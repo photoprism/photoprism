@@ -93,7 +93,7 @@ services:
       HOME: "/photoprism"
     ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
     # user: "1000:1000"
-    ## Share hardware devices for video transcoding and machine learning (optional):
+    ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     working_dir: "/photoprism"
