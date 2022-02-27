@@ -35,7 +35,7 @@
                  :transition="false"
                  aspect-ratio="1"
                  class="accent lighten-2 clickable"
-                 @touchstart="input.touchStart($event, index)"
+                 @touchstart.passive="input.touchStart($event, index)"
                  @touchend.prevent="onClick($event, index)"
                  @mousedown="input.mouseDown($event, index)"
                  @click.stop.prevent="onClick($event, index)"
