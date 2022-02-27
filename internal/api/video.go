@@ -19,7 +19,7 @@ import (
 //
 // Parameters:
 //   hash: string The photo or video file hash as returned by the search API
-//   type: string Video type
+//   type: string Video format
 func GetVideo(router *gin.RouterGroup) {
 	router.GET("/videos/:hash/:token/:type", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

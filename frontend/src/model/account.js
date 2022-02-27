@@ -19,7 +19,7 @@ Feel free to send an e-mail to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.app/developer-guide/
+<https://docs.photoprism.app/developer-guide/>
 
 */
 
@@ -75,10 +75,16 @@ export class Account extends RestModel {
     );
   }
 
-  Share(photos, dest) {
-    const values = { Photos: photos, Destination: dest };
+  Share(selection, folder) {
+    if (!selection) {
+      return;
+    }
 
-    return Api.post(this.getEntityResource() + "/share", values).then((response) =>
+    if (Array.isArray(selection)) {
+      selection = { Photos: selection };
+    }
+
+    return Api.post(this.getEntityResource() + "/share", { selection, folder }).then((response) =>
       Promise.resolve(response.data)
     );
   }

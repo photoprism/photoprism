@@ -25,6 +25,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
+// CreateZip creates a zip file archive for download.
+//
 // POST /api/v1/zip
 func CreateZip(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {
@@ -55,7 +57,8 @@ func CreateZip(router *gin.RouterGroup) {
 			return
 		}
 
-		files, err := query.FileSelection(f)
+		// Select files to be downloaded.
+		files, err := query.SelectedFiles(f, query.FileSelectionAll())
 
 		if err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrZipFailed)
@@ -132,6 +135,8 @@ func CreateZip(router *gin.RouterGroup) {
 	})
 }
 
+// DownloadZip downloads a zip file archive.
+//
 // GET /api/v1/zip/:filename
 func DownloadZip(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
@@ -159,6 +164,7 @@ func DownloadZip(router *gin.RouterGroup) {
 	})
 }
 
+// addFileToZip adds a file to a zip archive.
 func addFileToZip(zipWriter *zip.Writer, fileName, fileAlias string) error {
 	fileToZip, err := os.Open(fileName)
 	if err != nil {

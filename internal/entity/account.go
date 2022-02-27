@@ -137,3 +137,8 @@ func (m *Account) Save() error {
 func (m *Account) Create() error {
 	return Db().Create(m).Error
 }
+
+// ShareOriginals tests if the unmodified originals should be shared.
+func (m *Account) ShareOriginals() bool {
+	return m.ShareSize == ""
+}

@@ -274,7 +274,11 @@ export default {
   props: {
     show: Boolean,
     scope: String,
-    model: Object,
+    model: {
+      type: Object,
+      default: () => {
+      },
+    },
   },
   data() {
     const thumbs = this.$config.values.thumbs;
@@ -366,7 +370,7 @@ export default {
     },
     sizes(thumbs) {
       const result = [
-        {"text": this.$gettext("Original"), "value": ""}
+        {"text": this.$gettext("Originals"), "value": ""},
       ];
 
       for (let i = 0; i < thumbs.length; i++) {

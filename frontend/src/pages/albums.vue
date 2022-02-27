@@ -198,7 +198,7 @@
     </v-container>
     <p-share-dialog :show="dialog.share" :model="model" @upload="webdavUpload"
                     @close="dialog.share = false"></p-share-dialog>
-    <p-share-upload-dialog :show="dialog.upload" :selection="selection" @cancel="dialog.upload = false"
+    <p-share-upload-dialog :show="dialog.upload" :items="{albums: selection}" :model="model" @cancel="dialog.upload = false"
                            @confirm="dialog.upload = false"></p-share-upload-dialog>
     <p-album-edit-dialog :show="dialog.edit" :album="model" @close="dialog.edit = false"></p-album-edit-dialog>
   </div>

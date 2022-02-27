@@ -1,6 +1,6 @@
 package form
 
 type AccountShare struct {
-	Photos      []string `json:"photos"`
-	Destination string   `json:"destination"`
+	Selection Selection `json:"selection"`
+	Folder    string    `json:"folder"`
 }

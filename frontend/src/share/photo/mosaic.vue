@@ -100,11 +100,20 @@ import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 export default {
   name: 'PPhotoMosaic',
   props: {
-    photos: Array,
+    photos: {
+      type: Array,
+      default: () => [],
+    },
     openPhoto: Function,
     editPhoto: Function,
-    album: Object,
-    filter: Object,
+    album: {
+      type: Object,
+      default: () => {},
+    },
+    filter: {
+      type: Object,
+      default: () => {},
+    },
     context: String,
     selectMode: Boolean,
   },

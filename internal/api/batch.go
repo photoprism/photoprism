@@ -44,7 +44,8 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		log.Infof("photos: archiving %s", sanitize.Log(f.String()))
 
 		if service.Config().BackupYaml() {
-			photos, err := query.PhotoSelection(f)
+			// Fetch selection from index.
+			photos, err := query.SelectedPhotos(f)
 
 			if err != nil {
 				AbortEntityNotFound(c)
@@ -107,7 +108,8 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 		log.Infof("photos: restoring %s", sanitize.Log(f.String()))
 
 		if service.Config().BackupYaml() {
-			photos, err := query.PhotoSelection(f)
+			// Fetch selection from index.
+			photos, err := query.SelectedPhotos(f)
 
 			if err != nil {
 				AbortEntityNotFound(c)
@@ -168,7 +170,8 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 
 		log.Infof("photos: approving %s", sanitize.Log(f.String()))
 
-		photos, err := query.PhotoSelection(f)
+		// Fetch selection from index.
+		photos, err := query.SelectedPhotos(f)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -267,7 +270,8 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		// Update precalculated photo and file counts.
 		logWarn("index", entity.UpdateCounts())
 
-		if photos, err := query.PhotoSelection(f); err == nil {
+		// Fetch selection from index.
+		if photos, err := query.SelectedPhotos(f); err == nil {
 			for _, p := range photos {
 				SavePhotoAsYaml(p)
 			}
@@ -362,7 +366,8 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		log.Infof("photos: deleting %s", sanitize.Log(f.String()))
 
-		photos, err := query.PhotoSelection(f)
+		// Fetch selection from index.
+		photos, err := query.SelectedPhotos(f)
 
 		if err != nil {
 			AbortEntityNotFound(c)

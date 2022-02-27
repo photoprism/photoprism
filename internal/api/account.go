@@ -117,6 +117,8 @@ func GetAccountFolders(router *gin.RouterGroup) {
 	})
 }
 
+// ShareWithAccount uploads files to the selected account.
+//
 // GET /api/v1/accounts/:id/share
 //
 // Parameters:
@@ -146,8 +148,15 @@ func ShareWithAccount(router *gin.RouterGroup) {
 			return
 		}
 
-		dst := f.Destination
-		files, err := query.FilesByUID(f.Photos, 1000, 0)
+		folder := f.Folder
+
+		// Select files to be shared.
+		o := query.FileSelection{
+			Video:         true,
+			OriginalsOnly: m.ShareOriginals(),
+			PrimaryOnly:   !m.ShareOriginals(),
+		}
+		files, err := query.SelectedFiles(f.Selection, o)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -157,7 +166,7 @@ func ShareWithAccount(router *gin.RouterGroup) {
 		var aliases = make(map[string]int)
 
 		for _, file := range files {
-			alias := path.Join(dst, file.ShareBase(0))
+			alias := path.Join(folder, file.ShareBase(0))
 			key := strings.ToLower(alias)
 
 			if seq := aliases[key]; seq > 0 {
@@ -175,6 +184,8 @@ func ShareWithAccount(router *gin.RouterGroup) {
 	})
 }
 
+// CreateAccount creates a new remote account configuration.
+//
 // POST /api/v1/accounts
 func CreateAccount(router *gin.RouterGroup) {
 	router.POST("/accounts", func(c *gin.Context) {
@@ -219,6 +230,8 @@ func CreateAccount(router *gin.RouterGroup) {
 	})
 }
 
+// UpdateAccount updates a remote account configuration.
+//
 // PUT /api/v1/accounts/:id
 //
 // Parameters:
@@ -288,6 +301,8 @@ func UpdateAccount(router *gin.RouterGroup) {
 	})
 }
 
+// DeleteAccount removes a remote account configuration.
+//
 // DELETE /api/v1/accounts/:id
 //
 // Parameters:

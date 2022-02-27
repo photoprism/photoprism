@@ -30,7 +30,10 @@ export default {
   name: 'PAccountDeleteDialog',
   props: {
     show: Boolean,
-    model: Object,
+    model: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {

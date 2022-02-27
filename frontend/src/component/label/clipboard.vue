@@ -81,7 +81,10 @@ import download from "common/download";
 export default {
   name: 'PLabelClipboard',
   props: {
-    selection: Array,
+    selection: {
+      type: Array,
+      default: () => [],
+    },
     refresh: Function,
     clearSelection: Function,
   },

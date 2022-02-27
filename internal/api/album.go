@@ -365,7 +365,8 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		photos, err := query.PhotoSelection(f)
+		// Fetch selection from index.
+		photos, err := query.SelectedPhotos(f)
 
 		if err != nil {
 			log.Errorf("album: %s", err)

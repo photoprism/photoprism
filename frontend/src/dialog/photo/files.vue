@@ -231,7 +231,10 @@ import Util from "common/util";
 export default {
   name: 'PTabPhotoFiles',
   props: {
-    model: Object,
+    model: {
+      type: Object,
+      default: () => {},
+    },
     uid: String,
   },
   data() {

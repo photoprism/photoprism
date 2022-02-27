@@ -14,7 +14,7 @@ func TestPhotoSelection(t *testing.T) {
 			Photos: []string{},
 		}
 
-		r, err := PhotoSelection(f)
+		r, err := SelectedPhotos(f)
 
 		assert.Equal(t, "no items selected", err.Error())
 		assert.Empty(t, r)
@@ -24,7 +24,7 @@ func TestPhotoSelection(t *testing.T) {
 			Photos: []string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"},
 		}
 
-		r, err := PhotoSelection(f)
+		r, err := SelectedPhotos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -41,7 +41,7 @@ func TestFileSelection(t *testing.T) {
 			Photos: []string{},
 		}
 
-		r, err := FileSelection(f)
+		r, err := SelectedFiles(f, FileSelectionAll())
 
 		assert.Equal(t, "no items selected", err.Error())
 		assert.Empty(t, r)
@@ -51,7 +51,7 @@ func TestFileSelection(t *testing.T) {
 			Photos: []string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"},
 		}
 
-		r, err := FileSelection(f)
+		r, err := SelectedFiles(f, FileSelectionAll())
 
 		if err != nil {
 			t.Fatal(err)

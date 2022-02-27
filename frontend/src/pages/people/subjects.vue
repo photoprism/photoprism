@@ -180,7 +180,10 @@ import {ClickLong, ClickShort, Input, InputInvalid} from "common/input";
 export default {
   name: 'PPageSubjects',
   props: {
-    staticFilter: Object,
+    staticFilter: {
+      type: Object,
+      default: () => {},
+    },
     active: Boolean,
   },
   data() {

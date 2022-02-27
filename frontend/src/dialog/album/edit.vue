@@ -100,7 +100,10 @@ export default {
   name: 'PAlbumEditDialog',
   props: {
     show: Boolean,
-    album: Object,
+    album: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {

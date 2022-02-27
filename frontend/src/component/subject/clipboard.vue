@@ -69,7 +69,10 @@ import download from "common/download";
 export default {
   name: 'PSubjectClipboard',
   props: {
-    selection: Array,
+    selection: {
+      type: Array,
+      default: () => [],
+    },
     refresh: Function,
     clearSelection: Function,
   },

@@ -148,7 +148,7 @@
                             @confirm="batchDelete"></p-photo-delete-dialog>
     <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
                           @confirm="addToAlbum"></p-photo-album-dialog>
-    <p-share-upload-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
+    <p-share-upload-dialog :show="dialog.share" :items="{photos: selection}" :model="album" @cancel="dialog.share = false"
                            @confirm="onShared"></p-share-upload-dialog>
   </div>
 </template>
@@ -162,9 +162,15 @@ import Photo from "model/photo";
 export default {
   name: 'PPhotoClipboard',
   props: {
-    selection: Array,
+    selection: {
+      type: Array,
+      default: () => [],
+    },
     refresh: Function,
-    album: Object,
+    album: {
+      type: Object,
+      default: () => {},
+    },
     context: String,
   },
   data() {

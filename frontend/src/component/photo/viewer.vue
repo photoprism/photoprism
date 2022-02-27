@@ -177,7 +177,7 @@ export default {
     },
     openPlayer(video) {
       if (!video) {
-        this.$notify.error("no video selected");
+        this.$notify.error(this.$gettext("No video selected"));
         return;
       }
 

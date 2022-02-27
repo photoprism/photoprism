@@ -51,7 +51,10 @@ import download from "common/download";
 export default {
   name: 'PAlbumClipboard',
   props: {
-    selection: Array,
+    selection: {
+      type: Array,
+      default: () => [],
+    },
     refresh: Function,
     clearSelection: Function,
     context: String,

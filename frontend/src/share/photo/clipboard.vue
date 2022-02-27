@@ -54,9 +54,15 @@ import Photo from "model/photo";
 export default {
   name: 'PPhotoClipboard',
   props: {
-    selection: Array,
+    selection: {
+      type: Array,
+      default: () => [],
+    },
     refresh: Function,
-    album: Object,
+    album: {
+      type: Object,
+      default: () => {},
+    },
     context: String,
   },
   data() {

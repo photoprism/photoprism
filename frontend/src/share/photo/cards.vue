@@ -146,12 +146,21 @@ import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 export default {
   name: 'PPhotoCards',
   props: {
-    photos: Array,
+    photos: {
+      type: Array,
+      default: () => [],
+    },
     openPhoto: Function,
     editPhoto: Function,
     openLocation: Function,
-    album: Object,
-    filter: Object,
+    album: {
+      type: Object,
+      default: () => {},
+    },
+    filter: {
+      type: Object,
+      default: () => {},
+    },
     context: String,
     selectMode: Boolean,
   },

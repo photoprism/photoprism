@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -68,12 +68,20 @@
 </template>
 <script>
 import Account from "model/account";
+import Selection from "common/selection";
 
 export default {
   name: 'PShareUploadDialog',
   props: {
     show: Boolean,
-    selection: Array,
+    items: {
+      type: Object,
+      default: null,
+    },
+    model: {
+      type: Object,
+      default: null,
+    }
   },
   data() {
     return {
@@ -82,6 +90,7 @@ export default {
       search: null,
       account: {},
       accounts: [],
+      selection: new Selection({}),
       path: "/",
       paths: [
         {"abs": "/"}
@@ -107,6 +116,8 @@ export default {
     show: function (show) {
       if (show) {
         this.load();
+      } else if (this.selection) {
+        this.selection.clear();
       }
     }
   },
@@ -129,7 +140,7 @@ export default {
           this.loading = false;
 
           if (files.length === 1) {
-            this.$notify.success("One file uploaded");
+            this.$notify.success(this.$gettext("One file uploaded"));
           } else {
             this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} files uploaded"), {n: files.length}));
           }
@@ -153,6 +164,18 @@ export default {
     },
     load() {
       this.loading = true;
+
+      this.selection.clear().addItems(this.items);
+
+      if (this.selection.isEmpty()) {
+        this.selection.addModel(this.model);
+      }
+
+      if (this.selection.isEmpty()) {
+        this.loading = false;
+        this.$emit('cancel');
+        return;
+      }
 
       const params = {
         share: true,

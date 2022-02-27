@@ -128,8 +128,14 @@ export default {
   props: {
     index: Number,
     show: Boolean,
-    selection: Array,
-    album: Object,
+    selection: {
+      type: Array,
+      default: () => [],
+    },
+    album: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -217,7 +223,7 @@ export default {
       }
 
       if (!this.selection || !this.selection[index]) {
-        this.$notify.error("Invalid photo selected");
+        this.$notify.error(this.$gettext("Invalid photo selected"));
         return;
       }
 

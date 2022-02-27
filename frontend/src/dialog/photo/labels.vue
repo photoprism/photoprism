@@ -92,7 +92,10 @@ import Label from "model/label";
 export default {
   name: 'PTabPhotoLabels',
   props: {
-    model: Object,
+    model: {
+      type: Object,
+      default: () => {},
+    },
     uid: String,
   },
   data() {

@@ -108,7 +108,10 @@
 export default {
   name: 'PTabPhotoPeople',
   props: {
-    model: Object,
+    model: {
+      type: Object,
+      default: () => {},
+    },
     uid: String,
   },
   data() {

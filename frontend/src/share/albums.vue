@@ -118,7 +118,10 @@ import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 export default {
   name: 'PPageAlbums',
   props: {
-    staticFilter: Object,
+    staticFilter: {
+      type: Object,
+      default: () => {},
+    },
     view: String,
   },
   data() {

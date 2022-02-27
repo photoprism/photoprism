@@ -268,7 +268,10 @@ import * as options from "options/options";
 export default {
   name: 'PTabPhotoAdvanced',
   props: {
-    model: Object,
+    model: {
+      type: Object,
+      default: () => {},
+    },
     uid: String,
   },
   data() {

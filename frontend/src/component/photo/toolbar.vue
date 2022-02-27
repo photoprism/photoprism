@@ -156,8 +156,14 @@ export default {
   name: 'PPhotoToolbar',
   props: {
     dirty: Boolean,
-    filter: Object,
-    settings: Object,
+    filter: {
+      type: Object,
+      default: () => {},
+    },
+    settings: {
+      type: Object,
+      default: () => {},
+    },
     refresh: Function,
     filterChange: Function,
   },
