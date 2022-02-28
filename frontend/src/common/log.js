@@ -24,6 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import Event from "pubsub-js";
+import { config } from "app/session";
 
 class Log {
   constructor() {
@@ -42,6 +43,31 @@ class Log {
     this.logId = 0;
 
     Event.subscribe("log", this.onLog.bind(this));
+  }
+
+  debug(msg, data) {
+    if (config.debug && msg) {
+      if (data) {
+        if (Array.isArray(data)) {
+          data.forEach((val) => {
+            msg += ", " + JSON.stringify(val);
+          });
+        } else {
+          msg += ", " + JSON.stringify(data);
+        }
+      }
+
+      this.onLog(
+        {},
+        {
+          message: msg,
+          level: "debug",
+          time: new Date().toISOString(),
+        }
+      );
+    }
+
+    return this;
   }
 
   onLog(ev, data) {

@@ -23,6 +23,7 @@ Additional information can be found in our Developer Guide:
 
 */
 
+// import log from "common/log";
 export const InputInvalid = 0;
 export const ClickShort = 1;
 export const ClickLong = 2;
@@ -30,9 +31,11 @@ export const ClickLong = 2;
 export class Input {
   constructor() {
     this.reset();
+    this.preferTouch = false;
   }
 
   reset() {
+    // log.debug("input.reset");
     this.index = -1;
     this.scrollY = window.scrollY;
     this.touches = [];
@@ -40,6 +43,8 @@ export class Input {
   }
 
   touchStart(ev, index) {
+    // log.debug("input.touchStart", [ev, ev.type, ev.touches, index]);
+    this.preferTouch = true;
     this.index = index;
     this.scrollY = window.scrollY;
     if (ev.touches) {
@@ -49,6 +54,10 @@ export class Input {
   }
 
   mouseDown(ev, index) {
+    if (this.preferTouch) {
+      return; // Ignore "mousedown" event on touch devices.
+    }
+    // log.debug("input.mouseDown", [ev, ev.type, ev.touches, index]);
     this.index = index;
     this.scrollY = window.scrollY;
     this.touches = [];
@@ -56,6 +65,7 @@ export class Input {
   }
 
   clickType(ev, index) {
+    // log.debug("input.clickType", [ev, ev.type, index]);
     if (this.timeStamp < 0) {
       return InputInvalid;
     }
@@ -89,6 +99,7 @@ export class Input {
   }
 
   eval(ev, index) {
+    // log.debug("input.eval", [ev, ev.type, index]);
     const result = this.clickType(ev, index);
     this.reset();
     return result;

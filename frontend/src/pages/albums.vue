@@ -97,8 +97,8 @@
                   style="user-select: none"
                   class="accent lighten-2 clickable"
                   @touchstart.passive="input.touchStart($event, index)"
-                  @touchend.prevent="onClick($event, index)"
-                  @mousedown="input.mouseDown($event, index)"
+                  @touchend.stop.prevent="onClick($event, index)"
+                  @mousedown.stop.prevent="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn v-if="featureShare && album.LinkCount > 0" :ripple="false"
