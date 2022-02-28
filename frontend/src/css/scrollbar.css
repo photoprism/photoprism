@@ -1,0 +1,37 @@
+/* Scrollbar Styles */
+
+/*
+see https://css-tricks.com/custom-scrollbars-in-webkit/#aa-the-different-pieces
+*/
+
+[data-color-mode=light][data-light-theme*=dark],
+[data-color-mode=dark][data-dark-theme*=dark] {
+    color-scheme: dark;
+}
+
+:root,
+[data-color-mode=light][data-light-theme*=light],
+[data-color-mode=dark][data-dark-theme*=light] {
+    color-scheme: light;
+}
+
+body.nojs::-webkit-scrollbar,
+body.viewer::-webkit-scrollbar,
+body.player::-webkit-scrollbar,
+body.hide-scrollbar::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+body.nojs,
+body.viewer,
+body.player,
+body.hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+body.dark-theme {
+    color-scheme: dark !important;
+    scrollbar-color: dark !important;
+}

@@ -2,6 +2,8 @@
 
 #photoprism main .auth-login {
     min-height: 500px;
+    position: relative;
+    color-scheme: light;
 }
 
 #photoprism .auth-login .logo {

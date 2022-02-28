@@ -5,6 +5,8 @@
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
       <v-text-field v-model="filter.q"
                     class="input-search background-inherit elevation-0"
+                    autocorrect="off"
+                    autocapitalize="none"
                     browser-autocomplete="off"
                     solo hide-details clearable overflow single-line
                     :label="$gettext('Search')"

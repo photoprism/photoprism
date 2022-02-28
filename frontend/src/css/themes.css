@@ -16,12 +16,6 @@ input:-webkit-autofill:focus {
     transition: background-color 9999s !important;
 }
 
-/* Dark Scrollbar */
-
-body.dark-theme {
-    scrollbar-color: dark;
-}
-
 body.dark-theme #photoprism .v-tabs .v-badge__badge {
     color: #000000;
 }

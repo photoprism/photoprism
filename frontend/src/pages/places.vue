@@ -13,6 +13,8 @@
                         clearable
                         hide-details
                         browser-autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="none"
                         color="secondary-dark"
                         @click:clear="clearQuery"
                         @keyup.enter.native="formChange"

@@ -22,20 +22,6 @@ body.readonly #photoprism .feature-readonly {
     display: block !important;
 }
 
-body.viewer::-webkit-scrollbar,
-body.player::-webkit-scrollbar,
-body.hide-scrollbar::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-}
-
-body.viewer,
-body.player,
-body.hide-scrollbar {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
 /* Opacity */
 
 #photoprism .opacity-0 {

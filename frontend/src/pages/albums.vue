@@ -11,6 +11,8 @@
                       class="input-search background-inherit elevation-0"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
+                      autocorrect="off"
+                      autocapitalize="none"
                       prepend-inner-icon="search"
                       color="secondary-dark"
                       @keyup.enter.native="updateQuery"

@@ -171,10 +171,5 @@ if (isMobile) {
   setInterval(() => config.update(), 600000);
 }
 
-// Set body class for chrome-only optimizations.
-if (navigator.appVersion.indexOf("Chrome/") !== -1) {
-  document.body.classList.add("chrome");
-}
-
 // Start application.
 Mount(Vue, PhotoPrism, router);

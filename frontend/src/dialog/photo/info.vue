@@ -48,7 +48,11 @@
           <td>
             <v-text-field
                 v-model="model.OriginalName"
-                flat solo dense hide-details color="secondary-dark"
+                flat solo dense hide-details
+                browser-autocomplete="off"
+                autocorrect="off"
+                autocapitalize="none"
+                color="secondary-dark"
                 @change="save"
             ></v-text-field>
           </td>
@@ -206,7 +210,11 @@
           <td>
             <v-text-field
                 v-model="model.CellAccuracy"
-                flat solo dense hide-details color="secondary-dark"
+                flat solo dense hide-details
+                browser-autocomplete="off"
+                autocorrect="off"
+                autocapitalize="none"
+                color="secondary-dark"
                 type="number"
                 suffix="m"
                 style="width: 100px;"

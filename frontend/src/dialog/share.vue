@@ -36,7 +36,10 @@
                       <v-text-field
                           :value="link.url()"
                           :label="$gettext('URL')"
-                          browser-autocomplete="off" hide-details
+                          autocorrect="off"
+                          autocapitalize="none"
+                          browser-autocomplete="off"
+                          hide-details
                           readonly
                           color="secondary-dark"
                           class="input-url"
@@ -61,6 +64,8 @@
                       <v-text-field
                           v-model="link.Token" hide-details
                           required
+                          autocorrect="off"
+                          autocapitalize="none"
                           browser-autocomplete="off"
                           :label="$gettext('Secret')"
                           :placeholder="$gettext('Token')"

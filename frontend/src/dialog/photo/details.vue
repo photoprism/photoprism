@@ -92,6 +92,8 @@
                     :disabled="disabled"
                     :label="model.timeIsUTC() ? $gettext('Time UTC') : $gettext('Local Time')"
                     browser-autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="none"
                     hide-details
                     return-masked-value mask="##:##:##"
                     color="secondary-dark"
@@ -138,6 +140,8 @@
                     :disabled="disabled"
                     hide-details
                     browser-autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="none"
                     :label="$gettext('Altitude (m)')"
                     placeholder=""
                     color="secondary-dark"
@@ -152,6 +156,8 @@
                     :disabled="disabled"
                     hide-details
                     browser-autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="none"
                     :label="$gettext('Latitude')"
                     placeholder=""
                     color="secondary-dark"
@@ -166,6 +172,8 @@
                     :disabled="disabled"
                     hide-details
                     browser-autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="none"
                     :label="$gettext('Longitude')"
                     placeholder=""
                     color="secondary-dark"
@@ -195,6 +203,8 @@
                     :disabled="disabled"
                     hide-details
                     browser-autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="none"
                     label="ISO"
                     placeholder=""
                     color="secondary-dark"
@@ -208,6 +218,8 @@
                     :disabled="disabled"
                     hide-details
                     browser-autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="none"
                     :label="$gettext('Exposure')"
                     placeholder=""
                     color="secondary-dark"
@@ -237,6 +249,8 @@
                     :disabled="disabled"
                     hide-details
                     browser-autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="none"
                     :label="$gettext('F Number')"
                     placeholder=""
                     color="secondary-dark"

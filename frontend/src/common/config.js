@@ -69,6 +69,17 @@ export default class Config {
       this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
     }
 
+    if (document && document.body) {
+      document.body.classList.remove("nojs");
+
+      // Set body class for browser optimizations.
+      if (navigator.appVersion.indexOf("Chrome/") !== -1) {
+        document.body.classList.add("chrome");
+      } else if (navigator.appVersion.indexOf("Safari/") !== -1) {
+        document.body.classList.add("safari");
+      }
+    }
+
     this.page = {
       title: values.siteTitle,
       caption: values.siteCaption,
@@ -278,6 +289,24 @@ export default class Config {
     this.$vuetify = instance;
   }
 
+  setColorMode(value) {
+    if (!document || !document.body) {
+      return;
+    }
+
+    const tags = document.getElementsByTagName("html");
+
+    if (tags && tags.length > 0) {
+      tags[0].setAttribute("data-color-mode", value);
+    }
+
+    if (value === "dark") {
+      document.body.classList.add("dark-theme");
+    } else {
+      document.body.classList.remove("dark-theme");
+    }
+  }
+
   setTheme(name) {
     this.themeName = name;
 
@@ -286,9 +315,9 @@ export default class Config {
     this.theme = themes[name] ? themes[name] : themes["default"];
 
     if (this.theme.dark) {
-      document.body.classList.add("dark-theme");
+      this.setColorMode("dark");
     } else {
-      document.body.classList.remove("dark-theme");
+      this.setColorMode("light");
     }
 
     if (this.$vuetify) {

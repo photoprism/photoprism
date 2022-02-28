@@ -33,7 +33,7 @@ const Scrollbar = {
   body: function () {
     return document.body;
   },
-  update: function () {
+  update: function (preserveOverflow) {
     const htmlEl = this.html();
     const bodyEl = this.body();
 
@@ -42,7 +42,9 @@ const Scrollbar = {
     }
 
     if (this.hidden()) {
-      htmlEl.setAttribute("class", "overflow-y-hidden");
+      if (!preserveOverflow) {
+        htmlEl.setAttribute("class", "overflow-y-hidden");
+      }
       bodyEl.classList.add("hide-scrollbar");
     } else {
       htmlEl.removeAttribute("class");
@@ -56,10 +58,10 @@ const Scrollbar = {
 
     this.update();
   },
-  hide: function () {
+  hide: function (preserveOverflow) {
     hidePending++;
 
-    this.update();
+    this.update(preserveOverflow);
   },
   hidden: function () {
     return hidePending > 0 || hideDefault;

@@ -12,6 +12,8 @@
                       :label="$gettext('Search')"
                       prepend-inner-icon="search"
                       browser-autocomplete="off"
+                      autocorrect="off"
+                      autocapitalize="none"
                       clearable overflow
                       color="secondary-dark"
                       @click:clear="clearQuery"

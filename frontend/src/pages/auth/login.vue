@@ -1,9 +1,8 @@
 <template>
-  <v-container fluid fill-height class="auth-login wallpaper pa-0">
-    <v-layout align-center justify-center pa-3>
+  <v-container fluid fill-height class="auth-login wallpaper pa-3">
+    <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
-        <v-form ref="form" dense autocomplete="off" class="auth-login-form" accept-charset="UTF-8"
-                @submit.prevent="login">
+        <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
           <v-card class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-3">
               <div class="logo text-xs-center">
@@ -15,10 +14,12 @@
                   required hide-details solo flat light autofocus
                   type="text"
                   :disabled="loading"
+                  name="username"
+                  autocorrect="off"
+                  autocapitalize="none"
                   :label="$gettext('Name')"
-                  browser-autocomplete="off"
                   background-color="grey lighten-5"
-                  class="input-name"
+                  class="input-name text-selectable"
                   color="#05dde1"
                   :placeholder="$gettext('Name')"
                   prepend-icon="person"
@@ -28,11 +29,13 @@
                   required hide-details solo flat light
                   :type="showPassword ? 'text' : 'password'"
                   :disabled="loading"
+                  name="password"
+                  autocorrect="off"
+                  autocapitalize="none"
                   :label="$gettext('Password')"
-                  browser-autocomplete="off"
                   background-color="grey lighten-5"
                   :placeholder="$gettext('Password')"
-                  class="input-password mt-1"
+                  class="input-password mt-1 text-selectable"
                   :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                   prepend-icon="lock"
                   color="#05dde1"
@@ -42,7 +45,7 @@
               <v-spacer></v-spacer>
               <div class="pa-3 text-xs-center">
                 <!-- a href="#" target="_blank" class="text-link px-2"><translate>Forgot password?</translate></a -->
-                <v-btn color="#00adb0" round :disabled="loading || !password || !username"
+                <v-btn color="#00adb0" round :disabled="loginDisabled"
                        class="white--text action-confirm px-3" @click.stop="login">
                   <translate>Sign in</translate>
                   <v-icon :right="!rtl" :left="rtl" dark>arrow_forward</v-icon>
@@ -86,8 +89,13 @@ export default {
       rtl: this.$rtl,
     };
   },
+  computed: {
+    loginDisabled() {
+      return this.loading || !this.password || !this.username;
+    }
+  },
   created() {
-    this.$scrollbar.hide();
+    this.$scrollbar.hide(this.$isMobile);
   },
   destroyed() {
     this.$scrollbar.show();

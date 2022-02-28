@@ -1,24 +1,18 @@
 <template>
   <div id="p-navigation">
     <template v-if="visible && ($vuetify.breakpoint.smAndDown || !auth)">
-      <v-toolbar dark fixed flat scroll-off-screen :dense="$vuetify.breakpoint.smAndDown"  color="navigation darken-1" class="nav-small"
+      <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small"
                   @click.stop="showNavigation()">
-        <v-toolbar-side-icon v-if="auth" class="nav-show"></v-toolbar-side-icon>
-
+        <v-avatar tile :size="28">
+          <img :src="$config.appIcon()" :alt="config.name">
+        </v-avatar>
         <v-toolbar-title class="nav-title">
-          <v-avatar v-if="$route.meta.icon" tile :size="28">
-            <img :src="$config.staticUri + '/img/logo-white.svg'" :alt="config.name">
-          </v-avatar>
-          <template v-else>{{ page.title }}</template>
+          {{ page.title }}
         </v-toolbar-title>
-
         <v-btn v-if="auth && !config.readonly && $config.feature('upload')" icon class="action-upload"
                :title="$gettext('Upload')" @click.stop="openUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
-
-      </v-toolbar>
-      <v-toolbar dark flat :dense="$vuetify.breakpoint.smAndDown" color="#fafafa">
       </v-toolbar>
     </template>
     <v-navigation-drawer
@@ -518,6 +512,17 @@ import Event from "pubsub-js";
 
 export default {
   name: "PNavigation",
+  filters: {
+    abbreviateCount: (val) => {
+      const value = Number.parseInt(val);
+      // TODO: make abbreviation configurable by userprofile settings or env var before enabling it.
+      // if (value >= 1000) {
+      //   const digits = value % 1000 <= 50 ? 0 : 1;
+      //   return (value/1000).toFixed(digits).toString()+'k';
+      // }
+      return value;
+    }
+  },
   data() {
     return {
       drawer: null,
@@ -611,17 +616,6 @@ export default {
     logout() {
       this.$session.logout();
     },
-  },
-  filters: {
-    abbreviateCount: (val) => {
-      const value = Number.parseInt(val);
-      // TODO: make abbreviation configurable by userprofile settings or env var before enabling it.
-      // if (value >= 1000) {
-      //   const digits = value % 1000 <= 50 ? 0 : 1;
-      //   return (value/1000).toFixed(digits).toString()+'k';
-      // }
-      return value;
-    }
   },
 };
 </script>

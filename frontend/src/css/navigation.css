@@ -9,7 +9,7 @@
 }
 
 #p-navigation .nav-title {
-    text-align: center;
+    text-align: left;
     -webkit-box-flex: 1!important;
     -ms-flex-positive: 1!important;
     flex-grow: 1!important;
@@ -69,6 +69,10 @@
     text-decoration: none;
     font-size: 12px;
     color: #000;
+}
+
+#app.small-screen.show-nav main div.v-content__wrap {
+    padding-top: 48px;
 }
 
 #photoprism .v-tabs .v-toolbar__content {

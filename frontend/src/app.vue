@@ -4,7 +4,7 @@
 
     <p-notify></p-notify>
 
-    <v-app :class="$route.meta.background">
+    <v-app :class="appClass">
       <p-navigation></p-navigation>
 
       <v-content>
@@ -31,7 +31,15 @@ export default {
       touchStart: 0,
     };
   },
-  computed: {},
+  computed: {
+    appClass: function () {
+      return [
+        this.$route.meta.background,
+        this.$vuetify.breakpoint.smAndDown ? "small-screen" : "large-screen",
+        this.$route.meta.hideNav ? "hide-nav" : "show-nav",
+      ];
+    }
+  },
   created() {
     window.addEventListener('touchstart', (e) => this.onTouchStart(e), {passive: true});
     window.addEventListener('touchmove', (e) => this.onTouchMove(e), {passive: true});

@@ -5,6 +5,8 @@
       <v-text-field v-model="filter.q"
                     class="input-search background-inherit elevation-0"
                     browser-autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="none"
                     solo hide-details clearable overflow
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"

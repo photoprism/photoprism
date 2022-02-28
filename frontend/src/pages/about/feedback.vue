@@ -46,7 +46,8 @@
 
         <v-flex xs12 sm6 class="pa-2">
           <v-text-field v-model="form.UserEmail" flat solo hide-details required
-                        browser-autocomplete="off" color="secondary-dark"
+                        autocapitalize="none"
+                        color="secondary-dark"
                         :rules="[v => !!v || $gettext('Required')]"
                         background-color="secondary-light" :label="$gettext('E-Mail')" type="email">
           </v-text-field>

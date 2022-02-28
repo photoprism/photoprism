@@ -42,6 +42,7 @@ Additional information can be found in our Developer Guide:
 @import url("pages.css");
 @import url("help.css");
 @import url("auth.css");
+@import url("scrollbar.css");
 
 @media (min-width: 1750px) {
     .flex.xlg2 {
@@ -272,4 +273,51 @@ main {
 ol, ul {
     padding-left: 24px;
     padding-right: 24px;
+}
+
+/* Rounded Elements */
+
+.v-btn.v-btn--depressed,
+.v-menu__content,
+.v-text-field.v-text-field--solo>.v-input__control>.v-input__slot {
+    border-radius: 4px;
+}
+
+.v-autocomplete__content.v-menu__content,
+.v-autocomplete__content.v-menu__content .v-card {
+    border-radius: 0 0 4px 4px;
+}
+
+.v-progress-linear,
+.v-progress-linear .v-progress-linear__bar__determinate,
+.v-progress-linear .v-progress-linear__bar__indeterminate--active {
+    border-radius: 3px;
+}
+
+.v-snack.v-snack--bottom .v-snack__wrapper {
+    border-radius: 5px 5px 0 0;
+}
+
+#photoprism div.v-dialog>div.v-card {
+    border-radius: 6px;
+}
+
+#photoprism div.v-dialog .v-expansion-panel__container {
+    border-radius: 6px;
+}
+
+#photoprism .search-results.cards-view .result {
+    border-radius: 5px;
+}
+
+#photoprism .search-results.mosaic-view .result {
+    border-radius: 3px;
+}
+
+#photoprism .search-results.list-view .result {
+    padding: 1px 0 1px 8px !important;
+}
+
+#photoprism .search-results.list-view .result .v-image {
+    border-radius: 3px;
 }
