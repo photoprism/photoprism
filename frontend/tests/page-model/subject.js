@@ -5,6 +5,7 @@ export default class Page {
     this.recognizedTab = Selector("#tab-people > a", { timeout: 15000 });
     this.newTab = Selector("#tab-people_faces > a", { timeout: 15000 });
     this.showAllNewButton = Selector('a[href="/all?q=face%3Anew"]');
+    this.subjectName = Selector("a.is-subject div.v-card__title");
   }
 
   async addNameToFace(id, name) {
