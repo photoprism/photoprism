@@ -732,8 +732,8 @@ func TestJSON(t *testing.T) {
 		// t.Logf("all: %+v", data.All)
 
 		assert.Equal(t, "Jens\r\tMander", data.Artist)
-		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
-		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2004-09-23T10:57:57Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2004-09-23T10:57:57Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "This is the title", data.Title)
 		assert.Equal(t, "", data.Keywords.String())
 		assert.Equal(t, "This is a\n\ndescription!", data.Description)
@@ -882,6 +882,24 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, "2021-07-12T22:56:37Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2021-07-12T22:56:37Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, time.UTC.String(), data.TimeZone)
+		assert.Equal(t, 1080, data.Height)
+		assert.Equal(t, 1920, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 1, data.Orientation)
+	})
+
+	t.Run("sony_mp4_exiftool.json", func(t *testing.T) {
+		data, err := JSON("testdata/sony_mp4_exiftool.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2021-07-06T13:51:36Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2021-07-06T13:51:36Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, time.UTC.String(), data.TimeZone)
 		assert.Equal(t, 1080, data.Height)
 		assert.Equal(t, 1920, data.Width)

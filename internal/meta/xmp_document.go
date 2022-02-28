@@ -272,7 +272,7 @@ func (doc *XmpDocument) TakenAt() time.Time {
 		taken = t
 	} else if t, err := time.Parse("2006-01-02T15:04:05.999999999", s); err == nil {
 		taken = t
-	} else if t, err := time.Parse("2006-01-02T15:04:05-07:00", s); err == nil {
+	} else if t, err := time.Parse("2006-01-02T15:04:05Z07:00", s); err == nil {
 		taken = t
 	} else if t, err := time.Parse("2006-01-02T15:04:05", s[:19]); err == nil {
 		taken = t
