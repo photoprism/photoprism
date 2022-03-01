@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2022-02-09 16:24+0000\n"
-"Last-Translator: LyssaK <a.y.kurasova@gmail.com>\n"
+"PO-Revision-Date: 2022-02-19 16:21+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
 "Language: nl\n"
@@ -149,7 +149,6 @@ msgid "Invalid link"
 msgstr "Ongeldige link"
 
 #: messages.go:114
-#| msgid "Invalid link"
 msgid "Invalid name"
 msgstr "Ongeldige mapnaam"
 
@@ -224,6 +223,7 @@ msgid "Settings saved"
 msgstr "Instellingen opgeslagen"
 
 #: messages.go:133
+#, fuzzy
 msgid "Password changed"
 msgstr "Wachtwoord aangepast"
 
@@ -270,6 +270,7 @@ msgid "Copying files from %s"
 msgstr "Bestanden kopiëren uit %s"
 
 #: messages.go:143
+#, fuzzy
 msgid "Labels deleted"
 msgstr "Labels verwijderd"
 
@@ -299,7 +300,6 @@ msgid "%d files uploaded in %d s"
 msgstr "%d bestanden geüpload in %d s"
 
 #: messages.go:150
-#| msgid "Selection archived"
 msgid "Selection approved"
 msgstr "Selectie goedgekeurd"
 
@@ -325,7 +325,6 @@ msgid "Zip created in %d s"
 msgstr "Zip gemaakt in %d s"
 
 #: messages.go:156
-#| msgid "Labels deleted"
 msgid "Permanently deleted"
 msgstr "Permanent verwijderd"
 
