@@ -15,6 +15,7 @@ BUILD_TAG=${BUILD_DATE}-${BUILD_VERSION}
 BUILD_ID=${BUILD_TAG}-${BUILD_OS}-${BUILD_ARCH^^}
 BUILD_NAME=$(realpath "${2:-photoprism}")
 GO_BIN=${GO_BIN:-/usr/local/go/bin/go}
+GO_VER=$($GO_BIN version)
 
 echo "Building PhotoPrism ${BUILD_ID} ($1)..."
 
@@ -29,9 +30,8 @@ else
 fi
 
 # build binary
-echo "photoprism-bin: $BUILD_NAME"
-echo "command: ${BUILD_CMD[*]}"
-$GO_BIN version
+echo "=> compiling \"$BUILD_NAME\" with \"${GO_VER^}\""
+echo "=> command: ${BUILD_CMD[*]}"
 "${BUILD_CMD[@]}"
 
 # show size
