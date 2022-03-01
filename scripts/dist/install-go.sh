@@ -4,7 +4,7 @@ GOLANG_VERSION=1.17.7
 
 DESTDIR=$(realpath "${1:-/usr/local}")
 
-# abort if the user is not root
+# abort if not executed as root
 if [[ $(id -u) != "0" ]]; then
   echo "Usage: run ${0##*/} as root" 1>&2
   exit 1

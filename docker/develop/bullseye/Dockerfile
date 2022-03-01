@@ -24,7 +24,6 @@ ENV DOCKER_ARCH=$TARGETARCH \
 # copy scripts and debian backports sources list
 COPY --chown=root:root --chmod=755 /scripts/dist/* /root/.local/bin/
 COPY --chown=root:root --chmod=644 /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
-COPY --chown=root:root --chmod=755 /docker/develop/entrypoint.sh /entrypoint.sh
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
 # update image and install build dependencies
@@ -124,6 +123,7 @@ RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     echo "alias go=richgo ll='ls -alh'" > /root/.bash_aliases && \
     echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/all && \
     cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
+    cp /root/.local/bin/entrypoint.sh /entrypoint.sh && \
     chmod -R a+rwX /go
 
 # set up project directory
@@ -136,7 +136,7 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 # - 40000 (Go Debugger)
 EXPOSE 2342 2343 9515 40000
 
-# define container entrypoint script
+# set container entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
 
 # keep container running

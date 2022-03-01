@@ -96,6 +96,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       wget \
       curl \
       make \
+      sudo \
+      bash \
       mariadb-client \
       sqlite3 \
       tzdata \
@@ -121,6 +123,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       /photoprism/storage/config \
       /photoprism/storage/cache \
     && \
+    echo "ALL ALL=(ALL) NOPASSWD: /opt/photoprism/scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    cp /opt/photoprism/scripts/entrypoint.sh /entrypoint.sh && \
     cleanup.sh
 
 # define default directory and user
@@ -129,8 +133,8 @@ WORKDIR /photoprism
 # expose default http port 2342
 EXPOSE 2342
 
-# define container entrypoint script
-ENTRYPOINT ["/opt/photoprism/scripts/entrypoint.sh"]
+# set container entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
 
 # start app server
 CMD ["/opt/photoprism/bin/photoprism", "start"]

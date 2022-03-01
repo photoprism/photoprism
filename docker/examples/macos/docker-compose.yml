@@ -77,7 +77,6 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""
       ## Add/update packages (service must be started as root; options: update, gpu, tensorflow, davfs, clean):
       # PHOTOPRISM_INIT: "update gpu tensorflow clean"
-      HOME: "/photoprism"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
       # "/host/folder:/photoprism/folder"                # example

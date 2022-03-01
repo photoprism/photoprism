@@ -1,28 +1,68 @@
 #!/usr/bin/env bash
 
-DOCKER_ARCH=${DOCKER_ARCH:-arch}
-DOCKER_ENV=${DOCKER_ENV:-unknown}
-DOCKER_TAG=${DOCKER_TAG:-unknown}
+# regular expressions
+re='^[0-9]+$'
 
-if [[ $(id -u) == "0" ]]; then
-  echo "started as root"
+# set env defaults
+export DOCKER_ARCH=${DOCKER_ARCH:-arch}
+export DOCKER_ENV=${DOCKER_ENV:-unknown}
+export DOCKER_TAG=${DOCKER_TAG:-unknown}
 
-  if [[ ! -e /opt/photoprism/.init ]] && [[ ${PHOTOPRISM_INIT} ]]; then
-    for target in $PHOTOPRISM_INIT; do
-      echo "init ${target}..."
-      make -f /opt/photoprism/scripts/Makefile "${target}"
-    done
-    echo 1 >/opt/photoprism/.init
+# detect environment
+case $DOCKER_ENV in
+  prod)
+    INIT_SCRIPT="/opt/photoprism/scripts/entrypoint-init.sh"
+    ;;
+
+  develop)
+    INIT_SCRIPT="/go/src/github.com/photoprism/photoprism/scripts/dist/entrypoint-init.sh"
+    ;;
+
+  *)
+    INIT_SCRIPT=""
+    echo "unknown environment \"$DOCKER_ENV\"";
+    ;;
+esac
+
+# set home and install path defaults
+export PHOTOPRISM_HOME=${PHOTOPRISM_HOME:-/photoprism}
+export PHOTOPRISM_DIST=${PHOTOPRISM_DIST:-/opt/photoprism}
+
+# normalize user and group ID environment variables
+if [[ -z ${PHOTOPRISM_UID} ]]; then
+  if [[ ${UID} =~ $re ]] && [[ ${UID} != "0" ]]; then
+    export PHOTOPRISM_UID=${UID}
+  elif [[ ${PUID} =~ $re ]] && [[ ${PUID} != "0" ]]; then
+    export PHOTOPRISM_UID=${PUID}
+  fi
+  if [[ -z ${PHOTOPRISM_GID} ]]; then
+    if [[ ${GID} =~ $re ]] && [[ ${GID} != "0" ]]; then
+      export PHOTOPRISM_GID=${GID}
+    elif [[ ${PGID} =~ $re ]] && [[ ${PGID} != "0" ]]; then
+      export PHOTOPRISM_GID=${PGID}
+    fi
+  fi
+fi
+
+# initialize container packages and permissions
+if [[ -f "${INIT_SCRIPT}" ]]; then
+  if [[ $(id -u) == "0" ]]; then
+    echo "init as root"
+    bash -c "${INIT_SCRIPT}"
+  else
+    echo "init as uid $(id -u)"
+    sudo -E "${INIT_SCRIPT}"
   fi
 else
   echo "started as uid $(id -u)"
 fi
 
-re='^[0-9]+$'
+# set explicit home directory
+export HOME="${PHOTOPRISM_HOME}"
 
 # check for alternate umask variable
 if [[ -z ${PHOTOPRISM_UMASK} ]] && [[ ${UMASK} =~ $re ]] && [[ ${#UMASK} == 4 ]]; then
-  PHOTOPRISM_UMASK=${UMASK}
+  export PHOTOPRISM_UMASK=${UMASK}
 fi
 
 # set file-creation mode (umask)
@@ -32,78 +72,37 @@ else
   umask 0002
 fi
 
-# show info
-echo "image: $DOCKER_ARCH-$DOCKER_ENV"
-echo "build: $DOCKER_TAG"
+# show container info
+echo "image: $DOCKER_ARCH-$DOCKER_ENV, build $DOCKER_TAG"
+echo "home: ${PHOTOPRISM_HOME}"
 echo "umask: \"$(umask)\" ($(umask -S))"
+echo "install-path: ${PHOTOPRISM_DIST}"
 
-# script must run as root to perform changes
-if [[ $(id -u) == "0" ]]; then
-  # check for alternate user ID env variables
-  if [[ -z ${PHOTOPRISM_UID} ]]; then
-    if [[ ${UID} =~ $re ]] && [[ ${UID} != "0" ]]; then
-      PHOTOPRISM_UID=${UID}
-    elif [[ ${PUID} =~ $re ]] && [[ ${PUID} != "0" ]]; then
-      PHOTOPRISM_UID=${PUID}
-    fi
-  fi
-
-  # check for alternate group ID env variables
-  if [[ -z ${PHOTOPRISM_GID} ]]; then
-    if [[ ${GID} =~ $re ]] && [[ ${GID} != "0" ]]; then
-      PHOTOPRISM_GID=${GID}
-    elif [[ ${PGID} =~ $re ]] && [[ ${PGID} != "0" ]]; then
-      PHOTOPRISM_GID=${PGID}
-    fi
-  fi
-
+# change to another user and group on request
+if [[ $(id -u) == "0" ]] && [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
   # check uid and gid env variables
-  if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]] && [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]]; then
-    # RUN AS SPECIFIED USER + GROUP ID
-    groupadd -g "${PHOTOPRISM_GID}" "group_${PHOTOPRISM_GID}" 2>/dev/null
-    useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d /photoprism "user_${PHOTOPRISM_UID}" 2>/dev/null
-    usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
-
-    if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "updating filesystem permissions..."
-      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables filesystem permission updates"
-      chown --preserve-root -Rcf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /photoprism /opt/photoprism
-      chmod --preserve-root -Rcf u+rwX /photoprism /opt/photoprism
-    fi
-
+  if [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]]; then
     echo "switching to uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
     echo "${@}"
 
-    gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" audit.sh && gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
-  elif [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
-    # RUN AS SPECIFIED USER ID
-    useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d /photoprism "user_${PHOTOPRISM_UID}" 2>/dev/null
-    usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
-
-    if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "updating filesystem permissions..."
-      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables filesystem permission updates"
-      chown --preserve-root -Rcf "${PHOTOPRISM_UID}" /photoprism /opt/photoprism
-      chmod --preserve-root -Rcf u+rwX /photoprism /opt/photoprism
-    fi
-
+    # run command as uid:gid
+    ([[ ${DOCKER_ENV} != "prod" ]] || gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" audit.sh) \
+    && gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
+  else
     echo "switching to uid ${PHOTOPRISM_UID}"
     echo "${@}"
 
-    gosu "${PHOTOPRISM_UID}" audit.sh && gosu "${PHOTOPRISM_UID}" "$@" &
-  else
-    # RUN AS ROOT
-    echo "running as root"
-    echo "${@}"
-
-    audit.sh && "$@" &
+    # run command as uid
+    ([[ ${DOCKER_ENV} != "prod" ]] || gosu "${PHOTOPRISM_UID}" audit.sh) \
+    && gosu "${PHOTOPRISM_UID}" "$@" &
   fi
 else
-  # RUN AS NON-ROOT USER
   echo "running as uid $(id -u)"
   echo "${@}"
 
-   audit.sh && "$@" &
+  # run command
+  ([[ ${DOCKER_ENV} != "prod" ]] || audit.sh) \
+  && "$@" &
 fi
 
 PID=$!

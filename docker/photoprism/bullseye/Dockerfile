@@ -85,9 +85,10 @@ EXPOSE 2342
 
 # copy app dist files and debian backports sources list
 COPY --from=build /opt/photoprism/ /opt/photoprism
+RUN cp /opt/photoprism/scripts/entrypoint.sh /entrypoint.sh
 
-# define container entrypoint script
-ENTRYPOINT ["/opt/photoprism/scripts/entrypoint.sh"]
+# set container entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
 
 # start app server
 CMD ["/opt/photoprism/bin/photoprism", "start"]
