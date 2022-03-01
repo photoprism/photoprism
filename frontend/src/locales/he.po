@@ -1,18 +1,20 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-21 15:10+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
+"frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
-"2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -173,8 +175,9 @@ msgid "Albums"
 msgstr "אלבומים"
 
 #: src/component/album/clipboard.vue:74
+#, fuzzy
 msgid "Albums deleted"
-msgstr "אלבומים נמחקו"
+msgstr "האלבומים נמחקו"
 
 #: src/pages/albums.vue:257 src/share/albums.vue:215
 msgid "All %{n} albums loaded"
@@ -357,6 +360,7 @@ msgid "Black"
 msgstr "שחור"
 
 #: src/options/options.js:383
+#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
@@ -462,6 +466,7 @@ msgid "Chinese Traditional"
 msgstr "סינית מסורתית"
 
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
+#, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -553,6 +558,7 @@ msgid "Creating thumbnails for"
 msgstr "יותר תמונות מקדימות עבור"
 
 #: src/options/options.js:385
+#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Moderate Quality, Good Performance"
 
@@ -589,6 +595,7 @@ msgid "Day"
 msgstr "יום"
 
 #: src/pages/settings/advanced.vue:77
+#, fuzzy
 msgid "Debug Logs"
 msgstr "Debug Logs"
 
@@ -1007,6 +1014,7 @@ msgid "Group by similarity"
 msgstr "קבץ לפי דמיון"
 
 #: src/dialog/photo/files.vue:59 src/dialog/photo/files.vue:56
+#, fuzzy
 msgid "Hash"
 msgstr "Hash"
 
@@ -1195,10 +1203,12 @@ msgid "Labels"
 msgstr "תוויות"
 
 #: src/component/label/clipboard.vue:42
+#, fuzzy
 msgid "Labels deleted"
-msgstr "תווית נמחקה"
+msgstr "התוויות נמחקו"
 
 #: src/options/options.js:384
+#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Detail Preservation, Minimal Artifacts"
 
@@ -1247,6 +1257,7 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "לא ניתן להציג יותר, מציג את ה-%{n} קבצים הראשונים"
 
 #: src/options/options.js:386
+#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: Very Smooth, Best Performance"
 
@@ -1645,8 +1656,9 @@ msgid "Password"
 msgstr "סיסמה"
 
 #: src/pages/settings/account.vue:22
+#, fuzzy
 msgid "Password changed"
-msgstr "הסיסמה שונתה"
+msgstr "הסיסמא שונתה"
 
 #: src/component/navigation.vue:199 src/component/navigation.vue:791
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
@@ -1955,8 +1967,9 @@ msgid "Selection approved"
 msgstr "הבחירה אושרה"
 
 #: src/component/photo/clipboard.vue:55
+#, fuzzy
 msgid "Selection archived"
-msgstr "הבחירה הועברה לארכיון"
+msgstr "הבחירה בארכיון"
 
 #: src/component/photo/clipboard.vue:80
 msgid "Selection restored"
@@ -1989,8 +2002,9 @@ msgstr "הגדרות"
 
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:103
 #: src/pages/settings/library.vue:50
+#, fuzzy
 msgid "Settings saved"
-msgstr "הגדרות נשמרו"
+msgstr "ההגדרות נשמרו"
 
 #: src/dialog/share/upload.vue:32
 msgid "Setup"
@@ -2112,8 +2126,7 @@ msgstr "איחוד קבצים המשתפים את אותה התמונה או מ�
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
-msgstr ""
-"איחוד תמונות שצולמו באותו זמן ומיקום מדויק, בהתבסס על המטא-נתונים שלהן."
+msgstr "איחוד תמונות שצולמו באותו זמן ומיקום מדויק, בהתבסס על המטא-נתונים שלהן."
 
 #: src/dialog/photo/info.vue:86
 msgid "Stackable"

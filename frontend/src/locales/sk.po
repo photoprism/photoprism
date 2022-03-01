@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-25 20:46+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
+"frontend/sk/>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
 
 #: src/dialog/photo/files.vue:132 src/dialog/photo/files.vue:129
 msgid "{{ file.Orientation }}"
@@ -168,6 +170,7 @@ msgid "Albums"
 msgstr "Albumy"
 
 #: src/component/album/clipboard.vue:74
+#, fuzzy
 msgid "Albums deleted"
 msgstr "Albumy odstránené"
 
@@ -328,6 +331,7 @@ msgid "Become a sponsor"
 msgstr "Staňte sa sponzorom"
 
 #: src/pages/people/subjects.vue:430
+#, fuzzy
 msgid "Bio"
 msgstr "Bio"
 
@@ -365,7 +369,7 @@ msgstr "Nahlásiť chybu"
 
 #: src/common/notify.js:99
 msgid "Busy, please wait…"
-msgstr "Som zaneprázdnený, prosím čakajte..."
+msgstr "Som zaneprázdnený, prosím čakajte…"
 
 #: src/component/navigation.vue:215 src/component/navigation.vue:835
 #: src/routes.js:147 src/routes.js:154
@@ -677,6 +681,7 @@ msgid "Don't use RawTherapee to convert RAW files."
 msgstr "Nepoužívať RawTherapee na konverziu súborov RAW."
 
 #: src/pages/settings/advanced.vue:232
+#, fuzzy
 msgid "Don't use TensorFlow for image classification."
 msgstr "Nepoužívať TensorFlow pre triedenie fotografií"
 
@@ -719,7 +724,7 @@ msgstr "Stiahnuť samostatné súbory a zip archívy."
 #: src/share/photo/cards.vue:54 src/share/photo/clipboard.vue:39
 #: src/share/photo/list.vue:53 src/share/photos.vue:488
 msgid "Downloading…"
-msgstr "Sťahovanie..."
+msgstr "Sťahovanie…"
 
 #: src/pages/settings/advanced.vue:282
 msgid "Downscaling Filter"
@@ -1052,8 +1057,7 @@ msgstr ""
 
 #: src/pages/settings/general.vue:229
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"Importované súbory budú zoradené podľa dátumu a dostanú unikátny názov."
+msgstr "Importované súbory budú zoradené podľa dátumu a dostanú unikátny názov."
 
 #: src/pages/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1061,7 +1065,7 @@ msgstr "Importuje sa %{name}…"
 
 #: src/pages/library/import.vue:6
 msgid "Importing files to originals…"
-msgstr "Importujú sa súbory do originálov..."
+msgstr "Importujú sa súbory do originálov…"
 
 #: src/dialog/photo/files.vue:160 src/dialog/photo/files.vue:169
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:166
@@ -1092,13 +1096,14 @@ msgstr "Indexovanie zlyhalo"
 
 #: src/pages/library/index.vue:7
 msgid "Indexing media and sidecar files…"
-msgstr "Indexovanie médií a pripojených súborov..."
+msgstr "Indexovanie médií a pripojených súborov…"
 
 #: src/dialog/photo/files.vue:53 src/dialog/photo/files.vue:50
 msgid "Instance ID"
 msgstr "ID Inštancie"
 
 #: src/dialog/account/edit.vue:298
+#, fuzzy
 msgid "Interval"
 msgstr "Interval"
 
@@ -1154,6 +1159,7 @@ msgid "Labels"
 msgstr "Štítky"
 
 #: src/component/label/clipboard.vue:42
+#, fuzzy
 msgid "Labels deleted"
 msgstr "Štítky vymazané"
 
@@ -1609,6 +1615,7 @@ msgid "Password"
 msgstr "Heslo"
 
 #: src/pages/settings/account.vue:22
+#, fuzzy
 msgid "Password changed"
 msgstr "Heslo zmenené"
 
@@ -1624,6 +1631,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Ľudia s ktorými zdieľate odkaz, budú vidieť verejný obsah."
 
 #: src/component/photo/clipboard.vue:67
+#, fuzzy
 msgid "Permanently deleted"
 msgstr "Trvalo vymazané"
 
@@ -1636,6 +1644,7 @@ msgid "Photo"
 msgstr "Fotka"
 
 #: src/dialog/reload.vue:4
+#, fuzzy
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism bol aktualizovaný"
 
@@ -1704,11 +1713,11 @@ msgstr "Ponechať názvy súborov"
 
 #: src/pages/library/import.vue:8
 msgid "Press button to start importing…"
-msgstr "Kliknite pre začatie importovania..."
+msgstr "Kliknite pre začatie importovania…"
 
 #: src/pages/library/index.vue:9
 msgid "Press button to start indexing…"
-msgstr "Kliknite pre začatie indexovania..."
+msgstr "Kliknite pre začatie indexovania…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
@@ -1759,6 +1768,7 @@ msgid "Raspberry"
 msgstr "Malina"
 
 #: src/options/options.js:292
+#, fuzzy
 msgid "Raw"
 msgstr "Raw"
 
@@ -1818,7 +1828,7 @@ msgstr "Znovu načítať"
 #: src/dialog/reload.vue:26 src/pages/settings/general.vue:71
 #: src/pages/settings/library.vue:46
 msgid "Reloading…"
-msgstr "Znovu načítavanie..."
+msgstr "Znovu načítavanie…"
 
 #: src/dialog/account/edit.vue:97
 msgid "Remote Sync"
@@ -1931,14 +1941,17 @@ msgid "Select albums or create a new one"
 msgstr "Označte albumy alebo vytvorte nové"
 
 #: src/component/photo/clipboard.vue:39
+#, fuzzy
 msgid "Selection approved"
 msgstr "Označenie schválené"
 
 #: src/component/photo/clipboard.vue:55
+#, fuzzy
 msgid "Selection archived"
 msgstr "Označenie archivované"
 
 #: src/component/photo/clipboard.vue:80
+#, fuzzy
 msgid "Selection restored"
 msgstr "Označenie obnovené"
 
@@ -1969,6 +1982,7 @@ msgstr "Nastavenia"
 
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:75
 #: src/pages/settings/library.vue:50
+#, fuzzy
 msgid "Settings saved"
 msgstr "Nastavenia uložené"
 
@@ -2327,7 +2341,7 @@ msgstr "Aktualizujú sa náhľady"
 
 #: src/pages/library/index.vue:149
 msgid "Updating stacks"
-msgstr "Aktualizujú sa  naskladané fotky"
+msgstr "Aktualizujú sa naskladané fotky"
 
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:130
 #: src/component/photo/toolbar.vue:125 src/dialog/share/upload.vue:35
@@ -2343,7 +2357,7 @@ msgstr "Odovzdávanie hotové"
 
 #: src/dialog/upload.vue:38
 msgid "Upload complete. Indexing…"
-msgstr "Odovzdávanie hotové. Indexuje sa..."
+msgstr "Odovzdávanie hotové. Indexuje sa…"
 
 #: src/dialog/upload.vue:34
 msgid "Upload failed"
@@ -2363,7 +2377,7 @@ msgstr "Odovzdáva sa %{n} z %{t}…"
 
 #: src/dialog/upload.vue:59 src/dialog/upload.vue:67 src/dialog/upload.vue:108
 msgid "Uploading photos…"
-msgstr "Odovzdávanie fotiek..."
+msgstr "Odovzdávanie fotiek…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."

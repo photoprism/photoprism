@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-23 10:49+0000\n"
+"Last-Translator: Ladislav Marko <LadislavMarko@seznam.cz>\n"
+"Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
+"frontend/cs/>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -353,7 +355,7 @@ msgstr ""
 
 #: src/pages/people/subjects.vue:430
 msgid "Bio"
-msgstr "Bio"
+msgstr "Popisek"
 
 #: src/options/options.js:370
 msgid "Black"
@@ -685,8 +687,7 @@ msgstr "Nezálohujte metadata fotografií a alb do souborů YAML."
 
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Nevytvářejte soubory JSON nástroje ExifTool pro lepší extrakci metadat."
+msgstr "Nevytvářejte soubory JSON nástroje ExifTool pro lepší extrakci metadat."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
@@ -1210,7 +1211,7 @@ msgstr "Štítky"
 
 #: src/component/label/clipboard.vue:42
 msgid "Labels deleted"
-msgstr "Štítek vymazán"
+msgstr "Štítky vymazány"
 
 #: src/options/options.js:384
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1230,7 +1231,7 @@ msgstr "Zeměpisná šířka"
 
 #: src/options/options.js:239
 msgid "Lavender"
-msgstr "Lavender"
+msgstr "Levandule"
 
 #: src/dialog/photo/details.vue:391
 msgid "Lens"
@@ -1373,7 +1374,7 @@ msgstr "Měsíc"
 
 #: src/options/options.js:224
 msgid "Moonlight"
-msgstr "Moonlight"
+msgstr "Měsíční svit"
 
 #: src/pages/album/photos.vue:341 src/pages/photos.vue:379
 #: src/share/photos.vue:356
@@ -1803,7 +1804,7 @@ msgstr "Náhodně"
 
 #: src/options/options.js:249
 msgid "Raspberry"
-msgstr "Raspberry"
+msgstr "Malina"
 
 #: src/options/options.js:320
 msgid "Raw"
@@ -1955,11 +1956,11 @@ msgstr "Období"
 
 #: src/options/options.js:254
 msgid "Seaweed"
-msgstr "Seaweed"
+msgstr "Mořská řasa"
 
 #: src/dialog/share.vue:210
 msgid "Secret"
-msgstr "Secret"
+msgstr "Tajemství"
 
 #: src/component/photo/viewer.vue:119
 msgid "Select"

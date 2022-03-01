@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-25 15:35+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Portuguese <https://translate.photoprism.app/projects/"
+"photoprism/frontend/pt/>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -353,6 +355,7 @@ msgstr ""
 "de solução de problemas para determinar a causa de seu problema."
 
 #: src/pages/people/subjects.vue:430
+#, fuzzy
 msgid "Bio"
 msgstr "Bio"
 
@@ -874,10 +877,12 @@ msgid "F Number"
 msgstr "Razão focal"
 
 #: src/model/face.js:159
+#, fuzzy
 msgid "Face"
 msgstr "Face"
 
 #: src/dialog/photo/info.vue:73
+#, fuzzy
 msgid "Faces"
 msgstr "Faces"
 
@@ -1211,7 +1216,7 @@ msgstr "Etiquetas"
 
 #: src/component/label/clipboard.vue:42
 msgid "Labels deleted"
-msgstr "Etiquetas apagadas"
+msgstr "Etiquetas excluídas"
 
 #: src/options/options.js:384
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1654,10 +1659,12 @@ msgid "Outdoor"
 msgstr "Ao ar livre"
 
 #: src/dialog/photo/info.vue:118
+#, fuzzy
 msgid "Panorama"
 msgstr "Panorama"
 
 #: src/component/navigation.vue:86
+#, fuzzy
 msgid "Panoramas"
 msgstr "Panoramas"
 
@@ -2013,7 +2020,7 @@ msgstr "Configurações"
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:103
 #: src/pages/settings/library.vue:50
 msgid "Settings saved"
-msgstr "Configurações guardadas"
+msgstr "Configurações salvas"
 
 #: src/dialog/share/upload.vue:32
 msgid "Setup"
@@ -2405,8 +2412,7 @@ msgstr "Enviando fotos…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Envios que possam conter tais imagens serão rejeitados automaticamente."
+msgstr "Envios que possam conter tais imagens serão rejeitados automaticamente."
 
 #: src/dialog/share.vue:166
 msgid "URL"

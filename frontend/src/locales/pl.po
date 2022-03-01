@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Photoprism\n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-25 15:35+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -390,8 +392,9 @@ msgid "Bug Report"
 msgstr "Zgłoszenie Błędu"
 
 #: src/common/notify.js:99
+#, fuzzy
 msgid "Busy, please wait…"
-msgstr "Zajęty, proszę czekać..."
+msgstr "Zajęty, proszę czekać…"
 
 #: src/component/navigation.vue:238 src/component/navigation.vue:924
 #: src/routes.js:147 src/routes.js:154
@@ -467,6 +470,7 @@ msgid "Chinese Traditional"
 msgstr "Chiński Tradycyjny"
 
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
+#, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -683,13 +687,11 @@ msgstr "Odkryj"
 
 #: src/pages/settings/advanced.vue:144
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr ""
-"Nie wykonuj kopii zapasowych metadanych zdjęć i albumów do plików YAML."
+msgstr "Nie wykonuj kopii zapasowych metadanych zdjęć i albumów do plików YAML."
 
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Nie twórz plików ExifTool JSON w celu ulepszenia ekstrakcji metadanych."
+msgstr "Nie twórz plików ExifTool JSON w celu ulepszenia ekstrakcji metadanych."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
@@ -955,6 +957,7 @@ msgstr "Ogniskowa"
 #: src/dialog/account/edit.vue:276 src/dialog/account/edit.vue:282
 #: src/dialog/photo/info.vue:25 src/dialog/share/upload.vue:145
 #: src/model/folder.js:198 src/pages/library/files.vue:72
+#, fuzzy
 msgid "Folder"
 msgstr "Folder"
 
@@ -1278,6 +1281,7 @@ msgstr "Lista"
 #: src/component/photo/list.vue:186 src/component/photo/mosaic.vue:190
 #: src/options/options.js:324 src/routes.js:187 src/share/photo/cards.vue:188
 #: src/share/photo/list.vue:165 src/share/photo/mosaic.vue:171
+#, fuzzy
 msgid "Live"
 msgstr "Live"
 
@@ -1655,6 +1659,7 @@ msgid "Outdoor"
 msgstr "Outdoor"
 
 #: src/dialog/photo/info.vue:118
+#, fuzzy
 msgid "Panorama"
 msgstr "Panorama"
 
@@ -1758,11 +1763,11 @@ msgstr "Pozostaw nazwy plików"
 
 #: src/pages/library/import.vue:8
 msgid "Press button to start importing…"
-msgstr "Naciśnij przycisk by rozpocząć import..."
+msgstr "Naciśnij przycisk by rozpocząć import…"
 
 #: src/pages/library/index.vue:9
 msgid "Press button to start indexing…"
-msgstr "Naciśnij przycisk by rozpocząć indeksowanie..."
+msgstr "Naciśnij przycisk by rozpocząć indeksowanie…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
@@ -1875,6 +1880,7 @@ msgid "Reloading…"
 msgstr "Przeładunek.."
 
 #: src/dialog/account/edit.vue:97
+#, fuzzy
 msgid "Remote Sync"
 msgstr "Remote Sync"
 
@@ -2074,6 +2080,7 @@ msgstr ""
 "uruchomienia."
 
 #: src/model/file.js:187
+#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2202,8 +2209,7 @@ msgstr "Temat"
 #: src/dialog/account/add.vue:23
 msgid ""
 "Support for additional services, like Google Drive, will be added over time."
-msgstr ""
-"Wsparcie dla kolejnych usług, jak Google Drive, będą dodawane z czasem."
+msgstr "Wsparcie dla kolejnych usług, jak Google Drive, będą dodawane z czasem."
 
 #: src/pages/settings.vue:63 src/pages/settings/sync.vue:28
 msgid "Sync"

@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-23 10:49+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Indonesian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -172,16 +174,17 @@ msgid "Albums"
 msgstr "Koleksi Album"
 
 #: src/component/album/clipboard.vue:74
+#, fuzzy
 msgid "Albums deleted"
-msgstr "Koleksi album dihapus"
+msgstr "Album dihapus"
 
 #: src/pages/albums.vue:257 src/share/albums.vue:215
 msgid "All %{n} albums loaded"
-msgstr "%{n}  album telah dimuat"
+msgstr "%{n} album telah dimuat"
 
 #: src/pages/labels.vue:246
 msgid "All %{n} labels loaded"
-msgstr "%{n}  label telah dimuat"
+msgstr "%{n} label telah dimuat"
 
 #: src/pages/people/subjects.vue:335
 msgid "All %{n} people loaded"
@@ -952,6 +955,7 @@ msgstr "Panjang Fokus"
 #: src/dialog/account/edit.vue:276 src/dialog/account/edit.vue:282
 #: src/dialog/photo/info.vue:25 src/dialog/share/upload.vue:145
 #: src/model/folder.js:198 src/pages/library/files.vue:72
+#, fuzzy
 msgid "Folder"
 msgstr "Folder"
 
@@ -1152,6 +1156,7 @@ msgid "Instance ID"
 msgstr "ID Instance"
 
 #: src/dialog/account/edit.vue:298
+#, fuzzy
 msgid "Interval"
 msgstr "Interval"
 
@@ -1651,6 +1656,7 @@ msgid "Outdoor"
 msgstr "Luar ruangan"
 
 #: src/dialog/photo/info.vue:118
+#, fuzzy
 msgid "Panorama"
 msgstr "Panorama"
 
@@ -1680,8 +1686,9 @@ msgstr ""
 "Orang lain yang Anda bagikan tautan ini dapat melihat konten secara publik."
 
 #: src/component/photo/clipboard.vue:67
+#, fuzzy
 msgid "Permanently deleted"
-msgstr "Dihapus permanen"
+msgstr "Dihapus secara permanen"
 
 #: src/pages/settings/general.vue:207
 msgid "Permanently remove files to free up storage."
@@ -2067,6 +2074,7 @@ msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Menampilkan pesan log yang lebih detail. Memerlukan restart."
 
 #: src/model/file.js:187
+#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
