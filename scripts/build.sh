@@ -13,7 +13,7 @@ BUILD_DATE=$(date -u +%y%m%d)
 BUILD_VERSION=$(git describe --always)
 BUILD_TAG=${BUILD_DATE}-${BUILD_VERSION}
 BUILD_ID=${BUILD_TAG}-${BUILD_OS}-${BUILD_ARCH^^}
-BUILD_NAME=$(realpath "${2:-photoprism}")
+BUILD_NAME=${2:-photoprism}
 GO_BIN=${GO_BIN:-/usr/local/go/bin/go}
 GO_VER=$($GO_BIN version)
 

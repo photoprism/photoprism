@@ -43,7 +43,7 @@ if [ ! -f "$TMPDIR/$INSTALL_FILE" ]; then
   curl --create-dirs -fsSL -o "$TMPDIR/$INSTALL_FILE" "$URL"
 fi
 
-echo "Extracting \"$TMPDIR/$INSTALL_FILE\" to \"$DESTDIR\"..."
+echo "Extracting \"$TMPDIR/$INSTALL_FILE\" to \"$DESTDIR\"."
 
 if [ -f "$TMPDIR/$INSTALL_FILE" ]; then
   tar --overwrite --mode=755 -C "$DESTDIR" -xzf "$TMPDIR/$INSTALL_FILE"
@@ -53,7 +53,7 @@ else
 fi
 
 if [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]; then
-  echo "Running ldconfig..."
+  echo "Running \"ldconfig\"."
   ldconfig
 else
   echo "Running \"ldconfig -n $DESTDIR/lib\"."
