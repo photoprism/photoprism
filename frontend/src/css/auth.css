@@ -33,8 +33,31 @@
     color: #000000de !important;
 }
 
-#photoprism main .auth-login a.text-link {
-    color: #c8e3e7!important;
+#photoprism main .auth-login a {
+    text-decoration: none!important;
+}
+
+#photoprism main .auth-login,
+#photoprism main .auth-login form,
+#photoprism main .auth-login footer,
+#photoprism main .auth-login .v-input__prepend-outer .v-icon,
+#photoprism main .auth-login .body-1,
+#photoprism main .auth-login .body-2 {
+    caret-color: #fff;
+    color: #fff;
+}
+
+#photoprism main .auth-login .v-input__append-inner .v-icon {
+    color: rgba(0,0,0,.54);
+}
+
+#photoprism #app main .auth-login .v-btn.v-btn--disabled,
+#photoprism #app main .auth-login .v-btn.v-btn--disabled .v-icon {
+    color: rgba(255,255,255,.36)!important;
+}
+
+#photoprism #app main .auth-login .v-btn.v-btn--disabled {
+    background-color: rgba(255,255,255,.16)!important;
 }
 
 #photoprism main .auth-login footer {

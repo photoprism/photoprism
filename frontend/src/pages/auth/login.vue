@@ -1,7 +1,7 @@
 <template>
   <v-container fluid fill-height class="auth-login wallpaper pa-3">
     <v-layout align-center justify-center>
-      <v-flex xs12 sm8 md4>
+      <v-flex xs12 sm8 md4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
           <v-card class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-3">
@@ -20,7 +20,7 @@
                   :label="$gettext('Name')"
                   background-color="grey lighten-5"
                   class="input-name text-selectable"
-                  color="#05dde1"
+                  :color="colors.accent"
                   :placeholder="$gettext('Name')"
                   prepend-icon="person"
               ></v-text-field>
@@ -38,14 +38,14 @@
                   class="input-password mt-1 text-selectable"
                   :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                   prepend-icon="lock"
-                  color="#05dde1"
+                  :color="colors.accent"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter.native="login"
               ></v-text-field>
               <v-spacer></v-spacer>
               <div class="pa-3 text-xs-center">
-                <!-- a href="#" target="_blank" class="text-link px-2"><translate>Forgot password?</translate></a -->
-                <v-btn color="#00adb0" round :disabled="loginDisabled"
+                <!-- a href="#" target="_blank" class="text-link px-2" :style="`color: ${colors.link}!important`"><translate>Forgot password?</translate></a -->
+                <v-btn :color="colors.primary" round :disabled="loginDisabled"
                        class="white--text action-confirm px-3" @click.stop="login">
                   <translate>Sign in</translate>
                   <v-icon :right="!rtl" :left="rtl" dark>arrow_forward</v-icon>
@@ -62,7 +62,7 @@
           <strong>{{ config.siteTitle }}</strong> – {{ config.siteCaption }}
         </v-flex>
         <v-flex v-if="config.imprint" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
-          <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank" class="text-link">{{ config.imprint }}</a>
+          <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank" class="text-link" :style="`color: ${colors.link}!important`">{{ config.imprint }}</a>
           <span v-else>{{ config.imprint }}</span>
         </v-flex>
       </v-layout>
@@ -78,6 +78,11 @@ export default {
     const c = this.$config.values;
 
     return {
+      colors: {
+        accent: "#05dde1",
+        primary: "#00adb0",
+        link: "#c8e3e7",
+      },
       loading: false,
       showPassword: false,
       username: "",

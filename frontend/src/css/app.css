@@ -306,10 +306,6 @@ ol, ul {
     border-radius: 6px;
 }
 
-#photoprism .search-results.cards-view .result {
-    border-radius: 5px;
-}
-
 #photoprism .search-results.mosaic-view .result {
     border-radius: 3px;
 }
