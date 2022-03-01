@@ -6,17 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-11-21 14:16+0100\n"
-"PO-Revision-Date: 2021-11-22 17:37+0100\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-19 14:53+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
+"photoprism/backend/hu/>\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
-"Last-Translator: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: hu_HU\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -222,6 +223,7 @@ msgid "Settings saved"
 msgstr "Beállítások elmentve"
 
 #: messages.go:133
+#, fuzzy
 msgid "Password changed"
 msgstr "Jelszó megváltoztatva"
 
@@ -268,6 +270,7 @@ msgid "Copying files from %s"
 msgstr "Fájlok másolása innen: %s"
 
 #: messages.go:143
+#, fuzzy
 msgid "Labels deleted"
 msgstr "Címkék törölve"
 
@@ -297,14 +300,17 @@ msgid "%d files uploaded in %d s"
 msgstr "%d fájl feltöltve %d másodperc alatt"
 
 #: messages.go:150
+#, fuzzy
 msgid "Selection approved"
 msgstr "Választék jóváhagyva"
 
 #: messages.go:151
+#, fuzzy
 msgid "Selection archived"
 msgstr "Választék archiválva"
 
 #: messages.go:152
+#, fuzzy
 msgid "Selection restored"
 msgstr "Választék visszaállítva"
 

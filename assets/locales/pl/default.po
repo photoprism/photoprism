@@ -6,18 +6,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2021-10-10 08:33+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.app>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-19 14:34+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
+"backend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 "
-"|| n%100>14) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -73,12 +74,10 @@ msgid "Album not found"
 msgstr "Album nie został znaleziony"
 
 #: messages.go:95
-#| msgid "Selection not found"
 msgid "Subject not found"
 msgstr "Nie znaleziono tematu"
 
 #: messages.go:96
-#| msgid "User not found"
 msgid "Person not found"
 msgstr "Nie znaleziono osoby"
 
@@ -151,7 +150,6 @@ msgid "Invalid link"
 msgstr "Nieprawidłowy link"
 
 #: messages.go:114
-#| msgid "Invalid link"
 msgid "Invalid name"
 msgstr "Nieprawidłowa nazwa"
 
@@ -181,7 +179,6 @@ msgid "File removed from stack"
 msgstr "Plik został rozgrupowany"
 
 #: messages.go:123
-#| msgid "Labels deleted"
 msgid "File deleted"
 msgstr "Plik usunięty"
 
@@ -297,12 +294,11 @@ msgid "Person deleted"
 msgstr "Osoba usunięta"
 
 #: messages.go:149
-#, c-format
+#, c-format, fuzzy
 msgid "%d files uploaded in %d s"
 msgstr "%d files uploaded in %d s"
 
 #: messages.go:150
-#| msgid "Selection archived"
 msgid "Selection approved"
 msgstr "Wybór zatwierdzony"
 

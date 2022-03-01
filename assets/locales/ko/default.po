@@ -6,15 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-02-23 11:11+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
+"backend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:83
 msgid "Unexpected error, please try again"
@@ -220,12 +223,14 @@ msgid "Account deleted"
 msgstr ""
 
 #: messages.go:134
+#, fuzzy
 msgid "Settings saved"
-msgstr ""
+msgstr "설정 저장됨"
 
 #: messages.go:135
+#, fuzzy
 msgid "Password changed"
-msgstr ""
+msgstr "비밀번호 변경됨"
 
 #: messages.go:136
 #, c-format
@@ -270,8 +275,9 @@ msgid "Copying files from %s"
 msgstr ""
 
 #: messages.go:145
+#, fuzzy
 msgid "Labels deleted"
-msgstr ""
+msgstr "라벨 삭제됨"
 
 #: messages.go:146
 msgid "Label saved"
@@ -299,24 +305,28 @@ msgid "%d files uploaded in %d s"
 msgstr ""
 
 #: messages.go:152
+#, fuzzy
 msgid "Selection approved"
-msgstr ""
+msgstr "선택 항목 승인됨"
 
 #: messages.go:153
+#, fuzzy
 msgid "Selection archived"
-msgstr ""
+msgstr "선택 항목 보관됨"
 
 #: messages.go:154
+#, fuzzy
 msgid "Selection restored"
-msgstr ""
+msgstr "선택 항목 복원됨"
 
 #: messages.go:155
 msgid "Selection marked as private"
 msgstr ""
 
 #: messages.go:156
+#, fuzzy
 msgid "Albums deleted"
-msgstr ""
+msgstr "앨범 삭제됨"
 
 #: messages.go:157
 #, c-format
@@ -324,5 +334,6 @@ msgid "Zip created in %d s"
 msgstr ""
 
 #: messages.go:158
+#, fuzzy
 msgid "Permanently deleted"
-msgstr ""
+msgstr "영구 삭제됨"

@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-08 13:44+0000\n"
-"Last-Translator: Theresa Test <theresagresch@gmx.de>\n"
+"PO-Revision-Date: 2022-02-15 17:24+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "backend/de/>\n"
 "Language: de\n"
@@ -86,7 +86,7 @@ msgstr "Im öffentlichen Modus nicht verfügbar"
 
 #: messages.go:100
 msgid "not available in read-only mode"
-msgstr "Funktion im ‘read-only’ Modus nicht verfügbar"
+msgstr "Funktion im schreibgeschützten Modus nicht verfügbar"
 
 #: messages.go:101
 msgid "Please log in and try again"
@@ -130,7 +130,7 @@ msgstr "Keine Alben ausgewählt"
 
 #: messages.go:111
 msgid "No files available for download"
-msgstr "Nicht zum Download verfügbar"
+msgstr "Keine Dateien zum Download verfügbar"
 
 #: messages.go:112
 msgid "Failed to create zip file"
@@ -150,7 +150,7 @@ msgstr "Ungültiger Name"
 
 #: messages.go:116
 msgid "Busy, please try again later"
-msgstr "Beschäftigt, bitte später nocheinmal versuchen"
+msgstr "Beschäftigt, bitte später erneut versuchen"
 
 #: messages.go:119
 msgid "Changes successfully saved"
