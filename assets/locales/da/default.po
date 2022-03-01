@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-25 20:46+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-01 12:55+0000\n"
+"Last-Translator: TheresaNoRights <theresagresch+weblate@gmail.com>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "backend/da/>\n"
 "Language: da\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11\n"
 
 #: messages.go:83
 msgid "Unexpected error, please try again"
@@ -33,7 +33,7 @@ msgstr "Ændringer kunne ikke gemmes"
 
 #: messages.go:86
 msgid "Could not be deleted"
-msgstr ""
+msgstr "Kunne ikke slettes"
 
 #: messages.go:87
 #, c-format
