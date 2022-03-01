@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-27 09:39+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
+"frontend/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -1122,8 +1124,7 @@ msgstr "in"
 
 #: src/pages/about/about.vue:52
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr ""
-"Bovendien krijgen sponsors directe technische ondersteuning via e-mail."
+msgstr "Bovendien krijgen sponsors directe technische ondersteuning via e-mail."
 
 #: src/component/photo/cards.vue:11 src/component/photo/list.vue:12
 #: src/component/photo/mosaic.vue:11 src/pages/labels.vue:35
@@ -1211,8 +1212,9 @@ msgid "Labels"
 msgstr "Labels"
 
 #: src/component/label/clipboard.vue:42
+#, fuzzy
 msgid "Labels deleted"
-msgstr "Albums verwijderd"
+msgstr "Labels verwijderd"
 
 #: src/options/options.js:384
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1235,6 +1237,7 @@ msgid "Lavender"
 msgstr "Lavendel"
 
 #: src/dialog/photo/details.vue:391
+#, fuzzy
 msgid "Lens"
 msgstr "Lens"
 
@@ -1667,8 +1670,9 @@ msgid "Password"
 msgstr "Wachtwoord"
 
 #: src/pages/settings/account.vue:22
+#, fuzzy
 msgid "Password changed"
-msgstr "Wachtwoord gewijzigd"
+msgstr "Wachtwoord aangepast"
 
 #: src/component/navigation.vue:199 src/component/navigation.vue:791
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
@@ -2130,8 +2134,7 @@ msgstr "Stapel"
 
 #: src/pages/settings/library.vue:195
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Stapel bestanden met dezelfde unieke beeld- of instantie-identificatie."
+msgstr "Stapel bestanden met dezelfde unieke beeld- of instantie-identificatie."
 
 #: src/pages/settings/library.vue:174
 msgid ""

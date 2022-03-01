@@ -1,15 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: photoprism\n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-23 10:49+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -465,6 +468,7 @@ msgid "Chinese Traditional"
 msgstr "Kínai (hagyományos"
 
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
+#, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -946,8 +950,8 @@ msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
 msgstr ""
-"Az olyan szekvenciális nevű fájlok, mint az „IMG_1234 (2)” és „IMG_1234 "
-"(3)”, ugyanahhoz a képhez tartoznak."
+"Az olyan szekvenciális nevű fájlok, mint az „IMG_1234 (2)” és „IMG_1234 (3)”"
+", ugyanahhoz a képhez tartoznak."
 
 #: src/dialog/photo/details.vue:435
 msgid "Focal Length"
@@ -1210,8 +1214,9 @@ msgid "Labels"
 msgstr "Címkék"
 
 #: src/component/label/clipboard.vue:42
+#, fuzzy
 msgid "Labels deleted"
-msgstr "A címkék törölve"
+msgstr "Címkék törölve"
 
 #: src/options/options.js:384
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1667,8 +1672,9 @@ msgid "Password"
 msgstr "Jelszó"
 
 #: src/pages/settings/account.vue:22
+#, fuzzy
 msgid "Password changed"
-msgstr "A jelszó megváltozott"
+msgstr "Jelszó megváltoztatva"
 
 #: src/component/navigation.vue:199 src/component/navigation.vue:791
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
@@ -1975,16 +1981,19 @@ msgid "Select albums or create a new one"
 msgstr "Válasszon albumokat, vagy hozzon létre egy újat"
 
 #: src/component/photo/clipboard.vue:39
+#, fuzzy
 msgid "Selection approved"
-msgstr "Kiválasztás jóváhagyva"
+msgstr "Választék jóváhagyva"
 
 #: src/component/photo/clipboard.vue:55
+#, fuzzy
 msgid "Selection archived"
-msgstr "A kijelölés archiválva"
+msgstr "Választék archiválva"
 
 #: src/component/photo/clipboard.vue:80
+#, fuzzy
 msgid "Selection restored"
-msgstr "Kiválasztás visszaállítva"
+msgstr "Választék visszaállítva"
 
 #: src/pages/about/feedback.vue:35
 msgid "Send"

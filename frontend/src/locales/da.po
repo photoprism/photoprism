@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-27 09:39+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -172,6 +174,7 @@ msgid "Albums"
 msgstr "Album"
 
 #: src/component/album/clipboard.vue:74
+#, fuzzy
 msgid "Albums deleted"
 msgstr "Album slettet"
 
@@ -256,6 +259,7 @@ msgid "An error occurred - are you offline?"
 msgstr "Der opstod en fejl - er du offline?"
 
 #: src/pages/settings/general.vue:533
+#, fuzzy
 msgid "Animation"
 msgstr "Animation"
 
@@ -358,6 +362,7 @@ msgid "Black"
 msgstr "Sort"
 
 #: src/options/options.js:383
+#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
@@ -463,6 +468,7 @@ msgid "Chinese Traditional"
 msgstr "Traditionelt kinesisk"
 
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
+#, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -554,6 +560,7 @@ msgid "Creating thumbnails for"
 msgstr "Opretter miniaturer til"
 
 #: src/options/options.js:385
+#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Moderate Quality, Good Performance"
 
@@ -566,6 +573,7 @@ msgid "Customer Support"
 msgstr "Kunde support"
 
 #: src/options/options.js:365
+#, fuzzy
 msgid "Cyan"
 msgstr "Cyan"
 
@@ -912,6 +920,7 @@ msgid "Feature Request"
 msgstr "Funktionsanmodning"
 
 #: src/component/navigation.vue:402 src/component/navigation.vue:35
+#, fuzzy
 msgid "Feedback"
 msgstr "Feedback"
 
@@ -1008,6 +1017,7 @@ msgstr "Grå"
 
 #: src/component/album/toolbar.vue:43 src/component/photo/toolbar.vue:40
 #: src/dialog/album/edit.vue:20
+#, fuzzy
 msgid "Group by similarity"
 msgstr "Group by similarity"
 
@@ -1148,6 +1158,7 @@ msgid "Instance ID"
 msgstr "Instans-id"
 
 #: src/dialog/account/edit.vue:298
+#, fuzzy
 msgid "Interval"
 msgstr "Interval"
 
@@ -1203,10 +1214,12 @@ msgid "Labels"
 msgstr "Etiketter"
 
 #: src/component/label/clipboard.vue:42
+#, fuzzy
 msgid "Labels deleted"
 msgstr "Etiketter slettet"
 
 #: src/options/options.js:384
+#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Detail Preservation, Minimal Artifacts"
 
@@ -1646,6 +1659,7 @@ msgid "Outdoor"
 msgstr "Udendørs"
 
 #: src/dialog/photo/info.vue:118
+#, fuzzy
 msgid "Panorama"
 msgstr "Panorama"
 
@@ -1659,6 +1673,7 @@ msgid "Password"
 msgstr "Adgangskode"
 
 #: src/pages/settings/account.vue:22
+#, fuzzy
 msgid "Password changed"
 msgstr "Adgangskode ændret"
 
@@ -1674,6 +1689,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Personer, som du deler et link med, kan se offentligt indhold."
 
 #: src/component/photo/clipboard.vue:67
+#, fuzzy
 msgid "Permanently deleted"
 msgstr "Slettet permanent"
 
@@ -1758,6 +1774,7 @@ msgid "Press enter to create a new album."
 msgstr "Tryk på enter for at oprette et nyt album."
 
 #: src/dialog/photo/files.vue:19 src/dialog/photo/files.vue:16
+#, fuzzy
 msgid "Preview"
 msgstr "Preview"
 
@@ -1864,6 +1881,7 @@ msgid "Reloading…"
 msgstr "Genindlæser…"
 
 #: src/dialog/account/edit.vue:97
+#, fuzzy
 msgid "Remote Sync"
 msgstr "Remote Sync"
 
@@ -1926,6 +1944,7 @@ msgid "Save"
 msgstr "Gem"
 
 #: src/dialog/photo/info.vue:110
+#, fuzzy
 msgid "Scan"
 msgstr "Scan"
 
@@ -1966,14 +1985,17 @@ msgid "Select albums or create a new one"
 msgstr "Vælg album, eller opret et nyt"
 
 #: src/component/photo/clipboard.vue:39
+#, fuzzy
 msgid "Selection approved"
 msgstr "Valgte godkendt"
 
 #: src/component/photo/clipboard.vue:55
+#, fuzzy
 msgid "Selection archived"
 msgstr "Valgte arkiveret"
 
 #: src/component/photo/clipboard.vue:80
+#, fuzzy
 msgid "Selection restored"
 msgstr "Valgte gendannet"
 
@@ -2004,6 +2026,7 @@ msgstr "Indstillinger"
 
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:103
 #: src/pages/settings/library.vue:50
+#, fuzzy
 msgid "Settings saved"
 msgstr "Indstillinger gemt"
 
@@ -2061,6 +2084,7 @@ msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Viser mere detaljerede logmeddelelser. Kræver en genstart."
 
 #: src/model/file.js:187
+#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2203,6 +2227,7 @@ msgid "Taken"
 msgstr "Taget"
 
 #: src/options/options.js:364
+#, fuzzy
 msgid "Teal"
 msgstr "Teal"
 

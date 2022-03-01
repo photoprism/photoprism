@@ -75,7 +75,7 @@ msgstr "Abyss"
 #: src/component/navigation.vue:44 src/dialog/share/upload.vue:113
 #: src/model/account.js:96 src/pages/settings.vue:74
 msgid "Account"
-msgstr "Zugang"
+msgstr "Profil"
 
 #: src/dialog/photo/info.vue:159
 msgid "Accuracy"
@@ -95,7 +95,7 @@ msgstr "Neues Album erstellen"
 
 #: src/pages/settings/general.vue:141
 msgid "Add files to your library via Web Upload."
-msgstr "Dateien über den Browser hochladen und indexieren."
+msgstr "Dateien über den Browser hochladen und importieren."
 
 #: src/dialog/share.vue:92
 msgid "Add Link"
@@ -241,8 +241,8 @@ msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
 msgstr ""
-"Alternativ können Dateien auch direkt auf kompatible WebDAV-Server "
-"hochgeladen z.B. Nextcloud."
+"Alternativ können Dateien auch direkt auf kompatible WebDAV-Server z.B. "
+"Nextcloud hochgeladen werden."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -299,7 +299,7 @@ msgstr "Diese Alben wirklich löschen?"
 
 #: src/dialog/label/delete.vue:10
 msgid "Are you sure you want to delete these labels?"
-msgstr "Diese Kategorie wirklich löschen?"
+msgstr "Diese Kategorien wirklich löschen?"
 
 #: src/dialog/account/remove.vue:10
 msgid "Are you sure you want to delete this account?"
@@ -622,7 +622,7 @@ msgstr "Beschreibung"
 
 #: src/dialog/webdav.vue:23
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Unser englischer User Guide enthält eine detaillierte Anleitung."
+msgstr "Unser User Guide enthält eine detaillierte Anleitung."
 
 #: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1
 #: src/dialog/photo/edit.vue:178
@@ -653,7 +653,7 @@ msgstr "ExifTool deaktivieren"
 
 #: src/pages/settings/advanced.vue:526
 msgid "Disable FFmpeg"
-msgstr "FFmpeg  deaktivieren"
+msgstr "FFmpeg deaktivieren"
 
 #: src/pages/settings/advanced.vue:187
 msgid "Disable Places"
@@ -940,7 +940,7 @@ msgstr "Datei"
 
 #: src/routes.js:247
 msgid "File Browser"
-msgstr "Datei Browser"
+msgstr "Datei-Browser"
 
 #: src/dialog/photo/edit.vue:65 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:317
@@ -1105,14 +1105,14 @@ msgid ""
 "Imported files will be sorted by date and given a unique name to avoid "
 "duplicates."
 msgstr ""
-"Import kopiert neue Dateien und sortiert sie nach Datum, um Duplikate zu "
-"vermeiden."
+"Importierte Dateien werden nach Datum sortiert und bekommen einen "
+"eindeutigen Namen, um Duplikate zu vermeiden."
 
 #: src/pages/settings/general.vue:229
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr ""
-"Import kopiert neue Dateien und sortiert sie nach Datum, um Duplikate zu "
-"vermeiden."
+"Importierte Dateien werden nach Datum sortiert und bekommen einen "
+"eindeutigen Namen."
 
 #: src/pages/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1268,7 +1268,7 @@ msgstr "Hellgrün"
 
 #: src/pages/library/files.vue:307
 msgid "Limit reached, showing first %{n} files"
-msgstr "Limit erreicht, zeige erste %{n} Dateien"
+msgstr "Limit erreicht, zeige die ersten %{n} Dateien"
 
 #: src/options/options.js:386
 msgid "Linear: Very Smooth, Best Performance"
@@ -1434,7 +1434,7 @@ msgstr "Name"
 #: src/pages/labels.vue:38 src/pages/library/files.vue:40
 #: src/pages/people/faces.vue:42 src/pages/people/subjects.vue:40
 msgid "Name too long"
-msgstr "Name zu  lang"
+msgstr "Name zu lang"
 
 #: src/options/options.js:334 src/options/options.js:344
 #: src/pages/settings/sync.vue:50
@@ -1556,7 +1556,7 @@ msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
 msgstr ""
-"Note: Bereits angemeldete Benutzer werden nach ändern des Passworts nicht "
+"Hinweis: Bereits angemeldete Benutzer werden nach ändern des Passworts nicht "
 "automatisch abgemeldet."
 
 #: src/dialog/photo/details.vue:598
@@ -1605,7 +1605,7 @@ msgstr "Eine Person gefunden"
 #: src/pages/album/photos.vue:336 src/pages/photos.vue:374
 #: src/share/photos.vue:351
 msgid "One picture found"
-msgstr "Eine Bild gefunden"
+msgstr "Ein Bild gefunden"
 
 #: src/options/options.js:229
 msgid "Onyx"
@@ -1799,7 +1799,7 @@ msgstr "Projektion"
 
 #: src/options/options.js:355
 msgid "Purple"
-msgstr "Purpur"
+msgstr "Lila"
 
 #: src/pages/settings/library.vue:92
 msgid "Quality Filter"
@@ -1891,7 +1891,7 @@ msgstr "Löschen nicht möglich: Unbekanntes Album"
 
 #: src/component/photo/clipboard.vue:260
 msgid "Remove from album"
-msgstr "Entferne aus dem Album"
+msgstr "Aus dem Album entfernen"
 
 #: src/pages/library/import.vue:133
 msgid ""
@@ -1899,7 +1899,7 @@ msgid ""
 "deleted, they remain in their current location."
 msgstr ""
 "Dateien von Import nach Originals verschieben, um Speicherplatz zu sparen. "
-"Dateitypen, die nicht unterstützt werden, verbleiben in ihrem Ordner."
+"Dateitypen, die nicht unterstützt werden, verbleiben im Import Ordner."
 
 #: src/pages/library/errors.vue:87
 msgid "Report Bug"
@@ -2287,7 +2287,7 @@ msgstr "Titel"
 
 #: src/pages/albums.vue:49 src/share/albums.vue:48
 msgid "Title too long"
-msgstr "Titel zu  lang"
+msgstr "Titel zu lang"
 
 #: src/app.js:174 src/share.js:164
 msgid "to"
@@ -2297,7 +2297,7 @@ msgstr "nach"
 #: src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:74
 #: src/component/photo/toolbar.vue:91 src/component/photo/toolbar.vue:107
 msgid "Toggle View"
-msgstr "View wechseln"
+msgstr "Ansicht wechseln"
 
 #: src/dialog/share.vue:211
 msgid "Token"
@@ -2383,7 +2383,7 @@ msgstr "Upload"
 
 #: src/dialog/upload.vue:155
 msgid "Upload complete"
-msgstr "Vollständig  hochgeladen"
+msgstr "Vollständig hochgeladen"
 
 #: src/dialog/upload.vue:38
 msgid "Upload complete. Indexing…"
@@ -2531,7 +2531,7 @@ msgstr "Du kannst nur ein Album gleichzeitig downloaden"
 
 #: src/component/label/clipboard.vue:47
 msgid "You can only download one label"
-msgstr "Es kann nur eine Kategorie gleichzeitig downgeloadet werden"
+msgstr "Es kann nur eine Kategorie gleichzeitig heruntergeladen werden"
 
 #: src/component/album/clipboard.vue:32 src/component/album/clipboard.vue:45
 msgid "You may only select one item"
@@ -2731,7 +2731,6 @@ msgstr "Zoom in/out"
 #~ msgstr "Sips deaktivieren"
 
 #, fuzzy
-#~| msgid "Don't use Darktable to convert RAW files."
 #~ msgid "Don't use SIPS to convert RAW files on macOS."
 #~ msgstr "Darktable nicht zum Konvertieren von RAW Dateien verwenden."
 
@@ -2987,7 +2986,6 @@ msgstr "Zoom in/out"
 #~ msgstr "von"
 
 #, fuzzy
-#~| msgid "Press button to start copying..."
 #~ msgid "Press button to start copying"
 #~ msgstr "Klicke “Import” um den Kopiervorgang zu starten"
 

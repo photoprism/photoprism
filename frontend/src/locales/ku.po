@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-25 15:35+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ku/>\n"
 "Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/dialog/photo/files.vue:132 src/dialog/photo/files.vue:129
 msgid "{{ file.Orientation }}"
@@ -168,8 +170,9 @@ msgid "Albums"
 msgstr "ئەلبومەکان"
 
 #: src/component/album/clipboard.vue:74
+#, fuzzy
 msgid "Albums deleted"
-msgstr "ئەلبومەکان سڕانەوە"
+msgstr "ئەلبومەکان سڕایەوە"
 
 #: src/pages/albums.vue:257 src/share/albums.vue:215
 msgid "All %{n} albums loaded"
@@ -328,6 +331,7 @@ msgid "Become a sponsor"
 msgstr "Bibe sponsor"
 
 #: src/pages/people/subjects.vue:430
+#, fuzzy
 msgid "Bio"
 msgstr "Bio"
 
@@ -336,6 +340,7 @@ msgid "Black"
 msgstr "ڕەش"
 
 #: src/options/options.js:355
+#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
@@ -365,7 +370,7 @@ msgstr "راپۆرتی هەڵە"
 
 #: src/common/notify.js:99
 msgid "Busy, please wait…"
-msgstr "سەرقاڵە، تکایە چاوەڕێکە..."
+msgstr "سەرقاڵە، تکایە چاوەڕێکە…"
 
 #: src/component/navigation.vue:215 src/component/navigation.vue:835
 #: src/routes.js:147 src/routes.js:154
@@ -544,6 +549,7 @@ msgid "Cyan"
 msgstr "شینی ئاسمانی"
 
 #: src/options/options.js:204
+#, fuzzy
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -653,11 +659,11 @@ msgstr "دۆزینەوە"
 
 #: src/pages/settings/advanced.vue:144
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr "پاڵپشتی مێتاداتای وێنە و ئەلبوم مەکە بە پەڕگەی  YAML."
+msgstr "پاڵپشتی مێتاداتای وێنە و ئەلبوم مەکە بە پەڕگەی YAML."
 
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "پەڕگەکانی ExifToolی  JSON دروست مەکە بۆ دەرهێنانی مێتاداتای باشکراو."
+msgstr "پەڕگەکانی ExifToolی JSON دروست مەکە بۆ دەرهێنانی مێتاداتای باشکراو."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
@@ -908,6 +914,7 @@ msgstr ""
 "پەڕگەکان بە ناوی زنجیرەیی وەک 'IMG_1234 (2)' و 'IMG_1234 (3)' هی هەمان وێنەن."
 
 #: src/dialog/photo/details.vue:458
+#, fuzzy
 msgid "Focal Length"
 msgstr "Focal Length"
 
@@ -1058,7 +1065,7 @@ msgstr "هاوردنی %{name}…"
 
 #: src/pages/library/import.vue:6
 msgid "Importing files to originals…"
-msgstr "هێنانی پەڕگەکان بۆ ڕەسەنەکان..."
+msgstr "هێنانی پەڕگەکان بۆ ڕەسەنەکان…"
 
 #: src/dialog/photo/files.vue:160 src/dialog/photo/files.vue:169
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:166
@@ -1089,7 +1096,7 @@ msgstr "نیشانەسازی شکستی هێنا"
 
 #: src/pages/library/index.vue:7
 msgid "Indexing media and sidecar files…"
-msgstr "پێڕستکردنی پەڕگەکانی میدیا و لاتەنیشتەکان..."
+msgstr "پێڕستکردنی پەڕگەکانی میدیا و لاتەنیشتەکان…"
 
 #: src/dialog/photo/files.vue:53 src/dialog/photo/files.vue:50
 msgid "Instance ID"
@@ -1125,8 +1132,7 @@ msgstr "سنووری قەبارەی JPEG: %{n}px"
 
 #: src/pages/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr ""
-"JPEG و وێنە بچووکەکان بە شێوەیەکی خودکارانە بە پێێ پێویست پیشان دەدرێن."
+msgstr "JPEG و وێنە بچووکەکان بە شێوەیەکی خودکارانە بە پێێ پێویست پیشان دەدرێن."
 
 #: src/dialog/photo/details.vue:598
 msgid "Keywords"
@@ -1152,10 +1158,12 @@ msgid "Labels"
 msgstr "پێناسەکان"
 
 #: src/component/label/clipboard.vue:42
+#, fuzzy
 msgid "Labels deleted"
-msgstr "پێناسەکان سڕایەوە"
+msgstr "پێناسەکان سڕانەوە"
 
 #: src/options/options.js:356
+#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Detail Preservation, Minimal Artifacts"
 
@@ -1209,6 +1217,7 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "سنوور گەیشتن، یەکەمین ٪{n} پەڕگە پیشان دەدات"
 
 #: src/options/options.js:358
+#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: Very Smooth, Best Performance"
 
@@ -1300,7 +1309,7 @@ msgstr "پەیامەکە گەیەندرا"
 
 #: src/component/navigation.vue:205
 msgid "Minimize"
-msgstr " بچووک کردنەوە "
+msgstr "بچووک کردنەوە"
 
 #: src/dialog/photo/files.vue:149 src/dialog/photo/files.vue:146
 msgid "Missing"
@@ -1312,6 +1321,7 @@ msgid "Moments"
 msgstr "ساتەکان"
 
 #: src/component/navigation.vue:76
+#, fuzzy
 msgid "Monochrome"
 msgstr "Monochrome"
 
@@ -1546,6 +1556,7 @@ msgid "One picture found"
 msgstr "Yek wêne hat dîtin"
 
 #: src/options/options.js:219
+#, fuzzy
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1558,6 +1569,7 @@ msgid "Orange"
 msgstr "پرتەقاڵی"
 
 #: src/dialog/photo/files.vue:129 src/dialog/photo/files.vue:126
+#, fuzzy
 msgid "Orientation"
 msgstr "Orientation"
 
@@ -1608,8 +1620,9 @@ msgid "Password"
 msgstr "تێپەڕەوشە"
 
 #: src/pages/settings/account.vue:22
+#, fuzzy
 msgid "Password changed"
-msgstr "تێپەڕەوشە گۆڕا"
+msgstr "تێپەڕەوشە گۆڕدرا"
 
 #: src/component/navigation.vue:176 src/component/navigation.vue:702
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
@@ -1705,11 +1718,11 @@ msgstr "پاراستنی ناوی پەڕگەکان"
 
 #: src/pages/library/import.vue:8
 msgid "Press button to start importing…"
-msgstr "دوگمە دابگرە بۆ دەستکردن بە هێنان..."
+msgstr "دوگمە دابگرە بۆ دەستکردن بە هێنان…"
 
 #: src/pages/library/index.vue:9
 msgid "Press button to start indexing…"
-msgstr "دوگمە دابگرە بۆ دەست کردن بە پێنوێن کردن..."
+msgstr "دوگمە دابگرە بۆ دەست کردن بە پێنوێن کردن…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
@@ -1756,6 +1769,7 @@ msgid "Random"
 msgstr "هەڕەمەکی"
 
 #: src/options/options.js:224
+#, fuzzy
 msgid "Raspberry"
 msgstr "Raspberry"
 
@@ -1819,7 +1833,7 @@ msgstr "بارکردنەوە"
 #: src/dialog/reload.vue:26 src/pages/settings/general.vue:71
 #: src/pages/settings/library.vue:46
 msgid "Reloading…"
-msgstr "دووبارە بارکردن..."
+msgstr "دووبارە بارکردن…"
 
 #: src/dialog/account/edit.vue:97
 msgid "Remote Sync"
@@ -1867,6 +1881,7 @@ msgid "Required"
 msgstr "پێویست"
 
 #: src/dialog/photo/info.vue:67
+#, fuzzy
 msgid "Resolution"
 msgstr "Resolution"
 
@@ -1936,12 +1951,14 @@ msgid "Selection approved"
 msgstr "دەستنیشان کراو پەسەند کرا"
 
 #: src/component/photo/clipboard.vue:55
+#, fuzzy
 msgid "Selection archived"
-msgstr "دەستنیشان کراو ئەرشیفکرا"
+msgstr "هەڵبژاردەکە ئەرشیفکرا"
 
 #: src/component/photo/clipboard.vue:80
+#, fuzzy
 msgid "Selection restored"
-msgstr "دەستنیشان کراو گەڕێنرایەوە"
+msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 
 #: src/pages/about/feedback.vue:35
 msgid "Send"
@@ -1970,8 +1987,9 @@ msgstr "ڕێکخستنەکان"
 
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:75
 #: src/pages/settings/library.vue:50
+#, fuzzy
 msgid "Settings saved"
-msgstr "ڕێکخستنەکان پاشەکەوتکراو"
+msgstr "ڕێکخستنەکان پاشەکەوتکرا"
 
 #: src/dialog/share/upload.vue:32
 msgid "Setup"
@@ -1988,7 +2006,7 @@ msgstr "هاوبەشکردن"
 
 #: src/dialog/share.vue:7
 msgid "Share %{name}"
-msgstr "هاوبەشیپێکردنی  %{name}"
+msgstr "هاوبەشیپێکردنی %{name}"
 
 #: src/share/albums.vue:51
 msgid "Shared with you."
@@ -2086,8 +2104,7 @@ msgstr "پەڕگە کەڵەککراوەکان هەمان وێنەی بێ هاو�
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
-msgstr ""
-"وێنەی کەڵەککراوەکان لەهەمان کات و شوێن دا گیراوە لەسەر بنەمای مێتاداتا."
+msgstr "وێنەی کەڵەککراوەکان لەهەمان کات و شوێن دا گیراوە لەسەر بنەمای مێتاداتا."
 
 #: src/dialog/photo/info.vue:86
 msgid "Stackable"
@@ -2278,6 +2295,7 @@ msgid "Undo"
 msgstr "Betal bike"
 
 #: src/pages/settings/library.vue:194
+#, fuzzy
 msgid "Unique ID"
 msgstr "IDـی بێ هاوتا"
 
@@ -2338,7 +2356,7 @@ msgstr "بارکردنەکە تەواو"
 
 #: src/dialog/upload.vue:38
 msgid "Upload complete. Indexing…"
-msgstr "بارکردن تەواو بوو. نیشانەکردن..."
+msgstr "بارکردن تەواو بوو. نیشانەکردن…"
 
 #: src/dialog/upload.vue:34
 msgid "Upload failed"
@@ -2418,7 +2436,7 @@ msgstr ""
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
-"ڕاژەخوازەکانی  WebDAV دەتوانن پەیوەندی بکەن بە فۆتۆپریزمەوە بە بەکارهێنانی "
+"ڕاژەخوازەکانی WebDAV دەتوانن پەیوەندی بکەن بە فۆتۆپریزمەوە بە بەکارهێنانی "
 "ئەم URLەی خوارەوە:"
 
 #: src/pages/settings/sync.vue:35
@@ -2446,6 +2464,7 @@ msgid "Yellow"
 msgstr "زەرد"
 
 #: src/options/options.js:239
+#, fuzzy
 msgid "Yellowstone"
 msgstr "Yellowstone"
 

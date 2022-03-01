@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-25 20:46+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: usercopypaste\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -57,6 +59,7 @@ msgid "4 hours"
 msgstr "4 часа"
 
 #: src/dialog/share.vue:73
+#, fuzzy
 msgid "A click will copy it to your clipboard."
 msgstr "Нажмите, чтобы скопировать"
 
@@ -237,6 +240,7 @@ msgstr ""
 "Это дает дополнительную мотивацию для продолжения работы."
 
 #: src/dialog/share.vue:75
+#, fuzzy
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
@@ -260,6 +264,7 @@ msgid "Animation"
 msgstr "Анимация"
 
 #: src/dialog/share.vue:74
+#, fuzzy
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr ""
 "Все личные фотографии и видеозаписи останутся конфиденциальными и не будут "
@@ -390,8 +395,9 @@ msgid "Bug Report"
 msgstr "Отчет об ошибке"
 
 #: src/common/notify.js:99
+#, fuzzy
 msgid "Busy, please wait…"
-msgstr "В работе, пожалуйста, ждите..."
+msgstr "В работе, пожалуйста, ждите…"
 
 #: src/component/navigation.vue:238 src/component/navigation.vue:924
 #: src/routes.js:147 src/routes.js:154
@@ -538,6 +544,7 @@ msgid "Copyright"
 msgstr "Копирайт"
 
 #: src/component/photo/list.vue:17 src/share/photo/list.vue:17
+#, fuzzy
 msgid "Couldn't find anything."
 msgstr "Ничего не найдено"
 
@@ -621,6 +628,7 @@ msgid "Description"
 msgstr "Описание"
 
 #: src/dialog/webdav.vue:23
+#, fuzzy
 msgid "Detailed instructions can be found in our User Guide."
 msgstr "Подробные инструкции вы можете найти в нашем руководстве пользователя"
 
@@ -687,13 +695,11 @@ msgstr "Не создавать резервные копии метаданны
 
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Не создавать JSON-файлы ExifTool для улучшенного извлечения метаданных."
+msgstr "Не создавать JSON-файлы ExifTool для улучшенного извлечения метаданных."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Не изменять папку с оригиналами. Отключает импорт, загрузку и удаление."
+msgstr "Не изменять папку с оригиналами. Отключает импорт, загрузку и удаление."
 
 #: src/pages/settings/advanced.vue:527
 msgid "Don't transcode videos with FFmpeg."
@@ -749,14 +755,16 @@ msgstr "Скачать отдельные файлы и zip-архивы."
 #: src/pages/library/files.vue:99 src/share/album/clipboard.vue:37
 #: src/share/photo/cards.vue:54 src/share/photo/clipboard.vue:39
 #: src/share/photo/list.vue:53 src/share/photos.vue:486
+#, fuzzy
 msgid "Downloading…"
-msgstr "Скачивание..."
+msgstr "Скачивание…"
 
 #: src/pages/settings/advanced.vue:282
 msgid "Downscaling Filter"
 msgstr "Алгоритм создания превью"
 
 #: src/pages/library/files.vue:37
+#, fuzzy
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Дубликаты будут пропущены и отобразятся только один раз"
 
@@ -1108,12 +1116,14 @@ msgstr ""
 "имена."
 
 #: src/pages/library/import.vue:5
+#, fuzzy
 msgid "Importing %{name}…"
-msgstr "Импортирование %{name}..."
+msgstr "Импортирование %{name}…"
 
 #: src/pages/library/import.vue:6
+#, fuzzy
 msgid "Importing files to originals…"
-msgstr "Импортирование файлов в originals..."
+msgstr "Импортирование файлов в originals…"
 
 #: src/dialog/photo/files.vue:174 src/dialog/photo/files.vue:183
 #: src/dialog/photo/files.vue:171 src/dialog/photo/files.vue:180
@@ -1149,8 +1159,9 @@ msgid "Indexing failed"
 msgstr "Индексирование не удалось"
 
 #: src/pages/library/index.vue:7
+#, fuzzy
 msgid "Indexing media and sidecar files…"
-msgstr "Индексирование медиа и файлов sidecar..."
+msgstr "Индексирование медиа и файлов sidecar…"
 
 #: src/dialog/photo/files.vue:53 src/dialog/photo/files.vue:50
 msgid "Instance ID"
@@ -1185,6 +1196,7 @@ msgid "JPEG Size Limit: %{n}px"
 msgstr "Ограничение по размеру в формате JPEG: %{n}px"
 
 #: src/pages/library/import.vue:26
+#, fuzzy
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr ""
 "изобажения JPEG и файлы предпросмотра генерируются автоматически, если "
@@ -1539,6 +1551,7 @@ msgid "Note:"
 msgstr "Примечание:"
 
 #: src/dialog/account/add.vue:22
+#, fuzzy
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
@@ -1697,8 +1710,9 @@ msgid "Photo"
 msgstr "Фотография"
 
 #: src/dialog/reload.vue:4
+#, fuzzy
 msgid "PhotoPrism has been updated…"
-msgstr "PhotoPrism был обновлен..."
+msgstr "PhotoPrism был обновлен…"
 
 #: src/routes.js:114
 msgid "Photos"
@@ -1757,12 +1771,14 @@ msgid "Preserve filenames"
 msgstr "Сохранять имена файлов"
 
 #: src/pages/library/import.vue:8
+#, fuzzy
 msgid "Press button to start importing…"
-msgstr "Нажмите кнопку, чтобы начать импортирование..."
+msgstr "Нажмите кнопку, чтобы начать импортирование…"
 
 #: src/pages/library/index.vue:9
+#, fuzzy
 msgid "Press button to start indexing…"
-msgstr "Нажмите кнопку, чтобы начать индексирование..."
+msgstr "Нажмите кнопку, чтобы начать индексирование…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
@@ -1871,8 +1887,9 @@ msgstr "Перезагрузить"
 
 #: src/dialog/reload.vue:26 src/pages/settings/general.vue:99
 #: src/pages/settings/library.vue:46
+#, fuzzy
 msgid "Reloading…"
-msgstr "Перезагрузка..."
+msgstr "Перезагрузка…"
 
 #: src/dialog/account/edit.vue:97
 msgid "Remote Sync"
@@ -2072,6 +2089,7 @@ msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Показывает более подробные сообщения журнала. Требуется перезапуск."
 
 #: src/model/file.js:187
+#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2387,8 +2405,9 @@ msgid "Upload complete"
 msgstr "Загрузка завершена"
 
 #: src/dialog/upload.vue:38
+#, fuzzy
 msgid "Upload complete. Indexing…"
-msgstr "Загрузка завершена. Индексирование..."
+msgstr "Загрузка завершена. Индексирование…"
 
 #: src/dialog/upload.vue:34
 msgid "Upload failed"
@@ -2403,12 +2422,14 @@ msgid "Upload to WebDAV and share links with friends."
 msgstr "Загружайте WebDAV и делитесь ссылками с друзьями."
 
 #: src/dialog/upload.vue:36
+#, fuzzy
 msgid "Uploading %{n} of %{t}…"
-msgstr "Загрузка %{n} из %{t}..."
+msgstr "Загрузка %{n} из %{t}…"
 
 #: src/dialog/upload.vue:59 src/dialog/upload.vue:67 src/dialog/upload.vue:108
+#, fuzzy
 msgid "Uploading photos…"
-msgstr "Загрузка фотографий..."
+msgstr "Загрузка фотографий…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
@@ -2480,8 +2501,7 @@ msgstr ""
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr ""
-"WebDAV клиенты могут подключаться к PhotoPrism используя следующий URL:"
+msgstr "WebDAV клиенты могут подключаться к PhotoPrism используя следующий URL:"
 
 #: src/pages/settings/sync.vue:35
 msgid ""

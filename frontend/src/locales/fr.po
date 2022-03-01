@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-03-01 12:55+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
+"frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.11\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0.1\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -1157,7 +1159,7 @@ msgstr "Échec de l'indexation"
 
 #: src/pages/library/index.vue:7
 msgid "Indexing media and sidecar files…"
-msgstr "Indexation des média et et des fichiers annexes en cours…"
+msgstr "Indexation des médias et des fichiers annexes en cours…"
 
 #: src/dialog/photo/files.vue:53 src/dialog/photo/files.vue:50
 msgid "Instance ID"
@@ -1193,8 +1195,7 @@ msgstr "Limite de taille JPEG : %{n}px"
 
 #: src/pages/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr ""
-"Les JPEGS et vignettes sont automatiquement affichés selon les besoins."
+msgstr "Les JPEGS et vignettes sont automatiquement affichés selon les besoins."
 
 #: src/dialog/photo/details.vue:575
 msgid "Keywords"
@@ -1558,7 +1559,7 @@ msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
 msgstr ""
-"Remarque: Mettre à jour votre mot de passe n'interrompt pas l'accès des "
+"Remarque: Mettre à jour le mot de passe n'interrompt pas l'accès des "
 "utilisateurs déjà connectés."
 
 #: src/dialog/photo/details.vue:598
@@ -1678,7 +1679,7 @@ msgstr "Mot de passe"
 
 #: src/pages/settings/account.vue:22
 msgid "Password changed"
-msgstr "Mot de passe modifié"
+msgstr "Mode de passe changé"
 
 #: src/component/navigation.vue:199 src/component/navigation.vue:791
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
@@ -2323,7 +2324,7 @@ msgstr "Topograpique"
 #: src/share/photo/cards.vue:10 src/share/photo/list.vue:11
 #: src/share/photo/list.vue:19 src/share/photo/mosaic.vue:10
 msgid "Try again using other filters or keywords."
-msgstr "Réessayez  en utilisant d'autres filtres ou mots-clés."
+msgstr "Réessayez en utilisant d'autres filtres ou mots-clés."
 
 #: src/dialog/account/edit.vue:490 src/dialog/photo/files.vue:89
 #: src/dialog/photo/files.vue:86 src/dialog/photo/files.vue:33
@@ -2489,8 +2490,8 @@ msgstr ""
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
-"Les clients au protocole WebDAV peuvent se connecter à PhotoPrism à l'aide "
-"de l'URL suivante:"
+"Les clients utilisant le protocole WebDAV peuvent se connecter à PhotoPrism "
+"à l'aide de l'URL suivante:"
 
 #: src/pages/settings/sync.vue:35
 msgid ""
@@ -2498,7 +2499,7 @@ msgid ""
 "connect directly to PhotoPrism."
 msgstr ""
 "Les clients au protocole WebDAV, comme Microsoft’s Windows Explorer ou "
-"Apple's Finder,  peuvent se connecter directement à PhotoPrism."
+"Apple's Finder, peuvent se connecter directement à PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2551,8 +2552,7 @@ msgstr "Vous ne pouvez sélectionner qu'un seul élément"
 #: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:33
 #: src/pages/people/subjects.vue:37
 msgid "You may rescan your library to find additional faces."
-msgstr ""
-"Vous pouvez réanalyser votre bibliothèque pour trouver plus de visages."
+msgstr "Vous pouvez réanalyser votre bibliothèque pour trouver plus de visages."
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
