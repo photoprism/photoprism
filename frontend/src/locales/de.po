@@ -1,17 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-08 10:14+0000\n"
+"Last-Translator: Theresa Test <theresagresch@gmx.de>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
+"frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 2.3\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -337,7 +339,7 @@ msgstr "Erstellt automatisch Alben mit besonderen Momenten, Reisen und Orten."
 
 #: src/options/options.js:131
 msgid "Bahasa Indonesia"
-msgstr ""
+msgstr "Test"
 
 #: src/dialog/sponsor.vue:7 src/pages/about/about.vue:23
 msgid "Become a sponsor"
@@ -1689,7 +1691,7 @@ msgstr "Jeder mit diesem Link wird öffentliche Bilder und Videos sehen können.
 
 #: src/component/photo/clipboard.vue:67
 msgid "Permanently deleted"
-msgstr "Dauerhaft gelöscht"
+msgstr "Endgültig gelöscht"
 
 #: src/pages/settings/general.vue:207
 msgid "Permanently remove files to free up storage."
