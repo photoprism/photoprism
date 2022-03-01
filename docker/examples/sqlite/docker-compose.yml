@@ -74,7 +74,7 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      ### Add/update packages (service must be started as root; options: update, gpu, tensorflow, davfs, clean):
+      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clean):
       # PHOTOPRISM_INIT: "update gpu tensorflow clean"
       ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
       # PHOTOPRISM_UID: 1000
