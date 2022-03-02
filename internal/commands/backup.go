@@ -145,6 +145,9 @@ func backupAction(ctx *cli.Context) error {
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
 
+		// Log exact command for debugging in trace mode.
+		log.Trace(cmd.String())
+
 		// Run backup command.
 		if err := cmd.Run(); err != nil {
 			if stderr.String() != "" {

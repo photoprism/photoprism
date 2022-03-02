@@ -13,7 +13,7 @@ var logBuffer bytes.Buffer
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.Out = &logBuffer
-	log.SetLevel(logrus.DebugLevel)
+	log.SetLevel(logrus.TraceLevel)
 
 	code := m.Run()
 

@@ -179,6 +179,9 @@ func restoreAction(ctx *cli.Context) error {
 			}
 		}()
 
+		// Log exact command for debugging in trace mode.
+		log.Trace(cmd.String())
+
 		// Run backup command.
 		if err := cmd.Run(); err != nil {
 			if stderr.String() != "" {

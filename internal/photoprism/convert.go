@@ -162,6 +162,9 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 
+	// Log exact command for debugging in trace mode.
+	log.Trace(cmd.String())
+
 	// Run convert command.
 	if err := cmd.Run(); err != nil {
 		if stderr.String() != "" {
@@ -199,20 +202,24 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 		} else if c.conf.DarktableEnabled() && c.darktableBlacklist.Ok(fileExt) {
 			var args []string
 
-			// Only one instance of darktable-cli allowed due to locking if presets are loaded.
-			if c.conf.RawPresets() {
-				useMutex = true
-				args = []string{"--width", size, "--height", size, f.FileName()}
+			// Set RAW, XMP, and JPEG filenames.
+			if xmpName != "" {
+				args = []string{f.FileName(), xmpName, jpegName}
 			} else {
-				useMutex = false
-				args = []string{"--apply-custom-presets", "false", "--width", size, "--height", size, f.FileName()}
+				args = []string{f.FileName(), jpegName}
 			}
 
-			if xmpName != "" {
-				args = append(args, xmpName, jpegName)
+			// Set RAW to JPEG conversion options.
+			if c.conf.RawPresets() {
+				useMutex = true // can run one instance only with presets enabled
+				args = append(args, "--width", size, "--height", size, "--hq", "true", "--upscale", "false")
 			} else {
-				args = append(args, jpegName)
+				useMutex = false // --apply-custom-presets=false disables locking
+				args = append(args, "--apply-custom-presets", "false", "--width", size, "--height", size, "--hq", "true", "--upscale", "false")
 			}
+
+			// Set Darktable core storage paths.
+			args = append(args, "--core", "--configdir", c.conf.DarktableConfigPath(), "--cachedir", c.conf.DarktableCachePath(), "--library", ":memory:")
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
 		} else if c.conf.RawtherapeeEnabled() && c.rawtherapeeBlacklist.Ok(fileExt) {
@@ -319,6 +326,9 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	cmd.Stderr = &stderr
 
 	log.Infof("%s: converting %s to %s", filepath.Base(cmd.Path), fileName, fs.FormatJpeg)
+
+	// Log exact command for debugging in trace mode.
+	log.Trace(cmd.String())
 
 	// Run convert command.
 	if err := cmd.Run(); err != nil {
@@ -493,6 +503,9 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	})
 
 	log.Infof("%s: transcoding %s to %s", encoderName, fileName, fs.FormatAvc)
+
+	// Log exact command for debugging in trace mode.
+	log.Trace(cmd.String())
 
 	// Run convert command.
 	start := time.Now()

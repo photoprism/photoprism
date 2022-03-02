@@ -86,7 +86,7 @@ func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, ses
 
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
-	log.SetLevel(logrus.DebugLevel)
+	log.SetLevel(logrus.TraceLevel)
 
 	c := config.TestConfig()
 	service.SetConfig(c)

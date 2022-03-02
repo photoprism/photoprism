@@ -129,6 +129,8 @@ func configAction(ctx *cli.Context) error {
 	// External Tools.
 	fmt.Printf("%-25s %t\n", "raw-presets", conf.RawPresets())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
+	fmt.Printf("%-25s %s\n", "darktable-cache-path", conf.DarktableCachePath())
+	fmt.Printf("%-25s %s\n", "darktable-config-path", conf.DarktableConfigPath())
 	fmt.Printf("%-25s %s\n", "darktable-blacklist", conf.DarktableBlacklist())
 	fmt.Printf("%-25s %s\n", "rawtherapee-bin", conf.RawtherapeeBin())
 	fmt.Printf("%-25s %s\n", "rawtherapee-blacklist", conf.RawtherapeeBlacklist())

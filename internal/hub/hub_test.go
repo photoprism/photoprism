@@ -15,7 +15,7 @@ import (
 
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
-	log.SetLevel(logrus.DebugLevel)
+	log.SetLevel(logrus.TraceLevel)
 
 	ServiceURL = "https://hub-int.photoprism.app/v1/hello"
 

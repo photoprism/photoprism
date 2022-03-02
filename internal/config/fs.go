@@ -35,7 +35,7 @@ func (c *Config) CreateDirectories() error {
 		if fs.FileExists(path) {
 			result = fmt.Errorf("%s is a file, not a folder: please check your configuration", sanitize.Log(path))
 		} else {
-			result = fmt.Errorf("cannot create %s: please check configuration and permissions", sanitize.Log(path))
+			result = fmt.Errorf("cannot create %s, check config and permissions", sanitize.Log(path))
 		}
 
 		log.Debug(err)

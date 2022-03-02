@@ -1,5 +1,12 @@
 package config
 
+import (
+	"os"
+	"path/filepath"
+
+	"github.com/photoprism/photoprism/pkg/sanitize"
+)
+
 // RawPresets tests if RAW converter presents should be used (may reduce performance).
 func (c *Config) RawPresets() bool {
 	return c.options.RawPresets
@@ -13,6 +20,28 @@ func (c *Config) DarktableBin() string {
 // DarktableBlacklist returns the darktable file extension blacklist.
 func (c *Config) DarktableBlacklist() string {
 	return c.options.DarktableBlacklist
+}
+
+// DarktableConfigPath returns the darktable config directory.
+func (c *Config) DarktableConfigPath() string {
+	dir := filepath.Join(c.ConfigPath(), "darktable")
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		log.Errorf("darktable: cannot create config directory %s, check permissions", sanitize.Log(dir))
+		return c.ConfigPath()
+	}
+	return dir
+}
+
+// DarktableCachePath returns the darktable cache directory.
+func (c *Config) DarktableCachePath() string {
+	dir := filepath.Join(c.CachePath(), "darktable")
+
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		log.Errorf("darktable: cannot create cache directory %s, check permissions", sanitize.Log(dir))
+		return c.ConfigPath()
+	}
+
+	return dir
 }
 
 // DarktableEnabled tests if Darktable is enabled for RAW conversion.

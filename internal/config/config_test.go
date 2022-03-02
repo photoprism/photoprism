@@ -13,7 +13,7 @@ import (
 
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
-	log.SetLevel(logrus.DebugLevel)
+	log.SetLevel(logrus.TraceLevel)
 
 	c := TestConfig()
 
