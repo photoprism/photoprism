@@ -20,9 +20,9 @@ test.meta("testID", "about-001")("About page is displayed with all links", async
     .ok()
     .expect(Selector('a[href="/about/license"]').visible)
     .ok()
-    .expect(Selector('a[href="https://gitter.im/browseyourlife/community"]').visible)
+    .expect(Selector('a[href="https://link.photoprism.app/chat"]').visible)
     .ok()
-    .expect(Selector('a[href="https://twitter.com/photoprism_app"]').visible)
+    .expect(Selector('a[href="https://link.photoprism.app/twitter"]').visible)
     .ok();
 });
 
