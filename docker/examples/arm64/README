@@ -1,7 +1,7 @@
->> Running PhotoPrism on ARM64-based devices (64-bit) <<
+          >> Running PhotoPrism on ARM64-based devices (64-bit) <<
 
-Our stable version and development preview have been built into a single multi-arch Docker
-image for 64-bit AMD, Intel, and ARM processors (Apple Silicon, Raspberry Pi 4):
+Our stable version and development preview have been built into a single multi-arch
+Docker image for 64-bit AMD, Intel, and ARM processors (Apple Silicon, Raspberry Pi 4):
 
   Stable Release     : photoprism/photoprism:latest
   Development Preview: photoprism/photoprism:preview
@@ -18,56 +18,62 @@ as for regular Linux servers apply:
 
   https://docs.photoprism.app/getting-started/docker-compose/
 
-Existing users are advised to check their "docker-compose.yml" against our examples at
-<dl.photoprism.app/docker> from time to time in case there are new configuration options
-or other improvements. Update instructions can be found at the bottom of this README file.
+Existing users are advised to check their "docker-compose.yml" against our examples
+at <dl.photoprism.app/docker> from time to time in case there are new configuration
+options or other improvements. Update instructions can be found at the bottom of
+this README file.
 
-Note that Raspberry Pi OS (Raspbian) is a 32-bit user-space Linux with a 64-bit kernel to
-remain compatible with older Raspberry software. This requires special configuration to run
-modern 64-bit applications and Docker images (see below).
+Note that Raspberry Pi OS (Raspbian) is a 32-bit user-space Linux with a 64-bit
+kernel to remain compatible with older Raspberry software. This requires special
+configuration to run modern 64-bit applications and Docker images (see below).
 
-If you do not have legacy software, we recommend choosing a standard 64-bit Linux distribution
-as it requires less experience:
+If you do not have legacy software, we recommend choosing a standard 64-bit Linux
+distribution as it requires less experience:
 
-- Raspberry Pi Debian: https://raspi.debian.net/
-- Ubuntu for Raspberry Pi: https://ubuntu.com/raspberry-pi
-- UbuntuDockerPi: https://github.com/guysoft/UbuntuDockerPi (Ubuntu incl. Docker pre-configured)
+ > Raspberry Pi Debian: https://raspi.debian.net/
+ > Ubuntu for Raspberry Pi: https://ubuntu.com/raspberry-pi
+ > UbuntuDockerPi: https://github.com/guysoft/UbuntuDockerPi (Ubuntu incl. Docker pre-configured)
 
-Other distributions that target the same use case as Raspbian, such as CoreELEC, may have
-the same problems and should also not be used to run modern server applications.
+Other distributions that target the same use case as Raspbian, such as CoreELEC,
+may have the same problems and should also not be used to run modern server
+applications.
 
 ### Raspberry Pi OS ###
 
-To ensure compatibility with 64-bit Docker images, your Raspberry Pi 3 / 4 must boot with
-the "arm_64bit=1" flag in its "config.txt" file:
+To ensure compatibility with 64-bit Docker images, your Raspberry Pi 3 / 4 must
+boot with the "arm_64bit=1" flag in its "config.txt" file:
 
   https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 
 An "exec format" error will occur otherwise.
 
-Try explicitly pulling the ARM64 version if you've booted your device with the "arm_64bit=1"
-flag and you see the "no matching manifest" error on Raspberry Pi OS (Raspbian):
+Try explicitly pulling the ARM64 version if you've booted your device with the
+"arm_64bit=1" flag and you see the "no matching manifest" error on
+Raspberry Pi OS (Raspbian):
 
   docker pull --platform=arm64 photoprism/photoprism:latest
 
-It may also help to set the DOCKER_DEFAULT_PLATFORM environment variable to "linux/arm64".
+It may also help to set the DOCKER_DEFAULT_PLATFORM environment variable to
+"linux/arm64".
 
 ### System Requirements ###
 
-- Your device should have at least 3 GB of physical memory and a 64-bit operating system
-- While PhotoPrism has been reported to work on devices with less memory, we take no
-  responsibility for instability or performance problems
-- RAW image conversion and TensorFlow are disabled on systems with 1 GB or less memory
-- Indexing large photo and video collections significantly benefits from local SSD storage
-  and plenty of memory for caching, especially the conversion of RAW images and the transcoding
-  of videos are very demanding
-- If less than 4 GB of swap space is configured or a manual memory/swap limit is set, this can
-  cause unexpected restarts, for example, when the indexer temporarily needs more memory to
-  process large files
-- High-resolution panoramic images may require additional swap space and/or physical memory
-  above the recommended minimum
-- We recommend disabling kernel security in your docker-compose.yml, especially if you do not
-  have experience with the configuration:
+- Your device should have at least 3 GB of physical memory and a 64-bit
+  operating system
+- While PhotoPrism has been reported to work on devices with less memory,
+  we take no responsibility for instability or performance problems
+- RAW image conversion and TensorFlow are disabled on systems with 1 GB
+  or less memory
+- Indexing large photo and video collections significantly benefits from
+  local SSD storage and plenty of memory for caching, especially the conversion
+  of RAW images and the transcoding of videos are very demanding
+- If less than 4 GB of swap space is configured or a manual memory/swap limit
+  is set, this can cause unexpected restarts, for example, when the indexer
+  temporarily needs more memory to process large files
+- High-resolution panoramic images may require additional swap space and/or
+  physical memory above the recommended minimum
+- We recommend disabling kernel security in your docker-compose.yml, especially
+  if you do not have experience with the configuration:
   ```
   photoprism:
     security_opt:
