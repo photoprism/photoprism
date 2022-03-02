@@ -33,7 +33,7 @@ for t in ${GPU_DETECTED[@]}; do
       ;;
 
     nvidia)
-      apt-get -qq install nvidia-vdpau-driver nvidia-driver-libs nvidia-kernel-dkms libva2 vainfo libva-wayland2
+      apt-get -qq install nvidia-opencl-icd nvidia-vdpau-driver nvidia-driver-libs nvidia-kernel-dkms libva2 vainfo libva-wayland2
       ;;
 
     *)

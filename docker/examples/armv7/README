@@ -1,6 +1,7 @@
-# Running PhotoPrism on ARMv7-based devices (32-bit)
+>> Running PhotoPrism on ARMv7-based devices (32-bit) <<
 
-You may use the following 32-bit Docker images to run PhotoPrism and MariaDB on ARMv7-based devices:
+You may use the following 32-bit Docker images to run PhotoPrism and MariaDB
+on ARMv7-based devices:
 
 Stable Release     : photoprism/photoprism:armv7
 Development Preview: photoprism/photoprism:preview-armv7
@@ -10,56 +11,65 @@ Docker Hub URL:
 
   https://hub.docker.com/r/photoprism/photoprism/tags?page=1&name=armv7
 
-Note that Darktable is not included in the ARMv7 image because it is not 32-bit compatible.
-Always choose the regular 64-bit version if your device supports it.
+Note that Darktable is not included in the ARMv7 image because it is not
+32-bit compatible. Always choose the regular 64-bit version if your device
+supports it.
 
-If your device meets the system requirements, mostly the same installation instructions as for regular Linux
-servers apply:
+If your device meets the system requirements, mostly the same installation
+instructions as for regular Linux servers apply:
 
   https://docs.photoprism.app/getting-started/docker-compose/
 
 Please pay close attention to changed directory and environment variable names!
 
-Existing users are advised to check their "docker-compose.yml" against our examples at dl.photoprism.app/docker from
-time to time in case there are new configuration options or other improvements. Update instructions can be found at
+Existing users are advised to check their "docker-compose.yml" against our
+examples at <dl.photoprism.app/docker> from time to time in case there are new
+configuration options or other improvements. Update instructions can be found at
 the bottom of this README file.
 
 ### System Requirements ###
 
-- Your device should have at least 3 GB of physical memory and a 64-bit operating system (always use our ARM64 image
-  if possible)
-- While PhotoPrism has been reported to work on devices with less memory, we take no responsibility for instability or
-  performance problems
+- Your device should have at least 3 GB of physical memory and a 64-bit operating
+  system (always use our ARM64 image if possible)
+- While PhotoPrism has been reported to work on devices with less memory, we take
+  no responsibility for instability or performance problems
 - RAW image conversion and TensorFlow are disabled on systems with 1 GB or less memory
-- Indexing large photo and video collections significantly benefits from local SSD storage and plenty of memory for
-  caching, especially the conversion of RAW images and the transcoding of videos are very demanding
-- If less than 4 GB of swap space is configured or a manual memory/swap limit is set, this can cause unexpected
-  restarts, for example, when the indexer temporarily needs more memory to process large files
-- High-resolution panoramic images may require additional swap space and/or physical memory above the recommended
-  minimum
-- We recommend disabling kernel security in your docker-compose.yml, especially if you do not have experience with the
-  configuration:
+- Indexing large photo and video collections significantly benefits from local SSD
+  storage and plenty of memory for caching, especially the conversion of RAW images
+  and the transcoding of videos are very demanding
+- If less than 4 GB of swap space is configured or a manual memory/swap limit is set,
+  this can cause unexpected restarts, for example, when the indexer temporarily needs
+  more memory to process large files
+- High-resolution panoramic images may require additional swap space and/or physical
+  memory above the recommended minimum
+- We recommend disabling kernel security in your docker-compose.yml, especially if you
+  do not have experience with the configuration:
   ```
   photoprism:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
   ```
-- If you install PhotoPrism on a public server outside your home network, always run it behind a secure HTTPS reverse
-  proxy such as Traefik or Caddy https://docs.photoprism.app/getting-started/proxies/traefik/
+- If you install PhotoPrism on a public server outside your home network, always run
+  it behind a secure HTTPS reverse proxy such as Traefik or Caddy:
+  https://docs.photoprism.app/getting-started/proxies/traefik/
 
 ### Troubleshooting ###
 
-If your server runs out of memory, the index is frequently locked, or other system resources are running low:
+If your server runs out of memory, the index is frequently locked, or other
+system resources are running low:
 
-- Try reducing the number of workers by setting PHOTOPRISM_WORKERS to a reasonably small value in docker-compose.yml,
-  depending on the performance of your device or cloud server:
+- Try reducing the number of workers by setting PHOTOPRISM_WORKERS to a reasonably
+  small value in docker-compose.yml, depending on the performance of your device
+  or cloud server:
 
   https://docs.photoprism.app/getting-started/config-options/
 
-- If you are using SQLite, switch to MariaDB, which is better optimized for high concurrency
+- If you are using SQLite, switch to MariaDB, which is better optimized for
+  high concurrency
 
-- As a last measure, you can disable the use of TensorFlow for image classification and facial recognition
+- As a last measure, you can disable the use of TensorFlow for image classification
+  and facial recognition
 
 Other issues? Our troubleshooting checklists help you quickly diagnose and solve them:
 
@@ -67,20 +77,21 @@ Other issues? Our troubleshooting checklists help you quickly diagnose and solve
 
 ### Getting Updates ###
 
-Open a terminal and change to the folder where the "docker-compose.yml" file was saved. Now run the
-following commands to download the most recent image from Docker Hub and restart your instance
-in the background:
+Open a terminal and change to the folder where the "docker-compose.yml" file
+was saved. Now run the following commands to download the most recent image
+from Docker Hub and restart your instance in the background:
 
   docker-compose pull --platform=arm photoprism
   docker-compose stop photoprism
   docker-compose up -d photoprism
 
-Pulling a new version can take several minutes, depending on your internet connection speed.
+Pulling a new version can take several minutes, depending on your internet
+connection speed.
 
-Note that running an image with ":latest" tag does not cause Docker to automatically download
-new images.
+Note that running an image with ":latest" tag does not cause Docker to automatically
+download new images.
 
 ### Credits ###
 
-A big thank you to [Guy Sheffer](https://github.com/guysoft) for helping us [build](https://github.com/photoprism/photoprism/issues/109)
-a Raspberry Pi version!
+A big thank you to Guy Sheffer (https://github.com/guysoft) for helping us
+build a Raspberry Pi version!

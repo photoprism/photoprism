@@ -107,8 +107,8 @@ services:
       PHOTOPRISM_OIDC_ISSUER_URL: "https://keycloak.localssl.dev/auth/realms/master"
       PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-develop"
       PHOTOPRISM_OIDC_CLIENT_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
-      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clean):
-      # PHOTOPRISM_INIT: "update gpu tensorflow clean"
+      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, nano, clean):
+      # PHOTOPRISM_INIT: "gpu tensorflow"
       ## Hardware video transcoding config (optional):
       # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)

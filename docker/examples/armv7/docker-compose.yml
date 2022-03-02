@@ -41,7 +41,7 @@ version: '3.5'
 
 services:
   photoprism:
-    ## Special Docker image for running PhotoPrism on ARMv7-based devices and those with a 32-bit operating system:
+    ## Use photoprism/photoprism:preview-armv7 for testing preview builds:
     image: photoprism/photoprism:armv7
     depends_on:
       - mariadb

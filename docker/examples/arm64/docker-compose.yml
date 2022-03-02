@@ -46,9 +46,8 @@ version: '3.5'
 
 services:
   photoprism:
-    ## photoprism/photoprism-arm64 has been replaced by a single multi-arch image for AMD64 and ARM64 (64-bit).
-    ## Use photoprism/photoprism:preview for testing preview builds or :latest for the stable release:
-    image: photoprism/photoprism:latest
+    ## Use photoprism/photoprism:preview-arm64 for testing preview builds:
+    image: photoprism/photoprism:arm64
     depends_on:
       - mariadb
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!

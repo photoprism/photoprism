@@ -31,7 +31,7 @@ fi
 
 # build binary
 echo "=> compiling \"$BUILD_NAME\" with \"${GO_VER^}\""
-echo "=> command: ${BUILD_CMD[*]}"
+echo "=> ${BUILD_CMD[*]}"
 "${BUILD_CMD[@]}"
 
 # show size

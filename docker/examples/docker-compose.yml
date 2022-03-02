@@ -79,8 +79,8 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clean):
-      # PHOTOPRISM_INIT: "update gpu tensorflow clean"
+      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, nano, clean):
+      # PHOTOPRISM_INIT: "gpu tensorflow"
       ## Hardware video transcoding config (optional)
       # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
