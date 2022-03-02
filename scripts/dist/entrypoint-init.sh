@@ -14,13 +14,13 @@ re='^[0-9]+$'
 # detect environment
 case $DOCKER_ENV in
   prod)
-    INIT_MAKEFILE="/opt/photoprism/scripts/Makefile"
+    INIT_SCRIPTS="/opt/photoprism/scripts"
     CHOWN_DIRS=("${PHOTOPRISM_HOME}" "${PHOTOPRISM_DIST}")
     CHMOD_DIRS=("${PHOTOPRISM_DIST}")
     ;;
 
   develop)
-    INIT_MAKEFILE="/go/src/github.com/photoprism/photoprism/scripts/dist/Makefile"
+    INIT_SCRIPTS="/go/src/github.com/photoprism/photoprism/scripts/dist"
     CHOWN_DIRS=("/go /photoprism" "/opt/photoprism" "/tmp/photoprism")
     CHMOD_DIRS=("/photoprism" "/opt/photoprism" "/tmp/photoprism")
     ;;
@@ -65,11 +65,9 @@ INIT_LOCK="/root/.init-lock"
 
 # execute targets via make
 if [[ ! -e ${INIT_LOCK} ]]; then
-
-
   for INIT_TARGET in $PHOTOPRISM_INIT; do
     echo "init $INIT_TARGET..."
-    make -f "$INIT_MAKEFILE" "$INIT_TARGET}"
+    make -C "$INIT_SCRIPTS" "$INIT_TARGET"
   done
 
   echo 1 >${INIT_LOCK}

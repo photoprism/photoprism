@@ -121,7 +121,7 @@ RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     cp /go/bin/gosu /bin/gosu && \
     echo "alias go=richgo ll='ls -alh'" > /photoprism/.bash_aliases && \
     echo "alias go=richgo ll='ls -alh'" > /root/.bash_aliases && \
-    echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/all && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
     cp /root/.local/bin/entrypoint.sh /entrypoint.sh && \
     chmod -R a+rwX /go

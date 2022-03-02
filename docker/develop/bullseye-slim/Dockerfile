@@ -64,7 +64,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       /photoprism/storage/config \
       /photoprism/storage/cache \
     && \
-    echo "ALL ALL=(ALL) NOPASSWD: /opt/photoprism/scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /opt/photoprism/scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     cleanup.sh
 
 # define default directory and user

@@ -16,13 +16,16 @@ clean:
 	apt-get -y autoremove
 	apt-get -y autoclean
 	rm -rf /var/lib/apt/lists/*
+nano:
+	apt-get update
+	apt-get -qq install nano
 gpu:
-	install-gpu.sh
+	./install-gpu.sh
 tensorflow:
-	install-tensorflow.sh auto
+	./install-tensorflow.sh auto
 davfs:
-	install-davfs.sh
+	./install-davfs.sh
 
-.PHONY: update apt-upgrade clean apt-cleanup gpu tensorflow davfs install-davfs \
-    tensorflow-amd64-cpu tensorflow-amd64-avx tensorflow-amd64-avx2 install-davfs \
-    intel-graphics install-intel-graphics;
+.PHONY: update apt-upgrade clean apt-cleanup nano gpu tensorflow davfs \
+    tensorflow-amd64-cpu tensorflow-amd64-avx tensorflow-amd64-avx2 \
+    intel-graphics install-intel-graphics install-davfs;
