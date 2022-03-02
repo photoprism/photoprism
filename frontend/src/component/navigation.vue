@@ -1,6 +1,6 @@
 <template>
   <div id="p-navigation">
-    <template v-if="visible && ($vuetify.breakpoint.smAndDown || !auth)">
+    <template v-if="visible && $vuetify.breakpoint.smAndDown">
       <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small"
                   @click.stop="showNavigation()">
         <v-avatar tile :size="28">
@@ -13,6 +13,16 @@
                :title="$gettext('Upload')" @click.stop="openUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
+      </v-toolbar>
+    </template>
+    <template v-else-if="visible && !auth">
+      <v-toolbar dark flat scroll-off-screen dense color="navigation darken-1" class="nav-small">
+        <v-avatar tile :size="28">
+          <img :src="$config.appIcon()" :alt="config.name">
+        </v-avatar>
+        <v-toolbar-title class="nav-title">
+          {{ page.title }}
+        </v-toolbar-title>
       </v-toolbar>
     </template>
     <v-navigation-drawer
@@ -472,14 +482,14 @@
             <v-list-tile-sub-title>{{ accountInfo }}</v-list-tile-sub-title>
           </v-list-tile-content>
 
-          <v-list-tile-action :title="$gettext('Logout')" @click.stop="">
-            <v-btn icon @click="logout">
+          <v-list-tile-action :title="$gettext('Logout')">
+            <v-btn icon @click.stop.prevent="logout">
               <v-icon>power_settings_new</v-icon>
             </v-btn>
           </v-list-tile-action>
         </v-list-tile>
 
-        <v-list-tile v-show="isMini && auth && !isPublic" class="nav-logout" @click="logout">
+        <v-list-tile v-show="isMini && auth && !isPublic" class="nav-logout" @click.stop.prevent="logout">
           <v-list-tile-action :title="$gettext('Logout')">
             <v-icon>power_settings_new</v-icon>
           </v-list-tile-action>

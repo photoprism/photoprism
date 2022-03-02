@@ -7,6 +7,10 @@
       <v-toolbar-title v-else>
         <translate>Contact Us</translate>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon>
+        <v-icon size="26">feedback</v-icon>
+      </v-btn>
     </v-toolbar>
     <v-container v-if="sent" fluid class="pa-4">
       <p class="body-1">We'll get back to you as soon as possible!</p>

@@ -24,10 +24,10 @@
         </v-btn>
 
         <v-btn v-if="!filter.all" icon class="action-show-all" :title="$gettext('Show more')" @click.stop="showAll">
-          <v-icon>visibility</v-icon>
+          <v-icon>unfold_more</v-icon>
         </v-btn>
         <v-btn v-else icon class="action-show-important" :title="$gettext('Show less')" @click.stop="showImportant">
-          <v-icon>visibility_off</v-icon>
+          <v-icon>unfold_less</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>

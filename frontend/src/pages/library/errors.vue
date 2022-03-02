@@ -14,23 +14,23 @@
                     @click:clear="clearQuery"
                     @keyup.enter.native="updateQuery"
       ></v-text-field>
-
+      <v-spacer></v-spacer>
       <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="reload">
         <v-icon>refresh</v-icon>
       </v-btn>
-
-      <v-btn icon href="https://github.com/photoprism/photoprism/issues" target="_blank" class="action-bug-report"
-             :title="$gettext('Report Bug')">
+      <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-bug-report"
+             :title="$gettext('Troubleshooting Checklists')">
         <v-icon>bug_report</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-list v-else-if="errors.length > 0" dense two-line class="transparent">
+    <v-list v-else-if="errors.length > 0" dense two-line class="transparent pa-1">
       <v-list-tile
           v-for="err in errors" :key="err.ID"
           avatar
+          class="rounded-4"
           @click="showDetails(err)"
       >
         <v-list-tile-avatar>
