@@ -31,7 +31,7 @@ const ApiName = "places"
 
 var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca"
 var Secret = "photoprism"
-var UserAgent = "PhotoPrism/dev"
+var UserAgent = ""
 var ReverseLookupURL = "https://places.photoprism.app/v1/location/%s"
 
 var Retries = 3
@@ -84,9 +84,11 @@ func FindLocation(id string) (result Location, err error) {
 		return result, err
 	}
 
-	// Add User-Agent header?
+	// Set user agent.
 	if UserAgent != "" {
 		req.Header.Set("User-Agent", UserAgent)
+	} else {
+		req.Header.Set("User-Agent", "PhotoPrism/Test")
 	}
 
 	// Add API key?

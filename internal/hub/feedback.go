@@ -22,28 +22,31 @@ type Feedback struct {
 	UserEmail     string `json:"UserEmail"`
 	UserAgent     string `json:"UserAgent"`
 	ApiKey        string `json:"ApiKey"`
-	PartnerID     string `json:"PartnerID"`
 	ClientVersion string `json:"ClientVersion"`
 	ClientSerial  string `json:"ClientSerial"`
 	ClientOS      string `json:"ClientOS"`
 	ClientArch    string `json:"ClientArch"`
 	ClientCPU     int    `json:"ClientCPU"`
+	ClientEnv     string `json:"ClientEnv"`
+	PartnerID     string `json:"PartnerID"`
 }
 
 // NewFeedback creates a new hub feedback instance.
-func NewFeedback(version, serial, partner string) *Feedback {
+func NewFeedback(version, serial, env, partnerId string) *Feedback {
 	return &Feedback{
-		PartnerID:     partner,
 		ClientVersion: version,
 		ClientSerial:  serial,
 		ClientOS:      runtime.GOOS,
 		ClientArch:    runtime.GOARCH,
 		ClientCPU:     runtime.NumCPU(),
+		ClientEnv:     env,
+		PartnerID:     partnerId,
 	}
 }
 
+// SendFeedback sends a feedback message.
 func (c *Config) SendFeedback(f form.Feedback) (err error) {
-	feedback := NewFeedback(c.Version, c.Serial, c.PartnerID)
+	feedback := NewFeedback(c.Version, c.Serial, c.Env, c.PartnerID)
 	feedback.Category = f.Category
 	feedback.Subject = txt.Shorten(f.Message, 50, "...")
 	feedback.Message = f.Message
@@ -64,6 +67,13 @@ func (c *Config) SendFeedback(f form.Feedback) (err error) {
 		return err
 	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
 		return err
+	}
+
+	// Set user agent.
+	if c.UserAgent != "" {
+		req.Header.Set("User-Agent", c.UserAgent)
+	} else {
+		req.Header.Set("User-Agent", "PhotoPrism/Test")
 	}
 
 	req.Header.Add("Accept-Language", f.UserLocales)

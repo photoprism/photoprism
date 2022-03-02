@@ -12,6 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// SendFeedback sends a feedback message.
+//
 // POST /api/v1/feedback
 func SendFeedback(router *gin.RouterGroup) {
 	router.POST("/feedback", func(c *gin.Context) {
