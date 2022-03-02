@@ -3,7 +3,7 @@
     <template v-if="visible && $vuetify.breakpoint.smAndDown">
       <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small"
                   @click.stop="showNavigation()">
-        <v-avatar tile :size="28">
+        <v-avatar tile :size="28" :class="{'clickable': auth}">
           <img :src="$config.appIcon()" :alt="config.name">
         </v-avatar>
         <v-toolbar-title class="nav-title">
