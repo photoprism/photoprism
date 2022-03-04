@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-27 09:39+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-04 09:27+0000\n"
+"Last-Translator: FabseGP <fabiangrantpetrus@gmail.com>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/da/>\n"
 "Language: da\n"
@@ -174,9 +174,8 @@ msgid "Albums"
 msgstr "Album"
 
 #: src/component/album/clipboard.vue:74
-#, fuzzy
 msgid "Albums deleted"
-msgstr "Album slettet"
+msgstr "Slettede album"
 
 #: src/pages/albums.vue:257 src/share/albums.vue:215
 msgid "All %{n} albums loaded"
