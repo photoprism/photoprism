@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2022-02-19 16:21+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-04 08:32+0000\n"
+"Last-Translator: baysonfox <baysonfox@baysonfox.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -202,9 +202,9 @@ msgid "One entry removed from %s"
 msgstr "已从 %s 移除一个条目"
 
 #: messages.go:128
-#, c-format, fuzzy
+#, c-format
 msgid "%d entries removed from %s"
-msgstr "已从 %2$s 移除 %1$d 个条目"
+msgstr "已从 %s 移除 %d 个条目"
 
 #: messages.go:129
 msgid "Account created"
@@ -223,9 +223,8 @@ msgid "Settings saved"
 msgstr "设置已保存"
 
 #: messages.go:133
-#, fuzzy
 msgid "Password changed"
-msgstr "密码已修改"
+msgstr "密码已更改"
 
 #: messages.go:134
 #, c-format
