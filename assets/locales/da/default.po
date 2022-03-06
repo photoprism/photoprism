@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-01 12:55+0000\n"
-"Last-Translator: TheresaNoRights <theresagresch+weblate@gmail.com>\n"
+"PO-Revision-Date: 2022-03-04 21:42+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "backend/da/>\n"
 "Language: da\n"
@@ -324,9 +324,8 @@ msgid "Selection marked as private"
 msgstr ""
 
 #: messages.go:156
-#, fuzzy
 msgid "Albums deleted"
-msgstr "Album slettet"
+msgstr "Slettede album"
 
 #: messages.go:157
 #, c-format
