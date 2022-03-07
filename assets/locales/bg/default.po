@@ -6,34 +6,31 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-04 21:42+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
-"backend/da/>\n"
-"Language: da\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11\n"
 
 #: messages.go:83
 msgid "Unexpected error, please try again"
-msgstr "Uventet fejl, prøv venligst igen"
+msgstr ""
 
 #: messages.go:84
 msgid "Invalid request"
-msgstr "Ugyldig anmodning"
+msgstr ""
 
 #: messages.go:85
 msgid "Changes could not be saved"
-msgstr "Ændringer kunne ikke gemmes"
+msgstr ""
 
 #: messages.go:86
 msgid "Could not be deleted"
-msgstr "Kunne ikke slettes"
+msgstr ""
 
 #: messages.go:87
 #, c-format
@@ -223,14 +220,12 @@ msgid "Account deleted"
 msgstr ""
 
 #: messages.go:134
-#, fuzzy
 msgid "Settings saved"
-msgstr "Indstillinger gemt"
+msgstr ""
 
 #: messages.go:135
-#, fuzzy
 msgid "Password changed"
-msgstr "Adgangskode ændret"
+msgstr ""
 
 #: messages.go:136
 #, c-format
@@ -275,9 +270,8 @@ msgid "Copying files from %s"
 msgstr ""
 
 #: messages.go:145
-#, fuzzy
 msgid "Labels deleted"
-msgstr "Etiketter slettet"
+msgstr ""
 
 #: messages.go:146
 msgid "Label saved"
@@ -305,19 +299,16 @@ msgid "%d files uploaded in %d s"
 msgstr ""
 
 #: messages.go:152
-#, fuzzy
 msgid "Selection approved"
-msgstr "Valgte godkendt"
+msgstr ""
 
 #: messages.go:153
-#, fuzzy
 msgid "Selection archived"
-msgstr "Valgte arkiveret"
+msgstr ""
 
 #: messages.go:154
-#, fuzzy
 msgid "Selection restored"
-msgstr "Valgte gendannet"
+msgstr ""
 
 #: messages.go:155
 msgid "Selection marked as private"
@@ -325,7 +316,7 @@ msgstr ""
 
 #: messages.go:156
 msgid "Albums deleted"
-msgstr "Slettede album"
+msgstr ""
 
 #: messages.go:157
 #, c-format
@@ -333,6 +324,5 @@ msgid "Zip created in %d s"
 msgstr ""
 
 #: messages.go:158
-#, fuzzy
 msgid "Permanently deleted"
-msgstr "Slettet permanent"
+msgstr ""
