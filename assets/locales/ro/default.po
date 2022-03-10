@@ -6,323 +6,327 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-03-10 15:48+0000\n"
+"Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/"
+"photoprism/backend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
+"X-Generator: Weblate 4.11.2\n"
 
 #: messages.go:83
 msgid "Unexpected error, please try again"
-msgstr ""
+msgstr "Eroare neașteptată, vă rugăm să încercați din nou"
 
 #: messages.go:84
 msgid "Invalid request"
-msgstr ""
+msgstr "Cerere invalidă"
 
 #: messages.go:85
 msgid "Changes could not be saved"
-msgstr ""
+msgstr "Modificările nu au putut fi salvate"
 
 #: messages.go:86
 msgid "Could not be deleted"
-msgstr ""
+msgstr "Nu a putut fi șters"
 
 #: messages.go:87
 #, c-format
 msgid "%s already exists"
-msgstr ""
+msgstr "%s există deja"
 
 #: messages.go:88
 msgid "Not found"
-msgstr ""
+msgstr "Nu a fost găsit"
 
 #: messages.go:89
 msgid "File not found"
-msgstr ""
+msgstr "Fișierul nu a fost găsit"
 
 #: messages.go:90
 msgid "Selection not found"
-msgstr ""
+msgstr "Selecția nu a fost găsită"
 
 #: messages.go:91
 msgid "Entity not found"
-msgstr ""
+msgstr "Entitatea nu a fost găsită"
 
 #: messages.go:92
 msgid "Account not found"
-msgstr ""
+msgstr "Contul nu a fost găsit"
 
 #: messages.go:93
 msgid "User not found"
-msgstr ""
+msgstr "Utilizatorul nu a fost găsit"
 
 #: messages.go:94
 msgid "Label not found"
-msgstr ""
+msgstr "Eticheta nu a fost găsită"
 
 #: messages.go:95
 msgid "Album not found"
-msgstr ""
+msgstr "Albumul nu a fost găsit"
 
 #: messages.go:96
 msgid "Subject not found"
-msgstr ""
+msgstr "Subiectul nu a fost găsit"
 
 #: messages.go:97
 msgid "Person not found"
-msgstr ""
+msgstr "Persoana nu a fost găsită"
 
 #: messages.go:98
 msgid "Face not found"
-msgstr ""
+msgstr "Fața nu a fost găsită"
 
 #: messages.go:99
 msgid "Not available in public mode"
-msgstr ""
+msgstr "Nu este disponibil în modul public"
 
 #: messages.go:100
 msgid "not available in read-only mode"
-msgstr ""
+msgstr "nu este disponibil în modul doar pentru citire"
 
 #: messages.go:101
 msgid "Please log in and try again"
-msgstr ""
+msgstr "Vă rugăm să vă conectați și să încercați din nou"
 
 #: messages.go:102
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "Încărcarea poate fi ofensatoare"
 
 #: messages.go:103
 msgid "No items selected"
-msgstr ""
+msgstr "Niciun element selectat"
 
 #: messages.go:104
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Nu s-a putut crea fișierul, vă rugăm să verificați permisiunile"
 
 #: messages.go:105
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Nu s-a putut crea dosarul, vă rugăm să verificați permisiunile"
 
 #: messages.go:106
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Nu s-a putut conecta, vă rugăm să încercați din nou"
 
 #: messages.go:107
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Parolă invalidă, vă rugăm să încercați din nou"
 
 #: messages.go:108
 msgid "Feature disabled"
-msgstr ""
+msgstr "Funcție dezactivată"
 
 #: messages.go:109
 msgid "No labels selected"
-msgstr ""
+msgstr "Nu au fost selectate etichete"
 
 #: messages.go:110
 msgid "No albums selected"
-msgstr ""
+msgstr "Niciun album selectat"
 
 #: messages.go:111
 msgid "No files available for download"
-msgstr ""
+msgstr "Nu există fișiere disponibile pentru descărcare"
 
 #: messages.go:112
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Nu s-a putut crea fișierul zip"
 
 #: messages.go:113
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Acreditări nevalabile"
 
 #: messages.go:114
 msgid "Invalid link"
-msgstr ""
+msgstr "Link invalid"
 
 #: messages.go:115
 msgid "Invalid name"
-msgstr ""
+msgstr "Nume invalid"
 
 #: messages.go:116
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "Ocupat, vă rugăm să încercați din nou mai târziu"
 
 #: messages.go:119
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Modificările au fost salvate"
 
 #: messages.go:120
 msgid "Album created"
-msgstr ""
+msgstr "Album creat"
 
 #: messages.go:121
 msgid "Album saved"
-msgstr ""
+msgstr "Album salvat"
 
 #: messages.go:122
 #, c-format
 msgid "Album %s deleted"
-msgstr ""
+msgstr "Albumul %s a fost șters"
 
 #: messages.go:123
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Conținutul albumului a fost clonat"
 
 #: messages.go:124
 msgid "File removed from stack"
-msgstr ""
+msgstr "Fișierul a fost eliminat din stivă"
 
 #: messages.go:125
 msgid "File deleted"
-msgstr ""
+msgstr "Fișier șters"
 
 #: messages.go:126
 #, c-format
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Selecție adăugată la %s"
 
 #: messages.go:127
 #, c-format
 msgid "One entry added to %s"
-msgstr ""
+msgstr "O intrare adăugată la %s"
 
 #: messages.go:128
 #, c-format
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d intrări adăugate la %s"
 
 #: messages.go:129
 #, c-format
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "O intrare eliminată din %s"
 
 #: messages.go:130
 #, c-format
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d intrări eliminate din %s"
 
 #: messages.go:131
 msgid "Account created"
-msgstr ""
+msgstr "Cont creat"
 
 #: messages.go:132
 msgid "Account saved"
-msgstr ""
+msgstr "Cont salvat"
 
 #: messages.go:133
 msgid "Account deleted"
-msgstr ""
+msgstr "Contul a fost șters"
 
 #: messages.go:134
 msgid "Settings saved"
-msgstr ""
+msgstr "Setări salvate"
 
 #: messages.go:135
 msgid "Password changed"
-msgstr ""
+msgstr "Parola a fost schimbată"
 
 #: messages.go:136
 #, c-format
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Import finalizat în %d s"
 
 #: messages.go:137
 msgid "Import canceled"
-msgstr ""
+msgstr "Importul a fost anulat"
 
 #: messages.go:138
 #, c-format
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Indexare finalizată în %d s"
 
 #: messages.go:139
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Indexarea originalelor..."
 
 #: messages.go:140
 #, c-format
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "Indexarea fișierelor în %s"
 
 #: messages.go:141
 msgid "Indexing canceled"
-msgstr ""
+msgstr "Indexarea a fost anulată"
 
 #: messages.go:142
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "S-au eliminat %d fișiere și %d fotografii"
 
 #: messages.go:143
 #, c-format
 msgid "Moving files from %s"
-msgstr ""
+msgstr "Se mută fișiere din %s"
 
 #: messages.go:144
 #, c-format
 msgid "Copying files from %s"
-msgstr ""
+msgstr "Se copie fișiere din %s"
 
 #: messages.go:145
 msgid "Labels deleted"
-msgstr ""
+msgstr "Etichete șterse"
 
 #: messages.go:146
 msgid "Label saved"
-msgstr ""
+msgstr "Etichetă salvată"
 
 #: messages.go:147
 msgid "Subject saved"
-msgstr ""
+msgstr "Subiect salvat"
 
 #: messages.go:148
 msgid "Subject deleted"
-msgstr ""
+msgstr "Subiectul a fost șters"
 
 #: messages.go:149
 msgid "Person saved"
-msgstr ""
+msgstr "Persoană salvată"
 
 #: messages.go:150
 msgid "Person deleted"
-msgstr ""
+msgstr "Persoana a fost ștearsă"
 
 #: messages.go:151
 #, c-format
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d fișiere încărcate în %d s"
 
 #: messages.go:152
 msgid "Selection approved"
-msgstr ""
+msgstr "Selecție aprobată"
 
 #: messages.go:153
 msgid "Selection archived"
-msgstr ""
+msgstr "Selecție arhivată"
 
 #: messages.go:154
 msgid "Selection restored"
-msgstr ""
+msgstr "Selecție restabilită"
 
 #: messages.go:155
 msgid "Selection marked as private"
-msgstr ""
+msgstr "Selecția a fost marcată ca privată"
 
 #: messages.go:156
 msgid "Albums deleted"
-msgstr ""
+msgstr "Albume șterse"
 
 #: messages.go:157
 #, c-format
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "Zip creat în %d s"
 
 #: messages.go:158
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Șterse definitiv"
