@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-21 15:10+0000\n"
+"PO-Revision-Date: 2022-03-11 14:46+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
 "frontend/he/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
@@ -175,9 +175,8 @@ msgid "Albums"
 msgstr "אלבומים"
 
 #: src/component/album/clipboard.vue:74
-#, fuzzy
 msgid "Albums deleted"
-msgstr "האלבומים נמחקו"
+msgstr "אלבומים נמחקו"
 
 #: src/pages/albums.vue:257 src/share/albums.vue:215
 msgid "All %{n} albums loaded"
@@ -558,9 +557,8 @@ msgid "Creating thumbnails for"
 msgstr "יותר תמונות מקדימות עבור"
 
 #: src/options/options.js:385
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubic: Moderate Quality, Good Performance"
+msgstr "מעוקב: איכות בינונית, ביצועים טובים"
 
 #: src/pages/settings/account.vue:55
 msgid "Current Password"
@@ -1203,14 +1201,12 @@ msgid "Labels"
 msgstr "תוויות"
 
 #: src/component/label/clipboard.vue:42
-#, fuzzy
 msgid "Labels deleted"
-msgstr "התוויות נמחקו"
+msgstr "תוויות נמחקו"
 
 #: src/options/options.js:384
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Detail Preservation, Minimal Artifacts"
+msgstr "Lanczos: שימור פרטים, חפצים מינימליים"
 
 #: src/pages/settings/general.vue:94
 msgid "Language"
@@ -1257,9 +1253,8 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "לא ניתן להציג יותר, מציג את ה-%{n} קבצים הראשונים"
 
 #: src/options/options.js:386
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
-msgstr "Linear: Very Smooth, Best Performance"
+msgstr "ליניארי: חלק מאוד, הביצועים הטובים ביותר"
 
 #: src/model/link.js:120
 msgid "Link"
@@ -1656,9 +1651,8 @@ msgid "Password"
 msgstr "סיסמה"
 
 #: src/pages/settings/account.vue:22
-#, fuzzy
 msgid "Password changed"
-msgstr "הסיסמא שונתה"
+msgstr "סיסמא שונתה"
 
 #: src/component/navigation.vue:199 src/component/navigation.vue:791
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6

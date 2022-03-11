@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-25 20:46+0000\n"
+"PO-Revision-Date: 2022-03-11 14:46+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/ru/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 "Generated-By: usercopypaste\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
@@ -59,9 +59,8 @@ msgid "4 hours"
 msgstr "4 часа"
 
 #: src/dialog/share.vue:73
-#, fuzzy
 msgid "A click will copy it to your clipboard."
-msgstr "Нажмите, чтобы скопировать"
+msgstr "Нажмите, чтобы скопировать."
 
 #: src/component/navigation.vue:394 src/component/navigation.vue:27
 #: src/pages/about/about.vue:4 src/pages/about/about.vue:163
@@ -240,12 +239,11 @@ msgstr ""
 "Это дает дополнительную мотивацию для продолжения работы."
 
 #: src/dialog/share.vue:75
-#, fuzzy
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
 msgstr ""
-"Также вы можете загрузить файлы прямо на WebDAV сервер, например Nextcloud"
+"Также вы можете загрузить файлы прямо на WebDAV сервер, например Nextcloud."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -264,11 +262,10 @@ msgid "Animation"
 msgstr "Анимация"
 
 #: src/dialog/share.vue:74
-#, fuzzy
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr ""
 "Все личные фотографии и видеозаписи останутся конфиденциальными и не будут "
-"опубликованы"
+"опубликованы."
 
 #: src/dialog/account/edit.vue:472
 msgid "API Key"
@@ -544,9 +541,8 @@ msgid "Copyright"
 msgstr "Копирайт"
 
 #: src/component/photo/list.vue:17 src/share/photo/list.vue:17
-#, fuzzy
 msgid "Couldn't find anything."
-msgstr "Ничего не найдено"
+msgstr "Ничего не найдено."
 
 #: src/component/photo/toolbar.vue:182 src/dialog/photo/details.vue:238
 msgid "Country"
@@ -628,9 +624,8 @@ msgid "Description"
 msgstr "Описание"
 
 #: src/dialog/webdav.vue:23
-#, fuzzy
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Подробные инструкции вы можете найти в нашем руководстве пользователя"
+msgstr "Подробные инструкции вы можете найти в нашем руководстве пользователя."
 
 #: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1
 #: src/dialog/photo/edit.vue:178
@@ -764,9 +759,8 @@ msgid "Downscaling Filter"
 msgstr "Алгоритм создания превью"
 
 #: src/pages/library/files.vue:37
-#, fuzzy
 msgid "Duplicates will be skipped and only appear once."
-msgstr "Дубликаты будут пропущены и отобразятся только один раз"
+msgstr "Дубликаты будут пропущены и отобразятся только один раз."
 
 #: src/options/options.js:151
 msgid "Dutch"
@@ -1196,11 +1190,10 @@ msgid "JPEG Size Limit: %{n}px"
 msgstr "Ограничение по размеру в формате JPEG: %{n}px"
 
 #: src/pages/library/import.vue:26
-#, fuzzy
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr ""
 "изобажения JPEG и файлы предпросмотра генерируются автоматически, если "
-"необходимо"
+"необходимо."
 
 #: src/dialog/photo/details.vue:575
 msgid "Keywords"
@@ -1555,7 +1548,7 @@ msgstr "Примечание:"
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
-msgstr "Пометка"
+msgstr "Пометка."
 
 #: src/pages/settings/account.vue:20
 msgid ""
