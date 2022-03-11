@@ -78,6 +78,17 @@
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
+            v-if="context == 'album' && features.albums" fab dark
+            small
+            :title="$gettext('Use as album cover')"
+            color="light-green"
+            :disabled="selection.length !== 1"
+            class="action-cover"
+            @click.stop="changeThumb"
+        >
+          <v-icon>photo_album</v-icon>
+        </v-btn>
+        <v-btn
             v-if="context !== 'archive' && features.albums" fab dark
             small
             :title="$gettext('Add to album')"
@@ -249,6 +260,9 @@ export default {
     onAdded() {
       this.clearClipboard();
     },
+    onChangeThumb() {
+      this.clearClipboard();
+    },
     removeFromAlbum() {
       if (!this.album) {
         this.$notify.error(this.$gettext("remove failed: unknown album"));
@@ -287,6 +301,12 @@ export default {
     onShared() {
       this.dialog.share = false;
       this.clearClipboard();
+    },
+    changeThumb() { 
+      var photo = new Photo().find(this.selection[0]).then(p => p.mainFileHash())
+      photo.then( res => {
+        Api.put(`albums/${this.$route.params.uid}`, {"Thumb": res}).then(() => this.onChangeThumb());
+      });
     },
   }
 };
