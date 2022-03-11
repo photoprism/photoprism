@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2022-02-19 14:53+0000\n"
+"PO-Revision-Date: 2022-03-11 10:00+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
 "backend/he/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -225,9 +225,8 @@ msgid "Settings saved"
 msgstr "ההגדרות נשמרו"
 
 #: messages.go:133
-#, fuzzy
 msgid "Password changed"
-msgstr "הסיסמא שונתה"
+msgstr "סיסמא שונתה"
 
 #: messages.go:134
 #, c-format
@@ -272,9 +271,8 @@ msgid "Copying files from %s"
 msgstr "מעתיק קבצים מ-%s"
 
 #: messages.go:143
-#, fuzzy
 msgid "Labels deleted"
-msgstr "התוויות נמחקו"
+msgstr "תוויות נמחקו"
 
 #: messages.go:144
 msgid "Label saved"
@@ -319,9 +317,8 @@ msgid "Selection marked as private"
 msgstr "הבחירה סומנה כפרטית"
 
 #: messages.go:154
-#, fuzzy
 msgid "Albums deleted"
-msgstr "האלבומים נמחקו"
+msgstr "אלבומים נמחקו"
 
 #: messages.go:155
 #, c-format
