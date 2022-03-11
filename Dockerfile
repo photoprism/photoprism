@@ -9,8 +9,4 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # copy project source code to container
 COPY . .
-
-# copy init scripts to /scripts and change permissions
-RUN cp -f ./scripts/dist/* /scripts/ && \
-    chmod -R 755 /scripts && \
-    chown -R root:root /scripts
+COPY --chown=root:root /scripts/dist/* /scripts/
