@@ -7,7 +7,7 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # set environment variables
-ENV DOCKER_ARCH=$TARGETARCH \
+ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
     NODE_ENV="production" \
@@ -17,16 +17,16 @@ ENV DOCKER_ARCH=$TARGETARCH \
     TF_CPP_MIN_LOG_LEVEL="0" \
     GOPATH="/go" \
     GOBIN="/go/bin" \
-    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    PATH="/scripts:/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
 # copy scripts and debian backports sources list
-COPY --chown=root:root --chmod=755 /scripts/dist/* /root/.local/bin/
+COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
 # update image and install build dependencies
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
@@ -87,12 +87,12 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       apache2-utils \
       fonts-roboto \
     && \
-    /root/.local/bin/install-nodejs.sh && \
-    /root/.local/bin/install-tensorflow.sh && \
-    /root/.local/bin/install-darktable.sh && \
-    /root/.local/bin/install-chrome.sh && \
-    /root/.local/bin/install-go.sh && \
-    /root/.local/bin/cleanup.sh && \
+    /scripts/install-nodejs.sh && \
+    /scripts/install-tensorflow.sh && \
+    /scripts/install-darktable.sh && \
+    /scripts/install-chrome.sh && \
+    /scripts/install-go.sh && \
+    /scripts/cleanup.sh && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go" && \
     install -d -m 0777 -o 1000 -g 1000 \
@@ -122,8 +122,7 @@ RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     echo "alias go=richgo ll='ls -alh'" > /photoprism/.bash_aliases && \
     echo "alias go=richgo ll='ls -alh'" > /root/.bash_aliases && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
-    cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
-    cp /root/.local/bin/entrypoint.sh /entrypoint.sh && \
+    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     chmod -R a+rwX /go
 
 # set up project directory
@@ -137,7 +136,7 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 EXPOSE 2342 2343 9515 40000
 
 # set container entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/scripts/entrypoint.sh"]
 
 # keep container running
 CMD ["tail", "-f", "/dev/null"]

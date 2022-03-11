@@ -21,10 +21,10 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # set environment variables, see https://docs.photoprism.app/getting-started/config-options/
-ENV DOCKER_ARCH=$TARGETARCH \
+ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PATH="/opt/photoprism/bin:/opt/photoprism/scripts:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
+    PATH="/scripts:/opt/photoprism/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
@@ -75,7 +75,9 @@ ENV DOCKER_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_IMPORT=300
 
 # update pre-installed packages if needed
-RUN apt-get update && apt-get -qq dist-upgrade && cleanup.sh
+RUN apt-get update && \
+    apt-get -qq dist-upgrade && \
+    /scripts/cleanup.sh
 
 # define default directory and user
 WORKDIR /photoprism
@@ -83,12 +85,15 @@ WORKDIR /photoprism
 # expose default http port 2342
 EXPOSE 2342
 
-# copy app dist files and debian backports sources list
+# copy dist files and debian backports sources list
 COPY --from=build /opt/photoprism/ /opt/photoprism
-RUN cp /opt/photoprism/scripts/entrypoint.sh /entrypoint.sh
+RUN cp -f /opt/photoprism/scripts/* /scripts/ && \
+    chown -R root:root /scripts && \
+    chmod -R 755 /scripts && \
+    rm -rf /opt/photoprism/scripts
 
 # set container entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/scripts/entrypoint.sh"]
 
 # start app server
 CMD ["/opt/photoprism/bin/photoprism", "start"]

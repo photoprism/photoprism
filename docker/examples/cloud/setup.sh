@@ -28,7 +28,7 @@ if [[ -z $(swapon --show) ]]; then
 fi
 
 # set apt defaults
-echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
 echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
 echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
 echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \

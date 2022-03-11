@@ -3,8 +3,8 @@
 # This script returns the normalized machine architecture (amd64, arm64, or arm).
 # An error is returned if the architecture is currently not supported by PhotoPrism.
 
-if [[ $DOCKER_ARCH ]]; then
-  SYSTEM_ARCH=$DOCKER_ARCH
+if [[ $PHOTOPRISM_ARCH ]]; then
+  SYSTEM_ARCH=$PHOTOPRISM_ARCH
 elif [[ $OS == "Windows_NT" ]]; then
   if [[ $PROCESSOR_ARCHITEW6432 == "AMD64" || $PROCESSOR_ARCHITECTURE == "AMD64" ]]; then
     SYSTEM_ARCH=amd64
@@ -13,7 +13,7 @@ elif [[ $OS == "Windows_NT" ]]; then
     exit 1
   fi
 else
-  SYSTEM_ARCH=$(arch)
+  SYSTEM_ARCH=$(uname -m)
 fi
 
 BUILD_ARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
