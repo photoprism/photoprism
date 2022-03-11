@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
 
+# exit on error
 set -e
 
-# Run tests
+# install QEMU for multi-arch builds
+scripts/install-qemu.sh
+
+# run tests
 scripts/test.sh
 
-# Build images
+# build preview image
 make docker-preview
 
+# wait 2s
 sleep 2
 
+# build demo image
 make docker-demo
