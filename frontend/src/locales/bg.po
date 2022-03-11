@@ -1,9 +1,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"PO-Revision-Date: 2022-03-11 12:54+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11.2\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/labels.vue:164
