@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-07 07:58+0000\n"
-"Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
+"PO-Revision-Date: 2022-03-11 10:00+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/ru/>\n"
 "Language: ru\n"
@@ -1544,6 +1544,7 @@ msgid "Note:"
 msgstr "Примечание:"
 
 #: src/dialog/account/add.vue:22
+#, fuzzy
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
