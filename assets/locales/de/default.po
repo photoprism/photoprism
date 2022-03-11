@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
 "PO-Revision-Date: 2022-02-15 17:24+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
@@ -15,314 +15,240 @@ msgstr ""
 "X-Generator: Weblate 4.10.1\n"
 "X-Poedit-Basepath: .\n"
 
-#: messages.go:83
 msgid "Unexpected error, please try again"
 msgstr "Unerwarteter Fehler, bitte erneut versuchen"
 
-#: messages.go:84
 msgid "Invalid request"
 msgstr "Ungültige Anfrage"
 
-#: messages.go:85
 msgid "Changes could not be saved"
 msgstr "Fehler beim Speichern der Daten"
 
-#: messages.go:86
 msgid "Could not be deleted"
 msgstr "Konnte nicht gelöscht werden"
 
-#: messages.go:87
 #, c-format
 msgid "%s already exists"
 msgstr "%s existiert bereits"
 
-#: messages.go:88
 msgid "Not found"
 msgstr "Nicht gefunden"
 
-#: messages.go:89
 msgid "File not found"
 msgstr "Datei konnte nicht gefunden werden"
 
-#: messages.go:90
 msgid "Selection not found"
 msgstr "Auswahl nicht gefunden"
 
-#: messages.go:91
 msgid "Entity not found"
 msgstr "Keine Daten gefunden"
 
-#: messages.go:92
 msgid "Account not found"
 msgstr "Unbekannter Account"
 
-#: messages.go:93
 msgid "User not found"
 msgstr "Nutzer nicht gefunden"
 
-#: messages.go:94
 msgid "Label not found"
 msgstr "Kategorie nicht gefunden"
 
-#: messages.go:95
 msgid "Album not found"
 msgstr "Album nicht gefunden"
 
-#: messages.go:96
 msgid "Subject not found"
 msgstr "Unbekanntes Motiv"
 
-#: messages.go:97
 msgid "Person not found"
 msgstr "Unbekannte Person"
 
-#: messages.go:98
 msgid "Face not found"
 msgstr "Unbekanntes Gesicht"
 
-#: messages.go:99
 msgid "Not available in public mode"
 msgstr "Im öffentlichen Modus nicht verfügbar"
 
-#: messages.go:100
 msgid "not available in read-only mode"
 msgstr "Funktion im schreibgeschützten Modus nicht verfügbar"
 
-#: messages.go:101
 msgid "Please log in and try again"
 msgstr "Anmeldung erforderlich"
 
-#: messages.go:102
 msgid "Upload might be offensive"
 msgstr "Inhalt könnte anstößig sein und wurde abgelehnt"
 
-#: messages.go:103
 msgid "No items selected"
 msgstr "Nichts ausgewählt"
 
-#: messages.go:104
 msgid "Failed creating file, please check permissions"
 msgstr "Datei konnte nicht angelegt werden"
 
-#: messages.go:105
 msgid "Failed creating folder, please check permissions"
 msgstr "Verzeichnis konnte nicht angelegt werden"
 
-#: messages.go:106
 msgid "Could not connect, please try again"
 msgstr "Verbindung fehlgeschlagen"
 
-#: messages.go:107
 msgid "Invalid password, please try again"
 msgstr "Ungültiges Passwort"
 
-#: messages.go:108
 msgid "Feature disabled"
 msgstr "Funktion deaktiviert"
 
-#: messages.go:109
 msgid "No labels selected"
 msgstr "Keine Kategorien ausgewählt"
 
-#: messages.go:110
 msgid "No albums selected"
 msgstr "Keine Alben ausgewählt"
 
-#: messages.go:111
 msgid "No files available for download"
 msgstr "Keine Dateien zum Download verfügbar"
 
-#: messages.go:112
 msgid "Failed to create zip file"
 msgstr "Zip-Datei konnte nicht erstellt werden"
 
-#: messages.go:113
 msgid "Invalid credentials"
 msgstr "Ungültige Zugangsdaten"
 
-#: messages.go:114
 msgid "Invalid link"
 msgstr "Ungültiger Link"
 
-#: messages.go:115
 msgid "Invalid name"
 msgstr "Ungültiger Name"
 
-#: messages.go:116
 msgid "Busy, please try again later"
 msgstr "Beschäftigt, bitte später erneut versuchen"
 
-#: messages.go:119
 msgid "Changes successfully saved"
 msgstr "Änderungen erfolgreich gespeichert"
 
-#: messages.go:120
 msgid "Album created"
 msgstr "Album erstellt"
 
-#: messages.go:121
 msgid "Album saved"
 msgstr "Album gespeichert"
 
-#: messages.go:122
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s gelöscht"
 
-#: messages.go:123
 msgid "Album contents cloned"
 msgstr "Album-Einträge kopiert"
 
-#: messages.go:124
 msgid "File removed from stack"
 msgstr "Datei aus Stapel entfernt"
 
-#: messages.go:125
 msgid "File deleted"
 msgstr "Datei gelöscht"
 
-#: messages.go:126
 #, c-format
 msgid "Selection added to %s"
 msgstr "Auswahl zu %s hinzugefügt"
 
-#: messages.go:127
 #, c-format
 msgid "One entry added to %s"
 msgstr "Ein Eintrag zu %s hinzugefügt"
 
-#: messages.go:128
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d Einträge zu %s hinzugefügt"
 
-#: messages.go:129
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Ein Eintrag aus %s entfernt"
 
-#: messages.go:130
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d Einträge aus %s entfernt"
 
-#: messages.go:131
 msgid "Account created"
 msgstr "Server-Konfiguration angelegt"
 
-#: messages.go:132
 msgid "Account saved"
 msgstr "Server-Konfiguration gespeichert"
 
-#: messages.go:133
 msgid "Account deleted"
 msgstr "Server-Konfiguration gelöscht"
 
-#: messages.go:134
 msgid "Settings saved"
 msgstr "Einstellungen gespeichert"
 
-#: messages.go:135
 msgid "Password changed"
 msgstr "Passwort geändert"
 
-#: messages.go:136
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Import in %d s abgeschlossen"
 
-#: messages.go:137
 msgid "Import canceled"
 msgstr "Import abgebrochen"
 
-#: messages.go:138
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indexierung in %d s abgeschlossen"
 
-#: messages.go:139
 msgid "Indexing originals..."
 msgstr "Indexiere Dateien…"
 
-#: messages.go:140
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Indexiere Dateien in %s"
 
-#: messages.go:141
 msgid "Indexing canceled"
 msgstr "Indexierung abgebrochen"
 
-#: messages.go:142
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "%d Dateien und %d Bilder wurden entfernt"
 
-#: messages.go:143
 #, c-format
 msgid "Moving files from %s"
 msgstr "Verschiebe Dateien von %s"
 
-#: messages.go:144
 #, c-format
 msgid "Copying files from %s"
 msgstr "Kopiere Dateien von %s"
 
-#: messages.go:145
 msgid "Labels deleted"
 msgstr "Kategorien gelöscht"
 
-#: messages.go:146
 msgid "Label saved"
 msgstr "Kategorie gespeichert"
 
-#: messages.go:147
 msgid "Subject saved"
 msgstr "Motiv gespeichert"
 
-#: messages.go:148
 msgid "Subject deleted"
 msgstr "Motiv gelöscht"
 
-#: messages.go:149
 msgid "Person saved"
 msgstr "Person aktualisiert"
 
-#: messages.go:150
 msgid "Person deleted"
 msgstr "Person gelöscht"
 
-#: messages.go:151
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d Dateien hochgeladen in %d s"
 
-#: messages.go:152
 msgid "Selection approved"
 msgstr "Auswahl übernommen"
 
-#: messages.go:153
 msgid "Selection archived"
 msgstr "Auswahl archiviert"
 
-#: messages.go:154
 msgid "Selection restored"
 msgstr "Auswahl wiederhergestellt"
 
-#: messages.go:155
 msgid "Selection marked as private"
 msgstr "Auswahl als privat markiert"
 
-#: messages.go:156
 msgid "Albums deleted"
 msgstr "Alben gelöscht"
 
-#: messages.go:157
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip-Datei erstellt in %d s"
 
-#: messages.go:158
 msgid "Permanently deleted"
 msgstr "Endgültig gelöscht"
 
