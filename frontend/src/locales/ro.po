@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-03-11 14:17+0000\n"
+"PO-Revision-Date: 2022-03-11 14:23+0000\n"
 "Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/ro/>\n"
@@ -425,7 +425,7 @@ msgstr "Calendar"
 #: src/share/photo/cards.vue:37
 #: src/share/photo/list.vue:41
 msgid "Camera"
-msgstr "Cameră"
+msgstr "Camera"
 
 #: src/dialog/photo/info.vue:79
 msgid "Camera Serial"
@@ -474,7 +474,7 @@ msgstr "Anulează"
 #: src/component/album/toolbar.vue:41
 #: src/component/photo/toolbar.vue:37
 msgid "Cards"
-msgstr "Carduri"
+msgstr "Cărți"
 
 #: src/component/photo/toolbar.vue:351
 #: src/dialog/album/edit.vue:163
@@ -1011,7 +1011,7 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:449
 msgid "Focal Length"
-msgstr "Distanta focala"
+msgstr "Distanța focală"
 
 #: src/dialog/account/edit.vue:275
 #: src/dialog/account/edit.vue:281
