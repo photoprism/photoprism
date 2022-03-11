@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"POT-Creation-Date: 2021-10-01 12:14+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-09 00:51+0000\n"
 "PO-Revision-Date: 2022-02-19 14:34+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
@@ -19,312 +19,244 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.10.1\n"
 
-#: messages.go:82
 msgid "Unexpected error, please try again"
 msgstr "Uventet feil, prøv på nytt"
 
-#: messages.go:83
 msgid "Invalid request"
 msgstr "Ugyldig forespørsel"
 
-#: messages.go:84
 msgid "Changes could not be saved"
 msgstr "Kan ikke lagre endringer"
 
-#: messages.go:85
 msgid "Could not be deleted"
 msgstr "Kan ikke slettes"
 
-#: messages.go:86
 #, c-format
 msgid "%s already exists"
 msgstr "%s eksisterer allerede"
 
-#: messages.go:87
 msgid "Not found"
 msgstr "Ikke funnet"
 
-#: messages.go:88
 msgid "File not found"
 msgstr "Fil ikke funnet"
 
-#: messages.go:89
 msgid "Selection not found"
 msgstr "Finner ikke utvalg"
 
-#: messages.go:90
 msgid "Entity not found"
 msgstr "Enheten ble ikke funnet"
 
-#: messages.go:91
 msgid "Account not found"
 msgstr "Konto ikke funnet"
 
-#: messages.go:92
 msgid "User not found"
 msgstr "Bruker ikke funnet"
 
-#: messages.go:93
 msgid "Label not found"
 msgstr "Merkelapp ikke funnet"
 
-#: messages.go:94
 msgid "Album not found"
 msgstr "Album ikke funnet"
 
-#: messages.go:95
 msgid "Subject not found"
 msgstr "Emnet ble ikke funnet"
 
-#: messages.go:96
 msgid "Person not found"
 msgstr "Person ikke funnet"
 
-#: messages.go:97
 msgid "Face not found"
 msgstr "Ansikt ikke funnet"
 
-#: messages.go:98
 msgid "Not available in public mode"
 msgstr "Ikke tilgjengelig i offentlig modus"
 
-#: messages.go:99
 msgid "not available in read-only mode"
 msgstr "ikke tilgjengelig i skrivebeskyttet modus"
 
-#: messages.go:100
 msgid "Please log in and try again"
 msgstr "Vennligst logg inn og prøv igjen"
 
-#: messages.go:101
 msgid "Upload might be offensive"
 msgstr "Opplastingen kan være støtende"
 
-#: messages.go:102
 msgid "No items selected"
 msgstr "Ingen elementer valgt"
 
-#: messages.go:103
 msgid "Failed creating file, please check permissions"
 msgstr "Kunne ikke opprette fil, vennligst sjekk tillatelser"
 
-#: messages.go:104
 msgid "Failed creating folder, please check permissions"
 msgstr "Kunne ikke opprette mappe, vennligst sjekk tillatelser"
 
-#: messages.go:105
 msgid "Could not connect, please try again"
 msgstr "Kunne ikke koble til, vennligst prøv igjen"
 
-#: messages.go:106
 msgid "Invalid password, please try again"
 msgstr "Ugyldig passord, vennligst prøv igjen"
 
-#: messages.go:107
 msgid "Feature disabled"
 msgstr "Tjeneste deaktivert"
 
-#: messages.go:108
 msgid "No labels selected"
 msgstr "Ingen merkelapper valgt"
 
-#: messages.go:109
 msgid "No albums selected"
 msgstr "Ingen albumer valgt"
 
-#: messages.go:110
 msgid "No files available for download"
 msgstr "Ingen filer tilgjengelig for nedlasting"
 
-#: messages.go:111
 msgid "Failed to create zip file"
 msgstr "Kunne ikke opprette zip-arkiv"
 
-#: messages.go:112
 msgid "Invalid credentials"
 msgstr "Ugyldige innloggingsdetaljer"
 
-#: messages.go:113
 msgid "Invalid link"
 msgstr "Ugyldig lenke"
 
-#: messages.go:114
 msgid "Invalid name"
 msgstr "Ugyldig navn"
 
-#: messages.go:117
+#, fuzzy
+#| msgid "Invalid password, please try again"
+msgid "Busy, please try again later"
+msgstr "Ugyldig passord, vennligst prøv igjen"
+
 msgid "Changes successfully saved"
 msgstr "Endringene ble lagret"
 
-#: messages.go:118
 msgid "Album created"
 msgstr "Album opprettet"
 
-#: messages.go:119
 msgid "Album saved"
 msgstr "Album lagret"
 
-#: messages.go:120
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s slettet"
 
-#: messages.go:121
 msgid "Album contents cloned"
 msgstr "Albuminnhold duplisert"
 
-#: messages.go:122
 msgid "File removed from stack"
 msgstr "Fil fjernet fra samling"
 
-#: messages.go:123
 msgid "File deleted"
 msgstr "Fil slettet"
 
-#: messages.go:124
 #, c-format
 msgid "Selection added to %s"
 msgstr "Utvalg lagt til %s"
 
-#: messages.go:125
 #, c-format
 msgid "One entry added to %s"
 msgstr "En oppføring lagt til %s"
 
-#: messages.go:126
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d oppføringer lagt til %s"
 
-#: messages.go:127
 #, c-format
 msgid "One entry removed from %s"
 msgstr "En oppføring fjernet fra %s"
 
-#: messages.go:128
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d oppføringer fjernet fra %s"
 
-#: messages.go:129
 msgid "Account created"
 msgstr "Konto opprettet"
 
-#: messages.go:130
 msgid "Account saved"
 msgstr "Konto lagret"
 
-#: messages.go:131
 msgid "Account deleted"
 msgstr "Konto slettet"
 
-#: messages.go:132
 msgid "Settings saved"
 msgstr "Innstillinger lagret"
 
-#: messages.go:133
 msgid "Password changed"
 msgstr "Passord endret"
 
-#: messages.go:134
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Import fullført på %d s"
 
-#: messages.go:135
 msgid "Import canceled"
 msgstr "Import avbrutt"
 
-#: messages.go:136
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indeksering fullført på %d s"
 
-#: messages.go:137
 msgid "Indexing originals..."
 msgstr "Indekserer originaler…"
 
-#: messages.go:138
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Indekserer filer i %s"
 
-#: messages.go:139
 msgid "Indexing canceled"
 msgstr "Indeksering avbrutt"
 
-#: messages.go:140
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Fjernet %d filer og %d foto"
 
-#: messages.go:141
 #, c-format
 msgid "Moving files from %s"
 msgstr "Flytter filer fra %s"
 
-#: messages.go:142
 #, c-format
 msgid "Copying files from %s"
 msgstr "Kopierer filer fra %s"
 
-#: messages.go:143
 msgid "Labels deleted"
 msgstr "Merkelapper slettet"
 
-#: messages.go:144
 msgid "Label saved"
 msgstr "Merkelapper lagret"
 
-#: messages.go:145
 msgid "Subject saved"
 msgstr "Emnet er lagret"
 
-#: messages.go:146
 msgid "Subject deleted"
 msgstr "Emnet er slettet"
 
-#: messages.go:147
 msgid "Person saved"
 msgstr "Person reddet"
 
-#: messages.go:148
 msgid "Person deleted"
 msgstr "Person slettet"
 
-#: messages.go:149
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d filer lastet opp på %d s"
 
-#: messages.go:150
 msgid "Selection approved"
 msgstr "Utvalg godkjent"
 
-#: messages.go:151
 #, fuzzy
 msgid "Selection archived"
 msgstr "Utvalg lagret"
 
-#: messages.go:152
 msgid "Selection restored"
 msgstr "Utvalg gjenopprettet"
 
-#: messages.go:153
 msgid "Selection marked as private"
 msgstr "Utvalg markert som privat"
 
-#: messages.go:154
 #, fuzzy
 msgid "Albums deleted"
 msgstr "Albumer slettet"
 
-#: messages.go:155
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip opprettet på %d s"
 
-#: messages.go:156
 msgid "Permanently deleted"
 msgstr "Permanent slettet"
 
