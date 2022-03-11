@@ -77,18 +77,17 @@ install:
 	mkdir --mode=$(INSTALL_MODE) -p $(DESTDIR)
 	env TMPDIR="$(BUILD_PATH)" ./scripts/dist/install-tensorflow.sh $(DESTDIR)
 	rm -rf --preserve-root $(DESTDIR)/include
-	(cd $(DESTDIR) && mkdir -p bin scripts lib assets config config/examples)
+	(cd $(DESTDIR) && mkdir -p bin lib assets config config/examples)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
 	[ -f "$(GOBIN)/gosu" ] || go install github.com/tianon/gosu@latest
 	cp $(GOBIN)/gosu $(DESTDIR)/bin/gosu
 	[ ! -f "$(GOBIN)/exif-read-tool" ] || cp $(GOBIN)/exif-read-tool $(DESTDIR)/bin/exif-read-tool
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
-	rsync -r -l --safe-links --exclude-from=scripts/dist/.buildignore --chmod=a+rx,u+rwx ./scripts/dist/ $(DESTDIR)/scripts
-	mv $(DESTDIR)/scripts/heif-convert.sh $(DESTDIR)/bin/heif-convert
+	cp scripts/dist/heif-convert.sh $(DESTDIR)/bin/heif-convert
 	cp internal/config/testdata/*.yml $(DESTDIR)/config/examples
 	chown -R $(INSTALL_USER) $(DESTDIR)
 	chmod -R $(INSTALL_MODE) $(DESTDIR)
-	chmod -R $(INSTALL_MODE_BIN) $(DESTDIR)/bin $(DESTDIR)/lib $(DESTDIR)/scripts/*.sh
+	chmod -R $(INSTALL_MODE_BIN) $(DESTDIR)/bin $(DESTDIR)/lib
 	@echo "PhotoPrism $(BUILD_TAG) has been successfully installed in \"$(DESTDIR)\".\nEnjoy!"
 install-go:
 	sudo scripts/dist/install-go.sh

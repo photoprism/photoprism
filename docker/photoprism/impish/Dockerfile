@@ -74,8 +74,9 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
-# copy dist files and debian backports sources list
+# copy dist files and scripts
 COPY --from=build /opt/photoprism/ /opt/photoprism
+COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 
 # install additional distribution packages
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
@@ -83,9 +84,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    mv -f /opt/photoprism/scripts/ /scripts && \
-    chown -R root:root /scripts && \
-    chmod -R 755 /scripts && \
     cp /opt/photoprism/bin/gosu /bin/gosu && \
     chown root:root /bin/gosu && \
     groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \

@@ -74,6 +74,9 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
+# copy scripts
+COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
+
 # update pre-installed packages if needed
 RUN apt-get update && \
     apt-get -qq dist-upgrade && \
@@ -85,12 +88,8 @@ WORKDIR /photoprism
 # expose default http port 2342
 EXPOSE 2342
 
-# copy dist files and debian backports sources list
+# copy dist files
 COPY --from=build /opt/photoprism/ /opt/photoprism
-RUN cp -f /opt/photoprism/scripts/* /scripts/ && \
-    chown -R root:root /scripts && \
-    chmod -R 755 /scripts && \
-    rm -rf /opt/photoprism/scripts
 
 # set container entrypoint script
 ENTRYPOINT ["/scripts/entrypoint.sh"]
