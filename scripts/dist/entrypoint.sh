@@ -4,14 +4,14 @@
 re='^[0-9]+$'
 
 # set env defaults
-export DOCKER_ARCH=${DOCKER_ARCH:-arch}
+export PHOTOPRISM_ARCH=${PHOTOPRISM_ARCH:-arch}
 export DOCKER_ENV=${DOCKER_ENV:-unknown}
 export DOCKER_TAG=${DOCKER_TAG:-unknown}
 
 # detect environment
 case $DOCKER_ENV in
   prod)
-    INIT_SCRIPT="/opt/photoprism/scripts/entrypoint-init.sh"
+    INIT_SCRIPT="/scripts/entrypoint-init.sh"
     ;;
 
   develop)
@@ -23,10 +23,6 @@ case $DOCKER_ENV in
     echo "unknown environment \"$DOCKER_ENV\"";
     ;;
 esac
-
-# set home and install path defaults
-export PHOTOPRISM_HOME=${PHOTOPRISM_HOME:-/photoprism}
-export PHOTOPRISM_DIST=${PHOTOPRISM_DIST:-/opt/photoprism}
 
 # normalize user and group ID environment variables
 if [[ -z ${PHOTOPRISM_UID} ]]; then
@@ -44,21 +40,24 @@ if [[ -z ${PHOTOPRISM_UID} ]]; then
   fi
 fi
 
+# docker image info
+DOCKER_IMAGE="$PHOTOPRISM_ARCH-$DOCKER_ENV/$DOCKER_TAG"
+
 # initialize container packages and permissions
 if [[ -f "${INIT_SCRIPT}" ]]; then
   if [[ $(id -u) == "0" ]]; then
-    echo "init as root"
+    echo "init $DOCKER_IMAGE as root"
     bash -c "${INIT_SCRIPT}"
   else
-    echo "init as uid $(id -u)"
+    echo "init $DOCKER_IMAGE as uid $(id -u)"
     sudo -E "${INIT_SCRIPT}"
   fi
 else
-  echo "started as uid $(id -u)"
+  echo "started $DOCKER_IMAGE as uid $(id -u)"
 fi
 
 # set explicit home directory
-export HOME="${PHOTOPRISM_HOME}"
+export HOME="/photoprism"
 
 # check for alternate umask variable
 if [[ -z ${PHOTOPRISM_UMASK} ]] && [[ ${UMASK} =~ $re ]] && [[ ${#UMASK} == 4 ]]; then
@@ -72,11 +71,13 @@ else
   umask 0002
 fi
 
-# show container info
-echo "image: $DOCKER_ARCH-$DOCKER_ENV, build $DOCKER_TAG"
-echo "home: ${PHOTOPRISM_HOME}"
+# display additional container info for troubleshooting
 echo "umask: \"$(umask)\" ($(umask -S))"
-echo "install-path: ${PHOTOPRISM_DIST}"
+echo "home-directory: ${HOME}"
+echo "storage-path: ${PHOTOPRISM_STORAGE_PATH}"
+echo "originals-path: ${PHOTOPRISM_ORIGINALS_PATH}"
+echo "import-path: ${PHOTOPRISM_IMPORT_PATH}"
+echo "assets-path: ${PHOTOPRISM_ASSETS_PATH}"
 
 # change to another user and group on request
 if [[ $(id -u) == "0" ]] && [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
@@ -86,23 +87,23 @@ if [[ $(id -u) == "0" ]] && [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UI
     echo "${@}"
 
     # run command as uid:gid
-    ([[ ${DOCKER_ENV} != "prod" ]] || gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" audit.sh) \
-    && gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
+    ([[ ${DOCKER_ENV} != "prod" ]] || gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "/scripts/audit.sh") \
+     && gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
   else
     echo "switching to uid ${PHOTOPRISM_UID}"
     echo "${@}"
 
     # run command as uid
-    ([[ ${DOCKER_ENV} != "prod" ]] || gosu "${PHOTOPRISM_UID}" audit.sh) \
-    && gosu "${PHOTOPRISM_UID}" "$@" &
+    ([[ ${DOCKER_ENV} != "prod" ]] || gosu "${PHOTOPRISM_UID}" "/scripts/audit.sh") \
+     && gosu "${PHOTOPRISM_UID}" "$@" &
   fi
 else
   echo "running as uid $(id -u)"
   echo "${@}"
 
   # run command
-  ([[ ${DOCKER_ENV} != "prod" ]] || audit.sh) \
-  && "$@" &
+  ([[ ${DOCKER_ENV} != "prod" ]] || "/scripts/audit.sh") \
+   && "$@" &
 fi
 
 PID=$!

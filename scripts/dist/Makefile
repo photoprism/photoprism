@@ -17,11 +17,11 @@ clean:
 	apt-get -y autoclean
 	rm -rf /var/lib/apt/lists/*
 gpu:
-	./install-gpu.sh
+	/scripts/install-gpu.sh
 tensorflow:
-	./install-tensorflow.sh auto
+	/scripts/install-tensorflow.sh auto
 davfs:
-	./install-davfs.sh
+	/scripts/install-davfs.sh
 nano:
 	apt-get update
 	apt-get -qq install nano

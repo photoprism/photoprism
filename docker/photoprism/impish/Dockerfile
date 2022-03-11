@@ -21,10 +21,10 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # set environment variables, see https://docs.photoprism.app/getting-started/config-options/
-ENV DOCKER_ARCH=$TARGETARCH \
+ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PATH="/opt/photoprism/bin:/opt/photoprism/scripts:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
+    PATH="/scripts:/opt/photoprism/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
@@ -74,11 +74,12 @@ ENV DOCKER_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
-# copy app dist files and debian backports sources list
+# copy dist files and scripts
 COPY --from=build /opt/photoprism/ /opt/photoprism
+COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 
 # install additional distribution packages
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
@@ -110,7 +111,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       ffmpegthumbnailer \
       libavcodec-extra \
     && \
-    install-darktable.sh && \
+    /scripts/install-darktable.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
@@ -123,9 +124,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       /photoprism/storage/config \
       /photoprism/storage/cache \
     && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /opt/photoprism/scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
-    cp /opt/photoprism/scripts/entrypoint.sh /entrypoint.sh && \
-    cleanup.sh
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    /scripts/cleanup.sh
 
 # define default directory and user
 WORKDIR /photoprism
@@ -134,7 +134,7 @@ WORKDIR /photoprism
 EXPOSE 2342
 
 # set container entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/scripts/entrypoint.sh"]
 
 # start app server
 CMD ["/opt/photoprism/bin/photoprism", "start"]

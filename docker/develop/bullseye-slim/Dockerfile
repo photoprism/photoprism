@@ -7,25 +7,27 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # set environment variables, see https://docs.photoprism.app/getting-started/config-options/
-ENV DOCKER_ARCH=$TARGETARCH \
+ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
-    PATH="/opt/photoprism/bin:/opt/photoprism/scripts:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
+    PATH="/scripts:/opt/photoprism/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2"
 
 # copy scripts and debian backports sources list
-COPY /scripts/dist/ /opt/photoprism/scripts
-COPY /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
+COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
+COPY --chown=root:root --chmod=644 /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
 
 # install additional distribution packages
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \
+    groupadd -f -r -g 44 video && \
+    groupadd -f -r -g 109 render && \
+    groupadd -f -g 1000 photoprism && \
     useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       ca-certificates \
@@ -50,8 +52,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       ffmpegthumbnailer \
       libavcodec-extra \
     && \
-    install-mariadb.sh mariadb-client && \
-    install-darktable.sh && \
+    /scripts/install-mariadb.sh mariadb-client && \
+    /scripts/install-darktable.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
@@ -64,8 +66,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       /photoprism/storage/config \
       /photoprism/storage/cache \
     && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /opt/photoprism/scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
-    cleanup.sh
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    /scripts/cleanup.sh
 
 # define default directory and user
 WORKDIR /photoprism

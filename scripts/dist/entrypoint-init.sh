@@ -14,9 +14,9 @@ re='^[0-9]+$'
 # detect environment
 case $DOCKER_ENV in
   prod)
-    INIT_SCRIPTS="/opt/photoprism/scripts"
-    CHOWN_DIRS=("${PHOTOPRISM_HOME}" "${PHOTOPRISM_DIST}")
-    CHMOD_DIRS=("${PHOTOPRISM_DIST}")
+    INIT_SCRIPTS="/scripts"
+    CHOWN_DIRS=("/photoprism" "/opt/photoprism")
+    CHMOD_DIRS=("/opt/photoprism")
     ;;
 
   develop)
@@ -34,7 +34,7 @@ esac
 if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
   if [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]]; then
     groupadd -g "${PHOTOPRISM_GID}" "group_${PHOTOPRISM_GID}" 2>/dev/null
-    useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d "${PHOTOPRISM_HOME}" "user_${PHOTOPRISM_UID}" 2>/dev/null
+    useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
     usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
@@ -44,7 +44,7 @@ if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
       chmod --preserve-root -Rcf u+rwX "${CHMOD_DIRS[@]}"
     fi
   else
-    useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d "${PHOTOPRISM_HOME}" "user_${PHOTOPRISM_UID}" 2>/dev/null
+    useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
     usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
@@ -61,7 +61,7 @@ if [[ -z ${PHOTOPRISM_INIT} ]]; then
   exit
 fi
 
-INIT_LOCK="/root/.init-lock"
+INIT_LOCK="/scripts/.init-lock"
 
 # execute targets via make
 if [[ ! -e ${INIT_LOCK} ]]; then

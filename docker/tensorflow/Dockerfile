@@ -7,7 +7,7 @@ ENV TMP /tmp
 ENV EXTRA_BAZEL_ARGS "--host_javabase=@local_jdk//:jdk"
 
 # apt default settings
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \

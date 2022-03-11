@@ -175,6 +175,18 @@ export const Languages = () => [
     value: "ku",
     rtl: true,
   },
+  {
+    text: "Română", // Romanian
+    value: "ro",
+  },
+  {
+    text: "Türk", // Turkish
+    value: "tr",
+  },
+  {
+    text: "български", // Bulgarian
+    value: "bg",
+  },
 ];
 
 export const Themes = () => [
