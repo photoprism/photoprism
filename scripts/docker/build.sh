@@ -19,7 +19,6 @@ if [[ $1 ]] && [[ -z $2 || $2 == "preview" ]]; then
     echo "Build Tags: preview"
 
     docker build \
-      --pull \
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE \
       -t photoprism/$1:preview \
@@ -32,7 +31,6 @@ elif [[ $2 =~ $NUMERIC ]]; then
     fi
 
     docker build $4\
-      --pull \
       --no-cache \
       --build-arg BUILD_TAG=$2 \
       -t photoprism/$1:latest \
@@ -46,7 +44,6 @@ elif [[ $2 == *"preview"* ]]; then
     fi
 
     docker build $4\
-      --pull \
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE \
       -t photoprism/$1:$2 \
@@ -59,7 +56,6 @@ else
     fi
 
     docker build $4\
-      --pull \
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE-$2 \
       -t photoprism/$1:$2 \

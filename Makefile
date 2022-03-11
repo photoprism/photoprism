@@ -235,8 +235,8 @@ test-coverage:
 	$(info Running all Go unit tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
-docker-develop: docker-develop-bullseye docker-develop-bullseye-slim
-docker-develop-all: docker-develop docker-develop-armv7 docker-develop-buster docker-develop-impish
+docker-develop: docker-develop-bullseye docker-develop-bullseye-slim docker-develop-armv7
+docker-develop-all: docker-develop docker-develop-buster docker-develop-impish
 docker-develop-bullseye:
 	docker pull --platform=amd64 golang:bullseye
 	docker pull --platform=arm64 golang:bullseye
