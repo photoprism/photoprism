@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-15 18:08+0000\n"
+"Last-Translator: cheehoong <lechho@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/id/>\n"
 "Language: id\n"
@@ -1156,9 +1156,8 @@ msgid "Instance ID"
 msgstr "ID Instance"
 
 #: src/dialog/account/edit.vue:298
-#, fuzzy
 msgid "Interval"
-msgstr "Interval"
+msgstr "Selang"
 
 #: src/dialog/photo/details.vue:105
 msgid "Invalid date"
@@ -2074,9 +2073,8 @@ msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Menampilkan pesan log yang lebih detail. Memerlukan restart."
 
 #: src/model/file.js:187
-#, fuzzy
 msgid "Sidecar"
-msgstr "Sidecar"
+msgstr "Sespan"
 
 #: src/pages/login.vue:19
 msgid "Sign in"
