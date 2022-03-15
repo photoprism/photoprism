@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-15 18:08+0000\n"
+"Last-Translator: cheehoong <lechho@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -173,9 +173,8 @@ msgid "Albums"
 msgstr "相簿"
 
 #: src/component/album/clipboard.vue:74
-#, fuzzy
 msgid "Albums deleted"
-msgstr "相册已被删除"
+msgstr "已删除的专辑"
 
 #: src/pages/albums.vue:257 src/share/albums.vue:215
 msgid "All %{n} albums loaded"
@@ -264,9 +263,8 @@ msgid "Any private photos and videos remain private and won't be shared."
 msgstr "所有私人相片跟影片都會保持私人，不會被分享。"
 
 #: src/dialog/account/edit.vue:472
-#, fuzzy
 msgid "API Key"
-msgstr "API Key"
+msgstr "API密钥"
 
 #: src/dialog/photo/details.vue:117
 msgid "Apply"
@@ -1187,9 +1185,8 @@ msgid "Labels"
 msgstr "標籤"
 
 #: src/component/label/clipboard.vue:42
-#, fuzzy
 msgid "Labels deleted"
-msgstr "已删除标签"
+msgstr "删除的标签"
 
 #: src/options/options.js:384
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1631,7 +1628,6 @@ msgid "Password"
 msgstr "密碼"
 
 #: src/pages/settings/account.vue:22
-#, fuzzy
 msgid "Password changed"
 msgstr "密码已修改"
 
@@ -1802,7 +1798,6 @@ msgstr "近期新增"
 
 #: src/component/album/toolbar.vue:39 src/component/photo/toolbar.vue:36
 #: src/dialog/album/edit.vue:16
-#, fuzzy
 msgid "Recently edited"
 msgstr "近期編輯"
 
@@ -1937,17 +1932,14 @@ msgid "Select albums or create a new one"
 msgstr "選擇或新增相簿"
 
 #: src/component/photo/clipboard.vue:39
-#, fuzzy
 msgid "Selection approved"
 msgstr "选择已批准"
 
 #: src/component/photo/clipboard.vue:55
-#, fuzzy
 msgid "Selection archived"
 msgstr "所选项目已被归档"
 
 #: src/component/photo/clipboard.vue:80
-#, fuzzy
 msgid "Selection restored"
 msgstr "所选项目已被恢复"
 
@@ -1973,13 +1965,11 @@ msgstr "服務 URL"
 #: src/component/navigation.vue:4 src/component/navigation.vue:1398
 #: src/routes.js:320 src/routes.js:332 src/routes.js:344 src/routes.js:356
 #: src/routes.js:368
-#, fuzzy
 msgid "Settings"
-msgstr "設定"
+msgstr "设置"
 
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:103
 #: src/pages/settings/library.vue:50
-#, fuzzy
 msgid "Settings saved"
 msgstr "设置已保存"
 
@@ -2243,7 +2233,6 @@ msgstr "到"
 #: src/component/album/toolbar.vue:125 src/component/album/toolbar.vue:142
 #: src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:74
 #: src/component/photo/toolbar.vue:91 src/component/photo/toolbar.vue:107
-#, fuzzy
 msgid "Toggle View"
 msgstr "切換檢視"
 
