@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
+"PO-Revision-Date: 2022-03-15 12:35+0000\n"
 "Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/ro/>\n"
@@ -485,7 +485,7 @@ msgstr "Categorie"
 
 #: src/pages/settings/account.vue:26
 msgid "Change"
-msgstr "Schimbare"
+msgstr "Schimbă"
 
 #: src/pages/settings/general.vue:185
 msgid "Change photo titles, locations, and other metadata."
@@ -582,7 +582,7 @@ msgstr "Drepturi de autor"
 #: src/component/photo/list.vue:26
 #: src/share/photo/list.vue:26
 msgid "Couldn't find anything."
-msgstr "Nu am putut găsi nimic."
+msgstr "Nu sa putut găsi nimic."
 
 #: src/component/photo/toolbar.vue:184
 #: src/dialog/photo/details.vue:240
@@ -1870,7 +1870,7 @@ msgstr "Vă rugăm să confirmați noua parolă."
 
 #: src/dialog/upload.vue:45
 msgid "Please don't upload photos containing offensive content."
-msgstr "Vă rugăm să nu încărcați fotografii care conțin conținut jignitor."
+msgstr "Vă rugăm să nu încărcați fotografii care au un conținut jignitor."
 
 #: src/dialog/photo/files.vue:117
 #: src/dialog/photo/files.vue:114
