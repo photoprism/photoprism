@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
+"PO-Revision-Date: 2022-03-13 00:19+0000\n"
 "Last-Translator: Pheggas <petko252@gmail.com>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
 "frontend/sk/>\n"
@@ -208,7 +208,7 @@ msgstr "Všetky políčka sú vyžadované"
 
 #: src/pages/library/import.vue:12
 msgid "All files from import folder"
-msgstr "Všetky súbory zo vkladacej zložky"
+msgstr "Všetky súbory zo zložky importu"
 
 #: src/component/photo/toolbar.vue:22
 msgid "All Lenses"
@@ -248,7 +248,7 @@ msgstr "Nastala chyba - ste offline?"
 
 #: src/pages/settings/general.vue:533
 msgid "Animation"
-msgstr "Animácia"
+msgstr "Animácie"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
@@ -803,7 +803,7 @@ msgstr "Odhadnúť približnú polohu fotiek bez súradníc."
 
 #: src/pages/settings/library.vue:71
 msgid "Estimates"
-msgstr "Odhaduje sa"
+msgstr "Odhady"
 
 #: src/options/options.js:311
 msgid "Every two days"
@@ -871,7 +871,7 @@ msgstr "Chyba pri importovaní odovzdaných súborov"
 
 #: src/options/options.js:250
 msgid "Fast"
-msgstr "Rýchlo"
+msgstr "Rýchle"
 
 #: src/dialog/photo/info.vue:94
 msgid "Favorite"
@@ -1038,11 +1038,11 @@ msgstr "Obrázky"
 #: src/pages/library.vue:42 src/pages/library/import.vue:43
 #: src/pages/settings/general.vue:228
 msgid "Import"
-msgstr "Import"
+msgstr "Importovať"
 
 #: src/pages/library/import.vue:116
 msgid "Import failed"
-msgstr "Import zlyhal"
+msgstr "Importovanie zlyhalo"
 
 #: src/pages/library/import.vue:25
 msgid ""
@@ -1290,7 +1290,7 @@ msgstr "Značka"
 
 #: src/options/options.js:254
 msgid "Medium"
-msgstr "Médium"
+msgstr "Normálne"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
