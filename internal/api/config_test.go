@@ -15,7 +15,7 @@ func TestGetConfig(t *testing.T) {
 		GetConfig(router)
 		r := PerformRequest(app, "GET", "/api/v1/config")
 		val := gjson.Get(r.Body.String(), "flags")
-		assert.Equal(t, "public debug sponsor experimental settings", val.String())
+		assert.Equal(t, "public debug test sponsor experimental settings", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
