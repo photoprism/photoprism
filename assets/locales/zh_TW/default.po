@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-19 14:59+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-16 17:35+0000\n"
+"Last-Translator: cheehoong <lechho@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "未知错误, 请重试"
@@ -119,10 +119,8 @@ msgstr "无效链接"
 msgid "Invalid name"
 msgstr "名稱無效"
 
-#, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
-msgstr "无效密码, 请重试"
+msgstr "忙，请稍后再试"
 
 msgid "Changes successfully saved"
 msgstr "更改已保存"
@@ -175,11 +173,9 @@ msgstr "已保存账户"
 msgid "Account deleted"
 msgstr "已删除账户"
 
-#, fuzzy
 msgid "Settings saved"
 msgstr "设置已保存"
 
-#, fuzzy
 msgid "Password changed"
 msgstr "密码已修改"
 
@@ -216,9 +212,8 @@ msgstr "正在从 %s 中移动文件"
 msgid "Copying files from %s"
 msgstr "正在从 %s 中复制文件"
 
-#, fuzzy
 msgid "Labels deleted"
-msgstr "已删除标签"
+msgstr "删除的标签"
 
 msgid "Label saved"
 msgstr "已保存标签"
@@ -239,24 +234,20 @@ msgstr "已刪除人員"
 msgid "%d files uploaded in %d s"
 msgstr "已上传 %d 个文件, 耗时 %d 秒"
 
-#, fuzzy
 msgid "Selection approved"
 msgstr "选择已批准"
 
-#, fuzzy
 msgid "Selection archived"
 msgstr "所选项目已被归档"
 
-#, fuzzy
 msgid "Selection restored"
 msgstr "所选项目已被恢复"
 
 msgid "Selection marked as private"
 msgstr "所选项目已被设为私有"
 
-#, fuzzy
 msgid "Albums deleted"
-msgstr "相册已被删除"
+msgstr "已删除的专辑"
 
 #, c-format
 msgid "Zip created in %d s"
