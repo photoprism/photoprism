@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-04 08:32+0000\n"
-"Last-Translator: baysonfox <baysonfox@baysonfox.com>\n"
+"PO-Revision-Date: 2022-03-16 17:35+0000\n"
+"Last-Translator: cheehoong <lechho@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.11\n"
+"X-Generator: Weblate 4.11.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "未知错误, 请重试"
@@ -119,10 +119,8 @@ msgstr "无效链接"
 msgid "Invalid name"
 msgstr "无效的名称"
 
-#, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
-msgstr "无效密码, 请重试"
+msgstr "正忙, 请稍后重试"
 
 msgid "Changes successfully saved"
 msgstr "更改已保存"
@@ -214,7 +212,6 @@ msgstr "正在从 %s 中移动文件"
 msgid "Copying files from %s"
 msgstr "正在从 %s 中复制文件"
 
-#, fuzzy
 msgid "Labels deleted"
 msgstr "已删除标签"
 
