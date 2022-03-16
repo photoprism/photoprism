@@ -88,6 +88,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     chown root:root /bin/gosu && \
     groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \
     useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
+    chmod 777 /photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       ca-certificates \
       jq \
