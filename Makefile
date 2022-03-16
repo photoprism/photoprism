@@ -358,4 +358,4 @@ tidy:
 .PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
     install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
     docker-develop docker-preview docker-preview-all docker-preview-arm docker-release docker-release-all docker-release-arm \
-    install-go install-darktable install-tensorflow devtools tar.gz fix-permissions;
+    install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell;
