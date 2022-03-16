@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-03-15 12:35+0000\n"
+"PO-Revision-Date: 2022-03-16 21:35+0000\n"
 "Last-Translator: Joaquim Homrighausen <joho@boojam.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/sv/>\n"
@@ -528,115 +528,115 @@ msgstr "Färger"
 
 #: src/pages/library/index.vue:123
 msgid "Complete Rescan"
-msgstr ""
+msgstr "Fullständig omskanning"
 
 #: src/dialog/photo/labels.vue:22
 msgid "Confidence"
-msgstr ""
+msgstr "Tillit"
 
 #: src/dialog/account/add.vue:16
 msgid "Connect"
-msgstr ""
+msgstr "Anslut"
 
 #: src/dialog/webdav.vue:4
 #: src/pages/settings/sync.vue:42
 msgid "Connect via WebDAV"
-msgstr ""
+msgstr "Anslut via WebDAV"
 
 #: src/pages/about/feedback.vue:7
 msgid "Contact Us"
-msgstr ""
+msgstr "Kontakta oss"
 
 #: src/pages/albums.vue:93
 #: src/pages/labels.vue:74
 #: src/pages/people/subjects.vue:85
 msgid "Contains %{n} pictures."
-msgstr ""
+msgstr "Innehåller %{n} bilder."
 
 #: src/pages/albums.vue:90
 #: src/pages/labels.vue:71
 #: src/pages/people/subjects.vue:82
 msgid "Contains one picture."
-msgstr ""
+msgstr "Innehåller en bild."
 
 #: src/pages/settings/library.vue:113
 msgid "Convert to JPEG"
-msgstr ""
+msgstr "Konvertera till JPEG"
 
 #: src/pages/library/index.vue:166
 msgid "Converting"
-msgstr ""
+msgstr "Konverterar"
 
 #: src/dialog/share.vue:58
 #: src/dialog/webdav.vue:36
 msgid "Copied to clipboard"
-msgstr ""
+msgstr "Kopierad till urklippshanteraren"
 
 #: src/dialog/photo/details.vue:520
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
 #: src/component/photo/list.vue:26
 #: src/share/photo/list.vue:26
 msgid "Couldn't find anything."
-msgstr ""
+msgstr "Kunde inte hitta något."
 
 #: src/component/photo/toolbar.vue:184
 #: src/dialog/photo/details.vue:240
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: src/dialog/photo/album.vue:18
 msgid "Create album"
-msgstr ""
+msgstr "Skapa album"
 
 #: src/dialog/photo/info.vue:167
 msgid "Created"
-msgstr ""
+msgstr "Skapad"
 
 #: src/pages/library/index.vue:173
 msgid "Creating thumbnails for"
-msgstr ""
+msgstr "Skapar miniatyrbilder för"
 
 #: src/options/options.js:363
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr ""
+msgstr "Kubisk: Måttlig kvalitet, bra prestanda"
 
 #: src/pages/settings/account.vue:57
 msgid "Current Password"
-msgstr ""
+msgstr "Nuvarande lösenord"
 
 #: src/options/options.js:352
 msgid "Customer Support"
-msgstr ""
+msgstr "Kundsupport"
 
 #: src/options/options.js:343
 msgid "Cyan"
-msgstr ""
+msgstr "Cyan"
 
 #: src/options/options.js:212
 msgid "Cyano"
-msgstr ""
+msgstr "Cyano"
 
 #: src/options/options.js:316
 msgid "Daily"
-msgstr ""
+msgstr "Dagligen"
 
 #: src/dialog/photo/details.vue:118
 msgid "Day"
-msgstr ""
+msgstr "Dag"
 
 #: src/pages/settings/advanced.vue:77
 msgid "Debug Logs"
-msgstr ""
+msgstr "Felsökningsloggar"
 
 #: src/options/options.js:182
 msgid "Default"
-msgstr ""
+msgstr "Standard"
 
 #: src/dialog/account/edit.vue:203
 msgid "Default Folder"
-msgstr ""
+msgstr "Standardmapp"
 
 #: src/component/album/clipboard.vue:160
 #: src/component/label/clipboard.vue:89
@@ -651,7 +651,7 @@ msgstr ""
 #: src/dialog/share.vue:234
 #: src/pages/settings/general.vue:206
 msgid "Delete"
-msgstr ""
+msgstr "Radera"
 
 #: src/component/photo/cards.vue:33
 #: src/dialog/album/edit.vue:143
@@ -660,116 +660,117 @@ msgstr ""
 #: src/share/albums.vue:243
 #: src/share/photo/cards.vue:33
 msgid "Description"
-msgstr ""
+msgstr "Beskrivning"
 
 #: src/dialog/webdav.vue:23
 msgid "Detailed instructions can be found in our User Guide."
-msgstr ""
+msgstr "Detaljerade instruktioner finns i vår användarhandbok."
 
 #: src/dialog/photo/edit.vue:27
 #: src/dialog/photo/edit.vue:1
 #: src/dialog/photo/edit.vue:178
 msgid "Details"
-msgstr ""
+msgstr "Detaljer"
 
 #: src/dialog/photo/files.vue:35
 msgid "Dimensions"
-msgstr ""
+msgstr "Mått"
 
 #: src/pages/settings/advanced.vue:143
 msgid "Disable Backups"
-msgstr ""
+msgstr "Inaktivera säkerhetskopiering"
 
 #: src/pages/settings/advanced.vue:166
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr ""
+msgstr "Inaktivera den inbyggda WebDAV-servern. Kräver en omstart."
 
 #: src/pages/settings/advanced.vue:484
 msgid "Disable Darktable"
-msgstr ""
+msgstr "Inaktivera Darktable"
 
 #: src/pages/settings/advanced.vue:209
 msgid "Disable ExifTool"
-msgstr ""
+msgstr "Inaktivera ExifTool"
 
 #: src/pages/settings/advanced.vue:526
 msgid "Disable FFmpeg"
-msgstr ""
+msgstr "Inaktivera FFmpeg"
 
 #: src/pages/settings/advanced.vue:187
 msgid "Disable Places"
-msgstr ""
+msgstr "Inaktivera platser"
 
 #: src/pages/settings/advanced.vue:505
 msgid "Disable RawTherapee"
-msgstr ""
+msgstr "Inaktivera RawTherapee"
 
 #: src/pages/settings/advanced.vue:231
 msgid "Disable TensorFlow"
-msgstr ""
+msgstr "Inaktivera TensorFlow"
 
 #: src/pages/settings/advanced.vue:165
 msgid "Disable WebDAV"
-msgstr ""
+msgstr "Inaktivera WebDAV"
 
 #: src/dialog/account/edit.vue:66
 #: src/dialog/account/edit.vue:111
 msgid "Disabled"
-msgstr ""
+msgstr "Inaktiverad"
 
 #: src/pages/settings/advanced.vue:188
 msgid "Disables reverse geocoding and maps."
-msgstr ""
+msgstr "Inaktiverar omvänd geokodning och kartor."
 
 #: src/app/routes.js:375
 #: src/app/routes.js:382
 #: src/app/routes.js:389
 #: src/app/routes.js:396
 msgid "Discover"
-msgstr ""
+msgstr "Upptäck"
 
 #: src/pages/settings/advanced.vue:144
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr ""
+msgstr "Säkerhetskopiera inte metadata för foton och album till YAML-filer."
 
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
+msgstr "Skapa inte ExifTool JSON-filer för bättre utvinning av metadata."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
+"Ändra inte mappen med original. Inaktiverar import, uppladdning och radering."
 
 #: src/pages/settings/advanced.vue:527
 msgid "Don't transcode videos with FFmpeg."
-msgstr ""
+msgstr "Omkoda inte videor med FFmpeg."
 
 #: src/pages/settings/advanced.vue:485
 msgid "Don't use Darktable to convert RAW files."
-msgstr ""
+msgstr "Använd inte Darktable för att konvertera RAW-filer."
 
 #: src/pages/settings/advanced.vue:506
 msgid "Don't use RawTherapee to convert RAW files."
-msgstr ""
+msgstr "Använd inte RawTherapee för att konvertera RAW-filer."
 
 #: src/pages/settings/advanced.vue:232
 msgid "Don't use TensorFlow for image classification."
-msgstr ""
+msgstr "Använd inte TensorFlow för bildklassificering."
 
 #: src/options/options.js:356
 msgid "Donations"
-msgstr ""
+msgstr "Donationer"
 
 #: src/dialog/photo/details.vue:120
 #: src/dialog/share.vue:26
 msgid "Done"
-msgstr ""
+msgstr "Klart"
 
 #: src/dialog/upload.vue:39
 #: src/pages/library/import.vue:7
 #: src/pages/library/index.vue:8
 msgid "Done."
-msgstr ""
+msgstr "Klart."
 
 #: src/component/album/clipboard.vue:113
 #: src/component/album/toolbar.vue:107
@@ -784,15 +785,15 @@ msgstr ""
 #: src/share/photo/clipboard.vue:63
 #: src/share/photos.vue:77
 msgid "Download"
-msgstr ""
+msgstr "Ladda ner"
 
 #: src/dialog/account/edit.vue:320
 msgid "Download remote files"
-msgstr ""
+msgstr "Hämta fjärrfiler"
 
 #: src/pages/settings/general.vue:163
 msgid "Download single files and zip archives."
-msgstr ""
+msgstr "Ladda ner enskilda filer och zip-arkiv."
 
 #: src/component/album/clipboard.vue:86
 #: src/component/album/toolbar.vue:106
@@ -811,31 +812,33 @@ msgstr ""
 #: src/share/photo/list.vue:62
 #: src/share/photos.vue:486
 msgid "Downloading…"
-msgstr ""
+msgstr "Hämtar…"
 
 #: src/pages/settings/advanced.vue:282
 msgid "Downscaling Filter"
-msgstr ""
+msgstr "Filter för nedskalning"
 
 #: src/pages/library/files.vue:37
 msgid "Duplicates will be skipped and only appear once."
-msgstr ""
+msgstr "Dubletter kommer att hoppas över och visas endast en gång."
 
 #: src/pages/settings/advanced.vue:305
 msgid "Dynamic Previews"
-msgstr ""
+msgstr "Dynamiska förhandsgranskningar"
 
 #: src/pages/settings/advanced.vue:306
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr ""
+"Dynamisk rendering kräver en kraftfull server. Den rekommenderas inte för "
+"NAS-enheter."
 
 #: src/pages/settings/advanced.vue:348
 msgid "Dynamic Size Limit: %{n}px"
-msgstr ""
+msgstr "Begränsning av dynamisk storlek: %{n}px"
 
 #: src/pages/about/feedback.vue:181
 msgid "E-Mail"
-msgstr ""
+msgstr "E-post"
 
 #: src/component/album/clipboard.vue:91
 #: src/component/album/toolbar.vue:70
@@ -843,36 +846,36 @@ msgstr ""
 #: src/component/photo/viewer.vue:103
 #: src/pages/settings/general.vue:184
 msgid "Edit"
-msgstr ""
+msgstr "Redigera"
 
 #: src/dialog/album/edit.vue:8
 msgid "Edit %{name}"
-msgstr ""
+msgstr "Redigera %{namn}"
 
 #: src/dialog/account/edit.vue:140
 msgid "Edit Account"
-msgstr ""
+msgstr "Redigera konto"
 
 #: src/dialog/photo/edit.vue:51
 msgid "Edit Photo"
-msgstr ""
+msgstr "Redigera foto"
 
 #: src/dialog/photo/info.vue:183
 msgid "Edited"
-msgstr ""
+msgstr "Redigerad"
 
 #: src/pages/settings/advanced.vue:122
 msgid "Enable new features currently under development."
-msgstr ""
+msgstr "Aktivera nya funktioner som är under utveckling."
 
 #: src/dialog/account/edit.vue:66
 #: src/dialog/account/edit.vue:111
 msgid "Enabled"
-msgstr ""
+msgstr "Aktiverad"
 
 #: src/pages/settings/advanced.vue:464
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr ""
+msgstr "Aktiverar förinställningar för RAW-omvandlare. Kan minska prestandan."
 
 #: src/component/navigation.vue:365
 msgid "Errors"
