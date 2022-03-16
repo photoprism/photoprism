@@ -237,8 +237,8 @@ test-coverage:
 docker-develop: docker-develop-bullseye docker-develop-bullseye-slim docker-develop-armv7
 docker-develop-all: docker-develop docker-develop-buster docker-develop-impish
 docker-develop-bullseye:
-	docker pull --platform=amd64 golang:bullseye
-	docker pull --platform=arm64 golang:bullseye
+	docker pull --platform=amd64 golang:1.18-bullseye
+	docker pull --platform=arm64 golang:1.18-bullseye
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye "-t photoprism/develop:latest"
 docker-develop-bullseye-slim:
 	docker pull --platform=amd64 debian:bullseye-slim

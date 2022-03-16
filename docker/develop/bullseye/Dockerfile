@@ -1,5 +1,5 @@
 #### Base Image: Debian 11, Codename "Bullseye"
-FROM golang:bullseye
+FROM golang:1.18-bullseye
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
