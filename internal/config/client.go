@@ -138,6 +138,14 @@ func (c *Config) Flags() (flags []string) {
 		flags = append(flags, "debug")
 	}
 
+	if c.Test() {
+		flags = append(flags, "test")
+	}
+
+	if c.Demo() {
+		flags = append(flags, "demo")
+	}
+
 	if c.Sponsor() {
 		flags = append(flags, "sponsor")
 	}

@@ -289,7 +289,7 @@ func (c *Config) Version() string {
 
 // UserAgent returns an HTTP user agent string based on the app config and version.
 func (c *Config) UserAgent() string {
-	return fmt.Sprintf("%s/%s (%s)", c.Name(), c.Version(), strings.Join(c.Flags(), "; "))
+	return fmt.Sprintf("%s/%s (%s)", c.Name(), c.Version(), strings.Join(append(c.Flags(), c.Serial()), "; "))
 }
 
 // Copyright returns the application copyright.
