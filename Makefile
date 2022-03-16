@@ -353,8 +353,7 @@ fmt-go:
 	gofmt -w -s pkg internal cmd
 	goimports -w pkg internal cmd
 tidy:
-	go mod tidy
-
+	go mod tidy -go=1.16 && go mod tidy -go=1.17
 .PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
     install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
     docker-develop docker-preview docker-preview-all docker-preview-arm docker-release docker-release-all docker-release-arm \
