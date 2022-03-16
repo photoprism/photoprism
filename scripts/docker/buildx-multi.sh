@@ -9,7 +9,7 @@ if [[ -z $1 ]] || [[ -z $2 ]]; then
 fi
 
 NUMERIC='^[0-9]+$'
-BUILD_DATE=$(date -u +%y%m%d)
+BUILD_DATE=$(/bin/date -u +%y%m%d)
 
 # kill old multi builder if still alive.
 echo "Removing existing multibuilder..."

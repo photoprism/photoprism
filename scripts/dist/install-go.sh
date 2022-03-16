@@ -2,7 +2,7 @@
 
 GOLANG_VERSION=1.18
 
-DESTDIR=$(realpath "${1:-/usr/local}")
+DESTDIR=$(/usr/bin/realpath "${1:-/usr/local}")
 
 # abort if not executed as root
 if [[ $(id -u) != "0" ]]; then
@@ -14,9 +14,9 @@ echo "Installing Go in \"$DESTDIR\"..."
 
 set -e
 
-mkdir -p "$DESTDIR"
+/bin/mkdir -p "$DESTDIR"
 
-SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
+SYSTEM_ARCH=$("$(/usr/bin/dirname "$0")/arch.sh")
 DESTARCH=${2:-$SYSTEM_ARCH}
 
 set -eux;
@@ -37,11 +37,11 @@ fi
 
 echo "Downloading Go from \"$URL\". Please wait."
 
-wget -O go.tgz $URL
-echo $CHECKSUM | sha256sum -c -
-rm -rf /usr/local/go
-tar -C /usr/local -xzf go.tgz
-rm go.tgz
+/usr/bin/wget -O go.tgz $URL
+echo $CHECKSUM | /usr/bin/sha256sum -c -
+/bin/rm -rf /usr/local/go
+/bin/tar -C /usr/local -xzf go.tgz
+/bin/rm go.tgz
 
 /usr/local/go/bin/go version
 

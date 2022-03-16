@@ -8,7 +8,7 @@ fi
 
 echo "Installing WebDAV filesystem driver..."
 
-apt-get update
-apt-get -qq install davfs2
+/usr/bin/apt-get update
+/usr/bin/apt-get -qq install davfs2
 
 echo "Done."

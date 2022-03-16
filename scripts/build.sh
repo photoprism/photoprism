@@ -7,9 +7,9 @@ fi
 
 set -e
 
-BUILD_OS=$(uname -s)
-BUILD_ARCH=$("$(dirname "$0")/dist/arch.sh")
-BUILD_DATE=$(date -u +%y%m%d)
+BUILD_OS=$(/bin/uname -s)
+BUILD_ARCH=$("$(/usr/bin/dirname "$0")/dist/arch.sh")
+BUILD_DATE=$(/bin/date -u +%y%m%d)
 BUILD_VERSION=$(git describe --always)
 BUILD_TAG=${BUILD_DATE}-${BUILD_VERSION}
 BUILD_ID=${BUILD_TAG}-${BUILD_OS}-${BUILD_ARCH^^}
@@ -35,6 +35,6 @@ echo "=> ${BUILD_CMD[*]}"
 "${BUILD_CMD[@]}"
 
 # show size
-du -h "${BUILD_NAME}"
+/usr/bin/du -h "${BUILD_NAME}"
 
 echo "Done."

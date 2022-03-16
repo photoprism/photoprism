@@ -6,7 +6,7 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
-SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
+SYSTEM_ARCH=$("$(/usr/bin/dirname "$0")/arch.sh")
 DESTARCH=${2:-$SYSTEM_ARCH}
 . /etc/os-release
 
@@ -19,9 +19,9 @@ echo "Installing Google Chrome (stable) on ${ID} for ${DESTARCH^^}..."
 
 set -e
 
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-apt-get update
-apt-get -qq install google-chrome-stable
+/usr/bin/wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | /usr/bin/apt-key add -
+/bin/sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+/usr/bin/apt-get update
+/usr/bin/apt-get -qq install google-chrome-stable
 
 echo "Done."

@@ -13,7 +13,7 @@ elif [[ $OS == "Windows_NT" ]]; then
     exit 1
   fi
 else
-  SYSTEM_ARCH=$(uname -m)
+  SYSTEM_ARCH=$(/bin/uname -m)
 fi
 
 BUILD_ARCH=${BUILD_ARCH:-$SYSTEM_ARCH}

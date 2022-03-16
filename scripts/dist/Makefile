@@ -10,12 +10,12 @@ tensorflow-amd64-avx2: tensorflow
 apt-cleanup: clean
 apt-upgrade: update
 update:
-	apt-get update
-	apt-get -qq dist-upgrade
+	/usr/bin/apt-get update
+	/usr/bin/apt-get -qq dist-upgrade
 clean:
-	apt-get -y autoremove
-	apt-get -y autoclean
-	rm -rf /var/lib/apt/lists/*
+	/usr/bin/apt-get -y autoremove
+	/usr/bin/apt-get -y autoclean
+	/bin/rm -rf /var/lib/apt/lists/*
 gpu:
 	/scripts/install-gpu.sh
 tensorflow:
@@ -23,8 +23,8 @@ tensorflow:
 davfs:
 	/scripts/install-davfs.sh
 nano:
-	apt-get update
-	apt-get -qq install nano
+	/usr/bin/apt-get update
+	/usr/bin/apt-get -qq install nano
 
 .PHONY: update apt-upgrade clean apt-cleanup gpu tensorflow davfs nano \
     tensorflow-amd64-cpu tensorflow-amd64-avx tensorflow-amd64-avx2 \

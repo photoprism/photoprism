@@ -12,8 +12,8 @@ SETUP_URL="https://deb.nodesource.com/setup_16.x"
 
 echo "Installing NodeJS and NPM from \"$SETUP_URL\"..."
 
-curl -sL $SETUP_URL | bash -
-apt-get update && apt-get -qq install nodejs
+/usr/bin/curl -sL $SETUP_URL | /bin/bash  -
+/usr/bin/apt-get update && /usr/bin/apt-get -qq install nodejs
 npm install --unsafe-perm=true --allow-root -g npm testcafe
 npm config set cache ~/.cache/npm
 

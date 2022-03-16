@@ -17,7 +17,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     TF_CPP_MIN_LOG_LEVEL="0" \
     GOPATH="/go" \
     GOBIN="/go/bin" \
-    PATH="/scripts:/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/scripts:/usr/local/go/bin:/go/bin:/usr/local/bin:/usr/bin" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 

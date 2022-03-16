@@ -121,6 +121,7 @@ stop:
 	go run cmd/photoprism/photoprism.go stop
 terminal:
 	docker-compose exec -u $(UID) photoprism bash
+rootshell: root-terminal
 root-terminal:
 	docker-compose exec -u root photoprism bash
 migrate:

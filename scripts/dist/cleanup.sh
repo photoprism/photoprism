@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # abort if not executed as root
-if [[ $(id -u) != "0" ]]; then
+if [[ $(/usr/bin/id -u) != "0" ]]; then
   echo "Usage: run ${0##*/} as root" 1>&2
   exit 1
 fi
@@ -9,21 +9,21 @@ fi
 set -o errexit
 
 if [[ ! -d /tmp ]]; then
-  mkdir /tmp
+  /bin/mkdir /tmp
 fi
 
-chmod 1777 /tmp
+/bin/chmod 1777 /tmp
 
-apt-get -y autoremove
-apt-get -y autoclean
-rm -rf /var/lib/apt/lists/*
-rm -rf /tmp/* /var/tmp/*
+/usr/bin/apt-get -y autoremove
+/usr/bin/apt-get -y autoclean
+/bin/rm -rf /var/lib/apt/lists/*
+/bin/rm -rf /tmp/* /var/tmp/*
 history -c
-cat /dev/null > /root/.bash_history
+/bin/cat /dev/null > /root/.bash_history
 unset HISTFILE
-find /var/log -mtime -1 -type f -exec truncate -s 0 {} \;
-rm -rf /var/log/*.gz /var/log/*.log /var/log/*.[0-9] /var/log/*-????????
-rm -rf /var/lib/cloud/instances/*
-rm -f /root/.ssh/* /etc/ssh/*key*
+/usr/bin/find /var/log -mtime -1 -type f -exec truncate -s 0 {} \;
+/bin/rm -rf /var/log/*.gz /var/log/*.log /var/log/*.[0-9] /var/log/*-????????
+/bin/rm -rf /var/lib/cloud/instances/*
+/bin/rm -f /root/.ssh/* /etc/ssh/*key*
 
 echo "Done."
