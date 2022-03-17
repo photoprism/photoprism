@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # INITIALIZES CONTAINER PACKAGES AND PERMISSIONS
 
@@ -28,33 +28,34 @@ case $DOCKER_ENV in
     ;;
 
   *)
-    echo "unsupported init environment \"$DOCKER_ENV\"";
+    echo "init: unsupported environment $DOCKER_ENV";
     exit
     ;;
 esac
 
 if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
   if [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]]; then
-    /usr/sbin/groupadd -g "${PHOTOPRISM_GID}" "group_${PHOTOPRISM_GID}" 2>/dev/null
-    /usr/sbin/useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
-    /usr/sbin/usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
-
-    if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "updating filesystem permissions..."
-      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables filesystem permission updates"
-      /bin/chown --preserve-root -Rcf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "${CHOWN_DIRS[@]}"
-      /bin/chmod --preserve-root -Rcf u+rwX "${CHMOD_DIRS[@]}"
-    fi
+    CHOWN="${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
   else
-    /usr/sbin/useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
-    /usr/sbin/usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
+    CHOWN="${PHOTOPRISM_UID}"
+  fi
 
-    if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "updating filesystem permissions..."
-      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables filesystem permission updates"
-      /bin/chown --preserve-root -Rcf "${PHOTOPRISM_UID}" "${CHOWN_DIRS[@]}"
-      /bin/chmod --preserve-root -Rcf u+rwX "${CHMOD_DIRS[@]}"
+  if [[ ${PHOTOPRISM_UID} -ge 500 ]]; then
+    if [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]] && [[ ${PHOTOPRISM_GID} -ge 500 ]]; then
+      /usr/sbin/groupadd -g "${PHOTOPRISM_GID}" "group_${PHOTOPRISM_GID}" 2>/dev/null
+      /usr/sbin/useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
+      /usr/sbin/usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
+    else
+      /usr/sbin/useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
+      /usr/sbin/usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
     fi
+  fi
+
+  if [[ ${CHOWN} ]] && [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
+    echo "init: updating filesystem permissions"
+    echo "note: PHOTOPRISM_DISABLE_CHOWN=\"true\" disables permission updates"
+    /bin/chown --preserve-root -Rcf "${CHOWN}" "${CHOWN_DIRS[@]}"
+    /bin/chmod --preserve-root -Rcf u+rwX "${CHMOD_DIRS[@]}"
   fi
 fi
 
@@ -68,7 +69,7 @@ INIT_LOCK="/scripts/.init-lock"
 # execute targets via /usr/bin/make
 if [[ ! -e ${INIT_LOCK} ]]; then
   for INIT_TARGET in $PHOTOPRISM_INIT; do
-    echo "init $INIT_TARGET..."
+    echo "init: $INIT_TARGET"
     /usr/bin/make -C "$INIT_SCRIPTS" "$INIT_TARGET"
   done
 

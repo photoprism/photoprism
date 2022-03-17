@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 CPU_DETECTED=$(/usr/bin/lshw -c processor -json 2>/dev/null)
 

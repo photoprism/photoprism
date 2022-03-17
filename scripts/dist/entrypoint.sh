@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # regular expressions
 re='^[0-9]+$'
@@ -12,16 +12,16 @@ export DOCKER_TAG=${DOCKER_TAG:-unknown}
 case $DOCKER_ENV in
   prod)
     export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/scripts:/opt/photoprism/bin:/usr/local/bin:/usr/bin";
-    INIT_SCRIPT="/scripts/entrypoint-init.sh"
+    INIT_SCRIPT="/scripts/entrypoint-init.sh";
     ;;
 
   develop)
     export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/scripts:/usr/local/go/bin:/go/bin:/usr/local/bin:/usr/bin";
-    INIT_SCRIPT="/go/src/github.com/photoprism/photoprism/scripts/dist/entrypoint-init.sh"
+    INIT_SCRIPT="/go/src/github.com/photoprism/photoprism/scripts/dist/entrypoint-init.sh";
     ;;
 
   *)
-    echo "unknown environment \"$DOCKER_ENV\"";
+    echo "entrypoint: unknown environment $DOCKER_ENV";
     INIT_SCRIPT=""
     ;;
 esac
@@ -42,20 +42,23 @@ if [[ -z ${PHOTOPRISM_UID} ]]; then
   fi
 fi
 
-# docker image info
-DOCKER_IMAGE="$PHOTOPRISM_ARCH-$DOCKER_ENV/$DOCKER_TAG"
-
 # initialize container packages and permissions
 if [[ ${INIT_SCRIPT} ]] && [[ -f "${INIT_SCRIPT}" ]]; then
   if [[ $(/usr/bin/id -u) == "0" ]]; then
-    echo "init $DOCKER_IMAGE as root"
+    echo "started $DOCKER_TAG as root ($PHOTOPRISM_ARCH-$DOCKER_ENV)"
     /bin/bash  -c "${INIT_SCRIPT}"
   else
-    echo "init $DOCKER_IMAGE as uid $(/usr/bin/id -u)"
+    echo "started $DOCKER_TAG as uid $(/usr/bin/id -u) ($PHOTOPRISM_ARCH-$DOCKER_ENV)"
     /usr/bin/sudo -E "${INIT_SCRIPT}"
   fi
 else
-  echo "started $DOCKER_IMAGE as uid $(/usr/bin/id -u)"
+  echo "started $DOCKER_TAG as uid $(/usr/bin/id -u) without init script ($PHOTOPRISM_ARCH-$DOCKER_ENV)"
+fi
+
+# display documentation info and link
+if [[ $DOCKER_ENV == "prod" ]]; then
+    echo "Problems? Our Troubleshooting Checklists help you quickly diagnose and solve them:";
+    echo "https://docs.photoprism.app/getting-started/troubleshooting/";
 fi
 
 # set explicit home directory
@@ -74,12 +77,15 @@ else
 fi
 
 # display additional container info for troubleshooting
-echo "umask: \"$(umask)\" ($(umask -S))"
-echo "home-directory: ${HOME}"
-echo "storage-path: ${PHOTOPRISM_STORAGE_PATH}"
-echo "originals-path: ${PHOTOPRISM_ORIGINALS_PATH}"
-echo "import-path: ${PHOTOPRISM_IMPORT_PATH}"
-echo "assets-path: ${PHOTOPRISM_ASSETS_PATH}"
+echo "file umask....: \"$(umask)\" ($(umask -S))"
+echo "home directory: ${HOME}"
+echo "assets path...: ${PHOTOPRISM_ASSETS_PATH:-default}"
+echo "storage path..: ${PHOTOPRISM_STORAGE_PATH:-default}"
+echo "config path...: ${PHOTOPRISM_CONFIG_PATH:-default}"
+echo "cache path....: ${PHOTOPRISM_CACHE_PATH:-default}"
+echo "backup path...: ${PHOTOPRISM_BACKUP_PATH:-default}"
+echo "import path...: ${PHOTOPRISM_IMPORT_PATH:-default}"
+echo "originals path: ${PHOTOPRISM_ORIGINALS_PATH:-default}"
 
 # change to another user and group on request
 if [[ ${INIT_SCRIPT} ]] && [[ $(/usr/bin/id -u) == "0" ]] && [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # This script returns the normalized machine architecture (amd64, arm64, or arm).
 # An error is returned if the architecture is currently not supported by PhotoPrism.

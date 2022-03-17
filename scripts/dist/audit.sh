@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 ######################################## TEST STORAGE FOLDER PERMISSIONS ########################################
 
