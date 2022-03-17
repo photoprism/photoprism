@@ -90,6 +90,9 @@ EXPOSE 2342
 
 # copy dist files
 COPY --from=build /opt/photoprism/ /opt/photoprism
+RUN mv /opt/photoprism/sbin/gosu /sbin/gosu && \
+    chown root:root /sbin/gosu && \
+    chmod 755 /sbin/gosu
 
 # set container entrypoint script
 ENTRYPOINT ["/scripts/entrypoint.sh"]

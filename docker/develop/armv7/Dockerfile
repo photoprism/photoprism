@@ -110,7 +110,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
 
 # install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest; \
-    cp /go/bin/gosu /bin/gosu && \
+    cp /go/bin/gosu /sbin/gosu && \
+    chown root:root /sbin/gosu && \
+    chmod 755 /sbin/gosu && \
     echo "alias ll='ls -alh'" > /photoprism/.bash_aliases && \
     echo "alias ll='ls -alh'" > /root/.bash_aliases && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \

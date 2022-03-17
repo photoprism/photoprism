@@ -95,15 +95,15 @@ if [[ ${INIT_SCRIPT} ]] && [[ $(/usr/bin/id -u) == "0" ]] && [[ ${PHOTOPRISM_UID
     echo "${@}"
 
     # run command as uid:gid
-    ([[ ${DOCKER_ENV} != "prod" ]] || /bin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "/scripts/audit.sh") \
-     && /bin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
+    ([[ ${DOCKER_ENV} != "prod" ]] || /sbin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "/scripts/audit.sh") \
+     && /sbin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
   else
     echo "switching to uid ${PHOTOPRISM_UID}"
     echo "${@}"
 
     # run command as uid
-    ([[ ${DOCKER_ENV} != "prod" ]] || /bin/gosu "${PHOTOPRISM_UID}" "/scripts/audit.sh") \
-     && /bin/gosu "${PHOTOPRISM_UID}" "$@" &
+    ([[ ${DOCKER_ENV} != "prod" ]] || /sbin/gosu "${PHOTOPRISM_UID}" "/scripts/audit.sh") \
+     && /sbin/gosu "${PHOTOPRISM_UID}" "$@" &
   fi
 else
   echo "running as uid $(id -u)"

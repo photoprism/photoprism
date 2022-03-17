@@ -120,7 +120,9 @@ RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
     /usr/local/go/bin/go install github.com/psampaz/go-mod-outdated@latest && \
     /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
-    cp /go/bin/gosu /bin/gosu && \
+    cp /go/bin/gosu /sbin/gosu && \
+    chown root:root /sbin/gosu && \
+    chmod 755 /sbin/gosu && \
     echo "alias go=richgo ll='ls -alh'" > /photoprism/.bash_aliases && \
     echo "alias go=richgo ll='ls -alh'" > /root/.bash_aliases && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \

@@ -84,8 +84,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    cp /opt/photoprism/bin/gosu /bin/gosu && \
-    chown root:root /bin/gosu && \
+    mv /opt/photoprism/sbin/gosu /sbin/gosu && \
+    chown root:root /sbin/gosu && \
+    chmod 755 /sbin/gosu && \
     groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \
     useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
     chmod 777 /photoprism && \
