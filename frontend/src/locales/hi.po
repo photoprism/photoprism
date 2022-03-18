@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
+"PO-Revision-Date: 2022-03-18 10:07+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
 "frontend/hi/>\n"
@@ -2073,9 +2073,8 @@ msgid "Stack pictures taken at the exact same time and location based on their m
 msgstr "उनके मेटाडेटा के आधार पर ठीक उसी समय और स्थान पर ली गई स्टैक तस्वीरें।"
 
 #: src/dialog/photo/info.vue:86
-#, fuzzy
 msgid "Stackable"
-msgstr "stackable"
+msgstr "ढेर"
 
 #: src/component/navigation.vue:94 src/pages/settings/library.vue:34
 msgid "Stacks"
@@ -2266,9 +2265,8 @@ msgid "Unsorted"
 msgstr "अवर्गीकृत"
 
 #: src/dialog/photo/files.vue:38 src/dialog/photo/files.vue:35
-#, fuzzy
 msgid "Unstack"
-msgstr "unstack"
+msgstr "अलग करना"
 
 #: src/dialog/photo/files.vue:180 src/dialog/photo/files.vue:177 src/dialog/photo/info.vue:175
 msgid "Updated"
@@ -2291,9 +2289,8 @@ msgid "Updating previews"
 msgstr "पूर्वावलोकन अपडेट करना"
 
 #: src/pages/library/index.vue:149
-#, fuzzy
 msgid "Updating stacks"
-msgstr "unstack"
+msgstr "ढेर अद्यतन कर रहा है"
 
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:147
 #: src/component/photo/toolbar.vue:125 src/dialog/share/upload.vue:35 src/dialog/upload.vue:8

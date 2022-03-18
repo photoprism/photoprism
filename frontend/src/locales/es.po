@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-18 10:07+0000\n"
+"Last-Translator: Yunhao0799 <yunhi.0799@gmail.com>\n"
 "Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/es/>\n"
 "Language: es\n"
@@ -1821,7 +1821,7 @@ msgstr "Frambuesa"
 
 #: src/options/options.js:320
 msgid "Raw"
-msgstr "Raw"
+msgstr "RAW"
 
 #: src/component/photo/cards.vue:205 src/component/photo/mosaic.vue:180
 #: src/share/photo/cards.vue:178 src/share/photo/mosaic.vue:161
@@ -2549,7 +2549,7 @@ msgstr "Sólo puedes selecionar un elemento"
 #: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:33
 #: src/pages/people/subjects.vue:37
 msgid "You may rescan your library to find additional faces."
-msgstr "Puede volver a explorar su biblioteca para encontrar más caras."
+msgstr "Puede volver a escanear su biblioteca para encontrar más caras."
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
