@@ -22,10 +22,12 @@ tensorflow:
 	/scripts/install-tensorflow.sh auto
 davfs:
 	/scripts/install-davfs.sh
-nano:
+nano: clitools
+clitools:
 	/usr/bin/apt-get update
-	/usr/bin/apt-get -qq install nano
+	@/usr/bin/apt-get -qq install zsh nano >/dev/null 2>&1 && echo "init: successfully installed zsh and nano" || echo "init: packages zsh and nano not available for installation"
+	@/usr/bin/apt-get -qq install exa duf >/dev/null 2>&1 && echo "init: successfully installed exa and duf" || echo "init: packages exa and duf not available for installation"
 
-.PHONY: update apt-upgrade clean apt-cleanup gpu tensorflow davfs nano \
+.PHONY: update apt-upgrade clean apt-cleanup gpu tensorflow davfs \
     tensorflow-amd64-cpu tensorflow-amd64-avx tensorflow-amd64-avx2 \
-    intel-graphics install-intel-graphics install-davfs;
+    intel-graphics install-intel-graphics install-davfs nano clitools;

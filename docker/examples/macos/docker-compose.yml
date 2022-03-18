@@ -75,7 +75,7 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, nano, clean):
+      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clitools, clean):
       # PHOTOPRISM_INIT: "gpu tensorflow"
       HOME: "/photoprism"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory

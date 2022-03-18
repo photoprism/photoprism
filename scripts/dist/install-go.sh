@@ -38,7 +38,7 @@ fi
 echo "Downloading Go from \"$URL\". Please wait."
 
 /usr/bin/wget -O go.tgz $URL
-echo $CHECKSUM | /usr/bin/sha256sum -c -
+echo "$CHECKSUM" | /usr/bin/sha256sum -c -
 /bin/rm -rf /usr/local/go
 /bin/tar -C /usr/local -xzf go.tgz
 /bin/rm go.tgz
