@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-19 16:21+0000\n"
+"PO-Revision-Date: 2022-03-18 09:35+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "Onverwachte fout, probeer het opnieuw"
@@ -178,7 +178,6 @@ msgstr "Account verwijderd"
 msgid "Settings saved"
 msgstr "Instellingen opgeslagen"
 
-#, fuzzy
 msgid "Password changed"
 msgstr "Wachtwoord aangepast"
 
