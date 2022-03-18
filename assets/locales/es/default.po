@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-15 14:35+0000\n"
-"Last-Translator: Yunhao0799 <yunhi.0799@gmail.com>\n"
+"PO-Revision-Date: 2022-03-18 09:35+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
 "backend/es/>\n"
 "Language: es\n"
@@ -20,16 +20,16 @@ msgstr ""
 "X-Generator: Weblate 4.11.2\n"
 
 msgid "Unexpected error, please try again"
-msgstr "Error inesperado, por favor vuelve a intentarlo"
+msgstr "Error inesperado, por favor vuelva a intentarlo"
 
 msgid "Invalid request"
 msgstr "Solicitud inválida"
 
 msgid "Changes could not be saved"
-msgstr "No se guardaram los cambios"
+msgstr "No se pudo guardar los cambios"
 
 msgid "Could not be deleted"
-msgstr "No se logró borrarlo"
+msgstr "No se pudo borrar"
 
 #, c-format
 msgid "%s already exists"
@@ -51,7 +51,7 @@ msgid "Account not found"
 msgstr "Cuenta no encontrada"
 
 msgid "User not found"
-msgstr "Usuário no encontrado"
+msgstr "Usuario no encontrado"
 
 msgid "Label not found"
 msgstr "Etiqueta no encontrada"
@@ -69,34 +69,34 @@ msgid "Face not found"
 msgstr "Cara no encontrada"
 
 msgid "Not available in public mode"
-msgstr "Indisponible en modo público"
+msgstr "No disponible en modo público"
 
 msgid "not available in read-only mode"
-msgstr "indisponible en modo de solo lectura"
+msgstr "No disponible en modo de solo lectura"
 
 msgid "Please log in and try again"
-msgstr "Por favor inicia sesión en su cuenta y vuelve a intentarlo"
+msgstr "Por favor inicie sesión e inténtelo de nuevo"
 
 msgid "Upload might be offensive"
-msgstr "El contenido cargado puede ser ofensivo"
+msgstr "El archivo subido puede ser ofensivo"
 
 msgid "No items selected"
 msgstr "Ningún elemento seleccionado"
 
 msgid "Failed creating file, please check permissions"
-msgstr "La creación del archivo falló, por favor revisa los premisos"
+msgstr "Error creando el archivo, por favor revise los premisos"
 
 msgid "Failed creating folder, please check permissions"
-msgstr "La creación de la carpeta falló, por favor revisa los premisos"
+msgstr "Error creando la carpeta, por favor revise los premisos"
 
 msgid "Could not connect, please try again"
-msgstr "No se puede conectar, por favor vuelve a intentarlo"
+msgstr "No se pudo conectar, por favor vuelva a intentarlo"
 
 msgid "Invalid password, please try again"
-msgstr "Contraseña inválida, por favor vuelve a intentarlo"
+msgstr "Contraseña inválida, por favor vuelva a intentarlo"
 
 msgid "Feature disabled"
-msgstr "Herramienta deshabilitada"
+msgstr "Característica desactivada"
 
 msgid "No labels selected"
 msgstr "Ninguna etiqueta seleccionada"
