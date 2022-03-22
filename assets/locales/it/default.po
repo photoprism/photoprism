@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-19 14:34+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-21 16:35+0000\n"
+"Last-Translator: mistegia <mistegia@gmail.com>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "backend/it/>\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "Errore, si prega di riprovare"
@@ -119,10 +119,8 @@ msgstr "Link non valido"
 msgid "Invalid name"
 msgstr "Nome non valido"
 
-#, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
-msgstr "Password non valida, si prega di riprovare"
+msgstr "Occupato, si prega di riprovare più tardi"
 
 msgid "Changes successfully saved"
 msgstr "Le modifiche sono state salvate correttamente"
@@ -195,9 +193,9 @@ msgstr "Indicizzazione completata in %d secondi"
 msgid "Indexing originals..."
 msgstr "Indicizzando gli originali..."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Indexing files in %s"
-msgstr "Indicizzazione file in %s in corso"
+msgstr "Indicizzazione dei file in %s"
 
 msgid "Indexing canceled"
 msgstr "Indicizzazione cancellata"
