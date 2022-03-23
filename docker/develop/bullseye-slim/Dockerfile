@@ -9,7 +9,7 @@ ARG BUILD_TAG
 # set environment variables, see https://docs.photoprism.app/getting-started/config-options/
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
-    DOCKER_ENV="develop" \
+    DOCKER_ENV="prod" \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
