@@ -245,6 +245,14 @@ docker-develop-bullseye-slim:
 	docker pull --platform=amd64 debian:bullseye-slim
 	docker pull --platform=arm64 debian:bullseye-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye-slim /bullseye-slim
+docker-develop-bookworm:
+	docker pull --platform=amd64 debian:bookworm-slim
+	docker pull --platform=arm64 debian:bookworm-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm /bookworm
+docker-develop-bookworm-slim:
+	docker pull --platform=amd64 debian:bookworm-slim
+	docker pull --platform=arm64 debian:bookworm-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm-slim /bookworm-slim
 docker-develop-armv7:
 	docker pull --platform=arm debian:bullseye-slim
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
@@ -265,6 +273,12 @@ docker-preview-bullseye:
 	docker pull --platform=arm64 photoprism/develop:bullseye
 	docker pull --platform=arm64 photoprism/develop:bullseye-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /bullseye
+docker-preview-bookworm:
+	docker pull --platform=amd64 photoprism/develop:bookworm
+	docker pull --platform=amd64 photoprism/develop:bookworm-slim
+	docker pull --platform=arm64 photoprism/develop:bookworm
+	docker pull --platform=arm64 photoprism/develop:bookworm-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /bookworm
 docker-preview-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm debian:bullseye-slim
@@ -294,6 +308,12 @@ docker-release-bullseye:
 	docker pull --platform=arm64 photoprism/develop:bullseye
 	docker pull --platform=arm64 photoprism/develop:bullseye-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bullseye /bullseye "-t photoprism/photoprism:latest"
+docker-release-bookworm:
+	docker pull --platform=amd64 photoprism/develop:bookworm
+	docker pull --platform=amd64 photoprism/develop:bookworm-slim
+	docker pull --platform=arm64 photoprism/develop:bookworm
+	docker pull --platform=arm64 photoprism/develop:bookworm-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm
 docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm debian:bullseye-slim
