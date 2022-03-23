@@ -6,7 +6,7 @@
     <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field id="search"
-                      v-model="filter.q"
+                      :value="filter.q"
                       class="input-search  background-inherit elevation-0"
                       solo hide-details clearable overflow
                       :label="$gettext('Search')"
@@ -15,7 +15,10 @@
                       autocorrect="off"
                       autocapitalize="none"
                       color="secondary-dark"
+                      @input="onChangeQuery"
                       @click:clear="clearQuery"
+                      @blur="updateQuery"
+                      @change="updateQuery"
                       @keyup.enter.native="updateQuery"
         ></v-text-field>
 
@@ -415,7 +418,12 @@ export default {
         this.listen = true;
       });
     },
+    onChangeQuery(val) {
+      this.filter.q = typeof val === 'string' ? val.trim() : '';
+    },
     updateQuery() {
+      if (this.loading) return;
+
       this.filter.q = this.filter.q.trim();
 
       const query = {

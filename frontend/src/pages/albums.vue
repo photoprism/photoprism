@@ -6,7 +6,7 @@
     <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field id="search"
-                      v-model="filter.q"
+                      :value="filter.q"
                       solo hide-details clearable overflow single-line
                       class="input-search background-inherit elevation-0"
                       :label="$gettext('Search')"
@@ -15,8 +15,11 @@
                       autocapitalize="none"
                       prepend-inner-icon="search"
                       color="secondary-dark"
-                      @keyup.enter.native="updateQuery"
+                      @input="onChangeQuery"
                       @click:clear="clearQuery"
+                      @blur="updateQuery"
+                      @change="updateQuery"
+                      @keyup.enter.native="updateQuery"
         ></v-text-field>
 
         <v-overflow-btn v-model="filter.category"
@@ -483,7 +486,12 @@ export default {
         this.listen = true;
       });
     },
+    onChangeQuery(val) {
+      this.filter.q = typeof val === 'string' ? val.trim() : '';
+    },
     updateQuery() {
+      if (this.loading) return;
+
       this.filter.q = this.filter.q.trim();
 
       const query = {

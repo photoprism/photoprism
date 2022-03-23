@@ -3,7 +3,7 @@
     <div id="map" style="width: 100%; height: 100%;">
       <div class="map-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group">
-          <v-text-field v-model="filter.q"
+          <v-text-field :value="filter.q"
                         class="pa-0 ma-0 input-search"
                         single-line
                         solo
@@ -16,7 +16,10 @@
                         autocorrect="off"
                         autocapitalize="none"
                         color="secondary-dark"
+                        @input="onChangeQuery"
                         @click:clear="clearQuery"
+                        @blur="formChange"
+                        @change="formChange"
                         @keyup.enter.native="formChange"
           ></v-text-field>
         </div>
@@ -81,11 +84,11 @@ export default {
         const settings = this.$config.settings();
 
         if (settings && settings.features.private) {
-          filter.public = true;
+          filter.public = "true";
         }
 
         if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
-          filter.quality = 3;
+          filter.quality = "3";
         }
 
         let mapFont = ['Roboto', 'sans-serif'];
@@ -229,7 +232,11 @@ export default {
         this.loading = false;
       });
     },
+    onChangeQuery(val) {
+      this.filter.q = typeof val === 'string' ? val.trim() : '';
+    },
     formChange() {
+      if (this.loading) return;
       this.search();
     },
     clearQuery() {

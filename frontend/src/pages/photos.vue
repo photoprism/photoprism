@@ -79,11 +79,11 @@ export default {
     const settings = this.$config.settings();
 
     if (settings && settings.features.private) {
-      filter.public = true;
+      filter.public = "true";
     }
 
     if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
-      filter.quality = 3;
+      filter.quality = "3";
     }
 
     return {
@@ -337,6 +337,8 @@ export default {
       });
     },
     updateQuery() {
+      if (this.loading) return;
+
       this.filter.q = this.filter.q.trim();
 
       const query = {

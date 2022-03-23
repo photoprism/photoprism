@@ -3,7 +3,7 @@
           dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
           @submit.prevent="filterChange">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-      <v-text-field v-model="filter.q"
+      <v-text-field :value="filter.q"
                     class="input-search background-inherit elevation-0"
                     autocorrect="off"
                     autocapitalize="none"
@@ -12,7 +12,10 @@
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"
                     color="secondary-dark"
+                    @input="onChangeQuery"
                     @click:clear="clearQuery"
+                    @blur="filterChange"
+                    @change="filterChange"
                     @keyup.enter.native="filterChange"
       ></v-text-field>
 
@@ -217,6 +220,9 @@ export default {
     },
   },
   methods: {
+    onChangeQuery(val) {
+      this.filter.q = typeof val === 'string' ? val.trim() : '';
+    },
     colorOptions() {
       return this.all.colors.concat(options.Colors());
     },

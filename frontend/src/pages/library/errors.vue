@@ -2,7 +2,7 @@
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-      <v-text-field v-model="filter.q"
+      <v-text-field :value="filter.q"
                     class="input-search background-inherit elevation-0"
                     browser-autocomplete="off"
                     autocorrect="off"
@@ -11,7 +11,10 @@
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"
                     color="secondary-dark"
+                    @input="onChangeQuery"
                     @click:clear="clearQuery"
+                    @blur="updateQuery"
+                    @change="updateQuery"
                     @keyup.enter.native="updateQuery"
       ></v-text-field>
       <v-spacer></v-spacer>
@@ -125,7 +128,12 @@ export default {
     this.loadMore();
   },
   methods: {
+    onChangeQuery(val) {
+      this.filter.q = typeof val === 'string' ? val.trim() : '';
+    },
     updateQuery() {
+      if (this.loading) return;
+
       this.filter.q = this.filter.q.trim();
 
       const query = {};

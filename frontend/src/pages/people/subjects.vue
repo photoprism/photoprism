@@ -16,9 +16,10 @@
                       autocapitalize="none"
                       clearable overflow
                       color="secondary-dark"
-                      @change="onChangeQuery"
                       @input="onChangeQuery"
                       @click:clear="clearQuery"
+                      @blur="updateQuery"
+                      @change="updateQuery"
                       @keyup.enter.native="updateQuery"
         ></v-text-field>
 
@@ -532,14 +533,7 @@ export default {
       });
     },
     onChangeQuery(val) {
-      if (!val) {
-        val = '';
-      }
-
-      if (this.filter.q !== val) {
-        this.filter.q = val;
-        this.updateQuery();
-      }
+      this.filter.q = typeof val === 'string' ? val.trim() : '';
     },
     updateQuery() {
       if (this.loading || !this.active) {
