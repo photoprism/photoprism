@@ -105,9 +105,13 @@ export default {
 
       this.loading = true;
 
+      // todo: either introduce infinite flag or
+      // make count parameter optional for REST API
+      const MAX_COUNT = 10000;
+
       const params = {
         q: q,
-        count: 1000,
+        count: MAX_COUNT,
         offset: 0,
         type: "album"
       };
