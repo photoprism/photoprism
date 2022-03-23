@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-03-22 07:42+0000\n"
+"PO-Revision-Date: 2022-03-23 08:07+0000\n"
 "Last-Translator: Joe <reg@smakas.lt>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/lt/>\n"
@@ -21,8 +21,9 @@ msgstr ""
 
 #: src/pages/albums.vue:342
 #: src/share/albums.vue:303
+#, fuzzy
 msgid "%{n} albums found"
-msgstr ""
+msgstr "rasta %{n} albumų"
 
 #: src/dialog/share/upload.vue:76
 msgid "%{n} files uploaded"
@@ -1443,7 +1444,7 @@ msgstr ""
 #: src/pages/albums.vue:345
 #: src/share/albums.vue:306
 msgid "More than 20 albums found"
-msgstr ""
+msgstr "Rasta daugiau nei 20 albumų"
 
 #: src/pages/labels.vue:342
 msgid "More than 20 labels found"
@@ -1539,7 +1540,7 @@ msgstr ""
 #: src/share/albums.vue:18
 #: src/share/albums.vue:299
 msgid "No albums found"
-msgstr ""
+msgstr "Albumų nerasta"
 
 #: src/dialog/photo/labels.vue:33
 #: src/pages/labels.vue:31
@@ -1661,7 +1662,7 @@ msgstr ""
 #: src/pages/albums.vue:340
 #: src/share/albums.vue:301
 msgid "One album found"
-msgstr ""
+msgstr "Rastas vienas albumas"
 
 #: src/pages/library/files.vue:299
 msgid "One file found"
