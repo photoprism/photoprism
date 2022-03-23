@@ -235,24 +235,24 @@ test-coverage:
 	$(info Running all Go unit tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
-docker-develop: docker-develop-bullseye docker-develop-bullseye-slim docker-develop-armv7
-docker-develop-all: docker-develop docker-develop-buster docker-develop-impish
-docker-develop-bullseye:
-	docker pull --platform=amd64 golang:1.18-bullseye
-	docker pull --platform=arm64 golang:1.18-bullseye
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye "-t photoprism/develop:latest"
-docker-develop-bullseye-slim:
-	docker pull --platform=amd64 debian:bullseye-slim
-	docker pull --platform=arm64 debian:bullseye-slim
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye-slim /bullseye-slim
+docker-develop: docker-develop-bookworm docker-develop-bookworm-slim docker-develop-armv7
+docker-develop-all: docker-develop docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster docker-develop-impish
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm /bookworm
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/develop:latest"
 docker-develop-bookworm-slim:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm-slim /bookworm-slim
+docker-develop-bullseye:
+	docker pull --platform=amd64 golang:1.18-bullseye
+	docker pull --platform=arm64 golang:1.18-bullseye
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye
+docker-develop-bullseye-slim:
+	docker pull --platform=amd64 debian:bullseye-slim
+	docker pull --platform=arm64 debian:bullseye-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye-slim /bullseye-slim
 docker-develop-armv7:
 	docker pull --platform=arm debian:bullseye-slim
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
@@ -264,21 +264,21 @@ docker-develop-impish:
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 impish /impish
-docker-preview: docker-preview-bullseye
-docker-preview-all: docker-preview docker-preview-buster docker-preview-impish
+docker-preview: docker-preview-bookworm
+docker-preview-all: docker-preview docker-preview-bullseye docker-preview-buster docker-preview-impish
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
-docker-preview-bullseye:
-	docker pull --platform=amd64 photoprism/develop:bullseye
-	docker pull --platform=amd64 photoprism/develop:bullseye-slim
-	docker pull --platform=arm64 photoprism/develop:bullseye
-	docker pull --platform=arm64 photoprism/develop:bullseye-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /bullseye
 docker-preview-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /bookworm
+docker-preview-bullseye:
+	docker pull --platform=amd64 photoprism/develop:bullseye
+	docker pull --platform=amd64 photoprism/develop:bullseye-slim
+	docker pull --platform=arm64 photoprism/develop:bullseye
+	docker pull --platform=arm64 photoprism/develop:bullseye-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bullseye /bullseye
 docker-preview-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm debian:bullseye-slim
@@ -299,21 +299,21 @@ docker-preview-impish:
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
-docker-release: docker-release-bullseye
-docker-release-all: docker-release docker-release-buster docker-release-impish
+docker-release: docker-release-bookworm
+docker-release-all: docker-release docker-release-bullseye docker-release-buster docker-release-impish
 docker-release-arm: docker-release-arm64 docker-release-armv7
-docker-release-bullseye:
-	docker pull --platform=amd64 photoprism/develop:bullseye
-	docker pull --platform=amd64 photoprism/develop:bullseye-slim
-	docker pull --platform=arm64 photoprism/develop:bullseye
-	docker pull --platform=arm64 photoprism/develop:bullseye-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bullseye /bullseye "-t photoprism/photoprism:latest"
 docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm  "-t photoprism/photoprism:latest"
+docker-release-bullseye:
+	docker pull --platform=amd64 photoprism/develop:bullseye
+	docker pull --platform=amd64 photoprism/develop:bullseye-slim
+	docker pull --platform=arm64 photoprism/develop:bullseye
+	docker pull --platform=arm64 photoprism/develop:bullseye-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bullseye /bullseye
 docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm debian:bullseye-slim

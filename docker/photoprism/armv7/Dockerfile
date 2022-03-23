@@ -12,8 +12,8 @@ COPY . .
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Debian 11, Codename "Bullseye"
-FROM debian:bullseye-slim
+#### Base Image: Debian 12, Codename "Bookworm"
+FROM debian:bookworm-slim
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
@@ -77,7 +77,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
 # copy dist files, scripts, and debian backports sources list
 COPY --from=build /opt/photoprism/ /opt/photoprism
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
-COPY /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
+COPY /docker/develop/bookworm/sources.list /etc/apt/sources.list.d/bookworm.list
 
 # install additional distribution packages
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
