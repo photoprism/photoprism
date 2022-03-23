@@ -95,10 +95,14 @@ services:
     # user: "1000:1000"
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
-    #  - "/dev/dri:/dev/dri"
-    #  - "/dev/nvidia0:/dev/nvidia0"
+    #  - "/dev/dri:/dev/dri"                         # Intel (h264_qsv)
+    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia (h264_nvenc)
     #  - "/dev/nvidiactl:/dev/nvidiactl"
-    #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
+    #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
+    #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
+    #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
+    #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+    #  - "/dev/video11:/dev/video11"                 # Video4Linux (h264_v4l2m2m)
     working_dir: "/photoprism"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:

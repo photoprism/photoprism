@@ -1,6 +1,8 @@
-FROM photoprism/develop:220317-bullseye
+# Debian 12, Codename "Bookworm"
+FROM photoprism/develop:220323-bookworm
 
 ## alternative base images
+# FROM photoprism/develop:bullseye # Debian 11, Codename "Bullseye"
 # FROM photoprism/develop:buster   # Debian 10, Codename "Buster"
 # FROM photoprism/develop:impish   # Ubuntu 21.10, Codename "Impish Indri"
 

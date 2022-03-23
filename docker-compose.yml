@@ -110,16 +110,19 @@ services:
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clitools, clean):
       # PHOTOPRISM_INIT: "gpu tensorflow"
       ## Hardware video transcoding config (optional):
-      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
-      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # use Video4Linux for AVC transcoding (default: libx264)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # use Intel Quick Sync Video for AVC transcoding (default: libx264)
+      # PHOTOPRISM_FFMPEG_ENCODER: "nvidia" # FFmpeg Encoders ("software", "intel", "nvidia", "apple", "v4l2", "vaapi")
+      # PHOTOPRISM_FFMPEG_BUFFERS: "64"    # FFmpeg capture buffers (default: 32)
+      # PHOTOPRISM_FFMPEG_BITRATE: "32"    # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
-    #  - "/dev/dri:/dev/dri"
-    #  - "/dev/nvidia0:/dev/nvidia0"
+    #  - "/dev/dri:/dev/dri"                         # Intel (h264_qsv)
+    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia (h264_nvenc)
     #  - "/dev/nvidiactl:/dev/nvidiactl"
-    #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
+    #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
+    #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
+    #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
+    #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+    #  - "/dev/video11:/dev/video11"                 # Video4Linux (h264_v4l2m2m)
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
