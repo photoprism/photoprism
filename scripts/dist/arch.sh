@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH="/usr/local/sbin/:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+
 # This script returns the normalized machine architecture (amd64, arm64, or arm).
 # An error is returned if the architecture is currently not supported by PhotoPrism.
 
@@ -13,7 +15,7 @@ elif [[ $OS == "Windows_NT" ]]; then
     exit 1
   fi
 else
-  SYSTEM_ARCH=$(/bin/uname -m)
+  SYSTEM_ARCH=$(uname -m)
 fi
 
 BUILD_ARCH=${BUILD_ARCH:-$SYSTEM_ARCH}

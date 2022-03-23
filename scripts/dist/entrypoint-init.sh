@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # INITIALIZES CONTAINER PACKAGES AND PERMISSIONS
+export PATH="/usr/local/sbin/:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
 
 # abort if not executed as root
-if [[ $(/usr/bin/id -u) != "0" ]]; then
+if [[ $(id -u) != "0" ]]; then
   echo "Usage: run ${0##*/} as root" 1>&2
   exit 1
 fi
@@ -42,20 +43,20 @@ if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
 
   if [[ ${PHOTOPRISM_UID} -ge 500 ]]; then
     if [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]] && [[ ${PHOTOPRISM_GID} -ge 500 ]]; then
-      /usr/sbin/groupadd -g "${PHOTOPRISM_GID}" "group_${PHOTOPRISM_GID}" 2>/dev/null
-      /usr/sbin/useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
-      /usr/sbin/usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
+      groupadd -g "${PHOTOPRISM_GID}" "group_${PHOTOPRISM_GID}" 2>/dev/null
+      useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
+      usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
     else
-      /usr/sbin/useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
-      /usr/sbin/usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
+      useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d "/photoprism" "user_${PHOTOPRISM_UID}" 2>/dev/null
+      usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
     fi
   fi
 
   if [[ ${CHOWN} ]] && [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
     echo "init: updating filesystem permissions"
     echo "note: PHOTOPRISM_DISABLE_CHOWN=\"true\" disables permission updates"
-    /bin/chown --preserve-root -Rcf "${CHOWN}" "${CHOWN_DIRS[@]}"
-    /bin/chmod --preserve-root -Rcf u+rwX "${CHMOD_DIRS[@]}"
+    chown --preserve-root -Rcf "${CHOWN}" "${CHOWN_DIRS[@]}"
+    chmod --preserve-root -Rcf u+rwX "${CHMOD_DIRS[@]}"
   fi
 fi
 
@@ -70,7 +71,7 @@ INIT_LOCK="/scripts/.init-lock"
 if [[ ! -e ${INIT_LOCK} ]]; then
   for INIT_TARGET in $PHOTOPRISM_INIT; do
     echo "init: $INIT_TARGET"
-    /usr/bin/make -C "$INIT_SCRIPTS" "$INIT_TARGET"
+    make -C "$INIT_SCRIPTS" "$INIT_TARGET"
   done
 
   echo 1 >${INIT_LOCK}

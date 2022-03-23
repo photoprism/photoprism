@@ -1,7 +1,9 @@
 #!/bin/bash
 
+PATH="/usr/local/sbin/:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+
 # abort if not executed as root
-if [[ $(/usr/bin/id -u) != "0" ]]; then
+if [[ $(id -u) != "0" ]]; then
   echo "Usage: run ${0##*/} as root" 1>&2
   exit 1
 fi
@@ -13,8 +15,8 @@ set -eu
 export DEBIAN_FRONTEND="noninteractive"
 export TMPDIR="/tmp"
 
-/usr/bin/apt-get -y update
-/usr/bin/apt-get -y dist-upgrade
-/usr/bin/apt-get -y autoremove
+apt-get -y update
+apt-get -y dist-upgrade
+apt-get -y autoremove
 
 echo "Done."
