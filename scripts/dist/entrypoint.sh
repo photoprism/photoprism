@@ -7,7 +7,7 @@ re='^[0-9]+$'
 export PHOTOPRISM_ARCH=${PHOTOPRISM_ARCH:-arch}
 export DOCKER_ENV=${DOCKER_ENV:-unknown}
 export DOCKER_TAG=${DOCKER_TAG:-unknown}
-export PATH="/usr/local/sbin/:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
 
 # detect environment
 case $DOCKER_ENV in

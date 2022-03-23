@@ -13,11 +13,11 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     NODE_ENV="production" \
     DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
-    LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
+    LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib" \
     TF_CPP_MIN_LOG_LEVEL="0" \
     GOPATH="/go" \
     GOBIN="/go/bin" \
-    PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/scripts:/usr/local/go/bin:/go/bin:/usr/local/bin:/usr/bin" \
+    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 

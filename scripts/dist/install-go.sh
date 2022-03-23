@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATH="/usr/local/sbin/:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
 
 GOLANG_VERSION=1.18
 DESTDIR=$(realpath "${1:-/usr/local}")

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # INITIALIZES CONTAINER PACKAGES AND PERMISSIONS
-export PATH="/usr/local/sbin/:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
 
 # abort if not executed as root
 if [[ $(id -u) != "0" ]]; then
