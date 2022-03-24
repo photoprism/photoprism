@@ -6,7 +6,7 @@
     <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar dense flat class="page-toolbar" color="secondary-light pa-0">
         <v-text-field id="search"
-                      :value="filter.q"
+                      v-model.lazy.trim="filter.q"
                       class="input-search background-inherit elevation-0"
                       solo hide-details
                       :label="$gettext('Search')"
@@ -16,7 +16,6 @@
                       autocapitalize="none"
                       clearable overflow
                       color="secondary-dark"
-                      @input="onChangeQuery"
                       @click:clear="clearQuery"
                       @blur="updateQuery"
                       @change="updateQuery"
@@ -532,15 +531,10 @@ export default {
         this.listen = true;
       });
     },
-    onChangeQuery(val) {
-      this.filter.q = typeof val === 'string' ? val.trim() : '';
-    },
     updateQuery() {
       if (this.loading || !this.active) {
         return;
       }
-
-      this.filter.q = this.filter.q.trim();
 
       const query = {
         view: this.settings.view

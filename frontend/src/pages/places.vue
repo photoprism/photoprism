@@ -3,7 +3,7 @@
     <div id="map" style="width: 100%; height: 100%;">
       <div class="map-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group">
-          <v-text-field :value="filter.q"
+          <v-text-field v-model.lazy.trim="filter.q"
                         class="pa-0 ma-0 input-search"
                         single-line
                         solo
@@ -16,7 +16,6 @@
                         autocorrect="off"
                         autocapitalize="none"
                         color="secondary-dark"
-                        @input="onChangeQuery"
                         @click:clear="clearQuery"
                         @blur="formChange"
                         @change="formChange"
@@ -231,9 +230,6 @@ export default {
       }).finally(() => {
         this.loading = false;
       });
-    },
-    onChangeQuery(val) {
-      this.filter.q = typeof val === 'string' ? val.trim() : '';
     },
     formChange() {
       if (this.loading) return;
