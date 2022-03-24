@@ -2,19 +2,20 @@
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-      <v-text-field v-model.lazy.trim="filter.q"
+      <v-text-field :value="filter.q"
+                    solo hide-details clearable overflow single-line validate-on-blur
                     class="input-search background-inherit elevation-0"
                     browser-autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
-                    solo hide-details clearable overflow
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"
                     color="secondary-dark"
-                    @click:clear="clearQuery"
-                    @blur="updateQuery"
+                    @input="onChangeQuery"
                     @change="updateQuery"
+                    @blur="updateQuery"
                     @keyup.enter.native="updateQuery"
+                    @click:clear="clearQuery"
       ></v-text-field>
       <v-spacer></v-spacer>
       <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="reload">
@@ -104,6 +105,7 @@ export default {
       dirty: false,
       loading: false,
       scrollDisabled: false,
+      q: q,
       filter: {q},
       batchSize: 100,
       offset: 0,
@@ -119,7 +121,10 @@ export default {
   watch: {
     '$route'() {
       const query = this.$route.query;
-      this.filter.q = query['q'] ? query['q'] : '';
+
+      this.q = query['q'] ? query['q'] : '';
+      this.filter.q = this.q;
+
       this.reload();
     }
   },
@@ -127,7 +132,16 @@ export default {
     this.loadMore();
   },
   methods: {
+    onChangeQuery(val) {
+      this.q = String(val);
+    },
+    clearQuery() {
+      this.q = '';
+      this.updateQuery();
+    },
     updateQuery() {
+      this.filter.q = this.q.trim();
+
       if (this.loading) return;
 
       const query = {};
@@ -145,10 +159,6 @@ export default {
       }
 
       this.$router.replace({query});
-    },
-    clearQuery() {
-      this.filter.q = "";
-      this.updateQuery();
     },
     showDetails(err) {
       this.details.err = err;

@@ -4,14 +4,10 @@
       <div class="map-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group">
           <v-text-field v-model.lazy.trim="filter.q"
+                        solo hide-details clearable flat single-line validate-on-blur
                         class="pa-0 ma-0 input-search"
-                        single-line
-                        solo
-                        flat
                         :label="$gettext('Search')"
                         prepend-inner-icon="search"
-                        clearable
-                        hide-details
                         browser-autocomplete="off"
                         autocorrect="off"
                         autocapitalize="none"
@@ -56,6 +52,7 @@ export default {
     '$route'() {
       this.filter.q = this.query();
       this.lastFilter = {};
+
       this.search();
     }
   },

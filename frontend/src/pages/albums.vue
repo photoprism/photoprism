@@ -5,9 +5,8 @@
 
     <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-        <v-text-field id="search"
-                      v-model.lazy.trim="filter.q"
-                      solo hide-details clearable overflow single-line
+        <v-text-field :value="filter.q"
+                      solo hide-details clearable overflow single-line validate-on-blur
                       class="input-search background-inherit elevation-0"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
@@ -15,10 +14,11 @@
                       autocapitalize="none"
                       prepend-inner-icon="search"
                       color="secondary-dark"
-                      @click:clear="clearQuery"
-                      @blur="updateQuery"
+                      @input="onChangeQuery"
                       @change="updateQuery"
+                      @blur="updateQuery"
                       @keyup.enter.native="updateQuery"
+                      @click:clear="clearQuery"
         ></v-text-field>
 
         <v-overflow-btn v-model="filter.category"
@@ -254,6 +254,7 @@ export default {
       page: 0,
       selection: [],
       settings: settings,
+      q: q,
       filter: filter,
       lastFilter: {},
       routeName: routeName,
@@ -285,10 +286,12 @@ export default {
     '$route'() {
       const query = this.$route.query;
 
-      this.filter.q = query["q"] ? query["q"] : "";
-      this.filter.category = query["category"] ? query["category"] : "";
-      this.lastFilter = {};
       this.routeName = this.$route.name;
+      this.lastFilter = {};
+      this.q = query["q"] ? query["q"] : "";
+      this.filter.q = this.q;
+      this.filter.category = query["category"] ? query["category"] : "";
+
       this.search();
     }
   },
@@ -432,10 +435,6 @@ export default {
         }
       }
     },
-    clearQuery() {
-      this.filter.q = '';
-      this.search();
-    },
     loadMore() {
       if (this.scrollDisabled) return;
 
@@ -485,7 +484,16 @@ export default {
         this.listen = true;
       });
     },
+    onChangeQuery(val) {
+      this.q = String(val);
+    },
+    clearQuery() {
+      this.q = '';
+      this.updateQuery();
+    },
     updateQuery() {
+      this.filter.q = this.q.trim();
+
       if (this.loading) return;
 
       const query = {

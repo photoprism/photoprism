@@ -5,21 +5,20 @@
 
     <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar dense flat class="page-toolbar" color="secondary-light pa-0">
-        <v-text-field id="search"
-                      v-model.lazy.trim="filter.q"
+        <v-text-field :value="filter.q"
+                      solo hide-details clearable overflow single-line validate-on-blur
                       class="input-search background-inherit elevation-0"
-                      solo hide-details
                       :label="$gettext('Search')"
                       prepend-inner-icon="search"
                       browser-autocomplete="off"
                       autocorrect="off"
                       autocapitalize="none"
-                      clearable overflow
                       color="secondary-dark"
-                      @click:clear="clearQuery"
-                      @blur="updateQuery"
+                      @input="onChangeQuery"
                       @change="updateQuery"
+                      @blur="updateQuery"
                       @keyup.enter.native="updateQuery"
+                      @click:clear="clearQuery"
         ></v-text-field>
 
         <v-divider vertical></v-divider>
@@ -213,6 +212,7 @@ export default {
       page: 0,
       selection: [],
       settings: settings,
+      q: q,
       filter: filter,
       lastFilter: {},
       routeName: routeName,
@@ -244,10 +244,11 @@ export default {
 
       const query = this.$route.query;
 
-      this.filter.q = query["q"] ? query["q"] : "";
+      this.routeName = this.$route.name;
+      this.q = query["q"] ? query["q"] : "";
+      this.filter.q = this.q;
       this.filter.hidden = query["hidden"] ? query["hidden"] : "";
       this.filter.order = this.sortOrder();
-      this.routeName = this.$route.name;
 
       this.search();
     }
@@ -436,10 +437,6 @@ export default {
         this.busy = false;
       });
     },
-    clearQuery() {
-      this.filter.q = '';
-      this.updateQuery();
-    },
     addSelection(uid) {
       const pos = this.selection.indexOf(uid);
 
@@ -531,7 +528,16 @@ export default {
         this.listen = true;
       });
     },
+    onChangeQuery(val) {
+      this.q = String(val);
+    },
+    clearQuery() {
+      this.q = '';
+      this.updateQuery();
+    },
     updateQuery() {
+      this.filter.q = this.q.trim();
+
       if (this.loading || !this.active) {
         return;
       }

@@ -1,21 +1,22 @@
 <template>
   <v-form ref="form" lazy-validation
           dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
-          @submit.prevent="filterChange">
+          @submit.prevent="updateQuery">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-      <v-text-field v-model.lazy.trim="filter.q"
+      <v-text-field :value="filter.q"
                     class="input-search background-inherit elevation-0"
+                    solo hide-details clearable overflow single-line validate-on-blur
                     autocorrect="off"
                     autocapitalize="none"
                     browser-autocomplete="off"
-                    solo hide-details clearable overflow single-line
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"
                     color="secondary-dark"
+                    @input="onChangeQuery"
+                    @change="updateQuery"
+                    @blur="updateQuery"
+                    @keyup.enter.native="updateQuery"
                     @click:clear="clearQuery"
-                    @blur="filterChange"
-                    @change="filterChange"
-                    @keyup.enter.native="filterChange"
       ></v-text-field>
 
       <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh">
@@ -177,6 +178,7 @@ export default {
       isFullScreen: !!document.fullscreenElement,
       config: this.$config.values,
       searchExpanded: false,
+      q: this.filter.q ? this.filter.q : "",
       all: {
         countries: [{ID: "", Name: this.$gettext("All Countries")}],
         cameras: [{ID: 0, Name: this.$gettext("All Cameras")}],
@@ -239,8 +241,15 @@ export default {
       this.settings.view = name;
       this.filterChange();
     },
+    onChangeQuery(val) {
+      this.q = String(val);
+    },
     clearQuery() {
-      this.filter.q = '';
+      this.q = '';
+      this.updateQuery();
+    },
+    updateQuery() {
+      this.filter.q = this.q.trim();
       this.filterChange();
     },
     showUpload() {
