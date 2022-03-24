@@ -5,10 +5,9 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/sanitize"
-
-	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/pkg/txt"
 
+	"github.com/gosimple/slug"
 	"github.com/jinzhu/inflection"
 )
 
@@ -37,7 +36,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 		if keywords {
 			words = txt.UniqueKeywords(k)
 		} else {
-			words = txt.UniqueWords(txt.Words(k))
+			words = txt.UniqueWords(strings.Fields(k))
 		}
 
 		if len(words) == 0 {
@@ -46,9 +45,9 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 
 		for _, w := range words {
 			if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", col, w))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", col, SqlLike(w)))
 			} else {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, w))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, SqlLike(w)))
 			}
 
 			if !keywords || !txt.ContainsASCIILetters(w) {
@@ -58,7 +57,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 			singular := inflection.Singular(w)
 
 			if singular != w {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, singular))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, SqlLike(singular)))
 			}
 		}
 
@@ -93,7 +92,7 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
 		words = txt.UniqueKeywords(s)
 		wildcardThreshold = 4
 	} else {
-		words = txt.UniqueWords(txt.Words(s))
+		words = txt.UniqueWords(strings.Fields(s))
 		wildcardThreshold = 2
 	}
 
@@ -105,9 +104,9 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
 
 	for _, w := range words {
 		if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, w))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, SqlLike(w)))
 		} else {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, w))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, SqlLike(w)))
 		}
 	}
 
@@ -142,9 +141,9 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 
 			for _, c := range cols {
 				if strings.Contains(w, txt.Space) {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, w))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, SqlLike(w)))
 				} else {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, w))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, SqlLike(w)))
 				}
 			}
 		}
@@ -191,7 +190,7 @@ func AnySlug(col, search, sep string) (where string) {
 	}
 
 	for _, w := range words {
-		wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
+		wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, SqlLike(w)))
 	}
 
 	return strings.Join(wheres, " OR ")
@@ -233,7 +232,7 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 
 // OrLike returns a where condition and values for finding multiple terms combined with OR.
 func OrLike(col, s string) (where string, values []interface{}) {
-	if col == "" || s == "" {
+	if txt.IsEmpty(col) || txt.IsEmpty(s) {
 		return "", []interface{}{}
 	}
 

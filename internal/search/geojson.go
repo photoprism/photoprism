@@ -194,13 +194,12 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		}
 	} else if f.Unsorted && f.Filter == "" {
 		s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
-	} else if f.Albums != "" || f.Album != "" {
-		if f.Albums == "" {
-			f.Albums = f.Album
-		}
-
+	} else if txt.NotEmpty(f.Album) {
+		v := strings.Trim(f.Album, "*%") + "%"
+		s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
+	} else if txt.NotEmpty(f.Albums) {
 		for _, where := range LikeAnyWord("a.album_title", f.Albums) {
-			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE (?))", gorm.Expr(where))
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (?))", gorm.Expr(where))
 		}
 	}
 

@@ -63,8 +63,8 @@ type SearchPhotos struct {
 	Faces     string    `form:"faces"` // Find or exclude faces if detected.
 	Quality   int       `form:"quality"`
 	Review    bool      `form:"review"`
-	Camera    int       `form:"camera"`
-	Lens      int       `form:"lens"`
+	Camera    string    `form:"camera"`
+	Lens      string    `form:"lens"`
 	Before    time.Time `form:"before" time_format:"2006-01-02"`
 	After     time.Time `form:"after" time_format:"2006-01-02"`
 	Count     int       `form:"count" binding:"required" serialize:"-"`

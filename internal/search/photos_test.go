@@ -295,7 +295,7 @@ func TestPhotos(t *testing.T) {
 		f.Query = ""
 		f.Count = 10
 		f.Offset = 0
-		f.Camera = 1000003
+		f.Camera = "1000003"
 
 		photos, _, err := Photos(f)
 
@@ -603,12 +603,42 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
+	t.Run("search for camera name", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = ""
+		f.Count = 1
+		f.Offset = 0
+		f.Camera = "canon"
+		f.Lens = ""
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for lens name", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = ""
+		f.Count = 1
+		f.Offset = 0
+		f.Camera = ""
+		f.Lens = "apple"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
 	t.Run("search for lens, month, year, album", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Count = 5000
 		f.Offset = 0
-		f.Lens = 1000000
+		f.Lens = "1000000"
 		f.Month = strconv.Itoa(7)
 		f.Year = strconv.Itoa(2790)
 		f.Album = "at9lxuqxpogaaba8"
@@ -1393,7 +1423,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.Greater(t, len(photos), len(photos2))
 	})
-	t.Run("albums and and or search", func(t *testing.T) {
+	t.Run("AlbumsOrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "albums:Holiday|Berlin"
 
@@ -1403,14 +1433,19 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		f.Query = "albums:Berlin&Holiday"
+		assert.Greater(t, len(photos), 5)
+	})
+	t.Run("AlbumsAndSearch", func(t *testing.T) {
+		var f form.SearchPhotos
 
-		photos2, _, err2 := Photos(f)
+		f.Query = "albums:\"Berlin&Holiday\""
 
-		if err2 != nil {
-			t.Fatal(err2)
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
 		}
-		assert.Greater(t, len(photos), len(photos2))
+		assert.Greater(t, len(photos), 0)
 	})
 	t.Run("people and and or search", func(t *testing.T) {
 		var f form.SearchPhotos

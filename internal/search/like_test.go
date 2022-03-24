@@ -102,7 +102,7 @@ func TestLikeAnyKeyword(t *testing.T) {
 }
 
 func TestLikeAnyWord(t *testing.T) {
-	t.Run("and_or_search", func(t *testing.T) {
+	t.Run("SearchAndOr", func(t *testing.T) {
 		if w := LikeAnyWord("k.keyword", "table spoon & usa | img json"); len(w) != 2 {
 			t.Fatal("two where conditions expected")
 		} else {
@@ -110,12 +110,20 @@ func TestLikeAnyWord(t *testing.T) {
 			assert.Equal(t, "k.keyword LIKE 'img%' OR k.keyword LIKE 'json%' OR k.keyword LIKE 'usa%'", w[1])
 		}
 	})
-	t.Run("and_or_search_en", func(t *testing.T) {
+	t.Run("SearchAndOrEnglish", func(t *testing.T) {
 		if w := LikeAnyWord("k.keyword", "table spoon and usa or img json"); len(w) != 2 {
 			t.Fatal("two where conditions expected")
 		} else {
 			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
 			assert.Equal(t, "k.keyword LIKE 'img%' OR k.keyword LIKE 'json%' OR k.keyword LIKE 'usa%'", w[1])
+		}
+	})
+	t.Run("EscapeSql", func(t *testing.T) {
+		if w := LikeAnyWord("k.keyword", "table% | 'spoon' & \"usa"); len(w) != 2 {
+			t.Fatalf("two where conditions expected: %#v", w)
+		} else {
+			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
+			assert.Equal(t, "k.keyword LIKE '\\\"usa%'", w[1])
 		}
 	})
 }

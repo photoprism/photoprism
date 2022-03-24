@@ -104,7 +104,7 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Equal(t, "cat", form.Label)
 		assert.Equal(t, "fooBar baz", form.Query)
-		assert.Equal(t, 23, form.Camera)
+		assert.Equal(t, "23", form.Camera)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, false, form.Favorite)
 		assert.Equal(t, uint(0x61a8), form.Dist)
@@ -204,18 +204,27 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
 	})
-	t.Run("query for camera with invalid type", func(t *testing.T) {
+	t.Run("CameraString", func(t *testing.T) {
 		form := &SearchPhotos{Query: "camera:cat"}
 
 		err := form.ParseQueryString()
 
-		if err == nil {
+		if err != nil {
 			t.Fatal(err)
 		}
 
-		// log.Debugf("%+v\n", form)
+		assert.Equal(t, "cat", form.Camera)
+	})
+	t.Run("LensString", func(t *testing.T) {
+		form := &SearchPhotos{Query: "lens:cat"}
 
-		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "cat", form.Lens)
 	})
 	t.Run("query for before with invalid type", func(t *testing.T) {
 		form := &SearchPhotos{Query: "before:cat"}

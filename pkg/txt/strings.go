@@ -15,7 +15,7 @@ func Bool(s string) bool {
 	return true
 }
 
-// Yes returns true if a string represents "yes".
+// Yes tests if a string represents "yes".
 func Yes(s string) bool {
 	if s == "" {
 		return false
@@ -26,7 +26,7 @@ func Yes(s string) bool {
 	return strings.IndexAny(s, "ytjposiд") == 0
 }
 
-// No returns true if a string represents "no".
+// No tests if a string represents "no".
 func No(s string) bool {
 	if s == "" {
 		return false
@@ -37,7 +37,7 @@ func No(s string) bool {
 	return strings.IndexAny(s, "0nhufeн") == 0
 }
 
-// New returns true if a string represents "new".
+// New tests if a string represents "new".
 func New(s string) bool {
 	if s == "" {
 		return false

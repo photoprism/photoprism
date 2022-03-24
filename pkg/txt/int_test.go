@@ -38,6 +38,19 @@ func TestIsUInt(t *testing.T) {
 	assert.True(t, IsUInt("123"))
 }
 
+func TestIsPosInt(t *testing.T) {
+	assert.False(t, IsPosInt(""))
+	assert.False(t, IsPosInt("12 3"))
+	assert.True(t, IsPosInt("123"))
+	assert.False(t, IsPosInt(" "))
+	assert.False(t, IsPosInt("-1"))
+	assert.False(t, IsPosInt("0"))
+	assert.False(t, IsPosInt("0.1"))
+	assert.False(t, IsPosInt("0,1"))
+	assert.True(t, IsPosInt("1"))
+	assert.True(t, IsPosInt("99943546356"))
+}
+
 func TestUInt(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		result := UInt("")

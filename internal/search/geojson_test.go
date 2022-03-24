@@ -361,9 +361,9 @@ func TestGeo(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 1)
 	})
-	t.Run("albums", func(t *testing.T) {
+	t.Run("Album", func(t *testing.T) {
 		var f form.SearchGeo
-		f.Albums = "2030"
+		f.Album = "Berlin"
 
 		photos, err := Geo(f)
 
@@ -371,9 +371,21 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.GreaterOrEqual(t, len(photos), 10)
+		assert.Equal(t, 1, len(photos))
 	})
-	t.Run("path or path", func(t *testing.T) {
+	t.Run("Albums", func(t *testing.T) {
+		var f form.SearchGeo
+		f.Albums = "Holiday|Christmas"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 2, len(photos))
+	})
+	t.Run("PathOrPath", func(t *testing.T) {
 		var f form.SearchGeo
 		f.Path = "1990/04" + "|" + "2015/11"
 
@@ -591,7 +603,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		f.Query = "albums:Berlin&Holiday"
+		f.Query = "albums:\"Berlin&Holiday|Christmas\""
 
 		photos2, err2 := Geo(f)
 

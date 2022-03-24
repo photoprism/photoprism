@@ -91,7 +91,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		s = s.Where("files.file_primary = 1")
 	}
 
-	if f.UID != "" {
+	if txt.NotEmpty(f.UID) {
 		s = s.Where("photos.photo_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
 
 		// Take shortcut?
@@ -117,7 +117,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	var labels []entity.Label
 	var labelIds []uint
 
-	if f.Label != "" {
+	if txt.NotEmpty(f.Label) {
 		if err := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Debugf("search: label %s not found", txt.LogParamLower(f.Label))
 			return PhotoResults{}, 0, nil
@@ -225,7 +225,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	}
 
 	// Search for one or more keywords?
-	if f.Keywords != "" {
+	if txt.NotEmpty(f.Keywords) {
 		for _, where := range LikeAnyWord("k.keyword", f.Keywords) {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 		}
@@ -261,7 +261,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	}
 
 	// Filter for one or more subjects?
-	if f.Subject != "" {
+	if txt.NotEmpty(f.Subject) {
 		for _, subj := range strings.Split(strings.ToLower(f.Subject), txt.And) {
 			if subjects := strings.Split(subj, txt.Or); rnd.ContainsUIDs(subjects, 'j') {
 				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
@@ -271,7 +271,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 					entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(AnySlug("s.subj_slug", subj, txt.Or)))
 			}
 		}
-	} else if f.Subjects != "" {
+	} else if txt.NotEmpty(f.Subjects) {
 		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, f.Subjects) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
 				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where))
@@ -301,14 +301,20 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		}
 	}
 
-	// Filter by camera?
-	if f.Camera > 0 {
-		s = s.Where("photos.camera_id = ?", f.Camera)
+	// Filter by camera id or name?
+	if txt.IsPosInt(f.Camera) {
+		s = s.Where("photos.camera_id = ?", txt.UInt(f.Camera))
+	} else if txt.NotEmpty(f.Camera) {
+		v := strings.Trim(f.Camera, "*%") + "%"
+		s = s.Where("cameras.camera_make LIKE ? OR cameras.camera_model LIKE ? OR cameras.camera_slug LIKE ?", v, v, v)
 	}
 
-	// Filter by camera lens?
-	if f.Lens > 0 {
-		s = s.Where("photos.lens_id = ?", f.Lens)
+	// Filter by lens id or name?
+	if txt.IsPosInt(f.Lens) {
+		s = s.Where("photos.lens_id = ?", txt.UInt(f.Lens))
+	} else if txt.NotEmpty(f.Lens) {
+		v := strings.Trim(f.Lens, "*%") + "%"
+		s = s.Where("lenses.lens_make LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
 	}
 
 	// Filter by year?
@@ -358,23 +364,23 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	}
 
 	// Filter by location country?
-	if f.Country != "" {
+	if txt.NotEmpty(f.Country) {
 		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), txt.Or))
 	}
 
 	// Filter by location state?
-	if f.State != "" {
+	if txt.NotEmpty(f.State) {
 		s = s.Where("places.place_state IN (?)", strings.Split(f.State, txt.Or))
 	}
 
 	// Filter by location category?
-	if f.Category != "" {
+	if txt.NotEmpty(f.Category) {
 		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
 			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), txt.Or))
 	}
 
 	// Filter by media type?
-	if f.Type != "" {
+	if txt.NotEmpty(f.Type) {
 		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), txt.Or))
 	} else if f.Video {
 		s = s.Where("photos.photo_type = 'video'")
@@ -387,7 +393,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	}
 
 	// Filter by storage path?
-	if f.Path != "" {
+	if txt.NotEmpty(f.Path) {
 		p := f.Path
 
 		if strings.HasPrefix(p, "/") {
@@ -403,7 +409,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	}
 
 	// Filter by primary file name without path and extension.
-	if f.Name != "" {
+	if txt.NotEmpty(f.Name) {
 		where, names := OrLike("photos.photo_name", f.Name)
 
 		// Omit file path and known extensions.
@@ -415,25 +421,25 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	}
 
 	// Filter by complete file names?
-	if f.Filename != "" {
+	if txt.NotEmpty(f.Filename) {
 		where, values := OrLike("files.file_name", f.Filename)
 		s = s.Where(where, values...)
 	}
 
 	// Filter by original file name?
-	if f.Original != "" {
+	if txt.NotEmpty(f.Original) {
 		where, values := OrLike("photos.original_name", f.Original)
 		s = s.Where(where, values...)
 	}
 
 	// Filter by photo title?
-	if f.Title != "" {
+	if txt.NotEmpty(f.Title) {
 		where, values := OrLike("photos.photo_title", f.Title)
 		s = s.Where(where, values...)
 	}
 
 	// Filter by file hash?
-	if f.Hash != "" {
+	if txt.NotEmpty(f.Hash) {
 		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), txt.Or))
 	}
 
@@ -498,11 +504,10 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		}
 	} else if f.Unsorted && f.Filter == "" {
 		s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
-	} else if f.Albums != "" || f.Album != "" {
-		if f.Albums == "" {
-			f.Albums = f.Album
-		}
-
+	} else if txt.NotEmpty(f.Album) {
+		v := strings.Trim(f.Album, "*%") + "%"
+		s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
+	} else if txt.NotEmpty(f.Albums) {
 		for _, where := range LikeAnyWord("a.album_title", f.Albums) {
 			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (?))", gorm.Expr(where))
 		}

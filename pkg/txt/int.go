@@ -49,3 +49,18 @@ func IsUInt(s string) bool {
 
 	return true
 }
+
+// IsPosInt checks if a string represents an integer greater than 0.
+func IsPosInt(s string) bool {
+	if s == "" || s == " " || s == "0" || s == "-1" {
+		return false
+	}
+
+	for _, r := range s {
+		if r < 48 || r > 57 {
+			return false
+		}
+	}
+
+	return true
+}
