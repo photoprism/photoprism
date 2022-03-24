@@ -7,7 +7,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 
-	"github.com/gosimple/slug"
 	"github.com/jinzhu/inflection"
 )
 
@@ -172,7 +171,7 @@ func AnySlug(col, search, sep string) (where string) {
 	for _, w := range strings.Split(search, sep) {
 		w = strings.TrimSpace(w)
 
-		words = append(words, slug.Make(w))
+		words = append(words, txt.Slug(w))
 
 		if !txt.ContainsASCIILetters(w) {
 			continue
@@ -181,7 +180,7 @@ func AnySlug(col, search, sep string) (where string) {
 		singular := inflection.Singular(w)
 
 		if singular != w {
-			words = append(words, slug.Make(singular))
+			words = append(words, txt.Slug(singular))
 		}
 	}
 

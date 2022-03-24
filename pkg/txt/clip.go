@@ -16,6 +16,7 @@ const (
 	ClipName        = 160
 	ClipTitle       = 200
 	ClipVarchar     = 255
+	ClipPath        = 500
 	ClipLabel       = 500
 	ClipQuery       = 1000
 	ClipDescription = 16000

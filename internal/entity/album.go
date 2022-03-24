@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
@@ -133,7 +132,7 @@ func NewAlbum(albumTitle, albumType string) *Album {
 
 // NewFolderAlbum creates a new folder album.
 func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
-	albumSlug := slug.Make(albumPath)
+	albumSlug := txt.Slug(albumPath)
 
 	if albumTitle == "" || albumSlug == "" || albumPath == "" || albumFilter == "" {
 		return nil
@@ -144,9 +143,9 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	result := &Album{
 		AlbumOrder:  SortOrderAdded,
 		AlbumType:   AlbumFolder,
-		AlbumTitle:  albumTitle,
-		AlbumSlug:   albumSlug,
-		AlbumPath:   albumPath,
+		AlbumTitle:  txt.Clip(albumTitle, txt.ClipDefault),
+		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
+		AlbumPath:   txt.Clip(albumPath, txt.ClipPath),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -166,8 +165,8 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,
 		AlbumType:   AlbumMoment,
-		AlbumTitle:  albumTitle,
-		AlbumSlug:   albumSlug,
+		AlbumTitle:  txt.Clip(albumTitle, txt.ClipDefault),
+		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -190,8 +189,8 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	result := &Album{
 		AlbumOrder:  SortOrderNewest,
 		AlbumType:   AlbumState,
-		AlbumTitle:  albumTitle,
-		AlbumSlug:   albumSlug,
+		AlbumTitle:  txt.Clip(albumTitle, txt.ClipDefault),
+		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -276,7 +275,7 @@ func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 // FindFolderAlbum finds a matching folder album or returns nil.
 func FindFolderAlbum(albumPath string) *Album {
 	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
-	albumSlug := slug.Make(albumPath)
+	albumSlug := txt.Slug(albumPath)
 
 	if albumSlug == "" {
 		return nil
@@ -391,8 +390,8 @@ func (m *Album) SetTitle(title string) {
 
 // UpdateSlug updates title and slug of generated albums if needed.
 func (m *Album) UpdateSlug(title, slug string) error {
-	title = strings.TrimSpace(title)
-	slug = strings.TrimSpace(slug)
+	title = txt.Clip(title, txt.ClipDefault)
+	slug = txt.Clip(slug, txt.ClipSlug)
 
 	if title == "" || slug == "" {
 		return nil
@@ -416,6 +415,9 @@ func (m *Album) UpdateSlug(title, slug string) error {
 
 // UpdateState updates the album location.
 func (m *Album) UpdateState(title, slug, stateName, countryCode string) error {
+	title = txt.Clip(title, txt.ClipDefault)
+	slug = txt.Clip(slug, txt.ClipSlug)
+
 	if title == "" || slug == "" || stateName == "" || countryCode == "" {
 		return nil
 	}
@@ -482,7 +484,7 @@ func (m *Album) Updates(values interface{}) error {
 // UpdateFolder updates the path, filter and slug for a folder album.
 func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
-	albumSlug := slug.Make(albumPath)
+	albumSlug := txt.Slug(albumPath)
 
 	if albumSlug == "" {
 		return nil
@@ -592,7 +594,7 @@ func (m *Album) Title() string {
 
 // ZipName returns the zip download filename.
 func (m *Album) ZipName() string {
-	s := slug.Make(m.AlbumTitle)
+	s := txt.Slug(m.AlbumTitle)
 
 	if len(s) < 2 {
 		s = fmt.Sprintf("photoprism-album-%s", m.AlbumUID)

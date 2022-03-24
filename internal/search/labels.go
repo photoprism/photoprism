@@ -3,7 +3,6 @@ package search
 import (
 	"strings"
 
-	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/sanitize"
@@ -56,7 +55,7 @@ func Labels(f form.SearchLabels) (results []Label, err error) {
 		var categories []entity.Category
 		var label entity.Label
 
-		slugString := slug.Make(f.Query)
+		slugString := txt.Slug(f.Query)
 		likeString := "%" + f.Query + "%"
 
 		if result := Db().First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
