@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-08 11:48+0000\n"
+"PO-Revision-Date: 2022-03-24 10:44+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
@@ -78,7 +78,7 @@ msgid "Please log in and try again"
 msgstr "Veuillez vous identifier et recommencer"
 
 msgid "Upload might be offensive"
-msgstr "Le chargement peut être choquant"
+msgstr "Le contenu chargé peut être choquant"
 
 msgid "No items selected"
 msgstr "Aucun élément sélectionné"
@@ -138,10 +138,10 @@ msgid "Album %s deleted"
 msgstr "Album %s supprimé"
 
 msgid "Album contents cloned"
-msgstr "Le contenu de l'album a été cloné"
+msgstr "Le contenu de l'album a été copié"
 
 msgid "File removed from stack"
-msgstr "Fichier retiré du groupe"
+msgstr "Le fichier a été retiré du groupe"
 
 msgid "File deleted"
 msgstr "Fichier supprimé"
