@@ -28,7 +28,7 @@ func TestSearchQuery(t *testing.T) {
 	})
 	t.Run("AndOr", func(t *testing.T) {
 		q := SearchQuery("Jens AND Mander and me Or Kitty AND ")
-		assert.Equal(t, "Jens&Mander&me|Kitty", q)
+		assert.Equal(t, "Jens&Mander&me|Kitty&", q)
 	})
 	t.Run("FlowersInThePark", func(t *testing.T) {
 		q := SearchQuery(" Flowers in the Park ")

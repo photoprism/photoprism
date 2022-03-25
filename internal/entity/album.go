@@ -143,13 +143,14 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	result := &Album{
 		AlbumOrder:  SortOrderAdded,
 		AlbumType:   AlbumFolder,
-		AlbumTitle:  txt.Clip(albumTitle, txt.ClipDefault),
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumPath:   txt.Clip(albumPath, txt.ClipPath),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
 	}
+
+	result.SetTitle(albumTitle)
 
 	return result
 }
@@ -165,12 +166,13 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,
 		AlbumType:   AlbumMoment,
-		AlbumTitle:  txt.Clip(albumTitle, txt.ClipDefault),
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
 	}
+
+	result.SetTitle(albumTitle)
 
 	return result
 }
@@ -189,12 +191,13 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	result := &Album{
 		AlbumOrder:  SortOrderNewest,
 		AlbumType:   AlbumState,
-		AlbumTitle:  txt.Clip(albumTitle, txt.ClipDefault),
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
 	}
+
+	result.SetTitle(albumTitle)
 
 	return result
 }
@@ -219,7 +222,6 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,
 		AlbumType:   AlbumMonth,
-		AlbumTitle:  albumTitle,
 		AlbumSlug:   albumSlug,
 		AlbumFilter: f.Serialize(),
 		AlbumYear:   year,
@@ -227,6 +229,8 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 		CreatedAt:   now,
 		UpdatedAt:   now,
 	}
+
+	result.SetTitle(albumTitle)
 
 	return result
 }
@@ -367,13 +371,15 @@ func (m *Album) IsDefault() bool {
 
 // SetTitle changes the album name.
 func (m *Album) SetTitle(title string) {
-	title = strings.TrimSpace(title)
+	title = strings.Trim(title, "_&|{}<>: \n\r\t\\")
+	title = strings.ReplaceAll(title, "\"", "'")
+	title = txt.Shorten(title, txt.ClipDefault, txt.Ellipsis)
 
 	if title == "" {
 		title = m.CreatedAt.Format("January 2006")
 	}
 
-	m.AlbumTitle = txt.Clip(title, txt.ClipDefault)
+	m.AlbumTitle = title
 
 	if m.AlbumType == AlbumDefault || m.AlbumSlug == "" {
 		if len(m.AlbumTitle) < txt.ClipSlug {
@@ -408,7 +414,9 @@ func (m *Album) UpdateSlug(title, slug string) error {
 		return nil
 	}
 
-	m.AlbumTitle = title
+	if title != "" {
+		m.SetTitle(title)
+	}
 
 	return m.Updates(Values{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug})
 }
@@ -449,7 +457,9 @@ func (m *Album) UpdateState(title, slug, stateName, countryCode string) error {
 		return nil
 	}
 
-	m.AlbumTitle = title
+	if title != "" {
+		m.SetTitle(title)
+	}
 
 	return m.Updates(Values{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
 }

@@ -60,7 +60,7 @@ the further from the equator you get. The precision of the latitude part does no
 more strictly however, a meridian arc length per 1 second depends on the latitude at the point in question. 
 The discrepancy of 1 second meridian arc length between equator and pole is about 0.3 metres because the earth 
 is an oblate spheroid.`
-		expected := txt.Clip(longName, txt.ClipDefault)
+		expected := txt.Shorten(longName, txt.ClipDefault, txt.Ellipsis)
 		slugExpected := txt.Clip(longName, txt.ClipSlug)
 		album := NewAlbum(longName, AlbumDefault)
 		assert.Equal(t, expected, album.AlbumTitle)

@@ -306,7 +306,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		s = s.Where("photos.camera_id = ?", txt.UInt(f.Camera))
 	} else if txt.NotEmpty(f.Camera) {
 		v := strings.Trim(f.Camera, "*%") + "%"
-		s = s.Where("cameras.camera_make LIKE ? OR cameras.camera_model LIKE ? OR cameras.camera_slug LIKE ?", v, v, v)
+		s = s.Where("cameras.camera_name LIKE ? OR cameras.camera_model LIKE ? OR cameras.camera_slug LIKE ?", v, v, v)
 	}
 
 	// Filter by lens id or name?
@@ -314,7 +314,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		s = s.Where("photos.lens_id = ?", txt.UInt(f.Lens))
 	} else if txt.NotEmpty(f.Lens) {
 		v := strings.Trim(f.Lens, "*%") + "%"
-		s = s.Where("lenses.lens_make LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
+		s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
 	}
 
 	// Filter by year?

@@ -5,7 +5,8 @@ import (
 )
 
 // sqlSpecialBytes contains special bytes to escape in SQL search queries.
-var sqlSpecialBytes = []byte{34, 39, 92, 95}
+// see https://mariadb.com/kb/en/string-literals/
+var sqlSpecialBytes = []byte{34, 39, 92, 95} // ", ', \, _
 
 // SqlString escapes a string for use in an SQL query.
 func SqlString(s string) string {

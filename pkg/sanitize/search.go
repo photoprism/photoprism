@@ -27,7 +27,7 @@ func SearchString(s string) string {
 	s = strings.ReplaceAll(s, "**", "*")
 
 	// Trim.
-	return strings.Trim(s, "&|\\<>\n\r\t")
+	return strings.Trim(s, "|\\<>\n\r\t")
 }
 
 // SearchQuery replaces search operator with default symbols.
@@ -49,5 +49,5 @@ func SearchQuery(s string) string {
 	s = strings.ReplaceAll(s, "**", "*")
 
 	// Trim.
-	return strings.Trim(s, "+&|-=$^(){}\\<>,;: \n\r\t")
+	return strings.Trim(s, "|${}\\<>: \n\r\t")
 }

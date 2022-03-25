@@ -26,6 +26,8 @@ func (m *Photo) NoTitle() bool {
 
 // SetTitle changes the photo title and clips it to 300 characters.
 func (m *Photo) SetTitle(title, source string) {
+	title = strings.Trim(title, "_&|{}<>: \n\r\t\\")
+	title = strings.ReplaceAll(title, "\"", "'")
 	title = txt.Shorten(title, txt.ClipTitle, txt.Ellipsis)
 
 	if title == "" {
