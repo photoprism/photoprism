@@ -128,7 +128,7 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 		return m.takenAt, m.takenAtSrc
 	}
 
-	if nameTime := txt.Time(m.fileName); !nameTime.IsZero() {
+	if nameTime := txt.DateFromFilePath(m.fileName); !nameTime.IsZero() {
 		m.takenAt = nameTime
 		m.takenAtSrc = entity.SrcName
 

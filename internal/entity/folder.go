@@ -114,7 +114,7 @@ func (m *Folder) SetValuesFromPath() {
 	}
 
 	if len(m.Path) >= 6 {
-		if date := txt.Time(m.Path); !date.IsZero() {
+		if date := txt.DateFromFilePath(m.Path); !date.IsZero() {
 			if txt.IsUInt(s) || txt.IsTime(s) {
 				if date.Day() > 1 {
 					m.FolderTitle = date.Format("January 2, 2006")

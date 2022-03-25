@@ -11,18 +11,20 @@ import (
 	"time"
 
 	"github.com/dsoprea/go-exif/v3"
+	"gopkg.in/photoprism/go-tz.v2/tz"
+
 	exifcommon "github.com/dsoprea/go-exif/v3/common"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/sanitize"
-	"gopkg.in/photoprism/go-tz.v2/tz"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var exifIfdMapping *exifcommon.IfdMapping
 var exifTagIndex = exif.NewTagIndex()
 var exifMutex = sync.Mutex{}
-
-const DateTimeZero = "0000:00:00 00:00:00"
+var exifDateFields = []string{"DateTimeOriginal", "DateTimeDigitized", "CreateDate", "DateTime"}
 
 func init() {
 	exifIfdMapping = exifcommon.NewIfdMapping()
@@ -30,11 +32,6 @@ func init() {
 	if err := exifcommon.LoadStandardIfds(exifIfdMapping); err != nil {
 		log.Errorf("metadata: %s", err.Error())
 	}
-}
-
-// ValidDateTime returns true if a date string looks valid and is not zero.
-func ValidDateTime(s string) bool {
-	return len(s) == len(DateTimeZero) && s != DateTimeZero
 }
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
@@ -236,36 +233,24 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 		}
 	}
 
-	var takenAt string
+	takenAt := time.Time{}
 
-	if value, ok := tags["DateTimeOriginal"]; ok && ValidDateTime(value) {
-		takenAt = value
-	} else if value, ok := tags["DateTimeDigitized"]; ok && ValidDateTime(value) {
-		takenAt = value
-	} else if value, ok := tags["CreateDate"]; ok && ValidDateTime(value) {
-		takenAt = value
-	} else if value, ok := tags["DateTime"]; ok && ValidDateTime(value) {
-		takenAt = value
+	for _, name := range exifDateFields {
+		if dateTime := txt.DateTime(tags[name], data.TimeZone); !dateTime.IsZero() {
+			takenAt = dateTime
+			break
+		}
 	}
 
-	if ValidDateTime(takenAt) {
-		takenAt = strings.ReplaceAll(takenAt, "/", ":")
-		takenAt = strings.ReplaceAll(takenAt, "-", ":")
-
-		if taken, err := time.Parse("2006:01:02 15:04:05", takenAt); err == nil {
-			data.TakenAtLocal = taken.Round(time.Second)
-			data.TakenAt = data.TakenAtLocal
-
-			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
-				log.Warnf("metadata: unknown time zone %s in %s (exif)", data.TimeZone, logName)
-			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", takenAt, loc); err == nil {
-				data.TakenAt = tl.Round(time.Second).UTC()
-			} else {
-				log.Errorf("metadata: %s in %s (exif time)", err.Error(), logName) // this should never happen
-			}
+	// Valid time found in Exif metadata?
+	if !takenAt.IsZero() {
+		if takenAtLocal, err := time.ParseInLocation("2006-01-02T15:04:05", takenAt.Format("2006-01-02T15:04:05"), time.UTC); err == nil {
+			data.TakenAtLocal = takenAtLocal
 		} else {
-			log.Warnf("metadata: invalid time %s in %s (exif)", takenAt, logName)
+			data.TakenAtLocal = takenAt
 		}
+
+		data.TakenAt = takenAt.UTC()
 	}
 
 	if value, ok := tags["Flash"]; ok {

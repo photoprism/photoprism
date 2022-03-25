@@ -79,13 +79,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					continue
 				}
 
-				s := strings.TrimSpace(jsonValue.String())
-				s = strings.ReplaceAll(s, "/", ":")
-
-				if tv, err := time.Parse("2006:01:02 15:04:05", strings.ReplaceAll(s, "-", ":")); err == nil {
-					fieldValue.Set(reflect.ValueOf(tv.Round(time.Second).UTC()))
-				} else if tv, err := time.Parse("2006:01:02 15:04:05Z07:00", s); err == nil {
-					fieldValue.Set(reflect.ValueOf(tv.Round(time.Second)))
+				if dateTime := txt.DateTime(jsonValue.String(), ""); !dateTime.IsZero() {
+					fieldValue.Set(reflect.ValueOf(dateTime))
 				}
 			case time.Duration:
 				if !fieldValue.IsZero() {
