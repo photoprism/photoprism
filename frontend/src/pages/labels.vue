@@ -415,7 +415,7 @@ export default {
       });
     },
     onChangeQuery(val) {
-      this.q = String(val);
+      this.q = val ? String(val) : '';
     },
     clearQuery() {
       this.q = '';

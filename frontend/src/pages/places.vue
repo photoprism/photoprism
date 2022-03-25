@@ -195,7 +195,7 @@ export default {
       });
     },
     query: function () {
-      return this.$route.params.q ? this.$route.params.q : "";
+      return this.$route.params.q ? this.$route.params.q : '';
     },
     openPhoto(uid) {
       // Abort if uid is empty or results aren't loaded.

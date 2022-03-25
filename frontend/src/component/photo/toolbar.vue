@@ -176,7 +176,7 @@ export default {
       isFullScreen: !!document.fullscreenElement,
       config: this.$config.values,
       searchExpanded: false,
-      q: this.filter.q ? this.filter.q : "",
+      q: this.filter.q ? this.filter.q : '',
       all: {
         countries: [{ID: "", Name: this.$gettext("All Countries")}],
         cameras: [{ID: 0, Name: this.$gettext("All Cameras")}],
@@ -240,7 +240,7 @@ export default {
       this.updateQuery();
     },
     onChangeQuery(val) {
-      this.q = String(val);
+      this.q = val ? String(val) : '';
     },
     clearQuery() {
       this.q = '';
