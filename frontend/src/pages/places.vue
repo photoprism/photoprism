@@ -5,7 +5,7 @@
         <div class="maplibregl-ctrl maplibregl-ctrl-group">
           <v-text-field v-model.lazy.trim="filter.q"
                         solo hide-details clearable flat single-line validate-on-blur
-                        class="pa-0 ma-0 input-search"
+                        class="input-search pa-0 ma-0"
                         :label="$gettext('Search')"
                         prepend-inner-icon="search"
                         browser-autocomplete="off"
@@ -13,8 +13,6 @@
                         autocapitalize="none"
                         color="secondary-dark"
                         @click:clear="clearQuery"
-                        @blur="formChange"
-                        @change="formChange"
                         @keyup.enter.native="formChange"
           ></v-text-field>
         </div>

@@ -13,8 +13,6 @@
                     prepend-inner-icon="search"
                     color="secondary-dark"
                     @input="onChangeQuery"
-                    @change="updateQuery"
-                    @blur="updateQuery"
                     @keyup.enter.native="updateQuery"
                     @click:clear="clearQuery"
       ></v-text-field>
@@ -231,7 +229,7 @@ export default {
       return this.all.years.concat(options.IndexedYears());
     },
     dropdownChange() {
-      this.filterChange();
+      this.updateQuery();
 
       if (window.innerWidth < 600) {
         this.searchExpanded = false;
@@ -239,7 +237,7 @@ export default {
     },
     setView(name) {
       this.settings.view = name;
-      this.filterChange();
+      this.updateQuery();
     },
     onChangeQuery(val) {
       this.q = String(val);

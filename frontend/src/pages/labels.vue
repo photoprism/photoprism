@@ -15,8 +15,6 @@
                       autocapitalize="none"
                       color="secondary-dark"
                       @input="onChangeQuery"
-                      @change="updateQuery"
-                      @blur="updateQuery"
                       @keyup.enter.native="updateQuery"
                       @click:clear="clearQuery"
         ></v-text-field>
