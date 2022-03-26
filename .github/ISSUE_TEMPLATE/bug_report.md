@@ -7,24 +7,25 @@ assignees: ''
 
 ---
 
-## We kindly ask you not to report a bug unless you are certain to have found a fully reproducible and previously unreported issue that must be fixed directly in the application source code ##
+IMPORTANT - PLEASE READ BEFORE PROCEEDING:
 
-Contact us or a community member if you need help, it could be a local configuration problem, or a misunderstanding in how the software works.
+- We kindly ask you not to report bugs via GitHub Issues **unless you are certain to have found a fully reproducible and previously unreported issue** that must be fixed directly in the app
+- When reporting a problem, **always include the software versions you are using and other information about your environment** such as browser, browser plugins, operating system, storage type, memory size, and processor
+- Note that all issue **subscribers receive an email notification** from GitHub for each new comment, so these should only be used for sharing important information and not for personal discussions/questions
+- Contact us or a community member if you need help, it could be a local configuration problem, or a misunderstanding in how the software works
+- This gives our team the opportunity to improve the docs and provide best-in-class support to you, instead of handling unclear/duplicate bug reports or triggering a flood of notifications by responding to comments
 
-This gives our team the opportunity to improve the documentation and provide best-in-class support to you, instead of handling unclear and/or duplicate bug reports.
+USE THE TROUBLESHOOTING CHECKLISTS IN OUR DOCS TO QUICKLY DIAGNOSE AND FIX COMMON PROBLEMS:
 
-Existing Issues: https://github.com/photoprism/photoprism/issues
+  <https://docs.photoprism.app/getting-started/troubleshooting/>
 
-THANK YOU! 💐
+BEFORE OPENING AN ISSUE, MAKE SURE TO SEARCH EXISTING BUG REPORTS AND FEATURE REQUESTS:
 
-You are welcome to use GitHub Discussions instead:
-https://github.com/photoprism/photoprism/discussions
+  <https://github.com/photoprism/photoprism/issues>
 
-Sponsors receive direct technical support via email:
-https://photoprism.app/contact 📬
+FOR GENERAL QUESTIONS, TECHNICAL SUPPORT, AND TO GET TO KNOW OTHER COMMUNITY MEMBERS:
 
-Our troubleshooting checklists help you quickly find and fix common problems:
-https://docs.photoprism.app/getting-started/troubleshooting/
+  <https://github.com/photoprism/photoprism/discussions>
 
 **What does not work as described in the documentation?**
 

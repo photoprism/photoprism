@@ -7,15 +7,20 @@ assignees: ''
 
 ---
 
-ONLY CREATE A NEW FEATURE REQUEST AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA ALREADY EXISTS:
+IMPORTANT - PLEASE READ BEFORE PROCEEDING:
 
-- Roadmap: https://link.photoprism.app/roadmap
-- Open Issues: https://github.com/photoprism/photoprism/issues
+- Never use GitHub Issues if you have a general question, need help, or an issue has not (yet) been clearly identified
+- When creating a new feature request, be sure to **answer all of the questions below** so that we and other community members have a good understanding of the problem and the proposed solution
+- Note that all issue **subscribers receive an email notification** from GitHub for each new comment, so these should only be used for sharing important information and not for personal discussions/questions
 
-Never use GitHub Issues if you have a general question, need help, or an issue has not (yet) been clearly identified. Thank you! 🙃
+BEFORE OPENING AN ISSUE, PLEASE CHECK OUR PUBLIC ROADMAP AND SEARCH EXISTING FEATURE REQUESTS:
 
-You are welcome to use GitHub Discussions instead:
-https://github.com/photoprism/photoprism/discussions
+  <https://github.com/photoprism/photoprism/issues>
+  <https://link.photoprism.app/roadmap>
+
+FOR GENERAL QUESTIONS, TECHNICAL SUPPORT, AND TO GET TO KNOW OTHER COMMUNITY MEMBERS:
+
+  <https://github.com/photoprism/photoprism/discussions>
 
 **Is your feature request related to a problem? Please describe.**
 
