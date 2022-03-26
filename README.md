@@ -64,7 +64,7 @@ We currently have the following sponsorship options:
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account
-- you are welcome to [contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations) and other options
+- [Contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations), SEPA transfer details, and business partnerships
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
@@ -90,7 +90,7 @@ Having said that, funding really has the highest impact. So users can do their p
 Before submitting a support request, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
 to determine the cause of your problem. If this doesn't help, or you have other questions:
 
-- you are welcome to join us on [Reddit](https://link.photoprism.app/reddit)
+- You are welcome to join us on [Reddit](https://link.photoprism.app/reddit)
 - post your question in [GitHub Discussions](https://link.photoprism.app/discussions)
 - or ask in our [Community Chat](https://link.photoprism.app/chat)
 
@@ -106,7 +106,7 @@ Think of "free software" as in "free speech," not as in "free beer". Thank You! 
 - All issue subscribers receive an email notification from GitHub for each new comment, so these should only be used for sharing important information and not for personal discussions/questions
 - We kindly ask you not to report bugs via *GitHub Issues* unless you are certain to have found a fully reproducible and previously unreported issue that must be fixed directly in the app
 
-[Contact us](https://photoprism.app/contact) or [a community member](https://link.photoprism.app/discussions) if you need help, it could be a local configuration problem, or a misunderstanding in how the software works. This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling unclear and/or duplicate bug reports or triggering a notification flood by responding to issue comments.
+[Contact us](https://photoprism.app/contact) or [a community member](https://link.photoprism.app/discussions) if you need help, it could be a local configuration problem, or a misunderstanding in how the software works. This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling unclear/duplicate bug reports or triggering a flood of notifications by responding to comments.
 
 ## Join the Community ##
 
