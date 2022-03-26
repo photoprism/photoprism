@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: Suggest a new feature or improvement
-title: 'Category: Short Description'
+title: 'Category: Short Description (PLEASE CHANGE)'
 labels: idea
 assignees: ''
 

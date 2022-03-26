@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: Report a new and clearly identified bug that must be fixed directly in the application
-title: 'Category: Clear and concise title'
+title: 'Category: Clear and concise title (PLEASE CHANGE)'
 labels: bug
 assignees: ''
 
