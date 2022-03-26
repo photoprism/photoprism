@@ -103,12 +103,10 @@ Think of "free software" as in "free speech," not as in "free beer". Thank You! 
 
 ### GitHub Issues ###
 
-We kindly ask you not to report bugs via GitHub Issues unless you are certain to have found a fully reproducible and
-previously unreported issue that must be fixed directly in the app. [Contact us](https://photoprism.app/contact)
-or [a community member](https://link.photoprism.app/discussions) if you need help, it could be a local
-configuration problem, or a misunderstanding in how the software works. This gives our team the opportunity
-to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class
-support to you, instead of handling unclear and/or duplicate bug reports.
+- All issue subscribers receive an email notification from GitHub for each new comment, so these should only be used for sharing important information and not for personal discussions/questions
+- We kindly ask you not to report bugs via *GitHub Issues* unless you are certain to have found a fully reproducible and previously unreported issue that must be fixed directly in the app
+
+[Contact us](https://photoprism.app/contact) or [a community member](https://link.photoprism.app/discussions) if you need help, it could be a local configuration problem, or a misunderstanding in how the software works. This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling unclear and/or duplicate bug reports or triggering a notification flood by responding to issue comments.
 
 ## Join the Community ##
 
