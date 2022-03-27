@@ -7,7 +7,8 @@ assignees: ''
 
 ---
 
-IMPORTANT - PLEASE READ BEFORE PROCEEDING:
+STOP! BEFORE YOU PROCEED: ARE YOU 100% SURE THAT THIS IS NOT A TECHNICAL SUPPORT REQUEST
+AND/OR A PROBLEM WITH ANOTHER SOFTWARE YOU ARE USING, SUCH AS NGINX?
 
 - We kindly ask you not to report bugs via GitHub Issues **unless you are certain to have found a fully reproducible and previously unreported issue** that must be fixed directly in the app
 - When reporting a problem, **always include the software versions you are using and other information about your environment** such as browser, browser plugins, operating system, storage type, memory size, and processor
@@ -26,6 +27,13 @@ BEFORE OPENING AN ISSUE, MAKE SURE TO SEARCH EXISTING BUG REPORTS AND FEATURE RE
 FOR GENERAL QUESTIONS, TECHNICAL SUPPORT, AND TO GET TO KNOW OTHER COMMUNITY MEMBERS:
 
   <https://github.com/photoprism/photoprism/discussions>
+
+PLEASE PROCEED ONLY IF YOU ARE 100% SURE THAT THIS IS NOT A TECHNICAL SUPPORT REQUEST
+AND/OR A PROBLEM WITH ANOTHER SOFTWARE YOU ARE USING.
+
+**THANK YOU FOR YOUR CAREFUL CONSIDERATION!**
+
+===============================================================================
 
 **What does not work as described in the documentation?**
 

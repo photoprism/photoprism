@@ -22,6 +22,12 @@ FOR GENERAL QUESTIONS, TECHNICAL SUPPORT, AND TO GET TO KNOW OTHER COMMUNITY MEM
 
   <https://github.com/photoprism/photoprism/discussions>
 
+PLEASE PROCEED ONLY IF YOU ARE 100% SURE THAT THE PROBLEM AND THE PROPOSED SOLUTION ARE COMPLETELY CLEAR.
+
+**THANK YOU FOR YOUR CAREFUL CONSIDERATION!**
+
+===============================================================================
+
 **Is your feature request related to a problem? Please describe.**
 
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
