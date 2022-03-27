@@ -255,6 +255,30 @@
                 :items="items.types">
             </v-select>
           </v-flex>
+          <v-flex xs12 sm6 class="px-2">
+            <v-select
+                v-model="model.AccTimeout"
+                :label="$gettext('Timeout')"
+                browser-autocomplete="off"
+                hide-details
+                color="secondary-dark"
+                item-text="text"
+                item-value="value"
+                :items="options.Timeouts()">
+            </v-select>
+          </v-flex>
+          <v-flex xs12 sm6 class="px-2">
+            <v-select
+                v-model="model.RetryLimit"
+                :label="$gettext('Retry Limit')"
+                browser-autocomplete="off"
+                hide-details
+                color="secondary-dark"
+                item-text="text"
+                item-value="value"
+                :items="options.RetryLimits()">
+            </v-select>
+          </v-flex>
         </v-layout>
         <v-layout row wrap>
           <v-flex xs12 text-xs-right class="pt-3 pb-0">

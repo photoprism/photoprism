@@ -15,10 +15,11 @@ type Account struct {
 	AccKey        string `json:"AccKey"`
 	AccUser       string `json:"AccUser"`
 	AccPass       string `json:"AccPass"`
+	AccTimeout    string `json:"AccTimeout"` // Request timeout: default, high, medium, low, none
 	AccError      string `json:"AccError"`
-	AccShare      bool   `json:"AccShare"`
-	AccSync       bool   `json:"AccSync"`
-	RetryLimit    int    `json:"RetryLimit"`
+	AccShare      bool   `json:"AccShare"`   // Manual upload enabled, see SharePath, ShareSize, and ShareExpires.
+	AccSync       bool   `json:"AccSync"`    // Background sync enabled, see SyncDownload and SyncUpload.
+	RetryLimit    int    `json:"RetryLimit"` // Number of remote request retry attempts.
 	SharePath     string `json:"SharePath"`
 	ShareSize     string `json:"ShareSize"`
 	ShareExpires  int    `json:"ShareExpires"`

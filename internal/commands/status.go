@@ -22,6 +22,14 @@ var StatusCommand = cli.Command{
 // statusAction checks if the web server is running.
 func statusAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
+
+	// Create new http.Client instance.
+	//
+	// NOTE: Timeout specifies a time limit for requests made by
+	// this Client. The timeout includes connection time, any
+	// redirects, and reading the response body. The timer remains
+	// running after Get, Head, Post, or Do return and will
+	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	url := fmt.Sprintf("http://%s:%d/api/v1/status", conf.HttpHost(), conf.HttpPort())

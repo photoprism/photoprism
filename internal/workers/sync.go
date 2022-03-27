@@ -66,8 +66,8 @@ func (worker *Sync) Start() (err error) {
 			continue
 		}
 
-		if a.AccErrors > a.RetryLimit {
-			a.AccErrors = 0
+		// Failed too often?
+		if a.RetryLimit > 0 && a.AccErrors > a.RetryLimit {
 			a.AccSync = false
 
 			if err := entity.Db().Save(&a).Error; err != nil {
@@ -109,6 +109,7 @@ func (worker *Sync) Start() (err error) {
 			if complete, err := worker.download(a); err != nil {
 				accErrors++
 				accError = err.Error()
+				syncStatus = entity.AccountSyncStatusRefresh
 			} else if complete {
 				if a.SyncUpload {
 					syncStatus = entity.AccountSyncStatusUpload
@@ -123,6 +124,7 @@ func (worker *Sync) Start() (err error) {
 			if complete, err := worker.upload(a); err != nil {
 				accErrors++
 				accError = err.Error()
+				syncStatus = entity.AccountSyncStatusRefresh
 			} else if complete {
 				synced = true
 				syncStatus = entity.AccountSyncStatusSynced

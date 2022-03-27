@@ -28,7 +28,8 @@
           <v-btn icon small flat :ripple="false"
                  class="action-toggle-sync"
                  @click.stop.prevent="editSync(props.item)">
-            <v-icon v-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
+            <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">report_problem</v-icon>
+            <v-icon v-else-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
             <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
           </v-btn>
         </td>
@@ -114,7 +115,7 @@ export default {
         {text: this.$gettext('Upload'), value: 'AccShare', sortable: false, align: 'center'},
         {text: this.$gettext('Sync'), value: 'AccSync', sortable: false, align: 'center'},
         {
-          text: this.$gettext('Last Backup'),
+          text: this.$gettext('Last Sync'),
           value: 'SyncDate',
           sortable: false,
           class: 'hidden-sm-and-down',

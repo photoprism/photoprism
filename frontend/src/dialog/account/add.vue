@@ -67,6 +67,7 @@
 </template>
 <script>
 import Account from "model/account";
+import * as options from "options/options";
 
 export default {
   name: 'PAccountCreateDialog',
@@ -75,6 +76,7 @@ export default {
   },
   data() {
     return {
+      options: options,
       showPassword: false,
       loading: false,
       search: null,

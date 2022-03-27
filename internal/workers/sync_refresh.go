@@ -14,9 +14,9 @@ func (worker *Sync) refresh(a entity.Account) (complete bool, err error) {
 		return false, nil
 	}
 
-	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
+	client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
 
-	subDirs, err := client.Directories(a.SyncPath, true, webdav.AsyncTimeout)
+	subDirs, err := client.Directories(a.SyncPath, true, webdav.MaxRequestDuration)
 
 	if err != nil {
 		log.Error(err)

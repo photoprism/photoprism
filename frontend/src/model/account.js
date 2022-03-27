@@ -39,6 +39,7 @@ export class Account extends RestModel {
       AccKey: "",
       AccUser: "",
       AccPass: "",
+      AccTimeout: "",
       AccError: "",
       AccErrors: 0,
       AccShare: true,

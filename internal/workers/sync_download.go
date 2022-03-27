@@ -76,7 +76,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 
 	log.Infof("sync: downloading from %s", a.AccName)
 
-	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
+	client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
 
 	var baseDir string
 
@@ -94,7 +94,8 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 				return false, nil
 			}
 
-			if file.Errors > a.RetryLimit {
+			// Failed too often?
+			if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 				log.Debugf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
 				continue
 			}
@@ -104,14 +105,17 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 			if _, err := os.Stat(localName); err == nil {
 				log.Warnf("sync: download skipped, %s already exists", localName)
 				file.Status = entity.FileSyncExists
+				file.Error = ""
+				file.Errors = 0
 			} else {
 				if err := client.Download(file.RemoteName, localName, false); err != nil {
-					worker.logError(err)
 					file.Errors++
 					file.Error = err.Error()
 				} else {
 					log.Infof("sync: downloaded %s from %s", file.RemoteName, a.AccName)
 					file.Status = entity.FileSyncDownloaded
+					file.Error = ""
+					file.Errors = 0
 				}
 
 				if mutex.SyncWorker.Canceled() {

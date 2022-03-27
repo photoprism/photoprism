@@ -49,7 +49,7 @@ func (m *FileSync) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Updates a column in the database.
+// Update a column in the database.
 func (m *FileSync) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

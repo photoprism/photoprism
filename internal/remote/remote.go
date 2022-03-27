@@ -34,8 +34,6 @@ import (
 	"time"
 )
 
-var client = &http.Client{Timeout: 30 * time.Second} // TODO: Change timeout if needed
-
 const (
 	ServiceWebDAV    = "webdav"
 	ServiceFacebook  = "facebook"
@@ -57,6 +55,16 @@ func HttpOk(method, rawUrl string) bool {
 		return false
 	}
 
+	// Create new http.Client instance.
+	//
+	// NOTE: Timeout specifies a time limit for requests made by
+	// this Client. The timeout includes connection time, any
+	// redirects, and reading the response body. The timer remains
+	// running after Get, Head, Post, or Do return and will
+	// interrupt reading of the Response.Body.
+	client := &http.Client{Timeout: 30 * time.Second}
+
+	// Send request to see if it fails.
 	if resp, err := client.Do(req); err != nil {
 		return false
 	} else if resp.StatusCode < 400 {

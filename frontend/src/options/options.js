@@ -320,6 +320,52 @@ export const PhotoTypes = () => [
   },
 ];
 
+export const Timeouts = () => [
+  {
+    text: $gettext("Default"),
+    value: "",
+  },
+  {
+    text: $gettext("High"),
+    value: "high",
+  },
+  {
+    text: $gettext("Low"),
+    value: "low",
+  },
+  {
+    text: $gettext("None"),
+    value: "none",
+  },
+];
+
+export const RetryLimits = () => [
+  {
+    text: "None",
+    value: -1,
+  },
+  {
+    text: "1",
+    value: 1,
+  },
+  {
+    text: "2",
+    value: 2,
+  },
+  {
+    text: "3",
+    value: 3,
+  },
+  {
+    text: "4",
+    value: 4,
+  },
+  {
+    text: "5",
+    value: 5,
+  },
+];
+
 export const Intervals = () => [
   { value: 0, text: $gettext("Never") },
   { value: 3600, text: $gettext("1 hour") },

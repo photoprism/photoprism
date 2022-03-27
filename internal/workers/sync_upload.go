@@ -31,7 +31,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 		return true, nil
 	}
 
-	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
+	client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
 	existingDirs := make(map[string]string)
 
 	for _, file := range files {

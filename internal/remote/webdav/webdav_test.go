@@ -5,9 +5,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -17,13 +18,13 @@ const (
 )
 
 func TestConnect(t *testing.T) {
-	c := New(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass, TimeoutLow)
 
 	assert.IsType(t, Client{}, c)
 }
 
 func TestClient_Files(t *testing.T) {
-	c := New(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass, TimeoutLow)
 
 	assert.IsType(t, Client{}, c)
 
@@ -39,12 +40,12 @@ func TestClient_Files(t *testing.T) {
 }
 
 func TestClient_Directories(t *testing.T) {
-	c := New(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass, TimeoutLow)
 
 	assert.IsType(t, Client{}, c)
 
 	t.Run("non-recursive", func(t *testing.T) {
-		dirs, err := c.Directories("", false, SyncTimeout)
+		dirs, err := c.Directories("", false, MaxRequestDuration)
 
 		if err != nil {
 			t.Fatal(err)
@@ -62,7 +63,7 @@ func TestClient_Directories(t *testing.T) {
 	})
 
 	t.Run("recursive", func(t *testing.T) {
-		dirs, err := c.Directories("", true, SyncTimeout)
+		dirs, err := c.Directories("", true, 0)
 
 		if err != nil {
 			t.Fatal(err)
@@ -75,7 +76,7 @@ func TestClient_Directories(t *testing.T) {
 }
 
 func TestClient_Download(t *testing.T) {
-	c := New(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass, TimeoutDefault)
 
 	assert.IsType(t, Client{}, c)
 
@@ -106,7 +107,7 @@ func TestClient_Download(t *testing.T) {
 }
 
 func TestClient_DownloadDir(t *testing.T) {
-	c := New(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass, TimeoutLow)
 
 	assert.IsType(t, Client{}, c)
 
@@ -136,7 +137,7 @@ func TestClient_DownloadDir(t *testing.T) {
 }
 
 func TestClient_UploadAndDelete(t *testing.T) {
-	c := New(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass, TimeoutLow)
 
 	assert.IsType(t, Client{}, c)
 

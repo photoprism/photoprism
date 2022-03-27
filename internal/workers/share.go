@@ -78,7 +78,7 @@ func (worker *Share) Start() (err error) {
 			continue
 		}
 
-		client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
+		client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
 		existingDirs := make(map[string]string)
 
 		for _, file := range files {
@@ -124,7 +124,8 @@ func (worker *Share) Start() (err error) {
 				file.Status = entity.FileShareShared
 			}
 
-			if a.RetryLimit >= 0 && file.Errors > a.RetryLimit {
+			// Failed too often?
+			if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 				file.Status = entity.FileShareError
 			}
 
@@ -158,7 +159,7 @@ func (worker *Share) Start() (err error) {
 			continue
 		}
 
-		client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
+		client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
 
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {
