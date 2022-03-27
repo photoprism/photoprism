@@ -75,13 +75,18 @@ func (m *Account) SaveForm(form form.Account) error {
 		return err
 	}
 
-	if m.AccType != string(remote.ServiceWebDAV) {
-		// TODO: Only WebDAV supported at the moment
+	// TODO: Support for other remote services in addition to WebDAV.
+	if m.AccType != remote.ServiceWebDAV {
 		m.AccShare = false
 		m.AccSync = false
 	}
 
-	// Set defaults
+	// Prevent two-way sync, see https://github.com/photoprism/photoprism/issues/1785
+	if m.SyncUpload && m.SyncDownload {
+		m.SyncUpload = false
+	}
+
+	// Set defaults.
 	if m.SharePath == "" {
 		m.SharePath = "/"
 	}
@@ -90,7 +95,7 @@ func (m *Account) SaveForm(form form.Account) error {
 		m.SyncPath = "/"
 	}
 
-	// Refresh after performing changes
+	// Refresh after performing changes.
 	if m.AccSync && m.SyncStatus == AccountSyncStatusSynced {
 		m.SyncStatus = AccountSyncStatusRefresh
 	}

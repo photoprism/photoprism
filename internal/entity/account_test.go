@@ -53,7 +53,7 @@ func TestAccount_SaveForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		account := Account{AccName: "Foo", AccOwner: "bar", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
-			SyncInterval: 5, SyncUpload: true, SyncDownload: false, SyncFilenames: true, SyncRaw: false}
+			SyncInterval: 5, SyncUpload: true, SyncDownload: true, SyncFilenames: true, SyncRaw: false}
 
 		accountForm, err := form.NewAccount(account)
 
@@ -66,13 +66,18 @@ func TestAccount_SaveForm(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.Equal(t, true, model.SyncDownload)
+		assert.Equal(t, false, model.SyncUpload)
 		assert.Equal(t, "Foo", model.AccName)
 		assert.Equal(t, "bar", model.AccOwner)
 		assert.Equal(t, "test.com", model.AccURL)
 
-		accountUpdate := Account{AccName: "NewName", AccOwner: "NewOwner", AccURL: "new.com"}
+		accountUpdate := Account{AccName: "NewName", AccOwner: "NewOwner", AccURL: "new.com", SyncUpload: true, SyncDownload: true}
 
 		UpdateForm, err := form.NewAccount(accountUpdate)
+
+		assert.Equal(t, true, UpdateForm.SyncDownload)
+		assert.Equal(t, true, UpdateForm.SyncUpload)
 
 		err = model.SaveForm(UpdateForm)
 
@@ -80,10 +85,11 @@ func TestAccount_SaveForm(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.Equal(t, true, model.SyncDownload)
+		assert.Equal(t, false, model.SyncUpload)
 		assert.Equal(t, "NewName", model.AccName)
 		assert.Equal(t, "NewOwner", model.AccOwner)
 		assert.Equal(t, "new.com", model.AccURL)
-
 	})
 }
 
