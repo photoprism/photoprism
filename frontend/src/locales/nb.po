@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-27 19:37+0000\n"
+"Last-Translator: labolstad <lasse.bolstad@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
 "photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
@@ -174,9 +174,8 @@ msgid "Albums"
 msgstr "Album"
 
 #: src/component/album/clipboard.vue:74
-#, fuzzy
 msgid "Albums deleted"
-msgstr "Albumer slettet"
+msgstr "Album slettet"
 
 #: src/pages/albums.vue:257 src/share/albums.vue:215
 msgid "All %{n} albums loaded"
@@ -363,9 +362,8 @@ msgid "Black"
 msgstr "Svart"
 
 #: src/options/options.js:383
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
+msgstr "Blackman: Lanczos, bedre kantutjevning"
 
 #: src/options/options.js:366
 msgid "Blue"
@@ -560,9 +558,8 @@ msgid "Creating thumbnails for"
 msgstr "Oppretter miniatyrbilder for"
 
 #: src/options/options.js:385
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubic: Moderate Quality, Good Performance"
+msgstr "Kubisk: Moderat kvalitet, god ytelse"
 
 #: src/pages/settings/account.vue:55
 msgid "Current Password"
@@ -573,14 +570,12 @@ msgid "Customer Support"
 msgstr "Kundeservice"
 
 #: src/options/options.js:365
-#, fuzzy
 msgid "Cyan"
-msgstr "Cyan"
+msgstr "Turkis"
 
 #: src/options/options.js:234
-#, fuzzy
 msgid "Cyano"
-msgstr "Cyano"
+msgstr "Turkis"
 
 #: src/options/options.js:90
 msgid "Czech"
@@ -1216,9 +1211,8 @@ msgid "Labels deleted"
 msgstr "Merkelapper slettet"
 
 #: src/options/options.js:384
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Detail Preservation, Minimal Artifacts"
+msgstr "Lanczos: Detaljbevaring, minimale artefakter"
 
 #: src/pages/settings/general.vue:94
 msgid "Language"
@@ -1265,9 +1259,8 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "Grensen nådd, viser de første €{n} filene"
 
 #: src/options/options.js:386
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
-msgstr "Linear: Very Smooth, Best Performance"
+msgstr "Lineær: Veldig jevn, beste ytelse"
 
 #: src/model/link.js:120
 msgid "Link"
@@ -1281,7 +1274,6 @@ msgstr "Liste"
 #: src/component/photo/list.vue:186 src/component/photo/mosaic.vue:190
 #: src/options/options.js:324 src/routes.js:187 src/share/photo/cards.vue:188
 #: src/share/photo/list.vue:165 src/share/photo/mosaic.vue:171
-#, fuzzy
 msgid "Live"
 msgstr "Live"
 
@@ -1658,7 +1650,6 @@ msgid "Outdoor"
 msgstr "Utendørs"
 
 #: src/dialog/photo/info.vue:118
-#, fuzzy
 msgid "Panorama"
 msgstr "Panorama"
 
@@ -1815,7 +1806,6 @@ msgid "Raspberry"
 msgstr "Bringebær"
 
 #: src/options/options.js:320
-#, fuzzy
 msgid "Raw"
 msgstr "Raw"
 
@@ -1984,9 +1974,8 @@ msgid "Selection approved"
 msgstr "Utvalg godkjent"
 
 #: src/component/photo/clipboard.vue:55
-#, fuzzy
 msgid "Selection archived"
-msgstr "Utvalg lagret"
+msgstr "Utvalg arkivert"
 
 #: src/component/photo/clipboard.vue:80
 msgid "Selection restored"
@@ -2434,7 +2423,6 @@ msgid "Username"
 msgstr "Brukernavn"
 
 #: src/options/options.js:214
-#, fuzzy
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2504,7 +2492,6 @@ msgid "Yellow"
 msgstr "Gul"
 
 #: src/options/options.js:264
-#, fuzzy
 msgid "Yellowstone"
 msgstr "Yellowstone"
 
