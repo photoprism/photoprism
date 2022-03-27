@@ -70,7 +70,7 @@
         </v-btn>
 
         <v-alert
-            v-if="config.count.hidden > 1"
+            v-if="ready && !busy && config.count.hidden > 1"
             :value="true"
             color="error"
             icon="priority_high"
