@@ -55,8 +55,8 @@ require (
 	github.com/urfave/cli v1.22.5
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
 	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064
-	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
-	golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5 // indirect
+	golang.org/x/net v0.0.0-20220325170049-de3da57026de
+	golang.org/x/sys v0.0.0-20220325203850-36772127a21f // indirect
 	gonum.org/v1/gonum v0.11.0
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
