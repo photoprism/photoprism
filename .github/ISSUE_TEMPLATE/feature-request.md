@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-IMPORTANT - PLEASE READ BEFORE PROCEEDING:
+STOP! BEFORE YOU PROCEED: ARE YOU 100% SURE THAT THE PROBLEM AND THE PROPOSED SOLUTION ARE COMPLETELY CLEAR AND THAT NO SIMILAR ISSUE ALREADY EXISTS?
 
 - Never use GitHub Issues if you have a general question, need help, or an issue has not (yet) been clearly identified
 - When creating a new feature request, be sure to **answer all of the questions below** so that we and other community members have a good understanding of the problem and the proposed solution
@@ -22,7 +22,7 @@ FOR GENERAL QUESTIONS, TECHNICAL SUPPORT, AND TO GET TO KNOW OTHER COMMUNITY MEM
 
   <https://github.com/photoprism/photoprism/discussions>
 
-PLEASE PROCEED ONLY IF YOU ARE 100% SURE THAT THE PROBLEM AND THE PROPOSED SOLUTION ARE COMPLETELY CLEAR.
+PLEASE PROCEED ONLY IF YOU ARE 100% SURE THAT THE PROBLEM AND THE PROPOSED SOLUTION ARE COMPLETELY CLEAR AND THAT NO SIMILAR ISSUE ALREADY EXISTS.
 
 **THANK YOU FOR YOUR CAREFUL CONSIDERATION!**
 
