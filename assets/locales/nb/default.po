@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-19 14:34+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-28 08:44+0000\n"
+"Last-Translator: labolstad <lasse.bolstad@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
 "photoprism/backend/nb_NO/>\n"
 "Language: nb\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "Uventet feil, prøv på nytt"
@@ -119,10 +119,8 @@ msgstr "Ugyldig lenke"
 msgid "Invalid name"
 msgstr "Ugyldig navn"
 
-#, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
-msgstr "Ugyldig passord, vennligst prøv igjen"
+msgstr "Opptatt. Prøv igjen senere"
 
 msgid "Changes successfully saved"
 msgstr "Endringene ble lagret"
@@ -239,9 +237,8 @@ msgstr "%d filer lastet opp på %d s"
 msgid "Selection approved"
 msgstr "Utvalg godkjent"
 
-#, fuzzy
 msgid "Selection archived"
-msgstr "Utvalg lagret"
+msgstr "Utvalg arkivert"
 
 msgid "Selection restored"
 msgstr "Utvalg gjenopprettet"
@@ -249,9 +246,8 @@ msgstr "Utvalg gjenopprettet"
 msgid "Selection marked as private"
 msgstr "Utvalg markert som privat"
 
-#, fuzzy
 msgid "Albums deleted"
-msgstr "Albumer slettet"
+msgstr "Album slettet"
 
 #, c-format
 msgid "Zip created in %d s"
