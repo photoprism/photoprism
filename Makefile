@@ -335,6 +335,7 @@ docker-release-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
 docker-local: docker-local-bookworm
+docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -352,6 +353,7 @@ docker-local-impish:
 	docker pull ubuntu:impish
 	scripts/docker/build.sh photoprism impish /impish
 docker-local-develop: docker-local-develop-bookworm
+docker-local-develop-all: docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
