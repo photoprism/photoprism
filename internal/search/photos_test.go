@@ -289,7 +289,38 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.camera", func(t *testing.T) {
+	t.Run("form.camera- name", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = ""
+		f.Count = 10
+		f.Offset = 0
+		f.Camera = "Canon EOS 6D"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 3, len(photos))
+	})
+	t.Run("camera:\"Canon EOS 6D\"", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "camera:\"Canon EOS 6D\""
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 3, len(photos))
+	})
+	t.Run("form.camera- id", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -625,6 +656,35 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Camera = ""
 		f.Lens = "apple"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for full lens name", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = ""
+		f.Count = 1
+		f.Offset = 0
+		f.Camera = ""
+		f.Lens = "Apple F380"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for full lens name using query", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = "lens:\"Apple F380\""
+		f.Count = 1
+		f.Offset = 0
+		f.Camera = ""
 
 		photos, _, err := Photos(f)
 
