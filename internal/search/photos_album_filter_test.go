@@ -2,8 +2,9 @@ package search
 
 import (
 	"testing"
-	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPhotosFilterAlbum(t *testing.T) {
