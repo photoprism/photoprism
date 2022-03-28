@@ -1,41 +1,53 @@
 package sanitize
 
-import (
-	"bytes"
-)
+// SqlSpecial checks if the byte must be escaped/omitted in SQL.
+func SqlSpecial(b byte) (special bool, omit bool) {
+	if b < 32 {
+		return true, true
+	}
 
-// sqlSpecialBytes contains special bytes to escape in SQL search queries.
-// see https://mariadb.com/kb/en/string-literals/
-var sqlSpecialBytes = []byte{34, 39, 92, 95} // ", ', \, _
+	switch b {
+	case '"', '\'', '\\':
+		return true, false
+	default:
+		return false, false
+	}
+}
 
 // SqlString escapes a string for use in an SQL query.
 func SqlString(s string) string {
 	var i int
 	for i = 0; i < len(s); i++ {
-		if bytes.Contains(sqlSpecialBytes, []byte{s[i]}) {
+		if found, _ := SqlSpecial(s[i]); found {
 			break
 		}
 	}
 
-	// No special characters found, return original string.
+	// Return if no special characters were found.
 	if i >= len(s) {
 		return s
 	}
 
 	b := make([]byte, 2*len(s)-i)
+
 	copy(b, s[:i])
+
 	j := i
+
 	for ; i < len(s); i++ {
-		if s[i] < 31 {
-			// Ignore control chars.
+		if special, omit := SqlSpecial(s[i]); omit {
+			// Omit control characters.
 			continue
-		}
-		if bytes.Contains(sqlSpecialBytes, []byte{s[i]}) {
-			b[j] = '\\'
+		} else if special {
+			// Escape other special characters.
+			// see https://mariadb.com/kb/en/string-literals/
+			b[j] = s[i]
 			j++
 		}
+
 		b[j] = s[i]
 		j++
 	}
+
 	return string(b[:j])
 }

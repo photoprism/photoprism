@@ -10,6 +10,11 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
+// Like escapes a string for use in a query.
+func Like(s string) string {
+	return strings.Trim(sanitize.SqlString(s), " |&*%")
+}
+
 // LikeAny returns a single where condition matching the search words.
 func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 	if s == "" {
@@ -44,9 +49,9 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 
 		for _, w := range words {
 			if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", col, SqlLike(w)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", col, Like(w)))
 			} else {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, SqlLike(w)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, Like(w)))
 			}
 
 			if !keywords || !txt.ContainsASCIILetters(w) {
@@ -56,7 +61,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 			singular := inflection.Singular(w)
 
 			if singular != w {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, SqlLike(singular)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, Like(singular)))
 			}
 		}
 
@@ -103,9 +108,9 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
 
 	for _, w := range words {
 		if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, SqlLike(w)))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, Like(w)))
 		} else {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, SqlLike(w)))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, Like(w)))
 		}
 	}
 
@@ -140,9 +145,9 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 
 			for _, c := range cols {
 				if strings.Contains(w, txt.Space) {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, SqlLike(w)))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, Like(w)))
 				} else {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, SqlLike(w)))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, Like(w)))
 				}
 			}
 		}
@@ -189,7 +194,7 @@ func AnySlug(col, search, sep string) (where string) {
 	}
 
 	for _, w := range words {
-		wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, SqlLike(w)))
+		wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, Like(w)))
 	}
 
 	return strings.Join(wheres, " OR ")

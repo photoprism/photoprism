@@ -12,6 +12,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestLike(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Like(""))
+	})
+	t.Run("Special", func(t *testing.T) {
+		s := " ' \" \t \n %_''"
+		exp := "'' \"\"   %_''''"
+		result := Like(s)
+		t.Logf("String..: %s", s)
+		t.Logf("Expected: %s", exp)
+		t.Logf("Result..: %s", result)
+		assert.Equal(t, exp, result)
+	})
+	t.Run("Alnum", func(t *testing.T) {
+		assert.Equal(t, "123ABCabc", Like("   123ABCabc%*    "))
+	})
+}
+
 func TestLikeAny(t *testing.T) {
 	t.Run("and_or_search", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "table spoon & usa | img json", true, false); len(w) != 2 {
@@ -119,11 +137,11 @@ func TestLikeAnyWord(t *testing.T) {
 		}
 	})
 	t.Run("EscapeSql", func(t *testing.T) {
-		if w := LikeAnyWord("k.keyword", "table% | 'spoon' & \"usa"); len(w) != 2 {
+		if w := LikeAnyWord("k.keyword", "table% | 'spoon' & \"us'a"); len(w) != 2 {
 			t.Fatalf("two where conditions expected: %#v", w)
 		} else {
 			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE '\\\"usa%'", w[1])
+			assert.Equal(t, "k.keyword LIKE '\"\"us''a%'", w[1])
 		}
 	})
 }
