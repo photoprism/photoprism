@@ -1608,6 +1608,166 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
+	t.Run("albums start '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "'Family"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 0)
+	})
+	// TODO should not throw error
+	/*t.Run("albums middle '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Father's Day"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
+	})*/
+	t.Run("albums end '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Ice Cream'"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums start *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "*Forrest"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 0)
+	})
+	t.Run("albums middle *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "My*Kids"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums end *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Yoga***"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums start |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "|Banana"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 0)
+	})
+	t.Run("albums middle |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Red|Green"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		// TODO: Needs review, variable number of results.
+
+		assert.GreaterOrEqual(t, len(photos), 0)
+	})
+	t.Run("albums end |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Blue|"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums start number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "345 Shirt"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums middle number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Color555 Blue"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums end number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Route 66"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
 }
 
 func TestPhotosQueryAlbums(t *testing.T) {
@@ -1680,6 +1840,166 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Light&\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums start '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"'Family\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 0)
+	})
+	//TODO should not throw error
+	/*t.Run("albums middle '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Father's Day\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
+	})*/
+	t.Run("albums end '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Ice Cream'\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums start *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"*Forrest\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 0)
+	})
+	t.Run("albums middle *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"My*Kids\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums end *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Yoga***\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums start |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"|Banana\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 0)
+	})
+	t.Run("albums middle |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Red|Green\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		// TODO: Needs review, variable number of results.
+
+		assert.GreaterOrEqual(t, len(photos), 0)
+	})
+	t.Run("albums end |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Blue|\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums start number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"345 Shirt\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums middle number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Color555 Blue\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("albums end number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Route 66\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -1776,6 +2096,166 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
+	t.Run("album start '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "'Family"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album middle '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Father's Day"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album end '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Ice Cream'"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album start *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "*Forrest"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 0)
+	})
+	t.Run("album middle *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "My*Kids"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album end *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Yoga***"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album start |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "|Banana"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		// TODO: Needs review, variable number of results.
+
+		assert.GreaterOrEqual(t, len(photos), 0)
+	})
+	t.Run("album middle |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Red|Green"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		// TODO: Needs review, variable number of results.
+
+		assert.GreaterOrEqual(t, len(photos), 0)
+	})
+	t.Run("album end |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Blue|"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album start number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "345 Shirt"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album middle number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Color555 Blue"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album end number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Route 66"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
 }
 
 func TestPhotosQueryAlbum(t *testing.T) {
@@ -1857,8 +2337,173 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album start '", func(t *testing.T) {
+		var f form.SearchPhotos
 
+		f.Query = "album:\"'Family\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album middle '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Father's Day\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album end '", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Ice Cream'\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album start *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"*Forrest\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, len(photos), 0)
+	})
+	t.Run("album middle *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"My*Kids\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album end *", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Yoga***\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album start |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"|Banana\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, len(photos), 0)
+	})
+	t.Run("album middle |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Red|Green\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
 		// TODO: Needs review, variable number of results.
+
 		assert.GreaterOrEqual(t, len(photos), 0)
+	})
+	t.Run("album end |", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Blue|\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album start number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"345 Shirt\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album middle number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Color555 Blue\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("album end number", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Route 66\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Greater(t, len(photos), 0)
 	})
 }
