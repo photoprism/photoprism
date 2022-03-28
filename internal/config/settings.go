@@ -218,6 +218,10 @@ func (s *Settings) Save(fileName string) error {
 
 // initSettings initializes user settings from a config file.
 func (c *Config) initSettings() {
+	if c.settings != nil {
+		return
+	}
+
 	c.settings = NewSettings(c)
 	fileName := c.SettingsFile()
 
@@ -236,9 +240,7 @@ func (c *Config) initSettings() {
 
 // Settings returns the current user settings.
 func (c *Config) Settings() *Settings {
-	if c.settings == nil {
-		c.initSettings()
-	}
+	c.initSettings()
 
 	if c.DisablePlaces() {
 		c.settings.Features.Places = false

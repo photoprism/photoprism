@@ -600,6 +600,10 @@ func (c *Config) UpdateHub() {
 
 // initHub initializes PhotoPrism hub config.
 func (c *Config) initHub() {
+	if c.hub != nil {
+		return
+	}
+
 	c.hub = hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial, c.env, c.UserAgent(), c.options.PartnerID)
 
 	if err := c.hub.Load(); err == nil {
@@ -626,9 +630,7 @@ func (c *Config) initHub() {
 
 // Hub returns the PhotoPrism hub config.
 func (c *Config) Hub() *hub.Config {
-	if c.hub == nil {
-		c.initHub()
-	}
+	c.initHub()
 
 	return c.hub
 }
