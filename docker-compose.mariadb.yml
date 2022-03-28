@@ -2,6 +2,23 @@ version: '3.5'
 
 ## MariaDB Server Versions for Development & Testing
 services:
+  ## MariaDB 10.8 Database Server
+  ## Docs: https://mariadb.com/kb/en/release-notes-mariadb-108-series/
+  mariadb-10-8:
+    image: mariadb:10.8-rc
+    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    expose:
+      - "4001"
+    ports:
+      - "4002:4001" # database port (host:container)
+    volumes:
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      MYSQL_ROOT_PASSWORD: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: photoprism
+      MYSQL_DATABASE: photoprism
+
   ## MariaDB 10.7 Database Server
   mariadb-10-7:
     image: mariadb:10.7

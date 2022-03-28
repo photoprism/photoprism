@@ -9,13 +9,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/urfave/cli"
+
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/urfave/cli"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Download URL and ZIP hash for test files.
@@ -40,18 +43,31 @@ func NewTestOptions() *Options {
 	storagePath := fs.Abs("../../storage")
 	testDataPath := filepath.Join(storagePath, "testdata")
 
-	dbDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
-	dbDsn := os.Getenv("PHOTOPRISM_TEST_DSN")
+	driver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
+	dsn := os.Getenv("PHOTOPRISM_TEST_DSN")
 
 	// Config example for MySQL / MariaDB:
-	//   dbDriver = MySQL,
-	//   dbDsn = "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true",
+	//   driver = MySQL,
+	//   dsn = "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true",
 
-	if dbDriver == "test" || dbDriver == "sqlite" || dbDriver == "" || dbDsn == "" {
-		dbDriver = SQLite3
-		dbDsn = ".test.db"
+	// Set default test database driver.
+	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
+		driver = SQLite3
 	}
 
+	// Set default database DSN.
+	if driver == SQLite3 {
+		if dsn == "" {
+			dsn = SQLiteMemoryDSN
+		} else if dsn != SQLiteTestDB {
+			// Continue.
+
+		} else if err := os.Remove(dsn); err == nil {
+			log.Debugf("sqlite: test file %s removed", sanitize.Log(dsn))
+		}
+	}
+
+	// Test config options.
 	c := &Options{
 		Name:           "PhotoPrism",
 		Version:        "0.0.0",
@@ -74,8 +90,8 @@ func NewTestOptions() *Options {
 		TempPath:       testDataPath + "/temp",
 		ConfigPath:     testDataPath + "/config",
 		SidecarPath:    testDataPath + "/sidecar",
-		DatabaseDriver: dbDriver,
-		DatabaseDsn:    dbDsn,
+		DatabaseDriver: driver,
+		DatabaseDsn:    dsn,
 		AdminPassword:  "photoprism",
 	}
 

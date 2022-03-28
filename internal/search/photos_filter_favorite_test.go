@@ -116,7 +116,8 @@ func TestPhotosQueryFavorite(t *testing.T) {
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "favorite:\"Father's Day\""
+		// Note: If the string in favorite starts with f/F, the txt package will assume it means false,
+		f.Query = "favorite:\"Mother's Day\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -124,7 +125,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		//TODO should not fail
+
 		assert.Equal(t, len(photos), len(photos0))
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {

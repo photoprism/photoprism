@@ -128,7 +128,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 
 	results := PhotoResults{result1, result2}
 
-	merged, count, err := results.Merged()
+	merged, count, err := results.Merge()
 
 	if err != nil {
 		t.Fatal(err)

@@ -63,7 +63,6 @@ func TestPhotosFilterAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// TODO: Needs review, variable number of results.
 		assert.GreaterOrEqual(t, len(photos), 0)
 	})
 	t.Run("album middle &", func(t *testing.T) {
@@ -181,7 +180,6 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO: Needs review, variable number of results.
 
 		assert.GreaterOrEqual(t, len(photos), 0)
 	})
@@ -196,7 +194,6 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO: Needs review, variable number of results.
 
 		assert.GreaterOrEqual(t, len(photos), 0)
 	})
@@ -306,7 +303,6 @@ func TestPhotosQueryAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// TODO: Needs review, variable number of results.
 		assert.GreaterOrEqual(t, len(photos), 0)
 	})
 	t.Run("album middle &", func(t *testing.T) {
@@ -442,9 +438,8 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO: Needs review, variable number of results.
 
-		assert.GreaterOrEqual(t, len(photos), 0)
+		assert.Greater(t, 2, len(photos))
 	})
 	t.Run("album end |", func(t *testing.T) {
 		var f form.SearchPhotos

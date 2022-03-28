@@ -111,38 +111,38 @@ func (m PhotoResults) UIDs() []string {
 	return result
 }
 
-func (m PhotoResults) Merged() (PhotoResults, int, error) {
-	count := len(m)
-	merged := make([]Photo, 0, count)
+// Merge consecutive file results that belong to the same photo.
+func (m PhotoResults) Merge() (photos PhotoResults, count int, err error) {
+	count = len(m)
+	photos = make(PhotoResults, 0, count)
 
-	var lastId uint
 	var i int
+	var photoId uint
 
-	for _, res := range m {
+	for _, photo := range m {
 		file := entity.File{}
 
-		if err := deepcopier.Copy(&file).From(res); err != nil {
-			return merged, count, err
+		if err = deepcopier.Copy(&file).From(photo); err != nil {
+			return photos, count, err
 		}
 
-		file.ID = res.FileID
-		res.CompositeID = fmt.Sprintf("%d-%d", res.ID, res.FileID)
+		file.ID = photo.FileID
 
-		if lastId == res.ID && i > 0 {
-			merged[i-1].Files = append(merged[i-1].Files, file)
-			merged[i-1].Merged = true
+		if photoId == photo.ID && i > 0 {
+			photos[i-1].Files = append(photos[i-1].Files, file)
+			photos[i-1].Merged = true
 			continue
 		}
 
-		res.Files = append(res.Files, file)
-
-		merged = append(merged, res)
-
-		lastId = res.ID
 		i++
+		photoId = photo.ID
+		photo.CompositeID = fmt.Sprintf("%d-%d", photoId, file.ID)
+		photo.Files = append(photo.Files, file)
+
+		photos = append(photos, photo)
 	}
 
-	return merged, count, nil
+	return photos, count, nil
 }
 
 // ShareBase returns a meaningful file name for sharing.

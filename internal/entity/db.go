@@ -10,10 +10,12 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-// Database drivers (sql dialects).
+// SQL Databases.
 const (
-	MySQL   = "mysql"
-	SQLite3 = "sqlite3"
+	MySQL           = "mysql"
+	SQLite3         = "sqlite3"
+	SQLiteTestDB    = ".test.db"
+	SQLiteMemoryDSN = ":memory:"
 )
 
 var dbProvider DbProvider

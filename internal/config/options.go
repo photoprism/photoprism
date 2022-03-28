@@ -15,12 +15,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Database drivers (sql dialects).
+// SQL Databases.
 const (
-	MySQL    = "mysql"
-	MariaDB  = "mariadb"
-	SQLite3  = "sqlite3"
-	Postgres = "postgres" // TODO: Requires GORM 2.0 for generic column data types
+	MySQL           = "mysql"
+	MariaDB         = "mariadb"
+	Postgres        = "postgres" // TODO: Requires GORM 2.0 for generic column data types
+	SQLite3         = "sqlite3"
+	SQLiteTestDB    = ".test.db"
+	SQLiteMemoryDSN = ":memory:"
 )
 
 // Options provides a struct in which application configuration is stored.

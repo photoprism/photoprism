@@ -3,8 +3,9 @@ package search
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestPhotosFilterAlbums(t *testing.T) {
@@ -182,22 +183,20 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Red|Green"
-		f.Merged = false
+		f.Merged = true
 
-		UnscopedDb().LogMode(true)
-		photos, _, err := Photos(f)
-		UnscopedDb().LogMode(false)
+		photos, count, err := Photos(f)
+
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		// TODO: Needs review, variable number of results.
-		if len(photos) > 0 {
-			// UID: pt9jtdre2lvl0yh0
-			t.Logf("Search Result: %#v", photos)
+		if len(photos) != 1 {
+			t.Logf("excactly one result expected, but %d photos with %d files found", len(photos), count)
+			t.Logf("query results: %#v", photos)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -210,6 +209,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Greater(t, len(photos), 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
@@ -428,23 +428,20 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Red|Green\""
-		f.Merged = false
-		UnscopedDb().LogMode(true)
-		photos, _, err := Photos(f)
-		UnscopedDb().LogMode(false)
+		f.Merged = true
+
+		photos, count, err := Photos(f)
+
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		// TODO: Needs review, variable number of results.
-		if len(photos) > 0 {
-			// UID pt9jtdre2lvl0yh0
-			for _, p := range photos {
-				t.Logf("%#v", p)
-			}
+		if len(photos) != 1 {
+			t.Logf("excactly one result expected, but %d photos with %d files found", len(photos), count)
+			t.Logf("query results: %#v", photos)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos

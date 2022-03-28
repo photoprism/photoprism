@@ -342,12 +342,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
 	},
 	cli.StringFlag{
-		Name:   "database-dsn",
+		Name:   "database-dsn, dsn",
 		Usage:  "database connection `DSN` (sqlite filename, optional for mysql)",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 	cli.StringFlag{
-		Name:   "database-server",
+		Name:   "database-server, db",
 		Usage:  "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
 		EnvVar: "PHOTOPRISM_DATABASE_SERVER",
 	},

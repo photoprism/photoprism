@@ -39,9 +39,9 @@ services:
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
-      PHOTOPRISM_DATABASE_NAME: "latest"
-      PHOTOPRISM_DATABASE_USER: "root"
-      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
+      PHOTOPRISM_DATABASE_NAME: "photoprism_latest"
+      PHOTOPRISM_DATABASE_USER: "photoprism_latest"
+      PHOTOPRISM_DATABASE_PASSWORD: "photoprism_latest"
       PHOTOPRISM_DISABLE_CHOWN: "false"       # disables storage permission updates on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"     # don't backup photo and album metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"      # disables built-in WebDAV server
@@ -62,8 +62,8 @@ services:
       TF_CPP_MIN_LOG_LEVEL: 0                 # show TensorFlow log messages for development
     working_dir: "/photoprism"
     volumes:
-      - "./storage/latest:/photoprism/storage"
-      - "./storage/originals:/photoprism/originals"
+      - "/photoprism/storage"
+      - "/photoprism/originals"
 
 ## Join shared "photoprism-develop" network
 networks:
