@@ -145,7 +145,7 @@ dep-list:
 dep-npm:
 	sudo npm install -g npm
 dep-js:
-	(cd frontend &&	npm install --silent --legacy-peer-deps)
+	(cd frontend &&	npm ci --no-audit)
 dep-go:
 	go build -v ./...
 dep-upgrade:
