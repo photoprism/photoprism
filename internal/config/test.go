@@ -63,6 +63,7 @@ func NewTestOptions() *Options {
 		ReadOnly:       false,
 		DetectNSFW:     true,
 		UploadNSFW:     false,
+		ExifBruteForce: false,
 		AssetsPath:     assetsPath,
 		AutoIndex:      -1,
 		AutoImport:     7200,

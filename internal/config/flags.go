@@ -171,16 +171,6 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DISABLE_BACKUPS",
 	},
 	cli.BoolFlag{
-		Name:   "disable-exiftool",
-		Usage:  "disable creating JSON metadata sidecar files with ExifTool",
-		EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
-	},
-	cli.BoolFlag{
-		Name:   "disable-ffmpeg",
-		Usage:  "disable video transcoding and thumbnail extraction with FFmpeg",
-		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
-	},
-	cli.BoolFlag{
 		Name:   "disable-darktable",
 		Usage:  "disable converting RAW files with Darktable",
 		EnvVar: "PHOTOPRISM_DISABLE_DARKTABLE",
@@ -214,6 +204,26 @@ var GlobalFlags = []cli.Flag{
 		Name:   "disable-classification",
 		Usage:  "disable image classification",
 		EnvVar: "PHOTOPRISM_DISABLE_CLASSIFICATION",
+	},
+	cli.BoolFlag{
+		Name:   "disable-ffmpeg",
+		Usage:  "disable video transcoding and thumbnail extraction with FFmpeg",
+		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
+	},
+	cli.BoolFlag{
+		Name:   "disable-exiftool",
+		Usage:  "disable creating JSON metadata sidecar files with ExifTool",
+		EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
+	},
+	cli.BoolFlag{
+		Name:   "exif-bruteforce",
+		Usage:  "always perform a brute-force search if no Exif headers were found",
+		EnvVar: "PHOTOPRISM_EXIF_BRUTEFORCE",
+	},
+	cli.BoolFlag{
+		Name:   "raw-presets",
+		Usage:  "enable RAW file converter presets (may reduce performance)",
+		EnvVar: "PHOTOPRISM_RAW_PRESETS",
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
@@ -367,11 +377,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "database-conns-idle",
 		Usage:  "maximum `NUMBER` of idle database connections",
 		EnvVar: "PHOTOPRISM_DATABASE_CONNS_IDLE",
-	},
-	cli.BoolFlag{
-		Name:   "raw-presets",
-		Usage:  "enable RAW file converter presets (may reduce performance)",
-		EnvVar: "PHOTOPRISM_RAW_PRESETS",
 	},
 	cli.StringFlag{
 		Name:   "darktable-bin",

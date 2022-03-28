@@ -12,7 +12,7 @@ const (
 	ImageTypeHDR = 3 // see https://exiftool.org/TagNames/Apple.html
 )
 
-// Data represents image meta data.
+// Data represents image metadata.
 type Data struct {
 	FileName     string        `meta:"FileName"`
 	DocumentID   string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID"`

@@ -50,6 +50,9 @@ fmt: fmt-js fmt-go
 clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
+.SILENT: help;
+help:
+	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
 fix-permissions:
 	$(info Updating filesystem permissions...)
 	@if [ $(UID) != 0 ]; then\
@@ -405,7 +408,11 @@ fmt-go:
 	goimports -w pkg internal cmd
 tidy:
 	go mod tidy -go=1.16 && go mod tidy -go=1.17
+
 .PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
     install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
     docker-develop docker-preview docker-preview-all docker-preview-arm docker-release docker-release-all docker-release-arm \
-    install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell;
+    install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell help \
+    docker-local docker-local-all docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish \
+    docker-local-develop docker-local-develop-all docker-local-develop-bookworm docker-local-develop-bullseye \
+    docker-local-develop-buster docker-local-develop-impish;

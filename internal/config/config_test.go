@@ -148,13 +148,6 @@ func TestConfig_ImportPath(t *testing.T) {
 	assert.True(t, strings.HasSuffix(result, "/storage/testdata/import"))
 }
 
-func TestConfig_ExifToolBin(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	bin := c.ExifToolBin()
-	assert.Equal(t, "/usr/bin/exiftool", bin)
-}
-
 func TestConfig_CachePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

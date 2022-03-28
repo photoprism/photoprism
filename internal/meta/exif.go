@@ -34,15 +34,15 @@ func init() {
 	}
 }
 
-// Exif parses an image file for Exif meta data and returns as Data struct.
-func Exif(fileName string, fileType fs.FileFormat) (data Data, err error) {
-	err = data.Exif(fileName, fileType)
+// Exif parses an image file for Exif metadata and returns as Data struct.
+func Exif(fileName string, fileType fs.FileFormat, bruteForce bool) (data Data, err error) {
+	err = data.Exif(fileName, fileType, bruteForce)
 
 	return data, err
 }
 
-// Exif parses an image file for Exif meta data and returns as Data struct.
-func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
+// Exif parses an image file for Exif metadata and returns as Data struct.
+func (data *Data) Exif(fileName string, fileType fs.FileFormat, bruteForce bool) (err error) {
 	exifMutex.Lock()
 	defer exifMutex.Unlock()
 
@@ -53,7 +53,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 	}()
 
 	// Extract raw Exif block.
-	rawExif, err := RawExif(fileName, fileType)
+	rawExif, err := RawExif(fileName, fileType, bruteForce)
 
 	if err != nil {
 		return err

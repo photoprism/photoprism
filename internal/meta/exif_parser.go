@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
-func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error) {
+func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif []byte, err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("metadata: %s in %s (raw exif panic)\nstack: %s", e, sanitize.Log(filepath.Base(fileName)), debug.Stack())
@@ -25,8 +25,10 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 	// Extract raw Exif block.
 	var parsed bool
 
+	// Sanitized and shortened file name for logs.
 	logName := sanitize.Log(filepath.Base(fileName))
 
+	// Try Exif parser for specific media file format first.
 	if fileType == fs.FormatJpeg {
 		jpegMp := jpegstructure.NewJpegMediaParser()
 
@@ -38,7 +40,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 			_, rawExif, err = sl.Exif()
 
 			if err != nil {
-				if strings.HasPrefix(err.Error(), "no exif header") {
+				if !bruteForce || strings.HasPrefix(err.Error(), "no exif header") {
 					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse jpeg)", logName)
 				} else if strings.HasPrefix(err.Error(), "no exif data") {
 					log.Debugf("metadata: failed parsing %s, starting brute-force search (parse jpeg)", logName)
@@ -109,9 +111,13 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 				parsed = true
 			}
 		}
+	} else {
+		log.Infof("metadata: no file format parser for %s, performing brute-force search", logName)
+		bruteForce = true
 	}
 
-	if !parsed {
+	// Start brute-force search for Exif data?
+	if !parsed && bruteForce {
 		rawExif, err = exif.SearchFileAndExtractExif(fileName)
 
 		if err != nil {

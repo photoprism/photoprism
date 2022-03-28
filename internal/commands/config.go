@@ -63,11 +63,10 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "auto-index", conf.AutoIndex()/time.Second)
 	fmt.Printf("%-25s %d\n", "auto-import", conf.AutoImport()/time.Second)
 
-	// Features.
+	// Feature Flags.
 	fmt.Printf("%-25s %t\n", "disable-backups", conf.DisableBackups())
 	fmt.Printf("%-25s %t\n", "disable-settings", conf.DisableSettings())
 	fmt.Printf("%-25s %t\n", "disable-places", conf.DisablePlaces())
-	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
 	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())
 	fmt.Printf("%-25s %t\n", "disable-faces", conf.DisableFaces())
 	fmt.Printf("%-25s %t\n", "disable-classification", conf.DisableClassification())
@@ -76,12 +75,17 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "disable-sips", conf.DisableSips())
 	fmt.Printf("%-25s %t\n", "disable-heifconvert", conf.DisableHeifConvert())
 	fmt.Printf("%-25s %t\n", "disable-ffmpeg", conf.DisableFFmpeg())
+	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
+
+	// Format Flags.
+	fmt.Printf("%-25s %t\n", "exif-bruteforce", conf.ExifBruteForce())
+	fmt.Printf("%-25s %t\n", "raw-presets", conf.RawPresets())
 
 	// TensorFlow.
-	fmt.Printf("%-25s %s\n", "tensorflow-version", conf.TensorFlowVersion())
-	fmt.Printf("%-25s %s\n", "tensorflow-model-path", conf.TensorFlowModelPath())
 	fmt.Printf("%-25s %t\n", "detect-nsfw", conf.DetectNSFW())
 	fmt.Printf("%-25s %t\n", "upload-nsfw", conf.UploadNSFW())
+	fmt.Printf("%-25s %s\n", "tensorflow-version", conf.TensorFlowVersion())
+	fmt.Printf("%-25s %s\n", "tensorflow-model-path", conf.TensorFlowModelPath())
 
 	// UI Defaults.
 	fmt.Printf("%-25s %s\n", "default-locale", conf.DefaultLocale())
@@ -110,7 +114,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "api-uri", conf.ApiUri())
 	fmt.Printf("%-25s %s\n", "base-uri", conf.BaseUri("/"))
 
-	// Web Server..
+	// Web Server.
 	fmt.Printf("%-25s %s\n", "http-host", conf.HttpHost())
 	fmt.Printf("%-25s %d\n", "http-port", conf.HttpPort())
 	fmt.Printf("%-25s %s\n", "http-mode", conf.HttpMode())
@@ -127,7 +131,6 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "database-conns-idle", conf.DatabaseConnsIdle())
 
 	// External Tools.
-	fmt.Printf("%-25s %t\n", "raw-presets", conf.RawPresets())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
 	fmt.Printf("%-25s %s\n", "darktable-cache-path", conf.DarktableCachePath())
 	fmt.Printf("%-25s %s\n", "darktable-config-path", conf.DarktableConfigPath())

@@ -216,21 +216,6 @@ func (c *Config) ImportPath() string {
 	return fs.Abs(c.options.ImportPath)
 }
 
-// ExifToolBin returns the exiftool executable file name.
-func (c *Config) ExifToolBin() string {
-	return findExecutable(c.options.ExifToolBin, "exiftool")
-}
-
-// ExifToolJson tests if creating JSON metadata sidecar files with Exiftool is enabled.
-func (c *Config) ExifToolJson() bool {
-	return !c.DisableExifTool()
-}
-
-// BackupYaml tests if creating YAML files is enabled.
-func (c *Config) BackupYaml() bool {
-	return !c.DisableBackups()
-}
-
 // SidecarPath returns the storage path for generated sidecar files (relative or absolute).
 func (c *Config) SidecarPath() string {
 	if c.options.SidecarPath == "" {
