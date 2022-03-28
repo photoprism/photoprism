@@ -81,7 +81,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
 	cli.StringFlag{
-		Name:   "originals-path",
+		Name:   "originals-path, o",
 		Usage:  "storage `PATH` of your original media files (photos and videos)",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
@@ -92,7 +92,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
 	},
 	cli.StringFlag{
-		Name:   "storage-path",
+		Name:   "storage-path, t",
 		Usage:  "writable storage `PATH` for cache, database, and sidecar files",
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
 	},
@@ -117,12 +117,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_TEMP_PATH",
 	},
 	cli.StringFlag{
-		Name:   "backup-path",
+		Name:   "backup-path, b",
 		Usage:  "custom backup `PATH` for index backup files (optional)",
 		EnvVar: "PHOTOPRISM_BACKUP_PATH",
 	},
 	cli.StringFlag{
-		Name:   "assets-path",
+		Name:   "assets-path, a",
 		Usage:  "assets `PATH` containing static resources like icons, models, and translations",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
@@ -133,7 +133,7 @@ var GlobalFlags = []cli.Flag{
 		Value:  cpuid.CPU.PhysicalCores / 2,
 	},
 	cli.IntFlag{
-		Name:   "wakeup-interval",
+		Name:   "wakeup-interval, i",
 		Usage:  "metadata, share & sync background worker wakeup interval in `SECONDS` (1-604800)",
 		Value:  DefaultWakeupIntervalSeconds,
 		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",

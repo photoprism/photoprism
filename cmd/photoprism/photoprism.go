@@ -41,6 +41,12 @@ const appDescription = "For installation instructions, visit https://docs.photop
 const appCopyright = "(c) 2018-2022 Michael Mayer <hello@photoprism.app>"
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			os.Exit(1)
+		}
+	}()
+
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
 	app.HelpName = filepath.Base(os.Args[0])
