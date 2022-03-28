@@ -165,7 +165,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start |", func(t *testing.T) {
+	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "|Banana"
@@ -178,22 +178,28 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums middle |", func(t *testing.T) {
+	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Red|Green"
-		f.Merged = true
+		f.Merged = false
 
+		UnscopedDb().LogMode(true)
 		photos, _, err := Photos(f)
-
+		UnscopedDb().LogMode(false)
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		// TODO: Needs review, variable number of results.
-		assert.GreaterOrEqual(t, len(photos), 0)
+		if len(photos) > 0 {
+			// UID: pt9jtdre2lvl0yh0
+			t.Logf("Search Result: %#v", photos)
+		}
+
+		assert.Equal(t, 0, len(photos))
 	})
-	t.Run("albums end |", func(t *testing.T) {
+	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Blue|"
@@ -206,7 +212,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start number", func(t *testing.T) {
+	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "345 Shirt"
@@ -219,7 +225,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums middle number", func(t *testing.T) {
+	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Color555 Blue"
@@ -232,7 +238,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums end number", func(t *testing.T) {
+	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Route 66"
@@ -248,7 +254,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 }
 
 func TestPhotosQueryAlbums(t *testing.T) {
-	t.Run("albums start %", func(t *testing.T) {
+	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"%gold\""
@@ -261,7 +267,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums middle %", func(t *testing.T) {
+	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"I love % dog\""
@@ -274,7 +280,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums end %", func(t *testing.T) {
+	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"sale%\""
@@ -287,7 +293,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start &", func(t *testing.T) {
+	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"&IlikeFood\""
@@ -300,7 +306,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums middle &", func(t *testing.T) {
+	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pets & Dogs\""
@@ -313,7 +319,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums end &", func(t *testing.T) {
+	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Light&\""
@@ -326,7 +332,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start '", func(t *testing.T) {
+	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"'Family\""
@@ -339,7 +345,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("AlbumsQuerySingleQuote", func(t *testing.T) {
+	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Father's Day\""
@@ -353,7 +359,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums end '", func(t *testing.T) {
+	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Ice Cream'\""
@@ -366,7 +372,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start *", func(t *testing.T) {
+	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"*Forrest\""
@@ -379,7 +385,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums middle *", func(t *testing.T) {
+	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"My*Kids\""
@@ -392,7 +398,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums end *", func(t *testing.T) {
+	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Yoga***\""
@@ -405,7 +411,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start |", func(t *testing.T) {
+	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"|Banana\""
@@ -418,22 +424,29 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums middle |", func(t *testing.T) {
+	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Red|Green\""
-		f.Merged = true
-
+		f.Merged = false
+		UnscopedDb().LogMode(true)
 		photos, _, err := Photos(f)
-
+		UnscopedDb().LogMode(false)
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		// TODO: Needs review, variable number of results.
-		assert.GreaterOrEqual(t, len(photos), 0)
+		if len(photos) > 0 {
+			// UID pt9jtdre2lvl0yh0
+			for _, p := range photos {
+				t.Logf("%#v", p)
+			}
+		}
+
+		assert.Equal(t, 0, len(photos))
 	})
-	t.Run("albums end |", func(t *testing.T) {
+	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Blue|\""
@@ -446,7 +459,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start number", func(t *testing.T) {
+	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"345 Shirt\""
@@ -459,7 +472,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums middle number", func(t *testing.T) {
+	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Color555 Blue\""
@@ -472,7 +485,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums end number", func(t *testing.T) {
+	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Route 66\""

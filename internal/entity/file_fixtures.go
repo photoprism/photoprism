@@ -603,7 +603,7 @@ var FileFixtures = FileMap{
 	"bridge2.mp4": {
 		ID:              1000013,
 		Photo:           PhotoFixtures.Pointer("Photo03"),
-		PhotoID:         1000003,
+		PhotoID:         PhotoFixtures.Pointer("Photo03").ID,
 		PhotoUID:        PhotoFixtures.Pointer("Photo03").PhotoUID,
 		InstanceID:      "a698ac56-6e7e-42b9-9c3e-a79ec96080al",
 		FileUID:         "ft2es49whhbnlqdy",
