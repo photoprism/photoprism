@@ -335,12 +335,35 @@ docker-release-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
 docker-local: docker-local-bookworm
-docker-local-bullseye:
-	docker pull photoprism/develop:bullseye
-	scripts/docker/build.sh photoprism bullseye /bullseye
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
+	docker pull photoprism/develop:bookworm-slim
 	scripts/docker/build.sh photoprism bookworm /bookworm
+docker-local-bullseye:
+	docker pull photoprism/develop:bullseye
+	docker pull photoprism/develop:bullseye-slim
+	scripts/docker/build.sh photoprism bullseye /bullseye
+docker-local-buster:
+	docker pull photoprism/develop:buster
+	docker pull debian:buster-slim
+	scripts/docker/build.sh photoprism buster /buster
+docker-local-impish:
+	docker pull photoprism/develop:impish
+	docker pull ubuntu:impish
+	scripts/docker/build.sh photoprism impish /impish
+docker-local-develop: docker-local-develop-bookworm
+docker-local-develop-bookworm:
+	docker pull debian:bookworm-slim
+	scripts/docker/build.sh develop bookworm /bookworm
+docker-local-develop-bullseye:
+	docker pull golang:1.18-bullseye
+	scripts/docker/build.sh develop bullseye /bullseye
+docker-local-develop-buster:
+	docker pull golang:1.18-buster
+	scripts/docker/build.sh develop buster /buster
+docker-local-develop-impish:
+	docker pull ubuntu:impish
+	scripts/docker/build.sh develop impish /impish
 docker-pull:
 	docker pull photoprism/photoprism:preview photoprism/photoprism:latest
 docker-ddns:
