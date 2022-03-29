@@ -268,4 +268,32 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		assert.Equal(t, len(photos), len(photos0))
 	})
+	t.Run("AndSearch", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "favorite:\"Route 66 & Father's Day\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, len(photos), len(photos0))
+	})
+	t.Run("OrSearch", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "favorite:\"Route %66 | *Father's Day\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, len(photos), len(photos0))
+	})
 }
