@@ -307,6 +307,28 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Photo:     PhotoFixtures.Pointer("Photo03"),
 		Album:     AlbumFixtures.Pointer("route-66"),
 	},
+	"27": {
+		PhotoUID:  "pt9jtdre2lvl0yh9",
+		AlbumUID:  "at1lxuqipotaab26",
+		Hidden:    false,
+		Missing:   false,
+		Order:     0,
+		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
+		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
+		Photo:     PhotoFixtures.Pointer("Photo02"),
+		Album:     AlbumFixtures.Pointer("father's-day"),
+	},
+	"28": {
+		PhotoUID:  "pt9jtdre2lvl0yh9",
+		AlbumUID:  "at1lxuqipotaab24",
+		Hidden:    false,
+		Missing:   false,
+		Order:     0,
+		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
+		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
+		Photo:     PhotoFixtures.Pointer("Photo02"),
+		Album:     AlbumFixtures.Pointer("light&"),
+	},
 }
 
 // CreatePhotoAlbumFixtures inserts known entities into the database for testing.
