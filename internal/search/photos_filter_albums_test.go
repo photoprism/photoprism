@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterAlbums(t *testing.T) {
-	t.Run("albums start %", func(t *testing.T) {
+	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "%gold"
@@ -22,7 +22,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums middle %", func(t *testing.T) {
+	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "I love % dog"
@@ -35,7 +35,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums end %", func(t *testing.T) {
+	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "sale%"
@@ -48,7 +48,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start &", func(t *testing.T) {
+	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "&IlikeFood"
@@ -61,7 +61,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums middle &", func(t *testing.T) {
+	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pets & Dogs"
@@ -74,7 +74,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums end &", func(t *testing.T) {
+	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Light&"
@@ -87,7 +87,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start '", func(t *testing.T) {
+	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "'Family"
@@ -100,7 +100,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("AlbumsSingleQuote", func(t *testing.T) {
+	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Father's Day"
@@ -114,7 +114,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums end '", func(t *testing.T) {
+	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Ice Cream'"
@@ -127,7 +127,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums start *", func(t *testing.T) {
+	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "*Forrest"
@@ -140,7 +140,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	t.Run("albums middle *", func(t *testing.T) {
+	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "My*Kids"
@@ -153,7 +153,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("albums end *", func(t *testing.T) {
+	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Yoga***"
@@ -250,6 +250,84 @@ func TestPhotosFilterAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("AndSearch", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Route 66 & Father's Day"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("OrSearch", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Route 66 | Father's Day"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 1)
+	})
+	t.Run("AndSearch2", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Red|Green & Father's Day"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("OrSearch2", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Red|Green | Father's Day"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 1)
+	})
+	t.Run("AndSearch3", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Light& & Red|Green"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("OrSearch3", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Albums = "Red|Green | Light&"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 1)
 	})
 }
 
@@ -494,5 +572,83 @@ func TestPhotosQueryAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Greater(t, len(photos), 0)
+	})
+	t.Run("AndSearch", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Route 66 & Father's Day\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("OrSearch", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Route 66 | Father's Day\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 1)
+	})
+	t.Run("AndSearch2", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Red|Green & Father's Day\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("OrSearch2", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Red|Green | Father's Day\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 1)
+	})
+	t.Run("AndSearch3", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Light& & Red|Green\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("OrSearch3", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "albums:\"Red|Green | Light&\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 1)
 	})
 }
