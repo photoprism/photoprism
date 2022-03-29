@@ -178,6 +178,237 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.True(t, form.Favorite)
 	})
+	t.Run("query for primary with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "primary:&cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Primary)
+	})
+	t.Run("query for stack with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "stack:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Stack)
+	})
+	t.Run("query for unstacked with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "unstacked:'cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Unstacked)
+	})
+	t.Run("query for stackable with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "stackable:mother's day"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Stackable)
+	})
+	t.Run("query for video with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "video:|cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Video)
+	})
+	t.Run("query for photo with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "photo:cat>"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Photo)
+	})
+	t.Run("query for raw with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "raw:ca+(t"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Raw)
+	})
+	t.Run("query for live with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "live:cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Live)
+	})
+	t.Run("query for scan with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "scan:;cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Scan)
+	})
+	t.Run("query for panorama with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "panorama:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Panorama)
+	})
+	t.Run("query for error with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "error:^cat$#"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Error)
+	})
+	t.Run("query for hidden with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "hidden:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Hidden)
+	})
+	t.Run("query for archived with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "archived:`cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Archived)
+	})
+	t.Run("query for public with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "public:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Public)
+	})
+	t.Run("query for private with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "private:*c@t"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Private)
+	})
+	t.Run("query for unsorted with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "unsorted:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Unsorted)
+	})
+	t.Run("query for mono with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "mono:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Mono)
+	})
+	t.Run("query for portrait with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "portrait:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Portrait)
+	})
+	t.Run("query for geo with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "geo:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Geo)
+	})
+	t.Run("query for review with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "review:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Review)
+	})
+	t.Run("query for merged with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "merged:*cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Merged)
+	})
 	t.Run("query for lat with invalid type", func(t *testing.T) {
 		form := &SearchPhotos{Query: "lat:cat"}
 
