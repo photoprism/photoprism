@@ -1,0 +1,1 @@
+CREATE OR REPLACE UNIQUE INDEX idx_files_search_media ON files (media_id);

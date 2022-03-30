@@ -41,9 +41,6 @@ const MaxResults = 25000
 // Radius is about 1 km.
 const Radius = 0.009
 
-// Cols represents a list of database columns.
-type Cols []string
-
 // Query searches given an originals path and a db instance.
 type Query struct {
 	db *gorm.DB
@@ -62,4 +59,11 @@ func Db() *gorm.DB {
 // UnscopedDb returns an unscoped database connection instance.
 func UnscopedDb() *gorm.DB {
 	return entity.Db().Unscoped()
+}
+
+// Log logs the error if any and keeps quiet otherwise.
+func Log(action string, err error) {
+	if err != nil {
+		log.Errorf("search: %s (%s)", err, action)
+	}
 }

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -12,8 +13,9 @@ import (
 
 // MigrateCommand registers the "migrate" CLI command.
 var MigrateCommand = cli.Command{
-	Name:  "migrate",
-	Usage: "Updates the index database schema",
+	Name:      "migrate",
+	Usage:     "Updates the index database schema",
+	ArgsUsage: "[migrations...]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "failed, f",
@@ -53,9 +55,17 @@ func migrateAction(ctx *cli.Context) error {
 		log.Infoln("migrate: running previously failed migrations")
 	}
 
+	var ids []string
+
+	// Check argument for specific migrations to be run.
+	if migrations := strings.TrimSpace(ctx.Args().First()); migrations != "" {
+		ids = strings.Fields(migrations)
+	}
+
 	log.Infoln("migrating database schema...")
 
-	conf.MigrateDb(runFailed)
+	// Run migrations.
+	conf.MigrateDb(runFailed, ids)
 
 	elapsed := time.Since(start)
 

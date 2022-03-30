@@ -7,7 +7,7 @@ import (
 )
 
 // Auto automatically migrates the database provided.
-func Auto(db *gorm.DB, runFailed bool) error {
+func Auto(db *gorm.DB, runFailed bool, ids []string) error {
 	if db == nil {
 		return fmt.Errorf("migrate: database connection required")
 	}
@@ -23,7 +23,7 @@ func Auto(db *gorm.DB, runFailed bool) error {
 	}
 
 	if migrations, ok := Dialects[name]; ok && len(migrations) > 0 {
-		migrations.Start(db, runFailed)
+		migrations.Start(db, runFailed, ids)
 		return nil
 	} else {
 		return fmt.Errorf("migrate: no migrations found for %s", name)

@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/list"
+
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 )
@@ -47,12 +49,12 @@ func Existing(db *gorm.DB) MigrationMap {
 }
 
 // Start runs all migrations that haven't been executed yet.
-func (m *Migrations) Start(db *gorm.DB, runFailed bool) {
+func (m *Migrations) Start(db *gorm.DB, runFailed bool, ids []string) {
 	// Find previously executed migrations.
 	executed := Existing(db)
 
 	if prev := len(executed); prev == 0 {
-		log.Infof("migrate: found no previous migrations")
+		log.Infof("migrate: no previously executed migrations")
 	} else {
 		log.Debugf("migrate: found %s", english.Plural(len(executed), "previous migration", "previous migrations"))
 	}
@@ -61,10 +63,16 @@ func (m *Migrations) Start(db *gorm.DB, runFailed bool) {
 		start := time.Now()
 		migration.StartedAt = start.UTC().Round(time.Second)
 
+		// Excluded?
+		if list.Excludes(ids, migration.ID) {
+			log.Debugf("migrate: %s skipped", migration.ID)
+			continue
+		}
+
 		// Already executed?
 		if done, ok := executed[migration.ID]; ok {
 			// Try to run failed migrations again?
-			if !runFailed || done.Error == "" {
+			if (!runFailed || done.Error == "") && !list.Contains(ids, migration.ID) {
 				log.Debugf("migrate: %s skipped", migration.ID)
 				continue
 			}

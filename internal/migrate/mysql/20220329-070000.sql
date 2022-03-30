@@ -1,0 +1,2 @@
+ALTER TABLE files MODIFY COLUMN IF EXISTS photo_taken_at DATETIME AFTER photo_uid;
+ALTER TABLE files ADD COLUMN IF NOT EXISTS photo_taken_at DATETIME AFTER photo_uid;

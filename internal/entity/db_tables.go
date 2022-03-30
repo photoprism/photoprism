@@ -84,21 +84,23 @@ func (list Tables) Truncate(db *gorm.DB) {
 }
 
 // Migrate migrates all database tables of registered entities.
-func (list Tables) Migrate(db *gorm.DB, runFailed bool) {
-	for name, entity := range list {
-		if err := db.AutoMigrate(entity).Error; err != nil {
-			log.Debugf("entity: %s (waiting 1s)", err.Error())
-
-			time.Sleep(time.Second)
-
+func (list Tables) Migrate(db *gorm.DB, runFailed bool, ids []string) {
+	if len(ids) == 0 {
+		for name, entity := range list {
 			if err := db.AutoMigrate(entity).Error; err != nil {
-				log.Errorf("entity: failed migrating %s", sanitize.Log(name))
-				panic(err)
+				log.Debugf("entity: %s (waiting 1s)", err.Error())
+
+				time.Sleep(time.Second)
+
+				if err := db.AutoMigrate(entity).Error; err != nil {
+					log.Errorf("entity: failed migrating %s", sanitize.Log(name))
+					panic(err)
+				}
 			}
 		}
 	}
 
-	if err := migrate.Auto(db, runFailed); err != nil {
+	if err := migrate.Auto(db, runFailed, ids); err != nil {
 		log.Error(err)
 	}
 }

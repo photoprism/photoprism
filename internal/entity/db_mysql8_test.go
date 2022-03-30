@@ -42,14 +42,14 @@ func TestMySQL8(t *testing.T) {
 	Entities.Drop(db)
 
 	// First migration.
-	Entities.Migrate(db, false)
+	Entities.Migrate(db, false, nil)
 	Entities.WaitForMigration(db)
 
 	// Second migration.
-	Entities.Migrate(db, false)
+	Entities.Migrate(db, false, nil)
 	Entities.WaitForMigration(db)
 
 	// Third migration with force flag.
-	Entities.Migrate(db, true)
+	Entities.Migrate(db, true, []string{"20211121-094727"})
 	Entities.WaitForMigration(db)
 }

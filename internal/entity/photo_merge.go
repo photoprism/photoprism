@@ -13,7 +13,9 @@ var photoMergeMutex = sync.Mutex{}
 func (m *Photo) ResolvePrimary() error {
 	var file File
 
-	if err := Db().Where("file_primary = 1 AND photo_id = ?", m.ID).Order("file_width DESC, file_hdr DESC").First(&file).Error; err == nil && file.ID > 0 {
+	if err := Db().Where("file_primary = 1 AND photo_id = ?", m.ID).
+		Order("file_width DESC, file_hdr DESC").
+		First(&file).Error; err == nil && file.ID > 0 {
 		return file.ResolvePrimary()
 	}
 
@@ -101,18 +103,18 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 
 		deleted := TimeStamp()
 
-		logResult(UnscopedDb().Exec("UPDATE `files` SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
-		logResult(UnscopedDb().Exec("UPDATE `photos` SET photo_quality = -1, deleted_at = ? WHERE id = ?", TimeStamp(), merge.ID))
+		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
+		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", TimeStamp(), merge.ID))
 
 		switch DbDialect() {
 		case MySQL:
-			logResult(UnscopedDb().Exec("UPDATE IGNORE `photos_keywords` SET `photo_id` = ? WHERE photo_id = ?", original.ID, merge.ID))
-			logResult(UnscopedDb().Exec("UPDATE IGNORE `photos_labels` SET `photo_id` = ? WHERE photo_id = ?", original.ID, merge.ID))
-			logResult(UnscopedDb().Exec("UPDATE IGNORE `photos_albums` SET `photo_uid` = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
+			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
+			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
+			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
 		case SQLite3:
-			logResult(UnscopedDb().Exec("UPDATE OR IGNORE `photos_keywords` SET `photo_id` = ? WHERE photo_id = ?", original.ID, merge.ID))
-			logResult(UnscopedDb().Exec("UPDATE OR IGNORE `photos_labels` SET `photo_id` = ? WHERE photo_id = ?", original.ID, merge.ID))
-			logResult(UnscopedDb().Exec("UPDATE OR IGNORE `photos_albums` SET `photo_uid` = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
+			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
+			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
+			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
 		default:
 			log.Warnf("sql: unsupported dialect %s", DbDialect())
 		}
@@ -128,6 +130,8 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 		m.DeletedAt = &deleted
 		m.PhotoQuality = -1
 	}
+
+	File{PhotoID: original.ID, PhotoUID: original.PhotoUID}.RegenerateIndex()
 
 	return original, merged, err
 }

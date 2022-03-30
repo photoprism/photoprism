@@ -118,4 +118,11 @@ func (m *Photo) UpdateDateFields() {
 		m.PhotoMonth = int(m.TakenAtLocal.Month())
 		m.PhotoDay = m.TakenAtLocal.Day()
 	}
+
+	// Update photo_taken_at column in related files.
+	Log("photo", "update date fields",
+		UnscopedDb().Model(File{}).
+			Where("photo_id = ? AND photo_taken_at <> ?", m.ID, m.TakenAtLocal).
+			Updates(File{PhotoTakenAt: m.TakenAtLocal}).Error,
+	)
 }

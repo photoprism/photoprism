@@ -181,6 +181,7 @@ func (c *Config) PublicConfig() ClientConfig {
 	result := ClientConfig{
 		Settings: Settings{
 			UI:       settings.UI,
+			Search:   settings.Search,
 			Maps:     settings.Maps,
 			Features: settings.Features,
 			Share:    settings.Share,
@@ -251,6 +252,7 @@ func (c *Config) GuestConfig() ClientConfig {
 	result := ClientConfig{
 		Settings: Settings{
 			UI:       settings.UI,
+			Search:   settings.Search,
 			Maps:     settings.Maps,
 			Features: settings.Features,
 			Share:    settings.Share,
@@ -427,9 +429,7 @@ func (c *Config) UserConfig() ClientConfig {
 
 	c.Db().
 		Table("files").
-		Select("COUNT(*) AS files").
-		Where("file_missing = 0").
-		Where("deleted_at IS NULL").
+		Select("COUNT(media_id) AS files").
 		Take(&result.Count)
 
 	c.Db().

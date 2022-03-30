@@ -720,7 +720,7 @@ func CreateMarkerIfNotExists(m *Marker) (*Marker, error) {
 
 	if m.MarkerUID != "" {
 		return m, nil
-	} else if Db().Where(`file_uid = ? AND marker_type = ? AND thumb = ?`, m.FileUID, m.MarkerType, m.Thumb).
+	} else if Db().Where("file_uid = ? AND marker_type = ? AND thumb = ?", m.FileUID, m.MarkerType, m.Thumb).
 		First(&result).Error == nil {
 		return &result, nil
 	} else if err := m.Create(); err != nil {

@@ -1,0 +1,1 @@
+UPDATE files SET photo_taken_at = (SELECT photos.taken_at_local FROM photos WHERE photos.id = files.photo_id) WHERE 1;

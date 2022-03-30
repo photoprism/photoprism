@@ -14,6 +14,7 @@ import (
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -29,16 +30,22 @@ const (
 	DownloadNameDefault               = DownloadNameFile
 )
 
+// Files represents a file result set.
 type Files []File
 
-var primaryFileMutex = sync.Mutex{}
+// Index updates should not run simultaneously.
+var fileIndexMutex = sync.Mutex{}
+var filePrimaryMutex = sync.Mutex{}
 
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
 	ID               uint          `gorm:"primary_key" json:"-" yaml:"-"`
 	Photo            *Photo        `json:"-" yaml:"-"`
-	PhotoID          uint          `gorm:"index;" json:"-" yaml:"-"`
+	PhotoID          uint          `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
 	PhotoUID         string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
+	PhotoTakenAt     time.Time     `gorm:"type:DATETIME;index;" json:"TakenAt" yaml:"TakenAt"`
+	TimeIndex        *string       `gorm:"type:VARBINARY(48);" json:"TimeIndex" yaml:"TimeIndex"`
+	MediaID          *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	InstanceID       string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID          string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	FileName         string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
@@ -49,7 +56,7 @@ type File struct {
 	FileCodec        string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
 	FileType         string        `gorm:"type:VARBINARY(32)" json:"Type" yaml:"Type,omitempty"`
 	FileMime         string        `gorm:"type:VARBINARY(64)" json:"Mime" yaml:"Mime,omitempty"`
-	FilePrimary      bool          `json:"Primary" yaml:"Primary,omitempty"`
+	FilePrimary      bool          `gorm:"index:idx_files_photo_id;" json:"Primary" yaml:"Primary,omitempty"`
 	FileSidecar      bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
 	FileMissing      bool          `json:"Missing" yaml:"Missing,omitempty"`
 	FilePortrait     bool          `json:"Portrait" yaml:"Portrait,omitempty"`
@@ -58,10 +65,10 @@ type File struct {
 	FileWidth        int           `json:"Width" yaml:"Width,omitempty"`
 	FileHeight       int           `json:"Height" yaml:"Height,omitempty"`
 	FileOrientation  int           `json:"Orientation" yaml:"Orientation,omitempty"`
-	FileProjection   string        `gorm:"type:VARBINARY(40);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
+	FileProjection   string        `gorm:"type:VARBINARY(64);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
 	FileAspectRatio  float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
 	FileHDR          bool          `gorm:"column:file_hdr;"  json:"IsHDR" yaml:"IsHDR,omitempty"`
-	FileColorProfile string        `gorm:"type:VARBINARY(40);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
+	FileColorProfile string        `gorm:"type:VARBINARY(64);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
 	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance    string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
@@ -82,6 +89,59 @@ type File struct {
 // TableName returns the entity database table name.
 func (File) TableName() string {
 	return "files"
+}
+
+// RegenerateIndex updates the search index columns.
+func (m File) RegenerateIndex() {
+	fileIndexMutex.Lock()
+	defer fileIndexMutex.Unlock()
+
+	start := time.Now()
+	filesTable := File{}.TableName()
+	photosTable := Photo{}.TableName()
+
+	var updateWhere *gorm.SqlExpr
+
+	if m.PhotoID > 0 {
+		updateWhere = gorm.Expr("photo_id = ?", m.PhotoID)
+	} else if m.PhotoUID != "" {
+		updateWhere = gorm.Expr("photo_uid = ?", m.PhotoUID)
+	} else if m.ID > 0 {
+		updateWhere = gorm.Expr("id = ?", m.ID)
+	} else {
+		updateWhere = gorm.Expr("photo_id IS NOT NULL")
+	}
+
+	switch DbDialect() {
+	case MySQL:
+		Log("files", "regenerate photo_taken_at",
+			Db().Exec("UPDATE ? f JOIN ? p ON p.id = f.photo_id SET f.photo_taken_at = p.taken_at_local WHERE ?",
+				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
+
+		Log("files", "regenerate media_id",
+			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(HEX(100000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) END WHERE ?",
+				gorm.Expr(filesTable), updateWhere).Error)
+
+		Log("files", "regenerate time_index",
+			Db().Exec("UPDATE ? SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) END WHERE ?",
+				gorm.Expr(filesTable), updateWhere).Error)
+	case SQLite3:
+		Log("files", "regenerate photo_taken_at",
+			Db().Exec("UPDATE ? SET photo_taken_at = (SELECT p.taken_at_local FROM ? p WHERE p.id = photo_id) WHERE ?",
+				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
+
+		Log("files", "regenerate media_id",
+			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
+				gorm.Expr(filesTable), updateWhere).Error)
+
+		Log("files", "regenerate time_index",
+			Db().Exec("UPDATE ? SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE ?",
+				gorm.Expr(filesTable), updateWhere).Error)
+	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
+	}
+
+	log.Debugf("files: updated search index [%s]", time.Since(start))
 }
 
 type FileInfos struct {
@@ -338,15 +398,22 @@ func (m *File) Create() error {
 }
 
 // ResolvePrimary ensures there is only one primary file for a photo.
-func (m *File) ResolvePrimary() error {
-	primaryFileMutex.Lock()
-	defer primaryFileMutex.Unlock()
+func (m *File) ResolvePrimary() (err error) {
+	filePrimaryMutex.Lock()
+	defer filePrimaryMutex.Unlock()
 
-	if m.FilePrimary {
-		return UnscopedDb().Exec("UPDATE `files` SET file_primary = (id = ?) WHERE photo_id = ?", m.ID, m.PhotoID).Error
+	if !m.FilePrimary {
+		return nil
 	}
 
-	return nil
+	err = UnscopedDb().
+		Exec("UPDATE files SET file_primary = (id = ?) WHERE photo_id = ?", m.ID, m.PhotoID).Error
+
+	if err == nil {
+		m.RegenerateIndex()
+	}
+
+	return err
 }
 
 // Save stores the file in the database.
@@ -477,12 +544,12 @@ func (m *File) Panorama() bool {
 
 // Projection returns the panorama projection name if any.
 func (m *File) Projection() string {
-	return SanitizeTypeString(m.FileProjection)
+	return SanitizeStringTypeLower(m.FileProjection)
 }
 
 // SetProjection sets the panorama projection name.
 func (m *File) SetProjection(name string) {
-	m.FileProjection = SanitizeTypeString(name)
+	m.FileProjection = SanitizeStringTypeLower(name)
 }
 
 // IsHDR returns true if it is a high dynamic range file.
@@ -504,7 +571,7 @@ func (m *File) ResetHDR() {
 
 // ColorProfile returns the ICC color profile name if any.
 func (m *File) ColorProfile() string {
-	return SanitizeTypeCaseSensitive(m.FileColorProfile)
+	return SanitizeStringType(m.FileColorProfile)
 }
 
 // HasColorProfile tests if the file has a matching color profile.
@@ -514,8 +581,8 @@ func (m *File) HasColorProfile(profile colors.Profile) bool {
 
 // SetColorProfile sets the ICC color profile name such as "Display P3".
 func (m *File) SetColorProfile(name string) {
-	if name = SanitizeTypeCaseSensitive(name); name != "" {
-		m.FileColorProfile = SanitizeTypeCaseSensitive(name)
+	if name = SanitizeStringType(name); name != "" {
+		m.FileColorProfile = SanitizeStringType(name)
 	}
 }
 

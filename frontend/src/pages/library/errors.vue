@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
+       :infinite-scroll-distance="1600" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
       <v-text-field :value="filter.q"
                     solo hide-details clearable overflow single-line validate-on-blur

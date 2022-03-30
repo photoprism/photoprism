@@ -22,11 +22,16 @@ type Country struct {
 	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`
 	CountrySlug        string `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
 	CountryName        string `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
-	CountryDescription string `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CountryNotes       string `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CountryDescription string `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CountryNotes       string `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CountryPhoto       *Photo `json:"-" yaml:"-"`
 	CountryPhotoID     uint   `json:"-" yaml:"-"`
 	New                bool   `gorm:"-" json:"-" yaml:"-"`
+}
+
+// TableName returns the entity database table name.
+func (Country) TableName() string {
+	return "countries"
 }
 
 // UnknownCountry is defined here to use it as a default

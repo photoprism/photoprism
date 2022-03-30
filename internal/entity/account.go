@@ -25,21 +25,28 @@ const (
 type Accounts []Account
 
 // Account represents a remote service account for uploading, downloading or syncing media files.
+//
+// Field Descriptions:
+// - AccTimeout configures the timeout for requests, options: "", high, medium, low, none.
+// - AccErrors holds the number of connection errors since the last reset.
+// - AccShare enables manual upload, see SharePath, ShareSize, and ShareExpires.
+// - AccSync enables automatic file synchronization, see SyncDownload and SyncUpload.
+// - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
 type Account struct {
 	ID            uint   `gorm:"primary_key"`
 	AccName       string `gorm:"type:VARCHAR(160);"`
 	AccOwner      string `gorm:"type:VARCHAR(160);"`
-	AccURL        string `gorm:"type:VARBINARY(512);"`
+	AccURL        string `gorm:"type:VARCHAR(255);"`
 	AccType       string `gorm:"type:VARBINARY(255);"`
 	AccKey        string `gorm:"type:VARBINARY(255);"`
 	AccUser       string `gorm:"type:VARBINARY(255);"`
 	AccPass       string `gorm:"type:VARBINARY(255);"`
-	AccTimeout    string `gorm:"type:VARBINARY(16);"` // Request timeout: default, high, medium, low, none
+	AccTimeout    string `gorm:"type:VARBINARY(16);"`
 	AccError      string `gorm:"type:VARBINARY(512);"`
-	AccErrors     int    // Number of general account errors, there are counters for individual files too.
-	AccShare      bool   // Manual upload enabled, see SharePath, ShareSize, and ShareExpires.
-	AccSync       bool   // Background sync enabled, see SyncDownload and SyncUpload.
-	RetryLimit    int    // Number of remote request retry attempts.
+	AccErrors     int
+	AccShare      bool
+	AccSync       bool
+	RetryLimit    int
 	SharePath     string `gorm:"type:VARBINARY(500);"`
 	ShareSize     string `gorm:"type:VARBINARY(16);"`
 	ShareExpires  int
@@ -54,6 +61,11 @@ type Account struct {
 	CreatedAt     time.Time  `deepcopier:"skip"`
 	UpdatedAt     time.Time  `deepcopier:"skip"`
 	DeletedAt     *time.Time `deepcopier:"skip" sql:"index"`
+}
+
+// TableName returns the entity database table name.
+func (Account) TableName() string {
+	return "accounts"
 }
 
 // CreateAccount creates a new account entity in the database.

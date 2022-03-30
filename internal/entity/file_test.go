@@ -331,9 +331,9 @@ func TestFile_SetProjection(t *testing.T) {
 	})
 	t.Run("Sanitize", func(t *testing.T) {
 		m := &File{}
-		m.SetProjection(" 幸福 Hanzi are logograms developed for the writing of Chinese! ")
-		assert.Equal(t, "hanzi are logograms developed for the wr", m.FileProjection)
-		assert.Equal(t, TrimTypeString, len(m.FileProjection))
+		m.SetProjection(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
+		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", m.FileProjection)
+		assert.Equal(t, ClipStringType, len(m.FileProjection))
 	})
 }
 

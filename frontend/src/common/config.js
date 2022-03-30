@@ -357,6 +357,14 @@ export default class Config {
     return this.values.settings;
   }
 
+  searchBatchSize() {
+    if (!this.values || !this.values.settings || !this.values.settings.search.batchSize) {
+      return 80;
+    }
+
+    return this.values.settings.search.batchSize;
+  }
+
   rtl() {
     if (!this.values || !this.values.settings || !this.values.settings.ui.language) {
       return false;

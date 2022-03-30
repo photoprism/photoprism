@@ -151,7 +151,7 @@ func FindMarkers(fileUID string) (Markers, error) {
 	m := Markers{}
 
 	err := Db().
-		Where(`file_uid = ?`, fileUID).
+		Where("file_uid = ?", fileUID).
 		Order("x").
 		Offset(0).Limit(1000).
 		Find(&m).Error

@@ -336,7 +336,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
 	},
 	cli.StringFlag{
-		Name:   "database-driver",
+		Name:   "database-driver, db",
 		Usage:  "database `DRIVER` (sqlite, mysql)",
 		Value:  "sqlite",
 		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
@@ -347,24 +347,24 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 	cli.StringFlag{
-		Name:   "database-server, db",
+		Name:   "database-server, db-server",
 		Usage:  "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
 		EnvVar: "PHOTOPRISM_DATABASE_SERVER",
 	},
 	cli.StringFlag{
-		Name:   "database-name",
+		Name:   "database-name, db-name",
 		Value:  "photoprism",
 		Usage:  "database schema `NAME`",
 		EnvVar: "PHOTOPRISM_DATABASE_NAME",
 	},
 	cli.StringFlag{
-		Name:   "database-user",
+		Name:   "database-user, db-user",
 		Value:  "photoprism",
 		Usage:  "database user `NAME`",
 		EnvVar: "PHOTOPRISM_DATABASE_USER",
 	},
 	cli.StringFlag{
-		Name:   "database-password",
+		Name:   "database-password, db-pass",
 		Usage:  "database user `PASSWORD`",
 		EnvVar: "PHOTOPRISM_DATABASE_PASSWORD",
 	},

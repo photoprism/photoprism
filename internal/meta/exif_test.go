@@ -108,7 +108,7 @@ func TestExif(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "metadata: found no exif header in tweethog.png (parse png)", err.Error())
+		assert.Equal(t, "found no exif header", err.Error())
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
@@ -223,7 +223,7 @@ func TestExif(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "metadata: found no exif header in no-exif-data.jpg (parse jpeg)", err.Error())
+		assert.Equal(t, "found no exif header", err.Error())
 	})
 
 	t.Run("no-exif-data.jpg/BruteForce", func(t *testing.T) {
@@ -233,7 +233,7 @@ func TestExif(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "metadata: found no exif header in no-exif-data.jpg (search and extract)", err.Error())
+		assert.Equal(t, "found no exif data", err.Error())
 	})
 
 	t.Run("screenshot.png", func(t *testing.T) {
@@ -278,13 +278,13 @@ func TestExif(t *testing.T) {
 	t.Run("gopher-preview.jpg", func(t *testing.T) {
 		_, err := Exif("testdata/gopher-preview.jpg", fs.FormatJpeg, false)
 
-		assert.EqualError(t, err, "metadata: found no exif header in gopher-preview.jpg (parse jpeg)")
+		assert.EqualError(t, err, "found no exif header")
 	})
 
 	t.Run("gopher-preview.jpg/BruteForce", func(t *testing.T) {
 		_, err := Exif("testdata/gopher-preview.jpg", fs.FormatJpeg, true)
 
-		assert.EqualError(t, err, "metadata: found no exif header in gopher-preview.jpg (search and extract)")
+		assert.EqualError(t, err, "found no exif data")
 	})
 
 	t.Run("huawei-gps-error.jpg", func(t *testing.T) {

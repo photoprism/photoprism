@@ -30,7 +30,7 @@ var BackupCommand = cli.Command{
 	Name:        "backup",
 	Description: backupDescription,
 	Usage:       "Creates an index SQL dump and optionally album YAML files organized by type",
-	ArgsUsage:   "[FILENAME | -]",
+	ArgsUsage:   "[filename.sql | -]",
 	Flags:       backupFlags,
 	Action:      backupAction,
 }

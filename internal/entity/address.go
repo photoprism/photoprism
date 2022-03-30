@@ -22,7 +22,7 @@ type Address struct {
 	AddressCity    string     `gorm:"size:128;" json:"City" yaml:"City,omitempty"`
 	AddressState   string     `gorm:"size:128;" json:"State" yaml:"State,omitempty"`
 	AddressCountry string     `gorm:"type:VARBINARY(2);default:'zz'" json:"Country" yaml:"Country,omitempty"`
-	AddressNotes   string     `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
+	AddressNotes   string     `gorm:"type:VARCHAR(1024);" json:"Notes" yaml:"Notes,omitempty"`
 	CreatedAt      time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt      time.Time  `json:"UpdatedAt" yaml:"-"`
 	DeletedAt      *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`

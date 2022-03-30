@@ -888,7 +888,7 @@ export class Photo extends RestModel {
   }
 
   static batchSize() {
-    return 60;
+    return config.searchBatchSize();
   }
 
   static getCollectionResource() {

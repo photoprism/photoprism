@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	TrimTypeString = 40
+	ClipStringType = 64
 )
 
 // Values is a shortcut for map[string]interface{}
@@ -55,8 +55,8 @@ func ToASCII(s string) string {
 	return string(result)
 }
 
-// Trim shortens a string to the given number of characters, and removes all leading and trailing white space.
-func Trim(s string, maxLen int) string {
+// Clip shortens a string to the given number of characters, and removes all leading and trailing white space.
+func Clip(s string, maxLen int) string {
 	s = strings.TrimSpace(s)
 	l := len(s)
 
@@ -67,14 +67,14 @@ func Trim(s string, maxLen int) string {
 	}
 }
 
-// SanitizeTypeString converts a type string to lowercase, omits invalid runes, and shortens it if needed.
-func SanitizeTypeString(s string) string {
-	return Trim(ToASCII(strings.ToLower(s)), TrimTypeString)
+// SanitizeStringType omits invalid runes, ensures a maximum length of 32 characters, and returns the result.
+func SanitizeStringType(s string) string {
+	return Clip(ToASCII(s), ClipStringType)
 }
 
-// SanitizeTypeCaseSensitive omits invalid runes, ensures a maximum length of 32 characters, and returns the result.
-func SanitizeTypeCaseSensitive(s string) string {
-	return Trim(ToASCII(s), TrimTypeString)
+// SanitizeStringTypeLower converts a type string to lowercase, omits invalid runes, and shortens it if needed.
+func SanitizeStringTypeLower(s string) string {
+	return SanitizeStringType(strings.ToLower(s))
 }
 
 // TypeString returns an entity type string for logging.

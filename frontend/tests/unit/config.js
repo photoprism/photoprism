@@ -293,8 +293,9 @@ const clientConfig = {
       theme: "default",
       language: "en",
     },
-    templates: {
-      default: "index.tmpl",
+    search: {
+      batchSize: 60,
+      prefetchDist: 999,
     },
     maps: {
       animate: 0,
@@ -341,6 +342,9 @@ const clientConfig = {
     },
     download: {
       name: "file",
+    },
+    templates: {
+      default: "index.tmpl",
     },
   },
   disable: {

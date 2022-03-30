@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -18,10 +19,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// GeoCols contains the geo query column names.
+var GeoCols = SelectString(GeoResult{}, []string{"*"})
+
 // Geo searches for photos based on Form values and returns GeoResults ([]GeoResult).
 func Geo(f form.SearchGeo) (results GeoResults, err error) {
 	start := time.Now()
 
+	// Parse query string into fields.
 	if err := f.ParseQueryString(); err != nil {
 		return GeoResults{}, err
 	}
@@ -47,12 +52,8 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 
 	// s.LogMode(true)
 
-	s = s.Table("photos").
-		Select(`photos.id, photos.photo_uid, photos.photo_type, photos.photo_lat, photos.photo_lng, 
-		photos.photo_title, photos.photo_description, photos.photo_favorite, photos.taken_at, photos.taken_at_local, 
-		files.file_hash, files.file_width, files.file_height`).
-		Joins(`JOIN files ON files.photo_id = photos.id AND 
-		files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
+	s = s.Table("photos").Select(GeoCols).
+		Joins(`JOIN files ON files.photo_id = photos.id AND files.file_primary = 1 AND files.media_id IS NOT NULL`).
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
 
@@ -110,8 +111,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 			for _, l := range labels {
 				labelIds = append(labelIds, l.ID)
 
-				Db().Where("category_id = ?", l.ID).Find(&categories)
-
+				Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
 				log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
 
 				for _, category := range categories {

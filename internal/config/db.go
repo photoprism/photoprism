@@ -244,14 +244,14 @@ func (c *Config) SetDbOptions() {
 
 // InitDb initializes the database without running previously failed migrations.
 func (c *Config) InitDb() {
-	c.MigrateDb(false)
+	c.MigrateDb(false, nil)
 }
 
 // MigrateDb initializes the database and migrates the schema if needed.
-func (c *Config) MigrateDb(runFailed bool) {
+func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	c.SetDbOptions()
 	entity.SetDbProvider(c)
-	entity.MigrateDb(true, runFailed)
+	entity.MigrateDb(true, runFailed, ids)
 
 	entity.Admin.InitPassword(c.AdminPassword())
 

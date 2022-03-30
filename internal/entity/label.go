@@ -27,8 +27,8 @@ type Label struct {
 	LabelName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
 	LabelPriority    int        `json:"Priority" yaml:"Priority,omitempty"`
 	LabelFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
-	LabelDescription string     `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
-	LabelNotes       string     `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
+	LabelDescription string     `gorm:"type:VARCHAR(2048);" json:"Description" yaml:"Description,omitempty"`
+	LabelNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes" yaml:"Notes,omitempty"`
 	LabelCategories  []*Label   `gorm:"many2many:categories;association_jointable_foreignkey:category_id" json:"-" yaml:"-"`
 	PhotoCount       int        `gorm:"default:1" json:"PhotoCount" yaml:"-"`
 	Thumb            string     `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb" yaml:"Thumb,omitempty"`

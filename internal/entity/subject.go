@@ -27,8 +27,8 @@ type Subject struct {
 	SubjSlug     string          `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
 	SubjName     string          `gorm:"type:VARCHAR(160);unique_index;default:'';" json:"Name" yaml:"Name"`
 	SubjAlias    string          `gorm:"type:VARCHAR(160);default:'';" json:"Alias" yaml:"Alias"`
-	SubjBio      string          `gorm:"type:TEXT;" json:"Bio" yaml:"Bio,omitempty"`
-	SubjNotes    string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	SubjBio      string          `gorm:"type:VARCHAR(2048);" json:"Bio" yaml:"Bio,omitempty"`
+	SubjNotes    string          `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	SubjFavorite bool            `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
 	SubjHidden   bool            `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
 	SubjPrivate  bool            `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`

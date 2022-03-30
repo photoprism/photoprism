@@ -8,14 +8,14 @@ import (
 )
 
 // MigrateDb creates database tables and inserts default fixtures as needed.
-func MigrateDb(dropDeprecated, runFailed bool) {
+func MigrateDb(dropDeprecated, runFailed bool, ids []string) {
 	start := time.Now()
 
-	if dropDeprecated {
+	if dropDeprecated && len(ids) == 0 {
 		DeprecatedTables.Drop(Db())
 	}
 
-	Entities.Migrate(Db(), runFailed)
+	Entities.Migrate(Db(), runFailed, ids)
 	Entities.WaitForMigration(Db())
 
 	CreateDefaultFixtures()
@@ -56,6 +56,7 @@ func InitTestDb(driver, dsn string) *Gorm {
 	// Insert test fixtures.
 	SetDbProvider(db)
 	ResetTestFixtures()
+	File{}.RegenerateIndex()
 
 	return db
 }

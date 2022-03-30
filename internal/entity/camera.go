@@ -23,11 +23,16 @@ type Camera struct {
 	CameraMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
 	CameraModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
 	CameraType        string     `gorm:"type:VARCHAR(100);" json:"Type,omitempty" yaml:"Type,omitempty"`
-	CameraDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CameraNotes       string     `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CameraDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CameraNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"-"`
+}
+
+// TableName returns the entity database table name.
+func (Camera) TableName() string {
+	return "cameras"
 }
 
 var UnknownCamera = Camera{

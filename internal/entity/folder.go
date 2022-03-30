@@ -27,7 +27,7 @@ type Folder struct {
 	FolderType        string     `gorm:"type:VARBINARY(16);" json:"Type" yaml:"Type,omitempty"`
 	FolderTitle       string     `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title,omitempty"`
 	FolderCategory    string     `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
-	FolderDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	FolderDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
 	FolderOrder       string     `gorm:"type:VARBINARY(32);" json:"Order" yaml:"Order,omitempty"`
 	FolderCountry     string     `gorm:"type:VARBINARY(2);index:idx_folders_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
 	FolderYear        int        `gorm:"index:idx_folders_country_year_month;" json:"Year" yaml:"Year,omitempty"`
@@ -42,6 +42,11 @@ type Folder struct {
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	ModifiedAt        time.Time  `json:"ModifiedAt,omitempty" yaml:"-"`
 	DeletedAt         *time.Time `sql:"index" json:"-"`
+}
+
+// TableName returns the entity database table name.
+func (Folder) TableName() string {
+	return "folders"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.

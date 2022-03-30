@@ -6,20 +6,41 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/viewer"
+
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Photos searches for photos based on a Form and returns PhotoResults ([]Photo).
+var PhotosColsAll = SelectString(Photo{}, []string{"*"})
+var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
+
+// Photos finds photos based on the search form provided and returns them as PhotoResults.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
+	return searchPhotos(f, PhotosColsAll)
+}
+
+// PhotosViewerResults finds photos based on the search form provided and returns them as viewer.Results.
+func PhotosViewerResults(f form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
+	if results, count, err := searchPhotos(f, PhotosColsView); err != nil {
+		return viewer.Results{}, count, err
+	} else {
+		return results.ViewerResults(contentUri, apiUri, previewToken, downloadToken), count, err
+	}
+}
+
+// photos searches for photos based on a Form and returns PhotoResults ([]Photo).
+func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
+	// Parse query string into fields.
 	if err := f.ParseQueryString(); err != nil {
 		return PhotoResults{}, 0, err
 	}
@@ -27,53 +48,12 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	s := UnscopedDb()
 	// s = s.LogMode(true)
 
-	// Select columns.
-	cols := []string{
-		"photos.*",
-		"files.file_uid",
-		"files.id AS file_id",
-		"files.photo_id AS composite_id",
-		"files.instance_id",
-		"files.file_primary",
-		"files.file_sidecar",
-		"files.file_portrait",
-		"files.file_video",
-		"files.file_missing",
-		"files.file_name",
-		"files.file_root",
-		"files.file_hash",
-		"files.file_codec",
-		"files.file_type",
-		"files.file_mime",
-		"files.file_width",
-		"files.file_height",
-		"files.file_aspect_ratio",
-		"files.file_orientation",
-		"files.file_main_color",
-		"files.file_colors",
-		"files.file_luminance",
-		"files.file_chroma",
-		"files.file_projection",
-		"files.file_diff",
-		"files.file_duration",
-		"files.file_size",
-		"cameras.camera_make",
-		"cameras.camera_model",
-		"lenses.lens_make",
-		"lenses.lens_model",
-		"places.place_label",
-		"places.place_city",
-		"places.place_state",
-		"places.place_country",
-	}
-
 	// Database tables.
-	s = s.Table("files").Select(strings.Join(cols, ", ")).
-		Joins("JOIN photos ON photos.id = files.photo_id").
+	s = s.Table("files").Select(resultCols).
+		Joins("JOIN photos ON files.photo_id = photos.id AND files.media_id IS NOT NULL").
 		Joins("LEFT JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("LEFT JOIN lenses ON photos.lens_id = lenses.id").
-		Joins("LEFT JOIN places ON photos.place_id = places.id").
-		Where("files.deleted_at IS NULL AND files.file_missing = 0")
+		Joins("LEFT JOIN places ON photos.place_id = places.id")
 
 	// Offset and count.
 	if f.Count > 0 && f.Count <= MaxResults {
@@ -85,24 +65,24 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	// Sort order.
 	switch f.Order {
 	case entity.SortOrderEdited:
-		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.photo_id DESC, files.file_primary DESC, files.id")
+		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.media_id")
 	case entity.SortOrderRelevance:
 		if f.Label != "" {
-			s = s.Order("photos.photo_quality DESC, photos_labels.uncertainty ASC, photos.taken_at DESC, files.photo_id DESC, files.file_primary DESC, files.id")
+			s = s.Order("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index")
 		} else {
-			s = s.Order("photos.photo_quality DESC, photos.taken_at DESC, files.photo_id DESC, files.file_primary DESC, files.id")
+			s = s.Order("photos.photo_quality DESC, files.time_index")
 		}
 	case entity.SortOrderNewest:
-		s = s.Order("photos.taken_at DESC, files.photo_id DESC, files.file_primary DESC, files.id")
+		s = s.Order("files.time_index")
 	case entity.SortOrderOldest:
-		s = s.Order("photos.taken_at, files.photo_id DESC, files.file_primary DESC, files.id")
+		s = s.Order("files.photo_taken_at, files.media_id")
 	case entity.SortOrderSimilar:
 		s = s.Where("files.file_diff > 0")
-		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, photos.taken_at DESC, files.photo_id DESC, files.file_primary DESC, files.id")
+		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.time_index")
 	case entity.SortOrderName:
-		s = s.Order("photos.photo_path, photos.photo_name, files.photo_id DESC, files.file_primary DESC, files.id")
+		s = s.Order("photos.photo_path, photos.photo_name, files.time_index")
 	case entity.SortOrderDefault, entity.SortOrderImported, entity.SortOrderAdded:
-		s = s.Order("files.photo_id DESC, files.file_primary DESC, files.id")
+		s = s.Order("files.media_id")
 	default:
 		return PhotoResults{}, 0, fmt.Errorf("invalid sort order")
 	}
@@ -128,7 +108,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 
 		// Take shortcut?
 		if f.Album == "" && f.Query == "" {
-			s = s.Order("files.photo_id DESC, files.file_primary DESC, files.id")
+			s = s.Order("files.media_id")
 
 			if result := s.Scan(&results); result.Error != nil {
 				return results, 0, result.Error
@@ -157,9 +137,8 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 			for _, l := range labels {
 				labelIds = append(labelIds, l.ID)
 
-				Db().Where("category_id = ?", l.ID).Find(&categories)
-
-				log.Infof("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
+				Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
+				log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)
@@ -501,7 +480,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		f.Dist = 5000
 	}
 
-	// Filter by approx distance to coordinates:
+	// Filter by approx distance to co-ordinates:
 	if f.Lat != 0 {
 		latMin := f.Lat - Radius*float32(f.Dist)
 		latMax := f.Lat + Radius*float32(f.Dist)
@@ -523,7 +502,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 
 	// Find stacks only?
 	if f.Stack {
-		s = s.Where("files.photo_id IN (SELECT a.photo_id FROM files a JOIN files b ON a.id != b.id AND a.photo_id = b.photo_id AND a.file_type = b.file_type WHERE a.file_type='jpg')")
+		s = s.Where("photos.id IN (SELECT a.photo_id FROM files a JOIN files b ON a.id != b.id AND a.photo_id = b.photo_id AND a.file_type = b.file_type WHERE a.file_type='jpg')")
 	}
 
 	// Filter by album?

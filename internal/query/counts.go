@@ -52,9 +52,7 @@ func (c *Counts) Refresh() {
 		Take(c)
 
 	Db().Table("files").
-		Select("COUNT(*) AS files").
-		Where("file_missing = 0").
-		Where("deleted_at IS NULL").
+		Select("COUNT(media_id) AS files").
 		Take(c)
 
 	Db().Table("countries").

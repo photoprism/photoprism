@@ -23,11 +23,16 @@ type Lens struct {
 	LensMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
 	LensModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
 	LensType        string     `gorm:"type:VARCHAR(100);" json:"Type" yaml:"Type,omitempty"`
-	LensDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
-	LensNotes       string     `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	LensDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
+	LensNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt       time.Time  `json:"-" yaml:"-"`
 	UpdatedAt       time.Time  `json:"-" yaml:"-"`
 	DeletedAt       *time.Time `sql:"index" json:"-" yaml:"-"`
+}
+
+// TableName returns the entity database table name.
+func (Lens) TableName() string {
+	return "lenses"
 }
 
 var UnknownLens = Lens{
@@ -40,11 +45,6 @@ var UnknownLens = Lens{
 // CreateUnknownLens initializes the database with an unknown lens if not exists
 func CreateUnknownLens() {
 	UnknownLens = *FirstOrCreateLens(&UnknownLens)
-}
-
-// TableName returns the entity database table name.
-func (Lens) TableName() string {
-	return "lenses"
 }
 
 // NewLens creates a new lens in database

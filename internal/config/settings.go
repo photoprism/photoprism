@@ -20,6 +20,12 @@ type UISettings struct {
 	Language  string `json:"language" yaml:"Language"`
 }
 
+// SearchSettings represents search UI preferences.
+type SearchSettings struct {
+	BatchSize    int `json:"batchSize" yaml:"BatchSize"`
+	PrefetchDist int `json:"prefetchDist" yaml:"PrefetchDist"`
+}
+
 // TemplateSettings represents template settings for the UI and messaging.
 type TemplateSettings struct {
 	Default string `json:"default" yaml:"Default"`
@@ -88,7 +94,7 @@ type DownloadSettings struct {
 // Settings represents user settings for Web UI, indexing, and import.
 type Settings struct {
 	UI        UISettings       `json:"ui" yaml:"UI"`
-	Templates TemplateSettings `json:"templates" yaml:"Templates"`
+	Search    SearchSettings   `json:"search" yaml:"Search"`
 	Maps      MapsSettings     `json:"maps" yaml:"Maps"`
 	Features  FeatureSettings  `json:"features" yaml:"Features"`
 	Import    ImportSettings   `json:"import" yaml:"Import"`
@@ -96,6 +102,7 @@ type Settings struct {
 	Stack     StackSettings    `json:"stack" yaml:"Stack"`
 	Share     ShareSettings    `json:"share" yaml:"Share"`
 	Download  DownloadSettings `json:"download" yaml:"Download"`
+	Templates TemplateSettings `json:"templates" yaml:"Templates"`
 }
 
 // NewSettings creates a new Settings instance.
@@ -107,8 +114,9 @@ func NewSettings(c *Config) *Settings {
 			Theme:     c.DefaultTheme(),
 			Language:  c.DefaultLocale(),
 		},
-		Templates: TemplateSettings{
-			Default: "index.tmpl",
+		Search: SearchSettings{
+			BatchSize:    0,
+			PrefetchDist: 0,
 		},
 		Maps: MapsSettings{
 			Animate: 0,
@@ -154,6 +162,9 @@ func NewSettings(c *Config) *Settings {
 		},
 		Download: DownloadSettings{
 			Name: entity.DownloadNameDefault,
+		},
+		Templates: TemplateSettings{
+			Default: "index.tmpl",
 		},
 	}
 }

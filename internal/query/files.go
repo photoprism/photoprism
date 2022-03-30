@@ -102,7 +102,7 @@ func RenameFile(srcRoot, srcName, destRoot, destName string) error {
 }
 
 // SetPhotoPrimary sets a new primary image file for a photo.
-func SetPhotoPrimary(photoUID, fileUID string) error {
+func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 	if photoUID == "" {
 		return fmt.Errorf("photo uid is missing")
 	}
@@ -123,8 +123,19 @@ func SetPhotoPrimary(photoUID, fileUID string) error {
 		return fmt.Errorf("file uid is missing")
 	}
 
-	Db().Model(entity.File{}).Where("photo_uid = ? AND file_uid <> ?", photoUID, fileUID).UpdateColumn("file_primary", 0)
-	return Db().Model(entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).UpdateColumn("file_primary", 1).Error
+	if err = Db().Model(entity.File{}).
+		Where("photo_uid = ? AND file_uid <> ?", photoUID, fileUID).
+		UpdateColumn("file_primary", 0).Error; err != nil {
+		return err
+	} else if err = Db().
+		Model(entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).
+		UpdateColumn("file_primary", 1).Error; err != nil {
+		return err
+	} else {
+		entity.File{PhotoUID: photoUID}.RegenerateIndex()
+	}
+
+	return nil
 }
 
 // SetFileError updates the file error column.

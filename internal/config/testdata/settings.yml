@@ -3,8 +3,9 @@ UI:
   Zoom: false
   Theme: onyx
   Language: de
-Templates:
-  Default: index.tmpl
+Search:
+  BatchSize: 0
+  PrefetchDist: 0
 Maps:
   Animate: 0
   Style: streets
@@ -44,3 +45,5 @@ Share:
   Title: ""
 Download:
   Name: file
+Templates:
+  Default: index.tmpl

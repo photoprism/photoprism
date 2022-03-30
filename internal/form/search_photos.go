@@ -44,33 +44,33 @@ type SearchPhotos struct {
 	Mono      bool      `form:"mono"`
 	Portrait  bool      `form:"portrait"`
 	Geo       bool      `form:"geo"`
-	Keywords  string    `form:"keywords"`
-	Label     string    `form:"label"`
-	Category  string    `form:"category"` // Moments
-	Country   string    `form:"country"`  // Moments
-	State     string    `form:"state"`    // Moments
-	Year      string    `form:"year"`     // Moments
-	Month     string    `form:"month"`    // Moments
-	Day       string    `form:"day"`      // Moments
-	Face      string    `form:"face"`     // UIDs
-	Subject   string    `form:"subject"`  // UIDs
-	Person    string    `form:"person"`   // Alias for Subject
-	Subjects  string    `form:"subjects"` // Text
-	People    string    `form:"people"`   // Alias for Subjects
-	Album     string    `form:"album"`    // UIDs
-	Albums    string    `form:"albums"`   // Text
-	Color     string    `form:"color"`
-	Faces     string    `form:"faces"` // Find or exclude faces if detected.
-	Quality   int       `form:"quality"`
-	Review    bool      `form:"review"`
-	Camera    string    `form:"camera"`
-	Lens      string    `form:"lens"`
-	Before    time.Time `form:"before" time_format:"2006-01-02"`
-	After     time.Time `form:"after" time_format:"2006-01-02"`
-	Count     int       `form:"count" binding:"required" serialize:"-"`
-	Offset    int       `form:"offset" serialize:"-"`
-	Order     string    `form:"order" serialize:"-"`
-	Merged    bool      `form:"merged" serialize:"-"`
+	Keywords  string    `form:"keywords"`                               // Filter by keyword(s)
+	Label     string    `form:"label"`                                  // Label name
+	Category  string    `form:"category"`                               // Moments
+	Country   string    `form:"country"`                                // Moments
+	State     string    `form:"state"`                                  // Moments
+	Year      string    `form:"year"`                                   // Moments
+	Month     string    `form:"month"`                                  // Moments
+	Day       string    `form:"day"`                                    // Moments
+	Face      string    `form:"face"`                                   // UIDs
+	Subject   string    `form:"subject"`                                // UIDs
+	Person    string    `form:"person"`                                 // Alias for Subject
+	Subjects  string    `form:"subjects"`                               // People names
+	People    string    `form:"people"`                                 // Alias for Subjects
+	Album     string    `form:"album"`                                  // Album UIDs or name
+	Albums    string    `form:"albums"`                                 // Multi search with and/or
+	Color     string    `form:"color"`                                  // Main color
+	Faces     string    `form:"faces"`                                  // Find or exclude faces if detected.
+	Quality   int       `form:"quality"`                                // Photo quality score
+	Review    bool      `form:"review"`                                 // Find photos in review
+	Camera    string    `form:"camera"`                                 // Camera UID or name
+	Lens      string    `form:"lens"`                                   // Lens UID or name
+	Before    time.Time `form:"before" time_format:"2006-01-02"`        // Finds images taken before date
+	After     time.Time `form:"after" time_format:"2006-01-02"`         // Finds images taken after date
+	Count     int       `form:"count" binding:"required" serialize:"-"` // Result FILE limit
+	Offset    int       `form:"offset" serialize:"-"`                   // Result FILE offset
+	Order     string    `form:"order" serialize:"-"`                    // Sort order
+	Merged    bool      `form:"merged" serialize:"-"`                   // Merge FILES in response
 }
 
 func (f *SearchPhotos) GetQuery() string {

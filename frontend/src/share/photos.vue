@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" style="user-select: none"
-       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
+       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1600"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" lazy-validation
@@ -93,6 +93,7 @@ import Event from "pubsub-js";
 import Thumb from "model/thumb";
 import Notify from "common/notify";
 import download from "common/download";
+import Api from "common/api";
 
 export default {
   name: 'PPageAlbumPhotos',
@@ -110,6 +111,7 @@ export default {
     const view = this.viewType();
     const filter = {country: country, camera: camera, order: order, q: q};
     const settings = {view: view};
+    const batchSize = Photo.batchSize();
 
     return {
       subscriptions: [],
@@ -120,7 +122,7 @@ export default {
       uid: uid,
       results: [],
       scrollDisabled: true,
-      batchSize: Photo.batchSize(),
+      batchSize: batchSize,
       offset: 0,
       page: 0,
       selection: this.$clipboard.selection,
@@ -133,6 +135,8 @@ export default {
       viewer: {
         results: [],
         loading: false,
+        complete: true,
+        batchSize: batchSize > 160 ? 480 : batchSize * 3
       },
     };
   },
@@ -245,55 +249,57 @@ export default {
       } else if (showMerged) {
         this.$viewer.show(Thumb.fromFiles([selected]), 0);
       } else {
-        this.viewerResults().then((results) => {
-          const thumbsIndex = results.findIndex(result => result.UID === selected.UID);
-
-          if (thumbsIndex < 0) {
-            this.$viewer.show(Thumb.fromPhotos(this.results), index);
-          } else {
-            this.$viewer.show(Thumb.fromPhotos(results), thumbsIndex);
+        if (this.viewer.results && this.viewer.results.length > 0) {
+          // Reuse existing viewer result if possible.
+          const i = this.viewer.results.findIndex(p => p.uid === selected.UID);
+          if (i > -1 && (
+            (this.complete && this.viewer.results.length === this.results.length) ||
+            (this.viewer.complete && this.viewer.results.length > this.results.length) ||
+            (this.viewer.results.length - i < this.viewer.batchSize))
+          ) {
+            this.$viewer.show(this.viewer.results, i);
+            return;
           }
+        }
+
+        // Fetch photos from server API.
+        this.viewer.loading = true;
+
+        const params = this.searchParams();
+        params.count = this.complete ? params.offset : params.offset + this.viewer.batchSize;
+        params.offset = 0;
+
+        // Fetch viewer results from API.
+        return Api.get("photos/view", {params}).then((response) => {
+          let count = response && response.data ? response.data.length : 0;
+          if (count > 0) {
+            // Process response.
+            if (response.headers && response.headers["x-count"]) {
+              count = parseInt(response.headers["x-count"]);
+            }
+            this.viewer.results = Thumb.wrap(response.data);
+            this.viewer.complete = (count < this.batchSize);
+            const i = this.viewer.results.findIndex(p => p.uid === selected.UID);
+
+            // Show photos.
+            this.$viewer.show(this.viewer.results, i);
+          } else {
+            // Don't open viewer if nothing was found.
+            this.viewer.results = [];
+            this.viewer.complete = false;
+            this.$notify.warn(this.$gettext("No pictures found"));
+          }
+        }).catch(() => {
+          // Reset results in case of an error.
+          this.viewer.results = [];
+          this.viewer.complete = false;
+        }).finally(() => {
+          // Unblock.
+          this.viewer.loading = false;
         });
       }
 
       return true;
-    },
-    viewerResults() {
-      if (this.complete || this.loading || this.viewer.loading) {
-        return Promise.resolve(this.results);
-      }
-
-      if (this.viewer.results.length >= this.results.length) {
-        return Promise.resolve(this.viewer.results);
-      }
-
-      this.viewer.loading = true;
-
-      const params = {
-        count: Photo.limit(),
-        offset: 0,
-        album: this.uid,
-        filter: this.model.Filter ? this.model.Filter : "",
-        merged: true,
-      };
-
-      Object.assign(params, this.lastFilter);
-
-      if (this.staticFilter) {
-        Object.assign(params, this.staticFilter);
-      }
-
-      return Photo.search(params).then(resp => {
-        // Success.
-        this.viewer.loading = false;
-        this.viewer.results = resp.models;
-        return Promise.resolve(this.viewer.results);
-      }, () => {
-        // Error.
-        this.viewer.loading = false;
-        this.viewer.results = [];
-        return Promise.resolve(this.results);
-      });
     },
     loadMore() {
       if (this.scrollDisabled) return;
@@ -350,10 +356,6 @@ export default {
         this.dirty = false;
         this.loading = false;
         this.listen = true;
-
-        if (offset === 0) {
-          this.viewerResults();
-        }
       });
     },
     updateQuery() {
@@ -430,6 +432,7 @@ export default {
         this.offset = this.batchSize;
         this.results = response.models;
         this.viewer.results = [];
+        this.viewer.complete = false;
         this.complete = (response.count < this.batchSize);
         this.scrollDisabled = this.complete;
 
@@ -454,8 +457,6 @@ export default {
         this.dirty = false;
         this.loading = false;
         this.listen = true;
-
-        this.viewerResults();
       });
     },
     findAlbum() {

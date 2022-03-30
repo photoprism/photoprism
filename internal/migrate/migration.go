@@ -41,10 +41,25 @@ func (m *Migration) Finish(db *gorm.DB) error {
 
 // Execute runs the migration.
 func (m *Migration) Execute(db *gorm.DB) error {
-	for _, s := range m.Statements {
+	for _, s := range m.Statements { //  ADD
 		if err := db.Exec(s).Error; err != nil {
-			if strings.HasPrefix(s, "DROP ") && strings.Contains(err.Error(), "DROP") {
-				log.Tracef("migrate: %s (drop statement)", err)
+			// Normalize query and error for comparison.
+			q := strings.ToUpper(s)
+			e := strings.ToUpper(err.Error())
+
+			// Log the errors triggered by ALTER and DROP statements
+			// and otherwise ignore them, since some databases do not
+			// support "IF EXISTS".
+			if strings.HasPrefix(q, "ALTER TABLE ") &&
+				strings.Contains(s, " ADD ") &&
+				strings.Contains(e, "DUPLICATE") {
+				log.Tracef("migrate: %s (ignored, column already exists)", err)
+			} else if strings.HasPrefix(q, "DROP INDEX ") &&
+				strings.Contains(e, "DROP") {
+				log.Tracef("migrate: %s (ignored, probably didn't exist anymore)", err)
+			} else if strings.HasPrefix(q, "DROP TABLE ") &&
+				strings.Contains(e, "DROP") {
+				log.Tracef("migrate: %s (ignored, probably didn't exist anymored)", err)
 			} else {
 				return err
 			}

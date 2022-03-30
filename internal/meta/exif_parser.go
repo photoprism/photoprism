@@ -18,7 +18,7 @@ import (
 func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif []byte, err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (raw exif panic)\nstack: %s", e, sanitize.Log(filepath.Base(fileName)), debug.Stack())
+			err = fmt.Errorf("%s in %s (raw exif panic)\nstack: %s", e, sanitize.Log(filepath.Base(fileName)), debug.Stack())
 		}
 	}()
 
@@ -35,13 +35,13 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 		sl, err := jpegMp.ParseFile(fileName)
 
 		if err != nil {
-			log.Infof("metadata: %s in %s (parse jpeg)", err, logName)
+			log.Infof("metadata: %s while parsing jpeg file %s", err, logName)
 		} else {
 			_, rawExif, err = sl.Exif()
 
 			if err != nil {
 				if !bruteForce || strings.HasPrefix(err.Error(), "no exif header") {
-					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse jpeg)", logName)
+					return rawExif, fmt.Errorf("found no exif header")
 				} else if strings.HasPrefix(err.Error(), "no exif data") {
 					log.Debugf("metadata: failed parsing %s, starting brute-force search (parse jpeg)", logName)
 				} else {
@@ -57,13 +57,13 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 		cs, err := pngMp.ParseFile(fileName)
 
 		if err != nil {
-			return rawExif, fmt.Errorf("metadata: %s in %s (parse png)", err, logName)
+			return rawExif, fmt.Errorf("%s while parsing png file", err)
 		} else {
 			_, rawExif, err = cs.Exif()
 
 			if err != nil {
 				if err.Error() == "file does not have EXIF" || strings.HasPrefix(err.Error(), "no exif data") {
-					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse png)", logName)
+					return rawExif, fmt.Errorf("found no exif header")
 				} else {
 					log.Infof("metadata: %s in %s (parse png)", err, logName)
 				}
@@ -77,13 +77,13 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 		cs, err := heicMp.ParseFile(fileName)
 
 		if err != nil {
-			return rawExif, fmt.Errorf("metadata: %s in %s (parse heic)", err, logName)
+			return rawExif, fmt.Errorf("%s while parsing heic file", err)
 		} else {
 			_, rawExif, err = cs.Exif()
 
 			if err != nil {
 				if err.Error() == "file does not have EXIF" || strings.HasPrefix(err.Error(), "no exif data") {
-					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse heic)", logName)
+					return rawExif, fmt.Errorf("found no exif header")
 				} else {
 					log.Infof("metadata: %s in %s (parse heic)", err, logName)
 				}
@@ -97,13 +97,13 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 		cs, err := tiffMp.ParseFile(fileName)
 
 		if err != nil {
-			return rawExif, fmt.Errorf("metadata: %s in %s (parse tiff)", err, logName)
+			return rawExif, fmt.Errorf("%s while parsing tiff file", err)
 		} else {
 			_, rawExif, err = cs.Exif()
 
 			if err != nil {
 				if err.Error() == "file does not have EXIF" || strings.HasPrefix(err.Error(), "no exif data") {
-					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse tiff)", logName)
+					return rawExif, fmt.Errorf("found no exif header")
 				} else {
 					log.Infof("metadata: %s in %s (parse tiff)", err, logName)
 				}
@@ -112,7 +112,7 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 			}
 		}
 	} else {
-		log.Infof("metadata: no file format parser for %s, performing brute-force search", logName)
+		log.Debugf("metadata: no native file format support for %s, performing brute-force exif search", logName)
 		bruteForce = true
 	}
 
@@ -121,7 +121,7 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 		rawExif, err = exif.SearchFileAndExtractExif(fileName)
 
 		if err != nil {
-			return rawExif, fmt.Errorf("metadata: found no exif header in %s (search and extract)", logName)
+			return rawExif, fmt.Errorf("found no exif data")
 		}
 	}
 
