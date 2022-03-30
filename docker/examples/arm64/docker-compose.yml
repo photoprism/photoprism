@@ -75,7 +75,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # disables facial recognition
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification
-      PHOTOPRISM_DARKTABLE_PRESETS: "true"           # enables Darktable presets and disables concurrent RAW conversion
+      PHOTOPRISM_RAW_PRESETS: "false"                # enables RAW file converter presets (may reduce performance)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # FFmpeg AVC encoder for video transcoding (default: libx264)
       # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       PHOTOPRISM_DETECT_NSFW: "false"                # flag photos as private that MAY be offensive
