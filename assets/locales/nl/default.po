@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-18 09:35+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-03-29 18:44+0000\n"
+"Last-Translator: Tycho Werner <TychoWerner@gmail.com>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
 "Language: nl\n"
@@ -119,10 +119,8 @@ msgstr "Ongeldige link"
 msgid "Invalid name"
 msgstr "Ongeldige mapnaam"
 
-#, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
-msgstr "Fout wachtwoord, probeer alstublieft opnieuw"
+msgstr "Bezet, probeer het later nog eens"
 
 msgid "Changes successfully saved"
 msgstr "Wijzigingen succesvol opgeslagen"
@@ -214,9 +212,8 @@ msgstr "Bestanden verplaatsen uit %s"
 msgid "Copying files from %s"
 msgstr "Bestanden kopiëren uit %s"
 
-#, fuzzy
 msgid "Labels deleted"
-msgstr "Labels verwijderd"
+msgstr "Verwijderde labels"
 
 msgid "Label saved"
 msgstr "Labels opgeslagen"
