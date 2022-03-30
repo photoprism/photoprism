@@ -114,7 +114,7 @@ var KeywordFixtures = KeywordMap{
 		Keyword: "run|stay",
 		Skip:    false,
 	},
-	"pillow": {
+	"pillow|": {
 		ID:      10000019,
 		Keyword: "pillow|",
 		Skip:    false,

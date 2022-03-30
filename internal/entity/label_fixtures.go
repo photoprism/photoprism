@@ -252,7 +252,7 @@ var LabelFixtures = LabelMap{
 	"cell%": {
 		ID:               1000013,
 		LabelUID:         "lt9k3pw1wowuy315",
-		LabelSlug:        "lcell%",
+		LabelSlug:        "cell%",
 		CustomSlug:       "cell%",
 		LabelName:        "cell%",
 		LabelPriority:    1,
