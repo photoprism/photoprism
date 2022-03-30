@@ -190,15 +190,10 @@ func TestPhotosFilterMonth(t *testing.T) {
 		f.Month = "Red|Green"
 		f.Merged = true
 
-		photos, count, err := Photos(f)
+		photos, _, err := Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
-		}
-
-		if len(photos) != 1 {
-			t.Logf("excactly one result expected, but %d photos with %d files found", len(photos), count)
-			t.Logf("query results: %#v", photos)
 		}
 
 		assert.Equal(t, len(photos), len(photos0))
@@ -441,15 +436,10 @@ func TestPhotosQueryMonth(t *testing.T) {
 		f.Query = "month:\"Red|Green\""
 		f.Merged = true
 
-		photos, count, err := Photos(f)
+		photos, _, err := Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
-		}
-
-		if len(photos) != 1 {
-			t.Logf("excactly one result expected, but %d photos with %d files found", len(photos), count)
-			t.Logf("query results: %#v", photos)
 		}
 
 		assert.Equal(t, len(photos), len(photos0))

@@ -199,15 +199,10 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Red|Green"
 		f.Merged = true
 
-		photos, count, err := Photos(f)
+		photos, _, err := Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
-		}
-
-		if len(photos) != 1 {
-			t.Logf("excactly one result expected, but %d photos with %d files found", len(photos), count)
-			t.Logf("query results: %#v", photos)
 		}
 
 		assert.Equal(t, len(photosredorgreen), len(photos))
@@ -458,15 +453,10 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Red|Green\""
 		f.Merged = true
 
-		photos, count, err := Photos(f)
+		photos, _, err := Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
-		}
-
-		if len(photos) != 1 {
-			t.Logf("excactly one result expected, but %d photos with %d files found", len(photos), count)
-			t.Logf("query results: %#v", photos)
 		}
 
 		assert.Equal(t, len(photosredorgreen), len(photos))
