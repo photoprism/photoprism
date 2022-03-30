@@ -410,7 +410,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.True(t, form.Merged)
 	})
 	t.Run("query for lat with invalid type", func(t *testing.T) {
-		form := &SearchPhotos{Query: "lat:cat"}
+		form := &SearchPhotos{Query: "lat:&cat"}
 
 		err := form.ParseQueryString()
 
@@ -420,10 +420,23 @@ func TestParseQueryString(t *testing.T) {
 
 		// log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "strconv.ParseFloat: parsing \"cat\": invalid syntax", err.Error())
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for lng with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "lng:^>cat"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Contains(t, err.Error(), "invalid syntax")
 	})
 	t.Run("query for dist with invalid type", func(t *testing.T) {
-		form := &SearchPhotos{Query: "dist:cat"}
+		form := &SearchPhotos{Query: "dist:c@t"}
 
 		err := form.ParseQueryString()
 
@@ -433,7 +446,98 @@ func TestParseQueryString(t *testing.T) {
 
 		// log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for fmin with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "fmin:=}cat{"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for fmax with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "fmax:ca#$t"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for chroma with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "chroma:&|cat"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for diff with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "diff:&cat;%"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for quality with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "quality:`cat"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for count with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "count:ca(%t"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for offset with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "offset:&cat"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Contains(t, err.Error(), "invalid syntax")
 	})
 	t.Run("CameraString", func(t *testing.T) {
 		form := &SearchPhotos{Query: "camera:cat"}
@@ -459,6 +563,19 @@ func TestParseQueryString(t *testing.T) {
 	})
 	t.Run("query for before with invalid type", func(t *testing.T) {
 		form := &SearchPhotos{Query: "before:cat"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		// log.Debugf("%+v\n", form)
+
+		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
+	})
+	t.Run("query for after with invalid type", func(t *testing.T) {
+		form := &SearchPhotos{Query: "after:cat"}
 
 		err := form.ParseQueryString()
 
