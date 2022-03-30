@@ -132,7 +132,7 @@ migrate:
 generate:
 	go generate ./pkg/... ./internal/...
 	go fmt ./pkg/... ./internal/...
-	# Revert unnecessary file change?
+	# revert unnecessary pot file change
 	POT_UNCHANGED='1 file changed, 1 insertion(+), 1 deletion(-)'
 	@if [ ${$(shell git diff --shortstat assets/locales/messages.pot):1:45} == $(POT_UNCHANGED) ]; then\
 		git checkout -- assets/locales/messages.pot;\
