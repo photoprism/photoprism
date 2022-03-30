@@ -138,7 +138,7 @@ services:
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "false"                        # run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                       # no authentication required (disables password protection)
-      PHOTOPRISM_READONLY: "false"                     # don't modify originals directory (reduced functionality)
+      PHOTOPRISM_READONLY: "false"                     # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"                 # enables experimental features
       PHOTOPRISM_DISABLE_CHOWN: "false"                # disables storage permission updates on startup
       PHOTOPRISM_DISABLE_WEBDAV: "false"               # disables built-in WebDAV server
@@ -196,7 +196,7 @@ services:
     command: mysqld --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
-      - "./database:/var/lib/mysql" # important, don't remove
+      - "./database:/var/lib/mysql" # important, do not remove
     environment:
       MARIADB_AUTO_UPGRADE: "1"
       MARIADB_INITDB_SKIP_TZINFO: "1"

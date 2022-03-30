@@ -60,11 +60,11 @@ services:
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "false"                      # run in debug mode, shows additional log messages
       PHOTOPRISM_PUBLIC: "false"                     # no authentication required, disables password protection
-      PHOTOPRISM_READONLY: "false"                   # don't modify originals folder; disables import, upload, and delete
+      PHOTOPRISM_READONLY: "false"                   # do not modify originals folder; disables import, upload, and delete
       PHOTOPRISM_EXPERIMENTAL: "false"               # enables experimental features
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables storage permission updates on startup
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables Settings in Web UI
+      PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # disables facial recognition
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification
@@ -104,7 +104,7 @@ services:
     ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
     command: mysqld --innodb-buffer-pool-size=128M --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
-      - "database:/var/lib/mysql" # important, don't remove; named volume "database" is defined at the bottom
+      - "database:/var/lib/mysql" # important, do not remove; named volume "database" is defined at the bottom
     environment:
       MARIADB_AUTO_UPGRADE: "1"
       MARIADB_INITDB_SKIP_TZINFO: "1"
