@@ -103,7 +103,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
-    image: mariadb:10.6
+    image: mariadb:10.7
     container_name: mariadb
     security_opt:
       - seccomp:unconfined
@@ -113,10 +113,12 @@ services:
     volumes:
       - "./database:/var/lib/mysql" # important, don't remove
     environment:
-      MYSQL_ROOT_PASSWORD: insecure
-      MYSQL_DATABASE: photoprism
-      MYSQL_USER: photoprism
-      MYSQL_PASSWORD: insecure
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "insecure"
+      MARIADB_ROOT_PASSWORD: "insecure"
 
   ## Ofelia Job Runner (recommended for running background jobs)
   ## see https://github.com/mcuadros/ofelia

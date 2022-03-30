@@ -128,9 +128,9 @@ services:
       - "go-mod:/go/pkg/mod"
 
   ## MariaDB Database Server
-  ## Docs: https://mariadb.com/docs/reference/cs10.6/
+  ## Docs: https://mariadb.com/docs/reference/
   mariadb:
-    image: mariadb:10.6
+    image: mariadb:10.7
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
@@ -139,10 +139,12 @@ services:
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
-      MYSQL_ROOT_PASSWORD: photoprism
-      MYSQL_USER: photoprism
-      MYSQL_PASSWORD: photoprism
-      MYSQL_DATABASE: photoprism
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "photoprism"
+      MARIADB_ROOT_PASSWORD: "photoprism"
 
   ## Keycloak OpenID Connect Provider
   ## Admin Account: admin / photoprism
