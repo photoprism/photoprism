@@ -89,11 +89,11 @@
 <script>
 import {Photo, TypeLive, TypeRaw, TypeVideo} from "model/photo";
 import Album from "model/album";
-import Event from "pubsub-js";
 import Thumb from "model/thumb";
+import Event from "pubsub-js";
 import Notify from "common/notify";
 import download from "common/download";
-import Api from "common/api";
+import Viewer from "common/viewer";
 
 export default {
   name: 'PPageAlbumPhotos',
@@ -136,7 +136,8 @@ export default {
       viewer: {
         results: [],
         loading: false,
-        complete: true,
+        complete: false,
+        dirty: false,
         batchSize: batchSize > 160 ? 480 : batchSize * 3
       },
     };
@@ -230,7 +231,7 @@ export default {
       Event.publish("dialog.edit", {selection: selection, album: this.album, index: index});
     },
     openPhoto(index, showMerged) {
-      if (this.loading || this.viewer.loading || !this.results[index]) {
+      if (this.loading || !this.listen || this.viewer.loading || !this.results[index]) {
         return false;
       }
 
@@ -250,77 +251,20 @@ export default {
       } else if (showMerged) {
         this.$viewer.show(Thumb.fromFiles([selected]), 0);
       } else {
-        if (this.viewer.results && this.viewer.results.length > index) {
-          // Reuse existing viewer result if possible.
-          let i = -1;
-
-          if (this.viewer.results[index] && this.viewer.results[index].uid === selected.UID) {
-            i = index;
-          } else {
-            i = this.viewer.results.findIndex(p => p.uid === selected.UID);
-          }
-
-          if (i > -1 && (((this.viewer.complete || this.complete) && this.viewer.results.length >= this.results.length)
-              || ((i + this.viewer.batchSize) <= this.viewer.results.length))
-          ) {
-            this.$viewer.show(this.viewer.results, i);
-            return;
-          }
-        }
-
-        // Fetch photos from server API.
-        this.viewer.loading = true;
-
-        const params = this.searchParams();
-        params.count = this.complete ? params.offset : params.offset + this.viewer.batchSize;
-        params.offset = 0;
-
-        // Fetch viewer results from API.
-        return Api.get("photos/view", {params}).then((response) => {
-          let count = response && response.data ? response.data.length : 0;
-          if (count > 0) {
-            // Process response.
-            if (response.headers && response.headers["x-count"]) {
-              const c = parseInt(response.headers["x-count"]);
-              const l = parseInt(response.headers["x-limit"]);
-              this.viewer.complete = c < l;
-            }
-
-            let i;
-
-            if (response.data[index] && response.data[index].uid === selected.UID) {
-              i = index;
-            } else {
-              i = response.data.findIndex(p => p.uid === selected.UID);
-            }
-
-            this.viewer.results = Thumb.wrap(response.data);
-
-            // Show photos.
-            this.$viewer.show(this.viewer.results, i);
-          } else {
-            // Don't open viewer if nothing was found.
-            this.viewer.results = [];
-            this.viewer.complete = false;
-            this.$notify.warn(this.$gettext("No pictures found"));
-          }
-        }).catch(() => {
-          // Reset results in case of an error.
-          this.viewer.results = [];
-          this.viewer.complete = false;
-        }).finally(() => {
-          // Unblock.
-          this.viewer.loading = false;
-        });
+        Viewer.show(this, index);
       }
 
       return true;
     },
     loadMore() {
-      if (this.scrollDisabled) return;
+      if (this.scrollDisabled || this.$scrollbar.disabled()) return;
 
       this.scrollDisabled = true;
       this.listen = false;
+
+      if (this.dirty) {
+        this.viewer.dirty = true;
+      }
 
       const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;

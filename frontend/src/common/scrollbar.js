@@ -63,8 +63,11 @@ const Scrollbar = {
 
     this.update(preserveOverflow);
   },
+  disabled: function () {
+    return hidePending > 0;
+  },
   hidden: function () {
-    return hidePending > 0 || hideDefault;
+    return this.disabled() || hideDefault;
   },
 };
 
