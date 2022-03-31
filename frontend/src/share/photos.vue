@@ -250,13 +250,18 @@ export default {
       } else if (showMerged) {
         this.$viewer.show(Thumb.fromFiles([selected]), 0);
       } else {
-        if (this.viewer.results && this.viewer.results.length > 0) {
+        if (this.viewer.results && this.viewer.results.length > index) {
           // Reuse existing viewer result if possible.
-          const i = this.viewer.results.findIndex(p => p.uid === selected.UID);
-          if (i > -1 && (
-            (this.complete && this.viewer.results.length >= this.results.length) ||
-            (this.viewer.complete && this.viewer.results.length >= this.results.length) ||
-            ((i + this.viewer.batchSize) <= this.viewer.results.length))
+          let i = -1;
+
+          if (this.viewer.results[index] && this.viewer.results[index].uid === selected.UID) {
+            i = index;
+          } else {
+            i = this.viewer.results.findIndex(p => p.uid === selected.UID);
+          }
+
+          if (i > -1 && (((this.viewer.complete || this.complete) && this.viewer.results.length >= this.results.length)
+              || ((i + this.viewer.batchSize) <= this.viewer.results.length))
           ) {
             this.$viewer.show(this.viewer.results, i);
             return;
@@ -281,7 +286,14 @@ export default {
               this.viewer.complete = c < l;
             }
 
-            const i = response.data.findIndex(p => p.uid === selected.UID);
+            let i;
+
+            if (response.data[index] && response.data[index].uid === selected.UID) {
+              i = index;
+            } else {
+              i = response.data.findIndex(p => p.uid === selected.UID);
+            }
+
             this.viewer.results = Thumb.wrap(response.data);
 
             // Show photos.
