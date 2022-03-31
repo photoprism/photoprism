@@ -11,7 +11,7 @@
       <div class="pswp__ui pswp__ui--hidden">
 
         <div class="pswp__top-bar">
-          <div class="pswp__taken hidden-xs-only">{{ formatDate(item.taken) }}</div>
+          <div class="pswp__taken hidden-xs-only">{{ formatDate(item.TakenAtLocal) }}</div>
 
           <div class="pswp__counter"></div>
 
@@ -35,7 +35,7 @@
 
           <button class="pswp__button action-like hidden-shared-only" style="background: none;"
                   :title="$gettext('Like')" @click.exact="onLike">
-            <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
+            <v-icon v-if="item.Favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
 
@@ -158,7 +158,7 @@ export default {
         this.onPause();
       }
 
-      if (data.item && this.item && this.item.uid !== data.item.uid) {
+      if (data.item && this.item && this.item.UID !== data.item.UID) {
         this.closePlayer();
       }
 
@@ -171,8 +171,8 @@ export default {
       this.$clipboard.toggle(this.item);
     },
     onPlay() {
-      if (this.item && this.item.playable) {
-        new Photo().find(this.item.uid).then((video) => this.openPlayer(video));
+      if (this.item && this.item.Playable) {
+        new Photo().find(this.item.UID).then((video) => this.openPlayer(video));
       }
     },
     openPlayer(video) {
@@ -236,14 +236,14 @@ export default {
     onDownload() {
       this.onPause();
 
-      if (!this.item || !this.item.download_url) {
+      if (!this.item || !this.item.DownloadUrl) {
         console.warn("photo viewer: no download url");
         return;
       }
 
       Notify.success(this.$gettext("Downloading…"));
 
-      new Photo().find(this.item.uid).then(p => p.downloadAll());
+      new Photo().find(this.item.UID).then(p => p.downloadAll());
     },
     onEdit() {
       this.onPause();
@@ -253,15 +253,15 @@ export default {
 
       // remove duplicates
       let filtered = g.items.filter(function (p, i, s) {
-        return !(i > 0 && p.uid === s[i - 1].uid);
+        return !(i > 0 && p.UID === s[i - 1].UID);
       });
 
       let selection = filtered.map((p, i) => {
-        if (g.currItem.uid === p.uid) {
+        if (g.currItem.UID === p.UID) {
           index = i;
         }
 
-        return p.uid;
+        return p.UID;
       });
 
       let album = null;
