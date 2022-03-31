@@ -486,7 +486,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",
 		Usage:  "`QUALITY` of generated JPEG images, a higher value reduces compression (25-100)",
-		Value:  92,
+		Value:  85,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
 	cli.IntFlag{
