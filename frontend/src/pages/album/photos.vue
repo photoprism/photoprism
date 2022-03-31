@@ -198,9 +198,9 @@ export default {
           // Reuse existing viewer result if possible.
           const i = this.viewer.results.findIndex(p => p.uid === selected.UID);
           if (i > -1 && (
-            (this.complete && this.viewer.results.length === this.results.length) ||
-            (this.viewer.complete && this.viewer.results.length > this.results.length) ||
-            (this.viewer.results.length - i < this.viewer.batchSize))
+            (this.complete && this.viewer.results.length >= this.results.length) ||
+            (this.viewer.complete && this.viewer.results.length >= this.results.length) ||
+            ((i + this.viewer.batchSize) <= this.viewer.results.length))
           ) {
             this.$viewer.show(this.viewer.results, i);
             return;
@@ -220,11 +220,13 @@ export default {
           if (count > 0) {
             // Process response.
             if (response.headers && response.headers["x-count"]) {
-              count = parseInt(response.headers["x-count"]);
+              const c = parseInt(response.headers["x-count"]);
+              const l = parseInt(response.headers["x-limit"]);
+              this.viewer.complete = c < l;
             }
+
+            const i = response.data.findIndex(p => p.uid === selected.UID);
             this.viewer.results = Thumb.wrap(response.data);
-            this.viewer.complete = (count < this.batchSize);
-            const i = this.viewer.results.findIndex(p => p.uid === selected.UID);
 
             // Show photos.
             this.$viewer.show(this.viewer.results, i);
