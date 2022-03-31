@@ -2,8 +2,10 @@ package config
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"sync"
 	"testing"
@@ -37,12 +39,15 @@ func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
 }
 
+var PkgNameRegexp = regexp.MustCompile("[^a-zA-Z\\-_]+")
+
 // NewTestOptions returns valid config options for tests.
-func NewTestOptions() *Options {
+func NewTestOptions(pkg string) *Options {
 	assetsPath := fs.Abs("../../assets")
 	storagePath := fs.Abs("../../storage")
 	testDataPath := filepath.Join(storagePath, "testdata")
 
+	pkg = PkgNameRegexp.ReplaceAllString(pkg, "")
 	driver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
 	dsn := os.Getenv("PHOTOPRISM_TEST_DSN")
 
@@ -57,11 +62,12 @@ func NewTestOptions() *Options {
 
 	// Set default database DSN.
 	if driver == SQLite3 {
-		if dsn == "" {
+		if dsn == "" && pkg != "" {
+			dsn = fmt.Sprintf("file:%s?mode=memory&cache=shared", pkg)
+		} else if dsn == "" {
 			dsn = SQLiteMemoryDSN
 		} else if dsn != SQLiteTestDB {
 			// Continue.
-
 		} else if err := os.Remove(dsn); err == nil {
 			log.Debugf("sqlite: test file %s removed", sanitize.Log(dsn))
 		}
@@ -119,7 +125,7 @@ func NewTestOptionsError() *Options {
 }
 
 func SetNewTestConfig() {
-	testConfig = NewTestConfig()
+	testConfig = NewTestConfig("test")
 }
 
 // TestConfig returns the existing test config instance or creates a new instance and returns it.
@@ -130,14 +136,14 @@ func TestConfig() *Config {
 }
 
 // NewTestConfig returns a valid test config.
-func NewTestConfig() *Config {
+func NewTestConfig(pkg string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
 	testConfigMutex.Lock()
 	defer testConfigMutex.Unlock()
 
 	c := &Config{
-		options: NewTestOptions(),
+		options: NewTestOptions(pkg),
 		token:   rnd.Token(8),
 	}
 
@@ -174,7 +180,7 @@ func NewTestErrorConfig() *Config {
 
 // CliTestContext returns a CLI context for testing.
 func CliTestContext() *cli.Context {
-	config := NewTestOptions()
+	config := NewTestOptions("config-cli")
 
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.Bool("debug", false, "doc")

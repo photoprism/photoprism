@@ -27,7 +27,7 @@ func TestTestConfig(t *testing.T) {
 }
 
 func TestNewTestOptions(t *testing.T) {
-	c := NewTestOptions()
+	c := NewTestOptions("config")
 
 	assert.IsType(t, new(Options), c)
 

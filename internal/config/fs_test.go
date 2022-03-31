@@ -85,7 +85,7 @@ func TestConfig_CreateDirectories(t *testing.T) {
 		defer testConfigMutex.Unlock()
 
 		c := &Config{
-			options: NewTestOptions(),
+			options: NewTestOptions("config"),
 			token:   rnd.Token(8),
 		}
 

@@ -17,7 +17,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	c := config.TestConfig()
+	c := config.NewTestConfig("service")
 
 	SetConfig(c)
 
