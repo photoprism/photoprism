@@ -47,7 +47,7 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, username string,
 	return
 }
 
-// Performs API request with empty request body.
+// Executes an API request with an empty request body.
 // See https://medium.com/@craigchilds94/testing-gin-json-responses-1f258ce3b0b1
 func PerformRequest(r http.Handler, method, path string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(method, path, nil)
@@ -65,7 +65,7 @@ func AuthenticatedRequest(r http.Handler, method, path, sess string) *httptest.R
 	return w
 }
 
-// Performs API request including request body as string.
+// Executes an API request with the request body as a string.
 func PerformRequestWithBody(r http.Handler, method, path, body string) *httptest.ResponseRecorder {
 	reader := strings.NewReader(body)
 	req, _ := http.NewRequest(method, path, reader)
@@ -74,7 +74,7 @@ func PerformRequestWithBody(r http.Handler, method, path, body string) *httptest
 	return w
 }
 
-// Performs authenticated API request including request body as string.
+// Performs an authenticated API request containing the request body as a string.
 func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, sessionId string) *httptest.ResponseRecorder {
 	reader := strings.NewReader(body)
 	req, _ := http.NewRequest(method, path, reader)
@@ -88,7 +88,7 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	c := config.TestConfig()
+	c := config.NewTestConfig("api")
 	service.SetConfig(c)
 
 	code := m.Run()

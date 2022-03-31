@@ -12,7 +12,7 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	c := config.TestConfig()
+	c := config.NewTestConfig("auto")
 
 	code := m.Run()
 

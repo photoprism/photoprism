@@ -12,11 +12,7 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	if err := os.Remove(".test.db"); err == nil {
-		log.Debugln("removed .test.db")
-	}
-
-	c := config.TestConfig()
+	c := config.NewTestConfig("photoprism")
 	SetConfig(c)
 
 	code := m.Run()
