@@ -32,12 +32,12 @@ msgstr ""
 msgid "%{n} people found"
 msgstr ""
 
-#: src/pages/album/photos.vue:226
-#: src/pages/album/photos.vue:338
-#: src/pages/photos.vue:266
-#: src/pages/photos.vue:378
-#: src/share/photos.vue:241
-#: src/share/photos.vue:353
+#: src/pages/album/photos.vue:232
+#: src/pages/album/photos.vue:341
+#: src/pages/photos.vue:278
+#: src/pages/photos.vue:387
+#: src/share/photos.vue:247
+#: src/share/photos.vue:356
 msgid "%{n} pictures found"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr ""
 msgid "After two weeks"
 msgstr ""
 
-#: src/model/album.js:220
+#: src/model/album.js:227
 msgid "Album"
 msgstr ""
 
@@ -410,9 +410,9 @@ msgstr ""
 msgid "Camera Serial"
 msgstr ""
 
-#: src/pages/album/photos.vue:232
-#: src/pages/photos.vue:272
-#: src/share/photos.vue:247
+#: src/pages/album/photos.vue:238
+#: src/pages/photos.vue:284
+#: src/share/photos.vue:253
 msgid "Can't load more, limit reached"
 msgstr ""
 
@@ -792,7 +792,7 @@ msgstr ""
 #: src/share/photo/cards.vue:63
 #: src/share/photo/clipboard.vue:45
 #: src/share/photo/list.vue:62
-#: src/share/photos.vue:486
+#: src/share/photos.vue:487
 msgid "Downloading…"
 msgstr ""
 
@@ -907,7 +907,7 @@ msgstr ""
 msgid "F Number"
 msgstr ""
 
-#: src/model/face.js:154
+#: src/model/face.js:161
 msgid "Face"
 msgstr ""
 
@@ -1211,7 +1211,7 @@ msgid "Keywords"
 msgstr ""
 
 #: src/dialog/photo/labels.vue:20
-#: src/model/label.js:115
+#: src/model/label.js:122
 msgid "Label"
 msgstr ""
 
@@ -1374,7 +1374,7 @@ msgstr ""
 msgid "Manual Upload"
 msgstr ""
 
-#: src/model/marker.js:137
+#: src/model/marker.js:144
 msgid "Marker"
 msgstr ""
 
@@ -1420,9 +1420,9 @@ msgstr ""
 msgid "Moonlight"
 msgstr ""
 
-#: src/pages/album/photos.vue:341
-#: src/pages/photos.vue:381
-#: src/share/photos.vue:356
+#: src/pages/album/photos.vue:344
+#: src/pages/photos.vue:390
+#: src/share/photos.vue:359
 msgid "More than %{n} pictures found"
 msgstr ""
 
@@ -1545,15 +1545,18 @@ msgstr ""
 #: src/component/photo/cards.vue:7
 #: src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:7
-#: src/pages/album/photos.vue:334
+#: src/pages/album/photos.vue:186
+#: src/pages/album/photos.vue:337
 #: src/pages/library/files.vue:34
-#: src/pages/photos.vue:374
+#: src/pages/photos.vue:236
+#: src/pages/photos.vue:383
 #: src/pages/places.vue:199
 #: src/pages/places.vue:242
 #: src/share/photo/cards.vue:7
 #: src/share/photo/list.vue:8
 #: src/share/photo/mosaic.vue:7
-#: src/share/photos.vue:349
+#: src/share/photos.vue:201
+#: src/share/photos.vue:352
 msgid "No pictures found"
 msgstr ""
 
@@ -1672,9 +1675,9 @@ msgstr ""
 msgid "One person found"
 msgstr ""
 
-#: src/pages/album/photos.vue:336
-#: src/pages/photos.vue:376
-#: src/share/photos.vue:351
+#: src/pages/album/photos.vue:339
+#: src/pages/photos.vue:385
+#: src/share/photos.vue:354
 msgid "One picture found"
 msgstr ""
 
@@ -1771,7 +1774,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/model/photo.js:899
+#: src/model/photo.js:906
 msgid "Photo"
 msgstr ""
 
@@ -2292,7 +2295,7 @@ msgid "Style"
 msgstr ""
 
 #: src/dialog/photo/details.vue:473
-#: src/model/subject.js:149
+#: src/model/subject.js:156
 msgid "Subject"
 msgstr ""
 
@@ -2443,13 +2446,13 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:24
-#: src/model/album.js:177
-#: src/model/photo.js:566
-#: src/model/photo.js:583
-#: src/model/photo.js:606
-#: src/model/photo.js:620
-#: src/model/photo.js:705
-#: src/model/photo.js:718
+#: src/model/album.js:179
+#: src/model/photo.js:568
+#: src/model/photo.js:585
+#: src/model/photo.js:608
+#: src/model/photo.js:622
+#: src/model/photo.js:707
+#: src/model/photo.js:720
 #: src/options/options.js:20
 #: src/options/options.js:34
 #: src/options/options.js:51
@@ -2575,8 +2578,8 @@ msgstr ""
 #: src/component/photo/list.vue:196
 #: src/component/photo/mosaic.vue:200
 #: src/model/file.js:180
-#: src/model/photo.js:657
-#: src/model/photo.js:671
+#: src/model/photo.js:659
+#: src/model/photo.js:673
 #: src/options/options.js:318
 #: src/share/photo/cards.vue:38
 #: src/share/photo/cards.vue:198

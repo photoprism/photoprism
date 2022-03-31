@@ -295,7 +295,6 @@ const clientConfig = {
     },
     search: {
       batchSize: 60,
-      prefetchDist: 999,
     },
     maps: {
       animate: 0,

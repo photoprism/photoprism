@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" style="user-select: none"
-       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1600"
+       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" lazy-validation
@@ -122,6 +122,7 @@ export default {
       uid: uid,
       results: [],
       scrollDisabled: true,
+      scrollDistance: window.innerHeight*2,
       batchSize: batchSize,
       offset: 0,
       page: 0,

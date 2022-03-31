@@ -72,6 +72,8 @@ export const DATE_FULL_TZ = {
   timeZoneName: short,
 };
 
+export let BatchSize = 60;
+
 export class Photo extends RestModel {
   constructor(values) {
     super(values);
@@ -888,7 +890,14 @@ export class Photo extends RestModel {
   }
 
   static batchSize() {
-    return config.searchBatchSize();
+    return BatchSize;
+  }
+
+  static setBatchSize(count) {
+    const s = parseInt(count);
+    if (!isNaN(s) && s >= 24) {
+      BatchSize = s;
+    }
   }
 
   static getCollectionResource() {

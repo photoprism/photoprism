@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-photos" style="user-select: none"
-       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="settings.prefetchDist"
+       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <p-photo-toolbar :settings="settings" :filter="filter" :filter-change="updateQuery" :dirty="dirty"
@@ -79,8 +79,6 @@ export default {
 
     const settings = this.$config.settings();
 
-    let prefetchDist = 1600;
-
     if (settings) {
       if (settings.features.private) {
         filter.public = "true";
@@ -88,10 +86,6 @@ export default {
 
       if (settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
         filter.quality = "3";
-      }
-
-      if (settings.search.prefetchDist > 0) {
-        prefetchDist = settings.search.prefetchDist;
       }
     }
 
@@ -104,13 +98,13 @@ export default {
       complete: false,
       results: [],
       scrollDisabled: true,
+      scrollDistance: window.innerHeight*2,
       batchSize: batchSize,
       offset: 0,
       page: 0,
       selection: this.$clipboard.selection,
       settings: {
         view,
-        prefetchDist
       },
       filter: filter,
       lastFilter: {},

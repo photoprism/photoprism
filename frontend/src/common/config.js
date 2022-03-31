@@ -23,11 +23,12 @@ Additional information can be found in our Developer Guide:
 
 */
 
+import Api from "api.js";
 import Event from "pubsub-js";
 import themes from "options/themes.json";
 import translations from "locales/translations.json";
-import Api from "api.js";
 import { Languages } from "options/options";
+import { Photo } from "model/photo";
 
 export default class Config {
   /**
@@ -140,10 +141,21 @@ export default class Config {
     }
 
     if (values.settings) {
+      this.setBatchSize(values.settings);
       this.setTheme(values.settings.ui.theme);
     }
 
     return this;
+  }
+
+  setBatchSize(settings) {
+    if (!settings || !settings.search) {
+      return;
+    }
+
+    if (settings.search.batchSize) {
+      Photo.setBatchSize(settings.search.batchSize);
+    }
   }
 
   onPeople(ev, data) {
@@ -355,14 +367,6 @@ export default class Config {
 
   settings() {
     return this.values.settings;
-  }
-
-  searchBatchSize() {
-    if (!this.values || !this.values.settings || !this.values.settings.search.batchSize) {
-      return 80;
-    }
-
-    return this.values.settings.search.batchSize;
   }
 
   rtl() {

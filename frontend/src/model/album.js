@@ -30,6 +30,8 @@ import { DateTime } from "luxon";
 import { config } from "app/session";
 import { $gettext } from "common/vm";
 
+export let BatchSize = 24;
+
 export class Album extends RestModel {
   getDefaults() {
     return {
@@ -209,7 +211,14 @@ export class Album extends RestModel {
   }
 
   static batchSize() {
-    return 24;
+    return BatchSize;
+  }
+
+  static setBatchSize(count) {
+    const s = parseInt(count);
+    if (!isNaN(s) && s > 1) {
+      BatchSize = s;
+    }
   }
 
   static getCollectionResource() {

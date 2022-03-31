@@ -31,6 +31,8 @@ import { $gettext } from "common/vm";
 
 const SubjPerson = "person";
 
+export let BatchSize = 60;
+
 export class Subject extends RestModel {
   getDefaults() {
     return {
@@ -138,7 +140,14 @@ export class Subject extends RestModel {
   }
 
   static batchSize() {
-    return config.searchBatchSize();
+    return BatchSize;
+  }
+
+  static setBatchSize(count) {
+    const s = parseInt(count);
+    if (!isNaN(s) && s >= 24) {
+      BatchSize = s;
+    }
   }
 
   static getCollectionResource() {

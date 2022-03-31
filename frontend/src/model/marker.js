@@ -30,6 +30,8 @@ import { config } from "app/session";
 import { $gettext } from "common/vm";
 import * as src from "common/src";
 
+export let BatchSize = 48;
+
 export class Marker extends RestModel {
   getDefaults() {
     return {
@@ -126,7 +128,14 @@ export class Marker extends RestModel {
   }
 
   static batchSize() {
-    return 48;
+    return BatchSize;
+  }
+
+  static setBatchSize(count) {
+    const s = parseInt(count);
+    if (!isNaN(s) && s >= 24) {
+      BatchSize = s;
+    }
   }
 
   static getCollectionResource() {

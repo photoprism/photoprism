@@ -22,8 +22,7 @@ type UISettings struct {
 
 // SearchSettings represents search UI preferences.
 type SearchSettings struct {
-	BatchSize    int `json:"batchSize" yaml:"BatchSize"`
-	PrefetchDist int `json:"prefetchDist" yaml:"PrefetchDist"`
+	BatchSize int `json:"batchSize" yaml:"BatchSize"`
 }
 
 // TemplateSettings represents template settings for the UI and messaging.
@@ -115,8 +114,7 @@ func NewSettings(c *Config) *Settings {
 			Language:  c.DefaultLocale(),
 		},
 		Search: SearchSettings{
-			BatchSize:    0,
-			PrefetchDist: 0,
+			BatchSize: 0,
 		},
 		Maps: MapsSettings{
 			Animate: 0,

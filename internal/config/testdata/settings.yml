@@ -5,7 +5,6 @@ UI:
   Language: de
 Search:
   BatchSize: 0
-  PrefetchDist: 0
 Maps:
   Animate: 0
   Style: streets
