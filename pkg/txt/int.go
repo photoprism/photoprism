@@ -22,10 +22,10 @@ func Int(s string) int {
 
 // IntVal converts a string to a validated integer or a default if invalid.
 func IntVal(s string, min, max, d int) (i int) {
-	s = strings.TrimSpace(s)
-
 	if s == "" {
 		return d
+	} else if s[0] == ' ' {
+		s = strings.TrimSpace(s)
 	}
 
 	result, err := strconv.ParseInt(s, 10, 32)
@@ -49,9 +49,11 @@ func IntVal(s string, min, max, d int) (i int) {
 func UInt(s string) uint {
 	if s == "" {
 		return 0
+	} else if s[0] == ' ' {
+		s = strings.TrimSpace(s)
 	}
 
-	result, err := strconv.ParseInt(strings.TrimSpace(s), 10, 32)
+	result, err := strconv.ParseInt(s, 10, 32)
 
 	if err != nil || result < 0 {
 		return 0

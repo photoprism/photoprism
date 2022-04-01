@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 // GlobalFlags describes global command-line parameters and flags.
@@ -456,37 +457,37 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "thumb-filter",
-		Usage:  "thumbnail downscaling `FILTER` (best to worst: blackman, lanczos, cubic, linear)",
+		Usage:  "image downscaling `FILTER` (best to worst: blackman, lanczos, cubic, linear)",
 		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
-	cli.IntFlag{
-		Name:   "thumb-size, s",
-		Usage:  "maximum pre-cached thumbnail image size in `PIXELS` (720-7680)",
-		Value:  2048,
-		EnvVar: "PHOTOPRISM_THUMB_SIZE",
-	},
 	cli.BoolFlag{
 		Name:   "thumb-uncached, u",
-		Usage:  "enable on-demand thumbnail generation (high memory and cpu usage)",
+		Usage:  "enable on-demand creation of missing thumbnails (high memory and cpu usage)",
 		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
 	},
 	cli.IntFlag{
+		Name:   "thumb-size, s",
+		Usage:  "maximum size of thumbnails created during indexing in `PIXELS` (720-7680)",
+		Value:  2048,
+		EnvVar: "PHOTOPRISM_THUMB_SIZE",
+	},
+	cli.IntFlag{
 		Name:   "thumb-size-uncached, x",
-		Usage:  "maximum size of on-demand generated thumbnails in `PIXELS` (720-7680)",
+		Usage:  "maximum size of missing thumbnails created on demand in `PIXELS` (720-7680)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
 	cli.IntFlag{
 		Name:   "jpeg-size",
-		Usage:  "maximum size of generated JPEG images in `PIXELS` (720-30000)",
+		Usage:  "maximum size of created JPEG sidecar files in `PIXELS` (720-30000)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_JPEG_SIZE",
 	},
-	cli.IntFlag{
+	cli.StringFlag{
 		Name:   "jpeg-quality, q",
-		Usage:  "`QUALITY` of generated JPEG images, a higher value reduces compression (25-100)",
-		Value:  85,
+		Usage:  "`QUALITY` of created JPEG sidecars and thumbnails (25-100, best, high, default, low, worst)",
+		Value:  thumb.JpegQuality.String(),
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
 	cli.IntFlag{

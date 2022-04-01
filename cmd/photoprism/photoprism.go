@@ -72,7 +72,7 @@ func main() {
 		commands.MomentsCommand,
 		commands.ConvertCommand,
 		commands.ThumbsCommand,
-		commands.MigrateCommand,
+		commands.MigrationsCommand,
 		commands.BackupCommand,
 		commands.RestoreCommand,
 		commands.ResetCommand,

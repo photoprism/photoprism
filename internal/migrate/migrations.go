@@ -71,8 +71,8 @@ func (m *Migrations) Start(db *gorm.DB, runFailed bool, ids []string) {
 
 		// Already executed?
 		if done, ok := executed[migration.ID]; ok {
-			// Try to run failed migrations again?
-			if (!runFailed || done.Error == "") && !list.Contains(ids, migration.ID) {
+			// Repeat?
+			if !done.Repeat(runFailed) && !list.Contains(ids, migration.ID) {
 				log.Debugf("migrate: %s skipped", migration.ID)
 				continue
 			}

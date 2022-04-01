@@ -23,20 +23,71 @@ func (Migration) TableName() string {
 	return "migrations"
 }
 
-// Fail marks the migration as failed by adding an error message.
+// Finished tests if the migration has been finished yet.
+func (m *Migration) Finished() bool {
+	if m.FinishedAt == nil {
+		return false
+	}
+
+	return !m.FinishedAt.IsZero()
+}
+
+// RunDuration returns the run duration of started migrations.
+func (m *Migration) RunDuration() time.Duration {
+	if m.Error != "" || m.StartedAt.IsZero() {
+		return time.Duration(0)
+	}
+
+	if m.Finished() {
+		return m.FinishedAt.UTC().Sub(m.StartedAt.UTC())
+	}
+
+	return time.Now().UTC().Sub(m.StartedAt.UTC())
+}
+
+// Repeat tests if the migration should be repeated.
+func (m *Migration) Repeat(runFailed bool) bool {
+	if runFailed && m.Error != "" {
+		return true
+	}
+
+	// Don't repeat if finished.
+	if m.Finished() {
+		return false
+	}
+
+	// Repeat not started yet.
+	if m.StartedAt.IsZero() {
+		return true
+	}
+
+	// Repeat if "running" for more than 60 minutes.
+	return m.RunDuration().Minutes() >= 60
+}
+
+// Fail marks the migration as failed by adding an error message and removing the FinishedAt timestamp.
 func (m *Migration) Fail(err error, db *gorm.DB) {
 	if err == nil {
 		return
 	}
 
-	m.Error = err.Error()
+	m.FinishedAt = nil
 
-	db.Model(m).Updates(Values{"Error": m.Error})
+	if err.Error() == "" {
+		m.Error = "unknown error"
+	} else {
+		m.Error = err.Error()
+	}
+
+	db.Model(m).Updates(Values{"FinishedAt": m.FinishedAt, "Error": m.Error})
 }
 
-// Finish updates the FinishedAt timestamp when the migration was successful.
+// Finish updates the FinishedAt timestamp and removes the error message when the migration was successful.
 func (m *Migration) Finish(db *gorm.DB) error {
-	return db.Model(m).Updates(Values{"FinishedAt": time.Now().UTC()}).Error
+	finished := time.Now().UTC().Round(time.Second)
+	m.FinishedAt = &finished
+	m.Error = ""
+	return db.Model(m).Updates(Values{"FinishedAt": m.FinishedAt, "Error": m.Error}).Error
 }
 
 // Execute runs the migration.

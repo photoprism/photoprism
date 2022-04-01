@@ -20,9 +20,9 @@ func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, er
 		img = Rotate(img, orientation)
 	}
 
-	saveOption := imaging.JPEGQuality(JpegQuality)
+	quality := JpegQuality.EncodeOption()
 
-	if err = imaging.Save(img, jpgFilename, saveOption); err != nil {
+	if err = imaging.Save(img, jpgFilename, quality); err != nil {
 		log.Errorf("resample: failed to save %s", sanitize.Log(filepath.Base(jpgFilename)))
 		return img, err
 	}

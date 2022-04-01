@@ -128,6 +128,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/cache \
     && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     /scripts/cleanup.sh
 
 # define default directory and user

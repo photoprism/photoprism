@@ -24,7 +24,7 @@ func configAction(ctx *cli.Context) error {
 
 	dbDriver := conf.DatabaseDriver()
 
-	fmt.Printf("%-25s VALUE\n", "NAME")
+	fmt.Printf("%-25s Value\n", "Name")
 
 	// Flags.
 	fmt.Printf("%-25s %t\n", "debug", conf.Debug())

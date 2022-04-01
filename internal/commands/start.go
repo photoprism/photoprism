@@ -49,7 +49,7 @@ func startAction(ctx *cli.Context) error {
 	service.SetConfig(conf)
 
 	if ctx.IsSet("config") {
-		fmt.Printf("NAME                  VALUE\n")
+		fmt.Printf("Name                  Value\n")
 		fmt.Printf("detach-server         %t\n", conf.DetachServer())
 
 		fmt.Printf("http-host             %s\n", conf.HttpHost())

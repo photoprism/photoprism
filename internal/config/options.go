@@ -125,7 +125,7 @@ type Options struct {
 	ThumbSize             int     `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached     int     `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
 	JpegSize              int     `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
-	JpegQuality           int     `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
+	JpegQuality           string  `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
 	FaceSize              int     `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore             float64 `yaml:"-" json:"-" flag:"face-score"`
 	FaceOverlap           int     `yaml:"-" json:"-" flag:"face-overlap"`

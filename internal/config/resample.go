@@ -17,17 +17,9 @@ func (c *Config) JpegSize() int {
 	return c.options.JpegSize
 }
 
-// JpegQuality returns the jpeg quality for resampling, use 95 for high-quality thumbs (25-100).
-func (c *Config) JpegQuality() int {
-	if c.options.JpegQuality > 100 {
-		return 100
-	}
-
-	if c.options.JpegQuality < 25 {
-		return 25
-	}
-
-	return c.options.JpegQuality
+// JpegQuality returns the jpeg image quality as thumb.Quality (25-100).
+func (c *Config) JpegQuality() thumb.Quality {
+	return thumb.ParseQuality(c.options.JpegQuality)
 }
 
 // ThumbFilter returns the thumbnail resample filter (best to worst: blackman, lanczos, cubic or linear).
