@@ -48,8 +48,7 @@ func TestPhotosFilterSubjects(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	//TODO error
-	/*t.Run("StartsWithAmpersand", func(t *testing.T) {
+	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subjects = "&IlikeFood"
@@ -61,7 +60,7 @@ func TestPhotosFilterSubjects(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, len(photos), 0)
-	})*/
+	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -75,8 +74,7 @@ func TestPhotosFilterSubjects(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 0)
 	})
-	//TODO error
-	/*t.Run("EndsWithAmpersand", func(t *testing.T) {
+	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subjects = "Light&"
@@ -88,7 +86,7 @@ func TestPhotosFilterSubjects(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, len(photos), 0)
-	})*/
+	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
 
