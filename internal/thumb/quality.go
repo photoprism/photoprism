@@ -25,12 +25,12 @@ func (q Quality) String() string {
 // Common Quality levels.
 // see https://docs.photoprism.app/user-guide/settings/advanced/#jpeg-quality
 const (
-	QualityBest   Quality = 95
-	QualityHigh   Quality = 92
-	QualityMedium Quality = 85
-	QualityLow    Quality = 80
-	QualityBad    Quality = 75
-	QualityWorst  Quality = 70
+	QualityBest    Quality = 95
+	QualityHigh    Quality = 92
+	QualityDefault Quality = 85
+	QualityLow     Quality = 80
+	QualityBad     Quality = 75
+	QualityWorst   Quality = 70
 )
 
 // QualityLevels maps human-readable settings to a numeric Quality.
@@ -42,12 +42,12 @@ var QualityLevels = map[string]Quality{
 	"excellent": QualityHigh,
 	"good":      QualityHigh,
 	"high":      QualityHigh,
-	"3":         QualityMedium,
-	"":          QualityMedium,
-	"ok":        QualityMedium,
-	"default":   QualityMedium,
-	"standard":  QualityMedium,
-	"medium":    QualityMedium,
+	"3":         QualityDefault,
+	"":          QualityDefault,
+	"ok":        QualityDefault,
+	"default":   QualityDefault,
+	"standard":  QualityDefault,
+	"medium":    QualityDefault,
 	"2":         QualityLow,
 	"low":       QualityLow,
 	"small":     QualityLow,
@@ -60,15 +60,15 @@ var QualityLevels = map[string]Quality{
 
 // Current Quality settings.
 var (
-	JpegQuality      = QualityMedium
+	JpegQuality      = QualityDefault
 	JpegQualitySmall = QualityLow
 )
 
 // ParseQuality returns the matching quality based on a config value string.
 func ParseQuality(s string) Quality {
-	// Default to medium if empty.
+	// Default if empty.
 	if s == "" {
-		return QualityMedium
+		return QualityDefault
 	}
 
 	// Try to parse as positive integer.
@@ -84,6 +84,5 @@ func ParseQuality(s string) Quality {
 		return l
 	}
 
-	// Default to medium.
-	return QualityMedium
+	return QualityDefault
 }

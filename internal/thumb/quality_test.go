@@ -20,16 +20,16 @@ func TestParseQuality(t *testing.T) {
 		assert.Equal(t, QualityLow, ParseQuality("low"))
 	})
 	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, QualityMedium, ParseQuality(""))
-		assert.Equal(t, QualityMedium, ParseQuality("             "))
+		assert.Equal(t, QualityDefault, ParseQuality(""))
+		assert.Equal(t, QualityDefault, ParseQuality("             "))
 	})
 	t.Run("Default", func(t *testing.T) {
-		assert.Equal(t, QualityMedium, ParseQuality("default"))
+		assert.Equal(t, QualityDefault, ParseQuality("default"))
 	})
 	t.Run("Medium", func(t *testing.T) {
-		assert.Equal(t, QualityMedium, ParseQuality("medium"))
-		assert.Equal(t, QualityMedium, ParseQuality("   \t       medium \n\r"))
-		assert.Equal(t, QualityMedium, ParseQuality("MEDIUM"))
+		assert.Equal(t, QualityDefault, ParseQuality("medium"))
+		assert.Equal(t, QualityDefault, ParseQuality("   \t       medium \n\r"))
+		assert.Equal(t, QualityDefault, ParseQuality("MEDIUM"))
 	})
 	t.Run("Good", func(t *testing.T) {
 		assert.Equal(t, QualityHigh, ParseQuality("Good"))
@@ -51,7 +51,7 @@ func TestParseQuality(t *testing.T) {
 		assert.Equal(t, QualityLow, ParseQuality("2"))
 	})
 	t.Run("3", func(t *testing.T) {
-		assert.Equal(t, QualityMedium, ParseQuality("3"))
+		assert.Equal(t, QualityDefault, ParseQuality("3"))
 	})
 	t.Run("4", func(t *testing.T) {
 		assert.Equal(t, QualityHigh, ParseQuality("4"))
@@ -60,7 +60,7 @@ func TestParseQuality(t *testing.T) {
 		assert.Equal(t, QualityBest, ParseQuality("5"))
 	})
 	t.Run("6", func(t *testing.T) {
-		assert.Equal(t, QualityMedium, ParseQuality("6"))
+		assert.Equal(t, QualityDefault, ParseQuality("6"))
 	})
 	t.Run("50", func(t *testing.T) {
 		assert.Equal(t, Quality(50), ParseQuality("50"))
