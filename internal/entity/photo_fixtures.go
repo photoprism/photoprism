@@ -1898,7 +1898,7 @@ var PhotoFixtures = PhotoMap{
 		Albums: []Album{},
 		Files:  []File{},
 		Labels: []PhotoLabel{
-			LabelFixtures.PhotoLabel(1000029, "%tennis", 20, "image"),
+			LabelFixtures.PhotoLabel(10000029, "%tennis", 20, "image"),
 		},
 		CreatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
