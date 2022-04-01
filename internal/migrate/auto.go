@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Auto automatically migrates the database provided.
+// Auto automatically migrates the schema of the database passed as argument.
 func Auto(db *gorm.DB, runFailed bool, ids []string) error {
 	if db == nil {
 		return fmt.Errorf("migrate: database connection required")

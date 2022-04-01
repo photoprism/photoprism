@@ -128,7 +128,7 @@ rootshell: root-terminal
 root-terminal:
 	docker-compose exec -u root photoprism bash
 migrate:
-	go run cmd/photoprism/photoprism.go migrate
+	go run cmd/photoprism/photoprism.go migrations run
 generate:
 	go generate ./pkg/... ./internal/...
 	go fmt ./pkg/... ./internal/...
