@@ -20,17 +20,17 @@ var DialectSQLite3 = Migrations{
 	{
 		ID:         "20220329-050000",
 		Dialect:    "sqlite3",
-		Statements: []string{"CREATE INDEX idx_albums_album_filter ON albums (album_filter);"},
+		Statements: []string{"CREATE INDEX IF NOT EXISTS idx_albums_album_filter ON albums (album_filter);"},
 	},
 	{
 		ID:         "20220329-061000",
 		Dialect:    "sqlite3",
-		Statements: []string{"DROP INDEX IF EXISTS idx_files_photo_id;", "CREATE INDEX IF NOT EXISTS idx_files_photo_id ON files (photo_id, file_primary);"},
+		Statements: []string{"CREATE INDEX IF NOT EXISTS idx_files_photo_id ON files (photo_id, file_primary);"},
 	},
 	{
 		ID:         "20220329-071000",
 		Dialect:    "sqlite3",
-		Statements: []string{"UPDATE files SET photo_taken_at = (SELECT photos.taken_at_local FROM photos WHERE photos.id = files.photo_id) WHERE 1;"},
+		Statements: []string{"UPDATE files SET photo_taken_at = (SELECT p.taken_at_local FROM photos p WHERE p.id = photo_id) WHERE photo_id IS NOT NULL;"},
 	},
 	{
 		ID:         "20220329-081000",
@@ -40,7 +40,7 @@ var DialectSQLite3 = Migrations{
 	{
 		ID:         "20220329-082000",
 		Dialect:    "sqlite3",
-		Statements: []string{"UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || 1 + file_sidecar - file_primary || '-' || file_uid) END;"},
+		Statements: []string{"UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE photo_id IS NOT NULL;"},
 	},
 	{
 		ID:         "20220329-091000",
@@ -50,6 +50,6 @@ var DialectSQLite3 = Migrations{
 	{
 		ID:         "20220329-092000",
 		Dialect:    "sqlite3",
-		Statements: []string{"UPDATE files SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN (100000000000000 - CAST(photo_taken_at AS UNSIGNED) || '-' || media_id) END;"},
+		Statements: []string{"UPDATE files SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE media_id IS NOT NULL;"},
 	},
 }
