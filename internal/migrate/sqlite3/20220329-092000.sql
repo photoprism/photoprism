@@ -1,1 +1,1 @@
-UPDATE files SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN (100000000000000 - CAST(photo_taken_at AS UNSIGNED) || '-' || media_id) END;
+UPDATE files SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE media_id IS NOT NULL;
