@@ -744,17 +744,17 @@ func (m *MediaFile) IsSidecar() bool {
 	return m.MediaType() == fs.MediaSidecar
 }
 
-// IsPlayableVideo returns true if this is a supported video file format.
+// IsPlayableVideo checks if the file is a video in playable format.
 func (m *MediaFile) IsPlayableVideo() bool {
 	return m.IsVideo() && (m.HasFileType(fs.FormatMp4) || m.HasFileType(fs.FormatAvc))
 }
 
-// IsPhoto returns true if this file is a photo / image.
-func (m *MediaFile) IsPhoto() bool {
+// IsImage checks if the file is an image
+func (m *MediaFile) IsImage() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
 }
 
-// IsLive returns true if this is a live photo.
+// IsLive checks if the file is a live photo.
 func (m *MediaFile) IsLive() bool {
 	if m.IsHEIF() {
 		return fs.FormatMov.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
@@ -906,9 +906,34 @@ func (m *MediaFile) Portrait() bool {
 	return m.Width() < m.Height()
 }
 
-// Megapixels returns the resolution in megapixels.
-func (m *MediaFile) Megapixels() int {
-	return int(math.Round(float64(m.Width()*m.Height()) / 1000000))
+// Megapixels returns the resolution in megapixels if possible.
+func (m *MediaFile) Megapixels() (resolution int) {
+	if !m.IsMedia() {
+		return 0
+	}
+
+	if m.IsJpeg() || m.IsPng() || m.IsGif() {
+		resolution = int(math.Round(float64(m.Width()*m.Height()) / 1000000))
+	}
+
+	if resolution <= 0 {
+		resolution = m.MetaData().Megapixels()
+	}
+
+	return resolution
+}
+
+// ExceedsMegapixelLimit checks if the media file exceeds the configured resolution limit in megapixels.
+func (m *MediaFile) ExceedsMegapixelLimit() bool {
+	if !m.IsMedia() {
+		return false
+	} else if limit := Config().MegapixelLimit(); limit <= 0 {
+		return false
+	} else if mp := m.Megapixels(); mp <= 0 {
+		return false
+	} else {
+		return mp > limit
+	}
 }
 
 // Orientation returns the Exif orientation of the media file.
@@ -951,7 +976,7 @@ func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image,
 	return imaging.Open(filename)
 }
 
-// ResampleDefault pre-caches default thumbnails.
+// ResampleDefault creates the configured default thumbnails at indexing time.
 func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	count := 0
 	start := time.Now()

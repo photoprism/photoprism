@@ -130,6 +130,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		}
 	}
 
+	// Skip media files that exceed the configured resolution limit, unless the file has already been indexed.
+	if !fileExists && m.ExceedsMegapixelLimit() {
+		log.Warnf("index: %s exceeds resolution limit (%d / %d megapixels)", logName, m.Megapixels(), Config().MegapixelLimit())
+		result.Status = IndexSkipped
+		return result
+	}
+
 	// Find existing photo if a photo uid was provided or file has not been indexed yet...
 	if !fileExists && photoUID != "" {
 		// Find existing photo by UID.

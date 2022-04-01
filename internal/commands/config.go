@@ -39,9 +39,12 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "config-path", conf.ConfigPath())
 	fmt.Printf("%-25s %s\n", "settings-file", conf.SettingsFile())
 
-	// Paths.
+	// Originals.
 	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
 	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
+	fmt.Printf("%-25s %d\n", "megapixel-limit", conf.MegapixelLimit())
+
+	// Other paths.
 	fmt.Printf("%-25s %s\n", "storage-path", conf.StoragePath())
 	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
 	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
@@ -149,6 +152,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())
 	fmt.Printf("%-25s %s\n", "preview-token", conf.PreviewToken())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
+	fmt.Printf("%-25s %s\n", "thumb-colorspace", conf.ThumbColorspace())
 	fmt.Printf("%-25s %t\n", "thumb-uncached", conf.ThumbUncached())
 	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSizePrecached())
 	fmt.Printf("%-25s %d\n", "thumb-size-uncached", conf.ThumbSizeUncached())

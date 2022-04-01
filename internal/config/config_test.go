@@ -308,7 +308,27 @@ func TestConfig_OriginalsLimit(t *testing.T) {
 
 	assert.Equal(t, int64(-1), c.OriginalsLimit())
 	c.options.OriginalsLimit = 800
-	assert.Equal(t, int64(838860800), c.OriginalsLimit())
+	assert.Equal(t, int64(800), c.OriginalsLimit())
+}
+
+func TestConfig_OriginalsLimitBytes(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, int64(-1), c.OriginalsLimitBytes())
+	c.options.OriginalsLimit = 800
+	assert.Equal(t, int64(838860800), c.OriginalsLimitBytes())
+}
+
+func TestConfig_MegapixelLimit(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, 100, c.MegapixelLimit())
+	c.options.MegapixelLimit = 800
+	assert.Equal(t, 800, c.MegapixelLimit())
+	c.options.MegapixelLimit = 950
+	assert.Equal(t, 900, c.MegapixelLimit())
+	c.options.MegapixelLimit = -1
+	assert.Equal(t, -1, c.MegapixelLimit())
 }
 
 func TestConfig_BaseUri(t *testing.T) {

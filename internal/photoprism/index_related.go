@@ -21,11 +21,11 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 	}
 
 	f := related.Main
-	sizeLimit := ind.conf.OriginalsLimit()
+	limitSize := ind.conf.OriginalsLimitBytes()
 
 	// Enforce file size limit for originals.
-	if sizeLimit > 0 && f.FileSize() > sizeLimit {
-		result.Err = fmt.Errorf("index: %s exceeds file size limit (%d / %d MB)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
+	if limitSize > 0 && f.FileSize() > limitSize {
+		result.Err = fmt.Errorf("index: %s exceeds file size limit (%d / %d megabyte)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), limitSize/(1024*1024))
 		result.Status = IndexFailed
 		return result
 	}
@@ -82,7 +82,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 	}
 
 	done := make(map[string]bool)
-	sizeLimit := ind.conf.OriginalsLimit()
+	sizeLimit := ind.conf.OriginalsLimitBytes()
 
 	result = IndexMain(&related, ind, opt)
 
@@ -123,7 +123,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 
 		// Enforce file size limit for originals.
 		if sizeLimit > 0 && f.FileSize() > sizeLimit {
-			log.Warnf("index: %s exceeds file size limit (%d / %d MB)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
+			log.Warnf("index: %s exceeds file size limit (%d / %d megabyte)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
 			continue
 		}
 

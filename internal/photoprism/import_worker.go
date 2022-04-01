@@ -158,15 +158,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			done := make(map[string]bool)
 			ind := imp.index
-			sizeLimit := ind.conf.OriginalsLimit()
+			limitSize := ind.conf.OriginalsLimitBytes()
+
 			photoUID := ""
 
 			if related.Main != nil {
 				f := related.Main
 
 				// Enforce file size limit for originals.
-				if sizeLimit > 0 && f.FileSize() > sizeLimit {
-					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
+				if limitSize > 0 && f.FileSize() > limitSize {
+					log.Warnf("import: %s exceeds file size limit (%d / %d megabyte)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), limitSize/(1024*1024))
 					continue
 				}
 
@@ -200,8 +201,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 				done[f.FileName()] = true
 
 				// Enforce file size limit for originals.
-				if sizeLimit > 0 && f.FileSize() > sizeLimit {
-					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
+				if limitSize > 0 && f.FileSize() > limitSize {
+					log.Warnf("import: %s exceeds file size limit (%d / %d megabyte)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), limitSize/(1024*1024))
 					continue
 				}
 

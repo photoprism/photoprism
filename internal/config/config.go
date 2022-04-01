@@ -148,6 +148,7 @@ func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
 	// Set thumbnail generation parameters.
+	thumb.StandardRGB = c.ThumbStandardRGB()
 	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
@@ -577,14 +578,37 @@ func (c *Config) GeoApi() string {
 	return "places"
 }
 
-// OriginalsLimit returns the file size limit for originals.
+// OriginalsLimit returns the maximum size of originals in megabytes.
 func (c *Config) OriginalsLimit() int64 {
 	if c.options.OriginalsLimit <= 0 || c.options.OriginalsLimit > 100000 {
 		return -1
 	}
 
-	// Megabyte.
-	return c.options.OriginalsLimit * 1024 * 1024
+	return c.options.OriginalsLimit
+}
+
+// OriginalsLimitBytes returns the maximum size of originals in bytes.
+func (c *Config) OriginalsLimitBytes() int64 {
+	if megabyte := c.OriginalsLimit(); megabyte < 1 {
+		return -1
+	} else {
+		return megabyte * 1024 * 1024
+	}
+}
+
+// MegapixelLimit returns the maximum resolution of originals in megapixels (width x height).
+func (c *Config) MegapixelLimit() int {
+	mp := c.options.MegapixelLimit
+
+	if mp < 0 {
+		return -1
+	} else if c.options.MegapixelLimit > 900 {
+		mp = 900
+	} else if c.options.MegapixelLimit == 0 {
+		mp = 100
+	}
+
+	return mp
 }
 
 // UpdateHub updates backend api credentials for maps & places.

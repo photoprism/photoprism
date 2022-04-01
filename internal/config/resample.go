@@ -38,9 +38,19 @@ func (c *Config) ThumbFilter() thumb.ResampleFilter {
 	}
 }
 
-// ThumbPath returns the thumbnails directory.
+// ThumbPath returns the thumbnail storage directory.
 func (c *Config) ThumbPath() string {
 	return c.CachePath() + "/thumbnails"
+}
+
+// ThumbColorspace returns the standard colorspace for thumbnails.
+func (c *Config) ThumbColorspace() string {
+	return c.options.ThumbColorspace
+}
+
+// ThumbStandardRGB checks if colors should be normalized to standard RGB in thumbnails.
+func (c *Config) ThumbStandardRGB() bool {
+	return strings.ToLower(c.ThumbColorspace()) == "srgb"
 }
 
 // ThumbUncached checks if on-demand thumbnail rendering is enabled (high memory and cpu usage).

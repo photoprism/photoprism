@@ -52,6 +52,7 @@ type Options struct {
 	ConfigFile            string  `json:"-"`
 	OriginalsPath         string  `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
 	OriginalsLimit        int64   `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
+	MegapixelLimit        int     `yaml:"MegapixelLimit" json:"MegapixelLimit" flag:"megapixel-limit"`
 	StoragePath           string  `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	ImportPath            string  `yaml:"ImportPath" json:"-" flag:"import-path"`
 	CachePath             string  `yaml:"CachePath" json:"-" flag:"cache-path"`
@@ -121,6 +122,7 @@ type Options struct {
 	DownloadToken         string  `yaml:"DownloadToken" json:"-" flag:"download-token"`
 	PreviewToken          string  `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbFilter           string  `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
+	ThumbColorspace       string  `yaml:"ThumbColorspace" json:"ThumbColorspace" flag:"thumb-colorspace"`
 	ThumbUncached         bool    `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
 	ThumbSize             int     `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached     int     `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`

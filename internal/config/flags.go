@@ -89,8 +89,14 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "originals-limit",
 		Value:  1000,
-		Usage:  "file size limit in `MB`",
+		Usage:  "maximum size of media files in `MEGABYTES` (1-100000; -1 to disable)",
 		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
+	},
+	cli.IntFlag{
+		Name:   "megapixel-limit",
+		Value:  100,
+		Usage:  "maximum resolution of media files in `MEGAPIXELS` (1-900; -1 to disable)",
+		EnvVar: "PHOTOPRISM_MEGAPIXEL_LIMIT",
 	},
 	cli.StringFlag{
 		Name:   "storage-path, t",
@@ -141,13 +147,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "auto-index",
-		Usage:  "WebDAV auto index safety delay in `SECONDS`, disable with -1",
+		Usage:  "WebDAV auto index safety delay in `SECONDS` (-1 to disable)",
 		Value:  DefaultAutoIndexDelay,
 		EnvVar: "PHOTOPRISM_AUTO_INDEX",
 	},
 	cli.IntFlag{
 		Name:   "auto-import",
-		Usage:  "WebDAV auto import safety delay in `SECONDS`, disable with -1",
+		Usage:  "WebDAV auto import safety delay in `SECONDS` (-1 to disable)",
 		Value:  DefaultAutoImportDelay,
 		EnvVar: "PHOTOPRISM_AUTO_IMPORT",
 	},
@@ -460,6 +466,12 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "image downscaling `FILTER` (best to worst: blackman, lanczos, cubic, linear)",
 		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
+	},
+	cli.StringFlag{
+		Name:   "thumb-colorspace",
+		Usage:  "convert Apple Display P3 colors in thumbnails to standard color space",
+		Value:  "sRGB",
+		EnvVar: "PHOTOPRISM_THUMB_COLORSPACE",
 	},
 	cli.BoolFlag{
 		Name:   "thumb-uncached, u",
