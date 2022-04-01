@@ -122,17 +122,17 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 
 	result = Resample(img, width, height, opts...)
 
-	var saveOption imaging.EncodeOption
+	var quality imaging.EncodeOption
 
 	if filepath.Ext(fileName) == "."+string(fs.FormatPng) {
-		saveOption = imaging.PNGCompressionLevel(png.DefaultCompression)
+		quality = imaging.PNGCompressionLevel(png.DefaultCompression)
 	} else if width <= 150 && height <= 150 {
-		saveOption = imaging.JPEGQuality(JpegQualitySmall)
+		quality = JpegQualitySmall.EncodeOption()
 	} else {
-		saveOption = imaging.JPEGQuality(JpegQuality)
+		quality = JpegQuality.EncodeOption()
 	}
 
-	err = imaging.Save(result, fileName, saveOption)
+	err = imaging.Save(result, fileName, quality)
 
 	if err != nil {
 		log.Errorf("resample: failed to save %s", sanitize.Log(filepath.Base(fileName)))

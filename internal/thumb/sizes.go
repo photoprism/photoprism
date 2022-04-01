@@ -1,11 +1,9 @@
 package thumb
 
 var (
-	SizePrecached    = 2048
-	SizeUncached     = 7680
-	JpegQuality      = 95
-	JpegQualitySmall = 80
-	Filter           = ResampleLanczos
+	SizePrecached = 2048
+	SizeUncached  = 7680
+	Filter        = ResampleLanczos
 )
 
 func MaxSize() int {
