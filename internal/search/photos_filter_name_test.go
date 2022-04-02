@@ -8,6 +8,72 @@ import (
 )
 
 func TestPhotosFilterName(t *testing.T) {
+	t.Run("27900704_070228_D6D51B6C", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Name = "27900704_070228_D6D51B6C"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("*hoto1*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Name = "*hoto1*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})
+	t.Run("*hoto1* pipe 27900704_070228_D6D51B6C", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Name = "*hoto1*|27900704_070228_D6D51B6C"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 7)
+	})
+	//TODO
+	/*t.Run("*hoto1* whitespace pipe whitespace 27900704_070228_D6D51B6C", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Name = "*hoto1* | 27900704_070228_D6D51B6C"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 7)
+	})
+	t.Run("*hoto1* or 27900704_070228_D6D51B6C", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Name = "*hoto1* or 27900704_070228_D6D51B6C"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 7)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -430,6 +496,72 @@ func TestPhotosFilterName(t *testing.T) {
 }
 
 func TestPhotosQueryName(t *testing.T) {
+	t.Run("27900704_070228_D6D51B6C", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "name:\"27900704_070228_D6D51B6C\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("*hoto1*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "name:\"*hoto1*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})
+	t.Run("*hoto1* pipe 27900704_070228_D6D51B6C", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "name:\"*hoto1*|27900704_070228_D6D51B6C\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 7)
+	})
+	//TODO
+	/*t.Run("*hoto1* whitespace pipe whitespace 27900704_070228_D6D51B6C", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "name:\"*hoto1* | 27900704_070228_D6D51B6C\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 7)
+	})
+	t.Run("*hoto1* or 27900704_070228_D6D51B6C", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "name:\"*hoto1* or 27900704_070228_D6D51B6C\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 7)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

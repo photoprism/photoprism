@@ -8,6 +8,72 @@ import (
 )
 
 func TestPhotosFilterFilename(t *testing.T) {
+	t.Run("2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Filename = "2790/07/27900704_070228_D6D51B6C.jpg"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("1990*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Filename = "1990*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("1990* pipe 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Filename = "1990*|2790/07/27900704_070228_D6D51B6C.jpg"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})
+	//TODO Fix or
+	/*t.Run("1990* whitespace pipe whitespace 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Filename = "1990* | 2790/07/27900704_070228_D6D51B6C.jpg"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})
+	t.Run("1990* or 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Filename = "1990* or 2790/07/27900704_070228_D6D51B6C.jpg"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -443,6 +509,72 @@ func TestPhotosFilterFilename(t *testing.T) {
 }
 
 func TestPhotosQueryFilename(t *testing.T) {
+	t.Run("2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "filename:\"2790/07/27900704_070228_D6D51B6C.jpg\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("1990*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "filename:\"1990*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("1990* pipe 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "filename:\"1990*|2790/07/27900704_070228_D6D51B6C.jpg\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})
+	//TODO Fix or
+	/*t.Run("1990* whitespace pipe whitespace 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "filename:\"1990* | 2790/07/27900704_070228_D6D51B6C.jpg\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})
+	t.Run("1990* or 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "filename:\"1990* or 2790/07/27900704_070228_D6D51B6C.jpg\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
