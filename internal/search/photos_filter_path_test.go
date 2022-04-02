@@ -8,6 +8,72 @@ import (
 )
 
 func TestPhotosFilterPath(t *testing.T) {
+	t.Run("2790/07", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Path = "2790/07"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("2790*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Path = "2790*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("London", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Path = "London"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	//TODO Fix or search
+	/*t.Run("London or 2790/07", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Path = "London or 2790/07"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("London pipe 2790/07", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Path = "London | 2790/07"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -396,6 +462,72 @@ func TestPhotosFilterPath(t *testing.T) {
 }
 
 func TestPhotosQueryPath(t *testing.T) {
+	t.Run("2790/07", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "path:\"2790/07\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("2790*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "path:\"2790*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("London", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "path:\"London\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	//TODO Fix or search
+	/*t.Run("London or 2790/07", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "path:\"London or 2790/07\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("London pipe 2790/07", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "path:\"London | 2790/07\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
