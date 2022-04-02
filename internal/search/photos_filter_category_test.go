@@ -143,7 +143,7 @@ func TestPhotosFilterCategory(t *testing.T) {
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Category = "My*Kids"
+		f.Category = "My*Camping"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -156,7 +156,7 @@ func TestPhotosFilterCategory(t *testing.T) {
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Category = "Yoga***"
+		f.Category = "Camping***"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -169,7 +169,7 @@ func TestPhotosFilterCategory(t *testing.T) {
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Category = "|Banana"
+		f.Category = "|Camping"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -183,7 +183,7 @@ func TestPhotosFilterCategory(t *testing.T) {
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Category = "Red|Green"
+		f.Category = "Camping|botanical garden"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -192,12 +192,14 @@ func TestPhotosFilterCategory(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.GreaterOrEqual(t, len(photos), 30)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Category = "Blue|"
+		// Db().LogMode(true)
+
+		f.Category = "Camping|"
 		f.Merged = true
 
 		photos, _, err := Photos(f)

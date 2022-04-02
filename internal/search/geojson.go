@@ -151,9 +151,9 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 
 	// Filter for specific face clusters? Example: PLJ7A3G4MBGZJRMVDIUCBLC46IAP4N7O
 	if len(f.Face) >= 32 {
-		for _, f := range strings.Split(strings.ToUpper(f.Face), txt.And) {
+		for _, f := range SplitAnd(strings.ToUpper(f.Face)) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
-				entity.Marker{}.TableName()), strings.Split(f, txt.Or))
+				entity.Marker{}.TableName()), SplitOr(f))
 		}
 	} else if txt.New(f.Face) {
 		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE subj_uid IS NULL OR subj_uid = '')",
@@ -168,8 +168,8 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 
 	// Filter for one or more subjects?
 	if f.Subject != "" {
-		for _, subj := range strings.Split(strings.ToLower(f.Subject), txt.And) {
-			if subjects := strings.Split(subj, txt.Or); rnd.ContainsUIDs(subjects, 'j') {
+		for _, subj := range SplitAnd(strings.ToLower(f.Subject)) {
+			if subjects := SplitOr(subj); rnd.ContainsUIDs(subjects, 'j') {
 				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
 					entity.Marker{}.TableName()), subjects)
 			} else {
@@ -230,7 +230,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 
 	// Filter by main color?
 	if f.Color != "" {
-		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), txt.Or))
+		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
 	// Find favorites only?
@@ -250,12 +250,12 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 
 	// Filter by location country?
 	if f.Country != "" {
-		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), txt.Or))
+		s = s.Where("photos.photo_country IN (?)", SplitOr(strings.ToLower(f.Country)))
 	}
 
 	// Filter by media type?
 	if f.Type != "" {
-		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), txt.Or))
+		s = s.Where("photos.photo_type IN (?)", SplitOr(strings.ToLower(f.Type)))
 	} else if f.Video {
 		s = s.Where("photos.photo_type = 'video'")
 	} else if f.Photo {

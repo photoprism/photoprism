@@ -48,8 +48,7 @@ func TestPhotosFilterCountry(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 13)
 	})
-	//TODO
-	/*t.Run("mx whitespace pipe whitespace de", func(t *testing.T) {
+	t.Run("mx whitespace pipe whitespace de", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Country = "mx | de"
@@ -62,32 +61,6 @@ func TestPhotosFilterCountry(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 13)
 	})
-	t.Run("mx or de", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Country = "mx or de"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.GreaterOrEqual(t, len(photos), 13)
-	})
-	t.Run("mx OR de", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Country = "mx OR de"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.GreaterOrEqual(t, len(photos), 13)
-	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -284,7 +257,7 @@ func TestPhotosFilterCountry(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -367,8 +340,7 @@ func TestPhotosQueryCountry(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 13)
 	})
-	//TODO
-	/*t.Run("mx whitespace pipe whitespace de", func(t *testing.T) {
+	t.Run("mx whitespace pipe whitespace de", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "country:\"mx | de\""
@@ -393,7 +365,7 @@ func TestPhotosQueryCountry(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.GreaterOrEqual(t, len(photos), 13)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("mx OR de", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -406,8 +378,8 @@ func TestPhotosQueryCountry(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.GreaterOrEqual(t, len(photos), 13)
-	})*/
+		assert.Equal(t, 0, len(photos))
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

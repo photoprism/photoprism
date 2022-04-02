@@ -104,7 +104,7 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 	}
 
 	if txt.NotEmpty(f.UID) {
-		s = s.Where("photos.photo_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
+		s = s.Where("photos.photo_uid IN (?)", SplitOr(strings.ToLower(f.UID)))
 
 		// Take shortcut?
 		if f.Album == "" && f.Query == "" {
@@ -256,9 +256,9 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 
 	// Filter for specific face clusters? Example: PLJ7A3G4MBGZJRMVDIUCBLC46IAP4N7O
 	if len(f.Face) >= 32 {
-		for _, f := range strings.Split(strings.ToUpper(f.Face), txt.And) {
+		for _, f := range SplitAnd(strings.ToUpper(f.Face)) {
 			s = s.Where(fmt.Sprintf("files.photo_id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
-				entity.Marker{}.TableName()), strings.Split(f, txt.Or))
+				entity.Marker{}.TableName()), SplitOr(f))
 		}
 	} else if txt.New(f.Face) {
 		s = s.Where(fmt.Sprintf("files.photo_id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE subj_uid IS NULL OR subj_uid = '')",
@@ -273,8 +273,8 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 
 	// Filter for one or more subjects?
 	if txt.NotEmpty(f.Subject) {
-		for _, subj := range strings.Split(strings.ToLower(f.Subject), txt.And) {
-			if subjects := strings.Split(subj, txt.Or); rnd.ContainsUIDs(subjects, 'j') {
+		for _, subj := range SplitAnd(strings.ToLower(f.Subject)) {
+			if subjects := SplitOr(subj); rnd.ContainsUIDs(subjects, 'j') {
 				s = s.Where(fmt.Sprintf("files.photo_id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
 					entity.Marker{}.TableName()), subjects)
 			} else {
@@ -345,7 +345,7 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 
 	// Filter by main color?
 	if f.Color != "" {
-		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), txt.Or))
+		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
 	// Find favorites only?
@@ -376,23 +376,23 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 
 	// Filter by location country?
 	if txt.NotEmpty(f.Country) {
-		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), txt.Or))
+		s = s.Where("photos.photo_country IN (?)", SplitOr(strings.ToLower(f.Country)))
 	}
 
 	// Filter by location state?
 	if txt.NotEmpty(f.State) {
-		s = s.Where("places.place_state IN (?)", strings.Split(f.State, txt.Or))
+		s = s.Where("places.place_state IN (?)", SplitOr(f.State))
 	}
 
 	// Filter by location category?
 	if txt.NotEmpty(f.Category) {
 		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
-			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), txt.Or))
+			Where("cells.cell_category IN (?)", SplitOr(strings.ToLower(f.Category)))
 	}
 
 	// Filter by media type?
 	if txt.NotEmpty(f.Type) {
-		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), txt.Or))
+		s = s.Where("photos.photo_type IN (?)", SplitOr(strings.ToLower(f.Type)))
 	} else if f.Video {
 		s = s.Where("photos.photo_type = 'video'")
 	} else if f.Photo {
@@ -451,7 +451,7 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 
 	// Filter by file hash?
 	if txt.NotEmpty(f.Hash) {
-		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), txt.Or))
+		s = s.Where("files.file_hash IN (?)", SplitOr(strings.ToLower(f.Hash)))
 	}
 
 	if f.Mono {

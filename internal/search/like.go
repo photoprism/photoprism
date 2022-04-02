@@ -261,3 +261,38 @@ func OrLike(col, s string) (where string, values []interface{}) {
 
 	return where, values
 }
+
+// Split splits a search string into separate values and trims whitespace.
+func Split(s string, sep string) (result []string) {
+	if s == "" {
+		return []string{}
+	}
+
+	// Trim separator and split.
+	s = strings.Trim(s, sep)
+	v := strings.Split(s, sep)
+
+	if len(v) <= 1 {
+		return v
+	}
+
+	result = make([]string, 0, len(v))
+
+	for i := range v {
+		if t := strings.TrimSpace(v[i]); t != "" {
+			result = append(result, t)
+		}
+	}
+
+	return result
+}
+
+// SplitOr splits a search string into separate OR values for an IN condition.
+func SplitOr(s string) (values []string) {
+	return Split(s, txt.Or)
+}
+
+// SplitAnd splits a search string into separate AND values.
+func SplitAnd(s string) (values []string) {
+	return Split(s, txt.And)
+}

@@ -358,3 +358,79 @@ func TestOrLike(t *testing.T) {
 		assert.Equal(t, []interface{}{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
 	})
 }
+
+func TestSplit(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		values := Split("", "")
+
+		assert.Equal(t, []string{}, values)
+	})
+	t.Run("FooBar", func(t *testing.T) {
+		values := Split(" foo | Bar ", "&")
+
+		assert.Equal(t, []string{" foo | Bar "}, values)
+	})
+	t.Run("FooAndBar", func(t *testing.T) {
+		values := Split(" foo & Bar ", "o")
+
+		assert.Equal(t, []string{"f", "& Bar"}, values)
+	})
+	t.Run("FooAndBarAndBaz", func(t *testing.T) {
+		values := Split(" foo & Bar&BAZ ", "&")
+
+		assert.Equal(t, []string{"foo", "Bar", "BAZ"}, values)
+	})
+}
+func TestSplitOr(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		values := SplitOr("")
+
+		assert.Equal(t, []string{}, values)
+	})
+	t.Run("FooBar", func(t *testing.T) {
+		values := SplitOr(" foo | Bar ")
+
+		assert.Equal(t, []string{"foo", "Bar"}, values)
+	})
+	t.Run("FooBarTrim", func(t *testing.T) {
+		values := SplitOr(" foo | Bar |")
+
+		assert.Equal(t, []string{"foo", "Bar"}, values)
+	})
+	t.Run("FooAndBar", func(t *testing.T) {
+		values := SplitOr(" foo & Bar ")
+
+		assert.Equal(t, []string{" foo & Bar "}, values)
+	})
+	t.Run("FooAndBarAndBaz", func(t *testing.T) {
+		values := SplitOr(" foo & Bar&BAZ ")
+
+		assert.Equal(t, []string{" foo & Bar&BAZ "}, values)
+	})
+}
+
+func TestSplitAnd(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		values := SplitAnd("")
+
+		assert.Equal(t, []string{}, values)
+	})
+
+	t.Run("FooOrBar", func(t *testing.T) {
+		values := SplitAnd(" foo | Bar ")
+
+		assert.Equal(t, []string{" foo | Bar "}, values)
+	})
+
+	t.Run("FooAndBar", func(t *testing.T) {
+		values := SplitAnd(" foo & Bar ")
+
+		assert.Equal(t, []string{"foo", "Bar"}, values)
+	})
+
+	t.Run("FooAndBarAndBaz", func(t *testing.T) {
+		values := SplitAnd(" foo & Bar&BAZ ")
+
+		assert.Equal(t, []string{"foo", "Bar", "BAZ"}, values)
+	})
+}

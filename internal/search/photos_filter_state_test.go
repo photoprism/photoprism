@@ -138,7 +138,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -248,7 +248,7 @@ func TestPhotosFilterState(t *testing.T) {
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.State = "|Banana"
+		f.State = "|New york"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -256,11 +256,11 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		t.Log(photos[0].PlaceLabel)
-		t.Log(photos[1].PlaceLabel)
+		// t.Log(photos[0].PlaceLabel)
+		// t.Log(photos[1].PlaceLabel)
 		//TODO shows photos where places set but state empty
 
-		assert.Equal(t, len(photos), 2)
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -274,12 +274,12 @@ func TestPhotosFilterState(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.State = "Blue|"
+		f.State = "Rheinland-Pfalz|"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -287,10 +287,10 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		t.Log(photos[0].PlaceLabel)
-		t.Log(photos[1].PlaceLabel)
+		// t.Log(photos[0].PlaceLabel)
+		// t.Log(photos[1].PlaceLabel)
 		//TODO shows photos where places set but state empty
-		assert.Equal(t, len(photos), 2)
+		assert.Equal(t, 4, len(photos))
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -303,7 +303,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
