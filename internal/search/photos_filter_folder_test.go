@@ -59,9 +59,9 @@ func TestPhotosFilterFolder(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, len(photos), 2)
 	})
-	t.Run("London pipe 2790/07", func(t *testing.T) {
+	t.Run("London whitespace pipe whitespace 2790/07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Folder = "London | 2790/07"
@@ -72,8 +72,21 @@ func TestPhotosFilterFolder(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, len(photos), 2)
 	})*/
+	t.Run("London pipe 2790/07", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Folder = "London|2790/07"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -513,9 +526,9 @@ func TestPhotosQueryFolder(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, len(photos), 2)
 	})
-	t.Run("London pipe 2790/07", func(t *testing.T) {
+	t.Run("London whitespace pipe whitespace 2790/07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "folder:\"London | 2790/07\""
@@ -526,8 +539,21 @@ func TestPhotosQueryFolder(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, len(photos), 2)
 	})*/
+	t.Run("London pipe 2790/07", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "folder:\"London|2790/07\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

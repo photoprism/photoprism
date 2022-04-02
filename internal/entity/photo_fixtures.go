@@ -1358,7 +1358,7 @@ var PhotoFixtures = PhotoMap{
 		TakenSrc:         "",
 		PhotoType:        "image",
 		TypeSrc:          "",
-		PhotoTitle:       "",
+		PhotoTitle:       "Lake / 2001",
 		TitleSrc:         "",
 		PhotoDescription: "",
 		DescriptionSrc:   "",

@@ -8,6 +8,85 @@ import (
 )
 
 func TestPhotosFilterTitle(t *testing.T) {
+	t.Run("Lake / 2790", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Title = "Lake / 2790"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("Lake*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Title = "Lake*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("Neckarbrücke", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Title = "Neckarbrücke"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	//TODO Fix or search
+	/*t.Run("Neckarbrücke or Lake*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Title = "Neckarbrücke OR Lake*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Neckarbrücke whitespace pipe whitespace Lake*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Title = "Neckarbrücke | Lake*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})*/
+	t.Run("Neckarbrücke pipe Lake*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Title = "Neckarbrücke|Lake*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -341,6 +420,85 @@ func TestPhotosFilterTitle(t *testing.T) {
 }
 
 func TestPhotosQueryTitle(t *testing.T) {
+	t.Run("Lake / 2790", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "title:\"Lake / 2790\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("Lake*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "title:\"Lake*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("Neckarbrücke", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "title:\"Neckarbrücke\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	//TODO Fix or search
+	/*t.Run("Neckarbrücke or Lake*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "title:\"Neckarbrücke OR Lake*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Neckarbrücke whitespace pipe whitespace Lake*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "title:\"Neckarbrücke | Lake*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})*/
+	t.Run("Neckarbrücke pipe Lake*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "title:\"Neckarbrücke|Lake*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
