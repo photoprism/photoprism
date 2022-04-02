@@ -345,4 +345,16 @@ func TestOrLike(t *testing.T) {
 		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ?", where)
 		assert.Equal(t, []interface{}{"foo%", "bar"}, values)
 	})
+	t.Run("OneFilename", func(t *testing.T) {
+		where, values := OrLike("files.file_name", " 2790/07/27900704_070228_D6D51B6C.jpg")
+
+		assert.Equal(t, "files.file_name LIKE ?", where)
+		assert.Equal(t, []interface{}{" 2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+	})
+	t.Run("TwoFilenames", func(t *testing.T) {
+		where, values := OrLike("files.file_name", "1990* | 2790/07/27900704_070228_D6D51B6C.jpg")
+
+		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ?", where)
+		assert.Equal(t, []interface{}{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+	})
 }

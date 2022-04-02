@@ -47,8 +47,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 6)
 	})
-	//TODO Fix or
-	/*t.Run("1990* whitespace pipe whitespace 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+	t.Run("1990* whitespace pipe whitespace 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Filename = "1990* | 2790/07/27900704_070228_D6D51B6C.jpg"
@@ -59,11 +58,12 @@ func TestPhotosFilterFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 6)
+		assert.Equal(t, 6, len(photos))
 	})
+	/* TODO: Support for " or " as an alias for | has been removed as filenames can contain "or"!
 	t.Run("1990* or 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
 		var f form.SearchPhotos
-
+		Db().LogMode(true)
 		f.Filename = "1990* or 2790/07/27900704_070228_D6D51B6C.jpg"
 		f.Merged = true
 
@@ -72,8 +72,9 @@ func TestPhotosFilterFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 6)
-	})*/
+		assert.Equal(t, 6, len(photos))
+	})
+	*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -85,7 +86,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -957,8 +958,7 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	// TODO Should work
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "filename:\"*%photo28.jpg | *photo'35.jpg\""
@@ -995,7 +995,9 @@ func TestPhotosQueryFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Greater(t, len(photos), 1)
+
+		// TODO: Manual search also finds one result only.
+		assert.Equal(t, len(photos), 1)
 	})
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1009,5 +1011,5 @@ func TestPhotosQueryFilename(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, len(photos), 2)
-	})*/
+	})
 }

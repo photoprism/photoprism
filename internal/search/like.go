@@ -246,8 +246,14 @@ func OrLike(col, s string) (where string, values []interface{}) {
 	terms := strings.Split(s, txt.Or)
 	values = make([]interface{}, len(terms))
 
-	for i := range terms {
-		values[i] = terms[i]
+	if l := len(terms); l == 0 {
+		return "", []interface{}{}
+	} else if l == 1 {
+		values[0] = terms[0]
+	} else {
+		for i := range terms {
+			values[i] = strings.TrimSpace(terms[i])
+		}
 	}
 
 	like := fmt.Sprintf("%s LIKE ?", col)
