@@ -9,6 +9,164 @@ import (
 )
 
 func TestPhotosFilterPeople(t *testing.T) {
+	t.Run("Ac*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Ac*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("Actress", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actress"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Actor A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Actor A pipe Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A|Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("Actor A whitespace pipe whitespace Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A | Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	//TODO
+	/*t.Run("Actor A or Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A or Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("Actor A OR Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A OR Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})*/
+	t.Run("Actor A ampersand Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A&Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	//TODO
+	/*t.Run("Actor A and Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A and Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("Actor A AND Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A AND Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})*/
+	t.Run("Actor A whitespace ampersand whitespace Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.People = "Actor A & Actress A"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -249,6 +407,164 @@ func TestPhotosFilterPeople(t *testing.T) {
 }
 
 func TestPhotosQueryPeople(t *testing.T) {
+	t.Run("Ac*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Ac*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("Actress", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actress\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Actor A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Actor A pipe Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A|Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("Actor A whitespace pipe whitespace Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A | Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	//TODO
+	/*t.Run("Actor A or Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A or Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("Actor A OR Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A OR Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})*/
+	t.Run("Actor A ampersand Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A&Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	//TODO
+	/*t.Run("Actor A and Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A and Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("Actor A AND Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A AND Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})*/
+	t.Run("Actor A whitespace ampersand whitespace Actress A", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "people:\"Actor A & Actress A\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

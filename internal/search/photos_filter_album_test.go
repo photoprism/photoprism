@@ -8,6 +8,32 @@ import (
 )
 
 func TestPhotosFilterAlbum(t *testing.T) {
+	t.Run("Berlin*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Berlin*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Pet*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "Pet*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -252,6 +278,32 @@ func TestPhotosFilterAlbum(t *testing.T) {
 }
 
 func TestPhotosQueryAlbum(t *testing.T) {
+	t.Run("Berlin*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Berlin*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("Pet*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "album:\"Pet*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
