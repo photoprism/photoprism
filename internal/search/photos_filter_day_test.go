@@ -61,33 +61,6 @@ func TestPhotosFilterDay(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 5)
 	})
-	//TODO
-	/*t.Run("1 or 17", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Day = "1 or 17"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 5)
-	})
-	t.Run("1 OR 17", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Day = "1 OR 17"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 5)
-	})*/
 	var f0 form.SearchPhotos
 
 	f0.Merged = true
@@ -385,33 +358,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 5)
 	})
-	//TODO
-	/*t.Run("1 or 17", func(t *testing.T) {
-		var f form.SearchPhotos
 
-		f.Query = "day:\"1 or 17\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 5)
-	})
-	t.Run("1 OR 17", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "day:\"1 OR 17\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 5)
-	})*/
 	var f0 form.SearchPhotos
 
 	f0.Merged = true
