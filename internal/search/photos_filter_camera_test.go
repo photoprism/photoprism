@@ -9,6 +9,32 @@ import (
 )
 
 func TestPhotosFilterCamera(t *testing.T) {
+	t.Run("Apple iPhone SE", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Camera = "Apple iPhone SE"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("Apple", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Camera = "Apple"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -249,6 +275,32 @@ func TestPhotosFilterCamera(t *testing.T) {
 }
 
 func TestPhotosQueryCamera(t *testing.T) {
+	t.Run("Apple iPhone SE", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "camera:\"Apple iPhone SE\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("Apple", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "camera:\"Apple\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

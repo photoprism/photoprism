@@ -9,6 +9,99 @@ import (
 )
 
 func TestPhotosFilterYear(t *testing.T) {
+	t.Run("2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Year = "2008"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("2018", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Year = "2018"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	//TODO Wildcard fails
+	/*t.Run("19*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Year = "19*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})*/
+	t.Run("2018 pipe 2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Year = "2018|2008"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("2018 whitespace pipe whitespace 2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Year = "2018 | 2008"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	//TODO
+	/*t.Run("2018 or 2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Year = "2018 or 2008"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("2018 OR 2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Year = "2018 OR 2008"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})*/
 	var f0 form.SearchPhotos
 
 	f0.Merged = true
@@ -254,6 +347,99 @@ func TestPhotosFilterYear(t *testing.T) {
 }
 
 func TestPhotosQueryYear(t *testing.T) {
+	t.Run("2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "year:\"2008\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("2018", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "year:\"2018\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	//TODO Wildcard fails
+	/*t.Run("19*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "year:\"19*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})*/
+	t.Run("2018 pipe 2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "year:\"2018|2008\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("2018 whitespace pipe whitespace 2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "year:\"2018 | 2008\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	//TODO
+	/*t.Run("2018 or 2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "year:\"2018 or 2008\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("2018 OR 2008", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "year:\"2018 OR 2008\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})*/
 	var f0 form.SearchPhotos
 
 	f0.Merged = true

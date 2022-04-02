@@ -9,6 +9,85 @@ import (
 )
 
 func TestPhotosFilterCountry(t *testing.T) {
+	t.Run("de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Country = "de"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})
+	t.Run("mx", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Country = "mx"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 7)
+	})
+	t.Run("mx pipe de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Country = "mx|de"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 13)
+	})
+	//TODO
+	/*t.Run("mx whitespace pipe whitespace de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Country = "mx | de"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 13)
+	})
+	t.Run("mx or de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Country = "mx or de"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 13)
+	})
+	t.Run("mx OR de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Country = "mx OR de"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 13)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -249,6 +328,86 @@ func TestPhotosFilterCountry(t *testing.T) {
 }
 
 func TestPhotosQueryCountry(t *testing.T) {
+	t.Run("de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "country:\"de\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 6)
+	})
+	t.Run("mx", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "country:\"mx\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 7)
+	})
+	t.Run("mx pipe de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "country:\"mx|de\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 13)
+	})
+	//TODO
+	/*t.Run("mx whitespace pipe whitespace de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "country:\"mx | de\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 13)
+
+	})
+	t.Run("mx or de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "country:\"mx or de\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 13)
+	})
+	t.Run("mx OR de", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "country:\"mx OR de\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 13)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

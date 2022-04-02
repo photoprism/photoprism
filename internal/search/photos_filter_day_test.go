@@ -9,6 +9,85 @@ import (
 )
 
 func TestPhotosFilterDay(t *testing.T) {
+	t.Run("1", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Day = "1"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Day = "17"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("1 pipe 17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Day = "1|17"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("1 whitespace pipe whitespace 17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Day = "1 | 17"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	//TODO
+	/*t.Run("1 or 17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Day = "1 or 17"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("1 OR 17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Day = "1 OR 17"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})*/
 	var f0 form.SearchPhotos
 
 	f0.Merged = true
@@ -254,6 +333,85 @@ func TestPhotosFilterDay(t *testing.T) {
 }
 
 func TestPhotosQueryDay(t *testing.T) {
+	t.Run("1", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "day:\"1\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "day:\"17\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("1 pipe 17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "day:\"1|17\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("1 whitespace pipe whitespace 17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "day:\"1 | 17\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	//TODO
+	/*t.Run("1 or 17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "day:\"1 or 17\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})
+	t.Run("1 OR 17", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "day:\"1 OR 17\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 5)
+	})*/
 	var f0 form.SearchPhotos
 
 	f0.Merged = true

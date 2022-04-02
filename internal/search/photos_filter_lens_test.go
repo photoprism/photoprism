@@ -9,6 +9,46 @@ import (
 )
 
 func TestPhotosFilterLens(t *testing.T) {
+	t.Run("Apple", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Lens = "Apple"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 46)
+	})
+	t.Run("Apple iPhone SE back camera 4.15mm f/2.2", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Lens = "Apple iPhone SE back camera 4.15mm f/2.2"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	//TODO
+	/*t.Run("*4.15mm f/2.2", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Lens = "*4.15mm f/2.2"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -249,6 +289,46 @@ func TestPhotosFilterLens(t *testing.T) {
 }
 
 func TestPhotosQueryLens(t *testing.T) {
+	t.Run("Apple", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "lens:\"Apple\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 46)
+	})
+	t.Run("Apple iPhone SE back camera 4.15mm f/2.2", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "lens:\"Apple iPhone SE back camera 4.15mm f/2.2\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	//TODO
+	/*t.Run("*4.15mm f/2.2", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "lens:\"*4.15mm f/2.2\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
