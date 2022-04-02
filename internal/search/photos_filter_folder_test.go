@@ -47,20 +47,6 @@ func TestPhotosFilterFolder(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO Fix or search
-	/*t.Run("London or 2790/07", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Folder = "London or 2790/07"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})
 	t.Run("London whitespace pipe whitespace 2790/07", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -73,7 +59,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, len(photos), 2)
-	})*/
+	})
 	t.Run("London pipe 2790/07", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -419,8 +405,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	// TODO Should work
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Folder = "%abc/%folderx | 20'20/vacat'ion"
@@ -457,7 +442,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Greater(t, len(photos), 1)
+		assert.Equal(t, len(photos), 1)
 	})
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -470,8 +455,8 @@ func TestPhotosFilterFolder(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
-	})*/
+		assert.Equal(t, 5, len(photos))
+	})
 }
 
 func TestPhotosQueryFolder(t *testing.T) {
@@ -514,20 +499,6 @@ func TestPhotosQueryFolder(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO Fix or search
-	/*t.Run("London or 2790/07", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "folder:\"London or 2790/07\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})
 	t.Run("London whitespace pipe whitespace 2790/07", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -540,7 +511,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, len(photos), 2)
-	})*/
+	})
 	t.Run("London pipe 2790/07", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -888,8 +859,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	// TODO Should work
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "folder:\"%abc/%folderx | 20'20/vacat'ion\""
@@ -926,7 +896,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Greater(t, len(photos), 1)
+		assert.Equal(t, len(photos), 1)
 	})
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -939,6 +909,6 @@ func TestPhotosQueryFolder(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
-	})*/
+		assert.Equal(t, 5, len(photos))
+	})
 }
