@@ -130,13 +130,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		}
 	}
 
-	// Skip media files that exceed the configured resolution limit, unless the file has already been indexed.
-	if !fileExists && m.ExceedsMegapixelLimit() {
-		log.Warnf("index: %s exceeds resolution limit (%d / %d megapixels)", logName, m.Megapixels(), Config().MegapixelLimit())
-		result.Status = IndexSkipped
-		return result
-	}
-
 	// Find existing photo if a photo uid was provided or file has not been indexed yet...
 	if !fileExists && photoUID != "" {
 		// Find existing photo by UID.
@@ -240,6 +233,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 	// Remove file from duplicates table if exists.
 	if err := entity.PurgeDuplicate(m.RootRelName(), m.Root()); err != nil {
 		log.Error(err)
+	}
+
+	// Create default thumbnails if needed.
+	if err := m.CreateThumbnails(ind.thumbPath(), false); err != nil {
+		result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", sanitize.Log(m.RootRelName()), err.Error())
+		result.Status = IndexFailed
+		return result
 	}
 
 	// Fetch photo details such as keywords, subject, and artist.

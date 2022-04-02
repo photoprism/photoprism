@@ -578,8 +578,8 @@ func (c *Config) GeoApi() string {
 	return "places"
 }
 
-// OriginalsLimit returns the maximum size of originals in megabytes.
-func (c *Config) OriginalsLimit() int64 {
+// OriginalsLimit returns the maximum size of originals in MB.
+func (c *Config) OriginalsLimit() int {
 	if c.options.OriginalsLimit <= 0 || c.options.OriginalsLimit > 100000 {
 		return -1
 	}
@@ -589,26 +589,24 @@ func (c *Config) OriginalsLimit() int64 {
 
 // OriginalsLimitBytes returns the maximum size of originals in bytes.
 func (c *Config) OriginalsLimitBytes() int64 {
-	if megabyte := c.OriginalsLimit(); megabyte < 1 {
+	if result := c.OriginalsLimit(); result <= 0 {
 		return -1
 	} else {
-		return megabyte * 1024 * 1024
+		return int64(result) * 1024 * 1024
 	}
 }
 
-// MegapixelLimit returns the maximum resolution of originals in megapixels (width x height).
-func (c *Config) MegapixelLimit() int {
-	mp := c.options.MegapixelLimit
+// ResolutionLimit returns the maximum resolution of originals in megapixels (width x height).
+func (c *Config) ResolutionLimit() int {
+	result := c.options.ResolutionLimit
 
-	if mp < 0 {
+	if result <= 0 {
 		return -1
-	} else if c.options.MegapixelLimit > 900 {
-		mp = 900
-	} else if c.options.MegapixelLimit == 0 {
-		mp = 100
+	} else if result > 900 {
+		result = 900
 	}
 
-	return mp
+	return result
 }
 
 // UpdateHub updates backend api credentials for maps & places.

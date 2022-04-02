@@ -3,9 +3,6 @@ package thumb
 import (
 	"fmt"
 	"image"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/pkg/fs"

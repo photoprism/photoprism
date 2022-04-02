@@ -71,7 +71,7 @@ func (ind *Index) Cancel() {
 }
 
 // Start indexes media files in the "originals" folder.
-func (ind *Index) Start(opt IndexOptions) fs.Done {
+func (ind *Index) Start(o IndexOptions) fs.Done {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
@@ -86,7 +86,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	}
 
 	originalsPath := ind.originalsPath()
-	optionsPath := filepath.Join(originalsPath, opt.Path)
+	optionsPath := filepath.Join(originalsPath, o.Path)
 
 	if !fs.PathExists(optionsPath) {
 		event.Error(fmt.Sprintf("index: %s does not exist", sanitize.Log(optionsPath)))
@@ -186,7 +186,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 				return nil
 			}
 
-			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, opt.Rescan) {
+			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) {
 				return nil
 			}
 
@@ -205,7 +205,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 					continue
 				}
 
-				if f.FileSize() == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), opt.Rescan) {
+				if f.FileSize() == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
 					done[f.FileName()] = fs.Found
 					continue
 				}
@@ -227,7 +227,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			jobs <- IndexJob{
 				FileName: mf.FileName(),
 				Related:  related,
-				IndexOpt: opt,
+				IndexOpt: o,
 				Ind:      ind,
 			}
 

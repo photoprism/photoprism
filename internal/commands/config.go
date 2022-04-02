@@ -42,7 +42,7 @@ func configAction(ctx *cli.Context) error {
 	// Originals.
 	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
 	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
-	fmt.Printf("%-25s %d\n", "megapixel-limit", conf.MegapixelLimit())
+	fmt.Printf("%-25s %d\n", "resolution-limit", conf.ResolutionLimit())
 
 	// Other paths.
 	fmt.Printf("%-25s %s\n", "storage-path", conf.StoragePath())

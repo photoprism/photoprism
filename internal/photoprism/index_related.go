@@ -11,69 +11,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
-// IndexMain indexes the main file from a group of related files and returns the result.
-func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result IndexResult) {
-	// Skip if main file is nil.
-	if related.Main == nil {
-		result.Err = fmt.Errorf("index: no main file for %s", sanitize.Log(related.String()))
-		result.Status = IndexFailed
-		return result
-	}
-
-	f := related.Main
-	limitSize := ind.conf.OriginalsLimitBytes()
-
-	// Enforce file size limit for originals.
-	if limitSize > 0 && f.FileSize() > limitSize {
-		result.Err = fmt.Errorf("index: %s exceeds file size limit (%d / %d megabyte)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), limitSize/(1024*1024))
-		result.Status = IndexFailed
-		return result
-	}
-
-	if f.NeedsExifToolJson() {
-		if jsonName, err := ind.convert.ToJson(f); err != nil {
-			log.Debugf("index: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(f.BaseName()))
-		} else {
-			log.Debugf("index: created %s", filepath.Base(jsonName))
-		}
-	}
-
-	if opt.Convert && f.IsMedia() && !f.HasJpeg() {
-		if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
-			result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", sanitize.Log(f.BaseName()), err.Error())
-			result.Status = IndexFailed
-
-			return result
-		} else {
-			log.Debugf("index: created %s", sanitize.Log(jpegFile.BaseName()))
-
-			if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
-				result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", sanitize.Log(f.BaseName()), err.Error())
-				result.Status = IndexFailed
-
-				return result
-			}
-
-			related.Files = append(related.Files, jpegFile)
-		}
-	}
-
-	result = ind.MediaFile(f, opt, "", "")
-
-	if result.Indexed() && f.IsJpeg() {
-		if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-			log.Errorf("index: failed creating thumbnails for %s (%s)", sanitize.Log(f.BaseName()), err.Error())
-			query.SetFileError(result.FileUID, err.Error())
-		}
-	}
-
-	log.Infof("index: %s main %s file %s", result, f.FileType(), sanitize.Log(f.RelName(ind.originalsPath())))
-
-	return result
-}
-
 // IndexRelated indexes a group of related files and returns the result.
-func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result IndexResult) {
+func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result IndexResult) {
 	// Skip if main file is nil.
 	if related.Main == nil {
 		result.Err = fmt.Errorf("index: no main file for %s", sanitize.Log(related.String()))
@@ -82,12 +21,10 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 	}
 
 	done := make(map[string]bool)
-	sizeLimit := ind.conf.OriginalsLimitBytes()
-
-	result = IndexMain(&related, ind, opt)
+	result = IndexMain(&related, ind, o)
 
 	if result.Failed() {
-		log.Warn(result.Err)
+		log.Error(result.Err)
 		return result
 	} else if !result.Success() {
 		// Skip related files if indexing was not completely successful.
@@ -121,50 +58,51 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 
 		done[f.FileName()] = true
 
-		// Enforce file size limit for originals.
-		if sizeLimit > 0 && f.FileSize() > sizeLimit {
-			log.Warnf("index: %s exceeds file size limit (%d / %d megabyte)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
-			continue
+		// Show warning if sidecar file exceeds size or resolution limit.
+		if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
+			log.Warnf("index: sidecar file %s exceeds size limit (%d / %d MB)", sanitize.Log(f.RootRelName()), actual, o.OriginalsLimit)
+		} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
+			log.Warnf("index: sidecar file %s exceeds resolution limit (%d / %d MP)", sanitize.Log(f.RootRelName()), actual, o.ResolutionLimit)
 		}
 
+		// Extract metadata to a JSON file with Exiftool.
 		if f.NeedsExifToolJson() {
 			if jsonName, err := ind.convert.ToJson(f); err != nil {
-				log.Debugf("index: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(f.BaseName()))
+				log.Debugf("index: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(f.RootRelName()))
 			} else {
 				log.Debugf("index: created %s", filepath.Base(jsonName))
 			}
 		}
 
-		if opt.Convert && f.IsMedia() && !f.HasJpeg() {
-			if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
-				result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", sanitize.Log(f.BaseName()), err.Error())
+		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
+		if o.Convert && f.IsMedia() && !f.HasJpeg() {
+			if jpg, err := ind.convert.ToJpeg(f); err != nil {
+				result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", sanitize.Log(f.RootRelName()), err.Error())
 				result.Status = IndexFailed
-
 				return result
 			} else {
-				log.Debugf("index: created %s", sanitize.Log(jpegFile.BaseName()))
+				log.Debugf("index: created %s", sanitize.Log(jpg.BaseName()))
 
-				if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
-					result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", sanitize.Log(f.BaseName()), err.Error())
+				if err := jpg.CreateThumbnails(ind.thumbPath(), false); err != nil {
+					result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", sanitize.Log(f.RootRelName()), err.Error())
 					result.Status = IndexFailed
-
 					return result
 				}
 
-				related.Files = append(related.Files, jpegFile)
+				related.Files = append(related.Files, jpg)
 			}
 		}
 
-		res := ind.MediaFile(f, opt, "", result.PhotoUID)
+		// Index related MediaFile.
+		res := ind.MediaFile(f, o, "", result.PhotoUID)
 
-		if res.Indexed() && f.IsJpeg() {
-			if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-				log.Errorf("index: failed creating thumbnails for %s (%s)", sanitize.Log(f.BaseName()), err.Error())
-				query.SetFileError(res.FileUID, err.Error())
-			}
+		// Save file error.
+		if fileUid, err := res.FileError(); err != nil {
+			query.SetFileError(fileUid, err.Error())
 		}
 
-		log.Infof("index: %s related %s file %s", res, f.FileType(), sanitize.Log(f.BaseName()))
+		// Log index result.
+		log.Infof("index: %s related %s file %s", res, f.FileType(), sanitize.Log(f.RootRelName()))
 	}
 
 	return result

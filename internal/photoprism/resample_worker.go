@@ -15,7 +15,7 @@ func ResampleWorker(jobs <-chan ResampleJob) {
 			continue
 		}
 
-		if err := mf.ResampleDefault(job.path, job.force); err != nil {
+		if err := mf.CreateThumbnails(job.path, job.force); err != nil {
 			log.Errorf("resample: %s", err)
 		}
 	}

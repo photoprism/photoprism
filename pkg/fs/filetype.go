@@ -18,22 +18,23 @@ const (
 	FormatTiff     FileFormat = "tiff" // TIFF image file.
 	FormatBitmap   FileFormat = "bmp"  // BMP image file.
 	FormatRaw      FileFormat = "raw"  // RAW image file.
+	FormatMpo      FileFormat = "mpo"  // Stereoscopic Image that consists of two JPG images that are combined into one 3D image
 	FormatHEIF     FileFormat = "heif" // High Efficiency Image File Format
-	FormatHEVC     FileFormat = "hevc"
-	FormatMov      FileFormat = "mov" // Video files.
-	FormatMp4      FileFormat = "mp4"
-	FormatMpo      FileFormat = "mpo"
-	FormatAvc      FileFormat = "avc"
-	FormatAvi      FileFormat = "avi"
-	Format3gp      FileFormat = "3gp"
-	Format3g2      FileFormat = "3g2"
-	FormatFlv      FileFormat = "flv"
-	FormatMkv      FileFormat = "mkv"
-	FormatMpg      FileFormat = "mpg"
-	FormatMts      FileFormat = "mts"
-	FormatOgv      FileFormat = "ogv"
-	FormatWebm     FileFormat = "webm"
-	FormatWMV      FileFormat = "wmv"
+	FormatWebP     FileFormat = "webp" // Google WebP Image
+	FormatWebM     FileFormat = "webm" // Google WebM Video
+	FormatHEVC     FileFormat = "hevc" // H.265, High Efficiency Video Coding (HEVC)
+	FormatAvc      FileFormat = "avc"  // H.264, Advanced Video Coding (AVC), MPEG-4 Part 10, used internally
+	FormatMov      FileFormat = "mov"  // QuickTime File Format, can contain AVC, HEVC,...
+	FormatMp4      FileFormat = "mp4"  // Standard MPEG-4 Container based on QuickTime, can contain AVC, HEVC,...
+	FormatAvi      FileFormat = "avi"  // Microsoft Audio Video Interleave (AVI)
+	Format3gp      FileFormat = "3gp"  // Mobile Multimedia Container Format, MPEG-4 Part 12
+	Format3g2      FileFormat = "3g2"  // Similar to 3GP, consumes less space & bandwidth
+	FormatFlv      FileFormat = "flv"  // Flash Video
+	FormatMkv      FileFormat = "mkv"  // Matroska Multimedia Container, free and open
+	FormatMpg      FileFormat = "mpg"  // Moving Picture Experts Group (MPEG)
+	FormatMts      FileFormat = "mts"  // AVCHD (Advanced Video Coding High Definition)
+	FormatOgv      FileFormat = "ogv"  // Ogg container format maintained by the Xiph.Org, free and open
+	FormatWMV      FileFormat = "wmv"  // Windows Media Video
 	FormatXMP      FileFormat = "xmp"  // Adobe XMP sidecar file (XML).
 	FormatAAE      FileFormat = "aae"  // Apple sidecar file (XML).
 	FormatXML      FileFormat = "xml"  // XML metadata / config / sidecar file.
@@ -75,7 +76,8 @@ var FileExt = FileExtensions{
 	".mpo":  FormatMpo,
 	".mts":  FormatMts,
 	".ogv":  FormatOgv,
-	".webm": FormatWebm,
+	".webp": FormatWebP,
+	".webm": FormatWebM,
 	".wmv":  FormatWMV,
 	".yml":  FormatYaml,
 	".yaml": FormatYaml,

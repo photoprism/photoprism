@@ -251,13 +251,8 @@ func facesIndexAction(ctx *cli.Context) error {
 	var indexed fs.Done
 
 	if w := service.Index(); w != nil {
-		opt := photoprism.IndexOptions{
-			Path:      subPath,
-			Rescan:    true,
-			Convert:   conf.Settings().Index.Convert && conf.SidecarWritable(),
-			Stack:     true,
-			FacesOnly: true,
-		}
+		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
+		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true)
 
 		indexed = w.Start(opt)
 	}

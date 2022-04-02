@@ -51,8 +51,8 @@ type Options struct {
 	ConfigPath            string  `yaml:"ConfigPath" json:"-" flag:"config-path"`
 	ConfigFile            string  `json:"-"`
 	OriginalsPath         string  `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
-	OriginalsLimit        int64   `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
-	MegapixelLimit        int     `yaml:"MegapixelLimit" json:"MegapixelLimit" flag:"megapixel-limit"`
+	OriginalsLimit        int     `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
+	ResolutionLimit       int     `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	StoragePath           string  `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	ImportPath            string  `yaml:"ImportPath" json:"-" flag:"import-path"`
 	CachePath             string  `yaml:"CachePath" json:"-" flag:"cache-path"`

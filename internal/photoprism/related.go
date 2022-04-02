@@ -67,5 +67,5 @@ func (m RelatedFiles) MainLogName() string {
 		return ""
 	}
 
-	return sanitize.Log(m.Main.RelName(Config().OriginalsPath()))
+	return sanitize.Log(m.Main.RootRelName())
 }

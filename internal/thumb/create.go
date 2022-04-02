@@ -98,7 +98,7 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 	img, err := Open(imageFilename, orientation)
 
 	if err != nil {
-		log.Error(err)
+		log.Debugf("resample: %s in %s", err, sanitize.Log(filepath.Base(imageFilename)))
 		return "", err
 	}
 
@@ -135,7 +135,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 	err = imaging.Save(result, fileName, quality)
 
 	if err != nil {
-		log.Errorf("resample: failed to save %s", sanitize.Log(filepath.Base(fileName)))
+		log.Debugf("resample: failed to save %s", sanitize.Log(filepath.Base(fileName)))
 		return result, err
 	}
 

@@ -306,9 +306,9 @@ func TestConfig_GeoApi(t *testing.T) {
 func TestConfig_OriginalsLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int64(-1), c.OriginalsLimit())
+	assert.Equal(t, -1, c.OriginalsLimit())
 	c.options.OriginalsLimit = 800
-	assert.Equal(t, int64(800), c.OriginalsLimit())
+	assert.Equal(t, 800, c.OriginalsLimit())
 }
 
 func TestConfig_OriginalsLimitBytes(t *testing.T) {
@@ -319,16 +319,18 @@ func TestConfig_OriginalsLimitBytes(t *testing.T) {
 	assert.Equal(t, int64(838860800), c.OriginalsLimitBytes())
 }
 
-func TestConfig_MegapixelLimit(t *testing.T) {
+func TestConfig_ResolutionLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, 100, c.MegapixelLimit())
-	c.options.MegapixelLimit = 800
-	assert.Equal(t, 800, c.MegapixelLimit())
-	c.options.MegapixelLimit = 950
-	assert.Equal(t, 900, c.MegapixelLimit())
-	c.options.MegapixelLimit = -1
-	assert.Equal(t, -1, c.MegapixelLimit())
+	assert.Equal(t, -1, c.ResolutionLimit())
+	c.options.ResolutionLimit = 800
+	assert.Equal(t, 800, c.ResolutionLimit())
+	c.options.ResolutionLimit = 950
+	assert.Equal(t, 900, c.ResolutionLimit())
+	c.options.ResolutionLimit = 0
+	assert.Equal(t, -1, c.ResolutionLimit())
+	c.options.ResolutionLimit = -1
+	assert.Equal(t, -1, c.ResolutionLimit())
 }
 
 func TestConfig_BaseUri(t *testing.T) {

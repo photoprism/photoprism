@@ -124,6 +124,7 @@ func TestIndexRelated(t *testing.T) {
 
 		result := IndexRelated(related, ind, opt)
 
+		assert.Nil(t, result.Err)
 		assert.False(t, result.Failed())
 		assert.False(t, result.Stacked())
 		assert.True(t, result.Success())

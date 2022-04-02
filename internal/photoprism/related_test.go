@@ -197,7 +197,7 @@ func TestRelatedFiles_MainLogName(t *testing.T) {
 			Files: MediaFiles{},
 			Main:  mediaFile,
 		}
-		assert.Equal(t, conf.ExamplesPath()+"/telegram_2020-01-30_09-57-18.jpg", relatedFiles.MainLogName())
+		assert.Equal(t, "telegram_2020-01-30_09-57-18.jpg", relatedFiles.MainLogName())
 	})
 	t.Run("iPhone7", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
@@ -216,6 +216,6 @@ func TestRelatedFiles_MainLogName(t *testing.T) {
 			Files: MediaFiles{mediaFile, mediaFile2, mediaFile3},
 			Main:  mediaFile3,
 		}
-		assert.Equal(t, conf.ExamplesPath()+"/iphone_7.heic", relatedFiles.MainLogName())
+		assert.Equal(t, "iphone_7.heic", relatedFiles.MainLogName())
 	})
 }

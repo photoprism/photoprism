@@ -27,6 +27,14 @@ Additional information can be found in our Developer Guide:
 package thumb
 
 import (
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+
+	_ "golang.org/x/image/bmp"
+	_ "golang.org/x/image/tiff"
+	_ "golang.org/x/image/webp"
+
 	"github.com/photoprism/photoprism/internal/event"
 )
 
