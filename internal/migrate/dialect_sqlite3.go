@@ -40,7 +40,7 @@ var DialectSQLite3 = Migrations{
 	{
 		ID:         "20220329-082000",
 		Dialect:    "sqlite3",
-		Statements: []string{"UPDATE files SET media_id = CASE WHEN file_uid <> '' AND photo_id > 0 AND file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE media_id IS NULL;"},
+		Statements: []string{"UPDATE files SET media_id = CASE WHEN file_uid <> '' AND photo_id > 0 AND file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE photo_id IS NOT NULL;"},
 	},
 	{
 		ID:         "20220329-091000",
@@ -50,6 +50,6 @@ var DialectSQLite3 = Migrations{
 	{
 		ID:         "20220329-092000",
 		Dialect:    "sqlite3",
-		Statements: []string{"UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE time_index IS NULL;"},
+		Statements: []string{"UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE photo_id IS NOT NULL;"},
 	},
 }

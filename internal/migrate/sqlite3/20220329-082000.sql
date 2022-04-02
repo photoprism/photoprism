@@ -1,1 +1,1 @@
-UPDATE files SET media_id = CASE WHEN file_uid <> '' AND photo_id > 0 AND file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE media_id IS NULL;
+UPDATE files SET media_id = CASE WHEN file_uid <> '' AND photo_id > 0 AND file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE photo_id IS NOT NULL;
