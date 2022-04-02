@@ -453,8 +453,7 @@ func TestPhotosFilterName(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	// TODO Should work
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Name = "%photo28 | photo'35"
@@ -491,8 +490,8 @@ func TestPhotosFilterName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Greater(t, len(photos), 1)
-	})*/
+		assert.Equal(t, 1, len(photos))
+	})
 }
 
 func TestPhotosQueryName(t *testing.T) {
@@ -535,8 +534,7 @@ func TestPhotosQueryName(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 7)
 	})
-	//TODO
-	/*t.Run("*hoto1* whitespace pipe whitespace 27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("*hoto1* whitespace pipe whitespace 27900704_070228_D6D51B6C", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:\"*hoto1* | 27900704_070228_D6D51B6C\""
@@ -560,8 +558,8 @@ func TestPhotosQueryName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 7)
-	})*/
+		assert.Equal(t, 0, len(photos))
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -930,9 +928,7 @@ func TestPhotosQueryName(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	// TODO Should work
-
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:\"%photo28 | photo'35\""
@@ -969,7 +965,7 @@ func TestPhotosQueryName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Greater(t, len(photos), 1)
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -982,6 +978,6 @@ func TestPhotosQueryName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
-	})*/
+		assert.Equal(t, 2, len(photos))
+	})
 }
