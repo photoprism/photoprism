@@ -77,7 +77,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_CONFIG_FILE",
 	},
 	cli.StringFlag{
-		Name:   "config-path, cp",
+		Name:   "config-path, conf",
 		Usage:  "config `PATH` to be searched for additional configuration and settings files",
 		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
