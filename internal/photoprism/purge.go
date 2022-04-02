@@ -263,6 +263,9 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		if err := query.PurgeOrphans(); err != nil {
 			log.Errorf("index: %s (purge orphans)", err)
 		}
+
+		// Regenerate search index columns.
+		entity.File{}.RegenerateIndex()
 	}
 
 	// Hide missing album contents.

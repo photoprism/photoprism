@@ -64,6 +64,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	}
 
 	// Index main MediaFile.
+	exists := ind.files.Exists(f.RootRelName(), f.Root())
 	result = ind.MediaFile(f, o, "", "")
 
 	// Save file error.
@@ -72,7 +73,17 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	}
 
 	// Log index result.
-	log.Infof("index: %s main %s file %s", result, f.FileType(), sanitize.Log(f.RootRelName()))
+	if result.Failed() {
+		log.Error(result.Err)
+
+		if exists {
+			log.Errorf("index: %s updating main %s file %s", result, f.FileType(), sanitize.Log(f.RootRelName()))
+		} else {
+			log.Errorf("index: %s adding main %s file %s", result, f.FileType(), sanitize.Log(f.RootRelName()))
+		}
+	} else {
+		log.Infof("index: %s main %s file %s", result, f.FileType(), sanitize.Log(f.RootRelName()))
+	}
 
 	return result
 }

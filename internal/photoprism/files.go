@@ -115,3 +115,17 @@ func (m *Files) Indexed(fileName, fileRoot string, modTime time.Time, rescan boo
 		return false
 	}
 }
+
+// Exists tests of a file exists.
+func (m *Files) Exists(fileName, fileRoot string) bool {
+	key := path.Join(fileRoot, fileName)
+
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	if _, ok := m.files[key]; ok {
+		return true
+	} else {
+		return false
+	}
+}

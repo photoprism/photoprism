@@ -24,7 +24,6 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	result = IndexMain(&related, ind, o)
 
 	if result.Failed() {
-		log.Error(result.Err)
 		return result
 	} else if !result.Success() {
 		// Skip related files if indexing was not completely successful.

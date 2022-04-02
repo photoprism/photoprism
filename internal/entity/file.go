@@ -101,15 +101,20 @@ func (m File) RegenerateIndex() {
 	photosTable := Photo{}.TableName()
 
 	var updateWhere *gorm.SqlExpr
+	var scope string
 
 	if m.PhotoID > 0 {
 		updateWhere = gorm.Expr("photo_id = ?", m.PhotoID)
+		scope = "partial"
 	} else if m.PhotoUID != "" {
 		updateWhere = gorm.Expr("photo_uid = ?", m.PhotoUID)
+		scope = "partial"
 	} else if m.ID > 0 {
 		updateWhere = gorm.Expr("id = ?", m.ID)
+		scope = "file"
 	} else {
 		updateWhere = gorm.Expr("photo_id IS NOT NULL")
+		scope = "full"
 	}
 
 	switch DbDialect() {
@@ -135,13 +140,13 @@ func (m File) RegenerateIndex() {
 				gorm.Expr(filesTable), updateWhere).Error)
 
 		Log("files", "regenerate time_index",
-			Db().Exec("UPDATE ? SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE ? SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 	}
 
-	log.Debugf("files: updated search index [%s]", time.Since(start))
+	log.Debugf("files: updated %s search index [%s]", scope, time.Since(start))
 }
 
 type FileInfos struct {
