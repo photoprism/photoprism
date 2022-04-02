@@ -9,6 +9,85 @@ import (
 )
 
 func TestPhotosFilterState(t *testing.T) {
+	t.Run("State of Mexico", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.State = "State of Mexico"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 7)
+	})
+	//TODO  wildcard
+	/*t.Run("Rheinland*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.State = "Rheinland*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})*/
+	t.Run("State of Mexico pipe Rheinland-Pfalz", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.State = "State of Mexico|Rheinland-Pfalz"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 11)
+	})
+	/*t.Run("State of Mexico whitespace pipe whitespace Rheinland", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.State = "State of Mexico | Rheinland-Pfalz"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 11)
+	})
+	t.Run("State of Mexico or Rheinland", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.State = "State of Mexico or Rheinland-Pfalz"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 11)
+	})
+	t.Run("State of Mexico OR Rheinland", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.State = "State of Mexico OR Rheinland-Pfalz"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 11)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -255,6 +334,85 @@ func TestPhotosFilterState(t *testing.T) {
 }
 
 func TestPhotosQueryState(t *testing.T) {
+	t.Run("State of Mexico", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "state:\"State of Mexico\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 7)
+	})
+	//TODO  wildcard
+	/*t.Run("Rheinland*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "state:\"Rheinland*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})*/
+	t.Run("State of Mexico pipe Rheinland-Pfalz", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "state:\"State of Mexico|Rheinland-Pfalz\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 11)
+	})
+	/*t.Run("State of Mexico whitespace pipe whitespace Rheinland", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "state:\"State of Mexico | Rheinland-Pfalz\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 11)
+	})
+	t.Run("State of Mexico or Rheinland", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "state:\"State of Mexico or Rheinland-Pfalz\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 11)
+	})
+	t.Run("State of Mexico OR Rheinland", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "state:\"State of Mexico OR Rheinland-Pfalz\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.GreaterOrEqual(t, len(photos), 11)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

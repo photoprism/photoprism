@@ -9,6 +9,97 @@ import (
 )
 
 func TestPhotosFilterHash(t *testing.T) {
+	t.Run("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Hash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 pipe 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340|2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	/*t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 whitespace pipe whitespace 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 | 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd34*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd34*"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 1)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -249,6 +340,97 @@ func TestPhotosFilterHash(t *testing.T) {
 }
 
 func TestPhotosQueryHash(t *testing.T) {
+	t.Run("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "hash:\"2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 pipe 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340|2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	/*t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 whitespace pipe whitespace 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 | 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 2)
+	})
+	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd34*", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd34*\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), 1)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

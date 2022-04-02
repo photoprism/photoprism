@@ -9,6 +9,85 @@ import (
 )
 
 func TestPhotosFilterType(t *testing.T) {
+	t.Run("video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Type = "video"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("raw", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Type = "raw"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("raw pipe video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Type = "raw|video"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	//TODO
+	/*t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Type = "raw | video"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("raw or video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Type = "raw or video"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("raw OR video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Type = "raw OR video"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -249,6 +328,85 @@ func TestPhotosFilterType(t *testing.T) {
 }
 
 func TestPhotosQueryType(t *testing.T) {
+	t.Run("video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "type:\"video\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 3)
+	})
+	t.Run("raw", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "type:\"raw\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("raw pipe video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "type:\"raw|video\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	//TODO
+	/*t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "type:\"raw | video\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("raw or video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "type:\"raw or video\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
+	t.Run("raw OR video", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "type:\"raw OR video\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

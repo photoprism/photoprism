@@ -9,6 +9,19 @@ import (
 )
 
 func TestPhotosFilterFilter(t *testing.T) {
+	t.Run("path:\"1990/04\" public:true", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Filter = "path:\"1990/04\" public:true"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 4)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
