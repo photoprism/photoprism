@@ -77,12 +77,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_CONFIG_FILE",
 	},
 	cli.StringFlag{
-		Name:   "config-path, conf",
+		Name:   "config-path, co",
 		Usage:  "config `PATH` to be searched for additional configuration and settings files",
 		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
 	cli.StringFlag{
-		Name:   "originals-path, media",
+		Name:   "originals-path, o",
 		Usage:  "storage `PATH` of your original media files (photos and videos)",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
@@ -99,12 +99,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_RESOLUTION_LIMIT",
 	},
 	cli.StringFlag{
-		Name:   "storage-path, storage",
+		Name:   "storage-path, st",
 		Usage:  "writable storage `PATH` for cache, database, and sidecar files",
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
 	},
 	cli.StringFlag{
-		Name:   "import-path",
+		Name:   "import-path, im",
 		Usage:  "base `PATH` from which files can be imported to originals (optional)",
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
