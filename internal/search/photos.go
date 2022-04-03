@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/viewer"
-
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
@@ -25,15 +23,6 @@ var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}
 // Photos finds photos based on the search form provided and returns them as PhotoResults.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	return searchPhotos(f, PhotosColsAll)
-}
-
-// PhotosViewerResults finds photos based on the search form provided and returns them as viewer.Results.
-func PhotosViewerResults(f form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
-	if results, count, err := searchPhotos(f, PhotosColsView); err != nil {
-		return viewer.Results{}, count, err
-	} else {
-		return results.ViewerResults(contentUri, apiUri, previewToken, downloadToken), count, err
-	}
 }
 
 // photos searches for photos based on a Form and returns PhotoResults ([]Photo).

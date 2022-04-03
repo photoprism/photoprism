@@ -4,9 +4,19 @@ import (
 	"encoding/json"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/viewer"
 )
+
+// PhotosViewerResults finds photos based on the search form provided and returns them as viewer.Results.
+func PhotosViewerResults(f form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
+	if results, count, err := searchPhotos(f, PhotosColsView); err != nil {
+		return viewer.Results{}, count, err
+	} else {
+		return results.ViewerResults(contentUri, apiUri, previewToken, downloadToken), count, err
+	}
+}
 
 // ViewerResult returns a new photo viewer result.
 func (photo Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {

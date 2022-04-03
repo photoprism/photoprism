@@ -3,13 +3,12 @@ package search
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestLike(t *testing.T) {
