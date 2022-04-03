@@ -1,3 +1,9 @@
+/* Transitions */
+
+.no-transition {
+    transition: none;
+}
+
 /* Animations */
 
 @-webkit-keyframes rainbow {
