@@ -7,20 +7,25 @@ import (
 )
 
 // Errors returns the error log filtered with an optional search string.
-func Errors(limit, offset int, s string) (results entity.Errors, err error) {
+func Errors(limit, offset int, search string) (results entity.Errors, err error) {
 	stmt := Db()
 
-	s = strings.TrimSpace(s)
+	search = strings.TrimSpace(search)
 
-	if s == "errors" {
+	if search == "error" || search == "errors" {
 		stmt = stmt.Where("error_level = 'error'")
-	} else if s == "warnings" {
+	} else if search == "warning" || search == "warnings" {
 		stmt = stmt.Where("error_level = 'warning'")
-	} else if len(s) >= 3 {
-		stmt = stmt.Where("error_message LIKE ?", "%"+s+"%")
+	} else if len(search) >= 3 {
+		stmt = stmt.Where("error_message LIKE ?", "%"+search+"%")
 	}
 
 	err = stmt.Order("error_time DESC").Limit(limit).Offset(offset).Find(&results).Error
 
 	return results, err
+}
+
+// DeleteErrors removes all entries from the errors table.
+func DeleteErrors() (err error) {
+	return UnscopedDb().Delete(entity.Error{}).Error
 }

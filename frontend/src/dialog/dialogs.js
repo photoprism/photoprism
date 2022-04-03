@@ -42,6 +42,7 @@ import PShareUploadDialog from "dialog/share/upload.vue";
 import PWebdavDialog from "dialog/webdav.vue";
 import PReloadDialog from "dialog/reload.vue";
 import PSponsorDialog from "dialog/sponsor.vue";
+import PConfirmDialog from "dialog/confirm.vue";
 
 const dialogs = {};
 
@@ -65,6 +66,7 @@ dialogs.install = (Vue) => {
   Vue.component("PWebdavDialog", PWebdavDialog);
   Vue.component("PReloadDialog", PReloadDialog);
   Vue.component("PSponsorDialog", PSponsorDialog);
+  Vue.component("PConfirmDialog", PConfirmDialog);
 };
 
 export default dialogs;

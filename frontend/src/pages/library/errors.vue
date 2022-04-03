@@ -16,8 +16,11 @@
                     @click:clear="clearQuery"
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="reload">
+      <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="onReload">
         <v-icon>refresh</v-icon>
+      </v-btn>
+      <v-btn v-if="!isPublic" icon class="action-delete" :title="$gettext('Delete')" @click.stop="onDelete">
+        <v-icon>delete</v-icon>
       </v-btn>
       <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-bug-report"
              :title="$gettext('Troubleshooting Checklists')">
@@ -59,7 +62,8 @@
         </p>
       </v-alert>
     </div>
-
+    <p-confirm-dialog :show="dialog.delete" icon="delete_outline" @cancel="dialog.delete = false"
+                             @confirm="onConfirmDelete"></p-confirm-dialog>
     <v-dialog
         v-model="details.show"
         max-width="500"
@@ -103,13 +107,17 @@ export default {
       dirty: false,
       loading: false,
       scrollDisabled: false,
+      scrollDistance: window.innerHeight*2,
       q: q,
       filter: {q},
+      isPublic: this.$config.get("public"),
       batchSize: 100,
       offset: 0,
       page: 0,
       errors: [],
-      results: [],
+      dialog: {
+        delete: false,
+      },
       details: {
         show: false,
         err: {"Level": "", "Message": "", "Time": ""},
@@ -123,7 +131,7 @@ export default {
       this.q = query['q'] ? query['q'] : '';
       this.filter.q = this.q;
 
-      this.reload();
+      this.onReload();
     }
   },
   created() {
@@ -162,7 +170,37 @@ export default {
       this.details.err = err;
       this.details.show = true;
     },
-    reload() {
+    onDelete() {
+      if (this.loading) {
+        return;
+      }
+
+      this.dialog.delete = true;
+    },
+    onConfirmDelete() {
+      this.dialog.delete = false;
+
+      if (this.loading) {
+        return;
+      }
+
+      this.loading = true;
+      this.scrollDisabled = true;
+
+      // Delete error logs.
+      Api.delete("errors").then((resp) => {
+        if (resp && resp.data.code && resp.data.code === 200) {
+          this.errors = [];
+          this.dirty = false;
+          this.page = 0;
+          this.offset = 0;
+        }
+      }).finally(() => {
+        this.scrollDisabled = false;
+        this.loading = false;
+      });
+    },
+    onReload() {
       if (this.loading) {
         return;
       }
@@ -170,6 +208,7 @@ export default {
       this.page = 0;
       this.offset = 0;
       this.scrollDisabled = false;
+
       this.loadMore();
     },
     loadMore() {
@@ -187,6 +226,7 @@ export default {
 
       const params = {count, offset, q};
 
+      // Fetch error logs.
       Api.get("errors", {params}).then((resp) => {
         if (!resp.data) {
           resp.data = [];
