@@ -197,32 +197,32 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 		save = true
 	}
 
-	if !save {
-		return nil
-	}
-
 	// Save label.
-	if err := db.Save(m).Error; err != nil {
-		return err
+	if save {
+		if err := db.Save(m).Error; err != nil {
+			return err
+		}
 	}
 
 	// Update label categories.
-	labelCategoriesMutex.Lock()
-	defer labelCategoriesMutex.Unlock()
+	if len(label.Categories) > 0 {
+		labelCategoriesMutex.Lock()
+		defer labelCategoriesMutex.Unlock()
 
-	for _, category := range label.Categories {
-		sn := FirstOrCreateLabel(NewLabel(txt.Title(category), -3))
+		for _, category := range label.Categories {
+			sn := FirstOrCreateLabel(NewLabel(txt.Title(category), -3))
 
-		if sn == nil {
-			continue
-		}
+			if sn == nil {
+				continue
+			}
 
-		if sn.Deleted() {
-			continue
-		}
+			if sn.Deleted() {
+				continue
+			}
 
-		if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
-			log.Warnf("index: failed saving label category %s (%s)", sanitize.Log(category), err)
+			if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
+				log.Debugf("index: failed saving label category %s (%s)", sanitize.Log(category), err)
+			}
 		}
 	}
 
