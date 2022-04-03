@@ -18,6 +18,7 @@ func TestNewOptions(t *testing.T) {
 	assert.IsType(t, new(Options), c)
 
 	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath)
+	assert.Equal(t, "1h34m9s", c.WakeupInterval.String())
 	assert.False(t, c.Debug)
 	assert.False(t, c.ReadOnly)
 }
@@ -36,6 +37,7 @@ func TestOptions_SetOptionsFromFile(t *testing.T) {
 	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath)
 	assert.Equal(t, "/srv/photoprism/photos/import", c.ImportPath)
 	assert.Equal(t, "/srv/photoprism/temp", c.TempPath)
+	assert.Equal(t, "1h34m9s", c.WakeupInterval.String())
 	assert.NotEmpty(t, c.DatabaseDriver)
 	assert.NotEmpty(t, c.DatabaseDsn)
 	assert.Equal(t, 81, c.HttpPort)

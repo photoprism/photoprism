@@ -139,10 +139,10 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_WORKERS",
 		Value:  cpuid.CPU.PhysicalCores / 2,
 	},
-	cli.IntFlag{
+	cli.StringFlag{
 		Name:   "wakeup-interval, i",
-		Usage:  "metadata, share & sync background worker wakeup interval in `SECONDS` (1-604800)",
-		Value:  DefaultWakeupIntervalSeconds,
+		Usage:  "`DURATION` between worker runs required for face recognition and index maintenance (1-86400s)",
+		Value:  DefaultWakeupInterval.String(),
 		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
 	},
 	cli.IntFlag{

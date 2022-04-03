@@ -62,7 +62,7 @@ func configAction(ctx *cli.Context) error {
 
 	// Workers.
 	fmt.Printf("%-25s %d\n", "workers", conf.Workers())
-	fmt.Printf("%-25s %d\n", "wakeup-interval", conf.WakeupInterval()/time.Second)
+	fmt.Printf("%-25s %s\n", "wakeup-interval", conf.WakeupInterval().String())
 	fmt.Printf("%-25s %d\n", "auto-index", conf.AutoIndex()/time.Second)
 	fmt.Printf("%-25s %d\n", "auto-import", conf.AutoImport()/time.Second)
 

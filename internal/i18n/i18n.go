@@ -43,14 +43,17 @@ func gettext(s string) string {
 	return gotext.Get(s)
 }
 
-func Msg(id Message, params ...interface{}) string {
-	msg := gotext.Get(Messages[id])
-
+// msgParams replaces message params with the actual values.
+func msgParams(msg string, params ...interface{}) string {
 	if strings.Contains(msg, "%") {
 		msg = fmt.Sprintf(msg, params...)
 	}
 
 	return msg
+}
+
+func Msg(id Message, params ...interface{}) string {
+	return msgParams(gotext.Get(Messages[id]), params...)
 }
 
 func Error(id Message, params ...interface{}) error {

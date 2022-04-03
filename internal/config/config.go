@@ -52,6 +52,8 @@ const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
 const DefaultAutoImportDelay = int(3 * 60) // 3 Minutes
 
 const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
+const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
+const MaxWakeupInterval = time.Hour * 24 // 1 Day
 
 // Megabyte in bytes.
 const Megabyte = 1000 * 1000
@@ -133,6 +135,11 @@ func NewConfig(ctx *cli.Context) *Config {
 	return c
 }
 
+// Unsafe checks if unsafe settings are allowed.
+func (c *Config) Unsafe() bool {
+	return c.options.Unsafe
+}
+
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
@@ -210,6 +217,12 @@ func (c *Config) Init() error {
 	// Show swap info.
 	if TotalMem < RecommendedMem {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
+	}
+
+	// Show wakeup interval warning if face recognition is enabled
+	// and the worker runs less than once per hour.
+	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
+		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
 	}
 
 	// Set HTTP user agent.
@@ -534,17 +547,23 @@ func (c *Config) Workers() int {
 	return 1
 }
 
-// WakeupInterval returns the metadata, share & sync background worker wakeup interval duration (1 - 604800 seconds).
+// WakeupInterval returns the duration between background worker runs
+// required for face recognition and index maintenance(1-86400s).
 func (c *Config) WakeupInterval() time.Duration {
-	if c.options.Unsafe && c.options.WakeupInterval < 0 {
-		// Background worker can be disabled in unsafe mode.
-		return time.Duration(0)
-	} else if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 604800 {
-		// Default if out of range.
-		return time.Duration(DefaultWakeupIntervalSeconds) * time.Second
+	if c.options.WakeupInterval <= 0 {
+		if c.options.Unsafe {
+			// Worker can be disabled only in unsafe mode.
+			return time.Duration(0)
+		} else {
+			// Default to 15 minutes if no interval is set.
+			return DefaultWakeupInterval
+		}
+	} else if c.options.WakeupInterval > MaxWakeupInterval {
+		// Max interval is one day.
+		return MaxWakeupInterval
 	}
 
-	return time.Duration(c.options.WakeupInterval) * time.Second
+	return c.options.WakeupInterval
 }
 
 // AutoIndex returns the auto index delay duration.

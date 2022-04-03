@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,18 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 )
+
+// Checks if background worker runs less than once per hour.
+func wakeupIntervalTooHigh(c *gin.Context) bool {
+	if conf := service.Config(); conf.Unsafe() {
+		return false
+	} else if i := conf.WakeupInterval(); i > time.Hour {
+		Abort(c, http.StatusForbidden, i18n.ErrWakeupInterval, i.String())
+		return true
+	} else {
+		return false
+	}
+}
 
 // findFileMarker returns a file and marker entity matching the api request.
 func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, err error) {
@@ -67,6 +80,12 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 //   id: int Marker ID as returned by the API
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
+		// Abort if workers runs less than once per hour.
+		if wakeupIntervalTooHigh(c) {
+			return
+		}
+
+		// Abort if another update is running.
 		if err := mutex.People.Start(); err != nil {
 			AbortBusy(c)
 			return
@@ -145,6 +164,12 @@ func UpdateMarker(router *gin.RouterGroup) {
 //   id: int Marker ID as returned by the API
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
+		// Abort if workers runs less than once per hour.
+		if wakeupIntervalTooHigh(c) {
+			return
+		}
+
+		// Abort if another update is running.
 		if err := mutex.People.Start(); err != nil {
 			AbortBusy(c)
 			return

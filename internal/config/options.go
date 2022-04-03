@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"time"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -34,110 +37,110 @@ const (
 //
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Options struct {
-	Name                  string  `json:"-"`
-	Version               string  `json:"-"`
-	Copyright             string  `json:"-"`
-	PartnerID             string  `yaml:"-" json:"-" flag:"partner-id"`
-	AdminPassword         string  `yaml:"AdminPassword" json:"-" flag:"admin-password"`
-	LogLevel              string  `yaml:"LogLevel" json:"-" flag:"log-level"`
-	Debug                 bool    `yaml:"Debug" json:"Debug" flag:"debug"`
-	Test                  bool    `yaml:"-" json:"Test,omitempty" flag:"test"`
-	Unsafe                bool    `yaml:"-" json:"-" flag:"unsafe"`
-	Demo                  bool    `yaml:"Demo" json:"-" flag:"demo"`
-	Sponsor               bool    `yaml:"-" json:"-" flag:"sponsor"`
-	Public                bool    `yaml:"Public" json:"-" flag:"public"`
-	ReadOnly              bool    `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
-	Experimental          bool    `yaml:"Experimental" json:"Experimental" flag:"experimental"`
-	ConfigPath            string  `yaml:"ConfigPath" json:"-" flag:"config-path"`
-	ConfigFile            string  `json:"-"`
-	OriginalsPath         string  `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
-	OriginalsLimit        int     `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
-	ResolutionLimit       int     `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
-	StoragePath           string  `yaml:"StoragePath" json:"-" flag:"storage-path"`
-	ImportPath            string  `yaml:"ImportPath" json:"-" flag:"import-path"`
-	CachePath             string  `yaml:"CachePath" json:"-" flag:"cache-path"`
-	SidecarPath           string  `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	TempPath              string  `yaml:"TempPath" json:"-" flag:"temp-path"`
-	BackupPath            string  `yaml:"BackupPath" json:"-" flag:"backup-path"`
-	AssetsPath            string  `yaml:"AssetsPath" json:"-" flag:"assets-path"`
-	Workers               int     `yaml:"Workers" json:"Workers" flag:"workers"`
-	WakeupInterval        int     `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
-	AutoIndex             int     `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
-	AutoImport            int     `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
-	DisableWebDAV         bool    `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
-	DisableBackups        bool    `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
-	DisableSettings       bool    `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
-	DisablePlaces         bool    `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
-	DisableDarktable      bool    `yaml:"DisableDarktable" json:"DisableDarktable" flag:"disable-darktable"`
-	DisableRawtherapee    bool    `yaml:"DisableRawtherapee" json:"DisableRawtherapee" flag:"disable-rawtherapee"`
-	DisableSips           bool    `yaml:"DisableSips" json:"DisableSips" flag:"disable-sips"`
-	DisableHeifConvert    bool    `yaml:"DisableHeifConvert" json:"DisableHeifConvert" flag:"disable-heifconvert"`
-	DisableTensorFlow     bool    `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
-	DisableFaces          bool    `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`
-	DisableClassification bool    `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
-	DisableFFmpeg         bool    `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`
-	DisableExifTool       bool    `yaml:"DisableExifTool" json:"DisableExifTool" flag:"disable-exiftool"`
-	ExifBruteForce        bool    `yaml:"ExifBruteForce" json:"ExifBruteForce" flag:"exif-bruteforce"`
-	RawPresets            bool    `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`
-	DetectNSFW            bool    `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
-	UploadNSFW            bool    `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
-	DefaultTheme          string  `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
-	DefaultLocale         string  `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
-	AppIcon               string  `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
-	AppName               string  `yaml:"AppName" json:"AppName" flag:"app-name"`
-	AppMode               string  `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
-	CdnUrl                string  `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
-	SiteUrl               string  `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
-	SiteAuthor            string  `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
-	SiteTitle             string  `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
-	SiteCaption           string  `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
-	SiteDescription       string  `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
-	SitePreview           string  `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
-	Imprint               string  `yaml:"Imprint" json:"Imprint" flag:"imprint"`
-	ImprintUrl            string  `yaml:"ImprintUrl" json:"ImprintUrl" flag:"imprint-url"`
-	DatabaseDriver        string  `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
-	DatabaseDsn           string  `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
-	DatabaseServer        string  `yaml:"DatabaseServer" json:"-" flag:"database-server"`
-	DatabaseName          string  `yaml:"DatabaseName" json:"-" flag:"database-name"`
-	DatabaseUser          string  `yaml:"DatabaseUser" json:"-" flag:"database-user"`
-	DatabasePassword      string  `yaml:"DatabasePassword" json:"-" flag:"database-password"`
-	DatabaseConns         int     `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
-	DatabaseConnsIdle     int     `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
-	HttpHost              string  `yaml:"HttpHost" json:"-" flag:"http-host"`
-	HttpPort              int     `yaml:"HttpPort" json:"-" flag:"http-port"`
-	HttpMode              string  `yaml:"HttpMode" json:"-" flag:"http-mode"`
-	HttpCompression       string  `yaml:"HttpCompression" json:"-" flag:"http-compression"`
-	DarktableBin          string  `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
-	DarktableBlacklist    string  `yaml:"DarktableBlacklist" json:"-" flag:"darktable-blacklist"`
-	RawtherapeeBin        string  `yaml:"RawtherapeeBin" json:"-" flag:"rawtherapee-bin"`
-	RawtherapeeBlacklist  string  `yaml:"RawtherapeeBlacklist" json:"-" flag:"rawtherapee-blacklist"`
-	SipsBin               string  `yaml:"SipsBin" json:"-" flag:"sips-bin"`
-	HeifConvertBin        string  `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
-	FFmpegBin             string  `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
-	FFmpegEncoder         string  `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
-	FFmpegBitrate         int     `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
-	FFmpegBuffers         int     `yaml:"FFmpegBuffers" json:"FFmpegBuffers" flag:"ffmpeg-buffers"`
-	ExifToolBin           string  `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
-	DetachServer          bool    `yaml:"DetachServer" json:"-" flag:"detach-server"`
-	DownloadToken         string  `yaml:"DownloadToken" json:"-" flag:"download-token"`
-	PreviewToken          string  `yaml:"PreviewToken" json:"-" flag:"preview-token"`
-	ThumbFilter           string  `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
-	ThumbColorspace       string  `yaml:"ThumbColorspace" json:"ThumbColorspace" flag:"thumb-colorspace"`
-	ThumbUncached         bool    `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
-	ThumbSize             int     `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
-	ThumbSizeUncached     int     `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
-	JpegSize              int     `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
-	JpegQuality           string  `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
-	FaceSize              int     `yaml:"-" json:"-" flag:"face-size"`
-	FaceScore             float64 `yaml:"-" json:"-" flag:"face-score"`
-	FaceOverlap           int     `yaml:"-" json:"-" flag:"face-overlap"`
-	FaceClusterSize       int     `yaml:"-" json:"-" flag:"face-cluster-size"`
-	FaceClusterScore      int     `yaml:"-" json:"-" flag:"face-cluster-score"`
-	FaceClusterCore       int     `yaml:"-" json:"-" flag:"face-cluster-core"`
-	FaceClusterDist       float64 `yaml:"-" json:"-" flag:"face-cluster-dist"`
-	FaceMatchDist         float64 `yaml:"-" json:"-" flag:"face-match-dist"`
-	PIDFilename           string  `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
-	LogFilename           string  `yaml:"LogFilename" json:"-" flag:"log-filename"`
+	Name                  string        `json:"-"`
+	Version               string        `json:"-"`
+	Copyright             string        `json:"-"`
+	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
+	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
+	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
+	Debug                 bool          `yaml:"Debug" json:"Debug" flag:"debug"`
+	Test                  bool          `yaml:"-" json:"Test,omitempty" flag:"test"`
+	Unsafe                bool          `yaml:"-" json:"-" flag:"unsafe"`
+	Demo                  bool          `yaml:"Demo" json:"-" flag:"demo"`
+	Sponsor               bool          `yaml:"-" json:"-" flag:"sponsor"`
+	Public                bool          `yaml:"Public" json:"-" flag:"public"`
+	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
+	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
+	ConfigPath            string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
+	ConfigFile            string        `json:"-"`
+	OriginalsPath         string        `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
+	OriginalsLimit        int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
+	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
+	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
+	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
+	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
+	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
+	TempPath              string        `yaml:"TempPath" json:"-" flag:"temp-path"`
+	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
+	AssetsPath            string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
+	Workers               int           `yaml:"Workers" json:"Workers" flag:"workers"`
+	WakeupInterval        time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
+	AutoIndex             int           `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
+	AutoImport            int           `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
+	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
+	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
+	DisableSettings       bool          `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
+	DisablePlaces         bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
+	DisableDarktable      bool          `yaml:"DisableDarktable" json:"DisableDarktable" flag:"disable-darktable"`
+	DisableRawtherapee    bool          `yaml:"DisableRawtherapee" json:"DisableRawtherapee" flag:"disable-rawtherapee"`
+	DisableSips           bool          `yaml:"DisableSips" json:"DisableSips" flag:"disable-sips"`
+	DisableHeifConvert    bool          `yaml:"DisableHeifConvert" json:"DisableHeifConvert" flag:"disable-heifconvert"`
+	DisableTensorFlow     bool          `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
+	DisableFaces          bool          `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`
+	DisableClassification bool          `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
+	DisableFFmpeg         bool          `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`
+	DisableExifTool       bool          `yaml:"DisableExifTool" json:"DisableExifTool" flag:"disable-exiftool"`
+	ExifBruteForce        bool          `yaml:"ExifBruteForce" json:"ExifBruteForce" flag:"exif-bruteforce"`
+	RawPresets            bool          `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`
+	DetectNSFW            bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
+	UploadNSFW            bool          `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
+	DefaultTheme          string        `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
+	DefaultLocale         string        `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
+	AppIcon               string        `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
+	AppName               string        `yaml:"AppName" json:"AppName" flag:"app-name"`
+	AppMode               string        `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
+	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
+	SiteUrl               string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
+	SiteAuthor            string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
+	SiteTitle             string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
+	SiteCaption           string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
+	SiteDescription       string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
+	SitePreview           string        `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
+	Imprint               string        `yaml:"Imprint" json:"Imprint" flag:"imprint"`
+	ImprintUrl            string        `yaml:"ImprintUrl" json:"ImprintUrl" flag:"imprint-url"`
+	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
+	DatabaseDsn           string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
+	DatabaseServer        string        `yaml:"DatabaseServer" json:"-" flag:"database-server"`
+	DatabaseName          string        `yaml:"DatabaseName" json:"-" flag:"database-name"`
+	DatabaseUser          string        `yaml:"DatabaseUser" json:"-" flag:"database-user"`
+	DatabasePassword      string        `yaml:"DatabasePassword" json:"-" flag:"database-password"`
+	DatabaseConns         int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
+	DatabaseConnsIdle     int           `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
+	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
+	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
+	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
+	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
+	DarktableBin          string        `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
+	DarktableBlacklist    string        `yaml:"DarktableBlacklist" json:"-" flag:"darktable-blacklist"`
+	RawtherapeeBin        string        `yaml:"RawtherapeeBin" json:"-" flag:"rawtherapee-bin"`
+	RawtherapeeBlacklist  string        `yaml:"RawtherapeeBlacklist" json:"-" flag:"rawtherapee-blacklist"`
+	SipsBin               string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
+	HeifConvertBin        string        `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
+	FFmpegBin             string        `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
+	FFmpegEncoder         string        `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
+	FFmpegBitrate         int           `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
+	FFmpegBuffers         int           `yaml:"FFmpegBuffers" json:"FFmpegBuffers" flag:"ffmpeg-buffers"`
+	ExifToolBin           string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
+	DetachServer          bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
+	DownloadToken         string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
+	PreviewToken          string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
+	ThumbFilter           string        `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
+	ThumbColorspace       string        `yaml:"ThumbColorspace" json:"ThumbColorspace" flag:"thumb-colorspace"`
+	ThumbUncached         bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
+	ThumbSize             int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
+	ThumbSizeUncached     int           `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
+	JpegSize              int           `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
+	JpegQuality           string        `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
+	FaceSize              int           `yaml:"-" json:"-" flag:"face-size"`
+	FaceScore             float64       `yaml:"-" json:"-" flag:"face-score"`
+	FaceOverlap           int           `yaml:"-" json:"-" flag:"face-overlap"`
+	FaceClusterSize       int           `yaml:"-" json:"-" flag:"face-cluster-size"`
+	FaceClusterScore      int           `yaml:"-" json:"-" flag:"face-cluster-score"`
+	FaceClusterCore       int           `yaml:"-" json:"-" flag:"face-cluster-core"`
+	FaceClusterDist       float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
+	FaceMatchDist         float64       `yaml:"-" json:"-" flag:"face-match-dist"`
+	PIDFilename           string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
+	LogFilename           string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:
@@ -216,6 +219,24 @@ func (c *Options) SetContext(ctx *cli.Context) error {
 		// Assign value to field with "flag" tag.
 		if tagValue != "" {
 			switch t := fieldValue.Interface().(type) {
+			case time.Duration:
+				var s string
+
+				// Get duration string.
+				if ctx.IsSet(tagValue) {
+					s = ctx.String(tagValue)
+				} else if ctx.GlobalIsSet(tagValue) || fieldValue.Interface().(time.Duration) == 0 {
+					s = ctx.GlobalString(tagValue)
+				}
+
+				// Parse duration string.
+				if s == "" {
+					// Omit.
+				} else if sec := txt.UInt(s); sec > 0 {
+					fieldValue.Set(reflect.ValueOf(time.Duration(sec) * time.Second))
+				} else if d, err := time.ParseDuration(s); err == nil {
+					fieldValue.Set(reflect.ValueOf(d))
+				}
 			case float64:
 				// Only if explicitly set or current value is empty (use default).
 				if ctx.IsSet(tagValue) {
