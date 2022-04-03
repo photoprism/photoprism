@@ -18,7 +18,7 @@ type opticsClusterer struct {
 	minpts, workers int
 	eps, xi, x      float64
 
-	distance DistanceFunc
+	distance DistFunc
 
 	// slices holding the cluster mapping and sizes. Access is synchronized to avoid read during computation.
 	mu   sync.RWMutex
@@ -48,7 +48,7 @@ type opticsClusterer struct {
 
 // Implementation of OPTICS algorithm with concurrent nearest neighbour computation. The number of goroutines acting concurrently
 // is controlled via workers argument. Passing 0 will result in this number being chosen arbitrarily.
-func OPTICS(minpts int, eps, xi float64, workers int, distance DistanceFunc) (HardClusterer, error) {
+func OPTICS(minpts int, eps, xi float64, workers int, distance DistFunc) (HardClusterer, error) {
 	if minpts < 1 {
 		return nil, errZeroMinpts
 	}
@@ -65,12 +65,12 @@ func OPTICS(minpts int, eps, xi float64, workers int, distance DistanceFunc) (Ha
 		return nil, errZeroXi
 	}
 
-	var d DistanceFunc
+	var d DistFunc
 	{
 		if distance != nil {
 			d = distance
 		} else {
-			d = EuclideanDistance
+			d = EuclideanDist
 		}
 	}
 
@@ -191,7 +191,7 @@ func (c *opticsClusterer) run() {
 
 		c.so = append(c.so, i)
 
-		if d = c.coreDistance(i, l, ns); d != 0 {
+		if d = c.coreDist(i, l, ns); d != 0 {
 			q = newPriorityQueue(l)
 
 			c.update(i, d, l, ns, &q)
@@ -205,7 +205,7 @@ func (c *opticsClusterer) run() {
 
 				c.so = append(c.so, p.v)
 
-				if d = c.coreDistance(p.v, l, nss); d != 0 {
+				if d = c.coreDist(p.v, l, nss); d != 0 {
 					c.update(p.v, d, l, nss, &q)
 				}
 			}
@@ -213,7 +213,7 @@ func (c *opticsClusterer) run() {
 	}
 }
 
-func (c *opticsClusterer) coreDistance(p int, l int, r []int) float64 {
+func (c *opticsClusterer) coreDist(p int, l int, r []int) float64 {
 	if l < c.minpts {
 		return 0
 	}

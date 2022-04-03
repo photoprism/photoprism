@@ -54,9 +54,9 @@ func NewFace(subjUID, faceSrc string, embeddings face.Embeddings) *Face {
 	return result
 }
 
-// Unsuitable tests if the face is unsuitable for clustering and matching.
-func (m *Face) Unsuitable() bool {
-	return m.Embedding().Unsuitable()
+// OmitMatch checks whether the face should be skipped when matching.
+func (m *Face) OmitMatch() bool {
+	return m.Embedding().OmitMatch()
 }
 
 // SetEmbeddings assigns face embeddings.
@@ -125,7 +125,7 @@ func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 
 	// Calculate the smallest distance to embeddings.
 	for _, e := range embeddings {
-		if d := e.Distance(faceEmbedding); d < dist || dist < 0 {
+		if d := e.Dist(faceEmbedding); d < dist || dist < 0 {
 			dist = d
 		}
 	}

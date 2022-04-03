@@ -6,9 +6,9 @@ import (
 	"math"
 )
 
-// DistanceFunc represents a function for measuring distance
+// DistFunc represents a function for measuring distance
 // between n-dimensional vectors.
-type DistanceFunc func([]float64, []float64) float64
+type DistFunc func([]float64, []float64) float64
 
 // Online represents parameters important for online learning in
 // clustering algorithms.
@@ -73,8 +73,8 @@ type Importer interface {
 }
 
 var (
-	// EuclideanDistance is one of the common distance measurement
-	EuclideanDistance = func(a, b []float64) float64 {
+	// EuclideanDist is one of the common distance measurement
+	EuclideanDist = func(a, b []float64) float64 {
 		var (
 			s, t float64
 		)
@@ -87,8 +87,8 @@ var (
 		return math.Sqrt(s)
 	}
 
-	// EuclideanDistanceSquared is one of the common distance measurement
-	EuclideanDistanceSquared = func(a, b []float64) float64 {
+	// EuclideanDistSquared is one of the common distance measurement
+	EuclideanDistSquared = func(a, b []float64) float64 {
 		var (
 			s, t float64
 		)

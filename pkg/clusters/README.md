@@ -34,8 +34,8 @@ var observation []float64
 
 // Create a new KMeans++ clusterer with 1000 iterations, 
 // 8 clusters and a distance measurement function of type func([]float64, []float64) float64).
-// Pass nil to use clusters.EuclideanDistance
-c, e := clusters.KMeans(1000, 8, clusters.EuclideanDistance)
+// Pass nil to use clusters.EuclideanDist
+c, e := clusters.KMeans(1000, 8, clusters.EuclideanDist)
 if e != nil {
 	panic(e)
 }
@@ -59,7 +59,7 @@ Algorithms currenly supported are KMeans++, DBSCAN and OPTICS.
 Algorithms which support online learning can be trained this way using Online() function, which relies on channel communication to coordinate the process:
 
 ```go
-c, e := clusters.KmeansClusterer(1000, 8, clusters.EuclideanDistance)
+c, e := clusters.KmeansClusterer(1000, 8, clusters.EuclideanDist)
 if e != nil {
 	panic(e)
 }
@@ -104,8 +104,8 @@ The Estimator interface defines an operation of guessing an optimal number of cl
 var data [][]float64
 
 // Create a new KMeans++ estimator with 1000 iterations, 
-// a maximum of 8 clusters and default (EuclideanDistance) distance measurement
-c, e := clusters.KMeansEstimator(1000, 8, clusters.EuclideanDistance)
+// a maximum of 8 clusters and default (EuclideanDist) distance measurement
+c, e := clusters.KMeansEstimator(1000, 8, clusters.EuclideanDist)
 if e != nil {
 	panic(e)
 }

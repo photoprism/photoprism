@@ -122,7 +122,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			// Pointer to the matching face.
 			var f *entity.Face
 
-			// Distance to the matching face.
+			// Dist to the matching face.
 			var d float64
 
 			// Find the closest face match for marker.

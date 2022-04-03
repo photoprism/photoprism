@@ -12,7 +12,7 @@ var ClusterScoreThreshold = 15                   // Min score for faces forming 
 var SizeThreshold = 50                           // Min face size in pixels.
 var ClusterSizeThreshold = 80                    // Min size for faces forming a cluster in pixels.
 var ClusterDist = 0.64                           // Similarity distance threshold of faces forming a cluster core.
-var MatchDist = 0.46                             // Distance offset threshold for matching new faces with clusters.
+var MatchDist = 0.46                             // Dist offset threshold for matching new faces with clusters.
 var ClusterCore = 4                              // Min number of faces forming a cluster core.
 var SampleThreshold = 2 * ClusterCore            // Threshold for automatic clustering to start.
 

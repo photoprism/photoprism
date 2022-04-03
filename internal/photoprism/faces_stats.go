@@ -26,7 +26,7 @@ func (w *Faces) Stats() (err error) {
 					continue
 				}
 
-				d := embeddings[i].Distance(embeddings[j])
+				d := embeddings[i].Dist(embeddings[j])
 
 				if min < 0 || d < min {
 					min = d
@@ -84,7 +84,7 @@ func (w *Faces) Stats() (err error) {
 					continue
 				}
 
-				d := e1.Distance(f2.Embedding())
+				d := e1.Dist(f2.Embedding())
 
 				if min < 0 || d < min {
 					min = d

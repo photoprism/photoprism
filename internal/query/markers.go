@@ -102,7 +102,11 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 	}
 
 	for _, embeddingsJson := range col {
-		if embeddings := face.UnmarshalEmbeddings(embeddingsJson); !embeddings.Empty() {
+		if embeddingsJson == "" {
+			continue
+		} else if embeddings, err := face.UnmarshalEmbeddings(embeddingsJson); err != nil {
+			log.Warnf("faces: %s", err)
+		} else if !embeddings.Empty() {
 			if single {
 				// Single embedding per face detected.
 				result = append(result, embeddings[0])

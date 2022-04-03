@@ -103,7 +103,7 @@ func TestNet(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Distance Matrix
+	// Dist Matrix
 	correct := 0
 
 	for i := 0; i < len(embeddings); i++ {
@@ -112,7 +112,7 @@ func TestNet(t *testing.T) {
 				continue
 			}
 
-			dist := embeddings[i].Distance(embeddings[j])
+			dist := embeddings[i].Dist(embeddings[j])
 
 			t.Logf("Dist for %d %d (faces are %d %d) is %f", i, j, faceIndexToPersonID[i], faceIndexToPersonID[j], dist)
 			if faceIndexToPersonID[i] == faceIndexToPersonID[j] {

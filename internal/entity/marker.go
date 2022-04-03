@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/crop"
@@ -273,7 +272,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 				continue
 			}
 
-			if d := e.Distance(faceEmbedding); d < m.FaceDist || m.FaceDist < 0 {
+			if d := e.Dist(faceEmbedding); d < m.FaceDist || m.FaceDist < 0 {
 				m.FaceDist = d
 			}
 		}
@@ -507,7 +506,7 @@ func (m *Marker) Face() (f *Face) {
 		} else if f = NewFace(m.SubjUID, m.SubjSrc, emb); f == nil {
 			log.Warnf("marker %s: failed assigning face", sanitize.Log(m.MarkerUID))
 			return nil
-		} else if f.Unsuitable() {
+		} else if f.OmitMatch() {
 			log.Infof("marker %s: face %s is unsuitable for clustering and matching", sanitize.Log(m.MarkerUID), f.ID)
 		} else if f = FirstOrCreateFace(f); f == nil {
 			log.Warnf("marker %s: failed assigning face", sanitize.Log(m.MarkerUID))
