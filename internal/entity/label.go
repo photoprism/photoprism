@@ -15,6 +15,7 @@ import (
 )
 
 var labelMutex = sync.Mutex{}
+var labelCategoriesMutex = sync.Mutex{}
 
 type Labels []Label
 
@@ -196,13 +197,19 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 		save = true
 	}
 
-	if save {
-		if err := db.Save(m).Error; err != nil {
-			return err
-		}
+	if !save {
+		return nil
 	}
 
-	// Add categories
+	// Save label.
+	if err := db.Save(m).Error; err != nil {
+		return err
+	}
+
+	// Update label categories.
+	labelCategoriesMutex.Lock()
+	defer labelCategoriesMutex.Unlock()
+
 	for _, category := range label.Categories {
 		sn := FirstOrCreateLabel(NewLabel(txt.Title(category), -3))
 
@@ -215,7 +222,7 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 		}
 
 		if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
-			return err
+			log.Warnf("index: failed saving label category %s (%s)", sanitize.Log(category), err)
 		}
 	}
 

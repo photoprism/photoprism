@@ -7,8 +7,8 @@ import (
 )
 
 // NSFW returns true if media file might be offensive and detection is enabled.
-func (ind *Index) NSFW(jpeg *MediaFile) bool {
-	filename, err := jpeg.Thumbnail(Config().ThumbPath(), thumb.Fit720)
+func (ind *Index) NSFW(m *MediaFile) bool {
+	filename, err := m.Thumbnail(Config().ThumbPath(), thumb.Fit720)
 
 	if err != nil {
 		log.Error(err)
@@ -16,11 +16,11 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 	}
 
 	if nsfwLabels, err := ind.nsfwDetector.File(filename); err != nil {
-		log.Error(err)
+		log.Errorf("index: %s in %s (detect nsfw)", err, m.RootRelName())
 		return false
 	} else {
 		if nsfwLabels.NSFW(nsfw.ThresholdHigh) {
-			log.Warnf("index: %s might contain offensive content", sanitize.Log(jpeg.RelName(Config().OriginalsPath())))
+			log.Warnf("index: %s might contain offensive content", sanitize.Log(m.RelName(Config().OriginalsPath())))
 			return true
 		}
 	}

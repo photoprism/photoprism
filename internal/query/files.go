@@ -141,7 +141,7 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 // SetFileError updates the file error column.
 func SetFileError(fileUID, errorString string) {
 	if err := Db().Model(entity.File{}).Where("file_uid = ?", fileUID).UpdateColumn("file_error", errorString).Error; err != nil {
-		log.Errorf("query: %s", err.Error())
+		log.Errorf("files: %s (set error)", err.Error())
 	}
 }
 

@@ -124,11 +124,11 @@ func (m File) RegenerateIndex() {
 				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(HEX(100000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) END WHERE ?",
+			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(HEX(100000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 
 		Log("files", "regenerate time_index",
-			Db().Exec("UPDATE ? SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) END WHERE ?",
+			Db().Exec("UPDATE ? SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 	case SQLite3:
 		Log("files", "regenerate photo_taken_at",

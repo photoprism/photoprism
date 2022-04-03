@@ -21,13 +21,13 @@ type Duplicate struct {
 // AddDuplicate adds a duplicate.
 func AddDuplicate(fileName, fileRoot, fileHash string, fileSize, modTime int64) error {
 	if fileName == "" {
-		return fmt.Errorf("duplicate name must not be empty (add)")
+		return fmt.Errorf("duplicate name must not be empty")
 	} else if fileHash == "" {
-		return fmt.Errorf("duplicate hash must not be empty (add)")
+		return fmt.Errorf("duplicate hash must not be empty")
 	} else if modTime == 0 {
-		return fmt.Errorf("duplicate mod time must not be empty (add)")
+		return fmt.Errorf("duplicate mod time must not be empty")
 	} else if fileRoot == "" {
-		return fmt.Errorf("duplicate root must not be empty (add)")
+		return fmt.Errorf("duplicate root must not be empty")
 	}
 
 	duplicate := &Duplicate{
@@ -50,9 +50,9 @@ func AddDuplicate(fileName, fileRoot, fileHash string, fileSize, modTime int64) 
 // PurgeDuplicate deletes a duplicate.
 func PurgeDuplicate(fileName, fileRoot string) error {
 	if fileName == "" {
-		return fmt.Errorf("duplicate name must not be empty (purge)")
+		return fmt.Errorf("duplicate name must not be empty")
 	} else if fileRoot == "" {
-		return fmt.Errorf("duplicate root must not be empty (purge)")
+		return fmt.Errorf("duplicate root must not be empty")
 	}
 
 	if err := UnscopedDb().Delete(Duplicate{}, "file_name = ? AND file_root = ?", fileName, fileRoot).Error; err != nil {

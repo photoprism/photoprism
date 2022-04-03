@@ -102,7 +102,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 			// Do nothing.
 		} else if fs.FileExists(indFileName) {
 			if err := entity.AddDuplicate(m.RootRelName(), m.Root(), m.Hash(), m.FileSize(), m.ModTime().Unix()); err != nil {
-				log.Error(err)
+				log.Errorf("index: %s in %s", err, m.RootRelName())
 			}
 
 			result.Status = IndexDuplicate
@@ -232,7 +232,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 
 	// Remove file from duplicates table if exists.
 	if err := entity.PurgeDuplicate(m.RootRelName(), m.Root()); err != nil {
-		log.Error(err)
+		log.Errorf("index: %s in %s (purge duplicate)", err, m.RootRelName())
 	}
 
 	// Create default thumbnails if needed.

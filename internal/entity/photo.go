@@ -572,7 +572,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 
 		if err := labelEntity.UpdateClassify(classifyLabel); err != nil {
-			log.Errorf("index: %s", err)
+			log.Errorf("index: failed updating label %s (%s)", sanitize.Log(classifyLabel.Title()), err)
 		}
 
 		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, classifyLabel.Source))
