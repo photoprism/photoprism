@@ -29,12 +29,12 @@ func NewKeyword(keyword string) *Keyword {
 
 // Updates multiple columns in the database.
 func (m *Keyword) Updates(values interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumns(values).Error
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Update a column in the database.
 func (m *Keyword) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // Save updates the existing or inserts a new row.

@@ -63,7 +63,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 			log.Errorf("archive: %s", err)
 			AbortSaveFailed(c)
 			return
-		} else if err := entity.Db().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("hidden", true).Error; err != nil {
+		} else if err := entity.Db().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", f.Photos).Update("hidden", true).Error; err != nil {
 			log.Errorf("archive: %s", err)
 		}
 
@@ -124,7 +124,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 				}
 			}
 		} else if err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uid IN (?)", f.Photos).
-			UpdateColumn("deleted_at", gorm.Expr("NULL")).Error; err != nil {
+			Update("deleted_at", gorm.Expr("NULL")).Error; err != nil {
 			log.Errorf("restore: %s", err)
 			AbortSaveFailed(c)
 			return
@@ -260,7 +260,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 		log.Infof("photos: updating private flag for %s", sanitize.Log(f.String()))
 
-		if err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("photo_private",
+		if err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).Update("photo_private",
 			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error; err != nil {
 			log.Errorf("private: %s", err)
 			AbortSaveFailed(c)

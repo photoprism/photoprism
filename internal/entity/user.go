@@ -309,7 +309,7 @@ func (m *User) InvalidPassword(password string) bool {
 	}
 
 	if pw.InvalidPassword(password) {
-		if err := Db().Model(m).UpdateColumn("login_attempts", gorm.Expr("login_attempts + ?", 1)).Error; err != nil {
+		if err := Db().Model(m).Update("login_attempts", gorm.Expr("login_attempts + ?", 1)).Error; err != nil {
 			log.Errorf("user: %s (update login attempts)", err)
 		}
 

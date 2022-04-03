@@ -133,7 +133,7 @@ func (m *Marker) UpdateFile(file *File) (updated bool) {
 
 	if !updated || m.MarkerUID == "" {
 		return false
-	} else if res := UnscopedDb().Model(m).UpdateColumns(Values{"file_uid": m.FileUID, "thumb": m.Thumb}); res.Error != nil {
+	} else if res := UnscopedDb().Model(m).Updates(Values{"file_uid": m.FileUID, "thumb": m.Thumb}); res.Error != nil {
 		log.Errorf("marker %s: %s (set file)", m.MarkerUID, res.Error)
 		return false
 	} else {
@@ -342,7 +342,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 	// Update related markers?
 	if m.FaceID == "" || m.SubjUID == "" {
 		// Do nothing.
-	} else if res := Db().Model(&Face{}).Where("id = ? AND subj_uid = ''", m.FaceID).UpdateColumn("subj_uid", m.SubjUID); res.Error != nil {
+	} else if res := Db().Model(&Face{}).Where("id = ? AND subj_uid = ''", m.FaceID).Update("subj_uid", m.SubjUID); res.Error != nil {
 		return fmt.Errorf("%s (update known face)", err)
 	} else if !updateRelated {
 		return nil
@@ -351,7 +351,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 		Where("face_id = ?", m.FaceID).
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
-		UpdateColumns(Values{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
+		Updates(Values{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else if res.RowsAffected > 0 && m.face != nil {
 		log.Debugf("markers: matched %s with %s", subj.SubjName, m.FaceID)
@@ -574,7 +574,7 @@ func (m *Marker) RefreshPhotos() error {
 // Matched updates the match timestamp.
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimePointer()
-	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).Updates(Values{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Top returns the top Y coordinate as float64.

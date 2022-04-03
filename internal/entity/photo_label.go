@@ -36,12 +36,12 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 
 // Updates multiple columns in the database.
 func (m *PhotoLabel) Updates(values interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumns(values).Error
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Update a column in the database.
 func (m *PhotoLabel) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // Save saves the entity in the database.
