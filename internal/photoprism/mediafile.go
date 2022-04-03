@@ -752,7 +752,17 @@ func (m *MediaFile) IsXMP() bool {
 	return m.FileType() == fs.FormatXMP
 }
 
-// IsSidecar returns true if this is a sidecar file (containing metadata).
+// InOriginals checks if the file is stored in the 'originals' folder.
+func (m *MediaFile) InOriginals() bool {
+	return m.Root() == entity.RootOriginals
+}
+
+// InSidecar checks if the file is stored in the 'sidecar' folder.
+func (m *MediaFile) InSidecar() bool {
+	return m.Root() == entity.RootSidecar
+}
+
+// IsSidecar checks if the file is a metadata sidecar file, independent of the storage location.
 func (m *MediaFile) IsSidecar() bool {
 	return m.MediaType() == fs.MediaSidecar
 }

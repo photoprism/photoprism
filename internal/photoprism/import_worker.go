@@ -135,7 +135,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 			if o.Convert && f.IsMedia() && !f.HasJpeg() {
-				if jpegFile, err := imp.convert.ToJpeg(f); err != nil {
+				if jpegFile, err := imp.convert.ToJpeg(f, false); err != nil {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), sanitize.Log(f.RootRelName()))
 					continue
 				} else {

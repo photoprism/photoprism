@@ -325,7 +325,15 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	convert := NewConvert(conf)
 
-	jpeg, err := convert.ToJpeg(img)
+	// Create JPEG.
+	jpeg, err := convert.ToJpeg(img, false)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Replace JPEG.
+	jpeg, err = convert.ToJpeg(img, true)
 
 	if err != nil {
 		t.Fatal(err)

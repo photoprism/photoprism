@@ -41,7 +41,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jpegFile, err := convert.ToJpeg(mf)
+		jpegFile, err := convert.ToJpeg(mf, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -68,7 +68,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		imageJpeg, err := convert.ToJpeg(mf)
+		imageJpeg, err := convert.ToJpeg(mf, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -91,7 +91,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatalf("%s for %s", err.Error(), rawFilename)
 		}
 
-		imageRaw, err := convert.ToJpeg(rawMediaFile)
+		imageRaw, err := convert.ToJpeg(rawMediaFile, false)
 
 		if err != nil {
 			t.Fatalf("%s for %s", err.Error(), rawFilename)
@@ -206,7 +206,7 @@ func TestConvert_Start(t *testing.T) {
 
 	convert := NewConvert(conf)
 
-	err := convert.Start(conf.ImportPath())
+	err := convert.Start(conf.ImportPath(), false)
 
 	if err != nil {
 		t.Fatal(err)
@@ -234,7 +234,7 @@ func TestConvert_Start(t *testing.T) {
 
 	_ = os.Remove(existingJpegFilename)
 
-	if err := convert.Start(conf.ImportPath()); err != nil {
+	if err := convert.Start(conf.ImportPath(), false); err != nil {
 		t.Fatal(err)
 	}
 

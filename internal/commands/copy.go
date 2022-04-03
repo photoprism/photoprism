@@ -19,7 +19,7 @@ var CopyCommand = cli.Command{
 	Name:      "cp",
 	Aliases:   []string{"copy"},
 	Usage:     "Copies media files to originals",
-	ArgsUsage: "[PATH]",
+	ArgsUsage: "[path]",
 	Action:    copyAction,
 }
 

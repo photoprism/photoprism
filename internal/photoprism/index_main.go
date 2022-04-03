@@ -42,7 +42,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 
 	// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 	if o.Convert && f.IsMedia() && !f.HasJpeg() {
-		if jpg, err := ind.convert.ToJpeg(f); err != nil {
+		if jpg, err := ind.convert.ToJpeg(f, false); err != nil {
 			result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", sanitize.Log(f.RootRelName()), err.Error())
 			result.Status = IndexFailed
 			return result

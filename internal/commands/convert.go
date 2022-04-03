@@ -16,9 +16,15 @@ import (
 // ConvertCommand registers the convert cli command.
 var ConvertCommand = cli.Command{
 	Name:      "convert",
-	Usage:     "Converts files in other formats to JPEG and AVC",
-	ArgsUsage: "[ORIGINALS SUB-FOLDER]",
-	Action:    convertAction,
+	Usage:     "Converts files in other formats to JPEG and AVC as needed",
+	ArgsUsage: "[originals folder]",
+	Flags: []cli.Flag{
+		cli.BoolFlag{
+			Name:  "force, f",
+			Usage: "replace existing JPEG files in the sidecar folder",
+		},
+	},
+	Action: convertAction,
 }
 
 // convertAction converts originals in other formats to JPEG and AVC sidecar files.
@@ -52,7 +58,8 @@ func convertAction(ctx *cli.Context) error {
 
 	w := service.Convert()
 
-	if err := w.Start(convertPath); err != nil {
+	// Start file conversion.
+	if err := w.Start(convertPath, ctx.Bool("force")); err != nil {
 		log.Error(err)
 	}
 

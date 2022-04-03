@@ -44,7 +44,7 @@ func NewConvert(conf *config.Config) *Convert {
 }
 
 // Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(path string) (err error) {
+func (c *Convert) Start(path string, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
@@ -114,6 +114,7 @@ func (c *Convert) Start(path string) (err error) {
 			done[fileName] = fs.Processed
 
 			jobs <- ConvertJob{
+				force:   force,
 				file:    f,
 				convert: c,
 			}
@@ -245,7 +246,7 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 }
 
 // ToJpeg converts a single image file to JPEG if possible.
-func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
+func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	if f == nil {
 		return nil, fmt.Errorf("convert: file is nil - you might have found a bug")
 	}
@@ -262,17 +263,26 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 
 	mediaFile, err := NewMediaFile(jpegName)
 
+	// Replace existing sidecar if "force" is true.
 	if err == nil && mediaFile.IsJpeg() {
-		return mediaFile, nil
+		if force && mediaFile.InSidecar() {
+			if err := mediaFile.Remove(); err != nil {
+				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", mediaFile.RootRelName(), err)
+			} else {
+				log.Infof("convert: replacing %s", sanitize.Log(mediaFile.RootRelName()))
+			}
+		} else {
+			return mediaFile, nil
+		}
+	} else {
+		jpegName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
 	}
 
 	if !c.conf.SidecarWritable() {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", f.RelName(c.conf.OriginalsPath()))
 	}
 
-	jpegName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
-
 	xmpName := fs.FormatXMP.Find(f.FileName(), false)
 
 	event.Publish("index.converting", event.Data{
@@ -285,7 +295,7 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	start := time.Now()
 
 	if f.IsImageOther() {
-		log.Infof("%s: converting %s to %s", f.FileType(), fileName, fs.FormatJpeg)
+		log.Infof("convert: converting %s to %s (%s)", sanitize.Log(filepath.Base(fileName)), sanitize.Log(filepath.Base(jpegName)), f.FileType())
 
 		_, err = thumb.Jpeg(f.FileName(), jpegName, f.Orientation())
 
@@ -293,7 +303,7 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 			return nil, err
 		}
 
-		log.Infof("%s: created %s [%s]", f.FileType(), filepath.Base(jpegName), time.Since(start))
+		log.Infof("convert: %s created in %s (%s)", sanitize.Log(filepath.Base(jpegName)), time.Since(start), f.FileType())
 
 		return NewMediaFile(jpegName)
 	}
@@ -321,7 +331,7 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 
-	log.Infof("%s: converting %s to %s", filepath.Base(cmd.Path), fileName, fs.FormatJpeg)
+	log.Infof("convert: converting %s to %s (%s)", sanitize.Log(filepath.Base(fileName)), sanitize.Log(filepath.Base(jpegName)), filepath.Base(cmd.Path))
 
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())
@@ -335,7 +345,7 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 		}
 	}
 
-	log.Infof("%s: created %s [%s]", filepath.Base(cmd.Path), filepath.Base(jpegName), time.Since(start))
+	log.Infof("convert: %s created in %s (%s)", sanitize.Log(filepath.Base(jpegName)), time.Since(start), filepath.Base(cmd.Path))
 
 	return NewMediaFile(jpegName)
 }
