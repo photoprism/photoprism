@@ -22,8 +22,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO wildcard
-	/*t.Run("pt9jtdre2lvl0yh*", func(t *testing.T) {
+	t.Run("pt9jtdre2lvl0yh*", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.UID = "pt9jtdre2lvl0yh*"
@@ -34,8 +33,8 @@ func TestPhotosFilterUid(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Greater(t, len(photos), 1)
-	})*/
+		assert.Equal(t, len(photos), 0)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -289,8 +288,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO wildcard
-	/*t.Run("pt9jtdre2lvl0yh*", func(t *testing.T) {
+	t.Run("pt9jtdre2lvl0yh*", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "uid:\"pt9jtdre2lvl0yh*\""
@@ -301,8 +299,8 @@ func TestPhotosQueryUid(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Greater(t, len(photos), 1)
-	})*/
+		assert.Equal(t, len(photos), 0)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

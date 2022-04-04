@@ -48,8 +48,7 @@ func TestPhotosFilterType(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 4)
 	})
-	//TODO
-	/*t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
+	t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Type = "raw | video"
@@ -73,7 +72,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 4)
+		assert.Equal(t, len(photos), 0)
 	})
 	t.Run("raw OR video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -86,8 +85,8 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 4)
-	})*/
+		assert.Equal(t, len(photos), 0)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -367,8 +366,7 @@ func TestPhotosQueryType(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 4)
 	})
-	//TODO
-	/*t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
+	t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"raw | video\""
@@ -392,7 +390,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 4)
+		assert.Equal(t, len(photos), 0)
 	})
 	t.Run("raw OR video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -405,8 +403,8 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 4)
-	})*/
+		assert.Equal(t, len(photos), 0)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

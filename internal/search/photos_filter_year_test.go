@@ -9,6 +9,11 @@ import (
 )
 
 func TestPhotosFilterYear(t *testing.T) {
+	var f0 form.SearchPhotos
+
+	f0.Merged = true
+
+	photos0, _, _ := Photos(f0)
 	t.Run("2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -35,8 +40,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 2)
 	})
-	//TODO Wildcard fails
-	/*t.Run("19*", func(t *testing.T) {
+	t.Run("19*", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Year = "19*"
@@ -47,8 +51,8 @@ func TestPhotosFilterYear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
-	})*/
+		assert.Equal(t, len(photos), len(photos0))
+	})
 	t.Run("2018 pipe 2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -75,38 +79,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 4)
 	})
-	//TODO
-	/*t.Run("2018 or 2008", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Year = "2018 or 2008"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 4)
-	})
-	t.Run("2018 OR 2008", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Year = "2018 OR 2008"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 4)
-	})*/
-	var f0 form.SearchPhotos
-
-	f0.Merged = true
-
-	photos0, _, _ := Photos(f0)
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -347,6 +319,12 @@ func TestPhotosFilterYear(t *testing.T) {
 }
 
 func TestPhotosQueryYear(t *testing.T) {
+	var f0 form.SearchPhotos
+
+	f0.Merged = true
+
+	photos0, _, _ := Photos(f0)
+
 	t.Run("2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -373,8 +351,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 2)
 	})
-	//TODO Wildcard fails
-	/*t.Run("19*", func(t *testing.T) {
+	t.Run("19*", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "year:\"19*\""
@@ -385,8 +362,8 @@ func TestPhotosQueryYear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
-	})*/
+		assert.Equal(t, len(photos), len(photos0))
+	})
 	t.Run("2018 pipe 2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -413,39 +390,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 4)
 	})
-	//TODO
-	/*t.Run("2018 or 2008", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "year:\"2018 or 2008\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 4)
-	})
-	t.Run("2018 OR 2008", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "year:\"2018 OR 2008\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 4)
-	})*/
-	var f0 form.SearchPhotos
-
-	f0.Merged = true
-
-	photos0, _, _ := Photos(f0)
-
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

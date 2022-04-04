@@ -60,7 +60,6 @@ func TestPhotosFilterFilename(t *testing.T) {
 		}
 		assert.Equal(t, 6, len(photos))
 	})
-	/* TODO: Support for " or " as an alias for | has been removed as filenames can contain "or"!
 	t.Run("1990* or 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
 		var f form.SearchPhotos
 		Db().LogMode(true)
@@ -72,9 +71,8 @@ func TestPhotosFilterFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 6, len(photos))
+		assert.Equal(t, 0, len(photos))
 	})
-	*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
