@@ -147,9 +147,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 		return jsonName, nil
 	}
 
-	relName := f.RelName(c.conf.OriginalsPath())
-
-	log.Debugf("exiftool: extracting metadata from %s", relName)
+	log.Debugf("exiftool: extracting metadata from %s", sanitize.Log(f.RootRelName()))
 
 	cmd := exec.Command(c.conf.ExifToolBin(), "-n", "-m", "-api", "LargeFileSupport", "-j", f.FileName())
 
@@ -252,7 +250,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	}
 
 	if !f.Exists() {
-		return nil, fmt.Errorf("convert: %s not found", f.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: %s not found", f.RootRelName())
 	}
 
 	if f.IsJpeg() {
@@ -279,7 +277,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", f.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", f.RootRelName())
 	}
 
 	fileName := f.RelName(c.conf.OriginalsPath())

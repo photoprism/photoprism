@@ -178,7 +178,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	}
 
 	if !f.Exists() {
-		return nil, fmt.Errorf("convert: %s not found", f.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: %s not found", f.RootRelName())
 	}
 
 	avcName := fs.FormatAvc.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
@@ -190,15 +190,15 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: transcoding disabled in read only mode (%s)", f.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: transcoding disabled in read only mode (%s)", f.RootRelName())
 	}
 
 	if c.conf.DisableFFmpeg() {
-		return nil, fmt.Errorf("convert: ffmpeg is disabled for transcoding %s", f.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: ffmpeg is disabled for transcoding %s", f.RootRelName())
 	}
 
-	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
+	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 
 	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoderName)
 
