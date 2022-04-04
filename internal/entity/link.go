@@ -58,7 +58,7 @@ func NewLink(shareUID string, canComment, canEdit bool) Link {
 func (m *Link) Redeem() {
 	m.LinkViews += 1
 
-	result := Db().Model(m).Update("LinkViews", m.LinkViews)
+	result := Db().Model(m).UpdateColumn("LinkViews", m.LinkViews)
 
 	if result.RowsAffected == 0 {
 		log.Warnf("link: failed updating share view counter for %s", m.LinkUID)

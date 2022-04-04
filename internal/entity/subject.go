@@ -98,7 +98,7 @@ func (m *Subject) Create() error {
 }
 
 // Delete marks the entity as deleted in the database.
-func (m *Subject) Delete() (err error) {
+func (m *Subject) Delete() error {
 	if m.Deleted() {
 		return nil
 	}
@@ -117,36 +117,20 @@ func (m *Subject) Delete() (err error) {
 		})
 	}
 
-	if err = Db().Model(&Face{}).Where("subj_uid = ?", m.SubjUID).Update("subj_uid", "").Error; err != nil {
+	if err := Db().Model(&Face{}).Where("subj_uid = ?", m.SubjUID).Update("subj_uid", "").Error; err != nil {
 		return err
 	}
 
-	err = Db().Delete(m).Error
-
-	return err
+	return Db().Delete(m).Error
 }
 
 // AfterDelete resets file and photo counters when the entity was deleted.
-func (m *Subject) AfterDelete(db *gorm.DB) (err error) {
-	err = db.Model(m).Updates(Values{
+func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
+	tx.Model(m).Updates(Values{
 		"FileCount":  0,
 		"PhotoCount": 0,
-	}).Error
-	m.UpdateCache()
-	return err
-}
-
-// AfterSave is a hooks called after creation and updating.
-func (m *Subject) AfterSave() error {
-	log.Debugf("AfterSave: %s %s %t", m.SubjUID, m.SubjName, m.SubjFavorite)
-	m.UpdateCache()
-	return nil
-}
-
-// AfterFind is a hooks called after querying.
-func (m *Subject) AfterFind() error {
-	m.UpdateCache()
-	return nil
+	})
+	return
 }
 
 // Deleted returns true if the entity is deleted.
@@ -155,7 +139,7 @@ func (m *Subject) Deleted() bool {
 }
 
 // Restore restores the entity in the database.
-func (m *Subject) Restore() (err error) {
+func (m *Subject) Restore() error {
 	if m.Deleted() {
 		m.DeletedAt = nil
 
@@ -170,26 +154,20 @@ func (m *Subject) Restore() (err error) {
 			})
 		}
 
-		return m.Update("DeletedAt", nil)
+		return UnscopedDb().Model(m).UpdateColumn("DeletedAt", nil).Error
 	}
 
 	return nil
 }
 
 // Update updates an entity value in the database.
-func (m *Subject) Update(attr string, value interface{}) (err error) {
-	if err = UnscopedDb().Model(m).Update(attr, value).Error; err != nil {
-		return err
-	}
-	return nil
+func (m *Subject) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
 // Updates multiple values in the database.
-func (m *Subject) Updates(values interface{}) (err error) {
-	if err = UnscopedDb().Model(m).Updates(values).Error; err != nil {
-		return err
-	}
-	return nil
+func (m *Subject) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // FirstOrCreateSubject returns the existing entity, inserts a new entity or nil in case of errors.
@@ -200,10 +178,9 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 		return nil
 	}
 
-	// Query cache.
-	if result := FindSubjectByName(m.SubjName); result != nil {
-		return result
-	} else if err := m.Create(); err == nil {
+	if found := FindSubjectByName(m.SubjName); found != nil {
+		return found
+	} else if createErr := m.Create(); createErr == nil {
 		log.Infof("subject: added %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
@@ -216,27 +193,24 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 		}
 
 		return m
-	} else if result := FindSubjectByName(m.SubjName); result != nil {
-		return result
+	} else if found = FindSubjectByName(m.SubjName); found != nil {
+		return found
 	} else {
-		log.Errorf("subject: %s while creating %s", err, sanitize.Log(m.SubjName))
+		log.Errorf("subject: %s while creating %s", createErr, sanitize.Log(m.SubjName))
 	}
 
 	return nil
 }
 
 // FindSubject returns an existing entity if exists.
-func FindSubject(uid string) *Subject {
-	if uid == "" {
+func FindSubject(s string) *Subject {
+	if s == "" {
 		return nil
 	}
 
 	result := Subject{}
 
-	// Find subject by uid.
-	if cached, ok := result.Cache().UID(uid); ok {
-		result = *cached.(*Subject)
-	} else if err := UnscopedDb().Where("subj_uid = ?", uid).First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("subj_uid = ?", s).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -253,18 +227,16 @@ func FindSubjectByName(name string) *Subject {
 
 	result := Subject{}
 
-	// Find subject by name.
-	if cached, ok := result.Cache().Name(name); ok && cached != nil {
-		result = *cached.(*Subject)
-	} else if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+	// Search database.
+	if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
 		return nil
 	}
 
 	// Restore if currently deleted.
 	if err := result.Restore(); err != nil {
-		log.Errorf("subject: %s could not be restored", LogSubj(result.SubjUID))
+		log.Errorf("subject: %s could not be restored", result.SubjUID)
 	} else {
-		log.Debugf("subject: %s restored", LogSubj(result.SubjUID))
+		log.Debugf("subject: %s restored", result.SubjUID)
 	}
 
 	return &result
@@ -404,7 +376,7 @@ func (m *Subject) UpdateMarkerNames() error {
 	if err := Db().Model(&Marker{}).
 		Where("subj_uid = ? AND subj_src <> ?", m.SubjUID, SrcAuto).
 		Where("marker_name <> ?", m.SubjName).
-		Update("marker_name", m.SubjName).Error; err != nil {
+		UpdateColumn("marker_name", m.SubjName).Error; err != nil {
 		return err
 	}
 
@@ -445,11 +417,11 @@ func (m *Subject) MergeWith(other *Subject) error {
 	// Update markers and faces with new SubjUID.
 	if err := Db().Model(&Marker{}).
 		Where("subj_uid = ?", m.SubjUID).
-		Update("subj_uid", other.SubjUID).Error; err != nil {
+		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := Db().Model(&Face{}).
 		Where("subj_uid = ?", m.SubjUID).
-		Update("subj_uid", other.SubjUID).Error; err != nil {
+		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := other.UpdateMarkerNames(); err != nil {
 		return err

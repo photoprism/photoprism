@@ -211,12 +211,12 @@ func (m *Account) Directories() (result fs.FileInfos, err error) {
 
 // Updates multiple columns in the database.
 func (m *Account) Updates(values interface{}) error {
-	return UnscopedDb().Model(m).Updates(values).Error
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
 // Update a column in the database.
 func (m *Account) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).Update(attr, value).Error
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
 // Save updates the existing or inserts a new row.

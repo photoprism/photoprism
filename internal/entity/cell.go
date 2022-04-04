@@ -123,7 +123,7 @@ func (m *Cell) Refresh(api string) (err error) {
 		log.Tracef("index: cell %s keeps place_id %s", m.ID, m.PlaceID)
 	} else if err := UnscopedDb().Table(Photo{}.TableName()).
 		Where("place_id = ?", oldPlaceID).
-		Update("place_id", m.PlaceID).
+		UpdateColumn("place_id", m.PlaceID).
 		Error; err != nil {
 		log.Warnf("index: %s while changing place_id from %s to %s", err, oldPlaceID, m.PlaceID)
 	}

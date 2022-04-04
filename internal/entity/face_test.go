@@ -222,16 +222,10 @@ func TestFace_RefreshPhotos(t *testing.T) {
 }
 
 func TestFirstOrCreateFace(t *testing.T) {
-	t.Run("CreateNew", func(t *testing.T) {
+	t.Run("create new face", func(t *testing.T) {
 		m := NewFace("12345unique", SrcAuto, face.Embeddings{face.Embedding{99}, face.Embedding{2}})
 		r := FirstOrCreateFace(m)
 		assert.Equal(t, "12345unique", r.SubjUID)
-	})
-	t.Run("FindExisting", func(t *testing.T) {
-		m := FaceFixtures.Pointer("joe-biden")
-		r := FirstOrCreateFace(m)
-		assert.Equal(t, "jqy3y652h8njw0sx", r.SubjUID)
-		assert.Equal(t, 33, r.Samples)
 	})
 	t.Run("return existing entity", func(t *testing.T) {
 		m := FaceFixtures.Pointer("joe-biden")

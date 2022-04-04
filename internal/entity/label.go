@@ -115,7 +115,7 @@ func (m *Label) Restore() error {
 
 // Update a label property in the database.
 func (m *Label) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).Update(attr, value).Error
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
 // FirstOrCreateLabel returns the existing label, inserts a new label or nil in case of errors.

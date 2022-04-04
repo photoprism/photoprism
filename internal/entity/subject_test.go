@@ -187,13 +187,6 @@ func TestFindSubject(t *testing.T) {
 		r := FindSubject("")
 		assert.Nil(t, r)
 	})
-	t.Run("jqy3y652h8njw0sx", func(t *testing.T) {
-		r := FindSubject("jqy3y652h8njw0sx")
-		assert.IsType(t, &Subject{}, r)
-		assert.Equal(t, "jqy3y652h8njw0sx", r.SubjUID)
-		assert.Equal(t, "Joe Biden", r.SubjName)
-		assert.Equal(t, "Joe Biden", r.CacheName())
-	})
 }
 
 func TestSubject_Links(t *testing.T) {
@@ -235,6 +228,7 @@ func TestSubject_Updates(t *testing.T) {
 			assert.Equal(t, "UpdatedType", m.SubjType)
 		}
 	})
+
 }
 
 func TestSubject_Visible(t *testing.T) {

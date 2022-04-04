@@ -56,7 +56,7 @@ func UpdatePlacesCounts() (err error) {
 
 	// Update places.
 	res := Db().Table("places").
-		Update("photo_count", gorm.Expr("(SELECT COUNT(*) FROM photos p "+
+		UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(*) FROM photos p "+
 			"WHERE places.id = p.place_id "+
 			"AND p.photo_quality >= 0 "+
 			"AND p.photo_private = 0 "+
@@ -99,7 +99,7 @@ func UpdateSubjectCounts() (err error) {
 	case SQLite3:
 		// Update files count.
 		res = Db().Table(subjTable).
-			Update("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id) FROM files f "+
+			UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id) FROM files f "+
 				fmt.Sprintf("JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid = %s.subj_uid ",
 					markerTable, subjTable)+" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL) WHERE ?", condition))
 
@@ -108,7 +108,7 @@ func UpdateSubjectCounts() (err error) {
 			return res.Error
 		} else {
 			photosRes := Db().Table(subjTable).
-				Update("photo_count", gorm.Expr("(SELECT COUNT(DISTINCT f.photo_id) FROM files f "+
+				UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(DISTINCT f.photo_id) FROM files f "+
 					fmt.Sprintf("JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid = %s.subj_uid ",
 						markerTable, subjTable)+" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL) WHERE ?", condition))
 			res.RowsAffected += photosRes.RowsAffected
@@ -150,7 +150,7 @@ func UpdateLabelCounts() (err error) {
 	} else if IsDialect(SQLite3) {
 		res = Db().
 			Table("labels").
-			Update("photo_count",
+			UpdateColumn("photo_count",
 				gorm.Expr(`(SELECT photo_count FROM (SELECT label_id, SUM(photo_count) AS photo_count FROM (
 				SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l
 					JOIN photos_labels pl ON pl.label_id = l.id

@@ -331,7 +331,7 @@ func (m *File) ReplaceHash(newHash string) error {
 	for name, entity := range entities {
 		start := time.Now()
 
-		if res := UnscopedDb().Model(entity).Where("thumb = ?", oldHash).Update("thumb", newHash); res.Error != nil {
+		if res := UnscopedDb().Model(entity).Where("thumb = ?", oldHash).UpdateColumn("thumb", newHash); res.Error != nil {
 			return res.Error
 		} else if res.RowsAffected > 0 {
 			log.Infof("%s: updated %s [%s]", name, english.Plural(int(res.RowsAffected), "cover", "covers"), time.Since(start))
@@ -453,12 +453,12 @@ func (m *File) UpdateVideoInfos() error {
 
 // Update updates a column in the database.
 func (m *File) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).Update(attr, value).Error
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
 // Updates multiple columns in the database.
 func (m *File) Updates(values interface{}) error {
-	return UnscopedDb().Model(m).Updates(values).Error
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
 // Rename updates the name and path of this file.
@@ -644,7 +644,7 @@ func (m *File) UpdatePhotoFaceCount() (c int, err error) {
 
 	err = UnscopedDb().Model(Photo{}).
 		Where("id = ?", m.PhotoID).
-		Update("photo_faces", c).Error
+		UpdateColumn("photo_faces", c).Error
 
 	return c, err
 }

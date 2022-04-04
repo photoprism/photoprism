@@ -78,13 +78,13 @@ func (w *Faces) Audit(fix bool) (err error) {
 				log.Infof("face %s: ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjUID != "" {
-					log.Infof("face %s: subject %s (%s %s)", f1.ID, entity.LogSubj(f1.SubjUID), f1.SubjUID, entity.SrcString(f1.FaceSrc))
+					log.Infof("face %s: subject %s (%s %s)", f1.ID, sanitize.Log(subj[f1.SubjUID].SubjName), f1.SubjUID, entity.SrcString(f1.FaceSrc))
 				} else {
 					log.Infof("face %s: has no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
 				}
 
 				if f2.SubjUID != "" {
-					log.Infof("face %s: subject %s (%s %s)", f2.ID, entity.LogSubj(f2.SubjUID), f2.SubjUID, entity.SrcString(f2.FaceSrc))
+					log.Infof("face %s: subject %s (%s %s)", f2.ID, sanitize.Log(subj[f2.SubjUID].SubjName), f2.SubjUID, entity.SrcString(f2.FaceSrc))
 				} else {
 					log.Infof("face %s: has no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
 				}

@@ -571,18 +571,7 @@ func TestFile_SubjectNames(t *testing.T) {
 	t.Run("Video.jpg", func(t *testing.T) {
 		m := FileFixtures.Get("Video.jpg")
 
-		for _, marker := range *m.Markers() {
-			t.Logf("MarkerUID: %s SubjUID: %s FileUID: %s", marker.MarkerUID, marker.SubjUID, marker.FileUID)
-		}
-		for uid, i := range (Subject{}).Cache().items {
-			t.Logf("UID: %s CacheUID: %s CacheName: %s", uid, i.(CacheItem).CacheUID(), i.(CacheItem).CacheName())
-		}
-		for name, uid := range (Subject{}).Cache().names {
-			t.Logf("Name: %s UID: %s", name, uid)
-		}
-
 		names := m.SubjectNames()
-
 		t.Log(len(names))
 		if len(names) != 1 {
 			t.Errorf("there should be one name: %#v", names)

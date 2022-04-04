@@ -72,11 +72,6 @@ func RemoveOrphanSubjects() (removed int64, err error) {
 	return res.RowsAffected, res.Error
 }
 
-// LogSubj returns the sanitized subject name or id for logging.
-func LogSubj(uid string) string {
-	return entity.LogSubj(uid)
-}
-
 // CreateMarkerSubjects adds and references known marker subjects.
 func CreateMarkerSubjects() (affected int64, err error) {
 	var markers entity.Markers

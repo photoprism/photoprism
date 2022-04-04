@@ -35,7 +35,7 @@ func UpdateAlbumDefaultCovers() (err error) {
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite3:
 		res = Db().Table(entity.Album{}.TableName()).
-			Update("thumb", gorm.Expr(`(
+			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
 			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0 AND pa.missing = 0
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
@@ -81,7 +81,7 @@ func UpdateAlbumFolderCovers() (err error) {
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite3:
-		res = Db().Table(entity.Album{}.TableName()).Update("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
 			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
@@ -129,7 +129,7 @@ func UpdateAlbumMonthCovers() (err error) {
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite3:
-		res = Db().Table(entity.Album{}.TableName()).Update("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
 			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
@@ -205,7 +205,7 @@ func UpdateLabelCovers() (err error) {
 		) b ON b.label_id = labels.id
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite3:
-		res = Db().Table(entity.Label{}.TableName()).Update("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
@@ -214,7 +214,7 @@ func UpdateLabelCovers() (err error) {
 		) WHERE ?`, condition))
 
 		if res.Error == nil {
-			catRes := Db().Table(entity.Label{}.TableName()).Update("thumb", gorm.Expr(`(
+			catRes := Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
@@ -271,7 +271,7 @@ func UpdateSubjectCovers() (err error) {
 		SET thumb = marker_thumb WHERE ?`, gorm.Expr(subjTable), gorm.Expr(markerTable), condition)
 	case SQLite3:
 		from := gorm.Expr(fmt.Sprintf("%s m WHERE m.subj_uid = %s.subj_uid ", markerTable, subjTable))
-		res = Db().Table(entity.Subject{}.TableName()).Update("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT m.thumb FROM ? AND m.thumb <> '' ORDER BY m.subj_src DESC, m.q DESC LIMIT 1
 		) WHERE ?`, from, condition))
 	default:

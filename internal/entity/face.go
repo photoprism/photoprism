@@ -91,7 +91,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 // Matched updates the match timestamp.
 func (m *Face) Matched() error {
 	m.MatchedAt = TimePointer()
-	return UnscopedDb().Model(m).Updates(Values{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Embedding returns parsed face embedding.
@@ -166,7 +166,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		return false, fmt.Errorf("collision distance must be positive")
 	} else if dist < 0.02 {
 		// Ignore if distance is very small as faces may belong to the same person.
-		log.Warnf("face %s: clearing ambiguous subject %s, similar face at dist %f with source %s", m.ID, LogSubj(m.SubjUID), dist, SrcString(m.FaceSrc))
+		log.Warnf("face %s: clearing ambiguous subject %s, similar face at dist %f with source %s", m.ID, m.SubjUID, dist, SrcString(m.FaceSrc))
 
 		// Reset subject UID just in case.
 		m.SubjUID = ""
@@ -260,7 +260,7 @@ func (m *Face) SetSubjectUID(subjUID string) (err error) {
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
 		Where("marker_invalid = 0").
-		Updates(Values{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
+		UpdateColumns(Values{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
 		return err
 	}
 
@@ -319,7 +319,7 @@ func (m *Face) Delete() error {
 	// Remove face id from markers before deleting.
 	if err := Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
-		Updates(Values{"face_id": "", "face_dist": -1}).Error; err != nil {
+		UpdateColumns(Values{"face_id": "", "face_dist": -1}).Error; err != nil {
 		return err
 	}
 
@@ -341,14 +341,12 @@ func FirstOrCreateFace(m *Face) *Face {
 	result := Face{}
 
 	if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		if m.SubjUID != result.SubjUID {
-			log.Warnf("faces: %s has ambiguous subject %s", m.ID, LogSubj(m.SubjUID))
-		}
+		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjUID)
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
 	} else if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, LogSubj(m.SubjUID))
+		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjUID)
 		return &result
 	} else {
 		log.Errorf("faces: %s when trying to create %s", createErr, m.ID)

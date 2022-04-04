@@ -2,8 +2,6 @@ package entity
 
 import (
 	"fmt"
-
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Subjects represents a list of subjects.
@@ -18,17 +16,6 @@ func (m Subjects) Delete() error {
 	}
 
 	return nil
-}
-
-// LogSubj returns the sanitized subject name or id for logging.
-func LogSubj(uid string) string {
-	cached := Subject{}.Cached(uid)
-
-	if cached != nil {
-		return sanitize.Log(cached.SubjName)
-	} else {
-		return sanitize.Log(uid)
-	}
 }
 
 // OrphanPeople returns unused subjects.

@@ -125,11 +125,11 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 
 	if err = Db().Model(entity.File{}).
 		Where("photo_uid = ? AND file_uid <> ?", photoUID, fileUID).
-		Update("file_primary", 0).Error; err != nil {
+		UpdateColumn("file_primary", 0).Error; err != nil {
 		return err
 	} else if err = Db().
 		Model(entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).
-		Update("file_primary", 1).Error; err != nil {
+		UpdateColumn("file_primary", 1).Error; err != nil {
 		return err
 	} else {
 		entity.File{PhotoUID: photoUID}.RegenerateIndex()
@@ -140,7 +140,7 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 
 // SetFileError updates the file error column.
 func SetFileError(fileUID, errorString string) {
-	if err := Db().Model(entity.File{}).Where("file_uid = ?", fileUID).Update("file_error", errorString).Error; err != nil {
+	if err := Db().Model(entity.File{}).Where("file_uid = ?", fileUID).UpdateColumn("file_error", errorString).Error; err != nil {
 		log.Errorf("files: %s (set error)", err.Error())
 	}
 }
