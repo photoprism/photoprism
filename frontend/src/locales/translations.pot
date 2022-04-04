@@ -324,6 +324,10 @@ msgstr ""
 msgid "Are you sure you want to permanently delete this file?"
 msgstr ""
 
+#: src/dialog/confirm.vue:10
+msgid "Are you sure?"
+msgstr ""
+
 #: src/dialog/photo/details.vue:497
 msgid "Artist"
 msgstr ""
@@ -438,6 +442,7 @@ msgstr ""
 #: src/dialog/account/remove.vue:15
 #: src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:42
+#: src/dialog/confirm.vue:15
 #: src/dialog/file/delete.vue:15
 #: src/dialog/label/delete.vue:15
 #: src/dialog/photo/album.vue:14
@@ -455,7 +460,7 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:351
+#: src/component/photo/toolbar.vue:352
 #: src/dialog/album/edit.vue:163
 #: src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:130
@@ -486,7 +491,7 @@ msgstr ""
 #: src/component/photo-viewer.vue:79
 #: src/dialog/photo/details.vue:113
 #: src/dialog/share.vue:87
-#: src/pages/library/errors.vue:57
+#: src/pages/library/errors.vue:60
 msgid "Close"
 msgstr ""
 
@@ -495,7 +500,7 @@ msgstr ""
 msgid "Codec"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:327
+#: src/component/photo/toolbar.vue:328
 msgid "Color"
 msgstr ""
 
@@ -631,7 +636,8 @@ msgstr ""
 #: src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:41
 #: src/dialog/photo/files.vue:38
-#: src/dialog/share.vue:234
+#: src/dialog/share.vue:235
+#: src/pages/library/errors.vue:94
 #: src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr ""
@@ -1327,7 +1333,7 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: src/pages/library/errors.vue:34
+#: src/pages/library/errors.vue:37
 #: src/pages/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr ""
@@ -1580,7 +1586,7 @@ msgstr ""
 msgid "No video selected"
 msgstr ""
 
-#: src/pages/library/errors.vue:31
+#: src/pages/library/errors.vue:34
 #: src/pages/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr ""
@@ -1962,7 +1968,7 @@ msgstr ""
 #: src/dialog/reload.vue:15
 #: src/pages/albums.vue:142
 #: src/pages/labels.vue:94
-#: src/pages/library/errors.vue:74
+#: src/pages/library/errors.vue:76
 #: src/pages/library/files.vue:100
 #: src/pages/people/faces.vue:65
 #: src/pages/people/subjects.vue:106
@@ -2048,7 +2054,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:50
 #: src/pages/albums.vue:114
 #: src/pages/labels.vue:81
-#: src/pages/library/errors.vue:63
+#: src/pages/library/errors.vue:65
 #: src/pages/people/subjects.vue:88
 #: src/pages/places.vue:34
 msgid "Search"
@@ -2407,7 +2413,7 @@ msgstr ""
 msgid "Topographic"
 msgstr ""
 
-#: src/pages/library/errors.vue:92
+#: src/pages/library/errors.vue:113
 msgid "Troubleshooting Checklists"
 msgstr ""
 
@@ -2456,8 +2462,8 @@ msgstr ""
 #: src/options/options.js:51
 #: src/options/options.js:65
 #: src/options/options.js:77
-#: src/pages/library/errors.vue:125
-#: src/pages/library/errors.vue:132
+#: src/pages/library/errors.vue:161
+#: src/pages/library/errors.vue:168
 #: src/pages/library/logs.vue:16
 msgid "Unknown"
 msgstr ""
@@ -2640,6 +2646,7 @@ msgstr ""
 msgid "Yellowstone"
 msgstr ""
 
+#: src/dialog/confirm.vue:18
 #: src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18
 #: src/dialog/photo/files.vue:104
