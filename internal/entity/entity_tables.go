@@ -56,10 +56,10 @@ func (list Tables) WaitForMigration(db *gorm.DB) {
 		for i := 0; i <= attempts; i++ {
 			count := RowCount{}
 			if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", name)).Scan(&count).Error; err == nil {
-				log.Tracef("entity: %s migrated", sanitize.Log(name))
+				log.Tracef("migrate: %s migrated", sanitize.Log(name))
 				break
 			} else {
-				log.Debugf("entity: waiting for %s migration (%s)", sanitize.Log(name), err.Error())
+				log.Debugf("migrate: waiting for %s migration (%s)", sanitize.Log(name), err.Error())
 			}
 
 			if i == attempts {
@@ -78,7 +78,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 			// log.Debugf("entity: removed all data from %s", name)
 			break
 		} else if err.Error() != "record not found" {
-			log.Debugf("entity: %s in %s", err, sanitize.Log(name))
+			log.Debugf("migrate: %s in %s", err, sanitize.Log(name))
 		}
 	}
 }
@@ -88,12 +88,12 @@ func (list Tables) Migrate(db *gorm.DB, runFailed bool, ids []string) {
 	if len(ids) == 0 {
 		for name, entity := range list {
 			if err := db.AutoMigrate(entity).Error; err != nil {
-				log.Debugf("entity: %s (waiting 1s)", err.Error())
+				log.Debugf("migrate: %s (waiting 1s)", err.Error())
 
 				time.Sleep(time.Second)
 
 				if err := db.AutoMigrate(entity).Error; err != nil {
-					log.Errorf("entity: failed migrating %s", sanitize.Log(name))
+					log.Errorf("migrate: failed migrating %s", sanitize.Log(name))
 					panic(err)
 				}
 			}

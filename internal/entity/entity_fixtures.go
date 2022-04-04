@@ -27,5 +27,5 @@ func ResetTestFixtures() {
 
 	CreateTestFixtures()
 
-	log.Debugf("entity: recreated test fixtures [%s]", time.Since(start))
+	log.Debugf("migrate: recreated test fixtures [%s]", time.Since(start))
 }

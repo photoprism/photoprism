@@ -57,6 +57,18 @@ func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("SubjUID", rnd.PPID('j'))
 }
 
+// AfterSave is a hook that updates the name cache after saving.
+func (m *Subject) AfterSave() (err error) {
+	SubjNames.Set(m.SubjUID, m.SubjName)
+	return
+}
+
+// AfterFind is a hook that updates the name cache after querying.
+func (m *Subject) AfterFind() (err error) {
+	SubjNames.Set(m.SubjUID, m.SubjName)
+	return
+}
+
 // NewSubject returns a new entity.
 func NewSubject(name, subjType, subjSrc string) *Subject {
 	// Name is required.
@@ -180,7 +192,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 
 	if found := FindSubjectByName(m.SubjName); found != nil {
 		return found
-	} else if createErr := m.Create(); createErr == nil {
+	} else if err := m.Create(); err == nil {
 		log.Infof("subject: added %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
@@ -196,21 +208,21 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	} else if found = FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else {
-		log.Errorf("subject: %s while creating %s", createErr, sanitize.Log(m.SubjName))
+		log.Errorf("subject: %s while creating %s", err, sanitize.Log(m.SubjName))
 	}
 
 	return nil
 }
 
 // FindSubject returns an existing entity if exists.
-func FindSubject(s string) *Subject {
-	if s == "" {
+func FindSubject(uid string) *Subject {
+	if uid == "" {
 		return nil
 	}
 
 	result := Subject{}
 
-	if err := UnscopedDb().Where("subj_uid = ?", s).First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("subj_uid = ?", uid).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -218,28 +230,29 @@ func FindSubject(s string) *Subject {
 }
 
 // FindSubjectByName find an existing subject by name.
-func FindSubjectByName(name string) *Subject {
+func FindSubjectByName(name string) (result *Subject) {
 	name = sanitize.Name(name)
 
 	if name == "" {
 		return nil
 	}
 
-	result := Subject{}
+	uid := SubjNames.Key(name)
 
-	// Search database.
-	if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+	if uid == "" {
 		return nil
 	}
 
 	// Restore if currently deleted.
-	if err := result.Restore(); err != nil {
-		log.Errorf("subject: %s could not be restored", result.SubjUID)
+	if result = FindSubject(uid); result == nil {
+		return nil
+	} else if err := result.Restore(); err != nil {
+		log.Errorf("subject: %s could not be restored", sanitize.Log(result.SubjName))
 	} else {
-		log.Debugf("subject: %s restored", result.SubjUID)
+		log.Debugf("subject: %s restored", sanitize.Log(result.SubjName))
 	}
 
-	return &result
+	return result
 }
 
 // IsPerson tests if the subject is a person.

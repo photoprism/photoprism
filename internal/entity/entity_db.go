@@ -67,7 +67,7 @@ func (g *Gorm) Db() *gorm.DB {
 	g.once.Do(g.Connect)
 
 	if g.db == nil {
-		log.Fatal("entity: database not connected")
+		log.Fatal("migrate: database not connected")
 	}
 
 	return g.db

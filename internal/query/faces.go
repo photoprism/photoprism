@@ -185,13 +185,13 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 				log.Infof("face %s: ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjUID != "" {
-					log.Debugf("face %s: subject %s (%s %s)", f1.ID, sanitize.Log(f1.SubjUID), f1.SubjUID, entity.SrcString(f1.FaceSrc))
+					log.Debugf("face %s: subject %s (%s %s)", f1.ID, entity.SubjNames.Log(f1.SubjUID), f1.SubjUID, entity.SrcString(f1.FaceSrc))
 				} else {
 					log.Debugf("face %s: has no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
 				}
 
 				if f2.SubjUID != "" {
-					log.Debugf("face %s: subject %s (%s %s)", f2.ID, sanitize.Log(f2.SubjUID), f2.SubjUID, entity.SrcString(f2.FaceSrc))
+					log.Debugf("face %s: subject %s (%s %s)", f2.ID, entity.SubjNames.Log(f2.SubjUID), f2.SubjUID, entity.SrcString(f2.FaceSrc))
 				} else {
 					log.Debugf("face %s: has no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
 				}

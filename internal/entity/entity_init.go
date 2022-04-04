@@ -7,8 +7,25 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
-// MigrateDb creates database tables and inserts default fixtures as needed.
-func MigrateDb(dropDeprecated, runFailed bool, ids []string) {
+// onReady contains init functions to be called when the
+// initialization of the database is complete.
+var onReady []func()
+
+// ready executes init callbacks when the initialization of the
+// database is complete.
+func ready() {
+	for _, init := range onReady {
+		init()
+	}
+}
+
+// InitDb creates database tables and inserts default fixtures as needed.
+func InitDb(dropDeprecated, runFailed bool, ids []string) {
+	if !HasDbProvider() {
+		log.Error("migrate: no database provider")
+		return
+	}
+
 	start := time.Now()
 
 	if dropDeprecated && len(ids) == 0 {
@@ -20,7 +37,9 @@ func MigrateDb(dropDeprecated, runFailed bool, ids []string) {
 
 	CreateDefaultFixtures()
 
-	log.Debugf("entity: successfully initialized [%s]", time.Since(start))
+	ready()
+
+	log.Debugf("migrate: completed in %s", time.Since(start))
 }
 
 // InitTestDb connects to and completely initializes the test database incl fixtures.
@@ -28,6 +47,8 @@ func InitTestDb(driver, dsn string) *Gorm {
 	if HasDbProvider() {
 		return nil
 	}
+
+	start := time.Now()
 
 	// Set default test database driver.
 	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
@@ -57,6 +78,10 @@ func InitTestDb(driver, dsn string) *Gorm {
 	SetDbProvider(db)
 	ResetTestFixtures()
 	File{}.RegenerateIndex()
+
+	ready()
+
+	log.Debugf("migrate: completed in %s", time.Since(start))
 
 	return db
 }

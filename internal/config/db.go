@@ -251,7 +251,7 @@ func (c *Config) InitDb() {
 func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	c.SetDbOptions()
 	entity.SetDbProvider(c)
-	entity.MigrateDb(true, runFailed, ids)
+	entity.InitDb(true, runFailed, ids)
 
 	entity.Admin.InitPassword(c.AdminPassword())
 

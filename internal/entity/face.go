@@ -166,7 +166,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		return false, fmt.Errorf("collision distance must be positive")
 	} else if dist < 0.02 {
 		// Ignore if distance is very small as faces may belong to the same person.
-		log.Warnf("face %s: clearing ambiguous subject %s, similar face at dist %f with source %s", m.ID, m.SubjUID, dist, SrcString(m.FaceSrc))
+		log.Warnf("face %s: clearing ambiguous subject %s, similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
 
 		// Reset subject UID just in case.
 		m.SubjUID = ""
@@ -341,12 +341,12 @@ func FirstOrCreateFace(m *Face) *Face {
 	result := Face{}
 
 	if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjUID)
+		log.Warnf("faces: %s has ambiguous subject %s", m.ID, SubjNames.Log(m.SubjUID))
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
 	} else if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjUID)
+		log.Warnf("faces: %s has ambiguous subject %s", m.ID, SubjNames.Log(m.SubjUID))
 		return &result
 	} else {
 		log.Errorf("faces: %s when trying to create %s", createErr, m.ID)

@@ -22,6 +22,9 @@ func TestLog(t *testing.T) {
 	t.Run("Ldap", func(t *testing.T) {
 		assert.Equal(t, "?", Log("User-Agent: {jndi:ldap://<host>:<port>/<path>}"))
 	})
+	t.Run("SpecialChars", func(t *testing.T) {
+		assert.Equal(t, "'  The ?quick? ''brown 'fox.   '", Log("  The <quick>\n\r ''brown \"fox. \t  "))
+	})
 }
 
 func TestLogLower(t *testing.T) {

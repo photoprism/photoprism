@@ -3,25 +3,28 @@ package sanitize
 import (
 	"fmt"
 	"strings"
-	"unicode"
 )
 
 // Log sanitizes strings created from user input in response to the log4j debacle.
 func Log(s string) string {
-	if reject(s, 512) {
+	if s == "" {
+		return "''"
+	} else if reject(s, 512) {
 		return "?"
 	}
 
-	// Trim quotes, tabs, and newline characters.
-	s = strings.Trim(s, " '\"“`\t\n\r")
+	spaces := false
 
 	// Remove non-printable and other potentially problematic characters.
 	s = strings.Map(func(r rune) rune {
-		if !unicode.IsPrint(r) {
+		if r < 32 {
 			return -1
 		}
 
 		switch r {
+		case ' ':
+			spaces = true
+			return r
 		case '`', '"':
 			return '\''
 		case '\\', '$', '<', '>', '{', '}':
@@ -31,8 +34,8 @@ func Log(s string) string {
 		}
 	}, s)
 
-	// Empty?
-	if s == "" || strings.ContainsAny(s, " ") {
+	// Contains spaces?
+	if spaces {
 		return fmt.Sprintf("'%s'", s)
 	}
 

@@ -105,16 +105,16 @@ func (m File) RegenerateIndex() {
 
 	if m.PhotoID > 0 {
 		updateWhere = gorm.Expr("photo_id = ?", m.PhotoID)
-		scope = "partial"
+		scope = "partial file index"
 	} else if m.PhotoUID != "" {
 		updateWhere = gorm.Expr("photo_uid = ?", m.PhotoUID)
-		scope = "partial"
+		scope = "partial file index"
 	} else if m.ID > 0 {
 		updateWhere = gorm.Expr("id = ?", m.ID)
-		scope = "file"
+		scope = "partial file index"
 	} else {
 		updateWhere = gorm.Expr("photo_id IS NOT NULL")
-		scope = "full"
+		scope = "file index"
 	}
 
 	switch DbDialect() {
@@ -146,7 +146,7 @@ func (m File) RegenerateIndex() {
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 	}
 
-	log.Debugf("files: updated %s search index [%s]", scope, time.Since(start))
+	log.Debugf("search: updated %s [%s]", scope, time.Since(start))
 }
 
 type FileInfos struct {
