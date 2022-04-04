@@ -208,7 +208,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	} else if found = FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else {
-		log.Errorf("subject: %s while creating %s", err, sanitize.Log(m.SubjName))
+		log.Errorf("subject: failed adding %s (%s)", sanitize.Log(m.SubjName), err)
 	}
 
 	return nil
@@ -245,14 +245,18 @@ func FindSubjectByName(name string) (result *Subject) {
 
 	// Restore if currently deleted.
 	if result = FindSubject(uid); result == nil {
+		log.Debugf("subject: could not find %s", sanitize.Log(result.SubjName))
 		return nil
-	} else if err := result.Restore(); err != nil {
-		log.Errorf("subject: %s could not be restored", sanitize.Log(result.SubjName))
+	} else if !result.Deleted() {
+		return result
+	} else if err := result.Restore(); err == nil {
+		log.Debugf("subject: restored %s", sanitize.Log(result.SubjName))
+		return result
 	} else {
-		log.Debugf("subject: %s restored", sanitize.Log(result.SubjName))
+		log.Errorf("subject: failed restoring %s (%s)", sanitize.Log(result.SubjName), err)
 	}
 
-	return result
+	return nil
 }
 
 // IsPerson tests if the subject is a person.

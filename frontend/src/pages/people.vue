@@ -23,7 +23,7 @@
       </v-tab>
 
       <v-tabs-items touchless>
-        <v-tab-item v-for="(item, index) in tabs" :key="index" :transition="false" class="no-transition" lazy>
+        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
           <component :is="item.component" :static-filter="item.filter" :active="active === index"
                      @updateFaceCount="onUpdateFaceCount"></component>
         </v-tab-item>

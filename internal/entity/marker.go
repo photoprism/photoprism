@@ -500,19 +500,21 @@ func (m *Marker) Face() (f *Face) {
 		if m.Size < face.ClusterSizeThreshold || m.Score < face.ClusterScoreThreshold {
 			log.Debugf("marker %s: skipped adding face due to low-quality (size %d, score %d)", sanitize.Log(m.MarkerUID), m.Size, m.Score)
 			return nil
-		} else if emb := m.Embeddings(); emb.Empty() {
-			log.Warnf("marker %s: found no face embeddings", sanitize.Log(m.MarkerUID))
+		}
+
+		if emb := m.Embeddings(); emb.Empty() {
+			log.Warnf("faces: marker %s has no face embeddings", sanitize.Log(m.MarkerUID))
 			return nil
 		} else if f = NewFace(m.SubjUID, m.SubjSrc, emb); f == nil {
-			log.Warnf("marker %s: failed assigning face", sanitize.Log(m.MarkerUID))
+			log.Warnf("faces: failed assigning face to marker %s", sanitize.Log(m.MarkerUID))
 			return nil
-		} else if f.OmitMatch() {
-			log.Infof("marker %s: face %s is unsuitable for clustering and matching", sanitize.Log(m.MarkerUID), f.ID)
+		} else if f.SkipMatching() {
+			log.Infof("faces: skipped matching marker %s, embedding %s not distinct enough", sanitize.Log(m.MarkerUID), f.ID)
 		} else if f = FirstOrCreateFace(f); f == nil {
-			log.Warnf("marker %s: failed assigning face", sanitize.Log(m.MarkerUID))
+			log.Warnf("faces: failed matching marker %s with subject %s", sanitize.Log(m.MarkerUID), SubjNames.Log(m.SubjUID))
 			return nil
 		} else if err := f.MatchMarkers(Faceless); err != nil {
-			log.Errorf("marker %s: %s while matching with faces", sanitize.Log(m.MarkerUID), err)
+			log.Errorf("faces: failed matching marker %s with subject %s (%s)", sanitize.Log(m.MarkerUID), SubjNames.Log(m.SubjUID), err)
 		}
 
 		m.face = f

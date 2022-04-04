@@ -15,11 +15,22 @@ func init() {
 		log.Warnf("faces: PHOTOPRISM_FACE_KIDS_DIST can not be parsed (0.1-1.5; -1 to disable)")
 	} else if f < 0 {
 		KidsDist = -1
+		log.Debugf("faces: enabled matching of all kids embeddings")
 	} else if f >= 0.1 && f <= 1.5 {
 		KidsDist = f
+		log.Debugf("faces: changed matching distance for kids embeddings to %f", KidsDist)
 	} else {
 		log.Warnf("faces: PHOTOPRISM_FACE_KIDS_DIST is out of range (0.1-1.5; -1 to disable)")
 	}
+}
+
+// KidsFace tests if the embedded face belongs to a baby or young child.
+func (m Embedding) KidsFace() bool {
+	if KidsDist <= 0 {
+		return false
+	}
+
+	return KidsEmbeddings.Contains(m, KidsDist)
 }
 
 // KidsEmbeddings contains embeddings of children's faces that are (currently) too generic to be properly matched.

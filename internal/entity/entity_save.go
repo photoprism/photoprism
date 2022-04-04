@@ -3,6 +3,7 @@ package entity
 import (
 	"fmt"
 	"reflect"
+	"runtime/debug"
 	"strings"
 )
 
@@ -10,7 +11,7 @@ import (
 func Save(m interface{}, primaryKeys ...string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("save: %s (panic)", r)
+			err = fmt.Errorf("index: save failed (%s)\nstack: %s", r, debug.Stack())
 			log.Error(err)
 		}
 	}()
@@ -32,29 +33,20 @@ func Save(m interface{}, primaryKeys ...string) (err error) {
 func Update(m interface{}, primaryKeys ...string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("update: %s (panic)", r)
+			err = fmt.Errorf("index: update failed (%s)\nstack: %s", r, debug.Stack())
 			log.Error(err)
 		}
 	}()
 
+	// Return with error if a primary key is empty.
 	v := reflect.ValueOf(m).Elem()
-
-	// Abort if a primary key is zero.
 	for _, k := range primaryKeys {
-		if field := v.FieldByName(k); field.IsZero() {
-			return fmt.Errorf("key '%s' not found", k)
+		if field := v.FieldByName(k); !field.CanSet() || field.IsZero() {
+			return fmt.Errorf("empty primary key '%s'", k)
 		}
 	}
 
-	// Update all values except primary keys.
-	if res := UnscopedDb().Model(m).Updates(GetValues(m, primaryKeys...)); res.Error != nil {
-		return res.Error
-	} else if res.RowsAffected > 1 {
-		log.Warnf("update: more than one row affected")
-	} else if res.RowsAffected == 0 {
-		// MariaDB may report zero rows in case no data was actually changed, even though the row exists.
-		log.Tracef("update: no rows affected")
-	}
+	err = UnscopedDb().FirstOrCreate(m, GetValues(m)).Error
 
-	return nil
+	return err
 }

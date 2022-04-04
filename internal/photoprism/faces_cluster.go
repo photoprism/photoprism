@@ -73,8 +73,8 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		for _, cluster := range results {
 			if f := entity.NewFace("", entity.SrcAuto, cluster); f == nil {
 				log.Errorf("faces: face should not be nil - bug?")
-			} else if f.OmitMatch() {
-				log.Infof("faces: ignoring %s, cluster unsuitable for matching", f.ID)
+			} else if f.SkipMatching() {
+				log.Infof("faces: skipped cluster %s, embedding not distinct enough", f.ID)
 			} else if err := f.Create(); err == nil {
 				added = append(added, *f)
 				log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)

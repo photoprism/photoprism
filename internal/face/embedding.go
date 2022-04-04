@@ -27,36 +27,33 @@ func NewEmbedding(inference []float32) Embedding {
 	return result
 }
 
-// IgnoreFace tests whether the embedding is generally unsuitable for matching.
-func (m Embedding) IgnoreFace() bool {
-	if IgnoreDist <= 0 {
-		return false
+// Kind returns the type of face e.g. regular, kids, or ignored.
+func (m Embedding) Kind() Kind {
+	if m.KidsFace() {
+		return KidsFace
+	} else if m.Ignored() {
+		return IgnoredFace
 	}
 
-	return IgnoreEmbeddings.Contains(m, IgnoreDist)
+	return RegularFace
 }
 
-// KidsFace tests if the embedded face belongs to a baby or young child.
-func (m Embedding) KidsFace() bool {
-	if KidsDist <= 0 {
-		return false
-	}
-
-	return KidsEmbeddings.Contains(m, KidsDist)
-}
-
-// OmitMatch tests if the face embedding is unsuitable for matching.
-func (m Embedding) OmitMatch() bool {
-	return m.KidsFace() || m.IgnoreFace()
+// SkipMatching checks if the face embedding seems unsuitable for matching.
+func (m Embedding) SkipMatching() bool {
+	return m.KidsFace() || m.Ignored()
 }
 
 // CanMatch tests if the face embedding is not blacklisted.
 func (m Embedding) CanMatch() bool {
-	return !m.IgnoreFace()
+	return !m.Ignored()
 }
 
 // Dist calculates the distance to another face embedding.
 func (m Embedding) Dist(other Embedding) float64 {
+	if len(other) == 0 || len(m) != len(other) {
+		return -1
+	}
+
 	return clusters.EuclideanDist(m, other)
 }
 

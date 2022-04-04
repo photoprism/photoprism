@@ -19,6 +19,7 @@ var faceMutex = sync.Mutex{}
 type Face struct {
 	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
+	FaceKind        int             `json:"Kind" yaml:"Kind,omitempty"`
 	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
 	SubjUID         string          `gorm:"type:VARBINARY(42);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
@@ -54,14 +55,22 @@ func NewFace(subjUID, faceSrc string, embeddings face.Embeddings) *Face {
 	return result
 }
 
-// OmitMatch checks whether the face should be skipped when matching.
-func (m *Face) OmitMatch() bool {
-	return m.Embedding().OmitMatch()
+// SkipMatching checks whether the face should be skipped when matching.
+func (m *Face) SkipMatching() bool {
+	return m.Embedding().SkipMatching()
 }
 
 // SetEmbeddings assigns face embeddings.
 func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
+	if len(embeddings) == 0 {
+		return fmt.Errorf("empty")
+	}
+
 	m.embedding, m.SampleRadius, m.Samples = face.EmbeddingsMidpoint(embeddings)
+
+	if len(m.embedding) != len(face.NullEmbedding) {
+		return fmt.Errorf("invalid number of values")
+	}
 
 	// Limit sample radius to reduce false positives.
 	if m.SampleRadius > 0.35 {
@@ -75,15 +84,11 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	}
 
 	s := sha1.Sum(m.EmbeddingJSON)
+
+	// Update Face ID, Kind, and reset match timestamp,
 	m.ID = base32.StdEncoding.EncodeToString(s[:])
-	m.UpdatedAt = TimeStamp()
-
-	// Reset match timestamp.
+	m.FaceKind = int(m.embedding.Kind())
 	m.MatchedAt = nil
-
-	if m.CreatedAt.IsZero() {
-		m.CreatedAt = m.UpdatedAt
-	}
 
 	return nil
 }
@@ -187,7 +192,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 	if revised, err := m.ReviseMatches(); err != nil {
 		return true, err
 	} else if r := len(revised); r > 0 {
-		log.Infof("faces: revised %d matches after conflict", r)
+		log.Infof("faces: resolved %d conflicts", r)
 	}
 
 	return true, nil
@@ -203,13 +208,13 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 
 	if err := Db().Where("face_id = ?", m.ID).Where("marker_type = ?", MarkerFace).
 		Find(&matches).Error; err != nil {
-		log.Debugf("faces: %s (revise matches)", err)
+		log.Debugf("faces: found no matching markers for conflict resolution (%s)", err)
 		return revised, err
 	} else {
 		for _, marker := range matches {
 			if ok, _ := m.Match(marker.Embeddings()); !ok {
 				if updated, err := marker.ClearFace(); err != nil {
-					log.Debugf("faces: %s (revise matches)", err)
+					log.Debugf("faces: failed to remove match with marker (%s)", err) // Conflict resolution
 					return revised, err
 				} else if updated {
 					revised = append(revised, marker)
@@ -230,7 +235,7 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 		Find(&markers).Error
 
 	if err != nil {
-		log.Debugf("faces: %s (match markers)", err)
+		log.Debugf("faces: failed fetching markers matching face id %s (%s)", strings.Join(faceIds, ", "), err)
 		return err
 	}
 
@@ -300,6 +305,10 @@ func (m *Face) Show() (err error) {
 
 // Save updates the existing or inserts a new face.
 func (m *Face) Save() error {
+	if m.ID == "" {
+		return fmt.Errorf("empty id")
+	}
+
 	faceMutex.Lock()
 	defer faceMutex.Unlock()
 
@@ -308,6 +317,10 @@ func (m *Face) Save() error {
 
 // Create inserts the face to the database.
 func (m *Face) Create() error {
+	if m.ID == "" {
+		return fmt.Errorf("empty id")
+	}
+
 	faceMutex.Lock()
 	defer faceMutex.Unlock()
 
@@ -316,6 +329,10 @@ func (m *Face) Create() error {
 
 // Delete removes the face from the database.
 func (m *Face) Delete() error {
+	if m.ID == "" {
+		return fmt.Errorf("empty id")
+	}
+
 	// Remove face id from markers before deleting.
 	if err := Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
@@ -328,28 +345,49 @@ func (m *Face) Delete() error {
 
 // Update a face property in the database.
 func (m *Face) Update(attr string, value interface{}) error {
+	if m.ID == "" {
+		return fmt.Errorf("empty id")
+	}
+
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // Updates face properties in the database.
 func (m *Face) Updates(values interface{}) error {
+	if m.ID == "" {
+		return fmt.Errorf("empty id")
+	}
+
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // FirstOrCreateFace returns the existing entity, inserts a new entity or nil in case of errors.
 func FirstOrCreateFace(m *Face) *Face {
+	if m == nil {
+		return nil
+	}
+
+	if m.ID == "" {
+		return nil
+	}
+
 	result := Face{}
 
-	if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, SubjNames.Log(m.SubjUID))
+	// Search existing face with the same ID. Report if found and it belongs to another person.
+	if findErr := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; findErr == nil && result.ID != "" {
+		if m.SubjUID != result.SubjUID {
+			log.Warnf("faces: %s has ambiguous subjects %s and %s", m.ID, SubjNames.Log(m.SubjUID), SubjNames.Log(result.SubjUID))
+		}
 		return &result
-	} else if createErr := m.Create(); createErr == nil {
+	} else if err := m.Create(); err == nil {
 		return m
-	} else if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, SubjNames.Log(m.SubjUID))
+	} else if findErr = UnscopedDb().Where("id = ?", m.ID).First(&result).Error; findErr == nil && result.ID != "" {
+		if m.SubjUID != result.SubjUID {
+			log.Warnf("faces: %s has ambiguous subjects %s and %s", m.ID, SubjNames.Log(m.SubjUID), SubjNames.Log(result.SubjUID))
+		}
 		return &result
 	} else {
-		log.Errorf("faces: %s when trying to create %s", createErr, m.ID)
+		log.Errorf("faces: failed adding %s (%s)", m.ID, err)
 	}
 
 	return nil

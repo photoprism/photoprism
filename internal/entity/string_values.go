@@ -10,6 +10,10 @@ type Values map[string]interface{}
 // GetValues extracts entity Values.
 func GetValues(m interface{}, omit ...string) (result Values) {
 	skip := func(name string) bool {
+		if name == "" || name == "UpdatedAt" || name == "CreatedAt" {
+			return true
+		}
+
 		for _, s := range omit {
 			if name == s {
 				return true
@@ -23,15 +27,22 @@ func GetValues(m interface{}, omit ...string) (result Values) {
 
 	elem := reflect.ValueOf(m).Elem()
 	relType := elem.Type()
+	num := relType.NumField()
 
-	for i := 0; i < relType.NumField(); i++ {
-		name := relType.Field(i).Name
+	result = make(map[string]interface{}, num)
 
-		if skip(name) {
+	// Add exported fields to result.
+	for i := 0; i < num; i++ {
+		n := relType.Field(i).Name
+		v := elem.Field(i)
+
+		if !v.CanSet() {
+			continue
+		} else if skip(n) {
 			continue
 		}
 
-		result[name] = elem.Field(i).Interface()
+		result[n] = elem.Field(i).Interface()
 	}
 
 	return result

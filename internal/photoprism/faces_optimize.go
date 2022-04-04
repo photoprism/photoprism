@@ -27,7 +27,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 		var faces entity.Faces
 
 		// Fetch manually added faces from the database.
-		if faces, err = query.ManuallyAddedFaces(false); err != nil {
+		if faces, err = query.ManuallyAddedFaces(false, face.RegularFace); err != nil {
 			return result, err
 		} else if n = len(faces) - 1; n < 1 {
 			// Need at least 2 faces to optimize.

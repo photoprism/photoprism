@@ -29,9 +29,10 @@ func Faces(knownOnly, unmatched, hidden bool) (result entity.Faces, err error) {
 }
 
 // ManuallyAddedFaces returns all manually added face clusters.
-func ManuallyAddedFaces(hidden bool) (result entity.Faces, err error) {
+func ManuallyAddedFaces(hidden bool, kind face.Kind) (result entity.Faces, err error) {
 	err = Db().
 		Where("face_hidden = ?", hidden).
+		Where("face_kind <= ?", int(kind)).
 		Where("face_src = ?", entity.SrcManual).
 		Where("subj_uid <> ''").Order("subj_uid, samples DESC").
 		Find(&result).Error

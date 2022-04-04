@@ -20,7 +20,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	subj, err := query.SubjectMap()
 
 	if err != nil {
-		log.Error(err)
+		log.Errorf("faces: %s (find subjects)", err)
 	}
 
 	if n := len(subj); n == 0 {
@@ -35,9 +35,9 @@ func (w *Faces) Audit(fix bool) (err error) {
 	} else if !fix {
 		log.Infof("%s with non-existent subjects", english.Plural(n, "marker", "markers"))
 	} else if removed, err := query.RemoveNonExistentMarkerSubjects(); err != nil {
+		log.Errorf("faces: %s (remove orphan subjects)", err)
+	} else if removed > 0 {
 		log.Infof("removed %d / %d markers with non-existent subjects", removed, n)
-	} else {
-		log.Error(err)
 	}
 
 	// Fix non-existent marker face references?
@@ -46,9 +46,9 @@ func (w *Faces) Audit(fix bool) (err error) {
 	} else if !fix {
 		log.Infof("%s with non-existent faces", english.Plural(n, "marker", "markers"))
 	} else if removed, err := query.RemoveNonExistentMarkerFaces(); err != nil {
+		log.Errorf("faces: %s (remove orphan embeddings)", err)
+	} else if removed > 0 {
 		log.Infof("removed %d / %d markers with non-existent faces", removed, n)
-	} else {
-		log.Error(err)
 	}
 
 	conflicts := 0
@@ -92,12 +92,12 @@ func (w *Faces) Audit(fix bool) (err error) {
 				if !fix {
 					// Do nothing.
 				} else if ok, err := f1.ResolveCollision(face.Embeddings{f2.Embedding()}); err != nil {
-					log.Errorf("face %s: %s", f1.ID, err)
+					log.Errorf("conflict resolution for %s failed, face id %s has collisions with other persons (%s)", entity.SubjNames.Log(f1.SubjUID), f1.ID, err)
 				} else if ok {
-					log.Infof("face %s: ambiguous subject has been resolved", f1.ID)
+					log.Infof("successful conflict resolution for %s, face id %s had collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
 					resolved++
 				} else {
-					log.Infof("face %s: ambiguous subject could not be resolved", f1.ID)
+					log.Infof("conflict resolution for %s not successful, face id %s still has collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
 				}
 			}
 		}
@@ -112,7 +112,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	}
 
 	if markers, err := query.MarkersWithSubjectConflict(); err != nil {
-		log.Error(err)
+		log.Errorf("faces: %s (find marker conflicts)", err)
 	} else {
 		for _, m := range markers {
 			log.Infof("marker %s: %s subject %s conflicts with face %s subject %s", m.MarkerUID, entity.SrcString(m.SubjSrc), sanitize.Log(subj[m.SubjUID].SubjName), m.FaceID, sanitize.Log(subj[faceMap[m.FaceID].SubjUID].SubjName))

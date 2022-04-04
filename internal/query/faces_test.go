@@ -51,7 +51,7 @@ func TestFaces(t *testing.T) {
 
 func TestManuallyAddedFaces(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		results, err := ManuallyAddedFaces(false)
+		results, err := ManuallyAddedFaces(false, face.RegularFace)
 
 		if err != nil {
 			t.Fatal(err)
@@ -64,7 +64,7 @@ func TestManuallyAddedFaces(t *testing.T) {
 		}
 	})
 	t.Run("Hidden", func(t *testing.T) {
-		results, err := ManuallyAddedFaces(true)
+		results, err := ManuallyAddedFaces(true, face.RegularFace)
 
 		if err != nil {
 			t.Fatal(err)

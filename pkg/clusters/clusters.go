@@ -53,7 +53,7 @@ type HardClusterer interface {
 	// the returned channel.
 	Online(observations chan []float64, done chan struct{}) chan *HCEvent
 
-	// Implement common operation
+	// Clusterer implements common operation
 	Clusterer
 }
 
