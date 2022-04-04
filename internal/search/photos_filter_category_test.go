@@ -177,7 +177,6 @@ func TestPhotosFilterCategory(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		//TODO
 		assert.Greater(t, len(photos), 0)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
@@ -207,7 +206,6 @@ func TestPhotosFilterCategory(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		//TODO
 		assert.Greater(t, len(photos), 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {

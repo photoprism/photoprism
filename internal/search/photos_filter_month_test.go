@@ -61,33 +61,6 @@ func TestPhotosFilterMonth(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 8)
 	})
-	//TODO
-	/*t.Run("12 or 1", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Month = "12 or 1"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 8)
-	})
-	t.Run("12 OR 1", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Month = "12 OR 1"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 8)
-	})*/
 	var f0 form.SearchPhotos
 
 	f0.Merged = true
@@ -385,33 +358,6 @@ func TestPhotosQueryMonth(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 8)
 	})
-	//TODO
-	/*t.Run("12 or 1", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "month:\"12 or 1\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 8)
-	})
-	t.Run("12 OR 1", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "month:\"12 OR 1\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 8)
-	})*/
 	var f0 form.SearchPhotos
 
 	f0.Merged = true

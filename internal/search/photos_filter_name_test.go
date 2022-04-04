@@ -47,8 +47,7 @@ func TestPhotosFilterName(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 7)
 	})
-	//TODO
-	/*t.Run("*hoto1* whitespace pipe whitespace 27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("*hoto1* whitespace pipe whitespace 27900704_070228_D6D51B6C", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Name = "*hoto1* | 27900704_070228_D6D51B6C"
@@ -72,8 +71,8 @@ func TestPhotosFilterName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 7)
-	})*/
+		assert.Equal(t, len(photos), 0)
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

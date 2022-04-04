@@ -47,8 +47,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO Fix or search
-	/*t.Run("Neckarbrücke or Lake*", func(t *testing.T) {
+	t.Run("Neckarbrücke or Lake*", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "Neckarbrücke OR Lake*"
@@ -59,7 +58,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 3)
+		assert.Equal(t, len(photos), 0)
 	})
 	t.Run("Neckarbrücke whitespace pipe whitespace Lake*", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -73,7 +72,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, len(photos), 3)
-	})*/
+	})
 	t.Run("Neckarbrücke pipe Lake*", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -377,11 +376,10 @@ func TestPhotosFilterTitle(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO should work
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Title = "guest456 | engine*"
+		f.Title = "guest456|engine*"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -394,7 +392,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 	t.Run("OrSearch2", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Title = "guest456 | amaz'ing"
+		f.Title = "guest456|amaz'ing"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -407,7 +405,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 	t.Run("OrSearch3", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Title = "farm*animal | amaz'ing"
+		f.Title = "farm*animal|amaz'ing"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -416,7 +414,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Greater(t, len(photos), 1)
-	})*/
+	})
 }
 
 func TestPhotosQueryTitle(t *testing.T) {
@@ -459,8 +457,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO Fix or search
-	/*t.Run("Neckarbrücke or Lake*", func(t *testing.T) {
+	t.Run("Neckarbrücke or Lake*", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "title:\"Neckarbrücke OR Lake*\""
@@ -471,7 +468,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 3)
+		assert.Equal(t, len(photos), 0)
 	})
 	t.Run("Neckarbrücke whitespace pipe whitespace Lake*", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -485,7 +482,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, len(photos), 3)
-	})*/
+	})
 	t.Run("Neckarbrücke pipe Lake*", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -790,11 +787,10 @@ func TestPhotosQueryTitle(t *testing.T) {
 		// TODO Finds all?
 		assert.Greater(t, len(photos), 1)
 	})
-	//TODO should work
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "title:\"guest456 | engine*\""
+		f.Query = "title:\"guest456|engine*\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -807,7 +803,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 	t.Run("OrSearch2", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "title:\"guest456 | amaz'ing\""
+		f.Query = "title:\"guest456|amaz'ing\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -820,7 +816,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 	t.Run("OrSearch3", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "title:\"farm*animal | amaz'ing\""
+		f.Query = "title:\"farm*animal|amaz'ing\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -829,5 +825,5 @@ func TestPhotosQueryTitle(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Greater(t, len(photos), 1)
-	})*/
+	})
 }

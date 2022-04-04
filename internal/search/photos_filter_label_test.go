@@ -34,20 +34,6 @@ func TestPhotosFilterLabel(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 2)
 	})
-	//TODO wildcard
-	/*t.Run("landscape", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Label = "lands*"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 16)
-	})*/
 	t.Run("cake pipe flower", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -74,33 +60,6 @@ func TestPhotosFilterLabel(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 2)
 	})
-	//TODO
-	/*t.Run("cake or flower", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Label = "cake or flower"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})
-	t.Run("cake OR flower", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Label = "cake OR flower"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -434,20 +393,6 @@ func TestPhotosQueryLabel(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 2)
 	})
-	//TODO wildcard
-	/*t.Run("landscape", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "label:\"lands*\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 16)
-	})*/
 	t.Run("cake pipe flower", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -474,33 +419,6 @@ func TestPhotosQueryLabel(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 2)
 	})
-	//TODO
-	/*t.Run("cake or flower", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "label:\"cake or flower\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})
-	t.Run("cake OR flower", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "label:\"cake OR flower\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})*/
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

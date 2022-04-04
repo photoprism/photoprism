@@ -87,33 +87,6 @@ func TestPhotosFilterSubjects(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 5)
 	})
-	//TODO
-	/*t.Run("Actor A or Actress A", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Subjects = "Actor A or Actress A"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 5)
-	})
-	t.Run("Actor A OR Actress A", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Subjects = "Actor A OR Actress A"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 5)
-	})*/
 	t.Run("Actor A ampersand Actress A", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -127,33 +100,6 @@ func TestPhotosFilterSubjects(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO
-	/*t.Run("Actor A and Actress A", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Subjects = "Actor A and Actress A"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 1)
-	})
-	t.Run("Actor A AND Actress A", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Subjects = "Actor A AND Actress A"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 1)
-	})*/
 	t.Run("Actor A whitespace ampersand whitespace Actress A", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -485,33 +431,6 @@ func TestPhotosQuerySubjects(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 5)
 	})
-	//TODO
-	/*t.Run("Actor A or Actress A", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "subjects:\"Actor A or Actress A\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 5)
-	})
-	t.Run("Actor A OR Actress A", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "subjects:\"Actor A OR Actress A\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 5)
-	})*/
 	t.Run("Actor A ampersand Actress A", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -525,33 +444,6 @@ func TestPhotosQuerySubjects(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO
-	/*t.Run("Actor A and Actress A", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "subjects:\"Actor A and Actress A\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 1)
-	})
-	t.Run("Actor A AND Actress A", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "subjects:\"Actor A AND Actress A\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 1)
-	})*/
 	t.Run("Actor A whitespace ampersand whitespace Actress A", func(t *testing.T) {
 		var f form.SearchPhotos
 

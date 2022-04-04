@@ -47,33 +47,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO Fix or search
-	/*t.Run("London or 2790/07", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Path = "London or 2790/07"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})
-	t.Run("London whitespace pipe whitespace 2790/07", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Path = "London | 2790/07"
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})*/
 	t.Run("London pipe 2790/07", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -419,11 +392,10 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	// TODO Should work
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Path = "%abc/%folderx | 20'20/vacat'ion"
+		f.Path = "%abc/%folderx|20'20/vacat'ion"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -436,7 +408,7 @@ func TestPhotosFilterPath(t *testing.T) {
 	t.Run("OrSearch2", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Path = "202*3/vac*ation | 20'20/vacat'ion"
+		f.Path = "202*3/vac*ation|20'20/vacat'ion"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -449,7 +421,7 @@ func TestPhotosFilterPath(t *testing.T) {
 	t.Run("OrSearch3", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Path = "20|22/vacat|ion | &abc/&folde"
+		f.Path = "20'20/vacat'ion|&abc/&folde"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -462,7 +434,7 @@ func TestPhotosFilterPath(t *testing.T) {
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Path = "London | 1990/04"
+		f.Path = "London|1990/04"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -470,8 +442,8 @@ func TestPhotosFilterPath(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
-	})*/
+		assert.Greater(t, len(photos), 2)
+	})
 }
 
 func TestPhotosQueryPath(t *testing.T) {
@@ -514,33 +486,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	//TODO Fix or search
-	/*t.Run("London or 2790/07", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "path:\"London or 2790/07\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})
-	t.Run("London whitespace pipe whitespace 2790/07", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "path:\"London | 2790/07\""
-		f.Merged = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, len(photos), 2)
-	})*/
 	t.Run("London pipe 2790/07", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -888,11 +833,10 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	// TODO Should work
-	/*t.Run("OrSearch", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "path:\"%abc/%folderx | 20'20/vacat'ion\""
+		f.Query = "path:\"%abc/%folderx|20'20/vacat'ion\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -905,7 +849,7 @@ func TestPhotosQueryPath(t *testing.T) {
 	t.Run("OrSearch2", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "path:\"202*3/vac*ation | 20'20/vacat'ion\""
+		f.Query = "path:\"202*3/vac*ation|20'20/vacat'ion\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -918,7 +862,7 @@ func TestPhotosQueryPath(t *testing.T) {
 	t.Run("OrSearch3", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "path:\"20|22/vacat|ion | &abc/&folde\""
+		f.Query = "path:\"20'20/vacat'ion|&abc/&folde\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -931,7 +875,7 @@ func TestPhotosQueryPath(t *testing.T) {
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "path:\"London | 1990/04\""
+		f.Query = "path:\"London|1990/04\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -939,6 +883,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
-	})*/
+		assert.Greater(t, len(photos), 2)
+	})
 }
