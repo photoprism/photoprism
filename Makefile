@@ -39,6 +39,7 @@ test-go: reset-testdb run-test-go
 test-pkg: reset-testdb run-test-pkg
 test-api: reset-testdb run-test-api
 test-short: reset-testdb run-test-short
+test-mariadb: reset-acceptance run-test-mariadb
 acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
 acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
 acceptance-private-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop
@@ -206,6 +207,9 @@ acceptance-private-firefox:
 reset-mariadb:
 	$(info Resetting photoprism database...)
 	mysql < scripts/sql/reset-mariadb.sql
+reset-acceptance:
+	$(info Resetting acceptance database...)
+	echo "DROP DATABASE IF EXISTS acceptance;\nCREATE DATABASE IF NOT EXISTS acceptance;" | mysql
 reset-testdb:
 	$(info Removing test database files...)
 	find ./internal -type f -name ".test.*" -delete
@@ -215,6 +219,9 @@ run-test-short:
 run-test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
+run-test-mariadb:
+	$(info Running all Go unit tests on MariaDB...)
+	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go unit tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/...
@@ -415,4 +422,4 @@ tidy:
     install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell help \
     docker-local docker-local-all docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish \
     docker-local-develop docker-local-develop-all docker-local-develop-bookworm docker-local-develop-bullseye \
-    docker-local-develop-buster docker-local-develop-impish;
+    docker-local-develop-buster docker-local-develop-impish test-mariadb reset-acceptance run-test-mariadb;
