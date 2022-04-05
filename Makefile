@@ -279,7 +279,7 @@ docker-develop-jammy:
 	docker pull --platform=arm64 ubuntu:jammy
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy
 docker-preview: docker-preview-bookworm
-docker-preview-all: docker-preview docker-preview-bullseye docker-preview-buster docker-preview-impish
+docker-preview-all: docker-preview docker-preview-bullseye docker-preview-buster docker-preview-jammy
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
@@ -320,7 +320,7 @@ docker-preview-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
 docker-release: docker-release-bookworm
-docker-release-all: docker-release docker-release-bullseye docker-release-buster docker-release-impish
+docker-release-all: docker-release docker-release-bullseye docker-release-buster docker-release-jammy
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
@@ -361,7 +361,7 @@ docker-release-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
 docker-local: docker-local-bookworm
-docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish
+docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -374,6 +374,10 @@ docker-local-buster:
 	docker pull photoprism/develop:buster
 	docker pull debian:buster-slim
 	scripts/docker/build.sh photoprism buster /buster
+docker-local-jammy:
+	docker pull photoprism/develop:jammy
+	docker pull ubuntu:jammy
+	scripts/docker/build.sh photoprism jammy /jammy
 docker-local-impish:
 	docker pull photoprism/develop:impish
 	docker pull ubuntu:impish
