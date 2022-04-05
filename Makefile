@@ -274,6 +274,10 @@ docker-develop-impish:
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 impish /impish
+docker-develop-jammy:
+	docker pull --platform=amd64 ubuntu:jammy
+	docker pull --platform=arm64 ubuntu:jammy
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy
 docker-preview: docker-preview-bookworm
 docker-preview-all: docker-preview docker-preview-bullseye docker-preview-buster docker-preview-impish
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
@@ -303,9 +307,15 @@ docker-preview-buster:
 	docker pull --platform=amd64 debian:buster-slim
 	docker pull --platform=arm64 debian:buster-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-buster /buster
+docker-preview-jammy:
+	docker pull --platform=amd64 photoprism/develop:jammy
+	docker pull --platform=arm64 photoprism/develop:jammy
+	docker pull --platform=amd64 ubuntu:jammy
+	docker pull --platform=arm64 ubuntu:jammy
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-jammy /jammy
 docker-preview-impish:
-	docker pull --platform=amd64 photoprism/develop:latest
-	docker pull --platform=arm64 photoprism/develop:latest
+	docker pull --platform=amd64 photoprism/develop:impish
+	docker pull --platform=arm64 photoprism/develop:impish
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
@@ -338,6 +348,12 @@ docker-release-buster:
 	docker pull --platform=amd64 debian:buster-slim
 	docker pull --platform=arm64 debian:buster-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
+docker-preview-jammy:
+	docker pull --platform=amd64 photoprism/develop:jammy
+	docker pull --platform=arm64 photoprism/develop:jammy
+	docker pull --platform=amd64 ubuntu:jammy
+	docker pull --platform=arm64 ubuntu:jammy
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy
 docker-release-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
