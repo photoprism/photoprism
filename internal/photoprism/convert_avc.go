@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -46,6 +45,7 @@ var FFmpegAvcEncoders = map[string]string{
 	"osx":                 FFmpegAppleEncoder,
 	"mac":                 FFmpegAppleEncoder,
 	"macos":               FFmpegAppleEncoder,
+	"darwin":              FFmpegAppleEncoder,
 	FFmpegAppleEncoder:    FFmpegAppleEncoder,
 	"vaapi":               FFmpegVAAPIEncoder,
 	"libva":               FFmpegVAAPIEncoder,
@@ -55,6 +55,7 @@ var FFmpegAvcEncoders = map[string]string{
 	"cuda":                FFmpegNvidiaEncoder,
 	FFmpegNvidiaEncoder:   FFmpegNvidiaEncoder,
 	"v4l2":                FFmpegV4L2Encoder,
+	"v4l":                 FFmpegV4L2Encoder,
 	"video4linux":         FFmpegV4L2Encoder,
 	"rp4":                 FFmpegV4L2Encoder,
 	"raspberry":           FFmpegV4L2Encoder,
@@ -76,11 +77,10 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, encoderName string) (
 		if encoderName == FFmpegIntelEncoder {
 			format := "format=rgb32"
 
+			// Options: ffmpeg -hide_banner -h encoder=h264_qsv
 			result = exec.Command(
 				c.conf.FFmpegBin(),
 				"-qsv_device", "/dev/dri/renderD128",
-				"-init_hw_device", "qsv=hw",
-				"-filter_hw_device", "hw",
 				"-i", f.FileName(),
 				"-c:a", "aac",
 				"-vf", format,
@@ -96,6 +96,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, encoderName string) (
 		} else if encoderName == FFmpegAppleEncoder {
 			format := "format=yuv420p"
 
+			// Options: ffmpeg -hide_banner -h encoder=h264_videotoolbox
 			result = exec.Command(
 				c.conf.FFmpegBin(),
 				"-i", f.FileName(),
@@ -112,8 +113,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, encoderName string) (
 				avcName,
 			)
 		} else if encoderName == FFmpegNvidiaEncoder {
-			// to show options: ffmpeg -hide_banner -h encoder=h264_nvenc
-
+			// Options: ffmpeg -hide_banner -h encoder=h264_nvenc
 			result = exec.Command(
 				c.conf.FFmpegBin(),
 				"-r", "30",
@@ -136,6 +136,27 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, encoderName string) (
 				"-y",
 				avcName,
 			)
+		} else if encoderName == FFmpegV4L2Encoder {
+			format := "format=yuv420p"
+
+			// Options: ffmpeg -hide_banner -h encoder=h264_v4l2m2m
+			result = exec.Command(
+				c.conf.FFmpegBin(),
+				"-i", f.FileName(),
+				"-c:v", encoderName,
+				"-c:a", "aac",
+				"-vf", format,
+				"-num_output_buffers", "72",
+				"-num_capture_buffers", "64",
+				"-max_muxing_queue_size", "1024",
+				"-crf", "23",
+				"-vsync", "vfr",
+				"-r", "30",
+				"-b:v", c.AvcBitrate(f),
+				"-f", "mp4",
+				"-y",
+				avcName,
+			)
 		} else {
 			format := "format=yuv420p"
 
@@ -145,8 +166,6 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, encoderName string) (
 				"-c:v", encoderName,
 				"-c:a", "aac",
 				"-vf", format,
-				"-num_output_buffers", strconv.Itoa(c.conf.FFmpegBuffers()+8),
-				"-num_capture_buffers", strconv.Itoa(c.conf.FFmpegBuffers()),
 				"-max_muxing_queue_size", "1024",
 				"-crf", "23",
 				"-vsync", "vfr",

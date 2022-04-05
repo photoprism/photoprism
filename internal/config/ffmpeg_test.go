@@ -22,17 +22,6 @@ func TestConfig_FFmpegEnabled(t *testing.T) {
 	assert.Equal(t, false, c.FFmpegEnabled())
 }
 
-func TestConfig_FFmpegBuffers(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, 8, c.FFmpegBuffers())
-
-	c.options.FFmpegBuffers = 3300
-	assert.Equal(t, 2048, c.FFmpegBuffers())
-
-	c.options.FFmpegBuffers = 589
-	assert.Equal(t, 589, c.FFmpegBuffers())
-}
-
 func TestConfig_FFmpegBitrate(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, 50, c.FFmpegBitrate())
