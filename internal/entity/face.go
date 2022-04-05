@@ -303,18 +303,6 @@ func (m *Face) Show() (err error) {
 	return m.Update("FaceHidden", false)
 }
 
-// Save updates the existing or inserts a new face.
-func (m *Face) Save() error {
-	if m.ID == "" {
-		return fmt.Errorf("empty id")
-	}
-
-	faceMutex.Lock()
-	defer faceMutex.Unlock()
-
-	return Save(m, "ID")
-}
-
 // Create inserts the face to the database.
 func (m *Face) Create() error {
 	if m.ID == "" {

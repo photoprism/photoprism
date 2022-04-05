@@ -203,7 +203,7 @@ func TestFace_Save(t *testing.T) {
 
 		assert.Nil(t, FindFace(m.ID))
 
-		if err := m.Save(); err != nil {
+		if err := m.Create(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -213,7 +213,7 @@ func TestFace_Save(t *testing.T) {
 	t.Run("Error", func(t *testing.T) {
 		m := NewFace("12345fde", SrcAuto, face.Embeddings{face.Embedding{1}, face.Embedding{2}})
 		assert.Nil(t, FindFace(m.ID))
-		assert.Error(t, m.Save())
+		assert.Error(t, m.Create())
 		assert.Nil(t, FindFace(m.ID))
 	})
 }
@@ -227,7 +227,7 @@ func TestFace_Update(t *testing.T) {
 
 	assert.Nil(t, FindFace(id))
 
-	if err := m.Save(); err != nil {
+	if err := m.Create(); err != nil {
 		t.Fatal(err)
 		return
 	}

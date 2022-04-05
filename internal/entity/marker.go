@@ -697,24 +697,6 @@ func FindMarker(markerUid string) *Marker {
 	return &result
 }
 
-// FindFaceMarker finds the best marker for a given face
-func FindFaceMarker(faceId string) *Marker {
-	if faceId == "" {
-		return nil
-	}
-
-	var result Marker
-
-	if err := Db().Where("face_id = ?", faceId).
-		Where("thumb <> '' AND marker_invalid = 0").
-		Order("face_dist ASC, q DESC").First(&result).Error; err != nil {
-		log.Warnf("markers: found no marker for face %s", sanitize.Log(faceId))
-		return nil
-	}
-
-	return &result
-}
-
 // CreateMarkerIfNotExists updates a marker in the database or creates a new one if needed.
 func CreateMarkerIfNotExists(m *Marker) (*Marker, error) {
 	result := Marker{}
@@ -727,7 +709,7 @@ func CreateMarkerIfNotExists(m *Marker) (*Marker, error) {
 	} else if err := m.Create(); err != nil {
 		return m, err
 	} else {
-		log.Debugf("markers: added %s marker %s for %s", TypeString(m.MarkerType), sanitize.Log(m.MarkerUID), sanitize.Log(m.FileUID))
+		log.Debugf("markers: added %s %s for file %s", TypeString(m.MarkerType), sanitize.Log(m.MarkerUID), sanitize.Log(m.FileUID))
 	}
 
 	return m, nil
