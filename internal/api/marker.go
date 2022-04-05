@@ -53,18 +53,16 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 		return nil, nil, fmt.Errorf("bad request")
 	} else if marker, err = query.MarkerByUID(uid); err != nil {
 		AbortEntityNotFound(c)
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("uid %s %s", uid, err)
 	} else if marker.FileUID == "" {
 		AbortEntityNotFound(c)
 		return nil, marker, fmt.Errorf("marker file missing")
 	}
 
 	// Find file.
-	if f, err := query.FileByUID(marker.FileUID); err != nil {
+	if file, err = query.FileByUID(marker.FileUID); err != nil {
 		AbortEntityNotFound(c)
-		return nil, marker, err
-	} else {
-		file = &f
+		return file, marker, fmt.Errorf("file %s %s", marker.FileUID, err)
 	}
 
 	return file, marker, nil
@@ -96,7 +94,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 		file, marker, err := findFileMarker(c)
 
 		if err != nil {
-			log.Debugf("marker: %s (find)", err)
+			log.Debugf("faces: %s (find marker to update)", err)
 			return
 		}
 
@@ -104,18 +102,18 @@ func UpdateMarker(router *gin.RouterGroup) {
 		f, err := form.NewMarker(*marker)
 
 		if err != nil {
-			log.Errorf("marker: %s (new form)", err)
+			log.Errorf("faces: %s (create marker update form)", err)
 			AbortSaveFailed(c)
 			return
 		} else if err := c.BindJSON(&f); err != nil {
-			log.Errorf("marker: %s (update form)", err)
+			log.Errorf("faces: %s (set updated marker values)", err)
 			AbortBadRequest(c)
 			return
 		}
 
 		// Update marker from form values.
 		if changed, err := marker.SaveForm(f); err != nil {
-			log.Errorf("marker: %s", err)
+			log.Errorf("faces: %s (update marker)", err)
 			AbortSaveFailed(c)
 			return
 		} else if changed {
@@ -180,12 +178,12 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 		file, marker, err := findFileMarker(c)
 
 		if err != nil {
-			log.Debugf("api: %s (clear marker subject)", err)
+			log.Debugf("faces: %s (find marker to clear subject)", err)
 			return
 		}
 
 		if err := marker.ClearSubject(entity.SrcManual); err != nil {
-			log.Errorf("faces: %s (clear subject)", err)
+			log.Errorf("faces: %s (clear marker subject)", err)
 			AbortSaveFailed(c)
 			return
 		} else if err := query.UpdateSubjectCovers(); err != nil {

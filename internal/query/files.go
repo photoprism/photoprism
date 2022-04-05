@@ -57,39 +57,52 @@ func FilesByUID(u []string, limit int, offset int) (files entity.Files, err erro
 }
 
 // FileByPhotoUID finds a file for the given photo UID.
-func FileByPhotoUID(u string) (file entity.File, err error) {
-	if err := Db().Where("photo_uid = ? AND file_primary = 1", u).Preload("Photo").First(&file).Error; err != nil {
-		return file, err
+func FileByPhotoUID(photoUID string) (*entity.File, error) {
+	f := entity.File{}
+
+	if photoUID == "" {
+		return &f, fmt.Errorf("photo uid required")
 	}
 
-	return file, nil
+	err := Db().Where("photo_uid = ? AND file_primary = 1", photoUID).Preload("Photo").First(&f).Error
+	return &f, err
 }
 
 // VideoByPhotoUID finds a video for the given photo UID.
-func VideoByPhotoUID(u string) (file entity.File, err error) {
-	if err := Db().Where("photo_uid = ? AND file_video = 1", u).Preload("Photo").First(&file).Error; err != nil {
-		return file, err
+func VideoByPhotoUID(photoUID string) (*entity.File, error) {
+	f := entity.File{}
+
+	if photoUID == "" {
+		return &f, fmt.Errorf("photo uid required")
 	}
 
-	return file, nil
+	err := Db().Where("photo_uid = ? AND file_video = 1", photoUID).Preload("Photo").First(&f).Error
+	return &f, err
 }
 
 // FileByUID finds a file entity for the given UID.
-func FileByUID(uid string) (file entity.File, err error) {
-	if err := Db().Where("file_uid = ?", uid).Preload("Photo").First(&file).Error; err != nil {
-		return file, err
+func FileByUID(fileUID string) (*entity.File, error) {
+	f := entity.File{}
+
+	if fileUID == "" {
+		return &f, fmt.Errorf("file uid required")
 	}
 
-	return file, nil
+	err := Db().Where("file_uid = ?", fileUID).Preload("Photo").First(&f).Error
+	return &f, err
 }
 
 // FileByHash finds a file with a given hash string.
-func FileByHash(fileHash string) (file entity.File, err error) {
-	if err := Db().Where("file_hash = ?", fileHash).Preload("Photo").First(&file).Error; err != nil {
-		return file, err
+func FileByHash(fileHash string) (*entity.File, error) {
+	f := entity.File{}
+
+	if fileHash == "" {
+		return &f, fmt.Errorf("file hash required")
 	}
 
-	return file, nil
+	err := Db().Where("file_hash = ?", fileHash).Preload("Photo").First(&f).Error
+
+	return &f, err
 }
 
 // RenameFile renames an indexed file.
