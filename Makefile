@@ -348,7 +348,7 @@ docker-release-buster:
 	docker pull --platform=amd64 debian:buster-slim
 	docker pull --platform=arm64 debian:buster-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
-docker-preview-jammy:
+docker-release-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=amd64 ubuntu:jammy
