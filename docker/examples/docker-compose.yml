@@ -82,11 +82,10 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clitools, clean):
       # PHOTOPRISM_INIT: "gpu tensorflow"
-      ## Hardware video transcoding config (optional)
+      ## Hardware Video Transcoding (optional):
+      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # FFmpeg encoder ("software", "intel", "nvidia", "apple", "v4l2", "vaapi")
       # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # use Video4Linux for AVC transcoding (default: libx264)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # use Intel Quick Sync Video for AVC transcoding (default: libx264)
       ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000

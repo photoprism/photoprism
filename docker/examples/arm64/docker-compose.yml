@@ -77,8 +77,6 @@ services:
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification
       PHOTOPRISM_JPEG_QUALITY: 85                    # image quality, a higher value reduces compression (25-100)
       PHOTOPRISM_RAW_PRESETS: "false"                # enables RAW file converter presets (may reduce performance)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # FFmpeg AVC encoder for video transcoding (default: libx264)
-      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       PHOTOPRISM_DETECT_NSFW: "false"                # flag photos as private that MAY be offensive
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # allow uploads that MAY be offensive
       # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
@@ -93,6 +91,9 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clean):
       # PHOTOPRISM_INIT: "update clean"
+      ## Hardware Video Transcoding (optional):
+      # PHOTOPRISM_FFMPEG_ENCODER: "v4l2"            # FFmpeg encoder ("software", "intel", "nvidia", "apple", "v4l2", "vaapi")
+      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000

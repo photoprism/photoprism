@@ -108,10 +108,10 @@ services:
       PHOTOPRISM_OIDC_CLIENT_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clitools, clean):
       # PHOTOPRISM_INIT: "gpu tensorflow"
-      ## Hardware video transcoding config (optional):
-      # PHOTOPRISM_FFMPEG_ENCODER: "nvidia" # FFmpeg Encoders ("software", "intel", "nvidia", "apple", "v4l2", "vaapi")
-      # PHOTOPRISM_FFMPEG_BUFFERS: "64"    # FFmpeg capture buffers (default: 32)
-      # PHOTOPRISM_FFMPEG_BITRATE: "32"    # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
+      ## Hardware Video Transcoding (optional):
+      # PHOTOPRISM_FFMPEG_ENCODER: "nvidia"          # FFmpeg encoder ("software", "intel", "nvidia", "apple", "v4l2", "vaapi")
+      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
+      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
     #  - "/dev/dri:/dev/dri"                         # Intel (h264_qsv)
