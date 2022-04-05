@@ -157,8 +157,8 @@ services:
       PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB or MySQL database user password
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clean):
       PHOTOPRISM_INIT: "update tensorflow clean"
-      HOME: "/photoprism"
-    working_dir: "/photoprism"
+      HOME: "/photoprism" # do not change or remove
+    working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
       # "/host/folder:/photoprism/folder"       # example:

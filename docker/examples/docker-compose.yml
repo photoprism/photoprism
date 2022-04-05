@@ -91,7 +91,7 @@ services:
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
-      HOME: "/photoprism"
+      HOME: "/photoprism" # do not change or remove
     ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
     # user: "1000:1000"
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
@@ -104,7 +104,7 @@ services:
     #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
     #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
     #  - "/dev/video11:/dev/video11"                 # Video4Linux (h264_v4l2m2m)
-    working_dir: "/photoprism"
+    working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
       # "/host/folder:/photoprism/folder"                # example

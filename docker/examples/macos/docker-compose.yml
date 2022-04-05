@@ -78,7 +78,7 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clitools, clean):
       # PHOTOPRISM_INIT: "gpu tensorflow"
-      HOME: "/photoprism"
+      HOME: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
       # "/host/folder:/photoprism/folder"                # example

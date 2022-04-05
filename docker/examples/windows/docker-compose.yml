@@ -81,8 +81,8 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      HOME: "/photoprism"
-    working_dir: "/photoprism"
+      HOME: "/photoprism" # do not change or remove
+    working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: use "/" not "\" as separator, "~" is a shortcut for C:/user/{username}, "." for the current directory
     volumes:
       # "C:/user/username/folder:/photoprism/folder"       # example
