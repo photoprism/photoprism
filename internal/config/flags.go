@@ -12,7 +12,7 @@ import (
 // GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
-		Name:   "admin-password",
+		Name:   "admin-password, a",
 		Usage:  "initial admin `PASSWORD`, minimum 4 characters",
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
