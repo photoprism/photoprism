@@ -51,3 +51,64 @@ func TestConfig_DisableClassification(t *testing.T) {
 	c.options.DisableTensorFlow = false
 	assert.False(t, c.DisableClassification())
 }
+
+func TestConfig_DisableRaw(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.DisableRaw())
+	c.options.DisableRaw = true
+	assert.True(t, c.DisableRaw())
+	assert.True(t, c.DisableDarktable())
+	assert.True(t, c.DisableRawtherapee())
+	c.options.DisableRaw = false
+	assert.False(t, c.DisableRaw())
+	c.options.DisableDarktable = true
+	c.options.DisableRawtherapee = true
+	assert.False(t, c.DisableRaw())
+	c.options.DisableDarktable = false
+	c.options.DisableRawtherapee = false
+	assert.False(t, c.DisableRaw())
+	assert.False(t, c.DisableDarktable())
+	assert.False(t, c.DisableRawtherapee())
+}
+
+func TestConfig_DisableDarktable(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	missing := c.DarktableBin() == ""
+
+	assert.Equal(t, missing, c.DisableDarktable())
+	c.options.DisableRaw = true
+	assert.True(t, c.DisableDarktable())
+	c.options.DisableRaw = false
+	assert.Equal(t, missing, c.DisableDarktable())
+	c.options.DisableDarktable = true
+	assert.True(t, c.DisableDarktable())
+	c.options.DisableDarktable = false
+	assert.Equal(t, missing, c.DisableDarktable())
+}
+
+func TestConfig_DisableRawtherapee(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	missing := c.RawtherapeeBin() == ""
+
+	assert.Equal(t, missing, c.DisableRawtherapee())
+	c.options.DisableRaw = true
+	assert.True(t, c.DisableRawtherapee())
+	c.options.DisableRaw = false
+	assert.Equal(t, missing, c.DisableRawtherapee())
+	c.options.DisableRawtherapee = true
+	assert.True(t, c.DisableRawtherapee())
+	c.options.DisableRawtherapee = false
+	assert.Equal(t, missing, c.DisableRawtherapee())
+}
+
+func TestConfig_DisableSips(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	missing := c.SipsBin() == ""
+
+	assert.Equal(t, missing, c.DisableSips())
+	c.options.DisableSips = true
+	assert.True(t, c.DisableSips())
+	c.options.DisableSips = false
+	assert.Equal(t, missing, c.DisableSips())
+}

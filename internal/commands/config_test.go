@@ -23,7 +23,7 @@ func TestConfigCommand(t *testing.T) {
 	}
 
 	// Expected config command output.
-	assert.Contains(t, output, "Name                      Value")
+	assert.Contains(t, output, "NAME                      VALUE")
 	assert.Contains(t, output, "config-file")
 	assert.Contains(t, output, "darktable-cli")
 	assert.Contains(t, output, "originals-path")

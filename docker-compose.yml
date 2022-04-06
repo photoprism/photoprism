@@ -1,32 +1,7 @@
 version: '3.5'
 
-## Development Environment with
-## - HTTPS Reverse Proxy
-## - App Dev Container
-## - MariaDB Database Server
-## - Keycloak OpenID Connect Provider
-## - and Dummy Services
 services:
-  ## Traefik HTTPS Reverse Proxy
-  ## Includes Let's Encrypt certs for local dev domain "localssl.dev" (all records point to 127.0.0.1)
-  ## Docs: https://doc.traefik.io/traefik/
-  traefik:
-    image: photoprism/traefik:220405
-    ports:
-      # - "80:80" # HTTP (redirects to HTTPS)
-      - "443:443" # HTTPS (required)
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.localssl.dev`)"
-      - "traefik.http.routers.traefik.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.traefik.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.traefik.tls=true"
-      - "traefik.http.routers.traefik.tls.certresolver=myresolver"
-      - "traefik.http.routers.traefik.service=api@internal"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
-
-  ## App Build Environment
+  ## PhotoPrism Development Environment (MariaDB)
   ## Docs: https://docs.photoprism.org/developer-guide/
   photoprism:
     build: .
@@ -85,15 +60,16 @@ services:
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables storage permission updates on startup
-      PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables creating YAML metadata files
+      PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
       PHOTOPRISM_DISABLE_PLACES: "false"             # disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW files
+      PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW files (reduces performance)
       PHOTOPRISM_DETECT_NSFW: "false"                # flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that may be offensive
-      PHOTOPRISM_RAW_PRESETS: "false"                # enables RAW file converter presets (may reduce performance)
       PHOTOPRISM_THUMB_FILTER: "lanczos"             # resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048                    # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
@@ -146,9 +122,28 @@ services:
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
 
+  ## HTTPS Reverse Proxy
+  ## includes "*.localssl.dev" SSL certificate for local development
+  ## Docs: https://doc.traefik.io/traefik/
+  traefik:
+    image: photoprism/traefik:220405
+    ports:
+      # - "80:80" # HTTP (redirects to HTTPS)
+      - "443:443" # HTTPS (required)
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localssl.dev`)"
+      - "traefik.http.routers.traefik.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.traefik.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=myresolver"
+      - "traefik.http.routers.traefik.service=api@internal"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
+
   ## Keycloak OpenID Connect Provider
-  ## Admin Account: admin / photoprism
-  ## User Account: user / photoprism
+  ## Login: user / photoprism
+  ## Admin: admin / photoprism
   keycloak:
     image: quay.io/keycloak/keycloak:17.0.1
     command: "start-dev" # development mode, do not use this in production!
@@ -174,6 +169,18 @@ services:
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
 
+  ## Dummy OpenID Connect Provider
+  dummy-oidc:
+    image: photoprism/dummy-oidc:220405
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
+      - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
+      - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.localssl.dev`)"
+      - "traefik.http.routers.dummy-oidc.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.dummy-oidc.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.dummy-oidc.tls=true"
+
   ## Dummy WebDAV Server
   dummy-webdav:
     image: photoprism/dummy-webdav:220405
@@ -188,18 +195,6 @@ services:
       - "traefik.http.routers.dummy-webdav.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.dummy-webdav.tls=true"
-
-  ## Dummy OpenID Connect Server
-  dummy-oidc:
-    image: photoprism/dummy-oidc:220405
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
-      - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
-      - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.localssl.dev`)"
-      - "traefik.http.routers.dummy-oidc.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.dummy-oidc.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.dummy-oidc.tls=true"
 
 ## Create named volume for Go module cache
 volumes:

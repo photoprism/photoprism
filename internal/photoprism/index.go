@@ -126,6 +126,7 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 	defer ind.files.Done()
 
 	filesIndexed := 0
+	skipRaw := ind.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
@@ -176,25 +177,28 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 
 			mf, err := NewMediaFile(fileName)
 
+			// Check if file exists and is not empty.
 			if err != nil {
-				log.Error(err)
+				log.Errorf("index: %s", err)
 				return nil
 			}
 
-			if mf.FileSize() == 0 {
-				log.Infof("index: skipped empty file %s", sanitize.Log(mf.BaseName()))
+			// Ignore RAW images?
+			if mf.IsRaw() && skipRaw {
+				log.Infof("index: skipped raw %s", sanitize.Log(mf.RootRelName()))
 				return nil
 			}
 
+			// Skip?
 			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) {
 				return nil
 			}
 
+			// Find related files to index.
 			related, err := mf.RelatedFiles(ind.conf.Settings().StackSequences())
 
 			if err != nil {
 				log.Warnf("index: %s", err.Error())
-
 				return nil
 			}
 

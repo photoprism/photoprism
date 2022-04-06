@@ -115,7 +115,7 @@ func AlbumCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		} else if thumbnail == "" {
-			log.Errorf("%s: %s has empty thumb name - bug?", albumCover, filepath.Base(fileName))
+			log.Errorf("%s: %s has empty thumb name - possible bug", albumCover, filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
@@ -229,7 +229,7 @@ func LabelCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		} else if thumbnail == "" {
-			log.Errorf("%s: %s has empty thumb name - bug?", labelCover, filepath.Base(fileName))
+			log.Errorf("%s: %s has empty thumb name - possible bug", labelCover, filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}

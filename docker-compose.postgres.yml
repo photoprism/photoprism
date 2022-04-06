@@ -4,12 +4,8 @@ version: '3.5'
 # The current Gorm version does NOT support compatible general data types:
 # https://github.com/photoprism/photoprism/issues/47
 
-## Development Environment with
-## - App Dev Container
-## - PostgreSQL Database Server
-## - and Dummy Services
 services:
-  ## App Dev Container
+  ## PhotoPrism Development Environment (PostgresSQL)
   ## Docs: https://docs.photoprism.app/developer-guide/
   photoprism:
     build: .
@@ -54,7 +50,7 @@ services:
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"       # disables storage permission updates on startup
-      PHOTOPRISM_DISABLE_BACKUPS: "false"     # disables creating YAML metadata files
+      PHOTOPRISM_DISABLE_BACKUPS: "false"     # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"      # disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"    # disables settings UI and API
       PHOTOPRISM_DISABLE_PLACES: "false"      # disables reverse geocoding and maps
@@ -62,7 +58,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"  # disables all features depending on TensorFlow
       PHOTOPRISM_DETECT_NSFW: "false"         # flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "false"         # allows uploads that may be offensive
-      PHOTOPRISM_RAW_PRESETS: "false"         # enables RAW file converter presets (may reduce performance)
+      PHOTOPRISM_RAW_PRESETS: "false"         # enables applying user presets when converting RAW files (reduces performance)
       PHOTOPRISM_THUMB_FILTER: "lanczos"      # resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048             # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)

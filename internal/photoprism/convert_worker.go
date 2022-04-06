@@ -32,7 +32,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 				logError(err, job)
 			} else if metaData := job.file.MetaData(); metaData.CodecAvc() {
 				continue
-			} else if _, err := job.convert.ToAvc(job.file, job.convert.conf.FFmpegEncoder()); err != nil {
+			} else if _, err := job.convert.ToAvc(job.file, job.convert.conf.FFmpegEncoder(), false, false); err != nil {
 				logError(err, job)
 			}
 		default:

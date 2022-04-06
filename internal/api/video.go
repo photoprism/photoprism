@@ -3,14 +3,13 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
-
-	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/video"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // GetVideo streams videos.
@@ -75,7 +74,7 @@ func GetVideo(router *gin.RouterGroup) {
 		} else if f.FileCodec != string(videoType.Codec) {
 			conv := service.Convert()
 
-			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegEncoder()); err != nil {
+			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegEncoder(), false, false); err != nil {
 				log.Errorf("video: transcoding %s failed", sanitize.Log(f.FileName))
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 				return

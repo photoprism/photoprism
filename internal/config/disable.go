@@ -1,6 +1,6 @@
 package config
 
-// DisableWebDAV tests if the built-in WebDAV server should be disabled.
+// DisableWebDAV checks if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
 	if c.ReadOnly() || c.Demo() {
 		return true
@@ -9,7 +9,7 @@ func (c *Config) DisableWebDAV() bool {
 	return c.options.DisableWebDAV
 }
 
-// DisableBackups tests if photo and album metadata files should be disabled.
+// DisableBackups checks if photo and album metadata files should be disabled.
 func (c *Config) DisableBackups() bool {
 	if !c.SidecarWritable() {
 		return true
@@ -18,36 +18,37 @@ func (c *Config) DisableBackups() bool {
 	return c.options.DisableBackups
 }
 
-// DisableSettings tests if users should not be allowed to change settings.
+// DisableSettings checks if users should not be allowed to change settings.
 func (c *Config) DisableSettings() bool {
 	return c.options.DisableSettings
 }
 
-// DisablePlaces tests if geocoding and maps should be disabled.
+// DisablePlaces checks if geocoding and maps should be disabled.
 func (c *Config) DisablePlaces() bool {
 	return c.options.DisablePlaces
 }
 
-// DisableExifTool tests if ExifTool JSON files should not be created for improved metadata extraction.
+// DisableExifTool checks if ExifTool JSON files should not be created for improved metadata extraction.
 func (c *Config) DisableExifTool() bool {
-	if !c.SidecarWritable() || c.ExifToolBin() == "" {
+	if c.options.DisableExifTool {
 		return true
+	} else if !c.SidecarWritable() || c.ExifToolBin() == "" {
+		c.options.DisableExifTool = true
 	}
 
 	return c.options.DisableExifTool
 }
 
-// DisableTensorFlow tests if all features depending on TensorFlow should be disabled.
+// DisableTensorFlow checks if all features depending on TensorFlow should be disabled.
 func (c *Config) DisableTensorFlow() bool {
 	if LowMem && !c.options.DisableTensorFlow {
 		c.options.DisableTensorFlow = true
-		log.Warnf("config: disabled tensorflow due to memory constraints")
 	}
 
 	return c.options.DisableTensorFlow
 }
 
-// DisableFaces tests if facial recognition is disabled.
+// DisableFaces checks if facial recognition is disabled.
 func (c *Config) DisableFaces() bool {
 	if c.DisableTensorFlow() || c.options.DisableFaces {
 		return true
@@ -56,7 +57,7 @@ func (c *Config) DisableFaces() bool {
 	return false
 }
 
-// DisableClassification tests if image classification is disabled.
+// DisableClassification checks if image classification is disabled.
 func (c *Config) DisableClassification() bool {
 	if c.DisableTensorFlow() || c.options.DisableClassification {
 		return true
@@ -65,37 +66,67 @@ func (c *Config) DisableClassification() bool {
 	return false
 }
 
-// DisableFFmpeg tests if FFmpeg is disabled for video transcoding.
+// DisableFFmpeg checks if FFmpeg is disabled for video transcoding.
 func (c *Config) DisableFFmpeg() bool {
-	return c.options.DisableFFmpeg || c.FFmpegBin() == ""
+	if c.options.DisableFFmpeg {
+		return true
+	} else if c.FFmpegBin() == "" {
+		c.options.DisableFFmpeg = true
+	}
+
+	return c.options.DisableFFmpeg
 }
 
-// DisableDarktable tests if Darktable is disabled for RAW conversion.
+// DisableRaw checks if indexing and conversion of RAW files is disabled.
+func (c *Config) DisableRaw() bool {
+	if LowMem && !c.options.DisableRaw {
+		c.options.DisableRaw = true
+		return true
+	}
+
+	return c.options.DisableRaw
+}
+
+// DisableDarktable checks if conversion of RAW files with Darktable is disabled.
 func (c *Config) DisableDarktable() bool {
-	if LowMem && !c.options.DisableDarktable {
+	if c.DisableRaw() || c.options.DisableDarktable {
+		return true
+	} else if c.DarktableBin() == "" {
 		c.options.DisableDarktable = true
-		log.Warnf("config: disabled file conversion with Darktable due to memory constraints")
 	}
 
-	return c.options.DisableDarktable || c.DarktableBin() == ""
+	return c.options.DisableDarktable
 }
 
-// DisableRawtherapee tests if Rawtherapee is disabled for RAW conversion.
+// DisableRawtherapee checks if conversion of RAW files with Rawtherapee is disabled.
 func (c *Config) DisableRawtherapee() bool {
-	if LowMem && !c.options.DisableRawtherapee {
+	if c.DisableRaw() || c.options.DisableRawtherapee {
+		return true
+	} else if c.RawtherapeeBin() == "" {
 		c.options.DisableRawtherapee = true
-		log.Warnf("config: disabled file conversion with RawTherapee due to memory constraints")
 	}
 
-	return c.options.DisableRawtherapee || c.RawtherapeeBin() == ""
+	return c.options.DisableRawtherapee
 }
 
-// DisableSips tests if SIPS is disabled for RAW conversion.
+// DisableSips checks if conversion of RAW files with SIPS is disabled.
 func (c *Config) DisableSips() bool {
-	return c.options.DisableSips || c.SipsBin() == ""
+	if c.options.DisableSips {
+		return true
+	} else if c.SipsBin() == "" {
+		c.options.DisableSips = true
+	}
+
+	return c.options.DisableSips
 }
 
-// DisableHeifConvert tests if heif-convert is disabled for HEIF conversion.
+// DisableHeifConvert checks if heif-convert is disabled for HEIF conversion.
 func (c *Config) DisableHeifConvert() bool {
-	return c.options.DisableHeifConvert || c.HeifConvertBin() == ""
+	if c.options.DisableHeifConvert {
+		return true
+	} else if c.HeifConvertBin() == "" {
+		c.options.DisableHeifConvert = true
+	}
+
+	return c.options.DisableHeifConvert
 }

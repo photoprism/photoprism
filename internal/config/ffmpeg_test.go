@@ -3,15 +3,22 @@ package config
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/ffmpeg"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestConfig_FFmpegEncoder(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "libx264", c.FFmpegEncoder())
-
-	c.options.FFmpegEncoder = "testEncoder"
-	assert.Equal(t, "testEncoder", c.FFmpegEncoder())
+	assert.Equal(t, ffmpeg.SoftwareEncoder, c.FFmpegEncoder())
+	c.options.FFmpegEncoder = "nvidia"
+	assert.Equal(t, ffmpeg.NvidiaEncoder, c.FFmpegEncoder())
+	c.options.FFmpegEncoder = "intel"
+	assert.Equal(t, ffmpeg.IntelEncoder, c.FFmpegEncoder())
+	c.options.FFmpegEncoder = "xxx"
+	assert.Equal(t, ffmpeg.SoftwareEncoder, c.FFmpegEncoder())
+	c.options.FFmpegEncoder = ""
+	assert.Equal(t, ffmpeg.SoftwareEncoder, c.FFmpegEncoder())
 }
 
 func TestConfig_FFmpegEnabled(t *testing.T) {

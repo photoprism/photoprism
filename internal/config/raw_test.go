@@ -6,6 +6,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestConfig_RawEnabled(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.NotEqual(t, c.DisableRaw(), c.RawEnabled())
+}
+
 func TestConfig_RawtherapeeBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -64,8 +70,7 @@ func TestConfig_SipsBin(t *testing.T) {
 
 func TestConfig_SipsEnabled(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	c.options.DisableSips = true
-	assert.False(t, c.SipsEnabled())
+	assert.NotEqual(t, c.DisableSips(), c.SipsEnabled())
 }
 
 func TestConfig_HeifConvertBin(t *testing.T) {

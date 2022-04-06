@@ -174,28 +174,8 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-backups",
-		Usage:  "disable creating YAML metadata files",
+		Usage:  "disable backing up albums and photo metadata to YAML files",
 		EnvVar: "PHOTOPRISM_DISABLE_BACKUPS",
-	},
-	cli.BoolFlag{
-		Name:   "disable-darktable",
-		Usage:  "disable converting RAW files with Darktable",
-		EnvVar: "PHOTOPRISM_DISABLE_DARKTABLE",
-	},
-	cli.BoolFlag{
-		Name:   "disable-rawtherapee",
-		Usage:  "disable converting RAW files with RawTherapee",
-		EnvVar: "PHOTOPRISM_DISABLE_RAWTHERAPEE",
-	},
-	cli.BoolFlag{
-		Name:   "disable-sips",
-		Usage:  "disable converting RAW files with Sips (macOS only)",
-		EnvVar: "PHOTOPRISM_DISABLE_SIPS",
-	},
-	cli.BoolFlag{
-		Name:   "disable-heifconvert",
-		Usage:  "disable converting HEIC/HEIF files",
-		EnvVar: "PHOTOPRISM_DISABLE_HEIFCONVERT",
 	},
 	cli.BoolFlag{
 		Name:   "disable-tensorflow",
@@ -223,14 +203,39 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
 	},
 	cli.BoolFlag{
-		Name:   "exif-bruteforce",
-		Usage:  "always perform a brute-force search if no Exif headers were found",
-		EnvVar: "PHOTOPRISM_EXIF_BRUTEFORCE",
+		Name:   "disable-heifconvert",
+		Usage:  "disable conversion of HEIC/HEIF files",
+		EnvVar: "PHOTOPRISM_DISABLE_HEIFCONVERT",
+	},
+	cli.BoolFlag{
+		Name:   "disable-darktable",
+		Usage:  "disable conversion of RAW files with Darktable",
+		EnvVar: "PHOTOPRISM_DISABLE_DARKTABLE",
+	},
+	cli.BoolFlag{
+		Name:   "disable-rawtherapee",
+		Usage:  "disable conversion of RAW files with RawTherapee",
+		EnvVar: "PHOTOPRISM_DISABLE_RAWTHERAPEE",
+	},
+	cli.BoolFlag{
+		Name:   "disable-sips",
+		Usage:  "disable conversion of RAW files with Sips (macOS only)",
+		EnvVar: "PHOTOPRISM_DISABLE_SIPS",
+	},
+	cli.BoolFlag{
+		Name:   "disable-raw",
+		Usage:  "disable indexing and conversion of RAW files",
+		EnvVar: "PHOTOPRISM_DISABLE_RAW",
 	},
 	cli.BoolFlag{
 		Name:   "raw-presets",
-		Usage:  "enable RAW file converter presets (may reduce performance)",
+		Usage:  "enables applying user presets when converting RAW files (reduces performance)",
 		EnvVar: "PHOTOPRISM_RAW_PRESETS",
+	},
+	cli.BoolFlag{
+		Name:   "exif-bruteforce",
+		Usage:  "always perform a brute-force search if no Exif headers were found",
+		EnvVar: "PHOTOPRISM_EXIF_BRUTEFORCE",
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
@@ -398,6 +403,18 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 	},
 	cli.StringFlag{
+		Name:   "darktable-cache-path",
+		Usage:  "custom Darktable cache `PATH` (automatically created if empty)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_DARKTABLE_CACHE_PATH",
+	},
+	cli.StringFlag{
+		Name:   "darktable-config-path",
+		Usage:  "custom Darktable config `PATH` (automatically created if empty)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_DARKTABLE_CONFIG_PATH",
+	},
+	cli.StringFlag{
 		Name:   "rawtherapee-bin",
 		Usage:  "RawTherapee CLI `COMMAND` for RAW to JPEG conversion",
 		Value:  "rawtherapee-cli",
@@ -417,7 +434,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "heifconvert-bin",
-		Usage:  "HEIC/HEIF image convert `COMMAND`",
+		Usage:  "HEIC/HEIF image conversion `COMMAND`",
 		Value:  "heif-convert",
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
 	},
@@ -463,7 +480,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "thumb-colorspace",
-		Usage:  "convert Apple Display P3 colors in thumbnails to standard color space (\"\" to disable)",
+		Usage:  "standard colorspace for thumbnails (\"\" to disable)",
 		Value:  "sRGB",
 		EnvVar: "PHOTOPRISM_THUMB_COLORSPACE",
 	},

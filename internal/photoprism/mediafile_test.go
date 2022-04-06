@@ -1742,10 +1742,10 @@ func TestMediaFile_Megapixels(t *testing.T) {
 		}
 	})
 	t.Run("2018-04-12 19_24_49.mov", func(t *testing.T) {
-		if f, err := NewMediaFile("testdata/2018-04-12 19_24_49.mov"); err != nil {
-			t.Fatal(err)
+		if _, err := NewMediaFile("testdata/2018-04-12 19_24_49.mov"); err != nil {
+			assert.EqualError(t, err, "'testdata/2018-04-12 19_24_49.mov' is empty")
 		} else {
-			assert.Equal(t, 0, f.Megapixels())
+			t.Errorf("error expected")
 		}
 	})
 	t.Run("rotate/6.png", func(t *testing.T) {

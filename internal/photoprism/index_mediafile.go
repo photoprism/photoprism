@@ -23,7 +23,7 @@ import (
 // MediaFile indexes a single media file.
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID string) (result IndexResult) {
 	if m == nil {
-		err := errors.New("index: media file is nil - you might have found a bug")
+		err := errors.New("index: media file is nil - possible bug")
 		log.Error(err)
 		result.Err = err
 		result.Status = IndexFailed

@@ -77,6 +77,7 @@ type ClientDisable struct {
 	Places         bool `json:"places"`
 	ExifTool       bool `json:"exiftool"`
 	FFmpeg         bool `json:"ffmpeg"`
+	Raw            bool `json:"raw"`
 	Darktable      bool `json:"darktable"`
 	Rawtherapee    bool `json:"rawtherapee"`
 	Sips           bool `json:"sips"`
@@ -193,6 +194,7 @@ func (c *Config) PublicConfig() ClientConfig {
 			Places:         c.DisablePlaces(),
 			ExifTool:       true,
 			FFmpeg:         true,
+			Raw:            true,
 			Darktable:      true,
 			Rawtherapee:    true,
 			Sips:           true,
@@ -264,6 +266,7 @@ func (c *Config) GuestConfig() ClientConfig {
 			Places:         c.DisablePlaces(),
 			ExifTool:       true,
 			FFmpeg:         true,
+			Raw:            true,
 			Darktable:      true,
 			Rawtherapee:    true,
 			Sips:           true,
@@ -329,6 +332,7 @@ func (c *Config) UserConfig() ClientConfig {
 			Places:         c.DisablePlaces(),
 			ExifTool:       c.DisableExifTool(),
 			FFmpeg:         c.DisableFFmpeg(),
+			Raw:            c.DisableRaw(),
 			Darktable:      c.DisableDarktable(),
 			Rawtherapee:    c.DisableRawtherapee(),
 			Sips:           c.DisableSips(),

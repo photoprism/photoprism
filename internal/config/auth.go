@@ -27,7 +27,7 @@ func (c *Config) CheckPassword(p string) bool {
 	return ap == p
 }
 
-// InvalidDownloadToken tests if the token is invalid.
+// InvalidDownloadToken checks if the token is invalid.
 func (c *Config) InvalidDownloadToken(t string) bool {
 	return c.DownloadToken() != t
 }
@@ -41,7 +41,7 @@ func (c *Config) DownloadToken() string {
 	return c.options.DownloadToken
 }
 
-// InvalidPreviewToken tests if the preview token is invalid.
+// InvalidPreviewToken checks if the preview token is invalid.
 func (c *Config) InvalidPreviewToken(t string) bool {
 	return c.PreviewToken() != t && c.DownloadToken() != t
 }
@@ -51,6 +51,8 @@ func (c *Config) PreviewToken() string {
 	if c.options.PreviewToken == "" {
 		if c.Public() {
 			c.options.PreviewToken = "public"
+		} else if c.Serial() == "" {
+			return "********"
 		} else {
 			c.options.PreviewToken = c.SerialChecksum()
 		}

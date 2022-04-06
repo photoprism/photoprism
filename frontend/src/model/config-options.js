@@ -44,6 +44,7 @@ export class ConfigOptions extends Model {
       DisableDarktable: config.values.disable.darktable,
       DisableRawtherapee: config.values.disable.rawtherapee,
       DisableSips: config.values.disable.sips,
+      DisableRaw: config.values.disable.raw,
       DisableHeifConvert: config.values.disable.heifconvert,
       DisableFFmpeg: config.values.disable.ffmpeg,
       DisableTensorFlow: config.values.disable.tensorflow,

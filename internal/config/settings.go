@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/photoprism/photoprism/internal/entity"
+	"gopkg.in/yaml.v2"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/sanitize"
-	"gopkg.in/yaml.v2"
 )
 
 // UISettings represents user interface settings.
@@ -172,17 +172,17 @@ func (s *Settings) Propagate() {
 	i18n.SetLocale(s.UI.Language)
 }
 
-// StackSequences tests if files should be stacked based on their file name prefix (sequential names).
+// StackSequences checks if files should be stacked based on their file name prefix (sequential names).
 func (s Settings) StackSequences() bool {
 	return s.Stack.Name
 }
 
-// StackUUID tests if files should be stacked based on unique image or instance id.
+// StackUUID checks if files should be stacked based on unique image or instance id.
 func (s Settings) StackUUID() bool {
 	return s.Stack.UUID
 }
 
-// StackMeta tests if files should be stacked based on their place and time metadata.
+// StackMeta checks if files should be stacked based on their place and time metadata.
 func (s Settings) StackMeta() bool {
 	return s.Stack.Meta
 }
@@ -235,11 +235,11 @@ func (c *Config) initSettings() {
 	fileName := c.SettingsFile()
 
 	if err := c.settings.Load(fileName); err == nil {
-		log.Debugf("config: settings loaded from %s ", fileName)
+		log.Debugf("settings: loaded from %s ", fileName)
 	} else if err := c.settings.Save(fileName); err != nil {
-		log.Errorf("failed creating %s: %s", fileName, err)
+		log.Errorf("settings: could not create %s (%s)", fileName, err)
 	} else {
-		log.Debugf("config: created %s ", fileName)
+		log.Debugf("settings: saved to %s ", fileName)
 	}
 
 	i18n.SetDir(c.LocalesPath())

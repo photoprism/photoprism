@@ -193,7 +193,7 @@ func GetThumb(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		} else if thumbnail == "" {
-			log.Errorf("%s: %s has empty thumb name - bug?", logPrefix, filepath.Base(fileName))
+			log.Errorf("%s: %s has empty thumb name - possible bug", logPrefix, filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		}

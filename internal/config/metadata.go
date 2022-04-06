@@ -10,12 +10,12 @@ func (c *Config) ExifToolBin() string {
 	return findExecutable(c.options.ExifToolBin, "exiftool")
 }
 
-// ExifToolJson tests if creating JSON metadata sidecar files with Exiftool is enabled.
+// ExifToolJson checks if creating JSON metadata sidecar files with Exiftool is enabled.
 func (c *Config) ExifToolJson() bool {
 	return !c.DisableExifTool()
 }
 
-// BackupYaml tests if creating YAML files is enabled.
+// BackupYaml checks if creating YAML files is enabled.
 func (c *Config) BackupYaml() bool {
 	return !c.DisableBackups()
 }

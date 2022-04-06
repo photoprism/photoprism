@@ -24,7 +24,7 @@ func configAction(ctx *cli.Context) error {
 
 	dbDriver := conf.DatabaseDriver()
 
-	fmt.Printf("%-25s Value\n", "Name")
+	fmt.Printf("%-25s VALUE\n", "NAME")
 
 	// Flags.
 	fmt.Printf("%-25s %t\n", "debug", conf.Debug())
@@ -73,16 +73,17 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())
 	fmt.Printf("%-25s %t\n", "disable-faces", conf.DisableFaces())
 	fmt.Printf("%-25s %t\n", "disable-classification", conf.DisableClassification())
+	fmt.Printf("%-25s %t\n", "disable-ffmpeg", conf.DisableFFmpeg())
+	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
+	fmt.Printf("%-25s %t\n", "disable-heifconvert", conf.DisableHeifConvert())
 	fmt.Printf("%-25s %t\n", "disable-darktable", conf.DisableDarktable())
 	fmt.Printf("%-25s %t\n", "disable-rawtherapee", conf.DisableRawtherapee())
 	fmt.Printf("%-25s %t\n", "disable-sips", conf.DisableSips())
-	fmt.Printf("%-25s %t\n", "disable-heifconvert", conf.DisableHeifConvert())
-	fmt.Printf("%-25s %t\n", "disable-ffmpeg", conf.DisableFFmpeg())
-	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
+	fmt.Printf("%-25s %t\n", "disable-raw", conf.DisableRaw())
 
 	// Format Flags.
-	fmt.Printf("%-25s %t\n", "exif-bruteforce", conf.ExifBruteForce())
 	fmt.Printf("%-25s %t\n", "raw-presets", conf.RawPresets())
+	fmt.Printf("%-25s %t\n", "exif-bruteforce", conf.ExifBruteForce())
 
 	// TensorFlow.
 	fmt.Printf("%-25s %t\n", "detect-nsfw", conf.DetectNSFW())

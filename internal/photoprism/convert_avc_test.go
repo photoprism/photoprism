@@ -5,9 +5,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestConvert_ToAvc(t *testing.T) {
@@ -28,7 +29,7 @@ func TestConvert_ToAvc(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		avcFile, err := convert.ToAvc(mf, "")
+		avcFile, err := convert.ToAvc(mf, "", false, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -59,7 +60,7 @@ func TestConvert_ToAvc(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		avcFile, err := convert.ToAvc(mf, "")
+		avcFile, err := convert.ToAvc(mf, "", false, false)
 		assert.Error(t, err)
 		assert.Nil(t, avcFile)
 	})

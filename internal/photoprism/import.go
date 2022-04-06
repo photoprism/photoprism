@@ -102,7 +102,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	convert := imp.conf.Settings().Index.Convert && imp.conf.SidecarWritable()
 	indexOpt := NewIndexOptions("/", true, convert, true, false)
-
+	skipRaw := imp.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(importPath); err != nil {
@@ -156,20 +156,23 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 			mf, err := NewMediaFile(fileName)
 
+			// Check if file exists and is not empty.
 			if err != nil {
+				log.Warnf("import: %s", err)
 				return nil
 			}
 
-			if mf.FileSize() == 0 {
-				log.Infof("import: skipped empty file %s", sanitize.Log(mf.BaseName()))
+			// Ignore RAW images?
+			if mf.IsRaw() && skipRaw {
+				log.Infof("import: skipped raw %s", sanitize.Log(mf.RootRelName()))
 				return nil
 			}
 
+			// Find related files to import.
 			related, err := mf.RelatedFiles(imp.conf.Settings().StackSequences())
 
 			if err != nil {
 				event.Error(fmt.Sprintf("import: %s", err.Error()))
-
 				return nil
 			}
 

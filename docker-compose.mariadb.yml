@@ -1,6 +1,7 @@
 version: '3.5'
 
-## MariaDB Server Versions for Development & Testing
+# Additional MariaDB and MySQL versions for testing compatibility
+
 services:
   ## MariaDB 10.8 Database Server
   ## Docs: https://mariadb.com/kb/en/release-notes-mariadb-108-series/

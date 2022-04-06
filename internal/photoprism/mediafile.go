@@ -74,8 +74,11 @@ func NewMediaFile(fileName string) (*MediaFile, error) {
 		height:   -1,
 	}
 
-	if _, _, err := m.Stat(); err != nil {
-		return m, fmt.Errorf("media: %s not found", sanitize.Log(m.BaseName()))
+	// Check if file exists and is not empty.
+	if size, _, err := m.Stat(); err != nil {
+		return m, fmt.Errorf("%s not found", sanitize.Log(m.RootRelName()))
+	} else if size == 0 {
+		return m, fmt.Errorf("%s is empty", sanitize.Log(m.RootRelName()))
 	}
 
 	return m, nil
@@ -297,6 +300,9 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	sidecarPrefix := Config().SidecarPath() + "/"
 	originalsPrefix := Config().OriginalsPath() + "/"
 
+	// Ignore RAW images?
+	skipRaw := Config().DisableRaw()
+
 	// Replace sidecar with originals path in search prefix.
 	if len(sidecarPrefix) > 1 && sidecarPrefix != originalsPrefix && strings.HasPrefix(prefix, sidecarPrefix) {
 		prefix = strings.Replace(prefix, sidecarPrefix, originalsPrefix, 1)
@@ -326,15 +332,16 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	isHEIF := false
 
 	for _, fileName := range matches {
-		f, err := NewMediaFile(fileName)
+		f, fileErr := NewMediaFile(fileName)
 
-		if err != nil {
-			log.Warnf("media: %s in %s", err, sanitize.Log(filepath.Base(fileName)))
+		if fileErr != nil {
+			log.Warn(fileErr)
 			continue
 		}
 
-		if f.FileSize() == 0 {
-			log.Warnf("media: %s is empty", sanitize.Log(filepath.Base(fileName)))
+		// Ignore RAW images?
+		if f.IsRaw() && skipRaw {
+			log.Debugf("media: skipped related raw file %s", sanitize.Log(f.RootRelName()))
 			continue
 		}
 
