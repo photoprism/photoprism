@@ -127,7 +127,7 @@ type Options struct {
 	DownloadToken         string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
 	PreviewToken          string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbFilter           string        `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
-	ThumbColorspace       string        `yaml:"ThumbColorspace" json:"ThumbColorspace" flag:"thumb-colorspace"`
+	ThumbColor            string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
 	ThumbUncached         bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
 	ThumbSize             int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached     int           `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`

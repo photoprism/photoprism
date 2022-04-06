@@ -158,7 +158,7 @@ func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
 	// Set thumbnail generation parameters.
-	thumb.StandardRGB = c.ThumbStandardRGB()
+	thumb.StandardRGB = c.ThumbSRGB()
 	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()

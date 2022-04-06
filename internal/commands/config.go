@@ -152,7 +152,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())
 	fmt.Printf("%-25s %s\n", "preview-token", conf.PreviewToken())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
-	fmt.Printf("%-25s %s\n", "thumb-colorspace", conf.ThumbColorspace())
+	fmt.Printf("%-25s %s\n", "thumb-color", conf.ThumbColor())
 	fmt.Printf("%-25s %t\n", "thumb-uncached", conf.ThumbUncached())
 	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSizePrecached())
 	fmt.Printf("%-25s %d\n", "thumb-size-uncached", conf.ThumbSizeUncached())

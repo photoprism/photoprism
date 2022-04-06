@@ -479,10 +479,10 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
 	cli.StringFlag{
-		Name:   "thumb-colorspace",
-		Usage:  "standard colorspace for thumbnails (\"\" to disable)",
+		Name:   "thumb-color",
+		Usage:  "standard color `PROFILE` for thumbnails (leave blank to disable)",
 		Value:  "sRGB",
-		EnvVar: "PHOTOPRISM_THUMB_COLORSPACE",
+		EnvVar: "PHOTOPRISM_THUMB_COLOR",
 	},
 	cli.BoolFlag{
 		Name:   "thumb-uncached, u",
