@@ -46,19 +46,17 @@ func configAction(ctx *cli.Context) error {
 
 	// Other paths.
 	fmt.Printf("%-25s %s\n", "storage-path", conf.StoragePath())
-	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
-	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
 	fmt.Printf("%-25s %s\n", "sidecar-path", conf.SidecarPath())
+	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
 	fmt.Printf("%-25s %s\n", "albums-path", conf.AlbumsPath())
-	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
 	fmt.Printf("%-25s %s\n", "backup-path", conf.BackupPath())
+	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
 	fmt.Printf("%-25s %s\n", "assets-path", conf.AssetsPath())
-
-	// Assets.
 	fmt.Printf("%-25s %s\n", "static-path", conf.StaticPath())
 	fmt.Printf("%-25s %s\n", "build-path", conf.BuildPath())
 	fmt.Printf("%-25s %s\n", "img-path", conf.ImgPath())
 	fmt.Printf("%-25s %s\n", "templates-path", conf.TemplatesPath())
+	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
 
 	// Workers.
 	fmt.Printf("%-25s %d\n", "workers", conf.Workers())
@@ -151,8 +149,8 @@ func configAction(ctx *cli.Context) error {
 	// Thumbnails.
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())
 	fmt.Printf("%-25s %s\n", "preview-token", conf.PreviewToken())
-	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
 	fmt.Printf("%-25s %s\n", "thumb-color", conf.ThumbColor())
+	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
 	fmt.Printf("%-25s %t\n", "thumb-uncached", conf.ThumbUncached())
 	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSizePrecached())
 	fmt.Printf("%-25s %d\n", "thumb-size-uncached", conf.ThumbSizeUncached())

@@ -57,12 +57,12 @@ type Options struct {
 	OriginalsLimit        int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
-	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
-	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	TempPath              string        `yaml:"TempPath" json:"-" flag:"temp-path"`
+	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
+	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
 	AssetsPath            string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
+	TempPath              string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	Workers               int           `yaml:"Workers" json:"Workers" flag:"workers"`
 	WakeupInterval        time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
 	AutoIndex             int           `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
@@ -126,8 +126,8 @@ type Options struct {
 	DetachServer          bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
 	DownloadToken         string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
 	PreviewToken          string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
-	ThumbFilter           string        `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
 	ThumbColor            string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
+	ThumbFilter           string        `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
 	ThumbUncached         bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
 	ThumbSize             int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached     int           `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`

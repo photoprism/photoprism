@@ -99,19 +99,9 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_RESOLUTION_LIMIT",
 	},
 	cli.StringFlag{
-		Name:   "storage-path",
-		Usage:  "writable storage `PATH` for cache, database, and sidecar files",
+		Name:   "storage-path, s",
+		Usage:  "writable storage `PATH` for sidecar, cache, and database files",
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
-	},
-	cli.StringFlag{
-		Name:   "import-path",
-		Usage:  "base `PATH` from which files can be imported to originals (optional)",
-		EnvVar: "PHOTOPRISM_IMPORT_PATH",
-	},
-	cli.StringFlag{
-		Name:   "cache-path",
-		Usage:  "custom cache `PATH` for sessions and thumbnail files (optional)",
-		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "sidecar-path",
@@ -119,9 +109,9 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 	},
 	cli.StringFlag{
-		Name:   "temp-path",
-		Usage:  "custom temporary file `PATH` (optional)",
-		EnvVar: "PHOTOPRISM_TEMP_PATH",
+		Name:   "cache-path",
+		Usage:  "custom cache `PATH` for sessions and thumbnail files (optional)",
+		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "backup-path",
@@ -129,9 +119,19 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_BACKUP_PATH",
 	},
 	cli.StringFlag{
+		Name:   "import-path",
+		Usage:  "base `PATH` from which files can be imported to originals (optional)",
+		EnvVar: "PHOTOPRISM_IMPORT_PATH",
+	},
+	cli.StringFlag{
 		Name:   "assets-path",
 		Usage:  "assets `PATH` containing static resources like icons, models, and translations",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
+	},
+	cli.StringFlag{
+		Name:   "temp-path",
+		Usage:  "temporary file `PATH` (optional)",
+		EnvVar: "PHOTOPRISM_TEMP_PATH",
 	},
 	cli.IntFlag{
 		Name:   "workers, w",
@@ -243,7 +243,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DETECT_NSFW",
 	},
 	cli.BoolFlag{
-		Name:   "upload-nsfw",
+		Name:   "upload-nsfw, n",
 		Usage:  "allow uploads that may be offensive",
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 	},
@@ -254,7 +254,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DEFAULT_THEME",
 	},
 	cli.StringFlag{
-		Name:   "default-locale",
+		Name:   "default-locale, lang",
 		Usage:  "standard user interface language `CODE`",
 		Value:  i18n.Default.Locale(),
 		EnvVar: "PHOTOPRISM_DEFAULT_LOCALE",
@@ -282,7 +282,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_CDN_URL",
 	},
 	cli.StringFlag{
-		Name:   "site-url",
+		Name:   "site-url, url",
 		Usage:  "public site `URL`",
 		Value:  "http://localhost:2342/",
 		EnvVar: "PHOTOPRISM_SITE_URL",
@@ -327,18 +327,18 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_IMPRINT_URL",
 	},
 	cli.IntFlag{
-		Name:   "http-port",
+		Name:   "http-port, port",
 		Value:  2342,
 		Usage:  "http server port `NUMBER`",
 		EnvVar: "PHOTOPRISM_HTTP_PORT",
 	},
 	cli.StringFlag{
-		Name:   "http-host",
+		Name:   "http-host, ip",
 		Usage:  "http server `IP` address",
 		EnvVar: "PHOTOPRISM_HTTP_HOST",
 	},
 	cli.StringFlag{
-		Name:   "http-mode, m",
+		Name:   "http-mode, mode",
 		Usage:  "http server `MODE` (debug, release, or test)",
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
@@ -445,13 +445,13 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
 	},
 	cli.StringFlag{
-		Name:   "ffmpeg-encoder",
+		Name:   "ffmpeg-encoder, vc",
 		Usage:  "FFmpeg AVC encoder `NAME`",
 		Value:  "libx264",
 		EnvVar: "PHOTOPRISM_FFMPEG_ENCODER",
 	},
 	cli.IntFlag{
-		Name:   "ffmpeg-bitrate",
+		Name:   "ffmpeg-bitrate, vb",
 		Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
 		Value:  50,
 		EnvVar: "PHOTOPRISM_FFMPEG_BITRATE",
@@ -473,42 +473,42 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
-		Name:   "thumb-filter",
-		Usage:  "image downscaling `FILTER` (best to worst: blackman, lanczos, cubic, linear)",
-		Value:  "lanczos",
-		EnvVar: "PHOTOPRISM_THUMB_FILTER",
-	},
-	cli.StringFlag{
 		Name:   "thumb-color",
 		Usage:  "standard color `PROFILE` for thumbnails (leave blank to disable)",
 		Value:  "sRGB",
 		EnvVar: "PHOTOPRISM_THUMB_COLOR",
 	},
+	cli.StringFlag{
+		Name:   "thumb-filter, filter",
+		Usage:  "image downscaling filter `NAME` (best to worst: blackman, lanczos, cubic, linear)",
+		Value:  "lanczos",
+		EnvVar: "PHOTOPRISM_THUMB_FILTER",
+	},
 	cli.BoolFlag{
-		Name:   "thumb-uncached, u",
+		Name:   "thumb-uncached, x",
 		Usage:  "enable on-demand creation of missing thumbnails (high memory and cpu usage)",
 		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
 	},
 	cli.IntFlag{
-		Name:   "thumb-size, s",
+		Name:   "thumb-size, ts",
 		Usage:  "maximum size of thumbnails created during indexing in `PIXELS` (720-7680)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},
 	cli.IntFlag{
-		Name:   "thumb-size-uncached, x",
+		Name:   "thumb-size-uncached, tx",
 		Usage:  "maximum size of missing thumbnails created on demand in `PIXELS` (720-7680)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
 	cli.IntFlag{
-		Name:   "jpeg-size",
+		Name:   "jpeg-size, js",
 		Usage:  "maximum size of created JPEG sidecar files in `PIXELS` (720-30000)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_JPEG_SIZE",
 	},
 	cli.StringFlag{
-		Name:   "jpeg-quality, q",
+		Name:   "jpeg-quality, jq",
 		Usage:  "`QUALITY` of created JPEG sidecars and thumbnails (25-100, best, high, default, low, worst)",
 		Value:  thumb.JpegQuality.String(),
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
