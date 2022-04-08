@@ -7,35 +7,16 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/txt"
-
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-
 	"github.com/urfave/cli"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// SQL Databases.
-const (
-	MySQL           = "mysql"
-	MariaDB         = "mariadb"
-	Postgres        = "postgres" // TODO: Requires GORM 2.0 for generic column data types
-	SQLite3         = "sqlite3"
-	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:"
-)
-
-// Options provides a struct in which application configuration is stored.
-// Application code must use functions to get config options, for two reasons:
-//
-// 1. We do not want to leak implementation details so refactoring overhead is kept low
-// 2. Some config values are dynamically generated
-// 3. Paths may become dynamic too at a later time
-//
-// See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
+// Options hold the global configuration values without further validation or processing.
+// Application code should retrieve option values via getter functions since they provide
+// validation and return defaults if a value is empty.
 type Options struct {
 	Name                  string        `json:"-"`
 	Version               string        `json:"-"`

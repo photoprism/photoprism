@@ -14,10 +14,27 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
+// SQL Databases.
+// TODO: PostgresSQL support requires upgrading GORM, so generic column data types can be used.
+const (
+	MySQL    = "mysql"
+	MariaDB  = "mariadb"
+	Postgres = "postgres"
+	SQLite3  = "sqlite3"
+)
+
+// SQLite default DSNs.
+const (
+	SQLiteTestDB    = ".test.db"
+	SQLiteMemoryDSN = ":memory:"
+)
+
+// dsnPattern is a regular expression matching a database DSN string.
 var dsnPattern = regexp.MustCompile(
 	`^(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
 		`(?:(?P<net>[^\(]*)(?:\((?P<server>[^\)]*)\))?)?` +
