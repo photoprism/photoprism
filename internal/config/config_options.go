@@ -109,11 +109,11 @@ type Options struct {
 	PreviewToken          string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbColor            string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
 	ThumbFilter           string        `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
-	ThumbUncached         bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
 	ThumbSize             int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached     int           `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
-	JpegSize              int           `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
+	ThumbUncached         bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
 	JpegQuality           string        `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
+	JpegSize              int           `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
 	FaceSize              int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore             float64       `yaml:"-" json:"-" flag:"face-score"`
 	FaceOverlap           int           `yaml:"-" json:"-" flag:"face-overlap"`

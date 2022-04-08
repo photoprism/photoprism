@@ -484,11 +484,6 @@ var GlobalFlags = []cli.Flag{
 		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
-	cli.BoolFlag{
-		Name:   "thumb-uncached, x",
-		Usage:  "enable on-demand creation of missing thumbnails (high memory and cpu usage)",
-		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
-	},
 	cli.IntFlag{
 		Name:   "thumb-size, ts",
 		Usage:  "maximum size of thumbnails created during indexing in `PIXELS` (720-7680)",
@@ -501,21 +496,26 @@ var GlobalFlags = []cli.Flag{
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
-	cli.IntFlag{
-		Name:   "jpeg-size, js",
-		Usage:  "maximum size of created JPEG sidecar files in `PIXELS` (720-30000)",
-		Value:  7680,
-		EnvVar: "PHOTOPRISM_JPEG_SIZE",
+	cli.BoolFlag{
+		Name:   "thumb-uncached, x",
+		Usage:  "enable on-demand creation of missing thumbnails (high memory and cpu usage)",
+		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
 	},
 	cli.StringFlag{
-		Name:   "jpeg-quality, jq",
+		Name:   "jpeg-quality, q",
 		Usage:  "`QUALITY` of created JPEG sidecars and thumbnails (25-100, best, high, default, low, worst)",
 		Value:  thumb.JpegQuality.String(),
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
 	cli.IntFlag{
+		Name:   "jpeg-size",
+		Usage:  "maximum size of created JPEG sidecar files in `PIXELS` (720-30000)",
+		Value:  7680,
+		EnvVar: "PHOTOPRISM_JPEG_SIZE",
+	},
+	cli.IntFlag{
 		Name:   "face-size",
-		Usage:  "minimum face size in `PIXELS` (20-10000)",
+		Usage:  "minimum size of faces in `PIXELS` (20-10000)",
 		Value:  face.SizeThreshold,
 		EnvVar: "PHOTOPRISM_FACE_SIZE",
 	},
