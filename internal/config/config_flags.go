@@ -485,19 +485,19 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
 	cli.IntFlag{
-		Name:   "thumb-size, ts",
+		Name:   "thumb-size",
 		Usage:  "maximum size of thumbnails created during indexing in `PIXELS` (720-7680)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},
 	cli.IntFlag{
-		Name:   "thumb-size-uncached, tx",
+		Name:   "thumb-size-uncached",
 		Usage:  "maximum size of missing thumbnails created on demand in `PIXELS` (720-7680)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
 	cli.BoolFlag{
-		Name:   "thumb-uncached, x",
+		Name:   "thumb-uncached, u",
 		Usage:  "enable on-demand creation of missing thumbnails (high memory and cpu usage)",
 		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
 	},
