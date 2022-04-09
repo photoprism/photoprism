@@ -26,10 +26,6 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 		}
 	}()
 
-	if data.All == nil {
-		data.All = make(map[string]string)
-	}
-
 	quotedName := sanitize.Log(filepath.Base(jsonName))
 
 	if !fs.FileExists(jsonName) {

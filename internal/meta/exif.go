@@ -24,7 +24,8 @@ import (
 var exifIfdMapping *exifcommon.IfdMapping
 var exifTagIndex = exif.NewTagIndex()
 var exifMutex = sync.Mutex{}
-var exifDateFields = []string{"DateTimeOriginal", "DateTimeDigitized", "CreateDate", "DateTime"}
+var exifDateTimeTags = []string{"DateTimeOriginal", "DateTimeDigitized", "CreateDate", "DateTime"}
+var exifSubSecTags = []string{"SubSecTimeOriginal", "SubSecTimeDigitized", "SubSecTime"}
 
 func init() {
 	exifIfdMapping = exifcommon.NewIfdMapping()
@@ -61,78 +62,101 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat, bruteForce bool)
 
 	logName := sanitize.Log(filepath.Base(fileName))
 
-	if data.All == nil {
-		data.All = make(map[string]string)
-	}
-
-	// Enumerate tags in Exif block.
+	// Enumerate data.exif in Exif block.
 	opt := exif.ScanOptions{}
 	entries, _, err := exif.GetFlatExifData(rawExif, &opt)
 
-	for _, entry := range entries {
-		if entry.TagName != "" && entry.Formatted != "" {
-			data.All[entry.TagName] = strings.Split(entry.FormattedFirst, "\x00")[0]
+	// Create large enough map for values.
+	if data.exif == nil {
+		data.exif = make(map[string]string, len(entries))
+	}
+
+	// Ignore IFD1 data.exif with existing IFD0 values.
+	// see https://github.com/photoprism/photoprism/issues/2231
+	for _, tag := range entries {
+		s := strings.Split(tag.FormattedFirst, "\x00")[0]
+		if tag.TagName != "" && s != "" && (data.exif[tag.TagName] == "" || tag.IfdPath != exif.ThumbnailFqIfdPath) {
+			data.exif[tag.TagName] = s
 		}
 	}
 
-	tags := data.All
+	// Abort if no values were found.
+	if len(data.exif) == 0 {
+		return fmt.Errorf("metadata: no exif data in %s", logName)
+	}
 
-	_, index, err := exif.Collect(exifIfdMapping, exifTagIndex, rawExif)
+	var ifdIndex exif.IfdIndex
+	_, ifdIndex, err = exif.Collect(exifIfdMapping, exifTagIndex, rawExif)
 
+	// Find and parse GPS coordinates.
 	if err != nil {
-		log.Debugf("exif: %s in %s (collect)", err.Error(), logName)
+		log.Debugf("metadata: %s in %s (exif)", err, logName)
 	} else {
-		if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity); err == nil {
-			if gi, err := ifd.GpsInfo(); err != nil {
-				log.Debugf("exif: %s in %s (gps info)", err, logName)
-				log.Infof("metadata: failed parsing GPS coordinates in %s (exif)", logName)
-			} else if math.IsNaN(gi.Latitude.Decimal()) || math.IsNaN(gi.Longitude.Decimal()) {
-				log.Warnf("metadata: invalid GPS coordinates in %s (exif)", logName)
+		var ifd *exif.Ifd
+		if ifd, err = ifdIndex.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity); err == nil {
+			var gi *exif.GpsInfo
+			if gi, err = ifd.GpsInfo(); err != nil {
+				log.Infof("metadata: %s in %s (exif)", err, logName)
 			} else {
-				data.Lat = float32(gi.Latitude.Decimal())
-				data.Lng = float32(gi.Longitude.Decimal())
-				data.Altitude = gi.Altitude
+				if !math.IsNaN(gi.Latitude.Decimal()) && !math.IsNaN(gi.Longitude.Decimal()) {
+					data.Lat = float32(gi.Latitude.Decimal())
+					data.Lng = float32(gi.Longitude.Decimal())
+				} else if gi.Altitude != 0 || !gi.Timestamp.IsZero() {
+					log.Warnf("metadata: invalid exif gps coordinates in %s (%s)", logName, sanitize.Log(gi.String()))
+				}
+
+				if gi.Altitude != 0 {
+					data.Altitude = gi.Altitude
+				}
+
+				if !gi.Timestamp.IsZero() {
+					data.GPSTime = gi.Timestamp
+				}
 			}
 		}
 	}
 
-	if value, ok := tags["Artist"]; ok {
+	if value, ok := data.exif["Artist"]; ok {
 		data.Artist = SanitizeString(value)
 	}
 
-	if value, ok := tags["Copyright"]; ok {
+	if value, ok := data.exif["Copyright"]; ok {
 		data.Copyright = SanitizeString(value)
 	}
 
-	if value, ok := tags["Model"]; ok {
+	if value, ok := data.exif["Model"]; ok {
 		data.CameraModel = SanitizeString(value)
-	} else if value, ok := tags["CameraModel"]; ok {
+	} else if value, ok := data.exif["CameraModel"]; ok {
 		data.CameraModel = SanitizeString(value)
 	}
 
-	if value, ok := tags["Make"]; ok {
+	if value, ok := data.exif["Make"]; ok {
 		data.CameraMake = SanitizeString(value)
-	} else if value, ok := tags["CameraMake"]; ok {
+	} else if value, ok := data.exif["CameraMake"]; ok {
 		data.CameraMake = SanitizeString(value)
 	}
 
-	if value, ok := tags["CameraOwnerName"]; ok {
+	if value, ok := data.exif["CameraOwnerName"]; ok {
 		data.CameraOwner = SanitizeString(value)
 	}
 
-	if value, ok := tags["BodySerialNumber"]; ok {
+	if value, ok := data.exif["BodySerialNumber"]; ok {
 		data.CameraSerial = SanitizeString(value)
 	}
 
-	if value, ok := tags["LensMake"]; ok {
+	if value, ok := data.exif["LensMake"]; ok {
 		data.LensMake = SanitizeString(value)
 	}
 
-	if value, ok := tags["LensModel"]; ok {
+	if value, ok := data.exif["LensModel"]; ok {
 		data.LensModel = SanitizeString(value)
 	}
 
-	if value, ok := tags["ExposureTime"]; ok {
+	if value, ok := data.exif["Software"]; ok {
+		data.Software = SanitizeString(value)
+	}
+
+	if value, ok := data.exif["ExposureTime"]; ok {
 		if n := strings.Split(value, "/"); len(n) == 2 {
 			if n[0] != "1" && len(n[0]) < len(n[1]) {
 				n0, _ := strconv.ParseUint(n[0], 10, 64)
@@ -145,7 +169,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat, bruteForce bool)
 		data.Exposure = value
 	}
 
-	if value, ok := tags["FNumber"]; ok {
+	if value, ok := data.exif["FNumber"]; ok {
 		values := strings.Split(value, "/")
 
 		if len(values) == 2 && values[1] != "0" && values[1] != "" {
@@ -156,7 +180,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat, bruteForce bool)
 		}
 	}
 
-	if value, ok := tags["ApertureValue"]; ok {
+	if value, ok := data.exif["ApertureValue"]; ok {
 		values := strings.Split(value, "/")
 
 		if len(values) == 2 && values[1] != "0" && values[1] != "" {
@@ -167,11 +191,11 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat, bruteForce bool)
 		}
 	}
 
-	if value, ok := tags["FocalLengthIn35mmFilm"]; ok {
+	if value, ok := data.exif["FocalLengthIn35mmFilm"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.FocalLength = i
 		}
-	} else if value, ok := tags["FocalLength"]; ok {
+	} else if value, ok := data.exif["FocalLength"]; ok {
 		values := strings.Split(value, "/")
 
 		if len(values) == 2 && values[1] != "0" && values[1] != "" {
@@ -182,39 +206,39 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat, bruteForce bool)
 		}
 	}
 
-	if value, ok := tags["ISOSpeedRatings"]; ok {
+	if value, ok := data.exif["ISOSpeedRatings"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Iso = i
 		}
 	}
 
-	if value, ok := tags["ImageUniqueID"]; ok {
+	if value, ok := data.exif["ImageUniqueID"]; ok {
 		if id := rnd.SanitizeUUID(value); id != "" {
 			data.DocumentID = id
 		}
 	}
 
-	if value, ok := tags["PixelXDimension"]; ok {
+	if value, ok := data.exif["PixelXDimension"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Width = i
 		}
-	} else if value, ok := tags["ImageWidth"]; ok {
+	} else if value, ok := data.exif["ImageWidth"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Width = i
 		}
 	}
 
-	if value, ok := tags["PixelYDimension"]; ok {
+	if value, ok := data.exif["PixelYDimension"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Height = i
 		}
-	} else if value, ok := tags["ImageLength"]; ok {
+	} else if value, ok := data.exif["ImageLength"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Height = i
 		}
 	}
 
-	if value, ok := tags["Orientation"]; ok {
+	if value, ok := data.exif["Orientation"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Orientation = i
 		}
@@ -235,9 +259,16 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat, bruteForce bool)
 
 	takenAt := time.Time{}
 
-	for _, name := range exifDateFields {
-		if dateTime := txt.DateTime(tags[name], data.TimeZone); !dateTime.IsZero() {
+	for _, name := range exifDateTimeTags {
+		if dateTime := txt.DateTime(data.exif[name], data.TimeZone); !dateTime.IsZero() {
 			takenAt = dateTime
+			break
+		}
+	}
+
+	for _, name := range exifSubSecTags {
+		if i, err := strconv.Atoi(data.exif[name]); err == nil {
+			data.TakenSubSec = i
 			break
 		}
 	}
@@ -253,27 +284,25 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat, bruteForce bool)
 		data.TakenAt = takenAt.UTC()
 	}
 
-	if value, ok := tags["Flash"]; ok {
+	if value, ok := data.exif["Flash"]; ok {
 		if i, err := strconv.Atoi(value); err == nil && i&1 == 1 {
 			data.AddKeywords(KeywordFlash)
 			data.Flash = true
 		}
 	}
 
-	if value, ok := tags["ImageDescription"]; ok {
+	if value, ok := data.exif["ImageDescription"]; ok {
 		data.AutoAddKeywords(value)
 		data.Description = SanitizeDescription(value)
 	}
 
-	if value, ok := tags["ProjectionType"]; ok {
+	if value, ok := data.exif["ProjectionType"]; ok {
 		data.AddKeywords(KeywordPanorama)
 		data.Projection = SanitizeString(value)
 	}
 
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
-
-	data.All = tags
 
 	return nil
 }

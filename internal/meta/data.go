@@ -19,6 +19,7 @@ type Data struct {
 	InstanceID   string        `meta:"InstanceID,DocumentID"`
 	TakenAt      time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
 	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
+	TakenSubSec  int           `meta:"SubSecTimeOriginal,SubSecTimeDigitized,SubSecTime"`
 	TimeZone     string        `meta:"-"`
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	Codec        string        `meta:"CompressorID,FileType"`
@@ -37,6 +38,7 @@ type Data struct {
 	CameraSerial string        `meta:"SerialNumber"`
 	LensMake     string        `meta:"LensMake"`
 	LensModel    string        `meta:"Lens,LensModel"`
+	Software     string        `meta:"Software,HistorySoftwareAgent"`
 	Flash        bool          `meta:"-"`
 	FocalLength  int           `meta:"FocalLength"`
 	Exposure     string        `meta:"ExposureTime"`
@@ -47,6 +49,7 @@ type Data struct {
 	GPSPosition  string        `meta:"GPSPosition"`
 	GPSLatitude  string        `meta:"GPSLatitude"`
 	GPSLongitude string        `meta:"GPSLongitude"`
+	GPSTime      time.Time     `meta:"GPSDateTime,GPSDateStamp"`
 	Lat          float32       `meta:"-"`
 	Lng          float32       `meta:"-"`
 	Altitude     int           `meta:"GlobalAltitude,GPSAltitude"`
@@ -57,14 +60,12 @@ type Data struct {
 	Views        int           `meta:"-"`
 	Albums       []string      `meta:"-"`
 	Error        error         `meta:"-"`
-	All          map[string]string
+	exif         map[string]string
 }
 
 // NewData creates a new metadata struct.
 func NewData() Data {
-	return Data{
-		All: make(map[string]string),
-	}
+	return Data{}
 }
 
 // AspectRatio returns the aspect ratio based on width and height.

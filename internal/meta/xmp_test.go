@@ -16,7 +16,7 @@ func TestXMP(t *testing.T) {
 		}
 
 		assert.Equal(t, "Botanischer Garten", data.Title)
-		assert.Equal(t, time.Date(2021, 3, 24, 13, 07, 29, 0, time.FixedZone("", +3600)), data.TakenAt)
+		assert.Equal(t, time.Date(2021, 3, 24, 13, 07, 29, 0, time.FixedZone("", +3600)).UTC(), data.TakenAt.UTC())
 		assert.Equal(t, "Tulpen am See", data.Description)
 		assert.Equal(t, Keywords{"blume", "krokus", "schöne", "wiese"}, data.Keywords)
 	})
