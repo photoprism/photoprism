@@ -78,7 +78,7 @@ Please give ideas you like a thumbs-up 👍  , so that we know what is most popu
 Ideas endorsed by [silver, gold, and platinum sponsors](https://link.photoprism.app/sponsors) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized on the [roadmap](https://link.photoprism.app/roadmap).
 Note that we have a zero bug policy and do our best to help users when they need support or have other questions.
 This comes at a price, as we can't give exact deadlines for new features.
-Our team will consider new requests, but is not obligated to implement the features, improvements, or other changes you request.
+Our team will consider all requests, but is not obligated to implement the features, improvements, or other changes you request.
 
 Having said that, funding really has the highest impact. So users can do their part and
 [become a sponsor](https://docs.photoprism.app/funding/) to get their favorite features as soon as possible.
