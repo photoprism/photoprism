@@ -44,5 +44,6 @@ Share:
   Title: ""
 Download:
   Name: file
+  Raw: false
 Templates:
   Default: index.tmpl

@@ -32,10 +32,12 @@ func DownloadName(c *gin.Context) entity.DownloadName {
 	}
 }
 
+// GetDownload returns the raw file data.
+//
 // GET /api/v1/dl/:hash
 //
 // Parameters:
-//   hash: string The file hash as returned by the search API
+//   hash: string The file hash as returned by the files/photos endpoint
 func GetDownload(router *gin.RouterGroup) {
 	router.GET("/dl/:hash", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {

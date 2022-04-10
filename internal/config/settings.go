@@ -88,6 +88,7 @@ type ShareSettings struct {
 // DownloadSettings represents content download settings.
 type DownloadSettings struct {
 	Name entity.DownloadName `json:"name" yaml:"Name"`
+	Raw  bool                `json:"raw" yaml:"Raw"`
 }
 
 // Settings represents user settings for Web UI, indexing, and import.

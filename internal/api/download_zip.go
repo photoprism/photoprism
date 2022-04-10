@@ -105,6 +105,11 @@ func CreateZip(router *gin.RouterGroup) {
 				continue
 			}
 
+			if !conf.Settings().Download.Raw && fs.FormatRaw.Is(file.FileType) {
+				log.Debugf("download: skipped raw %s", sanitize.Log(file.FileName))
+				continue
+			}
+
 			fileName := photoprism.FileName(file.FileRoot, file.FileName)
 			alias := file.DownloadName(dlName, 0)
 			key := strings.ToLower(alias)

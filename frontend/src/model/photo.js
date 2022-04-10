@@ -509,6 +509,12 @@ export class Photo extends RestModel {
   }
 
   downloadAll() {
+    const settings = config.settings();
+
+    if (!settings || !settings.features || !settings.download || !settings.features.download) {
+      return;
+    }
+
     const token = config.downloadToken();
 
     if (!this.Files) {
@@ -524,9 +530,20 @@ export class Photo extends RestModel {
     }
 
     this.Files.forEach((file) => {
-      if (!file || !file.Hash || file.Sidecar) {
+      if (!file || !file.Hash) {
+        return;
+      }
+
+      // Skip sidecar files.
+      if (file.Sidecar) {
         // Don't download broken files and sidecars.
-        if (config.debug) console.log("download: skipped file", file);
+        if (config.debug) console.log("download: skipped sidecar", file);
+        return;
+      }
+
+      // Skip RAW images.
+      if (!settings.download.raw && file.Type === TypeRaw) {
+        if (config.debug) console.log("download: skipped raw", file);
         return;
       }
 
