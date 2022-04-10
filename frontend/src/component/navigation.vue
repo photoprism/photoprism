@@ -583,10 +583,10 @@ export default {
 
     this.edit.subscription = Event.subscribe("dialog.edit", (ev, data) => {
       if (!this.edit.dialog) {
+        this.edit.dialog = true;
         this.edit.index = data.index;
         this.edit.selection = data.selection;
         this.edit.album = data.album;
-        this.edit.dialog = true;
       }
     });
   },

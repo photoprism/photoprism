@@ -90,6 +90,10 @@ export default {
       this.$emit('cancel');
     },
     confirm() {
+      if (this.loading) {
+        return;
+      }
+
       if (this.album) {
         this.$emit('confirm', this.album);
       } else if (this.newAlbum) {
@@ -98,6 +102,8 @@ export default {
         this.newAlbum.save().then((a) => {
           this.loading = false;
           this.$emit('confirm', a.UID);
+        }).catch(() => {
+          this.loading = false;
         });
       }
     },
@@ -116,14 +122,14 @@ export default {
       };
 
       Album.search(params).then(response => {
-        this.loading = false;
         this.albums = response.models;
         this.items = [...this.albums];
         this.$nextTick(() => this.$refs.input.focus());
       }).catch(() => {
-        this.loading = false;
         this.$nextTick(() => this.$refs.input.focus());
-      });
+      }).finally(() => {
+        this.loading = false;
+      })
     },
   },
 };

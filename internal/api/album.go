@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
+
+var albumMutex = sync.Mutex{}
 
 // SaveAlbumAsYaml saves album data as YAML file.
 func SaveAlbumAsYaml(a entity.Album) {
@@ -84,10 +87,20 @@ func CreateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
+		albumMutex.Lock()
+		defer albumMutex.Unlock()
+
 		a := entity.NewAlbum(f.AlbumTitle, entity.AlbumDefault)
 		a.AlbumFavorite = f.AlbumFavorite
 
-		if res := entity.Db().Create(a); res.Error != nil {
+		// Search existing album.
+		if err := a.Find(); err == nil {
+			c.JSON(http.StatusOK, a)
+			return
+		}
+
+		// Create new album.
+		if err := a.Create(); err != nil {
 			AbortAlreadyExists(c, sanitize.Log(a.AlbumTitle))
 			return
 		}
@@ -138,7 +151,10 @@ func UpdateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := a.SaveForm(f); err != nil {
+		albumMutex.Lock()
+		defer albumMutex.Unlock()
+
+		if err = a.SaveForm(f); err != nil {
 			log.Error(err)
 			AbortSaveFailed(c)
 			return
@@ -176,6 +192,9 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
+
+		albumMutex.Lock()
+		defer albumMutex.Unlock()
 
 		// Regular, manually created album?
 		if a.IsDefault() {

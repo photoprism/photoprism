@@ -283,31 +283,37 @@ func TestNewMonthAlbum(t *testing.T) {
 
 func TestFindAlbumBySlug(t *testing.T) {
 	t.Run("1 result", func(t *testing.T) {
-		album := FindAlbumBySlug("holiday-2030", AlbumDefault)
+		album, err := FindAlbumBySlug("holiday-2030", AlbumDefault)
+		assert.NoError(t, err)
 
 		if album == nil {
-			t.Fatal("expected to find an album")
+			t.Fatal("album should not be nil")
 		}
 
 		assert.Equal(t, "Holiday 2030", album.AlbumTitle)
 		assert.Equal(t, "holiday-2030", album.AlbumSlug)
 	})
 	t.Run("state album", func(t *testing.T) {
-		album := FindAlbumBySlug("california-usa", AlbumState)
+		album, err := FindAlbumBySlug("california-usa", AlbumState)
+		assert.NoError(t, err)
 
 		if album == nil {
-			t.Fatal("expected to find an album")
+			t.Fatal("album should not be nil")
 		}
 
 		assert.Equal(t, "California / USA", album.AlbumTitle)
 		assert.Equal(t, "california-usa", album.AlbumSlug)
 	})
 	t.Run("no result", func(t *testing.T) {
-		album := FindAlbumBySlug("holiday-2030", AlbumMonth)
+		album, err := FindAlbumBySlug("holiday-2030", AlbumMonth)
+		assert.Error(t, err)
 
-		if album != nil {
-			t.Fatal("album should be nil")
+		if album == nil {
+			t.Fatal("album should not be nil")
 		}
+
+		assert.Equal(t, uint(0), album.ID)
+		assert.Equal(t, "", album.AlbumUID)
 	})
 }
 

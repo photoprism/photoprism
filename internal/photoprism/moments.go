@@ -36,7 +36,7 @@ func (w *Moments) MigrateSlug(m query.Moment, albumType string) {
 		return
 	}
 
-	if a := entity.FindAlbumBySlug(m.TitleSlug(), albumType); a != nil {
+	if a, err := entity.FindAlbumBySlug(m.TitleSlug(), albumType); err == nil {
 		logWarn("moments", a.Update("album_slug", m.Slug()))
 	}
 }

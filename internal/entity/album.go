@@ -247,14 +247,12 @@ func FindMonthAlbum(year, month int) *Album {
 }
 
 // FindAlbumBySlug finds a matching album or returns nil.
-func FindAlbumBySlug(albumSlug, albumType string) *Album {
+func FindAlbumBySlug(albumSlug, albumType string) (*Album, error) {
 	result := Album{}
 
-	if err := UnscopedDb().Where("album_slug = ? AND album_type = ?", albumSlug, albumType).First(&result).Error; err != nil {
-		return nil
-	}
+	err := UnscopedDb().Where("album_slug = ? AND album_type = ?", albumSlug, albumType).First(&result).Error
 
-	return &result
+	return &result, err
 }
 
 // FindAlbumByAttr finds an album by filters and slugs, or returns nil.
@@ -298,7 +296,7 @@ func FindFolderAlbum(albumPath string) *Album {
 }
 
 // Find returns an entity from the database.
-func (m *Album) Find() error {
+func (m *Album) Find() (err error) {
 	if rnd.IsPPID(m.AlbumUID, 'a') {
 		if err := UnscopedDb().First(m, "album_uid = ?", m.AlbumUID).Error; err != nil {
 			return err
@@ -318,14 +316,12 @@ func (m *Album) Find() error {
 	if m.AlbumType != AlbumDefault && m.AlbumFilter != "" {
 		stmt = stmt.Where("album_slug = ? OR album_filter = ?", m.AlbumSlug, m.AlbumFilter)
 	} else {
-		stmt = stmt.Where("album_slug = ?", m.AlbumSlug)
+		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", m.AlbumSlug, m.AlbumTitle)
 	}
 
-	if err := stmt.First(m).Error; err != nil {
-		return err
-	}
+	err = stmt.First(m).Error
 
-	return nil
+	return err
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -478,17 +474,17 @@ func (m *Album) SaveForm(f form.Album) error {
 		m.SetTitle(f.AlbumTitle)
 	}
 
-	return Db().Save(m).Error
+	return m.Save()
 }
 
 // Update sets a new value for a database column.
 func (m *Album) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // Updates multiple columns in the database.
 func (m *Album) Updates(values interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumns(values).Error
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // UpdateFolder updates the path, filter and slug for a folder album.

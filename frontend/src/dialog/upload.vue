@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" fullscreen hide-overlay scrollable
+  <v-dialog :value="show" fullscreen hide-overlay scrollable
             lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
@@ -177,6 +177,10 @@ export default {
       this.started = 0;
     },
     upload() {
+      if (this.busy) {
+        return;
+      }
+
       this.selected = this.$refs.upload.files;
       this.total = this.selected.length;
 
