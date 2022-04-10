@@ -11,6 +11,7 @@ import (
 	jpegstructure "github.com/dsoprea/go-jpeg-image-structure/v2"
 	pngstructure "github.com/dsoprea/go-png-image-structure/v2"
 	tiffstructure "github.com/dsoprea/go-tiff-image-structure/v2"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
@@ -29,7 +30,8 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 	logName := sanitize.Log(filepath.Base(fileName))
 
 	// Try Exif parser for specific media file format first.
-	if fileType == fs.FormatJpeg {
+	switch fileType {
+	case fs.FormatJpeg:
 		jpegMp := jpegstructure.NewJpegMediaParser()
 
 		sl, err := jpegMp.ParseFile(fileName)
@@ -51,7 +53,7 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 				parsed = true
 			}
 		}
-	} else if fileType == fs.FormatPng {
+	case fs.FormatPng:
 		pngMp := pngstructure.NewPngMediaParser()
 
 		cs, err := pngMp.ParseFile(fileName)
@@ -71,7 +73,7 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 				parsed = true
 			}
 		}
-	} else if fileType == fs.FormatHEIF {
+	case fs.FormatHEIF:
 		heicMp := heicexif.NewHeicExifMediaParser()
 
 		cs, err := heicMp.ParseFile(fileName)
@@ -91,7 +93,7 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 				parsed = true
 			}
 		}
-	} else if fileType == fs.FormatTiff {
+	case fs.FormatTiff:
 		tiffMp := tiffstructure.NewTiffMediaParser()
 
 		cs, err := tiffMp.ParseFile(fileName)
@@ -111,7 +113,7 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 				parsed = true
 			}
 		}
-	} else {
+	default:
 		log.Debugf("metadata: no native file format support for %s, performing brute-force exif search", logName)
 		bruteForce = true
 	}
