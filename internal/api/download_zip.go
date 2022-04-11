@@ -92,6 +92,8 @@ func CreateZip(router *gin.RouterGroup) {
 
 		dlName := DownloadName(c)
 
+		skipRaw := !conf.Settings().Download.Raw
+
 		var aliases = make(map[string]int)
 
 		for _, file := range files {
@@ -105,7 +107,7 @@ func CreateZip(router *gin.RouterGroup) {
 				continue
 			}
 
-			if !conf.Settings().Download.Raw && fs.FormatRaw.Is(file.FileType) {
+			if skipRaw && fs.FormatRaw.Is(file.FileType) {
 				log.Debugf("download: skipped raw %s", sanitize.Log(file.FileName))
 				continue
 			}

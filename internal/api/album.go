@@ -1,12 +1,9 @@
 package api
 
 import (
-	"archive/zip"
 	"net/http"
 	"path/filepath"
-	"strings"
 	"sync"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -15,12 +12,10 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
@@ -461,76 +456,5 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": f.Photos, "removed": removed})
-	})
-}
-
-// DownloadAlbum streams the album contents as zip archive.
-//
-// GET /api/v1/albums/:uid/dl
-func DownloadAlbum(router *gin.RouterGroup) {
-	router.GET("/albums/:uid/dl", func(c *gin.Context) {
-		if InvalidDownloadToken(c) {
-			AbortUnauthorized(c)
-			return
-		}
-
-		start := time.Now()
-		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
-
-		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
-			return
-		}
-
-		files, err := search.AlbumPhotos(a, 10000, true)
-
-		if err != nil {
-			AbortEntityNotFound(c)
-			return
-		}
-
-		zipFileName := a.ZipName()
-
-		AddDownloadHeader(c, zipFileName)
-
-		zipWriter := zip.NewWriter(c.Writer)
-		defer func() { _ = zipWriter.Close() }()
-
-		var aliases = make(map[string]int)
-
-		for _, file := range files {
-			if file.FileHash == "" {
-				log.Warnf("download: empty file hash, skipped %s", sanitize.Log(file.FileName))
-				continue
-			}
-
-			if file.FileSidecar {
-				log.Debugf("download: skipped sidecar %s", sanitize.Log(file.FileName))
-				continue
-			}
-
-			fileName := photoprism.FileName(file.FileRoot, file.FileName)
-			alias := file.ShareBase(0)
-			key := strings.ToLower(alias)
-
-			if seq := aliases[key]; seq > 0 {
-				alias = file.ShareBase(seq)
-			}
-
-			aliases[key] += 1
-
-			if fs.FileExists(fileName) {
-				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
-					log.Error(err)
-					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
-					return
-				}
-				log.Infof("download: added %s as %s", sanitize.Log(file.FileName), sanitize.Log(alias))
-			} else {
-				log.Errorf("download: failed finding %s", sanitize.Log(file.FileName))
-			}
-		}
-
-		log.Infof("download: created %s [%s]", sanitize.Log(zipFileName), time.Since(start))
 	})
 }
