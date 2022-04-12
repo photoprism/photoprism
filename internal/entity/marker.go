@@ -133,8 +133,8 @@ func (m *Marker) UpdateFile(file *File) (updated bool) {
 
 	if !updated || m.MarkerUID == "" {
 		return false
-	} else if res := UnscopedDb().Model(m).UpdateColumns(Values{"file_uid": m.FileUID, "thumb": m.Thumb}); res.Error != nil {
-		log.Errorf("marker %s: %s (set file)", m.MarkerUID, res.Error)
+	} else if err := UnscopedDb().Model(m).UpdateColumns(Values{"file_uid": m.FileUID, "thumb": m.Thumb}).Error; err != nil {
+		log.Errorf("faces: failed assigning marker %s to file %s (%s)", m.MarkerUID, m.FileUID, err)
 		return false
 	} else {
 		return true
@@ -232,7 +232,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	} else if reported, err := f.ResolveCollision(m.Embeddings()); err != nil {
 		return false, err
 	} else if reported {
-		log.Warnf("marker %s: face %s has ambiguous subjects %s <> %s, subject source %s", sanitize.Log(m.MarkerUID), sanitize.Log(f.ID), sanitize.Log(m.SubjUID), sanitize.Log(f.SubjUID), SrcString(m.SubjSrc))
+		log.Warnf("faces: marker %s face %s has ambiguous subjects %s <> %s, subject source %s", sanitize.Log(m.MarkerUID), sanitize.Log(f.ID), sanitize.Log(m.SubjUID), sanitize.Log(f.SubjUID), SrcString(m.SubjSrc))
 		return false, nil
 	} else {
 		return false, nil
@@ -428,10 +428,10 @@ func (m *Marker) Subject() (subj *Subject) {
 	// Create subject?
 	if m.SubjSrc != SrcAuto && m.MarkerName != "" && m.SubjUID == "" {
 		if subj = NewSubject(m.MarkerName, SubjPerson, m.SubjSrc); subj == nil {
-			log.Errorf("marker %s: invalid subject %s", sanitize.Log(m.MarkerUID), sanitize.Log(m.MarkerName))
+			log.Errorf("faces: marker %s has invalid subject %s", sanitize.Log(m.MarkerUID), sanitize.Log(m.MarkerName))
 			return nil
 		} else if subj = FirstOrCreateSubject(subj); subj == nil {
-			log.Debugf("marker %s: invalid subject %s", sanitize.Log(m.MarkerUID), sanitize.Log(m.MarkerName))
+			log.Debugf("faces: marker %s has invalid subject %s", sanitize.Log(m.MarkerUID), sanitize.Log(m.MarkerName))
 			return nil
 		} else {
 			m.subject = subj
@@ -457,9 +457,9 @@ func (m *Marker) ClearSubject(src string) error {
 		// Find and (soft) delete unused subjects.
 		start := time.Now()
 		if count, err := DeleteOrphanPeople(); err != nil {
-			log.Errorf("marker %s: %s while removing unused subjects [%s]", sanitize.Log(m.MarkerUID), err, time.Since(start))
+			log.Errorf("faces: %s while clearing subject of marker %s [%s]", err, sanitize.Log(m.MarkerUID), time.Since(start))
 		} else if count > 0 {
-			log.Debugf("marker %s: removed %s [%s]", sanitize.Log(m.MarkerUID), english.Plural(count, "person", "people"), time.Since(start))
+			log.Debugf("faces: %s marked as missing while clearing subject of marker %s [%s]", english.Plural(count, "person", "people"), sanitize.Log(m.MarkerUID), time.Since(start))
 		}
 	}()
 
@@ -472,7 +472,7 @@ func (m *Marker) ClearSubject(src string) error {
 	} else if resolved, err := m.face.ResolveCollision(m.Embeddings()); err != nil {
 		return err
 	} else if resolved {
-		log.Debugf("marker %s: resolved ambiguous subjects for face %s", sanitize.Log(m.MarkerUID), sanitize.Log(m.face.ID))
+		log.Debugf("faces: marker %s resolved ambiguous subjects for face %s", sanitize.Log(m.MarkerUID), sanitize.Log(m.face.ID))
 	}
 
 	// Clear references.
@@ -498,7 +498,7 @@ func (m *Marker) Face() (f *Face) {
 	// Add face if size
 	if m.SubjSrc != SrcAuto && m.FaceID == "" {
 		if m.Size < face.ClusterSizeThreshold || m.Score < face.ClusterScoreThreshold {
-			log.Debugf("marker %s: skipped adding face due to low-quality (size %d, score %d)", sanitize.Log(m.MarkerUID), m.Size, m.Score)
+			log.Debugf("faces: marker %s skipped adding face due to low-quality (size %d, score %d)", sanitize.Log(m.MarkerUID), m.Size, m.Score)
 			return nil
 		}
 

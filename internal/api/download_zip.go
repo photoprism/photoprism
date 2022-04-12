@@ -100,6 +100,9 @@ func CreateZip(router *gin.RouterGroup) {
 			if file.FileHash == "" {
 				log.Warnf("download: empty file hash, skipped %s", sanitize.Log(file.FileName))
 				continue
+			} else if file.FileName == "" {
+				log.Warnf("download: empty file name, skipped %s", sanitize.Log(file.FileUID))
+				continue
 			}
 
 			if file.FileSidecar {
@@ -124,12 +127,14 @@ func CreateZip(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
-					Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
+					log.Errorf("download: failed adding %s to zip (%s)", sanitize.Log(file.FileName), err)
+					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
+
 				log.Infof("download: added %s as %s", sanitize.Log(file.FileName), sanitize.Log(alias))
 			} else {
-				log.Warnf("download: file %s is missing", sanitize.Log(file.FileName))
+				log.Warnf("download: media file %s is missing", sanitize.Log(file.FileName))
 				logError("download", file.Update("FileMissing", true))
 			}
 		}

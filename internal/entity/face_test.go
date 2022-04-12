@@ -141,6 +141,18 @@ func TestNewFace(t *testing.T) {
 	})
 }
 
+func TestFace_MatchId(t *testing.T) {
+	t.Run("A123-B456", func(t *testing.T) {
+		f1 := Face{ID: "A123"}
+		f2 := Face{ID: "B456"}
+		f3 := Face{ID: ""}
+
+		assert.Equal(t, "A123-B456", f1.MatchId(f2))
+		assert.Equal(t, "A123-B456", f2.MatchId(f1))
+		assert.Equal(t, "", f3.MatchId(f1))
+	})
+}
+
 func TestFace_Unsuitable(t *testing.T) {
 	t.Run("True", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")

@@ -15,7 +15,7 @@ func Name(name string) string {
 	// Remove double quotes and other special characters.
 	name = strings.Map(func(r rune) rune {
 		switch r {
-		case '"', '`', '~', '\\', '/', '*', '%', '&', '|', '+', '=', '$', '@', '!', '?', ':', ';', '<', '>', '{', '}':
+		case '"', '`', '~', '\\', '/', '*', '%', '_', '&', '|', '+', '=', '$', '@', '!', '?', ':', ';', '<', '>', '{', '}':
 			return -1
 		}
 		return r

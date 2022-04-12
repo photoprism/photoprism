@@ -55,6 +55,19 @@ func NewFace(subjUID, faceSrc string, embeddings face.Embeddings) *Face {
 	return result
 }
 
+// MatchId returns a compound id for matching.
+func (m *Face) MatchId(f Face) string {
+	if m.ID == "" || f.ID == "" {
+		return ""
+	}
+
+	if m.ID < f.ID {
+		return fmt.Sprintf("%s-%s", m.ID, f.ID)
+	} else {
+		return fmt.Sprintf("%s-%s", f.ID, m.ID)
+	}
+}
+
 // SkipMatching checks whether the face should be skipped when matching.
 func (m *Face) SkipMatching() bool {
 	return m.Embedding().SkipMatching()
@@ -171,12 +184,12 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		return false, fmt.Errorf("collision distance must be positive")
 	} else if dist < 0.02 {
 		// Ignore if distance is very small as faces may belong to the same person.
-		log.Warnf("face %s: clearing ambiguous subject %s, similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
+		log.Warnf("faces: clearing ambiguous subject %s from face %s, similar face at dist %f with source %s", SubjNames.Log(m.SubjUID), m.ID, dist, SrcString(m.FaceSrc))
 
 		// Reset subject UID just in case.
 		m.SubjUID = ""
 
-		return false, m.Updates(Values{"SubjUID": m.SubjUID})
+		return true, m.Updates(Values{"SubjUID": m.SubjUID})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++

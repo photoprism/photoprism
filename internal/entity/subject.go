@@ -118,8 +118,6 @@ func (m *Subject) Delete() error {
 	subjectMutex.Lock()
 	defer subjectMutex.Unlock()
 
-	log.Infof("subject: deleting %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
-
 	event.EntitiesDeleted("subjects", []string{m.SubjUID})
 
 	if m.IsPerson() {
@@ -132,6 +130,8 @@ func (m *Subject) Delete() error {
 	if err := Db().Model(&Face{}).Where("subj_uid = ?", m.SubjUID).Update("subj_uid", "").Error; err != nil {
 		return err
 	}
+
+	log.Infof("subject: marked %s %s as missing", TypeString(m.SubjType), sanitize.Log(m.SubjName))
 
 	return Db().Delete(m).Error
 }
@@ -230,28 +230,37 @@ func FindSubject(uid string) *Subject {
 }
 
 // FindSubjectByName find an existing subject by name.
-func FindSubjectByName(name string) (result *Subject) {
+func FindSubjectByName(name string) *Subject {
 	name = sanitize.Name(name)
 
 	if name == "" {
 		return nil
 	}
 
+	result := Subject{}
 	uid := SubjNames.Key(name)
 
-	if uid == "" {
-		return nil
+	switch uid {
+	case "":
+		if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+			log.Debugf("subject: %s not found by name", sanitize.Log(name))
+			return nil
+		}
+	default:
+		if found := FindSubject(uid); found == nil {
+			log.Debugf("subject: %s not found by uid", sanitize.Log(name))
+			return nil
+		} else {
+			result = *found
+		}
 	}
 
-	// Restore if currently deleted.
-	if result = FindSubject(uid); result == nil {
-		log.Debugf("subject: could not find %s", sanitize.Log(result.SubjName))
-		return nil
-	} else if !result.Deleted() {
-		return result
+	// Restore if flagged as deleted.
+	if !result.Deleted() {
+		return &result
 	} else if err := result.Restore(); err == nil {
 		log.Debugf("subject: restored %s", sanitize.Log(result.SubjName))
-		return result
+		return &result
 	} else {
 		log.Errorf("subject: failed restoring %s (%s)", sanitize.Log(result.SubjName), err)
 	}

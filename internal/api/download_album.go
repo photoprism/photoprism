@@ -65,6 +65,9 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			if file.FileHash == "" {
 				log.Warnf("download: empty file hash, skipped %s", sanitize.Log(file.FileName))
 				continue
+			} else if file.FileName == "" {
+				log.Warnf("download: empty file name, skipped %s", sanitize.Log(file.FileUID))
+				continue
 			}
 
 			if file.FileSidecar {
@@ -89,13 +92,14 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
-					log.Error(err)
+					log.Errorf("download: failed adding %s to album zip (%s)", sanitize.Log(file.FileName), err)
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
+
 				log.Infof("download: added %s as %s", sanitize.Log(file.FileName), sanitize.Log(alias))
 			} else {
-				log.Errorf("download: failed finding %s", sanitize.Log(file.FileName))
+				log.Warnf("download: album file %s is missing", sanitize.Log(file.FileName))
 			}
 		}
 

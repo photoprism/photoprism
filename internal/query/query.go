@@ -75,3 +75,10 @@ func UnscopedDb() *gorm.DB {
 func DbDialect() string {
 	return Db().Dialect().GetName()
 }
+
+// logErr logs an error and keeps quiet otherwise.
+func logErr(prefix, action string, err error) {
+	if err != nil {
+		log.Errorf("%s: %s (%s)", prefix, err, action)
+	}
+}
