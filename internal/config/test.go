@@ -187,6 +187,7 @@ func CliTestContext() *cli.Context {
 	config := NewTestOptions("config-cli")
 
 	globalSet := flag.NewFlagSet("test", 0)
+	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.Bool("debug", false, "doc")
 	globalSet.String("storage-path", config.StoragePath, "doc")
 	globalSet.String("backup-path", config.StoragePath, "doc")
@@ -199,7 +200,6 @@ func CliTestContext() *cli.Context {
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.String("darktable-blacklist", config.DarktableBlacklist, "doc")
-	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 	globalSet.Int("auto-index", config.AutoIndex, "doc")
@@ -210,6 +210,7 @@ func CliTestContext() *cli.Context {
 
 	c := cli.NewContext(app, globalSet, nil)
 
+	LogError(c.Set("admin-password", config.AdminPassword))
 	LogError(c.Set("storage-path", config.StoragePath))
 	LogError(c.Set("backup-path", config.BackupPath))
 	LogError(c.Set("sidecar-path", config.SidecarPath))
@@ -221,7 +222,6 @@ func CliTestContext() *cli.Context {
 	LogError(c.Set("cache-path", config.CachePath))
 	LogError(c.Set("darktable-cli", config.DarktableBin))
 	LogError(c.Set("darktable-blacklist", "raf,cr3"))
-	LogError(c.Set("admin-password", config.AdminPassword))
 	LogError(c.Set("wakeup-interval", "1h34m9s"))
 	LogError(c.Set("detect-nsfw", "true"))
 	LogError(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))

@@ -15,8 +15,13 @@ import (
 // GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
+		Name:   "admin-password, pw",
+		Usage:  fmt.Sprintf("initial admin `PASSWORD`, must have at least %d characters", entity.PasswordLen),
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
+	},
+	cli.StringFlag{
 		Name:   "log-level, l",
-		Usage:  "`VERBOSITY` of log messages: trace, debug, info, warning, error, fatal, or panic",
+		Usage:  "log message verbosity `LEVEL` (trace, debug, info, warning, error, fatal, panic)",
 		Value:  "info",
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
 	},
@@ -29,11 +34,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "trace",
 		Usage:  "enable trace mode, show all log messages",
 		EnvVar: "PHOTOPRISM_TRACE",
-	},
-	cli.StringFlag{
-		Name:   "admin-password, pw",
-		Usage:  fmt.Sprintf("initial admin `PASSWORD`, must have at least %d characters", entity.PasswordLen),
-		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.BoolFlag{
 		Name:   "auth, a",

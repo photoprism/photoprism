@@ -15,10 +15,10 @@ func (c *Config) Table() (rows [][]string, cols []string) {
 	cols = []string{"Value", "Name"}
 
 	rows = [][]string{
+		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
 		{"log-level", c.LogLevel().String()},
 		{"debug", fmt.Sprintf("%t", c.Debug())},
 		{"trace", fmt.Sprintf("%t", c.Trace())},
-		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
 		{"auth", fmt.Sprintf("%t", c.Auth())},
 		{"public", fmt.Sprintf("%t", c.Public())},
 		{"read-only", fmt.Sprintf("%t", c.ReadOnly())},
