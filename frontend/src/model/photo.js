@@ -855,7 +855,14 @@ export class Photo extends RestModel {
       values.PlaceSrc = src.Manual;
     }
 
-    if (values.TakenAt || values.TimeZone || values.Day || values.Month || values.Year) {
+    if (
+      values.TakenAt ||
+      values.TakenAtLocal ||
+      values.TimeZone ||
+      values.Day ||
+      values.Month ||
+      values.Year
+    ) {
       values.TakenSrc = src.Manual;
     }
 
