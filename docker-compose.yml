@@ -33,7 +33,7 @@ services:
     environment:
       PHOTOPRISM_UID: ${UID:-1000}                   # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                   # group id
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # "admin" password (min 4 characters)
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
       ## External development server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"

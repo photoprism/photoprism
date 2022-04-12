@@ -15,6 +15,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
+const UsernameLen = 3
+const PasswordLen = 8
+
 type Users []User
 
 // User represents a person that may optionally log in as user.
@@ -256,8 +259,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len(password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", sanitize.Log(m.Username()))
+	if len(password) < PasswordLen {
+		return fmt.Errorf("password must have at least %d characters", PasswordLen)
 	}
 
 	pw := NewPassword(m.UserUID, password)
@@ -354,8 +357,8 @@ func (m *User) Validate() error {
 		return errors.New("username must not be empty")
 	}
 
-	if len(m.Username()) < 4 {
-		return errors.New("username must be at least 4 characters")
+	if len(m.Username()) < UsernameLen {
+		return fmt.Errorf("username must have at least %d characters", UsernameLen)
 	}
 
 	var err error
@@ -398,9 +401,11 @@ func CreateWithPassword(uc form.UserCreate) error {
 		PrimaryEmail: uc.Email,
 		RoleAdmin:    true,
 	}
-	if len(uc.Password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", sanitize.Log(u.Username()))
+
+	if len(uc.Password) < PasswordLen {
+		return fmt.Errorf("password must have at least %d characters", PasswordLen)
 	}
+
 	err := u.Validate()
 	if err != nil {
 		return err

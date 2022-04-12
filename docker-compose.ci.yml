@@ -36,7 +36,7 @@ services:
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # the initial admin password (min 4 characters)
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # initial "admin" password (minimum 8 characters)
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"

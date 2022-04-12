@@ -114,7 +114,7 @@ msgstr ""
 #: src/component/album/clipboard.vue:136
 #: src/component/file/clipboard.vue:89
 #: src/component/label/clipboard.vue:67
-#: src/component/photo/clipboard.vue:191
+#: src/component/photo/clipboard.vue:192
 #: src/component/subject/clipboard.vue:89
 #: src/dialog/photo/album.vue:20
 msgid "Add to album"
@@ -290,7 +290,7 @@ msgstr ""
 #: src/app/routes.js:210
 #: src/component/navigation.vue:123
 #: src/component/photo/cards.vue:36
-#: src/component/photo/clipboard.vue:215
+#: src/component/photo/clipboard.vue:216
 #: src/pages/settings/general.vue:294
 #: src/share/photo/cards.vue:36
 msgid "Archive"
@@ -335,10 +335,6 @@ msgstr ""
 #: src/dialog/photo/files.vue:131
 #: src/dialog/photo/files.vue:128
 msgid "Aspect Ratio"
-msgstr ""
-
-#: src/pages/settings/account.vue:85
-msgid "At least 6 characters."
 msgstr ""
 
 #: src/pages/settings/library.vue:114
@@ -460,8 +456,8 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:352
-#: src/dialog/album/edit.vue:163
+#: src/component/photo/toolbar.vue:351
+#: src/dialog/album/edit.vue:162
 #: src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:130
 msgid "Category"
@@ -500,7 +496,7 @@ msgstr ""
 msgid "Codec"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:328
+#: src/component/photo/toolbar.vue:327
 msgid "Color"
 msgstr ""
 
@@ -628,7 +624,7 @@ msgstr ""
 
 #: src/component/album/clipboard.vue:160
 #: src/component/label/clipboard.vue:89
-#: src/component/photo/clipboard.vue:283
+#: src/component/photo/clipboard.vue:284
 #: src/dialog/account/remove.vue:18
 #: src/dialog/album/delete.vue:18
 #: src/dialog/file/delete.vue:18
@@ -636,14 +632,14 @@ msgstr ""
 #: src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:41
 #: src/dialog/photo/files.vue:38
-#: src/dialog/share.vue:235
+#: src/dialog/share.vue:234
 #: src/pages/library/errors.vue:94
 #: src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr ""
 
 #: src/component/photo/cards.vue:33
-#: src/dialog/album/edit.vue:143
+#: src/dialog/album/edit.vue:142
 #: src/dialog/photo/details.vue:566
 #: src/pages/albums.vue:444
 #: src/share/albums.vue:243
@@ -657,7 +653,7 @@ msgstr ""
 
 #: src/dialog/photo/edit.vue:27
 #: src/dialog/photo/edit.vue:1
-#: src/dialog/photo/edit.vue:178
+#: src/dialog/photo/edit.vue:177
 msgid "Details"
 msgstr ""
 
@@ -789,7 +785,7 @@ msgstr ""
 #: src/component/label/clipboard.vue:59
 #: src/component/photo-viewer.vue:158
 #: src/component/photo/cards.vue:63
-#: src/component/photo/clipboard.vue:121
+#: src/component/photo/clipboard.vue:183
 #: src/component/photo/list.vue:67
 #: src/component/subject/clipboard.vue:46
 #: src/dialog/photo/files.vue:55
@@ -934,7 +930,7 @@ msgstr ""
 msgid "Failed updating link"
 msgstr ""
 
-#: src/dialog/upload.vue:159
+#: src/dialog/upload.vue:163
 msgid "Failure while importing uploaded files"
 msgstr ""
 
@@ -975,7 +971,7 @@ msgstr ""
 
 #: src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:317
+#: src/dialog/photo/edit.vue:316
 msgid "Files"
 msgstr ""
 
@@ -1226,7 +1222,7 @@ msgstr ""
 #: src/component/navigation.vue:1097
 #: src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:216
+#: src/dialog/photo/edit.vue:215
 #: src/pages/settings/general.vue:382
 msgid "Labels"
 msgstr ""
@@ -1327,7 +1323,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:32
 #: src/component/photo/list.vue:47
-#: src/dialog/album/edit.vue:124
+#: src/dialog/album/edit.vue:123
 #: src/share/photo/cards.vue:32
 #: src/share/photo/list.vue:43
 msgid "Location"
@@ -1460,11 +1456,15 @@ msgstr ""
 msgid "Move Files"
 msgstr ""
 
+#: src/pages/settings/account.vue:85
+msgid "Must have at least 8 characters."
+msgstr ""
+
 #: src/component/photo/cards.vue:39
 #: src/component/photo/list.vue:47
 #: src/component/photo/list.vue:235
 #: src/dialog/account/edit.vue:402
-#: src/dialog/album/edit.vue:106
+#: src/dialog/album/edit.vue:105
 #: src/dialog/photo/files.vue:71
 #: src/dialog/photo/files.vue:68
 #: src/dialog/photo/files.vue:34
@@ -1761,7 +1761,7 @@ msgstr ""
 #: src/component/navigation.vue:801
 #: src/dialog/photo/edit.vue:52
 #: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:267
+#: src/dialog/photo/edit.vue:266
 #: src/pages/settings/general.vue:338
 msgid "People"
 msgstr ""
@@ -1770,7 +1770,7 @@ msgstr ""
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
 
-#: src/component/photo/clipboard.vue:73
+#: src/component/photo/clipboard.vue:93
 msgid "Permanently deleted"
 msgstr ""
 
@@ -1778,7 +1778,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/model/photo.js:908
+#: src/model/photo.js:925
 msgid "Photo"
 msgstr ""
 
@@ -1989,11 +1989,11 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:99
+#: src/component/photo/clipboard.vue:132
 msgid "remove failed: unknown album"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:260
+#: src/component/photo/clipboard.vue:261
 msgid "Remove from album"
 msgstr ""
 
@@ -2015,7 +2015,7 @@ msgstr ""
 msgid "Resolution"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:238
+#: src/component/photo/clipboard.vue:239
 msgid "Restore"
 msgstr ""
 
@@ -2080,19 +2080,19 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: src/dialog/upload.vue:139
+#: src/dialog/upload.vue:138
 msgid "Select albums or create a new one"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:45
+#: src/component/photo/clipboard.vue:56
 msgid "Selection approved"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:61
+#: src/component/photo/clipboard.vue:81
 msgid "Selection archived"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:86
+#: src/component/photo/clipboard.vue:106
 msgid "Selection restored"
 msgstr ""
 
@@ -2225,7 +2225,7 @@ msgid "Sort by file name"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:257
-#: src/dialog/album/edit.vue:181
+#: src/dialog/album/edit.vue:180
 msgid "Sort Order"
 msgstr ""
 
@@ -2451,12 +2451,12 @@ msgstr ""
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:24
 #: src/model/album.js:179
-#: src/model/photo.js:568
 #: src/model/photo.js:585
-#: src/model/photo.js:608
-#: src/model/photo.js:622
-#: src/model/photo.js:707
-#: src/model/photo.js:720
+#: src/model/photo.js:602
+#: src/model/photo.js:625
+#: src/model/photo.js:639
+#: src/model/photo.js:724
+#: src/model/photo.js:737
 #: src/options/options.js:20
 #: src/options/options.js:34
 #: src/options/options.js:51
@@ -2517,7 +2517,7 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: src/dialog/upload.vue:155
+#: src/dialog/upload.vue:159
 msgid "Upload complete"
 msgstr ""
 
@@ -2543,7 +2543,7 @@ msgstr ""
 
 #: src/dialog/upload.vue:59
 #: src/dialog/upload.vue:67
-#: src/dialog/upload.vue:108
+#: src/dialog/upload.vue:112
 msgid "Uploading photos…"
 msgstr ""
 
@@ -2582,8 +2582,8 @@ msgstr ""
 #: src/component/photo/list.vue:196
 #: src/component/photo/mosaic.vue:200
 #: src/model/file.js:180
-#: src/model/photo.js:659
-#: src/model/photo.js:673
+#: src/model/photo.js:676
+#: src/model/photo.js:690
 #: src/options/options.js:318
 #: src/share/photo/cards.vue:38
 #: src/share/photo/cards.vue:198

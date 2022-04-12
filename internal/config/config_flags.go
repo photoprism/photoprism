@@ -1,9 +1,12 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -12,20 +15,35 @@ import (
 // GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
-		Name:   "admin-password, a",
-		Usage:  "initial admin `PASSWORD`, minimum 4 characters",
-		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
-	},
-	cli.StringFlag{
 		Name:   "log-level, l",
-		Usage:  "trace, debug, info, warning, error, fatal, or panic",
+		Usage:  "`VERBOSITY` of log messages: trace, debug, info, warning, error, fatal, or panic",
 		Value:  "info",
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
 	},
 	cli.BoolFlag{
 		Name:   "debug",
-		Usage:  "enable debug mode, show additional log messages",
+		Usage:  "enable debug mode, show non-essential log messages",
 		EnvVar: "PHOTOPRISM_DEBUG",
+	},
+	cli.BoolFlag{
+		Name:   "trace",
+		Usage:  "enable trace mode, show all log messages",
+		EnvVar: "PHOTOPRISM_TRACE",
+	},
+	cli.StringFlag{
+		Name:   "admin-password, pw",
+		Usage:  fmt.Sprintf("initial admin `PASSWORD`, must have at least %d characters", entity.PasswordLen),
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
+	},
+	cli.BoolFlag{
+		Name:   "auth, a",
+		Usage:  "always require password authentication, overrides the public flag",
+		EnvVar: "PHOTOPRISM_AUTH",
+	},
+	cli.BoolFlag{
+		Name:   "public, p",
+		Usage:  "disable password authentication, WebDAV, and the advanced settings page",
+		EnvVar: "PHOTOPRISM_PUBLIC",
 	},
 	cli.BoolFlag{
 		Name:   "test",
@@ -49,11 +67,6 @@ var GlobalFlags = []cli.Flag{
 		Hidden: true,
 		Usage:  "your continuous support helps to pay for development and operating expenses",
 		EnvVar: "PHOTOPRISM_SPONSOR",
-	},
-	cli.BoolFlag{
-		Name:   "public, p",
-		Usage:  "disable password authentication, WebDAV, and the advanced settings page",
-		EnvVar: "PHOTOPRISM_PUBLIC",
 	},
 	cli.BoolFlag{
 		Name:   "read-only, r",
