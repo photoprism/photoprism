@@ -151,10 +151,15 @@ export default class Util {
         return "Advanced Video Coding (AVC) / H.264";
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
+      case "av01":
+        return "AOMedia Video 1 (AV1)";
+      case "mpeg":
+        return "Moving Picture Experts Group (MPEG)";
       case "mjpg":
-        return "Motion JPEG (MJPEG)";
+        return "Motion JPEG (M-JPEG)";
+      case "heif":
       case "heic":
-        return "High Efficiency Image File Format (HEIC)";
+        return "High Efficiency Image File Format (HEIF)";
       case "1":
         return "Uncompressed";
       case "2":

@@ -22,14 +22,16 @@ type Options struct {
 	Version               string        `json:"-"`
 	Copyright             string        `json:"-"`
 	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
-	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Debug                 bool          `yaml:"Debug" json:"Debug" flag:"debug"`
+	Trace                 bool          `yaml:"Trace" json:"Trace" flag:"Trace"`
+	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
+	Auth                  bool          `yaml:"Auth" json:"-" flag:"auth"`
+	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	Test                  bool          `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool          `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                  bool          `yaml:"Demo" json:"-" flag:"demo"`
 	Sponsor               bool          `yaml:"-" json:"-" flag:"sponsor"`
-	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	ConfigPath            string        `yaml:"ConfigPath" json:"-" flag:"config-path"`

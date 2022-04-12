@@ -445,9 +445,17 @@ func (c *Config) ImprintUrl() string {
 	return c.options.ImprintUrl
 }
 
-// Debug checks if debug mode is enabled.
+// Debug checks if debug mode is enabled, shows non-essential log messages.
 func (c *Config) Debug() bool {
+	if c.Trace() {
+		return true
+	}
 	return c.options.Debug
+}
+
+// Trace checks if trace mode is enabled, shows all log messages.
+func (c *Config) Trace() bool {
+	return c.options.Trace
 }
 
 // Test checks if test mode is enabled.
@@ -467,7 +475,9 @@ func (c *Config) Sponsor() bool {
 
 // Public checks if app runs in public mode and requires no authentication.
 func (c *Config) Public() bool {
-	if c.Demo() {
+	if c.Auth() {
+		return false
+	} else if c.Demo() {
 		return true
 	}
 
@@ -506,12 +516,19 @@ func (c *Config) AdminPassword() string {
 	return c.options.AdminPassword
 }
 
+// Auth checks if authentication is always required.
+func (c *Config) Auth() bool {
+	return c.options.Auth
+}
+
 // LogLevel returns the Logrus log level.
 func (c *Config) LogLevel() logrus.Level {
 	// Normalize string.
 	c.options.LogLevel = strings.ToLower(strings.TrimSpace(c.options.LogLevel))
 
-	if c.Debug() && c.options.LogLevel != logrus.TraceLevel.String() {
+	if c.Trace() {
+		c.options.LogLevel = logrus.TraceLevel.String()
+	} else if c.Debug() && c.options.LogLevel != logrus.TraceLevel.String() {
 		c.options.LogLevel = logrus.DebugLevel.String()
 	}
 
@@ -520,6 +537,11 @@ func (c *Config) LogLevel() logrus.Level {
 	} else {
 		return logrus.InfoLevel
 	}
+}
+
+// SetLogLevel sets the Logrus log level.
+func (c *Config) SetLogLevel(level logrus.Level) {
+	log.SetLevel(level)
 }
 
 // Shutdown services and workers.

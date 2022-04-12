@@ -1,5 +1,7 @@
 /*
 
+Package report provides rendering of report results, for example as Markdown.
+
 Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
 
     This program is free software: you can redistribute it and/or modify
@@ -22,43 +24,4 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 
 */
-package main
-
-import (
-	"os"
-	"path/filepath"
-
-	"github.com/photoprism/photoprism/internal/commands"
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/event"
-	"github.com/urfave/cli"
-)
-
-var version = "development"
-var log = event.Log
-
-const appDescription = "For installation instructions, visit https://docs.photoprism.app/"
-const appCopyright = "(c) 2018-2022 Michael Mayer <hello@photoprism.app>"
-
-func main() {
-	defer func() {
-		if r := recover(); r != nil {
-			os.Exit(1)
-		}
-	}()
-
-	app := cli.NewApp()
-	app.Name = "PhotoPrism"
-	app.HelpName = filepath.Base(os.Args[0])
-	app.Usage = "AI-Powered Photos App"
-	app.Description = appDescription
-	app.Version = version
-	app.Copyright = appCopyright
-	app.EnableBashCompletion = true
-	app.Flags = config.GlobalFlags
-	app.Commands = commands.PhotoPrism
-
-	if err := app.Run(os.Args); err != nil {
-		log.Error(err)
-	}
-}
+package report

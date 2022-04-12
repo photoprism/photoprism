@@ -37,6 +37,7 @@ type ClientConfig struct {
 	AppMode         string              `json:"appMode"`
 	AppIcon         string              `json:"appIcon"`
 	Debug           bool                `json:"debug"`
+	Trace           bool                `json:"trace"`
 	Test            bool                `json:"test"`
 	Demo            bool                `json:"demo"`
 	Sponsor         bool                `json:"sponsor"`
@@ -227,6 +228,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Trace:           c.Trace(),
 		Test:            c.Test(),
 		Demo:            c.Demo(),
 		Sponsor:         c.Sponsor(),
@@ -299,6 +301,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Trace:           c.Trace(),
 		Test:            c.Test(),
 		Demo:            c.Demo(),
 		Sponsor:         c.Sponsor(),
@@ -365,6 +368,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Trace:           c.Trace(),
 		Test:            c.Test(),
 		Demo:            c.Demo(),
 		Sponsor:         c.Sponsor(),

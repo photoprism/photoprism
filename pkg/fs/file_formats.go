@@ -1,7 +1,6 @@
 package fs
 
 import (
-	"fmt"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
@@ -35,6 +34,8 @@ const (
 	FormatHEVC     Format = "hevc" // H.265, High Efficiency Video Coding (HEVC)
 	FormatAVC      Format = "avc"  // H.264, Advanced Video Coding (AVC), MPEG-4 Part 10, used internally
 	FormatAV1      Format = "av1"  // Alliance for Open Media Video
+	FormatMPEG     Format = "mpg"  // Moving Picture Experts Group (MPEG)
+	FormatMJPEG    Format = "mjpg" // Motion JPEG (M-JPEG)
 	FormatMov      Format = "mov"  // QuickTime File Format, can contain AVC, HEVC,...
 	FormatMp2      Format = "mp2"  // MPEG-2, H.222/H.262
 	FormatMp4      Format = "mp4"  // MPEG-4 Container based on QuickTime, can contain AVC, HEVC,...
@@ -43,7 +44,6 @@ const (
 	Format3g2      Format = "3g2"  // Similar to 3GP, consumes less space & bandwidth
 	FormatFlv      Format = "flv"  // Flash Video
 	FormatMkv      Format = "mkv"  // Matroska Multimedia Container, free and open
-	FormatMpg      Format = "mpg"  // Moving Picture Experts Group (MPEG)
 	FormatMts      Format = "mts"  // AVCHD (Advanced Video Coding High Definition)
 	FormatOgv      Format = "ogv"  // Ogg container format maintained by the Xiph.Org, free and open
 	FormatWMV      Format = "wmv"  // Windows Media Video
@@ -60,54 +60,69 @@ const (
 
 // FormatDesc contains human-readable descriptions for supported file formats
 var FormatDesc = map[Format]string{
-	FormatJpeg:     "JPEG (Joint Photographic Experts Group)",
+	FormatJpeg:     "Joint Photographic Experts Group (JPEG)",
 	FormatPng:      "Portable Network Graphics",
 	FormatGif:      "Graphics Interchange Format",
 	FormatTiff:     "Tag Image File Format",
 	FormatBitmap:   "Bitmap",
-	FormatRaw:      "Unprocessed Image Data",
-	FormatMpo:      "Stereoscopic 3D Format based on JPEG",
-	FormatHEIF:     "High Efficiency Image File Format",
+	FormatRaw:      "Unprocessed Sensor Data",
+	FormatMpo:      "Stereoscopic (3D JPEG)",
+	FormatHEIF:     "High Efficiency Image File Format (HEIF)",
 	FormatWebP:     "Google WebP",
 	FormatWebM:     "Google WebM",
-	FormatHEVC:     "H.265, High Efficiency Video Coding",
-	FormatAVC:      "H.264, Advanced Video Coding, MPEG-4 Part 10",
-	FormatAV1:      "Alliance for Open Media",
-	FormatMov:      "QuickTime File Format",
-	FormatMp2:      "MPEG-2, H.222, H.262",
-	FormatMp4:      "MPEG-4 Part 14 Multimedia Container",
+	FormatHEVC:     "High Efficiency Video Coding (HEVC, HVC1, H.265)",
+	FormatAVC:      "Advanced Video Coding (AVC, AVC1, H.264, MPEG-4 Part 10)",
+	FormatAV1:      "AOMedia Video 1 (AV1, AV01)",
+	FormatMov:      "Apple QuickTime (QT)",
+	FormatMp2:      "MPEG 2 (H.262, H.222)",
+	FormatMp4:      "Multimedia Container (MPEG-4 Part 14)",
 	FormatAvi:      "Microsoft Audio Video Interleave",
-	Format3gp:      "MPEG-4 Part 12, Mobile Multimedia Container",
-	Format3g2:      "Multimedia Container for 3G CDMA2000, based on 3GP",
+	FormatWMV:      "Microsoft Windows Media",
+	Format3gp:      "Mobile Multimedia Container (MPEG-4 Part 12)",
+	Format3g2:      "Mobile Multimedia Container for CDMA2000 (based on 3GP)",
 	FormatFlv:      "Flash Video",
-	FormatMkv:      "Matroska Multimedia Container",
-	FormatMpg:      "MPEG (Moving Picture Experts Group)",
-	FormatMts:      "AVCHD (Advanced Video Coding High Definition)",
+	FormatMkv:      "Matroska Multimedia Container (MKV, MCF, EBML)",
+	FormatMPEG:     "Moving Picture Experts Group (MPEG)",
+	FormatMJPEG:    "Motion JPEG (M-JPEG)",
+	FormatMts:      "Advanced Video Coding High Definition (AVCHD)",
 	FormatOgv:      "Ogg Media by Xiph.Org",
-	FormatWMV:      "Windows Media",
 	FormatXMP:      "Adobe Extensible Metadata Platform",
 	FormatAAE:      "Apple Image Edits",
 	FormatXML:      "Extensible Markup Language",
 	FormatJson:     "Serialized JSON Data (Exiftool, Google Photos)",
-	FormatYaml:     "Serialized YAML Data (Metadata, Config Values)",
+	FormatYaml:     "Serialized YAML Data (Config, Metadata)",
 	FormatToml:     "Serialized TOML Data (Tom's Obvious, Minimal Language)",
 	FormatText:     "Plain Text",
 	FormatMarkdown: "Markdown Formatted Text",
 	FormatOther:    "Other",
 }
 
-// Markdown returns a file format table in markdown text format.
-func (m FileFormats) Markdown() string {
+// Table returns a file format documentation table.
+func (m FileFormats) Table(withDesc, withType, withExt bool) (rows [][]string, cols []string) {
+	cols = make([]string, 0, 4)
+	cols = append(cols, "Format")
 
-	results := make([][]string, 0, len(m))
+	t := 0
 
-	max := func(x, y int) int {
-		if x < y {
-			return y
+	if withDesc {
+		cols = append(cols, "Description")
+	}
+
+	if withType {
+		if withDesc {
+			t = 2
+		} else {
+			t = 1
 		}
 
-		return x
+		cols = append(cols, "Type")
 	}
+
+	if withExt {
+		cols = append(cols, "Extensions")
+	}
+
+	rows = make([][]string, 0, len(m))
 
 	ucFirst := func(str string) string {
 		for i, v := range str {
@@ -116,40 +131,36 @@ func (m FileFormats) Markdown() string {
 		return ""
 	}
 
-	l0, l1, l2, l3 := 12, 12, 12, 12
-
 	for f, ext := range m {
 		sort.Slice(ext, func(i, j int) bool {
 			return ext[i] < ext[j]
 		})
 
-		v := make([]string, 4)
-		v[0] = strings.ToUpper(f.String())
-		v[1] = FormatDesc[f]
-		v[2] = ucFirst(string(MediaTypes[f]))
-		v[3] = strings.Join(ext, ", ")
-		l0, l1, l2, l3 = max(l0, len(v[0])), max(l1, len(v[1])), max(l2, len(v[2])), max(l3, len(v[3]))
-		results = append(results, v)
+		v := make([]string, 0, 4)
+		v = append(v, strings.ToUpper(f.String()))
+
+		if withDesc {
+			v = append(v, FormatDesc[f])
+		}
+
+		if withType {
+			v = append(v, ucFirst(string(MediaTypes[f])))
+		}
+
+		if withExt {
+			v = append(v, strings.Join(ext, ", "))
+		}
+
+		rows = append(rows, v)
 	}
 
-	sort.Slice(results, func(i, j int) bool {
-		if results[i][2] == results[j][2] {
-			return results[i][0] < results[j][0]
+	sort.Slice(rows, func(i, j int) bool {
+		if t > 0 && rows[i][t] == rows[j][t] {
+			return rows[i][0] < rows[j][0]
 		} else {
-			return results[i][2] < results[j][2]
+			return rows[i][t] < rows[j][t]
 		}
 	})
 
-	rows := make([]string, len(results)+2)
-
-	cols := fmt.Sprintf("| %%-%ds | %%-%ds | %%-%ds | %%-%ds |\n", l0, l1, l2, l3)
-
-	rows = append(rows, fmt.Sprintf(cols, "Format", "Description", "Type", "Extensions"))
-	rows = append(rows, fmt.Sprintf("|:%s-|:%s-|:%s-|:%s-|\n", strings.Repeat("-", l0), strings.Repeat("-", l1), strings.Repeat("-", l2), strings.Repeat("-", l3)))
-
-	for _, r := range results {
-		rows = append(rows, fmt.Sprintf(cols, r[0], r[1], r[2], r[3]))
-	}
-
-	return strings.Join(rows, "")
+	return rows, cols
 }

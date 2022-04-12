@@ -7,11 +7,20 @@ import (
 )
 
 func TestFileFormats_Markdown(t *testing.T) {
-	t.Run("Render", func(t *testing.T) {
+	t.Run("All", func(t *testing.T) {
 		f := Extensions.Formats(true)
-		result := f.Markdown()
-
-		// fmt.Print(result)
-		assert.NotEmpty(t, result)
+		rows, cols := f.Table(true, true, true)
+		assert.NotEmpty(t, rows)
+		assert.NotEmpty(t, cols)
+		assert.Len(t, cols, 4)
+		assert.GreaterOrEqual(t, len(rows), 30)
+	})
+	t.Run("Compact", func(t *testing.T) {
+		f := Extensions.Formats(true)
+		rows, cols := f.Table(false, false, false)
+		assert.NotEmpty(t, rows)
+		assert.NotEmpty(t, cols)
+		assert.Len(t, cols, 1)
+		assert.GreaterOrEqual(t, len(rows), 30)
 	})
 }
