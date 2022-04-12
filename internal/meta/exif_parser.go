@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
-func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif []byte, err error) {
+func RawExif(fileName string, fileFormat fs.Format, bruteForce bool) (rawExif []byte, err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("%s in %s (raw exif panic)\nstack: %s", e, sanitize.Log(filepath.Base(fileName)), debug.Stack())
@@ -30,7 +30,7 @@ func RawExif(fileName string, fileType fs.FileFormat, bruteForce bool) (rawExif 
 	logName := sanitize.Log(filepath.Base(fileName))
 
 	// Try Exif parser for specific media file format first.
-	switch fileType {
+	switch fileFormat {
 	case fs.FormatJpeg:
 		jpegMp := jpegstructure.NewJpegMediaParser()
 

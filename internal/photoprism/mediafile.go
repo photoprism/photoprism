@@ -3,6 +3,9 @@ package photoprism
 import (
 	"fmt"
 	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"io"
 	"math"
 	"os"
@@ -14,10 +17,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
 
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/tiff"
@@ -45,7 +44,7 @@ type MediaFile struct {
 	statErr        error
 	modTime        time.Time
 	fileSize       int64
-	fileType       fs.FileFormat
+	fileType       fs.Format
 	mimeType       string
 	takenAt        time.Time
 	takenAtSrc     string
@@ -718,7 +717,7 @@ func (m *MediaFile) IsJson() bool {
 }
 
 // FileType returns the file type (jpg, gif, tiff,...).
-func (m *MediaFile) FileType() fs.FileFormat {
+func (m *MediaFile) FileType() fs.Format {
 	switch {
 	case m.IsJpeg():
 		return fs.FormatJpeg
@@ -731,7 +730,7 @@ func (m *MediaFile) FileType() fs.FileFormat {
 	case m.IsBitmap():
 		return fs.FormatBitmap
 	default:
-		return fs.GetFileFormat(m.fileName)
+		return fs.FileFormat(m.fileName)
 	}
 }
 
@@ -741,7 +740,7 @@ func (m *MediaFile) MediaType() fs.MediaType {
 }
 
 // HasFileType returns true if this is the given type.
-func (m *MediaFile) HasFileType(fileType fs.FileFormat) bool {
+func (m *MediaFile) HasFileType(fileType fs.Format) bool {
 	if fileType == fs.FormatJpeg {
 		return m.IsJpeg()
 	}
@@ -776,7 +775,7 @@ func (m *MediaFile) IsSidecar() bool {
 
 // IsPlayableVideo checks if the file is a video in playable format.
 func (m *MediaFile) IsPlayableVideo() bool {
-	return m.IsVideo() && (m.HasFileType(fs.FormatMp4) || m.HasFileType(fs.FormatAvc))
+	return m.IsVideo() && (m.HasFileType(fs.FormatMp4) || m.HasFileType(fs.FormatAVC))
 }
 
 // IsImageOther returns true if this is a PNG, GIF, BMP, TIFF, or WebP file.

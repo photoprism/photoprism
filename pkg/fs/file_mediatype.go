@@ -1,7 +1,9 @@
 package fs
 
+// MediaType represents a general media type.
 type MediaType string
 
+// General media types.
 const (
 	MediaImage   MediaType = "image"
 	MediaSidecar MediaType = "sidecar"
@@ -10,7 +12,8 @@ const (
 	MediaOther   MediaType = "other"
 )
 
-var MediaTypes = map[FileFormat]MediaType{
+// MediaTypes maps file formats to general media types.
+var MediaTypes = map[Format]MediaType{
 	FormatRaw:      MediaRaw,
 	FormatJpeg:     MediaImage,
 	FormatPng:      MediaImage,
@@ -23,14 +26,16 @@ var MediaTypes = map[FileFormat]MediaType{
 	FormatWebP:     MediaImage,
 	FormatWebM:     MediaVideo,
 	FormatAvi:      MediaVideo,
-	FormatAvc:      MediaVideo,
+	FormatAVC:      MediaVideo,
+	FormatAV1:      MediaVideo,
+	FormatMpg:      MediaVideo,
+	FormatMp2:      MediaVideo,
 	FormatMp4:      MediaVideo,
+	FormatMkv:      MediaVideo,
 	FormatMov:      MediaVideo,
 	Format3gp:      MediaVideo,
 	Format3g2:      MediaVideo,
 	FormatFlv:      MediaVideo,
-	FormatMkv:      MediaVideo,
-	FormatMpg:      MediaVideo,
 	FormatMts:      MediaVideo,
 	FormatOgv:      MediaVideo,
 	FormatWMV:      MediaVideo,
@@ -50,7 +55,7 @@ func GetMediaType(fileName string) MediaType {
 		return MediaOther
 	}
 
-	result, ok := MediaTypes[GetFileFormat(fileName)]
+	result, ok := MediaTypes[FileFormat(fileName)]
 
 	if !ok {
 		result = MediaOther

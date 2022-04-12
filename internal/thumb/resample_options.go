@@ -27,7 +27,7 @@ var ResampleMethods = map[ResampleOption]string{
 }
 
 // ResampleOptions extracts filter, format, and method from resample options.
-func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.FileFormat) {
+func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.Format) {
 	method = ResampleFit
 	filter = imaging.Lanczos
 	format = fs.FormatJpeg

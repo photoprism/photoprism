@@ -27,7 +27,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 		return nil, fmt.Errorf("convert: %s not found", f.RootRelName())
 	}
 
-	avcName := fs.FormatAvc.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+	avcName := fs.FormatAVC.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(avcName)
 
@@ -85,7 +85,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 		"xmpName":  "",
 	})
 
-	log.Infof("%s: transcoding %s to %s", encoder, fileName, fs.FormatAvc)
+	log.Infof("%s: transcoding %s to %s", encoder, fileName, fs.FormatAVC)
 
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())

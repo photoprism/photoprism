@@ -78,7 +78,7 @@ func main() {
 		commands.ResetCommand,
 		commands.PasswdCommand,
 		commands.UsersCommand,
-		commands.ConfigCommand,
+		commands.ShowCommand,
 		commands.VersionCommand,
 	}
 

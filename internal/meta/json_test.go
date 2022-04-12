@@ -4,8 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/fs"
-
+	"github.com/photoprism/photoprism/internal/video"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -534,7 +533,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecJpeg), data.Codec)
+		assert.Equal(t, CodecJpeg, data.Codec)
 		assert.Equal(t, "", data.Artist)
 		assert.Equal(t, "2020-10-17T15:48:24Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2020-10-17T17:48:24Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
@@ -590,7 +589,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecAvc), data.Codec)
+		assert.Equal(t, string(video.CodecAVC), data.Codec)
 		assert.Equal(t, "10s", data.Duration.String())
 		assert.Equal(t, "2015-12-06 18:22:29 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2015-12-06 15:22:29 +0000 UTC", data.TakenAt.String())
@@ -614,7 +613,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecHvc), data.Codec)
+		assert.Equal(t, string(video.CodecHEVC), data.Codec)
 		assert.Equal(t, "6s", data.Duration.String())
 		assert.Equal(t, "2020-12-22 02:45:43 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-12-22 01:45:43 +0000 UTC", data.TakenAt.String())
@@ -638,7 +637,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecHvc), data.Codec)
+		assert.Equal(t, string(video.CodecHEVC), data.Codec)
 		assert.Equal(t, "2s", data.Duration.String())
 		assert.Equal(t, "2019-12-12 20:47:21 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2019-12-13 01:47:21 +0000 UTC", data.TakenAt.String())
@@ -658,7 +657,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecJpeg), data.Codec)
+		assert.Equal(t, CodecJpeg, data.Codec)
 		assert.Equal(t, "0s", data.Duration.String())
 		assert.Equal(t, "2015-03-20 12:07:53 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2015-03-20 12:07:53 +0000 UTC", data.TakenAt.String())
@@ -683,7 +682,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecJpeg), data.Codec)
+		assert.Equal(t, CodecJpeg, data.Codec)
 		assert.Equal(t, "0s", data.Duration.String())
 		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAt.String())
@@ -710,7 +709,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecJpeg), data.Codec)
+		assert.Equal(t, CodecJpeg, data.Codec)
 		assert.Equal(t, "0s", data.Duration.String())
 		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAt.String())
@@ -788,7 +787,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecAvc), data.Codec)
+		assert.Equal(t, string(video.CodecAVC), data.Codec)
 		assert.Equal(t, "1s", data.Duration.String())
 		assert.Equal(t, "2012-07-11 07:16:01 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2012-07-11 05:16:01 +0000 UTC", data.TakenAt.String())
@@ -805,7 +804,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecAvc), data.Codec)
+		assert.Equal(t, string(video.CodecAVC), data.Codec)
 		assert.Equal(t, "1s", data.Duration.String())
 		assert.Equal(t, "2012-07-11 07:16:01 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2012-07-11 05:16:01 +0000 UTC", data.TakenAt.String())
@@ -822,7 +821,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(fs.CodecAvc), data.Codec)
+		assert.Equal(t, string(video.CodecAVC), data.Codec)
 		assert.Equal(t, "1s", data.Duration.String())
 		assert.Equal(t, "2012-07-11 07:16:01 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2012-07-11 05:16:01 +0000 UTC", data.TakenAt.String())

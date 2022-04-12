@@ -129,3 +129,25 @@ func TestFileFormat_FindAll(t *testing.T) {
 		assert.Contains(t, result, "testdata/CATYELLOW.jpg")
 	})
 }
+
+func TestFileFormat(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		result := FileFormat("")
+		assert.Equal(t, FormatOther, result)
+	})
+	t.Run("JPEG", func(t *testing.T) {
+		result := FileFormat("testdata/test.jpg")
+		assert.Equal(t, FormatJpeg, result)
+	})
+	t.Run("RawCRw", func(t *testing.T) {
+		result := FileFormat("testdata/test (jpg).crw")
+		assert.Equal(t, FormatRaw, result)
+	})
+	t.Run("RawCR2", func(t *testing.T) {
+		result := FileFormat("testdata/test (jpg).CR2")
+		assert.Equal(t, FormatRaw, result)
+	})
+	t.Run("MP4", func(t *testing.T) {
+		assert.Equal(t, Format("mp4"), FileFormat("file.mp"))
+	})
+}

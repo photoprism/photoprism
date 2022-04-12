@@ -25,39 +25,3 @@ Additional information can be found in our Developer Guide:
 
 */
 package video
-
-import (
-	"github.com/photoprism/photoprism/pkg/fs"
-)
-
-type Type struct {
-	Format fs.FileFormat
-	Codec  fs.FileCodec
-	Width  int
-	Height int
-	Public bool
-}
-
-type TypeMap map[string]Type
-
-var TypeMp4 = Type{
-	Format: fs.FormatMp4,
-	Codec:  fs.CodecAvc,
-	Width:  0,
-	Height: 0,
-	Public: true,
-}
-
-var TypeAvc = Type{
-	Format: fs.FormatAvc,
-	Codec:  fs.CodecAvc,
-	Width:  0,
-	Height: 0,
-	Public: true,
-}
-
-var Types = TypeMap{
-	"":    TypeAvc,
-	"mp4": TypeMp4,
-	"avc": TypeAvc,
-}

@@ -18,7 +18,7 @@ func Open(fileName string, orientation int) (result image.Image, err error) {
 	}
 
 	// Open JPEG?
-	if StandardRGB && fs.GetFileFormat(fileName) == fs.FormatJpeg {
+	if StandardRGB && fs.FileFormat(fileName) == fs.FormatJpeg {
 		return OpenJpeg(fileName, orientation)
 	}
 

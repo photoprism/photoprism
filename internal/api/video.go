@@ -20,19 +20,19 @@ import (
 //   hash: string The photo or video file hash as returned by the search API
 //   type: string Video format
 func GetVideo(router *gin.RouterGroup) {
-	router.GET("/videos/:hash/:token/:type", func(c *gin.Context) {
+	router.GET("/videos/:hash/:token/:format", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
 		fileHash := sanitize.Token(c.Param("hash"))
-		typeName := sanitize.Token(c.Param("type"))
+		formatName := sanitize.Token(c.Param("format"))
 
-		videoType, ok := video.Types[typeName]
+		format, ok := video.Formats[formatName]
 
 		if !ok {
-			log.Errorf("video: invalid type %s", sanitize.Log(typeName))
+			log.Errorf("video: invalid format %s", sanitize.Log(formatName))
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 			return
 		}
@@ -71,7 +71,7 @@ func GetVideo(router *gin.RouterGroup) {
 			logError("video", f.Update("FileMissing", true))
 
 			return
-		} else if f.FileCodec != string(videoType.Codec) {
+		} else if f.FileCodec != string(format.Codec) {
 			conv := service.Convert()
 
 			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegEncoder(), false, false); err != nil {

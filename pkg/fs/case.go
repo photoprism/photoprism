@@ -24,5 +24,5 @@ func CaseInsensitive(storagePath string) (result bool, err error) {
 // IgnoreCase enables the case-insensitive mode.
 func IgnoreCase() {
 	ignoreCase = true
-	TypeExt = FileExt.TypeExt()
+	Formats = Extensions.Formats(true)
 }

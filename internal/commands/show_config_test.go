@@ -15,7 +15,7 @@ func TestConfigCommand(t *testing.T) {
 	ctx := config.CliTestContext()
 
 	output := capture.Output(func() {
-		err = ConfigCommand.Run(ctx)
+		err = ShowConfigCommand.Run(ctx)
 	})
 
 	if err != nil {

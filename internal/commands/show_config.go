@@ -11,15 +11,14 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// ConfigCommand registers the display config cli command.
-var ConfigCommand = cli.Command{
+var ShowConfigCommand = cli.Command{
 	Name:   "config",
 	Usage:  "Displays global configuration values",
-	Action: configAction,
+	Action: showConfigAction,
 }
 
-// configAction lists configuration options and their values.
-func configAction(ctx *cli.Context) error {
+// showConfigAction lists configuration options and their values.
+func showConfigAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
 	dbDriver := conf.DatabaseDriver()
