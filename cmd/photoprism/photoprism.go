@@ -37,7 +37,7 @@ import (
 var version = "development"
 var log = event.Log
 
-const appDescription = "For installation instructions, visit https://docs.photoprism.app/"
+const appDescription = "Visit https://docs.photoprism.app/ to learn more."
 const appCopyright = "(c) 2018-2022 Michael Mayer <hello@photoprism.app>"
 
 func main() {
