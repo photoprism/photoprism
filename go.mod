@@ -54,8 +54,8 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.0.0-20220408190544-5352b0902921
-	golang.org/x/net v0.0.0-20220407224826-aac1ed45d8e3
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
+	golang.org/x/net v0.0.0-20220412020605-290c469a71a5
 	golang.org/x/sys v0.0.0-20220330033206-e17cdc41300f // indirect
 	gonum.org/v1/gonum v0.11.0
 	google.golang.org/protobuf v1.28.0 // indirect
@@ -65,7 +65,12 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20220206211657-0a94163c4677 // indirect
-	golang.org/x/image v0.0.0-20220321031419-a8550c1d254a
+	golang.org/x/image v0.0.0-20220413100746-70e8d0d3baa9
+)
+
+require (
+	github.com/mattn/go-runewidth v0.0.13 // indirect
+	github.com/olekukonko/tablewriter v0.0.5
 )
 
 require (
@@ -80,9 +85,7 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mandykoh/go-parallel v0.1.0 // indirect
-	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
