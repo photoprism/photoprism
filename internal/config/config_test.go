@@ -74,17 +74,19 @@ func TestConfig_Copyright(t *testing.T) {
 	assert.Equal(t, "", copyright)
 }
 
-func TestConfig_ConfigFile(t *testing.T) {
-	c := NewConfig(CliTestContext())
+func TestConfig_OptionsYaml(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Contains(t, c.OptionsYaml(), "options.yml")
+	})
 
-	assert.Contains(t, c.ConfigFile(), "options.yml")
+	t.Run("ChangePath", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Contains(t, c.OptionsYaml(), "options.yml")
+		c.options.ConfigPath = "/go/src/github.com/photoprism/photoprism/internal/config/testdata/"
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/options.yml", c.OptionsYaml())
+	})
 }
-
-/*func TestConfig_SettingsPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Contains(t, c.ConfigPath(), "/storage/testdata/config")
-}*/
 
 func TestConfig_BackupPath(t *testing.T) {
 	c := NewConfig(CliTestContext())

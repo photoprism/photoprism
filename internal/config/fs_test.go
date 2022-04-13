@@ -262,13 +262,6 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 }
 */
 
-func TestConfig_ConfigFile2(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Contains(t, c.ConfigFile(), "options.yml")
-	c.options.ConfigFile = "/go/src/github.com/photoprism/photoprism/internal/config/testdata/config.yml"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/config.yml", c.ConfigFile())
-}
-
 func TestConfig_PIDFilename2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/photoprism.pid", c.PIDFilename())

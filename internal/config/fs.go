@@ -165,15 +165,6 @@ func (c *Config) CreateDirectories() error {
 	return nil
 }
 
-// ConfigFile returns the config file name.
-func (c *Config) ConfigFile() string {
-	if c.options.ConfigFile == "" || !fs.FileExists(c.options.ConfigFile) {
-		return filepath.Join(c.ConfigPath(), "options.yml")
-	}
-
-	return c.options.ConfigFile
-}
-
 // ConfigPath returns the config path.
 func (c *Config) ConfigPath() string {
 	if c.options.ConfigPath == "" {
@@ -187,13 +178,23 @@ func (c *Config) ConfigPath() string {
 	return fs.Abs(c.options.ConfigPath)
 }
 
+// OptionsYaml returns the config options YAML filename.
+func (c *Config) OptionsYaml() string {
+	return filepath.Join(c.ConfigPath(), "options.yml")
+}
+
+// DefaultsYaml returns the default options YAML filename.
+func (c *Config) DefaultsYaml() string {
+	return c.options.DefaultsYaml
+}
+
 // HubConfigFile returns the backend api config file name.
 func (c *Config) HubConfigFile() string {
 	return filepath.Join(c.ConfigPath(), "hub.yml")
 }
 
-// SettingsFile returns the user settings file name.
-func (c *Config) SettingsFile() string {
+// SettingsYaml returns the settings YAML filename.
+func (c *Config) SettingsYaml() string {
 	return filepath.Join(c.ConfigPath(), "settings.yml")
 }
 

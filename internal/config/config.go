@@ -119,19 +119,22 @@ func initLogger(debug bool) {
 
 // NewConfig initialises a new configuration file
 func NewConfig(ctx *cli.Context) *Config {
+	// Initialize logger.
 	initLogger(ctx.GlobalBool("debug"))
 
+	// Initialize options from config file and CLI context.
 	c := &Config{
 		options: NewOptions(ctx),
 		token:   rnd.Token(8),
 		env:     os.Getenv("DOCKER_ENV"),
 	}
 
-	if configFile := c.ConfigFile(); c.options.ConfigFile == "" && fs.FileExists(configFile) {
-		if err := c.options.Load(configFile); err != nil {
-			log.Warnf("config: %s", err)
+	// Overwrite values with options.yml from config path.
+	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
+		if err := c.options.Load(optionsYaml); err != nil {
+			log.Warnf("config: failed loading values from %s (%s)", sanitize.Log(optionsYaml), err)
 		} else {
-			log.Debugf("config: options loaded from %s", sanitize.Log(configFile))
+			log.Debugf("config: overriding config with values from %s", sanitize.Log(optionsYaml))
 		}
 	}
 

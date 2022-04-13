@@ -233,7 +233,7 @@ func (c *Config) initSettings() {
 	}
 
 	c.settings = NewSettings(c)
-	fileName := c.SettingsFile()
+	fileName := c.SettingsYaml()
 
 	if err := c.settings.Load(fileName); err == nil {
 		log.Debugf("settings: loaded from %s ", fileName)

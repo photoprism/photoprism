@@ -37,7 +37,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "auth, a",
-		Usage:  "always require password authentication, overrides the public flag",
+		Usage:  "always require password authentication, overrides the public flag if it is set",
 		EnvVar: "PHOTOPRISM_AUTH",
 	},
 	cli.BoolFlag{
@@ -85,14 +85,15 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_PARTNER_ID",
 	},
 	cli.StringFlag{
-		Name:   "config-file, c",
-		Usage:  "load config options from `FILENAME`",
-		EnvVar: "PHOTOPRISM_CONFIG_FILE",
+		Name:   "config-path, c",
+		Usage:  "config storage `PATH`, values in options.yml override CLI flags and environment variables if present",
+		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
 	cli.StringFlag{
-		Name:   "config-path, conf",
-		Usage:  "config `PATH` to be searched for additional configuration and settings files",
-		EnvVar: "PHOTOPRISM_CONFIG_PATH",
+		Name:   "defaults-yaml, y",
+		Usage:  "load config defaults from `FILE` if exists, does not override CLI flags and environment variables",
+		Value:  "/etc/photoprism/defaults.yml",
+		EnvVar: "PHOTOPRISM_DEFAULTS_YAML",
 	},
 	cli.StringFlag{
 		Name:   "originals-path, o",
@@ -102,7 +103,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "originals-limit, mb",
 		Value:  1000,
-		Usage:  "maximum size of media files in `MEGABYTES` (1-100000; -1 to disable)",
+		Usage:  "maximum size of media files in `MB` (1-100000; -1 to disable)",
 		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
 	},
 	cli.IntFlag{
@@ -368,7 +369,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-dsn, dsn",
-		Usage:  "database connection `DSN` (sqlite filename, optional for mysql)",
+		Usage:  "database connection `DSN` (sqlite file, optional for mysql)",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 	cli.StringFlag{
@@ -576,12 +577,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "pid-filename",
-		Usage:  "process id `FILENAME` (daemon mode only)",
+		Usage:  "process id `FILE`, used only in daemon mode",
 		EnvVar: "PHOTOPRISM_PID_FILENAME",
 	},
 	cli.StringFlag{
 		Name:   "log-filename",
-		Usage:  "server log `FILENAME` (daemon mode only)",
+		Usage:  "server log `FILE`, used only in daemon mode",
 		EnvVar: "PHOTOPRISM_LOG_FILENAME",
 		Value:  "",
 	},

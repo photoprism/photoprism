@@ -11,6 +11,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -35,7 +36,7 @@ type Options struct {
 	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	ConfigPath            string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
-	ConfigFile            string        `json:"-"`
+	DefaultsYaml          string        `json:"-" yaml:"-" flag:"defaults-yaml"`
 	OriginalsPath         string        `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
 	OriginalsLimit        int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
@@ -144,10 +145,14 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.Name = ctx.App.Name
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
-	c.ConfigFile = fs.Abs(ctx.GlobalString("config-file"))
 
-	if err := c.Load(c.ConfigFile); err != nil {
-		log.Debug(err)
+	// Load defaults from YAML file?
+	if defaultsYaml := ctx.GlobalString("defaults-yaml"); defaultsYaml == "" {
+		log.Tracef("config: defaults yaml file not specified")
+	} else if c.DefaultsYaml = fs.Abs(defaultsYaml); !fs.FileExists(c.DefaultsYaml) {
+		log.Tracef("config: defaults file %s does not exist", sanitize.Log(c.DefaultsYaml))
+	} else if err := c.Load(c.DefaultsYaml); err != nil {
+		log.Warnf("config: failed loading defaults from %s (%s)", sanitize.Log(c.DefaultsYaml), err)
 	}
 
 	if err := c.SetContext(ctx); err != nil {
@@ -178,7 +183,7 @@ func (c *Options) Load(fileName string) error {
 	}
 
 	if !fs.FileExists(fileName) {
-		return errors.New(fmt.Sprintf("config: %s not found", fileName))
+		return errors.New(fmt.Sprintf("%s not found", fileName))
 	}
 
 	yamlConfig, err := os.ReadFile(fileName)

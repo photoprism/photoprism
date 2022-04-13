@@ -25,9 +25,10 @@ func (c *Config) Table() (rows [][]string, cols []string) {
 		{"experimental", fmt.Sprintf("%t", c.Experimental())},
 
 		// Config.
-		{"config-file", c.ConfigFile()},
 		{"config-path", c.ConfigPath()},
-		{"settings-file", c.SettingsFile()},
+		{"options-yaml", c.OptionsYaml()},
+		{"defaults-yaml", c.DefaultsYaml()},
+		{"settings-yaml", c.SettingsYaml()},
 
 		// Originals.
 		{"originals-path", c.OriginalsPath()},
