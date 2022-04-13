@@ -11,7 +11,7 @@ import (
 
 var ShowFormatsCommand = cli.Command{
 	Name:  "formats",
-	Usage: "Displays supported media and sidecar file formats",
+	Usage: "Lists supported media and sidecar file formats",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "compact, c",

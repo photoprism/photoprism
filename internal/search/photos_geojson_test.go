@@ -813,4 +813,56 @@ func TestGeo(t *testing.T) {
 			assert.NotEmpty(t, r.ID)
 		}
 	})
+	t.Run("Panorama", func(t *testing.T) {
+		var f form.SearchGeo
+
+		f.Query = "panorama:true"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("Portrait", func(t *testing.T) {
+		var f form.SearchGeo
+
+		f.Query = "portrait:true"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("Landscape", func(t *testing.T) {
+		var f form.SearchGeo
+
+		f.Query = "landscape:true"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("Square", func(t *testing.T) {
+		var f form.SearchGeo
+
+		f.Query = "square:true"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
 }

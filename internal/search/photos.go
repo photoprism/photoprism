@@ -352,9 +352,13 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 		s = s.Where("photos.photo_panorama = 1")
 	}
 
-	// Find portraits only?
+	// Find portrait/landscape/square pictures only?
 	if f.Portrait {
 		s = s.Where("files.file_portrait = 1")
+	} else if f.Landscape {
+		s = s.Where("files.file_aspect_ratio > 1.25")
+	} else if f.Square {
+		s = s.Where("files.file_aspect_ratio = 1")
 	}
 
 	if f.Stackable {

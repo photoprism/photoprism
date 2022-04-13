@@ -376,6 +376,25 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.True(t, form.Portrait)
 	})
+	t.Run("PortraitLandscapeSquare", func(t *testing.T) {
+		form := &SearchPhotos{Query: "portrait:true landscape:yes square:jo"}
+
+		assert.False(t, form.Portrait)
+		assert.False(t, form.Landscape)
+		assert.False(t, form.Square)
+		assert.False(t, form.Panorama)
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Portrait)
+		assert.True(t, form.Landscape)
+		assert.True(t, form.Square)
+		assert.False(t, form.Panorama)
+	})
 	t.Run("query for geo with uncommon bool value", func(t *testing.T) {
 		form := &SearchPhotos{Query: "geo:*cat"}
 

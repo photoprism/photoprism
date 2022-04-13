@@ -12,7 +12,7 @@ import (
 
 var ShowConfigCommand = cli.Command{
 	Name:  "config",
-	Usage: "Displays global configuration values",
+	Usage: "Shows global configuration values",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "no-wrap, n",

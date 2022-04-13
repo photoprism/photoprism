@@ -248,6 +248,15 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		s = s.Where("photos.photo_panorama = 1")
 	}
 
+	// Find portrait/landscape/square pictures only?
+	if f.Portrait {
+		s = s.Where("files.file_portrait = 1")
+	} else if f.Landscape {
+		s = s.Where("files.file_aspect_ratio > 1.25")
+	} else if f.Square {
+		s = s.Where("files.file_aspect_ratio = 1")
+	}
+
 	// Filter by location country?
 	if f.Country != "" {
 		s = s.Where("photos.photo_country IN (?)", SplitOr(strings.ToLower(f.Country)))
