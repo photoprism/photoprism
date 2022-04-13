@@ -116,7 +116,7 @@ func (Photo) TableName() string {
 func NewPhoto(stackable bool) Photo {
 	m := Photo{
 		PhotoTitle:   UnknownTitle,
-		PhotoType:    TypeImage,
+		PhotoType:    MediaImage,
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,
 		LensID:       UnknownLens.ID,

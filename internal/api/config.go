@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v2"
 
@@ -69,10 +71,10 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			return
 		}
 
-		fileName := conf.ConfigFile()
+		fileName := conf.OptionsYaml()
 
 		if fileName == "" {
-			log.Errorf("options: empty config file name")
+			log.Errorf("config: empty options.yml file path")
 			AbortSaveFailed(c)
 			return
 		}
@@ -85,20 +87,20 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			yamlData, err := os.ReadFile(fileName)
 
 			if err != nil {
-				log.Errorf("options: %s", err)
+				log.Errorf("config: failed loading values from %s (%s)", sanitize.Log(fileName), err)
 				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 				return
 			}
 
 			if err := yaml.Unmarshal(yamlData, v); err != nil {
-				log.Errorf("options: %s", err)
+				log.Warnf("config: failed parsing values in %s (%s)", sanitize.Log(fileName), err)
 				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 				return
 			}
 		}
 
 		if err := c.BindJSON(&v); err != nil {
-			log.Errorf("options: %s", err)
+			log.Errorf("config: %s (bind json)", err)
 			AbortBadRequest(c)
 			return
 		}
@@ -106,27 +108,28 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		yamlData, err := yaml.Marshal(v)
 
 		if err != nil {
-			log.Errorf("options: %s", err)
+			log.Errorf("config: %s (marshal yaml)", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
 		// Make sure directory exists.
 		if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
-			log.Errorf("options: %s", err)
+			log.Errorf("config: failed creating config path %s (%s)", filepath.Dir(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
 		// Write YAML data to file.
 		if err := os.WriteFile(fileName, yamlData, os.ModePerm); err != nil {
-			log.Errorf("options: %s", err)
+			log.Errorf("config: failed writing values to %s (%s)", sanitize.Log(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
+		// Reload options.
 		if err := conf.Options().Load(fileName); err != nil {
-			log.Errorf("options: %s", err)
+			log.Warnf("config: failed loading values from %s (%s)", sanitize.Log(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}

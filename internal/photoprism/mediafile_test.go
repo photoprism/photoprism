@@ -418,7 +418,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, related.Files, 6)
+		assert.Len(t, related.Files, 7)
 		assert.True(t, related.ContainsJpeg())
 
 		for _, result := range related.Files {
@@ -1412,6 +1412,47 @@ func TestMediaFile_IsVideo(t *testing.T) {
 			assert.Equal(t, false, f.IsVideo())
 			assert.Equal(t, true, f.IsJson())
 			assert.Equal(t, true, f.IsSidecar())
+		}
+	})
+}
+
+func TestMediaFile_IsAnimated(t *testing.T) {
+	conf := config.TestConfig()
+
+	t.Run("example.gif", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "example.gif")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, true, f.IsImage())
+			assert.Equal(t, false, f.IsVideo())
+			assert.Equal(t, false, f.IsAnimated())
+			assert.Equal(t, true, f.IsGif())
+			assert.Equal(t, false, f.IsAnimatedGif())
+			assert.Equal(t, false, f.IsSidecar())
+		}
+	})
+	t.Run("pythagoras.gif", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "pythagoras.gif")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, true, f.IsImage())
+			assert.Equal(t, false, f.IsVideo())
+			assert.Equal(t, true, f.IsAnimated())
+			assert.Equal(t, true, f.IsGif())
+			assert.Equal(t, true, f.IsAnimatedGif())
+			assert.Equal(t, false, f.IsSidecar())
+		}
+	})
+	t.Run("christmas.mp4", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "christmas.mp4")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, false, f.IsImage())
+			assert.Equal(t, true, f.IsVideo())
+			assert.Equal(t, true, f.IsAnimated())
+			assert.Equal(t, false, f.IsGif())
+			assert.Equal(t, false, f.IsAnimatedGif())
+			assert.Equal(t, false, f.IsSidecar())
 		}
 	})
 }

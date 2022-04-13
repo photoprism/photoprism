@@ -1,25 +1,48 @@
 package ffmpeg
 
 import (
+	"fmt"
 	"os/exec"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
 func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder AvcEncoder) (result *exec.Cmd, useMutex bool, err error) {
+	if fileName == "" {
+		return nil, false, fmt.Errorf("empty input filename")
+	} else if avcName == "" {
+		return nil, false, fmt.Errorf("empty output filename")
+	}
+
 	// Don't transcode more than one video at the same time.
 	useMutex = true
 
-	encoderName := string(encoder)
+	// Animated GIF?
+	if fs.FileFormat(fileName) == fs.FormatGif {
+		result = exec.Command(
+			ffmpegBin,
+			"-i", fileName,
+			"-movflags", "faststart",
+			"-pix_fmt", "yuv420p",
+			"-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+			"-f", "mp4",
+			"-y",
+			avcName,
+		)
+
+		return result, useMutex, nil
+	}
 
 	// Display encoder info.
 	if encoder != SoftwareEncoder {
-		log.Infof("convert: ffmpeg encoder %s selected", encoderName)
+		log.Infof("convert: ffmpeg encoder %s selected", string(encoder))
 	}
 
-	if encoder == IntelEncoder {
+	switch encoder {
+	case IntelEncoder:
+		// ffmpeg -hide_banner -h encoder=h264_qsv
 		format := "format=rgb32"
-
-		// Options: ffmpeg -hide_banner -h encoder=h264_qsv
 		result = exec.Command(
 			ffmpegBin,
 			"-qsv_device", "/dev/dri/renderD128",
@@ -35,10 +58,10 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-y",
 			avcName,
 		)
-	} else if encoder == AppleEncoder {
-		format := "format=yuv420p"
 
-		// Options: ffmpeg -hide_banner -h encoder=h264_videotoolbox
+	case AppleEncoder:
+		// ffmpeg -hide_banner -h encoder=h264_videotoolbox
+		format := "format=yuv420p"
 		result = exec.Command(
 			ffmpegBin,
 			"-i", fileName,
@@ -54,8 +77,9 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-y",
 			avcName,
 		)
-	} else if encoder == NvidiaEncoder {
-		// Options: ffmpeg -hide_banner -h encoder=h264_nvenc
+
+	case NvidiaEncoder:
+		// ffmpeg -hide_banner -h encoder=h264_nvenc
 		result = exec.Command(
 			ffmpegBin,
 			"-r", "30",
@@ -78,10 +102,10 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-y",
 			avcName,
 		)
-	} else if encoder == Video4LinuxEncoder {
-		format := "format=yuv420p"
 
-		// Options: ffmpeg -hide_banner -h encoder=h264_v4l2m2m
+	case Video4LinuxEncoder:
+		// ffmpeg -hide_banner -h encoder=h264_v4l2m2m
+		format := "format=yuv420p"
 		result = exec.Command(
 			ffmpegBin,
 			"-i", fileName,
@@ -99,9 +123,9 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-y",
 			avcName,
 		)
-	} else {
-		format := "format=yuv420p"
 
+	default:
+		format := "format=yuv420p"
 		result = exec.Command(
 			ffmpegBin,
 			"-i", fileName,

@@ -52,7 +52,7 @@ func SaveSettings(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := settings.Save(conf.SettingsFile()); err != nil {
+		if err := settings.Save(conf.SettingsYaml()); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}

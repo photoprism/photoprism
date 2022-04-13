@@ -78,7 +78,7 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 
 	// Show hidden files?
 	if !f.Hidden {
-		s = s.Where("files.file_type = 'jpg' OR files.file_video = 1")
+		s = s.Where("files.file_type IN (?) OR files.file_video = 1", []string{"jpg", "gif"})
 
 		if f.Error {
 			s = s.Where("files.file_error <> ''")
@@ -389,7 +389,7 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 	} else if f.Video {
 		s = s.Where("photos.photo_type = 'video'")
 	} else if f.Photo {
-		s = s.Where("photos.photo_type IN ('image','raw','live')")
+		s = s.Where("photos.photo_type IN ('image','raw','live','animated')")
 	} else if f.Raw {
 		s = s.Where("photos.photo_type = 'raw'")
 	} else if f.Live {

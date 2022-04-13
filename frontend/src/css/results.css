@@ -300,6 +300,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .search-results.select-results .type-image .input-view,
 #photoprism .search-results .type-raw .input-open,
 #photoprism .search-results .type-video.is-playable .input-open,
+#photoprism .search-results .type-animated.is-playable .input-open,
 #photoprism .search-results .type-live.is-playable .input-open,
 #photoprism .search-results .type-image.is-stack .input-open {
     display: inline-flex;
@@ -311,6 +312,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .type-raw .input-open .action-raw,
 #photoprism .search-results .type-video.is-playable .input-open .action-play,
+#photoprism .search-results .type-animated.is-playable .input-open .action-play,
 #photoprism .search-results .type-live.is-playable .input-open .action-live,
 #photoprism .search-results .type-image.is-stack .input-open .action-stack {
     display: inline-flex;
@@ -320,6 +322,7 @@ body.chrome #photoprism .search-results .result {
     display: none;
 }
 
+#photoprism .search-results .type-animated.is-playable:hover .live-player,
 #photoprism .search-results .type-live.is-playable:hover .live-player {
     display: flex;
     overflow: hidden !important;
@@ -330,6 +333,7 @@ body.chrome #photoprism .search-results .result {
 }
 
 #photoprism .search-results.list-view .type-video.is-playable .input-play,
+#photoprism .search-results.list-view .type-animated.is-playable .input-play,
 #photoprism .search-results.list-view .type-live.is-playable .input-play {
     display: inline-flex;
     opacity: 0.75;

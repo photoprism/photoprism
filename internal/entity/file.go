@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"math"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -14,7 +15,6 @@ import (
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/face"
-
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -44,6 +44,7 @@ type File struct {
 	PhotoID          uint          `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
 	PhotoUID         string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	PhotoTakenAt     time.Time     `gorm:"type:DATETIME;index;" json:"TakenAt" yaml:"TakenAt"`
+	MetaUTC          int64         `gorm:"column:meta_utc;index;"  json:"MetaUTC" yaml:"MetaUTC,omitempty"`
 	TimeIndex        *string       `gorm:"type:VARBINARY(48);" json:"TimeIndex" yaml:"TimeIndex"`
 	MediaID          *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	InstanceID       string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
@@ -54,7 +55,8 @@ type File struct {
 	FileHash         string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize         int64         `json:"Size" yaml:"Size,omitempty"`
 	FileCodec        string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
-	FileType         string        `gorm:"type:VARBINARY(32)" json:"Type" yaml:"Type,omitempty"`
+	FileType         string        `gorm:"type:VARBINARY(16)" json:"FileType" yaml:"FileType,omitempty"`
+	MediaType        string        `gorm:"type:VARBINARY(16)" json:"MediaType" yaml:"MediaType,omitempty"`
 	FileMime         string        `gorm:"type:VARBINARY(64)" json:"Mime" yaml:"Mime,omitempty"`
 	FilePrimary      bool          `gorm:"index:idx_files_photo_id;" json:"Primary" yaml:"Primary,omitempty"`
 	FileSidecar      bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
@@ -62,18 +64,22 @@ type File struct {
 	FilePortrait     bool          `json:"Portrait" yaml:"Portrait,omitempty"`
 	FileVideo        bool          `json:"Video" yaml:"Video,omitempty"`
 	FileDuration     time.Duration `json:"Duration" yaml:"Duration,omitempty"`
+	FileFPS          float64       `gorm:"column:file_fps;" json:"FPS" yaml:"FPS,omitempty"`
+	FileFrames       int           `json:"Frames" yaml:"Frames,omitempty"`
 	FileWidth        int           `json:"Width" yaml:"Width,omitempty"`
 	FileHeight       int           `json:"Height" yaml:"Height,omitempty"`
 	FileOrientation  int           `json:"Orientation" yaml:"Orientation,omitempty"`
 	FileProjection   string        `gorm:"type:VARBINARY(64);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
 	FileAspectRatio  float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
-	FileHDR          bool          `gorm:"column:file_hdr;"  json:"IsHDR" yaml:"IsHDR,omitempty"`
+	FileHDR          bool          `gorm:"column:file_hdr;"  json:"HDR" yaml:"HDR,omitempty"`
+	FileWatermark    bool          `gorm:"column:file_watermark;"  json:"Watermark" yaml:"Watermark,omitempty"`
 	FileColorProfile string        `gorm:"type:VARBINARY(64);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
 	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance    string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff         uint32        `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma       uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
+	FileSoftware     string        `gorm:"type:VARCHAR(64)" json:"Software" yaml:"Software,omitempty"`
 	FileError        string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
 	ModTime          int64         `json:"ModTime" yaml:"-"`
 	CreatedAt        time.Time     `json:"CreatedAt" yaml:"-"`
@@ -574,6 +580,16 @@ func (m *File) ResetHDR() {
 	m.FileHDR = false
 }
 
+// HasWatermark returns true if the file has a watermark.
+func (m *File) HasWatermark() bool {
+	return m.FileWatermark
+}
+
+// IsAnimated returns true if the file has animated image frames.
+func (m *File) IsAnimated() bool {
+	return m.FileFrames > 1 && m.MediaType == MediaImage
+}
+
 // ColorProfile returns the ICC color profile name if any.
 func (m *File) ColorProfile() string {
 	return SanitizeStringType(m.FileColorProfile)
@@ -594,6 +610,69 @@ func (m *File) SetColorProfile(name string) {
 // ResetColorProfile removes the ICC color profile name.
 func (m *File) ResetColorProfile() {
 	m.FileColorProfile = ""
+}
+
+// SetSoftware sets the software name.
+func (m *File) SetSoftware(name string) {
+	if name = SanitizeStringType(name); name != "" {
+		m.FileSoftware = name
+	}
+}
+
+// SetDuration sets the video/animation duration.
+func (m *File) SetDuration(d time.Duration) {
+	if d <= 0 {
+		return
+	}
+
+	m.FileDuration = d.Round(time.Second)
+
+	// Update number of frames.
+	if m.FileFrames <= 0 && m.FileFPS > 0 {
+		m.FileFrames = int(math.Round(m.FileFPS * m.FileDuration.Seconds()))
+	}
+
+	// Update number of frames per second.
+	if m.FileFPS <= 0 && m.FileFrames > 0 {
+		m.FileFPS = float64(m.FileFrames) / m.FileDuration.Seconds()
+	}
+}
+
+// SetFPS sets the average number of frames per second.
+func (m *File) SetFPS(frameRate float64) {
+	if frameRate <= 0 {
+		return
+	}
+
+	m.FileFPS = frameRate
+
+	// Update number of frames.
+	if m.FileFrames <= 0 && m.FileDuration > 0 {
+		m.FileFrames = int(math.Round(m.FileFPS * m.FileDuration.Seconds()))
+	}
+}
+
+// SetFrames sets the number of video/animation frames.
+func (m *File) SetFrames(n int) {
+	if n <= 0 {
+		return
+	}
+
+	m.FileFrames = n
+
+	// Update FPS.
+	if m.FileFPS <= 0 && m.FileDuration > 0 {
+		m.FileFPS = float64(m.FileFrames) / m.FileDuration.Seconds()
+	}
+}
+
+// SetMetaUTC sets the creation date found in the metadata as a unix ms timestamp.
+func (m *File) SetMetaUTC(taken time.Time) {
+	if taken.IsZero() {
+		return
+	}
+
+	m.MetaUTC = taken.UTC().UnixMilli()
 }
 
 // AddFaces adds face markers to the file.

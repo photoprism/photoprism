@@ -48,7 +48,7 @@
               <v-icon color="white" class="select-on">check_circle</v-icon>
               <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
-            <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live'"
+            <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
                    :ripple="false"
                    flat icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
@@ -186,7 +186,7 @@ export default {
       } else if (this.photos[index]) {
         let photo = this.photos[index];
 
-        if (photo.Type === 'video' && photo.isPlayable()) {
+        if ((photo.Type === 'video' || photo.Type === 'animated') && photo.isPlayable()) {
           this.openPhoto(index, true);
         } else {
           this.openPhoto(index, false);

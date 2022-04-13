@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import {Photo, TypeLive, TypeRaw, TypeVideo} from "model/photo";
+import {Photo, MediaLive, MediaRaw, MediaVideo, MediaAnimated} from "model/photo";
 import Album from "model/album";
 import Thumb from "model/thumb";
 import Event from "pubsub-js";
@@ -238,11 +238,11 @@ export default {
       const selected = this.results[index];
 
       // Don't open as stack when user is selecting pictures, or a RAW has only one JPEG.
-      if (this.selection.length > 0 || selected.Type === TypeRaw && selected.jpegFiles().length < 2) {
+      if (this.selection.length > 0 || selected.Type === MediaRaw && selected.jpegFiles().length < 2) {
         showMerged = false;
       }
 
-      if (showMerged && selected.Type === TypeLive || selected.Type === TypeVideo) {
+      if (showMerged && selected.Type === MediaLive || selected.Type === MediaVideo|| selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
           this.$viewer.play({video: selected, album: this.album});
         } else {

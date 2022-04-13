@@ -110,7 +110,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Format, bruteForce bool) (
 				}
 
 				if !gi.Timestamp.IsZero() {
-					data.GPSTime = gi.Timestamp
+					data.TakenGps = gi.Timestamp
 				}
 			}
 		}
@@ -266,10 +266,18 @@ func (data *Data) Exif(fileName string, fileFormat fs.Format, bruteForce bool) (
 		}
 	}
 
-	for _, name := range exifSubSecTags {
-		if i, err := strconv.Atoi(data.exif[name]); err == nil {
-			data.TakenSubSec = i
-			break
+	// Fallback to GPS timestamp.
+	if takenAt.IsZero() && !data.TakenGps.IsZero() {
+		takenAt = data.TakenGps.UTC()
+	}
+
+	// Nanoseconds.
+	if data.TakenNs <= 0 {
+		for _, name := range exifSubSecTags {
+			if s := data.exif[name]; txt.IsPosInt(s) {
+				data.TakenNs = txt.Int(s + strings.Repeat("0", 9-len(s)))
+				break
+			}
 		}
 	}
 
@@ -282,6 +290,14 @@ func (data *Data) Exif(fileName string, fileFormat fs.Format, bruteForce bool) (
 		}
 
 		data.TakenAt = takenAt.UTC()
+	}
+
+	// Add nanoseconds to the calculated UTC and local time.
+	if data.TakenAt.Nanosecond() == 0 {
+		if ns := time.Duration(data.TakenNs); ns > 0 && ns <= time.Second {
+			data.TakenAt.Truncate(time.Second).UTC().Add(ns)
+			data.TakenAtLocal.Truncate(time.Second).Add(ns)
+		}
 	}
 
 	if value, ok := data.exif["Flash"]; ok {

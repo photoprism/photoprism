@@ -42,7 +42,7 @@
                  @mouseover="playLive(photo)"
                  @mouseleave="pauseLive(photo)"
           >
-            <v-layout v-if="photo.Type === 'live'" class="live-player">
+            <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none"
                      loop muted playsinline>
                 <source :src="photo.videoUrl()">
@@ -109,7 +109,7 @@
                   {{ photo.getDateString(true) }}
                 </div>
                 <template v-if="!photo.Description">
-                  <div v-if="photo.Type === 'video'" :title="labels.video">
+                  <div v-if="photo.Type === 'video' || photo.Type === 'animated'" :title="labels.video">
                     <v-icon size="14">movie</v-icon>
                     {{ photo.getVideoInfo() }}
                   </div>

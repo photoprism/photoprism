@@ -25,6 +25,8 @@ type Details struct {
 	CopyrightSrc string    `gorm:"type:VARBINARY(8);" json:"CopyrightSrc" yaml:"CopyrightSrc,omitempty"`
 	License      string    `gorm:"type:VARCHAR(1024);" json:"License" yaml:"License,omitempty"`
 	LicenseSrc   string    `gorm:"type:VARBINARY(8);" json:"LicenseSrc" yaml:"LicenseSrc,omitempty"`
+	Software     string    `gorm:"type:VARCHAR(1024);" json:"Software" yaml:"Software,omitempty"`
+	SoftwareSrc  string    `gorm:"type:VARBINARY(8);" json:"SoftwareSrc" yaml:"SoftwareSrc,omitempty"`
 	CreatedAt    time.Time `yaml:"-"`
 	UpdatedAt    time.Time `yaml:"-"`
 }
@@ -109,6 +111,11 @@ func (m *Details) NoLicense() bool {
 	return m.License == ""
 }
 
+// NoSoftware tests if the photo has no Software.
+func (m *Details) NoSoftware() bool {
+	return m.Software == ""
+}
+
 // HasKeywords tests if the photo has a Keywords.
 func (m *Details) HasKeywords() bool {
 	return !m.NoKeywords()
@@ -137,6 +144,11 @@ func (m *Details) HasCopyright() bool {
 // HasLicense tests if the photo has a License.
 func (m *Details) HasLicense() bool {
 	return !m.NoLicense()
+}
+
+// HasSoftware tests if the photo has a Software.
+func (m *Details) HasSoftware() bool {
+	return !m.NoSoftware()
 }
 
 // SetKeywords updates the photo details field.
@@ -241,4 +253,20 @@ func (m *Details) SetLicense(data, src string) {
 
 	m.License = val
 	m.LicenseSrc = src
+}
+
+// SetSoftware updates the photo details field.
+func (m *Details) SetSoftware(data, src string) {
+	val := txt.Clip(data, txt.ClipShortText)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.SoftwareSrc]) && m.HasSoftware() {
+		return
+	}
+
+	m.Software = val
+	m.SoftwareSrc = src
 }

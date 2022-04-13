@@ -179,7 +179,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		// Reset type for existing photo stack to image.
-		if err := stackPhoto.Update("PhotoType", entity.TypeImage); err != nil {
+		if err := stackPhoto.Update("PhotoType", entity.MediaImage); err != nil {
 			log.Errorf("photo: %s (unstack %s)", err, sanitize.Log(baseName))
 			AbortUnexpected(c)
 			return

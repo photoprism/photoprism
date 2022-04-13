@@ -138,7 +138,7 @@ func TestPhotoResults_ViewerJSON(t *testing.T) {
 }
 
 func TestGeoResults_ViewerJSON(t *testing.T) {
-	taken := time.Date(2000, 1, 1, 1, 1, 1, 1, time.UTC).UTC().Round(time.Second)
+	taken := time.Date(2000, 1, 1, 1, 1, 1, 1, time.UTC).UTC().Truncate(time.Second)
 	items := GeoResults{
 		GeoResult{
 			ID:               "1",
@@ -148,7 +148,7 @@ func TestGeoResults_ViewerJSON(t *testing.T) {
 			PhotoTitle:       "Title 1",
 			PhotoDescription: "Description 1",
 			PhotoFavorite:    false,
-			PhotoType:        entity.TypeVideo,
+			PhotoType:        entity.MediaVideo,
 			FileHash:         "d2b4a5d18276f96f1b5a1bf17fd82d6fab3807f2",
 			FileWidth:        1920,
 			FileHeight:       1080,
@@ -162,7 +162,7 @@ func TestGeoResults_ViewerJSON(t *testing.T) {
 			PhotoTitle:       "Title 2",
 			PhotoDescription: "Description 2",
 			PhotoFavorite:    true,
-			PhotoType:        entity.TypeImage,
+			PhotoType:        entity.MediaImage,
 			FileHash:         "da639e836dfa9179e66c619499b0a5e592f72fc1",
 			FileWidth:        3024,
 			FileHeight:       3024,
@@ -176,7 +176,7 @@ func TestGeoResults_ViewerJSON(t *testing.T) {
 			PhotoTitle:       "Title 3",
 			PhotoDescription: "Description 3",
 			PhotoFavorite:    false,
-			PhotoType:        entity.TypeRaw,
+			PhotoType:        entity.MediaRaw,
 			FileHash:         "412fe4c157a82b636efebc5bc4bc4a15c321aad1",
 			FileWidth:        5000,
 			FileHeight:       10000,

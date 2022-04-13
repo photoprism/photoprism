@@ -21,7 +21,7 @@
                     <div class="v-table__overflow">
                       <table class="v-datatable v-table theme--light photo-files">
                         <tbody>
-                        <tr v-if="file.Type === 'jpg'">
+                        <tr v-if="file.FileType === 'jpg'">
                           <td>
                             <translate>Preview</translate>
                           </td>
@@ -45,7 +45,7 @@
                                    @click.stop.prevent="downloadFile(file)">
                               <translate>Download</translate>
                             </v-btn>
-                            <v-btn v-if="features.edit && file.Type === 'jpg' && !file.Error && !file.Primary" small depressed dark
+                            <v-btn v-if="features.edit && file.FileType === 'jpg' && !file.Error && !file.Primary" small depressed dark
                                    color="primary-button"
                                    class="ma-0 action-primary"
                                    @click.stop.prevent="primaryFile(file)">
@@ -106,7 +106,7 @@
                           </td>
                           <td>{{ file.sizeInfo() }}</td>
                         </tr>
-                        <tr v-if="file.Type">
+                        <tr v-if="file.FileType">
                           <td>
                             <translate>Type</translate>
                           </td>
@@ -117,6 +117,18 @@
                             <translate>Codec</translate>
                           </td>
                           <td>{{ codecName(file) }}</td>
+                        </tr>
+                        <tr v-if="file.Frames">
+                          <td>
+                            <translate>Frames</translate>
+                          </td>
+                          <td>{{ file.Frames }}</td>
+                        </tr>
+                        <tr v-if="file.FPS">
+                          <td>
+                            <translate>FPS</translate>
+                          </td>
+                          <td>{{ file.FPS.toFixed(1) }}</td>
                         </tr>
                         <tr v-if="file.Primary">
                           <td>

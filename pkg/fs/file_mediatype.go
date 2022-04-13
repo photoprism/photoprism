@@ -3,14 +3,20 @@ package fs
 // MediaType represents a general media type.
 type MediaType string
 
-// General media types.
+// General categories of media file types.
 const (
 	MediaImage   MediaType = "image"
 	MediaSidecar MediaType = "sidecar"
 	MediaRaw     MediaType = "raw"
 	MediaVideo   MediaType = "video"
+	MediaVector  MediaType = "vector"
 	MediaOther   MediaType = "other"
 )
+
+// String returns the media name as string.
+func (m MediaType) String() string {
+	return string(m)
+}
 
 // MediaTypes maps file formats to general media types.
 var MediaTypes = map[Format]MediaType{

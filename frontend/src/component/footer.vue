@@ -9,10 +9,9 @@
         </v-flex>
 
         <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-xs-left text-sm-right">
-          <a href="https://photoprism.app/team/" target="_blank">© 2018-2022 Michael Mayer</a><br>
+          <a href="https://photoprism.app/team/" target="_blank">© 2018-2022 PhotoPrism UG</a><br>
           <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"
-             target="_blank" class="text-link">
-            3rd-party software packages</a>
+             target="_blank" class="text-link">3rd-party software packages</a>
         </v-flex>
       </v-layout>
     </v-card-actions>

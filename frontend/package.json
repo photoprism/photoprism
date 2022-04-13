@@ -1,8 +1,8 @@
 {
   "name": "photoprism",
   "version": "1.0.0",
-  "description": "PhotoPrism Progressive Web App (PWA)",
-  "author": "Michael Mayer",
+  "description": "AI-Powered Photos App",
+  "author": "PhotoPrism UG",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {

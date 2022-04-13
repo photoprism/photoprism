@@ -15,7 +15,7 @@ func Markdown(rows [][]string, cols []string, autoWrap bool) string {
 	table.SetAutoWrapText(autoWrap)
 	table.SetAutoFormatHeaders(false)
 	table.SetHeader(cols)
-	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	table.SetBorders(tablewriter.Border{Left: true, Top: true, Right: true, Bottom: false})
 	table.SetCenterSeparator("|")
 	table.AppendBulk(rows)
 	table.Render()

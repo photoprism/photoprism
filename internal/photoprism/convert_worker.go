@@ -24,7 +24,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 			continue
 		case job.convert == nil:
 			continue
-		case job.file.IsVideo():
+		case job.file.IsAnimated():
 			_, _ = job.convert.ToJson(job.file)
 
 			// Create JPEG preview and AVC encoded version for videos.

@@ -130,6 +130,16 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
+	// Nanoseconds.
+	if data.TakenNs <= 0 {
+		for _, name := range exifSubSecTags {
+			if s := jsonStrings[name]; txt.IsPosInt(s) {
+				data.TakenNs = txt.Int(s + strings.Repeat("0", 9-len(s)))
+				break
+			}
+		}
+	}
+
 	// Set latitude and longitude if known and not already set.
 	if data.Lat == 0 && data.Lng == 0 {
 		if data.GPSPosition != "" {
@@ -150,6 +160,13 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	hasTimeOffset := false
+
+	// Fallback to GPS timestamp.
+	if data.TakenAt.IsZero() && data.TakenAtLocal.IsZero() && !data.TakenGps.IsZero() {
+		data.TimeZone = time.UTC.String()
+		data.TakenAt = data.TakenGps.UTC()
+		data.TakenAtLocal = time.Time{}
+	}
 
 	if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
 		hasTimeOffset = true
@@ -180,7 +197,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					data.TakenAtLocal = localUtc
 				}
 
-				data.TakenAt = tl.Round(time.Second).UTC()
+				data.TakenAt = tl.Truncate(time.Second).UTC()
 			} else {
 				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
 			}
@@ -197,7 +214,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			data.TakenAtLocal = localUtc
 		}
 
-		data.TakenAt = data.TakenAt.Round(time.Second).UTC()
+		data.TakenAt = data.TakenAt.Truncate(time.Second).UTC()
 	}
 
 	// Set local time if still empty.
@@ -209,6 +226,14 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			data.TakenAt = data.TakenAt.UTC()
 		} else {
 			log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
+		}
+	}
+
+	// Add nanoseconds to the calculated UTC and local time.
+	if data.TakenAt.Nanosecond() == 0 {
+		if ns := time.Duration(data.TakenNs); ns > 0 && ns <= time.Second {
+			data.TakenAt.Truncate(time.Second).UTC().Add(ns)
+			data.TakenAtLocal.Truncate(time.Second).Add(ns)
 		}
 	}
 

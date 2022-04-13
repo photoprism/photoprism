@@ -133,7 +133,7 @@ describe("model/thumb", () => {
           UID: "123fgb",
           Name: "1980/01/superCuteKitten.jpg",
           Primary: true,
-          Type: "jpg",
+          FileType: "jpg",
           Width: 500,
           Height: 600,
           Hash: "1xxbgdt53",
@@ -157,7 +157,7 @@ describe("model/thumb", () => {
           UID: "123fgb",
           Name: "1980/01/superCuteKitten.jpg",
           Primary: true,
-          Type: "mov",
+          FileType: "mov",
           Width: 500,
           Height: 600,
           Hash: "1xxbgdt53",
@@ -190,7 +190,7 @@ describe("model/thumb", () => {
           UID: "123fgb",
           Name: "1980/01/superCuteKitten.jpg",
           Primary: true,
-          Type: "jpg",
+          FileType: "jpg",
           Width: 500,
           Height: 600,
           Hash: "1xxbgdt53",
@@ -238,7 +238,7 @@ describe("model/thumb", () => {
           UID: "123fgb",
           Name: "1980/01/superCuteKitten.jpg",
           Primary: true,
-          Type: "jpg",
+          FileType: "jpg",
           Width: 500,
           Height: 600,
           Hash: "1xxbgdt53",
@@ -258,7 +258,7 @@ describe("model/thumb", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file = new File(values);
@@ -266,7 +266,7 @@ describe("model/thumb", () => {
     const values2 = {
       InstanceID: 5,
       UID: "ABC123",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file2 = new File(values2);
@@ -278,7 +278,7 @@ describe("model/thumb", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file = new File(values);
@@ -297,7 +297,7 @@ describe("model/thumb", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Width: 900,
       Height: 850,
       Name: "1/2/IMG123.jpg",
@@ -310,7 +310,7 @@ describe("model/thumb", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Width: 750,
       Height: 850,
       Name: "1/2/IMG123.jpg",

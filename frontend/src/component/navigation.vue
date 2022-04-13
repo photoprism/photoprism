@@ -106,6 +106,15 @@
             </v-list-tile-content>
           </v-list-tile>
 
+          <v-list-tile :to="{name: 'browse', query: { q: 'type:animated' }}" :exact="true" class="nav-animated"
+                       @click.stop="">
+            <v-list-tile-content>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                <translate>Animated</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
           <v-list-tile :to="{name: 'photos', query: { q: 'stack:true' }}" :exact="true" class="nav-stacks" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">

@@ -268,7 +268,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 	} else if f.Video {
 		s = s.Where("photos.photo_type = 'video'")
 	} else if f.Photo {
-		s = s.Where("photos.photo_type IN ('image','raw','live')")
+		s = s.Where("photos.photo_type IN ('image','raw','live','animated')")
 	} else if f.Raw {
 		s = s.Where("photos.photo_type = 'raw'")
 	} else if f.Live {

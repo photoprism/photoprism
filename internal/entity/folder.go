@@ -80,7 +80,7 @@ func NewFolder(root, pathName string, modTime time.Time) Folder {
 		FolderUID:     rnd.PPID('d'),
 		Root:          root,
 		Path:          pathName,
-		FolderType:    TypeDefault,
+		FolderType:    MediaUnknown,
 		FolderOrder:   SortOrderName,
 		FolderCountry: UnknownCountry.ID,
 		FolderYear:    year,

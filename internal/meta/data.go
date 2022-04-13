@@ -17,19 +17,23 @@ type Data struct {
 	FileName     string        `meta:"FileName"`
 	DocumentID   string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID"`
 	InstanceID   string        `meta:"InstanceID,DocumentID"`
-	TakenAt      time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
-	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
-	TakenSubSec  int           `meta:"SubSecTimeOriginal,SubSecTimeDigitized,SubSecTime"`
+	TakenAt      time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime,SubSecDateTimeOriginal,SubSecCreateDate"`
+	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime,SubSecDateTimeOriginal,SubSecCreateDate"`
+	TakenGps     time.Time     `meta:"GPSDateTime,GPSDateStamp"`
+	TakenNs      int           `meta:"-"`
 	TimeZone     string        `meta:"-"`
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
+	FPS          float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
+	Frames       int           `meta:"FrameCount"`
 	Codec        string        `meta:"CompressorID,FileType"`
 	Title        string        `meta:"Title"`
 	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets"`
 	Keywords     Keywords      `meta:"Keywords"`
-	Notes        string        `meta:"-"`
-	Artist       string        `meta:"Artist,Creator,OwnerName"`
+	Notes        string        `meta:"Comment"`
+	Artist       string        `meta:"Artist,Creator,OwnerName,Owner"`
 	Description  string        `meta:"Description"`
-	Copyright    string        `meta:"Rights,Copyright"`
+	Copyright    string        `meta:"Rights,Copyright,WebStatement,Certificate"`
+	License      string        `meta:"UsageTerms,License"`
 	Projection   string        `meta:"ProjectionType"`
 	ColorProfile string        `meta:"ICCProfileName,ProfileDescription"`
 	CameraMake   string        `meta:"CameraMake,Make"`
@@ -38,7 +42,7 @@ type Data struct {
 	CameraSerial string        `meta:"SerialNumber"`
 	LensMake     string        `meta:"LensMake"`
 	LensModel    string        `meta:"Lens,LensModel"`
-	Software     string        `meta:"Software,HistorySoftwareAgent"`
+	Software     string        `meta:"Software,HistorySoftwareAgent,ProcessingSoftware"`
 	Flash        bool          `meta:"-"`
 	FocalLength  int           `meta:"FocalLength"`
 	Exposure     string        `meta:"ExposureTime"`
@@ -49,7 +53,6 @@ type Data struct {
 	GPSPosition  string        `meta:"GPSPosition"`
 	GPSLatitude  string        `meta:"GPSLatitude"`
 	GPSLongitude string        `meta:"GPSLongitude"`
-	GPSTime      time.Time     `meta:"GPSDateTime,GPSDateStamp"`
 	Lat          float32       `meta:"-"`
 	Lng          float32       `meta:"-"`
 	Altitude     int           `meta:"GlobalAltitude,GPSAltitude"`

@@ -36,13 +36,13 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 	}
 
 	// Round times to avoid jitter.
-	taken = taken.Round(time.Second).UTC()
+	taken = taken.Truncate(time.Second).UTC()
 
 	// Default local time to taken if zero or invalid.
 	if local.IsZero() || local.Year() < 1000 {
 		local = taken
 	} else {
-		local = local.Round(time.Second)
+		local = local.Truncate(time.Second)
 	}
 
 	// Don't update older date.

@@ -2,7 +2,7 @@ import { timeZonesNames } from "@vvo/tzdb";
 import { $gettext } from "common/vm";
 import { Info } from "luxon";
 import { config } from "app/session";
-import { TypeImage, TypeLive, TypeRaw, TypeVideo } from "model/photo";
+import { MediaAnimated, MediaImage, MediaLive, MediaRaw, MediaVideo } from "model/photo";
 
 export const TimeZones = () =>
   [
@@ -304,19 +304,23 @@ export const MapsStyle = () => [
 export const PhotoTypes = () => [
   {
     text: $gettext("Image"),
-    value: TypeImage,
+    value: MediaImage,
+  },
+  {
+    text: $gettext("Animated"),
+    value: MediaAnimated,
   },
   {
     text: $gettext("Raw"),
-    value: TypeRaw,
+    value: MediaRaw,
   },
   {
     text: $gettext("Live"),
-    value: TypeLive,
+    value: MediaLive,
   },
   {
     text: $gettext("Video"),
-    value: TypeVideo,
+    value: MediaVideo,
   },
 ];
 

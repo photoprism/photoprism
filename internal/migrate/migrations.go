@@ -61,7 +61,7 @@ func (m *Migrations) Start(db *gorm.DB, runFailed bool, ids []string) {
 
 	for _, migration := range *m {
 		start := time.Now()
-		migration.StartedAt = start.UTC().Round(time.Second)
+		migration.StartedAt = start.UTC().Truncate(time.Second)
 
 		// Excluded?
 		if list.Excludes(ids, migration.ID) {

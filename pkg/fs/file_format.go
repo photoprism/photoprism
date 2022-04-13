@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,6 +22,11 @@ func (f Format) Is(s string) bool {
 	}
 
 	return f.String() == strings.ToLower(s)
+}
+
+// Ext returns the standard file format extension.
+func (f Format) Ext() string {
+	return fmt.Sprintf(".%s", f)
 }
 
 // Find returns the first filename with the same base name and a given type.

@@ -18,7 +18,7 @@ func (m *Photo) EstimateCountry() {
 	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() || m.HasPlace() {
 		// Keep existing data.
 		return
-	} else if m.UnknownCamera() && m.PhotoType == TypeImage {
+	} else if m.UnknownCamera() && m.PhotoType == MediaImage {
 		// Don't estimate if it seems to be a non-photographic image.
 		return
 	}
@@ -72,7 +72,7 @@ func (m *Photo) EstimateLocation(force bool) {
 	m.EstimatedAt = TimePointer()
 
 	// Don't estimate if it seems to be a non-photographic image.
-	if m.UnknownCamera() && m.PhotoType == TypeImage {
+	if m.UnknownCamera() && m.PhotoType == MediaImage {
 		m.RemoveLocation(SrcEstimate, false)
 		m.RemoveLocationLabels()
 		return

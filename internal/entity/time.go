@@ -6,7 +6,7 @@ const Day = time.Hour * 24
 
 // TimeStamp returns the current timestamp in UTC rounded to seconds.
 func TimeStamp() time.Time {
-	return time.Now().UTC().Round(time.Second)
+	return time.Now().UTC().Truncate(time.Second)
 }
 
 // TimePointer returns a pointer to the current timestamp.

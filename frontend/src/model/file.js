@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -15,7 +15,7 @@ Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
     which describe how our Brand Assets may be used:
     <https://photoprism.app/trademark>
 
-Feel free to send an e-mail to hello@photoprism.app if you have questions,
+Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
@@ -30,6 +30,7 @@ import Util from "common/util";
 import { config } from "app/session";
 import { $gettext } from "common/vm";
 import download from "common/download";
+import { MediaAnimated } from "./photo";
 
 export class File extends RestModel {
   getDefaults() {
@@ -44,7 +45,8 @@ export class File extends RestModel {
       Size: 0,
       ModTime: 0,
       Codec: "",
-      Type: "",
+      FileType: "",
+      MediaType: "",
       Mime: "",
       Primary: false,
       Sidecar: false,
@@ -52,19 +54,22 @@ export class File extends RestModel {
       Portrait: false,
       Video: false,
       Duration: 0,
+      FPS: 0.0,
+      Frames: 0,
       Width: 0,
       Height: 0,
       Orientation: 0,
       Projection: "",
       AspectRatio: 1.0,
       HDR: false,
+      Watermark: false,
       ColorProfile: "",
       MainColor: "",
       Colors: "",
       Luminance: "",
       Diff: 0,
       Chroma: 0,
-      Notes: "",
+      Software: "",
       Error: "",
       Markers: [],
       CreatedAt: "",
@@ -112,7 +117,7 @@ export class File extends RestModel {
   thumbnailUrl(size) {
     if (this.Error || this.Missing) {
       return `${config.contentUri}/svg/broken`;
-    } else if (this.Type === "raw") {
+    } else if (this.FileType === "raw") {
       return `${config.contentUri}/svg/raw`;
     } else if (this.Sidecar) {
       return `${config.contentUri}/svg/file`;
@@ -162,12 +167,16 @@ export class File extends RestModel {
   getInfo() {
     let info = [];
 
-    if (this.Type) {
-      info.push(this.Type.toUpperCase());
+    if (this.FileType) {
+      info.push(this.FileType.toUpperCase());
     }
 
     if (this.Duration > 0) {
       info.push(Util.duration(this.Duration));
+    }
+
+    if (this.FPS > 0) {
+      info.push(Util.fps(this.FPS));
     }
 
     this.addSizeInfo(info);
@@ -176,13 +185,17 @@ export class File extends RestModel {
   }
 
   typeInfo() {
+    if (this.Type === MediaAnimated) {
+      return $gettext("Animation");
+    }
+
     if (this.Video) {
       return $gettext("Video");
     } else if (this.Sidecar) {
       return $gettext("Sidecar");
     }
 
-    return this.Type.toUpperCase();
+    return this.FileType.toUpperCase();
   }
 
   sizeInfo() {

@@ -95,7 +95,7 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 		m.fileSize = -1
 	} else {
 		m.statErr = nil
-		m.modTime = s.ModTime().Round(time.Second)
+		m.modTime = s.ModTime().Truncate(time.Second)
 		m.fileSize = s.Size()
 	}
 
@@ -709,6 +709,16 @@ func (m *MediaFile) IsWebP() bool {
 // IsVideo returns true if this is a video file.
 func (m *MediaFile) IsVideo() bool {
 	return strings.HasPrefix(m.MimeType(), "video/") || m.MediaType() == fs.MediaVideo
+}
+
+// IsAnimatedGif returns true if it is an animated GIF.
+func (m *MediaFile) IsAnimatedGif() bool {
+	return m.IsGif() && m.MetaData().Frames > 1
+}
+
+// IsAnimated returns true if it is a video or animated image.
+func (m *MediaFile) IsAnimated() bool {
+	return m.IsVideo() || m.IsAnimatedGif()
 }
 
 // IsJson return true if this media file is a json sidecar file.

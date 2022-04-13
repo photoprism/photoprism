@@ -78,8 +78,11 @@ type Photo struct {
 	FileMissing      bool          `json:"-" select:"files.file_missing"`
 	FileVideo        bool          `json:"-" select:"files.file_video"`
 	FileDuration     time.Duration `json:"-" select:"files.file_duration"`
+	FileFPS          float64       `json:"-" select:"files.file_fps"`
+	FileFrames       int           `json:"-" select:"files.file_frames"`
 	FileCodec        string        `json:"-" select:"files.file_codec"`
 	FileType         string        `json:"-" select:"files.file_type"`
+	MediaType        string        `json:"-" select:"files.media_type"`
 	FileMime         string        `json:"-" select:"files.file_mime"`
 	FileSize         int64         `json:"-" select:"files.file_size"`
 	FileOrientation  int           `json:"-" select:"files.file_orientation"`
@@ -97,6 +100,16 @@ type Photo struct {
 	DeletedAt        time.Time     `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
 
 	Files []entity.File `json:"Files"`
+}
+
+// IsPlayable returns true if the photo has a related video/animation that is playable.
+func (photo *Photo) IsPlayable() bool {
+	switch photo.PhotoType {
+	case entity.MediaVideo, entity.MediaLive, entity.MediaAnimated:
+		return true
+	default:
+		return false
+	}
 }
 
 // ShareBase returns a meaningful file name for sharing.
