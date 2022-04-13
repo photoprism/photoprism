@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-04-06 07:19+0000\n"
+"Last-Translator: TheresaNoRights <theresagresch+weblate@gmail.com>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/tr/>\n"
 "Language: tr\n"
@@ -1049,7 +1049,7 @@ msgstr "Tam ekran"
 
 #: src/options/options.js:222
 msgid "Gemstone"
-msgstr ""
+msgstr "Değerli taş"
 
 #: src/pages/settings.vue:30
 msgid "General"
@@ -1176,7 +1176,7 @@ msgstr "Dosyalar orijinallere aktarılıyor…"
 #: src/dialog/photo/files.vue:171
 #: src/dialog/photo/files.vue:180
 msgid "in"
-msgstr ""
+msgstr "içinde"
 
 #: src/pages/about/about.vue:52
 msgid "In addition, sponsors receive direct technical support via email."

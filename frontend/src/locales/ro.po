@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-03-15 12:35+0000\n"
+"PO-Revision-Date: 2022-04-07 22:13+0000\n"
 "Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/ro/>\n"
@@ -72,11 +72,11 @@ msgstr "Un clic îl va copia în clipboard."
 #: src/pages/about/about.vue:183
 #: src/pages/help.vue:45
 msgid "About"
-msgstr "Informații"
+msgstr "Despre"
 
 #: src/options/options.js:197
 msgid "Abyss"
-msgstr "Abis"
+msgstr "Abisul"
 
 #: src/component/navigation.vue:58
 #: src/dialog/share/upload.vue:112
@@ -105,11 +105,11 @@ msgstr "Adaugă album"
 
 #: src/pages/settings/general.vue:141
 msgid "Add files to your library via Web Upload."
-msgstr "Adăugați fișiere în biblioteca dvs. prin încărcare web."
+msgstr "Adăugați fișiere la biblioteca dvs. prin încărcare web."
 
 #: src/dialog/share.vue:91
 msgid "Add Link"
-msgstr "Adăugați link"
+msgstr "Adăugați un link"
 
 #: src/pages/albums.vue:96
 msgid "Add pictures from search results by selecting them."
@@ -212,7 +212,7 @@ msgstr "Toate %{n} persoane încărcate"
 #: src/component/album/toolbar.vue:26
 #: src/component/photo/toolbar.vue:27
 msgid "All Cameras"
-msgstr "Toate Camerele"
+msgstr "Toate camerele de luat vederi"
 
 #: src/component/photo/toolbar.vue:30
 #: src/pages/albums.vue:23
@@ -259,12 +259,12 @@ msgstr "Toți anii"
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
 msgstr ""
 "De asemenea, vă rugăm să lăsați o stea pe GitHub dacă vă place acest "
-"proiect. Aceasta stea oferă o motivație suplimentară pentru a continua."
+"proiect. Aceasta oferă o motivație suplimentară pentru a continua."
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
-"Alternativ, puteți încărca fișiere direct pe serverele WebDAV, cum ar fi "
+"Alternativ, puteți încărca fișiere direct pe servere WebDAV, cum ar fi "
 "Nextcloud."
 
 #: src/dialog/photo/info.vue:151
@@ -287,7 +287,7 @@ msgstr "Animație"
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr ""
 "Orice fotografii și videoclipuri private rămân private și nu vor fi "
-"distribuite."
+"partajate."
 
 #: src/dialog/account/edit.vue:471
 msgid "API Key"
@@ -302,7 +302,7 @@ msgstr "Aplicați"
 #: src/dialog/photo/details.vue:116
 #: src/share/photo/cards.vue:35
 msgid "Approve"
-msgstr "Aproba"
+msgstr "Aprobarea"
 
 #: src/app/routes.js:210
 #: src/component/navigation.vue:123
@@ -348,7 +348,7 @@ msgstr "Artist"
 #: src/dialog/photo/files.vue:131
 #: src/dialog/photo/files.vue:128
 msgid "Aspect Ratio"
-msgstr "Raport de aspect"
+msgstr "Raportul de aspect"
 
 #: src/pages/settings/account.vue:85
 msgid "At least 6 characters."
@@ -372,8 +372,9 @@ msgstr "Deveniți un sponsor"
 #: src/pages/about/about.vue:42
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr ""
-"Înainte de a trimite o cerere de asistență, vă rugăm să utilizați Listele "
-"noastre de verificare pentru depanare pentru a determina cauza problemei dvs."
+"Înainte de a trimite o solicitare de asistență, vă rugăm să utilizați "
+"listele noastre de verificare pentru depanare pentru a determina cauza "
+"problemei dumneavoastră."
 
 #: src/pages/people/subjects.vue:432
 msgid "Bio"
@@ -385,7 +386,7 @@ msgstr "Negru"
 
 #: src/options/options.js:361
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: modificarea Lanczos, mai puține artefacte de apel"
+msgstr "Blackman: modificarea Lanczos, mai puține artefacte care sună"
 
 #: src/options/options.js:344
 msgid "Blue"
@@ -481,7 +482,7 @@ msgstr "Cărți"
 #: src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:130
 msgid "Category"
-msgstr "Categorie"
+msgstr "Categoria"
 
 #: src/pages/settings/account.vue:26
 msgid "Change"
@@ -489,11 +490,11 @@ msgstr "Schimbă"
 
 #: src/pages/settings/general.vue:185
 msgid "Change photo titles, locations, and other metadata."
-msgstr "Schimbați titlurile fotografiilor, locațiile și alte metadate."
+msgstr "Modificați titlurile fotografiilor, locațiile și alte metadate."
 
 #: src/component/photo/clipboard.vue:146
 msgid "Change private flag"
-msgstr "Schimbați steagul privat"
+msgstr "Schimbarea steagului privat"
 
 #: src/dialog/photo/info.vue:191
 msgid "Checked"
@@ -548,7 +549,7 @@ msgstr "Conectare prin WebDAV"
 
 #: src/pages/about/feedback.vue:7
 msgid "Contact Us"
-msgstr "Contactează-ne"
+msgstr "Contactați-ne"
 
 #: src/pages/albums.vue:93
 #: src/pages/labels.vue:74
@@ -564,11 +565,11 @@ msgstr "Conține o imagine."
 
 #: src/pages/settings/library.vue:113
 msgid "Convert to JPEG"
-msgstr "Convertiți în JPEG"
+msgstr "Conversia în JPEG"
 
 #: src/pages/library/index.vue:166
 msgid "Converting"
-msgstr "Conversie"
+msgstr "Conversia"
 
 #: src/dialog/share.vue:58
 #: src/dialog/webdav.vue:36
@@ -587,7 +588,7 @@ msgstr "Nu sa putut găsi nimic."
 #: src/component/photo/toolbar.vue:184
 #: src/dialog/photo/details.vue:240
 msgid "Country"
-msgstr "Țară"
+msgstr "Țara"
 
 #: src/dialog/photo/album.vue:18
 msgid "Create album"
@@ -603,7 +604,7 @@ msgstr "Crearea de miniaturi pentru"
 
 #: src/options/options.js:363
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubic: Calitate moderată, performanță Bună"
+msgstr "Cubic: Calitate moderată, performanță bună"
 
 #: src/pages/settings/account.vue:57
 msgid "Current Password"
@@ -619,7 +620,7 @@ msgstr "Cyan"
 
 #: src/options/options.js:212
 msgid "Cyano"
-msgstr "Albăstrui"
+msgstr "Cyano"
 
 #: src/options/options.js:316
 msgid "Daily"
@@ -627,7 +628,7 @@ msgstr "Zilnic"
 
 #: src/dialog/photo/details.vue:118
 msgid "Day"
-msgstr "Zi"
+msgstr "Ziua"
 
 #: src/pages/settings/advanced.vue:77
 msgid "Debug Logs"
@@ -667,7 +668,7 @@ msgstr "Descriere"
 
 #: src/dialog/webdav.vue:23
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Instrucțiuni detaliate pot fi găsite în Ghidul Utilizatorului."
+msgstr "Instrucțiuni detaliate pot fi găsite în Ghidul utilizatorului."
 
 #: src/dialog/photo/edit.vue:27
 #: src/dialog/photo/edit.vue:1
@@ -689,36 +690,36 @@ msgstr "Dezactivați serverul WebDAV încorporat. Necesită o repornire."
 
 #: src/pages/settings/advanced.vue:484
 msgid "Disable Darktable"
-msgstr "Dezactivează Darktable"
+msgstr "Dezactivați Darktable"
 
 #: src/pages/settings/advanced.vue:209
 msgid "Disable ExifTool"
-msgstr "Dezactivează ExifTool"
+msgstr "Dezactivați ExifTool"
 
 #: src/pages/settings/advanced.vue:526
 msgid "Disable FFmpeg"
-msgstr "Dezactivează FFmpeg"
+msgstr "Dezactivați FFmpeg"
 
 #: src/pages/settings/advanced.vue:187
 msgid "Disable Places"
-msgstr "Dezactivează Locații"
+msgstr "Dezactivați locurile"
 
 #: src/pages/settings/advanced.vue:505
 msgid "Disable RawTherapee"
-msgstr "Dezactivează RawTherapee"
+msgstr "Dezactivați RawTherapee"
 
 #: src/pages/settings/advanced.vue:231
 msgid "Disable TensorFlow"
-msgstr "Dezactivează TensorFlow"
+msgstr "Dezactivați TensorFlow"
 
 #: src/pages/settings/advanced.vue:165
 msgid "Disable WebDAV"
-msgstr "Dezactivează WebDAV"
+msgstr "Dezactivați WebDAV"
 
 #: src/dialog/account/edit.vue:66
 #: src/dialog/account/edit.vue:111
 msgid "Disabled"
-msgstr "Dezactivat"
+msgstr "Persoane cu handicap"
 
 #: src/pages/settings/advanced.vue:188
 msgid "Disables reverse geocoding and maps."
@@ -740,7 +741,7 @@ msgstr ""
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
-"Nu creați fișiere ExifTool JSON pentru extragerea îmbunătățită a metadatelor."
+"Nu creați fișiere ExifTool JSON pentru o mai bună extragere a metadatelor."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
@@ -754,11 +755,11 @@ msgstr "Nu transcodați videoclipuri cu FFmpeg."
 
 #: src/pages/settings/advanced.vue:485
 msgid "Don't use Darktable to convert RAW files."
-msgstr "Nu utilizați Darktable pentru a converti fișierele RAW."
+msgstr "Nu utilizați Darktable pentru a converti fișiere RAW."
 
 #: src/pages/settings/advanced.vue:506
 msgid "Don't use RawTherapee to convert RAW files."
-msgstr "Nu utilizați RawTherapee pentru a converti fișierele RAW."
+msgstr "Nu utilizați RawTherapee pentru a converti fișiere RAW."
 
 #: src/pages/settings/advanced.vue:232
 msgid "Don't use TensorFlow for image classification."
@@ -777,7 +778,7 @@ msgstr "Realizat"
 #: src/pages/library/import.vue:7
 #: src/pages/library/index.vue:8
 msgid "Done."
-msgstr "Realizat."
+msgstr "S-a făcut."
 
 #: src/component/album/clipboard.vue:113
 #: src/component/album/toolbar.vue:107
@@ -792,7 +793,7 @@ msgstr "Realizat."
 #: src/share/photo/clipboard.vue:63
 #: src/share/photos.vue:77
 msgid "Download"
-msgstr "Descarca"
+msgstr "Descărcați"
 
 #: src/dialog/account/edit.vue:320
 msgid "Download remote files"
@@ -819,11 +820,11 @@ msgstr "Descărcați fișiere individuale și arhive zip."
 #: src/share/photo/list.vue:62
 #: src/share/photos.vue:486
 msgid "Downloading…"
-msgstr "Descărcare…"
+msgstr "Descărcarea…"
 
 #: src/pages/settings/advanced.vue:282
 msgid "Downscaling Filter"
-msgstr "Filtru de reducere a dimensiunii"
+msgstr "Filtru de reducere a scării"
 
 #: src/pages/library/files.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -831,17 +832,17 @@ msgstr "Dublurile vor fi omise și vor apărea doar o singură dată."
 
 #: src/pages/settings/advanced.vue:305
 msgid "Dynamic Previews"
-msgstr "Previzualizări dinamice"
+msgstr "Previziuni dinamice"
 
 #: src/pages/settings/advanced.vue:306
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr ""
-"Redarea dinamică necesită un server puternic. Nu este recomandat pentru "
+"Redarea dinamică necesită un server puternic. Nu este recomandată pentru "
 "dispozitivele NAS."
 
 #: src/pages/settings/advanced.vue:348
 msgid "Dynamic Size Limit: %{n}px"
-msgstr "Limita Dimensiunii Dinamice: %{n}px"
+msgstr "Limita dimensiunii dinamice: %{n}px"
 
 #: src/pages/about/feedback.vue:181
 msgid "E-Mail"
@@ -857,7 +858,7 @@ msgstr "Editați"
 
 #: src/dialog/album/edit.vue:8
 msgid "Edit %{name}"
-msgstr "Editează %{nume}"
+msgstr "Editează %{name}"
 
 #: src/dialog/account/edit.vue:140
 msgid "Edit Account"
@@ -1484,7 +1485,7 @@ msgstr "Cele mai relevante"
 
 #: src/pages/library/import.vue:132
 msgid "Move Files"
-msgstr "Mutarea fișierelor"
+msgstr "Muta fișierele"
 
 #: src/component/photo/cards.vue:39
 #: src/component/photo/list.vue:47

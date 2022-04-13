@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-03-16 21:35+0000\n"
-"Last-Translator: Joaquim Homrighausen <joho@boojam.se>\n"
+"PO-Revision-Date: 2022-04-13 18:06+0000\n"
+"Last-Translator: Tom Stevens <tom@stevens.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/sv/>\n"
 "Language: sv\n"
@@ -879,127 +879,131 @@ msgstr "Aktiverar förinställningar för RAW-omvandlare. Kan minska prestandan.
 
 #: src/component/navigation.vue:365
 msgid "Errors"
-msgstr ""
+msgstr "Fel"
 
 #: src/pages/settings/library.vue:72
 msgid "Estimate the approximate location of pictures without coordinates."
-msgstr ""
+msgstr "Uppskatta den ungefärliga placeringen av bilder utan koordinater."
 
 #: src/pages/settings/library.vue:71
 msgid "Estimates"
-msgstr ""
+msgstr "Uppskattningar"
 
 #: src/options/options.js:317
 msgid "Every two days"
-msgstr ""
+msgstr "Varannan dag"
 
 #: src/pages/settings/general.vue:273
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr ""
+"Undanta innehåll som markerats som privat från sökresultat, delade album, "
+"etiketter och platser."
 
 #: src/pages/people/faces.vue:100
 #: src/pages/people/subjects.vue:140
 msgid "Exclude hidden"
-msgstr ""
+msgstr "Exkludera dolda"
 
 #: src/component/navigation.vue:279
 msgid "Expand"
-msgstr ""
+msgstr "Expandera"
 
 #: src/component/photo/toolbar.vue:144
 msgid "Expand Search"
-msgstr ""
+msgstr "Utöka sökningen"
 
 #: src/pages/settings/advanced.vue:121
 msgid "Experimental Features"
-msgstr ""
+msgstr "Experimentella funktioner"
 
 #: src/dialog/account/edit.vue:240
 #: src/dialog/share.vue:64
 msgid "Expires"
-msgstr ""
+msgstr "Upphör att gälla"
 
 #: src/dialog/photo/details.vue:383
 msgid "Exposure"
-msgstr ""
+msgstr "Exponering"
 
 #: src/dialog/photo/details.vue:429
 msgid "F Number"
-msgstr ""
+msgstr "F-nummer"
 
 #: src/model/face.js:154
 msgid "Face"
-msgstr ""
+msgstr "Ansikte"
 
 #: src/dialog/photo/info.vue:73
 msgid "Faces"
-msgstr ""
+msgstr "Ansikten"
 
 #: src/dialog/share.vue:60
 #: src/dialog/webdav.vue:38
 msgid "Failed copying to clipboard"
-msgstr ""
+msgstr "Kopiering till urklipp misslyckades"
 
 #: src/dialog/share.vue:93
 msgid "Failed removing link"
-msgstr ""
+msgstr "Misslyckades med att ta bort länken"
 
 #: src/dialog/share.vue:81
 msgid "Failed updating link"
-msgstr ""
+msgstr "Misslyckades att uppdatera länken"
 
 #: src/dialog/upload.vue:159
 msgid "Failure while importing uploaded files"
-msgstr ""
+msgstr "Fel vid import av uppladdade filer"
 
 #: src/options/options.js:253
 msgid "Fast"
-msgstr ""
+msgstr "Snabbt"
 
 #: src/dialog/photo/info.vue:94
 msgid "Favorite"
-msgstr ""
+msgstr "Favorit"
 
 #: src/app/routes.js:175
 #: src/component/navigation.vue:216
 #: src/component/navigation.vue:846
 msgid "Favorites"
-msgstr ""
+msgstr "Favoriter"
 
 #: src/options/options.js:354
 msgid "Feature Request"
-msgstr ""
+msgstr "Begäran om funktion"
 
 #: src/component/navigation.vue:406
 #: src/component/navigation.vue:35
 msgid "Feedback"
-msgstr ""
+msgstr "Återkoppling"
 
 #: src/dialog/sponsor.vue:24
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
+msgstr "Kontakta oss gärna på hello@photoprism.app om du har några frågor."
 
 #: src/model/file.js:241
 msgid "File"
-msgstr ""
+msgstr "Fil"
 
 #: src/app/routes.js:242
 msgid "File Browser"
-msgstr ""
+msgstr "Filhanterare"
 
 #: src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:317
 msgid "Files"
-msgstr ""
+msgstr "Filer"
 
 #: src/pages/settings/library.vue:216
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr ""
+"Filer med sekventiella namn som 'IMG_1234 (2)' och 'IMG_1234 (3)' tillhör "
+"samma bild."
 
 #: src/dialog/photo/details.vue:449
 msgid "Focal Length"
-msgstr ""
+msgstr "Brännvidd"
 
 #: src/dialog/account/edit.vue:275
 #: src/dialog/account/edit.vue:281
@@ -1008,149 +1012,151 @@ msgstr ""
 #: src/model/folder.js:193
 #: src/pages/library/files.vue:72
 msgid "Folder"
-msgstr ""
+msgstr "Mapp"
 
 #: src/pages/library/files.vue:305
 msgid "Folder contains %{n} files"
-msgstr ""
+msgstr "Mappen innehåller %{n} filer"
 
 #: src/pages/library/files.vue:297
 msgid "Folder is empty"
-msgstr ""
+msgstr "Mappen är tom"
 
 #: src/app/routes.js:155
 #: src/app/routes.js:162
 #: src/component/navigation.vue:302
 #: src/component/navigation.vue:1142
 msgid "Folders"
-msgstr ""
+msgstr "Mappar"
 
 #: src/pages/auth/login.vue:2
 msgid "Forgot password?"
-msgstr ""
+msgstr "Glömt lösenord?"
 
 #: src/component/photo/viewer.vue:174
 msgid "Fullscreen"
-msgstr ""
+msgstr "Fullskärm"
 
 #: src/options/options.js:222
 msgid "Gemstone"
-msgstr ""
+msgstr "Ädelsten"
 
 #: src/pages/settings.vue:30
 msgid "General"
-msgstr ""
+msgstr "Allmänt"
 
 #: src/pages/about/about.vue:38
 msgid "Getting Support"
-msgstr ""
+msgstr "Få stöd"
 
 #: src/options/options.js:338
 msgid "Gold"
-msgstr ""
+msgstr "Guld"
 
 #: src/options/options.js:187
 msgid "Grayscale"
-msgstr ""
+msgstr "Gråskala"
 
 #: src/options/options.js:341
 msgid "Green"
-msgstr ""
+msgstr "Grön"
 
 #: src/options/options.js:347
 msgid "Grey"
-msgstr ""
+msgstr "Grått"
 
 #: src/component/album/toolbar.vue:52
 #: src/component/photo/toolbar.vue:46
 #: src/dialog/album/edit.vue:23
 msgid "Group by similarity"
-msgstr ""
+msgstr "Gruppera efter likhet"
 
 #: src/dialog/photo/files.vue:59
 #: src/dialog/photo/files.vue:56
 msgid "Hash"
-msgstr ""
+msgstr "Hash"
 
 #: src/pages/help.vue:4
 msgid "Help"
-msgstr ""
+msgstr "Hjälp"
 
 #: src/component/navigation.vue:356
 msgid "Hidden"
-msgstr ""
+msgstr "Dolda"
 
 #: src/app/routes.js:248
 msgid "Hidden Files"
-msgstr ""
+msgstr "Dolda filer"
 
 #: src/pages/people/faces.vue:237
 #: src/pages/people/subjects.vue:297
 msgid "Hide"
-msgstr ""
+msgstr "Dölj"
 
 #: src/pages/settings/general.vue:295
 msgid "Hide photos that have been moved to archive."
-msgstr ""
+msgstr "Dölj foton som har flyttats till arkivet."
 
 #: src/dialog/photo/files.vue:109
 #: src/dialog/photo/files.vue:106
 msgid "High Dynamic Range (HDR)"
-msgstr ""
+msgstr "Högt dynamiskt omfång (HDR)"
 
 #: src/pages/about/feedback.vue:138
 msgid "How can we help?"
-msgstr ""
+msgstr "Hur kan vi hjälpa till?"
 
 #: src/options/options.js:276
 msgid "Hybrid"
-msgstr ""
+msgstr "Hybrid"
 
 #: src/dialog/sponsor.vue:36
 msgid "I'm a sponsor"
-msgstr ""
+msgstr "Jag är en sponsor"
 
 #: src/pages/about/about.vue:43
 msgid "If this doesn't help, or you have other questions:"
-msgstr ""
+msgstr "Om detta inte hjälper dig eller om du har andra frågor:"
 
 #: src/dialog/photo/labels.vue:37
 msgid "image"
-msgstr ""
+msgstr "bild"
 
 #: src/options/options.js:294
 msgid "Image"
-msgstr ""
+msgstr "Bild"
 
 #: src/pages/settings/advanced.vue:56
 msgid "Images"
-msgstr ""
+msgstr "Bilder"
 
 #: src/pages/library.vue:42
 #: src/pages/library/import.vue:43
 #: src/pages/settings/general.vue:228
 msgid "Import"
-msgstr ""
+msgstr "Import"
 
 #: src/pages/library/import.vue:116
 msgid "Import failed"
-msgstr ""
+msgstr "Importen misslyckades"
 
 #: src/pages/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr ""
+"Importerade filer sorteras efter datum och får ett unikt namn för att "
+"undvika dubbletter."
 
 #: src/pages/settings/general.vue:229
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
+msgstr "Importerade filer sorteras efter datum och får ett unikt namn."
 
 #: src/pages/library/import.vue:5
 msgid "Importing %{name}…"
-msgstr ""
+msgstr "Importerar %{name}…"
 
 #: src/pages/library/import.vue:6
 msgid "Importing files to originals…"
-msgstr ""
+msgstr "Importera filer till original…"
 
 #: src/dialog/photo/files.vue:174
 #: src/dialog/photo/files.vue:183
@@ -1161,7 +1167,7 @@ msgstr ""
 
 #: src/pages/about/about.vue:52
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr ""
+msgstr "Dessutom får sponsorer direkt teknisk support via e-post."
 
 #: src/component/photo/cards.vue:11
 #: src/component/photo/list.vue:12
