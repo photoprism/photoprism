@@ -104,7 +104,7 @@ func (m *Account) LogError(err error) error {
 
 // ResetErrors resets the account and related file error messages and counters.
 func (m *Account) ResetErrors(share, sync bool) error {
-	if !share && !sync {
+	if !share && !sync || Db().NewRecord(m) {
 		return nil
 	}
 
@@ -172,10 +172,9 @@ func (m *Account) SaveForm(form form.Account) error {
 		m.SyncStatus = AccountSyncStatusRefresh
 	}
 
-	// Reset share/sync errors.
-	if err := m.ResetErrors(m.AccShare, m.AccSync); err != nil {
-		log.Debugf("account: %s", err)
-		log.Errorf("account: failed to reset errors")
+	// Reset error counters if account already exists.
+	if !Db().NewRecord(m) {
+		Log("account", "reset errors", m.ResetErrors(m.AccShare, m.AccSync))
 	}
 
 	// Ensure account name and owner are not too long.
