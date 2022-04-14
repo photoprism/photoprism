@@ -63,6 +63,7 @@ var PhotoPrism = []cli.Command{
 	UsersCommand,
 	ShowCommand,
 	VersionCommand,
+	ShowConfigCommand,
 }
 
 // childAlreadyRunning tests if a .pid file at filePath is a running process.

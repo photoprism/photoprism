@@ -17,7 +17,7 @@ type Data struct {
 	FileName     string        `meta:"FileName"`
 	DocumentID   string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID"`
 	InstanceID   string        `meta:"InstanceID,DocumentID"`
-	TakenAt      time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime,SubSecDateTimeOriginal,SubSecCreateDate"`
+	TakenAt      time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime,SubSecDateTimeOriginal,SubSecCreateDate" xmp:"DateCreated"`
 	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime,SubSecDateTimeOriginal,SubSecCreateDate"`
 	TakenGps     time.Time     `meta:"GPSDateTime,GPSDateStamp"`
 	TakenNs      int           `meta:"-"`
@@ -26,27 +26,27 @@ type Data struct {
 	FPS          float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
 	Frames       int           `meta:"FrameCount"`
 	Codec        string        `meta:"CompressorID,FileType"`
-	Title        string        `meta:"Title"`
-	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets"`
+	Title        string        `meta:"Title" xmp:"dc:title" dc:"title,title.Alt"`
+	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords     Keywords      `meta:"Keywords"`
 	Notes        string        `meta:"Comment"`
-	Artist       string        `meta:"Artist,Creator,OwnerName,Owner"`
-	Description  string        `meta:"Description"`
-	Copyright    string        `meta:"Rights,Copyright,WebStatement,Certificate"`
+	Artist       string        `meta:"Artist,Creator,OwnerName,Owner" xmp:"Creator"`
+	Description  string        `meta:"Description" xmp:"Description,Description.Alt"`
+	Copyright    string        `meta:"Rights,Copyright,WebStatement" xmp:"Rights,Rights.Alt"`
 	License      string        `meta:"UsageTerms,License"`
 	Projection   string        `meta:"ProjectionType"`
 	ColorProfile string        `meta:"ICCProfileName,ProfileDescription"`
-	CameraMake   string        `meta:"CameraMake,Make"`
-	CameraModel  string        `meta:"CameraModel,Model"`
+	CameraMake   string        `meta:"CameraMake,Make" xmp:"Make"`
+	CameraModel  string        `meta:"CameraModel,Model" xmp:"Model"`
 	CameraOwner  string        `meta:"OwnerName"`
 	CameraSerial string        `meta:"SerialNumber"`
 	LensMake     string        `meta:"LensMake"`
-	LensModel    string        `meta:"Lens,LensModel"`
+	LensModel    string        `meta:"Lens,LensModel" xmp:"LensModel"`
 	Software     string        `meta:"Software,HistorySoftwareAgent,ProcessingSoftware"`
-	Flash        bool          `meta:"-"`
+	Flash        bool          `meta:"FlashFired"`
 	FocalLength  int           `meta:"FocalLength"`
-	Exposure     string        `meta:"ExposureTime"`
-	Aperture     float32       `meta:"ApertureValue"`
+	Exposure     string        `meta:"ExposureTime,ShutterSpeedValue,ShutterSpeed,TargetExposureTime"`
+	Aperture     float32       `meta:"ApertureValue,Aperture"`
 	FNumber      float32       `meta:"FNumber"`
 	Iso          int           `meta:"ISO"`
 	ImageType    int           `meta:"HDRImageType"`
@@ -73,16 +73,14 @@ func NewData() Data {
 
 // AspectRatio returns the aspect ratio based on width and height.
 func (data Data) AspectRatio() float32 {
-	width := float64(data.ActualWidth())
-	height := float64(data.ActualHeight())
+	w := float64(data.ActualWidth())
+	h := float64(data.ActualHeight())
 
-	if width <= 0 || height <= 0 {
+	if w <= 0 || h <= 0 {
 		return 0
 	}
 
-	aspectRatio := float32(math.Round((width/height)*100) / 100)
-
-	return aspectRatio
+	return float32(math.Round((w/h)*100) / 100)
 }
 
 // Portrait returns true if it is a portrait picture or video based on width and height.

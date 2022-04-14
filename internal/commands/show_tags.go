@@ -4,27 +4,28 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/photoprism/photoprism/internal/meta"
+
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
-var ShowFiltersCommand = cli.Command{
-	Name:  "filters",
-	Usage: "Displays a search filter overview with examples",
+var ShowTagsCommand = cli.Command{
+	Name:  "tags",
+	Usage: "Reports supported Exif and XMP metadata tags",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "md, m",
 			Usage: "renders valid Markdown",
 		},
 	},
-	Action: showFiltersAction,
+	Action: showTagsAction,
 }
 
-// showFiltersAction lists supported search filters.
-func showFiltersAction(ctx *cli.Context) error {
-	rows, cols := form.Report(&form.SearchPhotos{})
+// showTagsAction reports supported Exif and XMP metadata tags.
+func showTagsAction(ctx *cli.Context) error {
+	rows, cols := meta.Report(&meta.Data{})
 
 	sort.Slice(rows, func(i, j int) bool {
 		if rows[i][1] == rows[j][1] {

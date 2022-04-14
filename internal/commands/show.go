@@ -10,6 +10,7 @@ var ShowCommand = cli.Command{
 	Usage: "Configuration and system report subcommands",
 	Subcommands: []cli.Command{
 		ShowConfigCommand,
+		ShowTagsCommand,
 		ShowFiltersCommand,
 		ShowFormatsCommand,
 	},

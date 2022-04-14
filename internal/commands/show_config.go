@@ -12,11 +12,11 @@ import (
 
 var ShowConfigCommand = cli.Command{
 	Name:  "config",
-	Usage: "Shows global configuration values",
+	Usage: "Shows global config option names and values",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
-			Name:  "no-wrap, n",
-			Usage: "disable text-wrapping",
+			Name:  "md, m",
+			Usage: "renders valid Markdown",
 		},
 	},
 	Action: showConfigAction,
@@ -27,9 +27,9 @@ func showConfigAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)
 
-	rows, cols := conf.Table()
+	rows, cols := conf.Report()
 
-	fmt.Println(report.Markdown(rows, cols, !ctx.Bool("no-wrap")))
+	fmt.Println(report.Table(rows, cols, ctx.Bool("md")))
 
 	return nil
 }

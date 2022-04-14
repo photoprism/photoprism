@@ -97,8 +97,8 @@ var FormatDesc = map[Format]string{
 	FormatOther:    "Other",
 }
 
-// Table returns a file format documentation table.
-func (m FileFormats) Table(withDesc, withType, withExt bool) (rows [][]string, cols []string) {
+// Report returns a file format documentation table.
+func (m FileFormats) Report(withDesc, withType, withExt bool) (rows [][]string, cols []string) {
 	cols = make([]string, 0, 4)
 	cols = append(cols, "Format")
 

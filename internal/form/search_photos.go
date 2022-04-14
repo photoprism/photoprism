@@ -22,13 +22,13 @@ type SearchPhotos struct {
 	Unstacked bool      `form:"unstacked"`
 	Stackable bool      `form:"stackable"`
 	Video     bool      `form:"video"`
-	Vector    bool      `form:"vector" notes:"Vector graphics such as SVGs"`
-	Animated  bool      `form:"animated" notes:"Animated images such as GIFs"`
-	Photo     bool      `form:"photo" notes:"Everything except videos"`
-	Raw       bool      `form:"raw" notes:"RAW images only"`
-	Live      bool      `form:"live" notes:"Live photos, short videos"`
-	Scan      bool      `form:"scan" notes:"Scanned images and documents"`
-	Panorama  bool      `form:"panorama" notes:"Aspect ratio 2:1 and up"`
+	Vector    bool      `form:"vector" notes:"Vector Graphics"`
+	Animated  bool      `form:"animated" notes:"Animated GIFs"`
+	Photo     bool      `form:"photo" notes:"No Videos"`
+	Raw       bool      `form:"raw" notes:"RAW Images"`
+	Live      bool      `form:"live" notes:"Live Photos, Short Videos"`
+	Scan      bool      `form:"scan" notes:"Scanned Images, Documents"`
+	Panorama  bool      `form:"panorama" notes:"Aspect Ratio > 1.9:1"`
 	Portrait  bool      `form:"portrait"`
 	Landscape bool      `form:"landscape"`
 	Square    bool      `form:"square"`
@@ -48,33 +48,33 @@ type SearchPhotos struct {
 	Diff      uint32    `form:"diff"`
 	Mono      bool      `form:"mono"`
 	Geo       bool      `form:"geo"`
-	Keywords  string    `form:"keywords"`                                                                              // Filter by keyword(s)
-	Label     string    `form:"label"`                                                                                 // Label name
-	Category  string    `form:"category"`                                                                              // Moments
-	Country   string    `form:"country"`                                                                               // Moments
-	State     string    `form:"state"`                                                                                 // Moments
-	Year      string    `form:"year"`                                                                                  // Moments
-	Month     string    `form:"month"`                                                                                 // Moments
-	Day       string    `form:"day"`                                                                                   // Moments
-	Face      string    `form:"face"`                                                                                  // UIDs
-	Subject   string    `form:"subject"`                                                                               // UIDs
-	Person    string    `form:"person"`                                                                                // Alias for Subject
-	Subjects  string    `form:"subjects"`                                                                              // People names
-	People    string    `form:"people"`                                                                                // Alias for Subjects
-	Album     string    `form:"album" notes:"Single name with * wildcard"`                                             // Album UIDs or name
-	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"May be combined with & and |"` // Multi search with and/or
-	Color     string    `form:"color"`                                                                                 // Main color
-	Faces     string    `form:"faces"`                                                                                 // Find or exclude faces if detected.
-	Quality   int       `form:"quality"`                                                                               // Photo quality score
-	Review    bool      `form:"review"`                                                                                // Find photos in review
-	Camera    string    `form:"camera" example:"camera:canon"`                                                         // Camera UID or name
-	Lens      string    `form:"lens" example:"lens:ef24"`                                                              // Lens UID or name
-	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Taken before this date"`                        // Finds images taken before date
-	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Taken after this date"`                          // Finds images taken after date
-	Count     int       `form:"count" binding:"required" serialize:"-"`                                                // Result FILE limit
-	Offset    int       `form:"offset" serialize:"-"`                                                                  // Result FILE offset
-	Order     string    `form:"order" serialize:"-"`                                                                   // Sort order
-	Merged    bool      `form:"merged" serialize:"-"`                                                                  // Merge FILES in response
+	Keywords  string    `form:"keywords"`                                                                                          // Filter by keyword(s)
+	Label     string    `form:"label"`                                                                                             // Label name
+	Category  string    `form:"category"`                                                                                          // Moments
+	Country   string    `form:"country"`                                                                                           // Moments
+	State     string    `form:"state"`                                                                                             // Moments
+	Year      string    `form:"year"`                                                                                              // Moments
+	Month     string    `form:"month"`                                                                                             // Moments
+	Day       string    `form:"day"`                                                                                               // Moments
+	Face      string    `form:"face"`                                                                                              // UIDs
+	Subject   string    `form:"subject"`                                                                                           // UIDs
+	Person    string    `form:"person"`                                                                                            // Alias for Subject
+	Subjects  string    `form:"subjects"`                                                                                          // People names
+	People    string    `form:"people"`                                                                                            // Alias for Subjects
+	Album     string    `form:"album" notes:"Single name with * wildcard"`                                                         // Album UIDs or name
+	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album names can be combined with & and |"` // Multi search with and/or
+	Color     string    `form:"color"`                                                                                             // Main color
+	Faces     string    `form:"faces"`                                                                                             // Find or exclude faces if detected.
+	Quality   int       `form:"quality"`                                                                                           // Photo quality score
+	Review    bool      `form:"review"`                                                                                            // Find photos in review
+	Camera    string    `form:"camera" example:"camera:canon"`                                                                     // Camera UID or name
+	Lens      string    `form:"lens" example:"lens:ef24"`                                                                          // Lens UID or name
+	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Taken before this date"`                                    // Finds images taken before date
+	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Taken after this date"`                                      // Finds images taken after date
+	Count     int       `form:"count" binding:"required" serialize:"-"`                                                            // Result FILE limit
+	Offset    int       `form:"offset" serialize:"-"`                                                                              // Result FILE offset
+	Order     string    `form:"order" serialize:"-"`                                                                               // Sort order
+	Merged    bool      `form:"merged" serialize:"-"`                                                                              // Merge FILES in response
 }
 
 func (f *SearchPhotos) GetQuery() string {

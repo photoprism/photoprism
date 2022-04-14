@@ -278,8 +278,8 @@ func TestFile_Panorama(t *testing.T) {
 		assert.True(t, file.Panorama())
 	})
 	t.Run("1999", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1999, FileHeight: 1000}
-		assert.False(t, file.Panorama())
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1910, FileHeight: 1000}
+		assert.True(t, file.Panorama())
 	})
 	t.Run("2000", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 2000, FileHeight: 1000}

@@ -8,8 +8,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
-// Table returns form fields as table rows for reports.
-func Table(f interface{}) (rows [][]string, cols []string) {
+// Report returns form fields as table rows for reports.
+func Report(f interface{}) (rows [][]string, cols []string) {
 	cols = []string{"Filter", "Type", "Examples", "Notes"}
 
 	v := reflect.ValueOf(f)
@@ -26,6 +26,9 @@ func Table(f interface{}) (rows [][]string, cols []string) {
 
 	// Iterate through all form fields.
 	for i := 0; i < v.NumField(); i++ {
+		if !v.Type().Field(i).IsExported() {
+			continue
+		}
 		fieldValue := v.Field(i)
 		fieldName := v.Type().Field(i).Tag.Get("form")
 		fieldInfo := v.Type().Field(i).Tag.Get("serialize")
@@ -68,7 +71,7 @@ func Table(f interface{}) (rows [][]string, cols []string) {
 					example = fmt.Sprintf("%s:yes %s:no", fieldName, fieldName)
 				}
 			default:
-				log.Warnf("failed exporting %T %s", t, sanitize.Token(fieldName))
+				log.Warnf("failed reporting on %T %s", t, sanitize.Token(fieldName))
 				continue
 			}
 

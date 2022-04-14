@@ -9,36 +9,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
+// IDs represents a list of identifier strings.
 type IDs []string
+
+// FaceMap maps identification strings to face entities.
 type FaceMap map[string]entity.Face
-
-// IDs returns all known face ids as slice.
-func (m FaceMap) IDs() (ids IDs) {
-	ids = make(IDs, len(m))
-
-	for id := range m {
-		ids = append(ids, id)
-	}
-
-	return ids
-}
-
-// Refresh updates the map with current entity values from the database.
-func (m FaceMap) Refresh() (err error) {
-	result := entity.Faces{}
-
-	ids := m.IDs()
-
-	if err = Db().Where("id IN (?)", ids).Find(&result).Error; err != nil {
-		return err
-	}
-
-	for _, f := range result {
-		m[f.ID] = f
-	}
-
-	return nil
-}
 
 // FacesByID retrieves faces from the database and returns a map with the Face ID as key.
 func FacesByID(knownOnly, unmatchedOnly, inclHidden bool) (FaceMap, IDs, error) {

@@ -544,13 +544,18 @@ func (m *File) Links() Links {
 	return FindLinks("", m.FileUID)
 }
 
-// Panorama tests if the file seems to be a panorama image.
+// Panorama checks if the file appears to be a panoramic image.
 func (m *File) Panorama() bool {
 	if m.FileSidecar || m.FileWidth <= 1000 || m.FileHeight <= 500 {
+		// Too small.
 		return false
+	} else if m.Projection() != ProjDefault {
+		// Panoramic projection.
+		return true
 	}
 
-	return m.Projection() != ProjDefault || (m.FileWidth/m.FileHeight) >= 2
+	// Decide based on aspect ratio.
+	return float64(m.FileWidth)/float64(m.FileHeight) > 1.9
 }
 
 // Projection returns the panorama projection name if any.

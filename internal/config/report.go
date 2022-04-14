@@ -1,17 +1,14 @@
 package config
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
 	"time"
 	"unicode/utf8"
-
-	"github.com/olekukonko/tablewriter"
 )
 
-// Table returns global config values as a table for reporting.
-func (c *Config) Table() (rows [][]string, cols []string) {
+// Report returns global config values as a table for reporting.
+func (c *Config) Report() (rows [][]string, cols []string) {
 	cols = []string{"Value", "Name"}
 
 	rows = [][]string{
@@ -165,23 +162,4 @@ func (c *Config) Table() (rows [][]string, cols []string) {
 	}
 
 	return rows, cols
-}
-
-// MarkdownTable returns global config values as a markdown formatted table.
-func (c *Config) MarkdownTable(autoWrap bool) string {
-	buf := &bytes.Buffer{}
-
-	rows, cols := c.Table()
-
-	table := tablewriter.NewWriter(buf)
-
-	table.SetAutoWrapText(autoWrap)
-	table.SetAutoFormatHeaders(false)
-	table.SetHeader(cols)
-	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-	table.SetCenterSeparator("|")
-	table.AppendBulk(rows)
-	table.Render()
-
-	return buf.String()
 }
