@@ -265,13 +265,13 @@ test.meta("testID", "photos-archive-private-003")(
     const LabelPhoto = await photo.getNthPhotoUid("all", 0);
     await photo.triggerHoverAction("uid", LabelPhoto, "select");
     await menu.openPage("people");
-    await subject.openNthSubject(1);
+    await subject.openNthSubject(0);
     const SubjectPhoto = await photo.getNthPhotoUid("all", 1);
     await photo.triggerHoverAction("uid", SubjectPhoto, "select");
     await menu.openPage("folders");
     await toolbar.search("archive");
     await album.openNthAlbum(0);
-    const FolderPhoto = await photo.getNthPhotoUid("all", 0);
+    const FolderPhoto = await photo.getNthPhotoUid("all", 1);
     await photo.triggerHoverAction("uid", FolderPhoto, "select");
     await contextmenu.checkContextMenuCount("14");
     await contextmenu.triggerContextMenuAction("archive", "");
@@ -307,7 +307,7 @@ test.meta("testID", "photos-archive-private-003")(
     await t.navigateTo("/all?q=label%3Aseashore");
     await photo.checkPhotoVisibility(LabelPhoto, false);
     await menu.openPage("people");
-    await subject.openNthSubject(1);
+    await subject.openNthSubject(0);
     await photo.checkPhotoVisibility(SubjectPhoto, false);
     await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
     await photo.checkPhotoVisibility(FolderPhoto, false);
@@ -388,13 +388,13 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
     const LabelPhoto = await photo.getNthPhotoUid("all", 0);
     await photo.triggerHoverAction("uid", LabelPhoto, "select");
     await menu.openPage("people");
-    await subject.openNthSubject(1);
+    await subject.openNthSubject(0);
     const SubjectPhoto = await photo.getNthPhotoUid("all", 1);
     await photo.triggerHoverAction("uid", SubjectPhoto, "select");
     await menu.openPage("folders");
     await toolbar.search("archive");
     await album.openNthAlbum(0);
-    const FolderPhoto = await photo.getNthPhotoUid("all", 0);
+    const FolderPhoto = await photo.getNthPhotoUid("all", 1);
     await photo.triggerHoverAction("uid", FolderPhoto, "select");
     await contextmenu.checkContextMenuCount("14");
     await contextmenu.triggerContextMenuAction("private", "");
@@ -431,7 +431,7 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
     await t.navigateTo("/all?q=label%3Aseashore");
     await photo.checkPhotoVisibility(LabelPhoto, false);
     await menu.openPage("people");
-    await subject.openNthSubject(1);
+    await subject.openNthSubject(0);
     await photo.checkPhotoVisibility(SubjectPhoto, false);
     await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
     await photo.checkPhotoVisibility(FolderPhoto, false);
@@ -486,7 +486,7 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
     await t.navigateTo("/all?q=label%3Aseashore");
     await photo.checkPhotoVisibility(LabelPhoto, true);
     await menu.openPage("people");
-    await subject.openNthSubject(1);
+    await subject.openNthSubject(0);
     await photo.checkPhotoVisibility(SubjectPhoto, true);
     await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
     await photo.checkPhotoVisibility(FolderPhoto, true);

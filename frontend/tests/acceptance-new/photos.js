@@ -309,7 +309,7 @@ test.meta("testID", "photos-005").meta({ type: "smoke" })("Edit photo/video", as
   await contextmenu.clearSelection();
 });
 
-test.meta("testID", "photos-006")("Navigate from card view to place", async (t) => {
+test.skip.meta("testID", "photos-006")("Navigate from card view to place", async (t) => {
   await toolbar.setFilter("view", "Cards");
   await t.click(page.cardLocation.nth(0));
 

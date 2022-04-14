@@ -9,21 +9,9 @@ const menu = new Menu();
 test.meta("testID", "about-001")("About page is displayed with all links", async (t) => {
   await menu.openPage("about");
   await t
-    .expect(Selector("h2").withText("Trademarks").visible)
-    .ok()
     .expect(Selector('a[href="https://photoprism.app/"]').visible)
     .ok()
-    .expect(Selector('a[href="https://www.patreon.com/photoprism"]').visible)
-    .ok()
-    .expect(Selector('a[href="https://github.com/photoprism/photoprism/projects/5"]').visible)
-    .ok()
-    .expect(Selector('a[href="https://docs.photoprism.app/"]').visible)
-    .ok()
-    .expect(Selector('a[href="/about/license"]').visible)
-    .ok()
-    .expect(Selector('a[href="https://gitter.im/browseyourlife/community"]').visible)
-    .ok()
-    .expect(Selector('a[href="https://twitter.com/photoprism_app"]').visible)
+    .expect(Selector('a[href="https://link.photoprism.app/patreon"]').visible)
     .ok();
 });
 
