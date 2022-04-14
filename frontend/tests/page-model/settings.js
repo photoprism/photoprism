@@ -31,7 +31,7 @@ export default class Page {
     this.debugCheckbox = Selector("label").withText("Debug Logs");
     this.backupCheckbox = Selector("label").withText("Disable Backups");
     this.exiftoolCheckbox = Selector("label").withText("Disable ExifTool");
-    this.placesCheckbox = Selector("label").withText("Disable Places");
+    this.disableplacesCheckbox = Selector("label").withText("Disable Places");
     this.tensorflowCheckbox = Selector("label").withText("Disable TensorFlow");
     this.readOnlyCheckbox = Selector("label").withText("Read-Only Mode");
   }

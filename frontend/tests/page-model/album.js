@@ -61,8 +61,13 @@ export default class Page {
 
   async triggerHoverAction(mode, uidOrNth, action) {
     if (mode === "uid") {
-      await t.hover(Selector("a.uid-" + uidOrNth));
-      await t.click(Selector("a.uid-" + uidOrNth + " .input-" + action));
+      if (action === "share") {
+        await t.hover(Selector("a.uid-" + uidOrNth));
+        await t.click(Selector("a.uid-" + uidOrNth + " .action-" + action));
+      } else {
+        await t.hover(Selector("a.uid-" + uidOrNth));
+        await t.click(Selector("a.uid-" + uidOrNth + " .input-" + action));
+      }
     }
     if (mode === "nth") {
       await t.hover(Selector("a.is-album").nth(uidOrNth));
