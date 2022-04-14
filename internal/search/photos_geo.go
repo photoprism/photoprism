@@ -22,8 +22,8 @@ import (
 // GeoCols contains the geo query column names.
 var GeoCols = SelectString(GeoResult{}, []string{"*"})
 
-// Geo searches for photos based on Form values and returns GeoResults ([]GeoResult).
-func Geo(f form.SearchPhotosGeo) (results GeoResults, err error) {
+// PhotosGeo searches for photos based on Form values and returns GeoResults ([]GeoResult).
+func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	start := time.Now()
 
 	// Parse query string into fields.
@@ -91,6 +91,9 @@ func Geo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 			f.Live = true
 		case terms["raws"]:
 			f.Query = strings.ReplaceAll(f.Query, "raws", "")
+			f.Raw = true
+		case terms["raw"]:
+			f.Query = strings.ReplaceAll(f.Query, "raw", "")
 			f.Raw = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")

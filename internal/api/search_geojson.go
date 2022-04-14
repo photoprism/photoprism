@@ -52,7 +52,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		}
 
 		// Find matching pictures.
-		photos, err := search.Geo(f)
+		photos, err := search.PhotosGeo(f)
 
 		if err != nil {
 			log.Warnf("search: %s", err)

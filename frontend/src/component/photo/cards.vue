@@ -13,7 +13,7 @@
       <p class="body-1 mt-2 mb-0 pa-0">
         <translate>Try again using other filters or keywords.</translate>
         <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-        <template v-if="$config.feature('review')" class="mt-2 mb-0 pa-0">
+        <template v-if="$config.feature('review')">
           <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
         </template>
       </p>
@@ -61,6 +61,7 @@
                    @click.stop.prevent="onOpen($event, index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon color="white" class="default-hidden action-animated" :title="$gettext('Animated')">gif</v-icon>
               <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
               <v-icon color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
             </v-btn>
@@ -83,7 +84,7 @@
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
 
-            <v-btn v-if="hidePrivate" :ripple="false"
+            <v-btn v-if="featPrivate" :ripple="false"
                    icon flat absolute
                    class="input-private">
               <v-icon color="white" class="select-on">lock</v-icon>
@@ -118,7 +119,7 @@
                 <v-btn color="accent lighten-2"
                        small depressed dark block :round="false"
                        class="action-archive text-xs-center"
-                       :title="labels.archive" @click.stop="photo.archive()">
+                       :title="$gettext('Archive')" @click.stop="photo.archive()">
                   <v-icon dark>clear</v-icon>
                 </v-btn>
               </v-flex>
@@ -126,7 +127,7 @@
                 <v-btn color="accent lighten-2"
                        small depressed dark block :round="false"
                        class="action-approve text-xs-center"
-                       :title="labels.approve" @click.stop="photo.approve()">
+                       :title="$gettext('Approve')" @click.stop="photo.approve()">
                   <v-icon dark>check</v-icon>
                 </v-btn>
               </v-flex>
@@ -141,7 +142,7 @@
                   {{ photo.Title | truncate(80) }}
                 </button>
               </h3>
-              <div v-if="photo.Description" class="caption mb-2" :title="labels.description">
+              <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">
                 <button @click.exact="editPhoto(index)">
                   {{ photo.Description }}
                 </button>
@@ -149,31 +150,36 @@
               <div class="caption">
                 <button class="action-date-edit" :data-uid="photo.UID"
                         @click.exact="editPhoto(index)">
-                  <v-icon size="14" :title="labels.taken">date_range</v-icon>
+                  <v-icon size="14" :title="$gettext('Taken')">date_range</v-icon>
                   {{ photo.getDateString(true) }}
                 </button>
                 <br>
-                <button v-if="photo.Type === 'video' || photo.Type === 'animated'" :title="labels.video"
+                <button v-if="photo.Type === 'video'" :title="$gettext('Video')"
                         @click.exact="openPhoto(index, true)">
                   <v-icon size="14">movie</v-icon>
                   {{ photo.getVideoInfo() }}
                 </button>
-                <button v-else :title="labels.camera" class="action-camera-edit"
+                <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'"
+                        @click.exact="openPhoto(index, true)">
+                  <v-icon size="14">gif_box</v-icon>
+                  {{ photo.getVideoInfo() }}
+                </button>
+                <button v-else :title="$gettext('Camera')" class="action-camera-edit"
                         :data-uid="photo.UID" @click.exact="editPhoto(index)">
                   <v-icon size="14">photo_camera</v-icon>
                   {{ photo.getPhotoInfo() }}
                 </button>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
                   <br>
-                  <button :title="labels.name"
+                  <button :title="$gettext('Name')"
                           @click.exact="downloadFile(index)">
                     <v-icon size="14">insert_drive_file</v-icon>
                     {{ photo.baseName() }}
                   </button>
                 </template>
-                <template v-if="showLocation && photo.Country !== 'zz'">
+                <template v-if="featPlaces && photo.Country !== 'zz'">
                   <br>
-                  <button :title="labels.location" class="action-location"
+                  <button :title="$gettext('Location')" class="action-location"
                           :data-uid="photo.UID" @click.exact="openLocation(index)">
                     <v-icon size="14">location_on</v-icon>
                     {{ photo.locationInfo() }}
@@ -199,36 +205,51 @@ export default {
       type: Array,
       default: () => [],
     },
-    openPhoto: Function,
-    editPhoto: Function,
-    openLocation: Function,
+    openPhoto: {
+      type: Function,
+      default: () => () => {
+        console.warn('cards view: openPhoto is undefined');
+      },
+    },
+    editPhoto: {
+      type: Function,
+      default: () => () => {
+        console.warn('cards view: editPhoto is undefined');
+      },
+    },
+    openLocation: {
+      type: Function,
+      default: () => () => {
+        console.warn('cards view: openLocation is undefined');
+      },
+    },
     album: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     filter: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
-    context: String,
+    context: {
+      type: String,
+      default: "",
+    },
     selectMode: Boolean,
   },
   data() {
+    const featPlaces = this.$config.settings().features.places;
+    const featPrivate = this.$config.settings().features.private;
+    const input = new Input();
+    const debug = this.$config.get('debug');
+
     return {
-      showLocation: this.$config.settings().features.places,
-      hidePrivate: this.$config.settings().features.private,
-      debug: this.$config.get('debug'),
-      labels: {
-        location: this.$gettext("Location"),
-        description: this.$gettext("Description"),
-        taken: this.$gettext("Taken"),
-        approve: this.$gettext("Approve"),
-        archive: this.$gettext("Archive"),
-        camera: this.$gettext("Camera"),
-        video: this.$gettext("Video"),
-        name: this.$gettext("Name"),
-      },
-      input: new Input(),
+      featPlaces,
+      featPrivate,
+      debug,
+      input,
     };
   },
   methods: {
@@ -237,15 +258,17 @@ export default {
     },
     playLive(photo) {
       const player = this.livePlayer(photo);
-      try { if (player) player.play(); }
-      catch (e) {
+      try {
+        if (player) player.play();
+      } catch (e) {
         // Ignore.
       }
     },
     pauseLive(photo) {
       const player = this.livePlayer(photo);
-      try { if (player) player.pause(); }
-      catch (e) {
+      try {
+        if (player) player.pause();
+      } catch (e) {
         // Ignore.
       }
     },

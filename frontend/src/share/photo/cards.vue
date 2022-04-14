@@ -57,6 +57,7 @@
                    @click.stop.prevent="onOpen($event, index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon color="white" class="default-hidden action-animated" :title="$gettext('Animated')">gif</v-icon>
               <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
               <v-icon color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
             </v-btn>
@@ -98,34 +99,38 @@
                   {{ photo.Title | truncate(80) }}
                 </div>
               </h3>
-              <div v-if="photo.Description" class="caption mb-2" :title="labels.description">
+              <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">
                 <div>
                   {{ photo.Description }}
                 </div>
               </div>
               <div class="caption">
                 <div>
-                  <v-icon size="14" :title="labels.taken">date_range</v-icon>
+                  <v-icon size="14" :title="$gettext('Taken')">date_range</v-icon>
                   {{ photo.getDateString(true) }}
                 </div>
                 <template v-if="!photo.Description">
-                  <div v-if="photo.Type === 'video' || photo.Type === 'animated'" :title="labels.video">
+                  <div v-if="photo.Type === 'video'" :title="$gettext('Video')">
                     <v-icon size="14">movie</v-icon>
                     {{ photo.getVideoInfo() }}
                   </div>
-                  <div v-else :title="labels.camera">
+                  <div v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'">
+                    <v-icon size="14">gif_box</v-icon>
+                    {{ photo.getVideoInfo() }}
+                  </div>
+                  <div v-else :title="$gettext('Camera')">
                     <v-icon size="14">photo_camera</v-icon>
                     {{ photo.getPhotoInfo() }}
                   </div>
                 </template>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
-                  <div :title="labels.name">
+                  <div :title="$gettext('Name')">
                     <v-icon size="14">insert_drive_file</v-icon>
                     {{ photo.baseName() }}
                   </div>
                 </template>
-                <template v-if="showLocation && photo.Country !== 'zz'">
-                  <div :title="labels.location">
+                <template v-if="featPlaces && photo.Country !== 'zz'">
+                  <div :title="$gettext('Location')">
                     <v-icon size="14">location_on</v-icon>
                     {{ photo.locationInfo() }}
                   </div>
@@ -150,36 +155,49 @@ export default {
       type: Array,
       default: () => [],
     },
-    openPhoto: Function,
-    editPhoto: Function,
-    openLocation: Function,
+    openPhoto: {
+      type: Function,
+      default: () => () => {
+        console.warn('cards view: openPhoto is undefined');
+      },
+    },
+    editPhoto: {
+      type: Function,
+      default: () => () => {
+        console.warn('cards view: editPhoto is undefined');
+      },
+    },
+    openLocation: {
+      type: Function,
+      default: () => () => {
+        console.warn('cards view: openLocation is undefined');
+      },
+    },
     album: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     filter: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
-    context: String,
+    context: {
+      type: String,
+      default: "",
+    },
     selectMode: Boolean,
   },
   data() {
+    const featPlaces = this.$config.settings().features.places;
+    const input = new Input();
+    const debug = this.$config.get('debug');
+
     return {
-      showLocation: this.$config.settings().features.places,
-      hidePrivate: this.$config.settings().features.private,
-      debug: this.$config.get('debug'),
-      labels: {
-        location: this.$gettext("Location"),
-        description: this.$gettext("Description"),
-        taken: this.$gettext("Taken"),
-        approve: this.$gettext("Approve"),
-        archive: this.$gettext("Archive"),
-        camera: this.$gettext("Camera"),
-        video: this.$gettext("Video"),
-        name: this.$gettext("Name"),
-      },
-      input: new Input(),
+      featPlaces,
+      debug,
+      input,
     };
   },
   methods: {
@@ -188,15 +206,17 @@ export default {
     },
     playLive(photo) {
       const player = this.livePlayer(photo);
-      try { if (player) player.play(); }
-      catch (e) {
+      try {
+        if (player) player.play();
+      } catch (e) {
         // Ignore.
       }
     },
     pauseLive(photo) {
       const player = this.livePlayer(photo);
-      try { if (player) player.pause(); }
-      catch (e) {
+      try {
+        if (player) player.pause();
+      } catch (e) {
         // Ignore.
       }
     },

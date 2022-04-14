@@ -174,6 +174,9 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 		case terms["raws"]:
 			f.Query = strings.ReplaceAll(f.Query, "raws", "")
 			f.Raw = true
+		case terms["raw"]:
+			f.Query = strings.ReplaceAll(f.Query, "raw", "")
+			f.Raw = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
 			f.Favorite = true
