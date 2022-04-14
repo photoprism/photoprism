@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
+// ShowConfigCommand configures the command name, flags, and action.
 var ShowConfigCommand = cli.Command{
 	Name:  "config",
 	Usage: "Shows global config option names and values",
@@ -22,7 +23,7 @@ var ShowConfigCommand = cli.Command{
 	Action: showConfigAction,
 }
 
-// showConfigAction lists configuration options and their values.
+// showConfigAction shows global config option names and values.
 func showConfigAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)

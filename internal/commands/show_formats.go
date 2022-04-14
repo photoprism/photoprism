@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
+// ShowFormatsCommand configures the command name, flags, and action.
 var ShowFormatsCommand = cli.Command{
 	Name:  "formats",
 	Usage: "Lists supported media and sidecar file formats",

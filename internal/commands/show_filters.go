@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
+// ShowFiltersCommand configures the command name, flags, and action.
 var ShowFiltersCommand = cli.Command{
 	Name:  "filters",
 	Usage: "Displays a search filter overview with examples",
@@ -22,7 +23,7 @@ var ShowFiltersCommand = cli.Command{
 	Action: showFiltersAction,
 }
 
-// showFiltersAction lists supported search filters.
+// showFiltersAction displays a search filter overview with examples.
 func showFiltersAction(ctx *cli.Context) error {
 	rows, cols := form.Report(&form.SearchPhotos{})
 
