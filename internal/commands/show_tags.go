@@ -37,5 +37,10 @@ func showTagsAction(ctx *cli.Context) error {
 
 	fmt.Println(report.Table(rows, cols, ctx.Bool("md")))
 
+	// fmt.Printf("METADATA TAGS BY NAMESPACE\n")
+	fmt.Printf("## Metadata Tags by Namespace ##\n\n")
+
+	fmt.Println(report.Table(meta.Docs, []string{"Namespace", "Documentation"}, ctx.Bool("md")))
+
 	return nil
 }

@@ -8,6 +8,62 @@ import (
 )
 
 func TestExif(t *testing.T) {
+	t.Run("iptc-2014.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/iptc-2014.jpg", fs.FormatJpeg, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Creator1 (ref2014)", data.Artist)
+		assert.Equal(t, "2011-10-28T12:00:00Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2011-10-28T12:00:00Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, 0, data.TakenNs)
+		assert.Equal(t, "The description aka caption (ref2014)", data.Description)
+		assert.Equal(t, "Copyright (Notice) 2014 IPTC - www.iptc.org  (ref2014)", data.Copyright)
+		assert.Equal(t, "Adobe Photoshop CC 2014 (Windows)", data.Software)
+		assert.Equal(t, 1050, data.Height)
+		assert.Equal(t, 2100, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "", data.Exposure)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+	})
+
+	t.Run("iptc-2016.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/iptc-2016.jpg", fs.FormatJpeg, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Creator1 (ref2016)", data.Artist)
+		assert.Equal(t, "2011-10-28T12:00:00Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2011-10-28T12:00:00Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, 0, data.TakenNs)
+		assert.Equal(t, "The description aka caption (ref2016)", data.Description)
+		assert.Equal(t, "Copyright (Notice) 2016 IPTC - www.iptc.org  (ref2016)", data.Copyright)
+		assert.Equal(t, "Adobe Photoshop CC 2017 (Windows)", data.Software)
+		assert.Equal(t, 1050, data.Height)
+		assert.Equal(t, 2100, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "", data.Exposure)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+	})
+
 	t.Run("photoshop.jpg", func(t *testing.T) {
 		data, err := Exif("testdata/photoshop.jpg", fs.FormatJpeg, true)
 

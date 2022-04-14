@@ -10,7 +10,7 @@ import (
 
 // Report returns form fields as table rows for reports.
 func Report(f interface{}) (rows [][]string, cols []string) {
-	cols = []string{"Tag", "Type", "Exiftool", "XMP", "Dublin Core"}
+	cols = []string{"Tag", "Type", "Exiftool", "Adobe XMP", "Dublin Core"}
 
 	v := reflect.ValueOf(f)
 
