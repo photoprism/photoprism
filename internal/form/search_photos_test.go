@@ -233,6 +233,28 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.True(t, form.Video)
 	})
+	t.Run("AnimatedYes", func(t *testing.T) {
+		form := &SearchPhotos{Query: "animated:yes"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, form.Vector)
+		assert.True(t, form.Animated)
+	})
+	t.Run("VectorYes", func(t *testing.T) {
+		form := &SearchPhotos{Query: "vector:yes"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, form.Animated)
+		assert.True(t, form.Vector)
+	})
 	t.Run("query for photo with uncommon bool value", func(t *testing.T) {
 		form := &SearchPhotos{Query: "photo:cat>"}
 

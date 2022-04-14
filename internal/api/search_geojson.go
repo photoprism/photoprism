@@ -19,7 +19,7 @@ import (
 //
 // GET /api/v1/geo
 //
-// See form.SearchGeo for supported search params and data types.
+// See form.SearchPhotosGeo for supported search params and data types.
 func SearchGeo(router *gin.RouterGroup) {
 	handler := func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionSearch)
@@ -29,7 +29,7 @@ func SearchGeo(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.SearchGeo
+		var f form.SearchPhotosGeo
 
 		err := c.MustBindWith(&f, binding.Form)
 

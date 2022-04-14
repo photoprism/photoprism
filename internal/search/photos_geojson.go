@@ -23,7 +23,7 @@ import (
 var GeoCols = SelectString(GeoResult{}, []string{"*"})
 
 // Geo searches for photos based on Form values and returns GeoResults ([]GeoResult).
-func Geo(f form.SearchGeo) (results GeoResults, err error) {
+func Geo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	start := time.Now()
 
 	// Parse query string into fields.
@@ -77,6 +77,15 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		case terms["video"]:
 			f.Query = strings.ReplaceAll(f.Query, "video", "")
 			f.Video = true
+		case terms["svg"]:
+			f.Query = strings.ReplaceAll(f.Query, "svg", "")
+			f.Vector = true
+		case terms["gifs"]:
+			f.Query = strings.ReplaceAll(f.Query, "gifs", "")
+			f.Animated = true
+		case terms["gif"]:
+			f.Query = strings.ReplaceAll(f.Query, "gif", "")
+			f.Animated = true
 		case terms["live"]:
 			f.Query = strings.ReplaceAll(f.Query, "live", "")
 			f.Live = true
@@ -263,16 +272,20 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 	}
 
 	// Filter by media type?
-	if f.Type != "" {
+	if txt.NotEmpty(f.Type) {
 		s = s.Where("photos.photo_type IN (?)", SplitOr(strings.ToLower(f.Type)))
 	} else if f.Video {
-		s = s.Where("photos.photo_type = 'video'")
+		s = s.Where("photos.photo_type = ?", entity.MediaVideo)
+	} else if f.Vector {
+		s = s.Where("photos.photo_type = ?", entity.MediaVector)
+	} else if f.Animated {
+		s = s.Where("photos.photo_type = ?", entity.MediaAnimated)
+	} else if f.Raw {
+		s = s.Where("photos.photo_type = ?", entity.MediaRaw)
+	} else if f.Live {
+		s = s.Where("photos.photo_type = ?", entity.MediaLive)
 	} else if f.Photo {
 		s = s.Where("photos.photo_type IN ('image','raw','live','animated')")
-	} else if f.Raw {
-		s = s.Where("photos.photo_type = 'raw'")
-	} else if f.Live {
-		s = s.Where("photos.photo_type = 'live'")
 	}
 
 	// Filter by storage path?
