@@ -1,194 +1,192 @@
 import { Selector } from "testcafe";
 import { Role } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
-import Page from "../acceptance/page-model";
+import Page from "../page-model/page";
+import Menu from "../page-model/menu";
+import Toolbar from "../page-model/toolbar";
+import ContextMenu from "../page-model/context-menu";
+import Album from "../page-model/album";
+import PhotoViewer from "../page-model/photoviewer";
+import ShareDialog from "../page-model/dialog-share";
+import Photo from "../page-model/photo";
 
-fixture`Test link sharing`.page`${testcafeconfig.url}`;
+fixture`Test link sharing`.page`${testcafeconfig.url}`.skip("Urls are not working anymore");
 
 const page = new Page();
+const menu = new Menu();
+const toolbar = new Toolbar();
+const contextmenu = new ContextMenu();
+const album = new Album();
+const photoviewer = new PhotoViewer();
+const sharedialog = new ShareDialog();
+const photo = new Photo();
 
-test.meta("testID", "authentication-000")(
+//TODO merge with other sharing test
+test.skip.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
   async (t) => {
     await t.wait(5000);
   }
 );
 
-test.meta("testID", "sharing-001")("View shared albums", async (t) => {
+test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await page.selectFromUID(FirstAlbum);
-  const clipboardCount = await Selector("span.count-clipboard");
+  await menu.openPage("albums");
+  const FirstAlbumUid = await album.getNthAlbumUid("all", 0);
+  await album.triggerHoverAction("uid", FirstAlbumUid, "select");
+  await contextmenu.checkContextMenuCount("1");
+  await contextmenu.triggerContextMenuAction("share", "");
+  await t.click(sharedialog.expandLink.nth(0));
   await t
-    .expect(clipboardCount.textContent)
-    .eql("1")
-    .click(Selector("button.action-menu"))
-    .click(Selector("button.action-share"))
-    .click(Selector("div.v-expansion-panel__header__icon").nth(0));
-  await t
-    .typeText(Selector(".input-secret input"), "secretForTesting", { replace: true })
-    .click(Selector(".input-expires input"))
+    .typeText(sharedialog.linkSecretInput, "secretForTesting", { replace: true })
+    .click(sharedialog.linkExpireInput)
     .click(Selector("div").withText("After 1 day").parent('div[role="listitem"]'))
-    .click(Selector("button.action-save"));
-  const Url = await Selector("div.input-url input").value;
+    .click(sharedialog.dialogSave);
+  const Url = await sharedialog.linkUrl.value;
   const Expire = await Selector("div.v-select__selections").innerText;
+
   await t.expect(Url).contains("secretfortesting").expect(Expire).contains("After 1 day");
+
   let url = Url.replace("2342", "2343");
-  await t.click(Selector("button.action-close"));
-  await page.clearSelection();
-  await t.click(Selector(".nav-folders"));
-  const FirstFolder = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await page.selectFromUID(FirstFolder);
+  await t.click(sharedialog.dialogClose);
+  await contextmenu.clearSelection();
+  await menu.openPage("folders");
+  const FirstFolderUid = await album.getNthAlbumUid("all", 0);
+  await album.triggerHoverAction("uid", FirstFolderUid, "select");
+  await contextmenu.checkContextMenuCount("1");
+  await contextmenu.triggerContextMenuAction("share", "");
+  await t.click(sharedialog.expandLink.nth(0));
   await t
-    .click(Selector("button.action-menu"))
-    .click(Selector("button.action-share"))
-    .click(Selector("div.v-expansion-panel__header__icon").nth(0));
-  await t
-    .typeText(Selector(".input-secret input"), "secretForTesting", { replace: true })
-    .click(Selector(".input-expires input"))
+    .typeText(sharedialog.linkSecretInput, "secretForTesting", { replace: true })
+    .click(sharedialog.linkExpireInput)
     .click(Selector("div").withText("After 1 day").parent('div[role="listitem"]'))
-    .click(Selector("button.action-save"))
-    .click(Selector("button.action-close"));
-  await page.clearSelection();
+    .click(sharedialog.dialogSave)
+    .click(sharedialog.dialogSave);
+  await contextmenu.clearSelection();
   await t.navigateTo(url);
-  await t
-    .expect(Selector("div.v-toolbar__title").withText("Christmas").visible)
-    .ok()
-    .click(Selector("button").withText("@photoprism_app"))
-    .expect(Selector("div.v-toolbar__title").withText("Albums").visible)
-    .ok();
-  const countAlbums = await Selector("a.is-album").count;
-  await t.expect(countAlbums).gte(40).useRole(Role.anonymous());
+
+  await t.expect(toolbar.toolbarTitle.withText("Christmas").visible).ok();
+
+  await t.click(Selector("button").withText("@photoprism_app"));
+
+  await t.expect(toolbar.toolbarTitle.withText("Albums").visible).ok();
+
+  const AlbumCount = await album.getAlbumCount("all");
+
+  await t.expect(AlbumCount).gte(40);
+
+  await t.useRole(Role.anonymous());
   await t.navigateTo(url);
-  await t
-    .expect(Selector("div.v-toolbar__title").withText("Christmas").visible)
-    .ok()
-    .click(Selector("button").withText("@photoprism_app"))
-    .expect(Selector("div.v-toolbar__title").withText("Albums").visible)
-    .ok();
-  const countAlbumsAnonymous = await Selector("a.is-album").count;
-  await t.expect(countAlbumsAnonymous).eql(2);
+
+  await t.expect(toolbar.toolbarTitle.withText("Christmas").visible).ok();
+
+  await t.click(Selector("button").withText("@photoprism_app"));
+
+  await t.expect(toolbar.toolbarTitle.withText("Albums").visible).ok();
+
+  const AlbumCountAnonymous = await Selector("a.is-album").count;
+
+  await t.expect(AlbumCountAnonymous).eql(2);
+
   await t.navigateTo("http://localhost:2343/browse");
   await page.login("admin", "photoprism");
-  await page.openNav();
+  await menu.openPage("albums");
+  await album.openAlbumWithUid(FirstAlbumUid);
+  await toolbar.triggerToolbarAction("share");
   await t
-    .click(Selector(".nav-albums"))
-    .click(Selector("a.is-album").withAttribute("data-uid", FirstAlbum))
-    .click(Selector("button.action-share"))
-    .click(Selector("div.v-expansion-panel__header__icon").nth(0))
-    .click(Selector(".action-delete"))
-    .useRole(Role.anonymous())
-    .expect(Selector(".input-name input").visible)
-    .ok();
+    .click(sharedialog.expandLink.nth(0))
+    .click(sharedialog.deleteLink)
+    .useRole(Role.anonymous());
+
+  await t.expect(Selector(".input-name input").visible).ok();
+
   await t.navigateTo("http://localhost:2343/s/secretfortesting");
-  await t.expect(Selector("div.v-toolbar__title").withText("Albums").visible).ok();
-  const countAlbumsAnonymousAfterDelete = await Selector("a.is-album").count;
-  await t.expect(countAlbumsAnonymousAfterDelete).eql(1);
+
+  await t.expect(toolbar.toolbarTitle.withText("Albums").visible).ok();
+
+  const AlbumCountAnonymousAfterDelete = await album.getAlbumCount("all");
+
+  await t.expect(AlbumCountAnonymousAfterDelete).eql(1);
+
   await t.navigateTo("http://localhost:2343/browse");
   await page.login("admin", "photoprism");
-  await page.openNav();
+  await menu.openPage("folders");
+  await album.openAlbumWithUid(FirstFolderUid);
+  await toolbar.triggerToolbarAction("share");
   await t
-    .click(Selector(".nav-folders"))
-    .click(Selector("a.is-album").withAttribute("data-uid", FirstFolder))
-    .click(Selector("button.action-share"))
-    .click(Selector("div.v-expansion-panel__header__icon").nth(0))
-    .click(Selector(".action-delete"))
-    .useRole(Role.anonymous())
-    .expect(Selector(".input-name input").visible)
-    .ok();
+    .click(sharedialog.expandLink.nth(0))
+    .click(sharedialog.deleteLink)
+    .useRole(Role.anonymous());
+
+  await t.expect(Selector(".input-name input").visible).ok();
+
   await t.navigateTo("http://localhost:2343/s/secretfortesting");
+
   await t
-    .expect(Selector("div.v-toolbar__title").withText("Christmas").visible)
+    .expect(toolbar.toolbarTitle.withText("Christmas").visible)
     .notOk()
-    .expect(Selector("div.v-toolbar__title").withText("Albums").visible)
+    .expect(toolbar.toolbarTitle.withText("Albums").visible)
     .notOk()
     .expect(Selector(".input-name input").visible)
     .ok();
 });
 
-test.meta("testID", "sharing-002")("Verify anonymous user has limited options", async (t) => {
+test.skip.meta("testID", "sharing-002")("Verify anonymous user has limited options", async (t) => {
   await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
-  // check album toolbar
+
+  await t.expect(toolbar.toolbarTitle.withText("British Columbia").visible).ok();
+
+  await toolbar.checkToolbarActionAvailability("edit", false);
+  await toolbar.checkToolbarActionAvailability("share", false);
+  await toolbar.checkToolbarActionAvailability("upload", false);
+  await toolbar.checkToolbarActionAvailability("reload", true);
+  await toolbar.checkToolbarActionAvailability("download", true);
+
+  await photo.triggerHoverAction("nth", 0, "select");
+
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.checkContextMenuActionAvailability("archive", false);
+  await contextmenu.checkContextMenuActionAvailability("private", false);
+  await contextmenu.checkContextMenuActionAvailability("edit", false);
+  await contextmenu.checkContextMenuActionAvailability("share", false);
+  await contextmenu.checkContextMenuActionAvailability("album", false);
+
+  await contextmenu.clearSelection();
+
+  await t.expect(page.cardTitle.visible).notOk();
+
+  await photoviewer.openPhotoViewer("nth", 0);
+
+  await photoviewer.checkPhotoViewerActionAvailability("download", true);
+  await photoviewer.checkPhotoViewerActionAvailability("select", true);
+  await photoviewer.checkPhotoViewerActionAvailability("fullscreen", true);
+  await photoviewer.checkPhotoViewerActionAvailability("slideshow", true);
+  await photoviewer.checkPhotoViewerActionAvailability("like", false);
+  await photoviewer.checkPhotoViewerActionAvailability("edit", false);
+
+  await photoviewer.triggerPhotoViewerAction("close");
+
+  await photo.checkHoverActionAvailability("nth", 0, "favorite", false);
+  await photo.checkHoverActionAvailability("nth", 0, "select", true);
+
+  await toolbar.triggerToolbarAction("view-list");
+
   await t
-    .expect(Selector("div.v-toolbar__title").withText("British Columbia").visible)
-    .ok()
-    .expect(Selector("button.action-edit").visible)
+    .expect(Selector(`td button.input-private`).visible)
     .notOk()
-    .expect(Selector("button.action-share").visible)
+    .expect(Selector(`td button.input-favorite`).visible)
     .notOk()
-    .expect(Selector("button.action-upload").visible)
-    .notOk()
-    .expect(Selector("button.action-reload").visible)
-    .ok()
-    .expect(Selector("button.action-download").visible)
-    .ok();
-  //check photo context menu
-  await page.toggleSelectNthPhoto(0);
-  await t
-    .click("button.action-menu")
-    .expect(Selector("div.v-speed-dial__list button.action-download").visible)
-    .ok()
-    .expect(Selector("div.v-speed-dial__list button.action-archive").visible)
-    .notOk()
-    .expect(Selector("div.v-speed-dial__list button.action-album").visible)
-    .notOk()
-    .expect(Selector("div.v-speed-dial__list button.action-private").visible)
-    .notOk()
-    .expect(Selector("div.v-speed-dial__list button.action-edit").visible)
-    .notOk()
-    .expect(Selector("div.v-speed-dial__list button.action-share").visible)
-    .notOk();
-  await page.clearSelection();
-  await t.expect(Selector("button.action-title-edit").visible).notOk();
-  //check fullscreen actions
-  await t
-    .click(Selector('h3[title="Cape / Bowen Island / 2019"]'))
-    .expect(Selector("#photo-viewer").visible)
-    .ok()
-    .expect(Selector("img.pswp__img").visible)
-    .ok()
-    .expect(Selector("button.action-select").visible)
-    .ok()
-    .expect(Selector('button[title="Start/Stop Slideshow"]').visible)
-    .ok()
-    .expect(Selector('button[title="Fullscreen"]').visible)
-    .ok()
-    .expect(Selector('button[title="Start/Stop Slideshow"]').visible)
-    .ok()
-    .expect(Selector('button[title="Download"]').visible)
-    .ok()
-    .expect(Selector('button[title="Like"]').visible)
-    .notOk()
-    .expect(Selector('button[title="Edit"]').visible)
-    .notOk()
-    .click(Selector('button[title="Close"]'))
-    //check hover like actions card and mosaic
-    .expect(Selector("button.input-favorite").visible)
-    .notOk()
-    //check list view actions
-    //hover on mosaic
-    //action-menu albums
     .click(Selector("button").withText("@photoprism_app"))
-    .expect(Selector("div.v-toolbar__title").withText("Albums").visible)
+    .expect(toolbar.toolbarTitle.withText("Albums").visible)
     .ok();
-  //album edit dialog
-  const AlbumUid = await Selector("a.is-album", { timeout: 55000 }).nth(0).getAttribute("data-uid");
-  await page.selectFromUID(AlbumUid);
-  await t
-    .click(Selector("button.action-menu"))
-    .expect(Selector("div.v-speed-dial__list button.action-download").visible)
-    .ok()
-    .expect(Selector("div.v-speed-dial__list button.action-delete").visible)
-    .notOk()
-    .expect(Selector("div.v-speed-dial__list button.action-album").visible)
-    .notOk()
-    .expect(Selector("div.v-speed-dial__list button.action-edit").visible)
-    .notOk()
-    .expect(Selector("div.v-speed-dial__list button.action-share").visible)
-    .notOk();
-  await page.clearSelection();
-  await t.expect(Selector("button.action-title-edit").visible).notOk();
-  //TODO control + page model
+
+  const AlbumUid = await album.getNthAlbumUid("all", 0);
+  await album.triggerHoverAction("uid", AlbumUid, "select");
+
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.checkContextMenuActionAvailability("delete", false);
+  await contextmenu.checkContextMenuActionAvailability("album", false);
+  await contextmenu.checkContextMenuActionAvailability("edit", false);
+  await contextmenu.checkContextMenuActionAvailability("share", false);
+  await contextmenu.clearSelection();
 });
