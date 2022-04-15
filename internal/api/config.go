@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v2"
@@ -87,13 +87,13 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			yamlData, err := os.ReadFile(fileName)
 
 			if err != nil {
-				log.Errorf("config: failed loading values from %s (%s)", sanitize.Log(fileName), err)
+				log.Errorf("config: failed loading values from %s (%s)", clean.Log(fileName), err)
 				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 				return
 			}
 
 			if err := yaml.Unmarshal(yamlData, v); err != nil {
-				log.Warnf("config: failed parsing values in %s (%s)", sanitize.Log(fileName), err)
+				log.Warnf("config: failed parsing values in %s (%s)", clean.Log(fileName), err)
 				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 				return
 			}
@@ -122,14 +122,14 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 
 		// Write YAML data to file.
 		if err := os.WriteFile(fileName, yamlData, os.ModePerm); err != nil {
-			log.Errorf("config: failed writing values to %s (%s)", sanitize.Log(fileName), err)
+			log.Errorf("config: failed writing values to %s (%s)", clean.Log(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
 		// Reload options.
 		if err := conf.Options().Load(fileName); err != nil {
-			log.Warnf("config: failed loading values from %s (%s)", sanitize.Log(fileName), err)
+			log.Warnf("config: failed loading values from %s (%s)", clean.Log(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}

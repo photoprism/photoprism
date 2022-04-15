@@ -38,60 +38,20 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
     chmod 777 /photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
-      apt-utils \
-      gpg \
-      pkg-config \
-      software-properties-common \
-      ca-certificates \
-      build-essential \
-      gcc \
-      g++ \
-      sudo \
-      bash \
-      make \
-      nano \
-      lsof \
-      lshw \
-      wget \
-      curl \
-      rsync \
-      jq \
-      git \
-      zip \
-      unzip \
-      gettext \
-      chromium \
-      chromium-driver \
-      chromium-sandbox \
-      firefox-esr \
-      sqlite3 \
-      libc6-dev \
-      libssl-dev \
-      libxft-dev \
-      libhdf5-serial-dev \
-      libpng-dev \
-      libheif-examples \
-      librsvg2-bin \
-      libzmq3-dev \
-      libx264-dev \
-      libx265-dev \
-      libnss3 \
-      libfreetype6 \
-      libfreetype6-dev \
-      libfontconfig1 \
-      libfontconfig1-dev \
-      fonts-roboto \
-      tzdata \
-      exiftool \
-      rawtherapee \
-      ffmpeg \
-      darktable \
-      ffmpegthumbnailer \
-      libavcodec-extra \
-      davfs2 \
-      chrpath \
-      apache2-utils \
-      mariadb-client \
+      libc6 ca-certificates sudo bash tzdata \
+      gpg zip unzip wget curl rsync make nano \
+      jq lsof lshw sqlite3 mariadb-client \
+      exiftool darktable rawtherapee libheif-examples librsvg2-bin \
+      ffmpeg ffmpegthumbnailer libavcodec-extra libwebm1 \
+      libmatroska7 libdvdread8 libebml5 libgav1-0 libatomic1 \
+      libx264-163 libx265-199 && \
+    apt-get -qq install --no-install-recommends \
+      apt-utils pkg-config software-properties-common \
+      build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
+      chromium chromium-driver chromium-sandbox firefox-esr \
+      libx264-dev libx265-dev libpng-dev libxft-dev \
+      libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
+      libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \

@@ -18,9 +18,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Download URL and ZIP hash for test files.
@@ -69,7 +69,7 @@ func NewTestOptions(pkg string) *Options {
 		} else if dsn != SQLiteTestDB {
 			// Continue.
 		} else if err := os.Remove(dsn); err == nil {
-			log.Debugf("sqlite: test file %s removed", sanitize.Log(dsn))
+			log.Debugf("sqlite: test file %s removed", clean.Log(dsn))
 		}
 	}
 
@@ -148,7 +148,7 @@ func NewTestConfig(pkg string) *Config {
 
 	c := &Config{
 		options: NewTestOptions(pkg),
-		token:   rnd.Token(8),
+		token:   rnd.GenerateToken(8),
 	}
 
 	s := NewSettings(c)

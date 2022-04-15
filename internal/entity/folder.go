@@ -8,11 +8,12 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
+
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var folderMutex = sync.Mutex{}
@@ -51,11 +52,11 @@ func (Folder) TableName() string {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUID(m.FolderUID, 'd') {
+	if rnd.ValidID(m.FolderUID, 'd') {
 		return nil
 	}
 
-	return scope.SetColumn("FolderUID", rnd.PPID('d'))
+	return scope.SetColumn("FolderUID", rnd.GenerateUID('d'))
 }
 
 // NewFolder creates a new file system directory entity.
@@ -77,7 +78,7 @@ func NewFolder(root, pathName string, modTime time.Time) Folder {
 	}
 
 	result := Folder{
-		FolderUID:     rnd.PPID('d'),
+		FolderUID:     rnd.GenerateUID('d'),
 		Root:          root,
 		Path:          pathName,
 		FolderType:    MediaUnknown,
@@ -185,7 +186,7 @@ func (m *Folder) Create() error {
 		if err := a.Create(); err != nil {
 			log.Errorf("folder: %s (add album)", err)
 		} else {
-			log.Infof("folder: added album %s (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+			log.Infof("folder: added album %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 		}
 	}
 

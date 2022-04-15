@@ -2,6 +2,7 @@ package report
 
 import (
 	"bytes"
+	"strings"
 
 	"github.com/olekukonko/tablewriter"
 )
@@ -15,6 +16,17 @@ func Table(rows [][]string, cols []string, markDown bool) string {
 // TableWithCaption returns a text-formatted table with caption, optionally as valid Markdown,
 // so the output can be pasted into the docs.
 func TableWithCaption(rows [][]string, cols []string, caption string, markDown bool) string {
+	// Escape Markdown.
+	if markDown {
+		for i := range rows {
+			for j := range rows[i] {
+				if strings.ContainsRune(rows[i][j], '|') {
+					rows[i][j] = strings.ReplaceAll(rows[i][j], "|", "\\|")
+				}
+			}
+		}
+	}
+
 	buf := &bytes.Buffer{}
 
 	// Set Borders.

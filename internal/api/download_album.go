@@ -14,8 +14,8 @@ import (
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // DownloadAlbum streams the album contents as zip archive.
@@ -36,7 +36,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
+		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -57,26 +57,19 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		zipWriter := zip.NewWriter(c.Writer)
 		defer zipWriter.Close()
 
-		skipRaw := !conf.Settings().Download.Raw
-
 		var aliases = make(map[string]int)
 
 		for _, file := range files {
 			if file.FileHash == "" {
-				log.Warnf("download: empty file hash, skipped %s", sanitize.Log(file.FileName))
+				log.Warnf("download: empty file hash, skipped %s", clean.Log(file.FileName))
 				continue
 			} else if file.FileName == "" {
-				log.Warnf("download: empty file name, skipped %s", sanitize.Log(file.FileUID))
+				log.Warnf("download: empty file name, skipped %s", clean.Log(file.FileUID))
 				continue
 			}
 
 			if file.FileSidecar {
-				log.Debugf("download: skipped sidecar %s", sanitize.Log(file.FileName))
-				continue
-			}
-
-			if skipRaw && fs.FormatRaw.Is(file.FileType) {
-				log.Debugf("download: skipped raw %s", sanitize.Log(file.FileName))
+				log.Debugf("download: skipped sidecar %s", clean.Log(file.FileName))
 				continue
 			}
 
@@ -92,17 +85,17 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
-					log.Errorf("download: failed adding %s to album zip (%s)", sanitize.Log(file.FileName), err)
+					log.Errorf("download: failed adding %s to album zip (%s)", clean.Log(file.FileName), err)
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 
-				log.Infof("download: added %s as %s", sanitize.Log(file.FileName), sanitize.Log(alias))
+				log.Infof("download: added %s as %s", clean.Log(file.FileName), clean.Log(alias))
 			} else {
-				log.Warnf("download: album file %s is missing", sanitize.Log(file.FileName))
+				log.Warnf("download: album file %s is missing", clean.Log(file.FileName))
 			}
 		}
 
-		log.Infof("download: created %s [%s]", sanitize.Log(zipFileName), time.Since(start))
+		log.Infof("download: created %s [%s]", clean.Log(zipFileName), time.Since(start))
 	})
 }

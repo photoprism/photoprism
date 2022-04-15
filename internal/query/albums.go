@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Albums returns a slice of albums.
@@ -52,7 +52,7 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 			if err := a.Delete(); err != nil {
 				log.Errorf("%s: %s (hide)", a.AlbumType, err)
 			} else {
-				log.Infof("%s: %s hidden", a.AlbumType, sanitize.Log(a.AlbumTitle))
+				log.Infof("%s: %s hidden", a.AlbumType, clean.Log(a.AlbumTitle))
 			}
 		}
 

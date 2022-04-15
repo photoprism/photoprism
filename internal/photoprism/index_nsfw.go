@@ -3,7 +3,7 @@ package photoprism
 import (
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // NSFW returns true if media file might be offensive and detection is enabled.
@@ -20,7 +20,7 @@ func (ind *Index) NSFW(m *MediaFile) bool {
 		return false
 	} else {
 		if nsfwLabels.NSFW(nsfw.ThresholdHigh) {
-			log.Warnf("index: %s might contain offensive content", sanitize.Log(m.RelName(Config().OriginalsPath())))
+			log.Warnf("index: %s might contain offensive content", clean.Log(m.RelName(Config().OriginalsPath())))
 			return true
 		}
 	}

@@ -43,6 +43,7 @@ export const FormatGif = "gif";
 export const FormatJpeg = "jpg";
 export const MediaImage = "image";
 export const MediaAnimated = "animated";
+export const MediaSidecar = "sidecar";
 export const MediaVideo = "video";
 export const MediaLive = "live";
 export const MediaRaw = "raw";
@@ -535,9 +536,10 @@ export class Photo extends RestModel {
   }
 
   downloadAll() {
-    const settings = config.settings();
+    const s = config.settings();
 
-    if (!settings || !settings.features || !settings.download || !settings.features.download) {
+    if (!s || !s.features || !s.download || !s.features.download || s.download.disabled) {
+      console.log("download: disabled in settings", s.features, s.download);
       return;
     }
 
@@ -560,23 +562,30 @@ export class Photo extends RestModel {
         return;
       }
 
-      // Skip sidecar files.
-      if (file.Sidecar) {
+      // Originals only?
+      if (s.download.originals && file.Root.length > 1) {
         // Don't download broken files and sidecars.
-        if (config.debug) console.log("download: skipped sidecar", file);
+        if (config.debug) console.log(`download: skipped ${file.Root} file ${file.Name}`);
         return;
       }
 
-      // Skip RAW images.
-      if (!settings.download.raw && file.FileType === MediaRaw) {
-        if (config.debug) console.log("download: skipped raw", file);
+      // Skip metadata sidecar files?
+      if (!s.download.mediaSidecar && (file.MediaType === MediaSidecar || file.Sidecar)) {
+        // Don't download broken files and sidecars.
+        if (config.debug) console.log(`download: skipped sidecar file ${file.Name}`);
         return;
       }
 
-      // Skip related images if video.
+      // Skip RAW images?
+      if (!s.download.mediaRaw && (file.MediaType === MediaRaw || file.FileType === MediaRaw)) {
+        if (config.debug) console.log(`download: skipped raw file ${file.Name}`);
+        return;
+      }
+
+      // If this is a video, always skip stacked images...
       // see https://github.com/photoprism/photoprism/issues/1436
-      if (this.Type === MediaVideo && !file.Video) {
-        if (config.debug) console.log("download: skipped image", file);
+      if (this.Type === MediaVideo && !(file.MediaType === MediaVideo || file.Video)) {
+        if (config.debug) console.log(`download: skipped video sidecar ${file.Name}`);
         return;
       }
 

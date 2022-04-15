@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // ToAvc converts a single video file to MPEG-4 AVC.
@@ -27,7 +27,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 		return nil, fmt.Errorf("convert: %s not found", f.RootRelName())
 	}
 
-	avcName := fs.FormatAVC.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+	avcName := fs.VideoAVC.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(avcName)
 
@@ -36,7 +36,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: transcoding disabled in read only mode (%s)", f.RootRelName())
+		return nil, fmt.Errorf("convert: transcoding disabled in read-only mode (%s)", f.RootRelName())
 	}
 
 	if c.conf.DisableFFmpeg() {
@@ -44,7 +44,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 	}
 
 	fileName := f.RelName(c.conf.OriginalsPath())
-	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
+	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtAVC)
 
 	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoder)
 
@@ -66,9 +66,9 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 		} else if !force || !avcFile.InSidecar() {
 			return avcFile, nil
 		} else if err = avcFile.Remove(); err != nil {
-			return avcFile, fmt.Errorf("convert: failed removing %s (%s)", sanitize.Log(avcFile.RootRelName()), err)
+			return avcFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(avcFile.RootRelName()), err)
 		} else {
-			log.Infof("convert: replacing %s", sanitize.Log(avcFile.RootRelName()))
+			log.Infof("convert: replacing %s", clean.Log(avcFile.RootRelName()))
 		}
 	}
 
@@ -85,7 +85,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 		"xmpName":  "",
 	})
 
-	log.Infof("%s: transcoding %s to %s", encoder, fileName, fs.FormatAVC)
+	log.Infof("%s: transcoding %s to %s", encoder, fileName, fs.VideoAVC)
 
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())
@@ -109,7 +109,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 		if !fs.FileExists(avcName) {
 			// Do nothing.
 		} else if err = os.Remove(avcName); err != nil {
-			return nil, fmt.Errorf("convert: failed removing %s (%s)", sanitize.Log(RootRelName(avcName)), err)
+			return nil, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(RootRelName(avcName)), err)
 		}
 
 		// Try again using software encoder.
@@ -138,9 +138,9 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg
 	case bitrate == "":
 		return nil, false, fmt.Errorf("convert: transcoding bitrate is empty - possible bug")
 	case ffmpegBin == "":
-		return nil, false, fmt.Errorf("convert: ffmpeg must be installed to transcode %s to avc", sanitize.Log(f.BaseName()))
+		return nil, false, fmt.Errorf("convert: ffmpeg must be installed to transcode %s to avc", clean.Log(f.BaseName()))
 	case !f.IsAnimated():
-		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded to avc", f.FileType(), sanitize.Log(f.BaseName()))
+		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded to avc", f.FileType(), clean.Log(f.BaseName()))
 	}
 
 	return ffmpeg.AvcConvertCommand(fileName, avcName, ffmpegBin, c.AvcBitrate(f), encoder)

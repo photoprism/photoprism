@@ -3,6 +3,8 @@ package meta
 import (
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/projection"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -11,7 +13,7 @@ const (
 	KeywordHdr             = "hdr"
 	KeywordBurst           = "burst"
 	KeywordPanorama        = "panorama"
-	KeywordEquirectangular = "equirectangular"
+	KeywordEquirectangular = string(projection.Equirectangular)
 )
 
 // Keywords represents a list of metadata keywords.

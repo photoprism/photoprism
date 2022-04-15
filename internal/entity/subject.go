@@ -12,8 +12,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -50,11 +50,11 @@ func (Subject) TableName() string {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUID(m.SubjUID, 'j') {
+	if rnd.ValidID(m.SubjUID, 'j') {
 		return nil
 	}
 
-	return scope.SetColumn("SubjUID", rnd.PPID('j'))
+	return scope.SetColumn("SubjUID", rnd.GenerateUID('j'))
 }
 
 // AfterSave is a hook that updates the name cache after saving.
@@ -131,7 +131,7 @@ func (m *Subject) Delete() error {
 		return err
 	}
 
-	log.Infof("subject: marked %s %s as missing", TypeString(m.SubjType), sanitize.Log(m.SubjName))
+	log.Infof("subject: marked %s %s as missing", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 	return Db().Delete(m).Error
 }
@@ -155,7 +155,7 @@ func (m *Subject) Restore() error {
 	if m.Deleted() {
 		m.DeletedAt = nil
 
-		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
+		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -193,7 +193,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	if found := FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else if err := m.Create(); err == nil {
-		log.Infof("subject: added %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
+		log.Infof("subject: added %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -208,7 +208,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	} else if found = FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else {
-		log.Errorf("subject: failed adding %s (%s)", sanitize.Log(m.SubjName), err)
+		log.Errorf("subject: failed adding %s (%s)", clean.Log(m.SubjName), err)
 	}
 
 	return nil
@@ -231,7 +231,7 @@ func FindSubject(uid string) *Subject {
 
 // FindSubjectByName find an existing subject by name.
 func FindSubjectByName(name string) *Subject {
-	name = sanitize.Name(name)
+	name = clean.Name(name)
 
 	if name == "" {
 		return nil
@@ -243,12 +243,12 @@ func FindSubjectByName(name string) *Subject {
 	switch uid {
 	case "":
 		if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
-			log.Debugf("subject: %s not found by name", sanitize.Log(name))
+			log.Debugf("subject: %s not found by name", clean.Log(name))
 			return nil
 		}
 	default:
 		if found := FindSubject(uid); found == nil {
-			log.Debugf("subject: %s not found by uid", sanitize.Log(name))
+			log.Debugf("subject: %s not found by uid", clean.Log(name))
 			return nil
 		} else {
 			result = *found
@@ -259,10 +259,10 @@ func FindSubjectByName(name string) *Subject {
 	if !result.Deleted() {
 		return &result
 	} else if err := result.Restore(); err == nil {
-		log.Debugf("subject: restored %s", sanitize.Log(result.SubjName))
+		log.Debugf("subject: restored %s", clean.Log(result.SubjName))
 		return &result
 	} else {
-		log.Errorf("subject: failed restoring %s (%s)", sanitize.Log(result.SubjName), err)
+		log.Errorf("subject: failed restoring %s (%s)", clean.Log(result.SubjName), err)
 	}
 
 	return nil
@@ -280,7 +280,7 @@ func (m *Subject) Person() *Person {
 
 // SetName changes the subject's name.
 func (m *Subject) SetName(name string) error {
-	name = sanitize.Name(name)
+	name = clean.Name(name)
 
 	if name == m.SubjName {
 		// Nothing to do.
@@ -307,7 +307,7 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 	}
 
 	// Change name?
-	if name := sanitize.Name(f.SubjName); name != "" && name != m.SubjName {
+	if name := clean.Name(f.SubjName); name != "" && name != m.SubjName {
 		existing, err := m.UpdateName(name)
 
 		if existing.SubjUID != m.SubjUID || err != nil {
@@ -375,7 +375,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	if err := m.SetName(name); err != nil {
 		return m, err
 	} else if err := m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err == nil {
-		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
+		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 		event.EntitiesUpdated("subjects", []*Subject{m})
 

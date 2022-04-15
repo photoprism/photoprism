@@ -13,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -53,7 +53,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		indOpt := photoprism.NewIndexOptions(filepath.Clean(f.Path), f.Rescan, convert, true, false)
 
 		if len(indOpt.Path) > 1 {
-			event.InfoMsg(i18n.MsgIndexingFiles, sanitize.Log(indOpt.Path))
+			event.InfoMsg(i18n.MsgIndexingFiles, clean.Log(indOpt.Path))
 		} else {
 			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}
@@ -70,7 +70,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		if files, photos, err := prg.Start(prgOpt); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		} else if len(files) > 0 || len(photos) > 0 {
 			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))

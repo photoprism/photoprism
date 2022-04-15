@@ -1,6 +1,8 @@
 package meta
 
-import "github.com/photoprism/photoprism/internal/video"
+import (
+	"github.com/photoprism/photoprism/pkg/video"
+)
 
 const CodecUnknown = ""
 const CodecAvc1 = string(video.CodecAVC)

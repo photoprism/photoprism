@@ -12,8 +12,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/thumb"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // ToJpeg converts a single image file to JPEG if possible.
@@ -23,14 +23,14 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	}
 
 	if !f.Exists() {
-		return nil, fmt.Errorf("convert: %s not found", sanitize.Log(f.RootRelName()))
+		return nil, fmt.Errorf("convert: %s not found", clean.Log(f.RootRelName()))
 	}
 
 	if f.IsJpeg() {
 		return f, nil
 	}
 
-	jpegName := fs.FormatJpeg.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+	jpegName := fs.ImageJPEG.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -38,23 +38,23 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	if err == nil && mediaFile.IsJpeg() {
 		if force && mediaFile.InSidecar() {
 			if err := mediaFile.Remove(); err != nil {
-				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", sanitize.Log(mediaFile.RootRelName()), err)
+				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(mediaFile.RootRelName()), err)
 			} else {
-				log.Infof("convert: replacing %s", sanitize.Log(mediaFile.RootRelName()))
+				log.Infof("convert: replacing %s", clean.Log(mediaFile.RootRelName()))
 			}
 		} else {
 			return mediaFile, nil
 		}
 	} else {
-		jpegName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
+		jpegName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtJPEG)
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", sanitize.Log(f.RootRelName()))
+		return nil, fmt.Errorf("convert: disabled in read-only mode (%s)", clean.Log(f.RootRelName()))
 	}
 
 	fileName := f.RelName(c.conf.OriginalsPath())
-	xmpName := fs.FormatXMP.Find(f.FileName(), false)
+	xmpName := fs.XmpFile.Find(f.FileName(), false)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": f.FileType(),
@@ -66,7 +66,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	start := time.Now()
 
 	if f.IsImageOther() {
-		log.Infof("convert: converting %s to %s (%s)", sanitize.Log(filepath.Base(fileName)), sanitize.Log(filepath.Base(jpegName)), f.FileType())
+		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(jpegName)), f.FileType())
 
 		_, err = thumb.Jpeg(f.FileName(), jpegName, f.Orientation())
 
@@ -74,7 +74,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 			return nil, err
 		}
 
-		log.Infof("convert: %s created in %s (%s)", sanitize.Log(filepath.Base(jpegName)), time.Since(start), f.FileType())
+		log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(jpegName)), time.Since(start), f.FileType())
 
 		return NewMediaFile(jpegName)
 	}
@@ -102,7 +102,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 
-	log.Infof("convert: converting %s to %s (%s)", sanitize.Log(filepath.Base(fileName)), sanitize.Log(filepath.Base(jpegName)), filepath.Base(cmd.Path))
+	log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(jpegName)), filepath.Base(cmd.Path))
 
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())
@@ -116,7 +116,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 		}
 	}
 
-	log.Infof("convert: %s created in %s (%s)", sanitize.Log(filepath.Base(jpegName)), time.Since(start), filepath.Base(cmd.Path))
+	log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(jpegName)), time.Since(start), filepath.Base(cmd.Path))
 
 	return NewMediaFile(jpegName)
 }

@@ -13,7 +13,7 @@ func TestSave(t *testing.T) {
 
 	t.Run("HasCreatedUpdatedAt", func(t *testing.T) {
 		id := 99999 + r.Intn(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.PPID('p'), UpdatedAt: TimeStamp(), CreatedAt: TimeStamp()}
+		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID('p'), UpdatedAt: TimeStamp(), CreatedAt: TimeStamp()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
@@ -27,7 +27,7 @@ func TestSave(t *testing.T) {
 	})
 	t.Run("HasCreatedAt", func(t *testing.T) {
 		id := 99999 + r.Intn(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.PPID('p'), CreatedAt: TimeStamp()}
+		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID('p'), CreatedAt: TimeStamp()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
@@ -41,7 +41,7 @@ func TestSave(t *testing.T) {
 	})
 	t.Run("NoCreatedAt", func(t *testing.T) {
 		id := 99999 + r.Intn(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.PPID('p'), CreatedAt: TimeStamp()}
+		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID('p'), CreatedAt: TimeStamp()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)

@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -30,7 +30,7 @@ func ChangePassword(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := sanitize.IdString(c.Param("uid"))
+		uid := clean.IdString(c.Param("uid"))
 		m := entity.FindUserByUID(uid)
 
 		if s.User.UserUID != m.UserUID {

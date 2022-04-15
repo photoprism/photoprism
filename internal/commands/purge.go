@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // PurgeCommand registers the index cli command.
@@ -56,9 +56,9 @@ func purgeAction(ctx *cli.Context) error {
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("purge: removing missing files in %s", sanitize.Log(filepath.Base(conf.OriginalsPath())))
+		log.Infof("purge: removing missing files in %s", clean.Log(filepath.Base(conf.OriginalsPath())))
 	} else {
-		log.Infof("purge: removing missing files in %s", sanitize.Log(fs.RelName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
+		log.Infof("purge: removing missing files in %s", clean.Log(fs.RelName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
 	}
 
 	if conf.ReadOnly() {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ThumbsCommand registers the resample cli command.
@@ -34,7 +34,7 @@ func thumbsAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("creating thumbnails in %s", sanitize.Log(conf.ThumbPath()))
+	log.Infof("creating thumbnails in %s", clean.Log(conf.ThumbPath()))
 
 	rs := service.Resample()
 

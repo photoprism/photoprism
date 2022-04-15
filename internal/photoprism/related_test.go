@@ -156,7 +156,7 @@ func TestRelatedFiles_MainFileType(t *testing.T) {
 			Files: MediaFiles{},
 			Main:  mediaFile,
 		}
-		assert.Equal(t, string(fs.FormatJpeg), relatedFiles.MainFileType())
+		assert.Equal(t, string(fs.ImageJPEG), relatedFiles.MainFileType())
 	})
 	t.Run("Heif", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
@@ -175,7 +175,7 @@ func TestRelatedFiles_MainFileType(t *testing.T) {
 			Files: MediaFiles{mediaFile, mediaFile2},
 			Main:  mediaFile3,
 		}
-		assert.Equal(t, string(fs.FormatHEIF), relatedFiles.MainFileType())
+		assert.Equal(t, string(fs.ImageHEIF), relatedFiles.MainFileType())
 	})
 }
 

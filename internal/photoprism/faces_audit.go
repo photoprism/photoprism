@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Audit face clusters and subjects.
@@ -161,7 +161,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 			} else if m.SubjUID != "" {
 				log.Infof("faces: marker %s with %s subject %s (%s) conflicts with face %s (%s) of subject %s (%s)", m.MarkerUID, entity.SrcString(m.SubjSrc), entity.SubjNames.Log(m.SubjUID), m.SubjUID, m.FaceID, entity.SrcString(f.FaceSrc), entity.SubjNames.Log(f.SubjUID), f.SubjUID)
 			} else if m.MarkerName != "" {
-				log.Infof("faces: marker %s with %s subject name %s conflicts with face %s (%s) of subject %s (%s)", m.MarkerUID, entity.SrcString(m.SubjSrc), sanitize.Log(m.MarkerName), m.FaceID, entity.SrcString(f.FaceSrc), entity.SubjNames.Log(f.SubjUID), f.SubjUID)
+				log.Infof("faces: marker %s with %s subject name %s conflicts with face %s (%s) of subject %s (%s)", m.MarkerUID, entity.SrcString(m.SubjSrc), clean.Log(m.MarkerName), m.FaceID, entity.SrcString(f.FaceSrc), entity.SubjNames.Log(f.SubjUID), f.SubjUID)
 			} else {
 				log.Infof("faces: marker %s with unknown subject (%s) conflicts with face %s (%s) of subject %s (%s)", m.MarkerUID, entity.SrcString(m.SubjSrc), m.FaceID, entity.SrcString(f.FaceSrc), entity.SubjNames.Log(f.SubjUID), f.SubjUID)
 			}

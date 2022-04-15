@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // IDs represents a list of identifier strings.
@@ -166,15 +166,15 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	for i := 1; i < len(merge); i++ {
 		if merge[i].SubjUID != subjUID {
 			return merged, fmt.Errorf("faces: cannot merge clusters with conflicting subjects %s <> %s",
-				sanitize.Log(subjUID), sanitize.Log(merge[i].SubjUID))
+				clean.Log(subjUID), clean.Log(merge[i].SubjUID))
 		}
 	}
 
 	// Find or create merged face cluster.
 	if merged = entity.NewFace(merge[0].SubjUID, merge[0].FaceSrc, merge.Embeddings()); merged == nil {
-		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", sanitize.Log(subjUID))
+		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
-		return merged, fmt.Errorf("faces: failed creating new cluster for subject %s", sanitize.Log(subjUID))
+		return merged, fmt.Errorf("faces: failed creating new cluster for subject %s", clean.Log(subjUID))
 	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
 		return merged, err
 	}
@@ -183,9 +183,9 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	if removed, err := PurgeOrphanFaces(merge.IDs()); err != nil {
 		return merged, err
 	} else if removed > 0 {
-		log.Debugf("faces: removed %d orphans for subject %s", removed, sanitize.Log(subjUID))
+		log.Debugf("faces: removed %d orphans for subject %s", removed, clean.Log(subjUID))
 	} else {
-		log.Warnf("faces: failed removing merged clusters for subject %s", sanitize.Log(subjUID))
+		log.Warnf("faces: failed removing merged clusters for subject %s", clean.Log(subjUID))
 	}
 
 	return merged, err

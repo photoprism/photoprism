@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 type Addresses []Address
@@ -64,7 +64,7 @@ func FirstOrCreateAddress(m *Address) *Address {
 
 // String returns an identifier that can be used in logs.
 func (m *Address) String() string {
-	return sanitize.Log(fmt.Sprintf("%s, %s %s, %s", m.AddressLine1, m.AddressZip, m.AddressCity, m.AddressCountry))
+	return clean.Log(fmt.Sprintf("%s, %s %s, %s", m.AddressLine1, m.AddressZip, m.AddressCity, m.AddressCountry))
 }
 
 // Unknown returns true if the address is unknown.

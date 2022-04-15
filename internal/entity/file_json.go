@@ -15,14 +15,14 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Hash         string
 		Size         int64
 		Primary      bool
-		MetaUTC      int64         `json:",omitempty"`
 		TimeIndex    *string       `json:",omitempty"`
 		MediaID      *string       `json:",omitempty"`
+		MediaUTC     int64         `json:",omitempty"`
 		InstanceID   string        `json:",omitempty"`
 		OriginalName string        `json:",omitempty"`
 		Codec        string        `json:",omitempty"`
-		FileType     string        `json:"FileType"`
-		MediaType    string        `json:"MediaType"`
+		FileType     string        `json:",omitempty"`
+		MediaType    string        `json:",omitempty"`
 		Mime         string        `json:",omitempty"`
 		Sidecar      bool          `json:",omitempty"`
 		Missing      bool          `json:",omitempty"`
@@ -61,7 +61,7 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Hash:         m.FileHash,
 		Size:         m.FileSize,
 		Primary:      m.FilePrimary,
-		MetaUTC:      m.MetaUTC,
+		MediaUTC:     m.MediaUTC,
 		TimeIndex:    m.TimeIndex,
 		MediaID:      m.MediaID,
 		InstanceID:   m.InstanceID,

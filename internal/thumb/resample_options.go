@@ -27,15 +27,15 @@ var ResampleMethods = map[ResampleOption]string{
 }
 
 // ResampleOptions extracts filter, format, and method from resample options.
-func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.Format) {
+func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.Type) {
 	method = ResampleFit
 	filter = imaging.Lanczos
-	format = fs.FormatJpeg
+	format = fs.ImageJPEG
 
 	for _, option := range opts {
 		switch option {
 		case ResamplePng:
-			format = fs.FormatPng
+			format = fs.ImagePNG
 		case ResampleNearestNeighbor:
 			filter = imaging.NearestNeighbor
 		case ResampleDefault:

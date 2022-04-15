@@ -11,8 +11,8 @@ import (
 	"text/template"
 	"unicode"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"gopkg.in/yaml.v2"
 )
 
@@ -34,7 +34,7 @@ func main() {
 	fileName := "rules.yml"
 
 	if !fs.FileExists(fileName) {
-		log.Panicf("classify: found no label rules in %s", sanitize.Log(filepath.Base(fileName)))
+		log.Panicf("classify: found no label rules in %s", clean.Log(filepath.Base(fileName)))
 	}
 
 	yamlConfig, err := os.ReadFile(fileName)

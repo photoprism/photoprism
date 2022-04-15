@@ -17,8 +17,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// PhotosColsAll contains all supported result column names.
 var PhotosColsAll = SelectString(Photo{}, []string{"*"})
+
+// PhotosColsView contains the result column names necessary for the photo viewer.
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
+
+// FileTypes contains a list of browser-compatible file formats returned by search queries.
+var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageWebP.String()}
 
 // Photos finds photos based on the search form provided and returns them as PhotoResults.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
@@ -76,9 +82,9 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 		return PhotoResults{}, 0, fmt.Errorf("invalid sort order")
 	}
 
-	// Show hidden files?
+	// Limit the result file types if hidden images/videos should not be found.
 	if !f.Hidden {
-		s = s.Where("files.file_type IN (?) OR files.file_video = 1", []string{"jpg", "gif"})
+		s = s.Where("files.file_type IN (?) OR files.file_video = 1", FileTypes)
 
 		if f.Error {
 			s = s.Where("files.file_error <> ''")
@@ -92,6 +98,7 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 		s = s.Where("files.file_primary = 1")
 	}
 
+	// Find only certain unique IDs?
 	if txt.NotEmpty(f.UID) {
 		s = s.Where("photos.photo_uid IN (?)", SplitOr(strings.ToLower(f.UID)))
 
@@ -162,6 +169,9 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 		case terms["svg"]:
 			f.Query = strings.ReplaceAll(f.Query, "svg", "")
 			f.Vector = true
+		case terms["animated"]:
+			f.Query = strings.ReplaceAll(f.Query, "animated", "")
+			f.Animated = true
 		case terms["gifs"]:
 			f.Query = strings.ReplaceAll(f.Query, "gifs", "")
 			f.Animated = true
@@ -275,7 +285,7 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 	// Filter for one or more subjects?
 	if txt.NotEmpty(f.Subject) {
 		for _, subj := range SplitAnd(strings.ToLower(f.Subject)) {
-			if subjects := SplitOr(subj); rnd.ContainsUIDs(subjects, 'j') {
+			if subjects := SplitOr(subj); rnd.ValidIDs(subjects, 'j') {
 				s = s.Where(fmt.Sprintf("files.photo_id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
 					entity.Marker{}.TableName()), subjects)
 			} else {
@@ -515,7 +525,7 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 	}
 
 	// Filter by album?
-	if rnd.IsPPID(f.Album, 'a') {
+	if rnd.EntityUID(f.Album, 'a') {
 		if f.Filter != "" {
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", f.Album)
 		} else {

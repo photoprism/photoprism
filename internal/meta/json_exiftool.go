@@ -9,8 +9,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/projection"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
 	"gopkg.in/photoprism/go-tz.v2/tz"
@@ -30,7 +32,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	j := gjson.GetBytes(jsonData, "@flatten|@join")
 
 	if !j.IsObject() {
-		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", sanitize.Log(filepath.Base(originalName)))
+		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", clean.Log(filepath.Base(originalName)))
 	}
 
 	jsonStrings := make(map[string]string)
@@ -41,7 +43,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	if fileName, ok := jsonStrings["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
-		return fmt.Errorf("metadata: original name %s does not match %s (exiftool)", sanitize.Log(originalName), sanitize.Log(fileName))
+		return fmt.Errorf("metadata: original name %s does not match %s (exiftool)", clean.Log(originalName), clean.Log(fileName))
 	}
 
 	v := reflect.ValueOf(data).Elem()
@@ -112,6 +114,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			case Keywords:
 				existing := fieldValue.Interface().(Keywords)
 				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
+			case projection.Type:
+				fieldValue.Set(reflect.ValueOf(projection.Type(strings.TrimSpace(jsonValue.String()))))
 			case string:
 				if !fieldValue.IsZero() {
 					continue
@@ -288,7 +292,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		data.InstanceID = rnd.SanitizeUUID(data.InstanceID)
 	}
 
-	if data.Projection == "equirectangular" {
+	if projection.Equirectangular.Equal(data.Projection) {
 		data.AddKeywords(KeywordPanorama)
 	}
 

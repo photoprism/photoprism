@@ -80,6 +80,9 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 		case terms["svg"]:
 			f.Query = strings.ReplaceAll(f.Query, "svg", "")
 			f.Vector = true
+		case terms["animated"]:
+			f.Query = strings.ReplaceAll(f.Query, "animated", "")
+			f.Animated = true
 		case terms["gifs"]:
 			f.Query = strings.ReplaceAll(f.Query, "gifs", "")
 			f.Animated = true
@@ -181,7 +184,7 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	// Filter for one or more subjects?
 	if f.Subject != "" {
 		for _, subj := range SplitAnd(strings.ToLower(f.Subject)) {
-			if subjects := SplitOr(subj); rnd.ContainsUIDs(subjects, 'j') {
+			if subjects := SplitOr(subj); rnd.ValidIDs(subjects, 'j') {
 				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
 					entity.Marker{}.TableName()), subjects)
 			} else {
@@ -197,7 +200,7 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	}
 
 	// Filter by album?
-	if rnd.IsPPID(f.Album, 'a') {
+	if rnd.EntityUID(f.Album, 'a') {
 		if f.Filter != "" {
 			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", f.Album)
 		} else {

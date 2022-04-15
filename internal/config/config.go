@@ -29,46 +29,15 @@ import (
 	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 var log = event.Log
 var once sync.Once
 var LowMem = false
 var TotalMem uint64
-
-const MsgSponsor = "PhotoPrism® needs your support!"
-const SignUpURL = "https://docs.photoprism.app/funding/"
-const MsgSignUp = "Visit " + SignUpURL + " to learn more."
-const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
-	" we unfortunately can only offer it to sponsors."
-
-const ApiUri = "/api/v1"    // REST API
-const StaticUri = "/static" // Static Content
-
-const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
-const DefaultAutoImportDelay = int(3 * 60) // 3 Minutes
-
-const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
-const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
-const MaxWakeupInterval = time.Hour * 24 // 1 Day
-
-// Megabyte in bytes.
-const Megabyte = 1000 * 1000
-
-// Gigabyte in bytes.
-const Gigabyte = Megabyte * 1000
-
-// MinMem is the minimum amount of system memory required.
-const MinMem = Gigabyte
-
-// RecommendedMem is the recommended amount of system memory.
-const RecommendedMem = 3 * Gigabyte
-
-// serialName is the name of the unique storage serial.
-const serialName = "serial"
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -125,16 +94,16 @@ func NewConfig(ctx *cli.Context) *Config {
 	// Initialize options from config file and CLI context.
 	c := &Config{
 		options: NewOptions(ctx),
-		token:   rnd.Token(8),
+		token:   rnd.GenerateToken(8),
 		env:     os.Getenv("DOCKER_ENV"),
 	}
 
 	// Overwrite values with options.yml from config path.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
 		if err := c.options.Load(optionsYaml); err != nil {
-			log.Warnf("config: failed loading values from %s (%s)", sanitize.Log(optionsYaml), err)
+			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
 		} else {
-			log.Debugf("config: overriding config with values from %s", sanitize.Log(optionsYaml))
+			log.Debugf("config: overriding config with values from %s", clean.Log(optionsYaml))
 		}
 	}
 
@@ -210,7 +179,7 @@ func (c *Config) Init() error {
 	}
 
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
-		log.Debugf("config: running on %s, %s memory detected", sanitize.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
+		log.Debugf("config: running on %s, %s memory detected", clean.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
 	}
 
 	// Exit if less than 128 MB RAM was detected.
@@ -261,7 +230,7 @@ func (c *Config) readSerial() string {
 		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 {
 			return string(data)
 		} else {
-			log.Tracef("config: could not read %s (%s)", sanitize.Log(storageName), err)
+			log.Tracef("config: could not read %s (%s)", clean.Log(storageName), err)
 		}
 	}
 
@@ -269,7 +238,7 @@ func (c *Config) readSerial() string {
 		if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 {
 			return string(data)
 		} else {
-			log.Tracef("config: could not read %s (%s)", sanitize.Log(backupName), err)
+			log.Tracef("config: could not read %s (%s)", clean.Log(backupName), err)
 		}
 	}
 
@@ -282,7 +251,7 @@ func (c *Config) initSerial() (err error) {
 		return nil
 	}
 
-	c.serial = rnd.PPID('z')
+	c.serial = rnd.GenerateUID('z')
 
 	storageName := filepath.Join(c.StoragePath(), serialName)
 	backupName := filepath.Join(c.BackupPath(), serialName)

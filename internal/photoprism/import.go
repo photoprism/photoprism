@@ -11,14 +11,16 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/photoprism/photoprism/pkg/media"
+
 	"github.com/karrick/godirwalk"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Import represents an importer that can copy/move MediaFiles to the originals directory.
@@ -150,7 +152,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 			done[fileName] = fs.Found
 
-			if !fs.IsMedia(fileName) {
+			if !media.MainFile(fileName) {
 				return nil
 			}
 
@@ -164,7 +166,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 			// Ignore RAW images?
 			if mf.IsRaw() && skipRaw {
-				log.Infof("import: skipped raw %s", sanitize.Log(mf.RootRelName()))
+				log.Infof("import: skipped raw %s", clean.Log(mf.RootRelName()))
 				return nil
 			}
 
@@ -218,9 +220,9 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		for _, directory := range directories {
 			if fs.IsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
-					log.Errorf("import: failed deleting empty folder %s (%s)", sanitize.Log(fs.RelName(directory, importPath)), err)
+					log.Errorf("import: failed deleting empty folder %s (%s)", clean.Log(fs.RelName(directory, importPath)), err)
 				} else {
-					log.Infof("import: deleted empty folder %s", sanitize.Log(fs.RelName(directory, importPath)))
+					log.Infof("import: deleted empty folder %s", clean.Log(fs.RelName(directory, importPath)))
 				}
 			}
 		}
@@ -234,7 +236,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			}
 
 			if err := os.Remove(file); err != nil {
-				log.Errorf("import: failed removing %s (%s)", sanitize.Log(fs.RelName(file, importPath)), err.Error())
+				log.Errorf("import: failed removing %s (%s)", clean.Log(fs.RelName(file, importPath)), err.Error())
 			}
 		}
 	}
@@ -277,7 +279,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
 			existingFilename := FileName(f.FileRoot, f.FileName)
 			if fs.FileExists(existingFilename) {
-				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", sanitize.Log(filepath.Base(mediaFile.FileName())), sanitize.Log(f.FileName), mediaFile.Hash())
+				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
 			} else {
 				return existingFilename, nil
 			}
@@ -293,7 +295,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	for fs.FileExists(result) {
 		if mediaFile.Hash() == fs.Hash(result) {
-			return result, fmt.Errorf("%s already exists", sanitize.Log(fs.RelName(result, imp.originalsPath())))
+			return result, fmt.Errorf("%s already exists", clean.Log(fs.RelName(result, imp.originalsPath())))
 		}
 
 		iteration++

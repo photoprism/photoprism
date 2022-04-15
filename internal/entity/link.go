@@ -6,8 +6,8 @@ import (
 
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -31,11 +31,11 @@ type Link struct {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Link) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUID(m.LinkUID, 's') {
+	if rnd.ValidID(m.LinkUID, 's') {
 		return nil
 	}
 
-	return scope.SetColumn("LinkUID", rnd.PPID('s'))
+	return scope.SetColumn("LinkUID", rnd.GenerateUID('s'))
 }
 
 // NewLink creates a sharing link.
@@ -43,9 +43,9 @@ func NewLink(shareUID string, canComment, canEdit bool) Link {
 	now := TimeStamp()
 
 	result := Link{
-		LinkUID:    rnd.PPID('s'),
+		LinkUID:    rnd.GenerateUID('s'),
 		ShareUID:   shareUID,
-		LinkToken:  rnd.Token(10),
+		LinkToken:  rnd.GenerateToken(10),
 		CanComment: canComment,
 		CanEdit:    canEdit,
 		CreatedAt:  now,
@@ -112,7 +112,7 @@ func (m *Link) InvalidPassword(password string) bool {
 
 // Save inserts a new row to the database or updates a row if the primary key already exists.
 func (m *Link) Save() error {
-	if !rnd.IsPPID(m.ShareUID, 0) {
+	if !rnd.EntityUID(m.ShareUID, 0) {
 		return fmt.Errorf("link: invalid share uid (%s)", m.ShareUID)
 	}
 
@@ -166,7 +166,7 @@ func FindLinks(token, share string) (result Links) {
 	}
 
 	if share != "" {
-		if rnd.IsPPID(share, 'a') {
+		if rnd.EntityUID(share, 'a') {
 			q = q.Where("share_uid = ?", share)
 		} else {
 			q = q.Where("share_slug = ?", share)
@@ -193,5 +193,5 @@ func FindValidLinks(token, share string) (result Links) {
 
 // String returns an human readable identifier for logging.
 func (m *Link) String() string {
-	return sanitize.Log(m.LinkUID)
+	return clean.Log(m.LinkUID)
 }

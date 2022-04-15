@@ -3,7 +3,7 @@ package photoprism
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 type ConvertJob struct {
@@ -15,7 +15,7 @@ type ConvertJob struct {
 func ConvertWorker(jobs <-chan ConvertJob) {
 	logError := func(err error, job ConvertJob) {
 		fileName := job.file.RelName(job.convert.conf.OriginalsPath())
-		log.Errorf("convert: %s for %s", strings.TrimSpace(err.Error()), sanitize.Log(fileName))
+		log.Errorf("convert: %s for %s", strings.TrimSpace(err.Error()), clean.Log(fileName))
 	}
 
 	for job := range jobs {

@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -66,7 +66,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		var resp []byte
 
 		// Render JSON response.
-		switch sanitize.Token(c.Param("format")) {
+		switch clean.Token(c.Param("format")) {
 		case "view":
 			conf := service.Config()
 			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
@@ -75,7 +75,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		}
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 

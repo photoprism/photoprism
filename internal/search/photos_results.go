@@ -2,13 +2,13 @@ package search
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Photo represents a photo search result.
@@ -117,7 +117,7 @@ func (photo *Photo) ShareBase(seq int) string {
 	var name string
 
 	if photo.PhotoTitle != "" {
-		name = strings.Title(slug.MakeLang(photo.PhotoTitle, "en"))
+		name = txt.Title(slug.MakeLang(photo.PhotoTitle, "en"))
 	} else {
 		name = photo.PhotoUID
 	}

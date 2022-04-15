@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // POST /api/v1/upload/:path
@@ -32,7 +32,7 @@ func Upload(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		subPath := sanitize.Path(c.Param("path"))
+		subPath := clean.Path(c.Param("path"))
 
 		f, err := c.MultipartForm()
 
@@ -51,7 +51,7 @@ func Upload(router *gin.RouterGroup) {
 		p := path.Join(conf.ImportPath(), "upload", subPath)
 
 		if err := os.MkdirAll(p, os.ModePerm); err != nil {
-			log.Errorf("upload: failed creating folder %s", sanitize.Log(subPath))
+			log.Errorf("upload: failed creating folder %s", clean.Log(subPath))
 			AbortBadRequest(c)
 			return
 		}
@@ -59,10 +59,10 @@ func Upload(router *gin.RouterGroup) {
 		for _, file := range files {
 			filename := path.Join(p, filepath.Base(file.Filename))
 
-			log.Debugf("upload: saving file %s", sanitize.Log(file.Filename))
+			log.Debugf("upload: saving file %s", clean.Log(file.Filename))
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
-				log.Errorf("upload: failed saving file %s", sanitize.Log(filepath.Base(file.Filename)))
+				log.Errorf("upload: failed saving file %s", clean.Log(filepath.Base(file.Filename)))
 				AbortBadRequest(c)
 				return
 			}
@@ -87,7 +87,7 @@ func Upload(router *gin.RouterGroup) {
 					continue
 				}
 
-				log.Infof("nsfw: %s might be offensive", sanitize.Log(filename))
+				log.Infof("nsfw: %s might be offensive", clean.Log(filename))
 
 				containsNSFW = true
 			}
@@ -95,7 +95,7 @@ func Upload(router *gin.RouterGroup) {
 			if containsNSFW {
 				for _, filename := range uploads {
 					if err := os.Remove(filename); err != nil {
-						log.Errorf("nsfw: could not delete %s", sanitize.Log(filename))
+						log.Errorf("nsfw: could not delete %s", clean.Log(filename))
 					}
 				}
 

@@ -6,29 +6,51 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/media"
 )
+
+const MegaByte = 1024 * 1024
 
 // FileSelection represents a selection filter to include/exclude certain files.
 type FileSelection struct {
-	Video         bool
-	Sidecar       bool
-	PrimaryOnly   bool
-	OriginalsOnly bool
-	SizeLimit     int
-	Include       []string
-	Exclude       []string
+	MaxSize   int
+	Media     []string
+	OmitMedia []string
+	Types     []string
+	OmitTypes []string
+	Primary   bool
+	Originals bool
+	Hidden    bool
+	Private   bool
+	Archived  bool
 }
 
-// FileSelectionAll returns options that include videos and sidecar files.
-func FileSelectionAll() FileSelection {
+// DownloadSelection selects files to download.
+func DownloadSelection(mediaRaw, mediaSidecar, originals bool) FileSelection {
+	omitMedia := make([]string, 0, 2)
+
+	if !mediaRaw {
+		omitMedia = append(omitMedia, media.Raw.String())
+	}
+
+	if !mediaSidecar {
+		omitMedia = append(omitMedia, media.Sidecar.String())
+	}
+
 	return FileSelection{
-		Video:         true,
-		Sidecar:       true,
-		PrimaryOnly:   false,
-		OriginalsOnly: false,
-		SizeLimit:     0,
-		Include:       []string{},
-		Exclude:       []string{},
+		OmitMedia: omitMedia,
+		Originals: originals,
+		Private:   true,
+		Archived:  true,
+	}
+}
+
+// ShareSelection selects files to share, for example for upload via WebDAV.
+func ShareSelection(primary bool) FileSelection {
+	return FileSelection{
+		Originals: !primary,
+		Primary:   primary,
+		MaxSize:   1024 * MegaByte,
 	}
 }
 
@@ -39,7 +61,6 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 	}
 
 	var concat string
-
 	switch DbDialect() {
 	case MySQL:
 		concat = "CONCAT(a.path, '/%')"
@@ -49,6 +70,7 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 		return results, fmt.Errorf("unknown sql dialect: %s", DbDialect())
 	}
 
+	// Search condition.
 	where := fmt.Sprintf(`photos.photo_uid IN (?) 
 		OR photos.place_id IN (?) 
 		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))
@@ -61,42 +83,65 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
 		concat, entity.Marker{}.TableName())
 
+	// Build search query.
 	s := UnscopedDb().Table("files").
 		Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id").
-		Where("photos.deleted_at IS NULL").
-		Where("files.file_missing = 0").
+		Where("files.file_missing = 0 AND files.file_name <> '' AND files.file_hash <> ''").
 		Where(where, f.Photos, f.Places, f.Files, f.Files, f.Files, f.Albums, f.Subjects, f.Labels, f.Labels).
 		Group("files.id")
 
-	if o.OriginalsOnly {
-		s = s.Where("file_root = '/'")
+	// File size limit?
+	if o.MaxSize > 0 {
+		s = s.Where("file_size < ?", o.MaxSize)
 	}
 
-	if o.PrimaryOnly {
+	// Specific media types only?
+	if len(o.Media) > 0 {
+		s = s.Where("media_type IN (?)", o.Media)
+	}
+
+	// Exclude media types?
+	if len(o.OmitMedia) > 0 {
+		s = s.Where("media_type NOT IN (?)", o.OmitMedia)
+	}
+
+	// Specific file types only?
+	if len(o.Types) > 0 {
+		s = s.Where("file_type IN (?)", o.Types)
+	}
+
+	// Exclude file types?
+	if len(o.OmitTypes) > 0 {
+		s = s.Where("file_type NOT IN (?)", o.OmitTypes)
+	}
+
+	// Primary files only?
+	if o.Primary {
 		s = s.Where("file_primary = 1")
 	}
 
-	if !o.Sidecar {
-		s = s.Where("file_sidecar = 0")
+	// Files in originals only?
+	if o.Originals {
+		s = s.Where("file_root = '/'")
 	}
 
-	if !o.Video {
-		s = s.Where("file_video = 0")
+	// Exclude private?
+	if !o.Private {
+		s = s.Where("photos.photo_private <> 1")
 	}
 
-	if o.SizeLimit > 0 {
-		s = s.Where("file_size < ?", o.SizeLimit)
+	// Exclude hidden photos?
+	if !o.Hidden {
+		s = s.Where("photos.photo_quality > -1")
 	}
 
-	if len(o.Include) > 0 {
-		s = s.Where("file_type IN (?)", o.Include)
+	// Exclude archived photos?
+	if !o.Archived {
+		s = s.Where("photos.deleted_at IS NULL")
 	}
 
-	if len(o.Exclude) > 0 {
-		s = s.Where("file_type NOT IN (?)", o.Exclude)
-	}
-
+	// Find and return.
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}

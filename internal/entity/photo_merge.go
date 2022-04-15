@@ -38,7 +38,7 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 	}
 
 	includeMeta = includeMeta && m.TrustedLocation() && m.TrustedTime()
-	includeUuid = includeUuid && rnd.IsUUID(m.UUID)
+	includeUuid = includeUuid && rnd.ValidUUID(m.UUID)
 
 	switch {
 	case includeMeta && includeUuid:

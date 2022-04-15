@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/gin-gonic/gin"
 
@@ -28,7 +28,7 @@ func GetSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		if subj := entity.FindSubject(sanitize.IdString(c.Param("uid"))); subj == nil {
+		if subj := entity.FindSubject(clean.IdString(c.Param("uid"))); subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
 			return
 		} else {
@@ -56,7 +56,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := sanitize.IdString(c.Param("uid"))
+		uid := clean.IdString(c.Param("uid"))
 		m := entity.FindSubject(uid)
 
 		if m == nil {
@@ -109,7 +109,7 @@ func LikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := sanitize.IdString(c.Param("uid"))
+		uid := clean.IdString(c.Param("uid"))
 		subj := entity.FindSubject(uid)
 
 		if subj == nil {
@@ -118,7 +118,7 @@ func LikeSubject(router *gin.RouterGroup) {
 		}
 
 		if err := subj.Update("SubjFavorite", true); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
@@ -143,7 +143,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := sanitize.IdString(c.Param("uid"))
+		uid := clean.IdString(c.Param("uid"))
 		subj := entity.FindSubject(uid)
 
 		if subj == nil {
@@ -152,7 +152,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 		}
 
 		if err := subj.Update("SubjFavorite", false); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 

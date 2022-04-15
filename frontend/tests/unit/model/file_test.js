@@ -236,7 +236,21 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file3 = new File(values3);
-    assert.equal(file3.typeInfo(), "Sidecar");
+    assert.equal(file3.typeInfo(), "Sidecar JPG");
+    const values4 = {
+      InstanceID: 5,
+      UID: "ABC123",
+      Hash: "54ghtfd",
+      FileType: "gif",
+      MediaType: "image",
+      Duration: 8009,
+      Name: "1/2/IMG123.jpg",
+      Sidecar: true,
+      CreatedAt: "2012-07-08T14:45:39Z",
+      UpdatedAt: "2012-07-08T14:45:39Z",
+    };
+    const file4 = new File(values4);
+    assert.equal(file4.typeInfo(), "Sidecar GIF Image");
   });
 
   it("should get size info", () => {

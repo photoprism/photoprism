@@ -12,8 +12,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
@@ -71,7 +71,7 @@ func (c *Convert) Start(path string, force bool) (err error) {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof("convert: ignoring %s", sanitize.Log(filepath.Base(fileName)))
+		log.Infof("convert: ignoring %s", clean.Log(filepath.Base(fileName)))
 	}
 
 	err = godirwalk.Walk(path, &godirwalk.Options{

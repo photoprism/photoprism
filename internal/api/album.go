@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 var albumMutex = sync.Mutex{}
@@ -35,7 +35,7 @@ func SaveAlbumAsYaml(a entity.Album) {
 	if err := a.SaveAsYaml(fileName); err != nil {
 		log.Errorf("album: %s (update yaml)", err)
 	} else {
-		log.Debugf("album: updated yaml file %s", sanitize.Log(filepath.Base(fileName)))
+		log.Debugf("album: updated yaml file %s", clean.Log(filepath.Base(fileName)))
 	}
 }
 
@@ -51,7 +51,7 @@ func GetAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := sanitize.IdString(c.Param("uid"))
+		id := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -96,7 +96,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 
 		// Create new album.
 		if err := a.Create(); err != nil {
-			AbortAlreadyExists(c, sanitize.Log(a.AlbumTitle))
+			AbortAlreadyExists(c, clean.Log(a.AlbumTitle))
 			return
 		}
 
@@ -124,7 +124,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := sanitize.IdString(c.Param("uid"))
+		uid := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
@@ -179,7 +179,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := sanitize.IdString(c.Param("uid"))
+		id := clean.IdString(c.Param("uid"))
 
 		a, err := query.AlbumByUID(id)
 
@@ -212,7 +212,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 		SaveAlbumAsYaml(a)
 
-		event.SuccessMsg(i18n.MsgAlbumDeleted, sanitize.Log(a.AlbumTitle))
+		event.SuccessMsg(i18n.MsgAlbumDeleted, clean.Log(a.AlbumTitle))
 
 		c.JSON(http.StatusOK, a)
 	})
@@ -233,7 +233,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := sanitize.IdString(c.Param("uid"))
+		id := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -271,7 +271,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := sanitize.IdString(c.Param("uid"))
+		id := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -306,7 +306,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 			return
 		}
 
-		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
+		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -341,7 +341,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		}
 
 		if len(added) > 0 {
-			event.SuccessMsg(i18n.MsgSelectionAddedTo, sanitize.Log(a.Title()))
+			event.SuccessMsg(i18n.MsgSelectionAddedTo, clean.Log(a.Title()))
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
@@ -371,7 +371,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := sanitize.IdString(c.Param("uid"))
+		uid := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
@@ -392,9 +392,9 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 		if len(added) > 0 {
 			if len(added) == 1 {
-				event.SuccessMsg(i18n.MsgEntryAddedTo, sanitize.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryAddedTo, clean.Log(a.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), sanitize.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), clean.Log(a.Title()))
 			}
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
@@ -432,7 +432,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
+		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -443,9 +443,9 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 		if len(removed) > 0 {
 			if len(removed) == 1 {
-				event.SuccessMsg(i18n.MsgEntryRemovedFrom, sanitize.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryRemovedFrom, clean.Log(a.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), sanitize.Log(sanitize.Log(a.Title())))
+				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), clean.Log(clean.Log(a.Title())))
 			}
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)

@@ -10,8 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // TODO: GET /api/v1/dl/file/:hash
@@ -45,7 +45,7 @@ func GetDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		fileHash := sanitize.Token(c.Param("hash"))
+		fileHash := clean.Token(c.Param("hash"))
 
 		f, err := query.FileByHash(fileHash)
 
@@ -57,7 +57,7 @@ func GetDownload(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("download: file %s is missing", sanitize.Log(f.FileName))
+			log.Errorf("download: file %s is missing", clean.Log(f.FileName))
 			c.Data(404, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.

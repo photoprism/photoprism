@@ -77,7 +77,7 @@ func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 	err = Db().
 		Select("photos.*").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = 0 AND file_root = '/' AND deleted_at IS NULL)").
-		Where("photos.photo_type <> ?", entity.TypeMeta).
+		Where("photos.photo_type <> ?", entity.MediaText).
 		Group("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 

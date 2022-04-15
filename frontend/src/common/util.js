@@ -145,25 +145,100 @@ export default class Util {
     start = now;
   }
 
+  static capitalize(s) {
+    if (!s || s === "") {
+      return "";
+    }
+
+    return s.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
+  }
+
+  static fileType(value) {
+    if (!value || typeof value !== "string") {
+      return "";
+    }
+
+    switch (value) {
+      case "raw":
+        return "Unprocessed Sensor Data (RAW)";
+      case "mov":
+      case "qt":
+        return "Apple QuickTime";
+      case "bmp":
+        return "Bitmap";
+      case "png":
+        return "Portable Network Graphics";
+      case "tiff":
+        return "TIFF";
+      case "gif":
+        return "GIF";
+      case "avc":
+      case "avc1":
+        return "Advanced Video Coding (AVC) / H.264";
+      case "hevc":
+      case "hvc":
+      case "hvc1":
+        return "High Efficiency Video Coding (HEVC) / H.265";
+      case "mkv":
+        return "Matroska Multimedia Container";
+      case "webp":
+        return "Google WebP";
+      case "webm":
+        return "Google WebM";
+      case "flv":
+        return "Flash";
+      case "mpg":
+        return "MPEG";
+      case "mjpg":
+        return "Motion JPEG";
+      case "ogg":
+      case "ogv":
+        return "Ogg Media";
+      case "wmv":
+        return "Windows Media";
+      default:
+        return value.toUpperCase();
+    }
+  }
+
   static codecName(value) {
     if (!value || typeof value !== "string") {
       return "";
     }
 
     switch (value) {
+      case "raw":
+        return "Unprocessed Sensor Data (RAW)";
+      case "mov":
+      case "qt":
+        return "Apple QuickTime (MOV)";
+      case "avc":
       case "avc1":
         return "Advanced Video Coding (AVC) / H.264";
+      case "hevc":
+      case "hvc":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
+      case "vvc":
+        return "Versatile Video Coding (VVC) / H.266";
       case "av01":
         return "AOMedia Video 1 (AV1)";
+      case "gif":
+        return "Graphics Interchange Format (GIF)";
+      case "mkv":
+        return "Matroska Multimedia Container (MKV)";
+      case "webp":
+        return "Google WebP";
+      case "webm":
+        return "Google WebM";
       case "mpeg":
         return "Moving Picture Experts Group (MPEG)";
       case "mjpg":
         return "Motion JPEG (M-JPEG)";
       case "heif":
-      case "heic":
         return "High Efficiency Image File Format (HEIF)";
+      case "heic":
+        return "High Efficiency Image Container (HEIC)";
       case "1":
         return "Uncompressed";
       case "2":

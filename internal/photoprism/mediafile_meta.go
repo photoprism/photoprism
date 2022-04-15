@@ -7,8 +7,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/meta"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // HasSidecarJson returns true if this file has or is a json sidecar file.
@@ -17,7 +17,7 @@ func (m *MediaFile) HasSidecarJson() bool {
 		return true
 	}
 
-	return fs.FormatJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
+	return fs.JsonFile.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
 }
 
 // SidecarJsonName returns the corresponding JSON sidecar file name as used by Google Photos (and potentially other apps).
@@ -79,8 +79,8 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 
 		// Parse regular JSON sidecar files ("img_1234.json")
 		if !m.IsSidecar() {
-			if jsonFiles := fs.FormatJson.FindAll(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); len(jsonFiles) == 0 {
-				log.Tracef("metadata: found no additional sidecar file for %s", sanitize.Log(filepath.Base(m.FileName())))
+			if jsonFiles := fs.JsonFile.FindAll(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); len(jsonFiles) == 0 {
+				log.Tracef("metadata: found no additional sidecar file for %s", clean.Log(filepath.Base(m.FileName())))
 			} else {
 				for _, jsonFile := range jsonFiles {
 					jsonErr := m.metaData.JSON(jsonFile, m.BaseName())
@@ -102,7 +102,7 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 
 		if err != nil {
 			m.metaData.Error = err
-			log.Debugf("metadata: %s in %s", err, sanitize.Log(m.BaseName()))
+			log.Debugf("metadata: %s in %s", err, clean.Log(m.BaseName()))
 		}
 	})
 

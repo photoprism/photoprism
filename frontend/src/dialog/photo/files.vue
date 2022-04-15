@@ -82,17 +82,17 @@
                           </td>
                           <td>{{ file.Hash }}</td>
                         </tr>
-                        <tr v-if="file.Root.length > 1">
-                          <td>
-                            <translate>Storage Folder</translate>
-                          </td>
-                          <td>{{ file.Root | capitalize }}</td>
-                        </tr>
                         <tr v-if="file.Name">
                           <td>
-                            <translate>Name</translate>
+                            <translate>Filename</translate>
                           </td>
                           <td>{{ file.Name }}</td>
+                        </tr>
+                        <tr v-if="file.Root">
+                          <td>
+                            <translate>Storage</translate>
+                          </td>
+                          <td>{{ file.storageInfo() }}</td>
                         </tr>
                         <tr v-if="file.OriginalName">
                           <td>
@@ -112,11 +112,17 @@
                           </td>
                           <td>{{ file.typeInfo() }}</td>
                         </tr>
-                        <tr v-if="file.Codec">
+                        <tr v-if="file.Codec && file.Codec !== file.FileType">
                           <td>
                             <translate>Codec</translate>
                           </td>
                           <td>{{ codecName(file) }}</td>
+                        </tr>
+                        <tr v-if="file.Duration && file.Duration > 0">
+                          <td>
+                            <translate>Duration</translate>
+                          </td>
+                          <td>{{ formatDuration(file) }}</td>
                         </tr>
                         <tr v-if="file.Frames">
                           <td>
@@ -278,6 +284,20 @@ export default {
   },
   computed: {},
   methods: {
+    formatDuration(file) {
+      if (!file || !file.Duration) {
+        return "";
+      }
+
+      return Util.duration(file.Duration);
+    },
+    fileType(file) {
+      if (!file || !file.FileType) {
+        return "";
+      }
+
+      return Util.fileType(file.FileType);
+    },
     codecName(file) {
       if (!file || !file.Codec) {
         return "";

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -37,7 +37,7 @@ func FolderCover(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		uid := c.Param("uid")
-		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
+		thumbName := thumb.Name(clean.Token(c.Param("size")))
 		download := c.Query("download") != ""
 
 		size, ok := thumb.Sizes[thumbName]
@@ -98,7 +98,7 @@ func FolderCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			log.Warnf("%s: %s is missing", folderCover, sanitize.Log(f.FileName))
+			log.Warnf("%s: %s is missing", folderCover, clean.Log(f.FileName))
 			logError(folderCover, f.Update("FileMissing", true))
 			return
 		}

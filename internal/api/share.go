@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // GET /s/:token/...
@@ -17,7 +17,7 @@ func Shares(router *gin.RouterGroup) {
 	router.GET("/:token", func(c *gin.Context) {
 		conf := service.Config()
 
-		token := sanitize.Token(c.Param("token"))
+		token := clean.Token(c.Param("token"))
 
 		links := entity.FindValidLinks(token, "")
 
@@ -36,8 +36,8 @@ func Shares(router *gin.RouterGroup) {
 	router.GET("/:token/:share", func(c *gin.Context) {
 		conf := service.Config()
 
-		token := sanitize.Token(c.Param("token"))
-		share := sanitize.Token(c.Param("share"))
+		token := clean.Token(c.Param("token"))
+		share := clean.Token(c.Param("share"))
 
 		links := entity.FindValidLinks(token, share)
 

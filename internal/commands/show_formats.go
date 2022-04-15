@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
@@ -15,8 +16,8 @@ var ShowFormatsCommand = cli.Command{
 	Usage: "Lists supported media and sidecar file formats",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
-			Name:  "compact, c",
-			Usage: "hide format descriptions to make the output more compact",
+			Name:  "short, s",
+			Usage: "hides format descriptions",
 		},
 		cli.BoolFlag{
 			Name:  "md, m",
@@ -28,8 +29,7 @@ var ShowFormatsCommand = cli.Command{
 
 // showFormatsAction lists supported media and sidecar file formats.
 func showFormatsAction(ctx *cli.Context) error {
-	rows, cols := fs.Extensions.Formats(true).Report(!ctx.Bool("compact"), true, true)
-
+	rows, cols := media.Report(fs.Extensions.Types(true), !ctx.Bool("short"), true, true)
 	fmt.Println(report.Table(rows, cols, ctx.Bool("md")))
 
 	return nil

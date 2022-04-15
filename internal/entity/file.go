@@ -5,7 +5,6 @@ import (
 	"math"
 	"path/filepath"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -15,10 +14,14 @@ import (
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/face"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type DownloadName string
@@ -44,9 +47,9 @@ type File struct {
 	PhotoID          uint          `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
 	PhotoUID         string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	PhotoTakenAt     time.Time     `gorm:"type:DATETIME;index;" json:"TakenAt" yaml:"TakenAt"`
-	MetaUTC          int64         `gorm:"column:meta_utc;index;"  json:"MetaUTC" yaml:"MetaUTC,omitempty"`
 	TimeIndex        *string       `gorm:"type:VARBINARY(48);" json:"TimeIndex" yaml:"TimeIndex"`
 	MediaID          *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
+	MediaUTC         int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
 	InstanceID       string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID          string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	FileName         string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
@@ -187,11 +190,22 @@ func PrimaryFile(photoUID string) (*File, error) {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUID(m.FileUID, 'f') {
+	// Set MediaType based on FileName if empty.
+	if m.MediaType == "" && m.FileName != "" {
+		m.MediaType = media.FromName(m.FileName).String()
+	}
+
+	// Set MediaUTC based on PhotoTakenAt if empty.
+	if m.MediaUTC == 0 && !m.PhotoTakenAt.IsZero() {
+		m.MediaUTC = m.PhotoTakenAt.UnixMilli()
+	}
+
+	// Return if uid exists.
+	if rnd.ValidID(m.FileUID, 'f') {
 		return nil
 	}
 
-	return scope.SetColumn("FileUID", rnd.PPID('f'))
+	return scope.SetColumn("FileUID", rnd.GenerateUID('f'))
 }
 
 // DownloadName returns the download file name.
@@ -248,7 +262,7 @@ func (m *File) ShareBase(seq int) string {
 		return fmt.Sprintf("%s.%s", m.FileHash, m.FileType)
 	}
 
-	name := strings.Title(slug.MakeLang(photo.PhotoTitle, "en"))
+	name := txt.Title(slug.MakeLang(photo.PhotoTitle, "en"))
 	taken := photo.TakenAtLocal.Format("20060102-150405")
 
 	if seq > 0 {
@@ -281,23 +295,23 @@ func (m File) Missing() bool {
 // DeletePermanently permanently removes a file from the index.
 func (m *File) DeletePermanently() error {
 	if m.ID < 1 || m.FileUID == "" {
-		return fmt.Errorf("invalid file id %d / uid %s", m.ID, sanitize.Log(m.FileUID))
+		return fmt.Errorf("invalid file id %d / uid %s", m.ID, clean.Log(m.FileUID))
 	}
 
 	if err := UnscopedDb().Delete(Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
-		log.Errorf("file %s: %s while removing markers", sanitize.Log(m.FileUID), err)
+		log.Errorf("file %s: %s while removing markers", clean.Log(m.FileUID), err)
 	}
 
 	if err := UnscopedDb().Delete(FileShare{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file %s: %s while removing share info", sanitize.Log(m.FileUID), err)
+		log.Errorf("file %s: %s while removing share info", clean.Log(m.FileUID), err)
 	}
 
 	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file %s: %s while removing remote sync info", sanitize.Log(m.FileUID), err)
+		log.Errorf("file %s: %s while removing remote sync info", clean.Log(m.FileUID), err)
 	}
 
 	if err := m.ReplaceHash(""); err != nil {
-		log.Errorf("file %s: %s while removing covers", sanitize.Log(m.FileUID), err)
+		log.Errorf("file %s: %s while removing covers", clean.Log(m.FileUID), err)
 	}
 
 	return UnscopedDb().Delete(m).Error
@@ -312,9 +326,9 @@ func (m *File) ReplaceHash(newHash string) error {
 
 	// Log values.
 	if m.FileHash != "" && newHash == "" {
-		log.Tracef("file %s: removing hash %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileHash))
+		log.Tracef("file %s: removing hash %s", clean.Log(m.FileUID), clean.Log(m.FileHash))
 	} else if m.FileHash != "" && newHash != "" {
-		log.Tracef("file %s: hash %s changed to %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileHash), sanitize.Log(newHash))
+		log.Tracef("file %s: hash %s changed to %s", clean.Log(m.FileUID), clean.Log(m.FileHash), clean.Log(newHash))
 		// Reset error when hash changes.
 		m.FileError = ""
 	}
@@ -350,7 +364,7 @@ func (m *File) ReplaceHash(newHash string) error {
 // Delete deletes the entity from the database.
 func (m *File) Delete(permanently bool) error {
 	if m.ID < 1 || m.FileUID == "" {
-		return fmt.Errorf("invalid file id %d / uid %s", m.ID, sanitize.Log(m.FileUID))
+		return fmt.Errorf("invalid file id %d / uid %s", m.ID, clean.Log(m.FileUID))
 	}
 
 	if permanently {
@@ -401,7 +415,7 @@ func (m *File) Create() error {
 	}
 
 	if _, err := m.SaveMarkers(); err != nil {
-		log.Errorf("file %s: %s while saving markers", sanitize.Log(m.FileUID), err)
+		log.Errorf("file %s: %s while saving markers", clean.Log(m.FileUID), err)
 		return err
 	}
 
@@ -434,12 +448,12 @@ func (m *File) Save() error {
 	}
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("file %s: %s while saving", sanitize.Log(m.FileUID), err)
+		log.Errorf("file %s: %s while saving", clean.Log(m.FileUID), err)
 		return err
 	}
 
 	if _, err := m.SaveMarkers(); err != nil {
-		log.Errorf("file %s: %s while saving markers", sanitize.Log(m.FileUID), err)
+		log.Errorf("file %s: %s while saving markers", clean.Log(m.FileUID), err)
 		return err
 	}
 
@@ -469,7 +483,7 @@ func (m *File) Updates(values interface{}) error {
 
 // Rename updates the name and path of this file.
 func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
-	log.Debugf("file %s: renaming %s to %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileName), sanitize.Log(fileName))
+	log.Debugf("file %s: renaming %s to %s", clean.Log(m.FileUID), clean.Log(m.FileName), clean.Log(fileName))
 
 	// Update database row.
 	if err := m.Updates(map[string]interface{}{
@@ -513,7 +527,7 @@ func (m *File) Undelete() error {
 		return err
 	}
 
-	log.Debugf("file %s: removed missing flag from %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileName))
+	log.Debugf("file %s: removed missing flag from %s", clean.Log(m.FileUID), clean.Log(m.FileName))
 
 	m.FileMissing = false
 	m.DeletedAt = nil
@@ -536,7 +550,7 @@ func (m *File) RelatedPhoto() *Photo {
 
 // NoJPEG returns true if the file is not a JPEG image file.
 func (m *File) NoJPEG() bool {
-	return m.FileType != string(fs.FormatJpeg)
+	return fs.ImageJPEG.NotEqual(m.FileType)
 }
 
 // Links returns all share links for this entity.
@@ -549,7 +563,7 @@ func (m *File) Panorama() bool {
 	if m.FileSidecar || m.FileWidth <= 1000 || m.FileHeight <= 500 {
 		// Too small.
 		return false
-	} else if m.Projection() != ProjDefault {
+	} else if m.Projection() != projection.Unknown {
 		// Panoramic projection.
 		return true
 	}
@@ -559,13 +573,17 @@ func (m *File) Panorama() bool {
 }
 
 // Projection returns the panorama projection name if any.
-func (m *File) Projection() string {
-	return SanitizeStringTypeLower(m.FileProjection)
+func (m *File) Projection() projection.Type {
+	return projection.New(m.FileProjection)
 }
 
 // SetProjection sets the panorama projection name.
-func (m *File) SetProjection(name string) {
-	m.FileProjection = SanitizeStringTypeLower(name)
+func (m *File) SetProjection(s string) {
+	if s == "" {
+		return
+	} else if t := projection.New(s); !t.Unknown() {
+		m.FileProjection = t.String()
+	}
 }
 
 // IsHDR returns true if it is a high dynamic range file.
@@ -592,7 +610,7 @@ func (m *File) HasWatermark() bool {
 
 // IsAnimated returns true if the file has animated image frames.
 func (m *File) IsAnimated() bool {
-	return m.FileFrames > 1 && m.MediaType == MediaImage
+	return m.FileFrames > 1 && media.Image.Equal(m.MediaType)
 }
 
 // ColorProfile returns the ICC color profile name if any.
@@ -633,12 +651,12 @@ func (m *File) SetDuration(d time.Duration) {
 	m.FileDuration = d.Round(time.Second)
 
 	// Update number of frames.
-	if m.FileFrames <= 0 && m.FileFPS > 0 {
+	if m.FileFrames == 0 && m.FileFPS > 1 {
 		m.FileFrames = int(math.Round(m.FileFPS * m.FileDuration.Seconds()))
 	}
 
 	// Update number of frames per second.
-	if m.FileFPS <= 0 && m.FileFrames > 0 {
+	if m.FileFPS == 0 && m.FileFrames > 1 {
 		m.FileFPS = float64(m.FileFrames) / m.FileDuration.Seconds()
 	}
 }
@@ -652,7 +670,7 @@ func (m *File) SetFPS(frameRate float64) {
 	m.FileFPS = frameRate
 
 	// Update number of frames.
-	if m.FileFrames <= 0 && m.FileDuration > 0 {
+	if m.FileFrames == 0 && m.FileDuration > time.Second {
 		m.FileFrames = int(math.Round(m.FileFPS * m.FileDuration.Seconds()))
 	}
 }
@@ -671,13 +689,13 @@ func (m *File) SetFrames(n int) {
 	}
 }
 
-// SetMetaUTC sets the creation date found in the metadata as a unix ms timestamp.
-func (m *File) SetMetaUTC(taken time.Time) {
+// SetMediaUTC sets the media creation date from metadata as unix time in ms.
+func (m *File) SetMediaUTC(taken time.Time) {
 	if taken.IsZero() {
 		return
 	}
 
-	m.MetaUTC = taken.UTC().UnixMilli()
+	m.MediaUTC = taken.UTC().UnixMilli()
 }
 
 // AddFaces adds face markers to the file.
@@ -749,7 +767,7 @@ func (m *File) Markers() *Markers {
 	} else if m.FileUID == "" {
 		m.markers = &Markers{}
 	} else if res, err := FindMarkers(m.FileUID); err != nil {
-		log.Warnf("file %s: %s while loading markers", sanitize.Log(m.FileUID), err)
+		log.Warnf("file %s: %s while loading markers", clean.Log(m.FileUID), err)
 		m.markers = &Markers{}
 	} else {
 		m.markers = &res

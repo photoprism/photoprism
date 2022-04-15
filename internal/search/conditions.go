@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/jinzhu/inflection"
@@ -12,7 +12,7 @@ import (
 
 // Like escapes a string for use in a query.
 func Like(s string) string {
-	return strings.Trim(sanitize.SqlString(s), " |&*%")
+	return strings.Trim(clean.SqlString(s), " |&*%")
 }
 
 // LikeAny returns a single where condition matching the search words.
@@ -21,7 +21,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 		return wheres
 	}
 
-	s = txt.StripOr(sanitize.SearchQuery(s))
+	s = txt.StripOr(clean.SearchQuery(s))
 
 	var wildcardThreshold int
 

@@ -9,7 +9,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
@@ -30,8 +30,8 @@ func SharePreview(router *gin.RouterGroup) {
 	router.GET("/:token/:share/preview", func(c *gin.Context) {
 		conf := service.Config()
 
-		token := sanitize.Token(c.Param("token"))
-		share := sanitize.Token(c.Param("share"))
+		token := clean.Token(c.Param("token"))
+		share := clean.Token(c.Param("share"))
 		links := entity.FindLinks(token, share)
 
 		if len(links) != 1 {
@@ -52,13 +52,13 @@ func SharePreview(router *gin.RouterGroup) {
 		yesterday := time.Now().Add(-24 * time.Hour)
 
 		if info, err := os.Stat(previewFilename); err != nil {
-			log.Debugf("share: creating new preview for %s", sanitize.Log(share))
+			log.Debugf("share: creating new preview for %s", clean.Log(share))
 		} else if info.ModTime().After(yesterday) {
-			log.Debugf("share: using cached preview for %s", sanitize.Log(share))
+			log.Debugf("share: using cached preview for %s", clean.Log(share))
 			c.File(previewFilename)
 			return
 		} else if err := os.Remove(previewFilename); err != nil {
-			log.Errorf("share: could not remove old preview of %s", sanitize.Log(share))
+			log.Errorf("share: could not remove old preview of %s", clean.Log(share))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -96,7 +96,7 @@ func SharePreview(router *gin.RouterGroup) {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 			if !fs.FileExists(fileName) {
-				log.Errorf("share: file %s is missing (preview)", sanitize.Log(f.FileName))
+				log.Errorf("share: file %s is missing (preview)", clean.Log(f.FileName))
 				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 				return
 			}
@@ -126,7 +126,7 @@ func SharePreview(router *gin.RouterGroup) {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 			if !fs.FileExists(fileName) {
-				log.Errorf("share: file %s is missing (preview)", sanitize.Log(f.FileName))
+				log.Errorf("share: file %s is missing (preview)", clean.Log(f.FileName))
 				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 				return
 			}

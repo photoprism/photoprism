@@ -8,7 +8,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/araddon/dateparse"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -70,7 +70,7 @@ func Serialize(f interface{}, all bool) string {
 					q = append(q, fmt.Sprintf("%s:%t", fieldName, fieldValue.Bool()))
 				}
 			default:
-				log.Warnf("form: failed serializing %T %s", t, sanitize.Token(fieldName))
+				log.Warnf("form: failed serializing %T %s", t, clean.Token(fieldName))
 			}
 		}
 	}
@@ -93,7 +93,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 	for _, char := range q {
 		if unicode.IsSpace(char) && !escaped {
 			if isKeyValue {
-				fieldName := strings.Title(string(key))
+				fieldName := txt.UpperFirst(string(key))
 				field := formValues.FieldByNameFunc(func(name string) bool {
 					return strings.EqualFold(name, fieldName)
 				})
@@ -126,7 +126,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 							field.SetUint(uint64(intValue))
 						}
 					case string:
-						field.SetString(sanitize.SearchString(stringValue))
+						field.SetString(clean.SearchString(stringValue))
 					case bool:
 						field.SetBool(txt.Bool(stringValue))
 					default:
@@ -155,7 +155,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 	}
 
 	if len(queryStrings) > 0 {
-		f.SetQuery(sanitize.SearchQuery(strings.Join(queryStrings, " ")))
+		f.SetQuery(clean.SearchQuery(strings.Join(queryStrings, " ")))
 	}
 
 	if result != nil {

@@ -8,20 +8,20 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Colors returns the ColorPerception of an image (only JPEG supported).
 func (m *MediaFile) Colors(thumbPath string) (perception colors.ColorPerception, err error) {
 	if !m.IsJpeg() {
-		return perception, fmt.Errorf("%s is not a jpeg", sanitize.Log(m.BaseName()))
+		return perception, fmt.Errorf("%s is not a jpeg", clean.Log(m.BaseName()))
 	}
 
 	img, err := m.Resample(thumbPath, thumb.Colors)
 
 	if err != nil {
-		log.Debugf("colors: %s in %s (resample)", err, sanitize.Log(m.BaseName()))
+		log.Debugf("colors: %s in %s (resample)", err, clean.Log(m.BaseName()))
 		return perception, err
 	}
 

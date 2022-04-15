@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // People returns the sorted names of the first 2000 people.
@@ -93,10 +93,10 @@ func CreateMarkerSubjects() (affected int64, err error) {
 		if name == m.MarkerName && subj != nil {
 			// Do nothing.
 		} else if subj = entity.NewSubject(m.MarkerName, entity.SubjPerson, entity.SrcMarker); subj == nil {
-			log.Errorf("faces: invalid subject %s", sanitize.Log(m.MarkerName))
+			log.Errorf("faces: invalid subject %s", clean.Log(m.MarkerName))
 			continue
 		} else if subj = entity.FirstOrCreateSubject(subj); subj == nil {
-			log.Errorf("faces: failed adding subject %s", sanitize.Log(m.MarkerName))
+			log.Errorf("faces: failed adding subject %s", clean.Log(m.MarkerName))
 			continue
 		} else {
 			affected++

@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // ToJson uses exiftool to export metadata to a json file.
@@ -28,7 +28,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 		return jsonName, nil
 	}
 
-	log.Debugf("exiftool: extracting metadata from %s", sanitize.Log(f.RootRelName()))
+	log.Debugf("exiftool: extracting metadata from %s", clean.Log(f.RootRelName()))
 
 	cmd := exec.Command(c.conf.ExifToolBin(), "-n", "-m", "-api", "LargeFileSupport", "-j", f.FileName())
 

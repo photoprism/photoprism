@@ -4,7 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/video"
+	"github.com/photoprism/photoprism/pkg/video"
+
+	"github.com/photoprism/photoprism/pkg/projection"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -467,7 +470,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.CameraSerial)
 		assert.Equal(t, 0, data.FocalLength)
 		assert.Equal(t, 1, data.Orientation)
-		assert.Equal(t, "equirectangular", data.Projection)
+		assert.Equal(t, projection.Equirectangular.String(), data.Projection)
 	})
 
 	t.Run("P7250006.json", func(t *testing.T) {

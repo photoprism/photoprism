@@ -77,7 +77,7 @@ func TestSkipWalk(t *testing.T) {
 
 				done[fileName] = Found
 
-				if textName := FormatText.Find(fileName, false); textName != "" {
+				if textName := TextFile.Find(fileName, false); textName != "" {
 					done[textName] = Found
 				}
 

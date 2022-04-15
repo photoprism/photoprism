@@ -9,8 +9,8 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/mandykoh/prism/meta/autometa"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // OpenJpeg loads a JPEG image from disk, rotates it, and converts the color profile if necessary.
@@ -19,7 +19,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 		return result, fmt.Errorf("filename missing")
 	}
 
-	logName := sanitize.Log(filepath.Base(fileName))
+	logName := clean.Log(filepath.Base(fileName))
 
 	// Open file.
 	fileReader, err := os.Open(fileName)
@@ -52,7 +52,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 			// Do nothing.
 			log.Tracef("resample: %s has no color profile", logName)
 		} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
-			log.Tracef("resample: %s has color profile %s", logName, sanitize.Log(profile))
+			log.Tracef("resample: %s has color profile %s", logName, clean.Log(profile))
 			switch {
 			case colors.ProfileDisplayP3.Equal(profile):
 				img = colors.ToSRGB(img, colors.ProfileDisplayP3)

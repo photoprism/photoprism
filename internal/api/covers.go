@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -38,13 +38,13 @@ func AlbumCover(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := service.Config()
-		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
-		uid := sanitize.IdString(c.Param("uid"))
+		thumbName := thumb.Name(clean.Token(c.Param("size")))
+		uid := clean.IdString(c.Param("uid"))
 
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", albumCover, sanitize.Log(thumbName.String()))
+			log.Errorf("%s: invalid size %s", albumCover, clean.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
@@ -85,11 +85,11 @@ func AlbumCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: found no original for %s", albumCover, sanitize.Log(fileName))
+			log.Errorf("%s: found no original for %s", albumCover, clean.Log(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			log.Warnf("%s: %s is missing", albumCover, sanitize.Log(f.FileName))
+			log.Warnf("%s: %s is missing", albumCover, clean.Log(f.FileName))
 			logError(albumCover, f.Update("FileMissing", true))
 			return
 		}
@@ -150,13 +150,13 @@ func LabelCover(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := service.Config()
-		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
-		uid := sanitize.IdString(c.Param("uid"))
+		thumbName := thumb.Name(clean.Token(c.Param("size")))
+		uid := clean.IdString(c.Param("uid"))
 
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", labelCover, sanitize.Log(thumbName.String()))
+			log.Errorf("%s: invalid size %s", labelCover, clean.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
@@ -197,7 +197,7 @@ func LabelCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: file %s is missing", labelCover, sanitize.Log(f.FileName))
+			log.Errorf("%s: file %s is missing", labelCover, clean.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.

@@ -11,8 +11,8 @@ import (
 
 	"github.com/disintegration/imaging"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Suffix returns the thumb cache file suffix.
@@ -35,7 +35,7 @@ func FileName(hash string, thumbPath string, width, height int, opts ...Resample
 	}
 
 	if len(hash) < 4 {
-		return "", fmt.Errorf("resample: file hash is empty or too short (%s)", sanitize.Log(hash))
+		return "", fmt.Errorf("resample: file hash is empty or too short (%s)", clean.Log(hash))
 	}
 
 	if len(thumbPath) == 0 {
@@ -57,11 +57,11 @@ func FileName(hash string, thumbPath string, width, height int, opts ...Resample
 // FromCache returns the thumb cache file name for an image.
 func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("resample: invalid file hash %s", sanitize.Log(hash))
+		return "", fmt.Errorf("resample: invalid file hash %s", clean.Log(hash))
 	}
 
 	if len(imageFilename) < 4 {
-		return "", fmt.Errorf("resample: invalid file name %s", sanitize.Log(imageFilename))
+		return "", fmt.Errorf("resample: invalid file name %s", clean.Log(imageFilename))
 	}
 
 	fileName, err = FileName(hash, thumbPath, width, height, opts...)
@@ -98,7 +98,7 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 	img, err := Open(imageFilename, orientation)
 
 	if err != nil {
-		log.Debugf("resample: %s in %s", err, sanitize.Log(filepath.Base(imageFilename)))
+		log.Debugf("resample: %s in %s", err, clean.Log(filepath.Base(imageFilename)))
 		return "", err
 	}
 
@@ -124,7 +124,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 
 	var quality imaging.EncodeOption
 
-	if filepath.Ext(fileName) == "."+string(fs.FormatPng) {
+	if filepath.Ext(fileName) == "."+string(fs.ImagePNG) {
 		quality = imaging.PNGCompressionLevel(png.DefaultCompression)
 	} else if width <= 150 && height <= 150 {
 		quality = JpegQualitySmall.EncodeOption()
@@ -135,7 +135,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 	err = imaging.Save(result, fileName, quality)
 
 	if err != nil {
-		log.Debugf("resample: failed to save %s", sanitize.Log(filepath.Base(fileName)))
+		log.Debugf("resample: failed to save %s", clean.Log(filepath.Base(fileName)))
 		return result, err
 	}
 

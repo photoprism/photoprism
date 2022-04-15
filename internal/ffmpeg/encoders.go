@@ -1,6 +1,6 @@
 package ffmpeg
 
-import "github.com/photoprism/photoprism/pkg/sanitize"
+import "github.com/photoprism/photoprism/pkg/clean"
 
 // AvcEncoder represents a supported FFmpeg AVC encoder name.
 type AvcEncoder string
@@ -56,7 +56,7 @@ func FindEncoder(s string) AvcEncoder {
 	if encoder, ok := AvcEncoders[s]; ok {
 		return encoder
 	} else {
-		log.Warnf("ffmpeg: unsupported encoder %s", sanitize.Log(s))
+		log.Warnf("ffmpeg: unsupported encoder %s", clean.Log(s))
 	}
 
 	return SoftwareEncoder

@@ -30,7 +30,7 @@ import Util from "common/util";
 import { config } from "app/session";
 import { $gettext } from "common/vm";
 import download from "common/download";
-import { MediaAnimated } from "./photo";
+import { MediaImage } from "./photo";
 
 export class File extends RestModel {
   getDefaults() {
@@ -38,6 +38,9 @@ export class File extends RestModel {
       UID: "",
       PhotoUID: "",
       InstanceID: "",
+      MediaID: "",
+      MediaUTC: 0,
+      TakenAt: "",
       Root: "/",
       Name: "",
       OriginalName: "",
@@ -184,18 +187,54 @@ export class File extends RestModel {
     return info.join(", ");
   }
 
+  storageInfo() {
+    if (!this.Root || this.Root === "") {
+      return "";
+    }
+
+    if (this.Root.length === 1) {
+      return $gettext("Originals");
+    } else {
+      return Util.capitalize(this.Root);
+    }
+  }
+
   typeInfo() {
-    if (this.Type === MediaAnimated) {
-      return $gettext("Animation");
-    }
+    let info = [];
 
-    if (this.Video) {
-      return $gettext("Video");
+    if (
+      this.MediaType &&
+      this.Frames &&
+      this.MediaType === MediaImage &&
+      this.Frames &&
+      this.Frames > 0
+    ) {
+      info.push($gettext("Animated"));
     } else if (this.Sidecar) {
-      return $gettext("Sidecar");
+      info.push($gettext("Sidecar"));
     }
 
-    return this.FileType.toUpperCase();
+    if (this.Primary && !this.MediaType) {
+      info.push($gettext("Image"));
+      return info.join(" ");
+    } else if (this.Video && !this.MediaType) {
+      info.push($gettext("Video"));
+      return info.join(" ");
+    } else {
+      const format = Util.fileType(this.FileType);
+      if (format) {
+        info.push(format);
+      }
+
+      if (this.MediaType && this.MediaType !== this.FileType) {
+        const media = Util.capitalize(this.MediaType);
+        if (media) {
+          info.push(media);
+        }
+      }
+
+      return info.join(" ");
+    }
   }
 
   sizeInfo() {

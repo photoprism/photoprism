@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -125,7 +125,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 		lensCache.SetDefault(m.LensSlug, &result)
 		return &result
 	} else {
-		log.Errorf("lens: %s (create %s)", err.Error(), sanitize.Log(m.String()))
+		log.Errorf("lens: %s (create %s)", err.Error(), clean.Log(m.String()))
 	}
 
 	return &UnknownLens
@@ -133,7 +133,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 
 // String returns an identifier that can be used in logs.
 func (m *Lens) String() string {
-	return sanitize.Log(m.LensName)
+	return clean.Log(m.LensName)
 }
 
 // Unknown returns true if the lens is not a known make or model.

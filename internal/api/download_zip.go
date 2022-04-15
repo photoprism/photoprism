@@ -20,9 +20,9 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // CreateZip creates a zip file archive for download.
@@ -57,8 +57,17 @@ func CreateZip(router *gin.RouterGroup) {
 			return
 		}
 
-		// Select files to be downloaded.
-		files, err := query.SelectedFiles(f, query.FileSelectionAll())
+		// Configure file selection based on user settings.
+		var selection query.FileSelection
+		if dl := conf.Settings().Download; dl.Disabled {
+			AbortFeatureDisabled(c)
+			return
+		} else {
+			selection = query.DownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals)
+		}
+
+		// Find files to download.
+		files, err := query.SelectedFiles(f, selection)
 
 		if err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrZipFailed)
@@ -68,53 +77,36 @@ func CreateZip(router *gin.RouterGroup) {
 			return
 		}
 
+		// Configure file names.
+		dlName := DownloadName(c)
 		zipPath := path.Join(conf.TempPath(), "zip")
-		zipToken := rnd.Token(8)
+		zipToken := rnd.GenerateToken(8)
 		zipBaseName := fmt.Sprintf("photoprism-download-%s-%s.zip", time.Now().Format("20060102-150405"), zipToken)
 		zipFileName := path.Join(zipPath, zipBaseName)
 
+		// Create temp directory.
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
 		}
 
-		newZipFile, err := os.Create(zipFileName)
-
-		if err != nil {
+		// Create new zip file.
+		var newZipFile *os.File
+		if newZipFile, err = os.Create(zipFileName); err != nil {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
+		} else {
+			defer newZipFile.Close()
 		}
 
-		defer newZipFile.Close()
-
+		// Create zip writer.
 		zipWriter := zip.NewWriter(newZipFile)
 		defer zipWriter.Close()
 
-		dlName := DownloadName(c)
-
-		skipRaw := !conf.Settings().Download.Raw
-
 		var aliases = make(map[string]int)
 
+		// Add files to zip.
 		for _, file := range files {
-			if file.FileHash == "" {
-				log.Warnf("download: empty file hash, skipped %s", sanitize.Log(file.FileName))
-				continue
-			} else if file.FileName == "" {
-				log.Warnf("download: empty file name, skipped %s", sanitize.Log(file.FileUID))
-				continue
-			}
-
-			if file.FileSidecar {
-				log.Debugf("download: skipped sidecar %s", sanitize.Log(file.FileName))
-				continue
-			}
-
-			if skipRaw && fs.FormatRaw.Is(file.FileType) {
-				log.Debugf("download: skipped raw %s", sanitize.Log(file.FileName))
-				continue
-			}
-
 			fileName := photoprism.FileName(file.FileRoot, file.FileName)
 			alias := file.DownloadName(dlName, 0)
 			key := strings.ToLower(alias)
@@ -127,21 +119,21 @@ func CreateZip(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
-					log.Errorf("download: failed adding %s to zip (%s)", sanitize.Log(file.FileName), err)
+					log.Errorf("download: failed adding %s to zip (%s)", clean.Log(file.FileName), err)
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 
-				log.Infof("download: added %s as %s", sanitize.Log(file.FileName), sanitize.Log(alias))
+				log.Infof("download: added %s as %s", clean.Log(file.FileName), clean.Log(alias))
 			} else {
-				log.Warnf("download: media file %s is missing", sanitize.Log(file.FileName))
+				log.Warnf("download: media file %s is missing", clean.Log(file.FileName))
 				logError("download", file.Update("FileMissing", true))
 			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("download: created %s [%s]", sanitize.Log(zipBaseName), time.Since(start))
+		log.Infof("download: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
 	})
@@ -158,12 +150,12 @@ func DownloadZip(router *gin.RouterGroup) {
 		}
 
 		conf := service.Config()
-		zipBaseName := sanitize.FileName(filepath.Base(c.Param("filename")))
+		zipBaseName := clean.FileName(filepath.Base(c.Param("filename")))
 		zipPath := path.Join(conf.TempPath(), "zip")
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
-			log.Errorf("could not find zip file: %s", sanitize.Log(zipFileName))
+			log.Errorf("could not find zip file: %s", clean.Log(zipFileName))
 			c.Data(404, "image/svg+xml", photoIconSvg)
 			return
 		}
@@ -171,7 +163,7 @@ func DownloadZip(router *gin.RouterGroup) {
 		c.FileAttachment(zipFileName, zipBaseName)
 
 		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("download: failed removing %s (%s)", sanitize.Log(zipFileName), err.Error())
+			log.Errorf("download: failed removing %s (%s)", clean.Log(zipFileName), err.Error())
 		}
 	})
 }

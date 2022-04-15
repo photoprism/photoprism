@@ -36,8 +36,8 @@ import (
 	"github.com/studio-b12/gowebdav"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Global log instance.
@@ -180,14 +180,14 @@ func (c Client) fetchDirs(root string, recursive bool, start time.Time, timeout 
 func (c Client) Download(from, to string, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Errorf("webdav: %s (panic)\nstack: %s", r, sanitize.Log(from))
-			err = fmt.Errorf("webdav: unexpected error while downloading %s", sanitize.Log(from))
+			log.Errorf("webdav: %s (panic)\nstack: %s", r, clean.Log(from))
+			err = fmt.Errorf("webdav: unexpected error while downloading %s", clean.Log(from))
 		}
 	}()
 
 	// Skip if file already exists.
 	if _, err := os.Stat(to); err == nil && !force {
-		return fmt.Errorf("webdav: download skipped, %s already exists", sanitize.Log(to))
+		return fmt.Errorf("webdav: download skipped, %s already exists", clean.Log(to))
 	}
 
 	dir := path.Dir(to)
@@ -196,10 +196,10 @@ func (c Client) Download(from, to string, force bool) (err error) {
 	if err != nil {
 		// Create local storage path.
 		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-			return fmt.Errorf("webdav: cannot create folder %s (%s)", sanitize.Log(dir), err)
+			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.Log(dir), err)
 		}
 	} else if !dirInfo.IsDir() {
-		return fmt.Errorf("webdav: %s is not a folder", sanitize.Log(dir))
+		return fmt.Errorf("webdav: %s is not a folder", clean.Log(dir))
 	}
 
 	var bytes []byte
@@ -209,8 +209,8 @@ func (c Client) Download(from, to string, force bool) (err error) {
 
 	// Error?
 	if err != nil {
-		log.Errorf("webdav: %s", sanitize.Log(err.Error()))
-		return fmt.Errorf("webdav: failed downloading %s", sanitize.Log(from))
+		log.Errorf("webdav: %s", clean.Log(err.Error()))
+		return fmt.Errorf("webdav: failed downloading %s", clean.Log(from))
 	}
 
 	// Write data to file and return.
@@ -230,7 +230,7 @@ func (c Client) DownloadDir(from, to string, recursive, force bool) (errs []erro
 
 		if _, err = os.Stat(dest); err == nil {
 			// File already exists.
-			msg := fmt.Errorf("webdav: %s already exists", sanitize.Log(dest))
+			msg := fmt.Errorf("webdav: %s already exists", clean.Log(dest))
 			log.Warn(msg)
 			errs = append(errs, msg)
 			continue

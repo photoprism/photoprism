@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Delete permanently removes a photo and all its files.
@@ -24,16 +24,16 @@ func Delete(p entity.Photo) error {
 	for _, file := range files {
 		fileName := FileName(file.FileRoot, file.FileName)
 
-		log.Debugf("delete: removing file %s", sanitize.Log(file.FileName))
+		log.Debugf("delete: removing file %s", clean.Log(file.FileName))
 
 		if f, err := NewMediaFile(fileName); err == nil {
 			if sidecarJson := f.SidecarJsonName(); fs.FileExists(sidecarJson) {
-				log.Debugf("delete: removing json sidecar %s", sanitize.Log(filepath.Base(sidecarJson)))
+				log.Debugf("delete: removing json sidecar %s", clean.Log(filepath.Base(sidecarJson)))
 				logWarn("delete", os.Remove(sidecarJson))
 			}
 
 			if exifJson, err := f.ExifToolJsonName(); err == nil && fs.FileExists(exifJson) {
-				log.Debugf("delete: removing exiftool sidecar %s", sanitize.Log(filepath.Base(exifJson)))
+				log.Debugf("delete: removing exiftool sidecar %s", clean.Log(filepath.Base(exifJson)))
 				logWarn("delete", os.Remove(exifJson))
 			}
 
@@ -47,7 +47,7 @@ func Delete(p entity.Photo) error {
 
 	// Remove sidecar backup.
 	if fs.FileExists(yamlFileName) {
-		log.Debugf("delete: removing yaml sidecar %s", sanitize.Log(filepath.Base(yamlFileName)))
+		log.Debugf("delete: removing yaml sidecar %s", clean.Log(filepath.Base(yamlFileName)))
 		logWarn("delete", os.Remove(yamlFileName))
 	}
 

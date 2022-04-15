@@ -81,7 +81,7 @@ func PathWritable(path string) bool {
 		return false
 	}
 
-	tmpName := filepath.Join(path, "."+rnd.Token(8))
+	tmpName := filepath.Join(path, "."+rnd.GenerateToken(8))
 
 	if f, err := os.Create(tmpName); err != nil {
 		return false

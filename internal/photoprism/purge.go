@@ -12,8 +12,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Purge represents a worker that removes missing files from search results.
@@ -87,20 +87,20 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			if file.FileMissing {
 				if fs.FileExists(fileName) {
 					if opt.Dry {
-						log.Infof("purge: found %s", sanitize.Log(file.FileName))
+						log.Infof("purge: found %s", clean.Log(file.FileName))
 						continue
 					}
 
 					if err := file.Found(); err != nil {
 						log.Errorf("purge: %s", err)
 					} else {
-						log.Infof("purge: found %s", sanitize.Log(file.FileName))
+						log.Infof("purge: found %s", clean.Log(file.FileName))
 					}
 				}
 			} else if !fs.FileExists(fileName) {
 				if opt.Dry {
 					purgedFiles[fileName] = true
-					log.Infof("purge: file %s would be flagged as missing", sanitize.Log(file.FileName))
+					log.Infof("purge: file %s would be flagged as missing", clean.Log(file.FileName))
 					continue
 				}
 
@@ -113,7 +113,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 				w.files.Remove(file.FileName, file.FileRoot)
 				purgedFiles[fileName] = true
-				log.Infof("purge: flagged file %s as missing", sanitize.Log(file.FileName))
+				log.Infof("purge: flagged file %s as missing", clean.Log(file.FileName))
 
 				if !wasPrimary {
 					continue
@@ -162,7 +162,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			if !fs.FileExists(fileName) {
 				if opt.Dry {
 					purgedFiles[fileName] = true
-					log.Infof("purge: duplicate %s would be removed", sanitize.Log(file.FileName))
+					log.Infof("purge: duplicate %s would be removed", clean.Log(file.FileName))
 					continue
 				}
 
@@ -171,7 +171,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				} else {
 					w.files.Remove(file.FileName, file.FileRoot)
 					purgedFiles[fileName] = true
-					log.Infof("purge: removed duplicate %s", sanitize.Log(file.FileName))
+					log.Infof("purge: removed duplicate %s", clean.Log(file.FileName))
 				}
 			}
 		}
@@ -210,7 +210,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 			if opt.Dry {
 				purgedPhotos[photo.PhotoUID] = true
-				log.Infof("purge: %s would be removed", sanitize.Log(photo.PhotoName))
+				log.Infof("purge: %s would be removed", clean.Log(photo.PhotoName))
 				continue
 			}
 
@@ -220,9 +220,9 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				purgedPhotos[photo.PhotoUID] = true
 
 				if opt.Hard {
-					log.Infof("purge: permanently removed %s", sanitize.Log(photo.PhotoName))
+					log.Infof("purge: permanently removed %s", clean.Log(photo.PhotoName))
 				} else {
-					log.Infof("purge: flagged photo %s as deleted", sanitize.Log(photo.PhotoName))
+					log.Infof("purge: flagged photo %s as deleted", clean.Log(photo.PhotoName))
 				}
 
 				// Remove files from lookup table.

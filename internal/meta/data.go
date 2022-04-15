@@ -100,12 +100,12 @@ func (data Data) Megapixels() int {
 
 // HasDocumentID returns true if a DocumentID exists.
 func (data Data) HasDocumentID() bool {
-	return rnd.IsUUID(data.DocumentID)
+	return rnd.ValidUUID(data.DocumentID)
 }
 
 // HasInstanceID returns true if an InstanceID exists.
 func (data Data) HasInstanceID() bool {
-	return rnd.IsUUID(data.InstanceID)
+	return rnd.ValidUUID(data.InstanceID)
 }
 
 // HasTimeAndPlace if data contains a time and GPS position.

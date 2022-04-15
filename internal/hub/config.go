@@ -19,8 +19,8 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/hub/places"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Config represents backend api credentials for maps & geodata.
@@ -209,7 +209,7 @@ func (c *Config) Refresh() (err error) {
 // Load backend api credentials from a YAML file.
 func (c *Config) Load() error {
 	if !fs.FileExists(c.FileName) {
-		return fmt.Errorf("settings file not found: %s", sanitize.Log(c.FileName))
+		return fmt.Errorf("settings file not found: %s", clean.Log(c.FileName))
 	}
 
 	mutex.Lock()

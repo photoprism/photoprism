@@ -14,7 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // PasswdCommand updates a password.
@@ -39,7 +39,7 @@ func passwdAction(ctx *cli.Context) error {
 
 	user := entity.Admin
 
-	log.Infof("please enter a new password for %s (at least 6 characters)\n", sanitize.Log(user.Username()))
+	log.Infof("please enter a new password for %s (at least 6 characters)\n", clean.Log(user.Username()))
 
 	newPassword := getPassword("New Password: ")
 
@@ -57,7 +57,7 @@ func passwdAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("changed password for %s\n", sanitize.Log(user.Username()))
+	log.Infof("changed password for %s\n", clean.Log(user.Username()))
 
 	conf.Shutdown()
 

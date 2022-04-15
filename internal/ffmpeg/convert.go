@@ -19,7 +19,7 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 	useMutex = true
 
 	// Animated GIF?
-	if fs.FileFormat(fileName) == fs.FormatGif {
+	if fs.FileType(fileName) == fs.ImageGIF {
 		result = exec.Command(
 			ffmpegBin,
 			"-i", fileName,

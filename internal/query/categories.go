@@ -1,8 +1,6 @@
 package query
 
-import (
-	"strings"
-)
+import "github.com/photoprism/photoprism/pkg/txt"
 
 type CategoryLabel struct {
 	Name  string
@@ -24,7 +22,7 @@ func CategoryLabels(limit, offset int) (results []CategoryLabel) {
 	}
 
 	for i, l := range results {
-		results[i].Title = strings.Title(l.Name)
+		results[i].Title = txt.Title(l.Name)
 	}
 
 	return results

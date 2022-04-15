@@ -13,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Moments represents a worker that creates albums based on popular locations, dates and labels.
@@ -95,11 +95,11 @@ func (w *Moments) Start() (err error) {
 			if a := entity.FindFolderAlbum(mom.Path); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
-					log.Tracef("moments: %s was deleted (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s was deleted (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				} else if err := a.UpdateFolder(mom.Path, f.Serialize()); err != nil {
 					log.Errorf("moments: %s (update folder)", err.Error())
 				} else {
-					log.Tracef("moments: %s already exists (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				}
 			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Path, f.Serialize()); a != nil {
 				a.AlbumYear = mom.FolderYear
@@ -110,7 +110,7 @@ func (w *Moments) Start() (err error) {
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s (create folder)", err)
 				} else {
-					log.Infof("moments: added %s (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Infof("moments: added %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				}
 			}
 		}
@@ -127,17 +127,17 @@ func (w *Moments) Start() (err error) {
 				}
 
 				if !a.Deleted() {
-					log.Tracef("moments: %s already exists (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				} else if err := a.Restore(); err != nil {
 					log.Errorf("moments: %s (restore month)", err.Error())
 				} else {
-					log.Infof("moments: %s restored", sanitize.Log(a.AlbumTitle))
+					log.Infof("moments: %s restored", clean.Log(a.AlbumTitle))
 				}
 			} else if a := entity.NewMonthAlbum(mom.Title(), mom.Slug(), mom.Year, mom.Month); a != nil {
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err)
 				} else {
-					log.Infof("moments: added %s (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Infof("moments: added %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				}
 			}
 		}
@@ -161,9 +161,9 @@ func (w *Moments) Start() (err error) {
 
 				if a.DeletedAt != nil {
 					// Nothing to do.
-					log.Tracef("moments: %s was deleted (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s was deleted (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				} else {
-					log.Tracef("moments: %s already exists (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				}
 			} else if a := entity.NewMomentsAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumYear = mom.Year
@@ -172,7 +172,7 @@ func (w *Moments) Start() (err error) {
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err)
 				} else {
-					log.Infof("moments: added %s (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Infof("moments: added %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				}
 			}
 		}
@@ -195,11 +195,11 @@ func (w *Moments) Start() (err error) {
 				}
 
 				if !a.Deleted() {
-					log.Tracef("moments: %s already exists (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				} else if err := a.Restore(); err != nil {
 					log.Errorf("moments: %s (restore state)", err.Error())
 				} else {
-					log.Infof("moments: %s restored", sanitize.Log(a.AlbumTitle))
+					log.Infof("moments: %s restored", clean.Log(a.AlbumTitle))
 				}
 			} else if a := entity.NewStateAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumLocation = mom.CountryName()
@@ -209,7 +209,7 @@ func (w *Moments) Start() (err error) {
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err)
 				} else {
-					log.Infof("moments: added %s (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Infof("moments: added %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				}
 			}
 		}
@@ -233,20 +233,20 @@ func (w *Moments) Start() (err error) {
 				}
 
 				if a.DeletedAt != nil || f.Serialize() == a.AlbumFilter {
-					log.Tracef("moments: %s already exists (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 					continue
 				}
 
 				if err := a.Update("AlbumFilter", f.Serialize()); err != nil {
 					log.Errorf("moments: %s", err.Error())
 				} else {
-					log.Debugf("moments: updated %s (%s)", sanitize.Log(a.AlbumTitle), f.Serialize())
+					log.Debugf("moments: updated %s (%s)", clean.Log(a.AlbumTitle), f.Serialize())
 				}
 			} else if a := entity.NewMomentsAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err.Error())
 				} else {
-					log.Infof("moments: added %s (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
+					log.Infof("moments: added %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				}
 			} else {
 				log.Errorf("moments: failed to create new moment %s (%s)", mom.Title(), f.Serialize())

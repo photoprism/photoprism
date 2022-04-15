@@ -7,8 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/projection"
 )
 
 func TestFirstFileByHash(t *testing.T) {
@@ -35,7 +37,7 @@ func TestFile_ShareFileName(t *testing.T) {
 		filename := file.ShareBase(0)
 
 		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
-		assert.Contains(t, filename, fs.JpegExt)
+		assert.Contains(t, filename, fs.ExtJPEG)
 	})
 	t.Run("photo without title", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
@@ -290,11 +292,11 @@ func TestFile_Panorama(t *testing.T) {
 		assert.False(t, file.Panorama())
 	})
 	t.Run("equirectangular", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjEquirectangular}
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: projection.Equirectangular.String()}
 		assert.True(t, file.Panorama())
 	})
 	t.Run("transverse-cylindrical", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjTransverseCylindrical}
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: projection.TransverseCylindrical.String()}
 		assert.True(t, file.Panorama())
 	})
 	t.Run("sidecar", func(t *testing.T) {
@@ -304,36 +306,42 @@ func TestFile_Panorama(t *testing.T) {
 }
 
 func TestFile_SetProjection(t *testing.T) {
-	t.Run(ProjDefault, func(t *testing.T) {
+	t.Run("Unknown", func(t *testing.T) {
 		m := &File{}
-		m.SetProjection(ProjDefault)
-		assert.Equal(t, ProjDefault, m.FileProjection)
+		m.SetProjection(Unknown)
+		assert.True(t, projection.Unknown.Equal(m.FileProjection))
+		assert.Equal(t, Unknown, m.FileProjection)
+		assert.Equal(t, projection.Unknown.String(), m.FileProjection)
 	})
-	t.Run(ProjCubestrip, func(t *testing.T) {
+	t.Run(projection.Cubestrip.String(), func(t *testing.T) {
 		m := &File{}
-		m.SetProjection(ProjCubestrip)
-		assert.Equal(t, ProjCubestrip, m.FileProjection)
+		m.SetProjection(projection.Cubestrip.String())
+		assert.True(t, projection.Cubestrip.Equal(m.FileProjection))
+		assert.Equal(t, projection.Cubestrip.String(), m.FileProjection)
 	})
-	t.Run(ProjCylindrical, func(t *testing.T) {
+	t.Run(projection.Cylindrical.String(), func(t *testing.T) {
 		m := &File{}
-		m.SetProjection(ProjCylindrical)
-		assert.Equal(t, ProjCylindrical, m.FileProjection)
+		m.SetProjection(projection.Cylindrical.String())
+		assert.True(t, projection.Cylindrical.Equal(m.FileProjection))
+		assert.Equal(t, projection.Cylindrical.String(), m.FileProjection)
 	})
-	t.Run(ProjTransverseCylindrical, func(t *testing.T) {
+	t.Run(projection.TransverseCylindrical.String(), func(t *testing.T) {
 		m := &File{}
-		m.SetProjection(ProjTransverseCylindrical)
-		assert.Equal(t, ProjTransverseCylindrical, m.FileProjection)
+		m.SetProjection(projection.TransverseCylindrical.String())
+		assert.Equal(t, projection.TransverseCylindrical.String(), m.FileProjection)
 	})
-	t.Run(ProjPseudocylindricalCompromise, func(t *testing.T) {
+	t.Run(projection.PseudocylindricalCompromise.String(), func(t *testing.T) {
 		m := &File{}
-		m.SetProjection(ProjPseudocylindricalCompromise)
-		assert.Equal(t, ProjPseudocylindricalCompromise, m.FileProjection)
+		m.SetProjection(projection.PseudocylindricalCompromise.String())
+		assert.Equal(t, projection.PseudocylindricalCompromise.String(), m.FileProjection)
+		assert.Equal(t, projection.PseudocylindricalCompromise, projection.Find(m.FileProjection))
 	})
-	t.Run("Sanitize", func(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
 		m := &File{}
-		m.SetProjection(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
-		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", m.FileProjection)
-		assert.Equal(t, ClipStringType, len(m.FileProjection))
+		p := projection.New(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
+		m.SetProjection(p.String())
+		assert.Equal(t, p.String(), m.FileProjection)
+		assert.GreaterOrEqual(t, clean.ClipType, len(m.FileProjection))
 	})
 }
 
@@ -384,12 +392,12 @@ func TestFile_OriginalBase(t *testing.T) {
 		filename := file.OriginalBase(0)
 
 		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
-		assert.Contains(t, filename, fs.JpegExt)
+		assert.Contains(t, filename, fs.ExtJPEG)
 
 		filename2 := file.OriginalBase(1)
 		assert.Contains(t, filename2, "20190115-000000-Berlin-Morning-Mood")
 		assert.Contains(t, filename2, "(1)")
-		assert.Contains(t, filename2, fs.JpegExt)
+		assert.Contains(t, filename2, fs.ExtJPEG)
 	})
 	t.Run("original name empty", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
@@ -398,12 +406,12 @@ func TestFile_OriginalBase(t *testing.T) {
 		filename := file.OriginalBase(0)
 
 		assert.Contains(t, filename, "sonnenaufgang")
-		assert.Contains(t, filename, fs.JpegExt)
+		assert.Contains(t, filename, fs.ExtJPEG)
 
 		filename2 := file.OriginalBase(1)
 		assert.Contains(t, filename2, "sonnenaufgang")
 		assert.Contains(t, filename2, "(1)")
-		assert.Contains(t, filename2, fs.JpegExt)
+		assert.Contains(t, filename2, fs.ExtJPEG)
 	})
 	t.Run("original name not empty", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
@@ -412,12 +420,12 @@ func TestFile_OriginalBase(t *testing.T) {
 		filename := file.OriginalBase(0)
 
 		assert.Contains(t, filename, "Sonnenaufgang")
-		assert.Contains(t, filename, fs.JpegExt)
+		assert.Contains(t, filename, fs.ExtJPEG)
 
 		filename2 := file.OriginalBase(1)
 		assert.Contains(t, filename2, "Sonnenaufgang")
 		assert.Contains(t, filename2, "(1)")
-		assert.Contains(t, filename2, fs.JpegExt)
+		assert.Contains(t, filename2, fs.ExtJPEG)
 	})
 }
 
@@ -428,12 +436,12 @@ func TestFile_DownloadName(t *testing.T) {
 
 		filename := file.DownloadName(DownloadNameFile, 0)
 		assert.Contains(t, filename, "filename")
-		assert.Contains(t, filename, fs.JpegExt)
+		assert.Contains(t, filename, fs.ExtJPEG)
 
 		filename2 := file.DownloadName(DownloadNameOriginal, 1)
 		assert.Contains(t, filename2, "originalName")
 		assert.Contains(t, filename2, "(1)")
-		assert.Contains(t, filename2, fs.JpegExt)
+		assert.Contains(t, filename2, fs.ExtJPEG)
 
 		filename3 := file.DownloadName("xxx", 0)
 		assert.Contains(t, filename3, "20190115-000000-Berlin-Morning-Mood")

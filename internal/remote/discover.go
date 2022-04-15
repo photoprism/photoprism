@@ -60,7 +60,7 @@ func Discover(rawUrl, user, pass string) (result Account, err error) {
 			serviceUrl.User = nil
 
 			if w := txt.Keywords(serviceUrl.Host); len(w) > 0 {
-				result.AccName = strings.Title(w[0])
+				result.AccName = txt.Title(w[0])
 			} else {
 				result.AccName = serviceUrl.Host
 			}

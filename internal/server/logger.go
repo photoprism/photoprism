@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Logger instances a Logger middleware for Gin.
@@ -33,7 +33,7 @@ func Logger() gin.HandlerFunc {
 		// Use debug level to keep production logs clean.
 		log.Debugf("http: %s %s (%3d) [%v]",
 			method,
-			sanitize.Log(path),
+			clean.Log(path),
 			statusCode,
 			latency,
 		)

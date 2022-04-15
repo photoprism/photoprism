@@ -16,8 +16,8 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -211,15 +211,15 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 func (m *Photo) String() string {
 	if m.PhotoUID == "" {
 		if m.PhotoName != "" {
-			return sanitize.Log(m.PhotoName)
+			return clean.Log(m.PhotoName)
 		} else if m.OriginalName != "" {
-			return sanitize.Log(m.OriginalName)
+			return clean.Log(m.OriginalName)
 		}
 
 		return "(unknown)"
 	}
 
-	return "uid " + sanitize.Log(m.PhotoUID)
+	return "uid " + clean.Log(m.PhotoUID)
 }
 
 // FirstOrCreate fetches an existing row from the database or inserts a new one.
@@ -286,7 +286,7 @@ func (m *Photo) Find() error {
 		Preload("Cell").
 		Preload("Cell.Place")
 
-	if rnd.IsPPID(m.PhotoUID, 'p') {
+	if rnd.EntityUID(m.PhotoUID, 'p') {
 		if err := q.First(m, "photo_uid = ?", m.PhotoUID).Error; err != nil {
 			return err
 		}
@@ -365,11 +365,11 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 		}
 	}
 
-	if rnd.IsUID(m.PhotoUID, 'p') {
+	if rnd.ValidID(m.PhotoUID, 'p') {
 		return nil
 	}
 
-	return scope.SetColumn("PhotoUID", rnd.PPID('p'))
+	return scope.SetColumn("PhotoUID", rnd.GenerateUID('p'))
 }
 
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
@@ -562,17 +562,17 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		labelEntity := FirstOrCreateLabel(NewLabel(classifyLabel.Title(), classifyLabel.Priority))
 
 		if labelEntity == nil {
-			log.Errorf("index: label %s should not be nil - possible bug (%s)", sanitize.Log(classifyLabel.Title()), m)
+			log.Errorf("index: label %s should not be nil - possible bug (%s)", clean.Log(classifyLabel.Title()), m)
 			continue
 		}
 
 		if labelEntity.Deleted() {
-			log.Debugf("index: skipping deleted label %s (%s)", sanitize.Log(classifyLabel.Title()), m)
+			log.Debugf("index: skipping deleted label %s (%s)", clean.Log(classifyLabel.Title()), m)
 			continue
 		}
 
 		if err := labelEntity.UpdateClassify(classifyLabel); err != nil {
-			log.Errorf("index: failed updating label %s (%s)", sanitize.Log(classifyLabel.Title()), err)
+			log.Errorf("index: failed updating label %s (%s)", clean.Log(classifyLabel.Title()), err)
 		}
 
 		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, classifyLabel.Source))
@@ -722,7 +722,7 @@ func (m *Photo) Restore() error {
 // Delete deletes the photo from the index.
 func (m *Photo) Delete(permanently bool) (files Files, err error) {
 	if m.ID < 1 || m.PhotoUID == "" {
-		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, sanitize.Log(m.PhotoUID))
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, clean.Log(m.PhotoUID))
 	}
 
 	if permanently {
@@ -743,7 +743,7 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 // DeletePermanently permanently removes a photo from the index.
 func (m *Photo) DeletePermanently() (files Files, err error) {
 	if m.ID < 1 || m.PhotoUID == "" {
-		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, sanitize.Log(m.PhotoUID))
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, clean.Log(m.PhotoUID))
 	}
 
 	files = m.AllFiles()

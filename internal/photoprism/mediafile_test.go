@@ -1006,7 +1006,7 @@ func TestMediaFile_Extension(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.JpegExt, mediaFile.Extension())
+		assert.Equal(t, fs.ExtJPEG, mediaFile.Extension())
 	})
 }
 
@@ -1153,7 +1153,7 @@ func TestMediaFile_IsPng(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, fs.FormatPng, mediaFile.FileType())
+		assert.Equal(t, fs.ImagePNG, mediaFile.FileType())
 		assert.Equal(t, "image/png", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsPng())
 	})
@@ -1167,7 +1167,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.FormatJson, mediaFile.FileType())
+		assert.Equal(t, fs.JsonFile, mediaFile.FileType())
 		assert.Equal(t, "", mediaFile.MimeType())
 		assert.Equal(t, false, mediaFile.IsTiff())
 	})
@@ -1176,7 +1176,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.FormatTiff, mediaFile.FileType())
+		assert.Equal(t, fs.ImageTIFF, mediaFile.FileType())
 		assert.Equal(t, "image/tiff", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsTiff())
 	})
@@ -1185,7 +1185,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.FormatTiff, mediaFile.FileType())
+		assert.Equal(t, fs.ImageTIFF, mediaFile.FileType())
 		assert.Equal(t, "image/tiff", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsTiff())
 	})
@@ -1229,7 +1229,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.FormatBitmap, mediaFile.FileType())
+		assert.Equal(t, fs.ImageBMP, mediaFile.FileType())
 		assert.Equal(t, "image/bmp", mediaFile.MimeType())
 		assert.Equal(t, false, mediaFile.IsJpeg())
 		assert.Equal(t, false, mediaFile.IsGif())
@@ -1247,7 +1247,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, fs.FormatGif, mediaFile.FileType())
+		assert.Equal(t, fs.ImageGIF, mediaFile.FileType())
 		assert.Equal(t, "image/gif", mediaFile.MimeType())
 		assert.Equal(t, false, mediaFile.IsJpeg())
 		assert.Equal(t, true, mediaFile.IsGif())
@@ -1266,7 +1266,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, fs.FormatWebP, mediaFile.FileType())
+		assert.Equal(t, fs.ImageWebP, mediaFile.FileType())
 		assert.Equal(t, fs.MimeTypeWebP, mediaFile.MimeType())
 		assert.Equal(t, false, mediaFile.IsJpeg())
 		assert.Equal(t, false, mediaFile.IsGif())
@@ -2162,7 +2162,7 @@ func TestMediaFile_FileType(t *testing.T) {
 
 	assert.True(t, m.IsJpeg())
 	assert.Equal(t, "jpg", string(m.FileType()))
-	assert.Equal(t, fs.FormatJpeg, m.FileType())
+	assert.Equal(t, fs.ImageJPEG, m.FileType())
 	assert.Equal(t, ".png", m.Extension())
 }
 

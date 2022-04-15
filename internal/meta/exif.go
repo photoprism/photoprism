@@ -15,9 +15,10 @@ import (
 
 	exifcommon "github.com/dsoprea/go-exif/v3/common"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -36,20 +37,20 @@ func init() {
 }
 
 // Exif parses an image file for Exif metadata and returns as Data struct.
-func Exif(fileName string, fileType fs.Format, bruteForce bool) (data Data, err error) {
+func Exif(fileName string, fileType fs.Type, bruteForce bool) (data Data, err error) {
 	err = data.Exif(fileName, fileType, bruteForce)
 
 	return data, err
 }
 
 // Exif parses an image file for Exif metadata and returns as Data struct.
-func (data *Data) Exif(fileName string, fileFormat fs.Format, bruteForce bool) (err error) {
+func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (err error) {
 	exifMutex.Lock()
 	defer exifMutex.Unlock()
 
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (exif panic)\nstack: %s", e, sanitize.Log(filepath.Base(fileName)), debug.Stack())
+			err = fmt.Errorf("metadata: %s in %s (exif panic)\nstack: %s", e, clean.Log(filepath.Base(fileName)), debug.Stack())
 		}
 	}()
 
@@ -60,7 +61,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Format, bruteForce bool) (
 		return err
 	}
 
-	logName := sanitize.Log(filepath.Base(fileName))
+	logName := clean.Log(filepath.Base(fileName))
 
 	// Enumerate data.exif in Exif block.
 	opt := exif.ScanOptions{}
@@ -102,7 +103,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Format, bruteForce bool) (
 					data.Lat = float32(gi.Latitude.Decimal())
 					data.Lng = float32(gi.Longitude.Decimal())
 				} else if gi.Altitude != 0 || !gi.Timestamp.IsZero() {
-					log.Warnf("metadata: invalid exif gps coordinates in %s (%s)", logName, sanitize.Log(gi.String()))
+					log.Warnf("metadata: invalid exif gps coordinates in %s (%s)", logName, clean.Log(gi.String()))
 				}
 
 				if gi.Altitude != 0 {
@@ -281,7 +282,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Format, bruteForce bool) (
 		}
 	}
 
-	// Valid time found in Exif metadata?
+	// UniqueID time found in Exif metadata?
 	if !takenAt.IsZero() {
 		if takenAtLocal, err := time.ParseInLocation("2006-01-02T15:04:05", takenAt.Format("2006-01-02T15:04:05"), time.UTC); err == nil {
 			data.TakenAtLocal = takenAtLocal
@@ -314,7 +315,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Format, bruteForce bool) (
 
 	if value, ok := data.exif["ProjectionType"]; ok {
 		data.AddKeywords(KeywordPanorama)
-		data.Projection = SanitizeString(value)
+		data.Projection = projection.New(SanitizeString(value)).String()
 	}
 
 	data.Subject = SanitizeMeta(data.Subject)

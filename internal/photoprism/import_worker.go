@@ -8,8 +8,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/query"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 type ImportJob struct {
@@ -31,16 +31,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 		related := job.Related
 
 		if related.Main == nil {
-			log.Warnf("import: %s belongs to no supported media file", sanitize.Log(fs.RelName(job.FileName, impPath)))
+			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, impPath)))
 			continue
 		}
 
 		// Extract metadata to a JSON file with Exiftool.
 		if related.Main.NeedsExifToolJson() {
 			if jsonName, err := imp.convert.ToJson(related.Main); err != nil {
-				log.Debugf("import: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(related.Main.BaseName()))
+				log.Debugf("import: %s in %s (extract metadata)", clean.Log(err.Error()), clean.Log(related.Main.BaseName()))
 			} else if err := related.Main.ReadExifToolJson(); err != nil {
-				log.Errorf("import: %s in %s (read metadata)", sanitize.Log(err.Error()), sanitize.Log(related.Main.BaseName()))
+				log.Errorf("import: %s in %s (read metadata)", clean.Log(err.Error()), clean.Log(related.Main.BaseName()))
 			} else {
 				log.Debugf("import: created %s", filepath.Base(jsonName))
 			}
@@ -62,7 +62,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				if fs.PathExists(destDir) {
 					// Do nothing.
 				} else if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
-					log.Errorf("import: failed creating folder for %s (%s)", sanitize.Log(f.BaseName()), err.Error())
+					log.Errorf("import: failed creating folder for %s (%s)", clean.Log(f.BaseName()), err.Error())
 				} else {
 					destDirRel := fs.RelName(destDir, imp.originalsPath())
 
@@ -75,20 +75,20 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if related.Main.HasSameName(f) {
 					destMainFileName = destFileName
-					log.Infof("import: moving main %s file %s to %s", f.FileType(), sanitize.Log(relFileName), sanitize.Log(fs.RelName(destFileName, imp.originalsPath())))
+					log.Infof("import: moving main %s file %s to %s", f.FileType(), clean.Log(relFileName), clean.Log(fs.RelName(destFileName, imp.originalsPath())))
 				} else {
-					log.Infof("import: moving related %s file %s to %s", f.FileType(), sanitize.Log(relFileName), sanitize.Log(fs.RelName(destFileName, imp.originalsPath())))
+					log.Infof("import: moving related %s file %s to %s", f.FileType(), clean.Log(relFileName), clean.Log(fs.RelName(destFileName, imp.originalsPath())))
 				}
 
 				if impOpt.Move {
 					if err := f.Move(destFileName); err != nil {
-						logRelName := sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath()))
+						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
 						log.Debugf("import: %s", err.Error())
 						log.Warnf("import: failed moving file to %s, is another import running at the same time?", logRelName)
 					}
 				} else {
 					if err := f.Copy(destFileName); err != nil {
-						logRelName := sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath()))
+						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
 						log.Debugf("import: %s", err.Error())
 						log.Warnf("import: failed copying file to %s, is another import running at the same time?", logRelName)
 					}
@@ -108,9 +108,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// Remove duplicates to save storage.
 				if impOpt.RemoveExistingFiles {
 					if err := f.Remove(); err != nil {
-						log.Errorf("import: failed deleting %s (%s)", sanitize.Log(f.BaseName()), err.Error())
+						log.Errorf("import: failed deleting %s (%s)", clean.Log(f.BaseName()), err.Error())
 					} else {
-						log.Infof("import: deleted %s (already exists)", sanitize.Log(relFileName))
+						log.Infof("import: deleted %s (already exists)", clean.Log(relFileName))
 					}
 				}
 			}
@@ -120,14 +120,14 @@ func ImportWorker(jobs <-chan ImportJob) {
 			f, err := NewMediaFile(destMainFileName)
 
 			if err != nil {
-				log.Errorf("import: %s in %s", err.Error(), sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath())))
+				log.Errorf("import: %s in %s", err.Error(), clean.Log(fs.RelName(destMainFileName, imp.originalsPath())))
 				continue
 			}
 
 			// Extract metadata to a JSON file with Exiftool.
 			if f.NeedsExifToolJson() {
 				if jsonName, err := imp.convert.ToJson(f); err != nil {
-					log.Debugf("import: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(f.RootRelName()))
+					log.Debugf("import: %s in %s (extract metadata)", clean.Log(err.Error()), clean.Log(f.RootRelName()))
 				} else {
 					log.Debugf("import: created %s", filepath.Base(jsonName))
 				}
@@ -136,10 +136,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 			if o.Convert && f.IsMedia() && !f.HasJpeg() {
 				if jpegFile, err := imp.convert.ToJpeg(f, false); err != nil {
-					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), sanitize.Log(f.RootRelName()))
+					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), clean.Log(f.RootRelName()))
 					continue
 				} else {
-					log.Debugf("import: created %s", sanitize.Log(jpegFile.BaseName()))
+					log.Debugf("import: created %s", clean.Log(jpegFile.BaseName()))
 				}
 			}
 
@@ -147,10 +147,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 			if jpg, err := f.Jpeg(); err != nil {
 				log.Error(err)
 			} else if exceeds, actual := jpg.ExceedsResolution(o.ResolutionLimit); exceeds {
-				log.Errorf("index: %s exceeds resolution limit (%d / %d MP)", sanitize.Log(f.RootRelName()), actual, o.ResolutionLimit)
+				log.Errorf("index: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
 				continue
 			} else if err := jpg.CreateThumbnails(imp.thumbPath(), false); err != nil {
-				log.Errorf("import: failed creating thumbnails for %s (%s)", sanitize.Log(f.RootRelName()), err.Error())
+				log.Errorf("import: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
 				continue
 			}
 
@@ -159,7 +159,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Skip import if the finding related files results in an error.
 			if err != nil {
-				log.Errorf("import: %s in %s (find related files)", err.Error(), sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath())))
+				log.Errorf("import: %s in %s (find related files)", err.Error(), clean.Log(fs.RelName(destMainFileName, imp.originalsPath())))
 				continue
 			}
 
@@ -172,10 +172,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// Enforce file size and resolution limits.
 				if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
-					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", sanitize.Log(f.RootRelName()), actual, o.OriginalsLimit)
+					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
 					continue
 				} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
-					log.Warnf("import: %s exceeds resolution limit (%d / %d MP)", sanitize.Log(f.RootRelName()), actual, o.ResolutionLimit)
+					log.Warnf("import: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
 					continue
 				}
 
@@ -183,7 +183,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				res := ind.MediaFile(f, o, originalName, "")
 
 				// Log result.
-				log.Infof("import: %s main %s file %s", res, f.FileType(), sanitize.Log(f.RootRelName()))
+				log.Infof("import: %s main %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
 				done[f.FileName()] = true
 
 				if !res.Success() {
@@ -198,7 +198,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					}
 				}
 			} else {
-				log.Warnf("import: found no main file for %s, conversion to jpeg may have failed", sanitize.Log(f.RootRelName()))
+				log.Warnf("import: found no main file for %s, conversion to jpeg may have failed", clean.Log(f.RootRelName()))
 			}
 
 			for _, f := range related.Files {
@@ -214,15 +214,15 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// Show warning if sidecar file exceeds size or resolution limit.
 				if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
-					log.Warnf("import: sidecar file %s exceeds size limit (%d / %d MB)", sanitize.Log(f.RootRelName()), actual, o.OriginalsLimit)
+					log.Warnf("import: sidecar file %s exceeds size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
 				} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
-					log.Warnf("import: sidecar file %s exceeds resolution limit (%d / %d MP)", sanitize.Log(f.RootRelName()), actual, o.ResolutionLimit)
+					log.Warnf("import: sidecar file %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
 				}
 
 				// Extract metadata to a JSON file with Exiftool.
 				if f.NeedsExifToolJson() {
 					if jsonName, err := imp.convert.ToJson(f); err != nil {
-						log.Debugf("import: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(f.RootRelName()))
+						log.Debugf("import: %s in %s (extract metadata)", clean.Log(err.Error()), clean.Log(f.RootRelName()))
 					} else {
 						log.Debugf("import: created %s", filepath.Base(jsonName))
 					}
@@ -237,7 +237,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Log result.
-				log.Infof("import: %s related %s file %s", res, f.FileType(), sanitize.Log(f.RootRelName()))
+				log.Infof("import: %s related %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
 			}
 
 		}

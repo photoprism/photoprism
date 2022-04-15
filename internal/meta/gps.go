@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/dsoprea/go-exif/v3"
 )
@@ -23,7 +23,7 @@ func GpsToLatLng(s string) (lat, lng float32) {
 	// Floating point numbers?
 	if fl := GpsFloatRegexp.FindAllString(s, -1); len(fl) == 2 {
 		if lat, err := strconv.ParseFloat(fl[0], 64); err != nil {
-			log.Infof("metadata: %s is not a valid gps position", sanitize.Log(fl[0]))
+			log.Infof("metadata: %s is not a valid gps position", clean.Log(fl[0]))
 		} else if lng, err := strconv.ParseFloat(fl[1], 64); err == nil {
 			return float32(lat), float32(lng)
 		}
@@ -93,7 +93,7 @@ func ParseFloat(s string) float64 {
 
 	// Parse floating point number.
 	if result, err := strconv.ParseFloat(s, 64); err != nil {
-		log.Debugf("metadata: %s is not a valid gps position", sanitize.Log(s))
+		log.Debugf("metadata: %s is not a valid gps position", clean.Log(s))
 		return 0
 	} else {
 		return result
