@@ -1,10 +1,24 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
+import Menu from "../page-model/menu";
+import Album from "../page-model/album";
+import Toolbar from "../page-model/toolbar";
+import ContextMenu from "../page-model/context-menu";
+import Photo from "../page-model/photo";
+import PhotoViewer from "../page-model/photoviewer";
+import Page from "../page-model/page";
+import AlbumDialog from "../page-model/dialog-album";
 
 fixture`Test albums`.page`${testcafeconfig.url}`;
 
+const menu = new Menu();
+const album = new Album();
+const toolbar = new Toolbar();
+const contextmenu = new ContextMenu();
+const photo = new Photo();
+const photoviewer = new PhotoViewer();
 const page = new Page();
+const albumdialog = new AlbumDialog();
 
 test.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
@@ -13,181 +27,182 @@ test.meta("testID", "authentication-000")(
   }
 );
 
-test.meta("testID", "albums-001")("Create/delete album on /albums", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  const countAlbums = await Selector("a.is-album").count;
-  await t.click(Selector("button.action-add"));
-  const countAlbumsAfterCreate = await Selector("a.is-album").count;
-  const NewAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await t.expect(countAlbumsAfterCreate).eql(countAlbums + 1);
-  await page.selectFromUID(NewAlbum);
-  await page.deleteSelected();
-  const countAlbumsAfterDelete = await Selector("a.is-album").count;
-  await t.expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
-});
+test.meta("testID", "albums-001").meta({ type: "smoke" })(
+  "Create/delete album on /albums",
+  async (t) => {
+    await menu.openPage("albums");
+    const AlbumCount = await album.getAlbumCount("all");
+    await toolbar.triggerToolbarAction("add");
+    const AlbumCountAfterCreate = await album.getAlbumCount("all");
+    const NewAlbumUid = await album.getNthAlbumUid("all", 0);
 
-test.meta("testID", "albums-002")("Update album", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  await page.search("Holiday");
-  const AlbumUid = await Selector("a.is-album", { timeout: 55000 }).nth(0).getAttribute("data-uid");
+    await t.expect(AlbumCountAfterCreate).eql(AlbumCount + 1);
+
+    await album.selectAlbumFromUID(NewAlbumUid);
+    await contextmenu.triggerContextMenuAction("delete", "");
+    const AlbumCountAfterDelete = await album.getAlbumCount("all");
+
+    await t.expect(AlbumCountAfterDelete).eql(AlbumCountAfterCreate - 1);
+  }
+);
+
+test.meta("testID", "albums-002").meta({ type: "smoke" })(
+  "Create/delete album during add to album",
+  async (t) => {
+    await menu.openPage("albums");
+    const AlbumCount = await album.getAlbumCount("all");
+    await menu.openPage("browse");
+    await toolbar.search("photo:true");
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+    await photo.selectPhotoFromUID(SecondPhotoUid);
+    await photo.selectPhotoFromUID(FirstPhotoUid);
+    await contextmenu.triggerContextMenuAction("album", "NotYetExistingAlbum");
+    await menu.openPage("albums");
+    const AlbumCountAfterCreation = await album.getAlbumCount("all");
+
+    await t.expect(AlbumCountAfterCreation).eql(AlbumCount + 1);
+
+    await toolbar.search("NotYetExistingAlbum");
+    const AlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.selectAlbumFromUID(AlbumUid);
+    await contextmenu.triggerContextMenuAction("delete", "");
+    await menu.openPage("albums");
+    const AlbumCountAfterDelete = await album.getAlbumCount("all");
+
+    await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
+  }
+);
+
+test.meta("testID", "albums-003").meta({ type: "smoke" })("Update album details", async (t) => {
+  await menu.openPage("albums");
+  await toolbar.search("Holiday");
+  const AlbumUid = await album.getNthAlbumUid("all", 0);
+
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Holiday");
+
+  await t.click(page.cardTitle.nth(0)).typeText(albumdialog.title, "Animals", { replace: true });
+
+  await t.expect(albumdialog.description.value).eql("").expect(albumdialog.category.value).eql("");
+
   await t
-    .expect(Selector("button.action-title-edit").nth(0).innerText)
-    .contains("Holiday")
-    .click(Selector(".action-title-edit").nth(0))
-    .typeText(Selector(".input-title input"), "Animals", { replace: true })
-    .expect(Selector(".input-description textarea").value)
-    .eql("")
-    .expect(Selector(".input-category input").value)
-    .eql("")
-    .typeText(Selector(".input-description textarea"), "All my animals")
-    .typeText(Selector(".input-category input"), "Pets")
+    .typeText(albumdialog.description, "All my animals")
+    .typeText(albumdialog.category, "Pets")
     .pressKey("enter")
-    .click(".action-confirm")
-    .click(Selector("a.is-album").nth(0));
-  const PhotoCount = await Selector("div.is-photo").count;
+    .click(albumdialog.dialogSave);
+
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Animals");
+
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+  await t.typeText(albumdialog.title, "Holiday", { replace: true });
+
   await t
-    .expect(Selector(".v-card__text").nth(0).innerText)
-    .contains("All my animals")
-    .expect(Selector("div").withText("Animals").exists)
-    .ok();
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("photo:true");
-  const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
-  const SecondPhotoUid = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
-  await page.selectPhotoFromUID(SecondPhotoUid);
-  await page.selectFromUIDInFullscreen(FirstPhotoUid);
-  await page.addSelectedToAlbum("Animals", "album");
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  if (t.browser.platform === "mobile") {
-    await page.search("category:Family");
-  } else {
-    await t
-      .click(Selector(".input-category"))
-      .click(Selector('div[role="listitem"]').withText("Family"));
-  }
-  await t.expect(Selector("button.action-title-edit").nth(0).innerText).contains("Christmas");
-  await page.openNav();
-  await t.click(Selector(".nav-albums")).click(".action-reload");
-  if (t.browser.platform === "mobile") {
-  } else {
-    await t
-      .click(Selector(".input-category"))
-      .click(Selector('div[role="listitem"]').withText("All Categories"), { timeout: 55000 });
-  }
-  await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
-  const PhotoCountAfterAdd = await Selector("div.is-photo").count;
-  await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
-  await page.selectPhotoFromUID(FirstPhotoUid);
-  await page.selectPhotoFromUID(SecondPhotoUid);
-  await page.removeSelected();
-  const PhotoCountAfterDelete = await Selector("div.is-photo").count;
-  await t
-    .expect(PhotoCountAfterDelete)
-    .eql(PhotoCountAfterAdd - 2)
-    .click(Selector(".action-edit"))
-    .typeText(Selector(".input-title input"), "Holiday", { replace: true })
-    .expect(Selector(".input-description textarea").value)
+    .expect(albumdialog.description.value)
     .eql("All my animals")
-    .expect(Selector(".input-category input").value)
-    .eql("Pets")
-    .click(Selector(".input-description textarea"))
-    .pressKey("ctrl+a delete")
-    .pressKey("enter")
-    .click(Selector(".input-category input"))
-    .pressKey("ctrl+a delete")
-    .pressKey("enter")
-    .click(".action-confirm");
-  await page.openNav();
+    .expect(albumdialog.category.value)
+    .eql("Pets");
+
   await t
-    .click(Selector(".nav-albums"))
+    .click(albumdialog.description)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.category)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.dialogSave);
+  await menu.openPage("albums");
+
+  await t
     .expect(Selector("div").withText("Holiday").visible)
     .ok()
     .expect(Selector("div").withText("Animals").exists)
     .notOk();
 });
 
-test.meta("testID", "albums-003")("Download album", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  await page.checkButtonVisibility("download", true, true);
+test.meta("testID", "albums-004").meta({ type: "smoke" })(
+  "Add/Remove Photos to/from album",
+  async (t) => {
+    await menu.openPage("albums");
+    await toolbar.search("Holiday");
+    const AlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.openAlbumWithUid(AlbumUid);
+    const PhotoCount = await photo.getPhotoCount("all");
+    await menu.openPage("browse");
+    await toolbar.search("photo:true");
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+    await photo.selectPhotoFromUID(SecondPhotoUid);
+    await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
+    await photoviewer.triggerPhotoViewerAction("select");
+    await photoviewer.triggerPhotoViewerAction("close");
+    await contextmenu.triggerContextMenuAction("album", "Holiday");
+    await menu.openPage("albums");
+    await album.openAlbumWithUid(AlbumUid);
+    const PhotoCountAfterAdd = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
+
+    await photo.selectPhotoFromUID(FirstPhotoUid);
+    await photo.selectPhotoFromUID(SecondPhotoUid);
+    await contextmenu.triggerContextMenuAction("remove", "");
+    const PhotoCountAfterRemove = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountAfterRemove).eql(PhotoCountAfterAdd - 2);
+  }
+);
+
+test.meta("testID", "albums-005")("Use album search and filters", async (t) => {
+  await menu.openPage("albums");
+  if (t.browser.platform === "mobile") {
+    await toolbar.search("category:Family");
+  } else {
+    await toolbar.setFilter("category", "Family");
+  }
+
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Christmas");
+  const AlbumCount = await album.getAlbumCount("all");
+  await t.expect(AlbumCount).eql(1);
+
+  if (t.browser.platform === "mobile") {
+  } else {
+    await toolbar.setFilter("category", "All Categories");
+  }
+
+  await toolbar.search("Holiday");
+
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Holiday");
+  const AlbumCount2 = await album.getAlbumCount("all");
+  await t.expect(AlbumCount2).eql(1);
 });
 
-test.meta("testID", "albums-004")("View folders", async (t) => {
-  await page.openNav();
+test.meta("testID", "albums-006")("Test album autocomplete", async (t) => {
+  await toolbar.search("photo:true");
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+  await photo.selectPhotoFromUID(FirstPhotoUid);
+  await contextmenu.openContextMenu();
+  await t.click(Selector("button.action-album")).click(Selector(".input-album input"));
+
   await t
-    .click(Selector(".nav-folders"))
-    .expect(Selector("a").withText("BotanicalGarden").visible)
+    .expect(page.selectOption.withText("Holiday").visible)
     .ok()
-    .expect(Selector("a").withText("Kanada").visible)
+    .expect(page.selectOption.withText("Christmas").visible)
+    .ok();
+
+  await t.typeText(Selector(".input-album input"), "C", { replace: true });
+
+  await t
+    .expect(page.selectOption.withText("Holiday").visible)
+    .notOk()
+    .expect(page.selectOption.withText("Christmas").visible)
     .ok()
-    .expect(Selector("a").withText("KorsikaAdventure").visible)
+    .expect(page.selectOption.withText("C").visible)
     .ok();
 });
 
-test.meta("testID", "albums-005")("View calendar", async (t) => {
-  await page.openNav();
-  await t
-    .click(Selector(".nav-calendar"))
-    .expect(Selector("a").withText("May 2019").visible)
-    .ok()
-    .expect(Selector("a").withText("October 2019").visible)
-    .ok();
-});
-
-//TODO test that sharing link works as expected
-test.meta("testID", "albums-006")("Create, Edit, delete sharing link", async (t) => {
-  await page.testCreateEditDeleteSharingLink("albums");
-});
-
-test.meta("testID", "albums-007")("Create/delete album during add to album", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  const countAlbums = await Selector("a.is-album").count;
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("photo:true");
-  const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
-  const SecondPhotoUid = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
-  await page.selectPhotoFromUID(SecondPhotoUid);
-  await page.selectFromUIDInFullscreen(FirstPhotoUid);
-  await page.addSelectedToAlbum("NotYetExistingAlbum", "album");
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  const countAlbumsAfterCreation = await Selector("a.is-album").count;
-  await t.expect(countAlbumsAfterCreation).eql(countAlbums + 1);
-  await page.search("NotYetExistingAlbum");
-  const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await page.selectFromUID(AlbumUid);
-  await page.deleteSelected();
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  const countAlbumsAfterDelete = await Selector("a.is-album").count;
-  await t.expect(countAlbumsAfterDelete).eql(countAlbums);
-});
-
-test.meta("testID", "albums-008")("Test album autocomplete", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("photo:true");
-  const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
-  await page.selectPhotoFromUID(FirstPhotoUid);
-  await t
-    .click(Selector("button.action-menu"))
-    .click(Selector("button.action-album"))
-    .click(Selector(".input-album input"))
-    .expect(Selector("div.v-list__tile__title").withText("Holiday").visible)
-    .ok()
-    .expect(Selector("div.v-list__tile__title").withText("Christmas").visible)
-    .ok()
-    .typeText(Selector(".input-album input"), "C", { replace: true })
-    .expect(Selector("div.v-list__tile__title").withText("Christmas").visible)
-    .ok()
-    .expect(Selector("div.v-list__tile__title").withText("C").visible)
-    .ok()
-    .expect(Selector("div.v-list__tile__title").withText("Holiday").visible)
-    .notOk();
-});
+test.meta("testID", "albums-007").meta({ type: "smoke" })(
+  "Create, Edit, delete sharing link",
+  async (t) => {
+    await page.testCreateEditDeleteSharingLink("albums");
+  }
+);
