@@ -34,5 +34,7 @@ export default class Page {
     this.disableplacesCheckbox = Selector("label").withText("Disable Places");
     this.tensorflowCheckbox = Selector("label").withText("Disable TensorFlow");
     this.readOnlyCheckbox = Selector("label").withText("Read-Only Mode");
+
+    this.accountTab = Selector("#tab-settings-account");
   }
 }
