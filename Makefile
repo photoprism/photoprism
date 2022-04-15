@@ -44,6 +44,7 @@ acceptance-private-run-chromium: acceptance-private-restart acceptance-private a
 acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
 acceptance-private-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop
 acceptance-public-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
+acceptance-run-chromium-smoke: acceptance-private-restart acceptance-private-smoke acceptance-private-stop acceptance-restart acceptance-smoke acceptance-stop
 acceptance-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop acceptance-restart acceptance acceptance-stop
 acceptance-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop acceptance-restart acceptance-firefox acceptance-stop
 test-all: test acceptance-run-chromium
@@ -110,19 +111,19 @@ acceptance-restart:
 	rm -rf storage/acceptance/originals/2011
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
-	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
+	./photoprism -p --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
 acceptance-stop:
-	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
+	./photoprism -p --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
 acceptance-private-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
-	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
+	./photoprism -a --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
 acceptance-private-stop:
-	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
+	./photoprism -a --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
 start:
-	go run cmd/photoprism/photoprism.go start -d
+	./photoprism start -d
 stop:
-	go run cmd/photoprism/photoprism.go stop
+	./photoprism stop
 terminal:
 	docker-compose exec -u $(UID) photoprism bash
 rootshell: root-terminal
@@ -195,12 +196,18 @@ test-js:
 acceptance:
 	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run acceptance && cd ..)
+acceptance-smoke:
+	$(info Running JS acceptance tests in Chrome...)
+	(cd frontend &&	npm run acceptance-smoke && cd ..)
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox && cd ..)
 acceptance-private:
 	$(info Running JS acceptance-private tests in Chrome...)
 	(cd frontend &&	npm run acceptance-private && cd ..)
+acceptance-private-smoke:
+	$(info Running JS acceptance-private tests in Chrome...)
+	(cd frontend &&	npm run acceptance-private-smoke && cd ..)
 acceptance-private-firefox:
 	$(info Running JS acceptance-private tests in Firefox...)
 	(cd frontend &&	npm run acceptance-private-firefox && cd ..)
