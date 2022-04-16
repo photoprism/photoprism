@@ -30,7 +30,7 @@ RUN wget -qO- https://dl.photoprism.app/qa/demo.tar.gz | tar xvz -C /photoprism/
 
 # Import example photos
 RUN photoprism restore -a
-RUN photoprism index
+RUN photoprism index -a
 RUN photoprism moments
 
 # Start PhotoPrism server
