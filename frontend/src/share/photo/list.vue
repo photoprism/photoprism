@@ -104,21 +104,15 @@ export default {
     },
     openPhoto: {
       type: Function,
-      default: () => () => {
-        console.warn('list view: openPhoto is undefined');
-      },
+      default: () => {},
     },
     editPhoto: {
       type: Function,
-      default: () => () => {
-        console.warn('list view: editPhoto is undefined');
-      },
+      default: () => {},
     },
     openLocation: {
       type: Function,
-      default: () => () => {
-        console.warn('list view: openLocation is undefined');
-      },
+      default: () => {},
     },
     album: {
       type: Object,

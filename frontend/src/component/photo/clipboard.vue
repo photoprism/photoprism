@@ -167,12 +167,18 @@ export default {
       type: Array,
       default: () => [],
     },
-    refresh: Function,
+    refresh: {
+      type: Function,
+      default: () => {},
+    },
     album: {
       type: Object,
       default: () => {},
     },
-    context: String,
+    context: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {

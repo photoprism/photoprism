@@ -3,8 +3,9 @@
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <v-form ref="form" lazy-validation
-            dense autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
+    <v-form ref="form" lazy-validation dense
+            autocomplete="off" class="p-photo-toolbar p-album-toolbar"
+            accept-charset="UTF-8" @submit.prevent="updateQuery()">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
         <v-toolbar-title>
           {{ model.Title }}
@@ -12,12 +13,12 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon class="hidden-xs-only action-reload" @click.stop="refresh">
+        <v-btn icon class="hidden-xs-only action-reload" @click.stop="refresh()">
           <v-icon>refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="$config.feature('download')" icon class="hidden-xs-only action-download" :title="$gettext('Download')"
-               @click.stop="download">
+               @click.stop="download()">
           <v-icon>get_app</v-icon>
         </v-btn>
 
@@ -98,7 +99,10 @@ import Viewer from "common/viewer";
 export default {
   name: 'PPageAlbumPhotos',
   props: {
-    staticFilter: Object
+    staticFilter: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     const uid = this.$route.params.uid;
@@ -317,8 +321,44 @@ export default {
         this.listen = true;
       });
     },
-    updateQuery() {
-      this.filter.q = this.filter.q.trim();
+    updateSettings(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.settings.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.settings[key] = value.trim();
+            break;
+          default:
+            this.settings[key] = value;
+        }
+      }
+    },
+    updateFilter(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.filter.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.filter[key] = value.trim();
+            break;
+          default:
+            this.filter[key] = value;
+        }
+      }
+    },
+    updateQuery(props) {
+      this.updateFilter(props);
 
       const query = {
         view: this.settings.view
@@ -355,10 +395,10 @@ export default {
 
       return params;
     },
-    refresh() {
-      if (this.loading) {
-        return;
-      }
+    refresh(props) {
+      this.updateSettings(props);
+
+      if (this.loading) return;
 
       this.loading = true;
       this.page = 0;

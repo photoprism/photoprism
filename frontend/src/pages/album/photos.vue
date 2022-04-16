@@ -2,8 +2,8 @@
   <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <p-album-toolbar :album="model" :settings="settings" :filter="filter" :filter-change="updateQuery"
-                     :refresh="refresh"></p-album-toolbar>
+    <p-album-toolbar :filter="filter" :album="model" :settings="settings" :refresh="refresh"
+                     :update-filter="updateFilter" :update-query="updateQuery"></p-album-toolbar>
 
     <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
@@ -55,7 +55,10 @@ import Viewer from "common/viewer";
 export default {
   name: 'PPageAlbumPhotos',
   props: {
-    staticFilter: Object
+    staticFilter: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     const uid = this.$route.params.uid;
@@ -261,8 +264,51 @@ export default {
         this.listen = true;
       });
     },
-    updateQuery() {
-      this.filter.q = this.filter.q.trim();
+    updateSettings(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.settings.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.settings[key] = value.trim();
+            break;
+          default:
+            this.settings[key] = value;
+        }
+      }
+    },
+    updateFilter(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.filter.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.filter[key] = value.trim();
+            break;
+          default:
+            this.filter[key] = value;
+        }
+      }
+    },
+    updateQuery(props) {
+      this.updateFilter(props);
+
+      if (this.model.Order !== this.filter.order) {
+        this.model.Order = this.filter.order;
+        this.updateAlbum();
+      }
+
+      if (this.loading) return;
 
       const query = {
         view: this.settings.view
@@ -299,10 +345,10 @@ export default {
 
       return params;
     },
-    refresh() {
-      if (this.loading) {
-        return;
-      }
+    refresh(props) {
+      this.updateSettings(props);
+
+      if (this.loading) return;
 
       this.loading = true;
       this.page = 0;

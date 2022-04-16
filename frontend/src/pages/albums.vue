@@ -3,7 +3,7 @@
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
+    <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery()">
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field :value="filter.q"
                       solo hide-details clearable overflow single-line validate-on-blur
@@ -14,12 +14,12 @@
                       autocapitalize="none"
                       prepend-inner-icon="search"
                       color="secondary-dark"
-                      @input="onChangeQuery"
-                      @keyup.enter.native="updateQuery"
-                      @click:clear="clearQuery"
+                      @change="(v) => {updateFilter({'q': v})}"
+                      @keyup.enter.native="refresh()"
+                      @click:clear="() => {updateQuery({'q': ''})}"
         ></v-text-field>
 
-        <v-overflow-btn v-model="filter.category"
+        <v-overflow-btn :value="filter.category"
                   solo hide-details single-line
                   :label="$gettext('Category')"
                   color="secondary-dark"
@@ -28,11 +28,11 @@
                   append-icon=""
                   :items="categories"
                   class="hidden-xs-only input-category background-inherit elevation-0"
-                  @change="updateQuery"
+                  @change="(v) => {updateFilter({'category': v})}"
         >
         </v-overflow-btn>
 
-        <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
+        <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>refresh</v-icon>
         </v-btn>
 
@@ -42,7 +42,7 @@
         </v-btn>
 
         <v-btn v-if="staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')"
-               @click.prevent="create">
+               @click.prevent="create()">
           <v-icon>add</v-icon>
         </v-btn>
       </v-toolbar>
@@ -218,8 +218,14 @@ import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 export default {
   name: 'PPageAlbums',
   props: {
-    staticFilter: Object,
-    view: String,
+    staticFilter: {
+      type: Object,
+      default: () => {},
+    },
+    view: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     const query = this.$route.query;
@@ -483,15 +489,44 @@ export default {
         this.listen = true;
       });
     },
-    onChangeQuery(val) {
-      this.q = val ? String(val) : '';
+    updateSettings(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.settings.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.settings[key] = value.trim();
+            break;
+          default:
+            this.settings[key] = value;
+        }
+      }
     },
-    clearQuery() {
-      this.q = '';
-      this.updateQuery();
+    updateFilter(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.filter.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.filter[key] = value.trim();
+            break;
+          default:
+            this.filter[key] = value;
+        }
+      }
     },
-    updateQuery() {
-      this.filter.q = this.q.trim();
+    updateQuery(props) {
+      this.updateFilter(props);
 
       if (this.loading) return;
 
@@ -574,8 +609,11 @@ export default {
         this.listen = true;
       });
     },
-    refresh() {
+    refresh(props) {
+      this.updateSettings(props);
+
       if (this.loading) return;
+
       this.loading = true;
       this.page = 0;
       this.dirty = true;

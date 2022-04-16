@@ -11,15 +11,15 @@
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"
                     color="secondary-dark"
-                    @input="onChangeQuery"
-                    @keyup.enter.native="updateQuery"
-                    @click:clear="clearQuery"
+                    @change="(v) => {updateFilter({'q': v})}"
+                    @keyup.enter.native="updateQuery()"
+                    @click:clear="() => {updateQuery({'q': ''})}"
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="onReload">
+      <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="onReload()">
         <v-icon>refresh</v-icon>
       </v-btn>
-      <v-btn v-if="!isPublic" icon class="action-delete" :title="$gettext('Delete')" @click.stop="onDelete">
+      <v-btn v-if="!isPublic" icon class="action-delete" :title="$gettext('Delete')" @click.stop="onDelete()">
         <v-icon>delete</v-icon>
       </v-btn>
       <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-bug-report"
@@ -108,7 +108,6 @@ export default {
       loading: false,
       scrollDisabled: false,
       scrollDistance: window.innerHeight*2,
-      q: q,
       filter: {q},
       isPublic: this.$config.get("public"),
       batchSize: 100,
@@ -127,10 +126,7 @@ export default {
   watch: {
     '$route'() {
       const query = this.$route.query;
-
-      this.q = query['q'] ? query['q'] : '';
-      this.filter.q = this.q;
-
+      this.filter.q = query['q'] ? query['q'] : '';
       this.onReload();
     }
   },
@@ -138,15 +134,26 @@ export default {
     this.loadMore();
   },
   methods: {
-    onChangeQuery(val) {
-      this.q = val ? String(val) : '';
+    updateFilter(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.filter.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.filter[key] = value.trim();
+            break;
+          default:
+            this.filter[key] = value;
+        }
+      }
     },
-    clearQuery() {
-      this.q = '';
-      this.updateQuery();
-    },
-    updateQuery() {
-      this.filter.q = this.q.trim();
+    updateQuery(props) {
+      this.updateFilter(props);
 
       if (this.loading) return;
 

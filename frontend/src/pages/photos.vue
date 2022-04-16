@@ -3,8 +3,8 @@
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <p-photo-toolbar :settings="settings" :filter="filter" :filter-change="updateQuery" :dirty="dirty"
-                     :refresh="refresh"></p-photo-toolbar>
+    <p-photo-toolbar :filter="filter" :settings="settings" :refresh="refresh"
+                     :update-filter="updateFilter" :update-query="updateQuery"></p-photo-toolbar>
 
     <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import {Photo, MediaLive, MediaRaw, MediaVideo, MediaAnimated} from "model/photo";
+import {MediaAnimated, MediaLive, MediaRaw, MediaVideo, Photo} from "model/photo";
 import Thumb from "model/thumb";
 import Viewer from "common/viewer";
 import Event from "pubsub-js";
@@ -50,7 +50,11 @@ import Event from "pubsub-js";
 export default {
   name: 'PPagePhotos',
   props: {
-    staticFilter: Object
+    staticFilter: {
+      type: Object,
+      default: () => {
+      },
+    },
   },
   data() {
     const query = this.$route.query;
@@ -98,7 +102,7 @@ export default {
       complete: false,
       results: [],
       scrollDisabled: true,
-      scrollDistance: window.innerHeight*2,
+      scrollDistance: window.innerHeight * 2,
       batchSize: batchSize,
       offset: 0,
       page: 0,
@@ -232,7 +236,7 @@ export default {
         showMerged = false;
       }
 
-      if (showMerged && selected.Type === MediaLive || selected.Type === MediaVideo|| selected.Type === MediaAnimated) {
+      if (showMerged && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
           this.$viewer.play({video: selected});
         } else {
@@ -303,10 +307,46 @@ export default {
         this.listen = true;
       });
     },
-    updateQuery() {
-      if (this.loading) return;
+    updateSettings(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
 
-      this.filter.q = this.filter.q.trim();
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.settings.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.settings[key] = value.trim();
+            break;
+          default:
+            this.settings[key] = value;
+        }
+      }
+    },
+    updateFilter(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.filter.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.filter[key] = value.trim();
+            break;
+          default:
+            this.filter[key] = value;
+        }
+      }
+    },
+    updateQuery(props) {
+      this.updateFilter(props);
+
+      if (this.loading) return;
 
       const query = {
         view: this.settings.view
@@ -341,10 +381,10 @@ export default {
 
       return params;
     },
-    refresh() {
-      if (this.loading) {
-        return;
-      }
+    refresh(props) {
+      this.updateSettings(props);
+
+      if (this.loading) return;
 
       this.loading = true;
       this.page = 0;

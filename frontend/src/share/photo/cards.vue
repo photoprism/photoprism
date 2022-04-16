@@ -157,21 +157,15 @@ export default {
     },
     openPhoto: {
       type: Function,
-      default: () => () => {
-        console.warn('cards view: openPhoto is undefined');
-      },
+      default: () => {},
     },
     editPhoto: {
       type: Function,
-      default: () => () => {
-        console.warn('cards view: editPhoto is undefined');
-      },
+      default: () => {},
     },
     openLocation: {
       type: Function,
-      default: () => () => {
-        console.warn('cards view: openLocation is undefined');
-      },
+      default: () => {},
     },
     album: {
       type: Object,
