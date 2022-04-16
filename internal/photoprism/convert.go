@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime/debug"
-	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -76,7 +75,6 @@ func (c *Convert) Start(path string, force bool) (err error) {
 
 	err = godirwalk.Walk(path, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
-			log.Errorf("convert: %s", strings.Replace(err.Error(), path, "", 1))
 			return godirwalk.SkipNode
 		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
@@ -87,7 +85,7 @@ func (c *Convert) Start(path string, force bool) (err error) {
 			}()
 
 			if mutex.MainWorker.Canceled() {
-				return errors.New("convert: canceled")
+				return errors.New("canceled")
 			}
 
 			isDir := info.IsDir()

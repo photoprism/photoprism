@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
-	"strings"
 	"sync"
 
 	"github.com/photoprism/photoprism/pkg/media"
@@ -141,12 +140,17 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
-			log.Errorf("index: %s", strings.Replace(err.Error(), originalsPath, "", 1))
 			return godirwalk.SkipNode
 		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
+			defer func() {
+				if r := recover(); r != nil {
+					log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
+				}
+			}()
+
 			if mutex.MainWorker.Canceled() {
-				return errors.New("indexing canceled")
+				return errors.New("canceled")
 			}
 
 			isDir := info.IsDir()

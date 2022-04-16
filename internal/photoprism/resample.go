@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime/debug"
-	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -69,7 +68,6 @@ func (w *Resample) Start(force bool) (err error) {
 
 	err = godirwalk.Walk(originalsPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
-			log.Errorf("resample: %s", strings.Replace(err.Error(), originalsPath, "", 1))
 			return godirwalk.SkipNode
 		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
@@ -80,7 +78,7 @@ func (w *Resample) Start(force bool) (err error) {
 			}()
 
 			if mutex.MainWorker.Canceled() {
-				return errors.New("resample: canceled")
+				return errors.New("canceled")
 			}
 
 			isDir := info.IsDir()

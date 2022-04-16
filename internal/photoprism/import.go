@@ -8,7 +8,6 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sort"
-	"strings"
 	"sync"
 
 	"github.com/photoprism/photoprism/pkg/media"
@@ -118,7 +117,6 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
-			log.Errorf("import: %s", strings.Replace(err.Error(), importPath, "", 1))
 			return godirwalk.SkipNode
 		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
@@ -129,7 +127,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			}()
 
 			if mutex.MainWorker.Canceled() {
-				return errors.New("import canceled")
+				return errors.New("canceled")
 			}
 
 			isDir := info.IsDir()

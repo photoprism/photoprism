@@ -875,7 +875,7 @@ func (m *Photo) SetPrimary(fileUID string) (err error) {
 		Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
-		return fmt.Errorf("found no valid jpeg for %s", m.PhotoUID)
+		return fmt.Errorf("found no jpeg for photo uid %s", clean.Log(m.PhotoUID))
 	} else {
 		fileUID = files[0]
 	}
