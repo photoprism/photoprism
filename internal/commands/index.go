@@ -33,7 +33,7 @@ var indexFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "archived, a",
-		Usage: "update archived photos, do not skip them",
+		Usage: "do not skip files belonging to archived photos",
 	},
 	cli.BoolFlag{
 		Name:  "cleanup, c",
