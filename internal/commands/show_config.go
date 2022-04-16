@@ -17,7 +17,7 @@ var ShowConfigCommand = cli.Command{
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "md, m",
-			Usage: "render valid Markdown",
+			Usage: "render Markdown without line breaks",
 		},
 	},
 	Action: showConfigAction,

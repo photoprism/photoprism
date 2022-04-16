@@ -12,8 +12,9 @@ import (
 
 // ShowFormatsCommand configures the command name, flags, and action.
 var ShowFormatsCommand = cli.Command{
-	Name:  "formats",
-	Usage: "Lists supported media and sidecar file formats",
+	Name:    "formats",
+	Aliases: []string{"filetypes"},
+	Usage:   "Lists supported media and sidecar file formats",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "short, s",
@@ -21,7 +22,7 @@ var ShowFormatsCommand = cli.Command{
 		},
 		cli.BoolFlag{
 			Name:  "md, m",
-			Usage: "render valid Markdown",
+			Usage: "render Markdown without line breaks",
 		},
 	},
 	Action: showFormatsAction,
