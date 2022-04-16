@@ -21,7 +21,7 @@ sleep 3
 # create new multibuilder.
 docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
 
-echo "Starting 'photoprism/$1' multi-arch build from docker/${1/-//}$4/Dockerfile..."
+echo "Starting 'photoprism/$1' multi-arch build based on docker/${1/-//}$4/Dockerfile..."
 echo "Build Arch: $2"
 
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
