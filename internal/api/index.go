@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -30,8 +31,9 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		conf := service.Config()
+		settings := conf.Settings()
 
-		if !conf.Settings().Features.Library {
+		if !settings.Features.Library {
 			AbortFeatureDisabled(c)
 			return
 		}
@@ -45,12 +47,12 @@ func StartIndexing(router *gin.RouterGroup) {
 			return
 		}
 
+		// Configure index options.
 		path := conf.OriginalsPath()
+		convert := settings.Index.Convert && conf.SidecarWritable()
+		skipArchived := settings.Index.SkipArchived
 
-		ind := service.Index()
-
-		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
-		indOpt := photoprism.NewIndexOptions(filepath.Clean(f.Path), f.Rescan, convert, true, false)
+		indOpt := photoprism.NewIndexOptions(filepath.Clean(f.Path), f.Rescan, convert, true, false, skipArchived)
 
 		if len(indOpt.Path) > 1 {
 			event.InfoMsg(i18n.MsgIndexingFiles, clean.Log(indOpt.Path))
@@ -58,16 +60,20 @@ func StartIndexing(router *gin.RouterGroup) {
 			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}
 
+		// Start indexing.
+		ind := service.Index()
 		indexed := ind.Start(indOpt)
 
 		RemoveFromFolderCache(entity.RootOriginals)
 
-		prg := service.Purge()
-
+		// Configure purge options.
 		prgOpt := photoprism.PurgeOptions{
 			Path:   filepath.Clean(f.Path),
 			Ignore: indexed,
 		}
+
+		// Start purging.
+		prg := service.Purge()
 
 		if files, photos, err := prg.Start(prgOpt); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})

@@ -307,8 +307,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 	}
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
-		// Restore photos that have been purged automatically.
+		// Restore pictures that have been purged automatically.
 		photo.DeletedAt = nil
+	} else if o.SkipArchived && photo.DeletedAt != nil {
+		// Skip archived pictures for faster indexing.
+		result.Status = IndexArchived
+		return result
 	}
 
 	// Extra labels to ba added when new files have a photo id.

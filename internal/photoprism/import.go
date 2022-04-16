@@ -102,8 +102,9 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	filesImported := 0
 
-	convert := imp.conf.Settings().Index.Convert && imp.conf.SidecarWritable()
-	indexOpt := NewIndexOptions("/", true, convert, true, false)
+	settings := imp.conf.Settings()
+	convert := settings.Index.Convert && imp.conf.SidecarWritable()
+	indexOpt := NewIndexOptions("/", true, convert, true, false, false)
 	skipRaw := imp.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 

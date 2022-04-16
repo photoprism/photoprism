@@ -17,11 +17,11 @@ var ShowFormatsCommand = cli.Command{
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "short, s",
-			Usage: "hides format descriptions",
+			Usage: "hide format descriptions",
 		},
 		cli.BoolFlag{
 			Name:  "md, m",
-			Usage: "renders valid Markdown",
+			Usage: "render valid Markdown",
 		},
 	},
 	Action: showFormatsAction,

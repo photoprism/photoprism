@@ -17,7 +17,7 @@ var ShowFiltersCommand = cli.Command{
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "md, m",
-			Usage: "renders valid Markdown",
+			Usage: "render valid Markdown",
 		},
 	},
 	Action: showFiltersAction,

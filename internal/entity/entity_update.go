@@ -6,11 +6,15 @@ import (
 
 // Update updates an existing record in the database.
 func Update(m interface{}, keyNames ...string) (err error) {
+	// Unscoped so soft-deleted records can still be updated.
+	db := UnscopedDb()
+
 	// New entity?
-	if Db().NewRecord(m) {
+	if db.NewRecord(m) {
 		return fmt.Errorf("new record")
 	}
 
+	// Extract interface slice with all values including zero.
 	values, keys, err := ModelValues(m, keyNames...)
 
 	// Has keys and values?
@@ -20,16 +24,16 @@ func Update(m interface{}, keyNames ...string) (err error) {
 		return fmt.Errorf("record keys missing")
 	}
 
-	// Perform update.
-	res := Db().Model(m).Updates(values)
+	// Update values.
+	result := db.Model(m).Updates(values)
 
 	// Successful?
-	if res.Error != nil {
+	if result.Error != nil {
 		return err
-	} else if res.RowsAffected > 1 {
+	} else if result.RowsAffected > 1 {
 		log.Debugf("entity: updated statement affected more than one record - possible bug")
 		return nil
-	} else if res.RowsAffected == 1 {
+	} else if result.RowsAffected == 1 {
 		return nil
 	} else if Count(m, keyNames, keys) != 1 {
 		return fmt.Errorf("record not found")

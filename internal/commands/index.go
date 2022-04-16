@@ -29,7 +29,11 @@ var IndexCommand = cli.Command{
 var indexFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "re-index all originals, including unchanged files",
+		Usage: "rescan all originals, including unchanged files",
+	},
+	cli.BoolFlag{
+		Name:  "archived, a",
+		Usage: "update archived photos, do not skip them",
 	},
 	cli.BoolFlag{
 		Name:  "cleanup, c",
@@ -70,7 +74,7 @@ func indexAction(ctx *cli.Context) error {
 
 	if w := service.Index(); w != nil {
 		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
-		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false)
+		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"))
 
 		indexed = w.Start(opt)
 	}

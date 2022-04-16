@@ -11,14 +11,16 @@ func Count(m interface{}, keys []string, values []interface{}) int {
 		return -1
 	}
 
-	var count int
+	db, count := UnscopedDb(), 0
 
-	stmt := Db().Model(m)
+	stmt := db.Model(m)
 
+	// Compose where condition.
 	for k := range keys {
 		stmt.Where("? = ?", gorm.Expr(keys[k]), values[k])
 	}
 
+	// Fetch count from database.
 	if err := stmt.Count(&count).Error; err != nil {
 		log.Debugf("entity: %s (count records)", err)
 		return -1
