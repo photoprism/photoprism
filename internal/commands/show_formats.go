@@ -17,7 +17,7 @@ var ShowFormatsCommand = cli.Command{
 	Usage:   "Lists supported media and sidecar file formats",
 	Flags: append(report.CliFlags, cli.BoolFlag{
 		Name:  "short, s",
-		Usage: "hide links to documentation",
+		Usage: "hide format descriptions",
 	}),
 	Action: showFormatsAction,
 }

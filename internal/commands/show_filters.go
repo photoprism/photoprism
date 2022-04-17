@@ -12,10 +12,11 @@ import (
 
 // ShowFiltersCommand configures the command name, flags, and action.
 var ShowFiltersCommand = cli.Command{
-	Name:   "filters",
-	Usage:  "Displays a search filter overview with examples",
-	Flags:  report.CliFlags,
-	Action: showFiltersAction,
+	Name:    "filters",
+	Aliases: []string{"search"},
+	Usage:   "Displays a search filter overview with examples",
+	Flags:   report.CliFlags,
+	Action:  showFiltersAction,
 }
 
 // showFiltersAction displays a search filter overview with examples.
