@@ -64,10 +64,11 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \
     /scripts/install-go.sh && \
-    /scripts/install-go-tools.sh && \
     /scripts/cleanup.sh && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go" && \
+    /scripts/install-go-tools.sh && \
+    chmod -R a+rwX /go && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
@@ -93,8 +94,7 @@ RUN cp /go/bin/gosu /sbin/gosu && \
     echo "alias go=richgo ll='ls -alh'" > /photoprism/.bash_aliases && \
     echo "alias go=richgo ll='ls -alh'" > /root/.bash_aliases && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
-    chmod -R a+rwX /go
+    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert
 
 # set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
