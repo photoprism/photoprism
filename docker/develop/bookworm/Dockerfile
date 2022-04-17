@@ -44,7 +44,10 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     groupadd -f -r -g 109 render && \
     groupadd -f -g 1000 photoprism && \
     useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
-    chmod 777 /photoprism && \
+    groupadd -f -g 99 unraid && \
+    useradd -m -g 99 -u 99 -d /photoprism -G video,render unraid && \
+    chown 1000:1000 /photoprism && \
+    chmod -R a+rwX /photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       libc6 ca-certificates sudo bash tzdata \
       gpg zip unzip wget curl rsync make nano \
