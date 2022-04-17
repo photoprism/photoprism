@@ -108,7 +108,6 @@ var Extensions = FileExtensions{
 	".yml":      YamlFile,
 	".yaml":     YamlFile,
 	".json":     JsonFile,
-	".toml":     TomlFile,
 	".txt":      TextFile,
 	".md":       MarkdownFile,
 	".markdown": MarkdownFile,

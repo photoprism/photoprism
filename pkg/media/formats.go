@@ -38,7 +38,6 @@ var Formats = map[fs.Type]Type{
 	fs.YamlFile:     Sidecar,
 	fs.TextFile:     Sidecar,
 	fs.JsonFile:     Sidecar,
-	fs.TomlFile:     Sidecar,
 	fs.MarkdownFile: Sidecar,
 	fs.UnknownType:  Other,
 }

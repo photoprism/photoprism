@@ -44,7 +44,6 @@ const (
 	AaeFile      Type = "aae"  // Apple image edits sidecar file (based on XML).
 	XmlFile      Type = "xml"  // XML metadata / config / sidecar file.
 	YamlFile     Type = "yml"  // YAML metadata / config / sidecar file.
-	TomlFile     Type = "toml" // Tom's Obvious, Minimal Language sidecar file.
 	JsonFile     Type = "json" // JSON metadata / config / sidecar file.
 	TextFile     Type = "txt"  // Text config / sidecar file.
 	MarkdownFile Type = "md"   // Markdown text sidecar file.

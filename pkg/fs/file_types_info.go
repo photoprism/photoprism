@@ -35,7 +35,6 @@ var TypeInfo = map[Type]string{
 	XmlFile:      "Extensible Markup Language",
 	JsonFile:     "Serialized JSON Data (Exiftool, Google Photos)",
 	YamlFile:     "Serialized YAML Data (Config, Metadata)",
-	TomlFile:     "Serialized TOML Data (Tom's Obvious, Minimal Language)",
 	TextFile:     "Plain Text",
 	MarkdownFile: "Markdown Formatted Text",
 	UnknownType:  "Other",
