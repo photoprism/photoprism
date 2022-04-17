@@ -7,17 +7,11 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// Table returns a text-formatted table, optionally as valid Markdown,
+// MarkdownTable returns a text-formatted table with caption, optionally as valid Markdown,
 // so the output can be pasted into the docs.
-func Table(rows [][]string, cols []string, markDown bool) string {
-	return TableWithCaption(rows, cols, "", markDown)
-}
-
-// TableWithCaption returns a text-formatted table with caption, optionally as valid Markdown,
-// so the output can be pasted into the docs.
-func TableWithCaption(rows [][]string, cols []string, caption string, markDown bool) string {
+func MarkdownTable(rows [][]string, cols []string, caption string, valid bool) string {
 	// Escape Markdown.
-	if markDown {
+	if valid {
 		for i := range rows {
 			for j := range rows[i] {
 				if strings.ContainsRune(rows[i][j], '|') {
@@ -33,8 +27,8 @@ func TableWithCaption(rows [][]string, cols []string, caption string, markDown b
 	borders := tablewriter.Border{
 		Left:   true,
 		Right:  true,
-		Top:    !markDown,
-		Bottom: !markDown,
+		Top:    !valid,
+		Bottom: !valid,
 	}
 
 	// Render.
@@ -45,7 +39,7 @@ func TableWithCaption(rows [][]string, cols []string, caption string, markDown b
 		table.SetCaption(true, caption)
 	}
 
-	table.SetAutoWrapText(!markDown)
+	table.SetAutoWrapText(!valid)
 	table.SetAutoFormatHeaders(false)
 	table.SetHeader(cols)
 	table.SetBorders(borders)

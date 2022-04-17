@@ -12,14 +12,9 @@ import (
 
 // ShowConfigCommand configures the command name, flags, and action.
 var ShowConfigCommand = cli.Command{
-	Name:  "config",
-	Usage: "Shows global config option names and values",
-	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "md, m",
-			Usage: "render Markdown without line breaks",
-		},
-	},
+	Name:   "config",
+	Usage:  "Shows global config option names and values",
+	Flags:  report.CliFlags,
 	Action: showConfigAction,
 }
 
@@ -30,7 +25,9 @@ func showConfigAction(ctx *cli.Context) error {
 
 	rows, cols := conf.Report()
 
-	fmt.Println(report.Table(rows, cols, ctx.Bool("md")))
+	result, err := report.Render(rows, cols, report.CliFormat(ctx))
 
-	return nil
+	fmt.Println(result)
+
+	return err
 }

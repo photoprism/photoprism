@@ -12,14 +12,9 @@ import (
 
 // ShowFiltersCommand configures the command name, flags, and action.
 var ShowFiltersCommand = cli.Command{
-	Name:  "filters",
-	Usage: "Displays a search filter overview with examples",
-	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "md, m",
-			Usage: "render Markdown without line breaks",
-		},
-	},
+	Name:   "filters",
+	Usage:  "Displays a search filter overview with examples",
+	Flags:  report.CliFlags,
 	Action: showFiltersAction,
 }
 
@@ -35,7 +30,9 @@ func showFiltersAction(ctx *cli.Context) error {
 		}
 	})
 
-	fmt.Println(report.Table(rows, cols, ctx.Bool("md")))
+	result, err := report.Render(rows, cols, report.CliFormat(ctx))
 
-	return nil
+	fmt.Println(result)
+
+	return err
 }

@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/photoprism/photoprism/internal/meta"
-
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
@@ -16,16 +15,10 @@ var ShowTagsCommand = cli.Command{
 	Name:    "tags",
 	Aliases: []string{"metadata"},
 	Usage:   "Shows an overview of the supported metadata tags",
-	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "short, s",
-			Usage: "hide links to documentation",
-		},
-		cli.BoolFlag{
-			Name:  "md, m",
-			Usage: "render Markdown without line breaks",
-		},
-	},
+	Flags: append(report.CliFlags, cli.BoolFlag{
+		Name:  "short, s",
+		Usage: "hide links to documentation",
+	}),
 	Action: showTagsAction,
 }
 
@@ -42,14 +35,21 @@ func showTagsAction(ctx *cli.Context) error {
 		}
 	})
 
-	// Show table with the supported metadata tags.
-	fmt.Println(report.Table(rows, cols, ctx.Bool("md")))
+	// Output overview of supported metadata tags.
+	format := report.CliFormat(ctx)
+	result, err := report.Render(rows, cols, format)
 
-	// Show documentation links for those who want to delve deeper.
-	if !ctx.Bool("short") {
-		fmt.Printf("## Metadata Tags by Namespace ##\n\n")
-		fmt.Println(report.Table(meta.Docs, []string{"Namespace", "Documentation"}, ctx.Bool("md")))
+	fmt.Println(result)
+
+	if err != nil || ctx.Bool("short") || format == report.TSV {
+		return err
 	}
 
-	return nil
+	// Documentation links for those who want to delve deeper.
+	result, err = report.Render(meta.Docs, []string{"Namespace", "Documentation"}, format)
+
+	fmt.Printf("## Metadata Tags by Namespace ##\n\n")
+	fmt.Println(result)
+
+	return err
 }
