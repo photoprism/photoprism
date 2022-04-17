@@ -15,8 +15,6 @@ RUN make all install DESTDIR=/opt/photoprism
 #### Base Image: Debian 11, Codename "Bullseye"
 FROM photoprism/develop:bullseye-slim
 
-LABEL maintainer="Michael Mayer <hello@photoprism.app>"
-
 ARG TARGETARCH
 ARG BUILD_TAG
 

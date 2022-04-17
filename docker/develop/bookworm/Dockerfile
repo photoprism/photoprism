@@ -1,7 +1,15 @@
-#### Base Image: Debian 12, Codename "Bookworm"
+#### Base Image: Debian 12, Codename 'Bookworm'
 FROM debian:bookworm-slim
 
-LABEL maintainer="Michael Mayer <hello@photoprism.app>"
+# Open Container Initiative (OCI) Annotations
+# see https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism Build Environment"
+LABEL org.opencontainers.image.description="Debian 12, Codename 'Bookworm'"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
+LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
 ARG TARGETARCH
 ARG BUILD_TAG
@@ -56,6 +64,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \
     /scripts/install-go.sh && \
+    /scripts/install-go-tools.sh && \
     /scripts/cleanup.sh && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go" && \
@@ -69,20 +78,16 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache \
-    && \
-    wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
+      /photoprism/storage/cache
+
+# download models and testdata
+RUN wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# install Go tools
-RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
-    /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
-    /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
-    /usr/local/go/bin/go install github.com/psampaz/go-mod-outdated@latest && \
-    /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
-    cp /go/bin/gosu /sbin/gosu && \
+# set up dev environment & tools
+RUN cp /go/bin/gosu /sbin/gosu && \
     chown root:root /sbin/gosu && \
     chmod 755 /sbin/gosu && \
     echo "alias go=richgo ll='ls -alh'" > /photoprism/.bash_aliases && \

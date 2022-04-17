@@ -1,7 +1,15 @@
-#### Base Image: Ubuntu 22.04, Codename "Jammy Jellyfish"
+#### Base Image: Ubuntu 22.04, Codename 'Jammy Jellyfish'
 FROM ubuntu:jammy
 
-LABEL maintainer="Michael Mayer <hello@photoprism.app>"
+# Open Container Initiative (OCI) Annotations
+# see https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism Build Environment"
+LABEL org.opencontainers.image.description="Ubuntu 22.04, Codename 'Jammy Jellyfish'"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
+LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
 ARG TARGETARCH
 ARG BUILD_TAG

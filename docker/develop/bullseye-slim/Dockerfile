@@ -1,7 +1,15 @@
-#### Base Image: Debian 11, Codename "Bullseye"
+#### Base Image: Debian 11, Codename 'Bullseye'
 FROM debian:bullseye-slim
 
-LABEL maintainer="Michael Mayer <hello@photoprism.app>"
+# Open Container Initiative (OCI) Annotations
+# see https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism Production Base Image"
+LABEL org.opencontainers.image.description="Debian 11, Codename 'Bullseye'"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
+LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
 ARG TARGETARCH
 ARG BUILD_TAG
