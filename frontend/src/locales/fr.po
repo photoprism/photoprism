@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-18 10:07+0000\n"
+"PO-Revision-Date: 2022-04-13 18:06+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "frontend/fr/>\n"
@@ -320,7 +320,7 @@ msgstr "Artiste"
 
 #: src/dialog/photo/files.vue:131 src/dialog/photo/files.vue:128
 msgid "Aspect Ratio"
-msgstr "Ratio d’aspect"
+msgstr "Format d'image"
 
 #: src/pages/settings/account.vue:81
 msgid "At least 6 characters."
@@ -331,8 +331,8 @@ msgid ""
 "Automatically create JPEGs for other file types so that they can be "
 "displayed in a browser."
 msgstr ""
-"Les fichiers de certains types comme RAW doivent être convertis pour être "
-"affichables par le navigateur."
+"Crée automatiquement des fichiers JPEG pour les autres types de fichiers "
+"afin de les rendre affichables dans le navigateur."
 
 #: src/pages/settings/general.vue:361
 msgid "Automatically creates albums of special moments, trips, and places."

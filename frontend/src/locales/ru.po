@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-04-07 22:13+0000\n"
+"Last-Translator: Alexander Listratenkov <a.listratenkov@gmail.com>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/ru/>\n"
 "Language: ru\n"
@@ -392,9 +392,8 @@ msgid "Bug Report"
 msgstr "Отчет об ошибке"
 
 #: src/common/notify.js:99
-#, fuzzy
 msgid "Busy, please wait…"
-msgstr "В работе, пожалуйста, ждите…"
+msgstr "Занят, пожалуйста, подождите…"
 
 #: src/component/navigation.vue:238 src/component/navigation.vue:924
 #: src/routes.js:147 src/routes.js:154
@@ -750,9 +749,8 @@ msgstr "Скачать отдельные файлы и zip-архивы."
 #: src/pages/library/files.vue:99 src/share/album/clipboard.vue:37
 #: src/share/photo/cards.vue:54 src/share/photo/clipboard.vue:39
 #: src/share/photo/list.vue:53 src/share/photos.vue:486
-#, fuzzy
 msgid "Downloading…"
-msgstr "Скачивание…"
+msgstr "Загрузка…"
 
 #: src/pages/settings/advanced.vue:282
 msgid "Downscaling Filter"
@@ -1544,11 +1542,13 @@ msgid "Note:"
 msgstr "Примечание:"
 
 #: src/dialog/account/add.vue:22
-#, fuzzy
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
-msgstr "Пометка."
+msgstr ""
+"Примечание: Только серверы WebDAV, такие как Nextcloud или PhotoPrism, могут "
+"быть настроены как удаленная служба для резервного копирования и загрузки "
+"файлов."
 
 #: src/pages/settings/account.vue:20
 msgid ""
