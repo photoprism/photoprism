@@ -47,7 +47,7 @@ fi
 if [[ ${INIT_SCRIPT} ]] && [[ -f "${INIT_SCRIPT}" ]]; then
   if [[ $(/usr/bin/id -u) == "0" ]]; then
     echo "started $DOCKER_TAG as root ($PHOTOPRISM_ARCH-$DOCKER_ENV)"
-    /bin/bash  -c "${INIT_SCRIPT}"
+    /bin/bash -c "${INIT_SCRIPT}"
   else
     echo "started $DOCKER_TAG as uid $(/usr/bin/id -u) ($PHOTOPRISM_ARCH-$DOCKER_ENV)"
     /usr/bin/sudo -E "${INIT_SCRIPT}"
@@ -96,15 +96,15 @@ if [[ ${INIT_SCRIPT} ]] && [[ $(/usr/bin/id -u) == "0" ]] && [[ ${PHOTOPRISM_UID
     echo "${@}"
 
     # run command as uid:gid
-    ([[ ${DOCKER_ENV} != "prod" ]] || /sbin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "/scripts/audit.sh") \
-     && /sbin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
+    ([[ ${DOCKER_ENV} != "prod" ]] || /usr/local/sbin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "/scripts/audit.sh") \
+     && /usr/local/sbin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
   else
     echo "switching to uid ${PHOTOPRISM_UID}"
     echo "${@}"
 
     # run command as uid
-    ([[ ${DOCKER_ENV} != "prod" ]] || /sbin/gosu "${PHOTOPRISM_UID}" "/scripts/audit.sh") \
-     && /sbin/gosu "${PHOTOPRISM_UID}" "$@" &
+    ([[ ${DOCKER_ENV} != "prod" ]] || /usr/local/sbin/gosu "${PHOTOPRISM_UID}" "/scripts/audit.sh") \
+     && /usr/local/sbin/gosu "${PHOTOPRISM_UID}" "$@" &
   fi
 else
   echo "running as uid $(id -u)"

@@ -18,7 +18,9 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
+    PS1="\u@$DOCKER_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
+    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2"
@@ -33,22 +35,23 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    groupadd -f -r -g 44 video && \
-    groupadd -f -r -g 109 render && \
-    groupadd -f -g 1000 photoprism && \
-    useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
-    groupadd -f -g 99 unraid && \
-    useradd -m -g 99 -u 99 -d /photoprism -G video,render unraid && \
-    chown 1000:1000 /photoprism && \
-    chmod -R a+rwX /photoprism && \
-    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get -qq install \
       libc6 ca-certificates sudo bash tzdata \
       gpg zip unzip wget curl rsync make nano \
       jq lsof lshw sqlite3 mariadb-client \
       exiftool darktable rawtherapee libheif-examples librsvg2-bin \
       ffmpeg ffmpegthumbnailer libavcodec-extra libwebm1 \
       libmatroska7 libdvdread8 libebml5 libgav1-0 libatomic1 \
-      libx264-163 libx265-199 && \
+      libx264-163 libx265-199 \
+    && \
+    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    cp /etc/skel/.bashrc /root/.bashrc && \
+    /scripts/create-users.sh && \
+    /scripts/cleanup.sh && \
+    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
@@ -59,11 +62,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache \
-    && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
-    /scripts/cleanup.sh
+      /photoprism/storage/cache
 
 # define default directory and user
 WORKDIR /photoprism

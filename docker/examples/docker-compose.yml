@@ -90,7 +90,6 @@ services:
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
-      HOME: "/photoprism" # do not change or remove
     ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
     # user: "1000:1000"
     ## Share hardware devices with FFmpeg and TensorFlow (optional):

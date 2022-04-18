@@ -24,7 +24,9 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
+    PS1="\u@$DOCKER_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
+    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
@@ -85,9 +87,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    mv /opt/photoprism/sbin/gosu /sbin/gosu && \
-    chown root:root /sbin/gosu && \
-    chmod 755 /sbin/gosu && \
+    mv /opt/photoprism/usr/local/sbin/gosu /usr/local/sbin/gosu && \
+    chown root:root /usr/local/sbin/gosu && \
+    chmod 755 /usr/local/sbin/gosu && \
     groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \
     useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
     chmod 777 /photoprism && \

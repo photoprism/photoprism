@@ -22,7 +22,6 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
@@ -88,9 +87,9 @@ EXPOSE 2342
 
 # copy dist files
 COPY --from=build /opt/photoprism/ /opt/photoprism
-RUN mv /opt/photoprism/sbin/gosu /sbin/gosu && \
-    chown root:root /sbin/gosu && \
-    chmod 755 /sbin/gosu
+RUN mv /opt/photoprism/usr/local/sbin/gosu /usr/local/sbin/gosu && \
+    chown root:root /usr/local/sbin/gosu && \
+    chmod 755 /usr/local/sbin/gosu
 
 # set container entrypoint script
 ENTRYPOINT ["/scripts/entrypoint.sh"]

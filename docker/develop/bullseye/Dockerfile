@@ -19,13 +19,14 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
     NODE_ENV="production" \
+    PS1="\u@$DOCKER_TAG:\w\$ " \
+    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
+    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
-    LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib" \
     TF_CPP_MIN_LOG_LEVEL="0" \
     GOPATH="/go" \
     GOBIN="/go/bin" \
-    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
@@ -45,7 +46,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     groupadd -f -g 1000 photoprism && \
     useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
     chmod 777 /photoprism && \
-    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get -qq install \
       apt-utils \
       gpg \
       pkg-config \
@@ -103,9 +105,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-tensorflow.sh && \
     /scripts/install-darktable.sh && \
+    /scripts/install-go-tools.sh && \
+    echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
+    cp /etc/skel/.bashrc /root/.bashrc && \
+    /scripts/create-users.sh && \
     /scripts/cleanup.sh && \
-    mkdir -p "/go/src" "/go/bin" && \
-    chmod -R 777 "/go" && \
+    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
@@ -116,27 +123,13 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache \
-    && \
-    wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
+      /photoprism/storage/cache
+
+# download models and testdata
+RUN wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
-
-# install Go tools
-RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
-    /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
-    /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
-    /usr/local/go/bin/go install github.com/psampaz/go-mod-outdated@latest && \
-    /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
-    cp /go/bin/gosu /sbin/gosu && \
-    chown root:root /sbin/gosu && \
-    chmod 755 /sbin/gosu && \
-    echo "alias go=richgo ll='ls -alh'" > /photoprism/.bash_aliases && \
-    echo "alias go=richgo ll='ls -alh'" > /root/.bash_aliases && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
-    chmod -R a+rwX /go
 
 # set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"

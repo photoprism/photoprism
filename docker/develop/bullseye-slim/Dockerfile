@@ -18,7 +18,9 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
+    PS1="\u@$DOCKER_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
+    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2"
@@ -63,6 +65,13 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-darktable.sh && \
+    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    cp /etc/skel/.bashrc /root/.bashrc && \
+    /scripts/create-users.sh && \
+    /scripts/cleanup.sh && \
+    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
@@ -73,11 +82,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache \
-    && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
-    /scripts/cleanup.sh
+      /photoprism/storage/cache
 
 # define default directory and user
 WORKDIR /photoprism
