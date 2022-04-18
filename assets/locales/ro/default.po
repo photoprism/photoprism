@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-10 15:48+0000\n"
+"PO-Revision-Date: 2022-04-07 22:13+0000\n"
 "Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/backend/ro/>\n"
@@ -40,7 +40,7 @@ msgid "Not found"
 msgstr "Nu a fost găsit"
 
 msgid "File not found"
-msgstr "Fișierul nu a fost găsit"
+msgstr "Fișier nedescoperit"
 
 msgid "Selection not found"
 msgstr "Selecția nu a fost găsită"
@@ -58,7 +58,7 @@ msgid "Label not found"
 msgstr "Eticheta nu a fost găsită"
 
 msgid "Album not found"
-msgstr "Albumul nu a fost găsit"
+msgstr "Album nedescoperit"
 
 msgid "Subject not found"
 msgstr "Subiectul nu a fost găsit"
@@ -85,10 +85,10 @@ msgid "No items selected"
 msgstr "Niciun element selectat"
 
 msgid "Failed creating file, please check permissions"
-msgstr "Nu s-a putut crea fișierul, vă rugăm să verificați permisiunile"
+msgstr "Nu a reușit să creeze fișierul, vă rugăm să verificați permisiunile"
 
 msgid "Failed creating folder, please check permissions"
-msgstr "Nu s-a putut crea dosarul, vă rugăm să verificați permisiunile"
+msgstr "Nu s-a reușit crearea dosarului, vă rugăm să verificați permisiunile"
 
 msgid "Could not connect, please try again"
 msgstr "Nu s-a putut conecta, vă rugăm să încercați din nou"
@@ -97,25 +97,25 @@ msgid "Invalid password, please try again"
 msgstr "Parolă invalidă, vă rugăm să încercați din nou"
 
 msgid "Feature disabled"
-msgstr "Funcție dezactivată"
+msgstr "Caracteristică dezactivată"
 
 msgid "No labels selected"
-msgstr "Nu au fost selectate etichete"
+msgstr "Nu sunt selectate etichete"
 
 msgid "No albums selected"
-msgstr "Niciun album selectat"
+msgstr "Nu sunt selectate albume"
 
 msgid "No files available for download"
 msgstr "Nu există fișiere disponibile pentru descărcare"
 
 msgid "Failed to create zip file"
-msgstr "Nu s-a putut crea fișierul zip"
+msgstr "Nu a reușit să creeze fișierul zip"
 
 msgid "Invalid credentials"
 msgstr "Acreditări nevalabile"
 
 msgid "Invalid link"
-msgstr "Link invalid"
+msgstr "Legătură invalidă"
 
 msgid "Invalid name"
 msgstr "Nume invalid"
@@ -124,7 +124,7 @@ msgid "Busy, please try again later"
 msgstr "Ocupat, vă rugăm să încercați din nou mai târziu"
 
 msgid "Changes successfully saved"
-msgstr "Modificările au fost salvate"
+msgstr "Modificări salvate cu succes"
 
 msgid "Album created"
 msgstr "Album creat"
@@ -134,13 +134,13 @@ msgstr "Album salvat"
 
 #, c-format
 msgid "Album %s deleted"
-msgstr "Albumul %s a fost șters"
+msgstr "Album %s șters"
 
 msgid "Album contents cloned"
-msgstr "Conținutul albumului a fost clonat"
+msgstr "Conținutul albumului clonat"
 
 msgid "File removed from stack"
-msgstr "Fișierul a fost eliminat din stivă"
+msgstr "Fișier eliminat din stivă"
 
 msgid "File deleted"
 msgstr "Fișier șters"
@@ -172,7 +172,7 @@ msgid "Account saved"
 msgstr "Cont salvat"
 
 msgid "Account deleted"
-msgstr "Contul a fost șters"
+msgstr "Cont șters"
 
 msgid "Settings saved"
 msgstr "Setări salvate"
@@ -199,19 +199,19 @@ msgid "Indexing files in %s"
 msgstr "Indexarea fișierelor în %s"
 
 msgid "Indexing canceled"
-msgstr "Indexarea a fost anulată"
+msgstr "Indexare anulată"
 
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr "S-au eliminat %d fișiere și %d fotografii"
+msgstr "Eliminat fișierele %d și fotografiile %d"
 
 #, c-format
 msgid "Moving files from %s"
-msgstr "Se mută fișiere din %s"
+msgstr "Mutarea fișierelor din %s"
 
 #, c-format
 msgid "Copying files from %s"
-msgstr "Se copie fișiere din %s"
+msgstr "Copierea fișierelor din %s"
 
 msgid "Labels deleted"
 msgstr "Etichete șterse"
@@ -223,13 +223,13 @@ msgid "Subject saved"
 msgstr "Subiect salvat"
 
 msgid "Subject deleted"
-msgstr "Subiectul a fost șters"
+msgstr "Subiect eliminat"
 
 msgid "Person saved"
 msgstr "Persoană salvată"
 
 msgid "Person deleted"
-msgstr "Persoana a fost ștearsă"
+msgstr "Persoană eliminată"
 
 #, c-format
 msgid "%d files uploaded in %d s"
@@ -245,7 +245,7 @@ msgid "Selection restored"
 msgstr "Selecție restabilită"
 
 msgid "Selection marked as private"
-msgstr "Selecția a fost marcată ca privată"
+msgstr "Selecție marcată ca fiind privată"
 
 msgid "Albums deleted"
 msgstr "Albume șterse"

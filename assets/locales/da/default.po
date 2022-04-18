@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-04 21:42+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-04-06 07:19+0000\n"
+"Last-Translator: TheresaNoRights <theresagresch+weblate@gmail.com>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "backend/da/>\n"
 "Language: da\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11\n"
+"X-Generator: Weblate 4.11.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "Uventet fejl, prøv venligst igen"
@@ -33,22 +33,22 @@ msgstr "Kunne ikke slettes"
 
 #, c-format
 msgid "%s already exists"
-msgstr ""
+msgstr "%s findes allerede"
 
 msgid "Not found"
-msgstr ""
+msgstr "Ikke fundet"
 
 msgid "File not found"
-msgstr ""
+msgstr "Fil ikke fundet"
 
 msgid "Selection not found"
-msgstr ""
+msgstr "Valg ikke fundet"
 
 msgid "Entity not found"
-msgstr ""
+msgstr "Enhed ikke fundet"
 
 msgid "Account not found"
-msgstr ""
+msgstr "Konto ikke fundet"
 
 msgid "User not found"
 msgstr ""
