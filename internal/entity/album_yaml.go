@@ -62,5 +62,5 @@ func (m *Album) LoadFromYaml(fileName string) error {
 
 // YamlFileName returns the YAML file name.
 func (m *Album) YamlFileName(albumsPath string) string {
-	return filepath.Join(albumsPath, m.AlbumType, m.AlbumUID+fs.YamlExt)
+	return filepath.Join(albumsPath, m.AlbumType, m.AlbumUID+fs.ExtYAML)
 }

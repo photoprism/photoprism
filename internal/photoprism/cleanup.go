@@ -15,9 +15,9 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // CleanUp represents a worker that deletes unneeded data and files.
@@ -64,7 +64,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 	}
 
 	// Thumbnails storage path.
-	thumbPath := w.conf.ThumbPath()
+	thumbPath := w.conf.ThumbCachePath()
 
 	// Find and remove orphan thumbnail files.
 	if err := fastwalk.Walk(thumbPath, func(fileName string, info os.FileMode) error {
@@ -82,7 +82,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		}
 
 		hash := base[:i]
-		logName := sanitize.Log(fs.RelName(fileName, thumbPath))
+		logName := clean.Log(fs.RelName(fileName, thumbPath))
 
 		if ok := fileHashes[hash]; ok {
 			// Do nothing.
@@ -119,7 +119,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 
 		if opt.Dry {
 			orphans++
-			log.Infof("cleanup: orphan photo %s would be removed", sanitize.Log(p.PhotoUID))
+			log.Infof("cleanup: orphan photo %s would be removed", clean.Log(p.PhotoUID))
 			continue
 		}
 

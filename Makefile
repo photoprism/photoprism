@@ -35,15 +35,16 @@ all: dep build-js
 dep: dep-tensorflow dep-npm dep-js dep-go
 build: build-go
 test: test-js test-go
-test-go: reset-testdb run-test-go
-test-pkg: reset-testdb run-test-pkg
-test-api: reset-testdb run-test-api
-test-short: reset-testdb run-test-short
+test-go: reset-sqlite run-test-go
+test-pkg: reset-sqlite run-test-pkg
+test-api: reset-sqlite run-test-api
+test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
 acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
 acceptance-private-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop
 acceptance-public-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
+acceptance-run-chromium-smoke: acceptance-private-restart acceptance-private-smoke acceptance-private-stop acceptance-restart acceptance-smoke acceptance-stop
 acceptance-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop acceptance-restart acceptance acceptance-stop
 acceptance-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop acceptance-restart acceptance-firefox acceptance-stop
 test-all: test acceptance-run-chromium
@@ -52,6 +53,8 @@ clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
 .SILENT: help;
+logs:
+	docker-compose logs -f
 help:
 	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
 fix-permissions:
@@ -110,19 +113,19 @@ acceptance-restart:
 	rm -rf storage/acceptance/originals/2011
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
-	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
+	./photoprism -p --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
 acceptance-stop:
-	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
+	./photoprism -p --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
 acceptance-private-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
-	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
+	./photoprism -a --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
 acceptance-private-stop:
-	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
+	./photoprism -a --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
 start:
-	go run cmd/photoprism/photoprism.go start -d
+	./photoprism start -d
 stop:
-	go run cmd/photoprism/photoprism.go stop
+	./photoprism stop
 terminal:
 	docker-compose exec -u $(UID) photoprism bash
 rootshell: root-terminal
@@ -195,22 +198,37 @@ test-js:
 acceptance:
 	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run acceptance && cd ..)
+acceptance-smoke:
+	$(info Running JS acceptance tests in Chrome...)
+	(cd frontend &&	npm run acceptance-smoke && cd ..)
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox && cd ..)
 acceptance-private:
 	$(info Running JS acceptance-private tests in Chrome...)
 	(cd frontend &&	npm run acceptance-private && cd ..)
+acceptance-private-smoke:
+	$(info Running JS acceptance-private tests in Chrome...)
+	(cd frontend &&	npm run acceptance-private-smoke && cd ..)
 acceptance-private-firefox:
 	$(info Running JS acceptance-private tests in Firefox...)
 	(cd frontend &&	npm run acceptance-private-firefox && cd ..)
-reset-mariadb:
-	$(info Resetting photoprism database...)
-	mysql < scripts/sql/reset-mariadb.sql
-reset-acceptance:
+reset-mariadb-testdb:
+	$(info Resetting testdb database...)
+	mysql < scripts/sql/reset-testdb.sql
+reset-mariadb-local:
+	$(info Resetting local database...)
+	mysql < scripts/sql/reset-local.sql
+reset-mariadb-acceptance:
 	$(info Resetting acceptance database...)
-	echo "DROP DATABASE IF EXISTS acceptance;\nCREATE DATABASE IF NOT EXISTS acceptance;" | mysql
-reset-testdb:
+	mysql < scripts/sql/reset-acceptance.sql
+reset-mariadb-photoprism:
+	$(info Resetting photoprism database...)
+	mysql < scripts/sql/reset-photoprism.sql
+reset-mariadb: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-photoprism
+reset-testdb: reset-sqlite reset-mariadb-testdb
+reset-acceptance: reset-mariadb-acceptance
+reset-sqlite:
 	$(info Removing test database files...)
 	find ./internal -type f -name ".test.*" -delete
 run-test-short:
@@ -274,8 +292,12 @@ docker-develop-impish:
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 impish /impish
+docker-develop-jammy:
+	docker pull --platform=amd64 ubuntu:jammy
+	docker pull --platform=arm64 ubuntu:jammy
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy
 docker-preview: docker-preview-bookworm
-docker-preview-all: docker-preview docker-preview-bullseye docker-preview-buster docker-preview-impish
+docker-preview-all: docker-preview docker-preview-bullseye docker-preview-buster docker-preview-jammy
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
@@ -303,21 +325,27 @@ docker-preview-buster:
 	docker pull --platform=amd64 debian:buster-slim
 	docker pull --platform=arm64 debian:buster-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-buster /buster
+docker-preview-jammy:
+	docker pull --platform=amd64 photoprism/develop:jammy
+	docker pull --platform=arm64 photoprism/develop:jammy
+	docker pull --platform=amd64 ubuntu:jammy
+	docker pull --platform=arm64 ubuntu:jammy
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-jammy /jammy
 docker-preview-impish:
-	docker pull --platform=amd64 photoprism/develop:latest
-	docker pull --platform=arm64 photoprism/develop:latest
+	docker pull --platform=amd64 photoprism/develop:impish
+	docker pull --platform=arm64 photoprism/develop:impish
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
 docker-release: docker-release-bookworm
-docker-release-all: docker-release docker-release-bullseye docker-release-buster docker-release-impish
+docker-release-all: docker-release docker-release-bullseye docker-release-buster docker-release-jammy
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm  "-t photoprism/photoprism:latest"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/photoprism:latest"
 docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm debian:bookworm-slim
@@ -338,30 +366,44 @@ docker-release-buster:
 	docker pull --platform=amd64 debian:buster-slim
 	docker pull --platform=arm64 debian:buster-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
+docker-release-jammy:
+	docker pull --platform=amd64 photoprism/develop:jammy
+	docker pull --platform=arm64 photoprism/develop:jammy
+	docker pull --platform=amd64 ubuntu:jammy
+	docker pull --platform=arm64 ubuntu:jammy
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy
 docker-release-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
+start-local:
+	docker-compose -f docker-compose.local.yml up -d
+stop-local:
+	docker-compose -f docker-compose.local.yml stop
 docker-local: docker-local-bookworm
-docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish
+docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
-	scripts/docker/build.sh photoprism bookworm /bookworm
+	scripts/docker/build.sh photoprism bookworm /bookworm "-t photoprism/photoprism:local"
 docker-local-bullseye:
 	docker pull photoprism/develop:bullseye
 	docker pull photoprism/develop:bullseye-slim
-	scripts/docker/build.sh photoprism bullseye /bullseye
+	scripts/docker/build.sh photoprism bullseye /bullseye "-t photoprism/photoprism:local"
 docker-local-buster:
 	docker pull photoprism/develop:buster
 	docker pull debian:buster-slim
-	scripts/docker/build.sh photoprism buster /buster
+	scripts/docker/build.sh photoprism buster /buster "-t photoprism/photoprism:local"
+docker-local-jammy:
+	docker pull photoprism/develop:jammy
+	docker pull ubuntu:jammy
+	scripts/docker/build.sh photoprism jammy /jammy "-t photoprism/photoprism:local"
 docker-local-impish:
 	docker pull photoprism/develop:impish
 	docker pull ubuntu:impish
-	scripts/docker/build.sh photoprism impish /impish
+	scripts/docker/build.sh photoprism impish /impish "-t photoprism/photoprism:local"
 docker-local-develop: docker-local-develop-bookworm
 docker-local-develop-all: docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:

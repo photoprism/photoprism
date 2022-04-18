@@ -9,8 +9,8 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -69,7 +69,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 
 		// TODO: User defined title format
 		if names != "" {
-			log.Debugf("photo: %s title based on %s (%s)", m.String(), english.Plural(len(people), "person", "people"), sanitize.Log(names))
+			log.Debugf("photo: %s title based on %s (%s)", m.String(), english.Plural(len(people), "person", "people"), clean.Log(names))
 
 			if l := len([]rune(names)); l > 35 {
 				m.SetTitle(names, SrcAuto)
@@ -83,7 +83,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", names, loc.City(), m.TakenAt.Format("2006")), SrcAuto)
 			}
 		} else if title := labels.Title(loc.Name()); title != "" {
-			log.Debugf("photo: %s title based on label %s", m.String(), sanitize.Log(title))
+			log.Debugf("photo: %s title based on label %s", m.String(), clean.Log(title))
 			if loc.NoCity() || loc.LongCity() || loc.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -108,7 +108,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		knownLocation = true
 
 		if names != "" {
-			log.Debugf("photo: %s title based on %s (%s)", m.String(), english.Plural(len(people), "person", "people"), sanitize.Log(names))
+			log.Debugf("photo: %s title based on %s (%s)", m.String(), english.Plural(len(people), "person", "people"), clean.Log(names))
 
 			if l := len([]rune(names)); l > 35 {
 				m.SetTitle(names, SrcAuto)
@@ -122,7 +122,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", names, m.Place.City(), m.TakenAt.Format("2006")), SrcAuto)
 			}
 		} else if title := labels.Title(fileTitle); title != "" {
-			log.Debugf("photo: %s title based on label %s", m.String(), sanitize.Log(title))
+			log.Debugf("photo: %s title based on label %s", m.String(), clean.Log(title))
 			if m.Place.NoCity() || m.Place.LongCity() || m.Place.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -164,7 +164,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	}
 
 	if m.PhotoTitle != oldTitle {
-		log.Debugf("photo: %s has new title %s [%s]", m.String(), sanitize.Log(m.PhotoTitle), time.Since(start))
+		log.Debugf("photo: %s has new title %s [%s]", m.String(), clean.Log(m.PhotoTitle), time.Since(start))
 	}
 
 	return nil

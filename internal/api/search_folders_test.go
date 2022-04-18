@@ -44,7 +44,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 
 		for _, folder := range folders {
 			assert.Equal(t, "", folder.FolderDescription)
-			assert.Equal(t, entity.TypeDefault, folder.FolderType)
+			assert.Equal(t, entity.MediaUnknown, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
 			assert.Equal(t, entity.RootOriginals, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
@@ -81,7 +81,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 
 		for _, folder := range folders {
 			assert.Equal(t, "", folder.FolderDescription)
-			assert.Equal(t, entity.TypeDefault, folder.FolderType)
+			assert.Equal(t, entity.MediaUnknown, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
 			assert.Equal(t, entity.RootOriginals, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
@@ -127,7 +127,7 @@ func TestGetFoldersImport(t *testing.T) {
 
 		for _, folder := range folders {
 			assert.Equal(t, "", folder.FolderDescription)
-			assert.Equal(t, entity.TypeDefault, folder.FolderType)
+			assert.Equal(t, entity.MediaUnknown, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
 			assert.Equal(t, entity.RootImport, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
@@ -164,7 +164,7 @@ func TestGetFoldersImport(t *testing.T) {
 
 		for _, folder := range folders {
 			assert.Equal(t, "", folder.FolderDescription)
-			assert.Equal(t, entity.TypeDefault, folder.FolderType)
+			assert.Equal(t, entity.MediaUnknown, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
 			assert.Equal(t, entity.RootImport, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)

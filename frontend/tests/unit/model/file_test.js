@@ -74,7 +74,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file = new File(values);
@@ -91,7 +91,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Name: "1/2/IMG123.jpg",
-      Type: "raw",
+      FileType: "raw",
     };
     const file3 = new File(values3);
     assert.equal(file3.thumbnailUrl("tile_224"), "/api/v1/svg/raw");
@@ -99,7 +99,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
       Sidecar: true,
     };
@@ -112,7 +112,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file = new File(values);
@@ -123,7 +123,7 @@ describe("model/file", () => {
     const values = {
       InstanceID: 5,
       UID: "ABC123",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file = new File(values);
@@ -135,7 +135,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Width: 500,
       Height: 700,
       Name: "1/2/IMG123.jpg",
@@ -147,7 +147,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Width: 900,
       Height: 850,
       Name: "1/2/IMG123.jpg",
@@ -159,7 +159,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Width: 750,
       Height: 850,
       Name: "1/2/IMG123.jpg",
@@ -174,7 +174,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
       CreatedAt: "2012-07-08T14:45:39Z",
       UpdatedAt: "2012-07-08T14:45:39Z",
@@ -188,7 +188,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Duration: 8009,
       Name: "1/2/IMG123.jpg",
       CreatedAt: "2012-07-08T14:45:39Z",
@@ -203,7 +203,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Duration: 8009,
       Name: "1/2/IMG123.jpg",
       CreatedAt: "2012-07-08T14:45:39Z",
@@ -215,7 +215,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Duration: 8009,
       Name: "1/2/IMG123.jpg",
       Video: true,
@@ -228,7 +228,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Duration: 8009,
       Name: "1/2/IMG123.jpg",
       Sidecar: true,
@@ -236,7 +236,21 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file3 = new File(values3);
-    assert.equal(file3.typeInfo(), "Sidecar");
+    assert.equal(file3.typeInfo(), "Sidecar JPG");
+    const values4 = {
+      InstanceID: 5,
+      UID: "ABC123",
+      Hash: "54ghtfd",
+      FileType: "gif",
+      MediaType: "image",
+      Duration: 8009,
+      Name: "1/2/IMG123.jpg",
+      Sidecar: true,
+      CreatedAt: "2012-07-08T14:45:39Z",
+      UpdatedAt: "2012-07-08T14:45:39Z",
+    };
+    const file4 = new File(values4);
+    assert.equal(file4.typeInfo(), "Sidecar GIF Image");
   });
 
   it("should get size info", () => {
@@ -244,7 +258,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Size: 8009,
       Name: "1/2/IMG123.jpg",
       CreatedAt: "2012-07-08T14:45:39Z",
@@ -256,7 +270,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Size: 8009999987,
       Name: "1/2/IMG123.jpg",
       CreatedAt: "2012-07-08T14:45:39Z",
@@ -268,7 +282,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Size: 8009999987,
       Name: "1/2/IMG123.jpg",
       Width: 500,
@@ -285,7 +299,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Duration: 8009,
       Favorite: false,
       Name: "1/2/IMG123.jpg",
@@ -303,7 +317,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Duration: 8009,
       Favorite: true,
       Name: "1/2/IMG123.jpg",
@@ -321,7 +335,7 @@ describe("model/file", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Duration: 8009,
       Favorite: true,
       Name: "1/2/IMG123.jpg",
@@ -342,7 +356,7 @@ describe("model/file", () => {
       PhotoUID: "bgad457",
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Duration: 8009,
       Favorite: true,
       Name: "1/2/IMG123.jpg",

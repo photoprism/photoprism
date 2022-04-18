@@ -122,15 +122,16 @@ export default {
       type: Object,
       default: () => {},
     },
-    view: String,
+    view: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
     const q = query["q"] ? query["q"] : "";
     const category = query["category"] ? query["category"] : "";
-    const filter = {q, category};
-    const settings = {};
 
     let categories = [{"value": "", "text": this.$gettext("All Categories")}];
 
@@ -154,8 +155,8 @@ export default {
       offset: 0,
       page: 0,
       selection: [],
-      settings: settings,
-      filter: filter,
+      settings: {},
+      filter: {q, category},
       lastFilter: {},
       routeName: routeName,
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),

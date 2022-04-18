@@ -33,7 +33,7 @@ func MimeType(filename string) string {
 		return ""
 	} else if t, err := filetype.Get(buffer); err == nil && t != filetype.Unknown {
 		return t.MIME.Value
-	} else if t := filetype.GetType(NormalizeExt(filename)); t != filetype.Unknown {
+	} else if t := filetype.GetType(NormalizedExt(filename)); t != filetype.Unknown {
 		return t.MIME.Value
 	} else {
 		return ""

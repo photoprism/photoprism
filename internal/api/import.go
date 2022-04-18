@@ -18,8 +18,8 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // StartImport imports media files from a directory and converts/indexes them as needed.
@@ -53,7 +53,7 @@ func StartImport(router *gin.RouterGroup) {
 		subPath := ""
 		path := conf.ImportPath()
 
-		if subPath = sanitize.Path(c.Param("path")); subPath != "" && subPath != "/" {
+		if subPath = clean.Path(c.Param("path")); subPath != "" && subPath != "/" {
 			subPath = strings.Replace(subPath, ".", "", -1)
 			path = filepath.Join(path, subPath)
 		} else if f.Path != "" {
@@ -70,15 +70,15 @@ func StartImport(router *gin.RouterGroup) {
 		var opt photoprism.ImportOptions
 
 		if f.Move {
-			event.InfoMsg(i18n.MsgMovingFilesFrom, sanitize.Log(filepath.Base(path)))
+			event.InfoMsg(i18n.MsgMovingFilesFrom, clean.Log(filepath.Base(path)))
 			opt = photoprism.ImportOptionsMove(path)
 		} else {
-			event.InfoMsg(i18n.MsgCopyingFilesFrom, sanitize.Log(filepath.Base(path)))
+			event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(path)))
 			opt = photoprism.ImportOptionsCopy(path)
 		}
 
 		if len(f.Albums) > 0 {
-			log.Debugf("import: adding files to album %s", sanitize.Log(strings.Join(f.Albums, " and ")))
+			log.Debugf("import: adding files to album %s", clean.Log(strings.Join(f.Albums, " and ")))
 			opt.Albums = f.Albums
 		}
 
@@ -86,9 +86,9 @@ func StartImport(router *gin.RouterGroup) {
 
 		if subPath != "" && path != conf.ImportPath() && fs.IsEmpty(path) {
 			if err := os.Remove(path); err != nil {
-				log.Errorf("import: failed deleting empty folder %s: %s", sanitize.Log(path), err)
+				log.Errorf("import: failed deleting empty folder %s: %s", clean.Log(path), err)
 			} else {
-				log.Infof("import: deleted empty folder %s", sanitize.Log(path))
+				log.Infof("import: deleted empty folder %s", clean.Log(path))
 			}
 		}
 

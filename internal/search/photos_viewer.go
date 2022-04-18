@@ -3,7 +3,6 @@ package search
 import (
 	"encoding/json"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/viewer"
@@ -26,7 +25,7 @@ func (photo Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken 
 		TakenAtLocal: photo.TakenAtLocal,
 		Description:  photo.PhotoDescription,
 		Favorite:     photo.PhotoFavorite,
-		Playable:     photo.PhotoType == entity.TypeVideo || photo.PhotoType == entity.TypeLive,
+		Playable:     photo.IsPlayable(),
 		DownloadUrl:  viewer.DownloadUrl(photo.FileHash, apiUri, downloadToken),
 		Width:        photo.FileWidth,
 		Height:       photo.FileHeight,
@@ -67,7 +66,7 @@ func (photo GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadTo
 		TakenAtLocal: photo.TakenAtLocal,
 		Description:  photo.PhotoDescription,
 		Favorite:     photo.PhotoFavorite,
-		Playable:     photo.PhotoType == entity.TypeVideo || photo.PhotoType == entity.TypeLive,
+		Playable:     photo.IsPlayable(),
 		DownloadUrl:  viewer.DownloadUrl(photo.FileHash, apiUri, downloadToken),
 		Width:        photo.FileWidth,
 		Height:       photo.FileHeight,

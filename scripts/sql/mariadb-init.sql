@@ -13,13 +13,21 @@ CREATE DATABASE IF NOT EXISTS keycloak;
 CREATE USER IF NOT EXISTS keycloak@'%' IDENTIFIED BY 'keycloak';
 GRANT ALL PRIVILEGES ON keycloak.* TO keycloak@'%';
 
-CREATE DATABASE IF NOT EXISTS photoprism_latest;
-CREATE USER IF NOT EXISTS photoprism_latest@'%' IDENTIFIED BY 'photoprism_latest';
-GRANT ALL PRIVILEGES ON photoprism_latest.* TO photoprism_latest@'%';
+CREATE DATABASE IF NOT EXISTS `local`;
+CREATE USER IF NOT EXISTS 'local'@'%' IDENTIFIED BY 'local';
+GRANT ALL PRIVILEGES ON `local`.* TO 'local'@'%';
 
-CREATE DATABASE IF NOT EXISTS photoprism_preview;
-CREATE USER IF NOT EXISTS photoprism_preview@'%' IDENTIFIED BY 'photoprism_preview';
-GRANT ALL PRIVILEGES ON photoprism_preview.* TO photoprism_preview@'%';
+CREATE DATABASE IF NOT EXISTS latest;
+CREATE USER IF NOT EXISTS latest@'%' IDENTIFIED BY 'latest';
+GRANT ALL PRIVILEGES ON latest.* TO latest@'%';
+
+CREATE DATABASE IF NOT EXISTS preview;
+CREATE USER IF NOT EXISTS preview@'%' IDENTIFIED BY 'preview';
+GRANT ALL PRIVILEGES ON preview.* TO preview@preview;
+
+CREATE DATABASE IF NOT EXISTS testdb;
+CREATE USER IF NOT EXISTS testdb@'%' IDENTIFIED BY 'testdb';
+GRANT ALL PRIVILEGES ON testdb.* TO testdb@'%';
 
 CREATE DATABASE IF NOT EXISTS acceptance;
 CREATE USER IF NOT EXISTS acceptance@'%' IDENTIFIED BY 'acceptance';

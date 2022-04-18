@@ -62,7 +62,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 	})
 	t.Run("1990* or 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
 		var f form.SearchPhotos
-		Db().LogMode(true)
+		// Db().LogMode(true)
 		f.Filename = "1990* or 2790/07/27900704_070228_D6D51B6C.jpg"
 		f.Merged = true
 

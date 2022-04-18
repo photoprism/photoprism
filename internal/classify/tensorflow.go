@@ -14,7 +14,7 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
@@ -148,7 +148,7 @@ func (t *TensorFlow) loadModel() error {
 
 	modelPath := path.Join(t.modelsPath, t.modelName)
 
-	log.Infof("classify: loading %s", sanitize.Log(filepath.Base(modelPath)))
+	log.Infof("classify: loading %s", clean.Log(filepath.Base(modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(modelPath, t.modelTags, nil)

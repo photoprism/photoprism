@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="500" class="modal-dialog sponsor-dialog" @keydown.esc="close">
+  <v-dialog :value="show" lazy persistent max-width="500" class="modal-dialog sponsor-dialog" @keydown.esc="close">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>

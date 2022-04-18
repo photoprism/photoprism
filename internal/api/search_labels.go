@@ -35,7 +35,7 @@ func SearchLabels(router *gin.RouterGroup) {
 		result, err := search.Labels(f)
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 

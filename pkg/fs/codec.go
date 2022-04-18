@@ -9,8 +9,8 @@ import (
 type FileCodec string
 
 const (
-	CodecAvc   FileCodec = "avc1"
-	CodecHvc   FileCodec = "hvc1"
-	CodecJpeg  FileCodec = "jpeg"
-	CodecOther FileCodec = ""
+	CodecAVC  FileCodec = "avc1"
+	CodecHEVC FileCodec = "hvc1"
+	CodecAV1  FileCodec = "av01"
+	CodecJpeg FileCodec = "jpeg"
 )

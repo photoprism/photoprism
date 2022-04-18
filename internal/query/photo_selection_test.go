@@ -36,28 +36,55 @@ func TestPhotoSelection(t *testing.T) {
 }
 
 func TestFileSelection(t *testing.T) {
-	t.Run("no items selected", func(t *testing.T) {
-		f := form.Selection{
-			Photos: []string{},
+	none := form.Selection{Photos: []string{}}
+
+	one := form.Selection{Photos: []string{"pt9jtdre2lvl0yh8"}}
+
+	two := form.Selection{Photos: []string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"}}
+
+	many := form.Selection{
+		Files:  []string{"ft8es39w45bnlqdw"},
+		Photos: []string{"pt9jtdre2lvl0y21", "pt9jtdre2lvl0y19", "pr2xu7myk7wrbk38", "pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"},
+	}
+
+	t.Run("EmptySelection", func(t *testing.T) {
+		sel := DownloadSelection(true, false, true)
+		if results, err := SelectedFiles(none, sel); err == nil {
+			t.Fatal("error expected")
+		} else {
+			assert.Empty(t, results)
 		}
-
-		r, err := SelectedFiles(f, FileSelectionAll())
-
-		assert.Equal(t, "no items selected", err.Error())
-		assert.Empty(t, r)
 	})
-	t.Run("files selected", func(t *testing.T) {
-		f := form.Selection{
-			Photos: []string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"},
-		}
-
-		r, err := SelectedFiles(f, FileSelectionAll())
-
-		if err != nil {
+	t.Run("DownloadSelectionRawSidecarPrivate", func(t *testing.T) {
+		sel := DownloadSelection(true, true, false)
+		if results, err := SelectedFiles(one, sel); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.Len(t, results, 2)
 		}
-
-		assert.Equal(t, 3, len(r))
-		assert.IsType(t, entity.Files{}, r)
+	})
+	t.Run("DownloadSelectionRawOriginals", func(t *testing.T) {
+		sel := DownloadSelection(true, false, true)
+		if results, err := SelectedFiles(two, sel); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Len(t, results, 2)
+		}
+	})
+	t.Run("ShareSelectionOriginals", func(t *testing.T) {
+		sel := ShareSelection(false)
+		if results, err := SelectedFiles(many, sel); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Len(t, results, 6)
+		}
+	})
+	t.Run("ShareSelectionPrimary", func(t *testing.T) {
+		sel := ShareSelection(true)
+		if results, err := SelectedFiles(many, sel); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Len(t, results, 4)
+		}
 	})
 }

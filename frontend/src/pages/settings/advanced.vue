@@ -247,7 +247,7 @@
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.RawPresets"
-                  :disabled="busy"
+                  :disabled="busy || settings.DisableRaw"
                   class="ma-0 pa-0"
                   color="secondary-dark"
                   :label="$gettext('Use Presets')"
@@ -262,7 +262,7 @@
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.DisableDarktable"
-                  :disabled="busy"
+                  :disabled="busy || settings.DisableRaw"
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
                   :label="$gettext('Disable Darktable')"
@@ -277,7 +277,7 @@
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.DisableRawtherapee"
-                  :disabled="busy"
+                  :disabled="busy || settings.DisableRaw"
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
                   :label="$gettext('Disable RawTherapee')"

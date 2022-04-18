@@ -7,14 +7,14 @@ fi
 
 set -e
 
-BUILD_OS=$(/bin/uname -s)
-BUILD_ARCH=$("$(/usr/bin/dirname "$0")/dist/arch.sh")
-BUILD_DATE=$(/bin/date -u +%y%m%d)
+BUILD_OS=$(uname -s)
+BUILD_ARCH=$("$(dirname "$0")/dist/arch.sh")
+BUILD_DATE=$(date -u +%y%m%d)
 BUILD_VERSION=$(git describe --always)
 BUILD_TAG=${BUILD_DATE}-${BUILD_VERSION}
-BUILD_ID=${BUILD_TAG}-${BUILD_OS}-${BUILD_ARCH^^}
+BUILD_ID=${BUILD_TAG}-${BUILD_OS}-$(echo "${BUILD_ARCH}" |  tr '[:lower:]' '[:upper:]')
 BUILD_NAME=${2:-photoprism}
-GO_BIN=${GO_BIN:-/usr/local/go/bin/go}
+GO_BIN=${GO_BIN:-go}
 GO_VER=$($GO_BIN version)
 
 echo "Building PhotoPrism ${BUILD_ID} ($1)..."
@@ -30,11 +30,11 @@ else
 fi
 
 # build binary
-echo "=> compiling \"$BUILD_NAME\" with \"${GO_VER^}\""
+echo "=> compiling \"$BUILD_NAME\" with \"${GO_VER}\""
 echo "=> ${BUILD_CMD[*]}"
 "${BUILD_CMD[@]}"
 
 # show size
-/usr/bin/du -h "${BUILD_NAME}"
+du -h "${BUILD_NAME}"
 
 echo "Done."

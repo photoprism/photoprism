@@ -1,120 +1,140 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
-import Page from "../acceptance/page-model";
+import Page from "../page-model/page";
+import Account from "../page-model/account";
+import Settings from "../page-model/settings";
+import Menu from "../page-model/menu";
 
 fixture`Test authentication`.page`${testcafeconfig.url}`;
 
 const page = new Page();
-test.meta("testID", "authentication-000")(
-  "Time to start instance (will be marked as unstable)",
+const account = new Account();
+const menu = new Menu();
+const settings = new Settings();
+
+test.meta("testID", "authentication-001").meta({ type: "smoke" })("Login and Logout", async (t) => {
+  await t.navigateTo("/browse");
+
+  await t
+    .expect(page.nameInput.visible)
+    .ok()
+    .expect(Selector(".input-search input").visible)
+    .notOk();
+
+  await t.typeText(page.nameInput, "admin", { replace: true });
+
+  await t.expect(page.loginAction.hasAttribute("disabled", "disabled")).ok();
+
+  await t.typeText(page.passwordInput, "photoprism", { replace: true });
+
+  await t.expect(page.passwordInput.hasAttribute("type", "password")).ok();
+
+  await t.click(page.togglePasswordMode);
+
+  await t.expect(page.passwordInput.hasAttribute("type", "text")).ok();
+
+  await t.click(page.togglePasswordMode);
+
+  await t.expect(page.passwordInput.hasAttribute("type", "password")).ok();
+
+  await t.click(page.loginAction);
+
+  await t.expect(Selector(".input-search input", { timeout: 7000 }).visible).ok();
+
+  await page.logout();
+
+  await t
+    .expect(page.nameInput.visible)
+    .ok()
+    .expect(Selector(".input-search input").visible)
+    .notOk();
+
+  await t.navigateTo("/settings");
+  await t
+    .expect(page.nameInput.visible)
+    .ok()
+    .expect(Selector(".input-search input").visible)
+    .notOk();
+});
+
+test.meta("testID", "authentication-002").meta({ type: "smoke" })(
+  "Login with wrong credentials",
   async (t) => {
-    await t.wait(5000);
+    await page.login("wrong", "photoprism");
+    await t.navigateTo("/favorites");
+
+    await t
+      .expect(page.nameInput.visible)
+      .ok()
+      .expect(Selector(".input-search input").visible)
+      .notOk();
+
+    await page.login("admin", "abcdefg");
+    await t.navigateTo("/archive");
+
+    await t
+      .expect(page.nameInput.visible)
+      .ok()
+      .expect(Selector(".input-search input").visible)
+      .notOk();
   }
 );
 
-test.meta("testID", "authentication-001")("Login and Logout", async (t) => {
-  //await t.wait(800000);
+test.meta("testID", "authentication-003").meta({ type: "smoke" })("Change password", async (t) => {
   await t.navigateTo("/browse");
-  await t
-    .expect(Selector(".input-name input").visible)
-    .ok()
-    .expect(Selector(".input-search input").visible)
-    .notOk()
-    .typeText(Selector(".input-name input"), "admin", { replace: true })
-    .expect(Selector(".action-confirm").hasAttribute("disabled", "disabled"))
-    .ok()
-    .typeText(Selector(".input-password input"), "photoprism", { replace: true })
-    .expect(Selector(".input-password input").hasAttribute("type", "password"))
-    .ok()
-    .click(Selector(".v-input__icon--append"))
-    .expect(Selector(".input-password input").hasAttribute("type", "text"))
-    .ok()
-    .click(Selector(".v-input__icon--append"))
-    .expect(Selector(".input-password input").hasAttribute("type", "password"))
-    .ok()
-    .click(Selector(".action-confirm"))
-    .expect(Selector(".input-search input", { timeout: 7000 }).visible)
-    .ok();
-  await page.openNav();
-  await t
-    .click(Selector('div[title="Logout"]'))
-    .expect(Selector(".input-name input").visible)
-    .ok()
-    .expect(Selector(".input-search input").visible)
-    .notOk();
-  await t.navigateTo("/settings");
-  await t
-    .expect(Selector(".input-name input").visible)
-    .ok()
-    .expect(Selector(".input-search input").visible)
-    .notOk();
-});
-
-//TODO test all pages not accessible while logged out
-
-test.meta("testID", "authentication-002")("Login with wrong credentials", async (t) => {
-  await page.login("wrong", "photoprism");
-  await t
-    .navigateTo("/favorites")
-    .expect(Selector(".input-name input").visible)
-    .ok()
-    .expect(Selector(".input-search input").visible)
-    .notOk();
-  await page.login("admin", "abcdefg");
-  await t
-    .navigateTo("/archive")
-    .expect(Selector(".input-name input").visible)
-    .ok()
-    .expect(Selector(".input-search input").visible)
-    .notOk();
-});
-
-test.meta("testID", "authentication-003")("Change password", async (t) => {
   await page.login("admin", "photoprism");
-  await t.expect(Selector(".input-search input").visible).ok();
-  await page.openNav();
+  await t.expect(Selector(".input-search input", { timeout: 15000 }).visible).ok();
+  await menu.openPage("settings");
+
   await t
-    .click(Selector(".nav-settings"))
-    .click(Selector("#tab-settings-account"))
-    .typeText(Selector(".input-current-password input"), "wrong", { replace: true })
-    .typeText(Selector(".input-new-password input"), "photoprism", { replace: true })
-    .expect(Selector(".action-confirm").hasAttribute("disabled", "disabled"))
-    .ok()
-    .typeText(Selector(".input-retype-password input"), "photoprism", { replace: true })
-    .expect(Selector(".action-confirm").hasAttribute("disabled", "disabled"))
-    .notOk()
-    .click(".action-confirm")
-    .typeText(Selector(".input-current-password input"), "photoprism", { replace: true })
-    .typeText(Selector(".input-new-password input"), "photoprism123", { replace: true })
-    .expect(Selector(".action-confirm").hasAttribute("disabled", "disabled"))
-    .ok()
-    .typeText(Selector(".input-retype-password input"), "photoprism123", { replace: true })
-    .expect(Selector(".action-confirm").hasAttribute("disabled", "disabled"))
-    .notOk()
-    .click(".action-confirm");
-  await page.openNav();
-  await t.click(Selector('div[title="Logout"]'));
+    .click(settings.accountTab)
+    .typeText(account.currentPassword, "wrong", { replace: true })
+    .typeText(account.newPassword, "photoprism", { replace: true });
+
+  await t.expect(account.confirm.hasAttribute("disabled", "disabled")).ok();
+
+  await t.typeText(account.retypePassword, "photoprism", { replace: true });
+
+  await t.expect(account.confirm.hasAttribute("disabled", "disabled")).notOk();
+
+  await t
+    .click(account.confirm)
+    .typeText(account.currentPassword, "photoprism", { replace: true })
+    .typeText(account.newPassword, "photoprism123", { replace: true });
+
+  await t.expect(account.confirm.hasAttribute("disabled", "disabled")).ok();
+
+  await t.typeText(account.retypePassword, "photoprism123", { replace: true });
+
+  await t.expect(account.confirm.hasAttribute("disabled", "disabled")).notOk();
+
+  await t.click(account.confirm);
+  await page.logout();
+  if (t.browser.platform === "mobile") {
+    await t.wait(7000);
+  }
   await page.login("admin", "photoprism");
+  await t.navigateTo("/archive");
+
   await t
-    .navigateTo("/archive")
-    .expect(Selector(".input-name input").visible)
+    .expect(page.nameInput.visible)
     .ok()
     .expect(Selector(".input-search input").visible)
     .notOk();
+
   await page.login("admin", "photoprism123");
   await t.expect(Selector(".input-search input").visible).ok();
-  await page.openNav();
+  await menu.openPage("settings");
+
   await t
-    .click(Selector(".nav-settings", { timeout: 7000 }))
-    .click(Selector("#tab-settings-account"))
-    .typeText(Selector(".input-current-password input"), "photoprism123", { replace: true })
-    .typeText(Selector(".input-new-password input"), "photoprism", { replace: true })
-    .typeText(Selector(".input-retype-password input"), "photoprism", { replace: true })
-    .click(".action-confirm");
-  await page.openNav();
-  await t.click(Selector('div[title="Logout"]'));
+    .click(settings.accountTab)
+    .typeText(account.currentPassword, "photoprism123", { replace: true })
+    .typeText(account.newPassword, "photoprism", { replace: true })
+    .typeText(account.retypePassword, "photoprism", { replace: true })
+    .click(account.confirm);
+  await page.logout();
   await page.login("admin", "photoprism");
+
   await t.expect(Selector(".input-search input").visible).ok();
-  await page.openNav();
-  await t.click(Selector('div[title="Logout"]'));
+  await page.logout();
 });

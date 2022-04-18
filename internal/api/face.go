@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/gin-gonic/gin"
 
@@ -58,7 +58,7 @@ func UpdateFace(router *gin.RouterGroup) {
 			return
 		}
 
-		faceId := sanitize.Token(c.Param("id"))
+		faceId := clean.Token(c.Param("id"))
 		m := entity.FindFace(faceId)
 
 		if m == nil {
@@ -70,7 +70,7 @@ func UpdateFace(router *gin.RouterGroup) {
 		if !f.FaceHidden && f.FaceHidden == m.FaceHidden {
 			// Do nothing.
 		} else if err := m.Update("FaceHidden", f.FaceHidden); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
@@ -78,7 +78,7 @@ func UpdateFace(router *gin.RouterGroup) {
 		if f.SubjUID == "" {
 			// Do nothing.
 		} else if err := m.SetSubjectUID(f.SubjUID); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 

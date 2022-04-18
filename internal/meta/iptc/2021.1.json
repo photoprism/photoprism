@@ -1,0 +1,2758 @@
+{
+    "documentation_available_at": "https://iptc.org/std/photometadata/documentation/techreference",
+    "document_timestamp": "2022-03-15T11:47:44+00:00",
+    "ipmd_top": {
+        "altTextAccessibility": {
+            "name": "Alt Text (Accessibility)",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp115",
+            "ugtopic": "gimgcont",
+            "specidx": "#alt-text-accessibility",
+            "datatype": "struct",
+            "dataformat": "AltLang",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpCore:AltTextAccessibility",
+            "etXMP": "XMP-iptcCore:AltTextAccessibility"
+        },
+        "cityName": {
+            "name": "City (legacy)",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp130",
+            "ugtopic": "location",
+            "specidx": "#city-legacy",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:90",
+            "IIMname": "City",
+            "IIMmaxbytes": 32,
+            "XMPid": "photoshop:City",
+            "etXMP": "XMP-photoshop:City",
+            "etIIM": "IPTC:City"
+        },
+        "copyrightNotice": {
+            "name": "Copyright Notice",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp150",
+            "ugtopic": "rights",
+            "specidx": "#copyright-notice",
+            "datatype": "struct",
+            "dataformat": "AltLang",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:116",
+            "IIMname": "Copyright Notice",
+            "IIMmaxbytes": 128,
+            "XMPid": "dc:rights",
+            "EXIFid": "33432",
+            "SCHEMAid": "https://schema.org/copyrightNotice",
+            "etXMP": "XMP-dc:Rights",
+            "etIIM": "IPTC:CopyrightNotice",
+            "etEXIF": "IFD0:Copyright"
+        },
+        "countryName": {
+            "name": "Country (legacy)",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp170",
+            "ugtopic": "location",
+            "specidx": "#country-legacy",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:101",
+            "IIMname": "Country/Primary Location Name",
+            "IIMmaxbytes": 64,
+            "XMPid": "photoshop:Country",
+            "etXMP": "XMP-photoshop:Country",
+            "etIIM": "IPTC:Country-PrimaryLocationName"
+        },
+        "countryCode": {
+            "name": "Country Code (legacy)",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp180",
+            "ugtopic": "location",
+            "specidx": "#country-code-legacy",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:100",
+            "IIMname": "Country/Primary Location Code",
+            "IIMmaxbytes": 3,
+            "XMPid": "Iptc4xmpCore:CountryCode",
+            "etXMP": "XMP-iptcCore:CountryCode",
+            "etIIM": "IPTC:Country-PrimaryLocationCode"
+        },
+        "creatorNames": {
+            "name": "Creator",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp200",
+            "ugtopic": "rights",
+            "specidx": "#creator",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "IIMid": "2:80",
+            "IIMname": "By-line",
+            "IIMmaxbytes": 32,
+            "XMPid": "dc:creator",
+            "EXIFid": "315",
+            "SCHEMAid": "https://schema.org/creator",
+            "etXMP": "XMP-dc:Creator",
+            "etIIM": "IPTC:By-line",
+            "etEXIF": "IFD0:Artist"
+        },
+        "creatorContactInfo": {
+            "name": "Creator's Contact Info",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp210",
+            "ugtopic": "rights",
+            "specidx": "#creator's-contact-info",
+            "datatype": "struct",
+            "dataformat": "CreatorContactInfo",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpCore:CreatorContactInfo",
+            "etXMP": "XMP-iptcCore:CreatorContactInfo"
+        },
+        "jobtitle": {
+            "name": "Creator's jobtitle",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp220",
+            "ugtopic": "rights",
+            "specidx": "#creator's-jobtitle",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:85",
+            "IIMname": "By-line Title",
+            "IIMmaxbytes": 32,
+            "XMPid": "photoshop:AuthorsPosition",
+            "etXMP": "XMP-photoshop:AuthorsPosition",
+            "etIIM": "IPTC:By-lineTitle"
+        },
+        "creditLine": {
+            "name": "Credit Line",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp230",
+            "ugtopic": "rights",
+            "specidx": "#credit-line",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:110",
+            "IIMname": "Credit",
+            "IIMmaxbytes": 32,
+            "XMPid": "photoshop:Credit",
+            "SCHEMAid": "https://schema.org/creditText",
+            "etXMP": "XMP-photoshop:Credit",
+            "etIIM": "IPTC:Credit"
+        },
+        "dateCreated": {
+            "name": "Date Created",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp250",
+            "ugtopic": "admin",
+            "specidx": "#date-created",
+            "datatype": "string",
+            "dataformat": "date-time",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:55",
+            "IIMname": "Date Created+2:60 Time Created",
+            "XMPid": "photoshop:DateCreated",
+            "EXIFid": "36867",
+            "SCHEMAid": "https://schema.org/dateCreated",
+            "etXMP": "XMP-photoshop:DateCreated",
+            "etIIM": "IPTC:DateCreated+IPTC:TimeCreated",
+            "etEXIF": "ExifIFD:DateTimeOriginal+ExifIFD:TimeZoneOffset"
+        },
+        "description": {
+            "name": "Description",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp260",
+            "ugtopic": "gimgcont",
+            "specidx": "#description",
+            "datatype": "struct",
+            "dataformat": "AltLang",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:120",
+            "IIMname": "Caption/Abstract",
+            "IIMmaxbytes": 2000,
+            "XMPid": "dc:description",
+            "EXIFid": "270",
+            "SCHEMAid": "https://schema.org/caption",
+            "etXMP": "XMP-dc:Description",
+            "etIIM": "IPTC:Caption-Abstract",
+            "etEXIF": "IFD0:ImageDescription"
+        },
+        "captionWriter": {
+            "name": "Description Writer",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp270",
+            "ugtopic": "admin",
+            "specidx": "#description-writer",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:122",
+            "IIMname": "Writer/Editor",
+            "IIMmaxbytes": 32,
+            "XMPid": "photoshop:CaptionWriter",
+            "SCHEMAid": "https://schema.org/editor",
+            "etXMP": "XMP-photoshop:CaptionWriter",
+            "etIIM": "IPTC:Writer-Editor"
+        },
+        "extDescrAccessibility": {
+            "name": "Extended Description (Accessibility)",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp330",
+            "ugtopic": "gimgcont",
+            "specidx": "#extended-description-accessibility",
+            "datatype": "struct",
+            "dataformat": "AltLang",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpCore:ExtDescrAccessibility",
+            "etXMP": "XMP-iptcCore:ExtDescrAccessibility"
+        },
+        "headline": {
+            "name": "Headline",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp340",
+            "ugtopic": "gimgcont",
+            "specidx": "#headline",
+            "datatype": "struct",
+            "dataformat": "AltLang",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:105",
+            "IIMname": "Headline",
+            "IIMmaxbytes": 256,
+            "XMPid": "photoshop:Headline",
+            "SCHEMAid": "https://schema.org/headline",
+            "etXMP": "XMP-photoshop:Headline",
+            "etIIM": "IPTC:Headline"
+        },
+        "instructions": {
+            "name": "Instructions",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp420",
+            "ugtopic": "admin",
+            "specidx": "#instructions",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:40",
+            "IIMname": "Special Instruction",
+            "IIMmaxbytes": 256,
+            "XMPid": "photoshop:Instructions",
+            "etXMP": "XMP-photoshop:Instructions",
+            "etIIM": "IPTC:SpecialInstructions"
+        },
+        "intellectualGenre": {
+            "name": "Intellectual Genre",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp430",
+            "ugtopic": "gimgcont",
+            "specidx": "#intellectual-genre",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:04",
+            "IIMname": "Object Attribute Reference",
+            "IIMmaxbytes": 64,
+            "XMPid": "Iptc4xmpCore:IntellectualGenre",
+            "etXMP": "XMP-iptcCore:IntellectualGenre",
+            "etIIM": "IPTC:ObjectAttributeReference"
+        },
+        "jobid": {
+            "name": "Job Id",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp440",
+            "ugtopic": "admin",
+            "specidx": "#job-id",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:103",
+            "IIMname": "Original Transmission Reference",
+            "IIMmaxbytes": 32,
+            "XMPid": "photoshop:TransmissionReference",
+            "etXMP": "XMP-photoshop:TransmissionReference",
+            "etIIM": "IPTC:OriginalTransmissionReference"
+        },
+        "keywords": {
+            "name": "Keywords",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp450",
+            "ugtopic": "gimgcont",
+            "specidx": "#keywords",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "IIMid": "2:25",
+            "IIMname": "Keywords",
+            "IIMmaxbytes": 64,
+            "XMPid": "dc:subject",
+            "etXMP": "XMP-dc:Subject",
+            "etIIM": "IPTC:Keywords"
+        },
+        "provinceState": {
+            "name": "Province or State (legacy)",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp640",
+            "ugtopic": "location",
+            "specidx": "#province-or-state-legacy",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:95",
+            "IIMname": "Province/State",
+            "IIMmaxbytes": 32,
+            "XMPid": "photoshop:State",
+            "etXMP": "XMP-photoshop:State",
+            "etIIM": "IPTC:Province-State"
+        },
+        "usageTerms": {
+            "name": "Rights Usage Terms",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp650",
+            "ugtopic": "licensing",
+            "specidx": "#rights-usage-terms",
+            "datatype": "struct",
+            "dataformat": "AltLang",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "xmpRights:UsageTerms",
+            "etXMP": "XMP-xmpRights:UsageTerms"
+        },
+        "sceneCodes": {
+            "name": "Scene Code",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp660",
+            "ugtopic": "gimgcont",
+            "specidx": "#scene-code",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpCore:Scene",
+            "etXMP": "XMP-iptcCore:Scene"
+        },
+        "source": {
+            "name": "Source",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp670",
+            "ugtopic": "rights",
+            "specidx": "#source",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:115",
+            "IIMname": "Source",
+            "IIMmaxbytes": 32,
+            "XMPid": "photoshop:Source",
+            "etXMP": "XMP-photoshop:Source",
+            "etIIM": "IPTC:Source"
+        },
+        "subjectCodes": {
+            "name": "Subject Code",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp680",
+            "ugtopic": "gimgcont",
+            "specidx": "#subject-code",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "IIMid": "2:12",
+            "IIMname": "Subject Reference",
+            "IIMmaxbytes": 236,
+            "XMPid": "Iptc4xmpCore:SubjectCode",
+            "etXMP": "XMP-iptcCore:SubjectCode",
+            "etIIM": "IPTC:SubjectReference"
+        },
+        "sublocationName": {
+            "name": "Sublocation (legacy)",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp690",
+            "ugtopic": "location",
+            "specidx": "#sublocation-legacy",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:92",
+            "IIMname": "Sublocation",
+            "IIMmaxbytes": 32,
+            "XMPid": "Iptc4xmpCore:Location",
+            "etXMP": "XMP-iptcCore:Location",
+            "etIIM": "IPTC:Sub-location"
+        },
+        "title": {
+            "name": "Title",
+            "ipmdschema": "IptcCore",
+            "sortorder": "tp710",
+            "ugtopic": "admin",
+            "specidx": "#title",
+            "datatype": "struct",
+            "dataformat": "AltLang",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "IIMid": "2:05",
+            "IIMname": "Object Name",
+            "IIMmaxbytes": 64,
+            "XMPid": "dc:title",
+            "etXMP": "XMP-dc:Title",
+            "etIIM": "IPTC:ObjectName"
+        },
+        "eventId": {
+            "name": "Event Identifier",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp320",
+            "ugtopic": "othings",
+            "specidx": "#event-identifier",
+            "datatype": "string",
+            "dataformat": "uri",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:EventId",
+            "etXMP": "XMP-iptcExt:EventID"
+        },
+        "eventName": {
+            "name": "Event Name",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp325",
+            "ugtopic": "othings",
+            "specidx": "#event-name",
+            "datatype": "struct",
+            "dataformat": "AltLang",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:Event",
+            "etXMP": "XMP-iptcExt:Event"
+        },
+        "additionalModelInfo": {
+            "name": "Additional Model Information",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp110",
+            "ugtopic": "person",
+            "specidx": "#additional-model-information",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:AddlModelInfo",
+            "etXMP": "XMP-iptcExt:AdditionalModelInformation"
+        },
+        "artworkOrObjects": {
+            "name": "Artwork or Object in the Image",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp120",
+            "ugtopic": "othings",
+            "specidx": "#artwork-or-object-in-the-image",
+            "datatype": "struct",
+            "dataformat": "ArtworkOrObject",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:ArtworkOrObject",
+            "etXMP": "XMP-iptcExt:ArtworkOrObject"
+        },
+        "organisationInImageCodes": {
+            "name": "Code of Organisation Featured in the Image",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp140",
+            "ugtopic": "othings",
+            "specidx": "#code-of-organisation-featured-in-the-image",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:OrganisationInImageCode",
+            "etXMP": "XMP-iptcExt:OrganisationInImageCode"
+        },
+        "copyrightOwners": {
+            "name": "Copyright Owner",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp160",
+            "ugtopic": "rights",
+            "specidx": "#copyright-owner",
+            "datatype": "struct",
+            "dataformat": "CopyrightOwner",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "plus:CopyrightOwner",
+            "SCHEMAid": "https://schema.org/copyrightHolder",
+            "etXMP": "XMP-plus:CopyrightOwner"
+        },
+        "aboutCvTerms": {
+            "name": "CV-Term About Image",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp240",
+            "ugtopic": "gimgcont",
+            "specidx": "#cv-term-about-image",
+            "datatype": "struct",
+            "dataformat": "CvTerm",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:AboutCvTerm",
+            "SCHEMAid": "https://schema.org/about",
+            "etXMP": "XMP-iptcExt:AboutCvTerm"
+        },
+        "digitalImageGuid": {
+            "name": "Digital Image GUID",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp280",
+            "ugtopic": "admin",
+            "specidx": "#digital-image-guid",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:DigImageGUID",
+            "EXIFid": "42016",
+            "SCHEMAid": "https://schema.org/identifier",
+            "etXMP": "XMP-iptcExt:DigitalImageGUID",
+            "etEXIF": "ExifIFD:ImageUniqueID"
+        },
+        "digitalSourceType": {
+            "name": "Digital Source Type",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp290",
+            "ugtopic": "admin",
+            "specidx": "#digital-source-type",
+            "datatype": "string",
+            "dataformat": "uri",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:DigitalSourceType",
+            "etXMP": "XMP-iptcExt:DigitalSourceType"
+        },
+        "embdEncRightsExprs": {
+            "name": "Embedded Encoded Rights Expression",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp310",
+            "ugtopic": "licensing",
+            "specidx": "#embedded-encoded-rights-expression",
+            "datatype": "struct",
+            "dataformat": "EmbdEncRightsExpr",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:EmbdEncRightsExpr",
+            "etXMP": "XMP-iptcExt:EmbdEncRightsExpr"
+        },
+        "genres": {
+            "name": "Genre",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp335",
+            "ugtopic": "gimgcont",
+            "specidx": "#genre",
+            "datatype": "struct",
+            "dataformat": "CvTerm",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:Genre",
+            "SCHEMAid": "https://schema.org/genre",
+            "etXMP": "XMP-iptcExt:Genre"
+        },
+        "imageCreators": {
+            "name": "Image Creator",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp350",
+            "ugtopic": "rights",
+            "specidx": "#image-creator",
+            "datatype": "struct",
+            "dataformat": "ImageCreator",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "plus:ImageCreator",
+            "etXMP": "XMP-plus:ImageCreator"
+        },
+        "imageRating": {
+            "name": "Image Rating",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp360",
+            "ugtopic": "gimgcont",
+            "specidx": "#image-rating",
+            "datatype": "number",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "xmp:Rating",
+            "SCHEMAid": "https://schema.org/contentRating",
+            "etXMP": "XMP-xmp:Rating"
+        },
+        "imageRegion": {
+            "name": "Image Region",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp370",
+            "ugtopic": "imgreg",
+            "specidx": "#image-region",
+            "datatype": "struct",
+            "dataformat": "ImageRegion",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:ImageRegion",
+            "EXIFid": "37396",
+            "etXMP": "XMP-iptcExt:ImageRegion",
+            "etEXIF": "ExifIFD:SubjectArea"
+        },
+        "registryEntries": {
+            "name": "Image Registry Entry",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp380",
+            "ugtopic": "admin",
+            "specidx": "#image-registry-entry",
+            "datatype": "struct",
+            "dataformat": "RegistryEntry",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:RegistryId",
+            "etXMP": "XMP-iptcExt:RegistryID"
+        },
+        "suppliers": {
+            "name": "Image Supplier",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp390",
+            "ugtopic": "licensing",
+            "specidx": "#image-supplier",
+            "datatype": "struct",
+            "dataformat": "ImageSupplier",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "plus:ImageSupplier",
+            "SCHEMAid": "https://schema.org/provider",
+            "etXMP": "XMP-plus:ImageSupplier"
+        },
+        "imageSupplierImageId": {
+            "name": "Image Supplier Image ID",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp400",
+            "ugtopic": "licensing",
+            "specidx": "#image-supplier-image-id",
+            "datatype": "string",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "plus:ImageSupplierImageID",
+            "etXMP": "XMP-plus:ImageSupplierImageID"
+        },
+        "licensors": {
+            "name": "Licensor",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp460",
+            "ugtopic": "licensing",
+            "specidx": "#licensor",
+            "datatype": "struct",
+            "dataformat": "Licensor",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "plus:Licensor",
+            "etXMP": "XMP-plus:Licensor"
+        },
+        "linkedEncRightsExprs": {
+            "name": "Linked  Encoded Rights Expression",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp470",
+            "ugtopic": "licensing",
+            "specidx": "#linked--encoded-rights-expression",
+            "datatype": "struct",
+            "dataformat": "LinkedEncRightsExpr",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:LinkedEncRightsExpr",
+            "etXMP": "XMP-iptcExt:LinkedEncRightsExpr"
+        },
+        "locationCreated": {
+            "name": "Location created",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp480",
+            "ugtopic": "location",
+            "specidx": "#location-created",
+            "datatype": "struct",
+            "dataformat": "Location",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:LocationCreated",
+            "SCHEMAid": "https://schema.org/locationCreated",
+            "etXMP": "XMP-iptcExt:LocationCreated"
+        },
+        "locationsShown": {
+            "name": "Location Shown in the Image",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp490",
+            "ugtopic": "location",
+            "specidx": "#location-shown-in-the-image",
+            "datatype": "struct",
+            "dataformat": "Location",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:LocationShown",
+            "SCHEMAid": "https://schema.org/contentLocation",
+            "etXMP": "XMP-iptcExt:LocationShown"
+        },
+        "maxAvailHeight": {
+            "name": "Max Avail Height",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp510",
+            "ugtopic": "admin",
+            "specidx": "#max-avail-height",
+            "datatype": "number",
+            "dataformat": "integer",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:MaxAvailHeight",
+            "etXMP": "XMP-iptcExt:MaxAvailHeight"
+        },
+        "maxAvailWidth": {
+            "name": "Max Avail Width",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp520",
+            "ugtopic": "admin",
+            "specidx": "#max-avail-width",
+            "datatype": "number",
+            "dataformat": "integer",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:MaxAvailWidth",
+            "etXMP": "XMP-iptcExt:MaxAvailWidth"
+        },
+        "minorModelAgeDisclosure": {
+            "name": "Minor Model Age Disclosure",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp530",
+            "ugtopic": "person",
+            "specidx": "#minor-model-age-disclosure",
+            "datatype": "string",
+            "dataformat": "uri",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "plus:MinorModelAgeDisclosure",
+            "etXMP": "XMP-plus:MinorModelAgeDisclosure"
+        },
+        "modelAges": {
+            "name": "Model Age",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp540",
+            "ugtopic": "person",
+            "specidx": "#model-age",
+            "datatype": "number",
+            "dataformat": "integer",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:ModelAge",
+            "etXMP": "XMP-iptcExt:ModelAge"
+        },
+        "modelReleaseDocuments": {
+            "name": "Model Release Id",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp550",
+            "ugtopic": "person",
+            "specidx": "#model-release-id",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "plus:ModelReleaseID",
+            "etXMP": "XMP-plus:ModelReleaseID"
+        },
+        "modelReleaseStatus": {
+            "name": "Model Release Status",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp560",
+            "ugtopic": "person",
+            "specidx": "#model-release-status",
+            "datatype": "string",
+            "dataformat": "uri",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "plus:ModelReleaseStatus",
+            "etXMP": "XMP-plus:ModelReleaseStatus"
+        },
+        "organisationInImageNames": {
+            "name": "Name of Organisation Featured in the Image",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp570",
+            "ugtopic": "othings",
+            "specidx": "#name-of-organisation-featured-in-the-image",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:OrganisationInImageName",
+            "etXMP": "XMP-iptcExt:OrganisationInImageName"
+        },
+        "personInImageNames": {
+            "name": "Person Shown in the Image",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp580",
+            "ugtopic": "person",
+            "specidx": "#person-shown-in-the-image",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:PersonInImage",
+            "etXMP": "XMP-iptcExt:PersonInImage"
+        },
+        "personsShown": {
+            "name": "Person Shown in the Image with Details",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp590",
+            "ugtopic": "person",
+            "specidx": "#person-shown-in-the-image-with-details",
+            "datatype": "struct",
+            "dataformat": "PersonWDetails",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:PersonInImageWDetails",
+            "etXMP": "XMP-iptcExt:PersonInImageWDetails"
+        },
+        "productsShown": {
+            "name": "Product Shown in the Image",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp610",
+            "ugtopic": "othings",
+            "specidx": "#product-shown-in-the-image",
+            "datatype": "struct",
+            "dataformat": "ProductWGtin",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "Iptc4xmpExt:ProductInImage",
+            "etXMP": "XMP-iptcExt:ProductInImage"
+        },
+        "propertyReleaseDocuments": {
+            "name": "Property Release Id",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp620",
+            "ugtopic": "rights",
+            "specidx": "#property-release-id",
+            "datatype": "string",
+            "propoccurrence": "multi",
+            "isrequired": "0",
+            "XMPid": "plus:PropertyReleaseID",
+            "etXMP": "XMP-plus:PropertyReleaseID"
+        },
+        "propertyReleaseStatus": {
+            "name": "Property Release Status",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp630",
+            "ugtopic": "rights",
+            "specidx": "#property-release-status",
+            "datatype": "string",
+            "dataformat": "uri",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "plus:PropertyReleaseStatus",
+            "etXMP": "XMP-plus:PropertyReleaseStatus"
+        },
+        "webstatementRights": {
+            "name": "Web Statement of Rights",
+            "ipmdschema": "IptcExt",
+            "sortorder": "tp720",
+            "ugtopic": "rights",
+            "specidx": "#web-statement-of-rights",
+            "datatype": "string",
+            "dataformat": "uri",
+            "propoccurrence": "single",
+            "isrequired": "0",
+            "XMPid": "xmpRights:WebStatement",
+            "SCHEMAid": "https://schema.org/license",
+            "etXMP": "XMP-xmpRights:WebStatement"
+        }
+    },
+    "ipmd_struct": {
+        "CreatorContactInfo": {
+            "address": {
+                "name": "Address",
+                "ipmdschema": "IptcCore",
+                "sortorder": "s0101",
+                "specidx": "#address",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpCore:CiAdrExtadr",
+                "etTag": "CiAdrExtadr"
+            },
+            "city": {
+                "name": "City",
+                "ipmdschema": "IptcCore",
+                "sortorder": "s0102",
+                "specidx": "#city",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpCore:CiAdrCity",
+                "etTag": "CiAdrCity"
+            },
+            "country": {
+                "name": "Country",
+                "ipmdschema": "IptcCore",
+                "sortorder": "s0103",
+                "specidx": "#country",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpCore:CiAdrCtry",
+                "etTag": "CiAdrCtry"
+            },
+            "emailwork": {
+                "name": "Email address(es)",
+                "ipmdschema": "IptcCore",
+                "sortorder": "s0104",
+                "specidx": "#email-addresses",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpCore:CiEmailWork",
+                "etTag": "CiEmailWork"
+            },
+            "phonework": {
+                "name": "Phone number(s)",
+                "ipmdschema": "IptcCore",
+                "sortorder": "s0105",
+                "specidx": "#phone-numbers",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpCore:CiTelWork",
+                "etTag": "CiTelWork"
+            },
+            "postalCode": {
+                "name": "Postal Code",
+                "ipmdschema": "IptcCore",
+                "sortorder": "s0106",
+                "specidx": "#postal-code",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpCore:CiAdrPcode",
+                "etTag": "CiAdrPcode"
+            },
+            "region": {
+                "name": "State/Province",
+                "ipmdschema": "IptcCore",
+                "sortorder": "s0107",
+                "specidx": "#state/province",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpCore:CiAdrRegion",
+                "etTag": "CiAdrRegion"
+            },
+            "weburlwork": {
+                "name": "Web URL(s)",
+                "ipmdschema": "IptcCore",
+                "sortorder": "s0108",
+                "specidx": "#web-urls",
+                "datatype": "string",
+                "dataformat": "url",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpCore:CiUrlWork",
+                "etTag": "CiUrlWork"
+            }
+        },
+        "ArtworkOrObject": {
+            "circaDateCreated": {
+                "name": "Circa Date Created",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0201",
+                "specidx": "#circa-date-created",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOCircaDateCreated",
+                "etTag": "AOCircaDateCreated"
+            },
+            "contentDescription": {
+                "name": "Content Description",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0202",
+                "specidx": "#content-description",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOContentDescription",
+                "etTag": "AOContentDescription"
+            },
+            "contributionDescription": {
+                "name": "Contribution Description",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0203",
+                "specidx": "#contribution-description",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOContributionDescription",
+                "etTag": "AOContributionDescription"
+            },
+            "copyrightNotice": {
+                "name": "Copyright Notice",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0204",
+                "specidx": "#copyright-notice",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOCopyrightNotice",
+                "etTag": "AOCopyrightNotice"
+            },
+            "creatorNames": {
+                "name": "Creator",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0205",
+                "specidx": "#creator",
+                "datatype": "string",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOCreator",
+                "etTag": "AOCreator"
+            },
+            "creatorIdentifiers": {
+                "name": "Creator ID",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0206",
+                "specidx": "#creator-id",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOCreatorId",
+                "etTag": "AOCreatorId"
+            },
+            "currentCopyrightOwnerIdentifier": {
+                "name": "Current Copyright Owner ID",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0207",
+                "specidx": "#current-copyright-owner-id",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOCurrentCopyrightOwnerId",
+                "etTag": "AOCurrentCopyrightOwnerId"
+            },
+            "currentCopyrightOwnerName": {
+                "name": "Current Copyright Owner Name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0208",
+                "specidx": "#current-copyright-owner-name",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOCurrentCopyrightOwnerName",
+                "etTag": "AOCurrentCopyrightOwnerName"
+            },
+            "currentLicensorIdentifier": {
+                "name": "Current Licensor ID",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0209",
+                "specidx": "#current-licensor-id",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOCurrentLicensorId",
+                "etTag": "AOCurrentLicensorId"
+            },
+            "currentLicensorName": {
+                "name": "Current Licensor Name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0210",
+                "specidx": "#current-licensor-name",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOCurrentLicensorName",
+                "etTag": "AOCurrentLicensorName"
+            },
+            "dateCreated": {
+                "name": "Date Created",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0211",
+                "specidx": "#date-created",
+                "datatype": "string",
+                "dataformat": "date-time",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AODateCreated",
+                "etTag": "AODateCreated"
+            },
+            "physicalDescription": {
+                "name": "Physical Description",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0212",
+                "specidx": "#physical-description",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOPhysicalDescription",
+                "etTag": "AOPhysicalDescription"
+            },
+            "source": {
+                "name": "Source",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0213",
+                "specidx": "#source",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOSource",
+                "etTag": "AOSource"
+            },
+            "sourceInventoryNr": {
+                "name": "Source Inventory Number",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0214",
+                "specidx": "#source-inventory-number",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOSourceInvNo",
+                "etTag": "AOSourceInvNo"
+            },
+            "sourceInventoryUrl": {
+                "name": "Source Inventory URL",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0215",
+                "specidx": "#source-inventory-url",
+                "datatype": "string",
+                "dataformat": "url",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOSourceInvURL",
+                "etTag": "AOSourceInvURL"
+            },
+            "stylePeriod": {
+                "name": "Style Period",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0216",
+                "specidx": "#style-period",
+                "datatype": "string",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOStylePeriod",
+                "etTag": "AOStylePeriod"
+            },
+            "title": {
+                "name": "Title",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0217",
+                "specidx": "#title",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:AOTitle",
+                "etTag": "AOTitle"
+            }
+        },
+        "CvTerm": {
+            "cvId": {
+                "name": "CV-Term CV ID",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0301",
+                "specidx": "#cv-term-cv-id",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:CvId",
+                "etTag": "CvId"
+            },
+            "cvTermId": {
+                "name": "CV-Term ID",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0302",
+                "specidx": "#cv-term-id",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:CvTermId",
+                "etTag": "CvTermId"
+            },
+            "cvTermName": {
+                "name": "CV-Term name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0303",
+                "specidx": "#cv-term-name",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:CvTermName",
+                "etTag": "CvTermName"
+            },
+            "cvTermRefinedAbout": {
+                "name": "Refined 'about' Relationship of the CV-Term",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0304",
+                "specidx": "#refined-'about'-relationship-of-the-cv-term",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:CvTermRefinedAbout",
+                "etTag": "CvTermRefinedAbout"
+            }
+        },
+        "EmbdEncRightsExpr": {
+            "rightsExprLangId": {
+                "name": "Encoded Rights Expression",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0401",
+                "specidx": "#encoded-rights-expression",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:EncRightsExpr",
+                "etTag": "EncRightsExpr"
+            },
+            "rightsExprEncType": {
+                "name": "Encoding type",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0402",
+                "specidx": "#encoding-type",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:RightsExprEncType",
+                "etTag": "RightsExprEncType"
+            },
+            "encRightsExpr": {
+                "name": "Rights Expression Language ID",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0403",
+                "specidx": "#rights-expression-language-id",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:RightsExprLangId",
+                "etTag": "RightsExprLangId"
+            }
+        },
+        "Entity": {
+            "identifiers": {
+                "name": "Identifier",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0401",
+                "specidx": "#identifier",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "xmp:Identifier",
+                "etTag": "Identifier"
+            },
+            "name": {
+                "name": "Name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0402",
+                "specidx": "#name",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:Name",
+                "etTag": "Name"
+            }
+        },
+        "ImageRegion": {
+            "regionBoundary": {
+                "name": "Region Boundary",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0501",
+                "specidx": "#region-boundary",
+                "datatype": "struct",
+                "dataformat": "RegionBoundary",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:RegionBoundary",
+                "etTag": "RegionBoundary"
+            },
+            "rId": {
+                "name": "Region Identifier",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0502",
+                "specidx": "#region-identifier",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rId",
+                "etTag": "RId"
+            },
+            "name": {
+                "name": "Region Name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0503",
+                "specidx": "#region-name",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:Name",
+                "etTag": "Name"
+            },
+            "rCtype": {
+                "name": "Region Content Type",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0504",
+                "specidx": "#region-content-type",
+                "datatype": "struct",
+                "dataformat": "Entity",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rCtype",
+                "etTag": "RCtype"
+            },
+            "rRole": {
+                "name": "Region Role",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0505",
+                "specidx": "#region-role",
+                "datatype": "struct",
+                "dataformat": "Entity",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rRole",
+                "etTag": "RRole"
+            },
+            "$anypmdproperty": {
+                "name": "Other Metadata Property",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0506",
+                "specidx": "#other-metadata-property",
+                "datatype": "any",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "",
+                "etTag": ""
+            }
+        },
+        "RegionBoundary": {
+            "rbShape": {
+                "name": "Boundary Shape",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0601",
+                "specidx": "#boundary-shape",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbShape",
+                "etTag": "RbShape"
+            },
+            "rbUnit": {
+                "name": "Boundary Measuring Unit",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0602",
+                "specidx": "#boundary-measuring-unit",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbUnit",
+                "etTag": "RbUnit"
+            },
+            "rbX": {
+                "name": "X-Axis Coordinate",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0603",
+                "specidx": "#x-axis-coordinate",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbX",
+                "etTag": "RbX"
+            },
+            "rbY": {
+                "name": "Y-Axis Coordinate",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0604",
+                "specidx": "#y-axis-coordinate",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbY",
+                "etTag": "RbY"
+            },
+            "rbW": {
+                "name": "Rectangle Width",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0605",
+                "specidx": "#rectangle-width",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbW",
+                "etTag": "RbW"
+            },
+            "rbH": {
+                "name": "Rectangle Height",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0606",
+                "specidx": "#rectangle-height",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbH",
+                "etTag": "RbH"
+            },
+            "rbRx": {
+                "name": "Circle Radius",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0607",
+                "specidx": "#circle-radius",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbRx",
+                "etTag": "RbRx"
+            },
+            "rbVertices": {
+                "name": "Polygon Vertices",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0608",
+                "specidx": "#polygon-vertices",
+                "datatype": "struct",
+                "dataformat": "RegionBoundaryPoint",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbVertices",
+                "etTag": "RbVertices"
+            }
+        },
+        "RegionBoundaryPoint": {
+            "rbX": {
+                "name": "X-Axis Coordinate",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0701",
+                "specidx": "#x-axis-coordinate",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbX",
+                "etTag": "RbX"
+            },
+            "rbY": {
+                "name": "Y-Axis Coordinate",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0702",
+                "specidx": "#y-axis-coordinate",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:rbY",
+                "etTag": "RbY"
+            }
+        },
+        "LinkedEncRightsExpr": {
+            "rightsExprLangId": {
+                "name": "Encoding type",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0801",
+                "specidx": "#encoding-type",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:RightsExprEncType",
+                "etTag": "RightsExprEncType"
+            },
+            "rightsExprEncType": {
+                "name": "Link to Encoded Rights Expression",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0802",
+                "specidx": "#link-to-encoded-rights-expression",
+                "datatype": "string",
+                "dataformat": "url",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:LinkedRightsExpr",
+                "etTag": "LinkedRightsExpr"
+            },
+            "linkedRightsExpr": {
+                "name": "Rights Expression Language ID",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0803",
+                "specidx": "#rights-expression-language-id",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:RightsExprLangId",
+                "etTag": "RightsExprLangId"
+            }
+        },
+        "Location": {
+            "city": {
+                "name": "City",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0904",
+                "specidx": "#city",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:City",
+                "etTag": "City"
+            },
+            "countryCode": {
+                "name": "Country ISO-Code",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0907",
+                "specidx": "#country-iso-code",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:CountryCode",
+                "etTag": "CountryCode"
+            },
+            "countryName": {
+                "name": "Country Name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0906",
+                "specidx": "#country-name",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:CountryName",
+                "etTag": "CountryName"
+            },
+            "gpsAltitude": {
+                "name": "GPS-Altitude",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0911",
+                "specidx": "#gps-altitude",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "exif:GPSAltitude",
+                "etTag": "GPSAltitude"
+            },
+            "gpsLatitude": {
+                "name": "GPS-Latitude",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0912",
+                "specidx": "#gps-latitude",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "exif:GPSLatitude",
+                "etTag": "GPSLatitude"
+            },
+            "gpsLongitude": {
+                "name": "GPS-Longitude",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0913",
+                "specidx": "#gps-longitude",
+                "datatype": "number",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "exif:GPSLongitude",
+                "etTag": "GPSLongitude"
+            },
+            "identifiers": {
+                "name": "Location Identifier",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0901",
+                "specidx": "#location-identifier",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:LocationId",
+                "etTag": "LocationId"
+            },
+            "name": {
+                "name": "Location Name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0902",
+                "specidx": "#location-name",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:LocationName",
+                "etTag": "LocationName"
+            },
+            "provinceState": {
+                "name": "Province or State",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0905",
+                "specidx": "#province-or-state",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:ProvinceState",
+                "etTag": "ProvinceState"
+            },
+            "sublocation": {
+                "name": "Sublocation",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0903",
+                "specidx": "#sublocation",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:Sublocation",
+                "etTag": "Sublocation"
+            },
+            "worldRegion": {
+                "name": "World Region",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s0908",
+                "specidx": "#world-region",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:WorldRegion",
+                "etTag": "WorldRegion"
+            }
+        },
+        "PersonWDetails": {
+            "characteristics": {
+                "name": "Characteristics",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1004",
+                "specidx": "#characteristics",
+                "datatype": "struct",
+                "dataformat": "CvTerm",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:PersonCharacteristic",
+                "etTag": "PersonCharacteristic"
+            },
+            "description": {
+                "name": "Description",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1003",
+                "specidx": "#description",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:PersonDescription",
+                "etTag": "PersonDescription"
+            },
+            "identifiers": {
+                "name": "Identifier",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1001",
+                "specidx": "#identifier",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "multi",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:PersonId",
+                "etTag": "PersonId"
+            },
+            "name": {
+                "name": "Name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1002",
+                "specidx": "#name",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:PersonName",
+                "etTag": "PersonName"
+            }
+        },
+        "ProductWGtin": {
+            "description": {
+                "name": "Description",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1103",
+                "specidx": "#description",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:ProductDescription",
+                "etTag": "ProductDescription"
+            },
+            "gtin": {
+                "name": "GTIN",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1101",
+                "specidx": "#gtin",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:ProductGTIN",
+                "etTag": "ProductGTIN"
+            },
+            "name": {
+                "name": "Name",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1102",
+                "specidx": "#name",
+                "datatype": "struct",
+                "dataformat": "AltLang",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:ProductName",
+                "etTag": "ProductName"
+            }
+        },
+        "RegistryEntry": {
+            "assetIdentifier": {
+                "name": "Item Id",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1202",
+                "specidx": "#item-id",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:RegItemId",
+                "etTag": "RegItemId"
+            },
+            "registryIdentifier": {
+                "name": "Organisation Id",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1201",
+                "specidx": "#organisation-id",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:RegOrgId",
+                "etTag": "RegOrgId"
+            },
+            "role": {
+                "name": "Role",
+                "ipmdschema": "IptcExt",
+                "sortorder": "s1203",
+                "specidx": "#role",
+                "datatype": "string",
+                "dataformat": "uri",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "Iptc4xmpExt:RegEntryRole",
+                "etTag": "RegEntryRole"
+            }
+        },
+        "Licensor": {
+            "licensorId": {
+                "name": "Licensor ID",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3101",
+                "specidx": "#licensor-id",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorID",
+                "etTag": "LicensorID"
+            },
+            "licensorName": {
+                "name": "Licensor Name",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3102",
+                "specidx": "#licensor-name",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorName",
+                "etTag": "LicensorName"
+            },
+            "licensorAddress": {
+                "name": "Licensor Address",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3103",
+                "specidx": "#licensor-address",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorStreetAddress",
+                "etTag": "LicensorStreetAddress"
+            },
+            "licensorAddressDetail": {
+                "name": "Licensor Adress Detail",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3104",
+                "specidx": "#licensor-adress-detail",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorExtendedAddress",
+                "etTag": "LicensorExtendedAddress"
+            },
+            "licensorCity": {
+                "name": "Licensor City",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3105",
+                "specidx": "#licensor-city",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorCity",
+                "etTag": "LicensorCity"
+            },
+            "licensorStateProvince": {
+                "name": "Licensor State or Province",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3106",
+                "specidx": "#licensor-state-or-province",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorRegion",
+                "etTag": "LicensorRegion"
+            },
+            "licensorPostalCode": {
+                "name": "Licensor Postal Code",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3107",
+                "specidx": "#licensor-postal-code",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorPostalCode",
+                "etTag": "LicensorPostalCode"
+            },
+            "licensorCountryName": {
+                "name": "Licensor Country",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3108",
+                "specidx": "#licensor-country",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorCountry",
+                "etTag": "LicensorCountry"
+            },
+            "licensorTelephoneType1": {
+                "name": "Licensor Telephone Type 1",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3109",
+                "specidx": "#licensor-telephone-type-1",
+                "datatype": "string",
+                "dataformat": "url",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorTelephoneType1",
+                "etTag": "LicensorTelephoneType1"
+            },
+            "licensorTelephone1": {
+                "name": "Licensor Telephone 1",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3110",
+                "specidx": "#licensor-telephone-1",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorTelephone1",
+                "etTag": "LicensorTelephone1"
+            },
+            "licensorTelephoneType2": {
+                "name": "Licensor Telephone Type 2",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3111",
+                "specidx": "#licensor-telephone-type-2",
+                "datatype": "string",
+                "dataformat": "url",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorTelephoneType2",
+                "etTag": "LicensorTelephoneType2"
+            },
+            "licensorTelephone2": {
+                "name": "Licensor Telephone 2",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3112",
+                "specidx": "#licensor-telephone-2",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorTelephone2",
+                "etTag": "LicensorTelephone2"
+            },
+            "licensorEmail": {
+                "name": "Licensor Email",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3113",
+                "specidx": "#licensor-email",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorEmail",
+                "etTag": "LicensorEmail"
+            },
+            "licensorUrl": {
+                "name": "Licensor URL",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3114",
+                "specidx": "#licensor-url",
+                "datatype": "string",
+                "dataformat": "url",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:LicensorURL",
+                "SCHEMAid": "https://schema.org/acquireLicensePage",
+                "etTag": "LicensorURL"
+            }
+        },
+        "CopyrightOwner": {
+            "copyrightOwnerId": {
+                "name": "Copyright Owner ID",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3201",
+                "specidx": "#copyright-owner-id",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:CopyrightOwnerID",
+                "etTag": "CopyrightOwnerID"
+            },
+            "copyrightOwnerName": {
+                "name": "Copyright Owner Name",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3202",
+                "specidx": "#copyright-owner-name",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:CopyrightOwnerName",
+                "etTag": "CopyrightOwnerName"
+            }
+        },
+        "ImageCreator": {
+            "imageCreatorId": {
+                "name": "Image Creator ID",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3301",
+                "specidx": "#image-creator-id",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:ImageCreatorID",
+                "etTag": "ImageCreatorID"
+            },
+            "imageCreatorName": {
+                "name": "Image Creator Name",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3302",
+                "specidx": "#image-creator-name",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:ImageCreatorName",
+                "EXIFid": "315",
+                "etTag": "ImageCreatorName",
+                "etEXIF": "IFD0:Artist"
+            }
+        },
+        "ImageSupplier": {
+            "imageSupplierId": {
+                "name": "Image Supplier ID",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3401",
+                "specidx": "#image-supplier-id",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:ImageSupplierID",
+                "etTag": "ImageSupplierID"
+            },
+            "imageSupplierName": {
+                "name": "Image Supplier Name",
+                "ipmdschema": "PLUS",
+                "sortorder": "s3402",
+                "specidx": "#image-supplier-name",
+                "datatype": "string",
+                "propoccurrence": "single",
+                "isrequired": "0",
+                "XMPid": "plus:ImageSupplierName",
+                "etTag": "ImageSupplierName"
+            }
+        },
+        "AltLang": {
+            "Note": "A special structure covering variants of a text in different languages.",
+            "BCP47langid_1": "Text in the human language corresponding to the BCP 47 language id",
+            "BCP47langid_toMany": "Text in the human language corresponding to the BCP 47 language id"
+        }
+    },
+    "et_topwithprefix": {
+        "XMP-iptcCore_AltTextAccessibility": {
+            "ipmdid": "altTextAccessibility"
+        },
+        "IPTC_City": {
+            "ipmdid": "cityName"
+        },
+        "XMP-photoshop_City": {
+            "ipmdid": "cityName"
+        },
+        "IFD0_Copyright": {
+            "ipmdid": "copyrightNotice"
+        },
+        "IPTC_CopyrightNotice": {
+            "ipmdid": "copyrightNotice"
+        },
+        "XMP-dc_Rights": {
+            "ipmdid": "copyrightNotice"
+        },
+        "IPTC_Country-PrimaryLocationName": {
+            "ipmdid": "countryName"
+        },
+        "XMP-photoshop_Country": {
+            "ipmdid": "countryName"
+        },
+        "IPTC_Country-PrimaryLocationCode": {
+            "ipmdid": "countryCode"
+        },
+        "XMP-iptcCore_CountryCode": {
+            "ipmdid": "countryCode"
+        },
+        "IFD0_Artist": {
+            "ipmdid": "creatorNames"
+        },
+        "IPTC_By-line": {
+            "ipmdid": "creatorNames"
+        },
+        "XMP-dc_Creator": {
+            "ipmdid": "creatorNames"
+        },
+        "XMP-iptcCore_CreatorContactInfo": {
+            "ipmdid": "creatorContactInfo"
+        },
+        "IPTC_By-lineTitle": {
+            "ipmdid": "jobtitle"
+        },
+        "XMP-photoshop_AuthorsPosition": {
+            "ipmdid": "jobtitle"
+        },
+        "IPTC_Credit": {
+            "ipmdid": "creditLine"
+        },
+        "XMP-photoshop_Credit": {
+            "ipmdid": "creditLine"
+        },
+        "ExifIFD_DateTimeOriginal": {
+            "ipmdid": "dateCreated"
+        },
+        "ExifIFD_TimeZoneOffset": {
+            "ipmdid": "dateCreated"
+        },
+        "IPTC_DateCreated": {
+            "ipmdid": "dateCreated"
+        },
+        "IPTC_TimeCreated": {
+            "ipmdid": "dateCreated"
+        },
+        "XMP-photoshop_DateCreated": {
+            "ipmdid": "dateCreated"
+        },
+        "IFD0_ImageDescription": {
+            "ipmdid": "description"
+        },
+        "IPTC_Caption-Abstract": {
+            "ipmdid": "description"
+        },
+        "XMP-dc_Description": {
+            "ipmdid": "description"
+        },
+        "IPTC_Writer-Editor": {
+            "ipmdid": "captionWriter"
+        },
+        "XMP-photoshop_CaptionWriter": {
+            "ipmdid": "captionWriter"
+        },
+        "XMP-iptcCore_ExtDescrAccessibility": {
+            "ipmdid": "extDescrAccessibility"
+        },
+        "IPTC_Headline": {
+            "ipmdid": "headline"
+        },
+        "XMP-photoshop_Headline": {
+            "ipmdid": "headline"
+        },
+        "IPTC_SpecialInstructions": {
+            "ipmdid": "instructions"
+        },
+        "XMP-photoshop_Instructions": {
+            "ipmdid": "instructions"
+        },
+        "IPTC_ObjectAttributeReference": {
+            "ipmdid": "intellectualGenre"
+        },
+        "XMP-iptcCore_IntellectualGenre": {
+            "ipmdid": "intellectualGenre"
+        },
+        "IPTC_OriginalTransmissionReference": {
+            "ipmdid": "jobid"
+        },
+        "XMP-photoshop_TransmissionReference": {
+            "ipmdid": "jobid"
+        },
+        "IPTC_Keywords": {
+            "ipmdid": "keywords"
+        },
+        "XMP-dc_Subject": {
+            "ipmdid": "keywords"
+        },
+        "IPTC_Province-State": {
+            "ipmdid": "provinceState"
+        },
+        "XMP-photoshop_State": {
+            "ipmdid": "provinceState"
+        },
+        "XMP-xmpRights_UsageTerms": {
+            "ipmdid": "usageTerms"
+        },
+        "XMP-iptcCore_Scene": {
+            "ipmdid": "sceneCodes"
+        },
+        "IPTC_Source": {
+            "ipmdid": "source"
+        },
+        "XMP-photoshop_Source": {
+            "ipmdid": "source"
+        },
+        "IPTC_SubjectReference": {
+            "ipmdid": "subjectCodes"
+        },
+        "XMP-iptcCore_SubjectCode": {
+            "ipmdid": "subjectCodes"
+        },
+        "IPTC_Sub-location": {
+            "ipmdid": "sublocationName"
+        },
+        "XMP-iptcCore_Location": {
+            "ipmdid": "sublocationName"
+        },
+        "IPTC_ObjectName": {
+            "ipmdid": "title"
+        },
+        "XMP-dc_Title": {
+            "ipmdid": "title"
+        },
+        "XMP-iptcExt_EventID": {
+            "ipmdid": "eventId"
+        },
+        "XMP-iptcExt_Event": {
+            "ipmdid": "eventName"
+        },
+        "XMP-iptcExt_AdditionalModelInformation": {
+            "ipmdid": "additionalModelInfo"
+        },
+        "XMP-iptcExt_ArtworkOrObject": {
+            "ipmdid": "artworkOrObjects"
+        },
+        "XMP-iptcExt_OrganisationInImageCode": {
+            "ipmdid": "organisationInImageCodes"
+        },
+        "XMP-plus_CopyrightOwner": {
+            "ipmdid": "copyrightOwners"
+        },
+        "XMP-iptcExt_AboutCvTerm": {
+            "ipmdid": "aboutCvTerms"
+        },
+        "ExifIFD_ImageUniqueID": {
+            "ipmdid": "digitalImageGuid"
+        },
+        "XMP-iptcExt_DigitalImageGUID": {
+            "ipmdid": "digitalImageGuid"
+        },
+        "XMP-iptcExt_DigitalSourceType": {
+            "ipmdid": "digitalSourceType"
+        },
+        "XMP-iptcExt_EmbdEncRightsExpr": {
+            "ipmdid": "embdEncRightsExprs"
+        },
+        "XMP-iptcExt_Genre": {
+            "ipmdid": "genres"
+        },
+        "XMP-plus_ImageCreator": {
+            "ipmdid": "imageCreators"
+        },
+        "XMP-xmp_Rating": {
+            "ipmdid": "imageRating"
+        },
+        "ExifIFD_SubjectArea": {
+            "ipmdid": "imageRegion"
+        },
+        "XMP-iptcExt_ImageRegion": {
+            "ipmdid": "imageRegion"
+        },
+        "XMP-iptcExt_RegistryID": {
+            "ipmdid": "registryEntries"
+        },
+        "XMP-plus_ImageSupplier": {
+            "ipmdid": "suppliers"
+        },
+        "XMP-plus_ImageSupplierImageID": {
+            "ipmdid": "imageSupplierImageId"
+        },
+        "XMP-plus_Licensor": {
+            "ipmdid": "licensors"
+        },
+        "XMP-iptcExt_LinkedEncRightsExpr": {
+            "ipmdid": "linkedEncRightsExprs"
+        },
+        "XMP-iptcExt_LocationCreated": {
+            "ipmdid": "locationCreated"
+        },
+        "XMP-iptcExt_LocationShown": {
+            "ipmdid": "locationsShown"
+        },
+        "XMP-iptcExt_MaxAvailHeight": {
+            "ipmdid": "maxAvailHeight"
+        },
+        "XMP-iptcExt_MaxAvailWidth": {
+            "ipmdid": "maxAvailWidth"
+        },
+        "XMP-plus_MinorModelAgeDisclosure": {
+            "ipmdid": "minorModelAgeDisclosure"
+        },
+        "XMP-iptcExt_ModelAge": {
+            "ipmdid": "modelAges"
+        },
+        "XMP-plus_ModelReleaseID": {
+            "ipmdid": "modelReleaseDocuments"
+        },
+        "XMP-plus_ModelReleaseStatus": {
+            "ipmdid": "modelReleaseStatus"
+        },
+        "XMP-iptcExt_OrganisationInImageName": {
+            "ipmdid": "organisationInImageNames"
+        },
+        "XMP-iptcExt_PersonInImage": {
+            "ipmdid": "personInImageNames"
+        },
+        "XMP-iptcExt_PersonInImageWDetails": {
+            "ipmdid": "personsShown"
+        },
+        "XMP-iptcExt_ProductInImage": {
+            "ipmdid": "productsShown"
+        },
+        "XMP-plus_PropertyReleaseID": {
+            "ipmdid": "propertyReleaseDocuments"
+        },
+        "XMP-plus_PropertyReleaseStatus": {
+            "ipmdid": "propertyReleaseStatus"
+        },
+        "XMP-xmpRights_WebStatement": {
+            "ipmdid": "webstatementRights"
+        },
+        "xCommenttwpfx01": "Presets of properties outside the IPTC PMD Standard",
+        "XMP-x_XMPToolkit": {
+            "label": "XMP Toolkit Version (XMP)|XMP",
+            "sortorder": "tp910x",
+            "output": "any"
+        },
+        "ExifTool_ExifToolVersion": {
+            "label": "Exiftool Version used by this system|NA (Exiftool Version)",
+            "sortorder": "tp810a",
+            "output": "any"
+        },
+        "System_FileName": {
+            "label": "File Name|NA (File Name)",
+            "sortorder": "tp920x",
+            "output": "none"
+        },
+        "xCommenttwpfx02": "END of static presets"
+    },
+    "et_topnoprefix": {
+        "AltTextAccessibility": {
+            "ipmdid": "altTextAccessibility"
+        },
+        "City": {
+            "ipmdid": "cityName"
+        },
+        "Copyright": {
+            "ipmdid": "copyrightNotice"
+        },
+        "CopyrightNotice": {
+            "ipmdid": "copyrightNotice"
+        },
+        "Rights": {
+            "ipmdid": "copyrightNotice"
+        },
+        "Country-PrimaryLocationName": {
+            "ipmdid": "countryName"
+        },
+        "Country": {
+            "ipmdid": "countryName"
+        },
+        "Country-PrimaryLocationCode": {
+            "ipmdid": "countryCode"
+        },
+        "CountryCode": {
+            "ipmdid": "countryCode"
+        },
+        "Artist": {
+            "ipmdid": "creatorNames"
+        },
+        "By-line": {
+            "ipmdid": "creatorNames"
+        },
+        "Creator": {
+            "ipmdid": "creatorNames"
+        },
+        "CreatorContactInfo": {
+            "ipmdid": "creatorContactInfo"
+        },
+        "By-lineTitle": {
+            "ipmdid": "jobtitle"
+        },
+        "AuthorsPosition": {
+            "ipmdid": "jobtitle"
+        },
+        "Credit": {
+            "ipmdid": "creditLine"
+        },
+        "DateTimeOriginal": {
+            "ipmdid": "dateCreated"
+        },
+        "TimeZoneOffset": {
+            "ipmdid": "dateCreated"
+        },
+        "DateCreated": {
+            "ipmdid": "dateCreated"
+        },
+        "TimeCreated": {
+            "ipmdid": "dateCreated"
+        },
+        "ImageDescription": {
+            "ipmdid": "description"
+        },
+        "Caption-Abstract": {
+            "ipmdid": "description"
+        },
+        "Description": {
+            "ipmdid": "description"
+        },
+        "Writer-Editor": {
+            "ipmdid": "captionWriter"
+        },
+        "CaptionWriter": {
+            "ipmdid": "captionWriter"
+        },
+        "ExtDescrAccessibility": {
+            "ipmdid": "extDescrAccessibility"
+        },
+        "Headline": {
+            "ipmdid": "headline"
+        },
+        "SpecialInstructions": {
+            "ipmdid": "instructions"
+        },
+        "Instructions": {
+            "ipmdid": "instructions"
+        },
+        "ObjectAttributeReference": {
+            "ipmdid": "intellectualGenre"
+        },
+        "IntellectualGenre": {
+            "ipmdid": "intellectualGenre"
+        },
+        "OriginalTransmissionReference": {
+            "ipmdid": "jobid"
+        },
+        "TransmissionReference": {
+            "ipmdid": "jobid"
+        },
+        "Keywords": {
+            "ipmdid": "keywords"
+        },
+        "Subject": {
+            "ipmdid": "keywords"
+        },
+        "Province-State": {
+            "ipmdid": "provinceState"
+        },
+        "State": {
+            "ipmdid": "provinceState"
+        },
+        "UsageTerms": {
+            "ipmdid": "usageTerms"
+        },
+        "Scene": {
+            "ipmdid": "sceneCodes"
+        },
+        "Source": {
+            "ipmdid": "source"
+        },
+        "SubjectReference": {
+            "ipmdid": "subjectCodes"
+        },
+        "SubjectCode": {
+            "ipmdid": "subjectCodes"
+        },
+        "Sub-location": {
+            "ipmdid": "sublocationName"
+        },
+        "Location": {
+            "ipmdid": "sublocationName"
+        },
+        "ObjectName": {
+            "ipmdid": "title"
+        },
+        "Title": {
+            "ipmdid": "title"
+        },
+        "EventID": {
+            "ipmdid": "eventId"
+        },
+        "Event": {
+            "ipmdid": "eventName"
+        },
+        "AdditionalModelInformation": {
+            "ipmdid": "additionalModelInfo"
+        },
+        "ArtworkOrObject": {
+            "ipmdid": "artworkOrObjects"
+        },
+        "OrganisationInImageCode": {
+            "ipmdid": "organisationInImageCodes"
+        },
+        "CopyrightOwner": {
+            "ipmdid": "copyrightOwners"
+        },
+        "AboutCvTerm": {
+            "ipmdid": "aboutCvTerms"
+        },
+        "ImageUniqueID": {
+            "ipmdid": "digitalImageGuid"
+        },
+        "DigitalImageGUID": {
+            "ipmdid": "digitalImageGuid"
+        },
+        "DigitalSourceType": {
+            "ipmdid": "digitalSourceType"
+        },
+        "EmbdEncRightsExpr": {
+            "ipmdid": "embdEncRightsExprs"
+        },
+        "Genre": {
+            "ipmdid": "genres"
+        },
+        "ImageCreator": {
+            "ipmdid": "imageCreators"
+        },
+        "Rating": {
+            "ipmdid": "imageRating"
+        },
+        "SubjectArea": {
+            "ipmdid": "imageRegion"
+        },
+        "ImageRegion": {
+            "ipmdid": "imageRegion"
+        },
+        "RegistryID": {
+            "ipmdid": "registryEntries"
+        },
+        "ImageSupplier": {
+            "ipmdid": "suppliers"
+        },
+        "ImageSupplierImageID": {
+            "ipmdid": "imageSupplierImageId"
+        },
+        "Licensor": {
+            "ipmdid": "licensors"
+        },
+        "LinkedEncRightsExpr": {
+            "ipmdid": "linkedEncRightsExprs"
+        },
+        "LocationCreated": {
+            "ipmdid": "locationCreated"
+        },
+        "LocationShown": {
+            "ipmdid": "locationsShown"
+        },
+        "MaxAvailHeight": {
+            "ipmdid": "maxAvailHeight"
+        },
+        "MaxAvailWidth": {
+            "ipmdid": "maxAvailWidth"
+        },
+        "MinorModelAgeDisclosure": {
+            "ipmdid": "minorModelAgeDisclosure"
+        },
+        "ModelAge": {
+            "ipmdid": "modelAges"
+        },
+        "ModelReleaseID": {
+            "ipmdid": "modelReleaseDocuments"
+        },
+        "ModelReleaseStatus": {
+            "ipmdid": "modelReleaseStatus"
+        },
+        "OrganisationInImageName": {
+            "ipmdid": "organisationInImageNames"
+        },
+        "PersonInImage": {
+            "ipmdid": "personInImageNames"
+        },
+        "PersonInImageWDetails": {
+            "ipmdid": "personsShown"
+        },
+        "ProductInImage": {
+            "ipmdid": "productsShown"
+        }
+    },
+    "et_instructure": {
+        "CiAdrExtadr": {
+            "ipmdid": "address"
+        },
+        "CiAdrCity": {
+            "ipmdid": "city"
+        },
+        "CiAdrCtry": {
+            "ipmdid": "country"
+        },
+        "CiEmailWork": {
+            "ipmdid": "emailwork"
+        },
+        "CiTelWork": {
+            "ipmdid": "phonework"
+        },
+        "CiAdrPcode": {
+            "ipmdid": "postalCode"
+        },
+        "CiAdrRegion": {
+            "ipmdid": "region"
+        },
+        "CiUrlWork": {
+            "ipmdid": "weburlwork"
+        },
+        "AOCircaDateCreated": {
+            "ipmdid": "circaDateCreated"
+        },
+        "AOContentDescription": {
+            "ipmdid": "contentDescription"
+        },
+        "AOContributionDescription": {
+            "ipmdid": "contributionDescription"
+        },
+        "AOCopyrightNotice": {
+            "ipmdid": "copyrightNotice"
+        },
+        "AOCreator": {
+            "ipmdid": "creatorNames"
+        },
+        "AOCreatorId": {
+            "ipmdid": "creatorIdentifiers"
+        },
+        "AOCurrentCopyrightOwnerId": {
+            "ipmdid": "currentCopyrightOwnerIdentifier"
+        },
+        "AOCurrentCopyrightOwnerName": {
+            "ipmdid": "currentCopyrightOwnerName"
+        },
+        "AOCurrentLicensorId": {
+            "ipmdid": "currentLicensorIdentifier"
+        },
+        "AOCurrentLicensorName": {
+            "ipmdid": "currentLicensorName"
+        },
+        "AODateCreated": {
+            "ipmdid": "dateCreated"
+        },
+        "AOPhysicalDescription": {
+            "ipmdid": "physicalDescription"
+        },
+        "AOSource": {
+            "ipmdid": "source"
+        },
+        "AOSourceInvNo": {
+            "ipmdid": "sourceInventoryNr"
+        },
+        "AOSourceInvURL": {
+            "ipmdid": "sourceInventoryUrl"
+        },
+        "AOStylePeriod": {
+            "ipmdid": "stylePeriod"
+        },
+        "AOTitle": {
+            "ipmdid": "title"
+        },
+        "CvId": {
+            "ipmdid": "cvId"
+        },
+        "CvTermId": {
+            "ipmdid": "cvTermId"
+        },
+        "CvTermName": {
+            "ipmdid": "cvTermName"
+        },
+        "CvTermRefinedAbout": {
+            "ipmdid": "cvTermRefinedAbout"
+        },
+        "EncRightsExpr": {
+            "ipmdid": "rightsExprLangId"
+        },
+        "RightsExprEncType": {
+            "ipmdid": "rightsExprLangId"
+        },
+        "RightsExprLangId": {
+            "ipmdid": "linkedRightsExpr"
+        },
+        "Identifier": {
+            "ipmdid": "identifiers"
+        },
+        "Name": {
+            "ipmdid": "name"
+        },
+        "RegionBoundary": {
+            "ipmdid": "regionBoundary"
+        },
+        "RId": {
+            "ipmdid": "rId"
+        },
+        "RCtype": {
+            "ipmdid": "rCtype"
+        },
+        "RRole": {
+            "ipmdid": "rRole"
+        },
+        "RbShape": {
+            "ipmdid": "rbShape"
+        },
+        "RbUnit": {
+            "ipmdid": "rbUnit"
+        },
+        "RbX": {
+            "ipmdid": "rbX"
+        },
+        "RbY": {
+            "ipmdid": "rbY"
+        },
+        "RbW": {
+            "ipmdid": "rbW"
+        },
+        "RbH": {
+            "ipmdid": "rbH"
+        },
+        "RbRx": {
+            "ipmdid": "rbRx"
+        },
+        "RbVertices": {
+            "ipmdid": "rbVertices"
+        },
+        "LinkedRightsExpr": {
+            "ipmdid": "rightsExprEncType"
+        },
+        "City": {
+            "ipmdid": "city"
+        },
+        "CountryCode": {
+            "ipmdid": "countryCode"
+        },
+        "CountryName": {
+            "ipmdid": "countryName"
+        },
+        "GPSAltitude": {
+            "ipmdid": "gpsAltitude"
+        },
+        "GPSLatitude": {
+            "ipmdid": "gpsLatitude"
+        },
+        "GPSLongitude": {
+            "ipmdid": "gpsLongitude"
+        },
+        "LocationId": {
+            "ipmdid": "identifiers"
+        },
+        "LocationName": {
+            "ipmdid": "name"
+        },
+        "ProvinceState": {
+            "ipmdid": "provinceState"
+        },
+        "Sublocation": {
+            "ipmdid": "sublocation"
+        },
+        "WorldRegion": {
+            "ipmdid": "worldRegion"
+        },
+        "PersonCharacteristic": {
+            "ipmdid": "characteristics"
+        },
+        "PersonDescription": {
+            "ipmdid": "description"
+        },
+        "PersonId": {
+            "ipmdid": "identifiers"
+        },
+        "PersonName": {
+            "ipmdid": "name"
+        },
+        "ProductDescription": {
+            "ipmdid": "description"
+        },
+        "ProductGTIN": {
+            "ipmdid": "gtin"
+        },
+        "ProductName": {
+            "ipmdid": "name"
+        },
+        "RegItemId": {
+            "ipmdid": "assetIdentifier"
+        },
+        "RegOrgId": {
+            "ipmdid": "registryIdentifier"
+        },
+        "RegEntryRole": {
+            "ipmdid": "role"
+        },
+        "LicensorID": {
+            "ipmdid": "licensorId"
+        },
+        "LicensorName": {
+            "ipmdid": "licensorName"
+        },
+        "LicensorStreetAddress": {
+            "ipmdid": "licensorAddress"
+        },
+        "LicensorExtendedAddress": {
+            "ipmdid": "licensorAddressDetail"
+        },
+        "LicensorCity": {
+            "ipmdid": "licensorCity"
+        },
+        "LicensorRegion": {
+            "ipmdid": "licensorStateProvince"
+        },
+        "LicensorPostalCode": {
+            "ipmdid": "licensorPostalCode"
+        },
+        "LicensorCountry": {
+            "ipmdid": "licensorCountryName"
+        },
+        "LicensorTelephoneType1": {
+            "ipmdid": "licensorTelephoneType1"
+        },
+        "LicensorTelephone1": {
+            "ipmdid": "licensorTelephone1"
+        },
+        "LicensorTelephoneType2": {
+            "ipmdid": "licensorTelephoneType2"
+        },
+        "LicensorTelephone2": {
+            "ipmdid": "licensorTelephone2"
+        },
+        "LicensorEmail": {
+            "ipmdid": "licensorEmail"
+        },
+        "LicensorURL": {
+            "ipmdid": "licensorUrl"
+        },
+        "CopyrightOwnerID": {
+            "ipmdid": "copyrightOwnerId"
+        },
+        "CopyrightOwnerName": {
+            "ipmdid": "copyrightOwnerName"
+        },
+        "ImageCreatorID": {
+            "ipmdid": "imageCreatorId"
+        },
+        "Artist": {
+            "ipmdid": "imageCreatorName"
+        },
+        "ImageCreatorName": {
+            "ipmdid": "imageCreatorName"
+        },
+        "ImageSupplierID": {
+            "ipmdid": "imageSupplierId"
+        },
+        "ImageSupplierName": {
+            "ipmdid": "imageSupplierName"
+        }
+    }
+}

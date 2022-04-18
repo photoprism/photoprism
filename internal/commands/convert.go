@@ -10,7 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ConvertCommand registers the convert cli command.
@@ -54,7 +54,7 @@ func convertAction(ctx *cli.Context) error {
 		convertPath = filepath.Join(convertPath, subPath)
 	}
 
-	log.Infof("converting originals in %s", sanitize.Log(convertPath))
+	log.Infof("converting originals in %s", clean.Log(convertPath))
 
 	w := service.Convert()
 

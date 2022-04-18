@@ -231,11 +231,11 @@ export default {
       this.search();
     },
     clearQuery() {
-      this.filter.q = "";
+      this.filter.q = '';
       this.search();
     },
     updateQuery() {
-      this.filter.q = this.filter.q.trim();
+      if (this.loading) return;
 
       if (this.query() !== this.filter.q) {
         if (this.filter.q) {
@@ -247,6 +247,7 @@ export default {
     },
     search() {
       if (this.loading) return;
+
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
       this.loading = true;

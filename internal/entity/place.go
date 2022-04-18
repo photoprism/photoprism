@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/maps"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 var placeMutex = sync.Mutex{}
@@ -54,7 +54,7 @@ func FindPlace(id string) *Place {
 	place := Place{}
 
 	if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
-		log.Debugf("place: %s not found", sanitize.Log(id))
+		log.Debugf("place: %s not found", clean.Log(id))
 		return nil
 	} else {
 		return &place

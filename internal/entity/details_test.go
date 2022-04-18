@@ -332,3 +332,27 @@ func TestDetails_SetLicense(t *testing.T) {
 		assert.Equal(t, "new", description.License)
 	})
 }
+
+func TestDetails_SetSoftware(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		description := &Details{PhotoID: 123, Software: ""}
+		assert.False(t, description.HasSoftware())
+
+		description.SetSoftware("", "manual")
+		assert.False(t, description.HasSoftware())
+	})
+	t.Run("NoPriority", func(t *testing.T) {
+		description := &Details{PhotoID: 123, Software: "old", SoftwareSrc: SrcManual}
+		assert.Equal(t, "old", description.Software)
+
+		description.SetSoftware("new", SrcAuto)
+		assert.Equal(t, "old", description.Software)
+	})
+	t.Run("NewValue", func(t *testing.T) {
+		description := &Details{PhotoID: 123, Software: "old", SoftwareSrc: SrcMeta}
+		assert.Equal(t, "old", description.Software)
+
+		description.SetSoftware("new", SrcManual)
+		assert.Equal(t, "new", description.Software)
+	})
+}

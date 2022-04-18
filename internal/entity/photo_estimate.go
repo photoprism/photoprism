@@ -5,9 +5,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -18,7 +18,7 @@ func (m *Photo) EstimateCountry() {
 	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() || m.HasPlace() {
 		// Keep existing data.
 		return
-	} else if m.UnknownCamera() && m.PhotoType == TypeImage {
+	} else if m.UnknownCamera() && m.PhotoType == MediaImage {
 		// Don't estimate if it seems to be a non-photographic image.
 		return
 	}
@@ -53,7 +53,7 @@ func (m *Photo) EstimateCountry() {
 		m.PhotoCountry = countryCode
 		m.PlaceSrc = SrcEstimate
 		m.EstimatedAt = TimePointer()
-		log.Debugf("photo: estimated country for %s is %s", m, sanitize.Log(m.CountryName()))
+		log.Debugf("photo: estimated country for %s is %s", m, clean.Log(m.CountryName()))
 	}
 }
 
@@ -72,7 +72,7 @@ func (m *Photo) EstimateLocation(force bool) {
 	m.EstimatedAt = TimePointer()
 
 	// Don't estimate if it seems to be a non-photographic image.
-	if m.UnknownCamera() && m.PhotoType == TypeImage {
+	if m.UnknownCamera() && m.PhotoType == MediaImage {
 		m.RemoveLocation(SrcEstimate, false)
 		m.RemoveLocationLabels()
 		return
@@ -110,7 +110,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			Order(gorm.Expr("ABS(JulianDay(taken_at) - JulianDay(?))", m.TakenAt)).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
 	default:
-		log.Warnf("photo: unsupported sql dialect %s", sanitize.Log(DbDialect()))
+		log.Warnf("photo: unsupported sql dialect %s", clean.Log(DbDialect()))
 		return
 	}
 
@@ -147,7 +147,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			}
 		}
 	} else if recentPhoto.HasCountry() {
-		log.Debugf("photo: estimated country for %s is %s", m, sanitize.Log(m.CountryName()))
+		log.Debugf("photo: estimated country for %s is %s", m, clean.Log(m.CountryName()))
 		m.RemoveLocation(SrcEstimate, false)
 		m.RemoveLocationLabels()
 		m.PhotoCountry = recentPhoto.PhotoCountry

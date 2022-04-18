@@ -3,7 +3,7 @@ package photoprism
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // RelatedFiles represents a list of related files to be indexed or imported.
@@ -67,5 +67,5 @@ func (m RelatedFiles) MainLogName() string {
 		return ""
 	}
 
-	return sanitize.Log(m.Main.RootRelName())
+	return clean.Log(m.Main.RootRelName())
 }

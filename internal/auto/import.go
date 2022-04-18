@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 var autoImport = time.Time{}
@@ -66,7 +66,7 @@ func Import() error {
 
 	api.RemoveFromFolderCache(entity.RootImport)
 
-	event.InfoMsg(i18n.MsgCopyingFilesFrom, sanitize.Log(filepath.Base(path)))
+	event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(path)))
 
 	var opt photoprism.ImportOptions
 

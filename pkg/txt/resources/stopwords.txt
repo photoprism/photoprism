@@ -63,14 +63,12 @@ xyz
 jpg
 jpeg
 png
-gif
 tif
 tiff
 xmp
 xml
 yml
 yaml
-raw
 zip
 tar
 txt

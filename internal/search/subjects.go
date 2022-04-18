@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -162,5 +162,5 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 		result = append(result, strings.Join(subj, txt.Or))
 	}
 
-	return result, names, sanitize.SearchQuery(remaining)
+	return result, names, clean.SearchQuery(remaining)
 }

@@ -3,7 +3,7 @@
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery">
+    <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery()">
       <v-toolbar dense flat class="page-toolbar" color="secondary-light pa-0">
         <v-text-field :value="filter.q"
                       solo hide-details clearable overflow single-line validate-on-blur
@@ -14,21 +14,21 @@
                       autocorrect="off"
                       autocapitalize="none"
                       color="secondary-dark"
-                      @input="onChangeQuery"
-                      @keyup.enter.native="updateQuery"
-                      @click:clear="clearQuery"
+                      @change="(v) => {updateFilter({'q': v})}"
+                      @keyup.enter.native="(e) => updateQuery({'q': e.target.value})"
+                      @click:clear="() => {updateQuery({'q': ''})}"
         ></v-text-field>
 
         <v-divider vertical></v-divider>
 
-        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
+        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
+        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden()">
           <v-icon>visibility</v-icon>
         </v-btn>
-        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
+        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden()">
           <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
@@ -193,8 +193,6 @@ export default {
     const q = query['q'] ? query['q'] : '';
     const hidden = query['hidden'] ? query['hidden'] : '';
     const order = this.sortOrder();
-    const filter = {q, hidden, order};
-    const settings = {};
 
     return {
       view: 'all',
@@ -210,9 +208,8 @@ export default {
       offset: 0,
       page: 0,
       selection: [],
-      settings: settings,
-      q: q,
-      filter: filter,
+      settings: {},
+      filter:  {q, hidden, order},
       lastFilter: {},
       routeName: routeName,
       titleRule: v => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
@@ -244,8 +241,7 @@ export default {
       const query = this.$route.query;
 
       this.routeName = this.$route.name;
-      this.q = query["q"] ? query["q"] : "";
-      this.filter.q = this.q;
+      this.filter.q = query["q"] ? query["q"] : "";
       this.filter.hidden = query["hidden"] ? query["hidden"] : "";
       this.filter.order = this.sortOrder();
 
@@ -527,15 +523,44 @@ export default {
         this.listen = true;
       });
     },
-    onChangeQuery(val) {
-      this.q = val ? String(val) : '';
+    updateSettings(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.settings.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.settings[key] = value.trim();
+            break;
+          default:
+            this.settings[key] = value;
+        }
+      }
     },
-    clearQuery() {
-      this.q = '';
-      this.updateQuery();
+    updateFilter(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.filter.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.filter[key] = value.trim();
+            break;
+          default:
+            this.filter[key] = value;
+        }
+      }
     },
-    updateQuery() {
-      this.filter.q = this.q.trim();
+    updateQuery(props) {
+      this.updateFilter(props);
 
       if (this.loading || !this.active) {
         return;
@@ -573,10 +598,10 @@ export default {
 
       return params;
     },
-    refresh() {
-      if (this.loading || !this.active) {
-        return;
-      }
+    refresh(props) {
+      this.updateSettings(props);
+
+      if (this.loading || !this.active) return;
 
       this.loading = true;
       this.page = 0;

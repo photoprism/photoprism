@@ -3,7 +3,7 @@ package entity
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 type Duplicates []Duplicate
@@ -56,7 +56,7 @@ func PurgeDuplicate(fileName, fileRoot string) error {
 	}
 
 	if err := UnscopedDb().Delete(Duplicate{}, "file_name = ? AND file_root = ?", fileName, fileRoot).Error; err != nil {
-		log.Errorf("duplicate: %s in %s (purge)", err, sanitize.Log(fileName))
+		log.Errorf("duplicate: %s in %s (purge)", err, clean.Log(fileName))
 		return err
 	}
 
@@ -101,7 +101,7 @@ func (m *Duplicate) Save() error {
 	}
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("duplicate: %s in %s (save)", err, sanitize.Log(m.FileName))
+		log.Errorf("duplicate: %s in %s (save)", err, clean.Log(m.FileName))
 		return err
 	}
 

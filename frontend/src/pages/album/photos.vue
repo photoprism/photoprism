@@ -2,8 +2,8 @@
   <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <p-album-toolbar :album="model" :settings="settings" :filter="filter" :filter-change="updateQuery"
-                     :refresh="refresh"></p-album-toolbar>
+    <p-album-toolbar :filter="filter" :album="model" :settings="settings" :refresh="refresh"
+                     :update-filter="updateFilter" :update-query="updateQuery"></p-album-toolbar>
 
     <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import {Photo, TypeLive, TypeRaw, TypeVideo} from "model/photo";
+import {Photo, MediaLive, MediaRaw, MediaVideo, MediaAnimated} from "model/photo";
 import Album from "model/album";
 import Thumb from "model/thumb";
 import Event from "pubsub-js";
@@ -55,7 +55,10 @@ import Viewer from "common/viewer";
 export default {
   name: 'PPageAlbumPhotos',
   props: {
-    staticFilter: Object
+    staticFilter: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     const uid = this.$route.params.uid;
@@ -79,7 +82,7 @@ export default {
       uid: uid,
       results: [],
       scrollDisabled: true,
-      scrollDistance: window.innerHeight*2,
+      scrollDistance: window.innerHeight * 2,
       batchSize: batchSize,
       offset: 0,
       page: 0,
@@ -99,7 +102,7 @@ export default {
     };
   },
   computed: {
-    selectMode: function() {
+    selectMode: function () {
       return this.selection.length > 0;
     },
   },
@@ -182,11 +185,11 @@ export default {
       const selected = this.results[index];
 
       // Don't open as stack when user is selecting pictures, or a RAW has only one JPEG.
-      if (this.selection.length > 0 || selected.Type === TypeRaw && selected.jpegFiles().length < 2) {
+      if (this.selection.length > 0 || selected.Type === MediaRaw && selected.jpegFiles().length < 2) {
         showMerged = false;
       }
 
-      if (showMerged && selected.Type === TypeLive || selected.Type === TypeVideo) {
+      if (showMerged && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
           this.$viewer.play({video: selected, album: this.album});
         } else {
@@ -261,8 +264,51 @@ export default {
         this.listen = true;
       });
     },
-    updateQuery() {
-      this.filter.q = this.filter.q.trim();
+    updateSettings(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.settings.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.settings[key] = value.trim();
+            break;
+          default:
+            this.settings[key] = value;
+        }
+      }
+    },
+    updateFilter(props) {
+      if (!props || typeof props !== "object" || props.target) {
+        return;
+      }
+
+      for (const [key, value] of Object.entries(props)) {
+        if (!this.filter.hasOwnProperty(key)) {
+          continue;
+        }
+        switch (typeof value) {
+          case "string":
+            this.filter[key] = value.trim();
+            break;
+          default:
+            this.filter[key] = value;
+        }
+      }
+    },
+    updateQuery(props) {
+      this.updateFilter(props);
+
+      if (this.model.Order !== this.filter.order) {
+        this.model.Order = this.filter.order;
+        this.updateAlbum();
+      }
+
+      if (this.loading) return;
 
       const query = {
         view: this.settings.view
@@ -299,10 +345,10 @@ export default {
 
       return params;
     },
-    refresh() {
-      if (this.loading) {
-        return;
-      }
+    refresh(props) {
+      this.updateSettings(props);
+
+      if (this.loading) return;
 
       this.loading = true;
       this.page = 0;

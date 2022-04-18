@@ -73,7 +73,7 @@ func TestDateTime(t *testing.T) {
 	})
 	t.Run("UTC/016:06:28 09:45:49-0130", func(t *testing.T) {
 		result := DateTime("2016:06:28 09:45:49.0130", "UTC")
-		assert.Equal(t, "2016-06-28 09:45:49 +0000 UTC", result.String())
+		assert.Equal(t, "2016-06-28 09:45:49.013 +0000 UTC", result.String())
 	})
 	t.Run("2012:08:08 22:07:18", func(t *testing.T) {
 		result := DateTime("2012:08:08 22:07:18", "")
@@ -98,6 +98,11 @@ func TestDateTime(t *testing.T) {
 	t.Run("EuropeBerlin/2020-01-30_09-57-18", func(t *testing.T) {
 		result := DateTime("2020-01-30_09-57-18", "Europe/Berlin")
 		assert.Equal(t, "2020-01-30 09:57:18 +0100 CET", result.String())
+	})
+	t.Run("EuropeBerlin/2020-10-17-48-24.950488", func(t *testing.T) {
+		result := DateTime("2020:10:17 17:48:24.9508123", "UTC")
+		assert.Equal(t, "2020-10-17 17:48:24.9508123 +0000 UTC", result.UTC().String())
+		assert.Equal(t, "2020-10-17 17:48:24.9508123", result.Format("2006-01-02 15:04:05.999999999"))
 	})
 }
 

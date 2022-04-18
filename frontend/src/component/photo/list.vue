@@ -14,7 +14,7 @@
         <p class="body-1 mt-2 mb-0 pa-0">
           <translate>Try again using other filters or keywords.</translate>
           <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-          <template v-if="config.settings.features.review" class="mt-2 mb-0 pa-0">
+          <template v-if="config.settings.features.review">
             <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
           </template>
         </p>
@@ -52,13 +52,12 @@
               <v-icon color="white" class="select-on">check_circle</v-icon>
               <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
-            <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live'"
+            <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
                    :ripple="false"
                    flat icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
-              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">
-                $vuetify.icons.live_photo
-              </v-icon>
+              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon color="white" class="default-hidden action-animated" :title="$gettext('Animated')">gif</v-icon>
               <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
             </v-btn>
           </v-img>
@@ -121,9 +120,18 @@ export default {
       type: Array,
       default: () => [],
     },
-    openPhoto: Function,
-    editPhoto: Function,
-    openLocation: Function,
+    openPhoto: {
+      type: Function,
+      default: () => {},
+    },
+    editPhoto: {
+      type: Function,
+      default: () => {},
+    },
+    openLocation: {
+      type: Function,
+      default:() => {},
+    },
     album: {
       type: Object,
       default: () => {},
@@ -132,7 +140,10 @@ export default {
       type: Object,
       default: () => {},
     },
-    context: String,
+    context: {
+      type: String,
+      default: "",
+    },
     selectMode: Boolean,
   },
   data() {
@@ -211,7 +222,7 @@ export default {
       } else if (this.photos[index]) {
         let photo = this.photos[index];
 
-        if (photo.Type === 'video' && photo.isPlayable()) {
+        if ((photo.Type === 'video' || photo.Type === 'animated') && photo.isPlayable()) {
           this.openPhoto(index, true);
         } else {
           this.openPhoto(index, false);

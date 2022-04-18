@@ -16,8 +16,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 const backupDescription = "A user-defined SQL dump FILENAME or - for stdout can be passed as the first argument. " +
@@ -113,7 +113,7 @@ func backupAction(ctx *cli.Context) error {
 				}
 			}
 
-			log.Infof("writing SQL dump to %s", sanitize.Log(indexFileName))
+			log.Infof("writing SQL dump to %s", clean.Log(indexFileName))
 		}
 
 		var cmd *exec.Cmd
@@ -178,7 +178,7 @@ func backupAction(ctx *cli.Context) error {
 			albumsPath = conf.AlbumsPath()
 		}
 
-		log.Infof("saving albums in %s", sanitize.Log(albumsPath))
+		log.Infof("saving albums in %s", clean.Log(albumsPath))
 
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err

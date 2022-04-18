@@ -47,14 +47,23 @@ func ModelValues(m interface{}, keyNames ...string) (result Values, keys []inter
 			continue
 		}
 
-		name := field.Name
+		fieldName := field.Name
 
 		// Skip timestamps.
-		if name == "" || name == "UpdatedAt" || name == "CreatedAt" {
+		if fieldName == "" || fieldName == "UpdatedAt" || fieldName == "CreatedAt" {
 			continue
 		}
 
 		v := values.Field(i)
+
+		switch v.Kind() {
+		case reflect.Slice, reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
+			continue
+		case reflect.Struct:
+			if v.IsZero() {
+				continue
+			}
+		}
 
 		// Skip read-only fields.
 		if !v.CanSet() {
@@ -62,7 +71,7 @@ func ModelValues(m interface{}, keyNames ...string) (result Values, keys []inter
 		}
 
 		// Skip keys.
-		if isKey(name) {
+		if isKey(fieldName) {
 			if !v.IsZero() {
 				keys = append(keys, v.Interface())
 			}
@@ -70,7 +79,7 @@ func ModelValues(m interface{}, keyNames ...string) (result Values, keys []inter
 		}
 
 		// Add value to result.
-		result[name] = v.Interface()
+		result[fieldName] = v.Interface()
 	}
 
 	if len(result) == 0 {

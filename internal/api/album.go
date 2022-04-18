@@ -1,11 +1,9 @@
 package api
 
 import (
-	"archive/zip"
 	"net/http"
 	"path/filepath"
-	"strings"
-	"time"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,14 +12,14 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
+
+var albumMutex = sync.Mutex{}
 
 // SaveAlbumAsYaml saves album data as YAML file.
 func SaveAlbumAsYaml(a entity.Album) {
@@ -37,7 +35,7 @@ func SaveAlbumAsYaml(a entity.Album) {
 	if err := a.SaveAsYaml(fileName); err != nil {
 		log.Errorf("album: %s (update yaml)", err)
 	} else {
-		log.Debugf("album: updated yaml file %s", sanitize.Log(filepath.Base(fileName)))
+		log.Debugf("album: updated yaml file %s", clean.Log(filepath.Base(fileName)))
 	}
 }
 
@@ -53,7 +51,7 @@ func GetAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := sanitize.IdString(c.Param("uid"))
+		id := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -84,11 +82,21 @@ func CreateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
+		albumMutex.Lock()
+		defer albumMutex.Unlock()
+
 		a := entity.NewAlbum(f.AlbumTitle, entity.AlbumDefault)
 		a.AlbumFavorite = f.AlbumFavorite
 
-		if res := entity.Db().Create(a); res.Error != nil {
-			AbortAlreadyExists(c, sanitize.Log(a.AlbumTitle))
+		// Search existing album.
+		if err := a.Find(); err == nil {
+			c.JSON(http.StatusOK, a)
+			return
+		}
+
+		// Create new album.
+		if err := a.Create(); err != nil {
+			AbortAlreadyExists(c, clean.Log(a.AlbumTitle))
 			return
 		}
 
@@ -116,7 +124,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := sanitize.IdString(c.Param("uid"))
+		uid := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
@@ -138,7 +146,10 @@ func UpdateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := a.SaveForm(f); err != nil {
+		albumMutex.Lock()
+		defer albumMutex.Unlock()
+
+		if err = a.SaveForm(f); err != nil {
 			log.Error(err)
 			AbortSaveFailed(c)
 			return
@@ -168,7 +179,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := sanitize.IdString(c.Param("uid"))
+		id := clean.IdString(c.Param("uid"))
 
 		a, err := query.AlbumByUID(id)
 
@@ -176,6 +187,9 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
+
+		albumMutex.Lock()
+		defer albumMutex.Unlock()
 
 		// Regular, manually created album?
 		if a.IsDefault() {
@@ -198,7 +212,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 		SaveAlbumAsYaml(a)
 
-		event.SuccessMsg(i18n.MsgAlbumDeleted, sanitize.Log(a.AlbumTitle))
+		event.SuccessMsg(i18n.MsgAlbumDeleted, clean.Log(a.AlbumTitle))
 
 		c.JSON(http.StatusOK, a)
 	})
@@ -219,7 +233,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := sanitize.IdString(c.Param("uid"))
+		id := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -257,7 +271,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := sanitize.IdString(c.Param("uid"))
+		id := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -292,7 +306,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 			return
 		}
 
-		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
+		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -327,7 +341,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		}
 
 		if len(added) > 0 {
-			event.SuccessMsg(i18n.MsgSelectionAddedTo, sanitize.Log(a.Title()))
+			event.SuccessMsg(i18n.MsgSelectionAddedTo, clean.Log(a.Title()))
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
@@ -357,7 +371,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := sanitize.IdString(c.Param("uid"))
+		uid := clean.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
@@ -378,9 +392,9 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 		if len(added) > 0 {
 			if len(added) == 1 {
-				event.SuccessMsg(i18n.MsgEntryAddedTo, sanitize.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryAddedTo, clean.Log(a.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), sanitize.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), clean.Log(a.Title()))
 			}
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
@@ -418,7 +432,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
+		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -429,9 +443,9 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 		if len(removed) > 0 {
 			if len(removed) == 1 {
-				event.SuccessMsg(i18n.MsgEntryRemovedFrom, sanitize.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryRemovedFrom, clean.Log(a.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), sanitize.Log(sanitize.Log(a.Title())))
+				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), clean.Log(clean.Log(a.Title())))
 			}
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
@@ -442,76 +456,5 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": f.Photos, "removed": removed})
-	})
-}
-
-// DownloadAlbum streams the album contents as zip archive.
-//
-// GET /api/v1/albums/:uid/dl
-func DownloadAlbum(router *gin.RouterGroup) {
-	router.GET("/albums/:uid/dl", func(c *gin.Context) {
-		if InvalidDownloadToken(c) {
-			AbortUnauthorized(c)
-			return
-		}
-
-		start := time.Now()
-		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
-
-		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
-			return
-		}
-
-		files, err := search.AlbumPhotos(a, 10000, true)
-
-		if err != nil {
-			AbortEntityNotFound(c)
-			return
-		}
-
-		zipFileName := a.ZipName()
-
-		AddDownloadHeader(c, zipFileName)
-
-		zipWriter := zip.NewWriter(c.Writer)
-		defer func() { _ = zipWriter.Close() }()
-
-		var aliases = make(map[string]int)
-
-		for _, file := range files {
-			if file.FileHash == "" {
-				log.Warnf("download: empty file hash, skipped %s", sanitize.Log(file.FileName))
-				continue
-			}
-
-			if file.FileSidecar {
-				log.Debugf("download: skipped sidecar %s", sanitize.Log(file.FileName))
-				continue
-			}
-
-			fileName := photoprism.FileName(file.FileRoot, file.FileName)
-			alias := file.ShareBase(0)
-			key := strings.ToLower(alias)
-
-			if seq := aliases[key]; seq > 0 {
-				alias = file.ShareBase(seq)
-			}
-
-			aliases[key] += 1
-
-			if fs.FileExists(fileName) {
-				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
-					log.Error(err)
-					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
-					return
-				}
-				log.Infof("download: added %s as %s", sanitize.Log(file.FileName), sanitize.Log(alias))
-			} else {
-				log.Errorf("download: failed finding %s", sanitize.Log(file.FileName))
-			}
-		}
-
-		log.Infof("download: created %s [%s]", sanitize.Log(zipFileName), time.Since(start))
 	})
 }

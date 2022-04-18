@@ -296,4 +296,32 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		assert.Equal(t, len(photos), len(photos0))
 	})
+	t.Run("Landscape", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "landscape:true"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 7, len(photos))
+	})
+	t.Run("Square", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "square:true"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 1, len(photos))
+	})
 }

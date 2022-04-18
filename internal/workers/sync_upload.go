@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Uploads local files to a remote account
@@ -55,7 +55,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 			continue // try again next time
 		}
 
-		log.Infof("sync: uploaded %s to %s (%s)", sanitize.Log(file.FileName), sanitize.Log(remoteName), a.AccName)
+		log.Infof("sync: uploaded %s to %s (%s)", clean.Log(file.FileName), clean.Log(remoteName), a.AccName)
 
 		fileSync := entity.NewFileSync(a.ID, remoteName)
 		fileSync.Status = entity.FileSyncUploaded

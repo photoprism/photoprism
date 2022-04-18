@@ -22,7 +22,7 @@ func TestData_AspectRatio(t *testing.T) {
 			Width:        500,
 			Height:       600,
 			Error:        nil,
-			All:          nil,
+			exif:         nil,
 		}
 
 		assert.Equal(t, float32(0.83), data.AspectRatio())
@@ -42,7 +42,7 @@ func TestData_AspectRatio(t *testing.T) {
 			Width:        0,
 			Height:       600,
 			Error:        nil,
-			All:          nil,
+			exif:         nil,
 		}
 
 		assert.Equal(t, float32(0), data.AspectRatio())

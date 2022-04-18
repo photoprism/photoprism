@@ -36,6 +36,16 @@ func (photo GeoResult) Lng() float64 {
 	return float64(photo.PhotoLng)
 }
 
+// IsPlayable returns true if the photo has a related video/animation that is playable.
+func (photo GeoResult) IsPlayable() bool {
+	switch photo.PhotoType {
+	case entity.MediaVideo, entity.MediaLive, entity.MediaAnimated:
+		return true
+	default:
+		return false
+	}
+}
+
 // GeoResults represents a list of geo search results.
 type GeoResults []GeoResult
 
@@ -70,7 +80,7 @@ func (photos GeoResults) GeoJSON() ([]byte, error) {
 			"Title":   p.PhotoTitle,
 		}
 
-		if p.PhotoType != entity.TypeImage && p.PhotoType != entity.TypeDefault {
+		if p.PhotoType != entity.MediaImage && p.PhotoType != entity.MediaUnknown {
 			props["Type"] = p.PhotoType
 		}
 

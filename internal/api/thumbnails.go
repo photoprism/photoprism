@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // GetThumb returns a thumbnail image matching the file hash, crop area, and type.
@@ -37,21 +37,21 @@ func GetThumb(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		download := c.Query("download") != ""
-		fileHash, cropArea := crop.ParseThumb(sanitize.Token(c.Param("thumb")))
+		fileHash, cropArea := crop.ParseThumb(clean.Token(c.Param("thumb")))
 
 		// Is cropped thumbnail?
 		if cropArea != "" {
-			cropName := crop.Name(sanitize.Token(c.Param("size")))
+			cropName := crop.Name(clean.Token(c.Param("size")))
 
 			cropSize, ok := crop.Sizes[cropName]
 
 			if !ok {
-				log.Errorf("%s: invalid size %s", logPrefix, sanitize.Log(string(cropName)))
+				log.Errorf("%s: invalid size %s", logPrefix, clean.Log(string(cropName)))
 				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 				return
 			}
 
-			fileName, err := crop.FromRequest(fileHash, cropArea, cropSize, conf.ThumbPath())
+			fileName, err := crop.FromRequest(fileHash, cropArea, cropSize, conf.ThumbCachePath())
 
 			if err != nil {
 				log.Warnf("%s: %s", logPrefix, err)
@@ -73,12 +73,12 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
+		thumbName := thumb.Name(clean.Token(c.Param("size")))
 
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", logPrefix, sanitize.Log(thumbName.String()))
+			log.Errorf("%s: invalid size %s", logPrefix, clean.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}
@@ -119,7 +119,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Return existing thumbs straight away.
 		if !download {
-			if fileName, err := thumb.FileName(fileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...); err == nil && fs.FileExists(fileName) {
+			if fileName, err := thumb.FileName(fileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...); err == nil && fs.FileExists(fileName) {
 				AddThumbCacheHeader(c)
 				c.File(fileName)
 				return
@@ -153,17 +153,17 @@ func GetThumb(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: file %s is missing", logPrefix, sanitize.Log(f.FileName))
+			log.Errorf("%s: file %s is missing", logPrefix, clean.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			logError(logPrefix, f.Update("FileMissing", true))
 
 			if f.AllFilesMissing() {
-				log.Infof("%s: deleting photo, all files missing for %s", logPrefix, sanitize.Log(f.FileName))
+				log.Infof("%s: deleting photo, all files missing for %s", logPrefix, clean.Log(f.FileName))
 
 				if _, err := f.RelatedPhoto().Delete(false); err != nil {
-					log.Errorf("%s: %s while deleting %s", logPrefix, err, sanitize.Log(f.FileName))
+					log.Errorf("%s: %s while deleting %s", logPrefix, err, clean.Log(f.FileName))
 				}
 			}
 
@@ -183,9 +183,9 @@ func GetThumb(router *gin.RouterGroup) {
 		var thumbnail string
 
 		if conf.ThumbUncached() || size.Uncached() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...)
 		}
 
 		if err != nil {
@@ -193,7 +193,7 @@ func GetThumb(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		} else if thumbnail == "" {
-			log.Errorf("%s: %s has empty thumb name - bug?", logPrefix, filepath.Base(fileName))
+			log.Errorf("%s: %s has empty thumb name - possible bug", logPrefix, filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		}

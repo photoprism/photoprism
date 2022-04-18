@@ -23,7 +23,7 @@ func GetMomentsTime(router *gin.RouterGroup) {
 		result, err := query.MomentsTime(1)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 

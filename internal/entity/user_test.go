@@ -305,18 +305,18 @@ func TestUser_Guest(t *testing.T) {
 func TestUser_SetPassword(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
-		if err := p.SetPassword("abcdefgt"); err != nil {
+		if err := p.SetPassword("insecure"); err != nil {
 			t.Fatal(err)
 		}
 	})
 	t.Run("not registered", func(t *testing.T) {
 		p := User{UserUID: "", UserName: "Hanna", FullName: ""}
-		assert.Error(t, p.SetPassword("abchjy"))
+		assert.Error(t, p.SetPassword("insecure"))
 
 	})
 	t.Run("password too short", func(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
-		assert.Error(t, p.SetPassword("abc"))
+		assert.Error(t, p.SetPassword("short"))
 	})
 }
 
@@ -324,7 +324,7 @@ func TestUser_InitPassword(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		p := User{UserUID: "u000000000000009", UserName: "Hanna", FullName: ""}
 		assert.Nil(t, FindPassword("u000000000000009"))
-		p.InitPassword("abcdek")
+		p.InitPassword("insecure")
 		m := FindPassword("u000000000000009")
 
 		if m == nil {
@@ -338,12 +338,12 @@ func TestUser_InitPassword(t *testing.T) {
 			t.Logf("cannot user %s: ", err)
 		}
 
-		if err := p.SetPassword("hutfdt"); err != nil {
+		if err := p.SetPassword("insecure"); err != nil {
 			t.Fatal(err)
 		}
 
 		assert.NotNil(t, FindPassword("u000000000000010"))
-		p.InitPassword("hutfdt")
+		p.InitPassword("insecure")
 		m := FindPassword("u000000000000010")
 
 		if m == nil {
@@ -353,7 +353,7 @@ func TestUser_InitPassword(t *testing.T) {
 	t.Run("not registered", func(t *testing.T) {
 		p := User{UserUID: "u12", UserName: "", FullName: ""}
 		assert.Nil(t, FindPassword("u12"))
-		p.InitPassword("dcjygkh")
+		p.InitPassword("insecure")
 		assert.Nil(t, FindPassword("u12"))
 	})
 	t.Run("password empty", func(t *testing.T) {
@@ -415,7 +415,7 @@ func TestUser_Validate(t *testing.T) {
 	t.Run("username too short", func(t *testing.T) {
 		u := &User{
 			AddressID:    1,
-			UserName:     "val",
+			UserName:     "va",
 			FullName:     "Validate",
 			PrimaryEmail: "validate@example.com",
 		}

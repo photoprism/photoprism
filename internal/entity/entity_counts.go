@@ -28,7 +28,7 @@ func LabelCounts() LabelPhotoCounts {
 		JOIN photos_labels pl ON pl.label_id = l.id
 		JOIN photos ph ON pl.photo_id = ph.id
 		WHERE pl.uncertainty < 100
-		AND ph.photo_quality >= 0
+		AND ph.photo_quality > -1
 		AND ph.photo_private = 0
 		AND ph.deleted_at IS NULL GROUP BY l.id
 		UNION ALL
@@ -37,7 +37,7 @@ func LabelCounts() LabelPhotoCounts {
 		JOIN photos_labels pl ON pl.label_id = c.label_id
 		JOIN photos ph ON pl.photo_id = ph.id
 		WHERE pl.uncertainty < 100
-		AND ph.photo_quality >= 0
+		AND ph.photo_quality > -1
 		AND ph.photo_private = 0
 		AND ph.deleted_at IS NULL GROUP BY l.id) counts GROUP BY label_id
 		`).Scan(&result).Error; err != nil {
@@ -58,7 +58,7 @@ func UpdatePlacesCounts() (err error) {
 	res := Db().Table("places").
 		UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(*) FROM photos p "+
 			"WHERE places.id = p.place_id "+
-			"AND p.photo_quality >= 0 "+
+			"AND p.photo_quality > -1 "+
 			"AND p.photo_private = 0 "+
 			"AND p.deleted_at IS NULL)"))
 
@@ -156,7 +156,7 @@ func UpdateLabelCounts() (err error) {
 					JOIN photos_labels pl ON pl.label_id = l.id
 					JOIN photos ph ON pl.photo_id = ph.id
 					WHERE pl.uncertainty < 100
-					AND ph.photo_quality >= 0
+					AND ph.photo_quality > -1
 					AND ph.photo_private = 0
 					AND ph.deleted_at IS NULL GROUP BY l.id
 					UNION ALL
@@ -165,7 +165,7 @@ func UpdateLabelCounts() (err error) {
 					JOIN photos_labels pl ON pl.label_id = c.label_id
 					JOIN photos ph ON pl.photo_id = ph.id
 					WHERE pl.uncertainty < 100
-					AND ph.photo_quality >= 0
+					AND ph.photo_quality > -1
 					AND ph.photo_private = 0
 					AND ph.deleted_at IS NULL GROUP BY l.id) counts GROUP BY label_id) label_counts WHERE label_id = labels.id)`))
 	} else {

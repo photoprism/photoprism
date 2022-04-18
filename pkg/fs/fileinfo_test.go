@@ -48,6 +48,7 @@ func TestNewFileInfos(t *testing.T) {
 	}
 
 	expected := map[string]FileInfo{
+		"empty.jpg":     {Abs: PathSeparator + "empty.jpg", Size: 0, Dir: false},
 		"test.jpg":      {Abs: PathSeparator + "test.jpg", Size: 10990, Dir: false},
 		"CATYELLOW.jpg": {Abs: PathSeparator + "CATYELLOW.jpg", Size: 70790, Dir: false},
 		"directory":     {Abs: PathSeparator + "directory", Size: 4096, Dir: true},
@@ -57,7 +58,6 @@ func TestNewFileInfos(t *testing.T) {
 	for _, file := range result {
 		assert.NotEmpty(t, file.Name)
 		assert.NotEmpty(t, file.Abs)
-		assert.NotEmpty(t, file.Size)
 		assert.False(t, file.Date.IsZero())
 
 		if info, ok := expected[file.Name]; ok {

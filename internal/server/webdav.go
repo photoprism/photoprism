@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/auto"
@@ -20,11 +20,11 @@ const WebDAVImport = "/import"
 
 // MarkUploadAsFavorite sets the favorite flag for newly uploaded files.
 func MarkUploadAsFavorite(fileName string) {
-	yamlName := fs.AbsPrefix(fileName, false) + fs.YamlExt
+	yamlName := fs.AbsPrefix(fileName, false) + fs.ExtYAML
 
 	// Abort if YAML file already exists to avoid overwriting metadata.
 	if fs.FileExists(yamlName) {
-		log.Warnf("webdav: %s already exists", sanitize.Log(filepath.Base(yamlName)))
+		log.Warnf("webdav: %s already exists", clean.Log(filepath.Base(yamlName)))
 		return
 	}
 
@@ -41,7 +41,7 @@ func MarkUploadAsFavorite(fileName string) {
 	}
 
 	// Log success.
-	log.Infof("webdav: marked %s as favorite", sanitize.Log(filepath.Base(fileName)))
+	log.Infof("webdav: marked %s as favorite", clean.Log(filepath.Base(fileName)))
 }
 
 // WebDAV handles any requests to /originals|import/*
@@ -66,11 +66,11 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 			if err != nil {
 				switch r.Method {
 				case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
-					log.Errorf("webdav: %s in %s %s", sanitize.Log(err.Error()), sanitize.Log(r.Method), sanitize.Log(r.URL.String()))
+					log.Errorf("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
 				case MethodPropfind:
-					log.Tracef("webdav: %s in %s %s", sanitize.Log(err.Error()), sanitize.Log(r.Method), sanitize.Log(r.URL.String()))
+					log.Tracef("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
 				default:
-					log.Debugf("webdav: %s in %s %s", sanitize.Log(err.Error()), sanitize.Log(r.Method), sanitize.Log(r.URL.String()))
+					log.Debugf("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
 				}
 
 			} else {
@@ -85,7 +85,7 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 
 				switch r.Method {
 				case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
-					log.Infof("webdav: %s %s", sanitize.Log(r.Method), sanitize.Log(r.URL.String()))
+					log.Infof("webdav: %s %s", clean.Log(r.Method), clean.Log(r.URL.String()))
 
 					if router.BasePath() == WebDAVOriginals {
 						auto.ShouldIndex()
@@ -93,7 +93,7 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 						auto.ShouldImport()
 					}
 				default:
-					log.Tracef("webdav: %s %s", sanitize.Log(r.Method), sanitize.Log(r.URL.String()))
+					log.Tracef("webdav: %s %s", clean.Log(r.Method), clean.Log(r.URL.String()))
 				}
 			}
 		},

@@ -16,7 +16,7 @@ var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 var YearRegexp = regexp.MustCompile("\\d{4,5}")
 var IsDateRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}")
 var IsDateTimeRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}.{1,4}\\d{2}\\D?\\d{2}\\D?\\d{2}")
-var ExifDateTimeRegexp = regexp.MustCompile("((?P<year>\\d{4})|\\D{4})\\D((?P<month>\\d{2})|\\D{2})\\D((?P<day>\\d{2})|\\D{2})\\D((?P<h>\\d{2})|\\D{2})\\D((?P<m>\\d{2})|\\D{2})\\D((?P<s>\\d{2})|\\D{2})(?P<z>\\D)?(?P<zh>\\d{2})?\\D?(?P<zm>\\d{2})?")
+var ExifDateTimeRegexp = regexp.MustCompile("((?P<year>\\d{4})|\\D{4})\\D((?P<month>\\d{2})|\\D{2})\\D((?P<day>\\d{2})|\\D{2})\\D((?P<h>\\d{2})|\\D{2})\\D((?P<m>\\d{2})|\\D{2})\\D((?P<s>\\d{2})|\\D{2})(\\.(?P<subsec>\\d+))?(?P<z>\\D)?(?P<zh>\\d{2})?\\D?(?P<zm>\\d{2})?")
 var ExifDateTimeMatch = make(map[string]int)
 
 func init() {
@@ -62,18 +62,16 @@ func DateTime(s, timeZone string) (t time.Time) {
 
 	s = strings.TrimLeft(s, " ")
 
-	// Timestamp too short or much too long? Return unknown time.
-	if len(s) < 4 || len(s) > 50 {
+	// Timestamp too short?
+	if len(s) < 4 {
 		return time.Time{}
+	} else if len(s) > 50 {
+		// Clip to max length.
+		s = s[:50]
 	}
 
 	// Pad short timestamp with whitespace at the end.
 	s = fmt.Sprintf("%-19s", s)
-
-	// Shorten timestamp to max length.
-	if len(s) > 25 {
-		s = s[:25]
-	}
 
 	v := ExifDateTimeMatch
 	m := ExifDateTimeRegexp.FindStringSubmatch(s)
@@ -119,6 +117,14 @@ func DateTime(s, timeZone string) (t time.Time) {
 		}
 	}
 
+	var nsec int
+
+	if subsec := m[v["subsec"]]; subsec != "" {
+		nsec = Int(subsec + strings.Repeat("0", 9-len(subsec)))
+	} else {
+		nsec = 0
+	}
+
 	// Create rounded timestamp from parsed input values.
 	t = time.Date(
 		IntVal(m[v["year"]], 1, YearMax, time.Now().Year()),
@@ -127,8 +133,8 @@ func DateTime(s, timeZone string) (t time.Time) {
 		IntVal(m[v["h"]], 0, 23, 0),
 		IntVal(m[v["m"]], 0, 59, 0),
 		IntVal(m[v["s"]], 0, 59, 0),
-		0,
-		tz).Round(time.Second)
+		nsec,
+		tz)
 
 	if timeZone != "" && loc != nil && loc != tz {
 		return t.In(loc)

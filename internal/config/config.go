@@ -29,43 +29,15 @@ import (
 	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 var log = event.Log
 var once sync.Once
 var LowMem = false
 var TotalMem uint64
-
-const MsgSponsor = "PhotoPrism® needs your support!"
-const SignUpURL = "https://docs.photoprism.app/funding/"
-const MsgSignUp = "Visit " + SignUpURL + " to learn more."
-const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
-	" we unfortunately can only offer it to sponsors."
-
-const ApiUri = "/api/v1"    // REST API
-const StaticUri = "/static" // Static Content
-
-const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
-const DefaultAutoImportDelay = int(3 * 60) // 3 Minutes
-
-const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
-const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
-const MaxWakeupInterval = time.Hour * 24 // 1 Day
-
-// Megabyte in bytes.
-const Megabyte = 1000 * 1000
-
-// Gigabyte in bytes.
-const Gigabyte = Megabyte * 1000
-
-// MinMem is the minimum amount of system memory required.
-const MinMem = Gigabyte
-
-// RecommendedMem is the recommended amount of system memory.
-const RecommendedMem = 3 * Gigabyte
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -116,19 +88,22 @@ func initLogger(debug bool) {
 
 // NewConfig initialises a new configuration file
 func NewConfig(ctx *cli.Context) *Config {
+	// Initialize logger.
 	initLogger(ctx.GlobalBool("debug"))
 
+	// Initialize options from config file and CLI context.
 	c := &Config{
 		options: NewOptions(ctx),
-		token:   rnd.Token(8),
+		token:   rnd.GenerateToken(8),
 		env:     os.Getenv("DOCKER_ENV"),
 	}
 
-	if configFile := c.ConfigFile(); c.options.ConfigFile == "" && fs.FileExists(configFile) {
-		if err := c.options.Load(configFile); err != nil {
-			log.Warnf("config: %s", err)
+	// Overwrite values with options.yml from config path.
+	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
+		if err := c.options.Load(optionsYaml); err != nil {
+			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
 		} else {
-			log.Debugf("config: options loaded from %s", sanitize.Log(configFile))
+			log.Debugf("config: overriding config with values from %s", clean.Log(optionsYaml))
 		}
 	}
 
@@ -143,7 +118,7 @@ func (c *Config) Unsafe() bool {
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
-		log.Warnf("config: options should not be nil - bug?")
+		log.Warnf("config: options should not be nil - possible bug")
 		c.options = NewOptions(nil)
 	}
 
@@ -155,7 +130,7 @@ func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
 	// Set thumbnail generation parameters.
-	thumb.StandardRGB = c.ThumbStandardRGB()
+	thumb.StandardRGB = c.ThumbSRGB()
 	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
@@ -186,7 +161,7 @@ func (c *Config) Init() error {
 		return err
 	}
 
-	if err := c.initStorage(); err != nil {
+	if err := c.initSerial(); err != nil {
 		return err
 	}
 
@@ -204,14 +179,18 @@ func (c *Config) Init() error {
 	}
 
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
-		log.Debugf("config: running on %s, %s memory detected", sanitize.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
+		log.Debugf("config: running on %s, %s memory detected", clean.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
 	}
 
-	// Check memory requirements.
+	// Exit if less than 128 MB RAM was detected.
 	if TotalMem < 128*Megabyte {
 		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/Gigabyte)
-	} else if LowMem {
+	}
+
+	// Show warning if less than 1 GB RAM was detected.
+	if LowMem {
 		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/Gigabyte)
+		log.Warnf("config: tensorflow as well as indexing and conversion of RAW files have been disabled automatically")
 	}
 
 	// Show swap info.
@@ -242,28 +221,47 @@ func (c *Config) Init() error {
 	return err
 }
 
-// initStorage initializes storage directories with a random serial.
-func (c *Config) initStorage() error {
-	if c.serial != "" {
+// readSerial reads and returns the current storage serial.
+func (c *Config) readSerial() string {
+	storageName := filepath.Join(c.StoragePath(), serialName)
+	backupName := filepath.Join(c.BackupPath(), serialName)
+
+	if fs.FileExists(storageName) {
+		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 {
+			return string(data)
+		} else {
+			log.Tracef("config: could not read %s (%s)", clean.Log(storageName), err)
+		}
+	}
+
+	if fs.FileExists(backupName) {
+		if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 {
+			return string(data)
+		} else {
+			log.Tracef("config: could not read %s (%s)", clean.Log(backupName), err)
+		}
+	}
+
+	return ""
+}
+
+// initSerial initializes storage directories with a random serial.
+func (c *Config) initSerial() (err error) {
+	if c.Serial() != "" {
 		return nil
 	}
 
-	const serialName = "serial"
-
-	c.serial = rnd.PPID('z')
+	c.serial = rnd.GenerateUID('z')
 
 	storageName := filepath.Join(c.StoragePath(), serialName)
 	backupName := filepath.Join(c.BackupPath(), serialName)
 
-	if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 {
-		c.serial = string(data)
-	} else if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 {
-		c.serial = string(data)
-		LogError(os.WriteFile(storageName, []byte(c.serial), os.ModePerm))
-	} else if err := os.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
-		return fmt.Errorf("failed creating %s: %s", storageName, err)
-	} else if err := os.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {
-		return fmt.Errorf("failed creating %s: %s", backupName, err)
+	if err = os.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
+		return fmt.Errorf("could not create %s: %s", storageName, err)
+	}
+
+	if err = os.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {
+		return fmt.Errorf("could not create %s: %s", backupName, err)
 	}
 
 	return nil
@@ -271,8 +269,8 @@ func (c *Config) initStorage() error {
 
 // Serial returns the random storage serial.
 func (c *Config) Serial() string {
-	if err := c.initStorage(); err != nil {
-		log.Errorf("config: %s", err)
+	if c.serial == "" {
+		c.serial = c.readSerial()
 	}
 
 	return c.serial
@@ -419,17 +417,25 @@ func (c *Config) ImprintUrl() string {
 	return c.options.ImprintUrl
 }
 
-// Debug tests if debug mode is enabled.
+// Debug checks if debug mode is enabled, shows non-essential log messages.
 func (c *Config) Debug() bool {
+	if c.Trace() {
+		return true
+	}
 	return c.options.Debug
 }
 
-// Test tests if test mode is enabled.
+// Trace checks if trace mode is enabled, shows all log messages.
+func (c *Config) Trace() bool {
+	return c.options.Trace
+}
+
+// Test checks if test mode is enabled.
 func (c *Config) Test() bool {
 	return c.options.Test
 }
 
-// Demo tests if demo mode is enabled.
+// Demo checks if demo mode is enabled.
 func (c *Config) Demo() bool {
 	return c.options.Demo
 }
@@ -439,9 +445,11 @@ func (c *Config) Sponsor() bool {
 	return c.options.Sponsor || c.Test()
 }
 
-// Public tests if app runs in public mode and requires no authentication.
+// Public checks if app runs in public mode and requires no authentication.
 func (c *Config) Public() bool {
-	if c.Demo() {
+	if c.Auth() {
+		return false
+	} else if c.Demo() {
 		return true
 	}
 
@@ -455,22 +463,22 @@ func (c *Config) SetPublic(p bool) {
 	}
 }
 
-// Experimental tests if experimental features should be enabled.
+// Experimental checks if experimental features should be enabled.
 func (c *Config) Experimental() bool {
 	return c.options.Experimental
 }
 
-// ReadOnly tests if photo directories are write protected.
+// ReadOnly checks if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
 	return c.options.ReadOnly
 }
 
-// DetectNSFW tests if NSFW photos should be detected and flagged.
+// DetectNSFW checks if NSFW photos should be detected and flagged.
 func (c *Config) DetectNSFW() bool {
 	return c.options.DetectNSFW
 }
 
-// UploadNSFW tests if NSFW photos can be uploaded.
+// UploadNSFW checks if NSFW photos can be uploaded.
 func (c *Config) UploadNSFW() bool {
 	return c.options.UploadNSFW
 }
@@ -480,12 +488,19 @@ func (c *Config) AdminPassword() string {
 	return c.options.AdminPassword
 }
 
+// Auth checks if authentication is always required.
+func (c *Config) Auth() bool {
+	return c.options.Auth
+}
+
 // LogLevel returns the Logrus log level.
 func (c *Config) LogLevel() logrus.Level {
 	// Normalize string.
 	c.options.LogLevel = strings.ToLower(strings.TrimSpace(c.options.LogLevel))
 
-	if c.Debug() && c.options.LogLevel != logrus.TraceLevel.String() {
+	if c.Trace() {
+		c.options.LogLevel = logrus.TraceLevel.String()
+	} else if c.Debug() && c.options.LogLevel != logrus.TraceLevel.String() {
 		c.options.LogLevel = logrus.DebugLevel.String()
 	}
 
@@ -494,6 +509,11 @@ func (c *Config) LogLevel() logrus.Level {
 	} else {
 		return logrus.InfoLevel
 	}
+}
+
+// SetLogLevel sets the Logrus log level.
+func (c *Config) SetLogLevel(level logrus.Level) {
+	log.SetLevel(level)
 }
 
 // Shutdown services and workers.

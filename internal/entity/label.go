@@ -9,8 +9,8 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -47,11 +47,11 @@ func (Label) TableName() string {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUID(m.LabelUID, 'l') {
+	if rnd.ValidID(m.LabelUID, 'l') {
 		return nil
 	}
 
-	return scope.SetColumn("LabelUID", rnd.PPID('l'))
+	return scope.SetColumn("LabelUID", rnd.GenerateUID('l'))
 }
 
 // NewLabel returns a new label.
@@ -164,7 +164,7 @@ func (m *Label) AfterCreate(scope *gorm.Scope) error {
 
 // SetName changes the label name.
 func (m *Label) SetName(name string) {
-	name = sanitize.Name(name)
+	name = clean.Name(name)
 
 	if name == "" {
 		return
@@ -221,7 +221,7 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 			}
 
 			if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
-				log.Debugf("index: failed saving label category %s (%s)", sanitize.Log(category), err)
+				log.Debugf("index: failed saving label category %s (%s)", clean.Log(category), err)
 			}
 		}
 	}

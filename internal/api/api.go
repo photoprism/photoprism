@@ -2,7 +2,7 @@
 
 Package api contains PhotoPrism REST API handlers.
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -17,7 +17,7 @@ Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
     which describe how our Brand Assets may be used:
     <https://photoprism.app/trademark>
 
-Feel free to send an e-mail to hello@photoprism.app if you have questions,
+Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
@@ -34,7 +34,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 var log = event.Log
@@ -60,7 +60,7 @@ func UpdateClientConfig() {
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 	resp := i18n.NewResponse(code, id, params...)
 
-	log.Debugf("api: abort %s with code %d (%s)", sanitize.Log(c.FullPath()), code, resp.String())
+	log.Debugf("api: abort %s with code %d (%s)", clean.Log(c.FullPath()), code, resp.String())
 
 	c.AbortWithStatusJSON(code, resp)
 }
@@ -70,7 +70,7 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...inter
 
 	if err != nil {
 		resp.Details = err.Error()
-		log.Errorf("api: error %s with code %d in %s (%s)", sanitize.Log(err.Error()), code, sanitize.Log(c.FullPath()), resp.String())
+		log.Errorf("api: error %s with code %d in %s (%s)", clean.Log(err.Error()), code, clean.Log(c.FullPath()), resp.String())
 	}
 
 	c.AbortWithStatusJSON(code, resp)

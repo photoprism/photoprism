@@ -46,7 +46,7 @@ func TestLink_Expired(t *testing.T) {
 }
 
 func TestLink_Redeem(t *testing.T) {
-	link := NewLink(rnd.PPID('a'), false, false)
+	link := NewLink(rnd.GenerateUID('a'), false, false)
 
 	assert.Equal(t, uint(0), link.LinkViews)
 

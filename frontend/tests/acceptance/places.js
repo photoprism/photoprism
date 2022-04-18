@@ -1,54 +1,53 @@
 import { Selector } from "testcafe";
 import { ClientFunction } from "testcafe";
 import testcafeconfig from "./testcafeconfig.json";
-import Page from "./page-model";
+import Menu from "../page-model/menu";
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture`Test places page`.page`${testcafeconfig.url}`;
-const page = new Page();
+fixture`Search and open photo from places`.page`${testcafeconfig.url}`.skip(
+  "Places don't loadin chrome from within the container"
+);
+
+const menu = new Menu();
 
 test.meta("testID", "places-001")("Test places", async (t) => {
-  await page.openNav();
+  await menu.openPage("places");
+
   await t
-    .click(Selector(".nav-places"))
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()
     .expect(Selector("div.p-map-control").visible)
     .ok();
+
   await t.typeText(Selector('input[aria-label="Search"]'), "Berlin").pressKey("enter");
+
   await t
     .expect(Selector("div.p-map-control").visible)
     .ok()
     .expect(getLocation())
-    .contains("Berlin")
-    .click(Selector(".nav-browse"))
-    .expect(Selector("div.is-photo").exists)
-    .ok()
-    .click(Selector(".nav-places"))
+    .contains("Berlin");
+
+  await menu.openPage("browse");
+
+  await t.expect(Selector("div.is-photo").exists).ok();
+
+  await menu.openPage("places");
+
+  await t
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()
     .expect(Selector("div.p-map-control").visible)
     .ok();
-});
 
-test.meta("testID", "places-002")("Open photo from places", async (t) => {
-  //TODO replace wait
-  if (t.browser.name === "Firefox") {
-    console.log("Test skipped in firefox");
-  } else {
-    await page.openNav();
-    await t
-      .click(Selector(".nav-places"))
-      .expect(Selector("#is-photo-viewer").visible)
-      .notOk()
-      .expect(Selector("#map").exists, { timeout: 15000 })
-      .ok()
-      .typeText(Selector('input[aria-label="Search"]'), "Berlin")
-      .pressKey("enter")
-      .wait(30000)
-      .click(Selector("div.marker").nth(0), { timeout: 9000 })
-      .expect(Selector("#photo-viewer").visible)
-      .ok();
-  }
+  await t
+    .typeText(Selector('input[aria-label="Search"]'), "canada", { replace: true })
+    .pressKey("enter")
+    .wait(8000);
+
+  await t.expect(Selector('div[title="Cape / Bowen Island / 2019"]').visible).ok();
+
+  await t.click(Selector('div[title="Cape / Bowen Island / 2019"]'));
+
+  await t.expect(Selector("#photo-viewer").visible).ok();
 });

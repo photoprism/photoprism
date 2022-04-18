@@ -5,61 +5,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
-
-func TestSave(t *testing.T) {
-	var r = rand.New(rand.NewSource(time.Now().UnixNano()))
-
-	t.Run("HasCreatedUpdatedAt", func(t *testing.T) {
-		id := 99999 + r.Intn(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.PPID('p'), UpdatedAt: TimeStamp(), CreatedAt: TimeStamp()}
-
-		if err := m.Save(); err != nil {
-			t.Fatal(err)
-			return
-		}
-
-		if err := m.Find(); err != nil {
-			t.Fatal(err)
-			return
-		}
-	})
-	t.Run("HasCreatedAt", func(t *testing.T) {
-		id := 99999 + r.Intn(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.PPID('p'), CreatedAt: TimeStamp()}
-
-		if err := m.Save(); err != nil {
-			t.Fatal(err)
-			return
-		}
-
-		if err := m.Find(); err != nil {
-			t.Fatal(err)
-			return
-		}
-	})
-	t.Run("NoCreatedAt", func(t *testing.T) {
-		id := 99999 + r.Intn(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.PPID('p'), CreatedAt: TimeStamp()}
-
-		if err := m.Save(); err != nil {
-			t.Fatal(err)
-			return
-		}
-
-		if err := m.Find(); err != nil {
-			t.Fatal(err)
-			return
-		}
-	})
-}
 
 func TestUpdate(t *testing.T) {
 	var r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	t.Run("IDMissing", func(t *testing.T) {
-		uid := rnd.PPID('p')
+		uid := rnd.GenerateUID('p')
 		m := &Photo{ID: 0, PhotoUID: uid, UpdatedAt: TimeStamp(), CreatedAt: TimeStamp(), PhotoTitle: "Foo"}
 		updatedAt := m.UpdatedAt
 
@@ -88,7 +42,7 @@ func TestUpdate(t *testing.T) {
 	})
 	t.Run("NotUpdated", func(t *testing.T) {
 		id := 99999 + r.Intn(10000)
-		uid := rnd.PPID('p')
+		uid := rnd.GenerateUID('p')
 		m := &Photo{ID: uint(id), PhotoUID: uid, UpdatedAt: time.Now(), CreatedAt: TimeStamp(), PhotoTitle: "Foo"}
 		updatedAt := m.UpdatedAt
 
@@ -131,7 +85,7 @@ func TestUpdate(t *testing.T) {
 	t.Run("NonExistentKeys", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
 		m.ID = uint(99999 + r.Intn(10000))
-		m.PhotoUID = rnd.PPID('p')
+		m.PhotoUID = rnd.GenerateUID('p')
 		updatedAt := m.UpdatedAt
 		if err := Update(m, "ID", "PhotoUID"); err == nil {
 			t.Fatal("error expected")

@@ -4,184 +4,30 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
-// FFmpegSoftwareEncoder see https://trac.ffmpeg.org/wiki/HWAccelIntro.
-const FFmpegSoftwareEncoder = "libx264"
-
-// FFmpegIntelEncoder is the Intel Quick Sync H.264 encoder.
-const FFmpegIntelEncoder = "h264_qsv"
-
-// FFmpegAppleEncoder is the Apple Video Toolboar H.264 encoder.
-const FFmpegAppleEncoder = "h264_videotoolbox"
-
-// FFmpegVAAPIEncoder is the Video Acceleration API H.264 encoder.
-const FFmpegVAAPIEncoder = "h264_vaapi"
-
-// FFmpegNvidiaEncoder is the NVIDIA H.264 encoder.
-const FFmpegNvidiaEncoder = "h264_nvenc"
-
-// FFmpegV4L2Encoder is the Video4Linux H.264 encoder.
-const FFmpegV4L2Encoder = "h264_v4l2m2m"
-
-// FFmpegAvcEncoders is the list of supported H.264 encoders with aliases.
-var FFmpegAvcEncoders = map[string]string{
-	"":                    FFmpegSoftwareEncoder,
-	"default":             FFmpegSoftwareEncoder,
-	"software":            FFmpegSoftwareEncoder,
-	FFmpegSoftwareEncoder: FFmpegSoftwareEncoder,
-	"intel":               FFmpegIntelEncoder,
-	"qsv":                 FFmpegIntelEncoder,
-	FFmpegIntelEncoder:    FFmpegIntelEncoder,
-	"apple":               FFmpegAppleEncoder,
-	"osx":                 FFmpegAppleEncoder,
-	"mac":                 FFmpegAppleEncoder,
-	"macos":               FFmpegAppleEncoder,
-	FFmpegAppleEncoder:    FFmpegAppleEncoder,
-	"vaapi":               FFmpegVAAPIEncoder,
-	"libva":               FFmpegVAAPIEncoder,
-	FFmpegVAAPIEncoder:    FFmpegVAAPIEncoder,
-	"nvidia":              FFmpegNvidiaEncoder,
-	"nvenc":               FFmpegNvidiaEncoder,
-	"cuda":                FFmpegNvidiaEncoder,
-	FFmpegNvidiaEncoder:   FFmpegNvidiaEncoder,
-	"v4l2":                FFmpegV4L2Encoder,
-	"video4linux":         FFmpegV4L2Encoder,
-	"rp4":                 FFmpegV4L2Encoder,
-	"raspberry":           FFmpegV4L2Encoder,
-	"raspberrypi":         FFmpegV4L2Encoder,
-	FFmpegV4L2Encoder:     FFmpegV4L2Encoder,
-}
-
-// AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
-func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, encoderName string) (result *exec.Cmd, useMutex bool, err error) {
-	if f.IsVideo() {
-		// Don't transcode more than one video at the same time.
-		useMutex = true
-
-		// Display encoder info.
-		if encoderName != FFmpegSoftwareEncoder {
-			log.Infof("convert: ffmpeg encoder %s selected", encoderName)
-		}
-
-		if encoderName == FFmpegIntelEncoder {
-			format := "format=rgb32"
-
-			result = exec.Command(
-				c.conf.FFmpegBin(),
-				"-qsv_device", "/dev/dri/renderD128",
-				"-init_hw_device", "qsv=hw",
-				"-filter_hw_device", "hw",
-				"-i", f.FileName(),
-				"-c:a", "aac",
-				"-vf", format,
-				"-c:v", encoderName,
-				"-vsync", "vfr",
-				"-r", "30",
-				"-b:v", c.AvcBitrate(f),
-				"-maxrate", c.AvcBitrate(f),
-				"-f", "mp4",
-				"-y",
-				avcName,
-			)
-		} else if encoderName == FFmpegAppleEncoder {
-			format := "format=yuv420p"
-
-			result = exec.Command(
-				c.conf.FFmpegBin(),
-				"-i", f.FileName(),
-				"-c:v", encoderName,
-				"-c:a", "aac",
-				"-vf", format,
-				"-profile", "high",
-				"-level", "51",
-				"-vsync", "vfr",
-				"-r", "30",
-				"-b:v", c.AvcBitrate(f),
-				"-f", "mp4",
-				"-y",
-				avcName,
-			)
-		} else if encoderName == FFmpegNvidiaEncoder {
-			// to show options: ffmpeg -hide_banner -h encoder=h264_nvenc
-
-			result = exec.Command(
-				c.conf.FFmpegBin(),
-				"-r", "30",
-				"-i", f.FileName(),
-				"-pix_fmt", "yuv420p",
-				"-c:v", encoderName,
-				"-c:a", "aac",
-				"-preset", "15",
-				"-pixel_format", "yuv420p",
-				"-gpu", "any",
-				"-vf", "format=yuv420p",
-				"-rc:v", "constqp",
-				"-cq", "0",
-				"-tune", "2",
-				"-b:v", c.AvcBitrate(f),
-				"-profile:v", "1",
-				"-level:v", "41",
-				"-coder:v", "1",
-				"-f", "mp4",
-				"-y",
-				avcName,
-			)
-		} else {
-			format := "format=yuv420p"
-
-			result = exec.Command(
-				c.conf.FFmpegBin(),
-				"-i", f.FileName(),
-				"-c:v", encoderName,
-				"-c:a", "aac",
-				"-vf", format,
-				"-num_output_buffers", strconv.Itoa(c.conf.FFmpegBuffers()+8),
-				"-num_capture_buffers", strconv.Itoa(c.conf.FFmpegBuffers()),
-				"-max_muxing_queue_size", "1024",
-				"-crf", "23",
-				"-vsync", "vfr",
-				"-r", "30",
-				"-b:v", c.AvcBitrate(f),
-				"-f", "mp4",
-				"-y",
-				avcName,
-			)
-		}
-	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), sanitize.Log(f.BaseName()))
-	}
-
-	return result, useMutex, nil
-}
-
 // ToAvc converts a single video file to MPEG-4 AVC.
-func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err error) {
-	if n := FFmpegAvcEncoders[encoderName]; n != "" {
-		encoderName = n
-	} else {
-		log.Warnf("convert: unsupported ffmpeg encoder %s", encoderName)
-		encoderName = FFmpegSoftwareEncoder
-	}
-
+func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force bool) (file *MediaFile, err error) {
 	if f == nil {
-		return nil, fmt.Errorf("convert: file is nil - you might have found a bug")
+		return nil, fmt.Errorf("convert: file is nil - possible bug")
 	}
 
 	if !f.Exists() {
 		return nil, fmt.Errorf("convert: %s not found", f.RootRelName())
 	}
 
-	avcName := fs.FormatAvc.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+	avcName := fs.VideoAVC.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(avcName)
 
@@ -190,7 +36,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: transcoding disabled in read only mode (%s)", f.RootRelName())
+		return nil, fmt.Errorf("convert: transcoding disabled in read-only mode (%s)", f.RootRelName())
 	}
 
 	if c.conf.DisableFFmpeg() {
@@ -198,24 +44,32 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	}
 
 	fileName := f.RelName(c.conf.OriginalsPath())
-	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
+	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtAVC)
 
-	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoderName)
+	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoder)
 
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	if useMutex {
-		// Make sure only one command is executed at a time.
-		// See https://photo.stackexchange.com/questions/105969/darktable-cli-fails-because-of-locked-database-file
+	// Make sure only one convert command runs at a time.
+	if useMutex && !noMutex {
 		c.cmdMutex.Lock()
 		defer c.cmdMutex.Unlock()
 	}
 
 	if fs.FileExists(avcName) {
-		return NewMediaFile(avcName)
+		avcFile, avcErr := NewMediaFile(avcName)
+		if avcErr != nil {
+			return avcFile, avcErr
+		} else if !force || !avcFile.InSidecar() {
+			return avcFile, nil
+		} else if err = avcFile.Remove(); err != nil {
+			return avcFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(avcFile.RootRelName()), err)
+		} else {
+			log.Infof("convert: replacing %s", clean.Log(avcFile.RootRelName()))
+		}
 	}
 
 	// Fetch command output.
@@ -223,6 +77,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
+	cmd.Env = []string{fmt.Sprintf("HOME=%s", c.conf.CmdCachePath())}
 
 	event.Publish("index.converting", event.Data{
 		"fileType": f.FileType(),
@@ -231,7 +86,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 		"xmpName":  "",
 	})
 
-	log.Infof("%s: transcoding %s to %s", encoderName, fileName, fs.FormatAvc)
+	log.Infof("%s: transcoding %s to %s", encoder, fileName, fs.VideoAVC)
 
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())
@@ -239,8 +94,6 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	// Run convert command.
 	start := time.Now()
 	if err = cmd.Run(); err != nil {
-		_ = os.Remove(avcName)
-
 		if stderr.String() != "" {
 			err = errors.New(stderr.String())
 		}
@@ -251,17 +104,67 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 		}
 
 		// Log filename and transcoding time.
-		log.Warnf("%s: failed transcoding %s [%s]", encoderName, fileName, time.Since(start))
+		log.Warnf("%s: failed transcoding %s [%s]", encoder, fileName, time.Since(start))
 
-		if encoderName != FFmpegSoftwareEncoder {
-			return c.ToAvc(f, FFmpegSoftwareEncoder)
+		// Remove broken video file.
+		if !fs.FileExists(avcName) {
+			// Do nothing.
+		} else if err = os.Remove(avcName); err != nil {
+			return nil, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(RootRelName(avcName)), err)
+		}
+
+		// Try again using software encoder.
+		if encoder != ffmpeg.SoftwareEncoder {
+			return c.ToAvc(f, ffmpeg.SoftwareEncoder, true, false)
 		} else {
 			return nil, err
 		}
 	}
 
 	// Log transcoding time.
-	log.Infof("%s: created %s [%s]", encoderName, filepath.Base(avcName), time.Since(start))
+	log.Infof("%s: created %s [%s]", encoder, filepath.Base(avcName), time.Since(start))
 
 	return NewMediaFile(avcName)
+}
+
+// AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
+func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg.AvcEncoder) (result *exec.Cmd, useMutex bool, err error) {
+	fileName := f.FileName()
+	bitrate := c.AvcBitrate(f)
+	ffmpegBin := c.conf.FFmpegBin()
+
+	switch {
+	case fileName == "":
+		return nil, false, fmt.Errorf("convert: %s video filename is empty - possible bug", f.FileType())
+	case bitrate == "":
+		return nil, false, fmt.Errorf("convert: transcoding bitrate is empty - possible bug")
+	case ffmpegBin == "":
+		return nil, false, fmt.Errorf("convert: ffmpeg must be installed to transcode %s to avc", clean.Log(f.BaseName()))
+	case !f.IsAnimated():
+		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded to avc", f.FileType(), clean.Log(f.BaseName()))
+	}
+
+	return ffmpeg.AvcConvertCommand(fileName, avcName, ffmpegBin, c.AvcBitrate(f), encoder)
+}
+
+// AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
+func (c *Convert) AvcBitrate(f *MediaFile) string {
+	const defaultBitrate = "8M"
+
+	if f == nil {
+		return defaultBitrate
+	}
+
+	limit := c.conf.FFmpegBitrate()
+	quality := 12
+
+	bitrate := int(math.Ceil(float64(f.Width()*f.Height()*quality) / 1000000))
+
+	if bitrate <= 0 {
+		return defaultBitrate
+	} else if bitrate > limit {
+		bitrate = limit
+	}
+
+	return fmt.Sprintf("%dM", bitrate)
 }

@@ -18,7 +18,13 @@ func TestCaseInsensitive(t *testing.T) {
 }
 
 func TestIgnoreCase(t *testing.T) {
-	assert.False(t, ignoreCase)
+	isCS, err := CaseInsensitive(os.TempDir())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, isCS, ignoreCase)
 	IgnoreCase()
 	assert.True(t, ignoreCase)
 	ignoreCase = false

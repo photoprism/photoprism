@@ -1,26 +1,37 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "../testcafeconfig";
-import Page from "../page-model";
+import Menu from "../../page-model/menu";
+import Toolbar from "../../page-model/toolbar";
+import Page from "../../page-model/page";
+import Library from "../../page-model/library";
 
 fixture`Import file from folder`.page`${testcafeconfig.url}`;
 
+const menu = new Menu();
+const toolbar = new Toolbar();
 const page = new Page();
-test.meta("testID", "library-import-001")("Import files from folder using copy", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-labels"));
-  await page.search("bakery");
-  await t.expect(Selector("div.no-results").visible).ok();
-  await page.openNav();
-  await t
-    .click(Selector(".nav-library"))
-    .click(Selector("#tab-library-import"))
-    .typeText(Selector(".input-import-folder input"), "/B", { replace: true })
-    .click(Selector("div.v-list__tile__title").nth(0))
-    .click(Selector(".action-import"))
-    //TODO replace wait
-    .wait(60000);
-  await page.openNav();
-  await t.click(Selector(".nav-labels")).click(Selector(".action-reload"));
-  await page.search("bakery");
-  await t.expect(Selector(".is-label").visible).ok();
-});
+const library = new Library();
+
+test.meta("testID", "library-import-001").meta({ type: "smoke" })(
+  "Import files from folder using copy",
+  async (t) => {
+    await menu.openPage("labels");
+    await toolbar.search("bakery");
+
+    await t.expect(Selector("div.no-results").visible).ok();
+
+    await menu.openPage("library");
+    await t
+      .click(library.importTab)
+      .typeText(library.openImportFolderSelect, "/B", { replace: true })
+      .click(page.selectOption.nth(0))
+      .click(library.import)
+      //TODO replace wait
+      .wait(60000);
+    await menu.openPage("labels");
+    await toolbar.triggerToolbarAction("reload");
+    await toolbar.search("bakery");
+
+    await t.expect(Selector(".is-label").visible).ok();
+  }
+);

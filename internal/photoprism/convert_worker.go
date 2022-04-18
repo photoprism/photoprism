@@ -3,7 +3,7 @@ package photoprism
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 type ConvertJob struct {
@@ -15,7 +15,7 @@ type ConvertJob struct {
 func ConvertWorker(jobs <-chan ConvertJob) {
 	logError := func(err error, job ConvertJob) {
 		fileName := job.file.RelName(job.convert.conf.OriginalsPath())
-		log.Errorf("convert: %s for %s", strings.TrimSpace(err.Error()), sanitize.Log(fileName))
+		log.Errorf("convert: %s for %s", strings.TrimSpace(err.Error()), clean.Log(fileName))
 	}
 
 	for job := range jobs {
@@ -24,7 +24,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 			continue
 		case job.convert == nil:
 			continue
-		case job.file.IsVideo():
+		case job.file.IsAnimated():
 			_, _ = job.convert.ToJson(job.file)
 
 			// Create JPEG preview and AVC encoded version for videos.
@@ -32,7 +32,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 				logError(err, job)
 			} else if metaData := job.file.MetaData(); metaData.CodecAvc() {
 				continue
-			} else if _, err := job.convert.ToAvc(job.file, job.convert.conf.FFmpegEncoder()); err != nil {
+			} else if _, err := job.convert.ToAvc(job.file, job.convert.conf.FFmpegEncoder(), false, false); err != nil {
 				logError(err, job)
 			}
 		default:

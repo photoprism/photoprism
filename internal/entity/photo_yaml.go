@@ -66,5 +66,5 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 
 // YamlFileName returns the YAML file name.
 func (m *Photo) YamlFileName(originalsPath, sidecarPath string) string {
-	return fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.YamlExt)
+	return fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.ExtYAML)
 }

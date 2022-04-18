@@ -2,7 +2,7 @@
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
 
-GOLANG_VERSION=1.18
+GOLANG_VERSION=1.18.1
 DESTDIR=$(realpath "${1:-/usr/local}")
 
 # abort if not executed as root
@@ -24,13 +24,13 @@ set -eux;
 
 if [[ $DESTARCH == "amd64" ]]; then
     URL="https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"
-    CHECKSUM="e85278e98f57cdb150fe8409e6e5df5343ecb13cebf03a5d5ff12bd55a80264f *go.tgz"
+    CHECKSUM="b3b815f47ababac13810fc6021eb73d65478e0b2db4b09d348eefad9581a2334 *go.tgz"
 elif [[ $DESTARCH == "arm64" ]]; then
     URL="https://go.dev/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"
-    CHECKSUM="7ac7b396a691e588c5fb57687759e6c4db84a2a3bbebb0765f4b38e5b1c5b00e *go.tgz"
+    CHECKSUM="56a91851c97fb4697077abbca38860f735c32b38993ff79b088dac46e4735633 *go.tgz"
 elif [[ $DESTARCH == "arm" ]]; then
     URL="https://go.dev/dl/go${GOLANG_VERSION}.linux-armv6l.tar.gz"
-    CHECKSUM="a80fa43d1f4575fb030adbfbaa94acd860c6847820764eecb06c63b7c103612b *go.tgz"
+    CHECKSUM="9edc01c8e7db64e9ceeffc8258359e027812886ceca3444e83c4eb96ddb068ee *go.tgz"
 else
     echo "Unsupported Machine Architecture: $DESTARCH" 1>&2
     exit 1

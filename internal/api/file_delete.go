@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -36,8 +36,8 @@ func DeleteFile(router *gin.RouterGroup) {
 			return
 		}
 
-		photoUID := sanitize.IdString(c.Param("uid"))
-		fileUID := sanitize.IdString(c.Param("file_uid"))
+		photoUID := clean.IdString(c.Param("uid"))
+		fileUID := clean.IdString(c.Param("file_uid"))
 
 		file, err := query.FileByUID(fileUID)
 
@@ -59,17 +59,17 @@ func DeleteFile(router *gin.RouterGroup) {
 		mediaFile, err := photoprism.NewMediaFile(fileName)
 
 		if err != nil {
-			log.Errorf("photo: %s (delete %s)", err, sanitize.Log(baseName))
+			log.Errorf("photo: %s (delete %s)", err, clean.Log(baseName))
 			AbortEntityNotFound(c)
 			return
 		}
 
 		if err := mediaFile.Remove(); err != nil {
-			log.Errorf("photo: %s (delete %s from folder)", err, sanitize.Log(baseName))
+			log.Errorf("photo: %s (delete %s from folder)", err, clean.Log(baseName))
 		}
 
 		if err := file.Delete(true); err != nil {
-			log.Errorf("photo: %s (delete %s from index)", err, sanitize.Log(baseName))
+			log.Errorf("photo: %s (delete %s from index)", err, clean.Log(baseName))
 			AbortDeleteFailed(c)
 			return
 		}

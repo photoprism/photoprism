@@ -6,24 +6,51 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// Faces returns all (known / unmatched) faces from the index.
-func Faces(knownOnly, unmatched, hidden bool) (result entity.Faces, err error) {
-	stmt := Db()
+// IDs represents a list of identifier strings.
+type IDs []string
 
-	if unmatched {
-		stmt = stmt.Where("matched_at IS NULL")
+// FaceMap maps identification strings to face entities.
+type FaceMap map[string]entity.Face
+
+// FacesByID retrieves faces from the database and returns a map with the Face ID as key.
+func FacesByID(knownOnly, unmatchedOnly, inclHidden bool) (FaceMap, IDs, error) {
+	faces, err := Faces(knownOnly, unmatchedOnly, inclHidden)
+
+	if err != nil {
+		return nil, nil, err
 	}
+
+	faceIds := make(IDs, len(faces))
+	faceMap := make(FaceMap, len(faces))
+
+	for i, f := range faces {
+		faceMap[f.ID] = f
+		faceIds[i] = f.ID
+	}
+
+	return faceMap, faceIds, nil
+}
+
+// Faces returns all (known / unmatched) faces from the index.
+func Faces(knownOnly, unmatchedOnly, inclHidden bool) (result entity.Faces, err error) {
+	stmt := Db()
 
 	if knownOnly {
 		stmt = stmt.Where("subj_uid <> ''")
 	}
 
-	err = stmt.Where("face_hidden = ?", hidden).
-		Order("subj_uid, samples DESC").
-		Find(&result).Error
+	if unmatchedOnly {
+		stmt = stmt.Where("matched_at IS NULL")
+	}
+
+	if !inclHidden {
+		stmt = stmt.Where("face_hidden = ?", false)
+	}
+
+	err = stmt.Order("subj_uid, samples DESC").Find(&result).Error
 
 	return result, err
 }
@@ -65,19 +92,19 @@ func MatchFaceMarkers() (affected int64, err error) {
 }
 
 // RemoveAnonymousFaceClusters removes anonymous faces from the index.
-func RemoveAnonymousFaceClusters() (removed int64, err error) {
+func RemoveAnonymousFaceClusters() (removed int, err error) {
 	res := UnscopedDb().
 		Delete(entity.Face{}, "subj_uid = '' AND face_src = ?", entity.SrcAuto)
 
-	return res.RowsAffected, res.Error
+	return int(res.RowsAffected), res.Error
 }
 
 // RemoveAutoFaceClusters removes automatically added face clusters from the index.
-func RemoveAutoFaceClusters() (removed int64, err error) {
+func RemoveAutoFaceClusters() (removed int, err error) {
 	res := UnscopedDb().
 		Delete(entity.Face{}, "face_src = ?", entity.SrcAuto)
 
-	return res.RowsAffected, res.Error
+	return int(res.RowsAffected), res.Error
 }
 
 // CountNewFaceMarkers counts the number of new face markers in the index.
@@ -139,15 +166,15 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	for i := 1; i < len(merge); i++ {
 		if merge[i].SubjUID != subjUID {
 			return merged, fmt.Errorf("faces: cannot merge clusters with conflicting subjects %s <> %s",
-				sanitize.Log(subjUID), sanitize.Log(merge[i].SubjUID))
+				clean.Log(subjUID), clean.Log(merge[i].SubjUID))
 		}
 	}
 
 	// Find or create merged face cluster.
 	if merged = entity.NewFace(merge[0].SubjUID, merge[0].FaceSrc, merge.Embeddings()); merged == nil {
-		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", sanitize.Log(subjUID))
+		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
-		return merged, fmt.Errorf("faces: failed creating new cluster for subject %s", sanitize.Log(subjUID))
+		return merged, fmt.Errorf("faces: failed creating new cluster for subject %s", clean.Log(subjUID))
 	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
 		return merged, err
 	}
@@ -156,9 +183,9 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	if removed, err := PurgeOrphanFaces(merge.IDs()); err != nil {
 		return merged, err
 	} else if removed > 0 {
-		log.Debugf("faces: removed %d orphans for subject %s", removed, sanitize.Log(subjUID))
+		log.Debugf("faces: removed %d orphans for subject %s", removed, clean.Log(subjUID))
 	} else {
-		log.Warnf("faces: failed removing merged clusters for subject %s", sanitize.Log(subjUID))
+		log.Warnf("faces: failed removing merged clusters for subject %s", clean.Log(subjUID))
 	}
 
 	return merged, err
@@ -166,14 +193,40 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 
 // ResolveFaceCollisions resolves collisions of different subject's faces.
 func ResolveFaceCollisions() (conflicts, resolved int, err error) {
-	faces, err := Faces(true, false, false)
+	faces, ids, err := FacesByID(true, false, false)
 
 	if err != nil {
 		return conflicts, resolved, err
 	}
 
-	for _, f1 := range faces {
-		for _, f2 := range faces {
+	// Remembers matched combinations.
+	done := make(map[string]bool, len(ids)*len(ids))
+
+	// Find face assignment collisions.
+	for _, i := range ids {
+		for _, j := range ids {
+			var f1, f2 entity.Face
+
+			if f, ok := faces[i]; ok {
+				f1 = f
+			} else {
+				continue
+			}
+
+			if f, ok := faces[j]; ok {
+				f2 = f
+			} else {
+				continue
+			}
+
+			var matchId string
+
+			// Skip?
+			if matchId = f1.MatchId(f2); matchId == "" || done[matchId] {
+				continue
+			}
+
+			// Compare face 1 with face 2.
 			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}); matched {
 				if f1.SubjUID == f2.SubjUID {
 					continue
@@ -183,28 +236,40 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 				r := f1.SampleRadius + face.MatchDist
 
-				log.Infof("face %s: ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
+				log.Infof("faces: face %s has ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjUID != "" {
-					log.Debugf("face %s: subject %s (%s %s)", f1.ID, entity.SubjNames.Log(f1.SubjUID), f1.SubjUID, entity.SrcString(f1.FaceSrc))
+					log.Debugf("faces: face %s has %s subject %s (%s)", f1.ID, entity.SrcString(f1.FaceSrc), entity.SubjNames.Log(f1.SubjUID), f1.SubjUID)
 				} else {
-					log.Debugf("face %s: has no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
+					log.Debugf("faces: face %s has unknown subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
 				}
 
 				if f2.SubjUID != "" {
-					log.Debugf("face %s: subject %s (%s %s)", f2.ID, entity.SubjNames.Log(f2.SubjUID), f2.SubjUID, entity.SrcString(f2.FaceSrc))
+					log.Debugf("faces: face %s has %s subject %s (%s)", f2.ID, entity.SrcString(f2.FaceSrc), entity.SubjNames.Log(f2.SubjUID), f2.SubjUID)
 				} else {
-					log.Debugf("face %s: has no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
+					log.Debugf("faces: face %s has unknown subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
 				}
 
-				if ok, err := f1.ResolveCollision(face.Embeddings{f2.Embedding()}); err != nil {
-					log.Errorf("face %s: %s", f1.ID, err)
-				} else if ok {
-					log.Infof("face %s: conflict has been resolved", f1.ID)
-					resolved++
-				} else {
-					log.Debugf("face %s: conflict could not be resolved", f1.ID)
+				// Resolve.
+				success, failed := f1.ResolveCollision(face.Embeddings{f2.Embedding()})
+
+				// Failed?
+				if failed != nil {
+					log.Errorf("faces: conflict resolution for %s failed, face %s has collisions with other persons (%s)", entity.SubjNames.Log(f1.SubjUID), f1.ID, failed)
+					continue
 				}
+
+				// Success?
+				if success {
+					log.Infof("faces: successful conflict resolution for %s, face %s had collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
+					resolved++
+					faces, _, err = FacesByID(true, false, false)
+					logErr("faces", "refresh", err)
+				} else {
+					log.Infof("faces: conflict resolution for %s not successful, face %s still has collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
+				}
+
+				done[matchId] = true
 			}
 		}
 	}

@@ -9,8 +9,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/projection"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
 	"gopkg.in/photoprism/go-tz.v2/tz"
@@ -30,7 +32,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	j := gjson.GetBytes(jsonData, "@flatten|@join")
 
 	if !j.IsObject() {
-		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", sanitize.Log(filepath.Base(originalName)))
+		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", clean.Log(filepath.Base(originalName)))
 	}
 
 	jsonStrings := make(map[string]string)
@@ -41,7 +43,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	if fileName, ok := jsonStrings["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
-		return fmt.Errorf("metadata: original name %s does not match %s (exiftool)", sanitize.Log(originalName), sanitize.Log(fileName))
+		return fmt.Errorf("metadata: original name %s does not match %s (exiftool)", clean.Log(originalName), clean.Log(fileName))
 	}
 
 	v := reflect.ValueOf(data).Elem()
@@ -112,6 +114,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			case Keywords:
 				existing := fieldValue.Interface().(Keywords)
 				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
+			case projection.Type:
+				fieldValue.Set(reflect.ValueOf(projection.Type(strings.TrimSpace(jsonValue.String()))))
 			case string:
 				if !fieldValue.IsZero() {
 					continue
@@ -126,6 +130,16 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 				fieldValue.SetBool(jsonValue.Bool())
 			default:
 				log.Warnf("metadata: cannot assign value of type %s to %s (exiftool)", t, tagValue)
+			}
+		}
+	}
+
+	// Nanoseconds.
+	if data.TakenNs <= 0 {
+		for _, name := range exifSubSecTags {
+			if s := jsonStrings[name]; txt.IsPosInt(s) {
+				data.TakenNs = txt.Int(s + strings.Repeat("0", 9-len(s)))
+				break
 			}
 		}
 	}
@@ -150,6 +164,13 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	hasTimeOffset := false
+
+	// Fallback to GPS timestamp.
+	if data.TakenAt.IsZero() && data.TakenAtLocal.IsZero() && !data.TakenGps.IsZero() {
+		data.TimeZone = time.UTC.String()
+		data.TakenAt = data.TakenGps.UTC()
+		data.TakenAtLocal = time.Time{}
+	}
 
 	if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
 		hasTimeOffset = true
@@ -180,7 +201,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					data.TakenAtLocal = localUtc
 				}
 
-				data.TakenAt = tl.Round(time.Second).UTC()
+				data.TakenAt = tl.Truncate(time.Second).UTC()
 			} else {
 				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
 			}
@@ -197,7 +218,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			data.TakenAtLocal = localUtc
 		}
 
-		data.TakenAt = data.TakenAt.Round(time.Second).UTC()
+		data.TakenAt = data.TakenAt.Truncate(time.Second).UTC()
 	}
 
 	// Set local time if still empty.
@@ -209,6 +230,14 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			data.TakenAt = data.TakenAt.UTC()
 		} else {
 			log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
+		}
+	}
+
+	// Add nanoseconds to the calculated UTC and local time.
+	if data.TakenAt.Nanosecond() == 0 {
+		if ns := time.Duration(data.TakenNs); ns > 0 && ns <= time.Second {
+			data.TakenAt.Truncate(time.Second).UTC().Add(ns)
+			data.TakenAtLocal.Truncate(time.Second).Add(ns)
 		}
 	}
 
@@ -263,7 +292,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		data.InstanceID = rnd.SanitizeUUID(data.InstanceID)
 	}
 
-	if data.Projection == "equirectangular" {
+	if projection.Equirectangular.Equal(data.Projection) {
 		data.AddKeywords(KeywordPanorama)
 	}
 

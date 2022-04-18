@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -15,7 +15,7 @@ Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
     which describe how our Brand Assets may be used:
     <https://photoprism.app/trademark>
 
-Feel free to send an e-mail to hello@photoprism.app if you have questions,
+Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
@@ -32,6 +32,10 @@ const Hour = 60 * Minute;
 let start = new Date();
 
 export default class Util {
+  static fps(fps) {
+    return `${fps.toFixed(1)} FPS`;
+  }
+
   static duration(d) {
     let u = d;
 
@@ -141,20 +145,100 @@ export default class Util {
     start = now;
   }
 
+  static capitalize(s) {
+    if (!s || s === "") {
+      return "";
+    }
+
+    return s.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
+  }
+
+  static fileType(value) {
+    if (!value || typeof value !== "string") {
+      return "";
+    }
+
+    switch (value) {
+      case "raw":
+        return "Unprocessed Sensor Data (RAW)";
+      case "mov":
+      case "qt":
+        return "Apple QuickTime";
+      case "bmp":
+        return "Bitmap";
+      case "png":
+        return "Portable Network Graphics";
+      case "tiff":
+        return "TIFF";
+      case "gif":
+        return "GIF";
+      case "avc":
+      case "avc1":
+        return "Advanced Video Coding (AVC) / H.264";
+      case "hevc":
+      case "hvc":
+      case "hvc1":
+        return "High Efficiency Video Coding (HEVC) / H.265";
+      case "mkv":
+        return "Matroska Multimedia Container";
+      case "webp":
+        return "Google WebP";
+      case "webm":
+        return "Google WebM";
+      case "flv":
+        return "Flash";
+      case "mpg":
+        return "MPEG";
+      case "mjpg":
+        return "Motion JPEG";
+      case "ogg":
+      case "ogv":
+        return "Ogg Media";
+      case "wmv":
+        return "Windows Media";
+      default:
+        return value.toUpperCase();
+    }
+  }
+
   static codecName(value) {
     if (!value || typeof value !== "string") {
       return "";
     }
 
     switch (value) {
+      case "raw":
+        return "Unprocessed Sensor Data (RAW)";
+      case "mov":
+      case "qt":
+        return "Apple QuickTime (MOV)";
+      case "avc":
       case "avc1":
         return "Advanced Video Coding (AVC) / H.264";
+      case "hevc":
+      case "hvc":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
+      case "vvc":
+        return "Versatile Video Coding (VVC) / H.266";
+      case "av01":
+        return "AOMedia Video 1 (AV1)";
+      case "gif":
+        return "Graphics Interchange Format (GIF)";
+      case "mkv":
+        return "Matroska Multimedia Container (MKV)";
+      case "webp":
+        return "Google WebP";
+      case "webm":
+        return "Google WebM";
+      case "mpeg":
+        return "Moving Picture Experts Group (MPEG)";
       case "mjpg":
-        return "Motion JPEG (MJPEG)";
+        return "Motion JPEG (M-JPEG)";
+      case "heif":
+        return "High Efficiency Image File Format (HEIF)";
       case "heic":
-        return "High Efficiency Image File Format (HEIC)";
+        return "High Efficiency Image Container (HEIC)";
       case "1":
         return "Uncompressed";
       case "2":

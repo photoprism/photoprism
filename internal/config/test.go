@@ -18,9 +18,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Download URL and ZIP hash for test files.
@@ -69,7 +69,7 @@ func NewTestOptions(pkg string) *Options {
 		} else if dsn != SQLiteTestDB {
 			// Continue.
 		} else if err := os.Remove(dsn); err == nil {
-			log.Debugf("sqlite: test file %s removed", sanitize.Log(dsn))
+			log.Debugf("sqlite: test file %s removed", clean.Log(dsn))
 		}
 	}
 
@@ -77,10 +77,12 @@ func NewTestOptions(pkg string) *Options {
 	c := &Options{
 		Name:            "PhotoPrism",
 		Version:         "0.0.0",
-		Copyright:       "(c) 2018-2022 Michael Mayer",
+		Copyright:       "(c) 2018-2022 PhotoPrism UG. All rights reserved.",
+		Public:          true,
+		Auth:            false,
 		Test:            true,
 		Debug:           true,
-		Public:          true,
+		Trace:           false,
 		Experimental:    true,
 		ReadOnly:        false,
 		DetectNSFW:      true,
@@ -146,7 +148,7 @@ func NewTestConfig(pkg string) *Config {
 
 	c := &Config{
 		options: NewTestOptions(pkg),
-		token:   rnd.Token(8),
+		token:   rnd.GenerateToken(8),
 	}
 
 	s := NewSettings(c)
@@ -185,11 +187,11 @@ func CliTestContext() *cli.Context {
 	config := NewTestOptions("config-cli")
 
 	globalSet := flag.NewFlagSet("test", 0)
-	globalSet.Bool("debug", false, "doc")
+	globalSet.String("config-path", config.ConfigPath, "doc")
+	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.String("storage-path", config.StoragePath, "doc")
 	globalSet.String("backup-path", config.StoragePath, "doc")
 	globalSet.String("sidecar-path", config.SidecarPath, "doc")
-	globalSet.String("config-file", config.ConfigFile, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
 	globalSet.String("import-path", config.OriginalsPath, "doc")
@@ -197,8 +199,8 @@ func CliTestContext() *cli.Context {
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.String("darktable-blacklist", config.DarktableBlacklist, "doc")
-	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
+	globalSet.Bool("debug", false, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 	globalSet.Int("auto-index", config.AutoIndex, "doc")
 	globalSet.Int("auto-import", config.AutoImport, "doc")
@@ -208,10 +210,11 @@ func CliTestContext() *cli.Context {
 
 	c := cli.NewContext(app, globalSet, nil)
 
+	LogError(c.Set("config-path", config.ConfigPath))
+	LogError(c.Set("admin-password", config.AdminPassword))
 	LogError(c.Set("storage-path", config.StoragePath))
 	LogError(c.Set("backup-path", config.BackupPath))
 	LogError(c.Set("sidecar-path", config.SidecarPath))
-	LogError(c.Set("config-file", config.ConfigFile))
 	LogError(c.Set("assets-path", config.AssetsPath))
 	LogError(c.Set("originals-path", config.OriginalsPath))
 	LogError(c.Set("import-path", config.ImportPath))
@@ -219,7 +222,6 @@ func CliTestContext() *cli.Context {
 	LogError(c.Set("cache-path", config.CachePath))
 	LogError(c.Set("darktable-cli", config.DarktableBin))
 	LogError(c.Set("darktable-blacklist", "raf,cr3"))
-	LogError(c.Set("admin-password", config.AdminPassword))
 	LogError(c.Set("wakeup-interval", "1h34m9s"))
 	LogError(c.Set("detect-nsfw", "true"))
 	LogError(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))

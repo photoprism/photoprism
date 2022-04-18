@@ -1,0 +1,6 @@
+DROP DATABASE IF EXISTS acceptance;
+CREATE DATABASE IF NOT EXISTS acceptance;
+CREATE USER IF NOT EXISTS acceptance@'%' IDENTIFIED BY 'acceptance';
+GRANT ALL PRIVILEGES ON acceptance.* TO acceptance@'%';
+
+FLUSH PRIVILEGES;

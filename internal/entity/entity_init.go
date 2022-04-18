@@ -4,7 +4,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // onReady contains init functions to be called when the
@@ -62,7 +62,7 @@ func InitTestDb(driver, dsn string) *Gorm {
 		} else if dsn != SQLiteTestDB {
 			// Continue.
 		} else if err := os.Remove(dsn); err == nil {
-			log.Debugf("sqlite: test file %s removed", sanitize.Log(dsn))
+			log.Debugf("sqlite: test file %s removed", clean.Log(dsn))
 		}
 	}
 

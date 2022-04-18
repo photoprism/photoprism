@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -24,7 +24,7 @@ func GetFile(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.FileByHash(sanitize.Token(c.Param("hash")))
+		p, err := query.FileByHash(clean.Token(c.Param("hash")))
 
 		if err != nil {
 			AbortEntityNotFound(c)

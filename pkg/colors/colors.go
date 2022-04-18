@@ -2,7 +2,7 @@
 
 Package colors provides types and functions for color classification.
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -17,7 +17,7 @@ Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
     which describe how our Brand Assets may be used:
     <https://photoprism.app/trademark>
 
-Feel free to send an e-mail to hello@photoprism.app if you have questions,
+Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
@@ -29,7 +29,8 @@ package colors
 import (
 	"fmt"
 	"image/color"
-	"strings"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type Color uint8
@@ -137,7 +138,7 @@ func (c Colors) List() []map[string]string {
 	result := make([]map[string]string, 0, len(c))
 
 	for _, c := range c {
-		result = append(result, map[string]string{"Slug": c.Name(), "Name": strings.Title(c.Name()), "Example": ColorExamples[c]})
+		result = append(result, map[string]string{"Slug": c.Name(), "Name": txt.UpperFirst(c.Name()), "Example": ColorExamples[c]})
 	}
 
 	return result

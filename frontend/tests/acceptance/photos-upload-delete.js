@@ -1,162 +1,198 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
-import { ClientFunction } from "testcafe";
 import fs from "fs";
+import Menu from "../page-model/menu";
+import Toolbar from "../page-model/toolbar";
+import ContextMenu from "../page-model/context-menu";
+import Photo from "../page-model/photo";
+import Page from "../page-model/page";
+import PhotoEdit from "../page-model/photo-edit";
+import Originals from "../page-model/originals";
+import Album from "../page-model/album";
+import Library from "../page-model/library";
 
 fixture`Test photos upload and delete`.page`${testcafeconfig.url}`;
 
+const menu = new Menu();
+const album = new Album();
+const toolbar = new Toolbar();
+const contextmenu = new ContextMenu();
+const photo = new Photo();
 const page = new Page();
+const photoedit = new PhotoEdit();
+const originals = new Originals();
+const library = new Library();
 
-test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", async (t) => {
-  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).notOk();
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("digikam");
-  const PhotoCount = await Selector("div.is-photo").count;
-  await t
-    .expect(PhotoCount)
-    .eql(0)
-    .click(Selector(".action-upload"))
-    .setFilesToUpload(Selector(".input-upload"), [
-      "./upload-files/digikam.jpg",
-      "./upload-files/digikam.json",
-    ])
-    .wait(15000);
-  const PhotoCountAfterUpload = await Selector("div.is-photo").count;
-  await t.expect(PhotoCountAfterUpload).eql(1);
-  const UploadedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
-  await t.navigateTo("/library/files/2020/10");
-  const FileCount = await Selector("div.is-file").count;
-  await t.expect(FileCount).eql(2);
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("digikam");
-  await page.selectPhotoFromUID(UploadedPhoto);
-  await page.editSelected();
-  await t
-    .click("#tab-files")
-    .expect(Selector("div.caption").withText(".json").visible)
-    .ok()
-    .expect(Selector("div.caption").withText(".jpg").visible)
-    .ok()
-    .click(Selector(".action-close"));
-  await page.clearSelection();
-  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).ok();
-  const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/10").length;
-  await t.expect(originalsLength).eql(2);
-  await page.deletePhotoFromUID(UploadedPhoto);
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("digikam");
-  await t
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
-    .notOk()
-    .navigateTo("/library/files/2020/10");
-  const FileCountAfterDelete = await Selector("div.is-file").count;
-  await t.expect(FileCountAfterDelete).eql(0);
-  const originalsLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/10")
-    .length;
-  await t.expect(originalsLengthAfterDelete).eql(0);
-});
+test.meta("testID", "photos-upload-delete-001").meta({ type: "smoke" })(
+  "Upload + Delete jpg/json",
+  async (t) => {
+    await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).notOk();
+    await toolbar.search("digikam");
+    const PhotoCount = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCount).eql(0);
+
+    await toolbar.triggerToolbarAction("upload");
+    await t
+      .setFilesToUpload(Selector(".input-upload"), [
+        "./upload-files/digikam.jpg",
+        "./upload-files/digikam.json",
+      ])
+      .wait(15000);
+    const PhotoCountAfterUpload = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountAfterUpload).eql(1);
+
+    const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
+    await t.navigateTo("/library/files/2020/10");
+    const FileCount = await originals.getFileCount();
+
+    await t.expect(FileCount).eql(2);
+
+    await menu.openPage("browse");
+    await toolbar.search("digikam");
+    await photo.triggerHoverAction("uid", UploadedPhoto, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.filesTab);
+
+    await t
+      .expect(Selector("div.caption").withText(".json").visible)
+      .ok()
+      .expect(Selector("div.caption").withText(".jpg").visible)
+      .ok();
+
+    await t.click(photoedit.dialogClose);
+
+    if (t.browser.platform !== "mobile") {
+      await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).ok();
+      const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/10").length;
+      await t.expect(originalsLength).eql(2);
+    }
+
+    await contextmenu.triggerContextMenuAction("archive", "");
+    await menu.openPage("archive");
+    await photo.triggerHoverAction("uid", UploadedPhoto, "select");
+    await contextmenu.triggerContextMenuAction("delete", "");
+    await menu.openPage("browse");
+    await toolbar.search("digikam");
+    await photo.checkPhotoVisibility(UploadedPhoto, false);
+    await t.navigateTo("/library/files/2020/10");
+    const FileCountAfterDelete = await originals.getFileCount();
+
+    await t.expect(FileCountAfterDelete).eql(0);
+    if (t.browser.platform !== "mobile") {
+      const originalsLengthAfterDelete = fs.readdirSync(
+        "../storage/acceptance/originals/2020/10"
+      ).length;
+      await t.expect(originalsLengthAfterDelete).eql(0);
+    }
+  }
+);
 
 test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (t) => {
   await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).notOk();
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("korn");
-  const PhotoCount = await Selector("div.is-photo").count;
-  await t
-    .expect(PhotoCount)
-    .eql(0)
-    .click(Selector(".action-upload"))
-    .setFilesToUpload(Selector(".input-upload"), [
-      "./upload-files/korn.mp4",
-    ])
-    .wait(15000);
-  const PhotoCountAfterUpload = await Selector("div.is-photo").count;
+  await toolbar.search("korn");
+  const PhotoCount = await photo.getPhotoCount("all");
+
+  await t.expect(PhotoCount).eql(0);
+
+  await toolbar.triggerToolbarAction("upload");
+  await t.setFilesToUpload(Selector(".input-upload"), ["./upload-files/korn.mp4"]).wait(15000);
+  const PhotoCountAfterUpload = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountAfterUpload).eql(1);
-  const UploadedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+
+  const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
   await t.navigateTo("/library/files/2020/06");
-  const FileCount = await Selector("div.is-file").count;
+  const FileCount = await originals.getFileCount();
+
   await t.expect(FileCount).eql(1);
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("korn");
-  await page.selectPhotoFromUID(UploadedPhoto);
-  await page.editSelected();
+
+  await menu.openPage("browse");
+  await toolbar.search("korn");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
+  await contextmenu.triggerContextMenuAction("edit", "");
+  await t.click(photoedit.filesTab);
+
   await t
-    .click("#tab-files")
     .expect(Selector("div.caption").withText(".mp4").visible)
     .ok()
     .expect(Selector("div.caption").withText(".jpg").visible)
-    .ok()
-    .click(Selector(".action-close"));
-  await page.clearSelection();
-  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).ok();
-  const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
-  await t.expect(originalsLength).eql(1);
-  const sidecarLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
-  await t.expect(sidecarLength).eql(1);
-  await page.deletePhotoFromUID(UploadedPhoto);
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("korn");
-  await t
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
-    .notOk()
-    .navigateTo("/library/files/2020/06");
-  const FileCountAfterDelete = await Selector("div.is-file").count;
+    .ok();
+
+  await t.click(photoedit.dialogClose);
+
+  if (t.browser.platform !== "mobile") {
+    await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).ok();
+    const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
+    await t.expect(originalsLength).eql(1);
+    const sidecarLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
+    await t.expect(sidecarLength).eql(1);
+  }
+
+  await contextmenu.triggerContextMenuAction("archive", "");
+  await menu.openPage("archive");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
+  await contextmenu.triggerContextMenuAction("delete", "");
+  await menu.openPage("browse");
+  await toolbar.search("korn");
+  await photo.checkPhotoVisibility(UploadedPhoto, false);
+  await t.navigateTo("/library/files/2020/06");
+  const FileCountAfterDelete = await originals.getFileCount();
+
   await t.expect(FileCountAfterDelete).eql(0);
-  const originalsLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/06")
-    .length;
-  await t.expect(originalsLengthAfterDelete).eql(0);
-  const sidecarLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
-  await t.expect(sidecarLengthAfterDelete).eql(0);
+  if (t.browser.platform !== "mobile") {
+    const originalsLengthAfterDelete = fs.readdirSync(
+      "../storage/acceptance/originals/2020/06"
+    ).length;
+    await t.expect(originalsLengthAfterDelete).eql(0);
+    const sidecarLengthAfterDelete = fs.readdirSync(
+      "../storage/acceptance/originals/2020/06"
+    ).length;
+    await t.expect(sidecarLengthAfterDelete).eql(0);
+  }
 });
 
 test.meta("testID", "photos-upload-delete-003")("Upload to existing Album + Delete", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  await page.search("Christmas");
-  const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
-  const PhotoCount = await Selector("div.is-photo").count;
+  await menu.openPage("albums");
+  await toolbar.search("Christmas");
+  const AlbumUid = await album.getNthAlbumUid("all", 0);
+  await album.openAlbumWithUid(AlbumUid);
+  const PhotoCount = await photo.getPhotoCount("all");
+  await toolbar.triggerToolbarAction("upload");
   await t
-    .click(Selector(".action-upload"))
     .click(Selector(".input-albums"))
-    .click(Selector("div.v-list__tile__title").withText("Christmas"))
+    .click(page.selectOption.withText("Christmas"))
     .setFilesToUpload(Selector(".input-upload"), ["./upload-files/ladybug.jpg"])
     .wait(15000);
-  const PhotoCountAfterUpload = await Selector("div.is-photo").count;
+  const PhotoCountAfterUpload = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountAfterUpload).eql(PhotoCount + 1);
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("ladybug");
-  const UploadedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
-  await page.deletePhotoFromUID(UploadedPhoto);
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("ladybug");
-  await t
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
-    .notOk();
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  await t
-    .click(Selector("a.is-album").withAttribute("data-uid", AlbumUid))
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
-    .notOk();
-  const PhotoCountAfterDelete = await Selector("div.is-photo").count;
+
+  await menu.openPage("browse");
+  await toolbar.search("ladybug");
+  const UploadedPhotoUid = await photo.getNthPhotoUid("all", 0);
+  await photo.triggerHoverAction("uid", UploadedPhotoUid, "select");
+  await contextmenu.triggerContextMenuAction("archive", "");
+  await menu.openPage("archive");
+  await photo.triggerHoverAction("uid", UploadedPhotoUid, "select");
+  await contextmenu.triggerContextMenuAction("delete", "");
+  await menu.openPage("browse");
+  await toolbar.search("ladybug");
+  await photo.checkPhotoVisibility(UploadedPhotoUid, false);
+  await menu.openPage("albums");
+  await album.openAlbumWithUid(AlbumUid);
+  await photo.checkPhotoVisibility(UploadedPhotoUid, false);
+  const PhotoCountAfterDelete = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountAfterDelete).eql(PhotoCount);
 });
 
 test.meta("testID", "photos-upload-delete-004")("Upload jpg to new Album + Delete", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  const AlbumCount = await Selector("a.is-album").count;
+  await menu.openPage("albums");
+  const AlbumCount = await album.getAlbumCount("all");
+  await toolbar.triggerToolbarAction("upload");
   await t
-    .click(Selector(".action-upload", { timeout: 5000 }))
     .click(Selector(".input-albums"))
     .typeText(Selector(".input-albums input"), "NewCreatedAlbum")
     .pressKey("enter")
@@ -165,67 +201,66 @@ test.meta("testID", "photos-upload-delete-004")("Upload jpg to new Album + Delet
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
-    await t.click(Selector("button.action-reload"));
+    await toolbar.triggerToolbarAction("reload");
   }
-  const AlbumCountAfterUpload = await Selector("a.is-album").count;
+  const AlbumCountAfterUpload = await album.getAlbumCount("all");
+
   await t.expect(AlbumCountAfterUpload).eql(AlbumCount + 1);
-  await page.search("NewCreatedAlbum");
-  await t.click(Selector("a.is-album").nth(0));
-  const PhotoCount = await Selector("div.is-photo").count;
+
+  await toolbar.search("NewCreatedAlbum");
+  await album.openNthAlbum(0);
+  const PhotoCount = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCount).eql(1);
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("digikam");
-  const UploadedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
-  await page.deletePhotoFromUID(UploadedPhoto);
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("digikam");
-  await t
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
-    .notOk();
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  await page.search("NewCreatedAlbum");
-  await t
-    .click(Selector("a.is-album").nth(0))
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
-    .notOk();
-  const PhotoCountAfterDelete = await Selector("div.is-photo").count;
+
+  await menu.openPage("browse");
+  await toolbar.search("digikam");
+  const UploadedPhotoUid = await photo.getNthPhotoUid("all", 0);
+  await photo.triggerHoverAction("uid", UploadedPhotoUid, "select");
+  await contextmenu.triggerContextMenuAction("archive", "");
+  await menu.openPage("archive");
+  await photo.triggerHoverAction("uid", UploadedPhotoUid, "select");
+  await contextmenu.triggerContextMenuAction("delete", "");
+  await menu.openPage("browse");
+  await toolbar.search("digikam");
+  await photo.checkPhotoVisibility(UploadedPhotoUid, false);
+  await menu.openPage("albums");
+  await toolbar.search("NewCreatedAlbum");
+  await album.openNthAlbum(0);
+  await photo.checkPhotoVisibility(UploadedPhotoUid, false);
+  const PhotoCountAfterDelete = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountAfterDelete).eql(0);
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  await page.search("NewCreatedAlbum");
-  await t.hover(Selector("a.is-album").nth(0)).click(Selector("a.is-album .input-select").nth(0));
-  await page.deleteSelected();
+
+  await menu.openPage("albums");
+  await toolbar.search("NewCreatedAlbum");
+  await album.triggerHoverAction("nth", 0, "select");
+  await contextmenu.checkContextMenuCount("1");
+  await contextmenu.triggerContextMenuAction("delete", "");
 });
 
-test.meta("testID", "photos-upload-delete-005")("Try uploading nsfw file", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await t
-    .click(Selector(".action-upload"))
-    .setFilesToUpload(Selector(".input-upload"), ["./upload-files/hentai_2.jpg"])
-    .wait(15000);
-  await page.openNav();
-  await t
-    .click(Selector(".nav-library"))
-    .click(Selector("#tab-library-logs"))
-    .expect(Selector("p").withText("hentai_2.jpg might be offensive").visible)
-    .ok();
-});
+test.meta("testID", "photos-upload-delete-005").meta({ type: "smoke" })(
+  "Try uploading nsfw file",
+  async (t) => {
+    await toolbar.triggerToolbarAction("upload");
+    await t
+      .setFilesToUpload(Selector(".input-upload"), ["./upload-files/hentai_2.jpg"])
+      .wait(15000);
+    await menu.openPage("library");
+    await t.click(library.logsTab);
 
-test.meta("testID", "photos-upload-delete-006")("Try uploading txt file", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await t
-    .click(Selector(".action-upload"))
-    .setFilesToUpload(Selector(".input-upload"), ["./upload-files/foo.txt"])
-    .wait(15000);
-  await page.openNav();
-  await t
-    .click(Selector(".nav-library"))
-    .click(Selector("#tab-library-logs"))
-    .expect(Selector("p").withText(" foo.txt is not a jpeg file").visible)
-    .ok();
-});
+    await t.expect(Selector("p").withText("hentai_2.jpg might be offensive").visible).ok();
+  }
+);
+
+test.meta("testID", "photos-upload-delete-006").meta({ type: "smoke" })(
+  "Try uploading txt file",
+  async (t) => {
+    await toolbar.triggerToolbarAction("upload");
+    await t.setFilesToUpload(Selector(".input-upload"), ["./upload-files/foo.txt"]).wait(15000);
+    await menu.openPage("library");
+    await t.click(library.logsTab);
+
+    await t.expect(Selector("p").withText(" foo.txt is not a jpeg file").visible).ok();
+  }
+);

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Strings is a simple string map that should not be accessed by multiple goroutines.
@@ -58,10 +58,14 @@ func (s *StringMap) Key(val string) string {
 
 // Log returns a string sanitized for logging and using the key as fallback value.
 func (s *StringMap) Log(key string) (val string) {
+	if key == "" {
+		return "<unknown>"
+	}
+
 	if val = s.Get(key); val != "" {
-		return sanitize.Log(val)
+		return clean.Log(val)
 	} else {
-		return sanitize.Log(key)
+		return clean.Log(key)
 	}
 }
 
