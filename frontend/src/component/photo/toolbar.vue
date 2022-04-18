@@ -14,7 +14,7 @@
                     prepend-inner-icon="search"
                     color="secondary-dark"
                     @change="(v) => {updateFilter({'q': v})}"
-                    @keyup.enter.native="refresh()"
+                    @keyup.enter.native="(e) => updateQuery({'q': e.target.value})"
                     @click:clear="() => {updateQuery({'q': ''})}"
       ></v-text-field>
 
