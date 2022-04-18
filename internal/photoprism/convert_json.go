@@ -37,6 +37,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
+	cmd.Env = []string{fmt.Sprintf("HOME=%s", c.conf.CmdCachePath())}
 
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())

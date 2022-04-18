@@ -38,11 +38,6 @@ func (c *Config) ThumbFilter() thumb.ResampleFilter {
 	}
 }
 
-// ThumbPath returns the thumbnail storage directory.
-func (c *Config) ThumbPath() string {
-	return c.CachePath() + "/thumbnails"
-}
-
 // ThumbColor returns the color profile name for thumbnails.
 func (c *Config) ThumbColor() string {
 	return c.options.ThumbColor

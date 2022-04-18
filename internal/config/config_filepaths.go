@@ -74,6 +74,12 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.StoragePath(), err)
 	}
 
+	if c.CmdCachePath() == "" {
+		return notFoundError("cmd cache")
+	} else if err := os.MkdirAll(c.CmdCachePath(), os.ModePerm); err != nil {
+		return createError(c.CmdCachePath(), err)
+	}
+
 	if c.BackupPath() == "" {
 		return notFoundError("backup")
 	} else if err := os.MkdirAll(c.BackupPath(), os.ModePerm); err != nil {
@@ -104,10 +110,10 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.CachePath(), err)
 	}
 
-	if c.ThumbPath() == "" {
+	if c.ThumbCachePath() == "" {
 		return notFoundError("thumbs")
-	} else if err := os.MkdirAll(c.ThumbPath(), os.ModePerm); err != nil {
-		return createError(c.ThumbPath(), err)
+	} else if err := os.MkdirAll(c.ThumbCachePath(), os.ModePerm); err != nil {
+		return createError(c.ThumbCachePath(), err)
 	}
 
 	if c.ConfigPath() == "" {
@@ -153,12 +159,12 @@ func (c *Config) CreateDirectories() error {
 	}
 
 	if c.DarktableEnabled() {
-		if cachePath, err := c.CreateDarktableCachePath(); err != nil {
-			return fmt.Errorf("could not create darktable cache path %s", clean.Log(cachePath))
+		if dir, err := c.CreateDarktableCachePath(); err != nil {
+			return fmt.Errorf("could not create darktable cache path %s", clean.Log(dir))
 		}
 
-		if configPath, err := c.CreateDarktableConfigPath(); err != nil {
-			return fmt.Errorf("could not create darktable cache path %s", clean.Log(configPath))
+		if dir, err := c.CreateDarktableConfigPath(); err != nil {
+			return fmt.Errorf("could not create darktable cache path %s", clean.Log(dir))
 		}
 	}
 
@@ -263,11 +269,17 @@ func (c *Config) SidecarWritable() bool {
 
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
-	if c.options.TempPath == "" {
-		return filepath.Join(os.TempDir(), "photoprism")
+	if c.options.TempPath != "" {
+		if c.options.TempPath[0] != '/' {
+			c.options.TempPath = fs.Abs(c.options.TempPath)
+		}
+	} else if dir, err := os.MkdirTemp(os.TempDir(), "photoprism"); err == nil {
+		c.options.TempPath = dir
+	} else {
+		c.options.TempPath = filepath.Join(os.TempDir(), "photoprism")
 	}
 
-	return fs.Abs(c.options.TempPath)
+	return c.options.TempPath
 }
 
 // CachePath returns the path for cache files.
@@ -277,6 +289,16 @@ func (c *Config) CachePath() string {
 	}
 
 	return fs.Abs(c.options.CachePath)
+}
+
+// CmdCachePath returns a path that CLI commands can use as cache directory.
+func (c *Config) CmdCachePath() string {
+	return filepath.Join(c.CachePath(), "cmd")
+}
+
+// ThumbCachePath returns the thumbnail storage directory.
+func (c *Config) ThumbCachePath() string {
+	return c.CachePath() + "/thumbnails"
 }
 
 // StoragePath returns the path for generated files like cache and index.

@@ -77,6 +77,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
+	cmd.Env = []string{fmt.Sprintf("HOME=%s", c.conf.CmdCachePath())}
 
 	event.Publish("index.converting", event.Data{
 		"fileType": f.FileType(),

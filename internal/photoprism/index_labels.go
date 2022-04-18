@@ -24,7 +24,7 @@ func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
 	var labels classify.Labels
 
 	for _, size := range sizes {
-		filename, err := jpeg.Thumbnail(Config().ThumbPath(), size)
+		filename, err := jpeg.Thumbnail(Config().ThumbCachePath(), size)
 
 		if err != nil {
 			log.Debugf("%s in %s", err, clean.Log(jpeg.BaseName()))

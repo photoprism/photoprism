@@ -159,8 +159,8 @@ func TestConfig_CachePath(t *testing.T) {
 func TestConfig_ThumbnailsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.True(t, strings.HasPrefix(c.ThumbPath(), "/"))
-	assert.True(t, strings.HasSuffix(c.ThumbPath(), "storage/testdata/cache/thumbnails"))
+	assert.True(t, strings.HasPrefix(c.ThumbCachePath(), "/"))
+	assert.True(t, strings.HasSuffix(c.ThumbCachePath(), "storage/testdata/cache/thumbnails"))
 }
 
 func TestConfig_AssetsPath(t *testing.T) {

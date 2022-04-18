@@ -64,7 +64,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 	}
 
 	// Thumbnails storage path.
-	thumbPath := w.conf.ThumbPath()
+	thumbPath := w.conf.ThumbCachePath()
 
 	// Find and remove orphan thumbnail files.
 	if err := fastwalk.Walk(thumbPath, func(fileName string, info os.FileMode) error {

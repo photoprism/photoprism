@@ -25,7 +25,7 @@ func (ind *Index) Faces(jpeg *MediaFile, expected int) face.Faces {
 		thumbSize = thumb.Fit1280
 	}
 
-	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), thumbSize)
+	thumbName, err := jpeg.Thumbnail(Config().ThumbCachePath(), thumbSize)
 
 	if err != nil {
 		log.Debugf("index: %s in %s (faces)", err, clean.Log(jpeg.BaseName()))

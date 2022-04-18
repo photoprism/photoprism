@@ -47,7 +47,7 @@ func (imp *Import) originalsPath() string {
 
 // thumbPath returns the thumbnails cache path as string.
 func (imp *Import) thumbPath() string {
-	return imp.conf.ThumbPath()
+	return imp.conf.ThumbCachePath()
 }
 
 // Start imports media files from a directory and converts/indexes them as needed.

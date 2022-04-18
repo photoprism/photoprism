@@ -40,7 +40,7 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		thumbPath := path.Join(conf.ThumbPath(), "share")
+		thumbPath := path.Join(conf.ThumbCachePath(), "share")
 
 		if err := os.MkdirAll(thumbPath, os.ModePerm); err != nil {
 			log.Error(err)
@@ -101,7 +101,7 @@ func SharePreview(router *gin.RouterGroup) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 
 			if err != nil {
 				log.Error(err)
@@ -131,7 +131,7 @@ func SharePreview(router *gin.RouterGroup) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 
 			if err != nil {
 				log.Error(err)

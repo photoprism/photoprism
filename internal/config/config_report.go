@@ -35,9 +35,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Other paths.
 		{"storage-path", c.StoragePath()},
 		{"sidecar-path", c.SidecarPath()},
-		{"cache-path", c.CachePath()},
 		{"albums-path", c.AlbumsPath()},
 		{"backup-path", c.BackupPath()},
+		{"cache-path", c.CachePath()},
+		{"cmd-cache-path", c.CmdCachePath()},
+		{"thumb-cache-path", c.ThumbCachePath()},
 		{"import-path", c.ImportPath()},
 		{"assets-path", c.AssetsPath()},
 		{"static-path", c.StaticPath()},
@@ -142,7 +144,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},
 		{"thumb-size-uncached", fmt.Sprintf("%d", c.ThumbSizeUncached())},
 		{"thumb-uncached", fmt.Sprintf("%t", c.ThumbUncached())},
-		{"thumb-path", c.ThumbPath()},
 		{"jpeg-quality", fmt.Sprintf("%d", c.JpegQuality())},
 		{"jpeg-size", fmt.Sprintf("%d", c.JpegSize())},
 

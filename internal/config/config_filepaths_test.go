@@ -1,6 +1,7 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -44,7 +45,21 @@ func TestConfig_TempPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/temp", c.TempPath())
 	c.options.TempPath = ""
-	assert.Equal(t, "/tmp/photoprism", c.TempPath())
+
+	if dir := c.TempPath(); dir == "" {
+		t.Fatal("temp path is empty")
+	} else if !strings.HasPrefix(dir, "/tmp/photoprism") {
+		t.Fatalf("unexpected temp path: %s", dir)
+	}
+}
+
+func TestConfig_CmdCachePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	if dir := c.CmdCachePath(); dir == "" {
+		t.Fatal("cmd cache path is empty")
+	} else if !strings.HasPrefix(dir, c.CachePath()) {
+		t.Fatalf("unexpected cmd cache path: %s", dir)
+	}
 }
 
 func TestConfig_CachePath2(t *testing.T) {

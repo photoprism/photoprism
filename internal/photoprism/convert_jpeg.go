@@ -101,6 +101,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
+	cmd.Env = []string{fmt.Sprintf("HOME=%s", c.conf.CmdCachePath())}
 
 	log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(jpegName)), filepath.Base(cmd.Path))
 
@@ -135,7 +136,6 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 		result = exec.Command(c.conf.SipsBin(), "-Z", maxSize, "-s", "format", "jpeg", "--out", jpegName, f.FileName())
 	} else if f.IsRaw() && c.conf.RawEnabled() {
 		if c.conf.DarktableEnabled() && c.darktableBlacklist.Ok(fileExt) {
-			cachePath, configPath := conf.DarktableCachePath(), conf.DarktableConfigPath()
 
 			var args []string
 
@@ -155,8 +155,16 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 				args = append(args, "--apply-custom-presets", "false", "--width", maxSize, "--height", maxSize, "--hq", "true", "--upscale", "false")
 			}
 
-			// Set Darktable core storage paths.
-			args = append(args, "--core", "--configdir", configPath, "--cachedir", cachePath, "--library", ":memory:")
+			// Set library, config, and cache location.
+			args = append(args, "--core", "--library", ":memory:")
+
+			if dir := conf.DarktableConfigPath(); dir != "" {
+				args = append(args, "--configdir", dir)
+			}
+
+			if dir := conf.DarktableCachePath(); dir != "" {
+				args = append(args, "--cachedir", dir)
+			}
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
 		} else if c.conf.RawtherapeeEnabled() && c.rawtherapeeBlacklist.Ok(fileExt) {

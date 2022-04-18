@@ -8,7 +8,7 @@ import (
 
 // NSFW returns true if media file might be offensive and detection is enabled.
 func (ind *Index) NSFW(m *MediaFile) bool {
-	filename, err := m.Thumbnail(Config().ThumbPath(), thumb.Fit720)
+	filename, err := m.Thumbnail(Config().ThumbCachePath(), thumb.Fit720)
 
 	if err != nil {
 		log.Error(err)

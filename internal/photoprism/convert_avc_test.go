@@ -65,3 +65,107 @@ func TestConvert_ToAvc(t *testing.T) {
 		assert.Nil(t, avcFile)
 	})
 }
+
+func TestConvert_AvcBitrate(t *testing.T) {
+	conf := config.TestConfig()
+	convert := NewConvert(conf)
+
+	t.Run("low", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "1M", convert.AvcBitrate(mf))
+	})
+
+	t.Run("medium", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 1280
+		mf.height = 1024
+
+		assert.Equal(t, "16M", convert.AvcBitrate(mf))
+	})
+
+	t.Run("high", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 1920
+		mf.height = 1080
+
+		assert.Equal(t, "25M", convert.AvcBitrate(mf))
+	})
+
+	t.Run("very_high", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 4096
+		mf.height = 2160
+
+		assert.Equal(t, "50M", convert.AvcBitrate(mf))
+	})
+}
+
+func TestConvert_AvcConvertCommand(t *testing.T) {
+	conf := config.TestConfig()
+	convert := NewConvert(conf)
+
+	t.Run(".mp4", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		r, _, err := convert.AvcConvertCommand(mf, "avc1", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Contains(t, r.Path, "ffmpeg")
+		assert.Contains(t, r.Args, "mp4")
+	})
+	t.Run(".jpg", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "cat_black.jpg")
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		r, _, err := convert.AvcConvertCommand(mf, "avc1", "")
+		assert.Error(t, err)
+		assert.Nil(t, r)
+	})
+}

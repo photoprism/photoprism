@@ -354,7 +354,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 	switch {
 	case m.IsJpeg():
 		// Color information
-		if p, err := m.Colors(Config().ThumbPath()); err != nil {
+		if p, err := m.Colors(Config().ThumbCachePath()); err != nil {
 			log.Debugf("%s while detecting colors", err.Error())
 			file.FileError = err.Error()
 			file.FilePrimary = false

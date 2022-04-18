@@ -123,14 +123,14 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 	},
 	cli.StringFlag{
-		Name:   "cache-path",
-		Usage:  "custom cache `PATH` for sessions and thumbnail files (optional)",
-		EnvVar: "PHOTOPRISM_CACHE_PATH",
-	},
-	cli.StringFlag{
 		Name:   "backup-path",
 		Usage:  "custom backup `PATH` for index backup files (optional)",
 		EnvVar: "PHOTOPRISM_BACKUP_PATH",
+	},
+	cli.StringFlag{
+		Name:   "cache-path",
+		Usage:  "custom cache `PATH` for sessions and thumbnail files (optional)",
+		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "import-path",
@@ -418,13 +418,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "darktable-cache-path",
-		Usage:  "custom Darktable cache `PATH` (automatically created if empty)",
+		Usage:  "custom Darktable cache `PATH`",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_DARKTABLE_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "darktable-config-path",
-		Usage:  "custom Darktable config `PATH` (automatically created if empty)",
+		Usage:  "custom Darktable config `PATH`",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_DARKTABLE_CONFIG_PATH",
 	},

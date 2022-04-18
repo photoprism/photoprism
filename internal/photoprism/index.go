@@ -63,7 +63,7 @@ func (ind *Index) originalsPath() string {
 }
 
 func (ind *Index) thumbPath() string {
-	return ind.conf.ThumbPath()
+	return ind.conf.ThumbCachePath()
 }
 
 // Cancel stops the current indexing operation.

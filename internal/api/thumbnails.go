@@ -51,7 +51,7 @@ func GetThumb(router *gin.RouterGroup) {
 				return
 			}
 
-			fileName, err := crop.FromRequest(fileHash, cropArea, cropSize, conf.ThumbPath())
+			fileName, err := crop.FromRequest(fileHash, cropArea, cropSize, conf.ThumbCachePath())
 
 			if err != nil {
 				log.Warnf("%s: %s", logPrefix, err)
@@ -119,7 +119,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Return existing thumbs straight away.
 		if !download {
-			if fileName, err := thumb.FileName(fileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...); err == nil && fs.FileExists(fileName) {
+			if fileName, err := thumb.FileName(fileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...); err == nil && fs.FileExists(fileName) {
 				AddThumbCacheHeader(c)
 				c.File(fileName)
 				return
@@ -183,9 +183,9 @@ func GetThumb(router *gin.RouterGroup) {
 		var thumbnail string
 
 		if conf.ThumbUncached() || size.Uncached() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...)
 		}
 
 		if err != nil {

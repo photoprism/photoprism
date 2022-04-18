@@ -2,7 +2,8 @@ package config
 
 import (
 	"os"
-	"path/filepath"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // RawEnabled checks if indexing and conversion of RAW files is enabled.
@@ -27,27 +28,21 @@ func (c *Config) DarktableBlacklist() string {
 
 // DarktableConfigPath returns the darktable config directory.
 func (c *Config) DarktableConfigPath() string {
-	if c.options.DarktableConfigPath != "" {
-		return c.options.DarktableConfigPath
-	}
-
-	return filepath.Join(c.ConfigPath(), "darktable")
+	return fs.Abs(c.options.DarktableConfigPath)
 }
 
 // DarktableCachePath returns the darktable cache directory.
 func (c *Config) DarktableCachePath() string {
-	if c.options.DarktableCachePath != "" {
-		return c.options.DarktableCachePath
-	}
-
-	return filepath.Join(c.CachePath(), "darktable")
+	return fs.Abs(c.options.DarktableCachePath)
 }
 
 // CreateDarktableCachePath creates and returns the darktable cache directory.
 func (c *Config) CreateDarktableCachePath() (string, error) {
 	cachePath := c.DarktableCachePath()
 
-	if err := os.MkdirAll(cachePath, os.ModePerm); err != nil {
+	if cachePath == "" {
+		return "", nil
+	} else if err := os.MkdirAll(cachePath, os.ModePerm); err != nil {
 		return cachePath, err
 	} else {
 		c.options.DarktableCachePath = cachePath
@@ -60,7 +55,9 @@ func (c *Config) CreateDarktableCachePath() (string, error) {
 func (c *Config) CreateDarktableConfigPath() (string, error) {
 	configPath := c.DarktableConfigPath()
 
-	if err := os.MkdirAll(configPath, os.ModePerm); err != nil {
+	if configPath == "" {
+		return "", nil
+	} else if err := os.MkdirAll(configPath, os.ModePerm); err != nil {
 		return configPath, err
 	} else {
 		c.options.DarktableConfigPath = configPath

@@ -40,7 +40,7 @@ func (w *Resample) Start(force bool) (err error) {
 	defer mutex.MainWorker.Stop()
 
 	originalsPath := w.conf.OriginalsPath()
-	thumbnailsPath := w.conf.ThumbPath()
+	thumbnailsPath := w.conf.ThumbCachePath()
 
 	jobs := make(chan ResampleJob)
 
