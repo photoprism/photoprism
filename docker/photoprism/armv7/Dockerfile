@@ -97,7 +97,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       exiftool rawtherapee libheif-examples librsvg2-bin \
       ffmpeg ffmpegthumbnailer libavcodec-extra libwebm1 \
       libmatroska7 libdvdread8 libebml5 libgav1-0 libatomic1 \
-      libx264-163 libx265-199 && \
+      libx264-163 libx265-199 \
     && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
