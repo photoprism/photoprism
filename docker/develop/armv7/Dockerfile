@@ -41,11 +41,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    groupadd -f -r -g 44 video && \
-    groupadd -f -r -g 109 render && \
-    groupadd -f -g 1000 photoprism && \
-    useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
-    chmod 777 /photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       apt-utils \
       gpg \

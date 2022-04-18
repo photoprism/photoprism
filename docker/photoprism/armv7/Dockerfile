@@ -90,9 +90,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu && \
     chown root:root /usr/local/sbin/gosu && \
     chmod 755 /usr/local/sbin/gosu && \
-    groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \
-    useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
-    chmod 777 /photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       libc6 ca-certificates sudo bash tzdata \
       gpg zip unzip wget curl rsync make nano \
@@ -101,6 +98,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       ffmpeg ffmpegthumbnailer libavcodec-extra libwebm1 \
       libmatroska7 libdvdread8 libebml5 libgav1-0 libatomic1 \
       libx264-163 libx265-199 && \
+    && \
+    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    cp /etc/skel/.bashrc /root/.bashrc && \
+    /scripts/create-users.sh && \
+    /scripts/cleanup.sh && \
+    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
@@ -111,11 +116,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache \
-    && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
-    /scripts/cleanup.sh
+      /photoprism/storage/cache
+
 
 # define default directory and user
 WORKDIR /photoprism
