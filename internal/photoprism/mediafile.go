@@ -336,7 +336,6 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		f, fileErr := NewMediaFile(fileName)
 
 		if fileErr != nil {
-			log.Warn(fileErr)
 			continue
 		}
 

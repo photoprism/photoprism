@@ -8,8 +8,6 @@ import (
 	"runtime/debug"
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/media"
-
 	"github.com/karrick/godirwalk"
 
 	"github.com/photoprism/photoprism/internal/classify"
@@ -21,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // Index represents an indexer that indexes files in the originals directory.
@@ -185,7 +184,7 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 
 			// Check if file exists and is not empty.
 			if err != nil {
-				log.Errorf("index: %s", err)
+				log.Warnf("index: %s", err)
 				return nil
 			}
 

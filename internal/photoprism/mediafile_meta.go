@@ -24,7 +24,7 @@ func (m *MediaFile) HasSidecarJson() bool {
 func (m *MediaFile) SidecarJsonName() string {
 	jsonName := m.fileName + ".json"
 
-	if fs.FileExists(jsonName) {
+	if fs.FileExistsNotEmpty(jsonName) {
 		return jsonName
 	}
 

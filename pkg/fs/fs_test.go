@@ -23,8 +23,18 @@ func TestMain(m *testing.M) {
 
 func TestFileExists(t *testing.T) {
 	assert.True(t, FileExists("./testdata/test.jpg"))
+	assert.True(t, FileExists("./testdata/test.jpg"))
+	assert.True(t, FileExists("./testdata/empty.jpg"))
 	assert.False(t, FileExists("./foo.jpg"))
 	assert.False(t, FileExists(""))
+}
+
+func TestFileExistsNotEmpty(t *testing.T) {
+	assert.True(t, FileExistsNotEmpty("./testdata/test.jpg"))
+	assert.True(t, FileExistsNotEmpty("./testdata/test.jpg"))
+	assert.False(t, FileExistsNotEmpty("./testdata/empty.jpg"))
+	assert.False(t, FileExistsNotEmpty("./foo.jpg"))
+	assert.False(t, FileExistsNotEmpty(""))
 }
 
 func TestPathExists(t *testing.T) {

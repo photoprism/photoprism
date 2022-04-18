@@ -58,6 +58,17 @@ func FileExists(fileName string) bool {
 	return err == nil && !info.IsDir()
 }
 
+// FileExistsNotEmpty returns true if file exists, is not a directory, and not empty.
+func FileExistsNotEmpty(fileName string) bool {
+	if fileName == "" {
+		return false
+	}
+
+	info, err := os.Stat(fileName)
+
+	return err == nil && !info.IsDir() && info.Size() > 0
+}
+
 // PathExists tests if a path exists, and is a directory or symlink.
 func PathExists(path string) bool {
 	if path == "" {
