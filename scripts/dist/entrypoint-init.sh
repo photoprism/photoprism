@@ -44,8 +44,8 @@ if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
   if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]] || [[ ${PHOTOPRISM_DISABLE_CHOWN} == "false" ]]; then
     echo "init: updating filesystem permissions"
     echo "PHOTOPRISM_DISABLE_CHOWN=\"true\" disables permission updates"
-    chown --preserve-root --no-dereference --silent -R "${CHOWN}" "${CHOWN_DIRS[@]}"
-    chmod --preserve-root --no-dereference --silent -R u+rwX "${CHMOD_DIRS[@]}"
+    chown --preserve-root --silent -R "${CHOWN}" "${CHOWN_DIRS[@]}"
+    chmod --preserve-root --silent -R u+rwX "${CHMOD_DIRS[@]}"
   fi
 fi
 

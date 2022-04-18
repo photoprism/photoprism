@@ -1,20 +1,20 @@
 version: '3.5'
 
 services:
-  ## Stable Release
+  ## Local Test Build
   ## Docs: https://docs.photoprism.org/
-  photoprism-latest:
-    image: photoprism/photoprism:latest
+  photoprism-local:
+    image: photoprism/photoprism:local
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2344:2342" # HTTP port (host:container)
+      - "2345:2342" # HTTP port (host:container)
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.latest.loadbalancer.server.port=2342"
       - "traefik.http.routers.latest.entrypoints=websecure"
-      - "traefik.http.routers.latest.rule=Host(`latest.localssl.dev`)"
+      - "traefik.http.routers.latest.rule=Host(`local.localssl.dev`)"
       - "traefik.http.routers.latest.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.latest.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.latest.tls=true"
@@ -38,9 +38,9 @@ services:
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
-      PHOTOPRISM_DATABASE_NAME: "latest"
-      PHOTOPRISM_DATABASE_USER: "latest"
-      PHOTOPRISM_DATABASE_PASSWORD: "latest"
+      PHOTOPRISM_DATABASE_NAME: "local"
+      PHOTOPRISM_DATABASE_USER: "local"
+      PHOTOPRISM_DATABASE_PASSWORD: "local"
       PHOTOPRISM_DISABLE_CHOWN: "false"       # disables storage permission updates on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"     # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"      # disables built-in WebDAV server
@@ -59,10 +59,16 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 85             # image quality, a higher value reduces compression (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                 # show TensorFlow log messages for development
+      PHOTOPRISM_INIT: "gpu tensorflow"       # Options: "update gpu tensorflow davfs clitools clean"
+      PHOTOPRISM_FFMPEG_ENCODER: "nvidia"     # Options: "software", "intel", "nvidia", "apple", "raspberry"
+      PHOTOPRISM_STORAGE_PATH: "/photoprism/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "/photoprism/storage/originals"
+      PHOTOPRISM_IMPORT_PATH: "/photoprism/storage/import"
+    devices:
+      - "/dev/dri:/dev/dri" # Intel QuickSync
     working_dir: "/photoprism"
     volumes:
-      - "/photoprism/storage"
-      - "/photoprism/originals"
+      - "./storage:/photoprism/storage"
 
 ## Join shared "photoprism-develop" network
 networks:

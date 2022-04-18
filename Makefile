@@ -35,10 +35,10 @@ all: dep build-js
 dep: dep-tensorflow dep-npm dep-js dep-go
 build: build-go
 test: test-js test-go
-test-go: reset-testdb run-test-go
-test-pkg: reset-testdb run-test-pkg
-test-api: reset-testdb run-test-api
-test-short: reset-testdb run-test-short
+test-go: reset-sqlite run-test-go
+test-pkg: reset-sqlite run-test-pkg
+test-api: reset-sqlite run-test-api
+test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
 acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
@@ -53,6 +53,8 @@ clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
 .SILENT: help;
+logs:
+	docker-compose logs -f
 help:
 	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
 fix-permissions:
@@ -85,7 +87,7 @@ install:
 	(cd $(DESTDIR) && mkdir -p bin sbin lib assets config config/examples)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
 	[ -f "$(GOBIN)/gosu" ] || go install github.com/tianon/gosu@latest
-	cp $(GOBIN)/gosu $(DESTDIR)/usr/local/sbin/gosu
+	cp $(GOBIN)/gosu $(DESTDIR)/sbin/gosu
 	[ ! -f "$(GOBIN)/exif-read-tool" ] || cp $(GOBIN)/exif-read-tool $(DESTDIR)/bin/exif-read-tool
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	cp scripts/dist/heif-convert.sh $(DESTDIR)/bin/heif-convert
@@ -211,13 +213,22 @@ acceptance-private-smoke:
 acceptance-private-firefox:
 	$(info Running JS acceptance-private tests in Firefox...)
 	(cd frontend &&	npm run acceptance-private-firefox && cd ..)
-reset-mariadb:
-	$(info Resetting photoprism database...)
-	mysql < scripts/sql/reset-mariadb.sql
-reset-acceptance:
+reset-mariadb-testdb:
+	$(info Resetting testdb database...)
+	mysql < scripts/sql/reset-testdb.sql
+reset-mariadb-local:
+	$(info Resetting local database...)
+	mysql < scripts/sql/reset-local.sql
+reset-mariadb-acceptance:
 	$(info Resetting acceptance database...)
-	echo "DROP DATABASE IF EXISTS acceptance;\nCREATE DATABASE IF NOT EXISTS acceptance;" | mysql
-reset-testdb:
+	mysql < scripts/sql/reset-acceptance.sql
+reset-mariadb-photoprism:
+	$(info Resetting photoprism database...)
+	mysql < scripts/sql/reset-photoprism.sql
+reset-mariadb: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-photoprism
+reset-testdb: reset-sqlite reset-mariadb-testdb
+reset-acceptance: reset-mariadb-acceptance
+reset-sqlite:
 	$(info Removing test database files...)
 	find ./internal -type f -name ".test.*" -delete
 run-test-short:
@@ -334,7 +345,7 @@ docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm  "-t photoprism/photoprism:latest"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/photoprism:latest"
 docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm debian:bookworm-slim
@@ -367,28 +378,32 @@ docker-release-impish:
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
+start-local:
+	docker-compose -f docker-compose.local.yml up -d
+stop-local:
+	docker-compose -f docker-compose.local.yml stop
 docker-local: docker-local-bookworm
 docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
-	scripts/docker/build.sh photoprism bookworm /bookworm
+	scripts/docker/build.sh photoprism bookworm /bookworm "-t photoprism/photoprism:local"
 docker-local-bullseye:
 	docker pull photoprism/develop:bullseye
 	docker pull photoprism/develop:bullseye-slim
-	scripts/docker/build.sh photoprism bullseye /bullseye
+	scripts/docker/build.sh photoprism bullseye /bullseye "-t photoprism/photoprism:local"
 docker-local-buster:
 	docker pull photoprism/develop:buster
 	docker pull debian:buster-slim
-	scripts/docker/build.sh photoprism buster /buster
+	scripts/docker/build.sh photoprism buster /buster "-t photoprism/photoprism:local"
 docker-local-jammy:
 	docker pull photoprism/develop:jammy
 	docker pull ubuntu:jammy
-	scripts/docker/build.sh photoprism jammy /jammy
+	scripts/docker/build.sh photoprism jammy /jammy "-t photoprism/photoprism:local"
 docker-local-impish:
 	docker pull photoprism/develop:impish
 	docker pull ubuntu:impish
-	scripts/docker/build.sh photoprism impish /impish
+	scripts/docker/build.sh photoprism impish /impish "-t photoprism/photoprism:local"
 docker-local-develop: docker-local-develop-bookworm
 docker-local-develop-all: docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
