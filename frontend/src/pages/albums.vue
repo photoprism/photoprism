@@ -28,7 +28,7 @@
                   append-icon=""
                   :items="categories"
                   class="hidden-xs-only input-category background-inherit elevation-0"
-                  @change="(v) => {updateFilter({'category': v})}"
+                  @change="(v) => {updateQuery({'category': v})}"
         >
         </v-overflow-btn>
 
