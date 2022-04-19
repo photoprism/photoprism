@@ -100,6 +100,13 @@ test.meta("testID", "authentication-003").meta({ type: "smoke" })("Change passwo
   await t
     .click(account.confirm)
     .typeText(account.currentPassword, "photoprism", { replace: true })
+    .typeText(account.newPassword, "1234567", { replace: true })
+    .typeText(account.retypePassword, "1234567", { replace: true });
+
+  await t.expect(account.confirm.hasAttribute("disabled", "disabled")).ok();
+
+  await t
+    .typeText(account.currentPassword, "photoprism", { replace: true })
     .typeText(account.newPassword, "photoprism123", { replace: true });
 
   await t.expect(account.confirm.hasAttribute("disabled", "disabled")).ok();
