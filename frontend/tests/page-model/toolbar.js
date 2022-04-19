@@ -13,14 +13,14 @@ export default class Page {
 
   async checkToolbarActionAvailability(action, visible) {
     if (visible) {
-      await t.expect(Selector("nav.page-toolbar button.action-" + action).visible).ok();
+      await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).ok();
     } else {
-      await t.expect(Selector("nav.page-toolbar button.action-" + action).visible).notOk();
+      await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).notOk();
     }
   }
 
   async triggerToolbarAction(action) {
-    await t.click(Selector("nav.page-toolbar button.action-" + action));
+    await t.click(Selector("nav.v-toolbar button.action-" + action));
   }
 
   async toggleFilterBar() {

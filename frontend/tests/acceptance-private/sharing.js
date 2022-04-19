@@ -22,7 +22,6 @@ const photoviewer = new PhotoViewer();
 const sharedialog = new ShareDialog();
 const photo = new Photo();
 
-//TODO merge with other sharing test
 test.skip.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
   async (t) => {
@@ -43,7 +42,7 @@ test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
     .click(sharedialog.linkExpireInput)
     .click(Selector("div").withText("After 1 day").parent('div[role="listitem"]'))
     .click(sharedialog.dialogSave);
-  const Url = await sharedialog.linkUrl.value;
+  const Url = await sharedialog.linkUrl.innerText;
   const Expire = await Selector("div.v-select__selections").innerText;
 
   await t.expect(Url).contains("secretfortesting").expect(Expire).contains("After 1 day");
@@ -132,61 +131,64 @@ test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
     .ok();
 });
 
-test.meta("testID", "sharing-002")("Verify anonymous user has limited options", async (t) => {
-  await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
-  await t.expect(toolbar.toolbarTitle.withText("British Columbia").visible).ok();
+test.meta("testID", "sharing-002").meta({ type: "smoke" })(
+  "Verify anonymous user has limited options",
+  async (t) => {
+    await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
+    await t.expect(toolbar.toolbarTitle.withText("British Columbia").visible).ok();
 
-  await toolbar.checkToolbarActionAvailability("edit", false);
-  await toolbar.checkToolbarActionAvailability("share", false);
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await toolbar.checkToolbarActionAvailability("reload", true);
-  await toolbar.checkToolbarActionAvailability("download", true);
+    await toolbar.checkToolbarActionAvailability("edit", false);
+    await toolbar.checkToolbarActionAvailability("share", false);
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await toolbar.checkToolbarActionAvailability("reload", true);
+    await toolbar.checkToolbarActionAvailability("download", true);
 
-  await photo.triggerHoverAction("nth", 0, "select");
+    await photo.triggerHoverAction("nth", 0, "select");
 
-  await contextmenu.checkContextMenuActionAvailability("download", true);
-  await contextmenu.checkContextMenuActionAvailability("archive", false);
-  await contextmenu.checkContextMenuActionAvailability("private", false);
-  await contextmenu.checkContextMenuActionAvailability("edit", false);
-  await contextmenu.checkContextMenuActionAvailability("share", false);
-  await contextmenu.checkContextMenuActionAvailability("album", false);
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.checkContextMenuActionAvailability("archive", false);
+    await contextmenu.checkContextMenuActionAvailability("private", false);
+    await contextmenu.checkContextMenuActionAvailability("edit", false);
+    await contextmenu.checkContextMenuActionAvailability("share", false);
+    await contextmenu.checkContextMenuActionAvailability("album", false);
 
-  await contextmenu.clearSelection();
+    await contextmenu.clearSelection();
 
-  await t.expect(page.cardTitle.visible).notOk();
+    await t.expect(page.cardTitle.visible).notOk();
 
-  await photoviewer.openPhotoViewer("nth", 0);
+    await photoviewer.openPhotoViewer("nth", 0);
 
-  await photoviewer.checkPhotoViewerActionAvailability("download", true);
-  await photoviewer.checkPhotoViewerActionAvailability("select", true);
-  await photoviewer.checkPhotoViewerActionAvailability("toggle-fullscreen", true);
-  await photoviewer.checkPhotoViewerActionAvailability("slideshow", true);
-  await photoviewer.checkPhotoViewerActionAvailability("like", false);
-  await photoviewer.checkPhotoViewerActionAvailability("edit", false);
+    await photoviewer.checkPhotoViewerActionAvailability("download", true);
+    await photoviewer.checkPhotoViewerActionAvailability("select", true);
+    await photoviewer.checkPhotoViewerActionAvailability("toggle-fullscreen", true);
+    await photoviewer.checkPhotoViewerActionAvailability("slideshow", true);
+    await photoviewer.checkPhotoViewerActionAvailability("like", false);
+    await photoviewer.checkPhotoViewerActionAvailability("edit", false);
 
-  await photoviewer.triggerPhotoViewerAction("close");
+    await photoviewer.triggerPhotoViewerAction("close");
 
-  await photo.checkHoverActionAvailability("nth", 0, "favorite", false);
-  await photo.checkHoverActionAvailability("nth", 0, "select", true);
+    await photo.checkHoverActionAvailability("nth", 0, "favorite", false);
+    await photo.checkHoverActionAvailability("nth", 0, "select", true);
 
-  await toolbar.triggerToolbarAction("view-list");
+    await toolbar.triggerToolbarAction("view-list");
 
-  await t
-    .expect(Selector(`td button.input-private`).visible)
-    .notOk()
-    .expect(Selector(`td button.input-favorite`).visible)
-    .notOk()
-    .click(Selector("button").withText("@photoprism_app"))
-    .expect(toolbar.toolbarTitle.withText("Albums").visible)
-    .ok();
+    await t
+      .expect(Selector(`td button.input-private`).visible)
+      .notOk()
+      .expect(Selector(`td button.input-favorite`).visible)
+      .notOk()
+      .click(Selector("button").withText("@photoprism_app"))
+      .expect(toolbar.toolbarTitle.withText("Albums").visible)
+      .ok();
 
-  const AlbumUid = await album.getNthAlbumUid("all", 0);
-  await album.triggerHoverAction("uid", AlbumUid, "select");
+    const AlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.triggerHoverAction("uid", AlbumUid, "select");
 
-  await contextmenu.checkContextMenuActionAvailability("download", true);
-  await contextmenu.checkContextMenuActionAvailability("delete", false);
-  await contextmenu.checkContextMenuActionAvailability("album", false);
-  await contextmenu.checkContextMenuActionAvailability("edit", false);
-  await contextmenu.checkContextMenuActionAvailability("share", false);
-  await contextmenu.clearSelection();
-});
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.checkContextMenuActionAvailability("delete", false);
+    await contextmenu.checkContextMenuActionAvailability("album", false);
+    await contextmenu.checkContextMenuActionAvailability("edit", false);
+    await contextmenu.checkContextMenuActionAvailability("share", false);
+    await contextmenu.clearSelection();
+  }
+);
