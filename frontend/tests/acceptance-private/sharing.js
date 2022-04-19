@@ -10,7 +10,8 @@ import PhotoViewer from "../page-model/photoviewer";
 import ShareDialog from "../page-model/dialog-share";
 import Photo from "../page-model/photo";
 
-fixture`Test link sharing`.page`${testcafeconfig.url}`.skip("Urls are not working anymore");
+fixture`Test link sharing`.page`${testcafeconfig.url}`;
+//.skip("Urls are not working anymore");
 
 const page = new Page();
 const menu = new Menu();
@@ -131,9 +132,8 @@ test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
     .ok();
 });
 
-test.skip.meta("testID", "sharing-002")("Verify anonymous user has limited options", async (t) => {
+test.meta("testID", "sharing-002")("Verify anonymous user has limited options", async (t) => {
   await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
-
   await t.expect(toolbar.toolbarTitle.withText("British Columbia").visible).ok();
 
   await toolbar.checkToolbarActionAvailability("edit", false);
@@ -159,7 +159,7 @@ test.skip.meta("testID", "sharing-002")("Verify anonymous user has limited optio
 
   await photoviewer.checkPhotoViewerActionAvailability("download", true);
   await photoviewer.checkPhotoViewerActionAvailability("select", true);
-  await photoviewer.checkPhotoViewerActionAvailability("fullscreen", true);
+  await photoviewer.checkPhotoViewerActionAvailability("toggle-fullscreen", true);
   await photoviewer.checkPhotoViewerActionAvailability("slideshow", true);
   await photoviewer.checkPhotoViewerActionAvailability("like", false);
   await photoviewer.checkPhotoViewerActionAvailability("edit", false);
