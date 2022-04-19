@@ -44,7 +44,7 @@
 
           <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
 
-          <button class="pswp__button" style="background: none;" :title="$gettext('Start/Stop Slideshow')"
+          <button class="pswp__button action-slideshow" style="background: none;" :title="$gettext('Start/Stop Slideshow')"
                   @click.exact="onSlideshow">
             <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
             <v-icon v-show="interval" size="16" color="white">pause</v-icon>
