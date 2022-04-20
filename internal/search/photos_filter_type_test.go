@@ -35,6 +35,19 @@ func TestPhotosFilterType(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
+	t.Run("animated", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Type = "animated"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
 	t.Run("raw pipe video", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -344,6 +357,19 @@ func TestPhotosQueryType(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"raw\""
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), 1)
+	})
+	t.Run("animated", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "type:\"animated\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
