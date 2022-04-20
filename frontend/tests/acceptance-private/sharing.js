@@ -11,7 +11,6 @@ import ShareDialog from "../page-model/dialog-share";
 import Photo from "../page-model/photo";
 
 fixture`Test link sharing`.page`${testcafeconfig.url}`;
-//.skip("Urls are not working anymore");
 
 const page = new Page();
 const menu = new Menu();
@@ -29,7 +28,7 @@ test.skip.meta("testID", "authentication-000")(
   }
 );
 
-test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
+test.meta("testID", "sharing-001")("Create, view, delete shared albums", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openPage("albums");
   const FirstAlbumUid = await album.getNthAlbumUid("all", 0);
@@ -46,10 +45,12 @@ test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
   const Expire = await Selector("div.v-select__selections").innerText;
 
   await t.expect(Url).contains("secretfortesting").expect(Expire).contains("After 1 day");
-
-  let url = Url.replace("2342", "2343");
+  let url = "http://localhost:2343/s/secretfortesting/christmas";
   await t.click(sharedialog.dialogClose);
   await contextmenu.clearSelection();
+  await album.openAlbumWithUid(FirstAlbumUid);
+  const photoCount = await photo.getPhotoCount("all");
+  await t.expect(photoCount).eql(2);
   await menu.openPage("folders");
   const FirstFolderUid = await album.getNthAlbumUid("all", 0);
   await album.triggerHoverAction("uid", FirstFolderUid, "select");
@@ -79,6 +80,9 @@ test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
   await t.navigateTo(url);
 
   await t.expect(toolbar.toolbarTitle.withText("Christmas").visible).ok();
+  const photoCountShared = await photo.getPhotoCount("all");
+  //don't show private photo
+  await t.expect(photoCountShared).eql(1);
 
   await t.click(Selector("button").withText("@photoprism_app"));
 
