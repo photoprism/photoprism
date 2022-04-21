@@ -20,7 +20,7 @@ func TestPhotosQueryVector(t *testing.T) {
 	}
 	assert.Equal(t, len(photos0), 0)
 
-	t.Run("animated:yes", func(t *testing.T) {
+	t.Run("yes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "vector:yes"
@@ -32,6 +32,28 @@ func TestPhotosQueryVector(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, len(photos), len(photos0))
+	})
+	t.Run("false > yes", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "vector:yes"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), len(photos0))
+		f.Query = "vector:false"
+		f.Merged = true
+
+		photos2, _, err2 := Photos(f)
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		assert.Greater(t, len(photos2), len(photos))
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
