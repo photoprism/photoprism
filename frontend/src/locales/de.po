@@ -1879,7 +1879,7 @@ msgstr "Wird neu geladen…"
 
 #: src/dialog/account/edit.vue:97
 msgid "Remote Sync"
-msgstr "Remote Sync"
+msgstr "Entfernte Synchronisation"
 
 #: src/dialog/photo/people.vue:108
 msgid "Remove"
