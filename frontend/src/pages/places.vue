@@ -28,6 +28,13 @@ import Thumb from "model/thumb";
 
 export default {
   name: 'PPagePlaces',
+  props: {
+    staticFilter: {
+      type: Object,
+      default: () => {
+      },
+    },
+  },
   data() {
     return {
       initialized: false,
@@ -37,6 +44,7 @@ export default {
       loading: false,
       url: "",
       attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+      maxCount: 500000,
       options: {},
       mapFont: [],
       result: {},
@@ -245,6 +253,20 @@ export default {
         }
       }
     },
+    searchParams() {
+      const params = {
+        count: this.maxCount,
+        offset: 0,
+      };
+
+      Object.assign(params, this.filter);
+
+      if (this.staticFilter) {
+        Object.assign(params, this.staticFilter);
+      }
+
+      return params;
+    },
     search() {
       if (this.loading) return;
 
@@ -256,10 +278,12 @@ export default {
 
       this.updateQuery();
 
+      // Compose query params.
       const options = {
-        params: this.filter,
+        params: this.searchParams(),
       };
 
+      // Fetch results from server.
       return Api.get("geo", options).then((response) => {
         if (!response.data.features || response.data.features.length === 0) {
           this.loading = false;
