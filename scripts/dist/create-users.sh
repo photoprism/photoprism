@@ -10,35 +10,45 @@ fi
 
 echo "Creating default users and groups..."
 
-# create groups 'video' and 'render'
+# create groups 'www-data', 'video', 'davfs2', and 'render'
+groupadd -f -r -g 33 www-data 1>&2
+echo "✅ added group www-data (33)"
 groupadd -f -r -g 44 video 1>&2
-groupadd -f -r -g 109 render 1>&2
-echo "✅ added groups 'video' (44) and 'render' (109)"
+echo "✅ added group video (44)"
+groupadd -f -r -g 105 davfs2 1>&2
+echo "✅ added group davfs2 (105)"
+groupadd -f -r -g 109 renderd 1>&2
+echo "✅ added group renderd (109)"
+groupadd -f -r -g 115 render 1>&2
+echo "✅ added group render (115)"
 
-# create user/group 'videodriver'
+# create group 'videodriver'
 groupdel -f 937 >/dev/null 2>&1
 groupadd -f -r -g 937 videodriver  1>&2
-userdel -r -f videodriver >/dev/null 2>&1
-useradd -u 937 -r -N -g 937 -G photoprism,video,render -s /bin/bash -m -d "/home/videodriver" videodriver
-echo "✅ added user/group 'videodriver' (937)"
+echo "✅ added group videodriver (937)"
 
 # create group 'photoprism'
 groupdel -f 1000 >/dev/null 2>&1
 groupadd -f -g 1000 photoprism 1>&2
-echo "✅ added group 'photoprism' (1000)"
+echo "✅ added group photoprism (1000)"
+
+# create user 'videodriver'
+userdel -r -f videodriver >/dev/null 2>&1
+useradd -u 937 -r -N -g 937 -G photoprism,www-data,video,davfs2,renderd,render -s /bin/bash -m -d "/home/videodriver" videodriver
+echo "✅ added user videodriver (937)"
 
 # create user 'photoprism'
 userdel -r -f photoprism >/dev/null 2>&1
 userdel -r -f 1000 >/dev/null 2>&1
-useradd -u 1000 -N -g 1000 -G video,render,videodriver -s /bin/bash -m -d "/home/photoprism" photoprism
-echo "✅ added user 'photoprism' (1000)"
+useradd -u 1000 -N -g 1000 -G www-data,video,davfs2,renderd,render,videodriver -s /bin/bash -m -d "/home/photoprism" photoprism
+echo "✅ added user photoprism (1000)"
 
 add_user()
 {
   userdel -r -f "user-$1" >/dev/null 2>&1
   groupdel -f "group-$1" >/dev/null 2>&1
   groupadd -f -g "$1" "group-$1"
-  useradd -u "$1" -g "$1" -G photoprism,video,render,videodriver -s /bin/bash -m -d "/home/user-$1" "user-$1" 2>/dev/null
+  useradd -u "$1" -g "$1" -G photoprism,www-data,video,davfs2,renderd,render,videodriver -s /bin/bash -m -d "/home/user-$1" "user-$1" 2>/dev/null
   printf "."
 }
 
