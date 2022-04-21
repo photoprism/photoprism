@@ -118,32 +118,32 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
 	},
 	cli.StringFlag{
-		Name:   "sidecar-path",
+		Name:   "sidecar-path, sc",
 		Usage:  "custom relative or absolute sidecar `PATH` (optional)",
 		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 	},
 	cli.StringFlag{
-		Name:   "backup-path",
+		Name:   "backup-path, ba",
 		Usage:  "custom backup `PATH` for index backup files (optional)",
 		EnvVar: "PHOTOPRISM_BACKUP_PATH",
 	},
 	cli.StringFlag{
-		Name:   "cache-path",
+		Name:   "cache-path, ca",
 		Usage:  "custom cache `PATH` for sessions and thumbnail files (optional)",
 		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
-		Name:   "import-path",
+		Name:   "import-path, im",
 		Usage:  "base `PATH` from which files can be imported to originals (optional)",
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
-		Name:   "assets-path",
+		Name:   "assets-path, as",
 		Usage:  "assets `PATH` containing static resources like icons, models, and translations",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{
-		Name:   "temp-path",
+		Name:   "temp-path, tmp",
 		Usage:  "temporary file `PATH` (optional)",
 		EnvVar: "PHOTOPRISM_TEMP_PATH",
 	},
