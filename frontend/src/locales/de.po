@@ -1234,6 +1234,10 @@ msgstr "Sprache"
 msgid "Last Backup"
 msgstr "Letztes Backup"
 
+#: src/pages/settings/sync.vue:118
+msgid "Last Sync"
+msgstr "Letzte Synchronisation"
+
 #: src/dialog/photo/details.vue:285 src/dialog/photo/info.vue:135
 msgid "Latitude"
 msgstr "Breitengrad"
@@ -1879,7 +1883,7 @@ msgstr "Wird neu geladen…"
 
 #: src/dialog/account/edit.vue:97
 msgid "Remote Sync"
-msgstr "Entfernte Synchronisation"
+msgstr "Fern-Synchronisation"
 
 #: src/dialog/photo/people.vue:108
 msgid "Remove"

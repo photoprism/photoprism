@@ -468,7 +468,7 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:344
+#: src/component/photo/toolbar.vue:343
 #: src/dialog/album/edit.vue:162
 #: src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:129
@@ -508,7 +508,7 @@ msgstr ""
 msgid "Codec"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:321
+#: src/component/photo/toolbar.vue:320
 msgid "Color"
 msgstr ""
 
@@ -644,7 +644,7 @@ msgstr ""
 #: src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:41
 #: src/dialog/photo/files.vue:38
-#: src/dialog/share.vue:235
+#: src/dialog/share.vue:234
 #: src/pages/library/errors.vue:94
 #: src/pages/settings/general.vue:206
 msgid "Delete"
@@ -1586,8 +1586,8 @@ msgstr ""
 #: src/pages/album/photos.vue:342
 #: src/pages/library/files.vue:34
 #: src/pages/photos.vue:382
-#: src/pages/places.vue:199
-#: src/pages/places.vue:243
+#: src/pages/places.vue:207
+#: src/pages/places.vue:267
 #: src/share/photo/cards.vue:7
 #: src/share/photo/list.vue:8
 #: src/share/photo/mosaic.vue:7
