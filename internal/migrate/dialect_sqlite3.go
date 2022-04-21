@@ -50,6 +50,6 @@ var DialectSQLite3 = Migrations{
 	{
 		ID:         "20220329-092000",
 		Dialect:    "sqlite3",
-		Statements: []string{"UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE photo_id IS NOT NULL;"},
+		Statements: []string{"UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN (((100000000000000 - strftime('%Y%m%d%H%M%S', photo_taken_at)) || '-' || media_id) ELSE NULL END WHERE photo_id IS NOT NULL;"},
 	},
 }

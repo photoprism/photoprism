@@ -149,7 +149,7 @@ func (m File) RegenerateIndex() {
 				gorm.Expr(filesTable), updateWhere).Error)
 
 		Log("files", "regenerate time_index",
-			Db().Exec("UPDATE ? SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE ? SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - strftime('%Y%m%d%H%M%S', photo_taken_at)) || '-' || media_id) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())

@@ -1,9 +1,10 @@
 package search
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestPhotosFilterFaces(t *testing.T) {
