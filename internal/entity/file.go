@@ -133,7 +133,7 @@ func (m File) RegenerateIndex() {
 				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(HEX(100000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 
 		Log("files", "regenerate time_index",
@@ -145,7 +145,7 @@ func (m File) RegenerateIndex() {
 				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 
 		Log("files", "regenerate time_index",
