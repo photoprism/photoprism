@@ -38,7 +38,7 @@ var DialectSQLite3 = Migrations{
 		Statements: []string{"CREATE UNIQUE INDEX IF NOT EXISTS idx_files_search_media ON files (media_id);"},
 	},
 	{
-		ID:         "20220329-082000",
+		ID:         "20220329-083000",
 		Dialect:    "sqlite3",
 		Statements: []string{"UPDATE files SET media_id = CASE WHEN photo_id IS NOT NULL AND file_missing = 0 AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) END WHERE 1;"},
 	},
@@ -48,7 +48,7 @@ var DialectSQLite3 = Migrations{
 		Statements: []string{"CREATE UNIQUE INDEX IF NOT EXISTS idx_files_search_timeline ON files (time_index);"},
 	},
 	{
-		ID:         "20220329-092000",
+		ID:         "20220329-093000",
 		Dialect:    "sqlite3",
 		Statements: []string{"UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - strftime('%Y%m%d%H%M%S', photo_taken_at)) || '-' || media_id) ELSE NULL END WHERE photo_id IS NOT NULL;"},
 	},
