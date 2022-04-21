@@ -439,7 +439,8 @@ func (c *Config) UserConfig() ClientConfig {
 
 	c.Db().
 		Table("files").
-		Select("COUNT(media_id) AS files").
+		Select("COUNT(*) AS files").
+		Where("file_missing = 0 AND file_root = ?", entity.RootOriginals).
 		Take(&result.Count)
 
 	c.Db().

@@ -147,7 +147,11 @@ func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
 
 // Deleted returns true if the entity is deleted.
 func (m *Subject) Deleted() bool {
-	return m.DeletedAt != nil
+	if m.DeletedAt == nil {
+		return false
+	}
+
+	return !m.DeletedAt.IsZero()
 }
 
 // Restore restores the entity in the database.

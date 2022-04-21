@@ -19,8 +19,8 @@ func FilesByPath(limit, offset int, rootName, pathName string) (files entity.Fil
 	err = Db().
 		Table("files").Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
-		Where("files.file_missing = 0").
-		Where("files.file_root = ? AND photos.photo_path = ?", rootName, pathName).
+		Where("files.file_missing = 0 AND files.file_root = ?", rootName).
+		Where("photos.photo_path = ?", pathName).
 		Order("files.file_name").
 		Limit(limit).Offset(offset).
 		Find(&files).Error

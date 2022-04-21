@@ -573,7 +573,11 @@ func (m *Album) DeletePermanently() error {
 
 // Deleted tests if the entity is deleted.
 func (m *Album) Deleted() bool {
-	return m.DeletedAt != nil
+	if m.DeletedAt == nil {
+		return false
+	}
+
+	return !m.DeletedAt.IsZero()
 }
 
 // Restore restores the entity in the database.
