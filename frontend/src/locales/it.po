@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-23 08:07+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-04-21 18:19+0000\n"
+"Last-Translator: entropyst72 <ggflower@gmail.com>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/it/>\n"
 "Language: it\n"
@@ -1810,9 +1810,8 @@ msgid "Quality Score"
 msgstr "Punteggio Qualità"
 
 #: src/pages/discover.vue:16
-#, fuzzy
 msgid "Random"
-msgstr "Random"
+msgstr "Casuale"
 
 #: src/options/options.js:249
 msgid "Raspberry"
@@ -2440,9 +2439,8 @@ msgstr "Interfaccia Utente"
 
 #: src/dialog/account/add.vue:84 src/dialog/account/edit.vue:433
 #: src/dialog/share.vue:20
-#, fuzzy
 msgid "Username"
-msgstr "Username"
+msgstr "Nome utente"
 
 #: src/options/options.js:214
 msgid "Vanta"
