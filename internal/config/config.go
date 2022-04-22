@@ -55,7 +55,7 @@ func init() {
 	TotalMem = memory.TotalMemory()
 
 	// Check available memory if not running in unsafe mode.
-	if os.Getenv("PHOTOPRISM_UNSAFE") == "" {
+	if Env(EnvUnsafe) {
 		// Disable features with high memory requirements?
 		LowMem = TotalMem < MinMem
 	}
@@ -594,12 +594,18 @@ func (c *Config) WakeupInterval() time.Duration {
 			// Default to 15 minutes if no interval is set.
 			return DefaultWakeupInterval
 		}
-	} else if c.options.WakeupInterval > MaxWakeupInterval {
-		// Do not run less than once per day.
-		return MaxWakeupInterval
-	} else if c.options.WakeupInterval < MinWakeupInterval {
-		// Do not run more than once per minute.
+	}
+
+	// Do not run more than once per minute.
+	if c.options.WakeupInterval < MinWakeupInterval/time.Second {
 		return MinWakeupInterval
+	} else if c.options.WakeupInterval < MinWakeupInterval {
+		c.options.WakeupInterval = c.options.WakeupInterval * time.Second
+	}
+
+	// Do not run less than once per day.
+	if c.options.WakeupInterval > MaxWakeupInterval {
+		return MaxWakeupInterval
 	}
 
 	return c.options.WakeupInterval

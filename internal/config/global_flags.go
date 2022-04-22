@@ -64,7 +64,7 @@ var Flags = CliFlags{
 		Flag: cli.BoolFlag{
 			Name:   "unsafe",
 			Hidden: true,
-			Usage:  "enable unsafe mode",
+			Usage:  "disable safety checks",
 			EnvVar: "PHOTOPRISM_UNSAFE",
 		}},
 	CliFlag{

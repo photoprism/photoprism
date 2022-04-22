@@ -285,6 +285,15 @@ func TestConfig_Workers(t *testing.T) {
 
 func TestConfig_WakeupInterval(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	i := c.WakeupInterval()
+	assert.Equal(t, "1h34m9s", c.WakeupInterval().String())
+	c.options.WakeupInterval = 45
+	assert.Equal(t, "1m0s", c.WakeupInterval().String())
+	c.options.WakeupInterval = 0
+	assert.Equal(t, "15m0s", c.WakeupInterval().String())
+	c.options.WakeupInterval = 150
+	assert.Equal(t, "2m30s", c.WakeupInterval().String())
+	c.options.WakeupInterval = i
 	assert.Equal(t, "1h34m9s", c.WakeupInterval().String())
 }
 

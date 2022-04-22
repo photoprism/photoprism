@@ -9,6 +9,7 @@ import (
 
 // Environment names.
 const (
+	EnvUnsafe  = "unsafe"
 	EnvDebug   = "debug"
 	EnvTrace   = "trace"
 	EnvDemo    = "demo"
