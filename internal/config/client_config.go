@@ -26,6 +26,7 @@ type ClientConfig struct {
 	ManifestUri     string              `json:"manifestUri"`
 	ApiUri          string              `json:"apiUri"`
 	ContentUri      string              `json:"contentUri"`
+	WallpaperUri    string              `json:"wallpaperUri"`
 	SiteUrl         string              `json:"siteUrl"`
 	SiteDomain      string              `json:"siteDomain"`
 	SiteAuthor      string              `json:"siteAuthor"`
@@ -227,6 +228,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		AppName:         c.AppName(),
 		AppMode:         c.AppMode(),
 		AppIcon:         c.AppIcon(),
+		WallpaperUri:    c.WallpaperUri(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
@@ -300,6 +302,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		AppName:         c.AppName(),
 		AppMode:         c.AppMode(),
 		AppIcon:         c.AppIcon(),
+		WallpaperUri:    c.WallpaperUri(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
@@ -367,6 +370,7 @@ func (c *Config) UserConfig() ClientConfig {
 		AppName:         c.AppName(),
 		AppMode:         c.AppMode(),
 		AppIcon:         c.AppIcon(),
+		WallpaperUri:    c.WallpaperUri(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),

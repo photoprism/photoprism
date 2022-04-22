@@ -71,14 +71,16 @@ func init() {
 	}
 }
 
-func initLogger(debug bool) {
+func initLogger() {
 	once.Do(func() {
 		log.SetFormatter(&logrus.TextFormatter{
 			DisableColors: false,
 			FullTimestamp: true,
 		})
 
-		if debug {
+		if Env(EnvTrace) {
+			log.SetLevel(logrus.TraceLevel)
+		} else if Env(EnvDebug) {
 			log.SetLevel(logrus.DebugLevel)
 		} else {
 			log.SetLevel(logrus.InfoLevel)
@@ -89,7 +91,7 @@ func initLogger(debug bool) {
 // NewConfig initialises a new configuration file
 func NewConfig(ctx *cli.Context) *Config {
 	// Initialize logger.
-	initLogger(ctx.GlobalBool("debug"))
+	initLogger()
 
 	// Initialize options from config file and CLI context.
 	c := &Config{
@@ -291,6 +293,10 @@ func (c *Config) SerialChecksum() string {
 
 // Name returns the application name ("PhotoPrism").
 func (c *Config) Name() string {
+	if c.Sponsor() && c.options.Name == "PhotoPrism" {
+		c.options.Name = "PhotoPrism+"
+	}
+
 	return c.options.Name
 }
 
@@ -331,6 +337,10 @@ func (c *Config) ApiUri() string {
 
 // CdnUrl returns the optional content delivery network URI without trailing slash.
 func (c *Config) CdnUrl(res string) string {
+	if c.NoSponsor() {
+		return res
+	}
+
 	return strings.TrimRight(c.options.CdnUrl, "/") + res
 }
 
@@ -369,7 +379,7 @@ func (c *Config) SiteAuthor() string {
 
 // SiteTitle returns the main site title (default is application name).
 func (c *Config) SiteTitle() string {
-	if c.options.SiteTitle == "" {
+	if c.options.SiteTitle == "" || c.NoSponsor() {
 		return c.Name()
 	}
 
@@ -401,7 +411,7 @@ func (c *Config) SitePreview() string {
 
 // Imprint returns the legal info text for the page footer.
 func (c *Config) Imprint() string {
-	if !c.Sponsor() || c.Test() {
+	if c.NoSponsor() {
 		return MsgSponsor
 	}
 
@@ -410,7 +420,7 @@ func (c *Config) Imprint() string {
 
 // ImprintUrl returns the legal info url.
 func (c *Config) ImprintUrl() string {
-	if !c.Sponsor() || c.Test() {
+	if c.NoSponsor() {
 		return SignUpURL
 	}
 
@@ -422,6 +432,7 @@ func (c *Config) Debug() bool {
 	if c.Trace() {
 		return true
 	}
+
 	return c.options.Debug
 }
 
@@ -443,6 +454,11 @@ func (c *Config) Demo() bool {
 // Sponsor reports if your continuous support helps to pay for development and operating expenses.
 func (c *Config) Sponsor() bool {
 	return c.options.Sponsor || c.Test()
+}
+
+// NoSponsor reports if the instance is not operated by a sponsor.
+func (c *Config) NoSponsor() bool {
+	return !c.Sponsor() && !c.Demo()
 }
 
 // Public checks if app runs in public mode and requires no authentication.

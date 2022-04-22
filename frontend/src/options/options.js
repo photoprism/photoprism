@@ -283,6 +283,7 @@ export const MapsStyle = () => [
   {
     text: $gettext("Streets"),
     value: "streets",
+    sponsor: true,
   },
   {
     text: $gettext("Hybrid"),

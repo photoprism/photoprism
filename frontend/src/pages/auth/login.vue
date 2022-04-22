@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height class="auth-login wallpaper pa-3">
+  <v-container fluid fill-height class="auth-login wallpaper pa-3" :style="wallpaper()">
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
@@ -56,14 +56,35 @@
         </v-form>
       </v-flex>
     </v-layout>
-    <footer>
+    <footer v-if="sponsor">
       <v-layout wrap align-top pa-0 ma-0>
-        <v-flex xs12 class="pa-0 body-2 text-selectable text-xs-center white--text" :class="[config.imprint ? 'text-sm-left sm6' : '']">
-          <strong>{{ config.siteTitle }}</strong> – {{ config.siteCaption }}
+        <v-flex xs12 class="pa-0 body-2 text-selectable text-xs-center white--text"
+                :class="[config.imprint ? 'text-sm-left sm6' : '']">
+          <strong>{{ config.siteCaption ? config.siteCaption : config.siteTitle }}</strong>
         </v-flex>
         <v-flex v-if="config.imprint" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
-          <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank" class="text-link" :style="`color: ${colors.link}!important`">{{ config.imprint }}</a>
+          <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank" class="text-link"
+             :style="`color: ${colors.link}!important`">{{ config.imprint }}</a>
           <span v-else>{{ config.imprint }}</span>
+        </v-flex>
+      </v-layout>
+    </footer>
+    <footer v-else>
+      <v-layout wrap align-top pa-0 ma-0>
+        <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-left white--text text-selectable">
+          <strong>{{ config.siteTitle }}</strong> – {{ config.siteCaption }}
+        </v-flex>
+        <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
+          <v-btn
+              href="https://link.photoprism.app/patreon"
+              target="_blank"
+              color="transparent"
+              class="white--text px-3 py-2 ma-0 action-sponsor"
+              round depressed small
+          >
+            <translate>Become a sponsor</translate>
+            <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>star</v-icon>
+          </v-btn>
         </v-flex>
       </v-layout>
     </footer>
@@ -76,6 +97,7 @@ export default {
   name: "PPageAuthLogin",
   data() {
     const c = this.$config.values;
+    const sponsor = this.$config.isSponsor();
 
     return {
       colors: {
@@ -85,12 +107,13 @@ export default {
       },
       loading: false,
       showPassword: false,
-      username: "",
+      username: sponsor ? "" : "admin",
       password: "",
-      sponsor: this.$config.isSponsor(),
+      sponsor: sponsor,
       config: this.$config.values,
       siteDescription: c.siteDescription ? c.siteDescription : c.siteCaption,
       nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
+      wallpaperUri: c.wallpaperUri,
       rtl: this.$rtl,
     };
   },
@@ -106,6 +129,13 @@ export default {
     this.$scrollbar.show();
   },
   methods: {
+    wallpaper() {
+      if (this.wallpaperUri) {
+        return `background-image: url(${this.wallpaperUri});`;
+      }
+
+      return "";
+    },
     login() {
       if (!this.username || !this.password) {
         return;

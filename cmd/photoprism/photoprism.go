@@ -28,10 +28,11 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/urfave/cli"
+
 	"github.com/photoprism/photoprism/internal/commands"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/urfave/cli"
 )
 
 var version = "development"
@@ -55,7 +56,7 @@ func main() {
 	app.Version = version
 	app.Copyright = appCopyright
 	app.EnableBashCompletion = true
-	app.Flags = config.GlobalFlags
+	app.Flags = config.Flags.Cli()
 	app.Commands = commands.PhotoPrism
 
 	if err := app.Run(os.Args); err != nil {

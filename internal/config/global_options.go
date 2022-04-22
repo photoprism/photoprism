@@ -74,6 +74,7 @@ type Options struct {
 	AppIcon               string        `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
 	AppName               string        `yaml:"AppName" json:"AppName" flag:"app-name"`
 	AppMode               string        `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
+	WallpaperUri          string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
 	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
 	SiteUrl               string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SiteAuthor            string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`

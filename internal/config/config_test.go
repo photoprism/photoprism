@@ -12,6 +12,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	_ = os.Setenv("PHOTOPRISM_TEST", "true")
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 

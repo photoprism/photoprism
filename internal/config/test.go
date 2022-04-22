@@ -200,6 +200,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.String("darktable-blacklist", config.DarktableBlacklist, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
+	globalSet.Bool("test", true, "doc")
 	globalSet.Bool("debug", false, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 	globalSet.Int("auto-index", config.AutoIndex, "doc")
@@ -224,6 +225,7 @@ func CliTestContext() *cli.Context {
 	LogError(c.Set("darktable-blacklist", "raf,cr3"))
 	LogError(c.Set("wakeup-interval", "1h34m9s"))
 	LogError(c.Set("detect-nsfw", "true"))
+	LogError(c.Set("test", "true"))
 	LogError(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))
 	LogError(c.Set("auto-import", strconv.Itoa(config.AutoImport)))
 
