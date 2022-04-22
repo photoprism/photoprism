@@ -340,7 +340,7 @@ var PhotoFixtures = PhotoMap{
 		DeletedAt:  nil,
 		PhotoColor: 12,
 		PhotoStack: 0,
-		PhotoFaces: 6,
+		PhotoFaces: 3,
 	},
 	"Photo05": { //JPG, Imported, File error, TakenAtSrc Name, titleSrc Name
 		ID:               1000005,
@@ -399,7 +399,7 @@ var PhotoFixtures = PhotoMap{
 		DeletedAt:        nil,
 		PhotoColor:       6,
 		PhotoStack:       0,
-		PhotoFaces:       1,
+		PhotoFaces:       2,
 	},
 	"Photo06": { // PNG + JPG, Private, Indexed
 		ID:               1000006,

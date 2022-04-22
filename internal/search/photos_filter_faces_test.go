@@ -55,7 +55,7 @@ func TestPhotosFilterFaces(t *testing.T) {
 	t.Run("5", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Faces = "5"
+		f.Faces = "4"
 		f.Primary = true
 
 		photos, _, err := Photos(f)
@@ -63,23 +63,8 @@ func TestPhotosFilterFaces(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
-	})
-	//Should not find one --> some markers have type label
-	/*t.Run("6", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Faces = "6"
-		f.Primary = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Log(photos[0].PhotoUID)
 		assert.Equal(t, len(photos), 0)
-	})*/
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -383,23 +368,8 @@ func TestPhotosQueryFaces(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
-	})
-	//Should not find one --> some markers have type label
-	/*t.Run("6", func(t *testing.T) {
-		var f form.SearchPhotos
-
-		f.Query = "faces:6"
-		f.Primary = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Log(photos[0].PhotoUID)
 		assert.Equal(t, len(photos), 0)
-	})*/
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
