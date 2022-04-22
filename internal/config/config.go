@@ -595,8 +595,11 @@ func (c *Config) WakeupInterval() time.Duration {
 			return DefaultWakeupInterval
 		}
 	} else if c.options.WakeupInterval > MaxWakeupInterval {
-		// Max interval is one day.
+		// Do not run less than once per day.
 		return MaxWakeupInterval
+	} else if c.options.WakeupInterval < MinWakeupInterval {
+		// Do not run more than once per minute.
+		return MinWakeupInterval
 	}
 
 	return c.options.WakeupInterval
