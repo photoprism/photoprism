@@ -18,7 +18,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.GreaterOrEqual(t, len(photos0), 5)
+
+	assert.GreaterOrEqual(t, len(photos0), 40)
 
 	t.Run("false > yes", func(t *testing.T) {
 		var f form.SearchPhotos
