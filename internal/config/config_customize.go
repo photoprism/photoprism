@@ -102,7 +102,7 @@ func (c *Config) WallpaperUri() string {
 			return ""
 		}
 
-		c.options.WallpaperUri = "default.jpg"
+		c.options.WallpaperUri = "welcome.jpg"
 	} else if !strings.Contains(c.options.WallpaperUri, ".") {
 		c.options.WallpaperUri += fs.ExtJPEG
 	}
