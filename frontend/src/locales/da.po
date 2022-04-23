@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-06 07:19+0000\n"
-"Last-Translator: sunbeam60 <bjorn@toftmadsen.org>\n"
+"PO-Revision-Date: 2022-04-23 20:16+0000\n"
+"Last-Translator: Niels Rahbek <translate.photoprism@rahbeks.net>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/da/>\n"
 "Language: da\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.12\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
@@ -361,9 +361,8 @@ msgid "Black"
 msgstr "Sort"
 
 #: src/options/options.js:383
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
+msgstr "Blackman: Lanczos, bedre kantudjævning"
 
 #: src/options/options.js:366
 msgid "Blue"
@@ -1768,9 +1767,8 @@ msgid "Press enter to create a new album."
 msgstr "Tryk på enter for at oprette et nyt album."
 
 #: src/dialog/photo/files.vue:19 src/dialog/photo/files.vue:16
-#, fuzzy
 msgid "Preview"
-msgstr "Preview"
+msgstr "Forhåndsvisning"
 
 #: src/dialog/photo/files.vue:35 src/dialog/photo/files.vue:101
 #: src/dialog/photo/files.vue:32 src/dialog/photo/files.vue:98
@@ -1875,9 +1873,8 @@ msgid "Reloading…"
 msgstr "Genindlæser…"
 
 #: src/dialog/account/edit.vue:97
-#, fuzzy
 msgid "Remote Sync"
-msgstr "Remote Sync"
+msgstr "Fjernsynkronisering"
 
 #: src/dialog/photo/people.vue:108
 msgid "Remove"
@@ -1938,7 +1935,6 @@ msgid "Save"
 msgstr "Gem"
 
 #: src/dialog/photo/info.vue:110
-#, fuzzy
 msgid "Scan"
 msgstr "Scan"
 
@@ -2078,9 +2074,8 @@ msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Viser mere detaljerede logmeddelelser. Kræver en genstart."
 
 #: src/model/file.js:187
-#, fuzzy
 msgid "Sidecar"
-msgstr "Sidecar"
+msgstr "Sidevogn"
 
 #: src/pages/login.vue:19
 msgid "Sign in"
