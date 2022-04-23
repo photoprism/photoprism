@@ -90,7 +90,7 @@
         PhotoPrism® is a <a href="https://photoprism.app/trademark" rel="nofollow" target="_blank" class="text-link">registered trademark</a>.
         Docs are <a href="https://link.photoprism.app/github-docs" rel="nofollow" target="_blank" class="text-link">available</a> under the
         <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="nofollow" target="_blank" class="text-link">CC BY-NC-SA 4.0 License</a>; additional terms may apply.
-        By using our software, you agree to our <a href="https://photoprism.app/terms" rel="nofollow" target="_blank" class="text-link">terms of service</a>.
+        By using our software, you agree to our <a href="https://photoprism.app/terms" rel="nofollow" target="_blank" class="text-link">terms of service</a> and <a href="https://photoprism.app/privacy" rel="nofollow" target="_blank" class="text-link">privacy policy</a>.
       </p>
     </v-container>
     <p-about-footer></p-about-footer>
