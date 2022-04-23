@@ -24,6 +24,7 @@ type Options struct {
 	Copyright             string        `json:"-"`
 	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
 	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
+	AdminPasswordFile     string        `yaml:"AdminPasswordFile" json:"-" flag:"admin-password-file"`
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Debug                 bool          `yaml:"Debug" json:"Debug" flag:"debug"`
 	Trace                 bool          `yaml:"Trace" json:"Trace" flag:"Trace"`
@@ -90,6 +91,7 @@ type Options struct {
 	DatabaseName          string        `yaml:"DatabaseName" json:"-" flag:"database-name"`
 	DatabaseUser          string        `yaml:"DatabaseUser" json:"-" flag:"database-user"`
 	DatabasePassword      string        `yaml:"DatabasePassword" json:"-" flag:"database-password"`
+	DatabasePasswordFile  string        `yaml:"DatabasePasswordFile" json:"-" flag:"database-password-file"`
 	DatabaseConns         int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
 	DatabaseConnsIdle     int           `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
 	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`

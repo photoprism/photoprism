@@ -195,6 +195,11 @@ func (c *Config) DatabasePassword() string {
 	return c.options.DatabasePassword
 }
 
+// DatabasePasswordFile returns the file that contains database user password.
+func (c *Config) DatabasePasswordFile() string {
+	return c.options.DatabasePasswordFile
+}
+
 // DatabaseConns returns the maximum number of open connections to the database.
 func (c *Config) DatabaseConns() int {
 	limit := c.options.DatabaseConns

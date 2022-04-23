@@ -14,6 +14,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	rows = [][]string{
 		// Authentication.
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
+		{"admin-password-file", c.AdminPasswordFile()},
 		{"auth", fmt.Sprintf("%t", c.Auth())},
 		{"public", fmt.Sprintf("%t", c.Public())},
 
@@ -122,6 +123,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"database-name", c.DatabaseName()},
 		{"database-user", c.DatabaseUser()},
 		{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
+		{"database-password-file", c.DatabasePasswordFile()},
 		{"database-conns", fmt.Sprintf("%d", c.DatabaseConns())},
 		{"database-conns-idle", fmt.Sprintf("%d", c.DatabaseConnsIdle())},
 

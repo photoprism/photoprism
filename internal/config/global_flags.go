@@ -22,6 +22,13 @@ var Flags = CliFlags{
 		},
 	},
 	CliFlag{
+	    Flag: cli.StringFlag{
+		    Name:   "admin-password-file",
+		    Usage:  fmt.Sprintf("a file containing an initial admin user `PASSWORD`, which must have at least %d characters", entity.PasswordLen),
+		    EnvVar: "PHOTOPRISM_ADMIN_PASSWORD_FILE",
+	    },
+    },
+	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "public, p",
 			Usage:  "disable password authentication, WebDAV, and the advanced settings page",
@@ -494,6 +501,12 @@ var Flags = CliFlags{
 			Name:   "database-password, db-pass",
 			Usage:  "database user `PASSWORD`",
 			EnvVar: "PHOTOPRISM_DATABASE_PASSWORD",
+		}},
+	CliFlag{
+        Flag: cli.StringFlag{
+			Name:   "database-password-file",
+			Usage:  "a file containing a database user `PASSWORD`",
+			EnvVar: "PHOTOPRISM_DATABASE_PASSWORD_FILE",
 		}},
 	CliFlag{
 		Flag: cli.IntFlag{
