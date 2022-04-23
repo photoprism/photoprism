@@ -165,7 +165,7 @@ export default {
     this.intersectionObserver = new IntersectionObserver((entries) => {
       this.visibilitiesChanged(entries);
     }, {
-      rootMargin: "50% 0px",
+      rootMargin: "100% 0px",
     });
   },
   mounted() {

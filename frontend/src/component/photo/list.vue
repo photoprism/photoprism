@@ -30,10 +30,20 @@
                   disable-initial-sort
                   item-key="ID"
                   :no-data-text="notFoundMessage"
+                  ref="dataTable"
+
     >
       <template #items="props">
         <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
-          <v-img :key="props.item.Hash"
+          <div 
+              v-if="props.index < firstVisibleElementIndex || props.index > lastVisibileElementIndex"
+              class="v-image accent lighten-2"
+              aspect-ratio="1"
+              style="aspect-ratio: 1"
+          />
+          <v-img 
+                 v-if="props.index >= firstVisibleElementIndex && props.index <= lastVisibileElementIndex"
+                 :key="props.item.Hash"
                  :src="props.item.thumbnailUrl('tile_50')"
                  :alt="props.item.Title"
                  :transition="false"
@@ -184,9 +194,78 @@ export default {
         scrollY: window.scrollY,
         timeStamp: -1,
       },
+      firstVisibleElementIndex: 0,
+      lastVisibileElementIndex: 0,
+      visibleElementIndices: new Set(),
     };
   },
+  beforeCreate() {
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      this.visibilitiesChanged(entries);
+    }, {
+      rootMargin: "100% 0px",
+    });
+  },
+  mounted() {
+    this.observeItems();
+  },
+  updated() {
+    this.observeItems();
+  },
+  beforeDestroy() {
+    this.intersectionObserver.disconnect();
+  },
   methods: {
+    observeItems() {
+      if (this.$refs.dataTable === undefined) {
+        return;
+      }
+      const rows = this.$refs.dataTable.$el.getElementsByTagName('tbody')[0].children;
+      for (const row of rows) {
+        this.intersectionObserver.observe(row);
+      }
+    },
+    visibilitiesChanged(entries) {
+      entries.forEach((entry) => {
+        const inView = entry.isIntersecting && entry.intersectionRatio >= 0;
+        // console.log(entry.target.rowIndex - 2, entry.target);
+        const elementIndex = entry.target.rowIndex - 2;
+        if (elementIndex < 0) {
+          return;
+        }
+
+        if (inView) {
+          this.visibleElementIndices.add(elementIndex)
+        } else {
+          this.visibleElementIndices.delete(elementIndex)
+        }
+      });
+
+      /**
+       * There are many things that can influence what elements are currently
+       * visible on the screen, like scrolling, resizing, menu-opening etc.
+       *
+       * We therefore cannot make assumptions about our new first- and last
+       * visible index, even if it is tempting to initialize these values
+       * with this.firstVisibleElementIndex and this.lastVisibleElementIndex.
+       *
+       * Doing so would break the virtualization though. this.firstVisibleElementIndex
+       * would for example always stay at 0
+       */
+      let firstVisibleElementIndex, lastVisibileElementIndex;
+      for (const visibleElementIndex of this.visibleElementIndices.values()) {
+        if (firstVisibleElementIndex === undefined || visibleElementIndex < firstVisibleElementIndex) {
+          firstVisibleElementIndex = visibleElementIndex;
+        }
+        if (lastVisibileElementIndex === undefined || visibleElementIndex > lastVisibileElementIndex) {
+          lastVisibileElementIndex = visibleElementIndex;
+        }
+      }
+
+      this.firstVisibleElementIndex = firstVisibleElementIndex;
+      this.lastVisibileElementIndex = lastVisibileElementIndex;
+      console.log(this.firstVisibleElementIndex, this.lastVisibileElementIndex);
+    },
     downloadFile(index) {
       Notify.success(this.$gettext("Downloading…"));
 
