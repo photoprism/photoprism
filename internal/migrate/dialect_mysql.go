@@ -58,9 +58,9 @@ var DialectMySQL = Migrations{
 		Statements: []string{"CREATE OR REPLACE UNIQUE INDEX idx_files_search_media ON files (media_id);"},
 	},
 	{
-		ID:         "20220329-082000",
+		ID:         "20220329-083000",
 		Dialect:    "mysql",
-		Statements: []string{"UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(HEX(100000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) END;"},
+		Statements: []string{"UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) END;"},
 	},
 	{
 		ID:         "20220329-090000",
@@ -73,8 +73,13 @@ var DialectMySQL = Migrations{
 		Statements: []string{"CREATE OR REPLACE UNIQUE INDEX idx_files_search_timeline ON files (time_index);"},
 	},
 	{
-		ID:         "20220329-092000",
+		ID:         "20220329-093000",
 		Dialect:    "mysql",
 		Statements: []string{"UPDATE files SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) END;"},
+	},
+	{
+		ID:         "20220421-200000",
+		Dialect:    "mysql",
+		Statements: []string{"CREATE OR REPLACE INDEX idx_files_missing_root ON files (file_missing, file_root);"},
 	},
 }

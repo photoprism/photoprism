@@ -2,7 +2,7 @@
   <div class="p-page p-page-about">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <translate>About</translate>
+        <translate>About</translate> {{ $config.get('name') }}
       </v-toolbar-title>
 
       <v-spacer></v-spacer>

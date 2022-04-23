@@ -450,6 +450,50 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.True(t, form.Merged)
 	})
+	t.Run("query for landscape with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "landscape:test$5123"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Landscape)
+	})
+	t.Run("query for square with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "square:%abc"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Square)
+	})
+	t.Run("query for animated with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "animated:%abc"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Animated)
+	})
+	t.Run("query for vector with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotos{Query: "vector:%abc"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Vector)
+	})
 	t.Run("query for lat with invalid type", func(t *testing.T) {
 		form := &SearchPhotos{Query: "lat:&cat"}
 

@@ -101,7 +101,11 @@ func (m *Label) Delete() error {
 
 // Deleted returns true if the label is deleted.
 func (m *Label) Deleted() bool {
-	return m.DeletedAt != nil
+	if m.DeletedAt == nil {
+		return false
+	}
+
+	return !m.DeletedAt.IsZero()
 }
 
 // Restore restores the label in the database.

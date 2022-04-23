@@ -120,8 +120,6 @@ export class File extends RestModel {
   thumbnailUrl(size) {
     if (this.Error || this.Missing) {
       return `${config.contentUri}/svg/broken`;
-    } else if (this.FileType === "raw") {
-      return `${config.contentUri}/svg/raw`;
     } else if (this.Sidecar) {
       return `${config.contentUri}/svg/file`;
     }

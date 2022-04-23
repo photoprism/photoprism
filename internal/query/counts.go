@@ -52,7 +52,8 @@ func (c *Counts) Refresh() {
 		Take(c)
 
 	Db().Table("files").
-		Select("COUNT(media_id) AS files").
+		Select("COUNT(*) AS files").
+		Where("file_missing = 0 AND file_root = ?", entity.RootOriginals).
 		Take(c)
 
 	Db().Table("countries").

@@ -18,8 +18,31 @@ func TestPhotosQueryPortrait(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.GreaterOrEqual(t, len(photos0), 5)
 
+	assert.GreaterOrEqual(t, len(photos0), 39)
+
+	t.Run("false > yes", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "portrait:yes"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, len(photos), len(photos0))
+		f.Query = "portrait:false"
+		f.Merged = true
+
+		photos2, _, err2 := Photos(f)
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		assert.Greater(t, len(photos2), len(photos))
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

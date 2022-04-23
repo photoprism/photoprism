@@ -90,15 +90,19 @@ describe("model/file", () => {
     const values3 = {
       InstanceID: 5,
       UID: "ABC123",
+      Hash: "bd66bd2c304f45f6c160df375f34b49eb7aef321",
       Name: "1/2/IMG123.jpg",
       FileType: "raw",
     };
     const file3 = new File(values3);
-    assert.equal(file3.thumbnailUrl("tile_224"), "/api/v1/svg/raw");
+    assert.equal(
+      file3.thumbnailUrl("tile_224"),
+      "/api/v1/t/bd66bd2c304f45f6c160df375f34b49eb7aef321/public/tile_224"
+    );
     const values4 = {
       InstanceID: 5,
       UID: "ABC123",
-      Hash: "54ghtfd",
+      Hash: "0e437256ec20da874318b64027750b320548378c",
       FileType: "jpg",
       Name: "1/2/IMG123.jpg",
       Sidecar: true,

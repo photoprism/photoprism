@@ -20,6 +20,26 @@ func TestPhotosQueryPrimary(t *testing.T) {
 	}
 	assert.GreaterOrEqual(t, len(photos0), 46)
 
+	t.Run("false > yes", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "primary:yes"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, len(photos), len(photos0))
+		f.Query = "primary:false"
+
+		photos2, _, err2 := Photos(f)
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		assert.Greater(t, len(photos2), len(photos))
+	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

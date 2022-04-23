@@ -86,6 +86,10 @@ footer {
     padding: 1rem 2rem;
 }
 
+#photoprism .p-about-footer .body-1 {
+    line-height: 1.8em;
+}
+
 main {
     padding: 0;
     margin: 0;

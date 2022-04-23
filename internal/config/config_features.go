@@ -1,5 +1,10 @@
 package config
 
+// Sponsor checks if sponsor features should be enabled.
+func Sponsor() bool {
+	return Env(EnvDemo, EnvSponsor, EnvTest)
+}
+
 // DisableWebDAV checks if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
 	if c.ReadOnly() || c.Demo() {

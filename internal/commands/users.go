@@ -31,6 +31,7 @@ var UsersCommand = cli.Command{
 			Name:   "add",
 			Usage:  "Adds a new user",
 			Action: usersAddAction,
+			Hidden: !config.Sponsor(),
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "fullname, n",

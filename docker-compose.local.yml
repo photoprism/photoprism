@@ -24,7 +24,6 @@ services:
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
       ## Public server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_SITE_URL: "https://latest.localssl.dev/"
-      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"

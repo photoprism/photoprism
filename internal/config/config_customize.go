@@ -1,18 +1,20 @@
 package config
 
 import (
+	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/i18n"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // DefaultTheme returns the default user interface theme name.
 func (c *Config) DefaultTheme() string {
-	if c.options.DefaultTheme == "" || !c.Sponsor() {
+	if c.options.DefaultTheme == "" || c.NoSponsor() {
 		return "default"
 	}
 
@@ -32,7 +34,7 @@ func (c *Config) DefaultLocale() string {
 func (c *Config) AppIcon() string {
 	defaultIcon := "logo"
 
-	if c.options.AppIcon == "" || c.options.AppIcon == defaultIcon {
+	if c.NoSponsor() || c.options.AppIcon == "" || c.options.AppIcon == defaultIcon {
 		// Default.
 	} else if fs.FileExists(c.AppIconsPath(c.options.AppIcon, "512.png")) {
 		return c.options.AppIcon
@@ -44,9 +46,9 @@ func (c *Config) AppIcon() string {
 // AppIconsPath returns the path to the app icons.
 func (c *Config) AppIconsPath(name ...string) string {
 	if len(name) > 0 {
-		folder := []string{c.StaticPath(), "icons"}
-		folder = append(folder, name...)
-		return filepath.Join(folder...)
+		filePath := []string{c.StaticPath(), "icons"}
+		filePath = append(filePath, name...)
+		return filepath.Join(filePath...)
 	}
 
 	return filepath.Join(c.StaticPath(), "icons")
@@ -56,7 +58,7 @@ func (c *Config) AppIconsPath(name ...string) string {
 func (c *Config) AppName() string {
 	name := strings.TrimSpace(c.options.AppName)
 
-	if name == "" {
+	if c.NoSponsor() || name == "" {
 		name = c.SiteTitle()
 	}
 
@@ -82,4 +84,37 @@ func (c *Config) AppMode() string {
 	default:
 		return "standalone"
 	}
+}
+
+// WallpaperUri returns the login screen background image `URI`.
+func (c *Config) WallpaperUri() string {
+	if c.NoSponsor() {
+		return ""
+	} else if strings.Contains(c.options.WallpaperUri, "/") {
+		return c.options.WallpaperUri
+	}
+
+	assetPath := "img/wallpaper"
+
+	// Empty URI?
+	if c.options.WallpaperUri == "" {
+		if !fs.PathExists(filepath.Join(c.StaticPath(), assetPath)) {
+			return ""
+		}
+
+		c.options.WallpaperUri = "welcome.jpg"
+	} else if !strings.Contains(c.options.WallpaperUri, ".") {
+		c.options.WallpaperUri += fs.ExtJPEG
+	}
+
+	// Valid URI? Local file?
+	if p := clean.Path(c.options.WallpaperUri); p == "" {
+		return ""
+	} else if fs.FileExists(filepath.Join(c.StaticPath(), assetPath, p)) {
+		c.options.WallpaperUri = path.Join(c.StaticUri(), assetPath, p)
+	} else {
+		c.options.WallpaperUri = ""
+	}
+
+	return c.options.WallpaperUri
 }

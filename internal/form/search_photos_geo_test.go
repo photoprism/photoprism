@@ -120,6 +120,61 @@ func TestGeoSearch(t *testing.T) {
 		assert.False(t, form.Animated)
 		assert.True(t, form.Vector)
 	})
+	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "favorite:cat"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, form.Favorite)
+	})
+	t.Run("query for before with invalid type", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "before:cat"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
+	})
+	t.Run("query for lat with invalid type", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "lat:&cat"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for quality with invalid type", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "quality:`cat"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("query for dist with invalid type", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "dist:c@t"}
+
+		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal(err)
+		}
+
+		assert.Contains(t, err.Error(), "invalid syntax")
+	})
 }
 
 func TestGeoSearch_Serialize(t *testing.T) {

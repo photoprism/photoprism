@@ -22,13 +22,13 @@
           <v-icon>get_app</v-icon>
         </v-btn>
 
-        <v-btn v-if="settings.view === 'cards'" icon @click.stop="setView('list')">
+        <v-btn v-if="settings.view === 'cards'" icon class="action-view-list" @click.stop="setView('list')">
           <v-icon>view_list</v-icon>
         </v-btn>
-        <v-btn v-else-if="settings.view === 'list'" icon @click.stop="setView('mosaic')">
+        <v-btn v-else-if="settings.view === 'list'" icon class="action-view-mosaic" @click.stop="setView('mosaic')">
           <v-icon>view_comfy</v-icon>
         </v-btn>
-        <v-btn v-else icon @click.stop="setView('cards')">
+        <v-btn v-else icon class="action-view-cards" @click.stop="setView('cards')">
           <v-icon>view_column</v-icon>
         </v-btn>
       </v-toolbar>

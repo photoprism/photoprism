@@ -12,14 +12,15 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	cols = []string{"Value", "Name"}
 
 	rows = [][]string{
+		// Authentication.
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
+		{"auth", fmt.Sprintf("%t", c.Auth())},
+		{"public", fmt.Sprintf("%t", c.Public())},
+
+		// Logging.
 		{"log-level", c.LogLevel().String()},
 		{"debug", fmt.Sprintf("%t", c.Debug())},
 		{"trace", fmt.Sprintf("%t", c.Trace())},
-		{"auth", fmt.Sprintf("%t", c.Auth())},
-		{"public", fmt.Sprintf("%t", c.Public())},
-		{"read-only", fmt.Sprintf("%t", c.ReadOnly())},
-		{"experimental", fmt.Sprintf("%t", c.Experimental())},
 
 		// Config.
 		{"config-path", c.ConfigPath()},
@@ -55,6 +56,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"auto-import", fmt.Sprintf("%d", c.AutoImport()/time.Second)},
 
 		// Feature Flags.
+		{"read-only", fmt.Sprintf("%t", c.ReadOnly())},
+		{"experimental", fmt.Sprintf("%t", c.Experimental())},
 		{"disable-backups", fmt.Sprintf("%t", c.DisableBackups())},
 		{"disable-settings", fmt.Sprintf("%t", c.DisableSettings())},
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
@@ -79,13 +82,13 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tensorflow-version", c.TensorFlowVersion()},
 		{"tensorflow-model-path", c.TensorFlowModelPath()},
 
-		// UI Defaults.
+		// Customization.
 		{"default-locale", c.DefaultLocale()},
-
-		// Progressive Web App.
+		{"default-theme", c.DefaultTheme()},
 		{"app-icon", c.AppIcon()},
 		{"app-name", c.AppName()},
 		{"app-mode", c.AppMode()},
+		{"wallpaper-uri", c.WallpaperUri()},
 
 		// Site Infos.
 		{"cdn-url", c.CdnUrl("/")},

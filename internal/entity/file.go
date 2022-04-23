@@ -133,7 +133,7 @@ func (m File) RegenerateIndex() {
 				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(HEX(100000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 
 		Log("files", "regenerate time_index",
@@ -145,11 +145,11 @@ func (m File) RegenerateIndex() {
 				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN (HEX(100000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 
 		Log("files", "regenerate time_index",
-			Db().Exec("UPDATE ? SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - CAST(photo_taken_at AS UNSIGNED)) || '-' || media_id) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE ? SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - strftime('%Y%m%d%H%M%S', photo_taken_at)) || '-' || media_id) ELSE NULL END WHERE ?",
 				gorm.Expr(filesTable), updateWhere).Error)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())

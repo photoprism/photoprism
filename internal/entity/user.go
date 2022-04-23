@@ -212,7 +212,11 @@ func (m *User) Delete() error {
 
 // Deleted tests if the entity is marked as deleted.
 func (m *User) Deleted() bool {
-	return m.DeletedAt != nil
+	if m.DeletedAt == nil {
+		return false
+	}
+
+	return !m.DeletedAt.IsZero()
 }
 
 // String returns an identifier that can be used in logs.
