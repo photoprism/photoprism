@@ -21,10 +21,20 @@
     <v-layout row wrap class="search-results photo-results cards-view" :class="{'select-results': selectMode}">
       <v-flex
           v-for="(photo, index) in photos"
+          ref="items"
           :key="photo.ID"
+          :data-index="index"
           xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
       >
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
+                style="user-select: none"
+                class="accent lighten-3 result"
+                :class="photo.classes()"
+        >
+          <div class="accent lighten-2" style="aspect-ratio: 1">
+        </div>
         <v-card tile
+                v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 style="user-select: none"
@@ -244,9 +254,71 @@ export default {
       featPrivate,
       debug,
       input,
+      firstVisibleElementIndex: 0,
+      lastVisibileElementIndex: 0,
+      visibleElementIndices: new Set(),
     };
   },
+  beforeCreate() {
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      this.visibilitiesChanged(entries);
+    }, {
+      rootMargin: "50% 0px",
+    });
+  },
+  mounted() {
+    this.observeItems();
+  },
+  updated() {
+    this.observeItems();
+  },
+  beforeDestroy() {
+    this.intersectionObserver.disconnect();
+  },
   methods: {
+    observeItems() {
+      if (this.$refs.items === undefined) {
+        return;
+      }
+      for (const item of this.$refs.items) {
+        this.intersectionObserver.observe(item);
+      }
+    },
+    visibilitiesChanged(entries) {
+      entries.forEach((entry) => {
+        const inView = entry.isIntersecting && entry.intersectionRatio >= 0;
+        const elementIndex = parseInt(entry.target.getAttribute('data-index'));
+        if (inView) {
+          this.visibleElementIndices.add(elementIndex)
+        } else {
+          this.visibleElementIndices.delete(elementIndex)
+        }
+      });
+
+      /**
+       * There are many things that can influence what elements are currently
+       * visible on the screen, like scrolling, resizing, menu-opening etc.
+       *
+       * We therefore cannot make assumptions about our new first- and last
+       * visible index, even if it is tempting to initialize these values
+       * with this.firstVisibleElementIndex and this.lastVisibleElementIndex.
+       *
+       * Doing so would break the virtualization though. this.firstVisibleElementIndex
+       * would for example always stay at 0
+       */
+      let firstVisibleElementIndex, lastVisibileElementIndex;
+      for (const visibleElementIndex of this.visibleElementIndices.values()) {
+        if (firstVisibleElementIndex === undefined || visibleElementIndex < firstVisibleElementIndex) {
+          firstVisibleElementIndex = visibleElementIndex;
+        }
+        if (lastVisibileElementIndex === undefined || visibleElementIndex > lastVisibileElementIndex) {
+          lastVisibileElementIndex = visibleElementIndex;
+        }
+      }
+
+      this.firstVisibleElementIndex = firstVisibleElementIndex;
+      this.lastVisibileElementIndex = lastVisibileElementIndex;
+    },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);
     },
