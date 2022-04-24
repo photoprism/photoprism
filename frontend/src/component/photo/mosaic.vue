@@ -26,7 +26,13 @@
           :data-index="index"
           xs4 sm3 md2 lg1 d-flex
       >
+
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
+                style="user-select: none; aspect-ratio: 1"
+                class="accent lighten-2 result"
+                :class="photo.classes()"/>
         <v-card tile
+                v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 style="user-select: none; aspect-ratio: 1"
@@ -34,7 +40,6 @@
                 :class="photo.classes()"
                 @contextmenu.stop="onContextMenu($event, index)">
           <v-img
-                 v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
                  :key="photo.Hash"
                  :src="photo.thumbnailUrl('tile_224')"
                  :alt="photo.Title"
@@ -165,7 +170,7 @@ export default {
     this.intersectionObserver = new IntersectionObserver((entries) => {
       this.visibilitiesChanged(entries);
     }, {
-      rootMargin: "100% 0px",
+      rootMargin: "50% 0px",
     });
   },
   mounted() {
