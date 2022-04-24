@@ -23,6 +23,8 @@ Additional information can be found in our Developer Guide:
 
 */
 
+import memoizeOne from 'memoize-one';
+
 import RestModel from "model/rest";
 import File from "model/file";
 import Marker from "model/marker";
@@ -632,7 +634,9 @@ export class Photo extends RestModel {
     return this.localDate().toLocaleString(DateTime.DATE_HUGE);
   }
 
-  shortDateString() {
+  // TODO: Test if this works correnctly when the user updates the photos metadata
+  shortDateString = memoizeOne(() => {
+    console.log('get short date string');
     if (!this.TakenAt || this.Year === YearUnknown) {
       return $gettext("Unknown");
     } else if (this.Month === MonthUnknown) {
@@ -642,7 +646,7 @@ export class Photo extends RestModel {
     }
 
     return this.localDate().toLocaleString(DateTime.DATE_MED);
-  }
+  })
 
   hasLocation() {
     return this.Lat !== 0 || this.Lng !== 0;
@@ -660,7 +664,8 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
-  locationInfo() {
+  // TODO: Test if this works correnctly when the user updates the photos metadata
+  locationInfo = memoizeOne(() => {
     if (this.PlaceID === "zz" && this.Country !== "zz") {
       const country = countries.find((c) => c.Code === this.Country);
 
@@ -672,7 +677,7 @@ export class Photo extends RestModel {
     }
 
     return this.PlaceLabel ? this.PlaceLabel : $gettext("Unknown");
-  }
+  })
 
   addSizeInfo(file, info) {
     if (!file) {
