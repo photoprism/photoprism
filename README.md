@@ -85,19 +85,12 @@ Having said that, funding really has the highest impact. So users can do their p
 
 ## Getting Support ##
 
-Before submitting a support request, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
-to determine the cause of your problem. If this doesn't help, or you have other questions:
+If you need help installing our software at home, you can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions)! Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/).
 
-- You are welcome to join us on [Reddit](https://link.photoprism.app/reddit)
-- post your question in [GitHub Discussions](https://link.photoprism.app/discussions)
-- or ask in our [Community Chat](https://link.photoprism.app/chat)
-
-In addition, [sponsors](https://link.photoprism.app/sponsors) receive direct
-[technical support](https://photoprism.app/contact) via email.
-
-We'll do our best to answer all your questions. In return, we ask you to [back us](https://docs.photoprism.app/funding/) 
-on [Patreon](https://link.photoprism.app/patreon) or [GitHub Sponsors](https://link.photoprism.app/sponsor).
+We'll do our best to answer all your questions. In return, we ask you to [back us](https://docs.photoprism.app/funding/) on [Patreon](https://link.photoprism.app/patreon) or [GitHub Sponsors](https://link.photoprism.app/sponsors).
 Think of "free software" as in "free speech," not as in "free beer". Thank You! 💜
+
+In exchange for their continued support, [Sponsors](https://docs.photoprism.app/funding/) are also welcome to request direct technical [support via email](mailto:sponsors@photoprism.app). Please bear with us if we are unable to get back to you immediately. We do our best to respond within five business days or less.
 
 ### GitHub Issues ###
 
@@ -122,4 +115,4 @@ We welcome [contributions](CONTRIBUTING.md) of any kind, including blog posts, t
 
 ----
 
-*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply. By using our software, you agree to our [terms of service](https://photoprism.app/terms) and [privacy policy](https://photoprism.app/privacy).*
+*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply. By using our software, you agree to our [terms of service](https://photoprism.app/terms), [privacy policy](https://photoprism.app/privacy), and [code of conduct](https://photoprism.app/code-of-conduct).*
