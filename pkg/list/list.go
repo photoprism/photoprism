@@ -1,6 +1,6 @@
 /*
 
-Package list provides string slice abstraction
+Package list provides a string slice abstraction.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

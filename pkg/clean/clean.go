@@ -1,6 +1,6 @@
 /*
 
-Package sanitize provides input value sanitation functions
+Package clean provides validation, sanitation, and normalization of input values.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
