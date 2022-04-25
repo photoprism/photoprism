@@ -36,6 +36,6 @@ We encourage all community members to resolve problems on their own whenever pos
 
 (a) Violations may be punished with a [snarky](https://www.merriam-webster.com/dictionary/snarky) comment and finally a "Plonk", which means that we ignore you according to (3).
 
-(b) Plonk stands for the metaphorical sound of a user hitting the bottom of the kill file. It was first used in [Usenet forums](https://en.everybodywiki.com/Plonk_(Usenet)), a precursor to the WWW.
+(b) Plonk stands for the metaphorical sound of a user hitting the bottom of the kill file. It was first used in [Usenet forums](https://en.everybodywiki.com/Plonk_(Usenet)), a precursor to the Web.
 
 (c) To publicly repudiate a poster, it is added to one's reply or is simply used as the entire, one-word reply.
