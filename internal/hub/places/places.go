@@ -1,6 +1,6 @@
 /*
 
-Package places encapsulates the PhotoPrism Places geolocation API.
+Package places provides global location information to enrich metadata with location details.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

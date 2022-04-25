@@ -1,6 +1,6 @@
 /*
 
-Package maps encapsulates external geolocation APIs.
+Package maps provides a location lookup abstraction including a normalized list of countries.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
