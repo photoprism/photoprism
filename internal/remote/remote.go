@@ -1,9 +1,6 @@
 /*
 
-Package remote implements remote service sync and uploads.
-
-See also:
-  - RClone (https://rclone.org/), a popular Go tool for syncing data with remote services
+Package remote provides detection of remote services for file sharing and synchronization.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

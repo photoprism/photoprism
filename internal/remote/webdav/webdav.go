@@ -1,6 +1,6 @@
 /*
 
-Package webdav implements sharing with WebDAV servers.
+Package webdav provides WebDAV file sharing and synchronization.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

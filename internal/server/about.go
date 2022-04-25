@@ -1,6 +1,6 @@
 /*
 
-Package hub provides privacy-preserving reverse geocoding and other backend services.
+Package server provides REST and web server routing, request handling and logging.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
@@ -24,13 +24,4 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 
 */
-package hub
-
-import (
-	"sync"
-
-	"github.com/photoprism/photoprism/internal/event"
-)
-
-var log = event.Log
-var mutex = sync.Mutex{}
+package server

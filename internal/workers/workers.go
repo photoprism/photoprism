@@ -1,6 +1,6 @@
 /*
 
-Package workers contains background workers for file sync & metadata optimization.
+Package workers provides index, sync, and metadata optimization background workers.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

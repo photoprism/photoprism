@@ -1,6 +1,6 @@
 /*
 
-Package api contains PhotoPrism REST API handlers.
+Package api provides REST API request handlers.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

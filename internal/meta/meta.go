@@ -1,6 +1,6 @@
 /*
 
-Package meta encapsulates image metadata decoding and conversion to/from XMP and Exif.
+Package meta provides XMP and Exif metadata parsing and normalization.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

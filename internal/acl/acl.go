@@ -1,6 +1,6 @@
 /*
 
-Package acl contains PhotoPrism's access control lists for authorizing user actions.
+Package acl provides access control lists for authorization checking of user actions.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
