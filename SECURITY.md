@@ -1,4 +1,4 @@
-# Security Policy
+# PhotoPrism® Security Policy
 
 **Please contact us at [security@photoprism.app](mailto:security@photoprism.app) when you have discovered a potential security issue.** You are welcome to also report vulnerabilities in third-party applications that we may not be able to fix directly.
 
