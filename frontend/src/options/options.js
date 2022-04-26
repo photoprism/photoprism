@@ -184,8 +184,16 @@ export const Languages = () => [
     value: "tr",
   },
   {
-    text: "български", // Bulgarian
-    value: "bg",
+    text: "Svenska", // Swedish
+    value: "sv",
+  },
+  {
+    text: "Lietuvis", // Lithuanian
+    value: "lt",
+  },
+  {
+    text: "Hrvatski", // Croatian
+    value: "hr",
   },
 ];
 
