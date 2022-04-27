@@ -87,10 +87,11 @@
       </p>
 
       <p class="caption mt-4 text-xs-center">
-        PhotoPrism® is a <a href="https://photoprism.app/trademark" rel="nofollow" target="_blank" class="text-link">registered trademark</a>.
-        Docs are <a href="https://link.photoprism.app/github-docs" rel="nofollow" target="_blank" class="text-link">available</a> under the
-        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="nofollow" target="_blank" class="text-link">CC BY-NC-SA 4.0 License</a>; additional terms may apply.
-        By using our software, you agree to our <a href="https://photoprism.app/terms" rel="nofollow" target="_blank" class="text-link">terms of service</a> and <a href="https://photoprism.app/privacy" rel="nofollow" target="_blank" class="text-link">privacy policy</a>.
+        By using the software and services we provide, you agree to our
+        <a href="https://photoprism.app/terms" target="_blank" class="text-link">Terms of Service</a>,
+        <a href="https://photoprism.app/privacy" target="_blank" class="text-link">Privacy Policy</a>, and
+        <a href="https://photoprism.app/code-of-conduct" target="_blank" class="text-link">Code of Conduct</a>.
+        PhotoPrism® is a <a href="https://photoprism.app/trademark" target="_blank" class="text-link">registered trademark</a>.
       </p>
     </v-container>
     <p-about-footer></p-about-footer>
