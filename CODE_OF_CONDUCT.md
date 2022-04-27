@@ -6,7 +6,7 @@ By using the software and services we provide, you agree to our [Terms of Servic
 
 ## Rules
 
-Because we at [PhotoPrism UG](https://photoprism.app/contact) ("PhotoPrism", "we" or "us") want our Code of Conduct to be easy to understand and implement, we have only three basic rules:
+Because we want our Code of Conduct to be easy to understand and implement, we have only three basic rules:
 
 (1) Don't panic.
 
