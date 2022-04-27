@@ -24,7 +24,7 @@ The following non-exhaustive list provides specific guidelines and examples:
 
 (c) If you have a general question or need help installing our software, do **not** use GitHub Issues. You can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions) instead.
 
-(d) We kindly ask you not to report bugs unless you are certain to have found a fully reproducible and previously unreported problem that must be fixed directly in the app. [Read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening an issue or starting a social media "shitstorm".
+(d) [Read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening invalid bug reports, starting a public "shitstorm" or insulting other community members in our chat rooms. Aside from being annoying for everyone, it also keeps our team from working on features and improvements that users like you are waiting for. We kindly ask you not to report bugs unless you are certain to have found a fully reproducible and previously unreported problem that must be fixed directly in the app.
 
 (e) If you are having a bad day and want to offend someone, please go somewhere else.
 
