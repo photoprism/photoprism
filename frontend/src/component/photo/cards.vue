@@ -32,7 +32,7 @@
                 :class="photo.classes()"
         >
           <div class="accent lighten-2" style="aspect-ratio: 1" />
-          <div v-if="photo.Quality < 3 && context === 'review'"></div>
+          <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
           <div class="v-card__title pa-3 card-details v-card__title--primary">
             <h3 class="body-2 mb-2" :title="photo.Title">
               {{ photo.Title | truncate(80) }}
@@ -350,7 +350,6 @@ export default {
         }
       }
 
-      console.log(firstVisibleElementIndex, lastVisibileElementIndex)
       this.firstVisibleElementIndex = firstVisibleElementIndex;
       this.lastVisibileElementIndex = lastVisibileElementIndex;
     },
