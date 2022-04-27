@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-21 18:19+0000\n"
-"Last-Translator: entropyst72 <ggflower@gmail.com>\n"
+"PO-Revision-Date: 2022-04-26 12:02+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/it/>\n"
 "Language: it\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.12\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
@@ -469,7 +469,6 @@ msgid "Chinese Traditional"
 msgstr "Cinese Tradizionale"
 
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
-#, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -1313,9 +1312,8 @@ msgstr "Login"
 
 #: src/component/navigation.vue:471 src/component/navigation.vue:1670
 #: src/component/navigation.vue:1701
-#, fuzzy
 msgid "Logout"
-msgstr "Logout"
+msgstr "Esci"
 
 #: src/pages/library.vue:55 src/pages/settings/general.vue:426
 msgid "Logs"
@@ -1659,7 +1657,6 @@ msgid "Outdoor"
 msgstr "All'aperto"
 
 #: src/dialog/photo/info.vue:118
-#, fuzzy
 msgid "Panorama"
 msgstr "Panorama"
 
@@ -1729,9 +1726,8 @@ msgstr "Luoghi"
 
 #: src/component/photo/cards.vue:280 src/component/photo/mosaic.vue:256
 #: src/share/photo/cards.vue:253 src/share/photo/mosaic.vue:237
-#, fuzzy
 msgid "Play"
-msgstr "Play"
+msgstr "Riproduci"
 
 #: src/pages/settings/account.vue:104
 msgid "Please confirm your new password."
@@ -2350,9 +2346,8 @@ msgid "Unsorted"
 msgstr "Non Ordinato"
 
 #: src/dialog/photo/files.vue:38 src/dialog/photo/files.vue:35
-#, fuzzy
 msgid "Unstack"
-msgstr "Unstack"
+msgstr "Separa"
 
 #: src/dialog/photo/files.vue:180 src/dialog/photo/files.vue:177
 #: src/dialog/photo/info.vue:175
@@ -2570,7 +2565,6 @@ msgid "Your message has been sent"
 msgstr "Il tuo messaggio è stato inviato"
 
 #: src/component/photo/viewer.vue:178
-#, fuzzy
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
 

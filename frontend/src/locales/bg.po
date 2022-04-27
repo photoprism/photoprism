@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-04-27 10:01+0000\n"
+"Last-Translator: xd <s7orm@abv.bg>\n"
 "Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.12\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/labels.vue:164
@@ -20,15 +20,15 @@ msgstr ""
 #: src/pages/albums.vue:342
 #: src/share/albums.vue:303
 msgid "%{n} albums found"
-msgstr ""
+msgstr "%{n} намерени албума"
 
 #: src/dialog/share/upload.vue:76
 msgid "%{n} files uploaded"
-msgstr ""
+msgstr "%{n} качени файла"
 
 #: src/pages/library/files.vue:303
 msgid "%{n} folders found"
-msgstr ""
+msgstr "%{n} намерени папки"
 
 #: src/pages/labels.vue:339
 msgid "%{n} labels found"
@@ -38,7 +38,7 @@ msgstr ""
 #: src/pages/people/faces.vue:371
 #: src/pages/people/subjects.vue:435
 msgid "%{n} people found"
-msgstr ""
+msgstr "%{n} намерени човека"
 
 #: src/pages/album/photos.vue:226
 #: src/pages/album/photos.vue:338
@@ -47,19 +47,19 @@ msgstr ""
 #: src/share/photos.vue:241
 #: src/share/photos.vue:353
 msgid "%{n} pictures found"
-msgstr ""
+msgstr "%{n} намерени снимки"
 
 #: src/options/options.js:313
 msgid "1 hour"
-msgstr ""
+msgstr "1 час"
 
 #: src/options/options.js:315
 msgid "12 hours"
-msgstr ""
+msgstr "12 часа"
 
 #: src/options/options.js:314
 msgid "4 hours"
-msgstr ""
+msgstr "4 часа"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
@@ -86,29 +86,29 @@ msgstr ""
 
 #: src/dialog/photo/info.vue:159
 msgid "Accuracy"
-msgstr ""
+msgstr "Точност"
 
 #: src/dialog/photo/labels.vue:23
 msgid "Action"
-msgstr ""
+msgstr "Действие"
 
 #: src/dialog/photo/files.vue:28
 #: src/dialog/photo/files.vue:25
 msgid "Actions"
-msgstr ""
+msgstr "Действия"
 
 #: src/pages/albums.vue:122
 #: src/pages/albums.vue:179
 msgid "Add Album"
-msgstr ""
+msgstr "Създай албум"
 
 #: src/pages/settings/general.vue:141
 msgid "Add files to your library via Web Upload."
-msgstr ""
+msgstr "Добавете файлове към своята библиотека през Web Upload."
 
 #: src/dialog/share.vue:91
 msgid "Add Link"
-msgstr ""
+msgstr "Добавете линк"
 
 #: src/pages/albums.vue:96
 msgid "Add pictures from search results by selecting them."
@@ -117,7 +117,7 @@ msgstr ""
 #: src/dialog/account/add.vue:6
 #: src/pages/settings/sync.vue:46
 msgid "Add Server"
-msgstr ""
+msgstr "Добавете сървър"
 
 #: src/component/album/clipboard.vue:136
 #: src/component/file/clipboard.vue:89
@@ -126,12 +126,12 @@ msgstr ""
 #: src/component/subject/clipboard.vue:89
 #: src/dialog/photo/album.vue:17
 msgid "Add to album"
-msgstr ""
+msgstr "Добавете към албум"
 
 #: src/dialog/photo/files.vue:171
 #: src/dialog/photo/files.vue:168
 msgid "Added"
-msgstr ""
+msgstr "Добавено"
 
 #: src/pages/settings.vue:52
 msgid "Advanced"
@@ -139,23 +139,23 @@ msgstr ""
 
 #: src/options/options.js:323
 msgid "After 1 day"
-msgstr ""
+msgstr "След 1 ден"
 
 #: src/options/options.js:324
 msgid "After 3 days"
-msgstr ""
+msgstr "След 3 дни"
 
 #: src/options/options.js:325
 msgid "After 7 days"
-msgstr ""
+msgstr "След 7 дни"
 
 #: src/options/options.js:327
 msgid "After one month"
-msgstr ""
+msgstr "След 1 месец"
 
 #: src/options/options.js:329
 msgid "After one year"
-msgstr ""
+msgstr "След една година"
 
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
@@ -164,20 +164,20 @@ msgstr ""
 
 #: src/options/options.js:328
 msgid "After two months"
-msgstr ""
+msgstr "След два месеца"
 
 #: src/options/options.js:326
 msgid "After two weeks"
-msgstr ""
+msgstr "След две седмици"
 
 #: src/model/album.js:220
 msgid "Album"
-msgstr ""
+msgstr "Албум"
 
 #: src/dialog/photo/album.vue:71
 #: src/dialog/photo/album.vue:79
 msgid "Album Name"
-msgstr ""
+msgstr "Име на албум"
 
 #: src/app/routes.js:129
 #: src/app/routes.js:136
@@ -187,7 +187,7 @@ msgstr ""
 #: src/component/navigation.vue:571
 #: src/share/albums.vue:4
 msgid "Albums"
-msgstr ""
+msgstr "Албуми"
 
 #: src/component/album/clipboard.vue:77
 msgid "Albums deleted"
@@ -209,7 +209,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:26
 #: src/component/photo/toolbar.vue:27
 msgid "All Cameras"
-msgstr ""
+msgstr "Всички камери"
 
 #: src/component/photo/toolbar.vue:30
 #: src/pages/albums.vue:23
@@ -217,20 +217,20 @@ msgstr ""
 #: src/share/albums.vue:26
 #: src/share/albums.vue:408
 msgid "All Categories"
-msgstr ""
+msgstr "Всички категории"
 
 #: src/component/photo/toolbar.vue:29
 msgid "All Colors"
-msgstr ""
+msgstr "Всички цветове"
 
 #: src/component/album/toolbar.vue:30
 #: src/component/photo/toolbar.vue:26
 msgid "All Countries"
-msgstr ""
+msgstr "Всички страни"
 
 #: src/pages/about/feedback.vue:31
 msgid "All fields are required"
-msgstr ""
+msgstr "Всички полета са задължителни"
 
 #: src/pages/library/import.vue:12
 msgid "All files from import folder"
@@ -242,7 +242,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:31
 msgid "All Months"
-msgstr ""
+msgstr "Всички месеци"
 
 #: src/pages/library/index.vue:12
 msgid "All originals"
@@ -250,7 +250,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:32
 msgid "All Years"
-msgstr ""
+msgstr "Всички години"
 
 #: src/pages/about/about.vue:34
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
@@ -262,11 +262,11 @@ msgstr ""
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
-msgstr ""
+msgstr "Надморска височина"
 
 #: src/dialog/photo/details.vue:267
 msgid "Altitude (m)"
-msgstr ""
+msgstr "Надморска височина (м)"
 
 #: src/common/api.js:100
 msgid "An error occurred - are you offline?"
@@ -274,7 +274,7 @@ msgstr ""
 
 #: src/pages/settings/general.vue:533
 msgid "Animation"
-msgstr ""
+msgstr "Анимация"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
@@ -302,11 +302,11 @@ msgstr ""
 #: src/pages/settings/general.vue:294
 #: src/share/photo/cards.vue:36
 msgid "Archive"
-msgstr ""
+msgstr "Архив"
 
 #: src/dialog/photo/info.vue:199
 msgid "Archived"
-msgstr ""
+msgstr "Архивирано"
 
 #: src/dialog/photo/archive.vue:10
 msgid "Are you sure you want to archive the selection?"
@@ -364,11 +364,11 @@ msgstr ""
 
 #: src/pages/people/subjects.vue:432
 msgid "Bio"
-msgstr ""
+msgstr "Биография"
 
 #: src/options/options.js:348
 msgid "Black"
-msgstr ""
+msgstr "Черен"
 
 #: src/options/options.js:361
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
@@ -376,11 +376,11 @@ msgstr ""
 
 #: src/options/options.js:344
 msgid "Blue"
-msgstr ""
+msgstr "Син"
 
 #: src/options/options.js:345
 msgid "Brown"
-msgstr ""
+msgstr "Кафяв"
 
 #: src/pages/settings/general.vue:383
 msgid "Browse and edit image classification labels."
@@ -403,7 +403,7 @@ msgstr ""
 #: src/component/navigation.vue:242
 #: src/component/navigation.vue:933
 msgid "Calendar"
-msgstr ""
+msgstr "Календар"
 
 #: src/component/photo/cards.vue:37
 #: src/component/photo/list.vue:45
@@ -412,7 +412,7 @@ msgstr ""
 #: src/share/photo/cards.vue:37
 #: src/share/photo/list.vue:41
 msgid "Camera"
-msgstr ""
+msgstr "Камера"
 
 #: src/dialog/photo/info.vue:79
 msgid "Camera Serial"
@@ -468,7 +468,7 @@ msgstr ""
 #: src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:130
 msgid "Category"
-msgstr ""
+msgstr "Категория"
 
 #: src/pages/settings/account.vue:26
 msgid "Change"
@@ -505,7 +505,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:327
 msgid "Color"
-msgstr ""
+msgstr "Цвят"
 
 #: src/dialog/photo/files.vue:145
 #: src/dialog/photo/files.vue:142
@@ -514,7 +514,7 @@ msgstr ""
 
 #: src/pages/discover.vue:4
 msgid "Colors"
-msgstr ""
+msgstr "Цветове"
 
 #: src/pages/library/index.vue:123
 msgid "Complete Rescan"
@@ -535,7 +535,7 @@ msgstr ""
 
 #: src/pages/about/feedback.vue:7
 msgid "Contact Us"
-msgstr ""
+msgstr "Свържете се с нас"
 
 #: src/pages/albums.vue:93
 #: src/pages/labels.vue:74
@@ -564,7 +564,7 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:520
 msgid "Copyright"
-msgstr ""
+msgstr "Авторски права"
 
 #: src/component/photo/list.vue:26
 #: src/share/photo/list.vue:26
@@ -574,15 +574,15 @@ msgstr ""
 #: src/component/photo/toolbar.vue:184
 #: src/dialog/photo/details.vue:240
 msgid "Country"
-msgstr ""
+msgstr "Страна"
 
 #: src/dialog/photo/album.vue:18
 msgid "Create album"
-msgstr ""
+msgstr "Създаване на албум"
 
 #: src/dialog/photo/info.vue:167
 msgid "Created"
-msgstr ""
+msgstr "Създаден"
 
 #: src/pages/library/index.vue:173
 msgid "Creating thumbnails for"
@@ -614,7 +614,7 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:118
 msgid "Day"
-msgstr ""
+msgstr "Ден"
 
 #: src/pages/settings/advanced.vue:77
 msgid "Debug Logs"
@@ -650,7 +650,7 @@ msgstr ""
 #: src/share/albums.vue:243
 #: src/share/photo/cards.vue:33
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 #: src/dialog/webdav.vue:23
 msgid "Detailed instructions can be found in our User Guide."
