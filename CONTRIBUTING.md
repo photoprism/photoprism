@@ -8,7 +8,9 @@ Follow us on [Twitter](https://link.photoprism.app/twitter) and join the [Commun
 to get regular updates, connect with other contributors, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
-An important part of our journey is to explore new ways in product development and build better software through consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
+An important part of our journey is to explore new directions in product development and build better software through consistent use of feedback.
+
+Feel free to [contact us](https://photoprism.app/contact) with anything that is on your mind, even if you just want to say hello. It is our goal to answer all questions we receive from our users, customers, partners, and the developer community. Our team also welcomes feedback if you believe something can or should be improved.
 
 ## Not a Developer? No Problem ##
 
@@ -51,15 +53,18 @@ new features, bug fixes, and documentation improvements. Issues labeled [help wa
 
 **Reviewing, testing and finally merging pull requests requires significant resources on our side. If it's not just a small fix, it can take several months.**
 
-### Contributor License Agreement (CLA) ###
+## Contributor License Agreement (CLA) ##
 
-After submitting your first pull request, you will automatically be asked to [accept our CLA](https://link.photoprism.app/cla):
+After you submit your first pull request, you will be asked to accept our Contributor License Agreement (CLA). Visit [photoprism.app/cla](https://photoprism.app/cla) to learn more.
 
-- this gives us the ability to [(re-)license all code and documentation](https://en.wikipedia.org/wiki/Software_relicensing) at any time, *almost* as if we had created it ourselves (you retain the rights to your own work, which may be different for other CLAs)
-- otherwise, we cannot accept pull requests, as this would mean that we are not able to change the license of our software and documentation at a later time, even though most of it was developed and written by us
-- this may be necessary, for example, if the license is incompatible with a larger combined work, we want to remove some restrictions on the AGPL/Creative Commons license, or it turns out that someone is abusing the existing license in a way we don't yet know about
-- the lack of a formal contract [would also lead to legal uncertainty](https://en.wikipedia.org/wiki/SCO%E2%80%93Linux_disputes) for us and all users, as some contributors could later claim that they did not intend to license their code in any way and that it was stolen
+## Privacy Notice ##
+
+We operate a number of web services that help us develop and maintain our software in collaboration with the open source community, such as Weblate hosted at [translate.photoprism.app](https://translate.photoprism.app/) to keep translations up to date.
+
+Because many of these apps and tools were originally developed for internal use without a high level of privacy in mind, we ask that you do not enter personal information such as your real name or personal email address if you want it to remain private.
+
+**Be aware that such information may unexpectedly show up in logs, source code, translation files, commit messages, and pull request comments.**
 
 ----
 
-*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply. By using our software, you agree to our [terms of service](https://photoprism.app/terms).*
+*By using the software and services we provide, you agree to our [Terms of Service](https://photoprism.app/terms), [Privacy Policy](https://photoprism.app/privacy), and [Code of Conduct](https://photoprism.app/code-of-conduct). PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply.*

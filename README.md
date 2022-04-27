@@ -85,19 +85,12 @@ Having said that, funding really has the highest impact. So users can do their p
 
 ## Getting Support ##
 
-Before submitting a support request, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
-to determine the cause of your problem. If this doesn't help, or you have other questions:
+If you need help installing our software at home, you can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions). Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/).
 
-- You are welcome to join us on [Reddit](https://link.photoprism.app/reddit)
-- post your question in [GitHub Discussions](https://link.photoprism.app/discussions)
-- or ask in our [Community Chat](https://link.photoprism.app/chat)
+We'll do our best to answer all your questions. In return, we ask you to [back us](https://docs.photoprism.app/funding/) on [Patreon](https://link.photoprism.app/patreon) or [GitHub Sponsors](https://link.photoprism.app/sponsors).
+Think of "free software" as in "free speech," not as in "free beer". Thank you! 💜
 
-In addition, [sponsors](https://link.photoprism.app/sponsors) receive direct
-[technical support](https://photoprism.app/contact) via email.
-
-We'll do our best to answer all your questions. In return, we ask you to [back us](https://docs.photoprism.app/funding/) 
-on [Patreon](https://link.photoprism.app/patreon) or [GitHub Sponsors](https://link.photoprism.app/sponsor).
-Think of "free software" as in "free speech," not as in "free beer". Thank You! 💜
+In exchange for their continued support, [Sponsors](https://docs.photoprism.app/funding/) are also welcome to request direct technical [support via email](mailto:sponsors@photoprism.app). Please bear with us if we are unable to get back to you immediately due to the high volume of emails and contact requests we receive.
 
 ### GitHub Issues ###
 
@@ -114,7 +107,9 @@ Follow us on [Twitter](https://link.photoprism.app/twitter) and join the [Commun
 to get regular updates, connect with other users, and discuss your ideas.
 Our [Code of Conduct](https://photoprism.app/code-of-conduct) explains the "dos and don’ts."
 
-An important part of our journey is to explore new ways in product development and build better software through consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
+An important part of our journey is to explore new directions in product development and build better software through consistent use of feedback.
+
+Feel free to [contact us](https://photoprism.app/contact) with anything that is on your mind, even if you just want to say hello. It is our goal to answer all questions we receive from our users, customers, partners, and the developer community. Our team also welcomes feedback if you believe something can or should be improved.
 
 ## Every Contribution Makes a Difference ##
 
@@ -122,4 +117,4 @@ We welcome [contributions](CONTRIBUTING.md) of any kind, including blog posts, t
 
 ----
 
-*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply. By using our software, you agree to our [terms of service](https://photoprism.app/terms).*
+*By using the software and services we provide, you agree to our [Terms of Service](https://photoprism.app/terms), [Privacy Policy](https://photoprism.app/privacy), and [Code of Conduct](https://photoprism.app/code-of-conduct). PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply.*

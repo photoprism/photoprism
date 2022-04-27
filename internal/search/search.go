@@ -1,6 +1,6 @@
 /*
 
-Package search performs common index search queries.
+Package search provides search queries to find photos, albums, labels, and subjects.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

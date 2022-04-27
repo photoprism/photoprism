@@ -1,6 +1,6 @@
 /*
 
-Package nsfw uses TensorFlow to detect images that may not be safe for work.
+Package nsfw provides detection of images that are "not safe for work" based on various categories.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

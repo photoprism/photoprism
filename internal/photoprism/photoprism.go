@@ -1,6 +1,6 @@
 /*
 
-Package photoprism contains PhotoPrism core functionality.
+Package photoprism provides the core functionality of PhotoPrism®.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

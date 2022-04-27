@@ -1,6 +1,6 @@
 /*
 
-Package config contains CLI config related config functionality.
+Package config provides global options, command-line flags, and user settings.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

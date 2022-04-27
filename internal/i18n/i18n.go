@@ -1,6 +1,6 @@
 /*
 
-Package i18n contains PhotoPrism status and error message strings.
+Package i18n provides translatable notification and error messages.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

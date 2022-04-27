@@ -1,6 +1,6 @@
 /*
 
-Package auto contains index & import background workers.
+Package auto provides workers for background indexing and import operations.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
