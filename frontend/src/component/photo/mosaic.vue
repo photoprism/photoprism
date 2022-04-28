@@ -127,6 +127,7 @@
 </template>
 <script>
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
+import {virtualizationTools} from 'common/virtualization-tools';
 
 export default {
   name: 'PPhotoMosaic',
@@ -191,40 +192,18 @@ export default {
         this.intersectionObserver.observe(item);
       }
     },
+    elementIndexFromIntersectionObserverEntry(entry) {
+      return parseInt(entry.target.getAttribute('data-index'));
+    },
     visibilitiesChanged(entries) {
-      entries.forEach((entry) => {
-        const inView = entry.isIntersecting && entry.intersectionRatio >= 0;
-        const elementIndex = parseInt(entry.target.getAttribute('data-index'));
-        if (inView) {
-          this.visibleElementIndices.add(elementIndex)
-        } else {
-          this.visibleElementIndices.delete(elementIndex)
-        }
-      });
+      const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(
+        this.visibleElementIndices,
+        entries,
+        this.elementIndexFromIntersectionObserverEntry,
+      );
 
-      /**
-       * There are many things that can influence what elements are currently
-       * visible on the screen, like scrolling, resizing, menu-opening etc.
-       *
-       * We therefore cannot make assumptions about our new first- and last
-       * visible index, even if it is tempting to initialize these values
-       * with this.firstVisibleElementIndex and this.lastVisibleElementIndex.
-       *
-       * Doing so would break the virtualization though. this.firstVisibleElementIndex
-       * would for example always stay at 0
-       */
-      let firstVisibleElementIndex, lastVisibileElementIndex;
-      for (const visibleElementIndex of this.visibleElementIndices.values()) {
-        if (firstVisibleElementIndex === undefined || visibleElementIndex < firstVisibleElementIndex) {
-          firstVisibleElementIndex = visibleElementIndex;
-        }
-        if (lastVisibileElementIndex === undefined || visibleElementIndex > lastVisibileElementIndex) {
-          lastVisibileElementIndex = visibleElementIndex;
-        }
-      }
-
-      this.firstVisibleElementIndex = firstVisibleElementIndex;
-      this.lastVisibileElementIndex = lastVisibileElementIndex;
+      this.firstVisibleElementIndex = smallestIndex;
+      this.lastVisibileElementIndex = largestIndex;
     },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);

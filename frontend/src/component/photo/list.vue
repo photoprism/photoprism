@@ -128,6 +128,7 @@
 <script>
 import download from "common/download";
 import Notify from "common/notify";
+import {virtualizationTools} from 'common/virtualization-tools';
 
 export default {
   name: 'PPhotoList',
@@ -231,46 +232,18 @@ export default {
         this.intersectionObserver.observe(row);
       }
     },
+    elementIndexFromIntersectionObserverEntry(entry) {
+      return entry.target.rowIndex - 2;
+    },
     visibilitiesChanged(entries) {
-      entries.forEach((entry) => {
-        const inView = entry.isIntersecting && entry.intersectionRatio >= 0;
-        // console.log(entry.target.rowIndex - 2, entry.target);
-        const elementIndex = entry.target.rowIndex - 2;
-        if (elementIndex < 0) {
-          return;
-        }
+      const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(
+        this.visibleElementIndices,
+        entries,
+        this.elementIndexFromIntersectionObserverEntry,
+      );
 
-        if (inView) {
-          this.visibleElementIndices.add(elementIndex)
-        } else {
-          this.visibleElementIndices.delete(elementIndex)
-        }
-      });
-
-      /**
-       * There are many things that can influence what elements are currently
-       * visible on the screen, like scrolling, resizing, menu-opening etc.
-       *
-       * We therefore cannot make assumptions about our new first- and last
-       * visible index, even if it is tempting to initialize these values
-       * with this.firstVisibleElementIndex and this.lastVisibleElementIndex.
-       *
-       * Doing so would break the virtualization though. this.firstVisibleElementIndex
-       * would for example always stay at 0
-       */
-      let firstVisibleElementIndex, lastVisibileElementIndex;
-      for (const visibleElementIndex of this.visibleElementIndices.values()) {
-        if (firstVisibleElementIndex === undefined || visibleElementIndex < firstVisibleElementIndex) {
-          firstVisibleElementIndex = visibleElementIndex;
-        }
-        if (lastVisibileElementIndex === undefined || visibleElementIndex > lastVisibileElementIndex) {
-          lastVisibileElementIndex = visibleElementIndex;
-        }
-      }
-
-      this.firstVisibleElementIndex = firstVisibleElementIndex;
-      this.lastVisibileElementIndex = lastVisibileElementIndex;
-      console.log(this.firstVisibleElementIndex, this.lastVisibileElementIndex);
+      this.firstVisibleElementIndex = smallestIndex;
+      this.lastVisibileElementIndex = largestIndex;
     },
     downloadFile(index) {
       Notify.success(this.$gettext("Downloading…"));
