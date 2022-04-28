@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-13 18:06+0000\n"
-"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"PO-Revision-Date: 2022-04-28 17:06+0000\n"
+"Last-Translator: gagnonraphael <gagnon.raphael@gmail.com>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "frontend/fr/>\n"
 "Language: fr\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.12\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
@@ -66,7 +66,7 @@ msgstr "Cliquez pour copier vers le presse-papier."
 #: src/pages/about/about.vue:4 src/pages/about/about.vue:163
 #: src/pages/help.vue:45
 msgid "About"
-msgstr "A propos"
+msgstr "À propos"
 
 #: src/options/options.js:219
 msgid "Abyss"
@@ -91,7 +91,7 @@ msgstr "Actions"
 
 #: src/pages/albums.vue:122 src/pages/albums.vue:177
 msgid "Add Album"
-msgstr "Ajouter album"
+msgstr "Ajouter un album"
 
 #: src/pages/settings/general.vue:141
 msgid "Add files to your library via Web Upload."
@@ -104,7 +104,7 @@ msgstr "Ajouter un lien"
 #: src/pages/albums.vue:96
 msgid "Add pictures from search results by selecting them."
 msgstr ""
-"Ajoutez des images à partir des résultats de recherche en les sélectionnant."
+"Ajouter des images à partir des résultats de recherche en les sélectionnant."
 
 #: src/dialog/account/add.vue:6 src/pages/settings/sync.vue:46
 msgid "Add Server"
@@ -166,7 +166,7 @@ msgstr "Album"
 
 #: src/dialog/photo/album.vue:71 src/dialog/photo/album.vue:79
 msgid "Album Name"
-msgstr "Titre de l'Album"
+msgstr "Titre de l'album"
 
 #: src/component/navigation.vue:132 src/component/navigation.vue:142
 #: src/component/navigation.vue:4 src/component/navigation.vue:562
@@ -346,7 +346,7 @@ msgstr "Indonésien"
 
 #: src/dialog/sponsor.vue:7 src/pages/about/about.vue:23
 msgid "Become a sponsor"
-msgstr "Devenir un sponsor"
+msgstr "Devenir un commanditaire"
 
 #: src/pages/about/about.vue:42
 msgid ""
@@ -451,7 +451,7 @@ msgstr "Changer"
 
 #: src/pages/settings/general.vue:185
 msgid "Change photo titles, locations, and other metadata."
-msgstr "Changer les titres, les lieux et d'autres métadonnées."
+msgstr "Modifier les titres, les lieux et d'autres métadonnées."
 
 #: src/component/photo/clipboard.vue:146
 msgid "Change private flag"
@@ -471,7 +471,7 @@ msgstr "Chinois traditionnel"
 
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
 msgid "Chroma"
-msgstr "Chrome"
+msgstr "Chrominance"
 
 #: src/component/photo/viewer.vue:79 src/dialog/photo/details.vue:113
 #: src/dialog/share.vue:87 src/pages/library/errors.vue:58
@@ -522,7 +522,7 @@ msgstr "Contient %{n} images."
 #: src/pages/albums.vue:90 src/pages/labels.vue:71
 #: src/pages/people/subjects.vue:82
 msgid "Contains one picture."
-msgstr "Contient une photo."
+msgstr "Contient une image."
 
 #: src/pages/settings/library.vue:113
 msgid "Convert to JPEG"
@@ -701,7 +701,7 @@ msgstr ""
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Ne pas modifier le dossier des originaux. Désactive l'importation, le "
-"téléchargement et la suppression."
+"chargement et la suppression."
 
 #: src/pages/settings/advanced.vue:527
 msgid "Don't transcode videos with FFmpeg."
@@ -1052,7 +1052,7 @@ msgstr "Cacher"
 
 #: src/pages/settings/general.vue:295
 msgid "Hide photos that have been moved to archive."
-msgstr "Cacher les photos archivées."
+msgstr "Masquer les photos archivées."
 
 #: src/dialog/photo/files.vue:109 src/dialog/photo/files.vue:106
 msgid "High Dynamic Range (HDR)"
@@ -1142,8 +1142,8 @@ msgid ""
 "In case pictures you expect are missing, please rescan your library and wait "
 "until indexing has been completed."
 msgstr ""
-"Si des images que vous attendez manquent, veuillez rescanner votre "
-"bibliothèque et attendre que l'indexation soit terminée."
+"Si des images sont manquantes, veuillez réanalyser votre bibliothèque et "
+"attendre que l'indexation soit terminée."
 
 #: src/pages/library.vue:32 src/pages/settings/library.vue:6
 msgid "Index"
@@ -1486,13 +1486,13 @@ msgstr "Aucune personne trouvée"
 #: src/share/photo/cards.vue:7 src/share/photo/list.vue:8
 #: src/share/photo/mosaic.vue:7 src/share/photos.vue:349
 msgid "No pictures found"
-msgstr "Aucune photo trouvée"
+msgstr "Aucune image trouvée"
 
 #: src/component/photo/cards.vue:4 src/component/photo/list.vue:5
 #: src/component/photo/mosaic.vue:4 src/share/photo/cards.vue:4
 #: src/share/photo/list.vue:5 src/share/photo/mosaic.vue:4
 msgid "No recently edited pictures"
-msgstr "Pas de photos récemment éditées"
+msgstr "Aucune image récemment éditée"
 
 #: src/pages/settings/sync.vue:47
 msgid "No servers configured."
@@ -1551,8 +1551,8 @@ msgid ""
 "as remote service for backup and file upload."
 msgstr ""
 "Note : Seuls les serveurs WebDAV, comme Nextcloud ou PhotoPrism, peuvent "
-"être configurés comme service à distance pour la sauvegarde et le "
-"téléchargement de fichiers."
+"être configurés comme service à distance pour la sauvegarde et le chargement "
+"de fichiers."
 
 #: src/pages/settings/account.vue:20
 msgid ""
@@ -1608,7 +1608,7 @@ msgstr "Une personne trouvée"
 #: src/pages/album/photos.vue:336 src/pages/photos.vue:374
 #: src/share/photos.vue:351
 msgid "One picture found"
-msgstr "Une photo trouvée"
+msgstr "Une image trouvée"
 
 #: src/options/options.js:229
 msgid "Onyx"
@@ -1658,7 +1658,7 @@ msgid ""
 "keep your pictures organized and accessible."
 msgstr ""
 "Notre ambition est de vous fournir la solution la plus conviviale pour la "
-"navigation, l’organisation et le partage de vos photos."
+"navigation, l’organisation et le partage de vos images."
 
 #: src/options/options.js:308
 msgid "Outdoor"
@@ -1679,7 +1679,7 @@ msgstr "Mot de passe"
 
 #: src/pages/settings/account.vue:22
 msgid "Password changed"
-msgstr "Mot de passe changé"
+msgstr "Mot de passe modifié"
 
 #: src/component/navigation.vue:199 src/component/navigation.vue:791
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
@@ -1966,7 +1966,7 @@ msgstr "Rechercher"
 
 #: src/pages/settings/general.vue:451
 msgid "Search and display photos on a map."
-msgstr "Rechercher et afficher des photos sur une carte."
+msgstr "Rechercher et afficher des images sur une carte."
 
 #: src/pages/discover.vue:12
 msgid "Season"
