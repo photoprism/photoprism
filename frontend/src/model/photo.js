@@ -617,7 +617,9 @@ export class Photo extends RestModel {
     return { width: newW, height: newH };
   }
 
-  getDateString(showTimeZone) {
+  // TODO: Test if this works correnctly when the user updates the photos metadata
+  getDateString = memoizeOne((showTimeZone) => {
+    console.log('getDateString');
     if (!this.TakenAt || this.Year === YearUnknown) {
       return $gettext("Unknown");
     } else if (this.Month === MonthUnknown) {
@@ -632,7 +634,7 @@ export class Photo extends RestModel {
     }
 
     return this.localDate().toLocaleString(DateTime.DATE_HUGE);
-  }
+  })
 
   // TODO: Test if this works correnctly when the user updates the photos metadata
   shortDateString = memoizeOne(() => {
@@ -704,7 +706,8 @@ export class Photo extends RestModel {
     }
   }
 
-  getVideoInfo() {
+  // TODO: Test if this works correnctly when the user updates the photos metadata
+  getVideoInfo = memoizeOne(() => {
     let info = [];
     let file = this.videoFile();
 
@@ -731,9 +734,10 @@ export class Photo extends RestModel {
     }
 
     return info.join(", ");
-  }
+  })
 
-  getPhotoInfo() {
+  // TODO: Test if this works correnctly when the user updates the photos metadata
+  getPhotoInfo = memoizeOne(() => {
     let info = [];
 
     if (this.Camera) {
@@ -765,7 +769,7 @@ export class Photo extends RestModel {
     }
 
     return info.join(", ");
-  }
+  })
 
   getCamera() {
     if (this.Camera) {
