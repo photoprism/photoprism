@@ -418,18 +418,22 @@ export class Photo extends RestModel {
   }
 
   videoFile() {
-    if (!this.Files) {
+    return this.getVideoFileFromFiles(this.Files);
+  }
+
+  getVideoFileFromFiles = memoizeOne((files) => {
+    if (!files) {
       return false;
     }
 
-    let file = this.Files.find((f) => f.Codec === CodecAvc1);
+    let file = files.find((f) => f.Codec === CodecAvc1);
 
     if (!file) {
-      file = this.Files.find((f) => f.FileType === FormatMp4);
+      file = files.find((f) => f.FileType === FormatMp4);
     }
 
     if (!file) {
-      file = this.Files.find((f) => !!f.Video);
+      file = files.find((f) => !!f.Video);
     }
 
     if (!file) {
@@ -437,7 +441,7 @@ export class Photo extends RestModel {
     }
 
     return file;
-  }
+  })
 
   gifFile() {
     if (!this.Files) {
@@ -458,18 +462,22 @@ export class Photo extends RestModel {
   }
 
   mainFile() {
-    if (!this.Files) {
+    return this.getMainFileFromFiles(this.Files)
+  }
+
+  getMainFileFromFiles = memoizeOne((files) => {
+    if (!files) {
       return this;
     }
 
-    let file = this.Files.find((f) => !!f.Primary);
+    let file = files.find((f) => !!f.Primary);
 
     if (file) {
       return file;
     }
 
-    return this.Files.find((f) => f.FileType === FormatJpeg);
-  }
+    return files.find((f) => f.FileType === FormatJpeg);
+  })
 
   jpegFiles() {
     if (!this.Files) {
@@ -617,7 +625,7 @@ export class Photo extends RestModel {
     return { width: newW, height: newH };
   }
 
-  getDateString = (showTimeZone) => {
+  getDateString(showTimeZone) {
     return this.generateDateString(showTimeZone, this.TakenAt, this.Year, this.Month, this.Day, this.TimeZone);
   }
 
@@ -713,18 +721,20 @@ export class Photo extends RestModel {
     }
   }
 
-  // TODO: Test if this works correnctly when the user updates the photos metadata
-  getVideoInfo = memoizeOne(() => {
-    let info = [];
-    let file = this.videoFile();
+  getVideoInfo = () => {
+    console.log('videoInfo');
+    let file = this.videoFile() || this.mainFile();
+    return this.generateVideoInfo(file)
+  }
 
-    if (!file) {
-      file = this.mainFile();
-    }
-
+  generateVideoInfo = memoizeOne((file) => {
+    console.log('generateVideoInfo');
     if (!file) {
       return $gettext("Video");
     }
+
+    const info = [];
+
 
     if (file.Duration > 0) {
       info.push(Util.duration(file.Duration));
@@ -744,28 +754,33 @@ export class Photo extends RestModel {
   })
 
   // TODO: Test if this works correnctly when the user updates the photos metadata
-  getPhotoInfo = memoizeOne(() => {
+  getPhotoInfo = () => {
+    let file = this.videoFile();
+    if (!file || !file.Width) {
+      file = this.mainFile();
+    }
+
+    return this.generatePhotoInfo(this.Camera, this.CameraModel, this.CameraMake, file);
+  }
+
+  generatePhotoInfo = memoizeOne((camera, cameraModel, cameraMake, file) => {
     let info = [];
 
-    if (this.Camera) {
-      if (this.Camera.Model.length > 7) {
-        info.push(this.Camera.Model);
+    if (camera) {
+      if (camera.Model.length > 7) {
+        info.push(camera.Model);
       } else {
-        info.push(this.Camera.Make + " " + this.Camera.Model);
+        info.push(camera.Make + " " + camera.Model);
       }
-    } else if (this.CameraModel && this.CameraMake) {
-      if (this.CameraModel.length > 7) {
-        info.push(this.CameraModel);
+    } else if (cameraModel && cameraMake) {
+      if (cameraModel.length > 7) {
+        info.push(cameraModel);
       } else {
-        info.push(this.CameraMake + " " + this.CameraModel);
+        info.push(cameraMake + " " + cameraModel);
       }
     }
 
-    let file = this.videoFile();
-
-    if (!file || !file.Width) {
-      file = this.mainFile();
-    } else if (file.Codec) {
+    if (file && file.Width && file.Codec) {
       info.push(file.Codec.toUpperCase());
     }
 
