@@ -683,11 +683,11 @@ export class Photo extends RestModel {
   }
 
   locationInfo = () => {
-    return this.generateLocationInfo(this.PLaceID, this.Country, this.Place, this.PlaceLabel)
+    return this.generateLocationInfo(this.PlaceID, this.Country, this.Place, this.PlaceLabel)
   }
 
   generateLocationInfo = memoizeOne((placeId, countryCode, place, placeLabel) => {
-    if (placeId === "zz" && country !== "zz") {
+    if (placeId === "zz" && countryCode !== "zz") {
       const country = countries.find((c) => c.Code === countryCode);
 
       if (country) {
