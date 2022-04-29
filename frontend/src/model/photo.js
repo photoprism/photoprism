@@ -637,7 +637,6 @@ export class Photo extends RestModel {
 
   // TODO: Test if this works correnctly when the user updates the photos metadata
   shortDateString = memoizeOne(() => {
-    console.log('get short date string');
     if (!this.TakenAt || this.Year === YearUnknown) {
       return $gettext("Unknown");
     } else if (this.Month === MonthUnknown) {
