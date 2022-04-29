@@ -37,18 +37,15 @@
             <h3 class="body-2 mb-2" :title="photo.Title">
               {{ photo.Title | truncate(80) }}
             </h3>
-            <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">
+            <div v-if="photo.Description" class="caption mb-2" style="hyphens: auto; word-break: break-word">
               {{ photo.Description }}
             </div>
-            <div class="caption">
+            <div class="caption" style="hyphens: auto; word-break: break-word">
                 <i style="display: inline-block; width: 14px" />
                 {{ photo.getDateString(true) }}
               <br>
               <i style="display: inline-block; width: 14px" />
-              <template v-if="photo.Type === 'video'">
-                {{ photo.getVideoInfo() }}
-              </template>
-              <template v-else-if="photo.Type === 'animated'">
+              <template v-if="photo.Type === 'video' || photo.Type === 'animated'">
                 {{ photo.getVideoInfo() }}
               </template>
               <template v-else>
