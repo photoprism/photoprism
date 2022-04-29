@@ -297,7 +297,7 @@ export class Photo extends RestModel {
     let iso = this.localDateString(time);
     let zone = this.getTimeZone();
 
-    if (this.getTimeZone() === "") {
+    if (zone === "") {
       zone = "UTC";
     }
 
@@ -305,8 +305,12 @@ export class Photo extends RestModel {
   }
 
   utcDate() {
-    return DateTime.fromISO(this.TakenAt).toUTC();
+    return this.generateUtcDate(this.TakenAt);
   }
+
+  generateUtcDate = memoizeOne((takenAt) => {
+    return DateTime.fromISO(takenAt).toUTC();
+  })
 
   baseName(truncate) {
     let result = this.fileBase(this.FileName ? this.FileName : this.mainFile().Name);
@@ -682,9 +686,9 @@ export class Photo extends RestModel {
     return this.generateLocationInfo(this.PLaceID, this.Country, this.Place, this.PlaceLabel)
   }
 
-  generateLocationInfo = memoizeOne((placeId, country, place, placeLabel) => {
+  generateLocationInfo = memoizeOne((placeId, countryCode, place, placeLabel) => {
     if (placeId === "zz" && country !== "zz") {
-      const country = countries.find((c) => c.Code === country);
+      const country = countries.find((c) => c.Code === countryCode);
 
       if (country) {
         return country.Name;
@@ -722,13 +726,11 @@ export class Photo extends RestModel {
   }
 
   getVideoInfo = () => {
-    console.log('videoInfo');
     let file = this.videoFile() || this.mainFile();
     return this.generateVideoInfo(file)
   }
 
   generateVideoInfo = memoizeOne((file) => {
-    console.log('generateVideoInfo');
     if (!file) {
       return $gettext("Video");
     }
