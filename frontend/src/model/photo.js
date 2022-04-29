@@ -755,7 +755,6 @@ export class Photo extends RestModel {
     return info.join(", ");
   })
 
-  // TODO: Test if this works correnctly when the user updates the photos metadata
   getPhotoInfo = () => {
     let file = this.videoFile();
     if (!file || !file.Width) {
