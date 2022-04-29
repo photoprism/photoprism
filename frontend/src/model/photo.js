@@ -617,31 +617,37 @@ export class Photo extends RestModel {
     return { width: newW, height: newH };
   }
 
-  // TODO: Test if this works correnctly when the user updates the photos metadata
-  getDateString = memoizeOne((showTimeZone) => {
-    if (!this.TakenAt || this.Year === YearUnknown) {
+  getDateString = (showTimeZone) => {
+    return this.generateDateString(showTimeZone, this.TakenAt, this.Year, this.Month, this.Day, this.TimeZone);
+  }
+
+  generateDateString = memoizeOne((showTimeZone, takenAt, year, month, day, timeZone) => {
+    if (!takenAt || year === YearUnknown) {
       return $gettext("Unknown");
-    } else if (this.Month === MonthUnknown) {
+    } else if (month === MonthUnknown) {
       return this.localYearString();
-    } else if (this.Day === DayUnknown) {
+    } else if (day === DayUnknown) {
       return this.localDate().toLocaleString({
         month: long,
         year: num,
       });
-    } else if (this.TimeZone) {
+    } else if (timeZone) {
       return this.localDate().toLocaleString(showTimeZone ? DATE_FULL_TZ : DATE_FULL);
     }
 
     return this.localDate().toLocaleString(DateTime.DATE_HUGE);
   })
 
-  // TODO: Test if this works correnctly when the user updates the photos metadata
-  shortDateString = memoizeOne(() => {
-    if (!this.TakenAt || this.Year === YearUnknown) {
+  shortDateString = () => {
+    return this.generateShortDateString(this.TakenAt, this.Year, this.Month, this.Day)
+  }
+  
+  generateShortDateString = memoizeOne((takenAt, year, month, day) => {
+    if (!takenAt || year === YearUnknown) {
       return $gettext("Unknown");
-    } else if (this.Month === MonthUnknown) {
+    } else if (month === MonthUnknown) {
       return this.localYearString();
-    } else if (this.Day === DayUnknown) {
+    } else if (day === DayUnknown) {
       return this.localDate().toLocaleString({ month: "long", year: "numeric" });
     }
 
@@ -664,19 +670,22 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
-  // TODO: Test if this works correnctly when the user updates the photos metadata
-  locationInfo = memoizeOne(() => {
-    if (this.PlaceID === "zz" && this.Country !== "zz") {
-      const country = countries.find((c) => c.Code === this.Country);
+  locationInfo = () => {
+    return this.generateLocationInfo(this.PLaceID, this.Country, this.Place, this.PlaceLabel)
+  }
+
+  generateLocationInfo = memoizeOne((placeId, country, place, placeLabel) => {
+    if (placeId === "zz" && country !== "zz") {
+      const country = countries.find((c) => c.Code === country);
 
       if (country) {
         return country.Name;
       }
-    } else if (this.Place && this.Place.Label) {
-      return this.Place.Label;
+    } else if (place && place.Label) {
+      return place.Label;
     }
 
-    return this.PlaceLabel ? this.PlaceLabel : $gettext("Unknown");
+    return placeLabel ? placeLabel : $gettext("Unknown");
   })
 
   addSizeInfo(file, info) {
