@@ -53,7 +53,7 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-vsync", "vfr",
 			"-r", "30",
 			"-b:v", bitrate,
-			"-itrate", bitrate,
+			"-bitrate", bitrate,
 			"-f", "mp4",
 			"-y",
 			avcName,
