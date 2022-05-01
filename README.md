@@ -9,7 +9,7 @@ PhotoPrism: Browse Your Life in Pictures
 [![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)](https://link.photoprism.app/twitter)
 [![Reddit](https://img.shields.io/badge/join-/r/photoprism-EC5800.svg)](https://link.photoprism.app/reddit)
 
-PhotoPrism® is an AI-powered Photos App for the Decentralized Web.
+PhotoPrism® is an AI-powered Photos App for the [Decentralized Web](https://en.wikipedia.org/wiki/Decentralized_web).
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
 You can run it at home, on a private server, or in the cloud.
 
