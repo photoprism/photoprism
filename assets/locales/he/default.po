@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-11 10:00+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-04-30 15:37+0000\n"
+"Last-Translator: Orel <ryiseld@gmail.com>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
 "backend/he/>\n"
 "Language: he\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.12.1\n"
 
 msgid "Unexpected error, please try again"
 msgstr "שגיאה בלתי צפויה, נסה שוב"
@@ -176,7 +176,6 @@ msgstr "החשבון נשמר"
 msgid "Account deleted"
 msgstr "החשבון נמחק"
 
-#, fuzzy
 msgid "Settings saved"
 msgstr "ההגדרות נשמרו"
 
@@ -241,9 +240,8 @@ msgstr "%d קבצים הועלו תוך %d שניות"
 msgid "Selection approved"
 msgstr "הבחירה אושרה"
 
-#, fuzzy
 msgid "Selection archived"
-msgstr "הבחירה בארכיון"
+msgstr "הבחירה הועברה לארכיון"
 
 msgid "Selection restored"
 msgstr "הבחירה שוחזרה"
