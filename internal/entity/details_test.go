@@ -1,10 +1,9 @@
 package entity
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestFirstOrCreateDetails(t *testing.T) {
@@ -143,6 +142,7 @@ func TestNewDetails(t *testing.T) {
 	})
 }
 
+//TODO fails on mariadb
 func TestDetails_Create(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		details := Details{PhotoID: 0}
@@ -160,6 +160,7 @@ func TestDetails_Create(t *testing.T) {
 	})
 }
 
+//TODO fails on mariadb
 func TestDetails_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		details := Details{PhotoID: 123678955432, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}

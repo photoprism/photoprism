@@ -43,6 +43,7 @@ func TestPassword_InvalidPasswordPassword(t *testing.T) {
 	})
 }
 
+//TODO fails on mariadb
 func TestPassword_Create(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		p := Password{}
