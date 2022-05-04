@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-30 15:37+0000\n"
+"PO-Revision-Date: 2022-05-03 13:06+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "frontend/fr/>\n"
@@ -558,7 +558,7 @@ msgstr "Créé"
 
 #: src/pages/library/index.vue:173
 msgid "Creating thumbnails for"
-msgstr "Création des vignettes pour"
+msgstr "Création des miniatures pour"
 
 #: src/options/options.js:385
 msgid "Cubic: Moderate Quality, Good Performance"
@@ -1195,7 +1195,8 @@ msgstr "Limite de taille JPEG : %{n}px"
 
 #: src/pages/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr "Les JPEGS et vignettes sont automatiquement affichés selon les besoins."
+msgstr ""
+"Les JPEGS et miniatures sont automatiquement affichés selon les besoins."
 
 #: src/dialog/photo/details.vue:575
 msgid "Keywords"
@@ -2280,7 +2281,7 @@ msgstr ""
 
 #: src/pages/settings/advanced.vue:253
 msgid "Thumbnail Generation"
-msgstr "Génération de vignettes"
+msgstr "Génération de miniatures"
 
 #: src/dialog/photo/details.vue:189
 msgid "Time UTC"
