@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-04-26 12:02+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-05-03 13:06+0000\n"
+"Last-Translator: Joaquim Homrighausen <joho@boojam.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/sv/>\n"
 "Language: sv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12\n"
+"X-Generator: Weblate 4.12.1\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/labels.vue:164
@@ -1163,7 +1163,7 @@ msgstr "Importera filer till original…"
 #: src/dialog/photo/files.vue:171
 #: src/dialog/photo/files.vue:180
 msgid "in"
-msgstr ""
+msgstr "i"
 
 #: src/pages/about/about.vue:52
 msgid "In addition, sponsors receive direct technical support via email."
@@ -1176,66 +1176,68 @@ msgstr "Dessutom får sponsorer direkt teknisk support via e-post."
 #: src/pages/library/files.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr ""
+"Om du upplever att bilder saknas, vänligen skanna om biblioteket och vänta "
+"tills indexeringen är slutförd."
 
 #: src/pages/library.vue:32
 #: src/pages/settings/library.vue:6
 msgid "Index"
-msgstr ""
+msgstr "Index"
 
 #: src/pages/library/index.vue:134
 #: src/pages/library/index.vue:141
 msgid "Indexing"
-msgstr ""
+msgstr "Indexerar"
 
 #: src/pages/library/index.vue:116
 msgid "Indexing failed"
-msgstr ""
+msgstr "Indexeringen misslyckades"
 
 #: src/pages/library/index.vue:7
 msgid "Indexing media and sidecar files…"
-msgstr ""
+msgstr "Indexaerar media och sidecar-filer…"
 
 #: src/dialog/photo/files.vue:53
 #: src/dialog/photo/files.vue:50
 msgid "Instance ID"
-msgstr ""
+msgstr "Instans-ID"
 
 #: src/dialog/account/edit.vue:297
 msgid "Interval"
-msgstr ""
+msgstr "Intervall"
 
 #: src/dialog/photo/details.vue:105
 msgid "Invalid date"
-msgstr ""
+msgstr "Ogiltigt datum"
 
 #: src/dialog/photo/edit.vue:116
 msgid "Invalid photo selected"
-msgstr ""
+msgstr "Ett ogiltigt foto har valts"
 
 #: src/model/rest.js:167
 msgid "Item"
-msgstr ""
+msgstr "Artikel"
 
 #: src/pages/settings/advanced.vue:323
 msgid "JPEG Quality: %{n}"
-msgstr ""
+msgstr "JPEG-kvalitet: %{n}"
 
 #: src/pages/settings/advanced.vue:429
 msgid "JPEG Size Limit: %{n}px"
-msgstr ""
+msgstr "Begränsning av JPEG-storlek: %{n}px"
 
 #: src/pages/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr ""
+msgstr "JPEG-bilder och miniatyrbilder skapas automatiskt vid behov."
 
 #: src/dialog/photo/details.vue:589
 msgid "Keywords"
-msgstr ""
+msgstr "Nyckelord"
 
 #: src/dialog/photo/labels.vue:20
 #: src/model/label.js:115
 msgid "Label"
-msgstr ""
+msgstr "Etikett"
 
 #: src/app/routes.js:261
 #: src/component/navigation.vue:289
@@ -1245,19 +1247,19 @@ msgstr ""
 #: src/dialog/photo/edit.vue:216
 #: src/pages/settings/general.vue:382
 msgid "Labels"
-msgstr ""
+msgstr "Etiketter"
 
 #: src/component/label/clipboard.vue:45
 msgid "Labels deleted"
-msgstr ""
+msgstr "Etiketter raderade"
 
 #: src/options/options.js:362
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr ""
+msgstr "Lanczos: Bevarande av detaljer, minimala artefakter"
 
 #: src/pages/settings/general.vue:94
 msgid "Language"
-msgstr ""
+msgstr "Språk"
 
 #: src/pages/settings/sync.vue:30
 msgid "Last Backup"
@@ -1266,15 +1268,15 @@ msgstr ""
 #: src/dialog/photo/details.vue:291
 #: src/dialog/photo/info.vue:135
 msgid "Latitude"
-msgstr ""
+msgstr "Latitud"
 
 #: src/options/options.js:217
 msgid "Lavender"
-msgstr ""
+msgstr "Lavendel"
 
 #: src/dialog/photo/details.vue:403
 msgid "Lens"
-msgstr ""
+msgstr "Objektiv"
 
 #: src/app/routes.js:293
 #: src/app/routes.js:300
@@ -1286,39 +1288,39 @@ msgstr ""
 #: src/pages/settings.vue:41
 #: src/pages/settings/general.vue:404
 msgid "Library"
-msgstr ""
+msgstr "Bibliotek"
 
 #: src/component/navigation.vue:414
 #: src/component/navigation.vue:43
 #: src/dialog/photo/details.vue:544
 #: src/pages/about/license.vue:4
 msgid "License"
-msgstr ""
+msgstr "Licens"
 
 #: src/component/photo/viewer.vue:147
 msgid "Like"
-msgstr ""
+msgstr "Som"
 
 #: src/options/options.js:340
 msgid "Lime"
-msgstr ""
+msgstr "Lime"
 
 #: src/pages/library/files.vue:307
 msgid "Limit reached, showing first %{n} files"
-msgstr ""
+msgstr "Gränsen är nådd, visar de första %{n} filerna"
 
 #: src/options/options.js:364
 msgid "Linear: Very Smooth, Best Performance"
-msgstr ""
+msgstr "Linjär: Mycket jämn, bästa prestanda"
 
 #: src/model/link.js:115
 msgid "Link"
-msgstr ""
+msgstr "Länk"
 
 #: src/component/album/toolbar.vue:42
 #: src/component/photo/toolbar.vue:38
 msgid "List"
-msgstr ""
+msgstr "Lista"
 
 #: src/app/routes.js:182
 #: src/component/navigation.vue:189
@@ -1330,16 +1332,16 @@ msgstr ""
 #: src/share/photo/list.vue:165
 #: src/share/photo/mosaic.vue:171
 msgid "Live"
-msgstr ""
+msgstr "Live"
 
 #: src/dialog/photo/details.vue:189
 #: src/options/options.js:10
 msgid "Local Time"
-msgstr ""
+msgstr "Lokal tid"
 
 #: src/dialog/photo/labels.vue:39
 msgid "location"
-msgstr ""
+msgstr "plats"
 
 #: src/component/photo/cards.vue:32
 #: src/component/photo/list.vue:47
@@ -1347,75 +1349,77 @@ msgstr ""
 #: src/share/photo/cards.vue:32
 #: src/share/photo/list.vue:43
 msgid "Location"
-msgstr ""
+msgstr "Plats"
 
 #: src/pages/library/errors.vue:34
 #: src/pages/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr ""
+"Loggmeddelanden visas här när PhotoPrism stöter på trasiga filer eller när "
+"det finns andra potentiella problem."
 
 #: src/component/navigation.vue:428
 #: src/component/navigation.vue:1570
 msgid "Login"
-msgstr ""
+msgstr "Logga in"
 
 #: src/component/navigation.vue:475
 #: src/component/navigation.vue:1680
 #: src/component/navigation.vue:1711
 msgid "Logout"
-msgstr ""
+msgstr "Logga ut"
 
 #: src/pages/library.vue:55
 #: src/pages/settings/general.vue:426
 msgid "Logs"
-msgstr ""
+msgstr "Loggar"
 
 #: src/dialog/photo/details.vue:315
 #: src/dialog/photo/info.vue:143
 msgid "Longitude"
-msgstr ""
+msgstr "Longitud"
 
 #: src/options/options.js:334
 msgid "Magenta"
-msgstr ""
+msgstr "Magenta"
 
 #: src/dialog/photo/files.vue:151
 #: src/dialog/photo/files.vue:148
 msgid "Main Color"
-msgstr ""
+msgstr "Huvudfärg"
 
 #: src/dialog/photo/labels.vue:35
 msgid "manual"
-msgstr ""
+msgstr "manuellt"
 
 #: src/dialog/account/edit.vue:51
 msgid "Manual Upload"
-msgstr ""
+msgstr "Manuell uppladdning"
 
 #: src/model/marker.js:137
 msgid "Marker"
-msgstr ""
+msgstr "Markering"
 
 #: src/options/options.js:257
 msgid "Medium"
-msgstr ""
+msgstr "Medium"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
-msgstr ""
+msgstr "Slå ihop %{a} med %{b}?"
 
 #: src/pages/about/feedback.vue:27
 msgid "Message sent"
-msgstr ""
+msgstr "Meddelande skickat"
 
 #: src/component/navigation.vue:232
 msgid "Minimize"
-msgstr ""
+msgstr "Minimera"
 
 #: src/dialog/photo/files.vue:163
 #: src/dialog/photo/files.vue:160
 msgid "Missing"
-msgstr ""
+msgstr "Saknas"
 
 #: src/app/routes.js:116
 #: src/app/routes.js:123
@@ -1423,54 +1427,54 @@ msgstr ""
 #: src/component/navigation.vue:889
 #: src/pages/settings/general.vue:360
 msgid "Moments"
-msgstr ""
+msgstr "Stunder"
 
 #: src/component/navigation.vue:82
 msgid "Monochrome"
-msgstr ""
+msgstr "Monokrom"
 
 #: src/component/photo/toolbar.vue:302
 #: src/dialog/photo/details.vue:142
 msgid "Month"
-msgstr ""
+msgstr "Månad"
 
 #: src/options/options.js:202
 msgid "Moonlight"
-msgstr ""
+msgstr "Månsken"
 
 #: src/pages/album/photos.vue:341
 #: src/pages/photos.vue:379
 #: src/share/photos.vue:356
 msgid "More than %{n} pictures found"
-msgstr ""
+msgstr "Mer än %{n} bilder hittades"
 
 #: src/pages/albums.vue:345
 #: src/share/albums.vue:306
 msgid "More than 20 albums found"
-msgstr ""
+msgstr "Mer än 20 album hittades"
 
 #: src/pages/labels.vue:342
 msgid "More than 20 labels found"
-msgstr ""
+msgstr "Mer än 20 etiketter hittades"
 
 #: src/pages/people/subjects.vue:438
 msgid "More than 20 people found"
-msgstr ""
+msgstr "Mer än 20 personer hittades"
 
 #: src/component/album/toolbar.vue:40
 #: src/component/photo/toolbar.vue:36
 msgid "Mosaic"
-msgstr ""
+msgstr "Mosaik"
 
 #: src/component/album/toolbar.vue:53
 #: src/component/photo/toolbar.vue:47
 #: src/dialog/album/edit.vue:24
 msgid "Most relevant"
-msgstr ""
+msgstr "Mest relevant"
 
 #: src/pages/library/import.vue:132
 msgid "Move Files"
-msgstr ""
+msgstr "Flytta filer"
 
 #: src/component/photo/cards.vue:39
 #: src/component/photo/list.vue:47
@@ -1495,7 +1499,7 @@ msgstr ""
 #: src/share/photo/list.vue:43
 #: src/share/photo/list.vue:214
 msgid "Name"
-msgstr ""
+msgstr "Namn"
 
 #: src/component/album/toolbar.vue:61
 #: src/dialog/album/edit.vue:27
@@ -1506,27 +1510,27 @@ msgstr ""
 #: src/pages/people/faces.vue:45
 #: src/pages/people/subjects.vue:43
 msgid "Name too long"
-msgstr ""
+msgstr "Namnet är för långt"
 
 #: src/options/options.js:312
 #: src/options/options.js:322
 #: src/pages/settings/sync.vue:50
 msgid "Never"
-msgstr ""
+msgstr "Aldrig"
 
 #: src/pages/people.vue:26
 msgid "New"
-msgstr ""
+msgstr "Ny"
 
 #: src/pages/settings/account.vue:81
 msgid "New Password"
-msgstr ""
+msgstr "Nytt lösenord"
 
 #: src/component/album/toolbar.vue:49
 #: src/component/photo/toolbar.vue:43
 #: src/dialog/album/edit.vue:20
 msgid "Newest first"
-msgstr ""
+msgstr "Nyaste först"
 
 #: src/dialog/people/merge.vue:15
 #: src/dialog/photo/archive.vue:15
@@ -1536,20 +1540,20 @@ msgstr ""
 #: src/dialog/photo/info.vue:348
 #: src/dialog/photo/info.vue:368
 msgid "No"
-msgstr ""
+msgstr "Ingen"
 
 #: src/pages/albums.vue:35
 #: src/pages/albums.vue:338
 #: src/share/albums.vue:18
 #: src/share/albums.vue:299
 msgid "No albums found"
-msgstr ""
+msgstr "Inga album hittades"
 
 #: src/dialog/photo/labels.vue:33
 #: src/pages/labels.vue:31
 #: src/pages/labels.vue:335
 msgid "No labels found"
-msgstr ""
+msgstr "Inga etiketter hittades"
 
 #: src/dialog/photo/people.vue:5
 #: src/pages/people/faces.vue:30
@@ -1558,7 +1562,7 @@ msgstr ""
 #: src/pages/people/subjects.vue:33
 #: src/pages/people/subjects.vue:431
 msgid "No people found"
-msgstr ""
+msgstr "Inga personer hittades"
 
 #: src/component/photo/cards.vue:7
 #: src/component/photo/list.vue:8
@@ -1573,7 +1577,7 @@ msgstr ""
 #: src/share/photo/mosaic.vue:7
 #: src/share/photos.vue:349
 msgid "No pictures found"
-msgstr ""
+msgstr "Inga bilder hittades"
 
 #: src/component/photo/cards.vue:4
 #: src/component/photo/list.vue:5
@@ -1582,25 +1586,27 @@ msgstr ""
 #: src/share/photo/list.vue:5
 #: src/share/photo/mosaic.vue:4
 msgid "No recently edited pictures"
-msgstr ""
+msgstr "Inga nyligen redigerade bilder"
 
 #: src/pages/settings/sync.vue:47
 msgid "No servers configured."
-msgstr ""
+msgstr "Inga servrar har konfigurerats."
 
 #: src/dialog/sponsor.vue:31
 msgid "No thanks"
-msgstr ""
+msgstr "Nej tack"
 
 #: src/component/photo/viewer.vue:94
 #: src/dialog/video/viewer.vue:55
 msgid "No video selected"
-msgstr ""
+msgstr "Ingen video vald"
 
 #: src/pages/library/errors.vue:31
 #: src/pages/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr ""
+"Inga varningar eller fel som innehåller detta nyckelord. Observera att "
+"sökningen är skiftlägeskänslig."
 
 #: src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:1
@@ -1613,22 +1619,26 @@ msgstr ""
 #: src/pages/settings/library.vue:93
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
+"Bilder som inte är fotografiska eller av låg kvalitet måste granskas innan "
+"de visas i sökresultaten."
 
 #: src/options/options.js:249
 msgid "None"
-msgstr ""
+msgstr "Ingen"
 
 #: src/model/thumb.js:69
 msgid "Not Found"
-msgstr ""
+msgstr "Ej hittad"
 
 #: src/pages/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr ""
+"Observera att du kan hantera mappen med original manuellt och att import är "
+"valfritt."
 
 #: src/pages/settings/sync.vue:34
 msgid "Note:"
-msgstr ""
+msgstr "Observera:"
 
 #: src/dialog/account/add.vue:22
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
