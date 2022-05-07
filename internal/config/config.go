@@ -293,10 +293,6 @@ func (c *Config) SerialChecksum() string {
 
 // Name returns the application name ("PhotoPrism").
 func (c *Config) Name() string {
-	if c.Sponsor() && c.options.Name == "PhotoPrism" {
-		c.options.Name = "PhotoPrism+"
-	}
-
 	return c.options.Name
 }
 

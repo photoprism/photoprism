@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-03-15 14:35+0000\n"
+"PO-Revision-Date: 2022-05-03 13:06+0000\n"
 "Last-Translator: Joaquim Homrighausen <joho@boojam.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "backend/sv/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.12.1\n"
 
 #: messages.go:83
 msgid "Unexpected error, please try again"
@@ -274,7 +274,7 @@ msgstr ""
 
 #: messages.go:145
 msgid "Labels deleted"
-msgstr ""
+msgstr "Etiketter raderade"
 
 #: messages.go:146
 msgid "Label saved"

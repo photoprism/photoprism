@@ -60,7 +60,7 @@ msgstr ""
 #: src/component/navigation.vue:406
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:191
+#: src/pages/about/about.vue:180
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""

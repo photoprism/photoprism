@@ -229,6 +229,7 @@ func TestAccount_Update(t *testing.T) {
 	})
 }
 
+//TODO fails on mariadb
 func TestAccount_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		account := Account{AccName: "DeleteAccount", AccOwner: "Delete", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",

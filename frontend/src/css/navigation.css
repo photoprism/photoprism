@@ -8,6 +8,10 @@
     background: transparent;
 }
 
+nav .v-list__tile__title.title {
+    line-height: normal!important;
+}
+
 #p-navigation .nav-title {
     text-align: left;
     -webkit-box-flex: 1!important;
@@ -16,6 +20,7 @@
     margin-left: 10px;
     margin-right: 10px;
     max-height: 100%;
+    line-height: normal!important;
 }
 
 #p-navigation .nav-count {

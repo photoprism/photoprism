@@ -44,7 +44,7 @@
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title">
-                {{ config.name }}
+                {{ config.name }}<sup v-if="isSponsor">+</sup>
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
@@ -543,12 +543,17 @@ export default {
     }
   },
   data() {
+    const name = this.$config.get("name");
+    const isSponsor = name === "PhotoPrism" && this.$config.isSponsor();
+
     return {
+      name: this.$config.get("name"),
       drawer: null,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false',
       isPublic: this.$config.get("public"),
       isTest: this.$config.test,
       isReadOnly: this.$config.get("readonly"),
+      isSponsor: isSponsor,
       session: this.$session,
       config: this.$config.values,
       page: this.$config.page,

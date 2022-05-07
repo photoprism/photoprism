@@ -213,6 +213,8 @@ func TestSubject_Update(t *testing.T) {
 	})
 
 }
+
+//TODO fails on mariadb
 func TestSubject_Updates(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		m := NewSubject("Update Me", SubjPerson, SrcAuto)

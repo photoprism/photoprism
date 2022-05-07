@@ -54,8 +54,8 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.7
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
-	golang.org/x/net v0.0.0-20220421235706-1d1ef9303861
+	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f
+	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4
 	golang.org/x/sys v0.0.0-20220330033206-e17cdc41300f // indirect
 	gonum.org/v1/gonum v0.11.0
 	google.golang.org/protobuf v1.28.0 // indirect

@@ -2,7 +2,7 @@
   <div class="p-page p-page-about">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <translate>About</translate> {{ $config.get('name') }}
+        <translate>About</translate>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -87,11 +87,11 @@
       </p>
 
       <p class="caption mt-4 text-xs-center">
+        PhotoPrism® is a <a href="https://photoprism.app/trademark" target="_blank" class="text-link">registered trademark</a>.
         By using the software and services we provide, you agree to our
         <a href="https://photoprism.app/terms" target="_blank" class="text-link">Terms of Service</a>,
         <a href="https://photoprism.app/privacy" target="_blank" class="text-link">Privacy Policy</a>, and
         <a href="https://photoprism.app/code-of-conduct" target="_blank" class="text-link">Code of Conduct</a>.
-        PhotoPrism® is a <a href="https://photoprism.app/trademark" target="_blank" class="text-link">registered trademark</a>.
       </p>
     </v-container>
     <p-about-footer></p-about-footer>
