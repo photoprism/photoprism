@@ -29,10 +29,9 @@
 
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
                 style="user-select: none; aspect-ratio: 1"
-                class="accent lighten-2 result"
-                :class="photo.classes()"/>
-        <v-card tile
-                v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
+                class="accent lighten-2 result"/>
+        <v-card v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
+                tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 style="user-select: none; aspect-ratio: 1"
@@ -61,20 +60,22 @@
               </video>
             </v-layout>
 
-            <v-btn :ripple="false" :depressed="false" class="input-open"
+            <v-btn v-if="photo.type !== 'image' || photo.Files.length > 1"
+                   :ripple="false" :depressed="false" class="input-open"
                    icon flat small absolute
                    @touchstart.stop.prevent="input.touchStart($event, index)"
                    @touchend.stop.prevent="onOpen($event, index, true)"
                    @touchmove.stop.prevent
                    @click.stop.prevent="onOpen($event, index, true)">
-              <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
-              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
-              <v-icon color="white" class="default-hidden action-animated" :title="$gettext('Animated')">gif</v-icon>
-              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
-              <v-icon color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
+              <v-icon v-if="photo.type === 'raw'" color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
+              <v-icon v-if="photo.type === 'live'" color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon v-if="photo.type === 'animated'" color="white" class="default-hidden action-animated" :title="$gettext('Animated')">gif</v-icon>
+              <v-icon v-if="photo.type === 'video'" color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
+              <v-icon v-if="photo.Type === 'image'" color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
             </v-btn>
 
-            <v-btn :ripple="false" :depressed="false" class="input-view"
+            <v-btn v-if="photo.Type === 'image' && selectMode"
+                   :ripple="false" :depressed="false" class="input-view"
                    icon flat small absolute :title="$gettext('View')"
                    @touchstart.stop.prevent="input.touchStart($event, index)"
                    @touchend.stop.prevent="onOpen($event, index, false)"
@@ -92,21 +93,22 @@
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
 
-            <v-btn v-if="hidePrivate" :ripple="false"
+            <v-btn v-if="hidePrivate && photo.Private" :ripple="false"
                    icon flat small absolute
                    class="input-private">
               <v-icon color="white" class="select-on">lock</v-icon>
             </v-btn>
 
-            <v-btn :ripple="false"
+            <v-btn v-if="hover || photo.Selected"
+                   :ripple="false"
                    icon flat small absolute
                    class="input-select"
                    @touchstart.stop.prevent="input.touchStart($event, index)"
                    @touchend.stop.prevent="onSelect($event, index)"
                    @touchmove.stop.prevent
                    @click.stop.prevent="onSelect($event, index)">
-              <v-icon color="white" class="select-on">check_circle</v-icon>
-              <v-icon color="white" class="select-off">radio_button_off</v-icon>
+              <v-icon v-if="photo.Selected" color="white" class="select-on">check_circle</v-icon>
+              <v-icon v-else color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
 
             <v-btn :ripple="false"
