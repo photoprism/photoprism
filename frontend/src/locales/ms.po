@@ -1,9 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"PO-Revision-Date: 2022-05-08 05:48+0000\n"
+"Last-Translator: Engku Fariez <fariez@gmail.com>\n"
 "Language: ms\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.12.1\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/labels.vue:164
@@ -13,25 +18,25 @@ msgstr ""
 #: src/pages/albums.vue:386
 #: src/share/albums.vue:305
 msgid "%{n} albums found"
-msgstr ""
+msgstr "%{n} album ditemui"
 
 #: src/dialog/share/upload.vue:76
 msgid "%{n} files uploaded"
-msgstr ""
+msgstr "%{n} fail dimuat naik"
 
 #: src/pages/library/files.vue:303
 msgid "%{n} folders found"
-msgstr ""
+msgstr "%{n} folder ditemui"
 
 #: src/pages/labels.vue:381
 msgid "%{n} labels found"
-msgstr ""
+msgstr "%{n} label ditemui"
 
 #: src/pages/people/faces.vue:286
 #: src/pages/people/faces.vue:372
 #: src/pages/people/subjects.vue:470
 msgid "%{n} people found"
-msgstr ""
+msgstr "%{n} orang ditemui"
 
 #: src/pages/album/photos.vue:194
 #: src/pages/album/photos.vue:346
@@ -40,23 +45,23 @@ msgstr ""
 #: src/share/photos.vue:209
 #: src/share/photos.vue:354
 msgid "%{n} pictures found"
-msgstr ""
+msgstr "%{n} gambar ditemui"
 
 #: src/options/options.js:384
 msgid "1 hour"
-msgstr ""
+msgstr "1 jam"
 
 #: src/options/options.js:386
 msgid "12 hours"
-msgstr ""
+msgstr "12 jam"
 
 #: src/options/options.js:385
 msgid "4 hours"
-msgstr ""
+msgstr "4 jam"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
-msgstr ""
+msgstr "Satu klik akan menyalinnya ke papan klip anda."
 
 #: src/component/navigation.vue:406
 #: src/component/navigation.vue:27
@@ -64,53 +69,53 @@ msgstr ""
 #: src/pages/about/about.vue:180
 #: src/pages/help.vue:45
 msgid "About"
-msgstr ""
+msgstr "Mengenai"
 
 #: src/options/options.js:217
 msgid "Abyss"
-msgstr ""
+msgstr "Abyss"
 
 #: src/component/navigation.vue:58
 #: src/dialog/share/upload.vue:112
 #: src/model/account.js:98
 #: src/pages/settings.vue:74
 msgid "Account"
-msgstr ""
+msgstr "Akaun"
 
 #: src/dialog/photo/info.vue:159
 msgid "Accuracy"
-msgstr ""
+msgstr "Ketepatan"
 
 #: src/dialog/photo/labels.vue:23
 msgid "Action"
-msgstr ""
+msgstr "Tindakan"
 
 #: src/dialog/photo/files.vue:28
 #: src/dialog/photo/files.vue:25
 msgid "Actions"
-msgstr ""
+msgstr "Tindakan"
 
 #: src/pages/albums.vue:122
 #: src/pages/albums.vue:178
 msgid "Add Album"
-msgstr ""
+msgstr "Tambah Album"
 
 #: src/pages/settings/general.vue:141
 msgid "Add files to your library via Web Upload."
-msgstr ""
+msgstr "Tambahkan fail ke pustaka anda melalui Muat Naik Web."
 
 #: src/dialog/share.vue:91
 msgid "Add Link"
-msgstr ""
+msgstr "Tambah Pautan"
 
 #: src/pages/albums.vue:96
 msgid "Add pictures from search results by selecting them."
-msgstr ""
+msgstr "Tambahkan gambar dengan memilihnya daripada hasil carian."
 
 #: src/dialog/account/add.vue:6
 #: src/pages/settings/sync.vue:47
 msgid "Add Server"
-msgstr ""
+msgstr "Tambah Pelayan"
 
 #: src/component/album/clipboard.vue:136
 #: src/component/file/clipboard.vue:89
@@ -119,58 +124,60 @@ msgstr ""
 #: src/component/subject/clipboard.vue:89
 #: src/dialog/photo/album.vue:20
 msgid "Add to album"
-msgstr ""
+msgstr "Tambah kepada album"
 
 #: src/dialog/photo/files.vue:189
 #: src/dialog/photo/files.vue:186
 msgid "Added"
-msgstr ""
+msgstr "Ditambah"
 
 #: src/pages/settings.vue:52
 msgid "Advanced"
-msgstr ""
+msgstr "Lanjutan"
 
 #: src/options/options.js:394
 msgid "After 1 day"
-msgstr ""
+msgstr "Selepas 1 hari"
 
 #: src/options/options.js:395
 msgid "After 3 days"
-msgstr ""
+msgstr "Selepas 3 hari"
 
 #: src/options/options.js:396
 msgid "After 7 days"
-msgstr ""
+msgstr "Selepas 7 hari"
 
 #: src/options/options.js:398
 msgid "After one month"
-msgstr ""
+msgstr "Selepas sebulan"
 
 #: src/options/options.js:400
 msgid "After one year"
-msgstr ""
+msgstr "Selepas satu tahun"
 
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr ""
+"Selepas memilih gambar daripada hasil carian, anda boleh menambahkannya "
+"kepada album menggunakan menu konteks."
 
 #: src/options/options.js:399
 msgid "After two months"
-msgstr ""
+msgstr "Selepas dua bulan"
 
 #: src/options/options.js:397
 msgid "After two weeks"
-msgstr ""
+msgstr "Selepas dua minggu"
 
 #: src/model/album.js:229
 msgid "Album"
-msgstr ""
+msgstr "Album"
 
 #: src/dialog/photo/album.vue:71
 #: src/dialog/photo/album.vue:79
 msgid "Album Name"
-msgstr ""
+msgstr "Nama Album"
 
 #: src/app/routes.js:129
 #: src/app/routes.js:136
@@ -180,7 +187,7 @@ msgstr ""
 #: src/component/navigation.vue:601
 #: src/share/albums.vue:4
 msgid "Albums"
-msgstr ""
+msgstr "Album"
 
 #: src/component/album/clipboard.vue:77
 msgid "Albums deleted"
@@ -189,20 +196,20 @@ msgstr ""
 #: src/pages/albums.vue:263
 #: src/share/albums.vue:220
 msgid "All %{n} albums loaded"
-msgstr ""
+msgstr "Semua %{n} album telah dimuatkan"
 
 #: src/pages/labels.vue:246
 msgid "All %{n} labels loaded"
-msgstr ""
+msgstr "Semua %{n} label telah dimuatkan"
 
 #: src/pages/people/subjects.vue:333
 msgid "All %{n} people loaded"
-msgstr ""
+msgstr "Semua %{n} orang telah dimuatkan"
 
 #: src/component/album/toolbar.vue:36
 #: src/component/photo/toolbar.vue:36
 msgid "All Cameras"
-msgstr ""
+msgstr "Semua Kamera"
 
 #: src/component/photo/toolbar.vue:39
 #: src/pages/albums.vue:29
@@ -210,60 +217,65 @@ msgstr ""
 #: src/share/albums.vue:27
 #: src/share/albums.vue:410
 msgid "All Categories"
-msgstr ""
+msgstr "Semua Kategori"
 
 #: src/component/photo/toolbar.vue:38
 msgid "All Colors"
-msgstr ""
+msgstr "Semua Warna"
 
 #: src/component/album/toolbar.vue:40
 #: src/component/photo/toolbar.vue:35
 msgid "All Countries"
-msgstr ""
+msgstr "Semua Negara"
 
 #: src/pages/about/feedback.vue:31
 msgid "All fields are required"
-msgstr ""
+msgstr "Semua medan perlu diisikan"
 
 #: src/pages/library/import.vue:12
 msgid "All files from import folder"
-msgstr ""
+msgstr "Semua fail daripada folder import"
 
 #: src/component/photo/toolbar.vue:37
 msgid "All Lenses"
-msgstr ""
+msgstr "Semua Kanta"
 
 #: src/component/photo/toolbar.vue:40
 msgid "All Months"
-msgstr ""
+msgstr "Semua Bulan"
 
 #: src/pages/library/index.vue:12
 msgid "All originals"
-msgstr ""
+msgstr "Semua yang asal"
 
 #: src/component/photo/toolbar.vue:41
 msgid "All Years"
-msgstr ""
+msgstr "Semua Tahun"
 
 #: src/pages/about/about.vue:34
+#, fuzzy
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
 msgstr ""
+"Selanjutnya, sila tinggalkan bintang di GitHub jika anda menyukai projek "
+"ini. Ia akan memberi motivasi tambahan untuk meneruskan."
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
+"Sebagai alternatif, anda boleh memuat naik fail terus ke pelayan WebDAV "
+"seperti Nextcloud."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
-msgstr ""
+msgstr "Ketinggian"
 
 #: src/dialog/photo/details.vue:267
 msgid "Altitude (m)"
-msgstr ""
+msgstr "Ketinggian (m)"
 
 #: src/common/api.js:100
 msgid "An error occurred - are you offline?"
-msgstr ""
+msgstr "Ralat berlaku - adakah capaian anda tergendala?"
 
 #: src/component/navigation.vue:98
 #: src/component/photo/cards.vue:228
@@ -277,29 +289,30 @@ msgstr ""
 #: src/share/photo/list.vue:176
 #: src/share/photo/mosaic.vue:182
 msgid "Animated"
-msgstr ""
+msgstr "Beranimasi"
 
 #: src/pages/settings/general.vue:533
 msgid "Animation"
-msgstr ""
+msgstr "Animasi"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr ""
+"Sebarang foto dan video peribadi kekal peribadi dan tidak akan dikongsi."
 
 #: src/dialog/account/edit.vue:477
 msgid "API Key"
-msgstr ""
+msgstr "Kekunci API"
 
 #: src/dialog/photo/details.vue:117
 msgid "Apply"
-msgstr ""
+msgstr "Gunakan"
 
 #: src/component/photo/cards.vue:458
 #: src/component/photo/clipboard.vue:100
 #: src/dialog/photo/details.vue:116
 msgid "Approve"
-msgstr ""
+msgstr "Terima"
 
 #: src/app/routes.js:210
 #: src/component/navigation.vue:131
@@ -307,109 +320,119 @@ msgstr ""
 #: src/component/photo/clipboard.vue:216
 #: src/pages/settings/general.vue:294
 msgid "Archive"
-msgstr ""
+msgstr "Arkib"
 
 #: src/dialog/photo/info.vue:199
 msgid "Archived"
-msgstr ""
+msgstr "Diarkibkan"
 
 #: src/dialog/photo/archive.vue:10
 msgid "Are you sure you want to archive the selection?"
-msgstr ""
+msgstr "Adakah anda pasti mahu mengarkibkan pemilihan?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
-msgstr ""
+msgstr "Adakah anda pasti mahu memadamkan album ini?"
 
 #: src/dialog/label/delete.vue:10
 msgid "Are you sure you want to delete these labels?"
-msgstr ""
+msgstr "Adakah anda pasti mahu memadamkan label ini?"
 
 #: src/dialog/account/remove.vue:10
 msgid "Are you sure you want to delete this account?"
-msgstr ""
+msgstr "Adakah anda pasti mahu memadamkan akaun ini?"
 
 #: src/dialog/photo/delete.vue:10
 msgid "Are you sure you want to permanently delete these pictures?"
-msgstr ""
+msgstr "Adakah anda pasti mahu memadamkan gambar ini secara kekal?"
 
 #: src/dialog/file/delete.vue:10
 msgid "Are you sure you want to permanently delete this file?"
-msgstr ""
+msgstr "Adakah anda pasti mahu memadamkan fail ini secara kekal?"
 
 #: src/dialog/confirm.vue:10
 msgid "Are you sure?"
-msgstr ""
+msgstr "Adakah anda pasti?"
 
 #: src/dialog/photo/details.vue:497
 msgid "Artist"
-msgstr ""
+msgstr "Artis"
 
 #: src/dialog/photo/files.vue:149
 #: src/dialog/photo/files.vue:146
 msgid "Aspect Ratio"
-msgstr ""
+msgstr "Nisbah aspek"
 
 #: src/pages/settings/library.vue:114
+#, fuzzy
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr ""
+"Hasilkan JPEG secara automatik untuk fail jenis lain supaya ia boleh "
+"dipaparkan dalam pelayar."
 
 #: src/pages/settings/general.vue:361
+#, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr ""
+"Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara "
+"automatik."
 
 #: src/dialog/sponsor.vue:7
 #: src/pages/about/about.vue:23
 #: src/pages/auth/login.vue:44
 msgid "Become a sponsor"
-msgstr ""
+msgstr "Jadi penaja"
 
 #: src/pages/about/about.vue:42
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr ""
+"Sebelum menghantar permintaan sokongan, sila gunakan Senarai Semak "
+"Penyelesaian Masalah (Troubleshooting Checklists) kami untuk cuba mengenal "
+"pasti punca masalah anda."
 
 #: src/pages/people/subjects.vue:433
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: src/options/options.js:419
 msgid "Black"
-msgstr ""
+msgstr "Hitam"
 
 #: src/options/options.js:432
+#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr ""
+msgstr "Blackman: Modifikasi Lanczos, Kurang Artifak Deringan"
 
 #: src/options/options.js:415
 msgid "Blue"
-msgstr ""
+msgstr "Biru"
 
 #: src/options/options.js:416
 msgid "Brown"
-msgstr ""
+msgstr "Coklat"
 
 #: src/pages/settings/general.vue:383
 msgid "Browse and edit image classification labels."
-msgstr ""
+msgstr "Semak imbas dan kemaskini label klasifikasi imej."
 
 #: src/pages/settings/general.vue:317
 msgid "Browse indexed files and folders in Library."
-msgstr ""
+msgstr "Semak imbas fail dan folder yang telah diindeks dalam Perpustakaan."
 
 #: src/options/options.js:426
 msgid "Bug Report"
-msgstr ""
+msgstr "Laporan Pepijat"
 
 #: src/common/notify.js:94
 msgid "Busy, please wait…"
-msgstr ""
+msgstr "Tengah sibuk, sila tunggu…"
 
 #: src/app/routes.js:142
 #: src/app/routes.js:149
 #: src/component/navigation.vue:250
 #: src/component/navigation.vue:963
 msgid "Calendar"
-msgstr ""
+msgstr "Kalendar"
 
 #: src/component/photo/cards.vue:557
 #: src/component/photo/list.vue:57
@@ -418,11 +441,11 @@ msgstr ""
 #: src/share/photo/cards.vue:388
 #: src/share/photo/list.vue:53
 msgid "Camera"
-msgstr ""
+msgstr "Kamera"
 
 #: src/dialog/photo/info.vue:79
 msgid "Camera Serial"
-msgstr ""
+msgstr "Siri Kamera"
 
 #: src/pages/album/photos.vue:200
 #: src/pages/photos.vue:247
@@ -463,23 +486,23 @@ msgstr ""
 #: src/pages/library/import.vue:34
 #: src/pages/library/index.vue:27
 msgid "Cancel"
-msgstr ""
+msgstr "Batal"
 
 #: src/component/album/toolbar.vue:51
 #: src/component/photo/toolbar.vue:46
 msgid "Cards"
-msgstr ""
+msgstr "Kad"
 
 #: src/component/photo/toolbar.vue:344
 #: src/dialog/album/edit.vue:162
 #: src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:129
 msgid "Category"
-msgstr ""
+msgstr "Kategori"
 
 #: src/pages/settings/account.vue:26
 msgid "Change"
-msgstr ""
+msgstr "Ubah"
 
 #: src/pages/settings/general.vue:185
 msgid "Change photo titles, locations, and other metadata."
