@@ -181,17 +181,21 @@ export class Photo extends RestModel {
   }
 
   classes() {
+    return this.generateClasses(this.isPlayable(), Clipboard.has(this), this.Portrait, this.Favorite, this.Private, this.Files.length > 1)
+  }
+
+  generateClasses = memoizeOne((isPlayable, isInClipboard, portrait, favorite, isPrivate, hasMultipleFiles) => {
     let classes = ["is-photo", "uid-" + this.UID, "type-" + this.Type];
 
-    if (this.isPlayable()) classes.push("is-playable");
-    if (Clipboard.has(this)) classes.push("is-selected");
-    if (this.Portrait) classes.push("is-portrait");
-    if (this.Favorite) classes.push("is-favorite");
-    if (this.Private) classes.push("is-private");
-    if (this.Files.length > 1) classes.push("is-stack");
+    if (isPlayable) classes.push("is-playable");
+    if (isInClipboard) classes.push("is-selected");
+    if (portrait) classes.push("is-portrait");
+    if (favorite) classes.push("is-favorite");
+    if (isPrivate) classes.push("is-private");
+    if (hasMultipleFiles) classes.push("is-stack");
 
     return classes;
-  }
+  })
 
   localDayString() {
     if (!this.TakenAtLocal) {
@@ -358,14 +362,18 @@ export class Photo extends RestModel {
   }
 
   isPlayable() {
-    if (this.Type === MediaAnimated) {
+    return this.generateIsPlayable(this.Type, this.Files);
+  }
+
+  generateIsPlayable = memoizeOne((type, files) => {
+    if (type === MediaAnimated) {
       return true;
-    } else if (!this.Files) {
+    } else if (!files) {
       return false;
     }
 
-    return this.Files.findIndex((f) => f.Video) !== -1;
-  }
+    return files.some((f) => f.Video);
+  })
 
   videoParams() {
     const uri = this.videoUrl();
@@ -492,18 +500,20 @@ export class Photo extends RestModel {
   }
 
   mainFileHash() {
-    if (this.Files) {
-      let file = this.mainFile();
+    return this.generateMainFileHash(this.mainFile(), this.Hash);
+  }
 
-      if (file && file.Hash) {
-        return file.Hash;
+  generateMainFileHash = memoizeOne((mainFile, hash) => {
+    if (this.Files) {
+      if (mainFile && mainFile.Hash) {
+        return mainFile.Hash;
       }
-    } else if (this.Hash) {
-      return this.Hash;
+    } else if (hash) {
+      return hash;
     }
 
     return "";
-  }
+  });
 
   fileModels() {
     let result = [];
@@ -530,20 +540,22 @@ export class Photo extends RestModel {
   }
 
   thumbnailUrl(size) {
-    let hash = this.mainFileHash();
+    return this.generateThumbnailUrl(this.mainFileHash(), this.videoFile(), config.contentUri, config.previewToken(), size);
+  }
+
+  generateThumbnailUrl = memoizeOne((mainFileHash, videoFile, contentUri, previewToken, size) => {
+    let hash = mainFileHash;
 
     if (!hash) {
-      let video = this.videoFile();
-
-      if (video && video.Hash) {
-        return `${config.contentUri}/t/${video.Hash}/${config.previewToken()}/${size}`;
+      if (videoFile && videoFile.Hash) {
+        return `${contentUri}/t/${videoFile.Hash}/${previewToken}/${size}`;
       }
 
-      return `${config.contentUri}/svg/photo`;
+      return `${contentUri}/svg/photo`;
     }
 
-    return `${config.contentUri}/t/${hash}/${config.previewToken()}/${size}`;
-  }
+    return `${contentUri}/t/${hash}/${previewToken}/${size}`;
+  })
 
   getDownloadUrl() {
     return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken()}`;
