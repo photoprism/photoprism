@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-03 13:06+0000\n"
+"PO-Revision-Date: 2022-05-09 12:48+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "frontend/fr/>\n"
@@ -470,8 +470,9 @@ msgid "Chinese Traditional"
 msgstr "Chinois traditionnel"
 
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
+#, fuzzy
 msgid "Chroma"
-msgstr "Chrominance"
+msgstr "Saturation"
 
 #: src/component/photo/viewer.vue:79 src/dialog/photo/details.vue:113
 #: src/dialog/share.vue:87 src/pages/library/errors.vue:58

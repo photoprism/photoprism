@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-08 05:48+0000\n"
+"PO-Revision-Date: 2022-05-09 12:48+0000\n"
 "Last-Translator: Engku Fariez <fariez@gmail.com>\n"
 "Language: ms\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -506,7 +506,7 @@ msgstr "Ubah"
 
 #: src/pages/settings/general.vue:185
 msgid "Change photo titles, locations, and other metadata."
-msgstr ""
+msgstr "Tukar tajuk foto, lokasi dan metadata lain."
 
 #: src/component/photo/clipboard.vue:146
 msgid "Change private flag"
@@ -526,25 +526,25 @@ msgstr ""
 #: src/dialog/share.vue:87
 #: src/pages/library/errors.vue:60
 msgid "Close"
-msgstr ""
+msgstr "Tutup"
 
 #: src/dialog/photo/files.vue:95
 #: src/dialog/photo/files.vue:92
 msgid "Codec"
-msgstr ""
+msgstr "Codec"
 
 #: src/component/photo/toolbar.vue:321
 msgid "Color"
-msgstr ""
+msgstr "Warna"
 
 #: src/dialog/photo/files.vue:163
 #: src/dialog/photo/files.vue:160
 msgid "Color Profile"
-msgstr ""
+msgstr "Profil Warna"
 
 #: src/pages/discover.vue:4
 msgid "Colors"
-msgstr ""
+msgstr "Warna"
 
 #: src/pages/library/index.vue:123
 msgid "Complete Rescan"
@@ -565,23 +565,23 @@ msgstr ""
 
 #: src/pages/about/feedback.vue:7
 msgid "Contact Us"
-msgstr ""
+msgstr "Hubungi Kami"
 
 #: src/pages/albums.vue:93
 #: src/pages/labels.vue:74
 #: src/pages/people/subjects.vue:85
 msgid "Contains %{n} pictures."
-msgstr ""
+msgstr "Mengandungi %{n} gambar."
 
 #: src/pages/albums.vue:90
 #: src/pages/labels.vue:71
 #: src/pages/people/subjects.vue:82
 msgid "Contains one picture."
-msgstr ""
+msgstr "Mengandungi satu gambar."
 
 #: src/pages/settings/library.vue:113
 msgid "Convert to JPEG"
-msgstr ""
+msgstr "Tukar kepada JPEG"
 
 #: src/pages/library/index.vue:163
 msgid "Converting"
@@ -594,7 +594,7 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:520
 msgid "Copyright"
-msgstr ""
+msgstr "Hak Cipta"
 
 #: src/component/photo/list.vue:38
 #: src/share/photo/list.vue:38
@@ -608,7 +608,7 @@ msgstr ""
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
-msgstr ""
+msgstr "Buat album"
 
 #: src/dialog/photo/info.vue:167
 msgid "Created"
@@ -620,11 +620,11 @@ msgstr ""
 
 #: src/options/options.js:434
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr ""
+msgstr "Cubic: Kualiti Sederhana, Prestasi Baik"
 
 #: src/pages/settings/account.vue:57
 msgid "Current Password"
-msgstr ""
+msgstr "Kata Laluan Semasa"
 
 #: src/options/options.js:423
 msgid "Customer Support"
@@ -640,11 +640,11 @@ msgstr ""
 
 #: src/options/options.js:387
 msgid "Daily"
-msgstr ""
+msgstr "Setiap hari"
 
 #: src/dialog/photo/details.vue:118
 msgid "Day"
-msgstr ""
+msgstr "Hari"
 
 #: src/pages/settings/advanced.vue:77
 msgid "Debug Logs"
@@ -673,7 +673,7 @@ msgstr ""
 #: src/pages/library/errors.vue:94
 #: src/pages/settings/general.vue:206
 msgid "Delete"
-msgstr ""
+msgstr "Padam"
 
 #: src/component/photo/cards.vue:502
 #: src/dialog/album/edit.vue:142
