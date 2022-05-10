@@ -24,10 +24,11 @@
           ref="items"
           :key="photo.ID"
           :data-index="index"
+          style="width: min-content"
           xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
       >
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
-                style="user-select: none; width: min-content"
+                style="user-select: none"
                 class="accent lighten-3 result"
         >
           <div class="accent lighten-2" style="aspect-ratio: 1" />
