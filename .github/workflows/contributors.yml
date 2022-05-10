@@ -15,9 +15,3 @@ jobs:
           commitMessage: 'CI: Update contributors.svg'
           svgPath: 'assets/static/img/contributors.svg'
           affiliation: 'all'
-          svgWidth: 1024
-          avatarSize: 60
-          avatarMargin: 4
-          count: 9999
-          round: false
-          sort: true
