@@ -14,7 +14,7 @@ import (
 var ShowTagsCommand = cli.Command{
 	Name:    "tags",
 	Aliases: []string{"metadata"},
-	Usage:   "Shows an overview of the supported metadata tags",
+	Usage:   "Displays supported metadata tags and standards",
 	Flags: append(report.CliFlags, cli.BoolFlag{
 		Name:  "short, s",
 		Usage: "hide links to documentation",

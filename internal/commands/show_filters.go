@@ -14,7 +14,7 @@ import (
 var ShowFiltersCommand = cli.Command{
 	Name:    "filters",
 	Aliases: []string{"search"},
-	Usage:   "Displays a search filter overview with examples",
+	Usage:   "Displays supported search filters with examples",
 	Flags:   report.CliFlags,
 	Action:  showFiltersAction,
 }
