@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: wow-actions/contributors-list@v1
         with:
-          GITHUB_TOKEN: ${{ secrets.CONTRIB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SVG_TOKEN }}
           svgPath: 'assets/static/img/contributors.svg'
           svgWidth: 800
           avatarSize: 35
