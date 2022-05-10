@@ -12,11 +12,8 @@ jobs:
       - uses: wow-actions/contributors-list@v1
         with:
           GITHUB_TOKEN: ${{ secrets.SVG_TOKEN }}
+          commitMessage: 'CI: Update contributors.svg'
           svgPath: 'assets/static/img/contributors.svg'
-          svgWidth: 800
-          avatarSize: 35
-          avatarMargin: 5
           affiliation: 'all'
           round: false
           sort: true
-          commitMessage: 'CI: Update contributors.svg'
