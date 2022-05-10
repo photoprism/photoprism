@@ -1,8 +1,8 @@
 # PhotoPrism® Code of Conduct
 
-By using the software and services we provide, you agree to our [Terms of Service](https://photoprism.app/terms), including our [Privacy Policy](https://photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with other community members.
+**By using the software and services we provide, you agree to our [Terms of Service](https://photoprism.app/terms), including our [Privacy Policy](https://photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with other community members.**
 
-*Last Updated: April 27, 2022*
+*Last Updated: May 10, 2022*
 
 ## Rules
 
@@ -22,11 +22,9 @@ The following non-exhaustive list provides specific guidelines and examples:
 
 (b) Do not feel entitled to free software, support, or advice if you are **not** a [contributor](https://docs.photoprism.app/developer-guide/), [sponsor](https://docs.photoprism.app/funding/), or paying customer.
 
-(c) If you have a general question or need help installing our software, do **not** use GitHub Issues. You can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions) instead.
+(c) [Read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening invalid bug reports, starting a public "shitstorm" or insulting other community members in our chat rooms. Aside from being annoying for everyone, it also keeps our team from working on features and improvements that users like you are waiting for.
 
-(d) [Read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening invalid bug reports, starting a public "shitstorm" or insulting other community members in our chat rooms. Aside from being annoying for everyone, it also keeps our team from working on features and improvements that users like you are waiting for. We kindly ask you not to report bugs unless you are certain to have found a fully reproducible and previously unreported problem that must be fixed directly in the app.
-
-(e) If you are having a bad day and want to offend someone, please go somewhere else.
+(d) If you are having a bad day and want to offend someone, please go somewhere else.
 
 ## Reporting
 
@@ -34,6 +32,6 @@ We encourage all community members to resolve problems on their own whenever pos
 
 ## Enforcement
 
-(a) Violations may be punished with a [snarky](https://www.merriam-webster.com/dictionary/snarky) comment and finally a "Plonk", which means that we ignore you according to (3).
+Violations may be punished with a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky) and finally a **\*plonk\***[^1], meaning you will be ignored according to **Rule &#35;3**.
 
-(b) Plonk stands for the metaphorical sound of a user hitting the bottom of the kill file. It was first used in [Usenet forums](https://en.everybodywiki.com/Plonk_(Usenet)), a precursor to the Web.
+[^1]: Plonk stands for the metaphorical sound of a user hitting the bottom of the kill file. It was first used in [Usenet forums](https://en.everybodywiki.com/Plonk_(Usenet)), a worldwide distributed discussion system and precursor to the Web.
