@@ -27,7 +27,7 @@
           xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
       >
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
-                style="user-select: none"
+                style="user-select: none; width: min-content"
                 class="accent lighten-3 result"
                 :class="photo.classes()"
         >
@@ -64,8 +64,8 @@
             </div>
           </div>
         </div>
-        <v-card tile
-                v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
+        <v-card v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
+                tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 style="user-select: none"
