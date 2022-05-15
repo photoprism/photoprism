@@ -14,7 +14,7 @@ import (
 var ShowFormatsCommand = cli.Command{
 	Name:    "formats",
 	Aliases: []string{"filetypes"},
-	Usage:   "Lists supported media and sidecar file formats",
+	Usage:   "Displays supported media and sidecar file formats",
 	Flags: append(report.CliFlags, cli.BoolFlag{
 		Name:  "short, s",
 		Usage: "hide format descriptions",
