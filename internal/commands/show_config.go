@@ -13,7 +13,7 @@ import (
 // ShowConfigCommand configures the command name, flags, and action.
 var ShowConfigCommand = cli.Command{
 	Name:   "config",
-	Usage:  "Shows global config option names and values",
+	Usage:  "Displays global config options and their current values",
 	Flags:  report.CliFlags,
 	Action: showConfigAction,
 }

@@ -10,16 +10,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
-// ShowFlagsCommand configures the command name, flags, and action.
-var ShowFlagsCommand = cli.Command{
-	Name:   "flags",
-	Usage:  "Shows environment variable command-line parameter names",
-	Flags:  report.CliFlags,
-	Action: showFlagsAction,
+// ShowOptionsCommand configures the command name, flags, and action.
+var ShowOptionsCommand = cli.Command{
+	Name:    "options",
+	Aliases: []string{"flags"},
+	Usage:   "Displays supported config flags and variable names",
+	Flags:   report.CliFlags,
+	Action:  showOptionsAction,
 }
 
-var faceFlagsInfo = `!!! info ""    
-    To [recognize faces](../user-guide/organize/people.md), PhotoPrism first extracts crops from your images using a
+var faceOptionsInfo = `!!! info ""    
+    To [recognize faces](https://docs.photoprism.app/user-guide/organize/people/), PhotoPrism first extracts crops from your images using a
     [library](https://github.com/esimov/pigo) based on [pixel intensity comparisons](https://arxiv.org/pdf/1305.4537.pdf).
     These are then fed into TensorFlow to compute [512-dimensional vectors](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf)
     for characterization. In the final step, the [DBSCAN algorithm](https://en.wikipedia.org/wiki/DBSCAN)
@@ -30,8 +31,8 @@ var faceFlagsInfo = `!!! info ""
 
 We recommend that only advanced users change these parameters:`
 
-// showFlagsAction shows environment variable command-line parameter names.
-func showFlagsAction(ctx *cli.Context) error {
+// showOptionsAction shows environment variable command-line parameter names.
+func showOptionsAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)
 
@@ -66,7 +67,7 @@ func showFlagsAction(ctx *cli.Context) error {
 		{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Caption: "Security Tokens"},
 		{Start: "PHOTOPRISM_THUMB_COLOR", Caption: "Image Quality"},
 		{Start: "PHOTOPRISM_FACE_SIZE", Caption: "Face Recognition",
-			Info: faceFlagsInfo},
+			Info: faceOptionsInfo},
 		{Start: "PHOTOPRISM_PID_FILENAME", Caption: "Daemon Mode",
 			Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
 	}
