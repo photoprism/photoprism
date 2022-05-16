@@ -3,6 +3,7 @@ package query
 import (
 	"errors"
 	"fmt"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/entity"

@@ -57,7 +57,7 @@ func TestFileSelection(t *testing.T) {
 		if results, err := SelectedFiles(many, sel); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Len(t, results, 4)
+			assert.Len(t, results, 3)
 		}
 	})
 	t.Run("ShareSelectionPrimary", func(t *testing.T) {
@@ -98,7 +98,7 @@ func TestFileSelection(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			log.Debugf("ShareFolders Results: %#v", results)
-			assert.Len(t, results, 2)
+			assert.Len(t, results, 4)
 		}
 	})
 	t.Run("ShareStatesOriginals", func(t *testing.T) {
@@ -115,7 +115,7 @@ func TestFileSelection(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			log.Debugf("ShareStates Result: %#v", results[0])
-			assert.Len(t, results, 1)
+			assert.Len(t, results, 3)
 		}
 	})
 }
