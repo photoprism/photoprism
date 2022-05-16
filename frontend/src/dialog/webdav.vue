@@ -28,8 +28,8 @@
         </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
-        <translate>Windows users can connect to this resource:</translate>
+      <v-card-text class="pa-2 body-1 clickable" @click="windowsHelp($event)">
+        <translate>On Windows, enter the following resource in the connection dialog:</translate>
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
@@ -119,6 +119,11 @@ export default {
       } else {
         return `\\\\${window.location.host}\\originals\\`;
       }
+    },
+    windowsHelp(ev) {
+      window.open('https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server', '_blank');
+      ev.preventDefault();
+      ev.stopPropagation();
     },
     close() {
       this.$emit('close');

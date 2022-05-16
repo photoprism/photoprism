@@ -1680,6 +1680,10 @@ msgstr ""
 msgid "Oldest first"
 msgstr ""
 
+#: src/dialog/webdav.vue:17
+msgid "On Windows, enter the following resource in the connection dialog:"
+msgstr ""
+
 #: src/options/options.js:397
 msgid "Once a week"
 msgstr ""
@@ -2667,10 +2671,6 @@ msgstr ""
 
 #: src/options/options.js:425
 msgid "White"
-msgstr ""
-
-#: src/dialog/webdav.vue:17
-msgid "Windows users can connect to this resource:"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:274
