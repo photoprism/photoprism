@@ -1,5 +1,8 @@
 export GO111MODULE=on
 
+-include .env
+export
+
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 
@@ -282,7 +285,7 @@ docker-develop-bullseye-slim:
 	docker pull --platform=arm64 debian:bullseye-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye-slim /bullseye-slim
 docker-develop-armv7:
-	docker pull --platform=arm debian:bullseye-slim
+	docker pull --platform=arm debian:bookworm-slim
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
 docker-develop-buster:
 	docker pull --platform=amd64 golang:buster
