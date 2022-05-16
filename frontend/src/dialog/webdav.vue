@@ -29,6 +29,25 @@
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
+        <translate>Windows users can connect to this resource:</translate>
+      </v-card-text>
+
+      <v-card-text class="pa-2 body-1">
+        <v-text-field
+            autocorrect="off"
+            autocapitalize="none"
+            browser-autocomplete="off"
+            hide-details readonly
+            single-line
+            outline
+            color="secondary-dark"
+            :value="windowsUrl()"
+            class="input-url"
+            @click.stop="selectText($event)">
+        </v-text-field>
+      </v-card-text>
+
+      <v-card-text class="pa-2 body-1">
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </v-card-text>
 
@@ -93,6 +112,13 @@ export default {
     },
     webdavUrl() {
       return `${window.location.protocol}//admin@${window.location.host}/originals/`;
+    },
+    windowsUrl() {
+      if (window.location.protocol === "https") {
+        return `\\\\${window.location.host}@SSL\\originals\\`;
+      } else {
+        return `\\\\${window.location.host}\\originals\\`;
+      }
     },
     close() {
       this.$emit('close');
