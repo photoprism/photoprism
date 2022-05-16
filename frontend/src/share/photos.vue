@@ -66,7 +66,8 @@
                       :filter="filter"
                       :album="model"
                       :edit-photo="editPhoto"
-                      :open-photo="openPhoto"></p-photo-mosaic>
+                      :open-photo="openPhoto"
+                      :is-shared-view="true"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'"
                     :photos="results"
                     :select-mode="selectMode"
@@ -74,7 +75,8 @@
                     :album="model"
                     :open-photo="openPhoto"
                     :edit-photo="editPhoto"
-                    :open-location="openLocation"></p-photo-list>
+                    :open-location="openLocation"
+                    :is-shared-view="true"></p-photo-list>
       <p-photo-cards v-else
                      :photos="results"
                      :select-mode="selectMode"
@@ -82,7 +84,8 @@
                      :album="model"
                      :open-photo="openPhoto"
                      :edit-photo="editPhoto"
-                     :open-location="openLocation"></p-photo-cards>
+                     :open-location="openLocation"
+                     :is-shared-view="true"></p-photo-cards>
     </v-container>
   </div>
 </template>

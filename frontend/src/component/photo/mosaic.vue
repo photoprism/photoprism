@@ -2,7 +2,10 @@
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
     <v-alert
         :value="photos.length === 0"
-        color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+        color="secondary-dark"
+        :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
+        class="no-results ma-2 opacity-70"
+        outline
     >
       <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
         <translate>No recently edited pictures</translate>
@@ -12,9 +15,11 @@
       </h3>
       <p class="body-1 mt-2 mb-0 pa-0">
         <translate>Try again using other filters or keywords.</translate>
-        <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-        <template v-if="$config.feature('review')">
-          <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+        <template v-if="!isSharedView">
+          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
+          <template v-if="$config.feature('review')">
+            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          </template>
         </template>
       </p>
     </v-alert>
@@ -31,8 +36,8 @@
                 style="user-select: none; aspect-ratio: 1"
                 class="accent lighten-2 result"
                 :class="photo.classes()"/>
-        <v-card tile
-                v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
+        <v-card v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
+                tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 style="user-select: none; aspect-ratio: 1"
@@ -92,7 +97,7 @@
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
 
-            <v-btn v-if="hidePrivate" :ripple="false"
+            <v-btn v-if="hidePrivate && !isSharedView" :ripple="false"
                    icon flat small absolute
                    class="input-private">
               <v-icon color="white" class="select-on">lock</v-icon>
@@ -109,7 +114,8 @@
               <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
 
-            <v-btn :ripple="false"
+            <v-btn v-if="!isSharedView"
+                   :ripple="false"
                    icon flat small absolute
                    class="input-favorite"
                    @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -157,6 +163,10 @@ export default {
       default: "",
     },
     selectMode: Boolean,
+    isSharedView: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

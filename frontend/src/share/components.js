@@ -29,9 +29,9 @@ import PScrollTop from "component/scroll-top.vue";
 import PLoadingBar from "component/loading-bar.vue";
 import PPhotoViewer from "component/photo-viewer.vue";
 import PVideoPlayer from "component/video/player.vue";
-import PPhotoCards from "photo/cards.vue";
-import PPhotoMosaic from "photo/mosaic.vue";
-import PPhotoList from "photo/list.vue";
+import PPhotoCards from "component/photo/cards.vue";
+import PPhotoMosaic from "component/photo/mosaic.vue";
+import PPhotoList from "component/photo/list.vue";
 import PPhotoClipboard from "photo/clipboard.vue";
 import PAlbumClipboard from "album/clipboard.vue";
 

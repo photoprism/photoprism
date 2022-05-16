@@ -3,7 +3,10 @@
     <div v-if="photos.length === 0" class="pa-2">
       <v-alert
           :value="true"
-          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+          color="secondary-dark"
+          :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
+          class="no-results ma-2 opacity-70"
+          outline
       >
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
@@ -13,14 +16,17 @@
         </h3>
         <p class="body-1 mt-2 mb-0 pa-0">
           <translate>Try again using other filters or keywords.</translate>
-          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-          <template v-if="config.settings.features.review">
-            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          <template v-if="!isSharedView">
+            <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
+            <template v-if="config.settings.features.review">
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+            </template>
           </template>
         </p>
       </v-alert>
     </div>
     <v-data-table v-else
+                  ref="dataTable"
                   v-model="selected"
                   :headers="listColumns"
                   :items="photos"
@@ -30,7 +36,6 @@
                   disable-initial-sort
                   item-key="ID"
                   :no-data-text="notFoundMessage"
-                  ref="dataTable"
 
     >
       <template #items="props">
@@ -73,7 +78,7 @@
         </td>
 
         <td class="p-photo-desc clickable" :data-uid="props.item.UID" style="user-select: none;"
-            @click.exact="editPhoto(props.index)">
+            @click.exact="isSharedView ? openPhoto(props.index, false) : editPhoto(props.index)">
           {{ props.item.Title }}
         </td>
         <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
@@ -100,27 +105,29 @@
                     {{ props.item.locationInfo() }}
                 </span>
         </td>
-        <td class="text-xs-center">
-          <template v-if="props.index < firstVisibleElementIndex || props.index > lastVisibileElementIndex">
-            <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
-            <div class="v-btn v-btn--icon v-btn--small" />
-          </template>
+        <template v-if="!isSharedView">
+          <td class="text-xs-center">
+            <template v-if="props.index < firstVisibleElementIndex || props.index > lastVisibileElementIndex">
+              <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
+              <div class="v-btn v-btn--icon v-btn--small" />
+            </template>
 
-          <template v-else>
-            <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
-                  :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
-              <v-icon v-if="props.item.Private" color="secondary-dark" class="select-on">lock</v-icon>
-              <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
-            </v-btn>
-            <v-btn class="input-like" icon small flat :ripple="false"
-                  :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
-              <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">
-                favorite
-              </v-icon>
-              <v-icon v-else color="secondary" :data-uid="props.item.UID" class="select-off">favorite_border</v-icon>
-            </v-btn>
-          </template>
-        </td>
+            <template v-else>
+              <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
+                    :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
+                <v-icon v-if="props.item.Private" color="secondary-dark" class="select-on">lock</v-icon>
+                <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
+              </v-btn>
+              <v-btn class="input-like" icon small flat :ripple="false"
+                    :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
+                <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">
+                  favorite
+                </v-icon>
+                <v-icon v-else color="secondary" :data-uid="props.item.UID" class="select-off">favorite_border</v-icon>
+              </v-btn>
+            </template>
+          </td>
+        </template>
       </template>
     </v-data-table>
   </div>
@@ -162,37 +169,46 @@ export default {
       default: "",
     },
     selectMode: Boolean,
+    isSharedView: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     let m = this.$gettext("Couldn't find anything.");
 
     m += " " + this.$gettext("Try again using other filters or keywords.");
 
-    if (this.$config.feature("review")) {
+    if (this.$config.feature("review") && !this.isSharedView) {
       m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
     }
 
     let showName = this.filter.order === 'name';
 
     const align = !this.$rtl ? 'left' : 'right';
+    const listColumns = [
+      {text: '', value: '', align: 'center', class: 'p-col-select', sortable: false},
+      {text: this.$gettext('Title'), align, value: 'Title', sortable: false},
+      {text: this.$gettext('Taken'), align, class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
+      {text: this.$gettext('Camera'), align, class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
+      {
+        text: showName ? this.$gettext('Name') : this.$gettext('Location'),
+        align,
+        class: 'hidden-xs-only',
+        value: showName ? 'FileName' : 'PlaceLabel',
+        sortable: false
+      },
+    ];
+
+    if (!this.isSharedView) {
+      listColumns.push({text: '', value: '', align: 'center', sortable: false});
+    }
+
     return {
       config: this.$config.values,
       notFoundMessage: m,
       'selected': [],
-      'listColumns': [
-        {text: '', value: '', align: 'center', class: 'p-col-select', sortable: false},
-        {text: this.$gettext('Title'), align, value: 'Title', sortable: false},
-        {text: this.$gettext('Taken'), align, class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
-        {text: this.$gettext('Camera'), align, class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
-        {
-          text: showName ? this.$gettext('Name') : this.$gettext('Location'),
-          align,
-          class: 'hidden-xs-only',
-          value: showName ? 'FileName' : 'PlaceLabel',
-          sortable: false
-        },
-        {text: '', value: '', align: 'center', sortable: false},
-      ],
+      'listColumns': listColumns,
       showName: showName,
       showLocation: this.$config.values.settings.features.places,
       hidePrivate: this.$config.values.settings.features.private,
