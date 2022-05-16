@@ -14,6 +14,13 @@ func SelectedPhotos(f form.Selection) (results entity.Photos, err error) {
 		return results, errors.New("no items selected")
 	}
 
+	// Resolve photos in smart albums.
+	if photoIds, err := AlbumsPhotoUIDs(f.Albums, false, false); err != nil {
+		log.Warnf("query: %s", err.Error())
+	} else if len(photoIds) > 0 {
+		f.Photos = append(f.Photos, photoIds...)
+	}
+
 	var concat string
 
 	switch DbDialect() {

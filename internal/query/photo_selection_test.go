@@ -3,12 +3,21 @@ package query
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestPhotoSelection(t *testing.T) {
+	albums := form.Selection{Albums: []string{"at9lxuqxpogaaba9", "at6axuzitogaaiax", "at9lxuqxpogaaba8", "at9lxuqxpogaaba7"}}
+
+	months := form.Selection{Albums: []string{"at1lxuqipogaabj9"}}
+
+	folders := form.Selection{Albums: []string{"at1lxuqipogaaba1", "at1lxuqipogaabj8"}}
+
+	states := form.Selection{Albums: []string{"at1lxuqipogaab11", "at1lxuqipotaab12", "at1lxuqipotaab19"}}
+
 	t.Run("no items selected", func(t *testing.T) {
 		f := form.Selection{
 			Photos: []string{},
@@ -33,58 +42,44 @@ func TestPhotoSelection(t *testing.T) {
 		assert.Equal(t, 2, len(r))
 		assert.IsType(t, entity.Photos{}, r)
 	})
-}
+	t.Run("FindAlbums", func(t *testing.T) {
+		r, err := SelectedPhotos(albums)
 
-func TestFileSelection(t *testing.T) {
-	none := form.Selection{Photos: []string{}}
-
-	one := form.Selection{Photos: []string{"pt9jtdre2lvl0yh8"}}
-
-	two := form.Selection{Photos: []string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"}}
-
-	many := form.Selection{
-		Files:  []string{"ft8es39w45bnlqdw"},
-		Photos: []string{"pt9jtdre2lvl0y21", "pt9jtdre2lvl0y19", "pr2xu7myk7wrbk38", "pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"},
-	}
-
-	t.Run("EmptySelection", func(t *testing.T) {
-		sel := DownloadSelection(true, false, true)
-		if results, err := SelectedFiles(none, sel); err == nil {
-			t.Fatal("error expected")
-		} else {
-			assert.Empty(t, results)
-		}
-	})
-	t.Run("DownloadSelectionRawSidecarPrivate", func(t *testing.T) {
-		sel := DownloadSelection(true, true, false)
-		if results, err := SelectedFiles(one, sel); err != nil {
+		if err != nil {
 			t.Fatal(err)
-		} else {
-			assert.Len(t, results, 2)
 		}
+
+		assert.Equal(t, 6, len(r))
+		assert.IsType(t, entity.Photos{}, r)
 	})
-	t.Run("DownloadSelectionRawOriginals", func(t *testing.T) {
-		sel := DownloadSelection(true, false, true)
-		if results, err := SelectedFiles(two, sel); err != nil {
+	t.Run("FindMonths", func(t *testing.T) {
+		r, err := SelectedPhotos(months)
+
+		if err != nil {
 			t.Fatal(err)
-		} else {
-			assert.Len(t, results, 2)
 		}
+
+		assert.Equal(t, 0, len(r))
+		assert.IsType(t, entity.Photos{}, r)
 	})
-	t.Run("ShareSelectionOriginals", func(t *testing.T) {
-		sel := ShareSelection(false)
-		if results, err := SelectedFiles(many, sel); err != nil {
+	t.Run("FindFolders", func(t *testing.T) {
+		r, err := SelectedPhotos(folders)
+
+		if err != nil {
 			t.Fatal(err)
-		} else {
-			assert.Len(t, results, 6)
 		}
+
+		assert.Equal(t, 2, len(r))
+		assert.IsType(t, entity.Photos{}, r)
 	})
-	t.Run("ShareSelectionPrimary", func(t *testing.T) {
-		sel := ShareSelection(true)
-		if results, err := SelectedFiles(many, sel); err != nil {
+	t.Run("FindStates", func(t *testing.T) {
+		r, err := SelectedPhotos(states)
+
+		if err != nil {
 			t.Fatal(err)
-		} else {
-			assert.Len(t, results, 4)
 		}
+
+		assert.Equal(t, 1, len(r))
+		assert.IsType(t, entity.Photos{}, r)
 	})
 }
