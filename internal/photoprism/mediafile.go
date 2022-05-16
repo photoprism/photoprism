@@ -97,7 +97,7 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 		m.fileSize = -1
 	} else {
 		m.statErr = nil
-		m.modTime = s.ModTime().Truncate(time.Second)
+		m.modTime = s.ModTime().UTC().Truncate(time.Second)
 		m.fileSize = s.Size()
 	}
 

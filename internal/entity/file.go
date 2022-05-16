@@ -280,7 +280,7 @@ func (m File) Changed(fileSize int64, modTime time.Time) bool {
 	}
 
 	// Modification time has changed.
-	if m.ModTime == modTime.Unix() {
+	if m.ModTime == modTime.UTC().Truncate(time.Second).Unix() {
 		return false
 	}
 

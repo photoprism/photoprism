@@ -150,7 +150,7 @@ func (data *Data) GPhoto(jsonData []byte) (err error) {
 			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
 				log.Warnf("metadata: unknown time zone %s (gphotos)", data.TimeZone)
 			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
-				data.TakenAt = tl.Truncate(time.Second).UTC()
+				data.TakenAt = tl.UTC().Truncate(time.Second)
 			} else {
 				log.Errorf("metadata: %s (gphotos)", err.Error()) // this should never happen
 			}
