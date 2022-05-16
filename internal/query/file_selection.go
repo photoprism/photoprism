@@ -3,6 +3,7 @@ package query
 import (
 	"errors"
 	"fmt"
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -47,9 +48,32 @@ func DownloadSelection(mediaRaw, mediaSidecar, originals bool) FileSelection {
 
 // ShareSelection selects files to share, for example for upload via WebDAV.
 func ShareSelection(originals bool) FileSelection {
+	var omitMedia []string
+	var omitTypes []string
+
+	if !originals {
+		omitMedia = []string{
+			media.Unknown.String(),
+			media.Raw.String(),
+			media.Sidecar.String(),
+			media.Text.String(),
+			media.Other.String(),
+		}
+
+		omitTypes = []string{
+			fs.ImagePNG.String(),
+			fs.ImageWebP.String(),
+			fs.ImageTIFF.String(),
+			fs.ImageHEIF.String(),
+			fs.ImageBMP.String(),
+			fs.ImageGIF.String(),
+		}
+	}
+
 	return FileSelection{
 		Originals: originals,
-		Primary:   !originals,
+		OmitMedia: omitMedia,
+		OmitTypes: omitTypes,
 		Hidden:    false,
 		Private:   false,
 		Archived:  false,
