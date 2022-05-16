@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-04-27 10:01+0000\n"
-"Last-Translator: xd <s7orm@abv.bg>\n"
+"PO-Revision-Date: 2022-05-16 19:59+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12\n"
+"X-Generator: Weblate 4.12.1\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/labels.vue:164
@@ -191,7 +191,7 @@ msgstr "Албуми"
 
 #: src/component/album/clipboard.vue:77
 msgid "Albums deleted"
-msgstr ""
+msgstr "Изтрити албуми"
 
 #: src/pages/albums.vue:257
 #: src/share/albums.vue:218
@@ -1230,7 +1230,7 @@ msgstr ""
 
 #: src/component/label/clipboard.vue:45
 msgid "Labels deleted"
-msgstr ""
+msgstr "Изтрити етикети"
 
 #: src/options/options.js:362
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1744,7 +1744,7 @@ msgstr ""
 
 #: src/pages/settings/account.vue:22
 msgid "Password changed"
-msgstr ""
+msgstr "Паролата е променена"
 
 #: src/app/routes.js:267
 #: src/app/routes.js:287
@@ -1763,7 +1763,7 @@ msgstr ""
 
 #: src/component/photo/clipboard.vue:73
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Постоянно изтрити"
 
 #: src/pages/settings/general.vue:207
 msgid "Permanently remove files to free up storage."
@@ -2073,15 +2073,15 @@ msgstr ""
 
 #: src/component/photo/clipboard.vue:45
 msgid "Selection approved"
-msgstr ""
+msgstr "Одобрена селекция"
 
 #: src/component/photo/clipboard.vue:61
 msgid "Selection archived"
-msgstr ""
+msgstr "Архивирана селекция"
 
 #: src/component/photo/clipboard.vue:86
 msgid "Selection restored"
-msgstr ""
+msgstr "Възстановена селекция"
 
 #: src/pages/about/feedback.vue:39
 msgid "Send"
@@ -2119,7 +2119,7 @@ msgstr ""
 #: src/pages/settings/general.vue:103
 #: src/pages/settings/library.vue:50
 msgid "Settings saved"
-msgstr ""
+msgstr "Запазени настройки"
 
 #: src/dialog/share/upload.vue:32
 msgid "Setup"
