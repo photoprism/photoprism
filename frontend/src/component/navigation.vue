@@ -44,7 +44,7 @@
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title">
-                {{ config.name }}<sup v-if="isSponsor">+</sup>
+                {{ config.name }}<span v-if="isSponsor">+</span>
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
