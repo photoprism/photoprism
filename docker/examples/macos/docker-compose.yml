@@ -53,7 +53,7 @@ services:
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # public server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
-      PHOTOPRISM_DEBUG: "false"                      # run in debug mode (shows additional log messages)
+      PHOTOPRISM_LOG_LEVEL: "info"                   # log level: trace, debug, info, warning, error, fatal, or panic
       PHOTOPRISM_PUBLIC: "false"                     # no authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"               # enables experimental features
@@ -74,17 +74,17 @@ services:
       PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB or MySQL database user name
       PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB or MySQL database user password
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      PHOTOPRISM_SITE_DESCRIPTION: ""
-      PHOTOPRISM_SITE_AUTHOR: ""
+      PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
+      PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clitools, clean):
       # PHOTOPRISM_INIT: "gpu tensorflow"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
-      # "/host/folder:/photoprism/folder"                # example
-      - "~/Pictures:/photoprism/originals"               # original media files (photos and videos)
-      # - "/example/family:/photoprism/originals/family" # *additional* media folders can be mounted like this
-      # - "~/Import:/photoprism/import"                  # *optional* base folder from which files can be imported to originals
-      - "./storage:/photoprism/storage"                  # *writable* storage folder for cache, database, and sidecar files (never remove)
+      # "/host/folder:/photoprism/folder"                # Example
+      - "~/Pictures:/photoprism/originals"               # Original media files (DO NOT REMOVE)
+      # - "/example/family:/photoprism/originals/family" # *Additional* media folders can be mounted like this
+      # - "~/Import:/photoprism/import"                  # *Optional* base folder from which files can be imported to originals
+      - "./storage:/photoprism/storage"                  # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
 
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql

@@ -79,8 +79,8 @@ services:
       PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB or MySQL database user name
       PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB or MySQL database user password
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      PHOTOPRISM_SITE_DESCRIPTION: ""
-      PHOTOPRISM_SITE_AUTHOR: ""
+      PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
+      PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: use "/" not "\" as separator, "~" is a shortcut for C:/user/{username}, "." for the current directory
     volumes:
