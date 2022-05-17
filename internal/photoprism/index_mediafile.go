@@ -672,7 +672,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 	file.MediaType = m.Media().String()
 	file.FileMime = m.MimeType()
 	file.FileOrientation = m.Orientation()
-	file.ModTime = modTime.Unix()
+	file.ModTime = modTime.UTC().Truncate(time.Second).Unix()
 
 	// Detect ICC color profile for JPEGs if still unknown at this point.
 	if file.FileColorProfile == "" && fs.ImageJPEG.Equal(file.FileType) {

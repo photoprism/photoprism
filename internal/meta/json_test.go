@@ -687,8 +687,8 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, CodecJpeg, data.Codec)
 		assert.Equal(t, "0s", data.Duration.String())
-		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAtLocal.String())
-		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "2016-09-07 12:49:23.373 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2016-09-07 12:49:23.373 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 373000000, data.TakenNs)
 		assert.Equal(t, "", data.TimeZone)
 		assert.Equal(t, 4032, data.Width)
@@ -714,8 +714,8 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, CodecJpeg, data.Codec)
 		assert.Equal(t, "0s", data.Duration.String())
-		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAtLocal.String())
-		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "2016-09-07 12:49:23.373 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2016-09-07 12:49:23.373 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "", data.TimeZone)
 		assert.Equal(t, 4032, data.Width)
 		assert.Equal(t, 3024, data.Height)

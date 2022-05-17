@@ -19,15 +19,11 @@ echo "Installing Darktable for ${DESTARCH^^}..."
 
 if [[ $DESTARCH == "amd64" ]]; then
   if [[ $VERSION_CODENAME == "bullseye" ]]; then
-    echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/Debian_11/ /' | /usr/bin/tee /etc/apt/sources.list.d/graphics:darktable.list
-    curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/Debian_11/Release.key | gpg --dearmor | /usr/bin/tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
     apt-get update
-    apt-get -qq install darktable
+    apt-get -qq install -t bullseye-backports darktable
   elif [[ $VERSION_CODENAME == "buster" ]]; then
-    echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/Debian_10/ /' | /usr/bin/tee /etc/apt/sources.list.d/graphics:darktable.list
-    curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/Debian_10/Release.key | gpg --dearmor | /usr/bin/tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
     apt-get update
-    apt-get -qq install darktable
+    apt-get -qq install -t buster-backports darktable
   else
     echo "install-darktable: installing standard amd64 (Intel 64-bit) package"
     apt-get -qq install darktable
@@ -41,7 +37,7 @@ elif [[ $DESTARCH == "arm64" ]]; then
     apt-get update
     apt-get -qq install -t buster-backports darktable
   else
-    echo "install-darktable: installing standard amd64 (ARM 64-bit) package"
+    echo "install-darktable: installing standard arm64 (ARM 64-bit) package"
     apt-get -qq install darktable
   fi
   echo "Done."
