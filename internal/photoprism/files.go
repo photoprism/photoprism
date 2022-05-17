@@ -74,7 +74,7 @@ func (m *Files) Remove(fileName, fileRoot string) {
 
 // Ignore tests of a file requires indexing, file name must be relative to the originals path.
 func (m *Files) Ignore(fileName, fileRoot string, modTime time.Time, rescan bool) bool {
-	timestamp := modTime.Unix()
+	timestamp := modTime.UTC().Truncate(time.Second).Unix()
 	key := path.Join(fileRoot, fileName)
 
 	m.mutex.Lock()
