@@ -46,10 +46,13 @@ func DownloadSelection(mediaRaw, mediaSidecar, originals bool) FileSelection {
 }
 
 // ShareSelection selects files to share, for example for upload via WebDAV.
-func ShareSelection(primary bool) FileSelection {
+func ShareSelection(originals bool) FileSelection {
 	return FileSelection{
-		Originals: !primary,
-		Primary:   primary,
+		Originals: originals,
+		Primary:   !originals,
+		Hidden:    false,
+		Private:   false,
+		Archived:  false,
 		MaxSize:   1024 * MegaByte,
 	}
 }
@@ -58,6 +61,13 @@ func ShareSelection(primary bool) FileSelection {
 func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err error) {
 	if f.Empty() {
 		return results, errors.New("no items selected")
+	}
+
+	// Resolve photos in smart albums.
+	if photoIds, err := AlbumsPhotoUIDs(f.Albums, false, o.Private); err != nil {
+		log.Warnf("query: %s", err.Error())
+	} else if len(photoIds) > 0 {
+		f.Photos = append(f.Photos, photoIds...)
 	}
 
 	var concat string
@@ -93,37 +103,37 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 
 	// File size limit?
 	if o.MaxSize > 0 {
-		s = s.Where("file_size < ?", o.MaxSize)
+		s = s.Where("files.file_size < ?", o.MaxSize)
 	}
 
 	// Specific media types only?
 	if len(o.Media) > 0 {
-		s = s.Where("media_type IN (?)", o.Media)
+		s = s.Where("files.media_type IN (?)", o.Media)
 	}
 
 	// Exclude media types?
 	if len(o.OmitMedia) > 0 {
-		s = s.Where("media_type NOT IN (?)", o.OmitMedia)
+		s = s.Where("files.media_type NOT IN (?)", o.OmitMedia)
 	}
 
 	// Specific file types only?
 	if len(o.Types) > 0 {
-		s = s.Where("file_type IN (?)", o.Types)
+		s = s.Where("files.file_type IN (?)", o.Types)
 	}
 
 	// Exclude file types?
 	if len(o.OmitTypes) > 0 {
-		s = s.Where("file_type NOT IN (?)", o.OmitTypes)
+		s = s.Where("files.file_type NOT IN (?)", o.OmitTypes)
 	}
 
 	// Primary files only?
 	if o.Primary {
-		s = s.Where("file_primary = 1")
+		s = s.Where("files.file_primary = 1")
 	}
 
 	// Files in originals only?
 	if o.Originals {
-		s = s.Where("file_root = '/'")
+		s = s.Where("files.file_root = '/'")
 	}
 
 	// Exclude private?
