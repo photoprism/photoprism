@@ -102,7 +102,7 @@ services:
     # user: "1000:1000"
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
-    #  - "/dev/video11:/dev/video11" # Video4Linux ("raspberry")
+    #  - "/dev/video11:/dev/video11"                 # Raspberry V4L2
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
