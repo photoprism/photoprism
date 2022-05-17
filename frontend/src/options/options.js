@@ -195,6 +195,14 @@ export const Languages = () => [
     text: "Hrvatski", // Croatian
     value: "hr",
   },
+  {
+    text: "български", // Bulgarian
+    value: "bg",
+  },
+  {
+    text: "Melayu", // Malay
+    value: "ms",
+  },
 ];
 
 export const Themes = () => [

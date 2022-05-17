@@ -110,3 +110,50 @@ func AlbumEntryFound(uid string) error {
 		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 0 WHERE photo_uid = ?`, uid).Error
 	}
 }
+
+// AlbumsPhotoUIDs returns up to 10000 photo UIDs that belong to the specified albums.
+func AlbumsPhotoUIDs(albums []string, includeDefault, includePrivate bool) (photos []string, err error) {
+	for _, albumUid := range albums {
+		a, err := AlbumByUID(albumUid)
+
+		if err != nil {
+			log.Warnf("query: album %s not found (%s)", albumUid, err.Error())
+			continue
+		}
+
+		if a.IsDefault() && !includeDefault {
+			continue
+		}
+
+		frm := form.SearchPhotos{
+			Album:    a.AlbumUID,
+			Filter:   a.AlbumFilter,
+			Count:    10000,
+			Offset:   0,
+			Public:   !includePrivate,
+			Hidden:   false,
+			Archived: false,
+			Quality:  1,
+		}
+
+		res, count, err := search.PhotoIds(frm)
+
+		if err != nil {
+			return photos, err
+		} else if count == 0 {
+			continue
+		}
+
+		ids := make([]string, 0, count)
+
+		for _, r := range res {
+			ids = append(ids, r.PhotoUID)
+		}
+
+		if len(ids) > 0 {
+			photos = append(photos, ids...)
+		}
+	}
+
+	return photos, nil
+}

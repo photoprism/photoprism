@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"runtime/debug"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -78,6 +80,16 @@ func (worker *Share) Start() (err error) {
 			continue
 		}
 
+		size := thumb.Size{}
+
+		if a.ShareSize != "" {
+			if s, ok := thumb.Sizes[thumb.Name(a.ShareSize)]; ok {
+				size = s
+			} else {
+				size = thumb.Sizes[thumb.Fit2048]
+			}
+		}
+
 		client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
 		existingDirs := make(map[string]string)
 
@@ -97,14 +109,7 @@ func (worker *Share) Start() (err error) {
 
 			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
 
-			if a.ShareSize != "" {
-				size, ok := thumb.Sizes[thumb.Name(a.ShareSize)]
-
-				if !ok {
-					log.Errorf("share: invalid size %s", a.ShareSize)
-					continue
-				}
-
+			if fs.ImageJPEG.Equal(file.File.FileType) && size.Width > 0 && size.Height > 0 {
 				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbCachePath(), size.Width, size.Height, file.File.FileOrientation, size.Options...)
 
 				if err != nil {

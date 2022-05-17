@@ -31,6 +31,13 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	return searchPhotos(f, PhotosColsAll)
 }
 
+// PhotoIds finds photo and file ids based on the search form provided and returns them as PhotoResults.
+func PhotoIds(f form.SearchPhotos) (files PhotoResults, count int, err error) {
+	f.Merged = false
+	f.Primary = true
+	return searchPhotos(f, "photos.id, photos.photo_uid, files.file_uid")
+}
+
 // photos searches for photos based on a Form and returns PhotoResults ([]Photo).
 func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults, count int, err error) {
 	start := time.Now()

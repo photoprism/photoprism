@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-11 14:46+0000\n"
+"PO-Revision-Date: 2022-05-16 19:59+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/"
 "photoprism/frontend/pt/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.12.1\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
@@ -355,9 +355,8 @@ msgstr ""
 "de solução de problemas para determinar a causa de seu problema."
 
 #: src/pages/people/subjects.vue:430
-#, fuzzy
 msgid "Bio"
-msgstr "Bio"
+msgstr "Biografia"
 
 #: src/options/options.js:370
 msgid "Black"
@@ -877,12 +876,10 @@ msgid "F Number"
 msgstr "Razão focal"
 
 #: src/model/face.js:159
-#, fuzzy
 msgid "Face"
 msgstr "Face"
 
 #: src/dialog/photo/info.vue:73
-#, fuzzy
 msgid "Faces"
 msgstr "Faces"
 
@@ -1659,12 +1656,10 @@ msgid "Outdoor"
 msgstr "Ao ar livre"
 
 #: src/dialog/photo/info.vue:118
-#, fuzzy
 msgid "Panorama"
 msgstr "Panorama"
 
 #: src/component/navigation.vue:86
-#, fuzzy
 msgid "Panoramas"
 msgstr "Panoramas"
 

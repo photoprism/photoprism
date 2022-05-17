@@ -38,7 +38,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 		// Extract metadata to a JSON file with Exiftool.
 		if related.Main.NeedsExifToolJson() {
 			if jsonName, err := imp.convert.ToJson(related.Main); err != nil {
-				log.Debugf("import: %s in %s (extract metadata)", clean.Log(err.Error()), clean.Log(related.Main.BaseName()))
+				log.Tracef("exiftool: %s", clean.Log(err.Error()))
+				log.Debugf("exiftool: failed parsing %s", clean.Log(related.Main.RootRelName()))
 			} else if err := related.Main.ReadExifToolJson(); err != nil {
 				log.Errorf("import: %s in %s (read metadata)", clean.Log(err.Error()), clean.Log(related.Main.BaseName()))
 			} else {
@@ -127,7 +128,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// Extract metadata to a JSON file with Exiftool.
 			if f.NeedsExifToolJson() {
 				if jsonName, err := imp.convert.ToJson(f); err != nil {
-					log.Debugf("import: %s in %s (extract metadata)", clean.Log(err.Error()), clean.Log(f.RootRelName()))
+					log.Tracef("exiftool: %s", clean.Log(err.Error()))
+					log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 				} else {
 					log.Debugf("import: created %s", filepath.Base(jsonName))
 				}
@@ -222,7 +224,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// Extract metadata to a JSON file with Exiftool.
 				if f.NeedsExifToolJson() {
 					if jsonName, err := imp.convert.ToJson(f); err != nil {
-						log.Debugf("import: %s in %s (extract metadata)", clean.Log(err.Error()), clean.Log(f.RootRelName()))
+						log.Tracef("exiftool: %s", clean.Log(err.Error()))
+						log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 					} else {
 						log.Debugf("import: created %s", filepath.Base(jsonName))
 					}
