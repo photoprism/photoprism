@@ -89,14 +89,14 @@ services:
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
-    #  - "/dev/dri:/dev/dri"                         # Intel (h264_qsv)
-    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia (h264_nvenc)
+    #  - "/dev/dri:/dev/dri"                         # Intel ("intel")
+    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia ("nvidia")
     #  - "/dev/nvidiactl:/dev/nvidiactl"
     #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
     #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
     #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
     #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
-    #  - "/dev/video11:/dev/video11"                 # Video4Linux (h264_v4l2m2m)
+    #  - "/dev/video11:/dev/video11"                 # Video4Linux ("raspberry")
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"

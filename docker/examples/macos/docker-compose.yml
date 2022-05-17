@@ -98,7 +98,7 @@ services:
     ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
     command: mysqld --lower-case-table-names=1 --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
-      - "database:/var/lib/mysql" # important, do not remove; named volume "database" is defined at the bottom
+      - "database:/var/lib/mysql" # Named volume "database" is defined at the bottom (DO NOT REMOVE)
     environment:
       MARIADB_AUTO_UPGRADE: "1"
       MARIADB_INITDB_SKIP_TZINFO: "1"
