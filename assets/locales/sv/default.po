@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-05-03 13:06+0000\n"
-"Last-Translator: Joaquim Homrighausen <joho@boojam.se>\n"
+"PO-Revision-Date: 2022-05-17 19:49+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "backend/sv/>\n"
 "Language: sv\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12.1\n"
+"X-Generator: Weblate 4.12.2\n"
 
 #: messages.go:83
 msgid "Unexpected error, please try again"
@@ -228,7 +228,7 @@ msgstr ""
 
 #: messages.go:135
 msgid "Password changed"
-msgstr ""
+msgstr "Lösenordet har ändrats"
 
 #: messages.go:136
 #, c-format
@@ -328,4 +328,4 @@ msgstr ""
 
 #: messages.go:158
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Permanent borttagen"
