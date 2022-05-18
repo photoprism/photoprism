@@ -52,7 +52,7 @@ add_user()
   printf "."
 }
 
-printf "👥 adding user/group id ranges 50-99, 500-549, 900-936, 937-949, and 1001-1099"
+printf "👥 adding user/group id ranges 50-99, 500-600, 900-936, 938-999, and 1001-1200"
 
 for i in $(seq 50 99); do add_user "$i"; done
 for i in $(seq 500 600); do add_user "$i"; done
