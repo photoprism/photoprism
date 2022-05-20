@@ -69,7 +69,6 @@ Additional information can be found in our Developer Guide:
 }
 
 html {
-    height: 100%;
     overflow: auto overlay;
 }
 
@@ -123,7 +122,7 @@ footer {
     display: block;
 }
 
-@media only screen and (max-width: 959px) {
+@media only screen and (max-width: 599px) {
     #photoprism .footer a {
         display: inline-block;
     }
@@ -144,6 +143,18 @@ footer {
 
 #photoprism .p-about-footer .body-1 {
     line-height: 1.8em;
+}
+
+#photoprism .tm {
+    font-weight: 500;
+}
+
+#photoprism .tm strong {
+    font-weight: 600;
+}
+
+#photoprism .sidenav-visible .nav-small .v-toolbar__content {
+    opacity: 0.48;
 }
 
 main {
@@ -198,6 +209,11 @@ main {
 
 #photoprism .float-right {
     float: right;
+}
+
+#photoprism a.float-left,
+#photoprism a.float-right {
+    display: inline-block;
 }
 
 #photoprism .p-page {

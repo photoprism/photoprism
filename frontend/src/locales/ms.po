@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-16 19:59+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-05-20 16:11+0000\n"
+"Last-Translator: Engku Fariez <fariez@gmail.com>\n"
 "Language: ms\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.12.1\n"
+"X-Generator: Weblate 4.12.2\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/labels.vue:164
@@ -191,7 +191,7 @@ msgstr "Album"
 
 #: src/component/album/clipboard.vue:77
 msgid "Albums deleted"
-msgstr ""
+msgstr "Album dipadamkan"
 
 #: src/pages/albums.vue:263
 #: src/share/albums.vue:220
@@ -468,7 +468,7 @@ msgstr ""
 #: src/share/albums.vue:350
 #: src/share/albums.vue:366
 msgid "Can't select more items"
-msgstr ""
+msgstr "Tidak dapat memilih lebih banyak item"
 
 #: src/dialog/account/add.vue:17
 #: src/dialog/account/edit.vue:102
@@ -510,16 +510,16 @@ msgstr "Tukar tajuk foto, lokasi dan metadata lain."
 
 #: src/component/photo/clipboard.vue:146
 msgid "Change private flag"
-msgstr ""
+msgstr "Tukar petanda peribadi"
 
 #: src/dialog/photo/info.vue:191
 msgid "Checked"
-msgstr ""
+msgstr "Disemak"
 
 #: src/dialog/photo/files.vue:175
 #: src/dialog/photo/files.vue:172
 msgid "Chroma"
-msgstr ""
+msgstr "Chroma"
 
 #: src/component/photo-viewer.vue:79
 #: src/dialog/photo/details.vue:113
@@ -552,16 +552,16 @@ msgstr ""
 
 #: src/dialog/photo/labels.vue:22
 msgid "Confidence"
-msgstr ""
+msgstr "Keyakinan"
 
 #: src/dialog/account/add.vue:18
 msgid "Connect"
-msgstr ""
+msgstr "Sambung"
 
 #: src/dialog/webdav.vue:4
 #: src/pages/settings/sync.vue:43
 msgid "Connect via WebDAV"
-msgstr ""
+msgstr "Sambung melalui WebDAV"
 
 #: src/pages/about/feedback.vue:7
 msgid "Contact Us"
@@ -590,7 +590,7 @@ msgstr ""
 #: src/dialog/share.vue:58
 #: src/dialog/webdav.vue:36
 msgid "Copied to clipboard"
-msgstr ""
+msgstr "Disalin ke papan keratan"
 
 #: src/dialog/photo/details.vue:520
 msgid "Copyright"
@@ -599,12 +599,12 @@ msgstr "Hak Cipta"
 #: src/component/photo/list.vue:38
 #: src/share/photo/list.vue:38
 msgid "Couldn't find anything."
-msgstr ""
+msgstr "Tidak dapat mencari apa-apa."
 
 #: src/component/photo/toolbar.vue:184
 #: src/dialog/photo/details.vue:240
 msgid "Country"
-msgstr ""
+msgstr "Negara"
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
@@ -612,7 +612,7 @@ msgstr "Buat album"
 
 #: src/dialog/photo/info.vue:167
 msgid "Created"
-msgstr ""
+msgstr "Dicipta"
 
 #: src/pages/library/index.vue:169
 msgid "Creating thumbnails for"
@@ -628,15 +628,15 @@ msgstr "Kata Laluan Semasa"
 
 #: src/options/options.js:423
 msgid "Customer Support"
-msgstr ""
+msgstr "Sokongan Pengguna"
 
 #: src/options/options.js:414
 msgid "Cyan"
-msgstr ""
+msgstr "Cyan"
 
 #: src/options/options.js:232
 msgid "Cyano"
-msgstr ""
+msgstr "Cyano"
 
 #: src/options/options.js:387
 msgid "Daily"
@@ -648,7 +648,7 @@ msgstr "Hari"
 
 #: src/pages/settings/advanced.vue:77
 msgid "Debug Logs"
-msgstr ""
+msgstr "Log Nyahpepijat"
 
 #: src/options/options.js:202
 #: src/options/options.js:338
