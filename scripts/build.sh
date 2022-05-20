@@ -13,28 +13,28 @@ BUILD_DATE=$(date -u +%y%m%d)
 BUILD_VERSION=$(git describe --always)
 BUILD_TAG=${BUILD_DATE}-${BUILD_VERSION}
 BUILD_ID=${BUILD_TAG}-${BUILD_OS}-$(echo "${BUILD_ARCH}" |  tr '[:lower:]' '[:upper:]')
-BUILD_NAME=${2:-photoprism}
+BUILD_BIN=${2:-photoprism}
 GO_BIN=${GO_BIN:-go}
 GO_VER=$($GO_BIN version)
 
 echo "Building PhotoPrism ${BUILD_ID} ($1)..."
 
 if [[ $1 == "debug" ]]; then
-  BUILD_CMD=("$GO_BIN" build -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_NAME}" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 elif [[ $1 == "race" ]]; then
-  BUILD_CMD=("$GO_BIN" build -race -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_NAME}" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -race -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 elif [[ $1 == "static" ]]; then
-  BUILD_CMD=("$GO_BIN" build -a -v -ldflags "-linkmode external -extldflags \"-static -L /usr/lib -ltensorflow\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_NAME}" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -a -v -ldflags "-linkmode external -extldflags \"-static -L /usr/lib -ltensorflow\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 else
-  BUILD_CMD=("$GO_BIN" build -ldflags "-extldflags \"-Wl,-rpath -Wl,\$ORIGIN/../lib\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_NAME}" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -ldflags "-extldflags \"-Wl,-rpath -Wl,\$ORIGIN/../lib\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 fi
 
 # build binary
-echo "=> compiling \"$BUILD_NAME\" with \"${GO_VER}\""
+echo "=> compiling \"$BUILD_BIN\" with \"${GO_VER}\""
 echo "=> ${BUILD_CMD[*]}"
 "${BUILD_CMD[@]}"
 
 # show size
-du -h "${BUILD_NAME}"
+du -h "${BUILD_BIN}"
 
 echo "Done."
