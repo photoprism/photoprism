@@ -52,7 +52,7 @@ services:
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # !!! CHANGE YOUR INITIAL "admin" PASSWORD, MINIMUM 8 CHARACTERS !!!
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # YOUR INITIAL ADMIN PASSWORD (MINIMUM 8 CHARACTERS, USERNAME "admin")
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # public server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
@@ -85,11 +85,11 @@ services:
       ## Hardware Video Transcoding (for sponsors only due to high maintenance and support costs):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry")
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
-      ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
+      ## Switch to a non-root user after initialization (supported IDs are 33, 50-99, 500-600, and 900-1200):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
-    ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
+    ## Start as a non-root user before initialization (supported IDs are 33, 50-99, 500-600, and 900-1200):
     # user: "1000:1000"
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:

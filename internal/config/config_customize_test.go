@@ -78,7 +78,7 @@ func TestConfig_AppIconsPath(t *testing.T) {
 func TestConfig_AppName(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "config.test", c.AppName())
+	assert.Equal(t, "PhotoPrism", c.AppName())
 }
 
 func TestConfig_AppMode(t *testing.T) {

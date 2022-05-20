@@ -27,6 +27,7 @@ Additional information can be found in our Developer Guide:
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
 @import url("wallpapers.css");
+@import url("scrollbar.css");
 @import url("themes.css");
 @import url("effects.css");
 @import url("splash.css");
@@ -42,7 +43,6 @@ Additional information can be found in our Developer Guide:
 @import url("pages.css");
 @import url("help.css");
 @import url("auth.css");
-@import url("scrollbar.css");
 
 @media (min-width: 1750px) {
     .flex.xlg2 {
@@ -68,6 +68,11 @@ Additional information can be found in our Developer Guide:
     }
 }
 
+html {
+    height: 100%;
+    overflow: auto overlay;
+}
+
 html,
 body {
     overscroll-behavior-y: contain;
@@ -79,11 +84,62 @@ body {
     font-family: Roboto, sans-serif;
     min-width: 320px;
     min-height: 500px;
+
+    /* Text rendering defaults. */
+    letter-spacing: normal;
+    text-justify: inter-word;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Enable font features. */
+    font-feature-settings: 'kern', 'liga';
+}
+
+body.chrome {
+    overflow: auto overlay;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 footer {
     clear: both;
     padding: 1rem 2rem;
+}
+
+#photoprism .footer {
+    margin: 0;
+    padding: 6px 24px 12px;
+}
+
+#photoprism .footer a {
+    display: block;
+}
+
+@media only screen and (max-width: 959px) {
+    #photoprism .footer a {
+        display: inline-block;
+    }
+
+    #photoprism .footer a.text-link {
+        float: left;
+    }
+
+    #photoprism .footer a.body-link {
+        float:right;
+    }
+}
+
+#photoprism .footer .footer-actions {
+    padding: 0;
+    margin: 0;
 }
 
 #photoprism .p-about-footer .body-1 {
@@ -309,6 +365,10 @@ ol, ul {
 #photoprism div.v-dialog>div.v-card,
 #photoprism div.v-dialog .v-expansion-panel__container {
     border-radius: 6px;
+}
+
+#photoprism div.v-dialog.v-dialog--fullscreen>div.v-card {
+    border-radius: 0;
 }
 
 .v-autocomplete__content.v-menu__content,

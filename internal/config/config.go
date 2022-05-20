@@ -291,9 +291,22 @@ func (c *Config) SerialChecksum() string {
 	return hex.EncodeToString(hash.Sum(result))
 }
 
-// Name returns the application name ("PhotoPrism").
+// Name returns the app name.
 func (c *Config) Name() string {
+	if c.options.Name == "" {
+		return "PhotoPrism"
+	}
+
 	return c.options.Name
+}
+
+// Edition returns the app edition.
+func (c *Config) Edition() string {
+	if c.options.Edition == "" {
+		return "PhotoPrism® Dev"
+	}
+
+	return c.options.Edition
 }
 
 // Version returns the application version.

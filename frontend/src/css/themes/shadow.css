@@ -1,5 +1,9 @@
 /* Shadow Theme */
 
+body.dark-theme.theme-shadow {
+    background: #444 !important;
+}
+
 #photoprism.container.theme-shadow {
     background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
 }

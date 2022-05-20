@@ -28,7 +28,8 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     GOPATH="/go" \
     GOBIN="/go/bin" \
     GO111MODULE="on" \
-    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
+    PROG="photoprism"
 
 # copy scripts and debian backports sources list
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
