@@ -143,7 +143,13 @@ func NewOptions(ctx *cli.Context) *Options {
 		return c
 	}
 
-	c.Name = ctx.App.Name
+	// Set app name from metadata if possible.
+	if s, ok := ctx.App.Metadata["Name"]; ok {
+		c.Name = clean.ASCII(fmt.Sprintf("%s", s))
+	} else {
+		c.Name = "PhotoPrism"
+	}
+
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
 

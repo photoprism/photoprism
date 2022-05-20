@@ -44,7 +44,7 @@ func TestConfig_Name(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	name := c.Name()
-	assert.Equal(t, "config.test", name)
+	assert.Equal(t, "PhotoPrism", name)
 }
 
 func TestConfig_Version(t *testing.T) {
@@ -431,7 +431,7 @@ func TestConfig_SitePreview(t *testing.T) {
 func TestConfig_SiteTitle(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "config.test", c.SiteTitle())
+	assert.Equal(t, "PhotoPrism", c.SiteTitle())
 	c.options.SiteTitle = "Cats"
 	assert.Equal(t, "Cats", c.SiteTitle())
 }
