@@ -17,7 +17,7 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
-			Usage:  fmt.Sprintf("initial admin `PASSWORD`, must have at least %d characters", entity.PasswordLen),
+			Usage:  fmt.Sprintf("initial admin `PASSWORD`, must have at least %d characters", entity.PasswordLength),
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 		},
 	},
