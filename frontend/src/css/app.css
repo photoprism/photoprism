@@ -69,7 +69,6 @@ Additional information can be found in our Developer Guide:
 }
 
 html {
-    height: 100%;
     overflow: auto overlay;
 }
 
