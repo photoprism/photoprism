@@ -199,6 +199,7 @@ body.chrome #photoprism .search-results .result {
 }
 
 #photoprism .cards-view .result .image,
+#photoprism .list-view .result .image,
 #photoprism .mosaic-view .result.image
 {
   position: relative;
