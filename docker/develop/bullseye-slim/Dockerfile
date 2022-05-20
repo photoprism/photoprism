@@ -23,7 +23,8 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
-    TF_CPP_MIN_LOG_LEVEL="2"
+    TF_CPP_MIN_LOG_LEVEL="2" \
+    PROG="photoprism"
 
 # copy scripts and debian backports sources list
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/

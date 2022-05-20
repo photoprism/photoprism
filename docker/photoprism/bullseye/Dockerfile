@@ -25,6 +25,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
+    PROG="photoprism" \
     PHOTOPRISM_ASSETS_PATH="/opt/photoprism/assets" \
     PHOTOPRISM_IMPORT_PATH="/photoprism/import" \
     PHOTOPRISM_ORIGINALS_PATH="/photoprism/originals" \

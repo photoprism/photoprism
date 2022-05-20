@@ -1,5 +1,9 @@
 /* Vanta Theme */
 
+body.dark-theme.theme-vanta {
+    background: #212121 !important;
+}
+
 #photoprism.container.theme-vanta {
     background-image: linear-gradient(160deg, #333333 0%, #000000 100%);
 }

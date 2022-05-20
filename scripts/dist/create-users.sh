@@ -32,6 +32,9 @@ groupdel -f 1000 >/dev/null 2>&1
 groupadd -f -g 1000 photoprism 1>&2
 echo "✅ added group photoprism (1000)"
 
+# add existing www-data user to groups
+usermod -a -G photoprism,video,davfs2,renderd,render,videodriver www-data
+
 # create user 'videodriver'
 userdel -r -f videodriver >/dev/null 2>&1
 useradd -u 937 -r -N -g 937 -G photoprism,www-data,video,davfs2,renderd,render -s /bin/bash -m -d "/home/videodriver" videodriver
@@ -52,13 +55,13 @@ add_user()
   printf "."
 }
 
-printf "👥 adding user/group id ranges 50-99, 500-549, 900-936, 937-949, and 1001-1099"
+printf "👥 adding user/group id ranges 50-99, 500-600, 900-936, 938-999, and 1001-1200"
 
 for i in $(seq 50 99); do add_user "$i"; done
-for i in $(seq 500 549); do add_user "$i"; done
+for i in $(seq 500 600); do add_user "$i"; done
 for i in $(seq 900 936); do add_user "$i"; done
-for i in $(seq 938 949); do add_user "$i"; done
-for i in $(seq 1001 1099); do add_user "$i"; done
+for i in $(seq 938 999); do add_user "$i"; done
+for i in $(seq 1001 1200); do add_user "$i"; done
 
 printf " ✔\n"
 

@@ -93,7 +93,11 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 	pingTicker := time.NewTicker(15 * time.Second)
 	s := event.Subscribe(
-		"log.*",
+		"log.fatal",
+		"log.error",
+		"log.warning",
+		"log.warn",
+		"log.info",
 		"notify.*",
 		"index.*",
 		"upload.*",
