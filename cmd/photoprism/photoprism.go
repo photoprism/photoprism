@@ -38,14 +38,14 @@ var version = "development"
 var log = event.Log
 
 const appName = "PhotoPrism"
-const appCaption = "PhotoPrism® Community Edition"
+const appEdition = "PhotoPrism® CE"
 const appDescription = "AI-Powered Photos App. Visit https://docs.photoprism.app/ to learn more."
 const appCopyright = "(c) 2018-2022 PhotoPrism UG. All rights reserved."
 
 // Metadata contains build specific information.
 var Metadata = map[string]interface{}{
 	"Name":        appName,
-	"Caption":     appCaption,
+	"Edition":     appEdition,
 	"Description": appDescription,
 	"Version":     version,
 }
@@ -58,7 +58,7 @@ func main() {
 	}()
 
 	app := cli.NewApp()
-	app.Usage = appCaption
+	app.Usage = appEdition
 	app.Description = appDescription
 	app.Version = version
 	app.Copyright = appCopyright

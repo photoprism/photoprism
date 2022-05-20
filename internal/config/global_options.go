@@ -20,6 +20,7 @@ import (
 // validation and return defaults if a value is empty.
 type Options struct {
 	Name                  string        `json:"-"`
+	Edition               string        `json:"-"`
 	Version               string        `json:"-"`
 	Copyright             string        `json:"-"`
 	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
@@ -139,17 +140,22 @@ type Options struct {
 func NewOptions(ctx *cli.Context) *Options {
 	c := &Options{}
 
+	// Has context?
 	if ctx == nil {
 		return c
 	}
 
 	// Set app name from metadata if possible.
 	if s, ok := ctx.App.Metadata["Name"]; ok {
-		c.Name = clean.ASCII(fmt.Sprintf("%s", s))
-	} else {
-		c.Name = "PhotoPrism"
+		c.Name = fmt.Sprintf("%s", s)
 	}
 
+	// Set app edition from metadata if possible.
+	if s, ok := ctx.App.Metadata["Edition"]; ok {
+		c.Edition = fmt.Sprintf("%s", s)
+	}
+
+	// Set copyright and version information.
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
 

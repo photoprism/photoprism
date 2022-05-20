@@ -47,6 +47,13 @@ func TestConfig_Name(t *testing.T) {
 	assert.Equal(t, "PhotoPrism", name)
 }
 
+func TestConfig_Edition(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	name := c.Edition()
+	assert.Equal(t, "PhotoPrism® Dev", name)
+}
+
 func TestConfig_Version(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
