@@ -77,12 +77,10 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clitools, clean):
       # PHOTOPRISM_INIT: "gpu tensorflow"
-      ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
+      ## Switch to a non-root user after initialization (supported IDs are 33, 50-99, 500-600, and 900-1200):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
-    ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
-    # user: "1000:1000"
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:

@@ -32,6 +32,9 @@ groupdel -f 1000 >/dev/null 2>&1
 groupadd -f -g 1000 photoprism 1>&2
 echo "✅ added group photoprism (1000)"
 
+# add existing www-data user to groups
+usermod -a -G photoprism,video,davfs2,renderd,render,videodriver www-data
+
 # create user 'videodriver'
 userdel -r -f videodriver >/dev/null 2>&1
 useradd -u 937 -r -N -g 937 -G photoprism,www-data,video,davfs2,renderd,render -s /bin/bash -m -d "/home/videodriver" videodriver
