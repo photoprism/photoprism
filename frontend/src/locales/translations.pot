@@ -69,7 +69,7 @@ msgstr ""
 msgid "Abyss"
 msgstr ""
 
-#: src/component/navigation.vue:63
+#: src/component/navigation.vue:73
 #: src/dialog/share/upload.vue:112
 #: src/model/account.js:98
 #: src/pages/settings.vue:74
@@ -171,12 +171,12 @@ msgstr ""
 msgid "Album Name"
 msgstr ""
 
-#: src/app/routes.js:129
-#: src/app/routes.js:136
+#: src/app/routes.js:130
+#: src/app/routes.js:137
 #: src/component/navigation.vue:144
 #: src/component/navigation.vue:154
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:605
+#: src/component/navigation.vue:607
 #: src/share/albums.vue:4
 msgid "Albums"
 msgstr ""
@@ -300,7 +300,7 @@ msgstr ""
 msgid "Approve"
 msgstr ""
 
-#: src/app/routes.js:210
+#: src/app/routes.js:211
 #: src/component/navigation.vue:131
 #: src/component/photo/cards.vue:429
 #: src/component/photo/clipboard.vue:216
@@ -387,6 +387,11 @@ msgstr ""
 msgid "Brown"
 msgstr ""
 
+#: src/app/routes.js:97
+#: src/app/routes.js:103
+msgid "Browse"
+msgstr ""
+
 #: src/pages/settings/general.vue:383
 msgid "Browse and edit image classification labels."
 msgstr ""
@@ -403,10 +408,10 @@ msgstr ""
 msgid "Busy, please wait…"
 msgstr ""
 
-#: src/app/routes.js:142
-#: src/app/routes.js:149
+#: src/app/routes.js:143
+#: src/app/routes.js:150
 #: src/component/navigation.vue:250
-#: src/component/navigation.vue:967
+#: src/component/navigation.vue:969
 msgid "Calendar"
 msgstr ""
 
@@ -719,10 +724,10 @@ msgstr ""
 msgid "Disables reverse geocoding and maps."
 msgstr ""
 
-#: src/app/routes.js:375
-#: src/app/routes.js:382
-#: src/app/routes.js:389
-#: src/app/routes.js:396
+#: src/app/routes.js:376
+#: src/app/routes.js:383
+#: src/app/routes.js:390
+#: src/app/routes.js:397
 msgid "Discover"
 msgstr ""
 
@@ -902,7 +907,7 @@ msgstr ""
 msgid "Exclude hidden"
 msgstr ""
 
-#: src/component/navigation.vue:284
+#: src/component/navigation.vue:286
 msgid "Expand"
 msgstr ""
 
@@ -960,9 +965,9 @@ msgstr ""
 msgid "Favorite"
 msgstr ""
 
-#: src/app/routes.js:175
+#: src/app/routes.js:176
 #: src/component/navigation.vue:224
-#: src/component/navigation.vue:879
+#: src/component/navigation.vue:881
 msgid "Favorites"
 msgstr ""
 
@@ -983,7 +988,7 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#: src/app/routes.js:242
+#: src/app/routes.js:243
 msgid "File Browser"
 msgstr ""
 
@@ -1023,10 +1028,10 @@ msgstr ""
 msgid "Folder is empty"
 msgstr ""
 
-#: src/app/routes.js:155
-#: src/app/routes.js:162
+#: src/app/routes.js:156
+#: src/app/routes.js:163
 #: src/component/navigation.vue:310
-#: src/component/navigation.vue:1175
+#: src/component/navigation.vue:1177
 msgid "Folders"
 msgstr ""
 
@@ -1095,7 +1100,7 @@ msgstr ""
 msgid "Hidden"
 msgstr ""
 
-#: src/app/routes.js:248
+#: src/app/routes.js:249
 msgid "Hidden Files"
 msgstr ""
 
@@ -1251,9 +1256,9 @@ msgstr ""
 msgid "Label"
 msgstr ""
 
-#: src/app/routes.js:261
+#: src/app/routes.js:262
 #: src/component/navigation.vue:297
-#: src/component/navigation.vue:1130
+#: src/component/navigation.vue:1132
 #: src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:215
@@ -1290,13 +1295,13 @@ msgstr ""
 msgid "Lens"
 msgstr ""
 
-#: src/app/routes.js:293
-#: src/app/routes.js:300
-#: src/app/routes.js:307
+#: src/app/routes.js:294
+#: src/app/routes.js:301
+#: src/app/routes.js:308
 #: src/component/navigation.vue:336
 #: src/component/navigation.vue:346
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1267
+#: src/component/navigation.vue:1269
 #: src/pages/settings.vue:41
 #: src/pages/settings/general.vue:404
 msgid "Library"
@@ -1334,7 +1339,7 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-#: src/app/routes.js:182
+#: src/app/routes.js:183
 #: src/component/navigation.vue:197
 #: src/component/photo/cards.vue:218
 #: src/component/photo/list.vue:187
@@ -1369,13 +1374,13 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr ""
 
 #: src/component/navigation.vue:436
-#: src/component/navigation.vue:1603
+#: src/component/navigation.vue:1605
 msgid "Login"
 msgstr ""
 
 #: src/component/navigation.vue:483
-#: src/component/navigation.vue:1713
-#: src/component/navigation.vue:1744
+#: src/component/navigation.vue:1715
+#: src/component/navigation.vue:1746
 msgid "Logout"
 msgstr ""
 
@@ -1426,7 +1431,7 @@ msgstr ""
 msgid "Message sent"
 msgstr ""
 
-#: src/component/navigation.vue:237
+#: src/component/navigation.vue:239
 msgid "Minimize"
 msgstr ""
 
@@ -1435,10 +1440,10 @@ msgstr ""
 msgid "Missing"
 msgstr ""
 
-#: src/app/routes.js:116
-#: src/app/routes.js:123
+#: src/app/routes.js:117
+#: src/app/routes.js:124
 #: src/component/navigation.vue:237
-#: src/component/navigation.vue:922
+#: src/component/navigation.vue:924
 #: src/pages/settings/general.vue:360
 msgid "Moments"
 msgstr ""
@@ -1669,7 +1674,7 @@ msgid "Nothing to see here yet. Be patient."
 msgstr ""
 
 #: src/component/navigation.vue:452
-#: src/component/navigation.vue:1648
+#: src/component/navigation.vue:1650
 #: src/options/options.js:296
 msgid "Offline"
 msgstr ""
@@ -1792,10 +1797,10 @@ msgstr ""
 msgid "Password changed"
 msgstr ""
 
-#: src/app/routes.js:267
-#: src/app/routes.js:287
+#: src/app/routes.js:268
+#: src/app/routes.js:288
 #: src/component/navigation.vue:211
-#: src/component/navigation.vue:834
+#: src/component/navigation.vue:836
 #: src/dialog/photo/edit.vue:52
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:266
@@ -1823,11 +1828,7 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/component/footer.vue:6
-msgid "PhotoPrism® needs your support"
-msgstr ""
-
-#: src/app/routes.js:109
+#: src/app/routes.js:110
 msgid "Photos"
 msgstr ""
 
@@ -1843,14 +1844,14 @@ msgstr ""
 msgid "Place & Time"
 msgstr ""
 
-#: src/app/routes.js:217
-#: src/app/routes.js:223
-#: src/app/routes.js:229
-#: src/app/routes.js:236
+#: src/app/routes.js:218
+#: src/app/routes.js:224
+#: src/app/routes.js:230
+#: src/app/routes.js:237
 #: src/component/navigation.vue:263
 #: src/component/navigation.vue:273
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1012
+#: src/component/navigation.vue:1014
 #: src/pages/settings/general.vue:108
 #: src/pages/settings/general.vue:450
 msgid "Places"
@@ -1910,9 +1911,9 @@ msgstr ""
 msgid "Primary"
 msgstr ""
 
-#: src/app/routes.js:203
+#: src/app/routes.js:204
 #: src/component/navigation.vue:323
-#: src/component/navigation.vue:1220
+#: src/component/navigation.vue:1222
 #: src/dialog/photo/info.vue:102
 #: src/pages/settings/general.vue:272
 msgid "Private"
@@ -2064,7 +2065,7 @@ msgstr ""
 msgid "Retype Password"
 msgstr ""
 
-#: src/app/routes.js:196
+#: src/app/routes.js:197
 #: src/component/navigation.vue:122
 msgid "Review"
 msgstr ""
@@ -2083,11 +2084,10 @@ msgstr ""
 msgid "Scans"
 msgstr ""
 
-#: src/app/routes.js:102
 #: src/component/navigation.vue:62
 #: src/component/navigation.vue:72
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:316
+#: src/component/navigation.vue:318
 #: src/component/photo/toolbar.vue:50
 #: src/pages/albums.vue:114
 #: src/pages/labels.vue:81
@@ -2151,17 +2151,17 @@ msgstr ""
 msgid "Service URL"
 msgstr ""
 
-#: src/app/routes.js:315
-#: src/app/routes.js:327
-#: src/app/routes.js:339
-#: src/app/routes.js:351
-#: src/app/routes.js:363
+#: src/app/routes.js:316
+#: src/app/routes.js:328
+#: src/app/routes.js:340
+#: src/app/routes.js:352
+#: src/app/routes.js:364
 #: src/component/navigation.vue:387
 #: src/component/navigation.vue:397
 #: src/component/navigation.vue:8
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1441
+#: src/component/navigation.vue:1443
 msgid "Settings"
 msgstr ""
 
@@ -2374,11 +2374,6 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
-#: src/component/footer.vue:5
-#: src/component/footer.vue:1
-msgid "Thank you for supporting PhotoPrism®"
-msgstr ""
-
 #: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr ""
@@ -2508,7 +2503,7 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: src/app/routes.js:168
+#: src/app/routes.js:169
 #: src/component/navigation.vue:164
 msgid "Unsorted"
 msgstr ""
@@ -2545,7 +2540,7 @@ msgid "Updating stacks"
 msgstr ""
 
 #: src/component/album/toolbar.vue:176
-#: src/component/navigation.vue:134
+#: src/component/navigation.vue:136
 #: src/component/photo/toolbar.vue:128
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
@@ -2632,11 +2627,11 @@ msgstr ""
 msgid "Video"
 msgstr ""
 
-#: src/app/routes.js:189
+#: src/app/routes.js:190
 #: src/component/navigation.vue:177
 #: src/component/navigation.vue:187
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:718
+#: src/component/navigation.vue:720
 msgid "Videos"
 msgstr ""
 
