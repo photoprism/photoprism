@@ -21,6 +21,7 @@
       </v-alert>
     </div>
     <v-data-table v-else
+                  ref="dataTable"
                   v-model="selected"
                   :headers="listColumns"
                   :items="photos"
@@ -30,7 +31,6 @@
                   disable-initial-sort
                   item-key="ID"
                   :no-data-text="notFoundMessage"
-                  ref="dataTable"
 
     >
       <template #items="props">
