@@ -267,8 +267,10 @@ test-coverage:
 	$(info Running all Go unit tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
-docker-develop: docker-develop-bookworm docker-develop-bookworm-slim docker-develop-armv7
-docker-develop-all: docker-develop docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster docker-develop-impish
+docker-develop: docker-develop-latest
+docker-develop-all: docker-develop-latest docker-develop-other
+docker-develop-latest: docker-develop-bookworm docker-develop-bookworm-slim docker-develop-armv7
+docker-develop-other: docker-develop-bullseye docker-develop-bullseye-slim docker-develop-jammy
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
@@ -300,8 +302,10 @@ docker-develop-jammy:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy
-docker-preview: docker-preview-bookworm
-docker-preview-all: docker-preview docker-preview-bullseye docker-preview-buster docker-preview-jammy
+docker-preview: docker-preview-latest
+docker-preview-all: docker-preview-latest docker-preview-other
+docker-preview-latest: docker-preview-bookworm
+docker-preview-other: docker-preview-bullseye docker-preview-jammy
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
@@ -341,8 +345,10 @@ docker-preview-impish:
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
-docker-release: docker-release-bookworm
-docker-release-all: docker-release docker-release-bullseye docker-release-buster docker-release-jammy
+docker-release: docker-release-latest
+docker-release-all: docker-release-latest docker-release-other
+docker-release-latest: docker-release-bookworm
+docker-release-other: docker-release-bullseye docker-release-jammy
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
