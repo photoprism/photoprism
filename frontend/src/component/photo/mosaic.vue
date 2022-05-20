@@ -33,7 +33,8 @@
                 style="user-select: none; aspect-ratio: 1"
                 class="accent lighten-2 result"/>
         <v-hover v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex">
-          <div slot-scope="{ hover }"
+          <div :key="photo.Hash"
+                slot-scope="{ hover }"
                 tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"

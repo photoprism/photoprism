@@ -67,7 +67,7 @@
           </div>
         </div>
         <v-hover v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex">
-          <v-card slot-scope="{ hover }"
+          <div slot-scope="{ hover }"
                   tile
                   :data-id="photo.ID"
                   :data-uid="photo.UID"
@@ -76,13 +76,11 @@
                   :class="photo.classes()"
                   @contextmenu.stop="onContextMenu($event, index)">
             <div class="card-background accent lighten-3"></div>
-            <v-img :key="photo.Hash"
-                  :src="photo.thumbnailUrl('tile_500')"
+            <div :key="photo.Hash"
                   :alt="photo.Title"
                   :title="photo.Title"
-                  :transition="false"
-                  aspect-ratio="1"
-                  class="accent lighten-2 clickable"
+                  class="accent lighten-2 clickable image"
+                  :style="`background-image: url(${photo.thumbnailUrl('tile_500')})`"
                   @touchstart.passive="input.touchStart($event, index)"
                   @touchend.stop.prevent="onClick($event, index)"
                   @mousedown.stop.prevent="input.mouseDown($event, index)"
@@ -149,7 +147,7 @@
                 <v-icon v-if="photo.Favorite" color="white" class="select-on">favorite</v-icon>
                 <v-icon v-else color="white" class="select-off">favorite_border</v-icon>
               </v-btn>
-            </v-img>
+            </div>
 
             <v-card-actions v-if="photo.Quality < 3 && context === 'review'" class="card-details pa-0">
               <v-layout row wrap align-center>
@@ -226,7 +224,7 @@
                 </div>
               </div>
             </v-card-title>
-          </v-card>
+          </div>
         <v-hover>
       </v-flex>
     </v-layout>
