@@ -45,15 +45,12 @@
               class="v-image accent lighten-2"
               style="aspect-ratio: 1"
           />
-          <v-img 
+          <div
                 v-if="props.index >= firstVisibleElementIndex && props.index <= lastVisibileElementIndex"
                 :key="props.item.Hash"
-                :src="props.item.thumbnailUrl('tile_50')"
                 :alt="props.item.Title"
-                :transition="false"
-                aspect-ratio="1"
-                style="user-select: none"
-                class="accent lighten-2 clickable"
+                :style="`background-image: url(${props.item.thumbnailUrl('tile_50')})`"
+                class="accent lighten-2 clickable image"
                 @touchstart="onMouseDown($event, props.index)"
                 @touchend.stop.prevent="onClick($event, props.index)"
                 @mousedown="onMouseDown($event, props.index)"
@@ -63,8 +60,8 @@
             <v-btn v-if="selectMode" :ripple="false"
                   flat icon large absolute
                   class="input-select">
-              <v-icon v-if="$clipboard.has(photo)" color="white" class="select-on">check_circle</v-icon>
-              <v-icon v-else color="white" class="select-off">radio_button_off</v-icon>
+              <v-icon color="white" class="select-on">check_circle</v-icon>
+              <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
             <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
                   :ripple="false"
@@ -74,7 +71,7 @@
               <v-icon v-if="props.item.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</v-icon>
               <v-icon v-if="props.item.Type === 'video'" color="white" class="action-play" :title="$gettext('Video')">play_arrow</v-icon>
             </v-btn>
-          </v-img>
+          </div>
         </td>
 
         <td class="p-photo-desc clickable" :data-uid="props.item.UID" style="user-select: none;"
