@@ -2,18 +2,12 @@
     z-index: 10;
 }
 
-/* hide scrollbar to save space */
-#p-navigation ::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-}
-
 nav .v-list__tile__title.title {
     line-height: normal!important;
 }
 
 #p-navigation .nav-title {
-    text-align: left;
+    text-align: center;
     -webkit-box-flex: 1!important;
     -ms-flex-positive: 1!important;
     flex-grow: 1!important;
@@ -63,9 +57,11 @@ nav .v-list__tile__title.title {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
+    min-width: 200px;
     padding: 0 5px;
     background-color: rgba(255, 255, 255, 0.6);
     margin: 0;
+    text-align: center;
     border-radius: 5px 5px 0 0;
 }
 

@@ -1,5 +1,9 @@
 /* Abyss Theme */
 
+body.dark-theme.theme-abyss {
+    background: #212121 !important;
+}
+
 .theme-abyss .v-content__wrap,
 .theme-abyss .p-page,
 .theme-abyss .form,
@@ -31,11 +35,11 @@
 }
 
 #photoprism.theme-abyss .theme--light.v-chip,
-#photoprism.theme-abyss .v-card__actions .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+#photoprism.theme-abyss .v-card__actions .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
     background: #333;
 }
 
-#photoprism.theme-abyss .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+#photoprism.theme-abyss .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
     background: #262626;
 }
 

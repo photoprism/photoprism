@@ -74,10 +74,17 @@ export default class Config {
       document.body.classList.remove("nojs");
 
       // Set body class for browser optimizations.
-      if (navigator.appVersion.indexOf("Chrome/") !== -1) {
+      if (navigator.userAgent.indexOf("Chrome/") !== -1) {
         document.body.classList.add("chrome");
-      } else if (navigator.appVersion.indexOf("Safari/") !== -1) {
+      } else if (navigator.userAgent.indexOf("Safari/") !== -1) {
         document.body.classList.add("safari");
+        document.body.classList.add("not-chrome");
+      } else if (navigator.userAgent.indexOf("Firefox/") !== -1) {
+        document.body.classList.add("firefox");
+        document.body.classList.add("not-chrome");
+      } else {
+        document.body.classList.add("other-browser");
+        document.body.classList.add("not-chrome");
       }
     }
 
@@ -301,6 +308,19 @@ export default class Config {
     this.$vuetify = instance;
   }
 
+  setBodyTheme(name) {
+    if (!document || !document.body) {
+      return;
+    }
+    document.body.classList.forEach((c) => {
+      if (c.startsWith("theme-")) {
+        document.body.classList.remove(c);
+      }
+    });
+
+    document.body.classList.add("theme-" + name);
+  }
+
   setColorMode(value) {
     if (!document || !document.body) {
       return;
@@ -325,6 +345,8 @@ export default class Config {
     Event.publish("view.refresh", this);
 
     this.theme = themes[name] ? themes[name] : themes["default"];
+
+    this.setBodyTheme(name);
 
     if (this.theme.dark) {
       this.setColorMode("dark");
@@ -401,7 +423,29 @@ export default class Config {
     return !this.values.demo && !this.values.test;
   }
 
-  appIcon() {
+  getName() {
+    const name = this.get("name");
+
+    if (!name) {
+      return "PhotoPrism";
+    } else if (name === "PhotoPrism" && this.values.sponsor) {
+      return "PhotoPrism+";
+    }
+
+    return name;
+  }
+
+  getEdition() {
+    const edition = this.get("edition");
+
+    if (!edition) {
+      return "PhotoPrism® Dev";
+    }
+
+    return edition;
+  }
+
+  getIcon() {
     switch (this.get("appIcon")) {
       case "crisp":
       case "mint":
@@ -410,5 +454,9 @@ export default class Config {
       default:
         return `${this.staticUri}/icons/logo.svg`;
     }
+  }
+
+  getVersion() {
+    return this.get("version");
   }
 }
