@@ -15,8 +15,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-const UsernameLen = 3
-const PasswordLen = 8
+var UsernameLength = 3
+var PasswordLength = 4
 
 type Users []User
 
@@ -263,8 +263,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len(password) < PasswordLen {
-		return fmt.Errorf("password must have at least %d characters", PasswordLen)
+	if len(password) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
 	}
 
 	pw := NewPassword(m.UserUID, password)
@@ -361,8 +361,8 @@ func (m *User) Validate() error {
 		return errors.New("username must not be empty")
 	}
 
-	if len(m.Username()) < UsernameLen {
-		return fmt.Errorf("username must have at least %d characters", UsernameLen)
+	if len(m.Username()) < UsernameLength {
+		return fmt.Errorf("username must have at least %d characters", UsernameLength)
 	}
 
 	var err error
@@ -406,8 +406,8 @@ func CreateWithPassword(uc form.UserCreate) error {
 		RoleAdmin:    true,
 	}
 
-	if len(uc.Password) < PasswordLen {
-		return fmt.Errorf("password must have at least %d characters", PasswordLen)
+	if len(uc.Password) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
 	}
 
 	err := u.Validate()
