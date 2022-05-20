@@ -6,7 +6,7 @@
           <v-card class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-3">
               <div class="logo text-xs-center">
-                <img :src="$config.appIcon()" :alt="config.name">
+                <img :src="$config.getIcon()" :alt="config.name">
               </div>
               <v-spacer></v-spacer>
               <v-text-field
@@ -107,7 +107,7 @@ export default {
       },
       loading: false,
       showPassword: false,
-      username: sponsor ? "" : "admin",
+      username: "",
       password: "",
       sponsor: sponsor,
       config: this.$config.values,
@@ -119,7 +119,7 @@ export default {
   },
   computed: {
     loginDisabled() {
-      return this.loading || !this.password || !this.username;
+      return this.loading || this.username.trim() === "" || this.password.trim() === "";
     }
   },
   created() {
@@ -137,12 +137,15 @@ export default {
       return "";
     },
     login() {
-      if (!this.username || !this.password) {
+      const username = this.username.trim();
+      const password = this.password.trim();
+
+      if (username === "" || password === "") {
         return;
       }
 
       this.loading = true;
-      this.$session.login(this.username, this.password).then(
+      this.$session.login(username, password).then(
         () => {
           this.loading = false;
           this.$router.push(this.nextUrl);

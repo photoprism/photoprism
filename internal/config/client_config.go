@@ -16,6 +16,7 @@ import (
 type ClientConfig struct {
 	Mode            string              `json:"mode"`
 	Name            string              `json:"name"`
+	Edition         string              `json:"edition"`
 	Version         string              `json:"version"`
 	Copyright       string              `json:"copyright"`
 	Flags           string              `json:"flags"`
@@ -210,6 +211,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "public",
 		Name:            c.Name(),
+		Edition:         c.Edition(),
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
 		CssUri:          assets.AppCssUri(),
@@ -284,6 +286,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "guest",
 		Name:            c.Name(),
+		Edition:         c.Edition(),
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
 		CssUri:          assets.ShareCssUri(),
@@ -352,6 +355,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "user",
 		Name:            c.Name(),
+		Edition:         c.Edition(),
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
 		CssUri:          assets.AppCssUri(),

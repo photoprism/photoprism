@@ -316,7 +316,7 @@ func TestUser_SetPassword(t *testing.T) {
 	})
 	t.Run("password too short", func(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
-		assert.Error(t, p.SetPassword("short"))
+		assert.Error(t, p.SetPassword("cat"))
 	})
 }
 

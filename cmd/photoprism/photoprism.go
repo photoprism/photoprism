@@ -26,7 +26,6 @@ package main
 
 import (
 	"os"
-	"path/filepath"
 
 	"github.com/urfave/cli"
 
@@ -38,8 +37,18 @@ import (
 var version = "development"
 var log = event.Log
 
-const appDescription = "Visit https://docs.photoprism.app/ to learn more."
+const appName = "PhotoPrism"
+const appEdition = "PhotoPrism® CE"
+const appDescription = "AI-Powered Photos App. Visit https://docs.photoprism.app/ to learn more."
 const appCopyright = "(c) 2018-2022 PhotoPrism UG. All rights reserved."
+
+// Metadata contains build specific information.
+var Metadata = map[string]interface{}{
+	"Name":        appName,
+	"Edition":     appEdition,
+	"Description": appDescription,
+	"Version":     version,
+}
 
 func main() {
 	defer func() {
@@ -49,15 +58,14 @@ func main() {
 	}()
 
 	app := cli.NewApp()
-	app.Name = "PhotoPrism"
-	app.HelpName = filepath.Base(os.Args[0])
-	app.Usage = "AI-Powered Photos App"
+	app.Usage = appEdition
 	app.Description = appDescription
 	app.Version = version
 	app.Copyright = appCopyright
 	app.EnableBashCompletion = true
 	app.Flags = config.Flags.Cli()
 	app.Commands = commands.PhotoPrism
+	app.Metadata = Metadata
 
 	if err := app.Run(os.Args); err != nil {
 		log.Error(err)
