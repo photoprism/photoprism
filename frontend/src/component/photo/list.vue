@@ -58,8 +58,8 @@
             <v-btn v-if="selectMode" :ripple="false"
                   flat icon large absolute
                   class="input-select">
-              <v-icon v-if="$clipboard.has(photo)" color="white" class="select-on">check_circle</v-icon>
-              <v-icon v-else color="white" class="select-off">radio_button_off</v-icon>
+              <v-icon color="white" class="select-on">check_circle</v-icon>
+              <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
             <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
                   :ripple="false"

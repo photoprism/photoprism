@@ -101,8 +101,8 @@
                     @touchend.stop.prevent="onSelect($event, index)"
                     @touchmove.stop.prevent
                     @click.stop.prevent="onSelect($event, index)">
-                <v-icon v-if="$clipboard.has(photo)" color="white" class="select-on">check_circle</v-icon>
-                <v-icon v-else color="white" class="select-off">radio_button_off</v-icon>
+                <v-icon color="white" class="select-on">check_circle</v-icon>
+                <v-icon color="white" class="select-off">radio_button_off</v-icon>
               </v-btn>
 
               <v-btn :ripple="false"
