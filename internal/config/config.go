@@ -304,6 +304,8 @@ func (c *Config) Name() string {
 func (c *Config) Edition() string {
 	if c.options.Edition == "" {
 		return "PhotoPrism® Dev"
+	} else if strings.HasSuffix(c.options.Edition, "CE") && c.Sponsor() {
+		return strings.Replace(c.options.Edition, "CE", "Plus", 1)
 	}
 
 	return c.options.Edition
