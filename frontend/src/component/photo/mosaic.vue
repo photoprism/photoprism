@@ -1,28 +1,30 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
-    <v-alert
-        :value="photos.length === 0"
-        color="secondary-dark"
-        :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
-        class="no-results ma-2 opacity-70"
-        outline
-    >
-      <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
-        <translate>No recently edited pictures</translate>
-      </h3>
-      <h3 v-else class="body-2 ma-0 pa-0">
-        <translate>No pictures found</translate>
-      </h3>
-      <p class="body-1 mt-2 mb-0 pa-0">
-        <translate>Try again using other filters or keywords.</translate>
-        <template v-if="!isSharedView">
-          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-          <template v-if="$config.feature('review')">
-            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+    <template v-if="photos.length === 0">
+      <v-alert
+          :value="true"
+          color="secondary-dark"
+          :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
+          class="no-results ma-2 opacity-70"
+          outline
+      >
+        <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
+          <translate>No recently edited pictures</translate>
+        </h3>
+        <h3 v-else class="body-2 ma-0 pa-0">
+          <translate>No pictures found</translate>
+        </h3>
+        <p class="body-1 mt-2 mb-0 pa-0">
+          <translate>Try again using other filters or keywords.</translate>
+          <template v-if="!isSharedView">
+            <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
+            <template v-if="$config.feature('review')">
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+            </template>
           </template>
-        </template>
-      </p>
-    </v-alert>
+        </p>
+      </v-alert>
+    </template>
     <v-layout row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}">
       <v-flex
           v-for="(photo, index) in photos"
