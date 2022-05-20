@@ -63,16 +63,16 @@
             <v-btn v-if="selectMode" :ripple="false"
                   flat icon large absolute
                   class="input-select">
-              <v-icon color="white" class="select-on">check_circle</v-icon>
-              <v-icon color="white" class="select-off">radio_button_off</v-icon>
+              <v-icon v-if="$clipboard.has(photo)" color="white" class="select-on">check_circle</v-icon>
+              <v-icon v-else color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
             <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
                   :ripple="false"
                   flat icon large absolute class="input-open"
                   @click.stop.prevent="openPhoto(props.index, true)">
-              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
-              <v-icon color="white" class="default-hidden action-animated" :title="$gettext('Animated')">gif</v-icon>
-              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
+              <v-icon v-if="props.item.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon v-if="props.item.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</v-icon>
+              <v-icon v-if="props.item.Type === 'video'" color="white" class="action-play" :title="$gettext('Video')">play_arrow</v-icon>
             </v-btn>
           </v-img>
         </td>
