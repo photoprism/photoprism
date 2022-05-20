@@ -1,5 +1,5 @@
 <template>
-  <div id="p-navigation">
+  <div id="p-navigation" :class="{'sidenav-visible': drawer}">
     <template v-if="visible && $vuetify.breakpoint.smAndDown">
       <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small"
                   @click.stop="showNavigation()">
@@ -43,8 +43,8 @@
               <img :src="appIcon" :alt="appName">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title class="title">
-                {{ appName }}
+              <v-list-tile-title class="title tm">
+                <strong v-if="appNamePrefix">{{ appNamePrefix}}</strong>{{ appNameSuffix }}
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
@@ -543,7 +543,19 @@ export default {
     }
   },
   data() {
+    const appName = this.$config.getName();
+
+    let appNamePrefix = "";
+    let appNameSuffix = appName;
+
+    if (appName.startsWith("Photo")) {
+      appNamePrefix = appName.substring(0, 5);
+      appNameSuffix = appName.substring(5, 24);
+    }
+
     return {
+      appNamePrefix: appNamePrefix,
+      appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
       appEdition: this.$config.getEdition(),
       appIcon: this.$config.getIcon(),
