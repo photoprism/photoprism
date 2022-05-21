@@ -246,6 +246,7 @@ export default {
     },
     toggle(photo) {
       this.$clipboard.toggle(photo);
+      this.$forceUpdate();
     },
     onOpen(ev, index, showMerged) {
       const inputType = this.input.eval(ev, index);
@@ -283,6 +284,7 @@ export default {
     },
     selectRange(index) {
       this.$clipboard.addRange(index, this.photos);
+      this.$forceUpdate();
     }
   },
 };
