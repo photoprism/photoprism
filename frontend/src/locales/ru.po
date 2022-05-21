@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-26 12:02+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-05-21 16:13+0000\n"
+"Last-Translator: LyssaK <a.y.kurasova@gmail.com>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/ru/>\n"
 "Language: ru\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 4.12\n"
+"X-Generator: Weblate 4.12.2\n"
 "Generated-By: usercopypaste\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
@@ -60,7 +60,7 @@ msgstr "4 часа"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
-msgstr "Нажмите, чтобы скопировать."
+msgstr "Щелчок мыши скопирует его в буфер обмена."
 
 #: src/component/navigation.vue:394 src/component/navigation.vue:27
 #: src/pages/about/about.vue:4 src/pages/about/about.vue:163
@@ -243,7 +243,8 @@ msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
 msgstr ""
-"Также вы можете загрузить файлы прямо на WebDAV сервер, например Nextcloud."
+"Кроме того, вы можете загружать файлы непосредственно на WebDAV-серверы, "
+"такие как Nextcloud."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -264,8 +265,7 @@ msgstr "Анимация"
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr ""
-"Все личные фотографии и видеозаписи останутся конфиденциальными и не будут "
-"опубликованы."
+"Любые личные фотографии и видео остаются личными и не будут передаваться."
 
 #: src/dialog/account/edit.vue:472
 msgid "API Key"
@@ -624,7 +624,7 @@ msgstr "Описание"
 
 #: src/dialog/webdav.vue:23
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Подробные инструкции вы можете найти в нашем руководстве пользователя."
+msgstr "Подробные инструкции можно найти в нашем руководстве пользователя."
 
 #: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1
 #: src/dialog/photo/edit.vue:178
@@ -758,7 +758,7 @@ msgstr "Алгоритм создания превью"
 
 #: src/pages/library/files.vue:37
 msgid "Duplicates will be skipped and only appear once."
-msgstr "Дубликаты будут пропущены и отобразятся только один раз."
+msgstr "Дубликаты будут пропущены и появятся только один раз."
 
 #: src/options/options.js:151
 msgid "Dutch"
@@ -1108,14 +1108,12 @@ msgstr ""
 "имена."
 
 #: src/pages/library/import.vue:5
-#, fuzzy
 msgid "Importing %{name}…"
-msgstr "Импортирование %{name}…"
+msgstr "Импорт %{имя}…"
 
 #: src/pages/library/import.vue:6
-#, fuzzy
 msgid "Importing files to originals…"
-msgstr "Импортирование файлов в originals…"
+msgstr "Импорт файлов в оригиналы…"
 
 #: src/dialog/photo/files.vue:174 src/dialog/photo/files.vue:183
 #: src/dialog/photo/files.vue:171 src/dialog/photo/files.vue:180
@@ -1151,9 +1149,8 @@ msgid "Indexing failed"
 msgstr "Индексирование не удалось"
 
 #: src/pages/library/index.vue:7
-#, fuzzy
 msgid "Indexing media and sidecar files…"
-msgstr "Индексирование медиа и файлов sidecar…"
+msgstr "Индексирование мультимедийных и побочных файлов…"
 
 #: src/dialog/photo/files.vue:53 src/dialog/photo/files.vue:50
 msgid "Instance ID"
@@ -1189,9 +1186,7 @@ msgstr "Ограничение по размеру в формате JPEG: %{n}p
 
 #: src/pages/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr ""
-"изобажения JPEG и файлы предпросмотра генерируются автоматически, если "
-"необходимо."
+msgstr "JPEG и эскизы автоматически отображаются по мере необходимости."
 
 #: src/dialog/photo/details.vue:575
 msgid "Keywords"
@@ -1703,7 +1698,6 @@ msgid "Photo"
 msgstr "Фотография"
 
 #: src/dialog/reload.vue:4
-#, fuzzy
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism был обновлен…"
 
@@ -1764,14 +1758,12 @@ msgid "Preserve filenames"
 msgstr "Сохранять имена файлов"
 
 #: src/pages/library/import.vue:8
-#, fuzzy
 msgid "Press button to start importing…"
-msgstr "Нажмите кнопку, чтобы начать импортирование…"
+msgstr "Нажмите кнопку, чтобы начать импорт…"
 
 #: src/pages/library/index.vue:9
-#, fuzzy
 msgid "Press button to start indexing…"
-msgstr "Нажмите кнопку, чтобы начать индексирование…"
+msgstr "Нажмите кнопку для начала индексации…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
@@ -1880,7 +1872,6 @@ msgstr "Перезагрузить"
 
 #: src/dialog/reload.vue:26 src/pages/settings/general.vue:99
 #: src/pages/settings/library.vue:46
-#, fuzzy
 msgid "Reloading…"
 msgstr "Перезагрузка…"
 
@@ -2398,7 +2389,6 @@ msgid "Upload complete"
 msgstr "Загрузка завершена"
 
 #: src/dialog/upload.vue:38
-#, fuzzy
 msgid "Upload complete. Indexing…"
 msgstr "Загрузка завершена. Индексирование…"
 
@@ -2415,12 +2405,10 @@ msgid "Upload to WebDAV and share links with friends."
 msgstr "Загружайте WebDAV и делитесь ссылками с друзьями."
 
 #: src/dialog/upload.vue:36
-#, fuzzy
 msgid "Uploading %{n} of %{t}…"
 msgstr "Загрузка %{n} из %{t}…"
 
 #: src/dialog/upload.vue:59 src/dialog/upload.vue:67 src/dialog/upload.vue:108
-#, fuzzy
 msgid "Uploading photos…"
 msgstr "Загрузка фотографий…"
 
