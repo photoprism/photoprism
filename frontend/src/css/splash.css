@@ -189,12 +189,12 @@
 
 #splash-info {
     display: none;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 #noscript-info {
     display: block;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 #loading-info {
@@ -208,7 +208,7 @@
 #photoprism .splash-info a {
     text-align: center;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 15px;
     color: #101010;
     width: auto;
     padding: 0;

@@ -1,10 +1,10 @@
 <div id="photoprism" class="container{{if .config.SiteCaption}} theme-{{ .config.Settings.UI.Theme }}{{end}}">
   <noscript>
-    <div id="noscript-info" class="elevation-1 splash-info">
+    <div id="noscript-info" class="splash-info">
       <a href="https://enable-javascript.com/" target="_blank">Need help enabling JavaScript?</a>
     </div>
   </noscript>
-  <div id="splash-info" class="elevation-1 has-js splash-info">
+  <div id="splash-info" class="has-js splash-info">
   {{if .config.Imprint}}
     {{if .config.ImprintUrl}}<a href="{{ .config.ImprintUrl }}" target="_blank" class="imprint">{{ .config.Imprint }}</a>
     {{else}}<span class="imprint">{{ .config.Imprint }}</span>{{end}}
