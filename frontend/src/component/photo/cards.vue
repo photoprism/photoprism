@@ -140,8 +140,8 @@
                     @touchend.stop.prevent="toggleLike($event, index)"
                     @touchmove.stop.prevent
                     @click.stop.prevent="toggleLike($event, index)">
-                <i v-if="photo.Favorite" class="select-on">favorite</i>
-                <i v-else class="select-off">favorite_border</i>
+                <i v-if="photo.Favorite">favorite</i>
+                <i v-else>favorite_border</i>
               </button>
             </div>
 
