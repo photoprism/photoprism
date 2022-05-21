@@ -210,6 +210,49 @@ body.chrome #photoprism .search-results .result {
   background-repeat: no-repeat;
 }
 
+#photoprism .cards-view .result .image button,
+#photoprism .list-view .result .image button,
+#photoprism .mosaic-view .result.image button {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+}
+
+#photoprism .cards-view .result .image button {
+  width: 36px;
+  height: 36px;
+}
+
+#photoprism .list-view .result .image button {
+  width: 44px;
+  height: 44px;
+}
+#photoprism .cards-view .result .image button:hover,
+#photoprism .list-view .result .image button:hover,
+#photoprism .mosaic-view .result .image button:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+#photoprism .mosaic-view .result.image i,
+#photoprism .list-view .result .image i,
+#photoprism .cards-view .result .image i {
+  color: white;
+  font-size: 24px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-family: Material Icons;
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  line-height: 1;
+}
+
 
 #photoprism .cards-view .result.is-selected,
 #photoprism .mosaic-view .result.is-selected {

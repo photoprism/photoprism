@@ -95,58 +95,52 @@
                 </video>
               </v-layout>
 
-              <v-btn v-if="photo.Type !== 'image' || photo.Files.length > 1"
-                    :ripple="false" :depressed="false" class="input-open"
-                    icon flat absolute
+              <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
+                    class="input-open"
                     @touchstart.stop.prevent="input.touchStart($event, index)"
                     @touchend.stop.prevent="onOpen($event, index, true)"
                     @touchmove.stop.prevent
                     @click.stop.prevent="onOpen($event, index, true)">
-                  <v-icon v-if="photo.Type === 'raw'" color="white" class="action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
-                  <v-icon v-if="photo.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
-                  <v-icon v-if="photo.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</v-icon>
-                  <v-icon v-if="photo.Type === 'video'" color="white" class="action-play" :title="$gettext('Video')">play_arrow</v-icon>
-                  <v-icon v-if="photo.Type === 'image'" color="white" class="action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
-              </v-btn>
+                  <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
+                  <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</i>
+                  <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
+                  <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
+                  <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
+              </button>
 
-              <v-btn v-if="photo.Type === 'image' && selectMode"
-                    :ripple="false" :depressed="false" class="input-view"
-                    icon flat absolute :title="$gettext('View')"
+              <button v-if="photo.Type === 'image' && selectMode"
+                    class="input-view"
+                    :title="$gettext('View')"
                     @touchstart.stop.prevent="input.touchStart($event, index)"
                     @touchend.stop.prevent="onOpen($event, index, false)"
                     @touchmove.stop.prevent
                     @click.stop.prevent="onOpen($event, index, false)">
-                <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
-              </v-btn>
+                <i class="action-fullscreen">zoom_in</i>
+              </button>
 
-              <v-btn v-if="featPrivate && photo.Private" :ripple="false"
-                    icon flat absolute
-                    class="input-private">
-                <v-icon color="white" class="select-on">lock</v-icon>
-              </v-btn>
+              <button v-if="featPrivate && photo.Private" class="input-private">
+                <i class="select-on">lock</i>
+              </button>
 
-              <v-btn v-if="hover || $clipboard.has(photo)"
-                    :ripple="false"
-                    icon flat absolute
+              <button v-if="hover || $clipboard.has(photo)"
                     class="input-select"
                     @touchstart.stop.prevent="input.touchStart($event, index)"
                     @touchend.stop.prevent="onSelect($event, index)"
                     @touchmove.stop.prevent
                     @click.stop.prevent="onSelect($event, index)">
-                <v-icon color="white" class="select-on">check_circle</v-icon>
-                <v-icon color="white" class="select-off">radio_button_off</v-icon>
-              </v-btn>
+                <i class="select-on">check_circle</i>
+                <i class="select-off">radio_button_off</i>
+              </button>
 
-              <v-btn :ripple="false"
-                    icon flat absolute
+              <button
                     class="input-favorite"
                     @touchstart.stop.prevent="input.touchStart($event, index)"
                     @touchend.stop.prevent="toggleLike($event, index)"
                     @touchmove.stop.prevent
                     @click.stop.prevent="toggleLike($event, index)">
-                <v-icon v-if="photo.Favorite" color="white" class="select-on">favorite</v-icon>
-                <v-icon v-else color="white" class="select-off">favorite_border</v-icon>
-              </v-btn>
+                <i v-if="photo.Favorite" class="select-on">favorite</i>
+                <i v-else class="select-off">favorite_border</i>
+              </button>
             </div>
 
             <v-card-actions v-if="photo.Quality < 3 && context === 'review'" class="card-details pa-0">
