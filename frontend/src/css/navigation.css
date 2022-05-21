@@ -7,12 +7,14 @@ nav .v-list__tile__title.title {
 }
 
 #p-navigation .nav-title {
-    text-align: center;
+    text-align: left;
+    font-weight: bold;
+    font-size: 18px;
     -webkit-box-flex: 1!important;
     -ms-flex-positive: 1!important;
     flex-grow: 1!important;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 14px;
+    margin-right: 14px;
     max-height: 100%;
     line-height: normal!important;
 }
@@ -137,4 +139,8 @@ nav .v-list__tile__title.title {
 }
 .v-list__group__header .p-flex-menuitem .nav-count {
     margin-right: 0;
+}
+
+#p-navigation .nav-menu-trigger {
+    margin: 0 -5px 0 0;
 }

@@ -48,16 +48,9 @@ body.firefox.dark-theme {
 /* Chrome specific styles */
 
 ::-webkit-scrollbar {
-    height: 11px;
+    height: 7px;
+    width: 7px;
     overflow: visible;
-    width: 11px;
-}
-
-@media only screen and (max-width: 599px) {
-    ::-webkit-scrollbar {
-        height: 7px;
-        width: 7px;
-    }
 }
 
 ::-webkit-scrollbar-button {
@@ -65,18 +58,26 @@ body.firefox.dark-theme {
     width: 0;
 }
 
+@media only screen and (min-width: 600px) {
+    ::-webkit-scrollbar {
+        height: 11px;
+        width: 11px;
+        overflow: visible;
+    }
+}
+
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
 
 ::-webkit-scrollbar-track {
-    background-color: rgba(230, 230, 230, 0.43);
+    background-color: rgba(242, 242, 242, .32);
     border: solid transparent;
     border-width: 0 0 0 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, .57);
+    background-color: rgba(0, 0, 0, .64);
     border: solid transparent;
     border-width: 1px 1px 1px 6px;
     min-height: 28px;

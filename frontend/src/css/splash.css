@@ -33,16 +33,43 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 264px;
-    height: 264px;
-    margin: 0;
+    margin: auto;
     padding: 0;
     z-index: 1;
+    border-radius: 50%;
+    display: block;
 }
 
+#photoprism div.loading-logo,
 #photoprism div.loading-logo svg {
-    width: 264px;
-    height: 264px;
+    width: 35vh;
+    height: 35vh;
+    max-width: 65vw;
+    max-height: 65vw;
+}
+
+#photoprism .loading-dots {
+    text-align: center;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 30px;
+    color: #b5b5b3;
+    text-wrap: none;
+}
+
+#photoprism .loading-dots span.dot {
+    font-size: 85px;
+    font-weight: 700;
+    display: inline;
+    text-wrap: none;
+    margin-left: 5px;
+    margin-right: 5px;
+    line-height: 1;
+    position: relative;
+    bottom: 0;
+    opacity: 0;
+    color: #b5b5b3;
 }
 
 #photoprism div.loading-animation {
@@ -115,43 +142,75 @@
     overflow: hidden;
 }
 
-#noscript-info {
+#loading-info {
+    background-blend-mode: difference;
+}
+
+#loading-info,
+#photoprism .splash-info {
     position: fixed;
-    top: 10%;
+    padding: 10px 10px;
+    border-radius: 10px;
+    min-width: 280px;
+    width: auto;
+    height: auto;
     left: 50%;
     transform: translateX(-50%);
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-    border-radius: 5px;
-    min-width: 200px;
+    background-color: rgba(239, 239, 235, 0.56);
     text-align: center;
 }
 
-#noscript-info a {
-    text-align: center;
-    text-decoration: none;
-    font-size: 13px;
-    color: #000;
+#photoprism .splash-info {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    top: 0;
+    left: 50%;
+    right: auto;
+    width: auto;
+}
+
+#splash-info > span {
+    display: none;
+}
+
+#splash-info > .imprint{
+    display: inline-block;
+}
+
+#splash-info.day-0 .quote-0,
+#splash-info.day-1 .quote-1,
+#splash-info.day-2 .quote-3,
+#splash-info.day-3 .quote-3,
+#splash-info.day-4 .quote-4,
+#splash-info.day-5 .quote-5,
+#splash-info.day-6 .quote-6 {
+    display: block;
+}
+
+#splash-info {
+    display: none;
+    font-weight: 600;
+}
+
+#noscript-info {
+    display: block;
+    font-weight: 600;
 }
 
 #loading-info {
-    position: fixed;
     bottom: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-    border-radius: 5px;
     min-width: 200px;
-    text-align: center;
 }
 
+#loading-info span,
 #loading-info a,
-#loading-info span {
+#photoprism .splash-info span,
+#photoprism .splash-info a {
     text-align: center;
     text-decoration: none;
-    font-size: 13px;
-    color: #000;
+    font-size: 16px;
+    color: #101010;
+    width: auto;
+    padding: 0;
+    margin: 0;
 }

@@ -384,16 +384,16 @@
               </v-flex>
 
               <v-flex v-if="!disabled" xs12 :text-xs-right="!rtl" :text-xs-left="rtl" class="pt-3">
-                <v-btn depressed color="secondary-light" class="action-close"
+                <v-btn depressed color="secondary-light" class="compact action-close"
                        @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-                <v-btn color="primary-button" depressed dark class="action-apply action-approve"
+                <v-btn color="primary-button" depressed dark class="compact action-apply action-approve"
                        @click.stop="save(false)">
                   <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
                   <span v-else><translate>Apply</translate></span>
                 </v-btn>
-                <v-btn color="primary-button" depressed dark class="action-done hidden-xs-only"
+                <v-btn color="primary-button" depressed dark class="compact action-done hidden-xs-only"
                        @click.stop="save(true)">
                   <translate>Done</translate>
                 </v-btn>
@@ -402,7 +402,7 @@
           </v-flex>
         </v-layout>
 
-        <div class="mt-5"></div>
+        <div class="mt-1 clear"></div>
       </v-form>
     </v-container>
   </div>

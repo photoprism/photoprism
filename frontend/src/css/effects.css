@@ -160,3 +160,102 @@
 #photoprism .blur-8 {
     backdrop-filter: blur(14px);
 }
+
+/* Rotation Animation */
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+.animate-rotation {
+    -webkit-animation: rotation 1s infinite linear;
+    -moz-animation: rotation 1s infinite linear;
+    animation: rotation 1s infinite linear;
+}
+
+/* Saturation Animation */
+
+@keyframes saturation {
+    from {
+        filter: saturate(100%);
+    }
+    to {
+        filter: saturate(400%);
+    }
+}
+
+.animate-saturation {
+    -webkit-animation: saturation 1s ease-out 0s alternate infinite none running;
+    -moz-animation: saturation 1s ease-out 0s alternate infinite none running;
+    animation: saturation 1s ease-out 0s alternate infinite none running;
+}
+
+/* Hue Animation */
+
+@keyframes hue {
+    0% {
+        filter: hue-rotate(0);
+    }
+    25% {
+        filter: hue-rotate(-90deg);
+    }
+    50% {
+        filter: hue-rotate(0);
+    }
+    75% {
+        filter: hue-rotate(30deg);
+    }
+    100% {
+        filter: hue-rotate(0);
+    }
+}
+
+.animate-hue {
+    -webkit-animation: hue 4s infinite linear;
+    -moz-animation: hue 4s infinite linear;
+    animation: hue 4s infinite linear;
+}
+
+.animate-hue-fast {
+    -webkit-animation: hue 2.5s infinite linear;
+    -moz-animation: hue 2.5s infinite linear;
+    animation: hue 2.5s infinite linear;
+}
+
+/* Beating Heart Animation */
+
+@keyframes heart {
+     0%, 40%, 80%, 100% {
+         transform: scale(1);
+     }
+     20%, 60% {
+         transform: scale(1.15);
+     }
+ }
+
+.animate-heart {
+    animation: heart 1000ms infinite;
+}
+
+/* Loading Dots Animation */
+
+@keyframes dots {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    60% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.dots-animation {
+    animation: dots 2.5s ease-in-out infinite;
+}
+
+.dots-animation.one { animation-delay: 0.2s; }
+.dots-animation.two { animation-delay: 0.4s; }
+.dots-animation.three { animation-delay: 0.6s; }
+

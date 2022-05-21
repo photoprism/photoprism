@@ -1,18 +1,53 @@
 <template>
   <div id="p-navigation" :class="{'sidenav-visible': drawer}">
     <template v-if="visible && $vuetify.breakpoint.smAndDown">
-      <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small"
-                  @click.stop="showNavigation()">
-        <v-avatar tile :size="28" :class="{'clickable': auth}">
+      <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small elevation-2"
+                  @click.stop.prevent>
+        <v-avatar tile :size="28" :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">
           <img :src="appIcon" :alt="config.name">
         </v-avatar>
         <v-toolbar-title class="nav-title">
-          {{ page.title }}
+          <span :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
-        <v-btn v-if="auth && !config.readonly && $config.feature('upload')" icon class="action-upload"
-               :title="$gettext('Upload')" @click.stop="openUpload()">
-          <v-icon>cloud_upload</v-icon>
-        </v-btn>
+        <v-menu v-if="auth && !config.disable.settings" attach="#p-navigation .nav-small" :nudge-bottom="9" :nudge-right="6"
+                 close-on-content-click fixed disable-keys offset-y bottom left>
+          <template #activator="{ on }">
+            <v-btn
+                dark
+                icon
+                class="nav-menu-trigger"
+                v-on="on"
+                @click.stop.prevent
+            >
+              <v-icon>more_vert</v-icon>
+            </v-btn>
+          </template>
+
+          <v-list class="nav-menu opacity-98">
+            <v-list-tile v-if="auth && !config.readonly && $config.feature('upload')" class="clickable nav-menu-upload" @click.prevent="openUpload()">
+              <v-list-tile-action class="clickable" @click.prevent="openUpload()">
+                <v-icon>cloud_upload</v-icon>
+              </v-list-tile-action>
+
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <v-list-tile-title><translate key="Upload">Upload</translate></v-list-tile-title>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile v-if="auth && !isPublic" class="clickable nav-menu-logout" @click.prevent="logout">
+              <v-list-tile-action class="clickable" @click.prevent="logout">
+                <v-icon>power_settings_new</v-icon>
+              </v-list-tile-action>
+
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <v-list-tile-title><translate key="Logout">Logout</translate></v-list-tile-title>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
       </v-toolbar>
     </template>
     <template v-else-if="visible && !auth">
@@ -40,11 +75,11 @@
         <v-list class="navigation-home">
           <v-list-tile class="nav-logo">
             <v-list-tile-avatar class="clickable" @click.stop.prevent="goHome">
-              <img :src="appIcon" :alt="appName">
+              <img :src="appIcon" :alt="appName" :class="{'animate-hue': indexing}">
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title tm">
-                <strong v-if="appNamePrefix">{{ appNamePrefix}}</strong>{{ appNameSuffix }}
+                <strong>Photo</strong>Prism<span v-if="appName === 'PhotoPrism+'" class="plus">+</span><span v-else-if="appNameSuffix !== ''"> {{ appNameSuffix }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
@@ -545,20 +580,19 @@ export default {
   data() {
     const appName = this.$config.getName();
 
-    let appNamePrefix = "";
-    let appNameSuffix = appName;
+    let appNameSuffix = "";
+    let appNameParts = appName.split(" ");
 
-    if (appName.startsWith("Photo")) {
-      appNamePrefix = appName.substring(0, 5);
-      appNameSuffix = appName.substring(5, 24);
+    if (appNameParts.length > 1) {
+      appNameSuffix = appNameParts.slice(1, 9).join(" ");
     }
 
     return {
-      appNamePrefix: appNamePrefix,
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
       appEdition: this.$config.getEdition(),
       appIcon: this.$config.getIcon(),
+      indexing: false,
       drawer: null,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false',
       isPublic: this.$config.get("public"),
@@ -568,21 +602,19 @@ export default {
       config: this.$config.values,
       page: this.$config.page,
       reload: {
-        subscription: null,
         dialog: false,
       },
       upload: {
-        subscription: null,
         dialog: false,
       },
       edit: {
-        subscription: null,
         dialog: false,
         album: null,
         selection: [],
         index: 0,
       },
       rtl: this.$rtl,
+      subscriptions: [],
     };
   },
   computed: {
@@ -602,27 +634,35 @@ export default {
     },
   },
   created() {
-    this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);
-    this.upload.subscription = Event.subscribe("dialog.upload", () => this.upload.dialog = true);
-
-    this.edit.subscription = Event.subscribe("dialog.edit", (ev, data) => {
+    this.subscriptions.push(Event.subscribe('index', this.onIndex));
+    this.subscriptions.push(Event.subscribe('import', this.onIndex));
+    this.subscriptions.push(Event.subscribe("dialog.reload", () => this.reload.dialog = true));
+    this.subscriptions.push(Event.subscribe("dialog.upload", () => this.upload.dialog = true));
+    this.subscriptions.push(Event.subscribe("dialog.edit", (ev, data) => {
       if (!this.edit.dialog) {
         this.edit.dialog = true;
         this.edit.index = data.index;
         this.edit.selection = data.selection;
         this.edit.album = data.album;
       }
-    });
+    }));
   },
   destroyed() {
-    Event.unsubscribe(this.reload.subscription);
-    Event.unsubscribe(this.upload.subscription);
-    Event.unsubscribe(this.edit.subscription);
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
+    }
   },
   methods: {
     openUpload() {
       if (this.auth && !this.isReadOnly && this.$config.feature('upload')) {
         this.upload.dialog = true;
+      } else {
+        this.goHome();
+      }
+    },
+    openSettings() {
+      if (this.auth && this.$config.feature('settings')) {
+        this.$router.push({ name: 'settings' });
       } else {
         this.goHome();
       }
@@ -649,6 +689,24 @@ export default {
     },
     logout() {
       this.$session.logout();
+    },
+    onIndex(ev) {
+      if (!ev) {
+        return;
+      }
+
+      const type = ev.split('.')[1];
+
+      switch (type) {
+        case "file":
+        case "folder":
+        case "indexing":
+          this.indexing = true;
+          break;
+        case 'completed':
+          this.indexing = false;
+          break;
+      }
     },
   },
 };

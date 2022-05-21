@@ -26,6 +26,7 @@ Additional information can be found in our Developer Guide:
 @import url("vendor/icons/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
+@import url("typography.css");
 @import url("wallpapers.css");
 @import url("scrollbar.css");
 @import url("themes.css");
@@ -68,12 +69,6 @@ Additional information can be found in our Developer Guide:
     }
 }
 
-/*
-html {
-    overflow: auto overlay;
-}
-*/
-
 html,
 body {
     overscroll-behavior-y: contain;
@@ -81,35 +76,8 @@ body {
 
 body {
     background-color: #fafafa;
-    color: #333333;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     min-width: 320px;
     min-height: 500px;
-
-    /* Text rendering defaults. */
-    letter-spacing: normal;
-    text-justify: inter-word;
-
-    /* Support for all WebKit browsers. */
-    -webkit-font-smoothing: antialiased;
-
-    /* Support for Safari and Chrome. */
-    text-rendering: optimizeLegibility;
-
-    /* Support for Firefox. */
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Enable font features. */
-    font-feature-settings: 'kern', 'liga';
-}
-
-body .application {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-}
-
-body.chrome {
-    /* overflow: auto overlay; */
-    min-height: 100%;
     margin: 0;
     padding: 0;
 }
@@ -152,16 +120,55 @@ footer {
 }
 
 #photoprism .tm {
-    font-weight: 500;
+    letter-spacing: normal;
+    font-weight: 600;
 }
 
 #photoprism .tm strong {
     font-weight: 600;
 }
 
+#photoprism .tm sup,
+#photoprism .tm span {
+    letter-spacing: normal;
+}
+
+#photoprism .tm sup {
+    font-size: 9px;
+    font-weight: 600;
+    top: -9px;
+}
+
+#photoprism .tm sup.plus {
+    font-size: 17px;
+    font-weight: 500;
+    left: -1px;
+    top: -8px;
+}
+
+#photoprism .nav-menu {
+    padding: 0;
+}
+
+#photoprism .nav-logo .v-list__tile__action,
+#photoprism .nav-menu .v-list__tile__action {
+    min-width: 35px;
+}
+
+#photoprism .nav-menu .v-list__tile {
+    font-size: 15px;
+}
+
+#photoprism .nav-menu .v-list__tile .v-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+/*
 #photoprism .sidenav-visible .nav-small .v-toolbar__content {
     opacity: 0.48;
 }
+*/
 
 main {
     padding: 0;
