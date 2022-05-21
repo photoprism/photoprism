@@ -57,20 +57,17 @@
                 @contextmenu.stop="onContextMenu($event, props.index)"
                 @click.stop.prevent="onClick($event, props.index)"
           >
-            <v-btn v-if="selectMode" :ripple="false"
-                  flat icon large absolute
-                  class="input-select">
-              <v-icon color="white" class="select-on">check_circle</v-icon>
-              <v-icon color="white" class="select-off">radio_button_off</v-icon>
-            </v-btn>
-            <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
-                  :ripple="false"
-                  flat icon large absolute class="input-open"
+            <button v-if="selectMode" class="input-select">
+              <i class="select-on">check_circle</i>
+              <i class="select-off">radio_button_off</i>
+            </button>
+            <button v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
+                  class="input-open"
                   @click.stop.prevent="openPhoto(props.index, true)">
-              <v-icon v-if="props.item.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
-              <v-icon v-if="props.item.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</v-icon>
-              <v-icon v-if="props.item.Type === 'video'" color="white" class="action-play" :title="$gettext('Video')">play_arrow</v-icon>
-            </v-btn>
+              <i v-if="props.item.Type === 'live'" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</i>
+              <i v-if="props.item.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
+              <i v-if="props.item.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
+            </button>
           </div>
         </td>
 
