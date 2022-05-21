@@ -10,7 +10,7 @@
           <span :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
         <v-menu v-if="showNavMenu" attach="#p-navigation .nav-small" :nudge-bottom="16" :nudge-right="0"
-                 close-on-content-click fixed disable-keys offset-y bottom left>
+                 close-on-content-click fixed disable-keys offset-y bottom :left="!rtl">
           <template #activator="{ on }">
             <v-btn
                 dark

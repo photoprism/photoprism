@@ -233,6 +233,10 @@ main {
     -webkit-hyphens: auto;
 }
 
+#photoprism.is-rtl .v-card .caption {
+    text-align: right;
+}
+
 #photoprism .v-tabs .v-badge__badge {
     right: -22px;
     font-size: 9px;

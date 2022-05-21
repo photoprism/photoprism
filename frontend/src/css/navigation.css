@@ -19,6 +19,10 @@ nav .v-list__tile__title.title {
     line-height: normal!important;
 }
 
+.is-rtl #p-navigation .nav-title {
+    text-align: right;
+}
+
 #p-navigation .nav-count {
     opacity: 0.5;
     /*position: absolute;*/
