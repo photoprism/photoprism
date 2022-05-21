@@ -8,9 +8,22 @@ export const virtualizationTools = {
       }
 
       if (inView) {
-        visibleElementIndices.add(elementIndex)
+        visibleElementIndices.add(elementIndex);
       } else {
-        visibleElementIndices.delete(elementIndex)
+        /**
+         * If the target has no parent-node, it's no longer in the dom-tree.
+         * If the element is no longer inView because it was removed from the
+         * dom-tree, then this says nothing about the visible indices.
+         * If you remove a picture from the grid, the space where the picture
+         * was is still visible.
+         *
+         * We therefore must ignore entries that became invisible that no longer
+         * exists
+         */
+        const entryIsStillMounted = entry.target.parentNode !== null;
+        if (entryIsStillMounted) {
+          visibleElementIndices.delete(elementIndex);
+        }
       }
     });
 
@@ -27,14 +40,20 @@ export const virtualizationTools = {
      */
     let firstVisibleElementIndex, lastVisibileElementIndex;
     for (const visibleElementIndex of visibleElementIndices.values()) {
-      if (firstVisibleElementIndex === undefined || visibleElementIndex < firstVisibleElementIndex) {
+      if (
+        firstVisibleElementIndex === undefined ||
+        visibleElementIndex < firstVisibleElementIndex
+      ) {
         firstVisibleElementIndex = visibleElementIndex;
       }
-      if (lastVisibileElementIndex === undefined || visibleElementIndex > lastVisibileElementIndex) {
+      if (
+        lastVisibileElementIndex === undefined ||
+        visibleElementIndex > lastVisibileElementIndex
+      ) {
         lastVisibileElementIndex = visibleElementIndex;
       }
     }
 
     return [firstVisibleElementIndex, lastVisibileElementIndex];
   },
-}
+};
