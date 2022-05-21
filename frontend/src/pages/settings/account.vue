@@ -62,9 +62,9 @@
             </v-flex>
 
             <v-flex xs12 class="pa-2">
-              <v-btn depressed small color="primary-button"
+              <v-btn depressed color="primary-button"
                      :disabled="disabled()"
-                     class="action-confirm white--text ma-0"
+                     class="action-confirm compact white--text ma-0"
                      @click.stop="confirm">
                 <translate>Change</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>keyboard_return</v-icon>
