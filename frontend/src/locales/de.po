@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-26 12:02+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-05-21 06:38+0000\n"
+"Last-Translator: Michael Mayer <michael@liquidbytes.net>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12\n"
+"X-Generator: Weblate 4.12.2\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
@@ -677,7 +677,7 @@ msgstr "Deaktiviert"
 
 #: src/pages/settings/advanced.vue:188
 msgid "Disables reverse geocoding and maps."
-msgstr "Deaktiviert Ortsdaten und Landkarten."
+msgstr "Deaktiviert Geodaten und Weltkarten."
 
 #: src/routes.js:380 src/routes.js:387 src/routes.js:394 src/routes.js:401
 msgid "Discover"
@@ -1730,7 +1730,7 @@ msgstr "Gleicher Ort & Zeit"
 #: src/pages/settings/general.vue:108 src/pages/settings/general.vue:450
 #: src/routes.js:222 src/routes.js:228 src/routes.js:234 src/routes.js:241
 msgid "Places"
-msgstr "Karten"
+msgstr "Orte"
 
 #: src/component/photo/cards.vue:280 src/component/photo/mosaic.vue:256
 #: src/share/photo/cards.vue:253 src/share/photo/mosaic.vue:237
