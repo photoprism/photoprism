@@ -41,33 +41,35 @@
           <div class="accent lighten-2" style="aspect-ratio: 1" />
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
           <div class="v-card__title pa-3 card-details v-card__title--primary">
-            <h3 class="body-2 mb-2" :title="photo.Title">
-              {{ photo.Title | truncate(80) }}
-            </h3>
-            <div v-if="photo.Description" class="caption mb-2" style="hyphens: auto; word-break: break-word">
-              {{ photo.Description }}
-            </div>
-            <div class="caption" style="hyphens: auto; word-break: break-word">
-                <i style="display: inline-block; width: 14px" />
-                {{ photo.getDateString(true) }}
-              <br>
-              <i style="display: inline-block; width: 14px" />
-              <template v-if="photo.Type === 'video' || photo.Type === 'animated'">
-                {{ photo.getVideoInfo() }}
-              </template>
-              <template v-else>
-                {{ photo.getPhotoInfo() }}
-              </template>
-              <template v-if="filter.order === 'name' && $config.feature('download')">
+            <div>
+              <h3 class="body-2 mb-2" :title="photo.Title">
+                {{ photo.Title | truncate(80) }}
+              </h3>
+              <div v-if="photo.Description" class="caption mb-2" style="hyphens: auto; word-break: break-word">
+                {{ photo.Description }}
+              </div>
+              <div class="caption" style="hyphens: auto; word-break: break-word">
+                  <i style="display: inline-block; width: 14px" />
+                  {{ photo.getDateString(true) }}
                 <br>
                 <i style="display: inline-block; width: 14px" />
-                {{ photo.baseName() }}
-              </template>
-              <template v-if="featPlaces && photo.Country !== 'zz'">
-                <br>
-                <i style="display: inline-block; width: 14px" />
-                {{ photo.locationInfo() }}
-              </template>
+                <template v-if="photo.Type === 'video' || photo.Type === 'animated'">
+                  {{ photo.getVideoInfo() }}
+                </template>
+                <template v-else>
+                  {{ photo.getPhotoInfo() }}
+                </template>
+                <template v-if="filter.order === 'name' && $config.feature('download')">
+                  <br>
+                  <i style="display: inline-block; width: 14px" />
+                  {{ photo.baseName() }}
+                </template>
+                <template v-if="featPlaces && photo.Country !== 'zz'">
+                  <br>
+                  <i style="display: inline-block; width: 14px" />
+                  {{ photo.locationInfo() }}
+                </template>
+              </div>
             </div>
           </div>
         </div>
