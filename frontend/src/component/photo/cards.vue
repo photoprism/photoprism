@@ -371,8 +371,18 @@ export default {
       if (ev.shiftKey) {
         this.selectRange(index);
       } else {
-        this.$clipboard.toggle(this.photos[index]);
+        this.toggle(this.photos[index]);
       }
+    },
+    toggle(photo) {
+      this.$clipboard.toggle(photo);
+      /**
+       * updating the clipboard does not rerender this component. Because of that
+       * there can be scenarios where the select-icon is missing after a change,
+       * for example when using touch and no hover-state changes.We therefore
+       * force an update to fix that.
+       */
+      this.$forceUpdate();
     },
     onOpen(ev, index, showMerged) {
       const inputType = this.input.eval(ev, index);
@@ -395,7 +405,7 @@ export default {
         if (longClick || ev.shiftKey) {
           this.selectRange(index);
         } else {
-          this.$clipboard.toggle(this.photos[index]);
+          this.toggle(this.photos[index]);
         }
       } else {
         this.openPhoto(index, false);
@@ -410,6 +420,13 @@ export default {
     },
     selectRange(index) {
       this.$clipboard.addRange(index, this.photos);
+      /**
+       * updating the clipboard does not rerender this component. Because of that
+       * there can be scenarios where the select-icon is missing after a change,
+       * for example when selecting mutliple elements at once. We therefore
+       * force an update to fix that.
+       */
+      this.$forceUpdate();
     },
   }
 };
