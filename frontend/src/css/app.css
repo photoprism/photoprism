@@ -146,30 +146,6 @@ footer {
     top: -8px;
 }
 
-#photoprism .nav-menu {
-    padding: 0;
-}
-
-#photoprism .nav-logo .v-list__tile__action,
-#photoprism .nav-menu .v-list__tile__action {
-    min-width: 35px;
-}
-
-#photoprism .nav-menu .v-list__tile {
-    font-size: 15px;
-}
-
-#photoprism .nav-menu .v-list__tile .v-icon {
-    font-size: 20px;
-    line-height: 1;
-}
-
-/*
-#photoprism .sidenav-visible .nav-small .v-toolbar__content {
-    opacity: 0.48;
-}
-*/
-
 main {
     padding: 0;
     margin: 0;

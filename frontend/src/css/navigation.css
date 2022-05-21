@@ -141,6 +141,54 @@ nav .v-list__tile__title.title {
     margin-right: 0;
 }
 
-#p-navigation .nav-menu-trigger {
-    margin: 0 -5px 0 0;
+#photoprism .nav-logo .v-list__tile__action {
+    min-width: 35px;
 }
+
+#photoprism .nav-menu {
+    padding: 0;
+    background-color: #181818;
+}
+
+#p-navigation .nav-menu-trigger {
+    margin: 0 -2px 0 0;
+}
+
+#photoprism .nav-menu .v-list__tile--active {
+    display: none;
+}
+
+#photoprism .nav-menu .v-list__tile {
+    padding: 0 24px 0 24px;
+    height: 54px;
+}
+
+#photoprism .nav-menu .v-list__tile .v-list__tile__title {
+    height: 26px;
+    line-height: 26px;
+}
+
+#photoprism .nav-menu .v-list__tile__action {
+    min-width: 44px;
+}
+
+#photoprism .nav-menu .v-list__tile__content {
+    min-width: 146px;
+}
+
+/*
+#photoprism .nav-menu .v-list__tile {
+    font-size: 15px;
+}
+
+#photoprism .nav-menu .v-list__tile .v-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+*/
+
+/*
+#photoprism .sidenav-visible .nav-small .v-toolbar__content {
+    opacity: 0.48;
+}
+*/

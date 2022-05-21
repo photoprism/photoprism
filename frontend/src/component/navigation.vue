@@ -9,7 +9,7 @@
         <v-toolbar-title class="nav-title">
           <span :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
-        <v-menu v-if="auth && !config.disable.settings" attach="#p-navigation .nav-small" :nudge-bottom="9" :nudge-right="6"
+        <v-menu v-if="showNavMenu" attach="#p-navigation .nav-small" :nudge-bottom="16" :nudge-right="0"
                  close-on-content-click fixed disable-keys offset-y bottom left>
           <template #activator="{ on }">
             <v-btn
@@ -23,28 +23,50 @@
             </v-btn>
           </template>
 
-          <v-list class="nav-menu opacity-98">
+          <v-list class="nav-menu navigation dark elevation-2">
+            <v-list-tile to="/browse" class="clickable nav-menu-browse">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate>Search</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+
+              <v-list-tile-action :title="$gettext('Search')">
+                <v-icon>search</v-icon>
+              </v-list-tile-action>
+            </v-list-tile>
+
             <v-list-tile v-if="auth && !config.readonly && $config.feature('upload')" class="clickable nav-menu-upload" @click.prevent="openUpload()">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate key="Upload">Upload</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
               <v-list-tile-action class="clickable" @click.prevent="openUpload()">
                 <v-icon>cloud_upload</v-icon>
               </v-list-tile-action>
+            </v-list-tile>
 
+            <v-list-tile v-if="!config.disable.settings" to="/settings" class="nav-menu-settings">
               <v-list-tile-content>
                 <v-list-tile-title>
-                  <v-list-tile-title><translate key="Upload">Upload</translate></v-list-tile-title>
+                  <translate key="Settings">Settings</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
+              <v-list-tile-action :title="$gettext('Settings')">
+                <v-icon>settings</v-icon>
+              </v-list-tile-action>
             </v-list-tile>
+
             <v-list-tile v-if="auth && !isPublic" class="clickable nav-menu-logout" @click.prevent="logout">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate key="Logout">Logout</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
               <v-list-tile-action class="clickable" @click.prevent="logout">
                 <v-icon>power_settings_new</v-icon>
               </v-list-tile-action>
-
-              <v-list-tile-content>
-                <v-list-tile-title>
-                  <v-list-tile-title><translate key="Logout">Logout</translate></v-list-tile-title>
-                </v-list-tile-title>
-              </v-list-tile-content>
             </v-list-tile>
           </v-list>
         </v-menu>
@@ -596,6 +618,7 @@ export default {
       drawer: null,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false',
       isPublic: this.$config.get("public"),
+      isDemo: this.$config.get("demo"),
       isTest: this.$config.test,
       isReadOnly: this.$config.get("readonly"),
       session: this.$session,
@@ -632,6 +655,9 @@ export default {
       const user = this.$session.getUser();
       return user.PrimaryEmail ? user.PrimaryEmail : this.$gettext("Account");
     },
+    showNavMenu() {
+      return (this.isDemo || this.session.auth);
+    },
   },
   created() {
     this.subscriptions.push(Event.subscribe('index', this.onIndex));
@@ -656,13 +682,6 @@ export default {
     openUpload() {
       if (this.auth && !this.isReadOnly && this.$config.feature('upload')) {
         this.upload.dialog = true;
-      } else {
-        this.goHome();
-      }
-    },
-    openSettings() {
-      if (this.auth && this.$config.feature('settings')) {
-        this.$router.push({ name: 'settings' });
       } else {
         this.goHome();
       }
