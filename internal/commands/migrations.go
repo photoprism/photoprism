@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/migrate"
+	"github.com/photoprism/photoprism/pkg/report"
 )
 
 // MigrationsCommand registers the "migrations" CLI command.
@@ -23,6 +24,7 @@ var MigrationsCommand = cli.Command{
 			Aliases:   []string{"status", "show"},
 			Usage:     "Lists the status of schema migrations",
 			ArgsUsage: "[migrations...]",
+			Flags:     report.CliFlags,
 			Action:    migrationsStatusAction,
 		},
 		{
@@ -73,10 +75,12 @@ func migrationsStatusAction(ctx *cli.Context) error {
 		return err
 	}
 
-	// Display value names.
-	fmt.Printf("%-17s %-9s %-21s %-21s %s\n", "ID", "Dialect", "Started At", "Finished At", "Status")
+	// Report columns.
+	cols := []string{"ID", "Dialect", "Started At", "Finished At", "Status"}
 
-	// Show migrations.
+	// Report rows.
+	rows := make([][]string, 0, len(status))
+
 	for _, m := range status {
 		var started, finished, info string
 
@@ -104,8 +108,17 @@ func migrationsStatusAction(ctx *cli.Context) error {
 			info = "Running?"
 		}
 
-		fmt.Printf("%-17s %-9s %-21s %-21s %s\n", m.ID, m.Dialect, started, finished, info)
+		rows = append(rows, []string{m.ID, m.Dialect, started, finished, info})
 	}
+
+	// Display report.
+	info, err := report.Render(rows, cols, report.CliFormat(ctx))
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(info)
 
 	return nil
 }
