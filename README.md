@@ -34,7 +34,7 @@ To get a first impression, you are welcome to play with our [public demo](https:
 * Use [PhotoSync](https://link.photoprism.app/photosync) to securely backup iOS and Android phones in the background
 * WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder [can connect directly](https://docs.photoprism.app/user-guide/sync/webdav/) to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
-Because we are [100% self-funded and independent](https://photoprism.app/membership), we can promise you that we will [never sell your data](https://photoprism.app/privacy) and that we will [always be transparent](https://photoprism.app/terms) about our software and services. Your data will also never be shared with Google, Amazon, Facebook, or Apple unless you intentionally upload files to one of their services.
+Because we are [100% self-funded and independent](https://photoprism.app/membership), we can promise you that we will [never sell your data](https://photoprism.app/privacy) and that we will [always be transparent](https://photoprism.app/terms) about our software and services. Your data will also never be shared with Google, Amazon, Facebook, or Apple unless you intentionally upload files to one of their services. 🔒
 
 ## Getting Started ##
 <img align="right" width="25%" src="https://photoprism.app/user/pages/01.home/03._screenshots/iphone-maps-hybrid-540px.png">
