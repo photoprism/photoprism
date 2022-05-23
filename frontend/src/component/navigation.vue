@@ -656,7 +656,7 @@ export default {
       return user.PrimaryEmail ? user.PrimaryEmail : this.$gettext("Account");
     },
     showNavMenu() {
-      return (this.isDemo || this.session.auth);
+      return (this.isDemo || this.session.auth || this.isTest);
     },
   },
   created() {
