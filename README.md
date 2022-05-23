@@ -59,7 +59,7 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 Back us on [Patreon](https://link.photoprism.app/patreon) or [GitHub Sponsors](https://link.photoprism.app/sponsor), help us fulfill our mission and enjoy our [member benefits](https://photoprism.app/membership)! 💎
 
 - Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy
-- Sustained funding is key to releasing new features requested by you and other community members
+- Sustained funding is also key to releasing new features requested by you and other community members
 - Being **100% self-funded and independent**, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
 
 We currently have the following sponsorship options:
