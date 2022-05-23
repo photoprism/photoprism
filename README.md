@@ -80,7 +80,7 @@ We have a zero-bug policy and do our best to help users when they need support o
 
 Since our team receives many more requests than can be implemented, and for the avoidance of doubt, we also want to emphasize that we are in no way obligated to implement the features, improvements, or other changes you request. We do, however, appreciate your feedback and carefully consider all requests.
 
-**Because sustained funding is key to releasing new features, we encourage all active users to [sign up as a sponsor](https://link.photoprism.app/sponsor). Ultimately, that's what's best for the product and the community.**
+**Because sustained funding is key to releasing new features, we encourage all users to [sign up as a sponsor](https://link.photoprism.app/sponsor). Ultimately, that's what's best for the product and the community.**
 
 ## Getting Support ##
 
