@@ -19,7 +19,7 @@ To get a first impression, you are welcome to play with our [public demo](https:
 
 ## Feature Overview ##
 
-**Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.** PhotoPrism was designed from the ground up to run wherever you need it, with no compromise on freedom, privacy, or functionality:
+**Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.** PhotoPrism was designed from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality:
 
 * Browse [all your photos](https://docs.photoprism.app/user-guide/organize/browse/) and [videos](https://try.photoprism.app/videos) without worrying about [RAW conversion, duplicates or video formats](https://docs.photoprism.app/user-guide/settings/library/)
 * Easily find specific pictures using [powerful search filters](https://try.photoprism.app/browse?view=cards&q=flower%20color%3Ared)
@@ -80,13 +80,11 @@ Common problems can be quickly diagnosed and solved using the [Troubleshooting C
 
 ## Upcoming Features and Improvements ##
 
-Our [Project Roadmap](https://link.photoprism.app/roadmap) shows what tasks are in progress, what needs testing, and which features are going to be implemented next. Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
+Our [Project Roadmap](https://link.photoprism.app/roadmap) shows what tasks are in progress and what features will be implemented next. You're invited to give ideas you like a thumbs up, so we know what's most popular!
 
-We have a zero-bug policy and do our best to help users when they need support or have other questions. This comes at a price as we can't give exact deadlines for new features.
+Keep in mind that we have a zero-bug policy and do our best to help users when they need support or have other questions. This comes at a price, as we can't give exact deadlines for new features. Our team receives many more requests than can be implemented, so we also want to emphasize that we are in no way obligated to implement the features, improvements, or other changes you request. We do, however, appreciate your feedback and carefully consider all requests.
 
-Since our team receives many more requests than can be implemented, and for the avoidance of doubt, we also want to emphasize that we are in no way obligated to implement the features, improvements, or other changes you request. We do, however, appreciate your feedback and carefully consider all requests.
-
-**Because sustained funding is key to releasing new features, we encourage all users to [sign up as a sponsor](https://link.photoprism.app/sponsor). Ultimately, that's what's best for the product and the community.**
+**Because sustained funding is key to releasing new features in a timely manner, we encourage all users to support our mission by [signing up as a sponsor](https://link.photoprism.app/sponsor) or purchasing a commercial license. Ultimately, that's what's best for the product and the community.**
 
 ## GitHub Issues ⚠️ ##
 
