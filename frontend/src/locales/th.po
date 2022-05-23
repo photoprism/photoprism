@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-23 13:41+0000\n"
+"PO-Revision-Date: 2022-05-23 14:27+0000\n"
 "Last-Translator: ppnplus <djbestppntube@icloud.com>\n"
 "Language: th\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -30,13 +30,13 @@ msgstr "พบ %{n} โฟลเดอร์"
 
 #: src/pages/labels.vue:381
 msgid "%{n} labels found"
-msgstr ""
+msgstr "พบ %{n} ป้ายกำกับ"
 
 #: src/pages/people/faces.vue:286
 #: src/pages/people/faces.vue:372
 #: src/pages/people/subjects.vue:470
 msgid "%{n} people found"
-msgstr ""
+msgstr "พบ %{n} บุคคล"
 
 #: src/pages/album/photos.vue:194
 #: src/pages/album/photos.vue:346
@@ -45,7 +45,7 @@ msgstr ""
 #: src/share/photos.vue:209
 #: src/share/photos.vue:354
 msgid "%{n} pictures found"
-msgstr ""
+msgstr "พบ %{n} รูปภาพ"
 
 #: src/options/options.js:392
 msgid "1 hour"
@@ -61,7 +61,7 @@ msgstr "4 ชั่วโมง"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
-msgstr ""
+msgstr "การคลิกครั้งเดียวจะเป็นการคัดลอกไปยังคลิปบอร์ด"
 
 #: src/component/navigation.vue:457
 #: src/component/navigation.vue:27
@@ -133,19 +133,19 @@ msgstr "เพิ่มแล้ว"
 
 #: src/pages/settings.vue:52
 msgid "Advanced"
-msgstr ""
+msgstr "ขั้นสูง"
 
 #: src/options/options.js:402
 msgid "After 1 day"
-msgstr ""
+msgstr "หลังจาก 1 วัน"
 
 #: src/options/options.js:403
 msgid "After 3 days"
-msgstr ""
+msgstr "หลังจาก 3 วัน"
 
 #: src/options/options.js:404
 msgid "After 7 days"
-msgstr ""
+msgstr "หลังจาก 7 วัน"
 
 #: src/options/options.js:406
 msgid "After one month"
