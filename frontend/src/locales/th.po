@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-23 14:30+0000\n"
+"PO-Revision-Date: 2022-05-27 12:17+0000\n"
 "Last-Translator: ppnplus <djbestppntube@icloud.com>\n"
 "Language: th\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -149,11 +149,11 @@ msgstr "หลังจาก 7 วัน"
 
 #: src/options/options.js:406
 msgid "After one month"
-msgstr ""
+msgstr "หลังจากหนึ่งเดือน"
 
 #: src/options/options.js:408
 msgid "After one year"
-msgstr ""
+msgstr "หลังจากหนึ่งปี"
 
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
@@ -162,20 +162,20 @@ msgstr ""
 
 #: src/options/options.js:407
 msgid "After two months"
-msgstr ""
+msgstr "หลังจากสองเดือน"
 
 #: src/options/options.js:405
 msgid "After two weeks"
-msgstr ""
+msgstr "หลังจากสองสัปดาห์"
 
 #: src/model/album.js:229
 msgid "Album"
-msgstr ""
+msgstr "อัลบั้ม"
 
 #: src/dialog/photo/album.vue:71
 #: src/dialog/photo/album.vue:79
 msgid "Album Name"
-msgstr ""
+msgstr "ชื่ออัลบั้ม"
 
 #: src/app/routes.js:128
 #: src/app/routes.js:135
@@ -185,11 +185,11 @@ msgstr ""
 #: src/component/navigation.vue:812
 #: src/share/albums.vue:4
 msgid "Albums"
-msgstr ""
+msgstr "อัลบั้ม"
 
 #: src/component/album/clipboard.vue:77
 msgid "Albums deleted"
-msgstr ""
+msgstr "ลบอัลบั้มแล้ว"
 
 #: src/pages/albums.vue:263
 #: src/share/albums.vue:220
@@ -207,7 +207,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:36
 #: src/component/photo/toolbar.vue:36
 msgid "All Cameras"
-msgstr ""
+msgstr "กล้องทั้งหมด"
 
 #: src/component/photo/toolbar.vue:39
 #: src/pages/albums.vue:29
@@ -215,40 +215,40 @@ msgstr ""
 #: src/share/albums.vue:27
 #: src/share/albums.vue:410
 msgid "All Categories"
-msgstr ""
+msgstr "หมวดหมู่ทั้งหมด"
 
 #: src/component/photo/toolbar.vue:38
 msgid "All Colors"
-msgstr ""
+msgstr "สีทั้งหมด"
 
 #: src/component/album/toolbar.vue:40
 #: src/component/photo/toolbar.vue:35
 msgid "All Countries"
-msgstr ""
+msgstr "ประเทศทั้งหมด"
 
 #: src/pages/about/feedback.vue:31
 msgid "All fields are required"
-msgstr ""
+msgstr "ต้องกรอกให้ครบทุกช่อง"
 
 #: src/pages/library/import.vue:12
 msgid "All files from import folder"
-msgstr ""
+msgstr "ทุกไฟล์จากโฟลเดอร์นำเข้า"
 
 #: src/component/photo/toolbar.vue:37
 msgid "All Lenses"
-msgstr ""
+msgstr "เลนส์ทั้งหมด"
 
 #: src/component/photo/toolbar.vue:40
 msgid "All Months"
-msgstr ""
+msgstr "เดือนทั้งหมด"
 
 #: src/pages/library/index.vue:12
 msgid "All originals"
-msgstr ""
+msgstr "ต้นฉบับทั้งหมด"
 
 #: src/component/photo/toolbar.vue:41
 msgid "All Years"
-msgstr ""
+msgstr "ปีทั้งหมด"
 
 #: src/pages/about/about.vue:34
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
@@ -268,7 +268,7 @@ msgstr ""
 
 #: src/common/api.js:100
 msgid "An error occurred - are you offline?"
-msgstr ""
+msgstr "เกิดข้อผิดพลาด คุณออฟไลน์อยู่หรือเปล่า?"
 
 #: src/component/navigation.vue:149
 #: src/component/photo/cards.vue:228
@@ -282,29 +282,29 @@ msgstr ""
 #: src/share/photo/list.vue:176
 #: src/share/photo/mosaic.vue:182
 msgid "Animated"
-msgstr ""
+msgstr "เคลื่อนไหว"
 
 #: src/pages/settings/general.vue:533
 msgid "Animation"
-msgstr ""
+msgstr "แอนิเมชัน"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr ""
+msgstr "รูปภาพและวิดีโอส่วนตัวทั้งหมดจะยังคงเป็นส่วนตัว และจะไม่แชร์กับผู้อื่น"
 
 #: src/dialog/account/edit.vue:477
 msgid "API Key"
-msgstr ""
+msgstr "กุญแจ API"
 
 #: src/dialog/photo/details.vue:117
 msgid "Apply"
-msgstr ""
+msgstr "ปรับใช้"
 
 #: src/component/photo/cards.vue:458
 #: src/component/photo/clipboard.vue:100
 #: src/dialog/photo/details.vue:116
 msgid "Approve"
-msgstr ""
+msgstr "อนุมัติ"
 
 #: src/app/routes.js:209
 #: src/component/navigation.vue:182
@@ -344,30 +344,32 @@ msgstr ""
 
 #: src/dialog/confirm.vue:10
 msgid "Are you sure?"
-msgstr ""
+msgstr "คุณแน่ใจหรือไม่?"
 
 #: src/dialog/photo/details.vue:497
 msgid "Artist"
-msgstr ""
+msgstr "ศิลปิน"
 
 #: src/dialog/photo/files.vue:149
 #: src/dialog/photo/files.vue:146
 msgid "Aspect Ratio"
-msgstr ""
+msgstr "อัตราส่วน"
 
 #: src/pages/settings/library.vue:114
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr ""
+"สร้างไฟล์ JPEG สำหรับไฟล์ประเภทอื่น ๆ "
+"โดยอัตโนมัติเพื่อให้สามารถแสดงผลในเบราว์เซอร์"
 
 #: src/pages/settings/general.vue:361
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr ""
+msgstr "สร้างอัลบั้มของช่วงเวลาพิเศษ การเดินทาง และสถานที่ต่าง ๆ โดยอัตโนมัติ"
 
 #: src/dialog/sponsor.vue:7
 #: src/pages/about/about.vue:23
 #: src/pages/auth/login.vue:44
 msgid "Become a sponsor"
-msgstr ""
+msgstr "มาเป็นผู้สนับสนุน"
 
 #: src/pages/about/about.vue:42
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -375,11 +377,11 @@ msgstr ""
 
 #: src/pages/people/subjects.vue:433
 msgid "Bio"
-msgstr ""
+msgstr "ไปโอ"
 
 #: src/options/options.js:427
 msgid "Black"
-msgstr ""
+msgstr "สีดำ"
 
 #: src/options/options.js:440
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
@@ -387,11 +389,11 @@ msgstr ""
 
 #: src/options/options.js:423
 msgid "Blue"
-msgstr ""
+msgstr "สีฟ้า"
 
 #: src/options/options.js:424
 msgid "Brown"
-msgstr ""
+msgstr "สีน้ำตาล"
 
 #: src/pages/settings/general.vue:383
 msgid "Browse and edit image classification labels."
@@ -414,7 +416,7 @@ msgstr ""
 #: src/component/navigation.vue:301
 #: src/component/navigation.vue:1174
 msgid "Calendar"
-msgstr ""
+msgstr "ปฏิทิน"
 
 #: src/component/photo/cards.vue:557
 #: src/component/photo/list.vue:57
@@ -423,7 +425,7 @@ msgstr ""
 #: src/share/photo/cards.vue:388
 #: src/share/photo/list.vue:53
 msgid "Camera"
-msgstr ""
+msgstr "กล้อง"
 
 #: src/dialog/photo/info.vue:79
 msgid "Camera Serial"
@@ -468,23 +470,23 @@ msgstr ""
 #: src/pages/library/import.vue:34
 #: src/pages/library/index.vue:27
 msgid "Cancel"
-msgstr ""
+msgstr "ยกเลิก"
 
 #: src/component/album/toolbar.vue:51
 #: src/component/photo/toolbar.vue:46
 msgid "Cards"
-msgstr ""
+msgstr "การ์ด"
 
 #: src/component/photo/toolbar.vue:343
 #: src/dialog/album/edit.vue:162
 #: src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:129
 msgid "Category"
-msgstr ""
+msgstr "หมวดหมู่"
 
 #: src/pages/settings/account.vue:26
 msgid "Change"
-msgstr ""
+msgstr "เปลี่ยน"
 
 #: src/pages/settings/general.vue:185
 msgid "Change photo titles, locations, and other metadata."
@@ -508,7 +510,7 @@ msgstr ""
 #: src/dialog/share.vue:87
 #: src/pages/library/errors.vue:60
 msgid "Close"
-msgstr ""
+msgstr "ปิด"
 
 #: src/dialog/photo/files.vue:95
 #: src/dialog/photo/files.vue:92
@@ -517,16 +519,16 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:320
 msgid "Color"
-msgstr ""
+msgstr "สี"
 
 #: src/dialog/photo/files.vue:163
 #: src/dialog/photo/files.vue:160
 msgid "Color Profile"
-msgstr ""
+msgstr "โปรไฟล์สี"
 
 #: src/pages/discover.vue:4
 msgid "Colors"
-msgstr ""
+msgstr "สี"
 
 #: src/pages/library/index.vue:123
 msgid "Complete Rescan"
@@ -534,20 +536,20 @@ msgstr ""
 
 #: src/dialog/photo/labels.vue:22
 msgid "Confidence"
-msgstr ""
+msgstr "ค่าความมั่นใจ"
 
 #: src/dialog/account/add.vue:18
 msgid "Connect"
-msgstr ""
+msgstr "เชื่อมต่อ"
 
 #: src/dialog/webdav.vue:4
 #: src/pages/settings/sync.vue:43
 msgid "Connect via WebDAV"
-msgstr ""
+msgstr "เชื่อมต่อผ่าน WebDAV"
 
 #: src/pages/about/feedback.vue:7
 msgid "Contact Us"
-msgstr ""
+msgstr "ติดต่อเรา"
 
 #: src/pages/albums.vue:93
 #: src/pages/labels.vue:74
@@ -563,11 +565,11 @@ msgstr ""
 
 #: src/pages/settings/library.vue:113
 msgid "Convert to JPEG"
-msgstr ""
+msgstr "แปลงเป็น JPEG"
 
 #: src/pages/library/index.vue:163
 msgid "Converting"
-msgstr ""
+msgstr "กำลังแปลง"
 
 #: src/dialog/share.vue:58
 #: src/dialog/webdav.vue:36
@@ -576,25 +578,25 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:520
 msgid "Copyright"
-msgstr ""
+msgstr "ลิขสิทธิ์"
 
 #: src/component/photo/list.vue:38
 #: src/share/photo/list.vue:38
 msgid "Couldn't find anything."
-msgstr ""
+msgstr "ไม่พบอะไรเลย"
 
 #: src/component/photo/toolbar.vue:184
 #: src/dialog/photo/details.vue:240
 msgid "Country"
-msgstr ""
+msgstr "ประเทศ"
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
-msgstr ""
+msgstr "สร้างอัลบั้ม"
 
 #: src/dialog/photo/info.vue:167
 msgid "Created"
-msgstr ""
+msgstr "สร้างเมื่อ"
 
 #: src/pages/library/index.vue:169
 msgid "Creating thumbnails for"
