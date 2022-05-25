@@ -15,7 +15,7 @@ const (
 // Data represents image metadata.
 type Data struct {
 	FileName     string        `meta:"FileName"`
-	DocumentID   string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID"`
+	DocumentID   string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID,DigitalImageGUID"`
 	InstanceID   string        `meta:"InstanceID,DocumentID"`
 	TakenAt      time.Time     `meta:"SubSecDateTimeOriginal,SubSecCreateDate,DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime" xmp:"DateCreated"`
 	TakenAtLocal time.Time     `meta:"SubSecDateTimeOriginal,SubSecCreateDate,DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
@@ -26,13 +26,13 @@ type Data struct {
 	FPS          float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
 	Frames       int           `meta:"FrameCount"`
 	Codec        string        `meta:"CompressorID,FileType"`
-	Title        string        `meta:"Title" xmp:"dc:title" dc:"title,title.Alt"`
+	Title        string        `meta:"Headline,Title" xmp:"dc:title" dc:"title,title.Alt"`
 	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords     Keywords      `meta:"Keywords"`
 	Notes        string        `meta:"Comment"`
-	Artist       string        `meta:"Artist,Creator,OwnerName,Owner" xmp:"Creator"`
-	Description  string        `meta:"Description" xmp:"Description,Description.Alt"`
-	Copyright    string        `meta:"Rights,Copyright,WebStatement" xmp:"Rights,Rights.Alt"`
+	Artist       string        `meta:"Artist,Creator,By-line,OwnerName,Owner" xmp:"Creator"`
+	Description  string        `meta:"Description,Caption-Abstract" xmp:"Description,Description.Alt"`
+	Copyright    string        `meta:"Rights,Copyright,CopyrightNotice,WebStatement" xmp:"Rights,Rights.Alt"`
 	License      string        `meta:"UsageTerms,License"`
 	Projection   string        `meta:"ProjectionType"`
 	ColorProfile string        `meta:"ICCProfileName,ProfileDescription"`
@@ -100,6 +100,7 @@ func (data Data) Megapixels() int {
 
 // HasDocumentID returns true if a DocumentID exists.
 func (data Data) HasDocumentID() bool {
+	log.Info(data.DocumentID)
 	return rnd.ValidUUID(data.DocumentID)
 }
 
