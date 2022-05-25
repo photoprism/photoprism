@@ -1049,4 +1049,20 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.Projection)
 		assert.Equal(t, "", data.ColorProfile)
 	})
+
+	t.Run("iptc-fields-500", func(t *testing.T) {
+		data, err := JSON("testdata/iptc-fields-500.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		//t.Logf("all: %+v", data.exif)
+
+		assert.Equal(t, "creator A, creator B", data.Artist)
+		assert.Equal(t, "my image headline", data.Title)
+		assert.Equal(t, "my iptc description", data.Description)
+		assert.Equal(t, "my iptc copyright", data.Copyright)
+		//TODO
+		//assert.Equal(t, "zqdtcxt1q9wrxnur", data.DocumentID)
+	})
 }
