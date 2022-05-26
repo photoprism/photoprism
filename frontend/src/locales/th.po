@@ -1,9 +1,10 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
+"Language: th\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: easygettext\n"
-"Project-Id-Version: \n"
 
 #: src/dialog/photo/labels.vue:164
 msgid ""

@@ -1,0 +1,1 @@
+ALTER TABLE files MODIFY file_chroma SMALLINT DEFAULT -1;

@@ -10,8 +10,8 @@
         item-key="ID"
         :no-data-text="$gettext('No servers configured.')"
     >
-      <template #items="props" class="p-account">
-        <td>
+      <template #items="props">
+        <td class="p-account">
           <button class="secondary-dark--text" @click.stop.prevent="edit(props.item)">
             {{ props.item.AccName }}
           </button>
@@ -59,16 +59,15 @@
               dense class="p-form-settings mt-2" accept-charset="UTF-8"
               @submit.prevent="add">
 
-        <v-btn depressed color="secondary-light" class="action-webdav-dialog ml-0"
+        <v-btn depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2"
                :disabled="demo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
         </v-btn>
 
         <v-btn color="primary-button"
-               class="white--text ml-0"
+               class="white--text compact ml-0 my-2 mr-2"
                :disabled="demo"
-               depressed
-               @click.stop="add">
+               depressed @click.stop="add">
           <translate>Add Server</translate>
           <v-icon :right="!rtl" :left="rtl" dark>add</v-icon>
         </v-btn>

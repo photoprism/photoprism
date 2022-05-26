@@ -11,7 +11,7 @@ We currently have the following sponsorship options:
   account
 - You are welcome to [contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations), bank account details, and business partnerships
 
-Visit [docs.photoprism.app/funding](https://docs.photoprism.app/funding/) to learn more.
+Visit [photoprism.app/membership](https://photoprism.app/membership) to learn more.
 
 ## Platinum Sponsors ##
 
