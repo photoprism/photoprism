@@ -100,7 +100,6 @@ func (data Data) Megapixels() int {
 
 // HasDocumentID returns true if a DocumentID exists.
 func (data Data) HasDocumentID() bool {
-	log.Info(data.DocumentID)
 	return rnd.ValidUUID(data.DocumentID)
 }
 
