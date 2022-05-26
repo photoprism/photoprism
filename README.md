@@ -58,7 +58,7 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 **We encourage all of our users to [become a sponsor](https://link.photoprism.app/sponsor), as this allows us to make more features available to the public and remain independent.**
 
-Sponsors learn how to enable additional features, including access to interactive world maps, and can join our private chat room to connect with our team. We currently have the following sponsorship options:
+Sponsors learn how to enable additional features, including access to interactive world maps, and can join our private chat room to connect with our team and other sponsors. We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
