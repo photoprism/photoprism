@@ -149,7 +149,7 @@
 #loading-info,
 #photoprism .splash-info {
     position: fixed;
-    padding: 10px 10px;
+    padding: 12px 14px;
     border-radius: 10px;
     min-width: 280px;
     width: auto;
@@ -199,8 +199,8 @@
 
 #loading-info span,
 #loading-info a,
-#photoprism .splash-info span,
-#photoprism .splash-info a {
+.splash-info span,
+.splash-info a {
     text-align: center;
     text-decoration: none;
     font-size: 15px;
@@ -212,6 +212,10 @@
 
 #noscript-info {
     display: block;
-    font-weight: 600;
+}
+
+#noscript-info.splash-info,
+#noscript-info.splash-info a {
+    font-weight: 500;
     font-size: 16px;
 }
