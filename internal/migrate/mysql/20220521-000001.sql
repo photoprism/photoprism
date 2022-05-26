@@ -1,0 +1,1 @@
+ALTER TABLE photos MODIFY photo_color SMALLINT DEFAULT -1;

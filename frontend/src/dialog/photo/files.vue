@@ -41,24 +41,24 @@
                             <translate>Actions</translate>
                           </td>
                           <td>
-                            <v-btn v-if="features.download" small depressed dark color="primary-button" class="ma-0 action-download"
+                            <v-btn v-if="features.download" small depressed dark color="primary-button" class="btn-action action-download"
                                    @click.stop.prevent="downloadFile(file)">
                               <translate>Download</translate>
                             </v-btn>
                             <v-btn v-if="features.edit && file.FileType === 'jpg' && !file.Error && !file.Primary" small depressed dark
                                    color="primary-button"
-                                   class="ma-0 action-primary"
+                                   class="btn-action action-primary"
                                    @click.stop.prevent="primaryFile(file)">
                               <translate>Primary</translate>
                             </v-btn>
                             <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small
                                    depressed dark color="primary-button"
-                                   class="ma-0 action-unstack"
+                                   class="btn-action action-unstack"
                                    @click.stop.prevent="unstackFile(file)">
                               <translate>Unstack</translate>
                             </v-btn>
                             <v-btn v-if="features.delete && !file.Primary" small depressed dark color="primary-button"
-                                   class="ma-0 action-delete"
+                                   class="btn-action action-delete"
                                    @click.stop.prevent="showDeleteDialog(file)">
                               <translate>Delete</translate>
                             </v-btn>

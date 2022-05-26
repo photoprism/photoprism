@@ -83,4 +83,19 @@ var DialectMySQL = Migrations{
 		Dialect:    "mysql",
 		Statements: []string{"CREATE OR REPLACE INDEX idx_files_missing_root ON files (file_missing, file_root);"},
 	},
+	{
+		ID:         "20220521-000001",
+		Dialect:    "mysql",
+		Statements: []string{"ALTER TABLE photos MODIFY photo_color SMALLINT DEFAULT -1;"},
+	},
+	{
+		ID:         "20220521-000002",
+		Dialect:    "mysql",
+		Statements: []string{"ALTER TABLE files MODIFY file_diff INTEGER DEFAULT -1;"},
+	},
+	{
+		ID:         "20220521-000003",
+		Dialect:    "mysql",
+		Statements: []string{"ALTER TABLE files MODIFY file_chroma SMALLINT DEFAULT -1;"},
+	},
 }

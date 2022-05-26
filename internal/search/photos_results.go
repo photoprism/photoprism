@@ -89,9 +89,9 @@ type Photo struct {
 	FileProjection   string        `json:"-" select:"files.file_projection"`
 	FileAspectRatio  float32       `json:"-" select:"files.file_aspect_ratio"`
 	FileColors       string        `json:"-" select:"files.file_colors"`
-	FileChroma       uint8         `json:"-" select:"files.file_chroma"`
+	FileDiff         int           `json:"-" select:"files.file_diff"`
+	FileChroma       int8          `json:"-" select:"files.file_chroma"`
 	FileLuminance    string        `json:"-" select:"files.file_luminance"`
-	FileDiff         uint32        `json:"-" select:"files.file_diff"`
 	Merged           bool          `json:"Merged" select:"-"`
 	CreatedAt        time.Time     `json:"CreatedAt" select:"photos.created_at"`
 	UpdatedAt        time.Time     `json:"UpdatedAt" select:"photos.updated_at"`
