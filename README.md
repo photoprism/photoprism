@@ -54,20 +54,22 @@ after going through a short list of [requirements](https://docs.photoprism.app/g
 Existing users are advised to update their `docker-compose.yml` config based on our examples
 available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
-## Support Our Mission ##
+## Support Our Mission 💎 ##
 
-Back us on [Patreon](https://link.photoprism.app/patreon) or [GitHub Sponsors](https://link.photoprism.app/sponsor), help us fulfill our mission and enjoy our [member benefits](https://photoprism.app/membership)! 💎
+**We encourage all of our users to [become a sponsor](https://link.photoprism.app/sponsor), as this allows us to make more features available to the public and remain independent.**
 
-- Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy
-- Sustained funding is key to releasing new features requested by you and other community members in a timely manner
-- Being **100% self-funded and independent**, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
-
-We currently have the following sponsorship options:
+Sponsors learn how to enable additional features, including access to interactive world maps, and can join our private chat room to connect with our team. We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available in 2022, so you can sign up directly in the app without having a Patreon or GitHub account
 - You are welcome to [contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations), bank account details, and business partnerships
+
+Why your support matters:
+
+- Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy
+- Sustained funding is key to releasing new features requested by you and other community members in a timely manner
+- Being **100% self-funded and independent**, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
