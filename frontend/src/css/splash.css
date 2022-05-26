@@ -9,7 +9,10 @@
     right: 0;
     margin: 0;
     padding: 0;
-    background-image: linear-gradient(160deg, #ffffff 0%, #e2daf1 100%);
+}
+
+#photoprism.container.splash-screen {
+    background: #131313;
 }
 
 #photoprism div.logo-large {
@@ -33,16 +36,50 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 264px;
-    height: 264px;
-    margin: 0;
+    margin: auto;
     padding: 0;
     z-index: 1;
+    border-radius: 50%;
+    display: block;
+}
+
+#photoprism div.loading-animation,
+#photoprism div.loading-logo,
+#photoprism div.loading-logo svg {
+    width: 40vh;
+    height: 40vh;
+    max-width: 60vw;
+    max-height: 60vw;
 }
 
 #photoprism div.loading-logo svg {
-    width: 264px;
-    height: 264px;
+    -webkit-animation: hue 4s infinite linear;
+    -moz-animation: hue 4s infinite linear;
+    animation: hue 4s infinite linear;
+}
+
+#photoprism .loading-dots {
+    text-align: center;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 30px;
+    color: #b5b5b3;
+    text-wrap: none;
+}
+
+#photoprism .loading-dots span.dot {
+    font-size: 85px;
+    font-weight: 700;
+    display: inline;
+    text-wrap: none;
+    margin-left: 5px;
+    margin-right: 5px;
+    line-height: 1;
+    position: relative;
+    bottom: 0;
+    opacity: 0;
+    color: #b5b5b3;
 }
 
 #photoprism div.loading-animation {
@@ -50,8 +87,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 264px;
-    height: 264px;
+    /* width: 264px;
+    height: 264px; */
     z-index: 2;
     margin: 0;
     padding: 0;
@@ -71,15 +108,15 @@
     right: 0;
     z-index: 0;
     overflow: hidden;
-    border-top: 6px #d48af4 solid;
-    border-right: 6px #a990ec solid;
-    border-bottom: 6px #86c8ed solid;
-    border-left: 6px #a3ddf4 solid;
+    border-top: 6px #6200EA solid;
+    border-right: 6px #7C4DFF solid;
+    border-bottom: 6px #651FFF solid;
+    border-left: 6px #7C4DFF solid;
     border-radius: 50%;
     -webkit-transform-origin: center center;
     transform-origin: center center;
-    -webkit-animation: circle-animation 1s infinite linear;
-    animation: circle-animation 1s infinite linear;
+    -webkit-animation: circle-animation 1.5s infinite linear;
+    animation: circle-animation 1.5s infinite linear;
 }
 
 #photoprism div.loading-animation .loading-overlay {
@@ -115,43 +152,80 @@
     overflow: hidden;
 }
 
-#noscript-info {
+#loading-info {
+    background-blend-mode: difference;
+}
+
+#loading-info,
+#photoprism .splash-info {
     position: fixed;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-    border-radius: 5px;
+    padding: 24px;
+    height: auto;
+}
+
+#photoprism .splash-info {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#splash-info > span {
+    display: none;
+}
+
+#splash-info > .imprint{
+    display: inline-block;
+}
+
+#splash-info.day-0 .quote-0,
+#splash-info.day-1 .quote-1,
+#splash-info.day-2 .quote-3,
+#splash-info.day-3 .quote-3,
+#splash-info.day-4 .quote-4,
+#splash-info.day-5 .quote-5,
+#splash-info.day-6 .quote-6 {
+    display: block;
+}
+
+#splash-info {
+    display: none;
+    font-weight: 400;
+}
+
+#loading-info {
+    bottom: 10%;
     min-width: 200px;
+}
+
+#loading-info span,
+#loading-info a,
+.splash-info span,
+.splash-info a {
+    text-decoration: none;
+    font-size: 15px;
+    width: auto;
+    padding: 0;
+    margin: 0;
+}
+
+#splash-info {
+    text-align: center;
+    color: #7c7c78;
+}
+
+#noscript-info {
+    display: block;
     text-align: center;
 }
 
 #noscript-info a {
-    text-align: center;
-    text-decoration: none;
-    font-size: 13px;
-    color: #000;
+    color: #bbbbb5;
 }
 
-#loading-info {
-    position: fixed;
-    bottom: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-    border-radius: 5px;
-    min-width: 200px;
-    text-align: center;
-}
-
-#loading-info a,
-#loading-info span {
-    text-align: center;
-    text-decoration: none;
-    font-size: 13px;
-    color: #000;
+#noscript-info.splash-info,
+#noscript-info.splash-info a {
+    font-weight: 500;
+    font-size: 16px;
 }

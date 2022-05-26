@@ -70,7 +70,7 @@ export default {
       this.$emit('close');
     },
     signUp() {
-      window.open("https://link.photoprism.app/patreon", "_blank");
+      window.open("https://photoprism.app/membership", "_blank");
       this.$emit('close');
     },
   },

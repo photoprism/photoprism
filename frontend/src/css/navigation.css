@@ -7,14 +7,20 @@ nav .v-list__tile__title.title {
 }
 
 #p-navigation .nav-title {
-    text-align: center;
+    text-align: left;
+    /* font-weight: bold; */
+    font-size: 18px;
     -webkit-box-flex: 1!important;
     -ms-flex-positive: 1!important;
     flex-grow: 1!important;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 14px;
+    margin-right: 14px;
     max-height: 100%;
     line-height: normal!important;
+}
+
+.is-rtl #p-navigation .nav-title {
+    text-align: right;
 }
 
 #p-navigation .nav-count {
@@ -138,3 +144,68 @@ nav .v-list__tile__title.title {
 .v-list__group__header .p-flex-menuitem .nav-count {
     margin-right: 0;
 }
+
+#photoprism .nav-logo .v-list__tile__action {
+    min-width: 35px;
+}
+
+#photoprism .nav-menu {
+    padding: 8px 0;
+    background-color: #181818;
+    border: 1px solid hsla(0,0%,9%,.8);
+    border-radius: 8px;
+}
+
+#photoprism .nav-menu a {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#photoprism .nav-menu .v-list__tile .v-icon {
+    font-size: 22px;
+    line-height: 1;
+}
+
+#p-navigation .nav-menu-trigger {
+    margin: 0 -2px 0 0;
+}
+
+#photoprism .nav-menu .v-list__tile--active {
+    display: none;
+}
+
+#photoprism .nav-menu .v-list__tile {
+    padding: 0 16px 0 16px;
+    height: 42px;
+}
+
+#photoprism .nav-menu .v-list__tile .v-list__tile__title {
+    height: 26px;
+    line-height: 26px;
+}
+
+#photoprism .nav-menu .v-list__tile__action {
+    min-width: 44px;
+}
+
+#photoprism .nav-menu .v-list__tile__content {
+    min-width: 104px;
+}
+
+/*
+#photoprism .nav-menu .v-list__tile {
+    font-size: 15px;
+}
+
+#photoprism .nav-menu .v-list__tile .v-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+*/
+
+/*
+#photoprism .sidenav-visible .nav-small .v-toolbar__content {
+    opacity: 0.48;
+}
+*/

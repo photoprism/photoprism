@@ -43,8 +43,6 @@ import { $gettext } from "common/vm";
 import { config, session } from "./session";
 
 const c = window.__CONFIG__;
-const appName = c.name;
-const appEdition = c.edition;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
 
 export default [
@@ -57,25 +55,25 @@ export default [
     name: "about",
     path: "/about",
     component: About,
-    meta: { title: appEdition, auth: false },
+    meta: { title: $gettext("Help & Support"), auth: false },
   },
   {
     name: "license",
     path: "/about/license",
     component: License,
-    meta: { title: appEdition, auth: false },
+    meta: { title: $gettext("Help & Support"), auth: false },
   },
   {
     name: "feedback",
     path: "/feedback",
     component: Feedback,
-    meta: { title: appEdition, auth: true },
+    meta: { title: $gettext("Help & Support"), auth: true },
   },
   {
     name: "help",
     path: "/help*",
     component: Help,
-    meta: { title: appEdition, auth: false },
+    meta: { title: $gettext("Help & Support"), auth: false },
   },
   {
     name: "login",
@@ -94,13 +92,13 @@ export default [
     name: "browse",
     path: "/browse",
     component: Photos,
-    meta: { title: $gettext("Browse"), icon: true, auth: true },
+    meta: { title: siteTitle, icon: true, auth: true },
   },
   {
     name: "all",
     path: "/all",
     component: Photos,
-    meta: { title: $gettext("Browse"), auth: true },
+    meta: { title: siteTitle, auth: true },
     props: { staticFilter: { quality: "0" } },
   },
   {
@@ -253,7 +251,7 @@ export default [
     name: "errors",
     path: "/library/errors",
     component: Errors,
-    meta: { title: appName, auth: true },
+    meta: { title: $gettext("Errors"), auth: true },
   },
   {
     name: "labels",

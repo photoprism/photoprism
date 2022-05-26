@@ -350,6 +350,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		}
 	}
 
+	// Reset file perceptive diff and chroma percent.
+	file.FileDiff = -1
+	file.FileChroma = -1
+
 	// Handle file types.
 	switch {
 	case m.IsJpeg():
@@ -363,10 +367,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 			file.FileColors = p.Colors.Hex()
 			file.FileLuminance = p.Luminance.Hex()
 			file.FileDiff = p.Luminance.Diff()
-			file.FileChroma = p.Chroma.Value()
+			file.FileChroma = p.Chroma.Percent()
 
 			if file.FilePrimary {
-				photo.PhotoColor = p.MainColor.Uint8()
+				photo.PhotoColor = p.MainColor.ID()
 			}
 		}
 

@@ -32,3 +32,9 @@ table.v-table tbody td .v-icon.src {
     font-size: 13px;
     margin-left: 4px;
 }
+
+table.v-table td .v-btn.v-btn--small.btn-action {
+    margin: 4px 8px 4px 0;
+    padding: 3px 12px;
+    min-width: 90px;
+}
