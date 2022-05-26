@@ -26,6 +26,7 @@ Additional information can be found in our Developer Guide:
 @import url("vendor/icons/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
+@import url("typography.css");
 @import url("wallpapers.css");
 @import url("scrollbar.css");
 @import url("themes.css");
@@ -68,10 +69,6 @@ Additional information can be found in our Developer Guide:
     }
 }
 
-html {
-    overflow: auto overlay;
-}
-
 html,
 body {
     overscroll-behavior-y: contain;
@@ -79,31 +76,8 @@ body {
 
 body {
     background-color: #fafafa;
-    color: #333333;
-    font-family: Roboto, sans-serif;
     min-width: 320px;
     min-height: 500px;
-
-    /* Text rendering defaults. */
-    letter-spacing: normal;
-    text-justify: inter-word;
-
-    /* Support for all WebKit browsers. */
-    -webkit-font-smoothing: antialiased;
-
-    /* Support for Safari and Chrome. */
-    text-rendering: optimizeLegibility;
-
-    /* Support for Firefox. */
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Enable font features. */
-    font-feature-settings: 'kern', 'liga';
-}
-
-body.chrome {
-    overflow: auto overlay;
-    min-height: 100%;
     margin: 0;
     padding: 0;
 }
@@ -143,18 +117,6 @@ footer {
 
 #photoprism .p-about-footer .body-1 {
     line-height: 1.8em;
-}
-
-#photoprism .tm {
-    font-weight: 500;
-}
-
-#photoprism .tm strong {
-    font-weight: 600;
-}
-
-#photoprism .sidenav-visible .nav-small .v-toolbar__content {
-    opacity: 0.48;
 }
 
 main {
@@ -242,6 +204,10 @@ main {
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
+}
+
+#photoprism.is-rtl .v-card .caption {
+    text-align: right;
 }
 
 #photoprism .v-tabs .v-badge__badge {

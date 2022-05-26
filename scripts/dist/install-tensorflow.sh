@@ -24,7 +24,7 @@ if [[ $(id -u) != "0" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]
   exit 1
 fi
 
-/bin/mkdir -p "$DESTDIR"
+mkdir -p "$DESTDIR"
 
 if [[ $TF_DRIVER == "auto" ]]; then
   echo "Detecting driver..."

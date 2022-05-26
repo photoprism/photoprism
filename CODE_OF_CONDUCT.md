@@ -20,7 +20,7 @@ The following non-exhaustive list provides specific guidelines and examples:
 
 (a) Be respectful, be responsible, be kind, avoid asking for [deadlines](https://docs.photoprism.app/developer-guide/code-quality/#go-slow-before-you-go-fast).
 
-(b) Do not feel entitled to free software, support, or advice if you are **not** a [contributor](https://docs.photoprism.app/developer-guide/), [sponsor](https://docs.photoprism.app/funding/), or paying customer.
+(b) Do not feel entitled to free software, support, or advice if you are **not** a [contributor](https://docs.photoprism.app/developer-guide/), [sponsor](https://photoprism.app/membership), or paying customer.
 
 (c) [Read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening invalid bug reports, starting a public "shitstorm" or insulting other community members in our chat rooms. Aside from being annoying for everyone, it also keeps our team from working on features and improvements that users like you are waiting for.
 

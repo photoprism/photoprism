@@ -60,6 +60,10 @@ body.readonly #photoprism .feature-readonly {
     opacity: 0.95 !important;
 }
 
+#photoprism .opacity-98 {
+    opacity: 0.98 !important;
+}
+
 #photoprism .opacity-100 {
     opacity: 1 !important;
 }

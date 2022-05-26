@@ -80,8 +80,8 @@ type File struct {
 	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance    string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
-	FileDiff         uint32        `json:"Diff" yaml:"Diff,omitempty"`
-	FileChroma       uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
+	FileDiff         int           `json:"Diff" yaml:"Diff,omitempty"`
+	FileChroma       int8          `json:"Chroma" yaml:"Chroma,omitempty"`
 	FileSoftware     string        `gorm:"type:VARCHAR(64)" json:"Software" yaml:"Software,omitempty"`
 	FileError        string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
 	ModTime          int64         `json:"ModTime" yaml:"-"`
@@ -166,8 +166,8 @@ type FileInfos struct {
 	FileMainColor   string
 	FileColors      string
 	FileLuminance   string
-	FileDiff        uint32
-	FileChroma      uint8
+	FileDiff        int
+	FileChroma      int8
 }
 
 // FirstFileByHash gets a file in db from its hash

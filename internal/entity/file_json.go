@@ -40,8 +40,8 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		MainColor    string        `json:",omitempty"`
 		Colors       string        `json:",omitempty"`
 		Luminance    string        `json:",omitempty"`
-		Diff         uint32        `json:",omitempty"`
-		Chroma       uint8         `json:",omitempty"`
+		Diff         int           `json:",omitempty"`
+		Chroma       int8          `json:",omitempty"`
 		HDR          bool          `json:",omitempty"`
 		Watermark    bool          `json:",omitempty"`
 		Software     string        `json:",omitempty"`
