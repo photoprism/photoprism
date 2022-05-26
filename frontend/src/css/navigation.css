@@ -8,7 +8,7 @@ nav .v-list__tile__title.title {
 
 #p-navigation .nav-title {
     text-align: left;
-    font-weight: bold;
+    /* font-weight: bold; */
     font-size: 18px;
     -webkit-box-flex: 1!important;
     -ms-flex-positive: 1!important;
