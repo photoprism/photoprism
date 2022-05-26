@@ -9,7 +9,10 @@
     right: 0;
     margin: 0;
     padding: 0;
-    background-image: linear-gradient(160deg, #ffffff 0%, #e2daf1 100%);
+}
+
+#photoprism.container.splash-screen {
+    background: #131313;
 }
 
 #photoprism div.logo-large {
@@ -40,12 +43,19 @@
     display: block;
 }
 
+#photoprism div.loading-animation,
 #photoprism div.loading-logo,
 #photoprism div.loading-logo svg {
-    width: 35vh;
-    height: 35vh;
-    max-width: 65vw;
-    max-height: 65vw;
+    width: 40vh;
+    height: 40vh;
+    max-width: 60vw;
+    max-height: 60vw;
+}
+
+#photoprism div.loading-logo svg {
+    -webkit-animation: hue 4s infinite linear;
+    -moz-animation: hue 4s infinite linear;
+    animation: hue 4s infinite linear;
 }
 
 #photoprism .loading-dots {
@@ -77,8 +87,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 264px;
-    height: 264px;
+    /* width: 264px;
+    height: 264px; */
     z-index: 2;
     margin: 0;
     padding: 0;
@@ -98,15 +108,15 @@
     right: 0;
     z-index: 0;
     overflow: hidden;
-    border-top: 6px #d48af4 solid;
-    border-right: 6px #a990ec solid;
-    border-bottom: 6px #86c8ed solid;
-    border-left: 6px #a3ddf4 solid;
+    border-top: 6px #6200EA solid;
+    border-right: 6px #7C4DFF solid;
+    border-bottom: 6px #651FFF solid;
+    border-left: 6px #7C4DFF solid;
     border-radius: 50%;
     -webkit-transform-origin: center center;
     transform-origin: center center;
-    -webkit-animation: circle-animation 1s infinite linear;
-    animation: circle-animation 1s infinite linear;
+    -webkit-animation: circle-animation 1.5s infinite linear;
+    animation: circle-animation 1.5s infinite linear;
 }
 
 #photoprism div.loading-animation .loading-overlay {
@@ -149,24 +159,16 @@
 #loading-info,
 #photoprism .splash-info {
     position: fixed;
-    padding: 12px 14px;
-    border-radius: 10px;
-    min-width: 280px;
-    width: auto;
+    padding: 24px;
     height: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(239, 239, 235, 0.56);
-    text-align: center;
 }
 
 #photoprism .splash-info {
     border-top-right-radius: 0;
     border-top-left-radius: 0;
-    top: 0;
-    left: 50%;
-    right: auto;
-    width: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 #splash-info > span {
@@ -201,17 +203,25 @@
 #loading-info a,
 .splash-info span,
 .splash-info a {
-    text-align: center;
     text-decoration: none;
     font-size: 15px;
-    color: #101010;
     width: auto;
     padding: 0;
     margin: 0;
 }
 
+#splash-info {
+    text-align: center;
+    color: #7c7c78;
+}
+
 #noscript-info {
     display: block;
+    text-align: center;
+}
+
+#noscript-info a {
+    color: #bbbbb5;
 }
 
 #noscript-info.splash-info,
