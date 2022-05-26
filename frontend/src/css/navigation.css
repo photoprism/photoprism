@@ -150,8 +150,21 @@ nav .v-list__tile__title.title {
 }
 
 #photoprism .nav-menu {
-    padding: 0;
+    padding: 8px 0;
     background-color: #181818;
+    border: 1px solid hsla(0,0%,9%,.8);
+    border-radius: 8px;
+}
+
+#photoprism .nav-menu a {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#photoprism .nav-menu .v-list__tile .v-icon {
+    font-size: 22px;
+    line-height: 1;
 }
 
 #p-navigation .nav-menu-trigger {
@@ -164,7 +177,7 @@ nav .v-list__tile__title.title {
 
 #photoprism .nav-menu .v-list__tile {
     padding: 0 24px 0 24px;
-    height: 54px;
+    height: 48px;
 }
 
 #photoprism .nav-menu .v-list__tile .v-list__tile__title {
@@ -177,7 +190,7 @@ nav .v-list__tile__title.title {
 }
 
 #photoprism .nav-menu .v-list__tile__content {
-    min-width: 146px;
+    min-width: 134px;
 }
 
 /*

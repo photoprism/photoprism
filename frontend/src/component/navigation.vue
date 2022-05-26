@@ -23,7 +23,7 @@
             </v-btn>
           </template>
 
-          <v-list class="nav-menu navigation dark elevation-2">
+          <v-list dark class="nav-menu navigation elevation-2">
             <v-list-tile to="/browse" class="clickable nav-menu-browse">
               <v-list-tile-content>
                 <v-list-tile-title>
@@ -656,7 +656,7 @@ export default {
       return user.PrimaryEmail ? user.PrimaryEmail : this.$gettext("Account");
     },
     showNavMenu() {
-      return (this.isDemo || this.session.auth || this.isTest);
+      return (this.session.auth || this.isDemo || this.isTest);
     },
   },
   created() {
