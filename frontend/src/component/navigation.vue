@@ -100,8 +100,8 @@
               <img :src="appIcon" :alt="appName" :class="{'animate-hue': indexing}">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title class="title tm">
-                <strong>Photo</strong>Prism<span v-if="appName === 'PhotoPrism+'" class="plus">+</span><span v-else-if="appNameSuffix !== ''"> {{ appNameSuffix }}</span>
+              <v-list-tile-title class="title">
+                {{ appName }}
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">

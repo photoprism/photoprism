@@ -176,8 +176,8 @@ nav .v-list__tile__title.title {
 }
 
 #photoprism .nav-menu .v-list__tile {
-    padding: 0 24px 0 24px;
-    height: 48px;
+    padding: 0 16px 0 16px;
+    height: 42px;
 }
 
 #photoprism .nav-menu .v-list__tile .v-list__tile__title {
@@ -190,7 +190,7 @@ nav .v-list__tile__title.title {
 }
 
 #photoprism .nav-menu .v-list__tile__content {
-    min-width: 114px;
+    min-width: 104px;
 }
 
 /*

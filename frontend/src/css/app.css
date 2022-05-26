@@ -119,33 +119,6 @@ footer {
     line-height: 1.8em;
 }
 
-#photoprism .tm {
-    letter-spacing: normal;
-    font-weight: 500;
-}
-
-#photoprism .tm strong {
-    font-weight: 500;
-}
-
-#photoprism .tm sup,
-#photoprism .tm span {
-    letter-spacing: normal;
-}
-
-#photoprism .tm sup {
-    font-size: 9px;
-    font-weight: 600;
-    top: -9px;
-}
-
-#photoprism .tm sup.plus {
-    font-size: 17px;
-    font-weight: 500;
-    left: -1px;
-    top: -8px;
-}
-
 main {
     padding: 0;
     margin: 0;

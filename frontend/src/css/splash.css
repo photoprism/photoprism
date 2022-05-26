@@ -189,12 +189,7 @@
 
 #splash-info {
     display: none;
-    font-weight: bold;
-}
-
-#noscript-info {
-    display: block;
-    font-weight: bold;
+    font-weight: 400;
 }
 
 #loading-info {
@@ -213,4 +208,10 @@
     width: auto;
     padding: 0;
     margin: 0;
+}
+
+#noscript-info {
+    display: block;
+    font-weight: 600;
+    font-size: 16px;
 }
