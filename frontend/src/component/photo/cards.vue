@@ -21,13 +21,13 @@
       </v-alert>
     </template>
     <v-layout row wrap class="search-results photo-results cards-view" :class="{'select-results': selectMode}">
-      <v-flex
+      <div
           v-for="(photo, index) in photos"
           ref="items"
           :key="photo.ID"
           :data-index="index"
           style="width: min-content"
-          xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
+          class="flex xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex"
       >
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
                 style="user-select: none"
@@ -68,7 +68,7 @@
             </div>
           </div>
         </div>
-        <v-hover v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex">
+        <v-hover v-else>
           <div slot-scope="{ hover }"
                   tile
                   :data-id="photo.ID"
@@ -222,7 +222,7 @@
             </v-card-title>
           </div>
         <v-hover>
-      </v-flex>
+      </div>
     </v-layout>
   </v-container>
 </template>

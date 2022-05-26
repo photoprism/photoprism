@@ -37,11 +37,12 @@
         <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
           <div
               v-if="props.index < firstVisibleElementIndex || props.index > lastVisibileElementIndex"
+              :key="props.item.Hash"
               class="v-image accent lighten-2"
               style="aspect-ratio: 1"
           />
           <div
-                v-if="props.index >= firstVisibleElementIndex && props.index <= lastVisibileElementIndex"
+                v-else
                 :key="props.item.Hash"
                 :alt="props.item.Title"
                 :style="`background-image: url(${props.item.thumbnailUrl('tile_50')})`"
