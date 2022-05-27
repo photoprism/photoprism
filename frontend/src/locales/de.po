@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-27 14:07+0000\n"
+"PO-Revision-Date: 2022-05-27 17:55+0200\n"
 "Last-Translator: Michael Mayer <michael@liquidbytes.net>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Poedit 2.3\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -1397,7 +1397,7 @@ msgstr "Dateien verschieben"
 
 #: src/pages/settings/account.vue:85
 msgid "Must have at least 8 characters."
-msgstr "Muss mindestens 8 Zeichen haben."
+msgstr "Mindestens 8 Zeichen."
 
 #: src/component/photo/cards.vue:574 src/component/photo/list.vue:59
 #: src/component/photo/list.vue:246 src/dialog/account/edit.vue:402
@@ -1903,7 +1903,7 @@ msgstr "Wiederherstellen"
 
 #: src/dialog/account/edit.vue:535
 msgid "Retry Limit"
-msgstr "Wiederholte Versuche"
+msgstr "Wiederholungsversuche"
 
 #: src/pages/settings/account.vue:106
 msgid "Retype Password"
@@ -2256,7 +2256,7 @@ msgstr "Zeitzone"
 
 #: src/dialog/account/edit.vue:515
 msgid "Timeout"
-msgstr "Zeitlimit"
+msgstr "Timeout"
 
 #: src/component/photo/list.vue:55 src/dialog/photo/details.vue:97
 #: src/dialog/photo/info.vue:45 src/share/photo/list.vue:51
