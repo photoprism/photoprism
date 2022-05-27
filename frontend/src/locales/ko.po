@@ -1,19 +1,5 @@
 msgid ""
-msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-23 14:30+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ko/>\n"
-"Language: ko\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.12.2\n"
-"Generated-By: easygettext\n"
+msgstr "Project-Id-Version: \nReport-Msgid-Bugs-To: ci@photoprism.app\nPOT-Creation-Date: \nPO-Revision-Date: 2022-05-27 12:48+0000\nLast-Translator: Admin <hello@photoprism.app>\nLanguage-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\nLanguage: ko\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 4.12.2\nGenerated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -147,8 +133,7 @@ msgstr "1년 후"
 msgid ""
 "After selecting pictures from search results, you can add them to an album "
 "using the context menu."
-msgstr "검색 결과에서 사진을 선택한 후 컨텍스트 메뉴를 사용하여 사진을 앨범에 추가할 "
-"수 있습니다."
+msgstr "검색 결과에서 사진을 선택한 후 컨텍스트 메뉴를 사용하여 사진을 앨범에 추가할 수 있습니다."
 
 #: src/options/options.js:350
 msgid "After two months"
@@ -234,8 +219,7 @@ msgstr "모든 년도"
 msgid ""
 "Also, please leave a star on GitHub if you like this project. It provides "
 "additional motivation to keep going."
-msgstr "또한 이 프로젝트가 마음에 들면 GitHub에 별표를 남겨주세요. 계속 나아가게 "
-"하는 추가적인 동기를 제공합니다."
+msgstr "또한 이 프로젝트가 마음에 들면 GitHub에 별표를 남겨주세요. 계속 나아가게 하는 추가적인 동기를 제공합니다."
 
 #: src/dialog/share.vue:75
 msgid ""
@@ -344,8 +328,7 @@ msgstr "후원자가 되십시오"
 msgid ""
 "Before submitting a support request, please use our Troubleshooting "
 "Checklists to determine the cause of your problem."
-msgstr "지원 요청을 제출하기 전에 문제 해결 체크리스트를 사용하여 문제의 원인을 "
-"확인하십시오."
+msgstr "지원 요청을 제출하기 전에 문제 해결 체크리스트를 사용하여 문제의 원인을 확인하십시오."
 
 #: src/pages/people/subjects.vue:430
 msgid "Bio"
@@ -929,8 +912,7 @@ msgstr "파일"
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
-msgstr "'IMG_1234(2)', 'IMG_1234(3)'과 같이 순차적인 이름을 가진 파일은 같은 그림에 "
-"속합니다."
+msgstr "'IMG_1234(2)', 'IMG_1234(3)'과 같이 순차적인 이름을 가진 파일은 같은 그림에 속합니다."
 
 #: src/dialog/photo/details.vue:435
 msgid "Focal Length"
@@ -1081,8 +1063,7 @@ msgstr "가져오기 실패"
 msgid ""
 "Imported files will be sorted by date and given a unique name to avoid "
 "duplicates."
-msgstr "가져온 파일은 날짜별로 정렬되고 중복을 방지하기 위해 유일한 이름이 "
-"지정됩니다."
+msgstr "가져온 파일은 날짜별로 정렬되고 중복을 방지하기 위해 유일한 이름이 지정됩니다."
 
 #: src/pages/settings/general.vue:229
 msgid "Imported files will be sorted by date and given a unique name."
@@ -1112,8 +1093,7 @@ msgstr "또한 후원자는 이메일을 통해 직접적인 기술 지원을 �
 msgid ""
 "In case pictures you expect are missing, please rescan your library and wait "
 "until indexing has been completed."
-msgstr "예상한 사진이 누락된 경우 라이브러리를 다시 검색하고 색인 생성이 완료될 "
-"때까지 기다리십시오."
+msgstr "예상한 사진이 누락된 경우 라이브러리를 다시 검색하고 색인 생성이 완료될 때까지 기다리십시오."
 
 #: src/pages/library.vue:32 src/pages/settings/library.vue:6
 msgid "Index"
@@ -1280,8 +1260,7 @@ msgstr "위치"
 msgid ""
 "Log messages appear here whenever PhotoPrism comes across broken files, or "
 "there are other potential issues."
-msgstr "PhotoPrism이 깨진 파일을 발견하거나 다른 잠재적인 문제가 있을 때마다 로그 "
-"메시지가 여기에 나타납니다."
+msgstr "PhotoPrism이 깨진 파일을 발견하거나 다른 잠재적인 문제가 있을 때마다 로그 메시지가 여기에 나타납니다."
 
 #: src/component/navigation.vue:424 src/component/navigation.vue:1560
 msgid "Login"
@@ -1513,16 +1492,13 @@ msgstr "노트:"
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
-msgstr ""
-"주의: Nextcloud 또는 PhotoPrism와 같은 WebDAV서버만 백업 및 파일 업로드를 "
-"위한 원격 서비스로 구성할 수 있습니다."
+msgstr "주의: Nextcloud 또는 PhotoPrism와 같은 WebDAV서버만 백업 및 파일 업로드를 위한 원격 서비스로 구성할 수 있습니다."
 
 #: src/pages/settings/account.vue:20
 msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
-msgstr "참고: 비밀번호를 업데이트해도 이미 인증된 사용자의 액세스 권한은 취소되지 "
-"않습니다."
+msgstr "참고: 비밀번호를 업데이트해도 이미 인증된 사용자의 액세스 권한은 취소되지 않습니다."
 
 #: src/dialog/photo/details.vue:598
 msgid "Notes"
@@ -1863,8 +1839,7 @@ msgstr "앨범에서 제거"
 msgid ""
 "Remove imported files to save storage. Unsupported file types will never be "
 "deleted, they remain in their current location."
-msgstr "가져온 파일을 제거하여 저장 공간을 절약하십시오. 지원되지 않는 파일 형식은 "
-"삭제되지 않으며 현재 위치에 남아 있습니다."
+msgstr "가져온 파일을 제거하여 저장 공간을 절약하십시오. 지원되지 않는 파일 형식은 삭제되지 않으며 현재 위치에 남아 있습니다."
 
 #: src/pages/library/errors.vue:87
 msgid "Report Bug"
@@ -2093,9 +2068,7 @@ msgstr "스페인어"
 msgid ""
 "Sponsors get access to additional features, receive direct technical support "
 "via email, and can join our private chat room on matrix.org."
-msgstr ""
-"후원자는 추가 기능에 액세스할 수 있고 이메일을 통해 직접적인 기술 지원을 "
-"받을 수 있으며 matrix.org의 비공개 대화방에 참여할 수 있습니다."
+msgstr "후원자는 추가 기능에 액세스할 수 있고 이메일을 통해 직접적인 기술 지원을 받을 수 있으며 matrix.org의 비공개 대화방에 참여할 수 있습니다."
 
 #: src/component/photo/cards.vue:235 src/component/photo/mosaic.vue:210
 #: src/share/photo/cards.vue:208 src/share/photo/mosaic.vue:191
@@ -2124,8 +2097,7 @@ msgstr "스택"
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
-msgstr "참조 프레임은 유사하지만 품질, 형식, 크기 또는 색상이 다른 그룹 파일을 "
-"스택합니다."
+msgstr "참조 프레임은 유사하지만 품질, 형식, 크기 또는 색상이 다른 그룹 파일을 스택합니다."
 
 #: src/pages/library/index.vue:31
 msgid "Start"
@@ -2166,8 +2138,7 @@ msgstr "주제"
 #: src/dialog/account/add.vue:23
 msgid ""
 "Support for additional services, like Google Drive, will be added over time."
-msgstr "Google 드라이브와 같은 추가 서비스에 대한 지원은 시간이 지남에 따라 "
-"추가됩니다."
+msgstr "Google 드라이브와 같은 추가 서비스에 대한 지원은 시간이 지남에 따라 추가됩니다."
 
 #: src/pages/settings.vue:63 src/pages/settings/sync.vue:28
 msgid "Sync"
@@ -2199,15 +2170,13 @@ msgstr "현재 색인에서 %{n}개의 숨겨진 파일이 있습니다."
 msgid ""
 "The roadmap shows what tasks are in progress, what needs testing, and which "
 "feature requests are going to be implemented next."
-msgstr "로드맵은 진행 중인 작업, 테스트가 필요한 항목, 다음에 구현될 기능 요청을 "
-"보여줍니다."
+msgstr "로드맵은 진행 중인 작업, 테스트가 필요한 항목, 다음에 구현될 기능 요청을 보여줍니다."
 
 #: src/pages/library/index.vue:37
 msgid ""
 "Their format may not be supported, they haven't been converted to JPEG yet "
 "or there are duplicates."
-msgstr "형식이 지원되지 않을 수 있고, 아직 JPEG 형식으로 변환되지 않았거나 중복이 "
-"있을 수 있습니다."
+msgstr "형식이 지원되지 않을 수 있고, 아직 JPEG 형식으로 변환되지 않았거나 중복이 있을 수 있습니다."
 
 #: src/pages/settings/general.vue:72
 msgid "Theme"
@@ -2224,9 +2193,7 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
 "edit, and delete files from your computer or smartphone as if they were "
 "local."
-msgstr ""
-"이렇게 하면 원본 폴더가 네트워크 드라이브로 마운트되고 컴퓨터나 스마트폰에서 "
-"파일을 로컬에 있는 것처럼 열고 편집하고 삭제할 수 있습니다."
+msgstr "이렇게 하면 원본 폴더가 네트워크 드라이브로 마운트되고 컴퓨터나 스마트폰에서 파일을 로컬에 있는 것처럼 열고 편집하고 삭제할 수 있습니다."
 
 #: src/pages/settings/advanced.vue:253
 msgid "Thumbnail Generation"
@@ -2423,9 +2390,7 @@ msgstr "보기"
 msgid ""
 "We'll do our best to answer all your questions. In return, we ask you to "
 "back us on Patreon or GitHub Sponsors."
-msgstr ""
-"귀하의 모든 질문에 최선을 다해 답변해 드리겠습니다. 그 대가로 Patreon 또는 "
-"GitHub 후원자를 후원해 주시기 바랍니다."
+msgstr "귀하의 모든 질문에 최선을 다해 답변해 드리겠습니다. 그 대가로 Patreon 또는 GitHub 후원자를 후원해 주시기 바랍니다."
 
 #: src/dialog/sponsor.vue:18
 msgid ""
@@ -2441,9 +2406,7 @@ msgstr "WebDAV 클라이언트는 다음 URL을 사용하여 PhotoPrism에 연�
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
 "connect directly to PhotoPrism."
-msgstr ""
-"WebDAV 클라이언트 (예: 마이코로소프트 Windows Explorer 또는 애플 Finder) "
-"직접적으로 PhotoPrism에 연결할 수 있습니다."
+msgstr "WebDAV 클라이언트 (예: 마이코로소프트 Windows Explorer 또는 애플 Finder) 직접적으로 PhotoPrism에 연결할 수 있습니다."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2502,15 +2465,13 @@ msgstr "추가 얼굴을 찾기 위해 라이브러리를 다시 검색할 수 �
 msgid ""
 "Your continued support helps us provide regular updates and services like "
 "world maps."
-msgstr "귀하의 지속적인 지원은 위성 지도와 같은 서비스를 제공하고 새로운 기능을 "
-"개발하는 데 도움이 됩니다."
+msgstr "귀하의 지속적인 지원은 위성 지도와 같은 서비스를 제공하고 새로운 기능을 개발하는 데 도움이 됩니다."
 
 #: src/pages/albums.vue:43 src/pages/albums.vue:1
 msgid ""
 "Your library is continuously analyzed to automatically create albums of "
 "special moments, trips, and places."
-msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행 및 장소의 앨범을 자동으로 "
-"생성합니다."
+msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행 및 장소의 앨범을 자동으로 생성합니다."
 
 #: src/pages/about/feedback.vue:4
 msgid "Your message has been sent"

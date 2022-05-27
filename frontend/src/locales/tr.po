@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-23 14:30+0000\n"
-"Last-Translator: TheresaNoRights <theresagresch+weblate@gmail.com>\n"
+"PO-Revision-Date: 2022-05-27 13:30+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/tr/>\n"
 "Language: tr\n"
@@ -160,9 +160,7 @@ msgstr "Bir yıl sonra"
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr ""
-"Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak "
-"bunları bir albüme ekleyebilirsiniz."
+msgstr "Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak bunları bir albüme ekleyebilirsiniz."
 
 #: src/options/options.js:328
 msgid "After two months"
@@ -256,15 +254,11 @@ msgstr "Bütün yıllar"
 
 #: src/pages/about/about.vue:34
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr ""
-"Ayrıca, bu projeyi beğendiyseniz lütfen GitHub'da bir yıldız bırakın. Devam "
-"etmek için ek motivasyon sağlar."
+msgstr "Ayrıca, bu projeyi beğendiyseniz lütfen GitHub'da bir yıldız bırakın. Devam etmek için ek motivasyon sağlar."
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr ""
-"Alternatif olarak, dosyaları doğrudan Nextcloud gibi WebDAV sunucularına "
-"yükleyebilirsiniz."
+msgstr "Alternatif olarak, dosyaları doğrudan Nextcloud gibi WebDAV sunucularına yükleyebilirsiniz."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -353,14 +347,11 @@ msgstr "En az 6 karakter."
 
 #: src/pages/settings/library.vue:114
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr ""
-"Bir tarayıcıda görüntülenebilmeleri için diğer dosya türleri için otomatik "
-"olarak JPEG'ler oluşturun."
+msgstr "Bir tarayıcıda görüntülenebilmeleri için diğer dosya türleri için otomatik olarak JPEG'ler oluşturun."
 
 #: src/pages/settings/general.vue:361
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr ""
-"Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturur."
+msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturur."
 
 #: src/dialog/sponsor.vue:7
 #: src/pages/about/about.vue:23
@@ -369,9 +360,7 @@ msgstr "Sponsor olun"
 
 #: src/pages/about/about.vue:42
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr ""
-"Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için "
-"lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
+msgstr "Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
 
 #: src/pages/people/subjects.vue:432
 msgid "Bio"
@@ -686,8 +675,7 @@ msgstr "Yedekleri Devredışı Bırak"
 
 #: src/pages/settings/advanced.vue:166
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr ""
-"Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
+msgstr "Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
 
 #: src/pages/settings/advanced.vue:484
 msgid "Disable Darktable"
@@ -739,14 +727,11 @@ msgstr "Fotoğraf ve albüm meta verilerini YAML dosyalarına yedeklemeyin."
 
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
+msgstr "Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi "
-"devre dışı bırakır."
+msgstr "Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi devre dışı bırakır."
 
 #: src/pages/settings/advanced.vue:527
 msgid "Don't transcode videos with FFmpeg."
@@ -835,8 +820,7 @@ msgstr "Dinamik Önizlemeler"
 
 #: src/pages/settings/advanced.vue:306
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr ""
-"Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
+msgstr "Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
 
 #: src/pages/settings/advanced.vue:348
 msgid "Dynamic Size Limit: %{n}px"
@@ -902,9 +886,7 @@ msgstr "iki günde bir"
 
 #: src/pages/settings/general.vue:273
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr ""
-"Özel olarak işaretlenen içeriği arama sonuçlarından, paylaşılan albümlerden, "
-"etiketlerden ve yerlerden hariç tutun."
+msgstr "Özel olarak işaretlenen içeriği arama sonuçlarından, paylaşılan albümlerden, etiketlerden ve yerlerden hariç tutun."
 
 #: src/pages/people/faces.vue:100
 #: src/pages/people/subjects.vue:140
@@ -987,9 +969,7 @@ msgstr "Geri bildirim"
 
 #: src/dialog/sponsor.vue:24
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime "
-"geçmekten çekinmeyin."
+msgstr "Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime geçmekten çekinmeyin."
 
 #: src/model/file.js:241
 msgid "File"
@@ -1007,9 +987,7 @@ msgstr "Dosyalar"
 
 #: src/pages/settings/library.vue:216
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr ""
-"'IMG_1234 (2)' ve 'IMG_1234 (3)' gibi sıralı adlara sahip dosyalar aynı "
-"resme aittir."
+msgstr "'IMG_1234 (2)' ve 'IMG_1234 (3)' gibi sıralı adlara sahip dosyalar aynı resme aittir."
 
 #: src/dialog/photo/details.vue:449
 msgid "Focal Length"
@@ -1153,15 +1131,11 @@ msgstr "İçe aktarılamadı"
 
 #: src/pages/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr ""
-"İçe aktarılan dosyalar tarihe göre sıralanacak ve yinelemeleri önlemek için "
-"benzersiz bir ad verilecektir."
+msgstr "İçe aktarılan dosyalar tarihe göre sıralanacak ve yinelemeleri önlemek için benzersiz bir ad verilecektir."
 
 #: src/pages/settings/general.vue:229
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"İçe aktarılan dosyalar tarihe göre sıralanacak ve benzersiz bir ad "
-"verilecektir."
+msgstr "İçe aktarılan dosyalar tarihe göre sıralanacak ve benzersiz bir ad verilecektir."
 
 #: src/pages/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1188,9 +1162,7 @@ msgstr "Ayrıca, sponsorlar e-posta yoluyla doğrudan teknik destek alırlar."
 #: src/pages/labels.vue:35
 #: src/pages/library/files.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr ""
-"Beklediğiniz resimlerin eksik olması durumunda lütfen kitaplığınızı yeniden "
-"tarayın ve indeksleme tamamlanana kadar bekleyin."
+msgstr "Beklediğiniz resimlerin eksik olması durumunda lütfen kitaplığınızı yeniden tarayın ve indeksleme tamamlanana kadar bekleyin."
 
 #: src/pages/library.vue:32
 #: src/pages/settings/library.vue:6
@@ -1229,8 +1201,9 @@ msgid "Invalid photo selected"
 msgstr "Geçersiz fotoğraf seçildi"
 
 #: src/model/rest.js:167
+#, fuzzy
 msgid "Item"
-msgstr ""
+msgstr "Öğe"
 
 #: src/pages/settings/advanced.vue:323
 msgid "JPEG Quality: %{n}"
@@ -1268,8 +1241,9 @@ msgid "Labels deleted"
 msgstr "Etiketler silindi"
 
 #: src/options/options.js:362
+#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr ""
+msgstr "Lanczos: Detayların Korunması, Minimal Eserler"
 
 #: src/pages/settings/general.vue:94
 msgid "Language"
@@ -1320,21 +1294,25 @@ msgid "Lime"
 msgstr "Sarı"
 
 #: src/pages/library/files.vue:307
+#, fuzzy
 msgid "Limit reached, showing first %{n} files"
-msgstr ""
+msgstr "Sınıra ulaşıldı, ilk %{n} dosyaları gösteriliyor"
 
 #: src/options/options.js:364
+#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
-msgstr ""
+msgstr "Doğrusal: Çok Pürüzsüz, En İyi Performans"
 
 #: src/model/link.js:115
+#, fuzzy
 msgid "Link"
-msgstr ""
+msgstr "Bağlantı"
 
 #: src/component/album/toolbar.vue:42
 #: src/component/photo/toolbar.vue:38
+#, fuzzy
 msgid "List"
-msgstr ""
+msgstr "Liste"
 
 #: src/app/routes.js:182
 #: src/component/navigation.vue:189
@@ -1345,148 +1323,180 @@ msgstr ""
 #: src/share/photo/cards.vue:188
 #: src/share/photo/list.vue:165
 #: src/share/photo/mosaic.vue:171
+#, fuzzy
 msgid "Live"
-msgstr ""
+msgstr "Canlı"
 
 #: src/dialog/photo/details.vue:189
 #: src/options/options.js:10
+#, fuzzy
 msgid "Local Time"
-msgstr ""
+msgstr "Yerel Saat"
 
 #: src/dialog/photo/labels.vue:39
+#, fuzzy
 msgid "location"
-msgstr ""
+msgstr "konum"
 
 #: src/component/photo/cards.vue:32
 #: src/component/photo/list.vue:47
 #: src/dialog/album/edit.vue:124
 #: src/share/photo/cards.vue:32
 #: src/share/photo/list.vue:43
+#, fuzzy
 msgid "Location"
-msgstr ""
+msgstr "Konum"
 
 #: src/pages/library/errors.vue:34
 #: src/pages/library/errors.vue:1
+#, fuzzy
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr ""
+"PhotoPrism bozuk dosyalarla karşılaştığında veya başka olası sorunlar "
+"olduğunda günlük mesajları burada görünür."
 
 #: src/component/navigation.vue:428
 #: src/component/navigation.vue:1569
+#, fuzzy
 msgid "Login"
-msgstr ""
+msgstr "Giriş"
 
 #: src/component/navigation.vue:475
 #: src/component/navigation.vue:1679
 #: src/component/navigation.vue:1710
+#, fuzzy
 msgid "Logout"
-msgstr ""
+msgstr "Oturumu Kapat"
 
 #: src/pages/library.vue:55
 #: src/pages/settings/general.vue:426
+#, fuzzy
 msgid "Logs"
-msgstr ""
+msgstr "Günlükler"
 
 #: src/dialog/photo/details.vue:315
 #: src/dialog/photo/info.vue:143
+#, fuzzy
 msgid "Longitude"
-msgstr ""
+msgstr "Boylam"
 
 #: src/options/options.js:334
+#, fuzzy
 msgid "Magenta"
-msgstr ""
+msgstr "Magenta"
 
 #: src/dialog/photo/files.vue:151
 #: src/dialog/photo/files.vue:148
+#, fuzzy
 msgid "Main Color"
-msgstr ""
+msgstr "Ana Renk"
 
 #: src/dialog/photo/labels.vue:35
+#, fuzzy
 msgid "manual"
-msgstr ""
+msgstr "manuel"
 
 #: src/dialog/account/edit.vue:51
+#, fuzzy
 msgid "Manual Upload"
-msgstr ""
+msgstr "Manuel Yükleme"
 
 #: src/model/marker.js:137
+#, fuzzy
 msgid "Marker"
-msgstr ""
+msgstr "İşaretleyici"
 
 #: src/options/options.js:257
+#, fuzzy
 msgid "Medium"
-msgstr ""
+msgstr "Orta"
 
 #: src/dialog/people/merge.vue:25
+#, fuzzy
 msgid "Merge %{a} with %{b}?"
-msgstr ""
+msgstr "a} ile %{b} birleştirilsin mi?"
 
 #: src/pages/about/feedback.vue:27
+#, fuzzy
 msgid "Message sent"
-msgstr ""
+msgstr "Mesaj gönderildi"
 
 #: src/component/navigation.vue:231
+#, fuzzy
 msgid "Minimize"
-msgstr ""
+msgstr "Minimize etmek"
 
 #: src/dialog/photo/files.vue:163
 #: src/dialog/photo/files.vue:160
+#, fuzzy
 msgid "Missing"
-msgstr ""
+msgstr "Kayıp"
 
 #: src/app/routes.js:116
 #: src/app/routes.js:123
 #: src/component/navigation.vue:229
 #: src/component/navigation.vue:888
 #: src/pages/settings/general.vue:360
+#, fuzzy
 msgid "Moments"
-msgstr ""
+msgstr "Anlar"
 
 #: src/component/navigation.vue:82
+#, fuzzy
 msgid "Monochrome"
-msgstr ""
+msgstr "Monokrom"
 
 #: src/component/photo/toolbar.vue:302
 #: src/dialog/photo/details.vue:142
+#, fuzzy
 msgid "Month"
-msgstr ""
+msgstr "Ay"
 
 #: src/options/options.js:202
+#, fuzzy
 msgid "Moonlight"
-msgstr ""
+msgstr "Ay Işığı"
 
 #: src/pages/album/photos.vue:341
 #: src/pages/photos.vue:379
 #: src/share/photos.vue:356
+#, fuzzy
 msgid "More than %{n} pictures found"
-msgstr ""
+msgstr "n}'den fazla resim bulundu"
 
 #: src/pages/albums.vue:345
 #: src/share/albums.vue:306
+#, fuzzy
 msgid "More than 20 albums found"
-msgstr ""
+msgstr "20'den fazla albüm bulundu"
 
 #: src/pages/labels.vue:342
+#, fuzzy
 msgid "More than 20 labels found"
-msgstr ""
+msgstr "20'den fazla etiket bulundu"
 
 #: src/pages/people/subjects.vue:438
+#, fuzzy
 msgid "More than 20 people found"
-msgstr ""
+msgstr "20'den fazla kişi bulundu"
 
 #: src/component/album/toolbar.vue:40
 #: src/component/photo/toolbar.vue:36
+#, fuzzy
 msgid "Mosaic"
-msgstr ""
+msgstr "Mozaik"
 
 #: src/component/album/toolbar.vue:53
 #: src/component/photo/toolbar.vue:47
 #: src/dialog/album/edit.vue:24
+#, fuzzy
 msgid "Most relevant"
-msgstr ""
+msgstr "En alakalı"
 
 #: src/pages/library/import.vue:132
+#, fuzzy
 msgid "Move Files"
-msgstr ""
+msgstr "Dosyaları Taşı"
 
 #: src/component/photo/cards.vue:39
 #: src/component/photo/list.vue:47
@@ -1510,8 +1520,9 @@ msgstr ""
 #: src/share/photo/cards.vue:39
 #: src/share/photo/list.vue:43
 #: src/share/photo/list.vue:214
+#, fuzzy
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 #: src/component/album/toolbar.vue:61
 #: src/dialog/album/edit.vue:27
@@ -1521,28 +1532,33 @@ msgstr ""
 #: src/pages/library/files.vue:40
 #: src/pages/people/faces.vue:45
 #: src/pages/people/subjects.vue:43
+#, fuzzy
 msgid "Name too long"
-msgstr ""
+msgstr "İsim çok uzun"
 
 #: src/options/options.js:312
 #: src/options/options.js:322
 #: src/pages/settings/sync.vue:50
+#, fuzzy
 msgid "Never"
-msgstr ""
+msgstr "Asla"
 
 #: src/pages/people.vue:26
+#, fuzzy
 msgid "New"
-msgstr ""
+msgstr "Yeni"
 
 #: src/pages/settings/account.vue:81
+#, fuzzy
 msgid "New Password"
-msgstr ""
+msgstr "Yeni Şifre"
 
 #: src/component/album/toolbar.vue:49
 #: src/component/photo/toolbar.vue:43
 #: src/dialog/album/edit.vue:20
+#, fuzzy
 msgid "Newest first"
-msgstr ""
+msgstr "Önce en yeni"
 
 #: src/dialog/people/merge.vue:15
 #: src/dialog/photo/archive.vue:15
@@ -1551,21 +1567,24 @@ msgstr ""
 #: src/dialog/photo/info.vue:328
 #: src/dialog/photo/info.vue:348
 #: src/dialog/photo/info.vue:368
+#, fuzzy
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: src/pages/albums.vue:35
 #: src/pages/albums.vue:338
 #: src/share/albums.vue:18
 #: src/share/albums.vue:299
+#, fuzzy
 msgid "No albums found"
-msgstr ""
+msgstr "Albüm bulunamadı"
 
 #: src/dialog/photo/labels.vue:33
 #: src/pages/labels.vue:31
 #: src/pages/labels.vue:335
+#, fuzzy
 msgid "No labels found"
-msgstr ""
+msgstr "Etiket bulunamadı"
 
 #: src/dialog/photo/people.vue:5
 #: src/pages/people/faces.vue:30
@@ -1573,8 +1592,9 @@ msgstr ""
 #: src/pages/people/faces.vue:367
 #: src/pages/people/subjects.vue:33
 #: src/pages/people/subjects.vue:431
+#, fuzzy
 msgid "No people found"
-msgstr ""
+msgstr "Hiç kimse bulunamadı"
 
 #: src/component/photo/cards.vue:7
 #: src/component/photo/list.vue:8
@@ -1588,8 +1608,9 @@ msgstr ""
 #: src/share/photo/list.vue:8
 #: src/share/photo/mosaic.vue:7
 #: src/share/photos.vue:349
+#, fuzzy
 msgid "No pictures found"
-msgstr ""
+msgstr "Resim bulunamadı"
 
 #: src/component/photo/cards.vue:4
 #: src/component/photo/list.vue:5
@@ -1597,26 +1618,33 @@ msgstr ""
 #: src/share/photo/cards.vue:4
 #: src/share/photo/list.vue:5
 #: src/share/photo/mosaic.vue:4
+#, fuzzy
 msgid "No recently edited pictures"
-msgstr ""
+msgstr "Yakın zamanda düzenlenmiş resim yok"
 
 #: src/pages/settings/sync.vue:47
+#, fuzzy
 msgid "No servers configured."
-msgstr ""
+msgstr "Yapılandırılmış sunucu yok."
 
 #: src/dialog/sponsor.vue:31
+#, fuzzy
 msgid "No thanks"
-msgstr ""
+msgstr "Hayır, teşekkürler."
 
 #: src/component/photo/viewer.vue:94
 #: src/dialog/video/viewer.vue:55
+#, fuzzy
 msgid "No video selected"
-msgstr ""
+msgstr "Seçili video yok"
 
 #: src/pages/library/errors.vue:31
 #: src/pages/library/errors.vue:1
+#, fuzzy
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr ""
+"Bu anahtar sözcüğü içeren uyarı veya hata yok. Aramanın büyük/küçük harfe "
+"duyarlı olduğunu unutmayın."
 
 #: src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:1
@@ -1627,159 +1655,203 @@ msgstr ""
 #: src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50
 #: src/pages/settings/library.vue:93
+#, fuzzy
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
+"Fotoğrafik olmayan ve düşük kaliteli görseller, arama sonuçlarında "
+"görünmeden önce bir inceleme gerektirir."
 
 #: src/options/options.js:249
+#, fuzzy
 msgid "None"
-msgstr ""
+msgstr "Hiçbiri"
 
 #: src/model/thumb.js:69
+#, fuzzy
 msgid "Not Found"
-msgstr ""
+msgstr "Bulunamadı"
 
 #: src/pages/library/import.vue:28
+#, fuzzy
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr ""
+"Orijinaller klasörünüzü manuel olarak yönetebileceğinizi ve içe aktarmanın "
+"isteğe bağlı olduğunu unutmayın."
 
 #: src/pages/settings/sync.vue:34
+#, fuzzy
 msgid "Note:"
-msgstr ""
+msgstr "Not:"
 
 #: src/dialog/account/add.vue:22
+#, fuzzy
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr ""
+"Not: Yalnızca Nextcloud veya PhotoPrism gibi WebDAV sunucuları yedekleme ve "
+"dosya yükleme için uzak hizmet olarak yapılandırılabilir."
 
 #: src/pages/settings/account.vue:20
+#, fuzzy
 msgid "Note: Updating the password will not revoke access from already authenticated users."
 msgstr ""
+"Not: Parolanın güncellenmesi, zaten kimliği doğrulanmış kullanıcıların "
+"erişimini iptal etmeyecektir."
 
 #: src/dialog/photo/details.vue:612
+#, fuzzy
 msgid "Notes"
-msgstr ""
+msgstr "Notlar"
 
 #: src/pages/library/logs.vue:5
+#, fuzzy
 msgid "Nothing to see here yet. Be patient."
-msgstr ""
+msgstr "Henüz görecek bir şey yok. Sabırlı ol."
 
 #: src/component/navigation.vue:444
 #: src/component/navigation.vue:1614
 #: src/options/options.js:268
+#, fuzzy
 msgid "Offline"
-msgstr ""
+msgstr "Çevrimdışı"
 
 #: src/component/album/toolbar.vue:50
 #: src/component/photo/toolbar.vue:44
 #: src/dialog/album/edit.vue:21
+#, fuzzy
 msgid "Oldest first"
-msgstr ""
+msgstr "Önce en yaşlı"
 
 #: src/options/options.js:318
+#, fuzzy
 msgid "Once a week"
-msgstr ""
+msgstr "Haftada bir kez"
 
 #: src/pages/albums.vue:340
 #: src/share/albums.vue:301
+#, fuzzy
 msgid "One album found"
-msgstr ""
+msgstr "Bir albüm bulundu"
 
 #: src/pages/library/files.vue:299
+#, fuzzy
 msgid "One file found"
-msgstr ""
+msgstr "Bir dosya bulundu"
 
 #: src/dialog/share/upload.vue:74
+#, fuzzy
 msgid "One file uploaded"
-msgstr ""
+msgstr "Bir dosya yüklendi"
 
 #: src/pages/library/files.vue:301
+#, fuzzy
 msgid "One folder found"
-msgstr ""
+msgstr "Bir klasör bulundu"
 
 #: src/pages/labels.vue:337
+#, fuzzy
 msgid "One label found"
-msgstr ""
+msgstr "Bir etiket bulundu"
 
 #: src/pages/people/faces.vue:283
 #: src/pages/people/faces.vue:369
 #: src/pages/people/subjects.vue:433
+#, fuzzy
 msgid "One person found"
-msgstr ""
+msgstr "Bir kişi bulundu"
 
 #: src/pages/album/photos.vue:336
 #: src/pages/photos.vue:374
 #: src/share/photos.vue:351
+#, fuzzy
 msgid "One picture found"
-msgstr ""
+msgstr "Bir resim bulundu"
 
 #: src/options/options.js:207
+#, fuzzy
 msgid "Onyx"
-msgstr ""
+msgstr "Oniks"
 
 #: src/pages/settings/advanced.vue:6
+#, fuzzy
 msgid "Options"
-msgstr ""
+msgstr "Seçenekler"
 
 #: src/pages/about/about.vue:49
+#, fuzzy
 msgid "or ask in our Community Chat"
-msgstr ""
+msgstr "veya Topluluk Sohbetimizde sorun"
 
 #: src/options/options.js:337
+#, fuzzy
 msgid "Orange"
-msgstr ""
+msgstr "Turuncu"
 
 #: src/dialog/photo/files.vue:137
 #: src/dialog/photo/files.vue:134
+#, fuzzy
 msgid "Orientation"
-msgstr ""
+msgstr "Oryantasyon"
 
 #: src/pages/library/import.vue:27
+#, fuzzy
 msgid "Original file names will be stored and indexed."
-msgstr ""
+msgstr "Orijinal dosya adları saklanacak ve indekslenecektir."
 
 #: src/dialog/photo/files.vue:77
 #: src/dialog/photo/files.vue:74
 #: src/dialog/photo/info.vue:37
+#, fuzzy
 msgid "Original Name"
-msgstr ""
+msgstr "Orijinal İsim"
 
 #: src/component/navigation.vue:347
 #: src/dialog/account/edit.vue:104
 #: src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:316
+#, fuzzy
 msgid "Originals"
-msgstr ""
+msgstr "Orijinaller"
 
 #: src/options/options.js:357
+#, fuzzy
 msgid "Other"
-msgstr ""
+msgstr "Diğer"
 
 #: src/pages/about/about.vue:15
+#, fuzzy
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr ""
+"Misyonumuz, resimlerinizi düzenli ve erişilebilir tutmak için en kullanıcı "
+"ve gizlilik dostu çözümü sunmaktır."
 
 #: src/options/options.js:286
+#, fuzzy
 msgid "Outdoor"
-msgstr ""
+msgstr "Dış mekan"
 
 #: src/dialog/photo/info.vue:118
+#, fuzzy
 msgid "Panorama"
-msgstr ""
+msgstr "Panorama"
 
 #: src/component/navigation.vue:90
+#, fuzzy
 msgid "Panoramas"
-msgstr ""
+msgstr "Panoramalar"
 
 #: src/dialog/account/add.vue:105
 #: src/dialog/account/edit.vue:450
 #: src/dialog/share.vue:24
 #: src/pages/auth/login.vue:96
 #: src/pages/auth/login.vue:98
+#, fuzzy
 msgid "Password"
-msgstr ""
+msgstr "Şifre"
 
 #: src/pages/settings/account.vue:22
+#, fuzzy
 msgid "Password changed"
-msgstr ""
+msgstr "Şifre değiştirildi"
 
 #: src/app/routes.js:267
 #: src/app/routes.js:287
@@ -1789,48 +1861,60 @@ msgstr ""
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:267
 #: src/pages/settings/general.vue:338
+#, fuzzy
 msgid "People"
-msgstr ""
+msgstr "İnsanlar"
 
 #: src/dialog/share.vue:72
+#, fuzzy
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
+"Bağlantı paylaştığınız kişiler herkese açık içerikleri görüntüleyebilecektir."
 
 #: src/component/photo/clipboard.vue:73
+#, fuzzy
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Kalıcı olarak silindi"
 
 #: src/pages/settings/general.vue:207
+#, fuzzy
 msgid "Permanently remove files to free up storage."
-msgstr ""
+msgstr "Depolama alanını boşaltmak için dosyaları kalıcı olarak kaldırın."
 
 #: src/model/photo.js:899
+#, fuzzy
 msgid "Photo"
-msgstr ""
+msgstr "Fotoğraf"
 
 #: src/dialog/reload.vue:4
+#, fuzzy
 msgid "PhotoPrism has been updated…"
-msgstr ""
+msgstr "PhotoPrism güncellendi…"
 
 #: src/component/footer.vue:7
+#, fuzzy
 msgid "PhotoPrism® needs your support"
-msgstr ""
+msgstr "PhotoPrism®'in desteğinize ihtiyacı var"
 
 #: src/app/routes.js:109
+#, fuzzy
 msgid "Photos"
-msgstr ""
+msgstr "Fotoğraflar"
 
 #: src/options/options.js:335
+#, fuzzy
 msgid "Pink"
-msgstr ""
+msgstr "Pembe"
 
 #: src/dialog/photo/info.vue:126
+#, fuzzy
 msgid "Place"
-msgstr ""
+msgstr "Yer"
 
 #: src/pages/settings/library.vue:173
+#, fuzzy
 msgid "Place & Time"
-msgstr ""
+msgstr "Yer & Zaman"
 
 #: src/app/routes.js:217
 #: src/app/routes.js:223
@@ -1842,152 +1926,185 @@ msgstr ""
 #: src/component/navigation.vue:978
 #: src/pages/settings/general.vue:108
 #: src/pages/settings/general.vue:450
+#, fuzzy
 msgid "Places"
-msgstr ""
+msgstr "Yerler"
 
 #: src/component/photo/cards.vue:280
 #: src/component/photo/mosaic.vue:256
 #: src/share/photo/cards.vue:253
 #: src/share/photo/mosaic.vue:237
+#, fuzzy
 msgid "Play"
-msgstr ""
+msgstr "Oyun"
 
 #: src/pages/settings/account.vue:110
+#, fuzzy
 msgid "Please confirm your new password."
-msgstr ""
+msgstr "Lütfen yeni şifrenizi onaylayın."
 
 #: src/dialog/upload.vue:45
+#, fuzzy
 msgid "Please don't upload photos containing offensive content."
-msgstr ""
+msgstr "Lütfen saldırgan içerikli fotoğraflar yüklemeyin."
 
 #: src/dialog/photo/files.vue:117
 #: src/dialog/photo/files.vue:114
+#, fuzzy
 msgid "Portrait"
-msgstr ""
+msgstr "Portre"
 
 #: src/pages/about/about.vue:48
+#, fuzzy
 msgid "post your question in GitHub Discussions"
-msgstr ""
+msgstr "Sorunuzu GitHub Tartışmaları'na gönderin"
 
 #: src/dialog/account/edit.vue:337
+#, fuzzy
 msgid "Preserve filenames"
-msgstr ""
+msgstr "Dosya adlarını koru"
 
 #: src/pages/library/import.vue:8
+#, fuzzy
 msgid "Press button to start importing…"
-msgstr ""
+msgstr "İçe aktarmaya başlamak için düğmeye basın…"
 
 #: src/pages/library/index.vue:9
+#, fuzzy
 msgid "Press button to start indexing…"
-msgstr ""
+msgstr "İndekslemeyi başlatmak için düğmeye basın…"
 
 #: src/dialog/upload.vue:22
 #: src/dialog/upload.vue:4
+#, fuzzy
 msgid "Press enter to create a new album."
-msgstr ""
+msgstr "Yeni bir albüm oluşturmak için enter tuşuna basın."
 
 #: src/dialog/photo/files.vue:19
 #: src/dialog/photo/files.vue:16
+#, fuzzy
 msgid "Preview"
-msgstr ""
+msgstr "Önizleme"
 
 #: src/dialog/photo/files.vue:35
 #: src/dialog/photo/files.vue:101
 #: src/dialog/photo/files.vue:32
 #: src/dialog/photo/files.vue:98
 #: src/dialog/photo/files.vue:28
+#, fuzzy
 msgid "Primary"
-msgstr ""
+msgstr "Birincil"
 
 #: src/app/routes.js:203
 #: src/component/navigation.vue:315
 #: src/component/navigation.vue:1186
 #: src/dialog/photo/info.vue:102
 #: src/pages/settings/general.vue:272
+#, fuzzy
 msgid "Private"
-msgstr ""
+msgstr "Özel"
 
 #: src/options/options.js:353
+#, fuzzy
 msgid "Product Feedback"
-msgstr ""
+msgstr "Ürün Geri Bildirimi"
 
 #: src/dialog/photo/files.vue:125
 #: src/dialog/photo/files.vue:122
+#, fuzzy
 msgid "Projection"
-msgstr ""
+msgstr "Projeksiyon"
 
 #: src/options/options.js:333
+#, fuzzy
 msgid "Purple"
-msgstr ""
+msgstr "Mor"
 
 #: src/pages/settings/library.vue:92
+#, fuzzy
 msgid "Quality Filter"
-msgstr ""
+msgstr "Kalite Filtresi"
 
 #: src/dialog/photo/info.vue:59
+#, fuzzy
 msgid "Quality Score"
-msgstr ""
+msgstr "Kalite Puanı"
 
 #: src/pages/discover.vue:16
+#, fuzzy
 msgid "Random"
-msgstr ""
+msgstr "Rastgele"
 
 #: src/options/options.js:227
+#, fuzzy
 msgid "Raspberry"
-msgstr ""
+msgstr "Ahududu"
 
 #: src/options/options.js:298
+#, fuzzy
 msgid "Raw"
-msgstr ""
+msgstr "Çiğ"
 
 #: src/component/photo/cards.vue:205
 #: src/component/photo/mosaic.vue:180
 #: src/share/photo/cards.vue:178
 #: src/share/photo/mosaic.vue:161
+#, fuzzy
 msgid "RAW"
-msgstr ""
+msgstr "RAW"
 
 #: src/pages/settings/advanced.vue:96
+#, fuzzy
 msgid "RAW Conversion"
-msgstr ""
+msgstr "RAW Dönüştürme"
 
 #: src/pages/library/index.vue:124
+#, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
+"Önceden indekslenmiş ve değiştirilmemiş dosyalar da dahil olmak üzere tüm "
+"orijinalleri yeniden indeksleyin."
 
 #: src/pages/settings/advanced.vue:99
+#, fuzzy
 msgid "Read-Only Mode"
-msgstr ""
+msgstr "Salt Okunur Modu"
 
 #: src/component/album/toolbar.vue:47
 #: src/component/photo/toolbar.vue:41
 #: src/dialog/album/edit.vue:18
+#, fuzzy
 msgid "Recently added"
-msgstr ""
+msgstr "Yakın zamanda eklendi"
 
 #: src/component/album/toolbar.vue:48
 #: src/component/photo/toolbar.vue:42
 #: src/dialog/album/edit.vue:19
+#, fuzzy
 msgid "Recently edited"
-msgstr ""
+msgstr "Yakın zamanda düzenlendi"
 
 #: src/dialog/photo/people.vue:9
 #: src/pages/people/faces.vue:34
 #: src/pages/people/subjects.vue:38
+#, fuzzy
 msgid "Recognition starts after indexing has been completed."
-msgstr ""
+msgstr "Tanıma işlemi indeksleme tamamlandıktan sonra başlar."
 
 #: src/pages/people.vue:17
+#, fuzzy
 msgid "Recognized"
-msgstr ""
+msgstr "Tanınmış"
 
 #: src/pages/settings/general.vue:339
+#, fuzzy
 msgid "Recognizes faces so that specific people can be found."
-msgstr ""
+msgstr "Belirli kişilerin bulunabilmesi için yüzleri tanır."
 
 #: src/options/options.js:336
+#, fuzzy
 msgid "Red"
-msgstr ""
+msgstr "Kırmızı"
 
 #: src/component/album/toolbar.vue:54
 #: src/component/photo/toolbar.vue:59
@@ -1998,75 +2115,93 @@ msgstr ""
 #: src/pages/library/files.vue:100
 #: src/pages/people/faces.vue:65
 #: src/pages/people/subjects.vue:105
+#, fuzzy
 msgid "Reload"
-msgstr ""
+msgstr "Yeniden Yükle"
 
 #: src/dialog/reload.vue:26
 #: src/pages/settings/general.vue:99
 #: src/pages/settings/library.vue:46
+#, fuzzy
 msgid "Reloading…"
-msgstr ""
+msgstr "Yeniden doldurma…"
 
 #: src/dialog/account/edit.vue:96
+#, fuzzy
 msgid "Remote Sync"
-msgstr ""
+msgstr "Uzaktan Senkronizasyon"
 
 #: src/dialog/photo/people.vue:108
+#, fuzzy
 msgid "Remove"
-msgstr ""
+msgstr "Kaldırmak"
 
 #: src/component/photo/clipboard.vue:99
+#, fuzzy
 msgid "remove failed: unknown album"
-msgstr ""
+msgstr "kaldırma başarısız: bilinmeyen albüm"
 
 #: src/component/photo/clipboard.vue:260
+#, fuzzy
 msgid "Remove from album"
-msgstr ""
+msgstr "Albümden çıkar"
 
 #: src/pages/library/import.vue:133
+#, fuzzy
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr ""
+"Depolama alanından tasarruf etmek için içe aktarılan dosyaları kaldırın. "
+"Desteklenmeyen dosya türleri asla silinmez, mevcut konumlarında kalırlar."
 
 #: src/common/api.js:74
+#, fuzzy
 msgid "Request failed - invalid response"
-msgstr ""
+msgstr "İstek başarısız oldu - geçersiz yanıt"
 
 #: src/pages/about/feedback.vue:117
 #: src/pages/about/feedback.vue:137
 #: src/pages/about/feedback.vue:179
+#, fuzzy
 msgid "Required"
-msgstr ""
+msgstr "Gerekli"
 
 #: src/dialog/photo/info.vue:67
+#, fuzzy
 msgid "Resolution"
-msgstr ""
+msgstr "Çözünürlük"
 
 #: src/component/photo/clipboard.vue:238
+#, fuzzy
 msgid "Restore"
-msgstr ""
+msgstr "Geri Yükleme"
 
 #: src/pages/settings/account.vue:106
+#, fuzzy
 msgid "Retype Password"
-msgstr ""
+msgstr "Şifreyi Yeniden Yaz"
 
 #: src/app/routes.js:196
 #: src/component/navigation.vue:114
+#, fuzzy
 msgid "Review"
-msgstr ""
+msgstr "İnceleme"
 
 #: src/dialog/account/edit.vue:97
 #: src/dialog/album/edit.vue:45
 #: src/dialog/share.vue:61
+#, fuzzy
 msgid "Save"
-msgstr ""
+msgstr "Kaydet"
 
 #: src/dialog/photo/info.vue:110
+#, fuzzy
 msgid "Scan"
-msgstr ""
+msgstr "Tarama"
 
 #: src/component/navigation.vue:106
+#, fuzzy
 msgid "Scans"
-msgstr ""
+msgstr "Taramalar"
 
 #: src/app/routes.js:102
 #: src/component/navigation.vue:62
@@ -2079,62 +2214,76 @@ msgstr ""
 #: src/pages/library/errors.vue:62
 #: src/pages/people/subjects.vue:86
 #: src/pages/places.vue:30
+#, fuzzy
 msgid "Search"
-msgstr ""
+msgstr "Arama"
 
 #: src/pages/settings/general.vue:451
+#, fuzzy
 msgid "Search and display photos on a map."
-msgstr ""
+msgstr "Fotoğrafları harita üzerinde arayın ve görüntüleyin."
 
 #: src/pages/discover.vue:12
+#, fuzzy
 msgid "Season"
-msgstr ""
+msgstr "Sezon"
 
 #: src/options/options.js:232
+#, fuzzy
 msgid "Seaweed"
-msgstr ""
+msgstr "Deniz Yosunu"
 
 #: src/dialog/share.vue:213
+#, fuzzy
 msgid "Secret"
-msgstr ""
+msgstr "Gizli"
 
 #: src/component/photo/viewer.vue:119
+#, fuzzy
 msgid "Select"
-msgstr ""
+msgstr "Seçiniz"
 
 #: src/dialog/upload.vue:139
+#, fuzzy
 msgid "Select albums or create a new one"
-msgstr ""
+msgstr "Albümleri seçin veya yeni bir albüm oluşturun"
 
 #: src/component/photo/clipboard.vue:45
+#, fuzzy
 msgid "Selection approved"
-msgstr ""
+msgstr "Seçim onaylandı"
 
 #: src/component/photo/clipboard.vue:61
+#, fuzzy
 msgid "Selection archived"
-msgstr ""
+msgstr "Seçim arşivlendi"
 
 #: src/component/photo/clipboard.vue:86
+#, fuzzy
 msgid "Selection restored"
-msgstr ""
+msgstr "Seçim geri yüklendi"
 
 #: src/pages/about/feedback.vue:39
+#, fuzzy
 msgid "Send"
-msgstr ""
+msgstr "Gönder"
 
 #: src/pages/settings/library.vue:215
+#, fuzzy
 msgid "Sequential Name"
-msgstr ""
+msgstr "Sıralı İsim"
 
 #: src/pages/settings/sync.vue:26
+#, fuzzy
 msgid "Server"
-msgstr ""
+msgstr "Sunucu"
 
 #: src/dialog/account/add.vue:65
 #: src/dialog/account/edit.vue:414
 #: src/dialog/share.vue:22
+#, fuzzy
 msgid "Service URL"
-msgstr ""
+msgstr "Hizmet URL'si"
 
 #: src/app/routes.js:315
 #: src/app/routes.js:327
@@ -2147,272 +2296,347 @@ msgstr ""
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:1407
+#, fuzzy
 msgid "Settings"
-msgstr ""
+msgstr "Ayarlar"
 
 #: src/pages/settings/advanced.vue:39
 #: src/pages/settings/general.vue:103
 #: src/pages/settings/library.vue:50
+#, fuzzy
 msgid "Settings saved"
-msgstr ""
+msgstr "Ayarlar kaydedildi"
 
 #: src/dialog/share/upload.vue:32
+#, fuzzy
 msgid "Setup"
-msgstr ""
+msgstr "Kurulum"
 
 #: src/options/options.js:237
+#, fuzzy
 msgid "Shadow"
-msgstr ""
+msgstr "Gölge"
 
 #: src/component/album/clipboard.vue:70
 #: src/component/album/toolbar.vue:88
 #: src/component/photo/clipboard.vue:77
 #: src/pages/settings/general.vue:250
+#, fuzzy
 msgid "Share"
-msgstr ""
+msgstr "Paylaş"
 
 #: src/dialog/share.vue:7
+#, fuzzy
 msgid "Share %{name}"
-msgstr ""
+msgstr "Paylaş %{name}"
 
 #: src/share/albums.vue:51
+#, fuzzy
 msgid "Shared with you."
-msgstr ""
+msgstr "Seninle paylaştım."
 
 #: src/pages/people/faces.vue:227
 #: src/pages/people/subjects.vue:287
+#, fuzzy
 msgid "Show"
-msgstr ""
+msgstr "Göster"
 
 #: src/pages/people/faces.vue:66
+#, fuzzy
 msgid "Show all new faces"
-msgstr ""
+msgstr "Tüm yeni yüzleri göster"
 
 #: src/pages/people/faces.vue:83
 #: src/pages/people/subjects.vue:123
+#, fuzzy
 msgid "Show hidden"
-msgstr ""
+msgstr "Gizli göster"
 
 #: src/pages/labels.vue:128
+#, fuzzy
 msgid "Show less"
-msgstr ""
+msgstr "Daha az göster"
 
 #: src/pages/settings/general.vue:405
+#, fuzzy
 msgid "Show Library in navigation menu."
-msgstr ""
+msgstr "Gezinti menüsünde Kitaplığı göster."
 
 #: src/pages/labels.vue:111
+#, fuzzy
 msgid "Show more"
-msgstr ""
+msgstr "Daha fazla göster"
 
 #: src/pages/settings/general.vue:427
+#, fuzzy
 msgid "Show server logs in Library."
-msgstr ""
+msgstr "Kütüphane'de sunucu günlüklerini gösterin."
 
 #: src/pages/settings/advanced.vue:78
+#, fuzzy
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr ""
+"Daha ayrıntılı günlük mesajlarını gösterir. Yeniden başlatma gerektirir."
 
 #: src/model/file.js:182
+#, fuzzy
 msgid "Sidecar"
-msgstr ""
+msgstr "Sidecar"
 
 #: src/pages/auth/login.vue:17
+#, fuzzy
 msgid "Sign in"
-msgstr ""
+msgstr "Oturum aç"
 
 #: src/dialog/sponsor.vue:39
+#, fuzzy
 msgid "Sign Up"
-msgstr ""
+msgstr "Kaydolun"
 
 #: src/pages/discover.vue:8
+#, fuzzy
 msgid "Similar"
-msgstr ""
+msgstr "Benzer"
 
 #: src/dialog/account/edit.vue:219
 #: src/dialog/photo/files.vue:83
 #: src/dialog/photo/files.vue:80
 #: src/dialog/photo/files.vue:36
+#, fuzzy
 msgid "Size"
-msgstr ""
+msgstr "Boyut"
 
 #: src/options/options.js:261
+#, fuzzy
 msgid "Slow"
-msgstr ""
+msgstr "Yavaş"
 
 #: src/component/album/toolbar.vue:51
 #: src/component/photo/toolbar.vue:45
 #: src/dialog/album/edit.vue:22
+#, fuzzy
 msgid "Sort by file name"
-msgstr ""
+msgstr "Dosya adına göre sırala"
 
 #: src/component/photo/toolbar.vue:256
 #: src/dialog/album/edit.vue:181
+#, fuzzy
 msgid "Sort Order"
-msgstr ""
+msgstr "Sıralama Düzeni"
 
 #: src/dialog/photo/labels.vue:21
+#, fuzzy
 msgid "Source"
-msgstr ""
+msgstr "Kaynak"
 
 #: src/pages/about/about.vue:30
+#, fuzzy
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
 msgstr ""
+"Sponsorlar ek özelliklere erişebilir, e-posta yoluyla doğrudan teknik destek "
+"alabilir ve matrix.org'daki özel sohbet odamıza katılabilir."
 
 #: src/component/photo/cards.vue:235
 #: src/component/photo/mosaic.vue:210
 #: src/share/photo/cards.vue:208
 #: src/share/photo/mosaic.vue:191
+#, fuzzy
 msgid "Stack"
-msgstr ""
+msgstr "Yığın"
 
 #: src/pages/settings/library.vue:195
+#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr ""
+"Aynı benzersiz görüntü veya örnek tanımlayıcısını paylaşan yığın dosyaları."
 
 #: src/pages/settings/library.vue:174
+#, fuzzy
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr ""
+"Aynı zamanda ve konumda çekilen fotoğrafları meta verilerine göre yığınlayın."
 
 #: src/dialog/photo/info.vue:86
+#, fuzzy
 msgid "Stackable"
-msgstr ""
+msgstr "İstiflenebilir"
 
 #: src/component/navigation.vue:98
 #: src/pages/settings/library.vue:34
+#, fuzzy
 msgid "Stacks"
-msgstr ""
+msgstr "Yığınlar"
 
 #: src/pages/settings/library.vue:140
+#, fuzzy
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr ""
+"Yığınlar, benzer referans çerçevesine sahip, ancak kalite, format, boyut "
+"veya renk farklılıkları olan dosyaları gruplandırır."
 
 #: src/pages/library/index.vue:31
+#, fuzzy
 msgid "Start"
-msgstr ""
+msgstr "Başlangıç"
 
 #: src/component/photo/viewer.vue:183
+#, fuzzy
 msgid "Start/Stop Slideshow"
-msgstr ""
+msgstr "Slayt Gösterisini Başlat/Durdur"
 
 #: src/component/navigation.vue:275
+#, fuzzy
 msgid "States"
-msgstr ""
+msgstr "Devletler"
 
 #: src/pages/settings/advanced.vue:374
+#, fuzzy
 msgid "Static Size Limit: %{n}px"
-msgstr ""
+msgstr "Statik Boyut Sınırı: %{n}px"
 
 #: src/dialog/photo/files.vue:38
+#, fuzzy
 msgid "Status"
-msgstr ""
+msgstr "Durum"
 
 #: src/dialog/photo/files.vue:65
 #: src/dialog/photo/files.vue:62
+#, fuzzy
 msgid "Storage Folder"
-msgstr ""
+msgstr "Saklama Klasörü"
 
 #: src/options/options.js:272
+#, fuzzy
 msgid "Streets"
-msgstr ""
+msgstr "Sokaklar"
 
 #: src/pages/settings/general.vue:511
+#, fuzzy
 msgid "Style"
-msgstr ""
+msgstr "Stil"
 
 #: src/dialog/photo/details.vue:473
 #: src/model/subject.js:149
+#, fuzzy
 msgid "Subject"
-msgstr ""
+msgstr "Konu"
 
 #: src/dialog/account/add.vue:23
+#, fuzzy
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr ""
+msgstr "Google Drive gibi ek hizmetler için destek zaman içinde eklenecektir."
 
 #: src/pages/settings.vue:63
 #: src/pages/settings/sync.vue:28
+#, fuzzy
 msgid "Sync"
-msgstr ""
+msgstr "Senkronizasyon"
 
 #: src/dialog/account/edit.vue:371
+#, fuzzy
 msgid "Sync raw and video files"
-msgstr ""
+msgstr "Ham ve video dosyalarını senkronize edin"
 
 #: src/component/photo/cards.vue:34
 #: src/component/photo/list.vue:44
 #: src/dialog/photo/info.vue:52
 #: src/share/photo/cards.vue:34
 #: src/share/photo/list.vue:40
+#, fuzzy
 msgid "Taken"
-msgstr ""
+msgstr "Alınmış"
 
 #: src/options/options.js:342
+#, fuzzy
 msgid "Teal"
-msgstr ""
+msgstr "Deniz mavisi"
 
 #: src/dialog/photo/details.vue:25
 #: src/pages/people/faces.vue:54
+#, fuzzy
 msgid "Text too long"
-msgstr ""
+msgstr "Metin çok uzun"
 
 #: src/component/footer.vue:6
 #: src/component/footer.vue:1
+#, fuzzy
 msgid "Thank you for supporting PhotoPrism®"
-msgstr ""
+msgstr "PhotoPrism®'i desteklediğiniz için teşekkür ederiz"
 
 #: src/pages/library/index.vue:36
+#, fuzzy
 msgid "The index currently contains %{n} hidden files."
-msgstr ""
+msgstr "Dizin şu anda %{n} gizli dosya içeriyor."
 
 #: src/pages/about/about.vue:17
+#, fuzzy
 msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
 msgstr ""
+"Yol haritası, hangi görevlerin devam ettiğini, nelerin test edilmesi "
+"gerektiğini ve hangi özellik taleplerinin daha sonra uygulanacağını gösterir."
 
 #: src/pages/library/index.vue:37
+#, fuzzy
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr ""
+"Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir "
+"veya kopyaları olabilir."
 
 #: src/pages/settings/general.vue:72
+#, fuzzy
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/dialog/sponsor.vue:17
+#, fuzzy
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
+"Bu, şu anda bu uygulamanın geliştirilmesini destekleyen herkese teşekkür "
+"etmek için bir sponsor özelliğidir."
 
 #: src/dialog/webdav.vue:17
 #: src/pages/settings/sync.vue:36
+#, fuzzy
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr ""
+"Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları "
+"bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi açmanıza, "
+"düzenlemenize ve silmenize olanak tanır."
 
 #: src/pages/settings/advanced.vue:253
+#, fuzzy
 msgid "Thumbnail Generation"
-msgstr ""
+msgstr "Küçük Resim Oluşturma"
 
 #: src/dialog/photo/details.vue:189
+#, fuzzy
 msgid "Time UTC"
-msgstr ""
+msgstr "Zaman UTC"
 
 #: src/dialog/photo/details.vue:213
+#, fuzzy
 msgid "Time Zone"
-msgstr ""
+msgstr "Saat Dilimi"
 
 #: src/component/photo/list.vue:43
 #: src/dialog/photo/details.vue:97
 #: src/dialog/photo/info.vue:45
 #: src/share/photo/list.vue:39
+#, fuzzy
 msgid "Title"
-msgstr ""
+msgstr "Başlık"
 
 #: src/pages/albums.vue:49
 #: src/share/albums.vue:51
+#, fuzzy
 msgid "Title too long"
-msgstr ""
+msgstr "Başlık çok uzun"
 
 #: src/app.js:169
 #: src/share.js:159
+#, fuzzy
 msgid "to"
-msgstr ""
+msgstr "için"
 
 #: src/component/album/toolbar.vue:125
 #: src/component/album/toolbar.vue:142
@@ -2420,20 +2644,24 @@ msgstr ""
 #: src/component/photo/toolbar.vue:76
 #: src/component/photo/toolbar.vue:93
 #: src/component/photo/toolbar.vue:109
+#, fuzzy
 msgid "Toggle View"
-msgstr ""
+msgstr "Görünümü Değiştir"
 
 #: src/dialog/share.vue:214
+#, fuzzy
 msgid "Token"
-msgstr ""
+msgstr "Jeton"
 
 #: src/options/options.js:281
+#, fuzzy
 msgid "Topographic"
-msgstr ""
+msgstr "Topografik"
 
 #: src/pages/library/errors.vue:90
+#, fuzzy
 msgid "Troubleshooting Checklists"
-msgstr ""
+msgstr "Sorun Giderme Kontrol Listeleri"
 
 #: src/component/photo/cards.vue:10
 #: src/component/photo/list.vue:11
@@ -2447,24 +2675,28 @@ msgstr ""
 #: src/share/photo/list.vue:11
 #: src/share/photo/list.vue:28
 #: src/share/photo/mosaic.vue:10
+#, fuzzy
 msgid "Try again using other filters or keywords."
-msgstr ""
+msgstr "Başka filtreler veya anahtar kelimeler kullanarak tekrar deneyin."
 
 #: src/dialog/account/edit.vue:489
 #: src/dialog/photo/files.vue:89
 #: src/dialog/photo/files.vue:86
 #: src/dialog/photo/files.vue:37
 #: src/dialog/photo/info.vue:15
+#, fuzzy
 msgid "Type"
-msgstr ""
+msgstr "Tip"
 
 #: src/dialog/photo/people.vue:151
+#, fuzzy
 msgid "Undo"
-msgstr ""
+msgstr "Geri al"
 
 #: src/pages/settings/library.vue:194
+#, fuzzy
 msgid "Unique ID"
-msgstr ""
+msgstr "Benzersiz Kimlik"
 
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:24
@@ -2483,44 +2715,53 @@ msgstr ""
 #: src/pages/library/errors.vue:116
 #: src/pages/library/errors.vue:123
 #: src/pages/library/logs.vue:16
+#, fuzzy
 msgid "Unknown"
-msgstr ""
+msgstr "Bilinmiyor"
 
 #: src/app/routes.js:168
 #: src/component/navigation.vue:156
+#, fuzzy
 msgid "Unsorted"
-msgstr ""
+msgstr "Tasnif Edilmemiş"
 
 #: src/dialog/photo/files.vue:38
 #: src/dialog/photo/files.vue:35
+#, fuzzy
 msgid "Unstack"
-msgstr ""
+msgstr "Unstack"
 
 #: src/dialog/photo/files.vue:180
 #: src/dialog/photo/files.vue:177
 #: src/dialog/photo/info.vue:175
+#, fuzzy
 msgid "Updated"
-msgstr ""
+msgstr "Güncellenmiş"
 
 #: src/pages/library/index.vue:153
+#, fuzzy
 msgid "Updating faces"
-msgstr ""
+msgstr "Yüzleri güncelleme"
 
 #: src/pages/library/index.vue:157
+#, fuzzy
 msgid "Updating index"
-msgstr ""
+msgstr "Dizin güncelleniyor"
 
 #: src/pages/library/index.vue:151
+#, fuzzy
 msgid "Updating moments"
-msgstr ""
+msgstr "Anların güncellenmesi"
 
 #: src/pages/library/index.vue:155
+#, fuzzy
 msgid "Updating previews"
-msgstr ""
+msgstr "Önizlemeleri güncelleme"
 
 #: src/pages/library/index.vue:149
+#, fuzzy
 msgid "Updating stacks"
-msgstr ""
+msgstr "Yığınları güncelleme"
 
 #: src/component/album/toolbar.vue:176
 #: src/component/navigation.vue:131
@@ -2532,68 +2773,84 @@ msgstr ""
 #: src/pages/library/import.vue:38
 #: src/pages/settings/general.vue:140
 #: src/pages/settings/sync.vue:27
+#, fuzzy
 msgid "Upload"
-msgstr ""
+msgstr "Yükle"
 
 #: src/dialog/upload.vue:155
+#, fuzzy
 msgid "Upload complete"
-msgstr ""
+msgstr "Yükleme tamamlandı"
 
 #: src/dialog/upload.vue:38
+#, fuzzy
 msgid "Upload complete. Indexing…"
-msgstr ""
+msgstr "Yükleme tamamlandı. İndeksleniyor…"
 
 #: src/dialog/upload.vue:34
+#, fuzzy
 msgid "Upload failed"
-msgstr ""
+msgstr "Yükleme başarısız"
 
 #: src/dialog/account/edit.vue:354
+#, fuzzy
 msgid "Upload local files"
-msgstr ""
+msgstr "Yerel dosyaları yükleme"
 
 #: src/pages/settings/general.vue:251
+#, fuzzy
 msgid "Upload to WebDAV and share links with friends."
-msgstr ""
+msgstr "WebDAV'a yükleyin ve bağlantıları arkadaşlarınızla paylaşın."
 
 #: src/dialog/upload.vue:36
+#, fuzzy
 msgid "Uploading %{n} of %{t}…"
-msgstr ""
+msgstr "%{t}'nin %{n}'si yükleniyor…"
 
 #: src/dialog/upload.vue:59
 #: src/dialog/upload.vue:67
 #: src/dialog/upload.vue:108
+#, fuzzy
 msgid "Uploading photos…"
-msgstr ""
+msgstr "Fotoğraf yükleniyor…"
 
 #: src/dialog/upload.vue:46
+#, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
+"Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedilecektir."
 
 #: src/dialog/share.vue:165
+#, fuzzy
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
+#, fuzzy
 msgid "Use Presets"
-msgstr ""
+msgstr "Ön Ayarları Kullan"
 
 #: src/model/user.js:117
+#, fuzzy
 msgid "User"
-msgstr ""
+msgstr "Kullanıcı"
 
 #: src/pages/settings/general.vue:6
+#, fuzzy
 msgid "User Interface"
-msgstr ""
+msgstr "Kullanıcı Arayüzü"
 
 #: src/dialog/account/add.vue:84
 #: src/dialog/account/edit.vue:432
 #: src/dialog/share.vue:23
+#, fuzzy
 msgid "Username"
-msgstr ""
+msgstr "Kullanıcı Adı"
 
 #: src/options/options.js:192
+#, fuzzy
 msgid "Vanta"
-msgstr ""
+msgstr "Vanta"
 
 #: src/component/photo/cards.vue:38
 #: src/component/photo/cards.vue:225
@@ -2607,62 +2864,82 @@ msgstr ""
 #: src/share/photo/cards.vue:198
 #: src/share/photo/list.vue:175
 #: src/share/photo/mosaic.vue:181
+#, fuzzy
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: src/app/routes.js:189
 #: src/component/navigation.vue:169
 #: src/component/navigation.vue:179
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:684
+#, fuzzy
 msgid "Videos"
-msgstr ""
+msgstr "Videolar"
 
 #: src/component/photo/cards.vue:252
 #: src/component/photo/mosaic.vue:228
 #: src/component/photo/toolbar.vue:234
 #: src/share/photo/cards.vue:225
 #: src/share/photo/mosaic.vue:209
+#, fuzzy
 msgid "View"
-msgstr ""
+msgstr "Görünüm"
 
 #: src/pages/about/about.vue:56
+#, fuzzy
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr ""
+"Tüm sorularınızı yanıtlamak için elimizden geleni yapacağız. Karşılığında "
+"sizden bizi Patreon veya GitHub Sponsorları üzerinden desteklemenizi rica "
+"ediyoruz."
 
 #: src/dialog/sponsor.vue:18
+#, fuzzy
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
 msgstr ""
+"Patreon veya GitHub Sponsorlarına kaydolduğunuzda bunu nasıl "
+"etkinleştireceğinizi size bildireceğiz."
 
 #: src/dialog/webdav.vue:8
+#, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
+"WebDAV istemcileri aşağıdaki URL'yi kullanarak PhotoPrism'e bağlanabilir:"
 
 #: src/pages/settings/sync.vue:35
+#, fuzzy
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr ""
+"Microsoft'un Windows Explorer'ı veya Apple'ın Finder'ı gibi WebDAV "
+"istemcileri doğrudan PhotoPrism'e bağlanabilir."
 
 #: src/dialog/share.vue:82
 #: src/dialog/share/upload.vue:7
+#, fuzzy
 msgid "WebDAV Upload"
-msgstr ""
+msgstr "WebDAV Yükleme"
 
 #: src/options/options.js:346
+#, fuzzy
 msgid "White"
-msgstr ""
+msgstr "Beyaz"
 
 #: src/component/photo/toolbar.vue:278
 #: src/dialog/photo/details.vue:166
+#, fuzzy
 msgid "Year"
-msgstr ""
+msgstr "Yıl"
 
 #: src/options/options.js:339
+#, fuzzy
 msgid "Yellow"
-msgstr ""
+msgstr "Sarı"
 
 #: src/options/options.js:242
+#, fuzzy
 msgid "Yellowstone"
-msgstr ""
+msgstr "Yellowstone"
 
 #: src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18
@@ -2679,48 +2956,62 @@ msgstr ""
 #: src/dialog/photo/info.vue:328
 #: src/dialog/photo/info.vue:348
 #: src/dialog/photo/info.vue:368
+#, fuzzy
 msgid "Yes"
-msgstr ""
+msgstr "Evet"
 
 #: src/pages/about/about.vue:47
+#, fuzzy
 msgid "you are welcome to join us on Reddit"
-msgstr ""
+msgstr "Reddit'te bize katılabilirsiniz"
 
 #: src/component/album/clipboard.vue:82
 #: src/component/subject/clipboard.vue:42
 #: src/share/album/clipboard.vue:36
+#, fuzzy
 msgid "You can only download one album"
-msgstr ""
+msgstr "Yalnızca bir albüm indirebilirsiniz"
 
 #: src/component/label/clipboard.vue:50
+#, fuzzy
 msgid "You can only download one label"
-msgstr ""
+msgstr "Yalnızca bir etiket indirebilirsiniz"
 
 #: src/component/album/clipboard.vue:35
 #: src/component/album/clipboard.vue:48
+#, fuzzy
 msgid "You may only select one item"
-msgstr ""
+msgstr "Yalnızca bir öğe seçebilirsiniz"
 
 #: src/dialog/photo/people.vue:8
 #: src/pages/people/faces.vue:33
 #: src/pages/people/subjects.vue:37
+#, fuzzy
 msgid "You may rescan your library to find additional faces."
-msgstr ""
+msgstr "Başka yüzler bulmak için kütüphanenizi yeniden tarayabilirsiniz."
 
 #: src/dialog/sponsor.vue:21
 #: src/pages/about/about.vue:29
+#, fuzzy
 msgid "Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
+"Devam eden desteğiniz, düzenli güncellemeler ve dünya haritaları gibi "
+"hizmetler sunmamıza yardımcı oluyor."
 
 #: src/pages/albums.vue:43
 #: src/pages/albums.vue:1
+#, fuzzy
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr ""
+"Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturmak "
+"için kitaplığınız sürekli olarak analiz edilir."
 
 #: src/pages/about/feedback.vue:4
+#, fuzzy
 msgid "Your message has been sent"
-msgstr ""
+msgstr "Mesajınız gönderildi"
 
 #: src/component/photo/viewer.vue:178
+#, fuzzy
 msgid "Zoom in/out"
-msgstr ""
+msgstr "Yakınlaştırma/uzaklaştırma"
