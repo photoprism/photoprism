@@ -56,7 +56,7 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 ## Support Our Mission 💎 ##
 
-**We encourage all of our users to [become a sponsor](https://link.photoprism.app/sponsor), as this allows us to make more features available to the public and remain independent.**
+**We encourage all of our users to [become a sponsor](https://photoprism.app/membership), as this allows us to make more features available to the public and remain independent.**
 
 Sponsors enjoy additional features, including access to interactive world maps, and can join our private chat room to connect with our team and other sponsors. We currently have the following sponsorship options:
 
