@@ -235,7 +235,7 @@ body.chrome #photoprism .search-results .result {
 }
 #photoprism .cards-view .result .image button:hover,
 #photoprism .list-view .result .image button:hover,
-#photoprism .mosaic-view .result .image button:hover {
+#photoprism .mosaic-view .result.image button:hover {
   background-color: rgba(255, 255, 255, 0.12);
 }
 

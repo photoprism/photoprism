@@ -27,13 +27,10 @@
           :key="photo.ID"
           :data-index="index"
           style="width: min-content"
-          class="flex xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex"
+          class="flex xs12 sm6 md4 lg3 xlg2 xxxl1"
       >
-        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
-                style="user-select: none"
-                class="accent lighten-3 result"
-        >
-          <div class="accent lighten-2" style="aspect-ratio: 1" />
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-3 result">
+          <div class="accent lighten-2 image"/>
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
           <div class="v-card__title pa-3 card-details v-card__title--primary">
             <div>

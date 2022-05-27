@@ -25,13 +25,11 @@
           v-for="(photo, index) in photos"
           ref="items"
           :key="photo.ID"
-          class="flex xs4 sm3 md2 lg1 d-flex"
+          class="flex xs4 sm3 md2 lg1"
           :data-index="index"
       >
 
-        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
-                style="user-select: none; aspect-ratio: 1"
-                class="accent lighten-2 result"/>
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-2 result image"/>
         <v-hover v-else>
           <div :key="photo.Hash"
                 slot-scope="{ hover }"
