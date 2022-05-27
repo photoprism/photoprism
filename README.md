@@ -58,20 +58,19 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 **We encourage all of our users to [become a sponsor](https://photoprism.app/membership), as this allows us to make more features available to the public and remain independent.**
 
-Sponsors enjoy additional features, including access to interactive world maps, and can join our private chat room to connect with our team and other sponsors. We currently have the following sponsorship options:
+Sponsors enjoy additional features, including access to [interactive world maps](https://demo.photoprism.app/places), and can join our private chat room to connect with [our team](https://photoprism.app/team) and other sponsors. We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available in 2022, so you can sign up directly in the app
-- [Contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations), bank account details, and business partnerships
 
-Why your support matters:
+You are welcome to [contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations), bank account details, and business partnerships. Why your support matters:
 
 - Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy
 - Sustained funding is key to releasing new features requested by you and other community members in a timely manner
 - Being **100% self-funded and independent**, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
 
-Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
+Visit [photoprism.app/membership](https://photoprism.app/membership) to learn more. Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
 
 ## Getting Support ##
