@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-27 13:30+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-05-27 14:07+0000\n"
+"Last-Translator: Joaquim Homrighausen <joho@boojam.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/sv/>\n"
 "Language: sv\n"
@@ -160,7 +160,9 @@ msgstr "Efter ett år"
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "När du har valt bilder från sökresultaten kan du lägga till dem i ett album med hjälp av kontextmenyn."
+msgstr ""
+"När du har valt bilder från sökresultaten kan du lägga till dem i ett album "
+"med hjälp av kontextmenyn."
 
 #: src/options/options.js:328
 msgid "After two months"
@@ -254,11 +256,14 @@ msgstr "Alla år"
 
 #: src/pages/about/about.vue:34
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Lämna också gärna en stjärna på GitHub om du gillar det här projektet. Det ger ytterligare motivation att fortsätta."
+msgstr ""
+"Lämna också gärna en stjärna på GitHub om du gillar det här projektet. Det "
+"ger ytterligare motivation att fortsätta."
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternativt kan du ladda upp filer direkt till WebDAV-servrar som Nextcloud."
+msgstr ""
+"Alternativt kan du ladda upp filer direkt till WebDAV-servrar som Nextcloud."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -278,7 +283,8 @@ msgstr "Animering"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Alla privata foton och videor förblir privata och kommer inte att delas."
+msgstr ""
+"Alla privata foton och videor förblir privata och kommer inte att delas."
 
 #: src/dialog/account/edit.vue:471
 msgid "API Key"
@@ -347,7 +353,9 @@ msgstr "Minst 6 tecken."
 
 #: src/pages/settings/library.vue:114
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Skapa automatiskt JPEG-filer för andra filtyper så att de kan visas i en webbläsare."
+msgstr ""
+"Skapa automatiskt JPEG-filer för andra filtyper så att de kan visas i en "
+"webbläsare."
 
 #: src/pages/settings/general.vue:361
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -360,7 +368,9 @@ msgstr "Bli sponsor"
 
 #: src/pages/about/about.vue:42
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Innan du skickar in en supportbegäran kan du använda våra checklistor för felsökning för att fastställa orsaken till ditt problem."
+msgstr ""
+"Innan du skickar in en supportbegäran kan du använda våra checklistor för "
+"felsökning för att fastställa orsaken till ditt problem."
 
 #: src/pages/people/subjects.vue:432
 msgid "Bio"
@@ -728,7 +738,8 @@ msgstr "Skapa inte ExifTool JSON-filer för bättre utvinning av metadata."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Ändra inte mappen med original. Inaktiverar import, uppladdning och radering."
+msgstr ""
+"Ändra inte mappen med original. Inaktiverar import, uppladdning och radering."
 
 #: src/pages/settings/advanced.vue:527
 msgid "Don't transcode videos with FFmpeg."
@@ -817,7 +828,9 @@ msgstr "Dynamiska förhandsgranskningar"
 
 #: src/pages/settings/advanced.vue:306
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dynamisk rendering kräver en kraftfull server. Den rekommenderas inte för NAS-enheter."
+msgstr ""
+"Dynamisk rendering kräver en kraftfull server. Den rekommenderas inte för "
+"NAS-enheter."
 
 #: src/pages/settings/advanced.vue:348
 msgid "Dynamic Size Limit: %{n}px"
@@ -882,7 +895,9 @@ msgstr "Varannan dag"
 
 #: src/pages/settings/general.vue:273
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Undanta innehåll som markerats som privat från sökresultat, delade album, etiketter och platser."
+msgstr ""
+"Undanta innehåll som markerats som privat från sökresultat, delade album, "
+"etiketter och platser."
 
 #: src/pages/people/faces.vue:100
 #: src/pages/people/subjects.vue:140
@@ -982,7 +997,9 @@ msgstr "Filer"
 
 #: src/pages/settings/library.vue:216
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Filer med sekventiella namn som 'IMG_1234 (2)' och 'IMG_1234 (3)' tillhör samma bild."
+msgstr ""
+"Filer med sekventiella namn som 'IMG_1234 (2)' och 'IMG_1234 (3)' tillhör "
+"samma bild."
 
 #: src/dialog/photo/details.vue:449
 msgid "Focal Length"
@@ -1125,7 +1142,9 @@ msgstr "Importen misslyckades"
 
 #: src/pages/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Importerade filer sorteras efter datum och får ett unikt namn för att undvika dubbletter."
+msgstr ""
+"Importerade filer sorteras efter datum och får ett unikt namn för att "
+"undvika dubbletter."
 
 #: src/pages/settings/general.vue:229
 msgid "Imported files will be sorted by date and given a unique name."
@@ -1156,7 +1175,9 @@ msgstr "Dessutom får sponsorer direkt teknisk support via e-post."
 #: src/pages/labels.vue:35
 #: src/pages/library/files.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Om du upplever att bilder saknas, vänligen skanna om biblioteket och vänta tills indexeringen är slutförd."
+msgstr ""
+"Om du upplever att bilder saknas, vänligen skanna om biblioteket och vänta "
+"tills indexeringen är slutförd."
 
 #: src/pages/library.vue:32
 #: src/pages/settings/library.vue:6
@@ -1334,7 +1355,9 @@ msgstr "Plats"
 #: src/pages/library/errors.vue:34
 #: src/pages/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Loggmeddelanden visas här när PhotoPrism stöter på trasiga filer eller när det finns andra potentiella problem."
+msgstr ""
+"Loggmeddelanden visas här när PhotoPrism stöter på trasiga filer eller när "
+"det finns andra potentiella problem."
 
 #: src/component/navigation.vue:428
 #: src/component/navigation.vue:1570
@@ -1582,7 +1605,9 @@ msgstr "Ingen video vald"
 #: src/pages/library/errors.vue:31
 #: src/pages/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Inga varningar eller fel som innehåller detta nyckelord. Observera att sökningen är skiftlägeskänslig."
+msgstr ""
+"Inga varningar eller fel som innehåller detta nyckelord. Observera att "
+"sökningen är skiftlägeskänslig."
 
 #: src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:1
@@ -1594,7 +1619,9 @@ msgstr "Inga varningar eller fel som innehåller detta nyckelord. Observera att 
 #: src/dialog/upload.vue:50
 #: src/pages/settings/library.vue:93
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Bilder som inte är fotografiska eller av låg kvalitet måste granskas innan de visas i sökresultaten."
+msgstr ""
+"Bilder som inte är fotografiska eller av låg kvalitet måste granskas innan "
+"de visas i sökresultaten."
 
 #: src/options/options.js:249
 msgid "None"
@@ -1606,7 +1633,9 @@ msgstr "Ej hittad"
 
 #: src/pages/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Observera att du kan hantera mappen med original manuellt och att import är valfritt."
+msgstr ""
+"Observera att du kan hantera mappen med original manuellt och att import är "
+"valfritt."
 
 #: src/pages/settings/sync.vue:34
 msgid "Note:"

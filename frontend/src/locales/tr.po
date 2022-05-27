@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-27 13:30+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-05-27 14:07+0000\n"
+"Last-Translator: TheresaNoRights <theresagresch+weblate@gmail.com>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/tr/>\n"
 "Language: tr\n"
@@ -160,7 +160,9 @@ msgstr "Bir yıl sonra"
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak bunları bir albüme ekleyebilirsiniz."
+msgstr ""
+"Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak "
+"bunları bir albüme ekleyebilirsiniz."
 
 #: src/options/options.js:328
 msgid "After two months"
@@ -254,11 +256,15 @@ msgstr "Bütün yıllar"
 
 #: src/pages/about/about.vue:34
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Ayrıca, bu projeyi beğendiyseniz lütfen GitHub'da bir yıldız bırakın. Devam etmek için ek motivasyon sağlar."
+msgstr ""
+"Ayrıca, bu projeyi beğendiyseniz lütfen GitHub'da bir yıldız bırakın. Devam "
+"etmek için ek motivasyon sağlar."
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternatif olarak, dosyaları doğrudan Nextcloud gibi WebDAV sunucularına yükleyebilirsiniz."
+msgstr ""
+"Alternatif olarak, dosyaları doğrudan Nextcloud gibi WebDAV sunucularına "
+"yükleyebilirsiniz."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -347,11 +353,14 @@ msgstr "En az 6 karakter."
 
 #: src/pages/settings/library.vue:114
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Bir tarayıcıda görüntülenebilmeleri için diğer dosya türleri için otomatik olarak JPEG'ler oluşturun."
+msgstr ""
+"Bir tarayıcıda görüntülenebilmeleri için diğer dosya türleri için otomatik "
+"olarak JPEG'ler oluşturun."
 
 #: src/pages/settings/general.vue:361
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturur."
+msgstr ""
+"Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturur."
 
 #: src/dialog/sponsor.vue:7
 #: src/pages/about/about.vue:23
@@ -360,7 +369,9 @@ msgstr "Sponsor olun"
 
 #: src/pages/about/about.vue:42
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
+msgstr ""
+"Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için "
+"lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
 
 #: src/pages/people/subjects.vue:432
 msgid "Bio"
@@ -675,7 +686,8 @@ msgstr "Yedekleri Devredışı Bırak"
 
 #: src/pages/settings/advanced.vue:166
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
+msgstr ""
+"Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
 
 #: src/pages/settings/advanced.vue:484
 msgid "Disable Darktable"
@@ -727,11 +739,14 @@ msgstr "Fotoğraf ve albüm meta verilerini YAML dosyalarına yedeklemeyin."
 
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
+msgstr ""
+"Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi devre dışı bırakır."
+msgstr ""
+"Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi "
+"devre dışı bırakır."
 
 #: src/pages/settings/advanced.vue:527
 msgid "Don't transcode videos with FFmpeg."
@@ -820,7 +835,8 @@ msgstr "Dinamik Önizlemeler"
 
 #: src/pages/settings/advanced.vue:306
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
+msgstr ""
+"Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
 
 #: src/pages/settings/advanced.vue:348
 msgid "Dynamic Size Limit: %{n}px"
@@ -886,7 +902,9 @@ msgstr "iki günde bir"
 
 #: src/pages/settings/general.vue:273
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Özel olarak işaretlenen içeriği arama sonuçlarından, paylaşılan albümlerden, etiketlerden ve yerlerden hariç tutun."
+msgstr ""
+"Özel olarak işaretlenen içeriği arama sonuçlarından, paylaşılan albümlerden, "
+"etiketlerden ve yerlerden hariç tutun."
 
 #: src/pages/people/faces.vue:100
 #: src/pages/people/subjects.vue:140
@@ -969,7 +987,9 @@ msgstr "Geri bildirim"
 
 #: src/dialog/sponsor.vue:24
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime geçmekten çekinmeyin."
+msgstr ""
+"Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime "
+"geçmekten çekinmeyin."
 
 #: src/model/file.js:241
 msgid "File"
@@ -987,7 +1007,9 @@ msgstr "Dosyalar"
 
 #: src/pages/settings/library.vue:216
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "'IMG_1234 (2)' ve 'IMG_1234 (3)' gibi sıralı adlara sahip dosyalar aynı resme aittir."
+msgstr ""
+"'IMG_1234 (2)' ve 'IMG_1234 (3)' gibi sıralı adlara sahip dosyalar aynı "
+"resme aittir."
 
 #: src/dialog/photo/details.vue:449
 msgid "Focal Length"
@@ -1131,11 +1153,15 @@ msgstr "İçe aktarılamadı"
 
 #: src/pages/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "İçe aktarılan dosyalar tarihe göre sıralanacak ve yinelemeleri önlemek için benzersiz bir ad verilecektir."
+msgstr ""
+"İçe aktarılan dosyalar tarihe göre sıralanacak ve yinelemeleri önlemek için "
+"benzersiz bir ad verilecektir."
 
 #: src/pages/settings/general.vue:229
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "İçe aktarılan dosyalar tarihe göre sıralanacak ve benzersiz bir ad verilecektir."
+msgstr ""
+"İçe aktarılan dosyalar tarihe göre sıralanacak ve benzersiz bir ad "
+"verilecektir."
 
 #: src/pages/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1162,7 +1188,9 @@ msgstr "Ayrıca, sponsorlar e-posta yoluyla doğrudan teknik destek alırlar."
 #: src/pages/labels.vue:35
 #: src/pages/library/files.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Beklediğiniz resimlerin eksik olması durumunda lütfen kitaplığınızı yeniden tarayın ve indeksleme tamamlanana kadar bekleyin."
+msgstr ""
+"Beklediğiniz resimlerin eksik olması durumunda lütfen kitaplığınızı yeniden "
+"tarayın ve indeksleme tamamlanana kadar bekleyin."
 
 #: src/pages/library.vue:32
 #: src/pages/settings/library.vue:6

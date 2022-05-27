@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-27 13:33+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-05-27 14:07+0000\n"
+"Last-Translator: Engku Fariez <fariez@gmail.com>\n"
 "Language: ms\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -158,7 +158,9 @@ msgstr "Selepas satu tahun"
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Selepas memilih gambar daripada hasil carian, anda boleh menambahkannya kepada album menggunakan menu konteks."
+msgstr ""
+"Selepas memilih gambar daripada hasil carian, anda boleh menambahkannya "
+"kepada album menggunakan menu konteks."
 
 #: src/options/options.js:399
 msgid "After two months"
@@ -253,11 +255,15 @@ msgstr "Semua Tahun"
 #: src/pages/about/about.vue:34
 #, fuzzy
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Selanjutnya, sila tinggalkan bintang di GitHub jika anda menyukai projek ini. Ia akan memberi motivasi tambahan untuk meneruskan."
+msgstr ""
+"Selanjutnya, sila tinggalkan bintang di GitHub jika anda menyukai projek "
+"ini. Ia akan memberi motivasi tambahan untuk meneruskan."
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Sebagai alternatif, anda boleh memuat naik fail terus ke pelayan WebDAV seperti Nextcloud."
+msgstr ""
+"Sebagai alternatif, anda boleh memuat naik fail terus ke pelayan WebDAV "
+"seperti Nextcloud."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -291,7 +297,8 @@ msgstr "Animasi"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Sebarang foto dan video peribadi kekal peribadi dan tidak akan dikongsi."
+msgstr ""
+"Sebarang foto dan video peribadi kekal peribadi dan tidak akan dikongsi."
 
 #: src/dialog/account/edit.vue:477
 msgid "API Key"
@@ -359,12 +366,16 @@ msgstr "Nisbah aspek"
 #: src/pages/settings/library.vue:114
 #, fuzzy
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Hasilkan JPEG secara automatik untuk fail jenis lain supaya ia boleh dipaparkan dalam pelayar."
+msgstr ""
+"Hasilkan JPEG secara automatik untuk fail jenis lain supaya ia boleh "
+"dipaparkan dalam pelayar."
 
 #: src/pages/settings/general.vue:361
 #, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara automatik."
+msgstr ""
+"Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara "
+"automatik."
 
 #: src/dialog/sponsor.vue:7
 #: src/pages/about/about.vue:23
@@ -374,7 +385,10 @@ msgstr "Jadi penaja"
 
 #: src/pages/about/about.vue:42
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Sebelum menghantar permintaan sokongan, sila gunakan Senarai Semak Penyelesaian Masalah (Troubleshooting Checklists) kami untuk cuba mengenal pasti punca masalah anda."
+msgstr ""
+"Sebelum menghantar permintaan sokongan, sila gunakan Senarai Semak "
+"Penyelesaian Masalah (Troubleshooting Checklists) kami untuk cuba mengenal "
+"pasti punca masalah anda."
 
 #: src/pages/people/subjects.vue:433
 msgid "Bio"

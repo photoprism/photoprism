@@ -1,5 +1,19 @@
 msgid ""
-msgstr "Project-Id-Version: \nReport-Msgid-Bugs-To: ci@photoprism.app\nPOT-Creation-Date: \nPO-Revision-Date: 2022-05-27 13:26+0000\nLast-Translator: Anonymous <noreply@weblate.org>\nLanguage-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\nLanguage: ku\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 4.12.2\nGenerated-By: easygettext\n"
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-05-27 14:07+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ku/>\n"
+"Language: ku\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.12.2\n"
+"Generated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:132 src/dialog/photo/files.vue:129
 #, fuzzy
@@ -130,7 +144,9 @@ msgstr "دوای ١ ساڵ"
 msgid ""
 "After selecting pictures from search results, you can add them to an album "
 "using the context menu."
-msgstr "Piştî hilbijartina wêneyên ji encamên lêgerînê, hûn dikarin wan bi karanîna menuya naverokê li albûmê zêde bikin."
+msgstr ""
+"Piştî hilbijartina wêneyên ji encamên lêgerînê, hûn dikarin wan bi karanîna "
+"menuya naverokê li albûmê zêde bikin."
 
 #: src/options/options.js:322
 msgid "After two months"
@@ -216,7 +232,9 @@ msgstr "هەموو ساڵەکان"
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
-msgstr "لە جیاتی ئەوە، دەتوانیت ڕاستەوخۆ پەڕگەکان باربکەیتە سەر ڕاژەی WebDAV وەک Nextcloud."
+msgstr ""
+"لە جیاتی ئەوە، دەتوانیت ڕاستەوخۆ پەڕگەکان باربکەیتە سەر ڕاژەی WebDAV وەک "
+"Nextcloud."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -301,7 +319,9 @@ msgstr "بەلایەنی کەمەوە 6 نووسە"
 msgid ""
 "Automatically create JPEGs for other file types so that they can be "
 "displayed in a browser."
-msgstr "دروستکردنی JPEGs بە شێوەیەکی خودکارانە بۆ جۆرەکانی تری پەڕگە بۆ ئەوەی نیشان بدرێت لە وێبگەڕەکە."
+msgstr ""
+"دروستکردنی JPEGs بە شێوەیەکی خودکارانە بۆ جۆرەکانی تری پەڕگە بۆ ئەوەی نیشان "
+"بدرێت لە وێبگەڕەکە."
 
 #: src/pages/settings/general.vue:361
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -727,7 +747,9 @@ msgstr "پێشبینینی دینامیکی"
 msgid ""
 "Dynamic rendering requires a powerful server. It is not recommended for NAS "
 "devices."
-msgstr "پێڕدانی دینامیکی پێویستی بە ڕاژەکاری بەهێز هەیە. پێشنیار نەکراوە بۆ ئامێرەکانی NAS."
+msgstr ""
+"پێڕدانی دینامیکی پێویستی بە ڕاژەکاری بەهێز هەیە. پێشنیار نەکراوە بۆ "
+"ئامێرەکانی NAS."
 
 #: src/pages/settings/advanced.vue:348
 msgid "Dynamic Size Limit: %{n}px"
@@ -795,7 +817,9 @@ msgstr "هەموو دوو ڕۆژ جارێ"
 msgid ""
 "Exclude content marked as private from search results, shared albums, "
 "labels, and places."
-msgstr "Ji encamên lêgerînê, albûmên hevbeş, etîket û deveran naveroka ku wekî taybet hatî nîşankirin derxînin."
+msgstr ""
+"Ji encamên lêgerînê, albûmên hevbeş, etîket û deveran naveroka ku wekî "
+"taybet hatî nîşankirin derxînin."
 
 #: src/pages/people/faces.vue:100 src/pages/people/subjects.vue:138
 msgid "Exclude hidden"
@@ -887,7 +911,8 @@ msgstr "پەڕگەکان"
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
-msgstr "پەڕگەکان بە ناوی زنجیرەیی وەک 'IMG_1234 (2)' و 'IMG_1234 (3)' هی هەمان وێنەن."
+msgstr ""
+"پەڕگەکان بە ناوی زنجیرەیی وەک 'IMG_1234 (2)' و 'IMG_1234 (3)' هی هەمان وێنەن."
 
 #: src/dialog/photo/details.vue:458
 #, fuzzy
@@ -1025,7 +1050,9 @@ msgstr "هاوردن شکستی هێنا"
 msgid ""
 "Imported files will be sorted by date and given a unique name to avoid "
 "duplicates."
-msgstr "پەڕگە هاوردەکان بەپێی بەروار پۆلێن دەکرێت و ناوی بێهاوتای بۆ دادەندرێت بۆی پەڕگەی دووبارە بوونی نەبێت."
+msgstr ""
+"پەڕگە هاوردەکان بەپێی بەروار پۆلێن دەکرێت و ناوی بێهاوتای بۆ دادەندرێت بۆی "
+"پەڕگەی دووبارە بوونی نەبێت."
 
 #: src/pages/settings/general.vue:229
 msgid "Imported files will be sorted by date and given a unique name."
@@ -1050,7 +1077,9 @@ msgstr "لە"
 msgid ""
 "In case pictures you expect are missing, please rescan your library and wait "
 "until indexing has been completed."
-msgstr "Ger wêneyên ku hûn li bendê ne wenda nebin, ji kerema xwe pirtûkxaneya xwe ji nû ve şeh bikin û li bendê bimînin heya ku indexing qediya."
+msgstr ""
+"Ger wêneyên ku hûn li bendê ne wenda nebin, ji kerema xwe pirtûkxaneya xwe "
+"ji nû ve şeh bikin û li bendê bimînin heya ku indexing qediya."
 
 #: src/pages/library.vue:32 src/pages/settings/library.vue:6
 msgid "Index"
@@ -1223,7 +1252,9 @@ msgstr "ناونیشان"
 msgid ""
 "Log messages appear here whenever PhotoPrism comes across broken files, or "
 "there are other potential issues."
-msgstr "لۆگ مەسجەکان لێرە دەردەکەون هەرکاتێک فۆتۆپریزم لەگەڵ فایلی شێواو بەرکەوتنی هەبوو ، یان کێشەی شاراوەی تر بوونی هەبوو."
+msgstr ""
+"لۆگ مەسجەکان لێرە دەردەکەون هەرکاتێک فۆتۆپریزم لەگەڵ فایلی شێواو بەرکەوتنی "
+"هەبوو ، یان کێشەی شاراوەی تر بوونی هەبوو."
 
 #: src/component/navigation.vue:401 src/component/navigation.vue:1471
 msgid "Login"
@@ -1419,7 +1450,9 @@ msgstr "نەخێر سوپاس"
 msgid ""
 "No warnings or error containing this keyword. Note that search is case-"
 "sensitive."
-msgstr "هیچ ئاگادارییەک یان هەڵەیەک نیە کە ئەم وشی لەخۆ گرتبێت. تێبینی بکە کە گەڕان هەستیارە (جیاکەرەوەی پیتە گەورە و چکۆلەکان)."
+msgstr ""
+"هیچ ئاگادارییەک یان هەڵەیەک نیە کە ئەم وشی لەخۆ گرتبێت. تێبینی بکە کە گەڕان "
+"هەستیارە (جیاکەرەوەی پیتە گەورە و چکۆلەکان)."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:1
 #: src/component/photo/list.vue:14 src/component/photo/list.vue:1
@@ -1429,7 +1462,9 @@ msgstr "هیچ ئاگادارییەک یان هەڵەیەک نیە کە ئەم �
 msgid ""
 "Non-photographic and low-quality images require a review before they appear "
 "in search results."
-msgstr "وێنە نافۆتۆگرافی و کوالێتی نزمەکان پێویستی بە پێداچونەوە هەیە پێش ئەوەی لە ئەنجامی گەڕاندا دەرکەون."
+msgstr ""
+"وێنە نافۆتۆگرافی و کوالێتی نزمەکان پێویستی بە پێداچونەوە هەیە پێش ئەوەی لە "
+"ئەنجامی گەڕاندا دەرکەون."
 
 #: src/options/options.js:246
 msgid "None"
@@ -1446,7 +1481,9 @@ msgstr "نەدۆزرایەوە"
 #: src/pages/library/import.vue:28
 msgid ""
 "Note you may manually manage your originals folder and importing is optional."
-msgstr "Têbînî ku hûn dikarin peldanka orîjînalên xwe bi destan birêve bibin û hinardekirin vebijarkî ye."
+msgstr ""
+"Têbînî ku hûn dikarin peldanka orîjînalên xwe bi destan birêve bibin û "
+"hinardekirin vebijarkî ye."
 
 #: src/pages/settings/sync.vue:34
 msgid "Note:"
@@ -1456,13 +1493,17 @@ msgstr "تێبینی:"
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
-msgstr "تێبینی: تەنها ڕەژاکانی WebDAV، وەک Nextcloud یان PhotoPrism، دەتوانرێت وەک خزمەتگوزاریەکی دوور بۆ گەڕانەوەی پاڵپشت (باکئاپ) و دروستکردنی پاڵپشت ساز بکرێت."
+msgstr ""
+"تێبینی: تەنها ڕەژاکانی WebDAV، وەک Nextcloud یان PhotoPrism، دەتوانرێت وەک "
+"خزمەتگوزاریەکی دوور بۆ گەڕانەوەی پاڵپشت (باکئاپ) و دروستکردنی پاڵپشت ساز "
+"بکرێت."
 
 #: src/pages/settings/account.vue:20
 msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
-msgstr "تێبینی: نوێکردنەوەی تێپەڕەوشە دەستگەیشتن هەڵناوەشێ بۆ بەکارهێنەرە ڕێپێدراو."
+msgstr ""
+"تێبینی: نوێکردنەوەی تێپەڕەوشە دەستگەیشتن هەڵناوەشێ بۆ بەکارهێنەرە ڕێپێدراو."
 
 #: src/dialog/photo/details.vue:621
 msgid "Notes"
@@ -1555,7 +1596,9 @@ msgstr "هی تر"
 #: src/pages/about/about.vue:15
 msgid ""
 "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "دنیا بینیمان ئەوەیە کە زۆرترین چارەسەری بەکارهێنەر بۆ گەڕان و ڕێکخستن و هاوبەشکردنی کۆکراوەی فۆتۆ دابین بکەین."
+msgstr ""
+"دنیا بینیمان ئەوەیە کە زۆرترین چارەسەری بەکارهێنەر بۆ گەڕان و ڕێکخستن و "
+"هاوبەشکردنی کۆکراوەی فۆتۆ دابین بکەین."
 
 #: src/options/options.js:281
 msgid "Outdoor"
@@ -1588,7 +1631,9 @@ msgstr "خەڵك"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr "ئەو کەسانەی بەستەرێکی هاوبەشیان لەگەڵ دا دروست دەکەیت، توانای بینینی ناوەڕۆکە گشتیەکانی دەبێت."
+msgstr ""
+"ئەو کەسانەی بەستەرێکی هاوبەشیان لەگەڵ دا دروست دەکەیت، توانای بینینی "
+"ناوەڕۆکە گشتیەکانی دەبێت."
 
 #: src/component/photo/clipboard.vue:67
 msgid "Permanently deleted"
@@ -1645,7 +1690,9 @@ msgstr "تکایە وشە نهێنیە تازکەت پشتڕاستکەرەوە."
 #: src/dialog/sponsor.vue:24
 msgid ""
 "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "تکایە پەیوەندیمان پێوە بکە hello@photoprism.app ئەگەر پرسیارت هەیە یان پێویستیت بە یارمەتیە."
+msgstr ""
+"تکایە پەیوەندیمان پێوە بکە hello@photoprism.app ئەگەر پرسیارت هەیە یان "
+"پێویستیت بە یارمەتیە."
 
 #: src/dialog/upload.vue:45
 msgid "Please don't upload photos containing offensive content."
@@ -1739,7 +1786,9 @@ msgstr "گۆڕینی (Raw) خاو"
 
 #: src/pages/library/index.vue:124
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "دووبارە نیشانە (ئیندێکس) کردنی هەموو ڕەسەنەکان، بە فایلە نوانەدار و نەگۆڕاوەکانیشەوە."
+msgstr ""
+"دووبارە نیشانە (ئیندێکس) کردنی هەموو ڕەسەنەکان، بە فایلە نوانەدار و "
+"نەگۆڕاوەکانیشەوە."
 
 #: src/pages/settings/advanced.vue:99
 msgid "Read-Only Mode"
@@ -1804,7 +1853,9 @@ msgstr "Ji albûmê derxe"
 msgid ""
 "Remove imported files to save storage. Unsupported file types will never be "
 "deleted, they remain in their current location."
-msgstr "لابردنی پەڕگە هاوردەکان بۆ بەتاڵکردنی بیرگە. جۆرەکانی پەڕگەی پشتیوانی نەکراو هەرگیز ناسڕدرێتەوە، ئەوان لە شوێنی ئێستایان دەمێننەوە."
+msgstr ""
+"لابردنی پەڕگە هاوردەکان بۆ بەتاڵکردنی بیرگە. جۆرەکانی پەڕگەی پشتیوانی نەکراو "
+"هەرگیز ناسڕدرێتەوە، ئەوان لە شوێنی ئێستایان دەمێننەوە."
 
 #: src/pages/library/errors.vue:87
 msgid "Report Bug"
@@ -1987,7 +2038,8 @@ msgstr "پیشاندانی لۆگەکانی ڕاژە لە کتێبخانە."
 
 #: src/pages/settings/advanced.vue:78
 msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Peyamên têketinê yên bi detay nîşan dide. Ji nû ve destpêkirinê hewce dike."
+msgstr ""
+"Peyamên têketinê yên bi detay nîşan dide. Ji nû ve destpêkirinê hewce dike."
 
 #: src/model/file.js:185
 msgid "Sidecar"
@@ -2062,7 +2114,9 @@ msgstr "کەڵەکەکان"
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
-msgstr "کەڵەکەکراوەکان کۆمەڵێ فۆتۆ لە سەر بنەمای هەمان ناوەڕۆک پێکەوە دەبەستێ بەڵام فۆتۆکان جیاوازن لە جۆرێتی، فۆرمات، قەبارە یان ڕەنگ."
+msgstr ""
+"کەڵەکەکراوەکان کۆمەڵێ فۆتۆ لە سەر بنەمای هەمان ناوەڕۆک پێکەوە دەبەستێ بەڵام "
+"فۆتۆکان جیاوازن لە جۆرێتی، فۆرمات، قەبارە یان ڕەنگ."
 
 #: src/pages/library/index.vue:31
 msgid "Start"
@@ -2139,13 +2193,17 @@ msgstr "نوانەکە لە ئێستادا %{n} فایلی شاراوەی لەخ
 msgid ""
 "The roadmap shows what tasks are in progress, what needs testing, and which "
 "feature requests are going to be implemented next."
-msgstr "Nexşeya rê nîşan dide ka çi kar di pêş de ne, çi hewceyê ceribandinê ye, û kîjan daxwaznameyên taybetmendiyê di pêş de têne bicîh kirin."
+msgstr ""
+"Nexşeya rê nîşan dide ka çi kar di pêş de ne, çi hewceyê ceribandinê ye, û "
+"kîjan daxwaznameyên taybetmendiyê di pêş de têne bicîh kirin."
 
 #: src/pages/library/index.vue:37
 msgid ""
 "Their format may not be supported, they haven't been converted to JPEG yet "
 "or there are duplicates."
-msgstr "فۆرماتەکەیان لەوانەیە پشتگیری کراو نەبێت, هێشتا نەگۆڕدراوە بۆ JPEG یان لێکچووی دووبارەبوونی هەیە."
+msgstr ""
+"فۆرماتەکەیان لەوانەیە پشتگیری کراو نەبێت, هێشتا نەگۆڕدراوە بۆ JPEG یان "
+"لێکچووی دووبارەبوونی هەیە."
 
 #: src/pages/settings/general.vue:72
 msgid "Theme"
@@ -2161,7 +2219,10 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
 "edit, and delete files from your computer or smartphone as if they were "
 "local."
-msgstr "ئەمە فۆڵدەری ڕەسەنەکان وەک درایڤی ڕایەڵە هەڵدەکات و ڕێگەت پێدەدات فایلەکان لە کۆمپیوتەرەکەت یان مۆبایلەکە بکەیتەوە، بژاری بکەیت، یان بسڕیتەوە وەک ئەوەی کە خۆماڵی بن."
+msgstr ""
+"ئەمە فۆڵدەری ڕەسەنەکان وەک درایڤی ڕایەڵە هەڵدەکات و ڕێگەت پێدەدات فایلەکان "
+"لە کۆمپیوتەرەکەت یان مۆبایلەکە بکەیتەوە، بژاری بکەیت، یان بسڕیتەوە وەک ئەوەی "
+"کە خۆماڵی بن."
 
 #: src/pages/about/about.vue:21
 msgid "This open-source project is made possible thanks to our sponsors."
@@ -2315,7 +2376,9 @@ msgstr "فۆتۆکان بار دەبن…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "بارکردنەکان کە لەوانەیە ئەم جۆرە وێنانە لەخۆە بگرێ بە شێوەیەکی خۆکار ڕەت دەکرێنەوە."
+msgstr ""
+"بارکردنەکان کە لەوانەیە ئەم جۆرە وێنانە لەخۆە بگرێ بە شێوەیەکی خۆکار ڕەت "
+"دەکرێنەوە."
 
 #: src/dialog/share.vue:166
 msgid "URL"
@@ -2362,17 +2425,23 @@ msgstr "بینین"
 msgid ""
 "We'll let you know how to enable it when you sign up on Patreon or GitHub "
 "Sponsors."
-msgstr "ئێمە پێت دەڵێین چۆن چالاکی بکەیت کاتێک خۆت تۆمار دەکەیت بۆ سپۆنسەری پاتریۆن یان گیت هاب."
+msgstr ""
+"ئێمە پێت دەڵێین چۆن چالاکی بکەیت کاتێک خۆت تۆمار دەکەیت بۆ سپۆنسەری پاتریۆن "
+"یان گیت هاب."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "ڕاژەخوازەکانی WebDAV دەتوانن پەیوەندی بکەن بە فۆتۆپریزمەوە بە بەکارهێنانی ئەم URLەی خوارەوە:"
+msgstr ""
+"ڕاژەخوازەکانی WebDAV دەتوانن پەیوەندی بکەن بە فۆتۆپریزمەوە بە بەکارهێنانی "
+"ئەم URLەی خوارەوە:"
 
 #: src/pages/settings/sync.vue:35
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
 "connect directly to PhotoPrism."
-msgstr "ڕاژەخوازەکانی WebDAV، وەک Windows Explorer ی Microsoft یانFinderی Apple، دەتوانن ڕاستەوخۆ بە PhotoPrism ەوە ببەسترێنەوە."
+msgstr ""
+"ڕاژەخوازەکانی WebDAV، وەک Windows Explorer ی Microsoft یانFinderی Apple، "
+"دەتوانن ڕاستەوخۆ بە PhotoPrism ەوە ببەسترێنەوە."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2421,7 +2490,8 @@ msgstr "دەتوانیت تەنها یەک ئایتم دیاریبکەیت"
 #: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:33
 #: src/pages/people/subjects.vue:37
 msgid "You may rescan your library to find additional faces."
-msgstr "Hûn dikarin pirtûkxaneya xwe ji bo dîtina rûyên zêde ji nû ve şeh bikin."
+msgstr ""
+"Hûn dikarin pirtûkxaneya xwe ji bo dîtina rûyên zêde ji nû ve şeh bikin."
 
 #: src/pages/about/about.vue:47
 msgid ""
@@ -2433,13 +2503,18 @@ msgstr "دەتوانیت وەک پێویست بۆ وەسفکردنی سۆفتو�
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:32
 msgid ""
 "Your continued support helps us provide regular updates and services like world maps."
-msgstr "Piştgiriya weya domdar ji me re dibe alîkar ku em lêçûnên xebitandinê fînanse bikin, karûbarên wekî nexşeyên satelîtê peyda bikin, û taybetmendiyên nû pêşve bixin."
+msgstr ""
+"Piştgiriya weya domdar ji me re dibe alîkar ku em lêçûnên xebitandinê "
+"fînanse bikin, karûbarên wekî nexşeyên satelîtê peyda bikin, û "
+"taybetmendiyên nû pêşve bixin."
 
 #: src/pages/albums.vue:43 src/pages/albums.vue:1
 msgid ""
 "Your library is continuously analyzed to automatically create albums of "
 "special moments, trips, and places."
-msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên demên taybetî, rêwîtî û deveran çêdike."
+msgstr ""
+"Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên demên "
+"taybetî, rêwîtî û deveran çêdike."
 
 #: src/pages/about/feedback.vue:4
 msgid "Your message has been sent"

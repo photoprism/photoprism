@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-27 13:32+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-05-27 14:07+0000\n"
+"Last-Translator: Joe <reg@smakas.lt>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/lt/>\n"
 "Language: lt\n"
@@ -169,7 +169,9 @@ msgstr "Po vienerių metų"
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Pasirinkę nuotraukas iš paieškos rezultatų, galite jas įtraukti į albumą naudodami kontekstinį meniu."
+msgstr ""
+"Pasirinkę nuotraukas iš paieškos rezultatų, galite jas įtraukti į albumą "
+"naudodami kontekstinį meniu."
 
 #: src/options/options.js:328
 msgid "After two months"
@@ -266,11 +268,15 @@ msgstr "Visi metai"
 
 #: src/pages/about/about.vue:34
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Taip pat prašome palikti žvaigždutę \"GitHub\", jei jums patinka šis projektas. Tai suteikia papildomos motyvacijos tęsti darbą."
+msgstr ""
+"Taip pat prašome palikti žvaigždutę \"GitHub\", jei jums patinka šis "
+"projektas. Tai suteikia papildomos motyvacijos tęsti darbą."
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Taip pat galite įkelti failus tiesiai į WebDAV serverius, pvz., \"Nextcloud\"."
+msgstr ""
+"Taip pat galite įkelti failus tiesiai į WebDAV serverius, pvz., \"Nextcloud\""
+"."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -290,7 +296,9 @@ msgstr "Animacija"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Visos privačios nuotraukos ir vaizdo įrašai išlieka privatūs ir jais nebus dalijamasi."
+msgstr ""
+"Visos privačios nuotraukos ir vaizdo įrašai išlieka privatūs ir jais nebus "
+"dalijamasi."
 
 #: src/dialog/account/edit.vue:471
 msgid "API Key"
@@ -359,7 +367,9 @@ msgstr "Ne mažiau kaip 6 ženklai."
 
 #: src/pages/settings/library.vue:114
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Automatiškai sukurkite kitų tipų failų JPEG, kad juos būtų galima rodyti naršyklėje."
+msgstr ""
+"Automatiškai sukurkite kitų tipų failų JPEG, kad juos būtų galima rodyti "
+"naršyklėje."
 
 #: src/pages/settings/general.vue:361
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -372,7 +382,9 @@ msgstr "Tapkite rėmėju"
 
 #: src/pages/about/about.vue:42
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Prieš pateikdami pagalbos užklausą, pasinaudokite mūsų trikčių šalinimo kontroliniais sąrašais, kad nustatytumėte problemos priežastį."
+msgstr ""
+"Prieš pateikdami pagalbos užklausą, pasinaudokite mūsų trikčių šalinimo "
+"kontroliniais sąrašais, kad nustatytumėte problemos priežastį."
 
 #: src/pages/people/subjects.vue:432
 msgid "Bio"
