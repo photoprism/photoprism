@@ -149,11 +149,17 @@ nav .v-list__tile__title.title {
     min-width: 35px;
 }
 
+#photoprism nav.nav-small .v-menu__content {
+    padding: 0;
+    background-color: #212121;
+    border: 1px solid #333333;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
 #photoprism .nav-menu {
-    padding: 8px 0;
-    background-color: #181818;
-    border: 1px solid hsla(0,0%,9%,.8);
-    border-radius: 8px;
+    padding: 6px 0;
+    background-color: #212121;
 }
 
 #photoprism .nav-menu a {
@@ -177,7 +183,7 @@ nav .v-list__tile__title.title {
 
 #photoprism .nav-menu .v-list__tile {
     padding: 0 16px 0 16px;
-    height: 42px;
+    height: 48px;
 }
 
 #photoprism .nav-menu .v-list__tile .v-list__tile__title {
