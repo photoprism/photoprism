@@ -46,8 +46,8 @@
 #photoprism div.loading-animation,
 #photoprism div.loading-logo,
 #photoprism div.loading-logo svg {
-    width: 40vh;
-    height: 40vh;
+    width: 33vh;
+    height: 33vh;
     max-width: 60vw;
     max-height: 60vw;
 }
@@ -87,8 +87,6 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    /* width: 264px;
-    height: 264px; */
     z-index: 2;
     margin: 0;
     padding: 0;
@@ -108,10 +106,10 @@
     right: 0;
     z-index: 0;
     overflow: hidden;
-    border-top: 6px #6200EA solid;
-    border-right: 6px #7C4DFF solid;
-    border-bottom: 6px #651FFF solid;
-    border-left: 6px #7C4DFF solid;
+    border-top: 5px #7e29ff solid;
+    border-right: 5px #6d02ff solid;
+    border-bottom: 5px #5812fa solid;
+    border-left: 5px #7C4DFF solid;
     border-radius: 50%;
     -webkit-transform-origin: center center;
     transform-origin: center center;
