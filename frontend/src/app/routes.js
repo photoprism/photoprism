@@ -44,6 +44,7 @@ import { config, session } from "./session";
 
 const c = window.__CONFIG__;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
+const aboutTitle = c.edition ? c.edition : siteTitle;
 
 export default [
   {
@@ -55,19 +56,19 @@ export default [
     name: "about",
     path: "/about",
     component: About,
-    meta: { title: $gettext("Help & Support"), auth: false },
+    meta: { title: aboutTitle, auth: false },
   },
   {
     name: "license",
     path: "/about/license",
     component: License,
-    meta: { title: $gettext("Help & Support"), auth: false },
+    meta: { title: aboutTitle, auth: false },
   },
   {
     name: "feedback",
     path: "/feedback",
     component: Feedback,
-    meta: { title: $gettext("Help & Support"), auth: true },
+    meta: { title: aboutTitle, auth: true },
   },
   {
     name: "help",
