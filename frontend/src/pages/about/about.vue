@@ -13,7 +13,7 @@
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
       <p class="body-2 lh-17">
-          <translate>Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
+          <translate>Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
           <a href="https://link.photoprism.app/roadmap" target="_blank">
             <translate>The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next.</translate>
           </a>
@@ -21,7 +21,7 @@
 
       <p v-if="!sponsor" class="text-xs-center my-4">
         <v-btn
-            href="https://link.photoprism.app/patreon"
+            href="https://photoprism.app/membership"
             target="_blank"
             color="primary-button"
             class="white--text px-3 py-2 action-sponsor"

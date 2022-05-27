@@ -23,7 +23,7 @@
             </v-btn>
           </template>
 
-          <v-list class="nav-menu navigation dark elevation-2">
+          <v-list dark class="nav-menu navigation elevation-2">
             <v-list-tile to="/browse" class="clickable nav-menu-browse">
               <v-list-tile-content>
                 <v-list-tile-title>
@@ -100,8 +100,8 @@
               <img :src="appIcon" :alt="appName" :class="{'animate-hue': indexing}">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title class="title tm">
-                <strong>Photo</strong>Prism<span v-if="appName === 'PhotoPrism+'" class="plus">+</span><span v-else-if="appNameSuffix !== ''"> {{ appNameSuffix }}</span>
+              <v-list-tile-title class="title">
+                {{ appName }}
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
@@ -656,7 +656,7 @@ export default {
       return user.PrimaryEmail ? user.PrimaryEmail : this.$gettext("Account");
     },
     showNavMenu() {
-      return (this.isDemo || this.session.auth || this.isTest);
+      return (this.session.auth || this.isDemo || this.isTest);
     },
   },
   created() {

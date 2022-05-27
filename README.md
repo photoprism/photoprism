@@ -19,7 +19,7 @@ To get a first impression, you are welcome to play with our [public demo](https:
 
 ## Feature Overview ##
 
-**Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.** PhotoPrism was designed from the ground up to run wherever you need it, with no compromise on freedom, privacy, or functionality:
+**Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.** PhotoPrism was designed from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality:
 
 * Browse [all your photos](https://docs.photoprism.app/user-guide/organize/browse/) and [videos](https://try.photoprism.app/videos) without worrying about [RAW conversion, duplicates or video formats](https://docs.photoprism.app/user-guide/settings/library/)
 * Easily find specific pictures using [powerful search filters](https://try.photoprism.app/browse?view=cards&q=flower%20color%3Ared)
@@ -54,22 +54,23 @@ after going through a short list of [requirements](https://docs.photoprism.app/g
 Existing users are advised to update their `docker-compose.yml` config based on our examples
 available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
-## Support Our Mission ##
+## Support Our Mission 💎 ##
 
-Back us on [Patreon](https://link.photoprism.app/patreon) or [GitHub Sponsors](https://link.photoprism.app/sponsor), help us fulfill our mission and enjoy our [member benefits](https://photoprism.app/membership)! 💎
+**We encourage all of our users to [become a sponsor](https://photoprism.app/membership), as this allows us to make more features available to the public and remain independent.**
 
-- Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy
-- Sustained funding is also key to releasing new features requested by you and other community members
-- Being **100% self-funded and independent**, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
-
-We currently have the following sponsorship options:
+Sponsors enjoy additional features, including access to [interactive world maps](https://demo.photoprism.app/places), and can join our private chat room to connect with [our team](https://photoprism.app/team) and other sponsors. We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
-- Stripe will be available in 2022, so you can sign up directly in the app without having a Patreon or GitHub account
-- You are welcome to [contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations), bank account details, and business partnerships
+- Stripe will be available in 2022, so you can sign up directly in the app
 
-Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
+You are welcome to [contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations), bank account details, and business partnerships. Why your support matters:
+
+- Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy
+- Sustained funding is key to releasing new features requested by you and other community members in a timely manner
+- Being **100% self-funded and independent**, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
+
+Visit [photoprism.app/membership](https://photoprism.app/membership) to learn more. Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
 
 ## Getting Support ##
@@ -80,13 +81,11 @@ Common problems can be quickly diagnosed and solved using the [Troubleshooting C
 
 ## Upcoming Features and Improvements ##
 
-Our [Project Roadmap](https://link.photoprism.app/roadmap) shows what tasks are in progress, what needs testing, and which features are going to be implemented next. Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
+Our [Project Roadmap](https://link.photoprism.app/roadmap) shows what tasks are in progress and what features will be implemented next. You are invited to give ideas you like a thumbs-up, so we know what's most popular.
 
-We have a zero-bug policy and do our best to help users when they need support or have other questions. This comes at a price as we can't give exact deadlines for new features.
+Be aware that we have a zero-bug policy and do our best to help users when they need support or have other questions. This comes at a price though, as we can't give exact release dates for new features. Our team receives many more requests than can be implemented, so we want to emphasize that we are in no way obligated to implement the features, improvements, or other changes you request. We do, however, appreciate your feedback and carefully consider all requests.
 
-Since our team receives many more requests than can be implemented, and for the avoidance of doubt, we also want to emphasize that we are in no way obligated to implement the features, improvements, or other changes you request. We do, however, appreciate your feedback and carefully consider all requests.
-
-**Because sustained funding is key to releasing new features, we encourage all users to [sign up as a sponsor](https://link.photoprism.app/sponsor). Ultimately, that's what's best for the product and the community.**
+**Because sustained funding is key to releasing new features in a timely manner, we encourage you to support our mission by [signing up as a sponsor](https://link.photoprism.app/sponsor) or purchasing a commercial license. Ultimately, that's what's best for the product and the community.**
 
 ## GitHub Issues ⚠️ ##
 

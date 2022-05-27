@@ -1597,7 +1597,7 @@ msgstr "هی تر"
 
 #: src/pages/about/about.vue:15
 msgid ""
-"Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+"Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr ""
 "دنیا بینیمان ئەوەیە کە زۆرترین چارەسەری بەکارهێنەر بۆ گەڕان و ڕێکخستن و "
 "هاوبەشکردنی کۆکراوەی فۆتۆ دابین بکەین."

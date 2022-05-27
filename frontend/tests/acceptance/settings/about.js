@@ -11,7 +11,7 @@ test.meta("testID", "about-001")("About page is displayed with all links", async
   await t
     .expect(Selector('a[href="https://photoprism.app/"]').visible)
     .ok()
-    .expect(Selector('a[href="https://link.photoprism.app/patreon"]').visible)
+    .expect(Selector('a[href="https://photoprism.app/membership"]').visible)
     .ok();
 });
 

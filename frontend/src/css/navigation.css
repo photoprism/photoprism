@@ -8,7 +8,7 @@ nav .v-list__tile__title.title {
 
 #p-navigation .nav-title {
     text-align: left;
-    font-weight: bold;
+    /* font-weight: bold; */
     font-size: 18px;
     -webkit-box-flex: 1!important;
     -ms-flex-positive: 1!important;
@@ -150,8 +150,21 @@ nav .v-list__tile__title.title {
 }
 
 #photoprism .nav-menu {
-    padding: 0;
+    padding: 8px 0;
     background-color: #181818;
+    border: 1px solid hsla(0,0%,9%,.8);
+    border-radius: 8px;
+}
+
+#photoprism .nav-menu a {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#photoprism .nav-menu .v-list__tile .v-icon {
+    font-size: 22px;
+    line-height: 1;
 }
 
 #p-navigation .nav-menu-trigger {
@@ -163,8 +176,8 @@ nav .v-list__tile__title.title {
 }
 
 #photoprism .nav-menu .v-list__tile {
-    padding: 0 24px 0 24px;
-    height: 54px;
+    padding: 0 16px 0 16px;
+    height: 42px;
 }
 
 #photoprism .nav-menu .v-list__tile .v-list__tile__title {
@@ -177,7 +190,7 @@ nav .v-list__tile__title.title {
 }
 
 #photoprism .nav-menu .v-list__tile__content {
-    min-width: 146px;
+    min-width: 104px;
 }
 
 /*
