@@ -12,10 +12,10 @@
             </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
-            <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
+            <v-btn depressed  color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed dark class="action-confirm"
+            <v-btn color="primary-button" depressed dark compact class="action-confirm"
                    @click.stop="confirm">
               <translate key="Delete">Delete</translate>
             </v-btn>

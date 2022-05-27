@@ -88,7 +88,7 @@ export default {
     };
   },
   watch: {
-    show: function (show) {
+    show: function () {
     }
   },
   methods: {
