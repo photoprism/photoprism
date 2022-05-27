@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-27 13:33+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-05-27 14:07+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: hr\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -161,7 +161,9 @@ msgstr "Nakon godinu dana"
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Nakon što odaberete slike iz rezultata pretraživanja, možete ih dodati u album pomoću kontekstnog izbornika."
+msgstr ""
+"Nakon što odaberete slike iz rezultata pretraživanja, možete ih dodati u "
+"album pomoću kontekstnog izbornika."
 
 #: src/options/options.js:390
 msgid "After two months"
@@ -256,11 +258,15 @@ msgstr "Sve godine"
 
 #: src/pages/about/about.vue:34
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Također, ostavite zvjezdicu na GitHubu ako vam se sviđa ovaj projekt. Pruža dodatnu motivaciju za nastavak."
+msgstr ""
+"Također, ostavite zvjezdicu na GitHubu ako vam se sviđa ovaj projekt. Pruža "
+"dodatnu motivaciju za nastavak."
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternativno, možete prenijeti datoteke izravno na WebDAV poslužitelje poput Nextclouda."
+msgstr ""
+"Alternativno, možete prenijeti datoteke izravno na WebDAV poslužitelje poput "
+"Nextclouda."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -294,7 +300,8 @@ msgstr "Animacija"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Sve privatne fotografije i videozapisi ostaju privatni i neće biti dijeljeni."
+msgstr ""
+"Sve privatne fotografije i videozapisi ostaju privatni i neće biti dijeljeni."
 
 #: src/dialog/account/edit.vue:477
 msgid "API Key"

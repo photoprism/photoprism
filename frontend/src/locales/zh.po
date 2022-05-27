@@ -1,5 +1,19 @@
 msgid ""
-msgstr "Project-Id-Version: \nReport-Msgid-Bugs-To: ci@photoprism.app\nPOT-Creation-Date: \nPO-Revision-Date: 2022-05-27 12:48+0000\nLast-Translator: Admin <hello@photoprism.app>\nLanguage-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\nLanguage: zh\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 4.12.2\nGenerated-By: easygettext\n"
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-05-27 14:07+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hans/>\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.12.2\n"
+"Generated-By: easygettext\n"
 
 #: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
@@ -218,7 +232,8 @@ msgstr "所有年份"
 msgid ""
 "Also, please leave a star on GitHub if you like this project. It provides "
 "additional motivation to keep going."
-msgstr "另外，如果你喜欢这个项目，请在GitHub上留下一颗星。它提供了继续前进的额外动力。"
+msgstr "另外，如果你喜欢这个项目，请在GitHub上留下一颗星。它提供了继续前进的额外动力"
+"。"
 
 #: src/dialog/share.vue:75
 msgid ""
@@ -1489,7 +1504,8 @@ msgstr "注意："
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
-msgstr "注意：只能将WebDAV服务器（如Nextcloud或PhotoPrism）配置为远程服务，以进行备份和文件上传。"
+msgstr "注意：只能将WebDAV服务器（如Nextcloud或PhotoPrism）配置为远程服务，以进行备份"
+"和文件上传。"
 
 #: src/pages/settings/account.vue:20
 msgid ""
@@ -1840,7 +1856,8 @@ msgstr "从相册中删除"
 msgid ""
 "Remove imported files to save storage. Unsupported file types will never be "
 "deleted, they remain in their current location."
-msgstr "删除导入的文件以节省存储空间。不支持的文件类型将永远不会被删除，它们会保留在当前位置。"
+msgstr "删除导入的文件以节省存储空间。不支持的文件类型将永远不会被删除，它们会保留在"
+"当前位置。"
 
 #: src/pages/library/errors.vue:87
 msgid "Report Bug"
@@ -2065,7 +2082,8 @@ msgstr "Español"
 msgid ""
 "Sponsors get access to additional features, receive direct technical support "
 "via email, and can join our private chat room on matrix.org."
-msgstr "赞助商可以获得额外的功能，通过电子邮件获得直接的技术支持，并可以加入我们在matrix.org上的私人聊天室。"
+msgstr "赞助商可以获得额外的功能，通过电子邮件获得直接的技术支持，并可以加入我们在mat"
+"rix.org上的私人聊天室。"
 
 #: src/component/photo/cards.vue:235 src/component/photo/mosaic.vue:210
 #: src/share/photo/cards.vue:208 src/share/photo/mosaic.vue:191
@@ -2167,7 +2185,8 @@ msgstr "该索引当前包含 %{n} 个隐藏文件。"
 msgid ""
 "The roadmap shows what tasks are in progress, what needs testing, and which "
 "feature requests are going to be implemented next."
-msgstr "路线图显示了哪些任务正在进行中，哪些需要测试，以及哪些功能请求将在下一步实施。"
+msgstr "路线图显示了哪些任务正在进行中，哪些需要测试，以及哪些功能请求将在下一步实施"
+"。"
 
 #: src/pages/library/index.vue:37
 msgid ""
@@ -2190,7 +2209,8 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
 "edit, and delete files from your computer or smartphone as if they were "
 "local."
-msgstr "这会将原始文件夹安装为网络驱动器，并允许您从计算机或智能手机中打开，编辑和删除文件，就像它们是本地文件一样。"
+msgstr "这会将原始文件夹安装为网络驱动器，并允许您从计算机或智能手机中打开，编辑和删"
+"除文件，就像它们是本地文件一样。"
 
 #: src/pages/settings/advanced.vue:253
 msgid "Thumbnail Generation"
@@ -2388,7 +2408,8 @@ msgstr "视图"
 msgid ""
 "We'll do our best to answer all your questions. In return, we ask you to "
 "back us on Patreon or GitHub Sponsors."
-msgstr "我们会尽最大努力回答你的所有问题。作为回报，我们请您在Patreon或GitHub赞助商上支持我们。"
+msgstr "我们会尽最大努力回答你的所有问题。作为回报，我们请您在Patreon或GitHub赞助商上"
+"支持我们。"
 
 #: src/dialog/sponsor.vue:18
 msgid ""
@@ -2404,7 +2425,8 @@ msgstr "WebDAV客户端可以使用以下URL连接到PhotoPrism："
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
 "connect directly to PhotoPrism."
-msgstr "WebDAV客户端（例如Microsoft的Windows资源管理器或Apple的Finder）可以直接连接到PhotoPrism。"
+msgstr "WebDAV客户端（例如Microsoft的Windows资源管理器或Apple的Finder）可以直接连接到"
+"PhotoPrism。"
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
