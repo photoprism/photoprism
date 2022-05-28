@@ -24,10 +24,6 @@ body .application {
 }
 
 button.v-btn.compact  {
-    font-size: 13px;
-    height: 32px;
-}
-
-button.v-btn.compact .v-icon {
-    font-size: 22px;
+    font-size: 14px;
+    height: 34px;
 }

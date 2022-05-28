@@ -28,18 +28,18 @@
       <v-card-actions class="pt-0">
         <v-layout row wrap class="px-2">
           <v-flex xs12 sm4 text-xs-right text-sm-left class="py-2">
-            <v-btn small depressed color="secondary-light"
-                   class="action-close"
+            <v-btn depressed color="secondary-light"
+                   class="action-close compact"
                    @click.stop="close">
               <translate>No thanks</translate>
             </v-btn>
           </v-flex>
           <v-flex xs12 sm8 text-xs-right class="py-2">
-            <v-btn small depressed color="primary-button" class="white--text action-close"
+            <v-btn depressed color="primary-button" class="white--text action-close compact"
                    @click.stop="signIn">
               <translate>I'm a sponsor</translate>
             </v-btn>
-            <v-btn small depressed color="primary-button" class="white--text action-close"
+            <v-btn depressed color="primary-button" class="white--text action-close compact"
                    @click.stop="signUp">
               <translate>Sign Up</translate>
             </v-btn>
