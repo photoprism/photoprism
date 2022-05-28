@@ -29,9 +29,8 @@
           :data-index="index"
       >
        <!--
-         The following div div is the layout + size container.
-         It makes the browser not re-layout all elements in the list when
-         the children of one of them changes
+         The following div is the layout + size container. It makes the browser not
+         re-layout all elements in the list when the children of one of them changes
         -->
         <div class="image-container">
           <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-2 result image" />
