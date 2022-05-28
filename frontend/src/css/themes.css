@@ -36,3 +36,23 @@ body.dark-theme .theme--light.v-list a:hover {
     background: inherit;
     box-shadow: none;
 }
+
+/* Raspberry */
+
+#photoprism.theme-raspberry .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #a40e52;
+}
+
+#photoprism.theme-raspberry .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #bc105d;
+}
+
+#photoprism.theme-raspberry .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-raspberry .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #d31269;
+}
+
+#photoprism.theme-raspberry .navigation.darken-1 {
+    background-color: #bc105d!important;
+}

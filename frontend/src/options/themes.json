@@ -95,8 +95,8 @@
       "primary": "#ffb3cc",
       "primary-button": "#757575",
       "secondary-dark": "#757575",
-      "secondary": "#fce4ec",
-      "secondary-light": "#eeeeee",
+      "secondary": "#fbd0e3",
+      "secondary-light": "#fde8f1",
       "accent": "#9e9e9e",
       "error": "#e57373",
       "info": "#00acc1",
@@ -111,8 +111,8 @@
       "share": "#9575cd",
       "love": "#ef5350",
       "terminal": "#616161",
-      "navigation": "#a40e52",
-      "navigation-home": "#880e4f"
+      "navigation": "#b2346c",
+      "navigation-home": "#9e2e60"
     }
   },
   "seaweed": {
