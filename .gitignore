@@ -10,6 +10,7 @@
 /frontend/tests/*.html
 /frontend/tests/*.log
 /frontend/tests/screenshots
+/frontend/src/locales/*.mo
 /assets/facenet
 /assets/nasnet
 /assets/nsfw
