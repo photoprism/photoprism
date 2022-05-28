@@ -17,15 +17,18 @@ case $DOCKER_ENV in
   prod)
     export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/usr/local/bin:/usr/bin:/scripts:/opt/photoprism/bin";
     INIT_SCRIPTS="/scripts"
-    CHOWN_DIRS=("/photoprism" "/opt/photoprism")
+    CHOWN_DIRS=("/photoprism/storage" "/photoprism/import" "/opt/photoprism")
     CHMOD_DIRS=("/opt/photoprism")
+    CHOWN_ORIGINALS=("/photoprism/originals")
     ;;
 
   develop)
     export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/usr/local/bin:/usr/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin";
     INIT_SCRIPTS="/go/src/github.com/photoprism/photoprism/scripts/dist"
-    CHOWN_DIRS=("/photoprism" "/opt/photoprism" "/go" "/tmp/photoprism")
+    CHOWN_DIRS=("/photoprism/storage" "/photoprism/import" "/opt/photoprism" "/go" "/tmp/photoprism")
     CHMOD_DIRS=("/opt/photoprism" "/tmp/photoprism")
+    CHOWN_ORIGINALS=("/photoprism/originals")
+
     ;;
 
   *)
@@ -47,6 +50,14 @@ if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
     chown --preserve-root --silent -R "${CHOWN}" "${CHOWN_DIRS[@]}"
     chmod --preserve-root --silent -R u+rwX "${CHMOD_DIRS[@]}"
   fi
+
+  if [[ -z ${PHOTOPRISM_DISABLE_CHOWN_ORIGINALS} ]] || [[ ${PHOTOPRISM_DISABLE_CHOWN_ORIGINALS} == "false" ]]; then
+    echo "init: updating originals permissions"
+    echo "PHOTOPRISM_DISABLE_CHOWN_ORIGINALS=\"true\" disables permission updates"
+    echo "You may need to adjust your Originals owners/permission to allow the container to read originals if PHOTOPRISM_DISABLE_CHOWN_ORIGINALS=true"
+    chown --preserve-root --silent -R "${CHOWN}" "${CHOWN_ORIGINALS[@]}"
+  fi
+
 fi
 
 # do nothing if PHOTOPRISM_INIT was not set
