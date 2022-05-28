@@ -258,6 +258,27 @@ body.chrome #photoprism .search-results .result {
   line-height: 1;
 }
 
+#photoprism .cards-view .result .caption {
+  hyphens: auto;
+  word-break: break-word;
+}
+
+
+#photoprism .cards-view .result .card-details i {
+  color: white;
+  font-size: 14px;
+  width: 14px;
+  display: inline-block;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-family: Material Icons;
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: text-bottom;
+}
+
 
 #photoprism .cards-view .result.is-selected,
 #photoprism .mosaic-view .result.is-selected {

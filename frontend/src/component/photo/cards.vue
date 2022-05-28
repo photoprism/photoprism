@@ -26,25 +26,24 @@
           ref="items"
           :key="photo.ID"
           :data-index="index"
-          style="width: min-content"
           class="flex xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex"
       >
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-3 result">
           <div class="accent lighten-2 image"/>
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
-          <div class="v-card__title pa-3 card-details v-card__title--primary">
+          <div class="pa-3 card-details">
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
                 {{ photo.Title | truncate(80) }}
               </h3>
-              <div v-if="photo.Description" class="caption mb-2" style="hyphens: auto; word-break: break-word">
+              <div v-if="photo.Description" class="caption mb-2">
                 {{ photo.Description }}
               </div>
-              <div class="caption" style="hyphens: auto; word-break: break-word">
-                  <i style="display: inline-block; width: 14px" />
+              <div class="caption">
+                  <i/>
                   {{ photo.getDateString(true) }}
                 <br>
-                <i style="display: inline-block; width: 14px" />
+                <i/>
                 <template v-if="photo.Type === 'video' || photo.Type === 'animated'">
                   {{ photo.getVideoInfo() }}
                 </template>
@@ -53,12 +52,12 @@
                 </template>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
                   <br>
-                  <i style="display: inline-block; width: 14px" />
+                  <i/>
                   {{ photo.baseName() }}
                 </template>
                 <template v-if="featPlaces && photo.Country !== 'zz'">
                   <br>
-                  <i style="display: inline-block; width: 14px" />
+                  <i/>
                   {{ photo.locationInfo() }}
                 </template>
               </div>
@@ -70,7 +69,6 @@
                   tile
                   :data-id="photo.ID"
                   :data-uid="photo.UID"
-                  style="user-select: none"
                   class="result accent lighten-3"
                   :class="photo.classes()"
                   @contextmenu.stop="onContextMenu($event, index)">
@@ -163,7 +161,7 @@
               </v-layout>
             </v-card-actions>
 
-            <v-card-title primary-title class="pa-3 card-details" style="user-select: none;">
+            <div class="pa-3 card-details">
               <div>
                 <h3 class="body-2 mb-2" :title="photo.Title">
                   <button class="action-title-edit" :data-uid="photo.UID"
@@ -179,30 +177,30 @@
                 <div class="caption">
                   <button class="action-date-edit" :data-uid="photo.UID"
                           @click.exact="editPhoto(index)">
-                    <v-icon size="14" :title="$gettext('Taken')">date_range</v-icon>
+                    <i :title="$gettext('Taken')">date_range</i>
                     {{ photo.getDateString(true) }}
                   </button>
                   <br>
                   <button v-if="photo.Type === 'video'" :title="$gettext('Video')"
                           @click.exact="openPhoto(index, true)">
-                    <v-icon size="14">movie</v-icon>
+                    <i>movie</i>
                     {{ photo.getVideoInfo() }}
                   </button>
                   <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'"
                           @click.exact="openPhoto(index, true)">
-                    <v-icon size="14">gif_box</v-icon>
+                    <i>gif_box</i>
                     {{ photo.getVideoInfo() }}
                   </button>
                   <button v-else :title="$gettext('Camera')" class="action-camera-edit"
                           :data-uid="photo.UID" @click.exact="editPhoto(index)">
-                    <v-icon size="14">photo_camera</v-icon>
+                    <i>photo_camera</i>
                     {{ photo.getPhotoInfo() }}
                   </button>
                   <template v-if="filter.order === 'name' && $config.feature('download')">
                     <br>
                     <button :title="$gettext('Name')"
                             @click.exact="downloadFile(index)">
-                      <v-icon size="14">insert_drive_file</v-icon>
+                      <i>insert_drive_file</i>
                       {{ photo.baseName() }}
                     </button>
                   </template>
@@ -210,13 +208,13 @@
                     <br>
                     <button :title="$gettext('Location')" class="action-location"
                             :data-uid="photo.UID" @click.exact="openLocation(index)">
-                      <v-icon size="14">location_on</v-icon>
+                      <i>location_on</i>
                       {{ photo.locationInfo() }}
                     </button>
                   </template>
                 </div>
               </div>
-            </v-card-title>
+            </div>
           </div>
         <v-hover>
       </div>
