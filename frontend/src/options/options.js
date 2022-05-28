@@ -180,6 +180,10 @@ export const Languages = () => [
     value: "ro",
   },
   {
+    text: "ภาษาไทย", // Thai
+    value: "th",
+  },
+  {
     text: "Türk", // Turkish
     value: "tr",
   },

@@ -55,19 +55,19 @@ export default [
     name: "about",
     path: "/about",
     component: About,
-    meta: { title: $gettext("Help & Support"), auth: false },
+    meta: { title: siteTitle, auth: false },
   },
   {
     name: "license",
     path: "/about/license",
     component: License,
-    meta: { title: $gettext("Help & Support"), auth: false },
+    meta: { title: siteTitle, auth: false },
   },
   {
     name: "feedback",
     path: "/feedback",
     component: Feedback,
-    meta: { title: $gettext("Help & Support"), auth: true },
+    meta: { title: siteTitle, auth: true },
   },
   {
     name: "help",

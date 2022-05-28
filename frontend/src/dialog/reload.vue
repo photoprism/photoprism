@@ -10,7 +10,7 @@
 
         <v-btn
             color="secondary-light"
-            depressed small
+            depressed
             @click="close"
         >
           <translate>Cancel</translate>
@@ -18,7 +18,7 @@
 
         <v-btn
             color="primary-button"
-            dark depressed small
+            dark depressed
             class="action-update-reload"
             @click="reload"
         >

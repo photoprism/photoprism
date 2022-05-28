@@ -9,7 +9,7 @@
         <v-toolbar-title class="nav-title">
           <span :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
-        <v-menu v-if="showNavMenu" attach="#p-navigation .nav-small" :nudge-bottom="16" :nudge-right="0"
+        <v-menu v-if="showNavMenu" attach="#p-navigation .nav-small" class="elevation-1" :nudge-bottom="16" :nudge-right="0"
                  close-on-content-click fixed disable-keys offset-y bottom :left="!rtl">
           <template #activator="{ on }">
             <v-btn
@@ -23,14 +23,13 @@
             </v-btn>
           </template>
 
-          <v-list dark class="nav-menu navigation elevation-2">
+          <v-list dark class="nav-menu">
             <v-list-tile to="/browse" class="clickable nav-menu-browse">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate>Search</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
-
               <v-list-tile-action :title="$gettext('Search')">
                 <v-icon>search</v-icon>
               </v-list-tile-action>
