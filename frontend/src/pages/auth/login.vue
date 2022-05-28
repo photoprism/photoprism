@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height class="auth-login wallpaper pa-3" :style="wallpaper()">
+  <v-container fluid fill-height class="auth-login wallpaper background-welcome pa-3" :style="wallpaper()">
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">

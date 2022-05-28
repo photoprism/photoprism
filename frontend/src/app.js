@@ -50,7 +50,7 @@ import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 import Hls from "hls.js";
 import "common/maptiler-lang";
-import { $gettext, Mount } from "common/vm";
+import { T, Mount } from "common/vm";
 import * as offline from "@lcdp/offline-plugin/runtime";
 
 // Initialize helpers
@@ -168,15 +168,21 @@ router.afterEach((to) => {
   const t = to.meta["title"] ? to.meta["title"] : "";
 
   if (t !== "" && config.values.siteTitle !== t && config.values.name !== t) {
-    config.page.title = $gettext(t);
-    if (config.page.title === "") {
+    config.page.title = T(t);
+
+    if (config.page.title.startsWith(config.values.siteTitle)) {
+      window.document.title = config.page.title;
+    } else if (config.page.title === "") {
       window.document.title = config.values.siteTitle;
     } else {
       window.document.title = config.page.title + " – " + config.values.siteTitle;
     }
   } else {
     config.page.title = config.values.name;
-    if (config.values.siteCaption === "" || !config.values.sponsor) {
+
+    if (!config.values.sponsor) {
+      window.document.title = config.values.name;
+    } else if (config.values.siteCaption === "") {
       window.document.title = config.values.siteTitle;
     } else {
       window.document.title = config.values.siteCaption;
