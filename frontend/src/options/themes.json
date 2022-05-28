@@ -90,14 +90,14 @@
     "dark": false,
     "sponsor": false,
     "colors": {
-      "application": "#fafafa",
+      "application": "#FDEDF5",
       "form": "#fafafa",
       "primary": "#ffb3cc",
-      "primary-button": "#757575",
-      "secondary-dark": "#757575",
-      "secondary": "#fbd0e3",
-      "secondary-light": "#fde8f1",
-      "accent": "#9e9e9e",
+      "primary-button": "#EA3495",
+      "secondary-dark": "#EA3495",
+      "secondary": "#F6C5DC",
+      "secondary-light": "#FDD8E7",
+      "accent": "#B994A5",
       "error": "#e57373",
       "info": "#00acc1",
       "success": "#4db6ac",
@@ -110,9 +110,9 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
-      "terminal": "#616161",
-      "navigation": "#b2346c",
-      "navigation-home": "#9e2e60"
+      "terminal": "#a97599",
+      "navigation": "#A21F65",
+      "navigation-home": "#891A55"
     }
   },
   "seaweed": {
@@ -351,13 +351,13 @@
     "dark": true,
     "sponsor": true,
     "colors": {
-      "application": "#444",
+      "application": "#353535",
       "form": "#eeeeee",
-      "primary": "#9ca2c9",
-      "primary-button": "#6c6f84",
-      "secondary-dark": "#7e8bce",
-      "secondary": "#363636",
-      "secondary-light": "#3b3b3b",
+      "primary": "#AFB4D4",
+      "primary-button": "#545465",
+      "secondary-dark": "#9BA0C5",
+      "secondary": "#272727",
+      "secondary-light": "#424242",
       "accent": "#333",
       "error": "#e57373",
       "info": "#00acc1",
@@ -371,9 +371,9 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
-      "terminal": "#333333",
-      "navigation": "#1b1e32",
-      "navigation-home": "#121421"
+      "terminal": "#4A464F",
+      "navigation": "#1C1C21",
+      "navigation-home": "#131316"
     }
   }
 }

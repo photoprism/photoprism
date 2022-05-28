@@ -152,6 +152,12 @@ nav .v-list__tile__title.title {
     padding: 0;
 }
 
+/* SPEED DIAL */
+
+#photoprism .v-speed-dial__list .v-btn .v-icon {
+    font-size: 19px;
+}
+
 /* MOBILE NAV SPEED DIAL */
 
 #photoprism .mobile-dial .v-btn.nav-menu-trigger {
@@ -161,10 +167,6 @@ nav .v-list__tile__title.title {
 #photoprism .mobile-dial .v-btn:after,
 #photoprism .mobile-dial .v-btn:before {
     display: none!important;
-}
-
-#photoprism .mobile-dial .v-speed-dial__list .v-btn .v-icon {
-    font-size: 19px;
 }
 
 #photoprism .mobile-dial .v-speed-dial__list .v-btn {

@@ -12,7 +12,7 @@
         <v-speed-dial
             v-model="speedDial"
             direction="bottom"
-            transition="slide-y-reverse-transition"
+            transition="slide-y-transition"
             class="mobile-dial"
             open-on-hover
             dark
