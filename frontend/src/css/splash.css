@@ -96,20 +96,19 @@
 }
 
 #photoprism div.loading-circle {
-    width: 100%;
-    height: 100%;
-    margin: auto;
+    width: auto;
+    height: auto;
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    top: -2px;
+    bottom: -2px;
+    left: -2px;
+    right: -2px;
     z-index: 0;
-    overflow: hidden;
-    border-top: 5px #7e29ff solid;
-    border-right: 5px #6d02ff solid;
-    border-bottom: 5px #5812fa solid;
-    border-left: 5px #7C4DFF solid;
+    overflow: visible;
+    border-top: 5px #980cff solid;
+    border-right: 5px #692afe solid;
+    border-bottom: 5px #4045fe solid;
+    border-left: 5px #692afe solid;
     border-radius: 50%;
     -webkit-transform-origin: center center;
     transform-origin: center center;
@@ -169,7 +168,7 @@
     right: 0;
 }
 
-#splash-info > span {
+#photoprism .days > span {
     display: none;
 }
 
@@ -208,9 +207,19 @@
     margin: 0;
 }
 
-#splash-info {
+#splash-info,
+#splash-info a {
     text-align: center;
-    color: #7c7c78;
+    color: #858581;
+}
+
+#splash-info .edition {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+#splash-info .highlight {
+    color: #bbbbb5;
 }
 
 #noscript-info {
@@ -218,6 +227,7 @@
     text-align: center;
 }
 
+#splash-info .imprint,
 #noscript-info a {
     color: #bbbbb5;
 }

@@ -2364,10 +2364,6 @@ msgstr ""
 msgid "Sync raw and video files"
 msgstr ""
 
-#: src/app.js:171
-msgid "t"
-msgstr ""
-
 #: src/component/photo/cards.vue:517
 #: src/component/photo/list.vue:56
 #: src/dialog/photo/info.vue:52

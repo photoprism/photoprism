@@ -34,9 +34,15 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	})
 
 	// Rainbow Page.
-	router.GET(conf.BaseUri("/rainbow"), func(c *gin.Context) {
+	router.GET(conf.BaseUri("/_rainbow"), func(c *gin.Context) {
 		clientConfig := conf.PublicConfig()
 		c.HTML(http.StatusOK, "rainbow.tmpl", gin.H{"config": clientConfig})
+	})
+
+	// Splash Screen.
+	router.GET(conf.BaseUri("/_splash"), func(c *gin.Context) {
+		clientConfig := conf.PublicConfig()
+		c.HTML(http.StatusOK, "splash.tmpl", gin.H{"config": clientConfig})
 	})
 
 	// JSON-REST API Version 1

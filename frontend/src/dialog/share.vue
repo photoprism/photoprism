@@ -93,7 +93,7 @@
                       </v-btn>
                     </v-flex>
                     <v-flex xs6 :text-xs-right="!rtl" :text-xs-left="rtl" class="pa-2">
-                      <v-btn small depressed dark color="primary-button" class="ma-0 action-save"
+                      <v-btn depressed dark color="primary-button" class="ma-0 action-save"
                              @click.stop.exact="update(link)">
                         <translate>Save</translate>
                       </v-btn>

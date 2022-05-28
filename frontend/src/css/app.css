@@ -92,20 +92,22 @@ footer {
     padding: 6px 24px 12px;
 }
 
-#photoprism .footer a {
+#photoprism .footer div > span,
+#photoprism .footer div > a {
     display: block;
 }
 
 @media only screen and (max-width: 599px) {
-    #photoprism .footer a {
+    #photoprism .footer div > span,
+    #photoprism .footer div > a {
         display: inline-block;
     }
 
-    #photoprism .footer a.text-link {
+    #photoprism .footer .text-link {
         float: left;
     }
 
-    #photoprism .footer a.body-link {
+    #photoprism .footer .body-link {
         float:right;
     }
 }
