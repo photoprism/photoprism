@@ -108,3 +108,17 @@ body.dark-theme.theme-grayscale {
     color: #cccccc;
     background: transparent;
 }
+
+#photoprism.theme-grayscale .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #685a4a;
+}
+
+#photoprism.theme-grayscale .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #86735f;
+}
+
+#photoprism.theme-grayscale .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-grayscale .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #95806a;
+}

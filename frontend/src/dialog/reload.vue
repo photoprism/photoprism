@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="visible" max-width="300">
+  <v-dialog :value="show" max-width="300">
     <v-card>
       <v-card-title class="subheading pa-3">
         <translate>PhotoPrism has been updated…</translate>
@@ -11,6 +11,7 @@
         <v-btn
             color="secondary-light"
             depressed
+            class="compact"
             @click="close"
         >
           <translate>Cancel</translate>
@@ -19,7 +20,7 @@
         <v-btn
             color="primary-button"
             dark depressed
-            class="action-update-reload"
+            class="action-update-reload compact"
             @click="reload"
         >
           <translate>Reload</translate>
