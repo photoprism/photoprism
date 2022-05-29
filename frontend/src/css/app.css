@@ -347,7 +347,7 @@ ol, ul {
 .rounded-6,
 .rounded-6>a,
 #photoprism div.v-dialog>div.v-card,
-#photoprism div.v-dialog .v-expansion-panel__container {
+#photoprism div.v-dialog>div.v-card>.v-card__text .v-expansion-panel__container {
     border-radius: 6px;
 }
 
