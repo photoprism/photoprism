@@ -264,10 +264,8 @@ body.chrome #photoprism .search-results .result {
   word-break: break-word;
 }
 
-
 #photoprism .cards-view .result .card-details i {
   font-size: 14px;
-  width: 14px;
   display: inline-block;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -277,6 +275,11 @@ body.chrome #photoprism .search-results .result {
   text-transform: none;
   line-height: 1;
   vertical-align: text-bottom;
+}
+
+
+#photoprism .cards-view .result.placeholder .card-details i {
+  width: 14px;
 }
 
 
