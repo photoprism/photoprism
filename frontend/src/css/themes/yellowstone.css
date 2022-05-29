@@ -108,3 +108,17 @@ body.dark-theme.theme-yellowstone {
     color: #cccccc;
     background: transparent;
 }
+
+#photoprism.theme-yellowstone .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #b38000;
+}
+
+#photoprism.theme-yellowstone .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #cc9200;
+}
+
+#photoprism.theme-yellowstone .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-yellowstone .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #e6a400;
+}

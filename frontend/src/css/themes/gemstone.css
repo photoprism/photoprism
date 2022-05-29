@@ -1,7 +1,7 @@
 /* Gemstone Theme */
 
 body.dark-theme.theme-gemstone {
-    background: #444 !important;
+    background: #353535 !important;
 }
 
 #photoprism.container.theme-gemstone {
@@ -9,8 +9,8 @@ body.dark-theme.theme-gemstone {
 }
 
 #photoprism.container.theme-gemstone div.loading-animation {
-    color: #c4f1e5 !important;
-    caret-color: #c4f1e5 !important;
+    color: #AFB4D4 !important;
+    caret-color: #AFB4D4 !important;
 }
 
 #photoprism.container.theme-gemstone div.loading-animation .loading-underlay {
@@ -21,21 +21,21 @@ body.dark-theme.theme-gemstone {
 .theme-gemstone .p-page,
 .theme-gemstone .form,
 .theme-gemstone .v-content {
-    background: #444 !important;
+    background: #353535 !important;
 }
 
 #photoprism.theme-gemstone .theme--light.v-small-dialog__content,
 #photoprism.theme-gemstone .theme--light.v-sheet,
 #photoprism.theme-gemstone .theme--light.v-card {
-    background: #444;
+    background: #353535;
 }
 
 .theme-gemstone .application.theme--light {
-    background: #444;
+    background: #353535;
 }
 
 #photoprism.theme-gemstone .theme--light .v-table {
-    background: #4E4E4E;
+    background: #353535;
 }
 
 #photoprism.theme-gemstone .theme--light.v-table thead th,
@@ -53,7 +53,7 @@ body.dark-theme.theme-gemstone {
 }
 
 #photoprism.theme-gemstone .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: #4E4E4E;
+    background: #353535;
 }
 
 #photoprism.theme-gemstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
@@ -77,11 +77,11 @@ body.dark-theme.theme-gemstone {
 }
 
 #photoprism.theme-gemstone .theme--light.v-list {
-    background: #555;
+    background: #3a3a3a;
 }
 
 #photoprism.theme-gemstone a.text-link {
-    color: #c8e3e7 !important;
+    color: #BABEDC !important;
 }
 
 #photoprism.theme-gemstone .theme--light.v-select .v-select__selections {
@@ -90,7 +90,7 @@ body.dark-theme.theme-gemstone {
 
 #photoprism.theme-gemstone .theme--light.v-list .v-list__tile__sub-title,
 #photoprism.theme-gemstone .accent--text {
-    color: #7a83b8 !important;
+    color: #BABEDC !important;
 }
 
 #photoprism.theme-gemstone .theme--light.v-input:not(.v-input--is-disabled) input,
@@ -107,4 +107,9 @@ body.dark-theme.theme-gemstone {
 #photoprism.theme-gemstone .theme--light.v-list .v-list__tile__mask {
     color: #cccccc;
     background: transparent;
+}
+
+#photoprism.theme-gemstone .cards-view .result {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
 }
