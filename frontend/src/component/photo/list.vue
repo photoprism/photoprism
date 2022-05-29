@@ -20,104 +20,114 @@
         </p>
       </v-alert>
     </div>
-    <v-data-table v-else
-                  ref="dataTable"
-                  v-model="selected"
-                  :headers="listColumns"
-                  :items="photos"
-                  hide-actions
-                  class="search-results photo-results list-view"
-                  :class="{'select-results': selectMode}"
-                  disable-initial-sort
-                  item-key="ID"
-                  :no-data-text="notFoundMessage"
+    <div v-else class="search-results photo-results list-view">
+      <div class="v-table__overflow">
+        <table class="v-datatable v-table theme--light">
+          <thead>
+            <tr>
+              <th class="p-col-select" />
+              <th :class="!$rtl ? 'text-xs-left' : 'text-xs-right'">
+                {{$gettext('Title')}}
+              </th>
+              <th :class="!$rtl ? 'text-xs-left' : 'text-xs-right'" class="hidden-xs-only">
+                {{$gettext('Taken')}}
+              </th>
+              <th :class="!$rtl ? 'text-xs-left' : 'text-xs-right'" class="hidden-sm-and-down">
+                {{$gettext('Camera')}}
+              </th>
+              <th :class="!$rtl ? 'text-xs-left' : 'text-xs-right'" class="hidden-xs-only">
+                {{showName ? $gettext('Name') : $gettext('Location')}}
+              </th>
+              <th class="text-xs-center hidden-xs-only" />
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(photo, index) in photos" :key="photo.ID" ref="items" :data-index="index">
+              <td :data-uid="photo.UID" class="result" :class="photo.classes()">
+                <div
+                    v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
+                    :key="photo.Hash"
+                    class="image accent lighten-2"
+                />
+                <div
+                      v-else
+                      :key="photo.Hash"
+                      :alt="photo.Title"
+                      :style="`background-image: url(${photo.thumbnailUrl('tile_50')})`"
+                      class="accent lighten-2 clickable image"
+                      @touchstart="onMouseDown($event, index)"
+                      @touchend.stop.prevent="onClick($event, index)"
+                      @mousedown="onMouseDown($event, index)"
+                      @contextmenu.stop="onContextMenu($event, index)"
+                      @click.stop.prevent="onClick($event, index)"
+                >
+                  <button v-if="selectMode" class="input-select">
+                    <i class="select-on">check_circle</i>
+                    <i class="select-off">radio_button_off</i>
+                  </button>
+                  <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'"
+                        class="input-open"
+                        @click.stop.prevent="openPhoto(index, true)">
+                    <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</i>
+                    <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
+                    <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
+                  </button>
+                </div>
+              </td>
 
-    >
-      <template #items="props">
-        <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
-          <div
-              v-if="props.index < firstVisibleElementIndex || props.index > lastVisibileElementIndex"
-              :key="props.item.Hash"
-              class="v-image accent lighten-2"
-              style="aspect-ratio: 1"
-          />
-          <div
-                v-else
-                :key="props.item.Hash"
-                :alt="props.item.Title"
-                :style="`background-image: url(${props.item.thumbnailUrl('tile_50')})`"
-                class="accent lighten-2 clickable image"
-                @touchstart="onMouseDown($event, props.index)"
-                @touchend.stop.prevent="onClick($event, props.index)"
-                @mousedown="onMouseDown($event, props.index)"
-                @contextmenu.stop="onContextMenu($event, props.index)"
-                @click.stop.prevent="onClick($event, props.index)"
-          >
-            <button v-if="selectMode" class="input-select">
-              <i class="select-on">check_circle</i>
-              <i class="select-off">radio_button_off</i>
-            </button>
-            <button v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
-                  class="input-open"
-                  @click.stop.prevent="openPhoto(props.index, true)">
-              <i v-if="props.item.Type === 'live'" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</i>
-              <i v-if="props.item.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
-              <i v-if="props.item.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
-            </button>
-          </div>
-        </td>
-
-        <td class="p-photo-desc clickable" :data-uid="props.item.UID" style="user-select: none;"
-            @click.exact="editPhoto(props.index)">
-          {{ props.item.Title }}
-        </td>
-        <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
-          <button style="user-select: none;" @click.stop.prevent="editPhoto(props.index)">
-            {{ props.item.shortDateString() }}
-          </button>
-        </td>
-        <td class="p-photo-desc hidden-sm-and-down" style="user-select: none;">
-          <button @click.stop.prevent="editPhoto(props.index)">
-            {{ props.item.CameraMake }} {{ props.item.CameraModel }}
-          </button>
-        </td>
-        <td class="p-photo-desc hidden-xs-only">
-          <button v-if="filter.order === 'name'"
-                  :title="$gettext('Name')" @click.exact="downloadFile(props.index)">
-            {{ props.item.FileName }}
-          </button>
-          <button v-else-if="props.item.Country !== 'zz' && showLocation"
-                  style="user-select: none;"
-                  @click.stop.prevent="openLocation(props.index)">
-            {{ props.item.locationInfo() }}
-          </button>
-          <span v-else>
-                    {{ props.item.locationInfo() }}
+              <td class="p-photo-desc clickable" :data-uid="photo.UID"
+                  @click.exact="editPhoto(index)">
+                {{ photo.Title }}
+              </td>
+              <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">
+                <button @click.stop.prevent="editPhoto(index)">
+                  {{ photo.shortDateString() }}
+                </button>
+              </td>
+              <td class="p-photo-desc hidden-sm-and-down">
+                <button @click.stop.prevent="editPhoto(index)">
+                  {{ photo.CameraMake }} {{ photo.CameraModel }}
+                </button>
+              </td>
+              <td class="p-photo-desc hidden-xs-only">
+                <button v-if="filter.order === 'name'"
+                        :title="$gettext('Name')" @click.exact="downloadFile(index)">
+                  {{ photo.FileName }}
+                </button>
+                <button v-else-if="photo.Country !== 'zz' && showLocation"
+                        @click.stop.prevent="openLocation(index)">
+                  {{ photo.locationInfo() }}
+                </button>
+                <span v-else>
+                  {{ photo.locationInfo() }}
                 </span>
-        </td>
-        <td class="text-xs-center">
-          <template v-if="props.index < firstVisibleElementIndex || props.index > lastVisibileElementIndex">
-            <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
-            <div class="v-btn v-btn--icon v-btn--small" />
-          </template>
+              </td>
+              <td class="text-xs-center">
+                <template v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex">
+                  <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
+                  <div class="v-btn v-btn--icon v-btn--small" />
+                </template>
 
-          <template v-else>
-            <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
-                  :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
-              <v-icon v-if="props.item.Private" color="secondary-dark" class="select-on">lock</v-icon>
-              <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
-            </v-btn>
-            <v-btn class="input-like" icon small flat :ripple="false"
-                  :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
-              <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">
-                favorite
-              </v-icon>
-              <v-icon v-else color="secondary" :data-uid="props.item.UID" class="select-off">favorite_border</v-icon>
-            </v-btn>
-          </template>
-        </td>
-      </template>
-    </v-data-table>
+                <template v-else>
+                  <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
+                        :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
+                    <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">lock</v-icon>
+                    <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
+                  </v-btn>
+                  <v-btn class="input-like" icon small flat :ripple="false"
+                        :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
+                    <v-icon v-if="photo.Favorite" color="pink lighten-3" :data-uid="photo.UID" class="select-on">
+                      favorite
+                    </v-icon>
+                    <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">favorite_border</v-icon>
+                  </v-btn>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -167,28 +177,10 @@ export default {
       m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
     }
 
-    let showName = this.filter.order === 'name';
-
-    const align = !this.$rtl ? 'left' : 'right';
     return {
       config: this.$config.values,
       notFoundMessage: m,
-      'selected': [],
-      'listColumns': [
-        {text: '', value: '', align: 'center', class: 'p-col-select', sortable: false},
-        {text: this.$gettext('Title'), align, value: 'Title', sortable: false},
-        {text: this.$gettext('Taken'), align, class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
-        {text: this.$gettext('Camera'), align, class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
-        {
-          text: showName ? this.$gettext('Name') : this.$gettext('Location'),
-          align,
-          class: 'hidden-xs-only',
-          value: showName ? 'FileName' : 'PlaceLabel',
-          sortable: false
-        },
-        {text: '', value: '', align: 'center', sortable: false},
-      ],
-      showName: showName,
+      showName: this.filter.order === 'name',
       showLocation: this.$config.values.settings.features.places,
       hidePrivate: this.$config.values.settings.features.private,
       mouseDown: {
@@ -219,16 +211,15 @@ export default {
   },
   methods: {
     observeItems() {
-      if (this.$refs.dataTable === undefined) {
+      if (this.$refs.items === undefined) {
         return;
       }
-      const rows = this.$refs.dataTable.$el.getElementsByTagName('tbody')[0].children;
-      for (const row of rows) {
-        this.intersectionObserver.observe(row);
+      for (const item of this.$refs.items) {
+        this.intersectionObserver.observe(item);
       }
     },
     elementIndexFromIntersectionObserverEntry(entry) {
-      return entry.target.rowIndex - 2;
+      return parseInt(entry.target.getAttribute('data-index'));
     },
     visibilitiesChanged(entries) {
       const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(

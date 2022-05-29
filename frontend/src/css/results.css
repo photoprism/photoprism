@@ -213,6 +213,7 @@ body.chrome #photoprism .search-results .result {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
+  border-radius: 3px;
 }
 
 #photoprism .cards-view .result .image button,
