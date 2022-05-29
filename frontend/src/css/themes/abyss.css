@@ -95,3 +95,17 @@ body.dark-theme.theme-abyss {
     color: #cccccc;
     background: transparent;
 }
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #432970;
+}
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #643da9;
+}
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #7e57c2;
+}

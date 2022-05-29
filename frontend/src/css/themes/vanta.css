@@ -108,3 +108,17 @@ body.dark-theme.theme-vanta {
     color: #cccccc;
     background: transparent;
 }
+
+#photoprism.theme-vanta .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #026264;
+}
+
+#photoprism.theme-vanta .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #037b7d;
+}
+
+#photoprism.theme-vanta .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-vanta .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #04acaf;
+}
