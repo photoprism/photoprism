@@ -84,7 +84,11 @@ func GetVideo(router *gin.RouterGroup) {
 			}
 		}
 
-		AddContentTypeHeader(c, ContentTypeAvc)
+		if video.Types[formatName] == video.HEVC {
+			AddContentTypeHeader(c, ContentTypeHvc)
+		} else {
+			AddContentTypeHeader(c, ContentTypeAvc)
+		}
 
 		if c.Query("download") != "" {
 			c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
