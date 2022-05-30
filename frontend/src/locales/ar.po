@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-30 16:53+0000\n"
+"PO-Revision-Date: 2022-05-30 16:54+0000\n"
 "Last-Translator: moutasem1989 <moutasem19891@hotmail.com>\n"
 "Language: ar\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -372,9 +372,8 @@ msgstr "فنان"
 
 #: src/dialog/photo/files.vue:149
 #: src/dialog/photo/files.vue:146
-#, fuzzy
 msgid "Aspect Ratio"
-msgstr "ابعاد متزنة"
+msgstr "نسبة العرض إلى الارتفاع"
 
 #: src/pages/settings/library.vue:114
 #, fuzzy
