@@ -449,8 +449,9 @@ export class Photo extends RestModel {
 
   videoUrl() {
     let file = this.videoFile();
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-    if (file && file.Codec === CodecHvc1 && navigator.userAgent.indexOf("Safari") !== -1) {
+    if (file && file.Codec === CodecHvc1 && isSafari) {
       return `${config.apiUri}/videos/${file.Hash}/${config.previewToken()}/${FormatHvc}`;
     }
 
