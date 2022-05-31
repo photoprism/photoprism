@@ -57,7 +57,7 @@ test.meta("testID", "moments-001")("Update moment details", async (t) => {
 
   await album.openNthAlbum(0);
 
-  await t.expect(toolbar.toolbarTitle.innerText).contains("Winter");
+  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("Winter");
   await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
 
   await menu.openPage("moments");
@@ -137,7 +137,6 @@ test.meta("testID", "moments-003")("Create/delete album-clone from moment", asyn
   await menu.openPage("albums");
   await album.selectAlbumFromUID(AlbumUid);
   await contextmenu.triggerContextMenuAction("delete", "");
-  await menu.openPage("albums");
   const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
   await t.expect(AlbumCountAfterDelete).eql(AlbumCount);

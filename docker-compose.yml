@@ -40,6 +40,7 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
+      PHOTOPRISM_IMPRINT: "Beijing ICP Certificate No. 030123"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_PUBLIC: "true"

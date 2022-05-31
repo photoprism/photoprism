@@ -57,7 +57,7 @@ test.meta("testID", "calendar-002")("Update calendar details", async (t) => {
 
   await album.openNthAlbum(0);
 
-  await t.expect(toolbar.toolbarTitle.innerText).contains("March 2014");
+  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("March 2014");
   await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
   await menu.openPage("calendar");
   if (t.browser.platform === "mobile") {
@@ -135,7 +135,7 @@ test.meta("testID", "calendar-004").meta({ type: "smoke" })(
     await menu.openPage("albums");
     await album.selectAlbumFromUID(AlbumUid);
     await contextmenu.triggerContextMenuAction("delete", "");
-    await menu.openPage("albums");
+    await toolbar.triggerToolbarAction("reload");
     const AlbumCountAfterDelete = await album.getAlbumCount("all");
     await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
     await menu.openPage("calendar");
