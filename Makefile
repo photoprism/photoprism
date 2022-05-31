@@ -43,7 +43,6 @@ test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
-test-mariadb-internal: reset-acceptance run-test-mariadb-internal
 acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
 acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
 acceptance-private-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop
@@ -245,9 +244,6 @@ run-test-go:
 run-test-mariadb:
 	$(info Running all Go unit tests on MariaDB...)
 	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
-run-test-mariadb-internal:
-	$(info Running all Go unit tests on MariaDB...)
-	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./internal/acl ./internal/api ./internal/entity
 run-test-pkg:
 	$(info Running all Go unit tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/...
