@@ -135,7 +135,11 @@ test.meta("testID", "calendar-004").meta({ type: "smoke" })(
     await menu.openPage("albums");
     await album.selectAlbumFromUID(AlbumUid);
     await contextmenu.triggerContextMenuAction("delete", "");
-    await toolbar.triggerToolbarAction("reload");
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
     const AlbumCountAfterDelete = await album.getAlbumCount("all");
     await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
     await menu.openPage("calendar");

@@ -14,7 +14,14 @@ export default class Page {
   }
 
   async checkToolbarActionAvailability(action, visible) {
-    if ((t.browser.platform === "mobile") & (action !== "edit") & (action !== "share")) {
+    if (
+      (t.browser.platform === "mobile") &
+      (action !== "edit") &
+      (action !== "share") &
+      (action !== "add") &
+      (action !== "show-all") &
+      (action !== "show-important")
+    ) {
       if (await this.openMobileToolbar.exists) {
         await t.click(this.openMobileToolbar);
       }
@@ -34,7 +41,14 @@ export default class Page {
   }
 
   async triggerToolbarAction(action) {
-    if ((t.browser.platform === "mobile") & (action !== "edit") & (action !== "share")) {
+    if (
+      (t.browser.platform === "mobile") &
+      (action !== "edit") &
+      (action !== "share") &
+      (action !== "add") &
+      (action !== "show-all") &
+      (action !== "show-important")
+    ) {
       if (await this.openMobileToolbar.exists) {
         await t.click(this.openMobileToolbar);
       }
