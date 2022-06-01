@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-23 11:11+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-06-01 10:17+0000\n"
+"Last-Translator: Youngwan Kim <y103.kim@gmail.com>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
 "backend/ko/>\n"
 "Language: ko\n"
@@ -17,89 +17,89 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.12.2\n"
 
 msgid "Unexpected error, please try again"
-msgstr ""
+msgstr "예기치 못한 에러가 발생했습니다. 다시 시도해주세요"
 
 msgid "Invalid request"
-msgstr ""
+msgstr "잘못된 요청"
 
 msgid "Changes could not be saved"
-msgstr ""
+msgstr "저장에 실패함"
 
 msgid "Could not be deleted"
-msgstr ""
+msgstr "삭제에 실패함"
 
 #, c-format
 msgid "%s already exists"
-msgstr ""
+msgstr "%s가 이미 존재함"
 
 msgid "Not found"
-msgstr ""
+msgstr "찾을 수 없음"
 
 msgid "File not found"
-msgstr ""
+msgstr "파일을 찾을 수 없음"
 
 msgid "Selection not found"
-msgstr ""
+msgstr "섹션을 찾을 수 없음"
 
 msgid "Entity not found"
-msgstr ""
+msgstr "항목을 찾을 수 없음"
 
 msgid "Account not found"
-msgstr ""
+msgstr "계정을 찾지 못했습니다"
 
 msgid "User not found"
-msgstr ""
+msgstr "사용자를 찾을 수 없음"
 
 msgid "Label not found"
-msgstr ""
+msgstr "라벨을 찾을 수 없음"
 
 msgid "Album not found"
-msgstr ""
+msgstr "앨범을 찾을 수 없음"
 
 msgid "Subject not found"
-msgstr ""
+msgstr "제목을 찾을 수 없음"
 
 msgid "Person not found"
-msgstr ""
+msgstr "사람을 찾을 수 없음"
 
 msgid "Face not found"
-msgstr ""
+msgstr "얼굴을 찾을 수 없음"
 
 msgid "Not available in public mode"
-msgstr ""
+msgstr "공개 모드에서는 사용할 수 없음"
 
 msgid "not available in read-only mode"
-msgstr ""
+msgstr "읽기 전용 모드에서는 사용할 수 없음"
 
 msgid "Please log in and try again"
-msgstr ""
+msgstr "로그인하고 다시 시도하십시오"
 
 msgid "Upload might be offensive"
 msgstr ""
 
 msgid "No items selected"
-msgstr ""
+msgstr "선택된 항목이 없습니다"
 
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "파일 생성에 실패했습니다. 권한을 확인하세요"
 
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "폴더를 만들지 못했습니다. 권한을 확인하세요"
 
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "연결할 수 없습니다. 다시 시도해 주세요"
 
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "비밀번호가 잘못되었습니다. 다시 시도해 주세요"
 
 msgid "Feature disabled"
-msgstr ""
+msgstr "기능 비활성화됨"
 
 msgid "No labels selected"
-msgstr ""
+msgstr "선택한 라벨이 없습니다"
 
 msgid "No albums selected"
 msgstr ""
