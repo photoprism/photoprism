@@ -6,7 +6,7 @@
 
 ## Preamble
 
-The Internet is huge, and you inevitably run into people who don't show respect (even if they're nice when you meet them in person), who occasionally have a bad day, or who have simply had too much coffee. Except in the last case, which can be solved by having a smaller cup, it's best to save everyone's time and politely let them know that this is not the right community for them
+The Internet is huge, and so you inevitably run into people with poor social skills or who have simply had too much coffee. If issues arising from disrespectful, abusive, harassing, or otherwise unacceptable behavior cannot be resolved by choosing a smaller cup, it's best to save everyone's time and politely let them know that this is not the right community for them.
 
 ## Rules
 
@@ -30,7 +30,7 @@ The following non-exhaustive list provides specific guidelines and examples:
 
 ## Reporting
 
-We encourage all community members to resolve problems on their own whenever possible. Instances of abusive, harassing, or otherwise unacceptable behavior [may be reported](https://photoprism.app/contact) to us.
+We encourage all community members to resolve problems on their own whenever possible. Instances of disrespectful, abusive, harassing, or otherwise unacceptable behavior [may be reported](https://photoprism.app/contact) to us.
 
 ## Enforcement
 
