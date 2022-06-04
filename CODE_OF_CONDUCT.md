@@ -6,7 +6,7 @@
 
 ## Preamble
 
-The Internet is huge, so you're inevitably going to run into people who have poor social skills, a bad day, or enjoyed too much coffee. If issues arising from disrespectful, abusive, harassing, or otherwise unacceptable behavior cannot be resolved even after choosing a smaller cup, our policy is to save everyone's time and politely inform them that this is not the right community for them.
+The Internet is huge, so you're inevitably going to run into people who have poor social skills, a bad day, or enjoyed too much coffee. If issues arising from disrespectful, abusive, harassing, or otherwise unacceptable behavior cannot be resolved even after choosing a smaller cup, our policy is to politely inform them that this isn't the right community for them so everyone involved can spend their time doing something meaningful instead.
 
 ## Rules
 
