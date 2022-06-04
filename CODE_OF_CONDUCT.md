@@ -12,9 +12,9 @@ The Internet is huge. As a result, you will inevitably run into people who have 
 
 Because we want our Code of Conduct to be easy to understand and implement, we have only three basic rules:
 
-(1) Don't panic.
+(1) Be respectful, be responsible, be kind.
 
-(2) Be respectful, be responsible, be kind.
+(2) Don't panic.
 
 (3) Don’t feed the trolls.
 
