@@ -16,7 +16,7 @@ Because we want our Code of Conduct to be easy to understand and implement, we h
 
 ## Examples
 
-Not everyone has experience with open source communities and knows what is acceptable. The following guidelines and examples are intended to provide a quick overview in such cases and help avoid the most common pitfalls:
+Not everyone has experience with Open Source communities and knows what is acceptable. The following guidelines and examples are intended to provide a quick overview in such cases and help avoid the most common pitfalls:
 
 (a) Do not feel entitled to free software, support, or advice, especially if you are not a contributor, [sponsor](https://photoprism.app/membership), or paying customer. Don't ask contributors to report to you and [meet deadlines](https://docs.photoprism.app/developer-guide/code-quality/#go-slow-before-you-go-fast) as if they work for you or owe you something.
 
