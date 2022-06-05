@@ -14,7 +14,7 @@ Because we want our Code of Conduct to be easy to understand and implement, we h
 
 (3) Don’t panic.
 
-## Examples
+## Guidelines
 
 Not everyone has experience with Open Source communities and knows what is acceptable. The following guidelines and examples are intended to provide a quick overview in such cases and help avoid the most common pitfalls:
 
