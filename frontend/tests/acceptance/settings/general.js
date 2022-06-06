@@ -79,6 +79,8 @@ test.meta("testID", "settings-general-002").meta({ type: "smoke" })(
 test.meta("testID", "settings-general-003").meta({ type: "smoke" })(
   "Disable pages: import, originals, logs, moments, places, library",
   async (t) => {
+    await toolbar.setFilter("view", "Cards");
+
     await t.expect(page.cardLocation.exists).ok();
 
     await menu.openPage("library");
@@ -106,6 +108,7 @@ test.meta("testID", "settings-general-003").meta({ type: "smoke" })(
     await t.eval(() => location.reload());
 
     await menu.openPage("browse");
+    await toolbar.setFilter("view", "Cards");
 
     await t.expect(page.cardLocation.exists).notOk();
 
@@ -139,6 +142,7 @@ test.meta("testID", "settings-general-003").meta({ type: "smoke" })(
     await menu.checkMenuItemAvailability("places", true);
     await menu.checkMenuItemAvailability("library", false);
 
+    await menu.openPage("settings");
     await t.click(settings.libraryCheckbox);
 
     await menu.checkMenuItemAvailability("originals", true);
@@ -149,6 +153,7 @@ test.meta("testID", "settings-general-003").meta({ type: "smoke" })(
 test.meta("testID", "settings-general-004").meta({ type: "smoke" })(
   "Disable people and labels",
   async (t) => {
+    await toolbar.setFilter("view", "Cards");
     await t.click(page.cardTitle.nth(0));
     await t.click(photoedit.labelsTab);
 
@@ -165,6 +170,7 @@ test.meta("testID", "settings-general-004").meta({ type: "smoke" })(
     await t.click(settings.peopleCheckbox).click(settings.labelsCheckbox);
     await t.eval(() => location.reload());
     await menu.openPage("browse");
+    await toolbar.setFilter("view", "Cards");
     await t.click(page.cardTitle.nth(0));
     await t.click(photoedit.labelsTab);
 
@@ -190,11 +196,14 @@ test.meta("testID", "settings-general-004").meta({ type: "smoke" })(
 test.meta("testID", "settings-general-005").meta({ type: "smoke" })(
   "Disable private, archive and quality filter",
   async (t) => {
-    await menu.checkMenuItemAvailability("private", true);
     await menu.checkMenuItemAvailability("archive", true);
     await menu.checkMenuItemAvailability("review", true);
+    await menu.checkMenuItemAvailability("private", true);
 
+    await menu.openPage("browse");
+    await t.eval(() => location.reload());
     await toolbar.search("photo:true stack:true");
+
     await photo.triggerHoverAction("nth", 0, "select");
 
     await contextmenu.checkContextMenuActionAvailability("archive", true);
@@ -225,13 +234,12 @@ test.meta("testID", "settings-general-005").meta({ type: "smoke" })(
       .click(settings.privateCheckbox)
       .click(Selector(settings.libraryTab))
       .click(settings.reviewCheckbox);
-    await t.eval(() => location.reload());
 
-    await menu.checkMenuItemAvailability("private", false);
     await menu.checkMenuItemAvailability("archive", false);
     await menu.checkMenuItemAvailability("review", false);
-
+    await menu.checkMenuItemAvailability("private", false);
     await menu.openPage("browse");
+    await t.eval(() => location.reload());
 
     await toolbar.search("photo:true");
     await photo.triggerHoverAction("nth", 0, "select");
@@ -266,8 +274,8 @@ test.meta("testID", "settings-general-005").meta({ type: "smoke" })(
       .click(settings.reviewCheckbox);
 
     await menu.checkMenuItemAvailability("archive", true);
-    await menu.checkMenuItemAvailability("private", true);
     await menu.checkMenuItemAvailability("review", true);
+    await menu.checkMenuItemAvailability("private", true);
   }
 );
 
@@ -383,6 +391,8 @@ test.meta("testID", "settings-general-006").meta({ type: "smoke" })(
     await contextmenu.checkContextMenuActionAvailability("edit", false);
 
     await contextmenu.clearSelection();
+    await toolbar.setFilter("view", "Cards");
+
     await t.click(page.cardTitle.nth(0));
 
     await photoedit.checkAllDetailsFieldsDisabled(true);

@@ -25,6 +25,9 @@ export default class Page {
 
   async triggerContextMenuAction(action, albumName) {
     await this.openContextMenu();
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
     await t.click(Selector("#t-clipboard button.action-" + action));
     if (action === "delete") {
       await t.click(Selector("button.action-confirm"));

@@ -70,6 +70,7 @@ test.meta("testID", "stacks-003").meta({ type: "smoke" })("Ungroup files", async
 
   await menu.openPage("stacks");
   await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
+  await toolbar.setFilter("view", "Cards");
   await t
     .click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid))
     .click(photoedit.filesTab)

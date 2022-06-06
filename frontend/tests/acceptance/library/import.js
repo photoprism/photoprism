@@ -29,7 +29,11 @@ test.meta("testID", "library-import-001").meta({ type: "smoke" })(
       //TODO replace wait
       .wait(60000);
     await menu.openPage("labels");
-    await toolbar.triggerToolbarAction("reload");
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
     await toolbar.search("bakery");
 
     await t.expect(Selector(".is-label").visible).ok();

@@ -71,7 +71,7 @@ test.meta("testID", "folders-002")("Update folder details", async (t) => {
   await t
     .expect(toolbar.toolbarDescription.nth(0).innerText)
     .contains("Last holiday")
-    .expect(toolbar.toolbarTitle.nth(0).innerText)
+    .expect(toolbar.toolbarSecondTitle.innerText)
     .contains("MyFolder");
 
   await menu.openPage("folders");
@@ -149,7 +149,6 @@ test.meta("testID", "folders-004")("Create/delete album-clone from folder", asyn
   await menu.openPage("albums");
   await album.selectAlbumFromUID(AlbumUid);
   await contextmenu.triggerContextMenuAction("delete", "");
-  await menu.openPage("albums");
   const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
   await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
