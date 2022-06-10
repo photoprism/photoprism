@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-04-27 10:16+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-06-07 09:17+0000\n"
+"Last-Translator: Sunik Kupfer <kupfer@bitfire.at>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "backend/da/>\n"
 "Language: da\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12\n"
+"X-Generator: Weblate 4.12.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "Uventet fejl, prøv venligst igen"
@@ -51,149 +51,147 @@ msgid "Account not found"
 msgstr "Konto ikke fundet"
 
 msgid "User not found"
-msgstr ""
+msgstr "Bruger ikke fundet"
 
 msgid "Label not found"
-msgstr ""
+msgstr "Etiket ikke fundet"
 
 msgid "Album not found"
-msgstr ""
+msgstr "Album ikke fundet"
 
 msgid "Subject not found"
-msgstr ""
+msgstr "Genstand ikke fundet"
 
 msgid "Person not found"
-msgstr ""
+msgstr "Person ikke fundet"
 
 msgid "Face not found"
-msgstr ""
+msgstr "Ansigt ikke fundet"
 
 msgid "Not available in public mode"
-msgstr ""
+msgstr "Ikke tilgængeligt i offentlig tilstand"
 
 msgid "not available in read-only mode"
-msgstr ""
+msgstr "ikke tilgængelig i skrivebeskyttet tilstand"
 
 msgid "Please log in and try again"
-msgstr ""
+msgstr "Log ind og prøv igen"
 
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "Upload kunne være stødende"
 
 msgid "No items selected"
-msgstr ""
+msgstr "Ingen elementer valgt"
 
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Filoprettelse mislykkedes, tjek rettigheder"
 
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Mappeoprettelse mislykkedes, tjek rettigheder"
 
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Kunne ikke oprette forbindelse, prøv venligst igen"
 
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Ugyldig adgangskode, prøv venligst igen"
 
 msgid "Feature disabled"
-msgstr ""
+msgstr "Funktion deaktiveret"
 
 msgid "No labels selected"
-msgstr ""
+msgstr "Ingen etiketter valgt"
 
 msgid "No albums selected"
-msgstr ""
+msgstr "Ingen albummer valgt"
 
 msgid "No files available for download"
-msgstr ""
+msgstr "Ingen filer til download"
 
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Oprettelse af zip-fil mislykkedes"
 
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Ugyldig adgangsoplysninger"
 
 msgid "Invalid link"
-msgstr ""
+msgstr "Ugyldigt link"
 
 msgid "Invalid name"
-msgstr ""
+msgstr "Ugyldigt navn"
 
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "Optaget, venligst prøv igen senere"
 
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Ændringer er gemt succesfuld"
 
 msgid "Album created"
-msgstr ""
+msgstr "Album oprettet"
 
 msgid "Album saved"
-msgstr ""
+msgstr "Album gemt"
 
 #, c-format
 msgid "Album %s deleted"
-msgstr ""
+msgstr "Album %s slettet"
 
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Albumindhold klonet"
 
 msgid "File removed from stack"
-msgstr ""
+msgstr "Fil fjernet fra stakken"
 
 msgid "File deleted"
-msgstr ""
+msgstr "Fil slettet"
 
 #, c-format
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Valg tilføjet til %s"
 
 #, c-format
 msgid "One entry added to %s"
-msgstr ""
+msgstr "En post tilføjet til %s"
 
 #, c-format
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d poster tilføjet til %s"
 
 #, c-format
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "En post fjernet fra %s"
 
 #, c-format
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d poster fjernet fra %s"
 
 msgid "Account created"
-msgstr ""
+msgstr "Konto oprettet"
 
 msgid "Account saved"
-msgstr ""
+msgstr "Gemte konto"
 
 msgid "Account deleted"
-msgstr ""
+msgstr "Konto slettet"
 
-#, fuzzy
 msgid "Settings saved"
-msgstr "Indstillinger gemt"
+msgstr "Gemte indstillinger"
 
-#, fuzzy
 msgid "Password changed"
 msgstr "Adgangskode ændret"
 
 #, c-format
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Import afsluttet efter %d s"
 
 msgid "Import canceled"
-msgstr ""
+msgstr "Import annulleret"
 
 #, c-format
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Indeksering afsluttet efter %d s"
 
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Indeksering af originaler..."
 
 #, c-format
 msgid "Indexing files in %s"
