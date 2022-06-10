@@ -2,7 +2,7 @@
 
 **By using the software and services we provide, you agree to our [Terms of Service](https://photoprism.app/terms), including our [Privacy Policy](https://photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with other community members.**
 
-*Last Updated: June 5, 2022*
+*Last Updated: June 6, 2022*
 
 ## Rules
 
@@ -35,5 +35,7 @@ In the event of violations such as disrespectful, abusive, harassing, or otherwi
 Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky). In serious cases, we will provide a link to this Code of Conduct and make sure offenders don't have to read between the lines.
 
 Getting a simple **\*plonk\***[^1] in response finally signals that we have lost hope and you're being ignored according to **Rule &#35;2**. This old tradition from Usenet days is as time-saving as it is clear. It is not meant in a disrespectful way.
+
+In addition, we may use technical measures to temporarily or permanently restrict your access to our infrastructure, including forums and chats.
 
 [^1]: \*plonk\* including variants such as "Plonk." stands for the metaphorical sound of a user hitting the bottom of the kill file. It was first used in [Usenet forums](https://en.everybodywiki.com/Plonk_(Usenet)), a worldwide distributed discussion system and precursor to the Web.
