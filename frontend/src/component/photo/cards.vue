@@ -315,8 +315,19 @@ export default {
         this.elementIndexFromIntersectionObserverEntry,
       );
 
-      this.firstVisibleElementIndex = smallestIndex;
-      this.lastVisibileElementIndex = largestIndex;
+      /**
+       * When one element (for example at the top) becomes invisible, another one
+       * (for example at the bottom) becomes visible. Therefore both are triggering
+       * at nearly (but not exactly) the same time.
+       * Therefore re-rendering when one of them changes is enough.
+       *
+       * we check for the last element because the first element doesn't change
+       * on initial render (because it is already 0)
+       */
+      if (this.lastVisibileElementIndex !== largestIndex) {
+        this.firstVisibleElementIndex = smallestIndex;
+        this.lastVisibileElementIndex = largestIndex;
+      }
     },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);
