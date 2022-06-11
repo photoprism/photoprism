@@ -34,80 +34,78 @@
         -->
         <div class="image-container">
           <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-2 result image" />
-          <v-hover v-else>
-            <div :key="photo.Hash"
-                  slot-scope="{ hover }"
-                  tile
-                  :data-id="photo.ID"
-                  :data-uid="photo.UID"
-                  :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`"
-                  :class="photo.classes().join(' ') + ' accent lighten-2 result clickable image'"
-                  :alt="photo.Title"
-                  :title="photo.Title"
-                  @contextmenu.stop="onContextMenu($event, index)"
-                  @touchstart.passive="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onClick($event, index)"
-                  @mousedown.stop.prevent="input.mouseDown($event, index)"
-                  @click.stop.prevent="onClick($event, index)"
-                  @mouseover="playLive(photo)"
-                  @mouseleave="pauseLive(photo)">
-              <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
-                <video :id="'live-player-' + photo.ID" :key="photo.ID" width="224" height="224" preload="none"
-                      loop muted playsinline>
-                  <source :src="photo.videoUrl()">
-                </video>
-              </v-layout>
+          <div  v-else
+                :key="photo.Hash"
+                tile
+                :data-id="photo.ID"
+                :data-uid="photo.UID"
+                :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`"
+                :class="photo.classes().join(' ') + ' accent lighten-2 result clickable image'"
+                :alt="photo.Title"
+                :title="photo.Title"
+                @contextmenu.stop="onContextMenu($event, index)"
+                @touchstart.passive="input.touchStart($event, index)"
+                @touchend.stop.prevent="onClick($event, index)"
+                @mousedown.stop.prevent="input.mouseDown($event, index)"
+                @click.stop.prevent="onClick($event, index)"
+                @mouseover="playLive(photo)"
+                @mouseleave="pauseLive(photo)">
+            <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
+              <video :id="'live-player-' + photo.ID" :key="photo.ID" width="224" height="224" preload="none"
+                    loop muted playsinline>
+                <source :src="photo.videoUrl()">
+              </video>
+            </v-layout>
 
-              <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
-                    class="input-open"
-                    @touchstart.stop.prevent="input.touchStart($event, index)"
-                    @touchend.stop.prevent="onOpen($event, index, true)"
-                    @touchmove.stop.prevent
-                    @click.stop.prevent="onOpen($event, index, true)">
-                <i v-if="photo.Type === 'raw'" color="white" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
-                <i v-if="photo.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
-                <i v-if="photo.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</i>
-                <i v-if="photo.Type === 'video'" color="white" class="action-play" :title="$gettext('Video')">play_arrow</i>
-                <i v-if="photo.Type === 'image'" color="white" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
-              </button>
-
-              <button v-if="photo.Type === 'image' && selectMode"
-                    class="input-view"
-                    :title="$gettext('View')"
-                    @touchstart.stop.prevent="input.touchStart($event, index)"
-                    @touchend.stop.prevent="onOpen($event, index, false)"
-                    @touchmove.stop.prevent
-                    @click.stop.prevent="onOpen($event, index, false)">
-                <i color="white" class="action-fullscreen">zoom_in</i>
-              </button>
-
-              <button v-if="hidePrivate && photo.Private" class="input-private">
-                <i color="white" class="select-on">lock</i>
-              </button>
-
-              <button v-if="hover || $clipboard.has(photo)"
-                    class="input-select"
-                    @mousedown.stop.prevent="input.mouseDown($event, index)"
-                    @touchstart.stop.prevent="input.touchStart($event, index)"
-                    @touchend.stop.prevent="onSelect($event, index)"
-                    @touchmove.stop.prevent
-                    @click.stop.prevent="onSelect($event, index)">
-                <i color="white" class="select-on">check_circle</i>
-                <i color="white" class="select-off">radio_button_off</i>
-              </button>
-
-              <button
-                  class="input-favorite"
+            <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
+                  class="input-open"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="toggleLike($event, index)"
+                  @touchend.stop.prevent="onOpen($event, index, true)"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="toggleLike($event, index)"
-              >
-                <i v-if="photo.Favorite">favorite</i>
-                <i v-else>favorite_border</i>
-              </button>
-            </div>
-          </v-hover>
+                  @click.stop.prevent="onOpen($event, index, true)">
+              <i v-if="photo.Type === 'raw'" color="white" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
+              <i v-if="photo.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
+              <i v-if="photo.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</i>
+              <i v-if="photo.Type === 'video'" color="white" class="action-play" :title="$gettext('Video')">play_arrow</i>
+              <i v-if="photo.Type === 'image'" color="white" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
+            </button>
+
+            <button v-if="photo.Type === 'image' && selectMode"
+                  class="input-view"
+                  :title="$gettext('View')"
+                  @touchstart.stop.prevent="input.touchStart($event, index)"
+                  @touchend.stop.prevent="onOpen($event, index, false)"
+                  @touchmove.stop.prevent
+                  @click.stop.prevent="onOpen($event, index, false)">
+              <i color="white" class="action-fullscreen">zoom_in</i>
+            </button>
+
+            <button v-if="hidePrivate && photo.Private" class="input-private">
+              <i color="white" class="select-on">lock</i>
+            </button>
+
+            <button
+                  class="input-select"
+                  @mousedown.stop.prevent="input.mouseDown($event, index)"
+                  @touchstart.stop.prevent="input.touchStart($event, index)"
+                  @touchend.stop.prevent="onSelect($event, index)"
+                  @touchmove.stop.prevent
+                  @click.stop.prevent="onSelect($event, index)">
+              <i color="white" class="select-on">check_circle</i>
+              <i color="white" class="select-off">radio_button_off</i>
+            </button>
+
+            <button
+                class="input-favorite"
+                @touchstart.stop.prevent="input.touchStart($event, index)"
+                @touchend.stop.prevent="toggleLike($event, index)"
+                @touchmove.stop.prevent
+                @click.stop.prevent="toggleLike($event, index)"
+            >
+              <i v-if="photo.Favorite">favorite</i>
+              <i v-else>favorite_border</i>
+            </button>
+          </div>
         </div>
       </div>
     </v-layout>

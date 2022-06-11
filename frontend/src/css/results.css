@@ -292,6 +292,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .cards-view .input-select,
 #photoprism .mosaic-view .input-select {
+    visibility: hidden;
     opacity: 0.5;
     right: 4px;
     bottom: 4px;
@@ -301,6 +302,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .search-results .result.is-selected .input-select,
 #photoprism .search-results .result:hover .input-hidden,
 #photoprism .search-results .result.is-hidden .input-hidden {
+    visibility: visible;
     opacity: 1;
 }
 
