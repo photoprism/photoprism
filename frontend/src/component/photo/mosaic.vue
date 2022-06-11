@@ -107,8 +107,8 @@
                 <i v-else>favorite_border</i>
               </button>
             </div>
-          </div>
-        </v-hover>
+          </v-hover>
+        </div>
       </div>
     </v-layout>
   </v-container>
