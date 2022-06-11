@@ -68,7 +68,7 @@
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'"
                         class="input-open"
                         @click.stop.prevent="openPhoto(index, true)">
-                    <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</i>
+                    <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                     <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
                     <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
                   </button>
@@ -134,9 +134,13 @@
 import download from "common/download";
 import Notify from "common/notify";
 import {virtualizationTools} from 'common/virtualization-tools';
+import IconLivePhoto from "component/icon/live_photo.vue";
 
 export default {
   name: 'PPhotoList',
+  components: {
+    IconLivePhoto,
+  },
   props: {
     photos: {
       type: Array,

@@ -65,7 +65,7 @@
                     @touchmove.stop.prevent
                     @click.stop.prevent="onOpen($event, index, true)">
                 <i v-if="photo.Type === 'raw'" color="white" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
-                <i v-if="photo.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</i>
+                <i v-if="photo.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                 <i v-if="photo.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</i>
                 <i v-if="photo.Type === 'video'" color="white" class="action-play" :title="$gettext('Video')">play_arrow</i>
                 <i v-if="photo.Type === 'image'" color="white" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
@@ -116,9 +116,13 @@
 <script>
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 import {virtualizationTools} from 'common/virtualization-tools';
+import IconLivePhoto from "component/icon/live_photo.vue";
 
 export default {
   name: 'PPhotoMosaic',
+  components: {
+    IconLivePhoto,
+  },
   props: {
     photos: {
       type: Array,
