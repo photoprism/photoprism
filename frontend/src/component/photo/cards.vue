@@ -118,6 +118,16 @@
               <i class="select-on">lock</i>
             </button>
 
+            <!--
+              We'd usually use v-if here to only render the button if needed.
+              Because the button is supposed to be visible when the result is
+              being hovered over, implementing the v-if would require the use of
+              a <v-hover> element around the result.
+
+              Because rendering the plain HTML-Button is faster than rendering
+              the v-hover component we instead hide the button by default and
+              use css to show it when it is being hovered.
+            -->
             <button
                   class="input-select"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
