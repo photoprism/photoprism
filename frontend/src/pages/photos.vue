@@ -94,7 +94,7 @@ export default {
     }
 
     const batchSize = Photo.batchSize();
-
+    console.log(window.innerHeight * 4);
     return {
       subscriptions: [],
       listen: false,
@@ -102,7 +102,7 @@ export default {
       complete: false,
       results: [],
       scrollDisabled: true,
-      scrollDistance: window.innerHeight * 2,
+      scrollDistance: window.innerHeight * 6,
       batchSize: batchSize,
       offset: 0,
       page: 0,
