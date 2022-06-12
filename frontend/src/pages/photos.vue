@@ -94,7 +94,6 @@ export default {
     }
 
     const batchSize = Photo.batchSize();
-    console.log(window.innerHeight * 4);
     return {
       subscriptions: [],
       listen: false,
