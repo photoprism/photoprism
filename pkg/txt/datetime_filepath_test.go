@@ -61,13 +61,13 @@ func TestDateFromFilePath(t *testing.T) {
 	})
 	t.Run("/2020/1212/20130518_142022_3D657EBD.jpg", func(t *testing.T) {
 		result := DateFromFilePath("/2020/1212/20130518_142022_3D657EBD.jpg")
-		//assert.False(t, result.IsZero())
-		assert.True(t, result.IsZero())
+		assert.False(t, result.IsZero())
+		assert.Equal(t, "2013-05-18 00:00:00 +0000 UTC", result.String())
 	})
 	t.Run("20130518_142022_3D657EBD.jpg", func(t *testing.T) {
 		result := DateFromFilePath("20130518_142022_3D657EBD.jpg")
-		//assert.False(t, result.IsZero())
-		assert.True(t, result.IsZero())
+		assert.False(t, result.IsZero())
+		assert.Equal(t, "2013-05-18 00:00:00 +0000 UTC", result.String())
 	})
 	t.Run("telegram_2020_01_30_09_57_18.jpg", func(t *testing.T) {
 		result := DateFromFilePath("telegram_2020_01_30_09_57_18.jpg")
@@ -237,10 +237,10 @@ func TestDateFromFilePath(t *testing.T) {
 	})
 	t.Run("IMG-20191120-WA0001.jpg", func(t *testing.T) {
 		result := DateFromFilePath("IMG-20191120-WA0001.jpg")
-		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+		assert.Equal(t, "2019-11-20 00:00:00 +0000 UTC", result.String())
 	})
 	t.Run("VID-20191120-WA0001.jpg", func(t *testing.T) {
 		result := DateFromFilePath("VID-20191120-WA0001.jpg")
-		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+		assert.Equal(t, "2019-11-20 00:00:00 +0000 UTC", result.String())
 	})
 }
