@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-30 16:34+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-05-30 16:54+0000\n"
+"Last-Translator: moutasem1989 <moutasem19891@hotmail.com>\n"
 "Language: ar\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,31 +18,26 @@ msgstr ""
 
 #: src/pages/albums.vue:386
 #: src/share/albums.vue:305
-#, fuzzy
 msgid "%{n} albums found"
-msgstr "تم العثور على٪ {n} من الألبومات"
+msgstr "%{n} ألبومات تم العثور عليها"
 
 #: src/dialog/share/upload.vue:76
-#, fuzzy
 msgid "%{n} files uploaded"
-msgstr "تم تحميل٪ {n} من الملفات"
+msgstr "%{n} ملفات تم تحميلها"
 
 #: src/pages/library/files.vue:303
-#, fuzzy
 msgid "%{n} folders found"
 msgstr "تم العثور على٪ {n} مجلدات"
 
 #: src/pages/labels.vue:381
-#, fuzzy
 msgid "%{n} labels found"
-msgstr "تم العثور على٪ {n} من التصنيفات"
+msgstr "تم العثور على٪ {n} تصنيفات"
 
 #: src/pages/people/faces.vue:286
 #: src/pages/people/faces.vue:372
 #: src/pages/people/subjects.vue:470
-#, fuzzy
 msgid "%{n} people found"
-msgstr "تم العثور على٪ {n} من الأشخاص"
+msgstr "تم التعرف على٪ {n} أشخاص"
 
 #: src/pages/album/photos.vue:194
 #: src/pages/album/photos.vue:346
@@ -55,24 +50,20 @@ msgid "%{n} pictures found"
 msgstr "تم العثور على٪ {n} صورة"
 
 #: src/options/options.js:396
-#, fuzzy
 msgid "1 hour"
 msgstr "1 ساعة"
 
 #: src/options/options.js:398
-#, fuzzy
 msgid "12 hours"
 msgstr "12 ساعة"
 
 #: src/options/options.js:397
-#, fuzzy
 msgid "4 hours"
 msgstr "4 ساعات"
 
 #: src/dialog/share.vue:73
-#, fuzzy
 msgid "A click will copy it to your clipboard."
-msgstr "نقرة سوف تنسخه إلى الحافظة الخاصة بك."
+msgstr "نقرة للنسخ إلى الحافظة الخاصة بك."
 
 #: src/component/navigation.vue:426
 #: src/component/navigation.vue:27
@@ -92,52 +83,45 @@ msgstr "هاوية"
 #: src/dialog/share/upload.vue:112
 #: src/model/account.js:98
 #: src/pages/settings.vue:74
-#, fuzzy
 msgid "Account"
 msgstr "الحساب"
 
 #: src/dialog/photo/info.vue:159
 #, fuzzy
 msgid "Accuracy"
-msgstr "دقة"
+msgstr "الدقة"
 
 #: src/dialog/photo/labels.vue:23
-#, fuzzy
 msgid "Action"
-msgstr "عمل"
+msgstr "إجراء"
 
 #: src/dialog/photo/files.vue:28
 #: src/dialog/photo/files.vue:25
-#, fuzzy
 msgid "Actions"
-msgstr "أجراءات"
+msgstr "إجراءات"
 
 #: src/pages/albums.vue:122
 #: src/pages/albums.vue:178
-#, fuzzy
 msgid "Add Album"
 msgstr "أضف البوم"
 
 #: src/pages/settings/general.vue:141
 #, fuzzy
 msgid "Add files to your library via Web Upload."
-msgstr "أضف ملفات إلى مكتبتك عبر تحميل الويب."
+msgstr "أضف ملفات إلى مكتبتك عن طريق التحميل عبر الويب."
 
 #: src/dialog/share.vue:91
-#, fuzzy
 msgid "Add Link"
 msgstr "إضافة رابط"
 
 #: src/pages/albums.vue:96
-#, fuzzy
 msgid "Add pictures from search results by selecting them."
-msgstr "أضف الصور من نتائج البحث عن طريق تحديدها."
+msgstr "أضف صور من نتائج البحث عن طريق تحديدها."
 
 #: src/dialog/account/add.vue:6
 #: src/pages/settings/sync.vue:47
-#, fuzzy
 msgid "Add Server"
-msgstr "أضف الخادم"
+msgstr "أضف خادم"
 
 #: src/component/album/clipboard.vue:136
 #: src/component/file/clipboard.vue:89
@@ -145,9 +129,8 @@ msgstr "أضف الخادم"
 #: src/component/photo/clipboard.vue:192
 #: src/component/subject/clipboard.vue:89
 #: src/dialog/photo/album.vue:20
-#, fuzzy
 msgid "Add to album"
-msgstr "أضف إلى الألبوم"
+msgstr "أضف إلى ألبوم"
 
 #: src/dialog/photo/files.vue:189
 #: src/dialog/photo/files.vue:186
@@ -161,56 +144,46 @@ msgid "Advanced"
 msgstr "متقدم"
 
 #: src/options/options.js:406
-#, fuzzy
 msgid "After 1 day"
 msgstr "بعد يوم واحد"
 
 #: src/options/options.js:407
-#, fuzzy
 msgid "After 3 days"
 msgstr "بعد 3 ايام"
 
 #: src/options/options.js:408
-#, fuzzy
 msgid "After 7 days"
 msgstr "بعد 7 أيام"
 
 #: src/options/options.js:410
-#, fuzzy
 msgid "After one month"
 msgstr "بعد شهر واحد"
 
 #: src/options/options.js:412
-#, fuzzy
 msgid "After one year"
 msgstr "بعد سنة"
 
 #: src/pages/albums.vue:40
 #: src/pages/albums.vue:1
-#, fuzzy
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr ""
 "بعد تحديد الصور من نتائج البحث ، يمكنك إضافتها إلى ألبوم باستخدام قائمة "
 "السياق."
 
 #: src/options/options.js:411
-#, fuzzy
 msgid "After two months"
 msgstr "بعد شهرين"
 
 #: src/options/options.js:409
-#, fuzzy
 msgid "After two weeks"
 msgstr "بعد أسبوعين"
 
 #: src/model/album.js:229
-#, fuzzy
 msgid "Album"
 msgstr "البوم"
 
 #: src/dialog/photo/album.vue:71
 #: src/dialog/photo/album.vue:79
-#, fuzzy
 msgid "Album Name"
 msgstr "اسم الألبوم"
 
@@ -221,12 +194,10 @@ msgstr "اسم الألبوم"
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:737
 #: src/share/albums.vue:4
-#, fuzzy
 msgid "Albums"
 msgstr "ألبومات"
 
 #: src/component/album/clipboard.vue:77
-#, fuzzy
 msgid "Albums deleted"
 msgstr "تم حذف الألبومات"
 
@@ -237,18 +208,15 @@ msgid "All %{n} albums loaded"
 msgstr "تم تحميل كافة الألبومات الـ٪ {n}"
 
 #: src/pages/labels.vue:246
-#, fuzzy
 msgid "All %{n} labels loaded"
-msgstr "تم تحميل كافة٪ {n} تسميات"
+msgstr "تم تحميل كافة التسميات الـ٪ {n}"
 
 #: src/pages/people/subjects.vue:333
-#, fuzzy
 msgid "All %{n} people loaded"
-msgstr "تم تحميل جميع الـ٪ {n} من الأشخاص"
+msgstr "تم تحميل جميع الأشخاص الـ٪ {n}"
 
 #: src/component/album/toolbar.vue:36
 #: src/component/photo/toolbar.vue:36
-#, fuzzy
 msgid "All Cameras"
 msgstr "جميع الكاميرات"
 
@@ -257,56 +225,46 @@ msgstr "جميع الكاميرات"
 #: src/pages/albums.vue:494
 #: src/share/albums.vue:27
 #: src/share/albums.vue:410
-#, fuzzy
 msgid "All Categories"
 msgstr "جميع الفئات"
 
 #: src/component/photo/toolbar.vue:38
-#, fuzzy
 msgid "All Colors"
 msgstr "جميع الالوان"
 
 #: src/component/album/toolbar.vue:40
 #: src/component/photo/toolbar.vue:35
-#, fuzzy
 msgid "All Countries"
 msgstr "كل البلدان"
 
 #: src/pages/about/feedback.vue:31
-#, fuzzy
 msgid "All fields are required"
 msgstr "جميع الحقول مطلوبة"
 
 #: src/pages/library/import.vue:12
-#, fuzzy
 msgid "All files from import folder"
 msgstr "جميع الملفات من مجلد الاستيراد"
 
 #: src/component/photo/toolbar.vue:37
-#, fuzzy
 msgid "All Lenses"
 msgstr "جميع العدسات"
 
 #: src/component/photo/toolbar.vue:40
-#, fuzzy
 msgid "All Months"
 msgstr "كل الشهور"
 
 #: src/pages/library/index.vue:12
-#, fuzzy
 msgid "All originals"
 msgstr "جميع النسخ الأصلية"
 
 #: src/component/photo/toolbar.vue:41
-#, fuzzy
 msgid "All Years"
 msgstr "جميع السنوات"
 
 #: src/pages/about/about.vue:34
-#, fuzzy
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
 msgstr ""
-"أيضًا ، يرجى ترك نجمة على GitHub إذا كنت تحب هذا المشروع. يوفر دافعًا إضافيً"
+"أيضًا ، يرجى ترك نجمة على GitHub إذا كنت تحب هذا المشروع لتوفير دافعًا إضافيً"
 "ا للاستمرار."
 
 #: src/dialog/share.vue:75
@@ -343,94 +301,79 @@ msgstr "حدث خطأ - هل أنت غير متصل؟"
 #: src/share/photo/mosaic.vue:182
 #, fuzzy
 msgid "Animated"
-msgstr "مفعم بالحيوية"
+msgstr "متحرك"
 
 #: src/pages/settings/general.vue:533
 #, fuzzy
 msgid "Animation"
-msgstr "الرسوم المتحركة"
+msgstr "حركة"
 
 #: src/dialog/share.vue:74
-#, fuzzy
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "تظل أي صور ومقاطع فيديو خاصة خاصة ولن تتم مشاركتها."
+msgstr "أي صور ومقاطع فيديو خاصة تبقى خاصة ولن تتم مشاركتها."
 
 #: src/dialog/account/edit.vue:477
-#, fuzzy
 msgid "API Key"
 msgstr "مفتاح API"
 
 #: src/dialog/photo/details.vue:117
-#, fuzzy
 msgid "Apply"
-msgstr "يتقدم"
+msgstr "تطبيق"
 
 #: src/component/photo/cards.vue:458
 #: src/component/photo/clipboard.vue:100
 #: src/dialog/photo/details.vue:116
-#, fuzzy
 msgid "Approve"
-msgstr "يوافق"
+msgstr "موافق"
 
 #: src/app/routes.js:209
 #: src/component/navigation.vue:151
 #: src/component/photo/cards.vue:429
 #: src/component/photo/clipboard.vue:216
 #: src/pages/settings/general.vue:294
-#, fuzzy
 msgid "Archive"
 msgstr "أرشيف"
 
 #: src/dialog/photo/info.vue:199
-#, fuzzy
 msgid "Archived"
 msgstr "مؤرشف"
 
 #: src/dialog/photo/archive.vue:10
-#, fuzzy
 msgid "Are you sure you want to archive the selection?"
 msgstr "هل أنت متأكد أنك تريد أرشفة التحديد؟"
 
 #: src/dialog/album/delete.vue:10
-#, fuzzy
 msgid "Are you sure you want to delete these albums?"
 msgstr "هل أنت متأكد أنك تريد حذف هذه الألبومات؟"
 
 #: src/dialog/label/delete.vue:10
-#, fuzzy
 msgid "Are you sure you want to delete these labels?"
 msgstr "هل أنت متأكد أنك تريد حذف هذه التصنيفات؟"
 
 #: src/dialog/account/remove.vue:10
-#, fuzzy
 msgid "Are you sure you want to delete this account?"
 msgstr "هل أنت متأكد أنك تريد حذف هذا الحساب؟"
 
 #: src/dialog/photo/delete.vue:10
-#, fuzzy
 msgid "Are you sure you want to permanently delete these pictures?"
 msgstr "هل أنت متأكد أنك تريد حذف هذه الصور نهائيًا؟"
 
 #: src/dialog/file/delete.vue:10
-#, fuzzy
 msgid "Are you sure you want to permanently delete this file?"
 msgstr "هل أنت متأكد أنك تريد حذف هذا الملف نهائيًا؟"
 
 #: src/dialog/confirm.vue:10
-#, fuzzy
 msgid "Are you sure?"
 msgstr "هل أنت واثق؟"
 
 #: src/dialog/photo/details.vue:497
-#, fuzzy
 msgid "Artist"
 msgstr "فنان"
 
 #: src/dialog/photo/files.vue:149
 #: src/dialog/photo/files.vue:146
-#, fuzzy
 msgid "Aspect Ratio"
-msgstr "ابعاد متزنة"
+msgstr "نسبة العرض إلى الارتفاع"
 
 #: src/pages/settings/library.vue:114
 #, fuzzy
