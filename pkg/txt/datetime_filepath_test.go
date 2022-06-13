@@ -61,13 +61,11 @@ func TestDateFromFilePath(t *testing.T) {
 	})
 	t.Run("/2020/1212/20130518_142022_3D657EBD.jpg", func(t *testing.T) {
 		result := DateFromFilePath("/2020/1212/20130518_142022_3D657EBD.jpg")
-		assert.False(t, result.IsZero())
-		assert.Equal(t, "2013-05-18 00:00:00 +0000 UTC", result.String())
+		assert.True(t, result.IsZero(), "\"/2020/1212/20130518_142022_3D657EBD.jpg\" should not generate a valid Date. This is the filename which PhotoPrism generates when importing photos")
 	})
 	t.Run("20130518_142022_3D657EBD.jpg", func(t *testing.T) {
 		result := DateFromFilePath("20130518_142022_3D657EBD.jpg")
-		assert.False(t, result.IsZero())
-		assert.Equal(t, "2013-05-18 00:00:00 +0000 UTC", result.String())
+		assert.True(t, result.IsZero(), "\"20130518_142022_3D657EBD.jpg\" should not generate a valid Date. This is the filename which PhotoPrism generates when importing photos")
 	})
 	t.Run("telegram_2020_01_30_09_57_18.jpg", func(t *testing.T) {
 		result := DateFromFilePath("telegram_2020_01_30_09_57_18.jpg")
