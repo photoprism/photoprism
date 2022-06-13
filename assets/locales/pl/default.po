@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-19 14:34+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-06-10 21:36+0000\n"
+"Last-Translator: Przemysław Romanik <github@rom4nik.pl>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
 "backend/pl/>\n"
 "Language: pl\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.12.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "Nieoczekiwany błąd, spróbuj ponownie"
@@ -120,10 +120,8 @@ msgstr "Nieprawidłowy link"
 msgid "Invalid name"
 msgstr "Nieprawidłowa nazwa"
 
-#, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
-msgstr "Hasło nieprawidłowe, spróbuj ponownie"
+msgstr "Zajęty, spróbuj ponownie później"
 
 msgid "Changes successfully saved"
 msgstr "Zmiany zostały pomyślnie zapisane"
@@ -233,9 +231,9 @@ msgstr "Osoba zapisana"
 msgid "Person deleted"
 msgstr "Osoba usunięta"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d files uploaded in %d s"
-msgstr "%d files uploaded in %d s"
+msgstr "%d plików przesłano w %d s"
 
 msgid "Selection approved"
 msgstr "Wybór zatwierdzony"
