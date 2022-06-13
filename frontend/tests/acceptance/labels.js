@@ -57,6 +57,7 @@ test.meta("testID", "labels-001").meta({ type: "smoke" })(
     await toolbar.search("test");
     const LabelTest = await label.getNthLabeltUid(0);
     await label.openLabelWithUid(LabelTest);
+    await toolbar.setFilter("view", "Cards");
     await t
       .click(page.cardTitle.withAttribute("data-uid", PhotoBeaconUid))
       .click(photoedit.labelsTab)
@@ -131,6 +132,7 @@ test.meta("testID", "labels-003")("Rename Label", async (t) => {
   await toolbar.search("horse");
   await album.checkAlbumVisibility(LabelZebraUid, true);
   await label.openLabelWithUid(LabelZebraUid);
+  await toolbar.setFilter("view", "Cards");
   await photo.checkPhotoVisibility(FirstPhotoZebraUid, true);
   await t
     .click(page.cardTitle.withAttribute("data-uid", FirstPhotoZebraUid))

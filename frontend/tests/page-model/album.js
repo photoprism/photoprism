@@ -17,11 +17,21 @@ export default class Page {
 
   async getAlbumCount(type) {
     if (type === "all") {
-      const AlbumCount = await Selector("a.is-album", { timeout: 5000 }).count;
-      return AlbumCount;
+      if (t.browser.platform === "mobile") {
+        const AlbumCount = await Selector("a.is-album", { timeout: 8000 }).count;
+        return AlbumCount;
+      } else {
+        const AlbumCount = await Selector("a.is-album", { timeout: 5000 }).count;
+        return AlbumCount;
+      }
     } else {
-      const AlbumCount = await Selector("a.type-" + type, { timeout: 5000 }).count;
-      return AlbumCount;
+      if (t.browser.platform === "mobile") {
+        const AlbumCount = await Selector("a.type-" + type, { timeout: 8000 }).count;
+        return AlbumCount;
+      } else {
+        const AlbumCount = await Selector("a.type-" + type, { timeout: 5000 }).count;
+        return AlbumCount;
+      }
     }
   }
 

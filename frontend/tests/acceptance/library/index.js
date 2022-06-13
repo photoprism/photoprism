@@ -46,7 +46,6 @@ test.meta("testID", "library-index-001").meta({ type: "smoke" })(
 
     await menu.openPage("states");
     if (t.browser.platform === "mobile") {
-      console.log(t.browser.platform);
       await t.navigateTo("/states?q=KwaZulu");
     } else {
       await toolbar.search("KwaZulu");
@@ -73,7 +72,11 @@ test.meta("testID", "library-index-001").meta({ type: "smoke" })(
     await t.expect(Selector("span").withText("Done.").visible, { timeout: 60000 }).ok();
 
     await menu.openPage("labels");
-    await toolbar.triggerToolbarAction("reload");
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
     await toolbar.search("cheetah");
 
     await t.expect(Selector(".is-label").visible).ok();
@@ -89,9 +92,12 @@ test.meta("testID", "library-index-001").meta({ type: "smoke" })(
       .ok();
 
     await menu.openPage("calendar");
-    await toolbar.triggerToolbarAction("reload");
     if (t.browser.platform === "mobile") {
-      console.log(t.browser.platform);
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
+    if (t.browser.platform === "mobile") {
       await t.navigateTo("/calendar?q=December%202013");
     } else {
       await toolbar.search("December 2013");
@@ -100,9 +106,12 @@ test.meta("testID", "library-index-001").meta({ type: "smoke" })(
     await t.expect(Selector(".is-album").visible).ok();
 
     await menu.openPage("folders");
-    await toolbar.triggerToolbarAction("reload");
     if (t.browser.platform === "mobile") {
-      console.log(t.browser.platform);
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
+    if (t.browser.platform === "mobile") {
       await t.navigateTo("/folders?q=moment");
     } else {
       await toolbar.search("Moment");
@@ -112,7 +121,6 @@ test.meta("testID", "library-index-001").meta({ type: "smoke" })(
 
     await menu.openPage("states");
     if (t.browser.platform === "mobile") {
-      console.log(t.browser.platform);
       await t.navigateTo("/states?q=KwaZulu");
     } else {
       await toolbar.search("KwaZulu");
