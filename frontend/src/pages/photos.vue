@@ -94,6 +94,7 @@ export default {
     }
 
     const batchSize = Photo.batchSize();
+
     return {
       subscriptions: [],
       listen: false,
