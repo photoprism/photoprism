@@ -30,7 +30,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/cpuid/v2 v2.0.12
+	github.com/klauspost/cpuid/v2 v2.0.13
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.8.0 // indirect
@@ -47,7 +47,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/sirupsen/logrus v1.8.1
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.7.2
 	github.com/studio-b12/gowebdav v0.0.0-20211106090535-29e74efa701f
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.14.1
@@ -55,7 +55,7 @@ require (
 	github.com/urfave/cli v1.22.9
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
-	golang.org/x/net v0.0.0-20220526153639-5463443f8c37
+	golang.org/x/net v0.0.0-20220607020251-c690dde0001d
 	gonum.org/v1/gonum v0.11.0
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
@@ -64,7 +64,7 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20220206211657-0a94163c4677 // indirect
-	golang.org/x/image v0.0.0-20220413100746-70e8d0d3baa9
+	golang.org/x/image v0.0.0-20220601225756-64ec528b34cd
 )
 
 require (
@@ -94,7 +94,7 @@ require (
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 go 1.17
