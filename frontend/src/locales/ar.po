@@ -2,22 +2,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-05-30 16:54+0000\n"
-"Last-Translator: moutasem1989 <moutasem19891@hotmail.com>\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-06-14 13:22+0200\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"Language-Team: \n"
 "Language: ar\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.12.2\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Poedit 3.0.1\n"
 "Generated-By: easygettext\n"
 
-#: src/dialog/photo/labels.vue:164
-msgid ""
-msgstr ""
-
-#: src/pages/albums.vue:386
-#: src/share/albums.vue:305
+#: src/pages/albums.vue:386 src/share/albums.vue:305
 msgid "%{n} albums found"
 msgstr "%{n} ألبومات تم العثور عليها"
 
@@ -33,19 +30,12 @@ msgstr "تم العثور على٪ {n} مجلدات"
 msgid "%{n} labels found"
 msgstr "تم العثور على٪ {n} تصنيفات"
 
-#: src/pages/people/faces.vue:286
-#: src/pages/people/faces.vue:372
-#: src/pages/people/subjects.vue:470
+#: src/pages/people/faces.vue:286 src/pages/people/faces.vue:372 src/pages/people/subjects.vue:470
 msgid "%{n} people found"
 msgstr "تم التعرف على٪ {n} أشخاص"
 
-#: src/pages/album/photos.vue:194
-#: src/pages/album/photos.vue:346
-#: src/pages/photos.vue:241
-#: src/pages/photos.vue:386
-#: src/share/photos.vue:209
+#: src/pages/album/photos.vue:194 src/pages/album/photos.vue:346 src/pages/photos.vue:241 src/pages/photos.vue:386 src/share/photos.vue:209
 #: src/share/photos.vue:354
-#, fuzzy
 msgid "%{n} pictures found"
 msgstr "تم العثور على٪ {n} صورة"
 
@@ -65,29 +55,19 @@ msgstr "4 ساعات"
 msgid "A click will copy it to your clipboard."
 msgstr "نقرة للنسخ إلى الحافظة الخاصة بك."
 
-#: src/component/navigation.vue:426
-#: src/component/navigation.vue:27
-#: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:179
-#: src/pages/help.vue:45
-#, fuzzy
+#: src/component/navigation.vue:426 src/component/navigation.vue:27 src/pages/about/about.vue:4 src/pages/about/about.vue:179 src/pages/help.vue:45
 msgid "About"
 msgstr "حول"
 
 #: src/options/options.js:229
-#, fuzzy
 msgid "Abyss"
 msgstr "هاوية"
 
-#: src/component/navigation.vue:73
-#: src/dialog/share/upload.vue:112
-#: src/model/account.js:98
-#: src/pages/settings.vue:74
+#: src/component/navigation.vue:73 src/dialog/share/upload.vue:112 src/model/account.js:98 src/pages/settings.vue:74
 msgid "Account"
 msgstr "الحساب"
 
 #: src/dialog/photo/info.vue:159
-#, fuzzy
 msgid "Accuracy"
 msgstr "الدقة"
 
@@ -95,18 +75,15 @@ msgstr "الدقة"
 msgid "Action"
 msgstr "إجراء"
 
-#: src/dialog/photo/files.vue:28
-#: src/dialog/photo/files.vue:25
+#: src/dialog/photo/files.vue:28 src/dialog/photo/files.vue:25
 msgid "Actions"
 msgstr "إجراءات"
 
-#: src/pages/albums.vue:122
-#: src/pages/albums.vue:178
+#: src/pages/albums.vue:122 src/pages/albums.vue:178
 msgid "Add Album"
 msgstr "أضف البوم"
 
 #: src/pages/settings/general.vue:141
-#, fuzzy
 msgid "Add files to your library via Web Upload."
 msgstr "أضف ملفات إلى مكتبتك عن طريق التحميل عبر الويب."
 
@@ -118,28 +95,20 @@ msgstr "إضافة رابط"
 msgid "Add pictures from search results by selecting them."
 msgstr "أضف صور من نتائج البحث عن طريق تحديدها."
 
-#: src/dialog/account/add.vue:6
-#: src/pages/settings/sync.vue:47
+#: src/dialog/account/add.vue:6 src/pages/settings/sync.vue:47
 msgid "Add Server"
 msgstr "أضف خادم"
 
-#: src/component/album/clipboard.vue:136
-#: src/component/file/clipboard.vue:89
-#: src/component/label/clipboard.vue:67
-#: src/component/photo/clipboard.vue:192
-#: src/component/subject/clipboard.vue:89
-#: src/dialog/photo/album.vue:20
+#: src/component/album/clipboard.vue:136 src/component/file/clipboard.vue:89 src/component/label/clipboard.vue:67 src/component/photo/clipboard.vue:192
+#: src/component/subject/clipboard.vue:89 src/dialog/photo/album.vue:20
 msgid "Add to album"
 msgstr "أضف إلى ألبوم"
 
-#: src/dialog/photo/files.vue:189
-#: src/dialog/photo/files.vue:186
-#, fuzzy
+#: src/dialog/photo/files.vue:189 src/dialog/photo/files.vue:186
 msgid "Added"
 msgstr "مضاف"
 
 #: src/pages/settings.vue:52
-#, fuzzy
 msgid "Advanced"
 msgstr "متقدم"
 
@@ -163,12 +132,9 @@ msgstr "بعد شهر واحد"
 msgid "After one year"
 msgstr "بعد سنة"
 
-#: src/pages/albums.vue:40
-#: src/pages/albums.vue:1
+#: src/pages/albums.vue:40 src/pages/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr ""
-"بعد تحديد الصور من نتائج البحث ، يمكنك إضافتها إلى ألبوم باستخدام قائمة "
-"السياق."
+msgstr "بعد تحديد الصور من نتائج البحث ، يمكنك إضافتها إلى ألبوم باستخدام قائمة السياق."
 
 #: src/options/options.js:411
 msgid "After two months"
@@ -182,18 +148,12 @@ msgstr "بعد أسبوعين"
 msgid "Album"
 msgstr "البوم"
 
-#: src/dialog/photo/album.vue:71
-#: src/dialog/photo/album.vue:79
+#: src/dialog/photo/album.vue:71 src/dialog/photo/album.vue:79
 msgid "Album Name"
 msgstr "اسم الألبوم"
 
-#: src/app/routes.js:128
-#: src/app/routes.js:135
-#: src/component/navigation.vue:164
-#: src/component/navigation.vue:174
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:737
-#: src/share/albums.vue:4
+#: src/app/routes.js:128 src/app/routes.js:135 src/component/navigation.vue:164 src/component/navigation.vue:174 src/component/navigation.vue:4
+#: src/component/navigation.vue:737 src/share/albums.vue:4
 msgid "Albums"
 msgstr "ألبومات"
 
@@ -201,9 +161,7 @@ msgstr "ألبومات"
 msgid "Albums deleted"
 msgstr "تم حذف الألبومات"
 
-#: src/pages/albums.vue:263
-#: src/share/albums.vue:220
-#, fuzzy
+#: src/pages/albums.vue:263 src/share/albums.vue:220
 msgid "All %{n} albums loaded"
 msgstr "تم تحميل كافة الألبومات الـ٪ {n}"
 
@@ -215,16 +173,11 @@ msgstr "تم تحميل كافة التسميات الـ٪ {n}"
 msgid "All %{n} people loaded"
 msgstr "تم تحميل جميع الأشخاص الـ٪ {n}"
 
-#: src/component/album/toolbar.vue:36
-#: src/component/photo/toolbar.vue:36
+#: src/component/album/toolbar.vue:36 src/component/photo/toolbar.vue:36
 msgid "All Cameras"
 msgstr "جميع الكاميرات"
 
-#: src/component/photo/toolbar.vue:39
-#: src/pages/albums.vue:29
-#: src/pages/albums.vue:494
-#: src/share/albums.vue:27
-#: src/share/albums.vue:410
+#: src/component/photo/toolbar.vue:39 src/pages/albums.vue:29 src/pages/albums.vue:494 src/share/albums.vue:27 src/share/albums.vue:410
 msgid "All Categories"
 msgstr "جميع الفئات"
 
@@ -232,8 +185,7 @@ msgstr "جميع الفئات"
 msgid "All Colors"
 msgstr "جميع الالوان"
 
-#: src/component/album/toolbar.vue:40
-#: src/component/photo/toolbar.vue:35
+#: src/component/album/toolbar.vue:40 src/component/photo/toolbar.vue:35
 msgid "All Countries"
 msgstr "كل البلدان"
 
@@ -263,48 +215,31 @@ msgstr "جميع السنوات"
 
 #: src/pages/about/about.vue:34
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr ""
-"أيضًا ، يرجى ترك نجمة على GitHub إذا كنت تحب هذا المشروع لتوفير دافعًا إضافيً"
-"ا للاستمرار."
+msgstr "أيضًا ، يرجى ترك نجمة على GitHub إذا كنت تحب هذا المشروع لتوفير دافعًا إضافيًا للاستمرار."
 
 #: src/dialog/share.vue:75
-#, fuzzy
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr ""
-"بدلاً من ذلك ، يمكنك تحميل الملفات مباشرة إلى خوادم WebDAV مثل Nextcloud."
+msgstr "بدلاً من ذلك ، يمكنك تحميل الملفات مباشرة إلى خوادم WebDAV مثل Nextcloud."
 
 #: src/dialog/photo/info.vue:151
-#, fuzzy
 msgid "Altitude"
 msgstr "ارتفاع"
 
 #: src/dialog/photo/details.vue:267
-#, fuzzy
 msgid "Altitude (m)"
 msgstr "الارتفاع (م)"
 
 #: src/common/api.js:100
-#, fuzzy
 msgid "An error occurred - are you offline?"
 msgstr "حدث خطأ - هل أنت غير متصل؟"
 
-#: src/component/navigation.vue:118
-#: src/component/photo/cards.vue:228
-#: src/component/photo/cards.vue:544
-#: src/component/photo/list.vue:197
-#: src/component/photo/mosaic.vue:201
-#: src/model/file.js:210
-#: src/options/options.js:331
-#: src/share/photo/cards.vue:201
-#: src/share/photo/cards.vue:376
-#: src/share/photo/list.vue:176
-#: src/share/photo/mosaic.vue:182
-#, fuzzy
+#: src/component/navigation.vue:118 src/component/photo/cards.vue:228 src/component/photo/cards.vue:544 src/component/photo/list.vue:197
+#: src/component/photo/mosaic.vue:201 src/model/file.js:210 src/options/options.js:331 src/share/photo/cards.vue:201 src/share/photo/cards.vue:376
+#: src/share/photo/list.vue:176 src/share/photo/mosaic.vue:182
 msgid "Animated"
 msgstr "متحرك"
 
 #: src/pages/settings/general.vue:533
-#, fuzzy
 msgid "Animation"
 msgstr "حركة"
 
@@ -320,16 +255,11 @@ msgstr "مفتاح API"
 msgid "Apply"
 msgstr "تطبيق"
 
-#: src/component/photo/cards.vue:458
-#: src/component/photo/clipboard.vue:100
-#: src/dialog/photo/details.vue:116
+#: src/component/photo/cards.vue:458 src/component/photo/clipboard.vue:100 src/dialog/photo/details.vue:116
 msgid "Approve"
 msgstr "موافق"
 
-#: src/app/routes.js:209
-#: src/component/navigation.vue:151
-#: src/component/photo/cards.vue:429
-#: src/component/photo/clipboard.vue:216
+#: src/app/routes.js:209 src/component/navigation.vue:151 src/component/photo/cards.vue:429 src/component/photo/clipboard.vue:216
 #: src/pages/settings/general.vue:294
 msgid "Archive"
 msgstr "أرشيف"
@@ -370,2914 +300,1942 @@ msgstr "هل أنت واثق؟"
 msgid "Artist"
 msgstr "فنان"
 
-#: src/dialog/photo/files.vue:149
-#: src/dialog/photo/files.vue:146
+#: src/dialog/photo/files.vue:149 src/dialog/photo/files.vue:146
 msgid "Aspect Ratio"
 msgstr "نسبة العرض إلى الارتفاع"
 
 #: src/pages/settings/library.vue:114
-#, fuzzy
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr ""
-"قم بإنشاء ملفات JPEG تلقائيًا لأنواع الملفات الأخرى بحيث يمكن عرضها في "
-"المستعرض."
+msgstr "قم بإنشاء ملفات JPEG تلقائيًا لأنواع الملفات الأخرى بحيث يمكن عرضها في المستعرض."
 
 #: src/pages/settings/general.vue:361
-#, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "يقوم تلقائيًا بإنشاء ألبومات للحظات الخاصة والرحلات والأماكن."
 
-#: src/dialog/sponsor.vue:7
-#: src/pages/about/about.vue:23
-#: src/pages/auth/login.vue:44
-#, fuzzy
+#: src/dialog/sponsor.vue:7 src/pages/about/about.vue:23 src/pages/auth/login.vue:44
 msgid "Become a sponsor"
 msgstr "كن راعياً"
 
 #: src/pages/about/about.vue:42
-#, fuzzy
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr ""
-"قبل تقديم طلب دعم ، يرجى استخدام قوائم التحقق الخاصة باستكشاف الأخطاء "
-"وإصلاحها لتحديد سبب مشكلتك."
+msgstr "قبل تقديم طلب دعم ، يرجى استخدام قوائم التحقق الخاصة باستكشاف الأخطاء وإصلاحها لتحديد سبب مشكلتك."
 
 #: src/pages/people/subjects.vue:433
-#, fuzzy
 msgid "Bio"
 msgstr "السيرة الذاتية"
 
 #: src/options/options.js:431
-#, fuzzy
 msgid "Black"
 msgstr "أسود"
 
 #: src/options/options.js:444
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "بلاكمان: تعديل Lanczos ، قطع أثرية أقل رنين"
 
 #: src/options/options.js:427
-#, fuzzy
 msgid "Blue"
 msgstr "أزرق"
 
 #: src/options/options.js:428
-#, fuzzy
 msgid "Brown"
 msgstr "بني"
 
 #: src/pages/settings/general.vue:383
-#, fuzzy
 msgid "Browse and edit image classification labels."
 msgstr "تصفح وتحرير تسميات تصنيف الصورة."
 
 #: src/pages/settings/general.vue:317
-#, fuzzy
 msgid "Browse indexed files and folders in Library."
 msgstr "تصفح الملفات والمجلدات المفهرسة في المكتبة."
 
 #: src/options/options.js:438
-#, fuzzy
 msgid "Bug Report"
 msgstr "تقرير الشوائب"
 
 #: src/common/notify.js:94
-#, fuzzy
 msgid "Busy, please wait…"
 msgstr "مشغول ، الرجاء الانتظار …"
 
-#: src/app/routes.js:141
-#: src/app/routes.js:148
-#: src/component/navigation.vue:270
-#: src/component/navigation.vue:1099
-#, fuzzy
+#: src/app/routes.js:141 src/app/routes.js:148 src/component/navigation.vue:270 src/component/navigation.vue:1099
 msgid "Calendar"
 msgstr "تقويم"
 
-#: src/component/photo/cards.vue:557
-#: src/component/photo/list.vue:57
-#: src/component/photo/toolbar.vue:208
-#: src/dialog/photo/details.vue:335
-#: src/share/photo/cards.vue:388
-#: src/share/photo/list.vue:53
-#, fuzzy
+#: src/component/photo/cards.vue:557 src/component/photo/list.vue:57 src/component/photo/toolbar.vue:208 src/dialog/photo/details.vue:335
+#: src/share/photo/cards.vue:388 src/share/photo/list.vue:53
 msgid "Camera"
 msgstr "آلة تصوير"
 
 #: src/dialog/photo/info.vue:79
-#, fuzzy
 msgid "Camera Serial"
 msgstr "المسلسل الكاميرا"
 
-#: src/pages/album/photos.vue:200
-#: src/pages/photos.vue:247
-#: src/share/photos.vue:215
-#, fuzzy
+#: src/pages/album/photos.vue:200 src/pages/photos.vue:247 src/share/photos.vue:215
 msgid "Can't load more, limit reached"
 msgstr "لا يمكن تحميل المزيد ، تم الوصول إلى الحد الأقصى"
 
-#: src/common/clipboard.js:100
-#: src/common/clipboard.js:137
-#: src/pages/albums.vue:434
-#: src/pages/albums.vue:450
-#: src/pages/labels.vue:178
-#: src/pages/labels.vue:194
-#: src/pages/library/files.vue:193
-#: src/pages/library/files.vue:209
-#: src/pages/people/faces.vue:215
-#: src/pages/people/faces.vue:231
-#: src/pages/people/subjects.vue:267
-#: src/pages/people/subjects.vue:283
-#: src/share/albums.vue:350
-#: src/share/albums.vue:366
-#, fuzzy
+#: src/common/clipboard.js:100 src/common/clipboard.js:137 src/pages/albums.vue:434 src/pages/albums.vue:450 src/pages/labels.vue:178 src/pages/labels.vue:194
+#: src/pages/library/files.vue:193 src/pages/library/files.vue:209 src/pages/people/faces.vue:215 src/pages/people/faces.vue:231 src/pages/people/subjects.vue:267
+#: src/pages/people/subjects.vue:283 src/share/albums.vue:350 src/share/albums.vue:366
 msgid "Can't select more items"
 msgstr "لا يمكن تحديد المزيد من العناصر"
 
-#: src/dialog/account/add.vue:17
-#: src/dialog/account/edit.vue:102
-#: src/dialog/account/remove.vue:15
-#: src/dialog/album/delete.vue:15
-#: src/dialog/album/edit.vue:42
-#: src/dialog/confirm.vue:15
-#: src/dialog/file/delete.vue:15
-#: src/dialog/label/delete.vue:15
-#: src/dialog/photo/album.vue:14
-#: src/dialog/photo/delete.vue:15
-#: src/dialog/reload.vue:11
-#: src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29
-#: src/pages/library/import.vue:34
-#: src/pages/library/index.vue:27
-#, fuzzy
+#: src/dialog/account/add.vue:17 src/dialog/account/edit.vue:102 src/dialog/account/remove.vue:15 src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:42
+#: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:14 src/dialog/photo/delete.vue:15
+#: src/dialog/reload.vue:11 src/dialog/share.vue:25 src/dialog/share/upload.vue:29 src/pages/library/import.vue:34 src/pages/library/index.vue:27
 msgid "Cancel"
 msgstr "يلغي"
 
-#: src/component/album/toolbar.vue:51
-#: src/component/photo/toolbar.vue:46
-#, fuzzy
+#: src/component/album/toolbar.vue:51 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "البطاقات"
 
-#: src/component/photo/toolbar.vue:344
-#: src/dialog/album/edit.vue:162
-#: src/pages/about/feedback.vue:108
-#: src/pages/albums.vue:129
-#, fuzzy
+#: src/component/photo/toolbar.vue:344 src/dialog/album/edit.vue:162 src/pages/about/feedback.vue:108 src/pages/albums.vue:129
 msgid "Category"
 msgstr "فئة"
 
 #: src/pages/settings/account.vue:26
-#, fuzzy
 msgid "Change"
 msgstr "يتغيرون"
 
 #: src/pages/settings/general.vue:185
-#, fuzzy
 msgid "Change photo titles, locations, and other metadata."
 msgstr "قم بتغيير عناوين الصور والمواقع والبيانات الوصفية الأخرى."
 
 #: src/component/photo/clipboard.vue:146
-#, fuzzy
 msgid "Change private flag"
 msgstr "تغيير العلم الخاص"
 
 #: src/dialog/photo/info.vue:191
-#, fuzzy
 msgid "Checked"
 msgstr "التحقق"
 
-#: src/dialog/photo/files.vue:175
-#: src/dialog/photo/files.vue:172
-#, fuzzy
+#: src/dialog/photo/files.vue:175 src/dialog/photo/files.vue:172
 msgid "Chroma"
 msgstr "كروما"
 
-#: src/component/photo-viewer.vue:79
-#: src/dialog/photo/details.vue:113
-#: src/dialog/share.vue:87
-#: src/pages/library/errors.vue:60
-#, fuzzy
+#: src/component/photo-viewer.vue:79 src/dialog/photo/details.vue:113 src/dialog/share.vue:87 src/pages/library/errors.vue:60
 msgid "Close"
 msgstr "قريب"
 
-#: src/dialog/photo/files.vue:95
-#: src/dialog/photo/files.vue:92
-#, fuzzy
+#: src/dialog/photo/files.vue:95 src/dialog/photo/files.vue:92
 msgid "Codec"
 msgstr "ترميز"
 
 #: src/component/photo/toolbar.vue:321
-#, fuzzy
 msgid "Color"
 msgstr "اللون"
 
-#: src/dialog/photo/files.vue:163
-#: src/dialog/photo/files.vue:160
-#, fuzzy
+#: src/dialog/photo/files.vue:163 src/dialog/photo/files.vue:160
 msgid "Color Profile"
 msgstr "ملف تعريف اللون"
 
 #: src/pages/discover.vue:4
-#, fuzzy
 msgid "Colors"
 msgstr "الألوان"
 
 #: src/pages/library/index.vue:123
-#, fuzzy
 msgid "Complete Rescan"
 msgstr "إعادة تفحص كاملة"
 
 #: src/dialog/photo/labels.vue:22
-#, fuzzy
 msgid "Confidence"
 msgstr "الثقة"
 
 #: src/dialog/account/add.vue:18
-#, fuzzy
 msgid "Connect"
 msgstr "الاتصال"
 
-#: src/dialog/webdav.vue:4
-#: src/pages/settings/sync.vue:43
-#, fuzzy
+#: src/dialog/webdav.vue:4 src/pages/settings/sync.vue:43
 msgid "Connect via WebDAV"
 msgstr "الاتصال عبر WebDAV"
 
 #: src/pages/about/feedback.vue:7
-#, fuzzy
 msgid "Contact Us"
 msgstr "اتصل بنا"
 
-#: src/pages/albums.vue:93
-#: src/pages/labels.vue:74
-#: src/pages/people/subjects.vue:85
-#, fuzzy
+#: src/pages/albums.vue:93 src/pages/labels.vue:74 src/pages/people/subjects.vue:85
 msgid "Contains %{n} pictures."
 msgstr "يحتوي على٪ {n} صورة."
 
-#: src/pages/albums.vue:90
-#: src/pages/labels.vue:71
-#: src/pages/people/subjects.vue:82
-#, fuzzy
+#: src/pages/albums.vue:90 src/pages/labels.vue:71 src/pages/people/subjects.vue:82
 msgid "Contains one picture."
 msgstr "يحتوي على صورة واحدة."
 
 #: src/pages/settings/library.vue:113
-#, fuzzy
 msgid "Convert to JPEG"
 msgstr "قم بالتحويل إلى JPEG"
 
 #: src/pages/library/index.vue:163
-#, fuzzy
 msgid "Converting"
 msgstr "التحويل"
 
-#: src/dialog/share.vue:58
-#: src/dialog/webdav.vue:36
-#, fuzzy
+#: src/dialog/share.vue:58 src/dialog/webdav.vue:36
 msgid "Copied to clipboard"
 msgstr "نسخ إلى الحافظة"
 
 #: src/dialog/photo/details.vue:520
-#, fuzzy
 msgid "Copyright"
 msgstr "حقوق النشر"
 
-#: src/component/photo/list.vue:38
-#: src/share/photo/list.vue:38
-#, fuzzy
+#: src/component/photo/list.vue:38 src/share/photo/list.vue:38
 msgid "Couldn't find anything."
 msgstr "لا يمكن العثور على أي شيء."
 
-#: src/component/photo/toolbar.vue:184
-#: src/dialog/photo/details.vue:240
-#, fuzzy
+#: src/component/photo/toolbar.vue:184 src/dialog/photo/details.vue:240
 msgid "Country"
 msgstr "دولة"
 
 #: src/dialog/photo/album.vue:21
-#, fuzzy
 msgid "Create album"
 msgstr "إنشاء ألبوم"
 
 #: src/dialog/photo/info.vue:167
-#, fuzzy
 msgid "Created"
 msgstr "مخلوق"
 
 #: src/pages/library/index.vue:169
-#, fuzzy
 msgid "Creating thumbnails for"
 msgstr "إنشاء صور مصغرة لـ"
 
 #: src/options/options.js:446
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "مكعب: جودة متوسطة ، أداء جيد"
 
 #: src/pages/settings/account.vue:57
-#, fuzzy
 msgid "Current Password"
 msgstr "كلمة المرور الحالية"
 
 #: src/options/options.js:435
-#, fuzzy
 msgid "Customer Support"
 msgstr "دعم العملاء"
 
 #: src/options/options.js:426
-#, fuzzy
 msgid "Cyan"
 msgstr "ازرق سماوي"
 
 #: src/options/options.js:244
-#, fuzzy
 msgid "Cyano"
 msgstr "سيانو"
 
 #: src/options/options.js:399
-#, fuzzy
 msgid "Daily"
 msgstr "اليومي"
 
 #: src/dialog/photo/details.vue:118
-#, fuzzy
 msgid "Day"
 msgstr "يوم"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Debug Logs"
 msgstr "سجلات التصحيح"
 
-#: src/options/options.js:214
-#: src/options/options.js:350
-#, fuzzy
+#: src/options/options.js:214 src/options/options.js:350
 msgid "Default"
 msgstr "تقصير"
 
 #: src/dialog/account/edit.vue:203
-#, fuzzy
 msgid "Default Folder"
 msgstr "المجلد الإفتراضى"
 
-#: src/component/album/clipboard.vue:160
-#: src/component/label/clipboard.vue:89
-#: src/component/photo/clipboard.vue:284
-#: src/dialog/account/remove.vue:18
-#: src/dialog/album/delete.vue:18
-#: src/dialog/file/delete.vue:18
-#: src/dialog/label/delete.vue:18
-#: src/dialog/photo/delete.vue:18
-#: src/dialog/photo/files.vue:41
-#: src/dialog/photo/files.vue:38
-#: src/dialog/share.vue:235
-#: src/pages/library/errors.vue:94
-#: src/pages/settings/general.vue:206
-#, fuzzy
+#: src/component/album/clipboard.vue:160 src/component/label/clipboard.vue:89 src/component/photo/clipboard.vue:284 src/dialog/account/remove.vue:18
+#: src/dialog/album/delete.vue:18 src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18 src/dialog/photo/delete.vue:18 src/dialog/photo/files.vue:41
+#: src/dialog/photo/files.vue:38 src/dialog/share.vue:235 src/pages/library/errors.vue:94 src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr "حذف"
 
-#: src/component/photo/cards.vue:502
-#: src/dialog/album/edit.vue:142
-#: src/dialog/photo/details.vue:566
-#: src/pages/albums.vue:443
-#: src/share/albums.vue:243
+#: src/component/photo/cards.vue:502 src/dialog/album/edit.vue:142 src/dialog/photo/details.vue:566 src/pages/albums.vue:443 src/share/albums.vue:243
 #: src/share/photo/cards.vue:340
-#, fuzzy
 msgid "Description"
 msgstr "وصف"
 
 #: src/dialog/webdav.vue:32
-#, fuzzy
 msgid "Detailed instructions can be found in our User Guide."
 msgstr "يمكن العثور على تعليمات مفصلة في دليل المستخدم الخاص بنا."
 
-#: src/dialog/photo/edit.vue:27
-#: src/dialog/photo/edit.vue:1
-#: src/dialog/photo/edit.vue:177
-#, fuzzy
+#: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1 src/dialog/photo/edit.vue:177
 msgid "Details"
 msgstr "تفاصيل"
 
 #: src/dialog/photo/files.vue:35
-#, fuzzy
 msgid "Dimensions"
 msgstr "أبعاد"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Disable Backups"
 msgstr "تعطيل النسخ الاحتياطية"
 
 #: src/pages/settings/advanced.vue:166
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "تعطيل خادم WebDAV المدمج. يتطلب إعادة التشغيل."
 
 #: src/pages/settings/advanced.vue:484
-#, fuzzy
 msgid "Disable Darktable"
 msgstr "تعطيل Darktable"
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "تعطيل ExifTool"
 
 #: src/pages/settings/advanced.vue:526
-#, fuzzy
 msgid "Disable FFmpeg"
 msgstr "تعطيل FFmpeg"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disable Places"
 msgstr "تعطيل الأماكن"
 
 #: src/pages/settings/advanced.vue:505
-#, fuzzy
 msgid "Disable RawTherapee"
 msgstr "تعطيل RawTherapee"
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "تعطيل TensorFlow"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable WebDAV"
 msgstr "تعطيل WebDAV"
 
-#: src/dialog/account/edit.vue:66
-#: src/dialog/account/edit.vue:111
-#, fuzzy
+#: src/dialog/account/edit.vue:66 src/dialog/account/edit.vue:111
 msgid "Disabled"
 msgstr "عاجز"
 
 #: src/pages/settings/advanced.vue:188
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "تعطيل عكس الترميز الجغرافي والخرائط."
 
-#: src/app/routes.js:374
-#: src/app/routes.js:381
-#: src/app/routes.js:388
-#: src/app/routes.js:395
-#, fuzzy
+#: src/app/routes.js:374 src/app/routes.js:381 src/app/routes.js:388 src/app/routes.js:395
 msgid "Discover"
 msgstr "يكتشف"
 
 #: src/pages/settings/advanced.vue:144
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "لا تقم بنسخ البيانات الوصفية للصور والألبوم احتياطيًا إلى ملفات YAML."
 
 #: src/pages/settings/advanced.vue:210
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "لا تقم بإنشاء ملفات ExifTool JSON لتحسين استخراج البيانات الوصفية."
 
 #: src/pages/settings/advanced.vue:100
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "لا تقم بتعديل مجلد الأصول. تعطيل الاستيراد والتحميل والحذف."
 
 #: src/pages/settings/advanced.vue:527
-#, fuzzy
 msgid "Don't transcode videos with FFmpeg."
 msgstr "لا تقم بتحويل مقاطع الفيديو باستخدام FFmpeg."
 
 #: src/pages/settings/advanced.vue:485
-#, fuzzy
 msgid "Don't use Darktable to convert RAW files."
 msgstr "لا تستخدم Darktable لتحويل ملفات RAW."
 
 #: src/pages/settings/advanced.vue:506
-#, fuzzy
 msgid "Don't use RawTherapee to convert RAW files."
 msgstr "لا تستخدم RawTherapee لتحويل ملفات RAW."
 
 #: src/pages/settings/advanced.vue:232
-#, fuzzy
 msgid "Don't use TensorFlow for image classification."
 msgstr "لا تستخدم TensorFlow لتصنيف الصور."
 
 #: src/options/options.js:439
-#, fuzzy
 msgid "Donations"
 msgstr "التبرعات"
 
-#: src/dialog/photo/details.vue:120
-#: src/dialog/share.vue:26
-#, fuzzy
+#: src/dialog/photo/details.vue:120 src/dialog/share.vue:26
 msgid "Done"
 msgstr "فعله"
 
-#: src/dialog/upload.vue:39
-#: src/pages/library/import.vue:7
-#: src/pages/library/index.vue:8
-#, fuzzy
+#: src/dialog/upload.vue:39 src/pages/library/import.vue:7 src/pages/library/index.vue:8
 msgid "Done."
 msgstr "فعله."
 
-#: src/component/album/clipboard.vue:113
-#: src/component/album/toolbar.vue:107
-#: src/component/file/clipboard.vue:66
-#: src/component/photo-viewer.vue:86
-#: src/component/photo/clipboard.vue:169
-#: src/component/subject/clipboard.vue:66
-#: src/dialog/photo/files.vue:32
-#: src/dialog/photo/files.vue:29
-#: src/pages/settings/general.vue:162
-#: src/share/album/clipboard.vue:61
-#: src/share/photo/clipboard.vue:63
-#: src/share/photos.vue:78
-#, fuzzy
+#: src/component/album/clipboard.vue:113 src/component/album/toolbar.vue:107 src/component/file/clipboard.vue:66 src/component/photo-viewer.vue:86
+#: src/component/photo/clipboard.vue:169 src/component/subject/clipboard.vue:66 src/dialog/photo/files.vue:32 src/dialog/photo/files.vue:29
+#: src/pages/settings/general.vue:162 src/share/album/clipboard.vue:61 src/share/photo/clipboard.vue:63 src/share/photos.vue:78
 msgid "Download"
 msgstr "تحميل"
 
 #: src/dialog/account/edit.vue:322
-#, fuzzy
 msgid "Download remote files"
 msgstr "تنزيل الملفات البعيدة"
 
 #: src/pages/settings/general.vue:163
-#, fuzzy
 msgid "Download single files and zip archives."
 msgstr "تنزيل ملفات مفردة ومحفوظات مضغوطة."
 
-#: src/component/album/clipboard.vue:86
-#: src/component/album/toolbar.vue:101
-#: src/component/file/clipboard.vue:46
-#: src/component/label/clipboard.vue:59
-#: src/component/photo-viewer.vue:158
-#: src/component/photo/cards.vue:74
-#: src/component/photo/clipboard.vue:189
-#: src/component/photo/list.vue:79
-#: src/component/subject/clipboard.vue:46
-#: src/dialog/photo/files.vue:69
-#: src/pages/library/files.vue:99
-#: src/share/album/clipboard.vue:40
-#: src/share/photo/cards.vue:72
-#: src/share/photo/clipboard.vue:45
-#: src/share/photo/list.vue:74
-#: src/share/photos.vue:485
-#, fuzzy
+#: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:101 src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:59
+#: src/component/photo-viewer.vue:158 src/component/photo/cards.vue:74 src/component/photo/clipboard.vue:189 src/component/photo/list.vue:79
+#: src/component/subject/clipboard.vue:46 src/dialog/photo/files.vue:69 src/pages/library/files.vue:99 src/share/album/clipboard.vue:40
+#: src/share/photo/cards.vue:72 src/share/photo/clipboard.vue:45 src/share/photo/list.vue:74 src/share/photos.vue:485
 msgid "Downloading…"
 msgstr "جارى التحميل…"
 
 #: src/pages/settings/advanced.vue:282
-#, fuzzy
 msgid "Downscaling Filter"
 msgstr "مرشح تصغير الحجم"
 
 #: src/pages/library/files.vue:37
-#, fuzzy
 msgid "Duplicates will be skipped and only appear once."
 msgstr "سيتم تخطي التكرارات وستظهر مرة واحدة فقط."
 
-#: src/dialog/photo/files.vue:101
-#: src/dialog/photo/files.vue:98
-#, fuzzy
+#: src/dialog/photo/files.vue:101 src/dialog/photo/files.vue:98
 msgid "Duration"
 msgstr "مدة"
 
 #: src/pages/settings/advanced.vue:305
-#, fuzzy
 msgid "Dynamic Previews"
 msgstr "المعاينات الديناميكية"
 
 #: src/pages/settings/advanced.vue:306
-#, fuzzy
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "يتطلب العرض الديناميكي خادمًا قويًا. لا ينصح به لأجهزة NAS."
 
 #: src/pages/settings/advanced.vue:348
-#, fuzzy
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "حد الحجم الديناميكي:٪ {n} بكسل"
 
 #: src/pages/about/feedback.vue:181
-#, fuzzy
 msgid "E-Mail"
 msgstr "البريد الإلكتروني"
 
-#: src/component/album/clipboard.vue:91
-#: src/component/album/toolbar.vue:70
-#: src/component/photo-viewer.vue:103
-#: src/component/photo/clipboard.vue:123
+#: src/component/album/clipboard.vue:91 src/component/album/toolbar.vue:70 src/component/photo-viewer.vue:103 src/component/photo/clipboard.vue:123
 #: src/pages/settings/general.vue:184
-#, fuzzy
 msgid "Edit"
 msgstr "يحرر"
 
 #: src/dialog/album/edit.vue:8
-#, fuzzy
 msgid "Edit %{name}"
 msgstr "تعديل الاسم}"
 
 #: src/dialog/account/edit.vue:140
-#, fuzzy
 msgid "Edit Account"
 msgstr "تحرير الحساب"
 
 #: src/dialog/photo/edit.vue:51
-#, fuzzy
 msgid "Edit Photo"
 msgstr "تعديل الصورة"
 
 #: src/dialog/photo/info.vue:183
-#, fuzzy
 msgid "Edited"
 msgstr "تم تحريره"
 
 #: src/pages/settings/advanced.vue:122
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "تمكين الميزات الجديدة قيد التطوير حاليًا."
 
-#: src/dialog/account/edit.vue:66
-#: src/dialog/account/edit.vue:111
-#, fuzzy
+#: src/dialog/account/edit.vue:66 src/dialog/account/edit.vue:111
 msgid "Enabled"
 msgstr "ممكن"
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "لتمكين الإعدادات المسبقة لمحول RAW. قد يقلل من الأداء."
 
-#: src/app/routes.js:254
-#: src/component/navigation.vue:393
-#, fuzzy
+#: src/app/routes.js:254 src/component/navigation.vue:393
 msgid "Errors"
 msgstr "أخطاء"
 
 #: src/pages/settings/library.vue:72
-#, fuzzy
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "تقدير الموقع التقريبي للصور بدون إحداثيات."
 
 #: src/pages/settings/library.vue:71
-#, fuzzy
 msgid "Estimates"
 msgstr "التقديرات"
 
 #: src/options/options.js:400
-#, fuzzy
 msgid "Every two days"
 msgstr "كل يومين"
 
 #: src/pages/settings/general.vue:273
-#, fuzzy
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr ""
-"استبعاد المحتوى المحدد على أنه خاص من نتائج البحث والألبومات المشتركة "
-"والعلامات والأماكن."
+msgstr "استبعاد المحتوى المحدد على أنه خاص من نتائج البحث والألبومات المشتركة والعلامات والأماكن."
 
-#: src/pages/people/faces.vue:100
-#: src/pages/people/subjects.vue:141
-#, fuzzy
+#: src/pages/people/faces.vue:100 src/pages/people/subjects.vue:141
 msgid "Exclude hidden"
 msgstr "استبعاد مخفي"
 
 #: src/component/navigation.vue:416
-#, fuzzy
 msgid "Expand"
 msgstr "وسعت"
 
 #: src/component/photo/toolbar.vue:145
-#, fuzzy
 msgid "Expand Search"
 msgstr "قم بتوسيع البحث"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Experimental Features"
 msgstr "الميزات التجريبية"
 
-#: src/dialog/account/edit.vue:240
-#: src/dialog/share.vue:64
-#, fuzzy
+#: src/dialog/account/edit.vue:240 src/dialog/share.vue:64
 msgid "Expires"
 msgstr "تنتهي"
 
 #: src/dialog/photo/details.vue:383
-#, fuzzy
 msgid "Exposure"
 msgstr "التعرض"
 
 #: src/dialog/photo/details.vue:429
-#, fuzzy
 msgid "F Number"
 msgstr "رقم F"
 
 #: src/model/face.js:163
-#, fuzzy
 msgid "Face"
 msgstr "وجه"
 
 #: src/dialog/photo/info.vue:73
-#, fuzzy
 msgid "Faces"
 msgstr "وجوه"
 
-#: src/dialog/share.vue:60
-#: src/dialog/webdav.vue:38
-#, fuzzy
+#: src/dialog/share.vue:60 src/dialog/webdav.vue:38
 msgid "Failed copying to clipboard"
 msgstr "فشل النسخ إلى الحافظة"
 
 #: src/dialog/share.vue:93
-#, fuzzy
 msgid "Failed removing link"
 msgstr "فشل إزالة الارتباط"
 
 #: src/dialog/share.vue:81
-#, fuzzy
 msgid "Failed updating link"
 msgstr "فشل تحديث الارتباط"
 
 #: src/dialog/upload.vue:163
-#, fuzzy
 msgid "Failure while importing uploaded files"
 msgstr "فشل أثناء استيراد الملفات التي تم تحميلها"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Fast"
 msgstr "سريع"
 
 #: src/dialog/photo/info.vue:94
-#, fuzzy
 msgid "Favorite"
 msgstr "مفضل"
 
-#: src/app/routes.js:174
-#: src/component/navigation.vue:244
-#: src/component/navigation.vue:1011
-#, fuzzy
+#: src/app/routes.js:174 src/component/navigation.vue:244 src/component/navigation.vue:1011
 msgid "Favorites"
 msgstr "المفضلة"
 
 #: src/options/options.js:437
-#, fuzzy
 msgid "Feature Request"
 msgstr "طلب المواصفات"
 
-#: src/component/navigation.vue:434
-#: src/component/navigation.vue:35
-#, fuzzy
+#: src/component/navigation.vue:434 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "استجابة"
 
 #: src/dialog/sponsor.vue:24
-#, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "لا تتردد في الاتصال بنا على hello@photoprism.app إذا كان لديك أي أسئلة."
 
 #: src/model/file.js:291
-#, fuzzy
 msgid "File"
 msgstr "ملف"
 
 #: src/app/routes.js:241
-#, fuzzy
 msgid "File Browser"
 msgstr "متصفح الملفات"
 
-#: src/dialog/photo/files.vue:65
-#: src/dialog/photo/files.vue:62
-#, fuzzy
+#: src/dialog/photo/files.vue:65 src/dialog/photo/files.vue:62
 msgid "Filename"
 msgstr "اسم الملف"
 
-#: src/dialog/photo/edit.vue:65
-#: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:316
-#, fuzzy
+#: src/dialog/photo/edit.vue:65 src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:316
 msgid "Files"
 msgstr "الملفات"
 
 #: src/pages/settings/library.vue:216
-#, fuzzy
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr ""
-"الملفات ذات الأسماء المتسلسلة مثل \"IMG_1234 (2)\" و \"IMG_1234 (3)\" تنتمي "
-"إلى نفس الصورة."
+msgstr "الملفات ذات الأسماء المتسلسلة مثل \"IMG_1234 (2)\" و \"IMG_1234 (3)\" تنتمي إلى نفس الصورة."
 
 #: src/dialog/photo/details.vue:449
-#, fuzzy
 msgid "Focal Length"
 msgstr "البعد البؤري"
 
-#: src/dialog/account/edit.vue:275
-#: src/dialog/account/edit.vue:281
-#: src/dialog/photo/info.vue:25
-#: src/dialog/share/upload.vue:144
-#: src/model/folder.js:193
+#: src/dialog/account/edit.vue:275 src/dialog/account/edit.vue:281 src/dialog/photo/info.vue:25 src/dialog/share/upload.vue:144 src/model/folder.js:193
 #: src/pages/library/files.vue:72
-#, fuzzy
 msgid "Folder"
 msgstr "مجلد"
 
 #: src/pages/library/files.vue:305
-#, fuzzy
 msgid "Folder contains %{n} files"
 msgstr "يحتوي المجلد على٪ {n} من الملفات"
 
 #: src/pages/library/files.vue:297
-#, fuzzy
 msgid "Folder is empty"
 msgstr "مجلد فارغ"
 
-#: src/app/routes.js:154
-#: src/app/routes.js:161
-#: src/component/navigation.vue:330
-#: src/component/navigation.vue:1307
-#, fuzzy
+#: src/app/routes.js:154 src/app/routes.js:161 src/component/navigation.vue:330 src/component/navigation.vue:1307
 msgid "Folders"
 msgstr "المجلدات"
 
 #: src/pages/auth/login.vue:1
-#, fuzzy
 msgid "Forgot password?"
 msgstr "هل نسيت كلمة السر؟"
 
-#: src/dialog/photo/files.vue:113
-#: src/dialog/photo/files.vue:110
-#, fuzzy
+#: src/dialog/photo/files.vue:113 src/dialog/photo/files.vue:110
 msgid "FPS"
 msgstr "FPS"
 
-#: src/dialog/photo/files.vue:107
-#: src/dialog/photo/files.vue:104
-#, fuzzy
+#: src/dialog/photo/files.vue:107 src/dialog/photo/files.vue:104
 msgid "Frames"
 msgstr "الإطارات"
 
 #: src/component/photo-viewer.vue:174
-#, fuzzy
 msgid "Fullscreen"
 msgstr "شاشة كاملة"
 
 #: src/options/options.js:254
-#, fuzzy
 msgid "Gemstone"
 msgstr "الأحجار الكريمة"
 
 #: src/pages/settings.vue:30
-#, fuzzy
 msgid "General"
 msgstr "عام"
 
 #: src/pages/about/about.vue:38
-#, fuzzy
 msgid "Getting Support"
 msgstr "الحصول على الدعم"
 
 #: src/options/options.js:421
-#, fuzzy
 msgid "Gold"
 msgstr "ذهب"
 
 #: src/options/options.js:219
-#, fuzzy
 msgid "Grayscale"
 msgstr "تدرج الرمادي"
 
 #: src/options/options.js:424
-#, fuzzy
 msgid "Green"
 msgstr "لون أخضر"
 
 #: src/options/options.js:430
-#, fuzzy
 msgid "Grey"
 msgstr "رمادي"
 
-#: src/component/album/toolbar.vue:62
-#: src/component/photo/toolbar.vue:55
-#: src/dialog/album/edit.vue:23
-#, fuzzy
+#: src/component/album/toolbar.vue:62 src/component/photo/toolbar.vue:55 src/dialog/album/edit.vue:23
 msgid "Group by similarity"
 msgstr "تجميع حسب التشابه"
 
-#: src/dialog/photo/files.vue:59
-#: src/dialog/photo/files.vue:56
-#, fuzzy
+#: src/dialog/photo/files.vue:59 src/dialog/photo/files.vue:56
 msgid "Hash"
 msgstr "تجزئة"
 
 #: src/pages/help.vue:4
-#, fuzzy
 msgid "Help"
 msgstr "مساعدة"
 
 #: src/app/routes.js:76
-#, fuzzy
 msgid "Help & Support"
 msgstr "ساعد لدعم"
 
 #: src/component/navigation.vue:384
-#, fuzzy
 msgid "Hidden"
 msgstr "مختفي"
 
 #: src/app/routes.js:247
-#, fuzzy
 msgid "Hidden Files"
 msgstr "الملفات المخفية"
 
-#: src/pages/people/faces.vue:237
-#: src/pages/people/subjects.vue:298
-#, fuzzy
+#: src/pages/people/faces.vue:237 src/pages/people/subjects.vue:298
 msgid "Hide"
 msgstr "يخفي"
 
 #: src/pages/settings/general.vue:295
-#, fuzzy
 msgid "Hide photos that have been moved to archive."
 msgstr "إخفاء الصور التي تم نقلها إلى الأرشيف."
 
 #: src/options/options.js:354
-#, fuzzy
 msgid "High"
 msgstr "عالٍ"
 
-#: src/dialog/photo/files.vue:127
-#: src/dialog/photo/files.vue:124
-#, fuzzy
+#: src/dialog/photo/files.vue:127 src/dialog/photo/files.vue:124
 msgid "High Dynamic Range (HDR)"
 msgstr "المدى الديناميكي العالي (HDR)"
 
 #: src/pages/about/feedback.vue:138
-#, fuzzy
 msgid "How can we help?"
 msgstr "كيف يمكن أن نساعد؟"
 
 #: src/options/options.js:309
-#, fuzzy
 msgid "Hybrid"
 msgstr "هجين"
 
 #: src/dialog/sponsor.vue:36
-#, fuzzy
 msgid "I'm a sponsor"
 msgstr "أنا الراعي"
 
 #: src/pages/about/about.vue:43
-#, fuzzy
 msgid "If this doesn't help, or you have other questions:"
 msgstr "إذا لم يساعدك ذلك ، أو لديك أسئلة أخرى:"
 
 #: src/dialog/photo/labels.vue:37
-#, fuzzy
 msgid "image"
 msgstr "صورة"
 
-#: src/model/file.js:216
-#: src/options/options.js:327
-#, fuzzy
+#: src/model/file.js:216 src/options/options.js:327
 msgid "Image"
 msgstr "صورة"
 
 #: src/pages/settings/advanced.vue:56
-#, fuzzy
 msgid "Images"
 msgstr "الصور"
 
-#: src/pages/library.vue:42
-#: src/pages/library/import.vue:43
-#: src/pages/settings/general.vue:228
-#, fuzzy
+#: src/pages/library.vue:42 src/pages/library/import.vue:43 src/pages/settings/general.vue:228
 msgid "Import"
 msgstr "يستورد"
 
 #: src/pages/library/import.vue:116
-#, fuzzy
 msgid "Import failed"
 msgstr "فشل الاستيراد"
 
 #: src/pages/library/import.vue:25
-#, fuzzy
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "سيتم فرز الملفات المستوردة حسب التاريخ وإعطاء اسم فريد لتجنب التكرار."
 
 #: src/pages/settings/general.vue:229
-#, fuzzy
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr "سيتم فرز الملفات المستوردة حسب التاريخ وإعطاء اسم فريد."
 
 #: src/pages/library/import.vue:5
-#, fuzzy
 msgid "Importing %{name}…"
 msgstr "استيراد٪ {name}…"
 
 #: src/pages/library/import.vue:6
-#, fuzzy
 msgid "Importing files to originals…"
 msgstr "جارٍ استيراد الملفات إلى النسخ الأصلية …"
 
-#: src/dialog/photo/files.vue:192
-#: src/dialog/photo/files.vue:201
-#: src/dialog/photo/files.vue:189
-#: src/dialog/photo/files.vue:198
-#, fuzzy
+#: src/dialog/photo/files.vue:192 src/dialog/photo/files.vue:201 src/dialog/photo/files.vue:189 src/dialog/photo/files.vue:198
 msgid "in"
 msgstr "في"
 
 #: src/pages/about/about.vue:52
-#, fuzzy
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr ""
-"بالإضافة إلى ذلك ، يتلقى الرعاة دعمًا فنيًا مباشرًا عبر البريد الإلكتروني."
+msgstr "بالإضافة إلى ذلك ، يتلقى الرعاة دعمًا فنيًا مباشرًا عبر البريد الإلكتروني."
 
-#: src/component/photo/cards.vue:11
-#: src/component/photo/list.vue:12
-#: src/component/photo/mosaic.vue:11
-#: src/pages/labels.vue:35
-#: src/pages/library/files.vue:38
-#, fuzzy
+#: src/component/photo/cards.vue:11 src/component/photo/list.vue:12 src/component/photo/mosaic.vue:11 src/pages/labels.vue:35 src/pages/library/files.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr ""
-"في حالة الصور التي تتوقعها مفقودة ، يرجى إعادة فحص مكتبتك وانتظر حتى تكتمل "
-"الفهرسة."
+msgstr "في حالة الصور التي تتوقعها مفقودة ، يرجى إعادة فحص مكتبتك وانتظر حتى تكتمل الفهرسة."
 
-#: src/pages/library.vue:32
-#: src/pages/settings/library.vue:6
-#, fuzzy
+#: src/pages/library.vue:32 src/pages/settings/library.vue:6
 msgid "Index"
 msgstr "فِهرِس"
 
-#: src/pages/library/index.vue:134
-#: src/pages/library/index.vue:140
-#, fuzzy
+#: src/pages/library/index.vue:134 src/pages/library/index.vue:140
 msgid "Indexing"
 msgstr "الفهرسة"
 
 #: src/pages/library/index.vue:116
-#, fuzzy
 msgid "Indexing failed"
 msgstr "فشلت الفهرسة"
 
 #: src/pages/library/index.vue:7
-#, fuzzy
 msgid "Indexing media and sidecar files…"
 msgstr "جارٍ فهرسة الوسائط والملفات الجانبية …"
 
-#: src/dialog/photo/files.vue:53
-#: src/dialog/photo/files.vue:50
-#, fuzzy
+#: src/dialog/photo/files.vue:53 src/dialog/photo/files.vue:50
 msgid "Instance ID"
 msgstr "معرف المثيل"
 
 #: src/dialog/account/edit.vue:297
-#, fuzzy
 msgid "Interval"
 msgstr "فترة"
 
 #: src/dialog/photo/details.vue:105
-#, fuzzy
 msgid "Invalid date"
 msgstr "تاريخ غير صالح"
 
 #: src/dialog/photo/edit.vue:116
-#, fuzzy
 msgid "Invalid photo selected"
 msgstr "تم تحديد صورة غير صالحة"
 
 #: src/model/rest.js:167
-#, fuzzy
 msgid "Item"
 msgstr "العنصر"
 
 #: src/pages/settings/advanced.vue:323
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "جودة JPEG:٪ {n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "حد حجم JPEG:٪ {n} بكسل"
 
 #: src/pages/library/import.vue:26
-#, fuzzy
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "يتم تقديم ملفات JPEG والصور المصغرة تلقائيًا حسب الحاجة."
 
 #: src/dialog/photo/details.vue:589
-#, fuzzy
 msgid "Keywords"
 msgstr "الكلمات الدالة"
 
-#: src/dialog/photo/labels.vue:20
-#: src/model/label.js:124
-#, fuzzy
+#: src/dialog/photo/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "مُلصَق"
 
-#: src/app/routes.js:260
-#: src/component/navigation.vue:317
-#: src/component/navigation.vue:1262
-#: src/dialog/photo/edit.vue:39
-#: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:215
-#: src/pages/settings/general.vue:382
-#, fuzzy
+#: src/app/routes.js:260 src/component/navigation.vue:317 src/component/navigation.vue:1262 src/dialog/photo/edit.vue:39 src/dialog/photo/edit.vue:6
+#: src/dialog/photo/edit.vue:215 src/pages/settings/general.vue:382
 msgid "Labels"
 msgstr "ملصقات"
 
 #: src/component/label/clipboard.vue:45
-#, fuzzy
 msgid "Labels deleted"
 msgstr "تم حذف التصنيفات"
 
 #: src/options/options.js:445
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: الحفاظ على التفاصيل ، الحد الأدنى من القطع الأثرية"
 
 #: src/pages/settings/general.vue:94
-#, fuzzy
 msgid "Language"
 msgstr "لغة"
 
 #: src/pages/settings/sync.vue:30
-#, fuzzy
 msgid "Last Sync"
 msgstr "آخر مزامنة"
 
-#: src/dialog/photo/details.vue:291
-#: src/dialog/photo/info.vue:135
-#, fuzzy
+#: src/dialog/photo/details.vue:291 src/dialog/photo/info.vue:135
 msgid "Latitude"
 msgstr "خط العرض"
 
 #: src/options/options.js:249
-#, fuzzy
 msgid "Lavender"
 msgstr "لافندر"
 
 #: src/dialog/photo/details.vue:403
-#, fuzzy
 msgid "Lens"
 msgstr "عدسة"
 
-#: src/app/routes.js:292
-#: src/app/routes.js:299
-#: src/app/routes.js:306
-#: src/component/navigation.vue:356
-#: src/component/navigation.vue:366
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:1399
-#: src/pages/settings.vue:41
-#: src/pages/settings/general.vue:404
-#, fuzzy
+#: src/app/routes.js:292 src/app/routes.js:299 src/app/routes.js:306 src/component/navigation.vue:356 src/component/navigation.vue:366
+#: src/component/navigation.vue:4 src/component/navigation.vue:1399 src/pages/settings.vue:41 src/pages/settings/general.vue:404
 msgid "Library"
 msgstr "مكتبة"
 
-#: src/component/navigation.vue:442
-#: src/component/navigation.vue:43
-#: src/dialog/photo/details.vue:544
-#: src/pages/about/license.vue:4
-#, fuzzy
+#: src/component/navigation.vue:442 src/component/navigation.vue:43 src/dialog/photo/details.vue:544 src/pages/about/license.vue:4
 msgid "License"
 msgstr "رخصة"
 
 #: src/component/photo-viewer.vue:147
-#, fuzzy
 msgid "Like"
 msgstr "يحب"
 
 #: src/options/options.js:423
-#, fuzzy
 msgid "Lime"
 msgstr "جير"
 
 #: src/pages/library/files.vue:307
-#, fuzzy
 msgid "Limit reached, showing first %{n} files"
 msgstr "تم بلوغ الحد ، عرض أول٪ {n} ملف"
 
 #: src/options/options.js:447
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "الخطي: سلس جدًا ، أفضل أداء"
 
 #: src/model/link.js:115
-#, fuzzy
 msgid "Link"
 msgstr "نهاية لهذه الغاية"
 
-#: src/component/album/toolbar.vue:52
-#: src/component/photo/toolbar.vue:47
-#, fuzzy
+#: src/component/album/toolbar.vue:52 src/component/photo/toolbar.vue:47
 msgid "List"
 msgstr "قائمة"
 
-#: src/app/routes.js:181
-#: src/component/navigation.vue:217
-#: src/component/photo/cards.vue:218
-#: src/component/photo/list.vue:187
-#: src/component/photo/mosaic.vue:191
-#: src/options/options.js:339
-#: src/share/photo/cards.vue:191
-#: src/share/photo/list.vue:166
-#: src/share/photo/mosaic.vue:172
-#, fuzzy
+#: src/app/routes.js:181 src/component/navigation.vue:217 src/component/photo/cards.vue:218 src/component/photo/list.vue:187 src/component/photo/mosaic.vue:191
+#: src/options/options.js:339 src/share/photo/cards.vue:191 src/share/photo/list.vue:166 src/share/photo/mosaic.vue:172
 msgid "Live"
 msgstr "يعيش"
 
-#: src/dialog/photo/details.vue:189
-#: src/options/options.js:10
-#, fuzzy
+#: src/dialog/photo/details.vue:189 src/options/options.js:10
 msgid "Local Time"
 msgstr "الوقت المحلي"
 
 #: src/dialog/photo/labels.vue:39
-#, fuzzy
 msgid "location"
 msgstr "موقعك"
 
-#: src/component/photo/cards.vue:591
-#: src/component/photo/list.vue:59
-#: src/dialog/album/edit.vue:123
-#: src/share/photo/cards.vue:417
-#: src/share/photo/list.vue:55
-#, fuzzy
+#: src/component/photo/cards.vue:591 src/component/photo/list.vue:59 src/dialog/album/edit.vue:123 src/share/photo/cards.vue:417 src/share/photo/list.vue:55
 msgid "Location"
 msgstr "موقع"
 
-#: src/pages/library/errors.vue:37
-#: src/pages/library/errors.vue:1
-#, fuzzy
+#: src/pages/library/errors.vue:37 src/pages/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr ""
-"تظهر رسائل السجل هنا كلما صادفت PhotoPrism ملفات معطلة ، أو كانت هناك مشكلات "
-"أخرى محتملة."
+msgstr "تظهر رسائل السجل هنا كلما صادفت PhotoPrism ملفات معطلة ، أو كانت هناك مشكلات أخرى محتملة."
 
-#: src/component/navigation.vue:456
-#: src/component/navigation.vue:1735
-#, fuzzy
+#: src/component/navigation.vue:456 src/component/navigation.vue:1735
 msgid "Login"
 msgstr "تسجيل الدخول"
 
-#: src/component/navigation.vue:503
-#: src/component/navigation.vue:1845
-#: src/component/navigation.vue:1876
-#, fuzzy
+#: src/component/navigation.vue:503 src/component/navigation.vue:1845 src/component/navigation.vue:1876
 msgid "Logout"
 msgstr "تسجيل خروج"
 
-#: src/pages/library.vue:55
-#: src/pages/settings/general.vue:426
-#, fuzzy
+#: src/pages/library.vue:55 src/pages/settings/general.vue:426
 msgid "Logs"
 msgstr "السجلات"
 
-#: src/dialog/photo/details.vue:315
-#: src/dialog/photo/info.vue:143
-#, fuzzy
+#: src/dialog/photo/details.vue:315 src/dialog/photo/info.vue:143
 msgid "Longitude"
 msgstr "خط الطول"
 
 #: src/options/options.js:358
-#, fuzzy
 msgid "Low"
 msgstr "قليل"
 
 #: src/options/options.js:417
-#, fuzzy
 msgid "Magenta"
 msgstr "أرجواني"
 
-#: src/dialog/photo/files.vue:169
-#: src/dialog/photo/files.vue:166
-#, fuzzy
+#: src/dialog/photo/files.vue:169 src/dialog/photo/files.vue:166
 msgid "Main Color"
 msgstr "اللون الأساسي"
 
 #: src/dialog/photo/labels.vue:35
-#, fuzzy
 msgid "manual"
 msgstr "كتيب"
 
 #: src/dialog/account/edit.vue:51
-#, fuzzy
 msgid "Manual Upload"
 msgstr "تحميل يدوي"
 
 #: src/model/marker.js:146
-#, fuzzy
 msgid "Marker"
 msgstr "علامة"
 
 #: src/options/options.js:289
-#, fuzzy
 msgid "Medium"
 msgstr "متوسط"
 
 #: src/dialog/people/merge.vue:25
-#, fuzzy
 msgid "Merge %{a} with %{b}?"
 msgstr "هل تريد دمج٪ {a} مع٪ {b}؟"
 
 #: src/pages/about/feedback.vue:27
-#, fuzzy
 msgid "Message sent"
 msgstr "تم الارسال"
 
 #: src/component/navigation.vue:369
-#, fuzzy
 msgid "Minimize"
 msgstr "تصغير"
 
-#: src/dialog/photo/files.vue:181
-#: src/dialog/photo/files.vue:178
-#, fuzzy
+#: src/dialog/photo/files.vue:181 src/dialog/photo/files.vue:178
 msgid "Missing"
 msgstr "مفقود"
 
-#: src/app/routes.js:115
-#: src/app/routes.js:122
-#: src/component/navigation.vue:257
-#: src/component/navigation.vue:1054
-#: src/pages/settings/general.vue:360
-#, fuzzy
+#: src/app/routes.js:115 src/app/routes.js:122 src/component/navigation.vue:257 src/component/navigation.vue:1054 src/pages/settings/general.vue:360
 msgid "Moments"
 msgstr "لحظات"
 
 #: src/component/navigation.vue:102
-#, fuzzy
 msgid "Monochrome"
 msgstr "أحادي اللون"
 
-#: src/component/photo/toolbar.vue:297
-#: src/dialog/photo/details.vue:142
-#, fuzzy
+#: src/component/photo/toolbar.vue:297 src/dialog/photo/details.vue:142
 msgid "Month"
 msgstr "شهر"
 
 #: src/options/options.js:234
-#, fuzzy
 msgid "Moonlight"
 msgstr "ضوء القمر"
 
-#: src/pages/album/photos.vue:349
-#: src/pages/photos.vue:389
-#: src/share/photos.vue:357
-#, fuzzy
+#: src/pages/album/photos.vue:349 src/pages/photos.vue:389 src/share/photos.vue:357
 msgid "More than %{n} pictures found"
 msgstr "تم العثور على أكثر من٪ {n} صورة"
 
-#: src/pages/albums.vue:389
-#: src/share/albums.vue:308
-#, fuzzy
+#: src/pages/albums.vue:389 src/share/albums.vue:308
 msgid "More than 20 albums found"
 msgstr "تم العثور على أكثر من 20 ألبومًا"
 
 #: src/pages/labels.vue:384
-#, fuzzy
 msgid "More than 20 labels found"
 msgstr "تم العثور على أكثر من 20 تصنيفًا"
 
 #: src/pages/people/subjects.vue:473
-#, fuzzy
 msgid "More than 20 people found"
 msgstr "تم العثور على أكثر من 20 شخصًا"
 
-#: src/component/album/toolbar.vue:50
-#: src/component/photo/toolbar.vue:45
-#, fuzzy
+#: src/component/album/toolbar.vue:50 src/component/photo/toolbar.vue:45
 msgid "Mosaic"
 msgstr "فسيفساء"
 
-#: src/component/album/toolbar.vue:63
-#: src/component/photo/toolbar.vue:56
-#: src/dialog/album/edit.vue:24
-#, fuzzy
+#: src/component/album/toolbar.vue:63 src/component/photo/toolbar.vue:56 src/dialog/album/edit.vue:24
 msgid "Most relevant"
 msgstr "الأكثر صلة"
 
 #: src/pages/library/import.vue:132
-#, fuzzy
 msgid "Move Files"
 msgstr "نقل الملفات"
 
 #: src/pages/settings/account.vue:85
-#, fuzzy
 msgid "Must have at least 8 characters."
 msgstr "يجب أن يحتوي على 8 أحرف على الأقل."
 
-#: src/component/photo/cards.vue:574
-#: src/component/photo/list.vue:59
-#: src/component/photo/list.vue:246
-#: src/dialog/account/edit.vue:402
-#: src/dialog/album/edit.vue:105
-#: src/dialog/photo/files.vue:34
-#: src/dialog/photo/info.vue:31
-#: src/dialog/photo/labels.vue:48
-#: src/dialog/photo/people.vue:21
-#: src/dialog/photo/people.vue:230
-#: src/pages/about/feedback.vue:158
-#: src/pages/auth/login.vue:81
-#: src/pages/auth/login.vue:85
-#: src/pages/labels.vue:340
-#: src/pages/people/faces.vue:52
-#: src/pages/people/faces.vue:307
-#: src/pages/people/subjects.vue:396
-#: src/share/photo/cards.vue:403
-#: src/share/photo/list.vue:55
+#: src/component/photo/cards.vue:574 src/component/photo/list.vue:59 src/component/photo/list.vue:246 src/dialog/account/edit.vue:402
+#: src/dialog/album/edit.vue:105 src/dialog/photo/files.vue:34 src/dialog/photo/info.vue:31 src/dialog/photo/labels.vue:48 src/dialog/photo/people.vue:21
+#: src/dialog/photo/people.vue:230 src/pages/about/feedback.vue:158 src/pages/auth/login.vue:81 src/pages/auth/login.vue:85 src/pages/labels.vue:340
+#: src/pages/people/faces.vue:52 src/pages/people/faces.vue:307 src/pages/people/subjects.vue:396 src/share/photo/cards.vue:403 src/share/photo/list.vue:55
 #: src/share/photo/list.vue:225
-#, fuzzy
 msgid "Name"
 msgstr "اسم"
 
-#: src/component/album/toolbar.vue:71
-#: src/dialog/album/edit.vue:27
-#: src/dialog/photo/labels.vue:25
-#: src/dialog/photo/people.vue:24
-#: src/pages/labels.vue:37
-#: src/pages/library/files.vue:40
-#: src/pages/people/faces.vue:46
-#: src/pages/people/subjects.vue:42
-#, fuzzy
+#: src/component/album/toolbar.vue:71 src/dialog/album/edit.vue:27 src/dialog/photo/labels.vue:25 src/dialog/photo/people.vue:24 src/pages/labels.vue:37
+#: src/pages/library/files.vue:40 src/pages/people/faces.vue:46 src/pages/people/subjects.vue:42
 msgid "Name too long"
 msgstr "الاسم طويل جدًا"
 
-#: src/options/options.js:395
-#: src/options/options.js:405
-#: src/pages/settings/sync.vue:50
-#, fuzzy
+#: src/options/options.js:395 src/options/options.js:405 src/pages/settings/sync.vue:50
 msgid "Never"
 msgstr "أبداً"
 
 #: src/pages/people.vue:26
-#, fuzzy
 msgid "New"
 msgstr "جديد"
 
 #: src/pages/settings/account.vue:81
-#, fuzzy
 msgid "New Password"
 msgstr "كلمة السر الجديدة"
 
-#: src/component/album/toolbar.vue:59
-#: src/component/photo/toolbar.vue:52
-#: src/dialog/album/edit.vue:20
-#, fuzzy
+#: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:52 src/dialog/album/edit.vue:20
 msgid "Newest first"
 msgstr "الأحدث أولاً"
 
-#: src/dialog/people/merge.vue:15
-#: src/dialog/photo/archive.vue:15
-#: src/dialog/photo/info.vue:287
-#: src/dialog/photo/info.vue:308
-#: src/dialog/photo/info.vue:328
-#: src/dialog/photo/info.vue:348
-#: src/dialog/photo/info.vue:368
-#, fuzzy
+#: src/dialog/people/merge.vue:15 src/dialog/photo/archive.vue:15 src/dialog/photo/info.vue:287 src/dialog/photo/info.vue:308 src/dialog/photo/info.vue:328
+#: src/dialog/photo/info.vue:348 src/dialog/photo/info.vue:368
 msgid "No"
 msgstr "رقم"
 
-#: src/pages/albums.vue:35
-#: src/pages/albums.vue:382
-#: src/share/albums.vue:18
-#: src/share/albums.vue:301
-#, fuzzy
+#: src/pages/albums.vue:35 src/pages/albums.vue:382 src/share/albums.vue:18 src/share/albums.vue:301
 msgid "No albums found"
 msgstr "لم يتم العثور على ألبومات"
 
-#: src/dialog/photo/labels.vue:33
-#: src/pages/labels.vue:31
-#: src/pages/labels.vue:377
-#, fuzzy
+#: src/dialog/photo/labels.vue:33 src/pages/labels.vue:31 src/pages/labels.vue:377
 msgid "No labels found"
 msgstr "لم يتم العثور على تسميات"
 
-#: src/dialog/photo/people.vue:5
-#: src/pages/people/faces.vue:30
-#: src/pages/people/faces.vue:282
-#: src/pages/people/faces.vue:368
-#: src/pages/people/subjects.vue:33
+#: src/dialog/photo/people.vue:5 src/pages/people/faces.vue:30 src/pages/people/faces.vue:282 src/pages/people/faces.vue:368 src/pages/people/subjects.vue:33
 #: src/pages/people/subjects.vue:466
-#, fuzzy
 msgid "No people found"
 msgstr "لم يتم العثور على أشخاص"
 
-#: src/common/viewer.js:263
-#: src/component/photo/cards.vue:7
-#: src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:7
-#: src/pages/album/photos.vue:342
-#: src/pages/library/files.vue:34
-#: src/pages/photos.vue:382
-#: src/pages/places.vue:207
-#: src/pages/places.vue:267
-#: src/share/photo/cards.vue:7
-#: src/share/photo/list.vue:8
-#: src/share/photo/mosaic.vue:7
-#: src/share/photos.vue:350
-#, fuzzy
+#: src/common/viewer.js:263 src/component/photo/cards.vue:7 src/component/photo/list.vue:8 src/component/photo/mosaic.vue:7 src/pages/album/photos.vue:342
+#: src/pages/library/files.vue:34 src/pages/photos.vue:382 src/pages/places.vue:207 src/pages/places.vue:267 src/share/photo/cards.vue:7
+#: src/share/photo/list.vue:8 src/share/photo/mosaic.vue:7 src/share/photos.vue:350
 msgid "No pictures found"
 msgstr "لم يتم العثور على صور"
 
-#: src/component/photo/cards.vue:4
-#: src/component/photo/list.vue:5
-#: src/component/photo/mosaic.vue:4
-#: src/share/photo/cards.vue:4
-#: src/share/photo/list.vue:5
+#: src/component/photo/cards.vue:4 src/component/photo/list.vue:5 src/component/photo/mosaic.vue:4 src/share/photo/cards.vue:4 src/share/photo/list.vue:5
 #: src/share/photo/mosaic.vue:4
-#, fuzzy
 msgid "No recently edited pictures"
 msgstr "لا توجد صور تم تحريرها مؤخرا"
 
 #: src/pages/settings/sync.vue:49
-#, fuzzy
 msgid "No servers configured."
 msgstr "لم يتم تكوين أي خوادم."
 
 #: src/dialog/sponsor.vue:31
-#, fuzzy
 msgid "No thanks"
 msgstr "لا شكرا"
 
-#: src/component/photo-viewer.vue:94
-#: src/dialog/video/viewer.vue:55
-#, fuzzy
+#: src/component/photo-viewer.vue:94 src/dialog/video/viewer.vue:55
 msgid "No video selected"
 msgstr "لم يتم تحديد مقطع فيديو"
 
-#: src/pages/library/errors.vue:34
-#: src/pages/library/errors.vue:1
-#, fuzzy
+#: src/pages/library/errors.vue:34 src/pages/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr ""
-"لا تحذيرات أو خطأ يحتوي على هذه الكلمة الأساسية. لاحظ أن البحث حساس لحالة "
-"الأحرف."
+msgstr "لا تحذيرات أو خطأ يحتوي على هذه الكلمة الأساسية. لاحظ أن البحث حساس لحالة الأحرف."
 
-#: src/component/photo/cards.vue:13
-#: src/component/photo/cards.vue:1
-#: src/component/photo/list.vue:14
-#: src/component/photo/list.vue:1
-#: src/component/photo/list.vue:43
-#: src/component/photo/mosaic.vue:13
-#: src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:50
-#: src/pages/settings/library.vue:93
-#, fuzzy
+#: src/component/photo/cards.vue:13 src/component/photo/cards.vue:1 src/component/photo/list.vue:14 src/component/photo/list.vue:1 src/component/photo/list.vue:43
+#: src/component/photo/mosaic.vue:13 src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50 src/pages/settings/library.vue:93
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr ""
-"تتطلب الصور غير الفوتوغرافية وذات الجودة المنخفضة المراجعة قبل ظهورها في "
-"نتائج البحث."
+msgstr "تتطلب الصور غير الفوتوغرافية وذات الجودة المنخفضة المراجعة قبل ظهورها في نتائج البحث."
 
-#: src/options/options.js:281
-#: src/options/options.js:362
-#, fuzzy
+#: src/options/options.js:281 src/options/options.js:362
 msgid "None"
 msgstr "لا أحد"
 
 #: src/model/thumb.js:70
-#, fuzzy
 msgid "Not Found"
 msgstr "لم يتم العثور على"
 
 #: src/pages/library/import.vue:28
-#, fuzzy
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr "لاحظ أنه يمكنك إدارة مجلد الأصول يدويًا والاستيراد اختياري."
 
 #: src/pages/settings/sync.vue:35
-#, fuzzy
 msgid "Note:"
 msgstr "ملحوظة:"
 
 #: src/dialog/account/add.vue:22
-#, fuzzy
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr ""
-"ملاحظة: يمكن تكوين خوادم WebDAV فقط ، مثل Nextcloud أو PhotoPrism ، كخدمة عن "
-"بُعد للنسخ الاحتياطي وتحميل الملفات."
+msgstr "ملاحظة: يمكن تكوين خوادم WebDAV فقط ، مثل Nextcloud أو PhotoPrism ، كخدمة عن بُعد للنسخ الاحتياطي وتحميل الملفات."
 
 #: src/pages/settings/account.vue:20
-#, fuzzy
 msgid "Note: Updating the password will not revoke access from already authenticated users."
-msgstr ""
-"ملاحظة: لن يؤدي تحديث كلمة المرور إلى إبطال الوصول من المستخدمين المصادق "
-"عليهم بالفعل."
+msgstr "ملاحظة: لن يؤدي تحديث كلمة المرور إلى إبطال الوصول من المستخدمين المصادق عليهم بالفعل."
 
 #: src/dialog/photo/details.vue:612
-#, fuzzy
 msgid "Notes"
 msgstr "ملحوظات"
 
 #: src/pages/library/logs.vue:5
-#, fuzzy
 msgid "Nothing to see here yet. Be patient."
 msgstr "لا شيء لتراه هنا حتى الآن. كن صبوراً."
 
-#: src/component/navigation.vue:472
-#: src/component/navigation.vue:1780
-#: src/options/options.js:300
-#, fuzzy
+#: src/component/navigation.vue:472 src/component/navigation.vue:1780 src/options/options.js:300
 msgid "Offline"
 msgstr "غير متصل على الانترنت"
 
-#: src/component/album/toolbar.vue:60
-#: src/component/photo/toolbar.vue:53
-#: src/dialog/album/edit.vue:21
-#, fuzzy
+#: src/component/album/toolbar.vue:60 src/component/photo/toolbar.vue:53 src/dialog/album/edit.vue:21
 msgid "Oldest first"
 msgstr "الأقدم أولا"
 
 #: src/dialog/webdav.vue:17
-#, fuzzy
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "في نظام التشغيل Windows ، أدخل المورد التالي في مربع حوار الاتصال:"
 
 #: src/options/options.js:401
-#, fuzzy
 msgid "Once a week"
 msgstr "مرة في الأسبوع"
 
-#: src/pages/albums.vue:384
-#: src/share/albums.vue:303
-#, fuzzy
+#: src/pages/albums.vue:384 src/share/albums.vue:303
 msgid "One album found"
 msgstr "تم العثور على ألبوم واحد"
 
 #: src/pages/library/files.vue:299
-#, fuzzy
 msgid "One file found"
 msgstr "تم العثور على ملف واحد"
 
 #: src/dialog/share/upload.vue:74
-#, fuzzy
 msgid "One file uploaded"
 msgstr "تم تحميل ملف واحد"
 
 #: src/pages/library/files.vue:301
-#, fuzzy
 msgid "One folder found"
 msgstr "تم العثور على مجلد واحد"
 
 #: src/pages/labels.vue:379
-#, fuzzy
 msgid "One label found"
 msgstr "تم العثور على تسمية واحدة"
 
-#: src/pages/people/faces.vue:284
-#: src/pages/people/faces.vue:370
-#: src/pages/people/subjects.vue:468
-#, fuzzy
+#: src/pages/people/faces.vue:284 src/pages/people/faces.vue:370 src/pages/people/subjects.vue:468
 msgid "One person found"
 msgstr "تم العثور على شخص واحد"
 
-#: src/pages/album/photos.vue:344
-#: src/pages/photos.vue:384
-#: src/share/photos.vue:352
-#, fuzzy
+#: src/pages/album/photos.vue:344 src/pages/photos.vue:384 src/share/photos.vue:352
 msgid "One picture found"
 msgstr "تم العثور على صورة واحدة"
 
 #: src/options/options.js:239
-#, fuzzy
 msgid "Onyx"
 msgstr "أونيكس"
 
 #: src/pages/settings/advanced.vue:6
-#, fuzzy
 msgid "Options"
 msgstr "خيارات"
 
 #: src/pages/about/about.vue:49
-#, fuzzy
 msgid "or ask in our Community Chat"
 msgstr "أو اسأل في دردشة المجتمع"
 
 #: src/options/options.js:420
-#, fuzzy
 msgid "Orange"
 msgstr "البرتقالي"
 
-#: src/dialog/photo/files.vue:155
-#: src/dialog/photo/files.vue:152
-#, fuzzy
+#: src/dialog/photo/files.vue:155 src/dialog/photo/files.vue:152
 msgid "Orientation"
 msgstr "توجيه"
 
 #: src/pages/library/import.vue:27
-#, fuzzy
 msgid "Original file names will be stored and indexed."
 msgstr "سيتم تخزين أسماء الملفات الأصلية وفهرستها."
 
-#: src/dialog/photo/files.vue:77
-#: src/dialog/photo/files.vue:74
-#: src/dialog/photo/info.vue:37
-#, fuzzy
+#: src/dialog/photo/files.vue:77 src/dialog/photo/files.vue:74 src/dialog/photo/info.vue:37
 msgid "Original Name"
 msgstr "الاسم الاصلي"
 
-#: src/component/navigation.vue:375
-#: src/dialog/account/edit.vue:104
-#: src/model/file.js:194
-#: src/pages/library/files.vue:6
-#: src/pages/settings/general.vue:316
-#, fuzzy
+#: src/component/navigation.vue:375 src/dialog/account/edit.vue:104 src/model/file.js:194 src/pages/library/files.vue:6 src/pages/settings/general.vue:316
 msgid "Originals"
 msgstr "أصول"
 
 #: src/options/options.js:440
-#, fuzzy
 msgid "Other"
 msgstr "آخر"
 
 #: src/pages/about/about.vue:15
-#, fuzzy
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr ""
-"مهمتنا هي توفير الحل الأكثر ملاءمة للمستخدم والخصوصية للحفاظ على صورك منظمة "
-"ويمكن الوصول إليها."
+msgstr "مهمتنا هي توفير الحل الأكثر ملاءمة للمستخدم والخصوصية للحفاظ على صورك منظمة ويمكن الوصول إليها."
 
 #: src/options/options.js:319
-#, fuzzy
 msgid "Outdoor"
 msgstr "في الخارج"
 
 #: src/dialog/photo/info.vue:118
-#, fuzzy
 msgid "Panorama"
 msgstr "بانوراما"
 
 #: src/component/navigation.vue:110
-#, fuzzy
 msgid "Panoramas"
 msgstr "بانوراما"
 
-#: src/dialog/account/add.vue:105
-#: src/dialog/account/edit.vue:456
-#: src/dialog/share.vue:24
-#: src/pages/auth/login.vue:101
-#: src/pages/auth/login.vue:103
-#, fuzzy
+#: src/dialog/account/add.vue:105 src/dialog/account/edit.vue:456 src/dialog/share.vue:24 src/pages/auth/login.vue:101 src/pages/auth/login.vue:103
 msgid "Password"
 msgstr "كلمة المرور"
 
 #: src/pages/settings/account.vue:22
-#, fuzzy
 msgid "Password changed"
 msgstr "تم تغيير كلمة السر"
 
-#: src/app/routes.js:266
-#: src/app/routes.js:286
-#: src/component/navigation.vue:231
-#: src/component/navigation.vue:966
-#: src/dialog/photo/edit.vue:52
-#: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:266
-#: src/pages/settings/general.vue:338
-#, fuzzy
+#: src/app/routes.js:266 src/app/routes.js:286 src/component/navigation.vue:231 src/component/navigation.vue:966 src/dialog/photo/edit.vue:52
+#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:266 src/pages/settings/general.vue:338
 msgid "People"
 msgstr "الناس"
 
 #: src/dialog/share.vue:72
-#, fuzzy
 msgid "People you share a link with will be able to view public contents."
 msgstr "سيتمكن الأشخاص الذين تشارك الرابط معهم من عرض المحتويات العامة."
 
 #: src/component/photo/clipboard.vue:99
-#, fuzzy
 msgid "Permanently deleted"
 msgstr "حذف نهائيًا"
 
 #: src/pages/settings/general.vue:207
-#, fuzzy
 msgid "Permanently remove files to free up storage."
 msgstr "قم بإزالة الملفات بشكل دائم لتحرير مساحة التخزين."
 
 #: src/model/photo.js:967
-#, fuzzy
 msgid "Photo"
 msgstr "صورة"
 
 #: src/dialog/reload.vue:4
-#, fuzzy
 msgid "PhotoPrism has been updated…"
 msgstr "تم تحديث PhotoPrism …"
 
 #: src/app/routes.js:108
-#, fuzzy
 msgid "Photos"
 msgstr "الصور"
 
 #: src/options/options.js:418
-#, fuzzy
 msgid "Pink"
 msgstr "لون القرنفل"
 
 #: src/dialog/photo/info.vue:126
-#, fuzzy
 msgid "Place"
 msgstr "مكان"
 
 #: src/pages/settings/library.vue:173
-#, fuzzy
 msgid "Place & Time"
 msgstr "المكان والزمان"
 
-#: src/app/routes.js:216
-#: src/app/routes.js:222
-#: src/app/routes.js:228
-#: src/app/routes.js:235
-#: src/component/navigation.vue:283
-#: src/component/navigation.vue:293
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:1144
-#: src/pages/settings/general.vue:108
-#: src/pages/settings/general.vue:450
-#, fuzzy
+#: src/app/routes.js:216 src/app/routes.js:222 src/app/routes.js:228 src/app/routes.js:235 src/component/navigation.vue:283 src/component/navigation.vue:293
+#: src/component/navigation.vue:4 src/component/navigation.vue:1144 src/pages/settings/general.vue:108 src/pages/settings/general.vue:450
 msgid "Places"
 msgstr "أماكن"
 
-#: src/component/photo/cards.vue:293
-#: src/component/photo/mosaic.vue:267
-#: src/share/photo/cards.vue:266
-#: src/share/photo/mosaic.vue:248
-#, fuzzy
+#: src/component/photo/cards.vue:293 src/component/photo/mosaic.vue:267 src/share/photo/cards.vue:266 src/share/photo/mosaic.vue:248
 msgid "Play"
 msgstr "لعب"
 
 #: src/pages/settings/account.vue:110
-#, fuzzy
 msgid "Please confirm your new password."
 msgstr "يرجى تأكيد كلمة المرور الجديدة الخاصة بك."
 
 #: src/dialog/upload.vue:45
-#, fuzzy
 msgid "Please don't upload photos containing offensive content."
 msgstr "الرجاء عدم تحميل الصور التي تحتوي على محتوى مسيء."
 
-#: src/dialog/photo/files.vue:135
-#: src/dialog/photo/files.vue:132
-#, fuzzy
+#: src/dialog/photo/files.vue:135 src/dialog/photo/files.vue:132
 msgid "Portrait"
 msgstr "لَوحَة"
 
 #: src/pages/about/about.vue:48
-#, fuzzy
 msgid "post your question in GitHub Discussions"
 msgstr "انشر سؤالك في GitHub Discussions"
 
 #: src/dialog/account/edit.vue:340
-#, fuzzy
 msgid "Preserve filenames"
 msgstr "الاحتفاظ بأسماء الملفات"
 
 #: src/pages/library/import.vue:8
-#, fuzzy
 msgid "Press button to start importing…"
 msgstr "اضغط على الزر لبدء الاستيراد …"
 
 #: src/pages/library/index.vue:9
-#, fuzzy
 msgid "Press button to start indexing…"
 msgstr "اضغط على الزر لبدء الفهرسة …"
 
-#: src/dialog/upload.vue:22
-#: src/dialog/upload.vue:4
-#, fuzzy
+#: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
 msgstr "اضغط على Enter لإنشاء ألبوم جديد."
 
-#: src/dialog/photo/files.vue:19
-#: src/dialog/photo/files.vue:16
-#, fuzzy
+#: src/dialog/photo/files.vue:19 src/dialog/photo/files.vue:16
 msgid "Preview"
 msgstr "معاينة"
 
-#: src/dialog/photo/files.vue:35
-#: src/dialog/photo/files.vue:119
-#: src/dialog/photo/files.vue:32
-#: src/dialog/photo/files.vue:116
-#: src/dialog/photo/files.vue:28
-#, fuzzy
+#: src/dialog/photo/files.vue:35 src/dialog/photo/files.vue:119 src/dialog/photo/files.vue:32 src/dialog/photo/files.vue:116 src/dialog/photo/files.vue:28
 msgid "Primary"
 msgstr "الأولية"
 
-#: src/app/routes.js:202
-#: src/component/navigation.vue:343
-#: src/component/navigation.vue:1352
-#: src/dialog/photo/info.vue:102
-#: src/pages/settings/general.vue:272
-#, fuzzy
+#: src/app/routes.js:202 src/component/navigation.vue:343 src/component/navigation.vue:1352 src/dialog/photo/info.vue:102 src/pages/settings/general.vue:272
 msgid "Private"
 msgstr "خاص"
 
 #: src/options/options.js:436
-#, fuzzy
 msgid "Product Feedback"
 msgstr "ملاحظات المنتج"
 
-#: src/dialog/photo/files.vue:143
-#: src/dialog/photo/files.vue:140
-#, fuzzy
+#: src/dialog/photo/files.vue:143 src/dialog/photo/files.vue:140
 msgid "Projection"
 msgstr "تنبؤ"
 
 #: src/options/options.js:416
-#, fuzzy
 msgid "Purple"
 msgstr "أرجواني"
 
 #: src/pages/settings/library.vue:92
-#, fuzzy
 msgid "Quality Filter"
 msgstr "مرشح الجودة"
 
 #: src/dialog/photo/info.vue:59
-#, fuzzy
 msgid "Quality Score"
 msgstr "نقاط الجودة"
 
 #: src/pages/discover.vue:16
-#, fuzzy
 msgid "Random"
 msgstr "عشوائي"
 
 #: src/options/options.js:259
-#, fuzzy
 msgid "Raspberry"
 msgstr "توت العُليق"
 
 #: src/options/options.js:335
-#, fuzzy
 msgid "Raw"
 msgstr "خام"
 
-#: src/component/photo/cards.vue:208
-#: src/component/photo/mosaic.vue:181
-#: src/share/photo/cards.vue:181
-#: src/share/photo/mosaic.vue:162
-#, fuzzy
+#: src/component/photo/cards.vue:208 src/component/photo/mosaic.vue:181 src/share/photo/cards.vue:181 src/share/photo/mosaic.vue:162
 msgid "RAW"
 msgstr "الخام"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
 msgid "RAW Conversion"
 msgstr "تحويل RAW"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"أعد فهرسة جميع الأصول ، بما في ذلك الملفات المفهرسة بالفعل والتي لم يتم "
-"تغييرها."
+msgstr "أعد فهرسة جميع الأصول ، بما في ذلك الملفات المفهرسة بالفعل والتي لم يتم تغييرها."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Read-Only Mode"
 msgstr "وضع القراءة فقط"
 
-#: src/component/album/toolbar.vue:57
-#: src/component/photo/toolbar.vue:50
-#: src/dialog/album/edit.vue:18
-#, fuzzy
+#: src/component/album/toolbar.vue:57 src/component/photo/toolbar.vue:50 src/dialog/album/edit.vue:18
 msgid "Recently added"
 msgstr "أضيف مؤخرا"
 
-#: src/component/album/toolbar.vue:58
-#: src/component/photo/toolbar.vue:51
-#: src/dialog/album/edit.vue:19
-#, fuzzy
+#: src/component/album/toolbar.vue:58 src/component/photo/toolbar.vue:51 src/dialog/album/edit.vue:19
 msgid "Recently edited"
 msgstr "تم تحريره مؤخرًا"
 
-#: src/dialog/photo/people.vue:9
-#: src/pages/people/faces.vue:34
-#: src/pages/people/subjects.vue:38
-#, fuzzy
+#: src/dialog/photo/people.vue:9 src/pages/people/faces.vue:34 src/pages/people/subjects.vue:38
 msgid "Recognition starts after indexing has been completed."
 msgstr "يبدأ التعرف بعد اكتمال الفهرسة."
 
 #: src/pages/people.vue:17
-#, fuzzy
 msgid "Recognized"
 msgstr "معروف"
 
 #: src/pages/settings/general.vue:339
-#, fuzzy
 msgid "Recognizes faces so that specific people can be found."
 msgstr "يتعرف على الوجوه بحيث يمكن العثور على أشخاص محددين."
 
 #: src/options/options.js:419
-#, fuzzy
 msgid "Red"
 msgstr "أحمر"
 
-#: src/component/album/toolbar.vue:54
-#: src/component/photo/toolbar.vue:60
-#: src/dialog/reload.vue:15
-#: src/pages/albums.vue:141
-#: src/pages/labels.vue:94
-#: src/pages/library/errors.vue:76
-#: src/pages/library/files.vue:100
-#: src/pages/people/faces.vue:65
-#: src/pages/people/subjects.vue:106
-#, fuzzy
+#: src/component/album/toolbar.vue:54 src/component/photo/toolbar.vue:60 src/dialog/reload.vue:15 src/pages/albums.vue:141 src/pages/labels.vue:94
+#: src/pages/library/errors.vue:76 src/pages/library/files.vue:100 src/pages/people/faces.vue:65 src/pages/people/subjects.vue:106
 msgid "Reload"
 msgstr "إعادة تحميل"
 
-#: src/component/navigation.vue:100
-#: src/dialog/reload.vue:26
-#: src/pages/settings/general.vue:99
-#: src/pages/settings/library.vue:46
-#, fuzzy
+#: src/component/navigation.vue:100 src/dialog/reload.vue:26 src/pages/settings/general.vue:99 src/pages/settings/library.vue:46
 msgid "Reloading…"
 msgstr "جارٍ إعادة التحميل…"
 
 #: src/dialog/account/edit.vue:96
-#, fuzzy
 msgid "Remote Sync"
 msgstr "مزامنة عن بعد"
 
 #: src/dialog/photo/people.vue:108
-#, fuzzy
 msgid "Remove"
 msgstr "إزالة"
 
 #: src/component/photo/clipboard.vue:138
-#, fuzzy
 msgid "remove failed: unknown album"
 msgstr "فشل الإزالة: ألبوم غير معروف"
 
 #: src/component/photo/clipboard.vue:261
-#, fuzzy
 msgid "Remove from album"
 msgstr "إزالة من الألبوم"
 
 #: src/pages/library/import.vue:133
-#, fuzzy
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr ""
-"قم بإزالة الملفات المستوردة لحفظ التخزين. لن يتم حذف أنواع الملفات غير "
-"المدعومة مطلقًا ، وستظل في موقعها الحالي."
+msgstr "قم بإزالة الملفات المستوردة لحفظ التخزين. لن يتم حذف أنواع الملفات غير المدعومة مطلقًا ، وستظل في موقعها الحالي."
 
 #: src/common/api.js:74
-#, fuzzy
 msgid "Request failed - invalid response"
 msgstr "فشل الطلب - استجابة غير صالحة"
 
-#: src/pages/about/feedback.vue:117
-#: src/pages/about/feedback.vue:137
-#: src/pages/about/feedback.vue:179
-#, fuzzy
+#: src/pages/about/feedback.vue:117 src/pages/about/feedback.vue:137 src/pages/about/feedback.vue:179
 msgid "Required"
 msgstr "مطلوب"
 
 #: src/dialog/photo/info.vue:67
-#, fuzzy
 msgid "Resolution"
 msgstr "القرار"
 
 #: src/component/photo/clipboard.vue:239
-#, fuzzy
 msgid "Restore"
 msgstr "يعيد"
 
 #: src/dialog/account/edit.vue:535
-#, fuzzy
 msgid "Retry Limit"
 msgstr "حد إعادة المحاولة"
 
 #: src/pages/settings/account.vue:106
-#, fuzzy
 msgid "Retype Password"
 msgstr "اعد ادخال كلمة المرور"
 
-#: src/app/routes.js:195
-#: src/component/navigation.vue:142
-#, fuzzy
+#: src/app/routes.js:195 src/component/navigation.vue:142
 msgid "Review"
 msgstr "إعادة النظر"
 
-#: src/dialog/account/edit.vue:105
-#: src/dialog/album/edit.vue:45
-#: src/dialog/share.vue:61
-#, fuzzy
+#: src/dialog/account/edit.vue:105 src/dialog/album/edit.vue:45 src/dialog/share.vue:61
 msgid "Save"
 msgstr "يحفظ"
 
 #: src/dialog/photo/info.vue:110
-#, fuzzy
 msgid "Scan"
 msgstr "مسح"
 
 #: src/component/navigation.vue:134
-#, fuzzy
 msgid "Scans"
 msgstr "عمليات المسح"
 
-#: src/component/navigation.vue:82
-#: src/component/navigation.vue:92
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:448
-#: src/component/photo/toolbar.vue:50
-#: src/pages/albums.vue:114
-#: src/pages/labels.vue:81
-#: src/pages/library/errors.vue:65
-#: src/pages/people/subjects.vue:88
+#: src/component/navigation.vue:82 src/component/navigation.vue:92 src/component/navigation.vue:4 src/component/navigation.vue:448
+#: src/component/photo/toolbar.vue:50 src/pages/albums.vue:114 src/pages/labels.vue:81 src/pages/library/errors.vue:65 src/pages/people/subjects.vue:88
 #: src/pages/places.vue:34
-#, fuzzy
 msgid "Search"
 msgstr "يبحث"
 
 #: src/pages/settings/general.vue:451
-#, fuzzy
 msgid "Search and display photos on a map."
 msgstr "البحث عن الصور وعرضها على الخريطة."
 
 #: src/pages/discover.vue:12
-#, fuzzy
 msgid "Season"
 msgstr "الموسم"
 
 #: src/options/options.js:264
-#, fuzzy
 msgid "Seaweed"
 msgstr "الأعشاب البحرية"
 
 #: src/dialog/share.vue:213
-#, fuzzy
 msgid "Secret"
 msgstr "سر"
 
 #: src/component/photo-viewer.vue:119
-#, fuzzy
 msgid "Select"
 msgstr "يختار"
 
 #: src/dialog/upload.vue:138
-#, fuzzy
 msgid "Select albums or create a new one"
 msgstr "حدد ألبومات أو أنشئ واحدة جديدة"
 
 #: src/component/photo/clipboard.vue:62
-#, fuzzy
 msgid "Selection approved"
 msgstr "تمت الموافقة على الاختيار"
 
 #: src/component/photo/clipboard.vue:87
-#, fuzzy
 msgid "Selection archived"
 msgstr "تمت أرشفة التحديد"
 
 #: src/component/photo/clipboard.vue:112
-#, fuzzy
 msgid "Selection restored"
 msgstr "تمت استعادة التحديد"
 
 #: src/pages/about/feedback.vue:39
-#, fuzzy
 msgid "Send"
 msgstr "إرسال"
 
 #: src/pages/settings/library.vue:215
-#, fuzzy
 msgid "Sequential Name"
 msgstr "اسم متسلسل"
 
 #: src/pages/settings/sync.vue:26
-#, fuzzy
 msgid "Server"
 msgstr "الخادم"
 
-#: src/dialog/account/add.vue:65
-#: src/dialog/account/edit.vue:420
-#: src/dialog/share.vue:22
-#, fuzzy
+#: src/dialog/account/add.vue:65 src/dialog/account/edit.vue:420 src/dialog/share.vue:22
 msgid "Service URL"
 msgstr "URL الخدمة"
 
-#: src/app/routes.js:314
-#: src/app/routes.js:326
-#: src/app/routes.js:338
-#: src/app/routes.js:350
-#: src/app/routes.js:362
-#: src/component/navigation.vue:407
-#: src/component/navigation.vue:417
-#: src/component/navigation.vue:8
-#: src/component/navigation.vue:18
-#: src/component/navigation.vue:4
+#: src/app/routes.js:314 src/app/routes.js:326 src/app/routes.js:338 src/app/routes.js:350 src/app/routes.js:362 src/component/navigation.vue:407
+#: src/component/navigation.vue:417 src/component/navigation.vue:8 src/component/navigation.vue:18 src/component/navigation.vue:4
 #: src/component/navigation.vue:1573
-#, fuzzy
 msgid "Settings"
 msgstr "إعدادات"
 
-#: src/pages/settings/advanced.vue:39
-#: src/pages/settings/general.vue:103
-#: src/pages/settings/library.vue:50
-#, fuzzy
+#: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:103 src/pages/settings/library.vue:50
 msgid "Settings saved"
 msgstr "تم حفظ الإعدادات"
 
 #: src/dialog/share/upload.vue:32
-#, fuzzy
 msgid "Setup"
 msgstr "اقامة"
 
 #: src/options/options.js:269
-#, fuzzy
 msgid "Shadow"
 msgstr "ظل"
 
-#: src/component/album/clipboard.vue:70
-#: src/component/album/toolbar.vue:88
-#: src/component/photo/clipboard.vue:77
-#: src/pages/settings/general.vue:250
-#, fuzzy
+#: src/component/album/clipboard.vue:70 src/component/album/toolbar.vue:88 src/component/photo/clipboard.vue:77 src/pages/settings/general.vue:250
 msgid "Share"
 msgstr "يشارك"
 
 #: src/dialog/share.vue:7
-#, fuzzy
 msgid "Share %{name}"
 msgstr "شارك الاسم}"
 
 #: src/share/albums.vue:51
-#, fuzzy
 msgid "Shared with you."
 msgstr "مشترك معك."
 
-#: src/pages/people/faces.vue:227
-#: src/pages/people/subjects.vue:288
-#, fuzzy
+#: src/pages/people/faces.vue:227 src/pages/people/subjects.vue:288
 msgid "Show"
 msgstr "يعرض"
 
 #: src/pages/people/faces.vue:66
-#, fuzzy
 msgid "Show all new faces"
 msgstr "إظهار كل الوجوه الجديدة"
 
-#: src/pages/people/faces.vue:83
-#: src/pages/people/subjects.vue:124
-#, fuzzy
+#: src/pages/people/faces.vue:83 src/pages/people/subjects.vue:124
 msgid "Show hidden"
 msgstr "أظهر المخفي"
 
 #: src/pages/labels.vue:129
-#, fuzzy
 msgid "Show less"
 msgstr "عرض أقل"
 
 #: src/pages/settings/general.vue:405
-#, fuzzy
 msgid "Show Library in navigation menu."
 msgstr "إظهار المكتبة في قائمة التنقل."
 
 #: src/pages/labels.vue:112
-#, fuzzy
 msgid "Show more"
 msgstr "أظهر المزيد"
 
 #: src/pages/settings/general.vue:427
-#, fuzzy
 msgid "Show server logs in Library."
 msgstr "إظهار سجلات الخادم في المكتبة."
 
 #: src/pages/settings/advanced.vue:78
-#, fuzzy
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "يظهر رسائل سجل أكثر تفصيلا. يتطلب إعادة التشغيل."
 
 #: src/model/file.js:212
-#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
 #: src/pages/auth/login.vue:17
-#, fuzzy
 msgid "Sign in"
 msgstr "تسجيل الدخول"
 
 #: src/dialog/sponsor.vue:39
-#, fuzzy
 msgid "Sign Up"
 msgstr "اشتراك"
 
 #: src/pages/discover.vue:8
-#, fuzzy
 msgid "Similar"
 msgstr "مماثل"
 
-#: src/dialog/account/edit.vue:219
-#: src/dialog/photo/files.vue:83
-#: src/dialog/photo/files.vue:80
-#: src/dialog/photo/files.vue:36
-#, fuzzy
+#: src/dialog/account/edit.vue:219 src/dialog/photo/files.vue:83 src/dialog/photo/files.vue:80 src/dialog/photo/files.vue:36
 msgid "Size"
 msgstr "بحجم"
 
 #: src/options/options.js:293
-#, fuzzy
 msgid "Slow"
 msgstr "بطيء"
 
-#: src/component/album/toolbar.vue:61
-#: src/component/photo/toolbar.vue:54
-#: src/dialog/album/edit.vue:22
-#, fuzzy
+#: src/component/album/toolbar.vue:61 src/component/photo/toolbar.vue:54 src/dialog/album/edit.vue:22
 msgid "Sort by file name"
 msgstr "فرز حسب اسم الملف"
 
-#: src/component/photo/toolbar.vue:253
-#: src/dialog/album/edit.vue:180
-#, fuzzy
+#: src/component/photo/toolbar.vue:253 src/dialog/album/edit.vue:180
 msgid "Sort Order"
 msgstr "امر ترتيب"
 
 #: src/dialog/photo/labels.vue:21
-#, fuzzy
 msgid "Source"
 msgstr "مصدر"
 
 #: src/pages/about/about.vue:30
-#, fuzzy
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr ""
-"يحصل الرعاة على ميزات إضافية ، ويتلقون الدعم الفني المباشر عبر البريد "
-"الإلكتروني ، ويمكنهم الانضمام إلى غرفة الدردشة الخاصة بنا على matrix.org."
+msgstr "يحصل الرعاة على ميزات إضافية ، ويتلقون الدعم الفني المباشر عبر البريد الإلكتروني ، ويمكنهم الانضمام إلى غرفة الدردشة الخاصة بنا على matrix.org."
 
-#: src/component/photo/cards.vue:248
-#: src/component/photo/mosaic.vue:221
-#: src/share/photo/cards.vue:221
-#: src/share/photo/mosaic.vue:202
-#, fuzzy
+#: src/component/photo/cards.vue:248 src/component/photo/mosaic.vue:221 src/share/photo/cards.vue:221 src/share/photo/mosaic.vue:202
 msgid "Stack"
 msgstr "كومة"
 
 #: src/pages/settings/library.vue:195
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "تكديس الملفات التي تشترك في نفس الصورة الفريدة أو معرّف المثيل."
 
 #: src/pages/settings/library.vue:174
-#, fuzzy
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr ""
-"قم بتجميع الصور الملتقطة في نفس الوقت والمكان بالضبط بناءً على البيانات "
-"الوصفية الخاصة بها."
+msgstr "قم بتجميع الصور الملتقطة في نفس الوقت والمكان بالضبط بناءً على البيانات الوصفية الخاصة بها."
 
 #: src/dialog/photo/info.vue:86
-#, fuzzy
 msgid "Stackable"
 msgstr "سهل التخزين"
 
-#: src/component/navigation.vue:126
-#: src/pages/settings/library.vue:34
-#, fuzzy
+#: src/component/navigation.vue:126 src/pages/settings/library.vue:34
 msgid "Stacks"
 msgstr "الأكوام"
 
 #: src/pages/settings/library.vue:140
-#, fuzzy
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr ""
-"يكدس الملفات بإطار مرجعي مماثل ، لكن مع وجود اختلافات في الجودة أو التنسيق "
-"أو الحجم أو اللون."
+msgstr "يكدس الملفات بإطار مرجعي مماثل ، لكن مع وجود اختلافات في الجودة أو التنسيق أو الحجم أو اللون."
 
 #: src/pages/library/index.vue:31
-#, fuzzy
 msgid "Start"
 msgstr "بداية"
 
 #: src/component/photo-viewer.vue:183
-#, fuzzy
 msgid "Start/Stop Slideshow"
 msgstr "بدء / إيقاف عرض الشرائح"
 
 #: src/component/navigation.vue:303
-#, fuzzy
 msgid "States"
 msgstr "تنص على"
 
 #: src/pages/settings/advanced.vue:374
-#, fuzzy
 msgid "Static Size Limit: %{n}px"
 msgstr "حد الحجم الثابت:٪ {n} بكسل"
 
 #: src/dialog/photo/files.vue:38
-#, fuzzy
 msgid "Status"
 msgstr "حالة"
 
-#: src/dialog/photo/files.vue:71
-#: src/dialog/photo/files.vue:68
-#, fuzzy
+#: src/dialog/photo/files.vue:71 src/dialog/photo/files.vue:68
 msgid "Storage"
 msgstr "تخزين"
 
 #: src/options/options.js:304
-#, fuzzy
 msgid "Streets"
 msgstr "الشوارع"
 
 #: src/pages/settings/general.vue:511
-#, fuzzy
 msgid "Style"
 msgstr "أسلوب"
 
-#: src/dialog/photo/details.vue:473
-#: src/model/subject.js:158
-#, fuzzy
+#: src/dialog/photo/details.vue:473 src/model/subject.js:158
 msgid "Subject"
 msgstr "موضوعات"
 
 #: src/dialog/account/add.vue:23
-#, fuzzy
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "دعم الخدمات الإضافية ، مثل Google Drive ، ستتم إضافته بمرور الوقت."
 
-#: src/pages/settings.vue:63
-#: src/pages/settings/sync.vue:28
-#, fuzzy
+#: src/pages/settings.vue:63 src/pages/settings/sync.vue:28
 msgid "Sync"
 msgstr "مزامنة"
 
 #: src/dialog/account/edit.vue:377
-#, fuzzy
 msgid "Sync raw and video files"
 msgstr "مزامنة ملفات الفيديو الخام"
 
-#: src/component/photo/cards.vue:517
-#: src/component/photo/list.vue:56
-#: src/dialog/photo/info.vue:52
-#: src/share/photo/cards.vue:349
-#: src/share/photo/list.vue:52
-#, fuzzy
+#: src/component/photo/cards.vue:517 src/component/photo/list.vue:56 src/dialog/photo/info.vue:52 src/share/photo/cards.vue:349 src/share/photo/list.vue:52
 msgid "Taken"
 msgstr "مأخوذ"
 
 #: src/options/options.js:425
-#, fuzzy
 msgid "Teal"
 msgstr "بط نهري صغير"
 
-#: src/dialog/photo/details.vue:25
-#: src/pages/people/faces.vue:55
-#, fuzzy
+#: src/dialog/photo/details.vue:25 src/pages/people/faces.vue:55
 msgid "Text too long"
 msgstr "نص طويل جدًا"
 
 #: src/pages/library/index.vue:36
-#, fuzzy
 msgid "The index currently contains %{n} hidden files."
 msgstr "يحتوي الفهرس حاليًا على٪ {n} من الملفات المخفية."
 
 #: src/pages/about/about.vue:17
-#, fuzzy
 msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-msgstr ""
-"توضح خارطة الطريق المهام الجارية ، وما الذي يحتاج إلى اختبار ، وطلبات "
-"الميزات التي سيتم تنفيذها بعد ذلك."
+msgstr "توضح خارطة الطريق المهام الجارية ، وما الذي يحتاج إلى اختبار ، وطلبات الميزات التي سيتم تنفيذها بعد ذلك."
 
 #: src/pages/library/index.vue:37
-#, fuzzy
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr ""
-"قد لا يكون تنسيقها مدعومًا ، أو لم يتم تحويلها إلى JPEG بعد أو أن هناك نسخًا "
-"مكررة."
+msgstr "قد لا يكون تنسيقها مدعومًا ، أو لم يتم تحويلها إلى JPEG بعد أو أن هناك نسخًا مكررة."
 
 #: src/pages/settings/general.vue:72
-#, fuzzy
 msgid "Theme"
 msgstr "سمة"
 
 #: src/dialog/sponsor.vue:17
-#, fuzzy
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr "هذه ميزة الراعي حاليًا لشكر كل من يدعم تطوير هذا التطبيق."
 
-#: src/dialog/webdav.vue:26
-#: src/pages/settings/sync.vue:37
-#, fuzzy
+#: src/dialog/webdav.vue:26 src/pages/settings/sync.vue:37
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr ""
-"يعمل هذا على تثبيت مجلد النسخ الأصلية كمحرك أقراص شبكة ويسمح لك بفتح الملفات "
-"وتعديلها وحذفها من جهاز الكمبيوتر أو الهاتف الذكي كما لو كانت محلية."
+msgstr "يعمل هذا على تثبيت مجلد النسخ الأصلية كمحرك أقراص شبكة ويسمح لك بفتح الملفات وتعديلها وحذفها من جهاز الكمبيوتر أو الهاتف الذكي كما لو كانت محلية."
 
 #: src/pages/settings/advanced.vue:253
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "جيل المصغرات"
 
 #: src/dialog/photo/details.vue:189
-#, fuzzy
 msgid "Time UTC"
 msgstr "الوقت بالتوقيت العالمي المنسق"
 
 #: src/dialog/photo/details.vue:213
-#, fuzzy
 msgid "Time Zone"
 msgstr "وحدة زمنية"
 
 #: src/dialog/account/edit.vue:515
-#, fuzzy
 msgid "Timeout"
 msgstr "نفذ الوقت"
 
-#: src/component/photo/list.vue:55
-#: src/dialog/photo/details.vue:97
-#: src/dialog/photo/info.vue:45
-#: src/share/photo/list.vue:51
-#, fuzzy
+#: src/component/photo/list.vue:55 src/dialog/photo/details.vue:97 src/dialog/photo/info.vue:45 src/share/photo/list.vue:51
 msgid "Title"
 msgstr "عنوان"
 
-#: src/pages/albums.vue:57
-#: src/share/albums.vue:53
-#, fuzzy
+#: src/pages/albums.vue:57 src/share/albums.vue:53
 msgid "Title too long"
 msgstr "العنوان طويل جدًا"
 
 #: src/share.js:159
-#, fuzzy
 msgid "to"
 msgstr "إلى"
 
-#: src/component/album/toolbar.vue:125
-#: src/component/album/toolbar.vue:142
-#: src/component/album/toolbar.vue:158
-#: src/component/photo/toolbar.vue:77
-#: src/component/photo/toolbar.vue:94
-#: src/component/photo/toolbar.vue:110
-#, fuzzy
+#: src/component/album/toolbar.vue:125 src/component/album/toolbar.vue:142 src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:77
+#: src/component/photo/toolbar.vue:94 src/component/photo/toolbar.vue:110
 msgid "Toggle View"
 msgstr "نظرة قوية"
 
 #: src/dialog/share.vue:214
-#, fuzzy
 msgid "Token"
 msgstr "رمز"
 
 #: src/options/options.js:314
-#, fuzzy
 msgid "Topographic"
 msgstr "طبوغرافية"
 
 #: src/pages/library/errors.vue:113
-#, fuzzy
 msgid "Troubleshooting Checklists"
 msgstr "قوائم التحقق استكشاف الأخطاء وإصلاحها"
 
-#: src/component/photo/cards.vue:10
-#: src/component/photo/list.vue:11
-#: src/component/photo/list.vue:40
-#: src/component/photo/mosaic.vue:10
-#: src/pages/albums.vue:38
-#: src/pages/labels.vue:34
-#: src/pages/people/subjects.vue:36
-#: src/share/albums.vue:21
-#: src/share/photo/cards.vue:10
-#: src/share/photo/list.vue:11
-#: src/share/photo/list.vue:40
-#: src/share/photo/mosaic.vue:10
-#, fuzzy
+#: src/component/photo/cards.vue:10 src/component/photo/list.vue:11 src/component/photo/list.vue:40 src/component/photo/mosaic.vue:10 src/pages/albums.vue:38
+#: src/pages/labels.vue:34 src/pages/people/subjects.vue:36 src/share/albums.vue:21 src/share/photo/cards.vue:10 src/share/photo/list.vue:11
+#: src/share/photo/list.vue:40 src/share/photo/mosaic.vue:10
 msgid "Try again using other filters or keywords."
 msgstr "حاول مرة أخرى باستخدام عوامل تصفية أو كلمات رئيسية أخرى."
 
-#: src/dialog/account/edit.vue:495
-#: src/dialog/photo/files.vue:89
-#: src/dialog/photo/files.vue:86
-#: src/dialog/photo/files.vue:37
-#: src/dialog/photo/info.vue:15
-#, fuzzy
+#: src/dialog/account/edit.vue:495 src/dialog/photo/files.vue:89 src/dialog/photo/files.vue:86 src/dialog/photo/files.vue:37 src/dialog/photo/info.vue:15
 msgid "Type"
 msgstr "يكتب"
 
 #: src/dialog/photo/people.vue:151
-#, fuzzy
 msgid "Undo"
 msgstr "الغاء التحميل"
 
 #: src/pages/settings/library.vue:194
-#, fuzzy
 msgid "Unique ID"
 msgstr "معرف فريد"
 
-#: src/dialog/photo/details.vue:16
-#: src/dialog/photo/info.vue:24
-#: src/model/album.js:179
-#: src/model/photo.js:620
-#: src/model/photo.js:637
-#: src/model/photo.js:660
-#: src/model/photo.js:674
-#: src/model/photo.js:759
-#: src/model/photo.js:772
-#: src/options/options.js:20
-#: src/options/options.js:34
-#: src/options/options.js:51
-#: src/options/options.js:65
-#: src/options/options.js:77
-#: src/pages/library/errors.vue:168
-#: src/pages/library/errors.vue:175
-#: src/pages/library/logs.vue:16
-#, fuzzy
+#: src/dialog/photo/details.vue:16 src/dialog/photo/info.vue:24 src/model/album.js:179 src/model/photo.js:620 src/model/photo.js:637 src/model/photo.js:660
+#: src/model/photo.js:674 src/model/photo.js:759 src/model/photo.js:772 src/options/options.js:20 src/options/options.js:34 src/options/options.js:51
+#: src/options/options.js:65 src/options/options.js:77 src/pages/library/errors.vue:168 src/pages/library/errors.vue:175 src/pages/library/logs.vue:16
 msgid "Unknown"
 msgstr "مجهول"
 
-#: src/app/routes.js:167
-#: src/component/navigation.vue:184
-#, fuzzy
+#: src/app/routes.js:167 src/component/navigation.vue:184
 msgid "Unsorted"
 msgstr "غير مصنف"
 
-#: src/dialog/photo/files.vue:38
-#: src/dialog/photo/files.vue:35
-#, fuzzy
+#: src/dialog/photo/files.vue:38 src/dialog/photo/files.vue:35
 msgid "Unstack"
 msgstr "فك"
 
-#: src/dialog/photo/files.vue:198
-#: src/dialog/photo/files.vue:195
-#: src/dialog/photo/info.vue:175
-#, fuzzy
+#: src/dialog/photo/files.vue:198 src/dialog/photo/files.vue:195 src/dialog/photo/info.vue:175
 msgid "Updated"
 msgstr "محدث"
 
 #: src/pages/library/index.vue:151
-#, fuzzy
 msgid "Updating faces"
 msgstr "تحديث الوجوه"
 
 #: src/pages/library/index.vue:155
-#, fuzzy
 msgid "Updating index"
 msgstr "تحديث الفهرس"
 
 #: src/pages/library/index.vue:149
-#, fuzzy
 msgid "Updating moments"
 msgstr "تحديث اللحظات"
 
 #: src/pages/library/index.vue:153
-#, fuzzy
 msgid "Updating previews"
 msgstr "تحديث المعاينات"
 
 #: src/pages/library/index.vue:147
-#, fuzzy
 msgid "Updating stacks"
 msgstr "تحديث المداخن"
 
-#: src/component/album/toolbar.vue:176
-#: src/component/photo/toolbar.vue:128
-#: src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8
-#: src/dialog/upload.vue:54
-#: src/pages/albums.vue:159
-#: src/pages/library/import.vue:38
-#: src/pages/settings/general.vue:140
-#: src/pages/settings/sync.vue:27
-#, fuzzy
+#: src/component/album/toolbar.vue:176 src/component/photo/toolbar.vue:128 src/dialog/share/upload.vue:35 src/dialog/upload.vue:8 src/dialog/upload.vue:54
+#: src/pages/albums.vue:159 src/pages/library/import.vue:38 src/pages/settings/general.vue:140 src/pages/settings/sync.vue:27
 msgid "Upload"
 msgstr "تحميل"
 
 #: src/dialog/upload.vue:159
-#, fuzzy
 msgid "Upload complete"
 msgstr "اكتمل التحميل"
 
 #: src/dialog/upload.vue:38
-#, fuzzy
 msgid "Upload complete. Indexing…"
 msgstr "اكتمل التحميل. جارٍ الفهرسة …"
 
 #: src/dialog/upload.vue:34
-#, fuzzy
 msgid "Upload failed"
 msgstr "التحميل فشل"
 
 #: src/dialog/account/edit.vue:359
-#, fuzzy
 msgid "Upload local files"
 msgstr "تحميل الملفات المحلية"
 
 #: src/pages/settings/general.vue:251
-#, fuzzy
 msgid "Upload to WebDAV and share links with friends."
 msgstr "تحميل إلى WebDAV ومشاركة الروابط مع الأصدقاء."
 
 #: src/dialog/upload.vue:36
-#, fuzzy
 msgid "Uploading %{n} of %{t}…"
 msgstr "جارٍ تحميل٪ {n} من٪ {t}…"
 
-#: src/dialog/upload.vue:59
-#: src/dialog/upload.vue:67
-#: src/dialog/upload.vue:112
-#, fuzzy
+#: src/dialog/upload.vue:59 src/dialog/upload.vue:67 src/dialog/upload.vue:112
 msgid "Uploading photos…"
 msgstr "جارٍ تحميل الصور …"
 
 #: src/dialog/upload.vue:46
-#, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "سيتم رفض التحميلات التي قد تحتوي على مثل هذه الصور تلقائيًا."
 
 #: src/dialog/share.vue:165
-#, fuzzy
 msgid "URL"
 msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "استخدم الإعدادات المسبقة"
 
 #: src/model/user.js:117
-#, fuzzy
 msgid "User"
 msgstr "المستعمل"
 
 #: src/pages/settings/general.vue:6
-#, fuzzy
 msgid "User Interface"
 msgstr "واجهة المستخدم"
 
-#: src/dialog/account/add.vue:84
-#: src/dialog/account/edit.vue:438
-#: src/dialog/share.vue:23
-#, fuzzy
+#: src/dialog/account/add.vue:84 src/dialog/account/edit.vue:438 src/dialog/share.vue:23
 msgid "Username"
 msgstr "اسم المستخدم"
 
 #: src/options/options.js:224
-#, fuzzy
 msgid "Vanta"
 msgstr "فانتا"
 
-#: src/component/photo/cards.vue:238
-#: src/component/photo/cards.vue:530
-#: src/component/photo/list.vue:207
-#: src/component/photo/mosaic.vue:211
-#: src/model/file.js:219
-#: src/model/photo.js:711
-#: src/model/photo.js:725
-#: src/options/options.js:343
-#: src/share/photo/cards.vue:211
-#: src/share/photo/cards.vue:363
-#: src/share/photo/list.vue:186
-#: src/share/photo/mosaic.vue:192
-#, fuzzy
+#: src/component/photo/cards.vue:238 src/component/photo/cards.vue:530 src/component/photo/list.vue:207 src/component/photo/mosaic.vue:211 src/model/file.js:219
+#: src/model/photo.js:711 src/model/photo.js:725 src/options/options.js:343 src/share/photo/cards.vue:211 src/share/photo/cards.vue:363
+#: src/share/photo/list.vue:186 src/share/photo/mosaic.vue:192
 msgid "Video"
 msgstr "فيديو"
 
-#: src/app/routes.js:188
-#: src/component/navigation.vue:197
-#: src/component/navigation.vue:207
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:850
-#, fuzzy
+#: src/app/routes.js:188 src/component/navigation.vue:197 src/component/navigation.vue:207 src/component/navigation.vue:4 src/component/navigation.vue:850
 msgid "Videos"
 msgstr "أشرطة فيديو"
 
-#: src/component/photo/cards.vue:265
-#: src/component/photo/mosaic.vue:239
-#: src/component/photo/toolbar.vue:232
-#: src/share/photo/cards.vue:238
+#: src/component/photo/cards.vue:265 src/component/photo/mosaic.vue:239 src/component/photo/toolbar.vue:232 src/share/photo/cards.vue:238
 #: src/share/photo/mosaic.vue:220
-#, fuzzy
 msgid "View"
 msgstr "رأي"
 
 #: src/pages/about/about.vue:56
-#, fuzzy
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr ""
-"سنبذل قصارى جهدنا للإجابة على جميع أسئلتك. في المقابل ، نطلب منك دعمنا على "
-"Patreon أو GitHub الرعاة."
+msgstr "سنبذل قصارى جهدنا للإجابة على جميع أسئلتك. في المقابل ، نطلب منك دعمنا على Patreon أو GitHub الرعاة."
 
 #: src/dialog/sponsor.vue:18
-#, fuzzy
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
 msgstr "سنخبرك بكيفية تمكينه عند التسجيل على Patreon أو GitHub الرعاة."
 
 #: src/dialog/webdav.vue:8
-#, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "يمكن لعملاء WebDAV الاتصال بـ PhotoPrism باستخدام عنوان URL التالي:"
 
 #: src/pages/settings/sync.vue:36
-#, fuzzy
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr ""
-"يمكن لعملاء WebDAV ، مثل Microsoft Windows Explorer أو Apple's Finder ، "
-"الاتصال مباشرة بـ PhotoPrism."
+msgstr "يمكن لعملاء WebDAV ، مثل Microsoft Windows Explorer أو Apple's Finder ، الاتصال مباشرة بـ PhotoPrism."
 
-#: src/dialog/share.vue:82
-#: src/dialog/share/upload.vue:7
-#, fuzzy
+#: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
 msgstr "تحميل WebDAV"
 
 #: src/options/options.js:429
-#, fuzzy
 msgid "White"
 msgstr "أبيض"
 
-#: src/component/photo/toolbar.vue:274
-#: src/dialog/photo/details.vue:166
-#, fuzzy
+#: src/component/photo/toolbar.vue:274 src/dialog/photo/details.vue:166
 msgid "Year"
 msgstr "سنة"
 
 #: src/options/options.js:422
-#, fuzzy
 msgid "Yellow"
 msgstr "الأصفر"
 
 #: src/options/options.js:274
-#, fuzzy
 msgid "Yellowstone"
 msgstr "يلوستون"
 
-#: src/dialog/confirm.vue:18
-#: src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18
-#: src/dialog/photo/files.vue:122
-#: src/dialog/photo/files.vue:130
-#: src/dialog/photo/files.vue:138
-#: src/dialog/photo/files.vue:184
-#: src/dialog/photo/files.vue:119
-#: src/dialog/photo/files.vue:127
-#: src/dialog/photo/files.vue:135
-#: src/dialog/photo/files.vue:181
-#: src/dialog/photo/info.vue:287
-#: src/dialog/photo/info.vue:308
-#: src/dialog/photo/info.vue:328
-#: src/dialog/photo/info.vue:348
+#: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18 src/dialog/photo/archive.vue:18 src/dialog/photo/files.vue:122 src/dialog/photo/files.vue:130
+#: src/dialog/photo/files.vue:138 src/dialog/photo/files.vue:184 src/dialog/photo/files.vue:119 src/dialog/photo/files.vue:127 src/dialog/photo/files.vue:135
+#: src/dialog/photo/files.vue:181 src/dialog/photo/info.vue:287 src/dialog/photo/info.vue:308 src/dialog/photo/info.vue:328 src/dialog/photo/info.vue:348
 #: src/dialog/photo/info.vue:368
-#, fuzzy
 msgid "Yes"
 msgstr "نعم"
 
 #: src/pages/about/about.vue:47
-#, fuzzy
 msgid "you are welcome to join us on Reddit"
 msgstr "اهلا وسهلا بكم للانضمام إلينا على Reddit"
 
-#: src/component/album/clipboard.vue:82
-#: src/component/subject/clipboard.vue:42
-#: src/share/album/clipboard.vue:36
-#, fuzzy
+#: src/component/album/clipboard.vue:82 src/component/subject/clipboard.vue:42 src/share/album/clipboard.vue:36
 msgid "You can only download one album"
 msgstr "يمكنك تنزيل ألبوم واحد فقط"
 
 #: src/component/label/clipboard.vue:50
-#, fuzzy
 msgid "You can only download one label"
 msgstr "يمكنك فقط تحميل تسمية واحدة"
 
-#: src/component/album/clipboard.vue:35
-#: src/component/album/clipboard.vue:48
-#, fuzzy
+#: src/component/album/clipboard.vue:35 src/component/album/clipboard.vue:48
 msgid "You may only select one item"
 msgstr "يمكنك اختيار عنصر واحد فقط"
 
-#: src/dialog/photo/people.vue:8
-#: src/pages/people/faces.vue:33
-#: src/pages/people/subjects.vue:37
-#, fuzzy
+#: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:33 src/pages/people/subjects.vue:37
 msgid "You may rescan your library to find additional faces."
 msgstr "يمكنك إعادة فحص مكتبتك للعثور على وجوه إضافية."
 
-#: src/dialog/sponsor.vue:21
-#: src/pages/about/about.vue:29
-#, fuzzy
+#: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid "Your continued support helps us provide regular updates and services like world maps."
 msgstr "يساعدنا دعمك المستمر في توفير تحديثات وخدمات منتظمة مثل خرائط العالم."
 
-#: src/pages/albums.vue:43
-#: src/pages/albums.vue:1
-#, fuzzy
+#: src/pages/albums.vue:43 src/pages/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr ""
-"يتم تحليل مكتبتك باستمرار لإنشاء ألبومات للحظات الخاصة والرحلات والأماكن "
-"تلقائيًا."
+msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبومات للحظات الخاصة والرحلات والأماكن تلقائيًا."
 
 #: src/pages/about/feedback.vue:4
-#, fuzzy
 msgid "Your message has been sent"
 msgstr "تم ارسال رسالتك"
 
 #: src/component/photo-viewer.vue:178
-#, fuzzy
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
