@@ -311,8 +311,16 @@ export default {
       if (this.$refs.items === undefined) {
         return;
       }
-      for (const item of this.$refs.items) {
-        this.intersectionObserver.observe(item);
+
+      /**
+       * observing only every 5th item reduces the amount of time
+       * spent computing intersection by 80%. me might render up to
+       * 8 items more than required, but the time saved computing
+       * intersections is far greater than the time lost rendering
+       * a couple more items
+       */
+      for (let i = 0; i < this.$refs.items.length; i += 5) {
+        this.intersectionObserver.observe(this.$refs.items[i]);
       }
     },
     elementIndexFromIntersectionObserverEntry(entry) {
@@ -325,8 +333,10 @@ export default {
         this.elementIndexFromIntersectionObserverEntry,
       );
 
-      this.firstVisibleElementIndex = smallestIndex;
-      this.lastVisibileElementIndex = largestIndex;
+      // we observe only every 5th item, so we increase the rendered
+      // range here by 4 items in every directio just to be safe
+      this.firstVisibleElementIndex = smallestIndex - 4;
+      this.lastVisibileElementIndex = largestIndex + 4;
     },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);
