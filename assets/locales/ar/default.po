@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-06-01 10:17+0000\n"
-"Last-Translator: moutasem1989 <moutasem19891@hotmail.com>\n"
+"PO-Revision-Date: 2022-06-14 19:36+0000\n"
+"Last-Translator: Mohamed Sheikhaldeen <mas921@gmail.com>\n"
 "Language-Team: none\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -32,9 +32,8 @@ msgid "Changes could not be saved"
 msgstr "لا يمكن حفظ التغييرات"
 
 #: messages.go:86
-#, fuzzy
 msgid "Could not be deleted"
-msgstr "لا يمكن الحذف"
+msgstr "لا يمكن حذفه"
 
 #: messages.go:87
 #, c-format
@@ -43,27 +42,27 @@ msgstr "%s موجود بالفعل"
 
 #: messages.go:88
 msgid "Not found"
-msgstr "غير موجود"
+msgstr "لم يتم العثور على"
 
 #: messages.go:89
 msgid "File not found"
-msgstr "لا يمكن العثور على الملف"
+msgstr "لم يتم العثور على الملف"
 
 #: messages.go:90
 msgid "Selection not found"
-msgstr "لا يمكن العثور على التحديد"
+msgstr "الاختيار غير موجود"
 
 #: messages.go:91
 msgid "Entity not found"
-msgstr "لا يمكن العثور على الكيان"
+msgstr "الكيان غير موجود"
 
 #: messages.go:92
 msgid "Account not found"
-msgstr "لا يمكن العثور على الحساب"
+msgstr "الحساب غير موجود"
 
 #: messages.go:93
 msgid "User not found"
-msgstr "لا يمكن العثور على المستخدم"
+msgstr "المستخدم غير موجود"
 
 #: messages.go:94
 msgid "Label not found"
@@ -71,19 +70,19 @@ msgstr "لا يمكن العثور على التصنيف"
 
 #: messages.go:95
 msgid "Album not found"
-msgstr "لا يمكن العثور على الألبوم"
+msgstr "الألبوم غير موجود"
 
 #: messages.go:96
 msgid "Subject not found"
-msgstr "لا يمكن العثور على الموضوع"
+msgstr "الموضوع غير موجود"
 
 #: messages.go:97
 msgid "Person not found"
-msgstr "لا يمكن العثور على الشخص"
+msgstr "لم يتم العثور على الشخص"
 
 #: messages.go:98
 msgid "Face not found"
-msgstr "لا يمكن العثور على الوجه"
+msgstr "الوجه غير موجود"
 
 #: messages.go:99
 msgid "Not available in public mode"
@@ -99,11 +98,11 @@ msgstr "يرجى تسجيل الدخول وإعادة المحاولة"
 
 #: messages.go:102
 msgid "Upload might be offensive"
-msgstr "التحميل قد يكون مسيئا"
+msgstr "تحميل قد يكون مسيئا"
 
 #: messages.go:103
 msgid "No items selected"
-msgstr "لم يتم تحديد أي عناصر"
+msgstr "لم يتم تحديد الاختيار"
 
 #: messages.go:104
 msgid "Failed creating file, please check permissions"
@@ -119,11 +118,11 @@ msgstr "تعذر الاتصال ، يرجى المحاولة مرة أخرى"
 
 #: messages.go:107
 msgid "Invalid password, please try again"
-msgstr "كلمة السر غير صحيحة، برجاء حاول مرة أخرى"
+msgstr "كلمة السر غير صحيحة، رجاءً حاول مرة أخرى"
 
 #: messages.go:108
 msgid "Feature disabled"
-msgstr "تم تعطيل الميزة"
+msgstr "الخاصية معطلة"
 
 #: messages.go:109
 msgid "No labels selected"
@@ -131,7 +130,7 @@ msgstr "لم يتم تحديد أي تسميات"
 
 #: messages.go:110
 msgid "No albums selected"
-msgstr "لم يتم تحديد أي ألبومات"
+msgstr "لم يتم اختيار أي ألبومات"
 
 #: messages.go:111
 msgid "No files available for download"
@@ -199,7 +198,7 @@ msgstr "تمت إضافة إدخال واحد إلى %s"
 #: messages.go:128
 #, c-format
 msgid "%d entries added to %s"
-msgstr "تمت إضافة %d إدخال إلى %s"
+msgstr "تمت إضافة %d مدخلات إلى %s"
 
 #: messages.go:129
 #, c-format
@@ -209,7 +208,7 @@ msgstr "تمت إزالة إدخال واحد من %s"
 #: messages.go:130
 #, c-format
 msgid "%d entries removed from %s"
-msgstr "تمت إزالة %d إدخال من %s"
+msgstr "تمت إزالة %d مدخلات من %s"
 
 #: messages.go:131
 msgid "Account created"
@@ -232,23 +231,22 @@ msgid "Password changed"
 msgstr "تم تغيير كلمة السر"
 
 #: messages.go:136
-#, c-format, fuzzy
+#, c-format
 msgid "Import completed in %d s"
-msgstr "سيكتمل الاستيراد خلال %d ثوانٍ"
+msgstr "اكتمل الاستيراد في %d ثانية"
 
 #: messages.go:137
 msgid "Import canceled"
 msgstr "تم إلغاء الاستيراد"
 
 #: messages.go:138
-#, c-format, fuzzy
+#, c-format
 msgid "Indexing completed in %d s"
-msgstr "ستكتمل الفهرسة خلال %d ثوانٍ"
+msgstr "اكتملت الفهرسة في %d ثانية"
 
 #: messages.go:139
-#, fuzzy
 msgid "Indexing originals..."
-msgstr "فهرسة الصور الأصلية ..."
+msgstr "تتم فهرسة الصور الأصلية ..."
 
 #: messages.go:140
 #, c-format
@@ -265,14 +263,14 @@ msgid "Removed %d files and %d photos"
 msgstr "تمت إزالة %d ملفات و %d صورة"
 
 #: messages.go:143
-#, c-format, fuzzy
+#, c-format
 msgid "Moving files from %s"
-msgstr "نقل الملفات من %s"
+msgstr "يتم نقل الملفات من %s"
 
 #: messages.go:144
-#, c-format, fuzzy
+#, c-format
 msgid "Copying files from %s"
-msgstr "نسخ الملفات من %s"
+msgstr "يتم نسخ الملفات من %s"
 
 #: messages.go:145
 msgid "Labels deleted"
@@ -280,7 +278,7 @@ msgstr "تم حذف التصنيفات"
 
 #: messages.go:146
 msgid "Label saved"
-msgstr "تم حفظ التصنيفات"
+msgstr "تم حفظ التصنيف"
 
 #: messages.go:147
 msgid "Subject saved"
@@ -301,7 +299,7 @@ msgstr "تم حذف الشخص"
 #: messages.go:151
 #, c-format
 msgid "%d files uploaded in %d s"
-msgstr "تحميل %d ملفات خلال %d ثوانٍ"
+msgstr "تم تحميل %d ملف في %d ثانية"
 
 #: messages.go:152
 msgid "Selection approved"
@@ -316,9 +314,8 @@ msgid "Selection restored"
 msgstr "تمت استعادة التحديد"
 
 #: messages.go:155
-#, fuzzy
 msgid "Selection marked as private"
-msgstr "تم تعليم التحديد على أنه خاص"
+msgstr "تم تحديد الاختيار على أنه خاص"
 
 #: messages.go:156
 msgid "Albums deleted"
