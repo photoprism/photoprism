@@ -290,18 +290,22 @@ export default {
       visibleElementIndices: new Set(),
     };
   },
+  watch: {
+    photos: {
+      handler() {
+        this.$nextTick(() => {
+          this.observeItems();
+        });
+      },
+      immediate: true,
+    }
+  },
   beforeCreate() {
     this.intersectionObserver = new IntersectionObserver((entries) => {
       this.visibilitiesChanged(entries);
     }, {
       rootMargin: "50% 0px",
     });
-  },
-  mounted() {
-    this.observeItems();
-  },
-  updated() {
-    this.observeItems();
   },
   beforeDestroy() {
     this.intersectionObserver.disconnect();
