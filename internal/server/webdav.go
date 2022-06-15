@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/gin-gonic/gin"
+	"golang.org/x/net/webdav"
+
 	"github.com/photoprism/photoprism/internal/auto"
 	"github.com/photoprism/photoprism/internal/config"
-	"golang.org/x/net/webdav"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 const WebDAVOriginals = "/originals"
@@ -89,10 +89,8 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 
 					if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
 						auto.ShouldIndex()
-						log.Debugf("should index...")
 					} else if router.BasePath() == conf.BaseUri(WebDAVImport) {
 						auto.ShouldImport()
-						log.Debugf("should import...")
 					}
 				default:
 					log.Tracef("webdav: %s %s", clean.Log(r.Method), clean.Log(r.URL.String()))
