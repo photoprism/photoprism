@@ -140,10 +140,10 @@ services:
       DRONE_TARGET_BRANCH:
 
   ## MariaDB Database Server
-  ## Docs: https://mariadb.com/docs/reference/cs10.6/
+  ## Docs: https://mariadb.com/docs/reference/
   mariadb:
-    image: mariadb:10.7
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    image: mariadb:10.8
+    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # database port (internal)
     volumes:

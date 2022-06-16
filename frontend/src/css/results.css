@@ -198,6 +198,11 @@ body.chrome #photoprism .search-results .result {
     box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12) !important;
 }
 
+#photoprism .search-results .image-container {
+  aspect-ratio: 1;
+  contain: layout paint style size;
+}
+
 #photoprism .cards-view .result .image,
 #photoprism .list-view .result .image,
 #photoprism .mosaic-view .result.image
@@ -208,6 +213,8 @@ body.chrome #photoprism .search-results .result {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
 #photoprism .cards-view .result .image button,
@@ -235,7 +242,7 @@ body.chrome #photoprism .search-results .result {
 }
 #photoprism .cards-view .result .image button:hover,
 #photoprism .list-view .result .image button:hover,
-#photoprism .mosaic-view .result .image button:hover {
+#photoprism .mosaic-view .result.image button:hover {
   background-color: rgba(255, 255, 255, 0.12);
 }
 
@@ -253,6 +260,29 @@ body.chrome #photoprism .search-results .result {
   line-height: 1;
 }
 
+#photoprism .cards-view .result .caption {
+  hyphens: auto;
+  word-break: break-word;
+}
+
+#photoprism .cards-view .result .card-details i {
+  font-size: 14px;
+  display: inline-block;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-family: Material Icons;
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: text-bottom;
+}
+
+
+#photoprism .cards-view .result.placeholder .card-details i {
+  width: 14px;
+}
+
 
 #photoprism .cards-view .result.is-selected,
 #photoprism .mosaic-view .result.is-selected {
@@ -262,6 +292,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .cards-view .input-select,
 #photoprism .mosaic-view .input-select {
+    visibility: hidden;
     opacity: 0.5;
     right: 4px;
     bottom: 4px;
@@ -271,6 +302,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .search-results .result.is-selected .input-select,
 #photoprism .search-results .result:hover .input-hidden,
 #photoprism .search-results .result.is-hidden .input-hidden {
+    visibility: visible;
     opacity: 1;
 }
 

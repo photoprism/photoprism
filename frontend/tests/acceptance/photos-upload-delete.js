@@ -26,6 +26,9 @@ const library = new Library();
 test.meta("testID", "photos-upload-delete-001").meta({ type: "smoke" })(
   "Upload + Delete jpg/json",
   async (t) => {
+    await menu.openNav();
+    const InitialOriginalsCount = await Selector(".nav-originals .nav-count", { timeout: 5000 })
+      .innerText;
     await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).notOk();
     await toolbar.search("digikam");
     const PhotoCount = await photo.getPhotoCount("all");
@@ -48,6 +51,11 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "smoke" })(
     const FileCount = await originals.getFileCount();
 
     await t.expect(FileCount).eql(2);
+
+    await menu.openNav();
+    const OriginalsCountAfterUpload = await Selector(".nav-originals .nav-count", { timeout: 5000 })
+      .innerText;
+    await t.expect(parseInt(InitialOriginalsCount) + 2).eql(parseInt(OriginalsCountAfterUpload));
 
     await menu.openPage("browse");
     await toolbar.search("digikam");
@@ -256,11 +264,19 @@ test.meta("testID", "photos-upload-delete-005").meta({ type: "smoke" })(
 test.meta("testID", "photos-upload-delete-006").meta({ type: "smoke" })(
   "Try uploading txt file",
   async (t) => {
+    await menu.openNav();
+    const InitialOriginalsCount = await Selector(".nav-originals .nav-count", {
+      timeout: 10000,
+    }).innerText;
+    await menu.openPage("browse");
+
     await toolbar.triggerToolbarAction("upload");
     await t.setFilesToUpload(Selector(".input-upload"), ["./upload-files/foo.txt"]).wait(15000);
-    await menu.openPage("library");
-    await t.click(library.logsTab);
+    await menu.openNav();
+    const OriginalsCountAfterUpload = await Selector(".nav-originals .nav-count", {
+      timeout: 10000,
+    }).innerText;
 
-    await t.expect(Selector("p").withText(" foo.txt is not a jpeg file").visible).ok();
+    await t.expect(parseInt(InitialOriginalsCount)).eql(parseInt(OriginalsCountAfterUpload));
   }
 );

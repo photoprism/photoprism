@@ -57,7 +57,7 @@ test.meta("testID", "states-001")("Update state details", async (t) => {
 
   await album.openNthAlbum(0);
 
-  await t.expect(toolbar.toolbarTitle.innerText).contains("Wonderland");
+  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("Wonderland");
   await t.expect(toolbar.toolbarDescription.innerText).contains("We love earth");
 
   await menu.openPage("states");
@@ -136,7 +136,6 @@ test.meta("testID", "states-003")("Create/delete album-clone from state", async 
   await menu.openPage("albums");
   await album.selectAlbumFromUID(AlbumUid);
   await contextmenu.triggerContextMenuAction("delete", "");
-  await menu.openPage("albums");
   const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
   await t.expect(AlbumCountAfterDelete).eql(AlbumCount);

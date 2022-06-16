@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 21:32+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-06-15 09:51+0000\n"
+"Last-Translator: Johannes <translate.photoprism.app@mail.dilli.me>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.12.2\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -1707,7 +1707,7 @@ msgstr "Ort"
 
 #: src/pages/settings/library.vue:173
 msgid "Place & Time"
-msgstr "Gleicher Ort & Zeit"
+msgstr "Ort & Uhrzeit"
 
 #: src/app/routes.js:216 src/app/routes.js:222 src/app/routes.js:228
 #: src/app/routes.js:235 src/component/navigation.vue:283

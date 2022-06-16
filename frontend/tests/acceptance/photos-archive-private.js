@@ -276,7 +276,11 @@ test.meta("testID", "photos-archive-private-003")(
     await contextmenu.checkContextMenuCount("14");
     await contextmenu.triggerContextMenuAction("archive", "");
     await menu.openPage("archive");
-    await toolbar.triggerToolbarAction("reload");
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
     const PhotoCountInArchiveAfterArchive = await photo.getPhotoCount("all");
     await t.expect(PhotoCountInArchiveAfterArchive).eql(InitialPhotoCountInArchive + 14);
 
@@ -399,7 +403,11 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
     await contextmenu.checkContextMenuCount("14");
     await contextmenu.triggerContextMenuAction("private", "");
     await menu.openPage("private");
-    await toolbar.triggerToolbarAction("reload");
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
     const PhotoCountInPrivateAfterArchive = await photo.getPhotoCount("all");
 
     await t.expect(PhotoCountInPrivateAfterArchive).eql(InitialPhotoCountInPrivate + 14);
@@ -453,7 +461,11 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
     await photo.triggerHoverAction("uid", FolderPhoto, "select");
     await contextmenu.checkContextMenuCount("14");
     await contextmenu.triggerContextMenuAction("private", "");
-    await toolbar.triggerToolbarAction("reload");
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
     const PhotoCountInPrivateAfterRestore = await photo.getPhotoCount("all");
 
     await t.expect(PhotoCountInPrivateAfterRestore).eql(InitialPhotoCountInPrivate);

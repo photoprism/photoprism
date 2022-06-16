@@ -26,20 +26,21 @@
       </v-alert>
     </template>
     <v-layout row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}">
-      <v-flex
+      <div
           v-for="(photo, index) in photos"
           ref="items"
           :key="photo.ID"
+          class="flex xs4 sm3 md2 lg1"
           :data-index="index"
-          xs4 sm3 md2 lg1 d-flex
       >
-
-        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
-                style="user-select: none; aspect-ratio: 1"
-                class="accent lighten-2 result"/>
-        <v-hover v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex">
-          <div :key="photo.Hash"
-                slot-scope="{ hover }"
+       <!--
+         The following div is the layout + size container. It makes the browser not
+         re-layout all elements in the list when the children of one of them changes
+        -->
+        <div class="image-container">
+          <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-2 result image" />
+          <div  v-else
+                :key="photo.Hash"
                 tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
@@ -68,7 +69,7 @@
                   @touchmove.stop.prevent
                   @click.stop.prevent="onOpen($event, index, true)">
               <i v-if="photo.Type === 'raw'" color="white" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
-              <i v-if="photo.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</i>
+              <i v-if="photo.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
               <i v-if="photo.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</i>
               <i v-if="photo.Type === 'video'" color="white" class="action-play" :title="$gettext('Video')">play_arrow</i>
               <i v-if="photo.Type === 'image'" color="white" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
@@ -88,7 +89,17 @@
               <i color="white" class="select-on">lock</i>
             </button>
 
-            <button v-if="hover || $clipboard.has(photo)"
+            <!--
+              We'd usually use v-if here to only render the button if needed.
+              Because the button is supposed to be visible when the result is
+              being hovered over, implementing the v-if would require the use of
+              a <v-hover> element around the result.
+
+              Because rendering the plain HTML-Button is faster than rendering
+              the v-hover component we instead hide the button by default and
+              use css to show it when it is being hovered.
+            -->
+            <button
                   class="input-select"
                   @mousedown.stop.prevent="input.mouseDown($event, index)"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -106,21 +117,25 @@
                 @touchmove.stop.prevent
                 @click.stop.prevent="toggleLike($event, index)"
             >
-              <i v-if="photo.Favorite" class="select-on">favorite</i>
-              <i v-else class="select-off">favorite_border</i>
+              <i v-if="photo.Favorite">favorite</i>
+              <i v-else>favorite_border</i>
             </button>
           </div>
-        </v-hover>
-      </v-flex>
+        </div>
+      </div>
     </v-layout>
   </v-container>
 </template>
 <script>
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 import {virtualizationTools} from 'common/virtualization-tools';
+import IconLivePhoto from "component/icon/live_photo.vue";
 
 export default {
   name: 'PPhotoMosaic',
+  components: {
+    IconLivePhoto,
+  },
   props: {
     photos: {
       type: Array,
@@ -161,18 +176,22 @@ export default {
       visibleElementIndices: new Set(),
     };
   },
+  watch: {
+    photos: {
+      handler() {
+        this.$nextTick(() => {
+          this.observeItems();
+        });
+      },
+      immediate: true,
+    }
+  },
   beforeCreate() {
     this.intersectionObserver = new IntersectionObserver((entries) => {
       this.visibilitiesChanged(entries);
     }, {
       rootMargin: "50% 0px",
     });
-  },
-  mounted() {
-    this.observeItems();
-  },
-  updated() {
-    this.observeItems();
   },
   beforeDestroy() {
     this.intersectionObserver.disconnect();
@@ -182,8 +201,16 @@ export default {
       if (this.$refs.items === undefined) {
         return;
       }
-      for (const item of this.$refs.items) {
-        this.intersectionObserver.observe(item);
+
+      /**
+       * observing only every 5th item reduces the amount of time
+       * spent computing intersection by 80%. me might render up to
+       * 8 items more than required, but the time saved computing
+       * intersections is far greater than the time lost rendering
+       * a couple more items
+       */
+      for (let i = 0; i < this.$refs.items.length; i += 5) {
+        this.intersectionObserver.observe(this.$refs.items[i]);
       }
     },
     elementIndexFromIntersectionObserverEntry(entry) {
@@ -196,8 +223,10 @@ export default {
         this.elementIndexFromIntersectionObserverEntry,
       );
 
-      this.firstVisibleElementIndex = smallestIndex;
-      this.lastVisibileElementIndex = largestIndex;
+      // we observe only every 5th item, so we increase the rendered
+      // range here by 4 items in every directio just to be safe
+      this.firstVisibleElementIndex = smallestIndex - 4;
+      this.lastVisibileElementIndex = largestIndex + 4;
     },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);

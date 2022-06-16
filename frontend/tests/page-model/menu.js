@@ -4,8 +4,8 @@ export default class Page {
   constructor() {}
 
   async openNav() {
-    if (await Selector("button.nav-show").exists) {
-      await t.click(Selector("button.nav-show"));
+    if (await Selector("div.v-avatar--tile.clickable").exists) {
+      await t.click(Selector("div.v-avatar--tile.clickable"));
     } else if (await Selector("div.nav-expand").exists) {
       await t.click(Selector("div.nav-expand i"));
     }
@@ -13,6 +13,9 @@ export default class Page {
 
   async openPage(page) {
     await this.openNav();
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
     if (
       (page === "monochrome") |
       (page === "panoramas") |
@@ -45,7 +48,13 @@ export default class Page {
   }
 
   async checkMenuItemAvailability(page, visible) {
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
     await this.openNav();
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
     if (
       (page === "monochrome") |
       (page === "panoramas") |
@@ -54,8 +63,10 @@ export default class Page {
       (page === "review") |
       (page === "archive")
     ) {
-      if (!(await Selector("div.v-list__group--active div.nav-browse").visible)) {
-        await t.click(Selector("div.nav-browse + div"));
+      if (
+        !(await Selector("div.v-list__group--active div.nav-browse", { timeout: 15000 }).visible)
+      ) {
+        await t.click(Selector("div.nav-browse + div", { timeout: 15000 }));
       }
     } else if (page === "live") {
       if (await Selector(".nav-video").visible) {

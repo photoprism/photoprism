@@ -6,5 +6,9 @@ import (
 
 // UUID returns a standard, random UUID as string.
 func UUID() string {
-	return uuid.NewV4().String()
+	if id, err := uuid.NewV4(); err != nil {
+		return ""
+	} else {
+		return id.String()
+	}
 }
