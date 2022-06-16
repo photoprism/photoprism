@@ -121,7 +121,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal("err should be nil")
 		}
 
-		assert.Equal(t, uint8(200), form.Chroma)
+		assert.Equal(t, int16(200), form.Chroma)
 		assert.Equal(t, "te:st", form.Title)
 		assert.Equal(t, time.Date(2018, 01, 15, 0, 0, 0, 0, time.UTC), form.After)
 		assert.Equal(t, float32(33.45343), form.Lng)

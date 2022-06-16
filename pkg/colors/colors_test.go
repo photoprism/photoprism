@@ -28,6 +28,6 @@ func TestColors_Hex(t *testing.T) {
 	assert.Equal(t, "DA0", result)
 }
 
-func TestColor_Uint8(t *testing.T) {
-	assert.Equal(t, int8(7), Cyan.ID())
+func TestColor_ID(t *testing.T) {
+	assert.Equal(t, int16(7), Cyan.ID())
 }
