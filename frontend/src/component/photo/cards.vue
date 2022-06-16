@@ -165,7 +165,7 @@
             </v-btn>
           </v-img>
 
-          <v-card-actions v-if="!isShredView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
+          <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
             <v-layout row wrap align-center>
               <v-flex xs6 class="text-xs-center pa-1">
                 <v-btn color="accent lighten-2"
