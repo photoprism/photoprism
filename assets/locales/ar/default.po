@@ -5,11 +5,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-06-14 19:36+0000\n"
-"Last-Translator: Mohamed Sheikhaldeen <mas921@gmail.com>\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-16 16:58+0000\n"
+"PO-Revision-Date: 2022-06-16 19:26+0200\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: none\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -17,315 +17,325 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Poedit 3.1\n"
 
-#: messages.go:83
+#: messages.go:85
 msgid "Unexpected error, please try again"
 msgstr "خطأ غير متوقع ، يرجى المحاولة مرة أخرى"
 
-#: messages.go:84
+#: messages.go:86
 msgid "Invalid request"
 msgstr "طلب غير صالح"
 
-#: messages.go:85
+#: messages.go:87
 msgid "Changes could not be saved"
 msgstr "لا يمكن حفظ التغييرات"
 
-#: messages.go:86
+#: messages.go:88
 msgid "Could not be deleted"
 msgstr "لا يمكن حذفه"
 
-#: messages.go:87
+#: messages.go:89
 #, c-format
 msgid "%s already exists"
 msgstr "%s موجود بالفعل"
 
-#: messages.go:88
+#: messages.go:90
 msgid "Not found"
 msgstr "لم يتم العثور على"
 
-#: messages.go:89
+#: messages.go:91
 msgid "File not found"
 msgstr "لم يتم العثور على الملف"
 
-#: messages.go:90
+#: messages.go:92
 msgid "Selection not found"
 msgstr "الاختيار غير موجود"
 
-#: messages.go:91
+#: messages.go:93
 msgid "Entity not found"
 msgstr "الكيان غير موجود"
 
-#: messages.go:92
+#: messages.go:94
 msgid "Account not found"
 msgstr "الحساب غير موجود"
 
-#: messages.go:93
+#: messages.go:95
 msgid "User not found"
 msgstr "المستخدم غير موجود"
 
-#: messages.go:94
+#: messages.go:96
 msgid "Label not found"
 msgstr "لا يمكن العثور على التصنيف"
 
-#: messages.go:95
+#: messages.go:97
 msgid "Album not found"
 msgstr "الألبوم غير موجود"
 
-#: messages.go:96
+#: messages.go:98
 msgid "Subject not found"
 msgstr "الموضوع غير موجود"
 
-#: messages.go:97
+#: messages.go:99
 msgid "Person not found"
 msgstr "لم يتم العثور على الشخص"
 
-#: messages.go:98
+#: messages.go:100
 msgid "Face not found"
 msgstr "الوجه غير موجود"
 
-#: messages.go:99
+#: messages.go:101
 msgid "Not available in public mode"
 msgstr "غير متاح في الوضع العام"
 
-#: messages.go:100
+#: messages.go:102
 msgid "not available in read-only mode"
 msgstr "غير متوفر في وضع القراءة فقط"
 
-#: messages.go:101
+#: messages.go:103
 msgid "Please log in and try again"
 msgstr "يرجى تسجيل الدخول وإعادة المحاولة"
 
-#: messages.go:102
+#: messages.go:104
 msgid "Upload might be offensive"
 msgstr "تحميل قد يكون مسيئا"
 
-#: messages.go:103
+#: messages.go:105
 msgid "No items selected"
 msgstr "لم يتم تحديد الاختيار"
 
-#: messages.go:104
+#: messages.go:106
 msgid "Failed creating file, please check permissions"
 msgstr "فشل إنشاء الملف ، يرجى التحقق من الأذونات"
 
-#: messages.go:105
+#: messages.go:107
 msgid "Failed creating folder, please check permissions"
 msgstr "فشل إنشاء المجلد ، يرجى التحقق من الأذونات"
 
-#: messages.go:106
+#: messages.go:108
 msgid "Could not connect, please try again"
 msgstr "تعذر الاتصال ، يرجى المحاولة مرة أخرى"
 
-#: messages.go:107
+#: messages.go:109
 msgid "Invalid password, please try again"
 msgstr "كلمة السر غير صحيحة، رجاءً حاول مرة أخرى"
 
-#: messages.go:108
+#: messages.go:110
 msgid "Feature disabled"
 msgstr "الخاصية معطلة"
 
-#: messages.go:109
+#: messages.go:111
 msgid "No labels selected"
 msgstr "لم يتم تحديد أي تسميات"
 
-#: messages.go:110
+#: messages.go:112
 msgid "No albums selected"
 msgstr "لم يتم اختيار أي ألبومات"
 
-#: messages.go:111
+#: messages.go:113
 msgid "No files available for download"
 msgstr "لا توجد ملفات متاحة للتنزيل"
 
-#: messages.go:112
+#: messages.go:114
 msgid "Failed to create zip file"
 msgstr "فشل إنشاء ملف مضغوط"
 
-#: messages.go:113
+#: messages.go:115
 msgid "Invalid credentials"
 msgstr "بيانات الاعتماد غير صالحة"
 
-#: messages.go:114
+#: messages.go:116
 msgid "Invalid link"
 msgstr "ارتباط غير صالح"
 
-#: messages.go:115
+#: messages.go:117
 msgid "Invalid name"
 msgstr "الاسم غير صالح"
 
-#: messages.go:116
+#: messages.go:118
 msgid "Busy, please try again later"
 msgstr "مشغول ، يرجى المحاولة مرة أخرى في وقت لاحق"
 
 #: messages.go:119
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "فترة التنبيه هي %s ، لكن يجب أن تكون ساعة واحدة أو أقل"
+
+#: messages.go:122
 msgid "Changes successfully saved"
 msgstr "تم حفظ التغييرات بنجاح"
 
-#: messages.go:120
+#: messages.go:123
 msgid "Album created"
 msgstr "تم إنشاء الألبوم"
 
-#: messages.go:121
+#: messages.go:124
 msgid "Album saved"
 msgstr "تم حفظ الألبوم"
 
-#: messages.go:122
+#: messages.go:125
 #, c-format
 msgid "Album %s deleted"
 msgstr "تم حذف الألبوم %s"
 
-#: messages.go:123
+#: messages.go:126
 msgid "Album contents cloned"
 msgstr "تم نسخ محتويات الألبوم"
 
-#: messages.go:124
+#: messages.go:127
 msgid "File removed from stack"
 msgstr "تمت إزالة الملف من المجموعة"
 
-#: messages.go:125
+#: messages.go:128
 msgid "File deleted"
 msgstr "تم حذف الملف"
 
-#: messages.go:126
+#: messages.go:129
 #, c-format
 msgid "Selection added to %s"
 msgstr "تمت إضافة التحديد إلى %s"
 
-#: messages.go:127
+#: messages.go:130
 #, c-format
 msgid "One entry added to %s"
 msgstr "تمت إضافة إدخال واحد إلى %s"
 
-#: messages.go:128
+#: messages.go:131
 #, c-format
 msgid "%d entries added to %s"
 msgstr "تمت إضافة %d مدخلات إلى %s"
 
-#: messages.go:129
+#: messages.go:132
 #, c-format
 msgid "One entry removed from %s"
 msgstr "تمت إزالة إدخال واحد من %s"
 
-#: messages.go:130
+#: messages.go:133
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "تمت إزالة %d مدخلات من %s"
 
-#: messages.go:131
+#: messages.go:134
 msgid "Account created"
 msgstr "تم إنشاء الحساب"
 
-#: messages.go:132
+#: messages.go:135
 msgid "Account saved"
 msgstr "تم حفظ الحساب"
 
-#: messages.go:133
+#: messages.go:136
 msgid "Account deleted"
 msgstr "تم حذف الحساب"
 
-#: messages.go:134
+#: messages.go:137
 msgid "Settings saved"
 msgstr "تم حفظ الإعدادات"
 
-#: messages.go:135
+#: messages.go:138
 msgid "Password changed"
 msgstr "تم تغيير كلمة السر"
 
-#: messages.go:136
+#: messages.go:139
 #, c-format
 msgid "Import completed in %d s"
 msgstr "اكتمل الاستيراد في %d ثانية"
 
-#: messages.go:137
+#: messages.go:140
 msgid "Import canceled"
 msgstr "تم إلغاء الاستيراد"
 
-#: messages.go:138
+#: messages.go:141
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "اكتملت الفهرسة في %d ثانية"
 
-#: messages.go:139
+#: messages.go:142
 msgid "Indexing originals..."
 msgstr "تتم فهرسة الصور الأصلية ..."
 
-#: messages.go:140
+#: messages.go:143
 #, c-format
 msgid "Indexing files in %s"
 msgstr "فهرسة الملفات في %s"
 
-#: messages.go:141
+#: messages.go:144
 msgid "Indexing canceled"
 msgstr "تم إلغاء الفهرسة"
 
-#: messages.go:142
+#: messages.go:145
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "تمت إزالة %d ملفات و %d صورة"
 
-#: messages.go:143
+#: messages.go:146
 #, c-format
 msgid "Moving files from %s"
 msgstr "يتم نقل الملفات من %s"
 
-#: messages.go:144
+#: messages.go:147
 #, c-format
 msgid "Copying files from %s"
 msgstr "يتم نسخ الملفات من %s"
 
-#: messages.go:145
+#: messages.go:148
 msgid "Labels deleted"
 msgstr "تم حذف التصنيفات"
 
-#: messages.go:146
+#: messages.go:149
 msgid "Label saved"
 msgstr "تم حفظ التصنيف"
 
-#: messages.go:147
+#: messages.go:150
 msgid "Subject saved"
 msgstr "تم حفظ الموضوع"
 
-#: messages.go:148
+#: messages.go:151
 msgid "Subject deleted"
 msgstr "تم حذف الموضوع"
 
-#: messages.go:149
+#: messages.go:152
 msgid "Person saved"
 msgstr "تم حفظ الشخص"
 
-#: messages.go:150
+#: messages.go:153
 msgid "Person deleted"
 msgstr "تم حذف الشخص"
 
-#: messages.go:151
+#: messages.go:154
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "تم تحميل %d ملف في %d ثانية"
 
-#: messages.go:152
+#: messages.go:155
 msgid "Selection approved"
 msgstr "تمت الموافقة على الاختيار"
 
-#: messages.go:153
+#: messages.go:156
 msgid "Selection archived"
 msgstr "تمت أرشفة الاختيار"
 
-#: messages.go:154
+#: messages.go:157
 msgid "Selection restored"
 msgstr "تمت استعادة التحديد"
 
-#: messages.go:155
+#: messages.go:158
 msgid "Selection marked as private"
 msgstr "تم تحديد الاختيار على أنه خاص"
 
-#: messages.go:156
+#: messages.go:159
 msgid "Albums deleted"
 msgstr "تم حذف الألبومات"
 
-#: messages.go:157
+#: messages.go:160
 #, c-format
 msgid "Zip created in %d s"
 msgstr "إنشاء الملف المضغوط خلال %d ثوانٍ"
 
-#: messages.go:158
+#: messages.go:161
 msgid "Permanently deleted"
 msgstr "تم الحذف بشكل نهائي"
+
+#: messages.go:162
+#, c-format
+msgid "%s has been restored"
+msgstr "تمت استعادة %s"
