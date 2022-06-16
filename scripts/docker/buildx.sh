@@ -17,13 +17,17 @@ echo "Build Arch: $2"
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
     echo "Build Tags: preview"
 
+    if [[ $5 ]]; then
+      echo "Build Params: $5"
+    fi
+
     docker buildx build \
       --platform $2 \
       --pull \
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE \
       -f docker/${1/-//}$4/Dockerfile \
-      -t photoprism/$1:preview \
+      -t photoprism/$1:preview $5 \
       --push .
 elif [[ $3 =~ $NUMERIC ]]; then
     echo "Build Tags: $3, latest"
