@@ -44,7 +44,7 @@ type SearchPhotos struct {
 	Dist      uint      `form:"dist" example:"dist:5" notes:"Distance in km in combination with lat/lng"`
 	Fmin      float32   `form:"fmin" notes:"F-number (min)"`
 	Fmax      float32   `form:"fmax" notes:"F-number (max)"`
-	Chroma    uint8     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
+	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
 	Diff      uint32    `form:"diff" notes:"Differential Perceptual Hash (000000-FFFFFF)"`
 	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
 	Geo       bool      `form:"geo" notes:"Finds pictures with GPS location"`
