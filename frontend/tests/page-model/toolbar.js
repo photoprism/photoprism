@@ -8,11 +8,32 @@ export default class Page {
     this.time = Selector("div.p-time-select");
     this.search1 = Selector("div.input-search input");
     this.toolbarDescription = Selector(".v-card__text").nth(0);
-    this.toolbarTitle = Selector("div.v-toolbar__title");
+    this.toolbarTitle = Selector("#p-navigation div.v-toolbar__title");
+    this.toolbarSecondTitle = Selector("main.v-content div.v-toolbar__title");
+    this.openMobileToolbar = Selector("button.nav-menu-trigger");
   }
 
   async checkToolbarActionAvailability(action, visible) {
-    if (visible) {
+    if (
+      (t.browser.platform === "mobile") &
+      (action !== "edit") &
+      (action !== "share") &
+      (action !== "add") &
+      (action !== "show-all") &
+      (action !== "show-important")
+    ) {
+      if (await this.openMobileToolbar.exists) {
+        await t.click(this.openMobileToolbar);
+      }
+      if (await this.openMobileToolbar.exists) {
+        await t.click(this.openMobileToolbar);
+      }
+      if (visible) {
+        await t.expect(Selector("button.nav-menu-" + action).visible).ok();
+      } else {
+        await t.expect(Selector("button.nav-menu-" + action).visible).notOk();
+      }
+    } else if (visible) {
       await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).ok();
     } else {
       await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).notOk();
@@ -20,7 +41,24 @@ export default class Page {
   }
 
   async triggerToolbarAction(action) {
-    await t.click(Selector("nav.v-toolbar button.action-" + action));
+    if (
+      (t.browser.platform === "mobile") &
+      (action !== "edit") &
+      (action !== "share") &
+      (action !== "add") &
+      (action !== "show-all") &
+      (action !== "show-important")
+    ) {
+      if (await this.openMobileToolbar.exists) {
+        await t.click(this.openMobileToolbar);
+      }
+      if (await this.openMobileToolbar.exists) {
+        await t.click(this.openMobileToolbar);
+      }
+      await t.click(Selector("button.nav-menu-" + action));
+    } else {
+      await t.click(Selector("nav.v-toolbar button.action-" + action));
+    }
   }
 
   async toggleFilterBar() {

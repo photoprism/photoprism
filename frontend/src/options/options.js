@@ -207,6 +207,11 @@ export const Languages = () => [
     text: "Melayu", // Malay
     value: "ms",
   },
+  {
+    text: "عربى", // Arabic
+    value: "ar",
+    rtl: true,
+  },
 ];
 
 export const Themes = () => [

@@ -66,11 +66,11 @@ test.meta("testID", "sharing-001")("Create, view, delete shared albums", async (
   await contextmenu.clearSelection();
   await t.navigateTo(url);
 
-  await t.expect(toolbar.toolbarTitle.withText("Christmas").visible).ok();
+  await t.expect(toolbar.toolbarSecondTitle.withText("Christmas").visible).ok();
 
   await t.click(Selector("button").withText("@photoprism_app"));
 
-  await t.expect(toolbar.toolbarTitle.withText("Albums").visible).ok();
+  await t.expect(toolbar.toolbarSecondTitle.withText("Albums").visible).ok();
 
   const AlbumCount = await album.getAlbumCount("all");
 
@@ -79,14 +79,14 @@ test.meta("testID", "sharing-001")("Create, view, delete shared albums", async (
   await t.useRole(Role.anonymous());
   await t.navigateTo(url);
 
-  await t.expect(toolbar.toolbarTitle.withText("Christmas").visible).ok();
+  await t.expect(toolbar.toolbarSecondTitle.withText("Christmas").visible).ok();
   const photoCountShared = await photo.getPhotoCount("all");
   //don't show private photo
   await t.expect(photoCountShared).eql(1);
 
   await t.click(Selector("button").withText("@photoprism_app"));
 
-  await t.expect(toolbar.toolbarTitle.withText("Albums").visible).ok();
+  await t.expect(toolbar.toolbarSecondTitle.withText("Albums").visible).ok();
 
   const AlbumCountAnonymous = await Selector("a.is-album").count;
 
@@ -106,7 +106,7 @@ test.meta("testID", "sharing-001")("Create, view, delete shared albums", async (
 
   await t.navigateTo("http://localhost:2343/s/secretfortesting");
 
-  await t.expect(toolbar.toolbarTitle.withText("Albums").visible).ok();
+  await t.expect(toolbar.toolbarSecondTitle.withText("Albums").visible).ok();
 
   const AlbumCountAnonymousAfterDelete = await album.getAlbumCount("all");
 
@@ -127,9 +127,9 @@ test.meta("testID", "sharing-001")("Create, view, delete shared albums", async (
   await t.navigateTo("http://localhost:2343/s/secretfortesting");
 
   await t
-    .expect(toolbar.toolbarTitle.withText("Christmas").visible)
+    .expect(toolbar.toolbarSecondTitle.withText("Christmas").visible)
     .notOk()
-    .expect(toolbar.toolbarTitle.withText("Albums").visible)
+    .expect(toolbar.toolbarSecondTitle.withText("Albums").visible)
     .notOk()
     .expect(Selector(".input-name input").visible)
     .ok();
@@ -139,7 +139,7 @@ test.meta("testID", "sharing-002").meta({ type: "smoke" })(
   "Verify anonymous user has limited options",
   async (t) => {
     await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
-    await t.expect(toolbar.toolbarTitle.withText("British Columbia").visible).ok();
+    await t.expect(toolbar.toolbarSecondTitle.withText("British Columbia").visible).ok();
 
     await toolbar.checkToolbarActionAvailability("edit", false);
     await toolbar.checkToolbarActionAvailability("share", false);
@@ -182,7 +182,7 @@ test.meta("testID", "sharing-002").meta({ type: "smoke" })(
       .expect(Selector(`td button.input-favorite`).visible)
       .notOk()
       .click(Selector("button").withText("@photoprism_app"))
-      .expect(toolbar.toolbarTitle.withText("Albums").visible)
+      .expect(toolbar.toolbarSecondTitle.withText("Albums").visible)
       .ok();
 
     const AlbumUid = await album.getNthAlbumUid("all", 0);

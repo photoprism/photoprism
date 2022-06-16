@@ -369,8 +369,12 @@ test.meta("testID", "photos-007")("Mark photos/videos as panorama/scan", async (
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");
   await t.click(photoedit.dialogClose);
-  await toolbar.triggerToolbarAction("reload");
   await contextmenu.clearSelection();
+  if (t.browser.platform === "mobile") {
+    await t.eval(() => location.reload());
+  } else {
+    await toolbar.triggerToolbarAction("reload");
+  }
 
   await photo.checkPhotoVisibility(FirstPhotoUid, false);
   await photo.checkPhotoVisibility(FirstVideoUid, false);

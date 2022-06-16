@@ -91,7 +91,11 @@ export default class Page {
       .eql(LinkCountAfterAdd - 1)
       .click(sharedialog.dialogClose);
     await menu.openPage(type);
-    await toolbar.triggerToolbarAction("reload", "");
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await toolbar.triggerToolbarAction("reload");
+    }
     await album.triggerHoverAction("uid", FirstAlbum, "share");
     await t.click(sharedialog.expandLink).click(sharedialog.deleteLink);
   }

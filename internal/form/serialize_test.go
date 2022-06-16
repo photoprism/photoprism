@@ -25,7 +25,7 @@ type TestForm struct {
 	Dist     uint      `form:"dist"`
 	Fmin     float32   `form:"fmin"`
 	Fmax     float32   `form:"fmax"`
-	Chroma   uint8     `form:"chroma"`
+	Chroma   int16     `form:"chroma"`
 	Diff     uint32    `form:"diff"`
 	Mono     bool      `form:"mono"`
 	Portrait bool      `form:"portrait"`

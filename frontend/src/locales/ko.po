@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 21:45+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-06-14 11:25+0000\n"
+"Last-Translator: 김상구 <spair0039@gmail.com>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
 "frontend/ko/>\n"
 "Language: ko\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.12.2\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -34,13 +34,13 @@ msgstr "%{n}개의 라벨을 찾음"
 #: src/pages/people/faces.vue:286 src/pages/people/faces.vue:372
 #: src/pages/people/subjects.vue:470
 msgid "%{n} people found"
-msgstr "%{n}명을 찾았습니다."
+msgstr "%{n}명을 찾았습니다"
 
 #: src/pages/album/photos.vue:194 src/pages/album/photos.vue:346
 #: src/pages/photos.vue:241 src/pages/photos.vue:386 src/share/photos.vue:209
 #: src/share/photos.vue:354
 msgid "%{n} pictures found"
-msgstr "사진 %{n}장을 찾았습니다."
+msgstr "사진 %{n}장을 찾았습니다"
 
 #: src/options/options.js:396
 msgid "1 hour"
@@ -62,11 +62,11 @@ msgstr "클릭하면 클립보드에 복사됩니다."
 #: src/pages/about/about.vue:4 src/pages/about/about.vue:179
 #: src/pages/help.vue:45
 msgid "About"
-msgstr "관하여"
+msgstr "정보"
 
 #: src/options/options.js:229
 msgid "Abyss"
-msgstr "심연"
+msgstr "어비스"
 
 #: src/component/navigation.vue:73 src/dialog/share/upload.vue:112
 #: src/model/account.js:98 src/pages/settings.vue:74
@@ -91,7 +91,7 @@ msgstr "앨범 추가"
 
 #: src/pages/settings/general.vue:141
 msgid "Add files to your library via Web Upload."
-msgstr "웹 업로드 통한 당신의 라이브러리에 파일을 추가합니다."
+msgstr "웹 업로드로 라이브러리에 파일을 추가하세요."
 
 #: src/dialog/share.vue:91
 msgid "Add Link"
@@ -99,7 +99,7 @@ msgstr "링크 추가"
 
 #: src/pages/albums.vue:96
 msgid "Add pictures from search results by selecting them."
-msgstr "사진을 선택하여 검색 결과에서 사진을 추가합니다."
+msgstr "검색 결과에서 사진을 선택해 추가할 수 있습니다."
 
 #: src/dialog/account/add.vue:6 src/pages/settings/sync.vue:47
 msgid "Add Server"
@@ -143,9 +143,8 @@ msgstr "1년 후"
 msgid ""
 "After selecting pictures from search results, you can add them to an album "
 "using the context menu."
-msgstr ""
-"검색 결과에서 사진을 선택한 후 컨텍스트 메뉴를 사용하여 사진을 앨범에 추가할 "
-"수 있습니다."
+msgstr "검색 결과에서 사진을 선택한 뒤, 컨텍스트 메뉴를 사용하여 사진을 앨범에 "
+"추가할 수 있습니다."
 
 #: src/options/options.js:411
 msgid "After two months"
@@ -175,15 +174,15 @@ msgstr "앨범 삭제됨"
 
 #: src/pages/albums.vue:263 src/share/albums.vue:220
 msgid "All %{n} albums loaded"
-msgstr "모든 %{n}개의 앨범을 로드됨"
+msgstr "모든 %{n}개 앨범 로딩됨"
 
 #: src/pages/labels.vue:246
 msgid "All %{n} labels loaded"
-msgstr "모든 %{n}개의 라벨을 로드됨"
+msgstr "모든 %{n}개의 라벨 로딩됨"
 
 #: src/pages/people/subjects.vue:333
 msgid "All %{n} people loaded"
-msgstr "모든 %{n}명이 로드됨"
+msgstr "모든 %{n}명 로딩됨"
 
 #: src/component/album/toolbar.vue:36 src/component/photo/toolbar.vue:36
 msgid "All Cameras"
@@ -204,11 +203,11 @@ msgstr "모든 나라"
 
 #: src/pages/about/feedback.vue:31
 msgid "All fields are required"
-msgstr "모든 항목을 채워야합니다"
+msgstr "모든 항목을 채워야 합니다"
 
 #: src/pages/library/import.vue:12
 msgid "All files from import folder"
-msgstr "가져오기 폴더의 모든 파일"
+msgstr "폴더의 모든 파일 가져오기"
 
 #: src/component/photo/toolbar.vue:37
 msgid "All Lenses"
@@ -230,15 +229,14 @@ msgstr "모든 년도"
 msgid ""
 "Also, please leave a star on GitHub if you like this project. It provides "
 "additional motivation to keep going."
-msgstr ""
-"또한 이 프로젝트가 마음에 들면 GitHub에 별표를 남겨주세요. 계속 나아가게 하"
-"는 추가적인 동기를 제공합니다."
+msgstr "이 프로젝트가 마음에 든다 GitHub에 Star를 남겨주세요. 이는 계속 나아가게 "
+"하는 동기를 제공합니다."
 
 #: src/dialog/share.vue:75
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
-msgstr "또는 Nextcloud와 같은 WebDAV 서버에 직접 파일을 업로드할 수 있습니다."
+msgstr "대신, Nextcloud와 같은 WebDAV 서버에 직접 파일을 업로드할 수 있습니다."
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -246,11 +244,11 @@ msgstr "고도"
 
 #: src/dialog/photo/details.vue:267
 msgid "Altitude (m)"
-msgstr "고도 (미터)"
+msgstr "고도 (m)"
 
 #: src/common/api.js:100
 msgid "An error occurred - are you offline?"
-msgstr "오류가 발생했습니다 - 당신은 오프라인 상태입니까?"
+msgstr "오류가 발생했습니다 - 오프라인 상태인가요?"
 
 #: src/component/navigation.vue:118 src/component/photo/cards.vue:228
 #: src/component/photo/cards.vue:544 src/component/photo/list.vue:197
@@ -259,7 +257,7 @@ msgstr "오류가 발생했습니다 - 당신은 오프라인 상태입니까?"
 #: src/share/photo/cards.vue:376 src/share/photo/list.vue:176
 #: src/share/photo/mosaic.vue:182
 msgid "Animated"
-msgstr "움직이는 이미지"
+msgstr "움직이는 사진"
 
 #: src/pages/settings/general.vue:533
 msgid "Animation"
@@ -294,11 +292,11 @@ msgstr "보관함"
 
 #: src/dialog/photo/archive.vue:10
 msgid "Are you sure you want to archive the selection?"
-msgstr "선택 항목을 보관 하시겠습니까?"
+msgstr "선택 항목들을 보관하시겠습니까?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
-msgstr "선택 앨범을 삭제 하시겠습니까?"
+msgstr "선택한 앨범을 삭제 하시겠습니까?"
 
 #: src/dialog/label/delete.vue:10
 msgid "Are you sure you want to delete these labels?"
@@ -1091,7 +1089,7 @@ msgstr "오리지널에 가져 오는중…"
 #: src/dialog/photo/files.vue:192 src/dialog/photo/files.vue:201
 #: src/dialog/photo/files.vue:189 src/dialog/photo/files.vue:198
 msgid "in"
-msgstr "in"
+msgstr "입력"
 
 #: src/pages/about/about.vue:52
 msgid "In addition, sponsors receive direct technical support via email."
