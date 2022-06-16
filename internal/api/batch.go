@@ -223,8 +223,13 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 
 		log.Infof("albums: deleting %s", clean.Log(f.String()))
 
+		// Soft delete albums, can be restored.
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.Album{})
-		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
+
+		/*
+			KEEP ENTRIES AS ALBUMS MAY NOW BE RESTORED BY NAME
+			entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
+		*/
 
 		UpdateClientConfig()
 

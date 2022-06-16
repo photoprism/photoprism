@@ -88,26 +88,42 @@ func CreateAlbum(router *gin.RouterGroup) {
 		a := entity.NewAlbum(f.AlbumTitle, entity.AlbumDefault)
 		a.AlbumFavorite = f.AlbumFavorite
 
-		// Search existing album.
-		if err := a.Find(); err == nil {
-			c.JSON(http.StatusOK, a)
-			return
+		// Existing album?
+		if err := a.Find(); err != nil {
+			// Not found, create new album.
+			err = a.Create()
+
+			// Should never happen.
+			if err != nil {
+				// Report unexpected error.
+				log.Errorf("album: %s (create)", err)
+				AbortUnexpected(c)
+				return
+			}
+
+			event.SuccessMsg(i18n.MsgAlbumCreated)
+		} else {
+			// Exists, restore if necessary.
+			if !a.Deleted() {
+				event.InfoMsg(i18n.ErrAlreadyExists, a.Title())
+				c.JSON(http.StatusOK, a)
+				return
+			} else if err = a.Restore(); err == nil {
+				event.SuccessMsg(i18n.MsgRestored, a.Title())
+			} else {
+				// Report unexpected error.
+				log.Errorf("album: %s (restore)", err)
+				AbortUnexpected(c)
+				return
+			}
 		}
 
-		// Create new album.
-		if err := a.Create(); err != nil {
-			AbortAlreadyExists(c, clean.Log(a.AlbumTitle))
-			return
-		}
-
-		event.SuccessMsg(i18n.MsgAlbumCreated)
-
+		// Publish event and create/update YAML backup.
 		UpdateClientConfig()
-
 		PublishAlbumEvent(EntityCreated, a.AlbumUID, c)
-
 		SaveAlbumAsYaml(*a)
 
+		// Return as JSON.
 		c.JSON(http.StatusOK, a)
 	})
 }

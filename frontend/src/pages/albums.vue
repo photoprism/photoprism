@@ -677,9 +677,11 @@ export default {
       this.lastId = "";
     },
     onUpdate(ev, data) {
-      if (!this.listen) return;
-
-      if (!data || !data.entities || !Array.isArray(data.entities)) {
+      if (!this.listen) {
+        console.log("albums.onUpdate currently not listening", ev, data);
+        return;
+      } else if (!data || !data.entities || !Array.isArray(data.entities)) {
+        console.log("albums.onUpdate received empty data", ev, data);
         return;
       }
 
