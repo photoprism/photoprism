@@ -448,15 +448,14 @@ docker-demo-debian:
 	docker pull photoprism/photoprism:preview-debian
 	scripts/docker/build.sh demo $(BUILD_DATE) /debian "-t photoprism/demo:debian"
 	scripts/docker/push.sh demo $(BUILD_DATE)
-	scripts/docker/push.sh demo photoprism/demo:debian
+	scripts/docker/push.sh demo debian
 docker-demo-ubuntu:
 	docker pull photoprism/photoprism:preview-ubuntu
-	scripts/docker/build.sh demo $(BUILD_DATE) /ubuntu "-t photoprism/demo:ubuntu"
-	scripts/docker/push.sh demo $(BUILD_DATE)
-	scripts/docker/push.sh demo photoprism/demo:ubuntu
+	scripts/docker/build.sh demo ubuntu /ubuntu
+	scripts/docker/push.sh demo ubuntu
 docker-demo-local:
 	scripts/docker/build.sh photoprism
-	scripts/docker/build.sh demo $(BUILD_DATE) /debian "-t photoprism/demo:local"
+	scripts/docker/build.sh demo $(BUILD_DATE) /debian
 	scripts/docker/push.sh demo $(BUILD_DATE)
 docker-dummy-webdav:
 	docker pull --platform=amd64 golang:1
