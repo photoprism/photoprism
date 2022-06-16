@@ -101,7 +101,7 @@
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="onOpen($event, index, true)"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, true)">
+                  @click.stop.prevent="onOpen($event, index, isSharedView)">
                 <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
                 <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                 <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
@@ -144,6 +144,7 @@
             </button>
 
             <button
+                  v-if="!isSharedView"
                   class="input-favorite"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="toggleLike($event, index)"

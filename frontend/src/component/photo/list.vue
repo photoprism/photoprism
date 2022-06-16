@@ -81,7 +81,7 @@
               </td>
 
               <td class="p-photo-desc clickable" :data-uid="photo.UID"
-                  @click.exact="isSharedView ? openPhoto(props.index, false) : editPhoto(index)">
+                  @click.exact="isSharedView ? openPhoto(index, false) : editPhoto(index)">
                 {{ photo.Title }}
               </td>
               <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">
@@ -188,7 +188,7 @@ export default {
 
     m += " " + this.$gettext("Try again using other filters or keywords.");
 
-    if (this.$config.feature("review") && !this.isSharedView) {
+    if (!this.isSharedView && this.$config.feature("review")) {
       m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
     }
 
