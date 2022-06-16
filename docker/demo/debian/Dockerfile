@@ -1,4 +1,4 @@
-FROM photoprism/photoprism:preview as build
+FROM photoprism/photoprism:preview-debian as build
 
 # Set environment variables
 ENV TF_CPP_MIN_LOG_LEVEL=2 \
@@ -20,7 +20,7 @@ ENV TF_CPP_MIN_LOG_LEVEL=2 \
     PHOTOPRISM_APP_ICON="favicon" \
     PHOTOPRISM_SITE_TITLE="PhotoPrism" \
     PHOTOPRISM_SITE_CAPTION="Demo" \
-    PHOTOPRISM_SITE_DESCRIPTION="Tags and finds pictures without getting in your way!"
+    PHOTOPRISM_SITE_DESCRIPTION="AI-Powered Photos App for the Decentralized Web"
 
 # Copy assets
 COPY /docker/demo/index.tmpl /opt/photoprism/assets/templates
