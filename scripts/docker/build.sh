@@ -18,7 +18,11 @@ echo "Building image 'photoprism/$1' from docker/${1/-//}$3/Dockerfile...";
 if [[ $1 ]] && [[ -z $2 || $2 == "preview" ]]; then
     echo "Build Tags: preview"
 
-    docker build \
+    if [[ $4 ]]; then
+      echo "Build Params: $4"
+    fi
+
+    docker build $4\
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE \
       -t photoprism/$1:preview \

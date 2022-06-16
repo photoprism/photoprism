@@ -5,11 +5,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-06-01 10:17+0000\n"
-"Last-Translator: Youngwan Kim <y103.kim@gmail.com>\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-16 16:58+0000\n"
+"PO-Revision-Date: 2022-06-16 19:29+0200\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
 "backend/ko/>\n"
 "Language: ko\n"
@@ -17,249 +17,325 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Poedit 3.1\n"
 
+#: messages.go:85
 msgid "Unexpected error, please try again"
 msgstr "예기치 못한 에러가 발생했습니다. 다시 시도해주세요"
 
+#: messages.go:86
 msgid "Invalid request"
 msgstr "잘못된 요청"
 
+#: messages.go:87
 msgid "Changes could not be saved"
 msgstr "저장에 실패함"
 
+#: messages.go:88
 msgid "Could not be deleted"
 msgstr "삭제에 실패함"
 
+#: messages.go:89
 #, c-format
 msgid "%s already exists"
 msgstr "%s가 이미 존재함"
 
+#: messages.go:90
 msgid "Not found"
 msgstr "찾을 수 없음"
 
+#: messages.go:91
 msgid "File not found"
 msgstr "파일을 찾을 수 없음"
 
+#: messages.go:92
 msgid "Selection not found"
 msgstr "섹션을 찾을 수 없음"
 
+#: messages.go:93
 msgid "Entity not found"
 msgstr "항목을 찾을 수 없음"
 
+#: messages.go:94
 msgid "Account not found"
 msgstr "계정을 찾지 못했습니다"
 
+#: messages.go:95
 msgid "User not found"
 msgstr "사용자를 찾을 수 없음"
 
+#: messages.go:96
 msgid "Label not found"
 msgstr "라벨을 찾을 수 없음"
 
+#: messages.go:97
 msgid "Album not found"
 msgstr "앨범을 찾을 수 없음"
 
+#: messages.go:98
 msgid "Subject not found"
 msgstr "제목을 찾을 수 없음"
 
+#: messages.go:99
 msgid "Person not found"
 msgstr "사람을 찾을 수 없음"
 
+#: messages.go:100
 msgid "Face not found"
 msgstr "얼굴을 찾을 수 없음"
 
+#: messages.go:101
 msgid "Not available in public mode"
 msgstr "공개 모드에서는 사용할 수 없음"
 
+#: messages.go:102
 msgid "not available in read-only mode"
 msgstr "읽기 전용 모드에서는 사용할 수 없음"
 
+#: messages.go:103
 msgid "Please log in and try again"
 msgstr "로그인하고 다시 시도하십시오"
 
+#: messages.go:104
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "업로드가 불쾌할 수 있습니다."
 
+#: messages.go:105
 msgid "No items selected"
 msgstr "선택된 항목이 없습니다"
 
+#: messages.go:106
 msgid "Failed creating file, please check permissions"
 msgstr "파일 생성에 실패했습니다. 권한을 확인하세요"
 
+#: messages.go:107
 msgid "Failed creating folder, please check permissions"
 msgstr "폴더를 만들지 못했습니다. 권한을 확인하세요"
 
+#: messages.go:108
 msgid "Could not connect, please try again"
 msgstr "연결할 수 없습니다. 다시 시도해 주세요"
 
+#: messages.go:109
 msgid "Invalid password, please try again"
 msgstr "비밀번호가 잘못되었습니다. 다시 시도해 주세요"
 
+#: messages.go:110
 msgid "Feature disabled"
 msgstr "기능 비활성화됨"
 
+#: messages.go:111
 msgid "No labels selected"
 msgstr "선택한 라벨이 없습니다"
 
+#: messages.go:112
 msgid "No albums selected"
-msgstr ""
+msgstr "선택한 앨범이 없습니다."
 
+#: messages.go:113
 msgid "No files available for download"
-msgstr ""
+msgstr "다운로드할 수 있는 파일이 없습니다"
 
+#: messages.go:114
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "zip 파일 생성 실패"
 
+#: messages.go:115
 msgid "Invalid credentials"
-msgstr ""
+msgstr "잘못된 자격 증명"
 
+#: messages.go:116
 msgid "Invalid link"
-msgstr ""
+msgstr "유효하지 않은 링크입니다"
 
+#: messages.go:117
 msgid "Invalid name"
-msgstr ""
+msgstr "잘못된 이름"
 
+#: messages.go:118
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "바쁘니 나중에 다시 시도해 주세요."
 
+#: messages.go:119
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "깨우기 간격은 %s이지만 1시간 이하여야 합니다."
+
+#: messages.go:122
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "변경사항이 성공적으로 저장되었습니다"
 
+#: messages.go:123
 msgid "Album created"
-msgstr ""
+msgstr "앨범 생성됨"
 
+#: messages.go:124
 msgid "Album saved"
-msgstr ""
+msgstr "앨범 저장됨"
 
+#: messages.go:125
 #, c-format
 msgid "Album %s deleted"
-msgstr ""
+msgstr "앨범 %s이(가) 삭제됨"
 
+#: messages.go:126
 msgid "Album contents cloned"
-msgstr ""
+msgstr "복제된 앨범 콘텐츠"
 
+#: messages.go:127
 msgid "File removed from stack"
-msgstr ""
+msgstr "스택에서 제거된 파일"
 
+#: messages.go:128
 msgid "File deleted"
-msgstr ""
+msgstr "%u 개의 파일이 삭제되었습니다."
 
+#: messages.go:129
 #, c-format
 msgid "Selection added to %s"
-msgstr ""
+msgstr "선택 항목이 %s에 추가됨"
 
+#: messages.go:130
 #, c-format
 msgid "One entry added to %s"
-msgstr ""
+msgstr "%s에 항목 1개 추가됨"
 
+#: messages.go:131
 #, c-format
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d 항목이 %s에 추가됨"
 
+#: messages.go:132
 #, c-format
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "%s에서 항목 1개 삭제됨"
 
+#: messages.go:133
 #, c-format
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d 항목이 %s에서 제거됨"
 
+#: messages.go:134
 msgid "Account created"
-msgstr ""
+msgstr "계정 생성됨"
 
+#: messages.go:135
 msgid "Account saved"
-msgstr ""
+msgstr "계정이 저장됨"
 
+#: messages.go:136
 msgid "Account deleted"
-msgstr ""
+msgstr "계정 삭제됨"
 
-#, fuzzy
+#: messages.go:137
 msgid "Settings saved"
 msgstr "설정 저장됨"
 
-#, fuzzy
+#: messages.go:138
 msgid "Password changed"
 msgstr "비밀번호 변경됨"
 
+#: messages.go:139
 #, c-format
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "%d초 후에 가져오기 완료"
 
+#: messages.go:140
 msgid "Import canceled"
-msgstr ""
+msgstr "가져오기 취소됨"
 
+#: messages.go:141
 #, c-format
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "%d초 후에 인덱싱 완료"
 
+#: messages.go:142
 msgid "Indexing originals..."
-msgstr ""
+msgstr "원본 색인 생성 중..."
 
+#: messages.go:143
 #, c-format
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "%s에서 파일 색인 생성"
 
+#: messages.go:144
 msgid "Indexing canceled"
-msgstr ""
+msgstr "인덱싱 취소됨"
 
+#: messages.go:145
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "파일 %d개와 사진 %d개를 삭제했습니다."
 
+#: messages.go:146
 #, c-format
 msgid "Moving files from %s"
-msgstr ""
+msgstr "%s에서 파일 이동"
 
+#: messages.go:147
 #, c-format
 msgid "Copying files from %s"
-msgstr ""
+msgstr "%s에서 파일 복사"
 
-#, fuzzy
+#: messages.go:148
 msgid "Labels deleted"
 msgstr "라벨 삭제됨"
 
+#: messages.go:149
 msgid "Label saved"
-msgstr ""
+msgstr "라벨이 저장되었습니다."
 
+#: messages.go:150
 msgid "Subject saved"
-msgstr ""
+msgstr "주제가 저장됨"
 
+#: messages.go:151
 msgid "Subject deleted"
-msgstr ""
+msgstr "제목 삭제됨"
 
+#: messages.go:152
 msgid "Person saved"
-msgstr ""
+msgstr "사람이 저장됨"
 
+#: messages.go:153
 msgid "Person deleted"
-msgstr ""
+msgstr "삭제된 사람"
 
+#: messages.go:154
 #, c-format
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d개의 파일이 %d초에 업로드됨"
 
-#, fuzzy
+#: messages.go:155
 msgid "Selection approved"
 msgstr "선택 항목 승인됨"
 
-#, fuzzy
+#: messages.go:156
 msgid "Selection archived"
 msgstr "선택 항목 보관됨"
 
-#, fuzzy
+#: messages.go:157
 msgid "Selection restored"
 msgstr "선택 항목 복원됨"
 
+#: messages.go:158
 msgid "Selection marked as private"
-msgstr ""
+msgstr "비공개로 표시된 선택"
 
-#, fuzzy
+#: messages.go:159
 msgid "Albums deleted"
 msgstr "앨범 삭제됨"
 
+#: messages.go:160
 #, c-format
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "%d초에 생성된 우편번호"
 
-#, fuzzy
+#: messages.go:161
 msgid "Permanently deleted"
 msgstr "영구 삭제됨"
+
+#: messages.go:162
+#, c-format
+msgid "%s has been restored"
+msgstr "%s이(가) 복원되었습니다."
