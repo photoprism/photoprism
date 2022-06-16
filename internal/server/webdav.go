@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/gin-gonic/gin"
+	"golang.org/x/net/webdav"
+
 	"github.com/photoprism/photoprism/internal/auto"
 	"github.com/photoprism/photoprism/internal/config"
-	"golang.org/x/net/webdav"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 const WebDAVOriginals = "/originals"
@@ -76,9 +76,9 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 			} else {
 				// Mark uploaded files as favorite if X-Favorite HTTP header is "1".
 				if r.Method == MethodPut && r.Header.Get("X-Favorite") == "1" {
-					if router.BasePath() == WebDAVOriginals {
+					if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
 						MarkUploadAsFavorite(filepath.Join(conf.OriginalsPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
-					} else if router.BasePath() == WebDAVImport {
+					} else if router.BasePath() == conf.BaseUri(WebDAVImport) {
 						MarkUploadAsFavorite(filepath.Join(conf.ImportPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
 					}
 				}
@@ -87,9 +87,9 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 				case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
 					log.Infof("webdav: %s %s", clean.Log(r.Method), clean.Log(r.URL.String()))
 
-					if router.BasePath() == WebDAVOriginals {
+					if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
 						auto.ShouldIndex()
-					} else if router.BasePath() == WebDAVImport {
+					} else if router.BasePath() == conf.BaseUri(WebDAVImport) {
 						auto.ShouldImport()
 					}
 				default:

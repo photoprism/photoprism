@@ -32,7 +32,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-type Color int8
+type Color int16
 type Colors []Color
 
 const (
@@ -115,8 +115,8 @@ func (c Color) Name() string {
 	return Names[c]
 }
 
-func (c Color) ID() int8 {
-	return int8(c)
+func (c Color) ID() int16 {
+	return int16(c)
 }
 
 func (c Color) Hex() string {

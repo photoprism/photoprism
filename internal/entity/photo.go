@@ -85,7 +85,7 @@ type Photo struct {
 	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
 	PhotoFaces       int          `json:"Faces,omitempty" yaml:"Faces,omitempty"`
 	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
-	PhotoColor       int8         `json:"Color" yaml:"-"`
+	PhotoColor       int16        `json:"Color" yaml:"-"`
 	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
 	CameraSerial     string       `gorm:"type:VARBINARY(160);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string       `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`

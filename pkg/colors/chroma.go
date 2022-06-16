@@ -3,17 +3,17 @@ package colors
 import "fmt"
 
 // Chroma represents colorfulness.
-type Chroma int8
+type Chroma int16
 
 // Percent returns the colourfulness in percent.
-func (c Chroma) Percent() int8 {
+func (c Chroma) Percent() int16 {
 	if c > 100 {
 		return 100
 	} else if c < 0 {
 		return 0
 	}
 
-	return int8(c)
+	return int16(c)
 }
 
 // Hex returns the colourfulness in percent has hex string.
