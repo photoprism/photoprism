@@ -205,7 +205,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:39
 #: src/pages/albums.vue:29
-#: src/pages/albums.vue:494
+#: src/pages/albums.vue:496
 #: src/share/albums.vue:27
 #: src/share/albums.vue:410
 msgid "All Categories"

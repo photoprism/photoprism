@@ -63,7 +63,6 @@ module.exports = (config) => {
     },
 
     files: [
-      "node_modules/@babel/polyfill/dist/polyfill.js",
       "node_modules/regenerator-runtime/runtime/runtime.js",
       { pattern: "tests/unit/**/*_test.js", watched: false },
     ],
