@@ -21,6 +21,7 @@
       </v-alert>
     </div>
     <v-data-table v-else
+                  ref="dataTable"
                   v-model="selected"
                   :headers="listColumns"
                   :items="photos"
@@ -30,32 +31,40 @@
                   disable-initial-sort
                   item-key="ID"
                   :no-data-text="notFoundMessage"
+
     >
       <template #items="props">
         <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
-          <v-img :key="props.item.Hash"
-                 :src="props.item.thumbnailUrl('tile_50')"
-                 :alt="props.item.Title"
-                 :transition="false"
-                 aspect-ratio="1"
-                 style="user-select: none"
-                 class="accent lighten-2 clickable"
-                 @touchstart="onMouseDown($event, props.index)"
-                 @touchend.stop.prevent="onClick($event, props.index)"
-                 @mousedown="onMouseDown($event, props.index)"
-                 @contextmenu.stop="onContextMenu($event, props.index)"
-                 @click.stop.prevent="onClick($event, props.index)"
+          <div
+              v-if="props.index < firstVisibleElementIndex || props.index > lastVisibileElementIndex"
+              class="v-image accent lighten-2"
+              style="aspect-ratio: 1"
+          />
+          <v-img 
+                v-if="props.index >= firstVisibleElementIndex && props.index <= lastVisibileElementIndex"
+                :key="props.item.Hash"
+                :src="props.item.thumbnailUrl('tile_50')"
+                :alt="props.item.Title"
+                :transition="false"
+                aspect-ratio="1"
+                style="user-select: none"
+                class="accent lighten-2 clickable"
+                @touchstart="onMouseDown($event, props.index)"
+                @touchend.stop.prevent="onClick($event, props.index)"
+                @mousedown="onMouseDown($event, props.index)"
+                @contextmenu.stop="onContextMenu($event, props.index)"
+                @click.stop.prevent="onClick($event, props.index)"
           >
             <v-btn v-if="selectMode" :ripple="false"
-                   flat icon large absolute
-                   class="input-select">
+                  flat icon large absolute
+                  class="input-select">
               <v-icon color="white" class="select-on">check_circle</v-icon>
               <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
             <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live' || props.item.Type === 'animated'"
-                   :ripple="false"
-                   flat icon large absolute class="input-open"
-                   @click.stop.prevent="openPhoto(props.index, true)">
+                  :ripple="false"
+                  flat icon large absolute class="input-open"
+                  @click.stop.prevent="openPhoto(props.index, true)">
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
               <v-icon color="white" class="default-hidden action-animated" :title="$gettext('Animated')">gif</v-icon>
               <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
@@ -92,18 +101,25 @@
                 </span>
         </td>
         <td class="text-xs-center">
-          <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
-                 :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
-            <v-icon v-if="props.item.Private" color="secondary-dark" class="select-on">lock</v-icon>
-            <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
-          </v-btn>
-          <v-btn class="input-like" icon small flat :ripple="false"
-                 :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
-            <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">
-              favorite
-            </v-icon>
-            <v-icon v-else color="secondary" :data-uid="props.item.UID" class="select-off">favorite_border</v-icon>
-          </v-btn>
+          <template v-if="props.index < firstVisibleElementIndex || props.index > lastVisibileElementIndex">
+            <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
+            <div class="v-btn v-btn--icon v-btn--small" />
+          </template>
+
+          <template v-else>
+            <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
+                  :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
+              <v-icon v-if="props.item.Private" color="secondary-dark" class="select-on">lock</v-icon>
+              <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
+            </v-btn>
+            <v-btn class="input-like" icon small flat :ripple="false"
+                  :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
+              <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">
+                favorite
+              </v-icon>
+              <v-icon v-else color="secondary" :data-uid="props.item.UID" class="select-off">favorite_border</v-icon>
+            </v-btn>
+          </template>
         </td>
       </template>
     </v-data-table>
@@ -112,6 +128,7 @@
 <script>
 import download from "common/download";
 import Notify from "common/notify";
+import {virtualizationTools} from 'common/virtualization-tools';
 
 export default {
   name: 'PPhotoList',
@@ -184,9 +201,54 @@ export default {
         scrollY: window.scrollY,
         timeStamp: -1,
       },
+      firstVisibleElementIndex: 0,
+      lastVisibileElementIndex: 0,
+      visibleElementIndices: new Set(),
     };
   },
+  watch: {
+    photos: {
+      handler() {
+        this.$nextTick(() => {
+          this.observeItems();
+        });
+      },
+      immediate: true,
+    }
+  },
+  beforeCreate() {
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      this.visibilitiesChanged(entries);
+    }, {
+      rootMargin: "100% 0px",
+    });
+  },
+  beforeDestroy() {
+    this.intersectionObserver.disconnect();
+  },
   methods: {
+    observeItems() {
+      if (this.$refs.dataTable === undefined) {
+        return;
+      }
+      const rows = this.$refs.dataTable.$el.getElementsByTagName('tbody')[0].children;
+      for (const row of rows) {
+        this.intersectionObserver.observe(row);
+      }
+    },
+    elementIndexFromIntersectionObserverEntry(entry) {
+      return entry.target.rowIndex - 2;
+    },
+    visibilitiesChanged(entries) {
+      const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(
+        this.visibleElementIndices,
+        entries,
+        this.elementIndexFromIntersectionObserverEntry,
+      );
+
+      this.firstVisibleElementIndex = smallestIndex;
+      this.lastVisibileElementIndex = largestIndex;
+    },
     downloadFile(index) {
       Notify.success(this.$gettext("Downloading…"));
 

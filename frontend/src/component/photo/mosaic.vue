@@ -1,43 +1,54 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
-    <v-alert
-        :value="photos.length === 0"
-        color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
-    >
-      <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
-        <translate>No recently edited pictures</translate>
-      </h3>
-      <h3 v-else class="body-2 ma-0 pa-0">
-        <translate>No pictures found</translate>
-      </h3>
-      <p class="body-1 mt-2 mb-0 pa-0">
-        <translate>Try again using other filters or keywords.</translate>
-        <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-        <template v-if="$config.feature('review')">
-          <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
-        </template>
-      </p>
-    </v-alert>
+    <template v-if="photos.length === 0">
+      <v-alert
+          :value="true"
+          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+      >
+        <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
+          <translate>No recently edited pictures</translate>
+        </h3>
+        <h3 v-else class="body-2 ma-0 pa-0">
+          <translate>No pictures found</translate>
+        </h3>
+        <p class="body-1 mt-2 mb-0 pa-0">
+          <translate>Try again using other filters or keywords.</translate>
+          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
+          <template v-if="$config.feature('review')">
+            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          </template>
+        </p>
+      </v-alert>
+    </template>
     <v-layout row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}">
       <v-flex
           v-for="(photo, index) in photos"
+          ref="items"
           :key="photo.ID"
+          :data-index="index"
           xs4 sm3 md2 lg1 d-flex
       >
-        <v-card tile
+
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
+                style="user-select: none; aspect-ratio: 1"
+                class="accent lighten-2 result"
+                :class="photo.classes()"/>
+        <v-card v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
+                tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
-                style="user-select: none"
-                class="result"
+                style="user-select: none; aspect-ratio: 1"
+                class="accent lighten-2 result"
                 :class="photo.classes()"
                 @contextmenu.stop="onContextMenu($event, index)">
-          <v-img :key="photo.Hash"
+          <v-img
+                 :key="photo.Hash"
                  :src="photo.thumbnailUrl('tile_224')"
                  :alt="photo.Title"
                  :title="photo.Title"
                  :transition="false"
                  aspect-ratio="1"
-                 class="accent lighten-2 clickable"
+                 class="clickable"
                  @touchstart.passive="input.touchStart($event, index)"
                  @touchend.stop.prevent="onClick($event, index)"
                  @mousedown.stop.prevent="input.mouseDown($event, index)"
@@ -118,6 +129,7 @@
 </template>
 <script>
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
+import {virtualizationTools} from 'common/virtualization-tools';
 
 export default {
   name: 'PPhotoMosaic',
@@ -152,9 +164,53 @@ export default {
     return {
       hidePrivate: this.$config.settings().features.private,
       input: new Input(),
+      firstVisibleElementIndex: 0,
+      lastVisibileElementIndex: 0,
+      visibleElementIndices: new Set(),
     };
   },
+  watch: {
+    photos: {
+      handler() {
+        this.$nextTick(() => {
+          this.observeItems();
+        });
+      },
+      immediate: true,
+    }
+  },
+  beforeCreate() {
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      this.visibilitiesChanged(entries);
+    }, {
+      rootMargin: "50% 0px",
+    });
+  },
+  beforeDestroy() {
+    this.intersectionObserver.disconnect();
+  },
   methods: {
+    observeItems() {
+      if (this.$refs.items === undefined) {
+        return;
+      }
+      for (const item of this.$refs.items) {
+        this.intersectionObserver.observe(item);
+      }
+    },
+    elementIndexFromIntersectionObserverEntry(entry) {
+      return parseInt(entry.target.getAttribute('data-index'));
+    },
+    visibilitiesChanged(entries) {
+      const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(
+        this.visibleElementIndices,
+        entries,
+        this.elementIndexFromIntersectionObserverEntry,
+      );
+
+      this.firstVisibleElementIndex = smallestIndex;
+      this.lastVisibileElementIndex = largestIndex;
+    },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);
     },

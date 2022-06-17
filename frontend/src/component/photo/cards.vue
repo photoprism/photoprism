@@ -1,30 +1,76 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-cards">
-    <v-alert
-        :value="photos.length === 0"
-        color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
-    >
-      <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
-        <translate>No recently edited pictures</translate>
-      </h3>
-      <h3 v-else class="body-2 ma-0 pa-0">
-        <translate>No pictures found</translate>
-      </h3>
-      <p class="body-1 mt-2 mb-0 pa-0">
-        <translate>Try again using other filters or keywords.</translate>
-        <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-        <template v-if="$config.feature('review')">
-          <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
-        </template>
-      </p>
-    </v-alert>
+    <template v-if="photos.length === 0">
+      <v-alert
+          :value="true"
+          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+      >
+        <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
+          <translate>No recently edited pictures</translate>
+        </h3>
+        <h3 v-else class="body-2 ma-0 pa-0">
+          <translate>No pictures found</translate>
+        </h3>
+        <p class="body-1 mt-2 mb-0 pa-0">
+          <translate>Try again using other filters or keywords.</translate>
+          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
+          <template v-if="$config.feature('review')">
+            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          </template>
+        </p>
+      </v-alert>
+    </template>
     <v-layout row wrap class="search-results photo-results cards-view" :class="{'select-results': selectMode}">
       <v-flex
           v-for="(photo, index) in photos"
+          ref="items"
           :key="photo.ID"
+          :data-index="index"
+          style="width: min-content"
           xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
       >
-        <v-card tile
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" 
+                style="user-select: none"
+                class="accent lighten-3 result"
+                :class="photo.classes()"
+        >
+          <div class="accent lighten-2" style="aspect-ratio: 1" />
+          <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
+          <div class="v-card__title pa-3 card-details v-card__title--primary">
+            <div>
+              <h3 class="body-2 mb-2" :title="photo.Title">
+                {{ photo.Title | truncate(80) }}
+              </h3>
+              <div v-if="photo.Description" class="caption mb-2" style="hyphens: auto; word-break: break-word">
+                {{ photo.Description }}
+              </div>
+              <div class="caption" style="hyphens: auto; word-break: break-word">
+                  <i style="display: inline-block; width: 14px" />
+                  {{ photo.getDateString(true) }}
+                <br>
+                <i style="display: inline-block; width: 14px" />
+                <template v-if="photo.Type === 'video' || photo.Type === 'animated'">
+                  {{ photo.getVideoInfo() }}
+                </template>
+                <template v-else>
+                  {{ photo.getPhotoInfo() }}
+                </template>
+                <template v-if="filter.order === 'name' && $config.feature('download')">
+                  <br>
+                  <i style="display: inline-block; width: 14px" />
+                  {{ photo.baseName() }}
+                </template>
+                <template v-if="featPlaces && photo.Country !== 'zz'">
+                  <br>
+                  <i style="display: inline-block; width: 14px" />
+                  {{ photo.locationInfo() }}
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+        <v-card v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
+                tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 style="user-select: none"
@@ -197,6 +243,7 @@
 import download from "common/download";
 import Notify from "common/notify";
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
+import {virtualizationTools} from 'common/virtualization-tools';
 
 export default {
   name: 'PPhotoCards',
@@ -244,9 +291,53 @@ export default {
       featPrivate,
       debug,
       input,
+      firstVisibleElementIndex: 0,
+      lastVisibileElementIndex: 0,
+      visibleElementIndices: new Set(),
     };
   },
+  watch: {
+    photos: {
+      handler() {
+        this.$nextTick(() => {
+          this.observeItems();
+        });
+      },
+      immediate: true,
+    }
+  },
+  beforeCreate() {
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      this.visibilitiesChanged(entries);
+    }, {
+      rootMargin: "50% 0px",
+    });
+  },
+  beforeDestroy() {
+    this.intersectionObserver.disconnect();
+  },
   methods: {
+    observeItems() {
+      if (this.$refs.items === undefined) {
+        return;
+      }
+      for (const item of this.$refs.items) {
+        this.intersectionObserver.observe(item);
+      }
+    },
+    elementIndexFromIntersectionObserverEntry(entry) {
+      return parseInt(entry.target.getAttribute('data-index'));
+    },
+    visibilitiesChanged(entries) {
+      const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(
+        this.visibleElementIndices,
+        entries,
+        this.elementIndexFromIntersectionObserverEntry,
+      );
+
+      this.firstVisibleElementIndex = smallestIndex;
+      this.lastVisibileElementIndex = largestIndex;
+    },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);
     },

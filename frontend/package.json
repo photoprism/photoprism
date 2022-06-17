@@ -73,6 +73,7 @@
     "karma-webpack": "^5.0.0",
     "luxon": "^2.4.0",
     "maplibre-gl": "^2.1.9",
+    "memoize-one": "^6.0.0",
     "mini-css-extract-plugin": "^2.6.1",
     "minimist": ">=1.2.5",
     "mocha": "^10.0.0",
