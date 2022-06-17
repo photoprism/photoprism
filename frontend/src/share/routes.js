@@ -15,14 +15,14 @@ export default [
     name: "albums",
     path: "/s/:token",
     component: Albums,
-    meta: { title: shareTitle, auth: true },
+    meta: { title: shareTitle, auth: true, hideNav: true },
     props: { view: "album", staticFilter: { type: "" } },
   },
   {
     name: "album",
     path: "/s/:token/:uid",
     component: AlbumPhotos,
-    meta: { title: shareTitle, auth: true },
+    meta: { title: shareTitle, auth: true, hideNav: true },
   },
   {
     path: "*",
