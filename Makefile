@@ -442,17 +442,12 @@ docker-ddns:
 docker-goproxy:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh goproxy linux/amd64,linux/arm64 $(BUILD_DATE)
-docker-demo: docker-demo-debian
-docker-demo-all: docker-demo-debian docker-demo-ubuntu
+docker-demo: docker-demo-latest
+docker-demo-all: docker-demo-latest docker-demo-ubuntu
 docker-demo-latest:
 	docker pull photoprism/photoprism:preview
 	scripts/docker/build.sh demo $(BUILD_DATE)
 	scripts/docker/push.sh demo $(BUILD_DATE)
-docker-demo-debian:
-	docker pull photoprism/photoprism:preview-debian
-	scripts/docker/build.sh demo $(BUILD_DATE) /debian "-t photoprism/demo:latest -t photoprism/demo:debian"
-	scripts/docker/push.sh demo $(BUILD_DATE)
-	scripts/docker/push.sh demo debian
 docker-demo-ubuntu:
 	docker pull photoprism/photoprism:preview-ubuntu
 	scripts/docker/build.sh demo ubuntu /ubuntu
