@@ -123,5 +123,5 @@
     "npm": ">= 8.0.0",
     "yarn": "please use npm"
   },
-  "browserslist": ">0.25% and last 2 year"
+  "browserslist": ">0.25% and last 2 years"
 }
