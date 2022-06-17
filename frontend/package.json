@@ -123,9 +123,5 @@
     "npm": ">= 8.0.0",
     "yarn": "please use npm"
   },
-  "browserslist": [
-    "> 1%",
-    "not ie <= 9",
-    "last 3 versions"
-  ]
+  "browserslist": ">0.25% and last 2 years"
 }
