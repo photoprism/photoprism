@@ -23,7 +23,7 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import memoizeOne from 'memoize-one';
+import memoizeOne from "memoize-one";
 
 import RestModel from "model/rest";
 import File from "model/file";
@@ -181,21 +181,30 @@ export class Photo extends RestModel {
   }
 
   classes() {
-    return this.generateClasses(this.isPlayable(), Clipboard.has(this), this.Portrait, this.Favorite, this.Private, this.Files.length > 1)
+    return this.generateClasses(
+      this.isPlayable(),
+      Clipboard.has(this),
+      this.Portrait,
+      this.Favorite,
+      this.Private,
+      this.Files.length > 1
+    );
   }
 
-  generateClasses = memoizeOne((isPlayable, isInClipboard, portrait, favorite, isPrivate, hasMultipleFiles) => {
-    let classes = ["is-photo", "uid-" + this.UID, "type-" + this.Type];
+  generateClasses = memoizeOne(
+    (isPlayable, isInClipboard, portrait, favorite, isPrivate, hasMultipleFiles) => {
+      let classes = ["is-photo", "uid-" + this.UID, "type-" + this.Type];
 
-    if (isPlayable) classes.push("is-playable");
-    if (isInClipboard) classes.push("is-selected");
-    if (portrait) classes.push("is-portrait");
-    if (favorite) classes.push("is-favorite");
-    if (isPrivate) classes.push("is-private");
-    if (hasMultipleFiles) classes.push("is-stack");
+      if (isPlayable) classes.push("is-playable");
+      if (isInClipboard) classes.push("is-selected");
+      if (portrait) classes.push("is-portrait");
+      if (favorite) classes.push("is-favorite");
+      if (isPrivate) classes.push("is-private");
+      if (hasMultipleFiles) classes.push("is-stack");
 
-    return classes;
-  })
+      return classes;
+    }
+  );
 
   localDayString() {
     if (!this.TakenAtLocal) {
@@ -314,7 +323,7 @@ export class Photo extends RestModel {
 
   generateUtcDate = memoizeOne((takenAt) => {
     return DateTime.fromISO(takenAt).toUTC();
-  })
+  });
 
   baseName(truncate) {
     let result = this.fileBase(this.FileName ? this.FileName : this.mainFile().Name);
@@ -373,7 +382,7 @@ export class Photo extends RestModel {
     }
 
     return files.some((f) => f.Video);
-  })
+  });
 
   videoParams() {
     const uri = this.videoUrl();
@@ -453,7 +462,7 @@ export class Photo extends RestModel {
     }
 
     return file;
-  })
+  });
 
   gifFile() {
     if (!this.Files) {
@@ -474,7 +483,7 @@ export class Photo extends RestModel {
   }
 
   mainFile() {
-    return this.getMainFileFromFiles(this.Files)
+    return this.getMainFileFromFiles(this.Files);
   }
 
   getMainFileFromFiles = memoizeOne((files) => {
@@ -489,7 +498,7 @@ export class Photo extends RestModel {
     }
 
     return files.find((f) => f.FileType === FormatJpeg);
-  })
+  });
 
   jpegFiles() {
     if (!this.Files) {
@@ -540,7 +549,13 @@ export class Photo extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return this.generateThumbnailUrl(this.mainFileHash(), this.videoFile(), config.contentUri, config.previewToken(), size);
+    return this.generateThumbnailUrl(
+      this.mainFileHash(),
+      this.videoFile(),
+      config.contentUri,
+      config.previewToken(),
+      size
+    );
   }
 
   generateThumbnailUrl = memoizeOne((mainFileHash, videoFile, contentUri, previewToken, size) => {
@@ -555,7 +570,7 @@ export class Photo extends RestModel {
     }
 
     return `${contentUri}/t/${hash}/${previewToken}/${size}`;
-  })
+  });
 
   getDownloadUrl() {
     return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken()}`;
@@ -642,7 +657,14 @@ export class Photo extends RestModel {
   }
 
   getDateString(showTimeZone) {
-    return this.generateDateString(showTimeZone, this.TakenAt, this.Year, this.Month, this.Day, this.TimeZone);
+    return this.generateDateString(
+      showTimeZone,
+      this.TakenAt,
+      this.Year,
+      this.Month,
+      this.Day,
+      this.TimeZone
+    );
   }
 
   generateDateString = memoizeOne((showTimeZone, takenAt, year, month, day, timeZone) => {
@@ -660,12 +682,12 @@ export class Photo extends RestModel {
     }
 
     return this.localDate().toLocaleString(DateTime.DATE_HUGE);
-  })
+  });
 
   shortDateString = () => {
-    return this.generateShortDateString(this.TakenAt, this.Year, this.Month, this.Day)
-  }
-  
+    return this.generateShortDateString(this.TakenAt, this.Year, this.Month, this.Day);
+  };
+
   generateShortDateString = memoizeOne((takenAt, year, month, day) => {
     if (!takenAt || year === YearUnknown) {
       return $gettext("Unknown");
@@ -676,7 +698,7 @@ export class Photo extends RestModel {
     }
 
     return this.localDate().toLocaleString(DateTime.DATE_MED);
-  })
+  });
 
   hasLocation() {
     return this.Lat !== 0 || this.Lng !== 0;
@@ -695,8 +717,8 @@ export class Photo extends RestModel {
   }
 
   locationInfo = () => {
-    return this.generateLocationInfo(this.PlaceID, this.Country, this.Place, this.PlaceLabel)
-  }
+    return this.generateLocationInfo(this.PlaceID, this.Country, this.Place, this.PlaceLabel);
+  };
 
   generateLocationInfo = memoizeOne((placeId, countryCode, place, placeLabel) => {
     if (placeId === "zz" && countryCode !== "zz") {
@@ -710,7 +732,7 @@ export class Photo extends RestModel {
     }
 
     return placeLabel ? placeLabel : $gettext("Unknown");
-  })
+  });
 
   addSizeInfo(file, info) {
     if (!file) {
@@ -739,8 +761,8 @@ export class Photo extends RestModel {
 
   getVideoInfo = () => {
     let file = this.videoFile() || this.mainFile();
-    return this.generateVideoInfo(file)
-  }
+    return this.generateVideoInfo(file);
+  };
 
   generateVideoInfo = memoizeOne((file) => {
     if (!file) {
@@ -748,7 +770,6 @@ export class Photo extends RestModel {
     }
 
     const info = [];
-
 
     if (file.Duration > 0) {
       info.push(Util.duration(file.Duration));
@@ -765,7 +786,7 @@ export class Photo extends RestModel {
     }
 
     return info.join(", ");
-  })
+  });
 
   getPhotoInfo = () => {
     let file = this.videoFile();
@@ -774,7 +795,7 @@ export class Photo extends RestModel {
     }
 
     return this.generatePhotoInfo(this.Camera, this.CameraModel, this.CameraMake, file);
-  }
+  };
 
   generatePhotoInfo = memoizeOne((camera, cameraModel, cameraMake, file) => {
     let info = [];
@@ -804,7 +825,7 @@ export class Photo extends RestModel {
     }
 
     return info.join(", ");
-  })
+  });
 
   getCamera() {
     if (this.Camera) {
