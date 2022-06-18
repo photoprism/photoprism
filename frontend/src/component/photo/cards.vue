@@ -317,13 +317,11 @@ export default {
       }
 
       /**
-       * observing only every 5th item reduces the amount of time
-       * spent computing intersection by 80%. me might render up to
-       * 8 items more than required, but the time saved computing
-       * intersections is far greater than the time lost rendering
-       * a couple more items
+       * observing only every 5th item doesn't work here, because on small
+       * screens there aren't >= 5 elements in the viewport at all times.
+       * observing every second element should work.
        */
-      for (let i = 0; i < this.$refs.items.length; i += 5) {
+      for (let i = 0; i < this.$refs.items.length; i += 2) {
         this.intersectionObserver.observe(this.$refs.items[i]);
       }
     },
