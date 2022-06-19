@@ -206,7 +206,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .image-container {
   aspect-ratio: 1;
-  contain: layout paint style size;
+  contain: layout paint style size !important;
 }
 
 #photoprism .cards-view .result .image,

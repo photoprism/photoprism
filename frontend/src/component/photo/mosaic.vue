@@ -30,16 +30,25 @@
       >
        <!--
          The following div is the layout + size container. It makes the browser not
-         re-layout all elements in the list when the children of one of them changes
+         re-layout all elements in the list when the children of one of them changes.
+         We'd usually put the result-class and photo-classes on this, but that hurts
+         performance, because
+         1. photos would need to get accessed for placehoders (accessing large reactive array is slow)
+         2. the image-container could change size on selection, resulting in huge re-layout
+
+         We therefore put result- and photo classes in the actual rendered in-view node
+
+         We still add the result-class here aswell, because
         -->
-        <div :class="photo.classes()" class="image-container result accent lighten-2">
+        <div class="image-container result accent lighten-2">
           <div  v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
                 :key="photo.Hash"
                 tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`"
-                class="accent lighten-2 clickable image"
+                :class="photo.classes()"
+                class="result accent lighten-2 clickable image"
                 :alt="photo.Title"
                 :title="photo.Title"
                 @contextmenu.stop="onContextMenu($event, index)"
