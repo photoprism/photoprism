@@ -200,6 +200,10 @@ body.chrome #photoprism .search-results .result {
     box-shadow: none;
 }
 
+#photoprism .list-view .result .image {
+    border-radius: 3px;
+}
+
 #photoprism .search-results .image-container {
   aspect-ratio: 1;
   contain: layout paint style size;
