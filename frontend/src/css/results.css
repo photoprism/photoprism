@@ -199,7 +199,7 @@ body.chrome #photoprism .search-results .result {
 }
 
 #photoprism .search-results .image-container {
-  aspect-ratio: 1;
+  /*aspect-ratio: 1;*/
   contain: layout paint style size;
 }
 
@@ -209,7 +209,7 @@ body.chrome #photoprism .search-results .result {
 {
   position: relative;
   user-select: none;
-  aspect-ratio: 1;
+  /*aspect-ratio: 1;*/
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -481,14 +481,13 @@ body.chrome #photoprism .search-results .result {
 }
 
 /* old browser support */
-@supports not (aspect-ratio: 1) {
+/*@supports not (aspect-ratio: 1) {*/
   #photoprism .search-results .image-container {
     height: 0;
     padding-bottom: 100%;
   }
 
   #photoprism .cards-view .result .image,
-  #photoprism .list-view .result .image,
   #photoprism .mosaic-view .result.image
   {
     height: 0;
@@ -499,6 +498,7 @@ body.chrome #photoprism .search-results .result {
     padding-bottom: calc(100% - 8px)
   }
 
+  #photoprism .cards-view .result.is-selected,
   #photoprism .mosaic-view .result.is-selected {
     /*
        if it is selected then it has no more margin, so DON't subtract them
@@ -506,4 +506,4 @@ body.chrome #photoprism .search-results .result {
     */
     padding-bottom: 100%
   }
-}
+/*}*/
