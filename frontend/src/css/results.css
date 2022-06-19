@@ -206,12 +206,12 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .image-container {
   aspect-ratio: 1;
-  contain: layout paint style size !important;
+  contain: layout style size;
 }
 
 #photoprism .cards-view .result .image,
 #photoprism .list-view .result .image,
-#photoprism .mosaic-view .result .image
+#photoprism .mosaic-view .result.image
 {
   position: relative;
   user-select: none;
@@ -223,7 +223,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .cards-view .result .image button,
 #photoprism .list-view .result .image button,
-#photoprism .mosaic-view .result .image button {
+#photoprism .mosaic-view .result.image button {
   position: absolute;
   display: flex;
   justify-content: center;
@@ -246,11 +246,11 @@ body.chrome #photoprism .search-results .result {
 }
 #photoprism .cards-view .result .image button:hover,
 #photoprism .list-view .result .image button:hover,
-#photoprism .mosaic-view .result .image button:hover {
+#photoprism .mosaic-view .result.image button:hover {
   background-color: rgba(255, 255, 255, 0.12);
 }
 
-#photoprism .mosaic-view .result .image i,
+#photoprism .mosaic-view .result.image i,
 #photoprism .list-view .result .image i,
 #photoprism .cards-view .result .image i {
   color: white;
