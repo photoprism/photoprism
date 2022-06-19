@@ -29,4 +29,4 @@ packages are affected.
 
 (c) Refrain from sending HTML emails as we consider them insecure and unsuitable for this purpose.
 
-(d) If you are contacting us as a business or other organization, we encourage you to include legal and contact information on your website, as failure to provide legally required information may compromise your eligibility and trustworthiness.
+(d) If you are contacting us as a business or organization, we encourage you to include legal and contact information on your website, as failure to provide legally required information may compromise your eligibility and trustworthiness.
