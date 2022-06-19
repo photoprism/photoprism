@@ -20,7 +20,7 @@
         </p>
       </v-alert>
     </template>
-    <v-layout row wrap class="search-results photo-results cards-view" :class="{'select-results': selectMode}">
+    <div class="layout row wrap search-results photo-results cards-view" :class="{'select-results': selectMode}">
       <div
           v-for="(photo, index) in photos"
           ref="items"
@@ -28,205 +28,205 @@
           :data-index="index"
           class="flex xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex"
       >
-        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-3 result placeholder">
-          <div class="accent lighten-2 image"/>
-          <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
-          <div class="pa-3 card-details">
-            <div>
-              <h3 class="body-2 mb-2" :title="photo.Title">
-                {{ photo.Title | truncate(80) }}
-              </h3>
-              <div v-if="photo.Description" class="caption mb-2">
-                {{ photo.Description }}
-              </div>
-              <div class="caption">
-                  <i/>
-                  {{ photo.getDateString(true) }}
-                <br>
-                <i/>
-                <template v-if="photo.Type === 'video' || photo.Type === 'animated'">
-                  {{ photo.getVideoInfo() }}
-                </template>
-                <template v-else>
-                  {{ photo.getPhotoInfo() }}
-                </template>
-                <template v-if="filter.order === 'name' && $config.feature('download')">
+        <div :class="photo.classes()" class="result card-background accent lighten-3">
+          <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="placeholder">
+            <div class="accent lighten-2 image"/>
+            <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
+            <div class="pa-3 card-details">
+              <div>
+                <h3 class="body-2 mb-2" :title="photo.Title">
+                  {{ photo.Title | truncate(80) }}
+                </h3>
+                <div v-if="photo.Description" class="caption mb-2">
+                  {{ photo.Description }}
+                </div>
+                <div class="caption">
+                    <i/>
+                    {{ photo.getDateString(true) }}
                   <br>
                   <i/>
-                  {{ photo.baseName() }}
-                </template>
-                <template v-if="featPlaces && photo.Country !== 'zz'">
-                  <br>
-                  <i/>
-                  {{ photo.locationInfo() }}
-                </template>
+                  <template v-if="photo.Type === 'video' || photo.Type === 'animated'">
+                    {{ photo.getVideoInfo() }}
+                  </template>
+                  <template v-else>
+                    {{ photo.getPhotoInfo() }}
+                  </template>
+                  <template v-if="filter.order === 'name' && $config.feature('download')">
+                    <br>
+                    <i/>
+                    {{ photo.baseName() }}
+                  </template>
+                  <template v-if="featPlaces && photo.Country !== 'zz'">
+                    <br>
+                    <i/>
+                    {{ photo.locationInfo() }}
+                  </template>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div v-else
-              tile
-              :data-id="photo.ID"
-              :data-uid="photo.UID"
-              class="result accent lighten-3"
-              :class="photo.classes()"
-              @contextmenu.stop="onContextMenu($event, index)">
-          <div class="card-background accent lighten-3"></div>
-          <div :key="photo.Hash"
-                :alt="photo.Title"
-                :title="photo.Title"
-                class="accent lighten-2 clickable image"
-                :style="`background-image: url(${photo.thumbnailUrl('tile_500')})`"
-                @touchstart.passive="input.touchStart($event, index)"
-                @touchend.stop.prevent="onClick($event, index)"
-                @mousedown.stop.prevent="input.mouseDown($event, index)"
-                @click.stop.prevent="onClick($event, index)"
-                @mouseover="playLive(photo)"
-                @mouseleave="pauseLive(photo)"
-          >
-            <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
-              <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none"
-                    loop muted playsinline>
-                <source :src="photo.videoUrl()">
-              </video>
-            </v-layout>
-
-            <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
-                  class="input-open"
-                  @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onOpen($event, index, true)"
-                  @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, true)">
-                <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
-                <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
-                <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
-                <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
-                <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
-            </button>
-
-            <button v-if="photo.Type === 'image' && selectMode"
-                  class="input-view"
-                  :title="$gettext('View')"
-                  @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onOpen($event, index, false)"
-                  @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, false)">
-              <i class="action-fullscreen">zoom_in</i>
-            </button>
-
-            <button v-if="featPrivate && photo.Private" class="input-private">
-              <i class="select-on">lock</i>
-            </button>
-
-            <!--
-              We'd usually use v-if here to only render the button if needed.
-              Because the button is supposed to be visible when the result is
-              being hovered over, implementing the v-if would require the use of
-              a <v-hover> element around the result.
-
-              Because rendering the plain HTML-Button is faster than rendering
-              the v-hover component we instead hide the button by default and
-              use css to show it when it is being hovered.
-            -->
-            <button
-                  class="input-select"
-                  @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onSelect($event, index)"
-                  @touchmove.stop.prevent
-                  @click.stop.prevent="onSelect($event, index)">
-              <i class="select-on">check_circle</i>
-              <i class="select-off">radio_button_off</i>
-            </button>
-
-            <button
-                  class="input-favorite"
-                  @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="toggleLike($event, index)"
-                  @touchmove.stop.prevent
-                  @click.stop.prevent="toggleLike($event, index)">
-              <i v-if="photo.Favorite">favorite</i>
-              <i v-else>favorite_border</i>
-            </button>
-          </div>
-
-          <v-card-actions v-if="photo.Quality < 3 && context === 'review'" class="card-details pa-0">
-            <v-layout row wrap align-center>
-              <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="accent lighten-2"
-                      small depressed dark block :round="false"
-                      class="action-archive text-xs-center"
-                      :title="$gettext('Archive')" @click.stop="photo.archive()">
-                  <v-icon dark>clear</v-icon>
-                </v-btn>
-              </v-flex>
-              <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="accent lighten-2"
-                      small depressed dark block :round="false"
-                      class="action-approve text-xs-center"
-                      :title="$gettext('Approve')" @click.stop="photo.approve()">
-                  <v-icon dark>check</v-icon>
-                </v-btn>
-              </v-flex>
-            </v-layout>
-          </v-card-actions>
-
-          <div class="pa-3 card-details">
-            <div>
-              <h3 class="body-2 mb-2" :title="photo.Title">
-                <button class="action-title-edit" :data-uid="photo.UID"
-                        @click.exact="editPhoto(index)">
-                  {{ photo.Title | truncate(80) }}
-                </button>
-              </h3>
-              <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">
-                <button @click.exact="editPhoto(index)">
-                  {{ photo.Description }}
-                </button>
+          <div v-else
+                tile
+                :data-id="photo.ID"
+                :data-uid="photo.UID"
+                class="accent lighten-3"
+                @contextmenu.stop="onContextMenu($event, index)">
+            <div :key="photo.Hash"
+                  :alt="photo.Title"
+                  :title="photo.Title"
+                  class="accent lighten-2 clickable image"
+                  :style="`background-image: url(${photo.thumbnailUrl('tile_500')})`"
+                  @touchstart.passive="input.touchStart($event, index)"
+                  @touchend.stop.prevent="onClick($event, index)"
+                  @mousedown.stop.prevent="input.mouseDown($event, index)"
+                  @click.stop.prevent="onClick($event, index)"
+                  @mouseover="playLive(photo)"
+                  @mouseleave="pauseLive(photo)"
+            >
+              <div v-if="photo.Type === 'live' || photo.Type === 'animated'" class="layout live-player">
+                <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none"
+                      loop muted playsinline>
+                  <source :src="photo.videoUrl()">
+                </video>
               </div>
-              <div class="caption">
-                <button class="action-date-edit" :data-uid="photo.UID"
-                        @click.exact="editPhoto(index)">
-                  <i :title="$gettext('Taken')">date_range</i>
-                  {{ photo.getDateString(true) }}
-                </button>
-                <br>
-                <button v-if="photo.Type === 'video'" :title="$gettext('Video')"
-                        @click.exact="openPhoto(index, true)">
-                  <i>movie</i>
-                  {{ photo.getVideoInfo() }}
-                </button>
-                <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'"
-                        @click.exact="openPhoto(index, true)">
-                  <i>gif_box</i>
-                  {{ photo.getVideoInfo() }}
-                </button>
-                <button v-else :title="$gettext('Camera')" class="action-camera-edit"
-                        :data-uid="photo.UID" @click.exact="editPhoto(index)">
-                  <i>photo_camera</i>
-                  {{ photo.getPhotoInfo() }}
-                </button>
-                <template v-if="filter.order === 'name' && $config.feature('download')">
-                  <br>
-                  <button :title="$gettext('Name')"
-                          @click.exact="downloadFile(index)">
-                    <i>insert_drive_file</i>
-                    {{ photo.baseName() }}
+
+              <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
+                    class="input-open"
+                    @touchstart.stop.prevent="input.touchStart($event, index)"
+                    @touchend.stop.prevent="onOpen($event, index, true)"
+                    @touchmove.stop.prevent
+                    @click.stop.prevent="onOpen($event, index, true)">
+                  <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
+                  <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
+                  <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
+                  <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
+                  <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
+              </button>
+
+              <button v-if="photo.Type === 'image' && selectMode"
+                    class="input-view"
+                    :title="$gettext('View')"
+                    @touchstart.stop.prevent="input.touchStart($event, index)"
+                    @touchend.stop.prevent="onOpen($event, index, false)"
+                    @touchmove.stop.prevent
+                    @click.stop.prevent="onOpen($event, index, false)">
+                <i class="action-fullscreen">zoom_in</i>
+              </button>
+
+              <button v-if="featPrivate && photo.Private" class="input-private">
+                <i class="select-on">lock</i>
+              </button>
+
+              <!--
+                We'd usually use v-if here to only render the button if needed.
+                Because the button is supposed to be visible when the result is
+                being hovered over, implementing the v-if would require the use of
+                a <v-hover> element around the result.
+
+                Because rendering the plain HTML-Button is faster than rendering
+                the v-hover component we instead hide the button by default and
+                use css to show it when it is being hovered.
+              -->
+              <button
+                    class="input-select"
+                    @touchstart.stop.prevent="input.touchStart($event, index)"
+                    @touchend.stop.prevent="onSelect($event, index)"
+                    @touchmove.stop.prevent
+                    @click.stop.prevent="onSelect($event, index)">
+                <i class="select-on">check_circle</i>
+                <i class="select-off">radio_button_off</i>
+              </button>
+
+              <button
+                    class="input-favorite"
+                    @touchstart.stop.prevent="input.touchStart($event, index)"
+                    @touchend.stop.prevent="toggleLike($event, index)"
+                    @touchmove.stop.prevent
+                    @click.stop.prevent="toggleLike($event, index)">
+                <i v-if="photo.Favorite">favorite</i>
+                <i v-else>favorite_border</i>
+              </button>
+            </div>
+
+            <v-card-actions v-if="photo.Quality < 3 && context === 'review'" class="card-details pa-0">
+              <div class="layout row wrap align-center">
+                <v-flex xs6 class="text-xs-center pa-1">
+                  <v-btn color="accent lighten-2"
+                        small depressed dark block :round="false"
+                        class="action-archive text-xs-center"
+                        :title="$gettext('Archive')" @click.stop="photo.archive()">
+                    <v-icon dark>clear</v-icon>
+                  </v-btn>
+                </v-flex>
+                <v-flex xs6 class="text-xs-center pa-1">
+                  <v-btn color="accent lighten-2"
+                        small depressed dark block :round="false"
+                        class="action-approve text-xs-center"
+                        :title="$gettext('Approve')" @click.stop="photo.approve()">
+                    <v-icon dark>check</v-icon>
+                  </v-btn>
+                </v-flex>
+              </div>
+            </v-card-actions>
+
+            <div class="pa-3 card-details">
+              <div>
+                <h3 class="body-2 mb-2" :title="photo.Title">
+                  <button class="action-title-edit" :data-uid="photo.UID"
+                          @click.exact="editPhoto(index)">
+                    {{ photo.Title | truncate(80) }}
                   </button>
-                </template>
-                <template v-if="featPlaces && photo.Country !== 'zz'">
-                  <br>
-                  <button :title="$gettext('Location')" class="action-location"
-                          :data-uid="photo.UID" @click.exact="openLocation(index)">
-                    <i>location_on</i>
-                    {{ photo.locationInfo() }}
+                </h3>
+                <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">
+                  <button @click.exact="editPhoto(index)">
+                    {{ photo.Description }}
                   </button>
-                </template>
+                </div>
+                <div class="caption">
+                  <button class="action-date-edit" :data-uid="photo.UID"
+                          @click.exact="editPhoto(index)">
+                    <i :title="$gettext('Taken')">date_range</i>
+                    {{ photo.getDateString(true) }}
+                  </button>
+                  <br>
+                  <button v-if="photo.Type === 'video'" :title="$gettext('Video')"
+                          @click.exact="openPhoto(index, true)">
+                    <i>movie</i>
+                    {{ photo.getVideoInfo() }}
+                  </button>
+                  <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'"
+                          @click.exact="openPhoto(index, true)">
+                    <i>gif_box</i>
+                    {{ photo.getVideoInfo() }}
+                  </button>
+                  <button v-else :title="$gettext('Camera')" class="action-camera-edit"
+                          :data-uid="photo.UID" @click.exact="editPhoto(index)">
+                    <i>photo_camera</i>
+                    {{ photo.getPhotoInfo() }}
+                  </button>
+                  <template v-if="filter.order === 'name' && $config.feature('download')">
+                    <br>
+                    <button :title="$gettext('Name')"
+                            @click.exact="downloadFile(index)">
+                      <i>insert_drive_file</i>
+                      {{ photo.baseName() }}
+                    </button>
+                  </template>
+                  <template v-if="featPlaces && photo.Country !== 'zz'">
+                    <br>
+                    <button :title="$gettext('Location')" class="action-location"
+                            :data-uid="photo.UID" @click.exact="openLocation(index)">
+                      <i>location_on</i>
+                      {{ photo.locationInfo() }}
+                    </button>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </v-layout>
+    </div>
   </v-container>
 </template>
 <script>

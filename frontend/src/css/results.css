@@ -184,7 +184,7 @@ body.chrome #photoprism .search-results .result {
 }
 
 #photoprism .list-view {
-    box-shadow: 0 0 0 0 rgba(0,0,0,.2),0 0 0 0 rgba(0,0,0,.14),0 0 0 0 rgba(0,0,0,.12) !important;
+    box-shadow: none !important;
 }
 
 #photoprism .cards-view .result,
@@ -194,8 +194,10 @@ body.chrome #photoprism .search-results .result {
     -moz-transition-duration: 15ms !important;
     -o-transition-duration: 15ms !important;
     transition-duration: 15ms !important;
-    margin: 4px !important;
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12) !important;
+    margin: 4px;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: none;
 }
 
 #photoprism .search-results .image-container {
@@ -205,7 +207,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .cards-view .result .image,
 #photoprism .list-view .result .image,
-#photoprism .mosaic-view .result.image
+#photoprism .mosaic-view .result .image
 {
   position: relative;
   user-select: none;
@@ -213,13 +215,11 @@ body.chrome #photoprism .search-results .result {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  border-radius: 3px;
-  overflow: hidden;
 }
 
 #photoprism .cards-view .result .image button,
 #photoprism .list-view .result .image button,
-#photoprism .mosaic-view .result.image button {
+#photoprism .mosaic-view .result .image button {
   position: absolute;
   display: flex;
   justify-content: center;
@@ -242,11 +242,11 @@ body.chrome #photoprism .search-results .result {
 }
 #photoprism .cards-view .result .image button:hover,
 #photoprism .list-view .result .image button:hover,
-#photoprism .mosaic-view .result.image button:hover {
+#photoprism .mosaic-view .result .image button:hover {
   background-color: rgba(255, 255, 255, 0.12);
 }
 
-#photoprism .mosaic-view .result.image i,
+#photoprism .mosaic-view .result .image i,
 #photoprism .list-view .result .image i,
 #photoprism .cards-view .result .image i {
   color: white;
@@ -279,7 +279,7 @@ body.chrome #photoprism .search-results .result {
 }
 
 
-#photoprism .cards-view .result.placeholder .card-details i {
+#photoprism .cards-view .result .placeholder .card-details i {
   width: 14px;
 }
 

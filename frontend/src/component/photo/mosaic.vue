@@ -20,7 +20,7 @@
         </p>
       </v-alert>
     </template>
-    <v-layout row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}">
+    <div class="layout row wrap search-results photo-results mosaic-view" :class="{'select-results': selectMode}">
       <div
           v-for="(photo, index) in photos"
           ref="items"
@@ -32,15 +32,14 @@
          The following div is the layout + size container. It makes the browser not
          re-layout all elements in the list when the children of one of them changes
         -->
-        <div class="image-container">
-          <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-2 result image" />
-          <div  v-else
+        <div :class="photo.classes()" class="image-container result accent lighten-2">
+          <div  v-if="index >= firstVisibleElementIndex && index <= lastVisibileElementIndex"
                 :key="photo.Hash"
                 tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`"
-                :class="photo.classes().join(' ') + ' accent lighten-2 result clickable image'"
+                class="accent lighten-2 clickable image"
                 :alt="photo.Title"
                 :title="photo.Title"
                 @contextmenu.stop="onContextMenu($event, index)"
@@ -50,12 +49,12 @@
                 @click.stop.prevent="onClick($event, index)"
                 @mouseover="playLive(photo)"
                 @mouseleave="pauseLive(photo)">
-            <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
+            <div v-if="photo.Type === 'live' || photo.Type === 'animated'" class="layout live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="224" height="224" preload="none"
                     loop muted playsinline>
                 <source :src="photo.videoUrl()">
               </video>
-            </v-layout>
+            </div>
 
             <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
                   class="input-open"
@@ -118,7 +117,7 @@
           </div>
         </div>
       </div>
-    </v-layout>
+    </div>
   </v-container>
 </template>
 <script>
