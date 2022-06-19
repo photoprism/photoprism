@@ -479,3 +479,31 @@ body.chrome #photoprism .search-results .result {
 #photoprism .face-results .is-marker.is-invalid {
     opacity: 0.5;
 }
+
+/* old browser support */
+@supports not (aspect-ratio: 1) {
+  #photoprism .search-results .image-container {
+    height: 0;
+    padding-bottom: 100%;
+  }
+
+  #photoprism .cards-view .result .image,
+  #photoprism .list-view .result .image,
+  #photoprism .mosaic-view .result.image
+  {
+    height: 0;
+    /*
+       8px is required because this aspect-ratio-fallback doesn't take
+       margins into consideration
+    */
+    padding-bottom: calc(100% - 8px)
+  }
+
+  #photoprism .mosaic-view .result.is-selected {
+    /*
+       if it is selected then it has no more margin, so DON't subtract them
+       in that case
+    */
+    padding-bottom: 100%
+  }
+}
