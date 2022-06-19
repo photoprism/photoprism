@@ -20,7 +20,7 @@ require (
 	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
-	github.com/google/open-location-code/go v0.0.0-20220120191843-cafb35c0d74d
+	github.com/google/open-location-code/go v0.0.0-20220617201358-1f036ba518ad
 	github.com/gorilla/websocket v1.5.0
 	github.com/gosimple/slug v1.12.0
 	github.com/h2non/filetype v1.1.3
@@ -51,7 +51,7 @@ require (
 	github.com/urfave/cli v1.22.9
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
-	golang.org/x/net v0.0.0-20220615171555-694bf12d69de
+	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9
 	gonum.org/v1/gonum v0.11.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.4.0
@@ -59,7 +59,7 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20220206211657-0a94163c4677 // indirect
-	golang.org/x/image v0.0.0-20220601225756-64ec528b34cd
+	golang.org/x/image v0.0.0-20220617043117-41969df76e82
 )
 
 require (
