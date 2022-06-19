@@ -28,7 +28,7 @@
           :data-index="index"
           class="flex xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex"
       >
-        <div :class="photo.classes()" class="result card-background accent lighten-3">
+        <div class="result card-background accent lighten-3">
           <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="placeholder">
             <div class="accent lighten-2 image"/>
             <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
@@ -70,6 +70,7 @@
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 class="accent lighten-3"
+                :class="photo.classes()"
                 @contextmenu.stop="onContextMenu($event, index)">
             <div :key="photo.Hash"
                   :alt="photo.Title"
