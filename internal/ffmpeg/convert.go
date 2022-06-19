@@ -82,7 +82,6 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 		// ffmpeg -hide_banner -h encoder=h264_nvenc
 		result = exec.Command(
 			ffmpegBin,
-			"-r", "30",
 			"-i", fileName,
 			"-pix_fmt", "yuv420p",
 			"-c:v", string(encoder),
@@ -94,6 +93,7 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-rc:v", "constqp",
 			"-cq", "0",
 			"-tune", "2",
+			"-r", "30",
 			"-b:v", bitrate,
 			"-profile:v", "1",
 			"-level:v", "41",
