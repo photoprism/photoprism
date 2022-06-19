@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 21:23+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-06-19 07:51+0000\n"
+"Last-Translator: Chris Yang <chrisyx511@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.13\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -1041,7 +1041,7 @@ msgstr "我是一个赞助商"
 
 #: src/pages/about/about.vue:43
 msgid "If this doesn't help, or you have other questions:"
-msgstr "如果这没有帮助，或者你有其他问题。"
+msgstr "如果这没有帮助，或者你有其他问题："
 
 #: src/dialog/photo/labels.vue:37
 msgid "image"
@@ -1522,7 +1522,7 @@ msgstr "最旧的优先"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr "在Windows上，在连接对话框中输入以下资源。"
+msgstr "在Windows上，连接窗口中使用以下的资源地址："
 
 #: src/options/options.js:401
 msgid "Once a week"
@@ -1592,7 +1592,7 @@ msgstr "原始文件名"
 #: src/model/file.js:194 src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:316
 msgid "Originals"
-msgstr "來源"
+msgstr "原图"
 
 #: src/options/options.js:440
 msgid "Other"
