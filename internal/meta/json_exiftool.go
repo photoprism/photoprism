@@ -115,6 +115,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 				existing := fieldValue.Interface().(Keywords)
 				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
 			case projection.Type:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.Set(reflect.ValueOf(projection.Type(strings.TrimSpace(jsonValue.String()))))
 			case string:
 				if !fieldValue.IsZero() {
@@ -241,6 +245,18 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
+	// Use actual image width and height if available, see issue #2447.
+	if jsonValues["ImageWidth"].Exists() && jsonValues["ImageHeight"].Exists() {
+		if val := jsonValues["ImageWidth"].Int(); val > 0 {
+			data.Width = int(val)
+		}
+
+		if val := jsonValues["ImageHeight"].Int(); val > 0 {
+			data.Height = int(val)
+		}
+	}
+
+	// Image orientation, see https://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/.
 	if orientation, ok := jsonStrings["Orientation"]; ok && orientation != "" {
 		switch orientation {
 		case "1", "Horizontal (normal)":

@@ -327,8 +327,8 @@ func TestExif(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 3264, data.Width)
-		assert.Equal(t, 1836, data.Height)
+		assert.Equal(t, 326, data.Width)
+		assert.Equal(t, 184, data.Height)
 		assert.Equal(t, 1, data.Orientation)
 
 		if err := data.JSON("testdata/orientation.json", "foo.jpg"); err != nil {
