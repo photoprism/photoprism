@@ -58,6 +58,10 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       ffmpeg \
       ffmpegthumbnailer \
       libavcodec-extra \
+      x264 \
+      x265 \
+      libvpx6 \
+      libwebm1 \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-darktable.sh && \

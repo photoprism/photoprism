@@ -81,6 +81,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       libzmq3-dev \
       libx264-dev \
       libx265-dev \
+      libvpx-dev \
+      libwebm-dev \
       libnss3 \
       libfreetype6 \
       libfreetype6-dev \
