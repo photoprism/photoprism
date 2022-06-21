@@ -28,7 +28,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/cpuid/v2 v2.0.13
+	github.com/klauspost/cpuid/v2 v2.0.14
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.8.0 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/sirupsen/logrus v1.8.1
-	github.com/stretchr/testify v1.7.2
+	github.com/stretchr/testify v1.7.4
 	github.com/studio-b12/gowebdav v0.0.0-20211106090535-29e74efa701f
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.14.1
