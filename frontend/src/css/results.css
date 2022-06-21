@@ -259,6 +259,7 @@ body.chrome #photoprism .search-results .result {
   font-weight: 400;
   text-transform: none;
   line-height: 1;
+  white-space: nowrap;
 }
 
 #photoprism .cards-view .result .caption {
@@ -277,6 +278,7 @@ body.chrome #photoprism .search-results .result {
   text-transform: none;
   line-height: 1;
   vertical-align: text-bottom;
+  white-space: nowrap;
 }
 
 
