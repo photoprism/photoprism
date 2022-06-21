@@ -36,7 +36,7 @@ import (
 var log = event.Log
 
 // MaxResults is max result limit for queries.
-const MaxResults = 25000
+const MaxResults = 100000
 
 // Radius is about 1 km.
 const Radius = 0.009
