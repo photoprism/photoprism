@@ -24,8 +24,7 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-If reporting an import, indexing, or performance issue, please include the number and type of pictures in your library,
-as well as any configuration options you have changed e.g. for thumbnail quality.
+When reporting an import, indexing, or performance issue, please include the number and type of pictures in your library, as well as any configuration options you have changed, such as for thumbnail quality.
 
 #### 3. What behavior do you expect?
 
