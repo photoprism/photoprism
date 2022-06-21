@@ -11,9 +11,9 @@ PLEASE PROCEED ONLY IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPP
 
 ---------------------------------------------------------------------------
 
-#### 1. What does not work as described in the documentation?
+#### 1. What is not working as documented?
 
-Please be as specific as possible and explain which part of the software does not work [as documented](https://docs.photoprism.app/). "No photos found" would not be a sufficient description. Also never report [known issues](https://docs.photoprism.app/known-issues/) or [features not yet implemented](https://github.com/photoprism/photoprism/issues) as bugs. Thank you!
+Please be as specific as possible and explain what part of the software is not [working as documented](https://docs.photoprism.app/). "No photos found" would not be detailed enough. Also, never report [known issues](https://docs.photoprism.app/known-issues/) or [features not yet implemented](https://github.com/photoprism/photoprism/issues) as bugs. Thank you!
 
 #### 2. How can we reproduce it?
 
