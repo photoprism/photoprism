@@ -52,7 +52,7 @@ Visit <https://docs.photoprism.app/getting-started/troubleshooting/browsers/> to
 
 (d) Browser Types & Versions: Firefox, Chrome, Safari on iPhone,...
 
-(e) Browser Plugins & Ad Blockers, if any
+(e) Ad Blockers, Browser Plugins, and/or Firewall Software?
 
 You can find the version/build number of the app in *Settings* by scrolling to the bottom. Note that MySQL 8 support has been discontinued, see system requirements at <https://docs.photoprism.app/getting-started/#system-requirements>.
 
@@ -68,7 +68,7 @@ This is especially important if you are reporting a performance, import, or inde
 
 (c) Storage Type: HDD, SSD, RAID, USB, Network Storage,...
 
-(d) anything else that might be helpful
+(d) Anything else that might be helpful to know?
 
 *Always provide device, memory, and storage details if you have a backend, performance, import, or indexing issue.*
 
