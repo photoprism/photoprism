@@ -54,8 +54,7 @@ Visit <https://docs.photoprism.app/getting-started/troubleshooting/browsers/> to
 
 (e) Browser Plugins & Ad Blockers, if any
 
-The app version / build number can be found in *Settings* when you scroll to the bottom.
-MySQL 8 is not officially supported anymore, see System Requirements.
+You can find the version/build number of the app in *Settings* by scrolling to the bottom. Note that MySQL 8 support has been discontinued, see system requirements at <https://docs.photoprism.app/getting-started/#system-requirements>.
 
 *Always provide database and operating system details if it is a backend, import, or indexing issue. Should it be a frontend issue, at a minimum we require you to provide web browser and operating system details. When reporting a performance problem, we ask that you provide us with complete information about your environment, as there may be more than one cause.*
 
