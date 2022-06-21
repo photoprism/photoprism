@@ -37,10 +37,9 @@ Try to determine the cause of your problem before submitting a bug report: <http
 
 #### 5. Can you provide us with example files for testing, error logs, or screenshots?
 
-Please add example files or screenshots that help to reproduce your problem.
-You may also send files via email or share a download link: <https://photoprism.app/contact>
+Please include sample files or screenshots that help to reproduce your problem. You can also email files or share a download link, see <https://photoprism.app/contact> for details.
 
-Learn how to diagnose frontend issues: <https://docs.photoprism.app/getting-started/troubleshooting/browsers/>
+Visit <https://docs.photoprism.app/getting-started/troubleshooting/browsers/> to learn how to diagnose frontend issues.
 
 **Important: If it is an import, indexing or metadata issue, we require sample files and logs from you.** Otherwise, we will not be able to process your report. If it is an import problem specifically, please always provide us with an archive of the files before you import them so that we can actually reproduce the problem.
 
@@ -59,9 +58,7 @@ Learn how to diagnose frontend issues: <https://docs.photoprism.app/getting-star
 The app version / build number can be found in *Settings* when you scroll to the bottom.
 MySQL 8 is not officially supported anymore, see System Requirements.
 
-Always provide database and operating system details if it is a backend, import, or indexing issue. Should it be a frontend issue, at a minimum we require you to provide web browser and operating system details.
-
-When reporting a performance problem, we ask that you provide us with complete information about your environment, as there may be more than one cause.
+*Always provide database and operating system details if it is a backend, import, or indexing issue. Should it be a frontend issue, at a minimum we require you to provide web browser and operating system details. When reporting a performance problem, we ask that you provide us with complete information about your environment, as there may be more than one cause.*
 
 #### 7. On what kind of device is PhotoPrism installed?
 
@@ -81,6 +78,6 @@ This is especially important if you are reporting a Performance, Import, or Inde
 
 If yes, please specify type and version. You can skip this if you are reporting a completely unrelated issue.
 
-Always provide this information when you have a reliability, performance, or frontend problem, such as failed uploads, connection errors, broken thumbnails, or video playback issues.
+*Always provide this information when you have a reliability, performance, or frontend problem, such as failed uploads, connection errors, broken thumbnails, or video playback issues.*
 
-If you are using NGINX, also provide the configuration and/or consider asking the NGINX community for advice as we do not specialize in supporting their product. Docs can be found at <https://docs.photoprism.app/getting-started/proxies/nginx/>.
+**Using NGINX?** Please also provide the configuration and/or consider asking the NGINX community for advice as we do not specialize in supporting their product. Docs can be found at <https://docs.photoprism.app/getting-started/proxies/nginx/>.
