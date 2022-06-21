@@ -60,7 +60,7 @@ You can find the version/build number of the app in *Settings* by scrolling to t
 
 #### 7. On what kind of device is PhotoPrism installed?
 
-This is especially important if you are reporting a Performance, Import, or Indexing problem. You can skip this if you are reporting a problem found on our public demo, or if it is a completely unrelated issue, such as a broken page layout.
+This is especially important if you are reporting a performance, import, or indexing issue. You can skip this if you're reporting a problem you found in our public demo, or if it's a completely unrelated issue, such as incorrect page layout.
 
 (a) Device / Processor Type: Raspberry Pi 4, Intel Core i7-3770, AMD Ryzen 7 3800X,...
 
