@@ -797,7 +797,7 @@ msgstr ""
 #: src/component/file/clipboard.vue:46
 #: src/component/label/clipboard.vue:59
 #: src/component/photo-viewer.vue:158
-#: src/component/photo/cards.vue:133
+#: src/component/photo/cards.vue:131
 #: src/component/photo/clipboard.vue:189
 #: src/component/photo/list.vue:120
 #: src/component/subject/clipboard.vue:46
