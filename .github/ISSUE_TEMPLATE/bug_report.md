@@ -29,11 +29,11 @@ as well as any configuration options you have changed e.g. for thumbnail quality
 
 #### 3. What behavior do you expect?
 
-A clear and concise description of what you expected to happen.
+Give us a clear and concise description of what you expect.
 
 #### 4. What could be the cause of your problem?
 
-Try to determine the cause of your problem before submitting a bug report: <https://docs.photoprism.app/getting-started/troubleshooting/>
+Always try to determine the cause of your problem using the checklists at <https://docs.photoprism.app/getting-started/troubleshooting/> before submitting a bug report.
 
 #### 5. Can you provide us with example files for testing, error logs, or screenshots?
 
