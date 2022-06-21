@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-17 10:19+0000\n"
+"PO-Revision-Date: 2022-06-21 09:49+0000\n"
 "Last-Translator: Przemysław Romanik <github@rom4nik.pl>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/pl/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Weblate 4.13\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -99,7 +99,7 @@ msgstr "Dodaj link"
 
 #: src/pages/albums.vue:96
 msgid "Add pictures from search results by selecting them."
-msgstr "Dodawanie zdjęć z wyników wyszukiwania poprzez ich zaznaczenie."
+msgstr "Dodaj zdjęcia poprzez zaznaczenie ich w wynikach wyszukiwania."
 
 #: src/dialog/account/add.vue:6 src/pages/settings/sync.vue:47
 msgid "Add Server"
