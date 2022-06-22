@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-21 09:49+0000\n"
+"PO-Revision-Date: 2022-06-22 07:51+0000\n"
 "Last-Translator: Przemysław Romanik <github@rom4nik.pl>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/pl/>\n"
@@ -161,7 +161,7 @@ msgstr "Album"
 
 #: src/dialog/photo/album.vue:71 src/dialog/photo/album.vue:79
 msgid "Album Name"
-msgstr "Album Name"
+msgstr "Nazwa albumu"
 
 #: src/app/routes.js:128 src/app/routes.js:135 src/component/navigation.vue:164
 #: src/component/navigation.vue:174 src/component/navigation.vue:4
@@ -433,7 +433,7 @@ msgstr "Nie można zaznaczyć większej ilości elementów"
 #: src/dialog/share/upload.vue:29 src/pages/library/import.vue:34
 #: src/pages/library/index.vue:27
 msgid "Cancel"
-msgstr "Przerwij"
+msgstr "Anuluj"
 
 #: src/component/album/toolbar.vue:51 src/component/photo/toolbar.vue:46
 msgid "Cards"
