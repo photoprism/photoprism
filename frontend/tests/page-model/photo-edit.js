@@ -328,12 +328,14 @@ export default class Page {
       .pressKey("enter")
       .typeText(Selector(".input-month input"), month, { replace: true })
       .pressKey("enter")
+
       .typeText(Selector(".input-year input"), year, { replace: true })
       .click(Selector("div").withText(year).parent('div[role="listitem"]'))
       .click(Selector(".input-local-time input"))
       .pressKey("ctrl+a delete")
       .typeText(Selector(".input-local-time input"), localTime, { replace: true })
       .pressKey("enter")
+
       .typeText(Selector(".input-altitude input"), altitude, { replace: true })
       .typeText(Selector(".input-latitude input"), lat, { replace: true })
       .typeText(Selector(".input-longitude input"), lng, { replace: true })
@@ -355,6 +357,7 @@ export default class Page {
       })
       .typeText(Selector(".input-keywords textarea"), keywords)
       .typeText(Selector(".input-notes textarea"), notes, { replace: true })
+
       .click(Selector("button.action-approve"));
     await t.expect(Selector(".input-latitude input").visible, { timeout: 5000 }).ok();
     if (t.browser.platform === "mobile") {
