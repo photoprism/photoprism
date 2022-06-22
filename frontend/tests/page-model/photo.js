@@ -1,4 +1,7 @@
 import { Selector, t } from "testcafe";
+import Toolbar from "./toolbar";
+
+const toolbar = new Toolbar();
 
 export default class Page {
   constructor() {}
@@ -16,6 +19,7 @@ export default class Page {
   }
 
   async getPhotoCount(type) {
+    await t.wait(7000);
     if (type === "all") {
       const PhotoCount = await Selector("div.is-photo", { timeout: 2000 }).count;
       return PhotoCount;
@@ -72,7 +76,7 @@ export default class Page {
 
   async triggerHoverAction(mode, uidOrNth, action) {
     if (mode === "uid") {
-      await t.hover(Selector("div.is-photo").withAttribute("data-uid", uidOrNth));
+      await t.hover(Selector("div.is-photo").withAttribute("data-uid", uidOrNth, { timeout: 7000 }));
       await t.click(Selector(`div.uid-${uidOrNth} .input-` + action));
     }
     if (mode === "nth") {

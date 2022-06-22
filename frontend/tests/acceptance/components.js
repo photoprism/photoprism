@@ -11,7 +11,7 @@ test.meta("testID", "components-001").meta({ type: "smoke" })("Test filter optio
 });
 
 test.meta("testID", "components-002").meta({ type: "smoke" })("Fullscreen mode", async (t) => {
-  await t.click(Selector("div.v-image__image").nth(0));
+  await t.click(Selector("div.type-image div.image.clickable").nth(0));
 
   if (await Selector("#photo-viewer").visible) {
     await t
@@ -28,7 +28,7 @@ test.meta("testID", "components-003").meta({ type: "smoke" })("Mosaic view", asy
   await toolbar.setFilter("view", "Mosaic");
 
   await t
-    .expect(Selector("div.v-image__image").visible)
+    .expect(Selector("div.type-image.image.clickable").visible)
     .ok()
     .expect(Selector("div.p-photo-mosaic").visible)
     .ok()
@@ -52,7 +52,7 @@ test.meta("testID", "components-005").meta({ type: "smoke" })("Card view", async
   await toolbar.setFilter("view", "Cards");
 
   await t
-    .expect(Selector("div.v-image__image").visible)
+    .expect(Selector("div.type-image div.image.clickable").visible)
     .ok()
     .expect(Selector("div.is-photo div.caption").visible)
     .ok()

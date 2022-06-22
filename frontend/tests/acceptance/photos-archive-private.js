@@ -220,6 +220,7 @@ test.meta("testID", "photos-archive-private-003")(
   "Check that archived files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/private/videos/calendar/moments/states/labels/folders/originals",
   async (t) => {
     await menu.openPage("archive");
+    await toolbar.setFilter("view", "Mosaic");
     const InitialPhotoCountInArchive = await photo.getPhotoCount("all");
     await menu.openPage("monochrome");
     const MonochromePhoto = await photo.getNthPhotoUid("all", 0);
@@ -281,6 +282,8 @@ test.meta("testID", "photos-archive-private-003")(
     } else {
       await toolbar.triggerToolbarAction("reload");
     }
+    await toolbar.setFilter("view", "Mosaic");
+
     const PhotoCountInArchiveAfterArchive = await photo.getPhotoCount("all");
     await t.expect(PhotoCountInArchiveAfterArchive).eql(InitialPhotoCountInArchive + 14);
 
@@ -317,6 +320,8 @@ test.meta("testID", "photos-archive-private-003")(
     await photo.checkPhotoVisibility(FolderPhoto, false);
 
     await menu.openPage("archive");
+    await toolbar.setFilter("view", "Mosaic");
+
     await photo.triggerHoverAction("uid", MonochromePhoto, "select");
     await photo.triggerHoverAction("uid", PanoramaPhoto, "select");
     await photo.triggerHoverAction("uid", StackedPhoto, "select");
@@ -333,6 +338,7 @@ test.meta("testID", "photos-archive-private-003")(
     await photo.triggerHoverAction("uid", FolderPhoto, "select");
     await contextmenu.checkContextMenuCount("14");
     await contextmenu.triggerContextMenuAction("restore", "");
+    await toolbar.setFilter("view", "Mosaic");
 
     const PhotoCountInArchiveAfterRestore = await photo.getPhotoCount("all");
     await t.expect(PhotoCountInArchiveAfterRestore).eql(InitialPhotoCountInArchive);
@@ -345,6 +351,8 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
   "Check that private files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/archive/videos/calendar/moments/states/labels/folders/originals",
   async (t) => {
     await menu.openPage("private");
+    await toolbar.setFilter("view", "Mosaic");
+
     const InitialPhotoCountInPrivate = await photo.getPhotoCount("all");
     await menu.openPage("monochrome");
     const MonochromePhoto = await photo.getNthPhotoUid("all", 0);
@@ -408,6 +416,8 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
     } else {
       await toolbar.triggerToolbarAction("reload");
     }
+    await toolbar.setFilter("view", "Mosaic");
+
     const PhotoCountInPrivateAfterArchive = await photo.getPhotoCount("all");
 
     await t.expect(PhotoCountInPrivateAfterArchive).eql(InitialPhotoCountInPrivate + 14);
@@ -445,6 +455,8 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
     await photo.checkPhotoVisibility(FolderPhoto, false);
 
     await menu.openPage("private");
+    await toolbar.setFilter("view", "Mosaic");
+
     await photo.triggerHoverAction("uid", MonochromePhoto, "select");
     await photo.triggerHoverAction("uid", PanoramaPhoto, "select");
     await photo.triggerHoverAction("uid", StackedPhoto, "select");
@@ -466,6 +478,8 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
     } else {
       await toolbar.triggerToolbarAction("reload");
     }
+    await toolbar.setFilter("view", "Mosaic");
+
     const PhotoCountInPrivateAfterRestore = await photo.getPhotoCount("all");
 
     await t.expect(PhotoCountInPrivateAfterRestore).eql(InitialPhotoCountInPrivate);
