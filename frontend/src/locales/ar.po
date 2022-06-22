@@ -3,24 +3,25 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-14 13:22+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-06-22 15:41+0000\n"
+"Last-Translator: moutasem1989 <moutasem19891@hotmail.com>\n"
 "Language-Team: \n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Poedit 3.0.1\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 4.13\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
 msgid "%{n} albums found"
-msgstr "%{n} ألبومات تم العثور عليها"
+msgstr "تم العثور على٪ {n} من الألبومات"
 
 #: src/dialog/share/upload.vue:76
 msgid "%{n} files uploaded"
-msgstr "%{n} ملفات تم تحميلها"
+msgstr "تم تحميل٪ {n} من الملفات"
 
 #: src/pages/library/files.vue:303
 msgid "%{n} folders found"
@@ -28,11 +29,11 @@ msgstr "تم العثور على٪ {n} مجلدات"
 
 #: src/pages/labels.vue:381
 msgid "%{n} labels found"
-msgstr "تم العثور على٪ {n} تصنيفات"
+msgstr "تم العثور على٪ {n} من التصنيفات"
 
 #: src/pages/people/faces.vue:286 src/pages/people/faces.vue:372 src/pages/people/subjects.vue:470
 msgid "%{n} people found"
-msgstr "تم التعرف على٪ {n} أشخاص"
+msgstr "تم العثور على٪ {n} من الأشخاص"
 
 #: src/pages/album/photos.vue:194 src/pages/album/photos.vue:346 src/pages/photos.vue:241 src/pages/photos.vue:386 src/share/photos.vue:209
 #: src/share/photos.vue:354
@@ -69,7 +70,7 @@ msgstr "الحساب"
 
 #: src/dialog/photo/info.vue:159
 msgid "Accuracy"
-msgstr "الدقة"
+msgstr "دقة"
 
 #: src/dialog/photo/labels.vue:23
 msgid "Action"
@@ -77,7 +78,7 @@ msgstr "إجراء"
 
 #: src/dialog/photo/files.vue:28 src/dialog/photo/files.vue:25
 msgid "Actions"
-msgstr "إجراءات"
+msgstr "أجراءات"
 
 #: src/pages/albums.vue:122 src/pages/albums.vue:178
 msgid "Add Album"
@@ -85,7 +86,7 @@ msgstr "أضف البوم"
 
 #: src/pages/settings/general.vue:141
 msgid "Add files to your library via Web Upload."
-msgstr "أضف ملفات إلى مكتبتك عن طريق التحميل عبر الويب."
+msgstr "أضف ملفات إلى مكتبتك عبر تحميل الويب."
 
 #: src/dialog/share.vue:91
 msgid "Add Link"
@@ -93,16 +94,16 @@ msgstr "إضافة رابط"
 
 #: src/pages/albums.vue:96
 msgid "Add pictures from search results by selecting them."
-msgstr "أضف صور من نتائج البحث عن طريق تحديدها."
+msgstr "أضف الصور من نتائج البحث عن طريق تحديدها."
 
 #: src/dialog/account/add.vue:6 src/pages/settings/sync.vue:47
 msgid "Add Server"
-msgstr "أضف خادم"
+msgstr "أضف الخادم"
 
 #: src/component/album/clipboard.vue:136 src/component/file/clipboard.vue:89 src/component/label/clipboard.vue:67 src/component/photo/clipboard.vue:192
 #: src/component/subject/clipboard.vue:89 src/dialog/photo/album.vue:20
 msgid "Add to album"
-msgstr "أضف إلى ألبوم"
+msgstr "أضف إلى الألبوم"
 
 #: src/dialog/photo/files.vue:189 src/dialog/photo/files.vue:186
 msgid "Added"
