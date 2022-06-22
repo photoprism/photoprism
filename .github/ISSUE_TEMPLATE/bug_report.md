@@ -40,7 +40,7 @@ Please include sample files or screenshots that help to reproduce your problem. 
 
 Visit <https://docs.photoprism.app/getting-started/troubleshooting/browsers/> to learn how to diagnose frontend issues.
 
-**Important: If it is an import, indexing or metadata issue, we require sample files and logs from you.** Otherwise, we will not be able to process your report. If it is an import problem specifically, please always provide us with an archive of the files before you import them so that we can actually reproduce the problem.
+**Important: If it is an import, indexing or metadata issue, we require sample files and logs from you.** Otherwise, we will not be able to process your report. If it is an import problem specifically, please always provide us with an archive of the files before you imported them so we can reproduce the behavior.
 
 #### 6. Which software versions do you use?
 
