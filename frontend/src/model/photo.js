@@ -39,8 +39,10 @@ import download from "common/download";
 import * as src from "common/src";
 
 export const CodecAvc1 = "avc1";
+export const CodecHvc1 = "hvc1";
 export const FormatMp4 = "mp4";
 export const FormatAvc = "avc";
+export const FormatHvc = "hvc";
 export const FormatGif = "gif";
 export const FormatJpeg = "jpg";
 export const MediaImage = "image";
@@ -474,6 +476,11 @@ export class Photo extends RestModel {
 
   videoUrl() {
     let file = this.videoFile();
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    if (file && file.Codec === CodecHvc1 && isSafari) {
+      return `${config.apiUri}/videos/${file.Hash}/${config.previewToken()}/${FormatHvc}`;
+    }
 
     if (file) {
       return `${config.apiUri}/videos/${file.Hash}/${config.previewToken()}/${FormatAvc}`;
