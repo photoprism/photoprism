@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-06-16 16:58+0000\n"
-"PO-Revision-Date: 2022-06-16 19:26+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-06-23 12:51+0000\n"
+"Last-Translator: moutasem1989 <moutasem19891@hotmail.com>\n"
 "Language-Team: none\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Weblate 4.13\n"
 
 #: messages.go:85
 msgid "Unexpected error, please try again"
@@ -66,7 +66,7 @@ msgstr "المستخدم غير موجود"
 
 #: messages.go:96
 msgid "Label not found"
-msgstr "لا يمكن العثور على التصنيف"
+msgstr "التصنيف غير موجود"
 
 #: messages.go:97
 msgid "Album not found"
@@ -118,7 +118,7 @@ msgstr "تعذر الاتصال ، يرجى المحاولة مرة أخرى"
 
 #: messages.go:109
 msgid "Invalid password, please try again"
-msgstr "كلمة السر غير صحيحة، رجاءً حاول مرة أخرى"
+msgstr "كلمة السر غير مطابقة، برجاء حاول مرة أخرى"
 
 #: messages.go:110
 msgid "Feature disabled"
@@ -126,11 +126,11 @@ msgstr "الخاصية معطلة"
 
 #: messages.go:111
 msgid "No labels selected"
-msgstr "لم يتم تحديد أي تسميات"
+msgstr "لم يتم تحديد تسميات"
 
 #: messages.go:112
 msgid "No albums selected"
-msgstr "لم يتم اختيار أي ألبومات"
+msgstr "لم يتم تحديد ألبومات"
 
 #: messages.go:113
 msgid "No files available for download"
@@ -150,7 +150,7 @@ msgstr "ارتباط غير صالح"
 
 #: messages.go:117
 msgid "Invalid name"
-msgstr "الاسم غير صالح"
+msgstr "اسم غير صحيح"
 
 #: messages.go:118
 msgid "Busy, please try again later"
@@ -184,7 +184,7 @@ msgstr "تم نسخ محتويات الألبوم"
 
 #: messages.go:127
 msgid "File removed from stack"
-msgstr "تمت إزالة الملف من المجموعة"
+msgstr "تمت إزالة الملف من المكدس"
 
 #: messages.go:128
 msgid "File deleted"
@@ -270,12 +270,12 @@ msgstr "تمت إزالة %d ملفات و %d صورة"
 #: messages.go:146
 #, c-format
 msgid "Moving files from %s"
-msgstr "يتم نقل الملفات من %s"
+msgstr "نقل الملفات من %s"
 
 #: messages.go:147
 #, c-format
 msgid "Copying files from %s"
-msgstr "يتم نسخ الملفات من %s"
+msgstr "نسخ ملفات من %s"
 
 #: messages.go:148
 msgid "Labels deleted"
@@ -295,7 +295,7 @@ msgstr "تم حذف الموضوع"
 
 #: messages.go:152
 msgid "Person saved"
-msgstr "تم حفظ الشخص"
+msgstr "حفظ الشخص"
 
 #: messages.go:153
 msgid "Person deleted"
