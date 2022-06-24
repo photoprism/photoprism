@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/video"
+
 	"github.com/photoprism/photoprism/pkg/projection"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -292,10 +294,14 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
-	// Normalize compression information.
+	// Normalize codec name.
 	data.Codec = strings.ToLower(data.Codec)
-	if strings.Contains(data.Codec, CodecJpeg) {
+	if strings.Contains(data.Codec, CodecJpeg) { // JPEG Image?
 		data.Codec = CodecJpeg
+	} else if c, ok := video.Codecs[data.Codec]; ok { // Video codec?
+		data.Codec = string(c)
+	} else if strings.HasPrefix(data.Codec, "a_") { // Audio codec?
+		data.Codec = ""
 	}
 
 	// Validate and normalize optional DocumentID.

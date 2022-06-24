@@ -16,6 +16,9 @@ func TestIdString(t *testing.T) {
 	t.Run("SHA1", func(t *testing.T) {
 		assert.Equal(t, "5c50ae14f339364eb8224f23c2d3abc7e79016f3readmemd", IdString("5c50ae14f339364eb8224f23c2d3abc7e79016f3  README.md"))
 	})
+	t.Run("Quotes", func(t *testing.T) {
+		assert.Equal(t, "foobaaar23", IdString("\"foo\" baa'ar 2```3"))
+	})
 }
 
 func TestIdUint(t *testing.T) {

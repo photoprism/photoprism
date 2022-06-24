@@ -4,11 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/video"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/projection"
-
-	"github.com/stretchr/testify/assert"
+	"github.com/photoprism/photoprism/pkg/video"
 )
 
 func TestJSON(t *testing.T) {
@@ -38,6 +37,86 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone SE", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
+	})
+
+	t.Run("yoga-av1.webm.json", func(t *testing.T) {
+		data, err := JSON("testdata/yoga-av1.webm.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "yoga-av1.webm", data.FileName)
+		assert.Equal(t, "", data.Codec)
+		assert.Equal(t, "20s", data.Duration.String())
+		assert.Equal(t, 854, data.Width)
+		assert.Equal(t, 480, data.Height)
+		assert.Equal(t, 854, data.ActualWidth())
+		assert.Equal(t, 480, data.ActualHeight())
+	})
+
+	t.Run("stream.webm.json", func(t *testing.T) {
+		data, err := JSON("testdata/stream.webm.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "stream.webm", data.FileName)
+		assert.Equal(t, CodecAv1, data.Codec)
+		assert.Equal(t, "2m24s", data.Duration.String())
+		assert.Equal(t, 1280, data.Width)
+		assert.Equal(t, 720, data.Height)
+		assert.Equal(t, 1280, data.ActualWidth())
+		assert.Equal(t, 720, data.ActualHeight())
+	})
+
+	t.Run("earth.ogv.json", func(t *testing.T) {
+		data, err := JSON("testdata/earth.ogv.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "earth.ogv", data.FileName)
+		assert.Equal(t, string(video.CodecOGV), data.Codec)
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, 1280, data.Width)
+		assert.Equal(t, 720, data.Height)
+		assert.Equal(t, 1280, data.ActualWidth())
+		assert.Equal(t, 720, data.ActualHeight())
+	})
+
+	t.Run("webm-vp8.json", func(t *testing.T) {
+		data, err := JSON("testdata/webm-vp8.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "earth.vp8.webm", data.FileName)
+		assert.Equal(t, string(video.CodecVP8), data.Codec)
+		assert.Equal(t, "30s", data.Duration.String())
+		assert.Equal(t, 1920, data.Width)
+		assert.Equal(t, 1080, data.Height)
+		assert.Equal(t, 1920, data.ActualWidth())
+		assert.Equal(t, 1080, data.ActualHeight())
+	})
+
+	t.Run("webm-vp9.json", func(t *testing.T) {
+		data, err := JSON("testdata/webm-vp9.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "earth-animation.ogv.720p.vp9.webm", data.FileName)
+		assert.Equal(t, string(video.CodecVP9), data.Codec)
+		assert.Equal(t, "8s", data.Duration.String())
+		assert.Equal(t, 1280, data.Width)
+		assert.Equal(t, 720, data.Height)
+		assert.Equal(t, 1280, data.ActualWidth())
+		assert.Equal(t, 720, data.ActualHeight())
 	})
 
 	t.Run("gopher-telegram.json", func(t *testing.T) {

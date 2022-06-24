@@ -1,13 +1,20 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetVideo(t *testing.T) {
+	t.Run("ContentTypeAvc", func(t *testing.T) {
+		assert.Equal(t, ContentTypeAvc, fmt.Sprintf("%s; codecs=\"%s\"", "video/mp4", clean.Codec("avc1")))
+	})
+
 	t.Run("invalid hash", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetVideo(router)

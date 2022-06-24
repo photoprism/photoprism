@@ -37,12 +37,19 @@ import { $gettext } from "common/vm";
 import Clipboard from "common/clipboard";
 import download from "common/download";
 import * as src from "common/src";
+import { canUseOGV, canUseVP8, canUseVP9, canUseAv1, canUseWebm, canUseHevc } from "common/caniuse";
 
+export const CodecOGV = "ogv";
+export const CodecVP8 = "vp8";
+export const CodecVP9 = "vp9";
+export const CodecAv1 = "av01";
 export const CodecAvc1 = "avc1";
 export const CodecHvc1 = "hvc1";
 export const FormatMp4 = "mp4";
+export const FormatAv1 = "av01";
 export const FormatAvc = "avc";
-export const FormatHvc = "hvc";
+export const FormatHevc = "hevc";
+export const FormatWebM = "webm";
 export const FormatGif = "gif";
 export const FormatJpeg = "jpg";
 export const MediaImage = "image";
@@ -476,14 +483,25 @@ export class Photo extends RestModel {
 
   videoUrl() {
     let file = this.videoFile();
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-    if (file && file.Codec === CodecHvc1 && isSafari) {
-      return `${config.apiUri}/videos/${file.Hash}/${config.previewToken()}/${FormatHvc}`;
-    }
 
     if (file) {
-      return `${config.apiUri}/videos/${file.Hash}/${config.previewToken()}/${FormatAvc}`;
+      let videoFormat = FormatAvc;
+
+      if (canUseHevc && file.Codec === CodecHvc1) {
+        videoFormat = FormatHevc;
+      } else if (canUseOGV && file.Codec === CodecOGV) {
+        videoFormat = CodecOGV;
+      } else if (canUseVP8 && file.Codec === CodecVP8) {
+        videoFormat = CodecVP8;
+      } else if (canUseVP9 && file.Codec === CodecVP9) {
+        videoFormat = CodecVP9;
+      } else if (canUseAv1 && file.Codec === CodecAv1) {
+        videoFormat = FormatAv1;
+      } else if (canUseWebm && file.FileType === FormatWebM) {
+        videoFormat = FormatWebM;
+      }
+
+      return `${config.apiUri}/videos/${file.Hash}/${config.previewToken()}/${videoFormat}`;
     }
 
     return `${config.apiUri}/videos/${this.Hash}/${config.previewToken()}/${FormatAvc}`;

@@ -11,7 +11,6 @@ import (
 
 const (
 	ContentTypeAvc = `video/mp4; codecs="avc1"`
-	ContentTypeHvc = `video/mp4; codecs="hvc1"`
 )
 
 // AddCacheHeader adds a cache control header to the response.
