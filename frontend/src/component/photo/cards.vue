@@ -99,9 +99,9 @@
             <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
                   class="input-open"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onOpen($event, index, true)"
+                  @touchend.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, true)">
+                  @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')">
                 <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
                 <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                 <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
@@ -113,9 +113,9 @@
                   class="input-view"
                   :title="$gettext('View')"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onOpen($event, index, false)"
+                  @touchend.stop.prevent="onOpen($event, index)"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, false)">
+                  @click.stop.prevent="onOpen($event, index)">
               <i class="action-fullscreen">zoom_in</i>
             </button>
 
@@ -180,7 +180,7 @@
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID"
-                        @click.exact="isSharedView ? openPhoto(index, false) : editPhoto(index)">
+                        @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                   {{ photo.Title | truncate(80) }}
                 </button>
               </h3>
@@ -197,12 +197,12 @@
                 </button>
                 <br>
                 <button v-if="photo.Type === 'video'" :title="$gettext('Video')"
-                        @[!isSharedView&&`click`].exact="openPhoto(index, true)">
+                        @[!isSharedView&&`click`].exact="openPhoto(index)">
                   <i>movie</i>
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'"
-                        @[!isSharedView&&`click`].exact="openPhoto(index, true)">
+                        @[!isSharedView&&`click`].exact="openPhoto(index)">
                   <i>gif_box</i>
                   {{ photo.getVideoInfo() }}
                 </button>
@@ -413,14 +413,14 @@ export default {
        */
       this.$forceUpdate();
     },
-    onOpen(ev, index, showMerged) {
+    onOpen(ev, index, showMerged, preferVideo) {
       const inputType = this.input.eval(ev, index);
 
       if (inputType !== ClickShort) {
         return;
       }
 
-      this.openPhoto(index, showMerged);
+      this.openPhoto(index, showMerged, preferVideo);
     },
     onClick(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -437,7 +437,7 @@ export default {
           this.toggle(this.photos[index]);
         }
       } else {
-        this.openPhoto(index, false);
+        this.openPhoto(index);
       }
     },
     onContextMenu(ev, index) {

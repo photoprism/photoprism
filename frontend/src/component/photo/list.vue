@@ -72,7 +72,7 @@
                   </button>
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'"
                         class="input-open"
-                        @click.stop.prevent="openPhoto(index, true)">
+                        @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
                     <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                     <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
                     <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
@@ -81,7 +81,7 @@
               </td>
 
               <td class="p-photo-desc clickable" :data-uid="photo.UID"
-                  @click.exact="isSharedView ? openPhoto(index, false) : editPhoto(index)">
+                  @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                 {{ photo.Title }}
               </td>
               <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">
@@ -293,13 +293,7 @@ export default {
           this.toggle(this.photos[index]);
         }
       } else if (this.photos[index]) {
-        let photo = this.photos[index];
-
-        if ((photo.Type === 'video' || photo.Type === 'animated') && photo.isPlayable()) {
-          this.openPhoto(index, true);
-        } else {
-          this.openPhoto(index, false);
-        }
+        this.openPhoto(index);
       }
     },
     onContextMenu(ev, index) {
