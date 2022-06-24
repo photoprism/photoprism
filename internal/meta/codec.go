@@ -5,6 +5,8 @@ import (
 )
 
 const CodecUnknown = ""
+const CodecAv1 = string(video.CodecAV1)
+const CodecVP9 = string(video.CodecVP9)
 const CodecAvc1 = string(video.CodecAVC)
 const CodecJpeg = "jpeg"
 const CodecHeic = "heic"

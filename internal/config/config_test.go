@@ -231,6 +231,13 @@ func TestConfig_StaticPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static", path)
 }
 
+func TestConfig_StaticFile(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	path := c.StaticFile("video/404.mp4")
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/video/404.mp4", path)
+}
+
 func TestConfig_BuildPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

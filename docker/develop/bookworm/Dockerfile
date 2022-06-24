@@ -48,15 +48,15 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       gpg zip unzip wget curl rsync make nano \
       jq lsof lshw sqlite3 mariadb-client \
       exiftool darktable rawtherapee libheif-examples librsvg2-bin \
-      ffmpeg ffmpegthumbnailer libavcodec-extra libwebm1 \
+      ffmpeg ffmpegthumbnailer libavcodec-extra \
       libmatroska7 libdvdread8 libebml5 libgav1-0 libatomic1 \
-      libx264-163 libx265-199 \
+      x264 x265 libvpx7 libwebm1 \
     && \
     apt-get -qq install \
       apt-utils pkg-config software-properties-common \
       build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
       chromium chromium-driver chromium-sandbox firefox-esr \
-      libx264-dev libx265-dev libpng-dev libxft-dev \
+      libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
       libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
       libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
     && \

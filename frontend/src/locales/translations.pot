@@ -265,10 +265,10 @@ msgid "An error occurred - are you offline?"
 msgstr ""
 
 #: src/component/navigation.vue:118
-#: src/component/photo/cards.vue:228
-#: src/component/photo/cards.vue:544
+#: src/component/photo/cards.vue:303
+#: src/component/photo/cards.vue:480
 #: src/component/photo/list.vue:197
-#: src/component/photo/mosaic.vue:201
+#: src/component/photo/mosaic.vue:225
 #: src/model/file.js:210
 #: src/options/options.js:336
 #: src/share/photo/cards.vue:201
@@ -294,7 +294,7 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: src/component/photo/cards.vue:458
+#: src/component/photo/cards.vue:410
 #: src/component/photo/clipboard.vue:100
 #: src/dialog/photo/details.vue:116
 msgid "Approve"
@@ -302,7 +302,7 @@ msgstr ""
 
 #: src/app/routes.js:209
 #: src/component/navigation.vue:151
-#: src/component/photo/cards.vue:429
+#: src/component/photo/cards.vue:381
 #: src/component/photo/clipboard.vue:216
 #: src/pages/settings/general.vue:294
 msgid "Archive"
@@ -410,8 +410,8 @@ msgstr ""
 msgid "Calendar"
 msgstr ""
 
-#: src/component/photo/cards.vue:557
-#: src/component/photo/list.vue:57
+#: src/component/photo/cards.vue:488
+#: src/component/photo/list.vue:141
 #: src/component/photo/toolbar.vue:208
 #: src/dialog/photo/details.vue:335
 #: src/share/photo/cards.vue:388
@@ -572,7 +572,7 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: src/component/photo/list.vue:38
+#: src/component/photo/list.vue:43
 #: src/share/photo/list.vue:38
 msgid "Couldn't find anything."
 msgstr ""
@@ -651,7 +651,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: src/component/photo/cards.vue:502
+#: src/component/photo/cards.vue:449
 #: src/dialog/album/edit.vue:142
 #: src/dialog/photo/details.vue:566
 #: src/pages/albums.vue:443
@@ -797,9 +797,9 @@ msgstr ""
 #: src/component/file/clipboard.vue:46
 #: src/component/label/clipboard.vue:59
 #: src/component/photo-viewer.vue:158
-#: src/component/photo/cards.vue:74
+#: src/component/photo/cards.vue:131
 #: src/component/photo/clipboard.vue:189
-#: src/component/photo/list.vue:79
+#: src/component/photo/list.vue:120
 #: src/component/subject/clipboard.vue:46
 #: src/dialog/photo/files.vue:69
 #: src/pages/library/files.vue:99
@@ -1188,9 +1188,11 @@ msgstr ""
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr ""
 
-#: src/component/photo/cards.vue:11
+#: src/component/photo/cards.vue:12
+#: src/component/photo/cards.vue:10
 #: src/component/photo/list.vue:12
-#: src/component/photo/mosaic.vue:11
+#: src/component/photo/mosaic.vue:12
+#: src/component/photo/mosaic.vue:10
 #: src/pages/labels.vue:35
 #: src/pages/library/files.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
@@ -1341,9 +1343,9 @@ msgstr ""
 
 #: src/app/routes.js:181
 #: src/component/navigation.vue:217
-#: src/component/photo/cards.vue:218
-#: src/component/photo/list.vue:187
-#: src/component/photo/mosaic.vue:191
+#: src/component/photo/cards.vue:294
+#: src/component/photo/list.vue:188
+#: src/component/photo/mosaic.vue:215
 #: src/options/options.js:344
 #: src/share/photo/cards.vue:191
 #: src/share/photo/list.vue:166
@@ -1360,8 +1362,8 @@ msgstr ""
 msgid "location"
 msgstr ""
 
-#: src/component/photo/cards.vue:591
-#: src/component/photo/list.vue:59
+#: src/component/photo/cards.vue:512
+#: src/component/photo/list.vue:144
 #: src/dialog/album/edit.vue:123
 #: src/share/photo/cards.vue:417
 #: src/share/photo/list.vue:55
@@ -1499,9 +1501,9 @@ msgstr ""
 msgid "Must have at least 8 characters."
 msgstr ""
 
-#: src/component/photo/cards.vue:574
-#: src/component/photo/list.vue:59
-#: src/component/photo/list.vue:246
+#: src/component/photo/cards.vue:500
+#: src/component/photo/list.vue:144
+#: src/component/photo/list.vue:233
 #: src/dialog/account/edit.vue:402
 #: src/dialog/album/edit.vue:105
 #: src/dialog/photo/files.vue:34
@@ -1586,9 +1588,11 @@ msgid "No people found"
 msgstr ""
 
 #: src/common/viewer.js:263
-#: src/component/photo/cards.vue:7
+#: src/component/photo/cards.vue:8
+#: src/component/photo/cards.vue:6
 #: src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:7
+#: src/component/photo/mosaic.vue:8
+#: src/component/photo/mosaic.vue:6
 #: src/pages/album/photos.vue:342
 #: src/pages/library/files.vue:34
 #: src/pages/photos.vue:382
@@ -1601,9 +1605,11 @@ msgstr ""
 msgid "No pictures found"
 msgstr ""
 
-#: src/component/photo/cards.vue:4
+#: src/component/photo/cards.vue:5
+#: src/component/photo/cards.vue:3
 #: src/component/photo/list.vue:5
-#: src/component/photo/mosaic.vue:4
+#: src/component/photo/mosaic.vue:5
+#: src/component/photo/mosaic.vue:3
 #: src/share/photo/cards.vue:4
 #: src/share/photo/list.vue:5
 #: src/share/photo/mosaic.vue:4
@@ -1628,12 +1634,14 @@ msgstr ""
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr ""
 
-#: src/component/photo/cards.vue:13
+#: src/component/photo/cards.vue:14
+#: src/component/photo/cards.vue:12
 #: src/component/photo/cards.vue:1
 #: src/component/photo/list.vue:14
 #: src/component/photo/list.vue:1
-#: src/component/photo/list.vue:43
-#: src/component/photo/mosaic.vue:13
+#: src/component/photo/list.vue:48
+#: src/component/photo/mosaic.vue:14
+#: src/component/photo/mosaic.vue:12
 #: src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50
 #: src/pages/settings/library.vue:93
@@ -1820,7 +1828,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/model/photo.js:967
+#: src/model/photo.js:1032
 msgid "Photo"
 msgstr ""
 
@@ -1857,8 +1865,6 @@ msgstr ""
 msgid "Places"
 msgstr ""
 
-#: src/component/photo/cards.vue:293
-#: src/component/photo/mosaic.vue:267
 #: src/share/photo/cards.vue:266
 #: src/share/photo/mosaic.vue:248
 msgid "Play"
@@ -1952,8 +1958,8 @@ msgstr ""
 msgid "Raw"
 msgstr ""
 
-#: src/component/photo/cards.vue:208
-#: src/component/photo/mosaic.vue:181
+#: src/component/photo/cards.vue:287
+#: src/component/photo/mosaic.vue:207
 #: src/share/photo/cards.vue:181
 #: src/share/photo/mosaic.vue:162
 msgid "RAW"
@@ -2275,8 +2281,8 @@ msgstr ""
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
 msgstr ""
 
-#: src/component/photo/cards.vue:248
-#: src/component/photo/mosaic.vue:221
+#: src/component/photo/cards.vue:317
+#: src/component/photo/mosaic.vue:241
 #: src/share/photo/cards.vue:221
 #: src/share/photo/mosaic.vue:202
 msgid "Stack"
@@ -2354,8 +2360,8 @@ msgstr ""
 msgid "Sync raw and video files"
 msgstr ""
 
-#: src/component/photo/cards.vue:517
-#: src/component/photo/list.vue:56
+#: src/component/photo/cards.vue:463
+#: src/component/photo/list.vue:138
 #: src/dialog/photo/info.vue:52
 #: src/share/photo/cards.vue:349
 #: src/share/photo/list.vue:52
@@ -2412,7 +2418,7 @@ msgstr ""
 msgid "Timeout"
 msgstr ""
 
-#: src/component/photo/list.vue:55
+#: src/component/photo/list.vue:135
 #: src/dialog/photo/details.vue:97
 #: src/dialog/photo/info.vue:45
 #: src/share/photo/list.vue:51
@@ -2449,10 +2455,12 @@ msgstr ""
 msgid "Troubleshooting Checklists"
 msgstr ""
 
-#: src/component/photo/cards.vue:10
+#: src/component/photo/cards.vue:11
+#: src/component/photo/cards.vue:9
 #: src/component/photo/list.vue:11
-#: src/component/photo/list.vue:40
-#: src/component/photo/mosaic.vue:10
+#: src/component/photo/list.vue:45
+#: src/component/photo/mosaic.vue:11
+#: src/component/photo/mosaic.vue:9
 #: src/pages/albums.vue:38
 #: src/pages/labels.vue:34
 #: src/pages/people/subjects.vue:36
@@ -2483,12 +2491,12 @@ msgstr ""
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:24
 #: src/model/album.js:179
-#: src/model/photo.js:620
-#: src/model/photo.js:637
-#: src/model/photo.js:660
-#: src/model/photo.js:674
-#: src/model/photo.js:759
-#: src/model/photo.js:772
+#: src/model/photo.js:672
+#: src/model/photo.js:693
+#: src/model/photo.js:716
+#: src/model/photo.js:734
+#: src/model/photo.js:824
+#: src/model/photo.js:837
 #: src/options/options.js:20
 #: src/options/options.js:34
 #: src/options/options.js:51
@@ -2608,13 +2616,13 @@ msgstr ""
 msgid "Vanta"
 msgstr ""
 
-#: src/component/photo/cards.vue:238
-#: src/component/photo/cards.vue:530
-#: src/component/photo/list.vue:207
-#: src/component/photo/mosaic.vue:211
+#: src/component/photo/cards.vue:310
+#: src/component/photo/cards.vue:471
+#: src/component/photo/list.vue:204
+#: src/component/photo/mosaic.vue:233
 #: src/model/file.js:219
-#: src/model/photo.js:711
-#: src/model/photo.js:725
+#: src/model/photo.js:769
+#: src/model/photo.js:785
 #: src/options/options.js:348
 #: src/share/photo/cards.vue:211
 #: src/share/photo/cards.vue:363
@@ -2631,8 +2639,8 @@ msgstr ""
 msgid "Videos"
 msgstr ""
 
-#: src/component/photo/cards.vue:265
-#: src/component/photo/mosaic.vue:239
+#: src/component/photo/cards.vue:326
+#: src/component/photo/mosaic.vue:250
 #: src/component/photo/toolbar.vue:232
 #: src/share/photo/cards.vue:238
 #: src/share/photo/mosaic.vue:220

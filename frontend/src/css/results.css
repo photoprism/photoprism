@@ -76,6 +76,7 @@ body.chrome #photoprism .search-results .result {
     width: auto;
     height: 100%;
     position: absolute;
+    top: 0;
     overflow: hidden;
 }
 
@@ -258,6 +259,7 @@ body.chrome #photoprism .search-results .result {
   font-weight: 400;
   text-transform: none;
   line-height: 1;
+  white-space: nowrap;
 }
 
 #photoprism .cards-view .result .caption {
@@ -276,6 +278,7 @@ body.chrome #photoprism .search-results .result {
   text-transform: none;
   line-height: 1;
   vertical-align: text-bottom;
+  white-space: nowrap;
 }
 
 
@@ -478,4 +481,28 @@ body.chrome #photoprism .search-results .result {
 #photoprism .face-results .is-face.is-hidden,
 #photoprism .face-results .is-marker.is-invalid {
     opacity: 0.5;
+}
+
+/* old browser support */
+@supports not (aspect-ratio: 1) {
+  /* elements with aspect-ratio 1 and without margin */
+  #photoprism .search-results .image-container,
+  #photoprism .cards-view .result .image,
+  #photoprism .list-view .result .image,
+  #photoprism .list-view .result.image,
+  #photoprism .mosaic-view .result.is-selected {
+    height: 0;
+    padding-bottom: 100%
+  }
+
+  /* elements with aspect-ratio 1 and with margin */
+  #photoprism .mosaic-view .result
+  {
+    height: 0;
+    /*
+       8px is required because this aspect-ratio-fallback doesn't take
+       margins into consideration
+    */
+    padding-bottom: calc(100% - 8px)
+  }
 }

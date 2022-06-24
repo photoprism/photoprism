@@ -30,7 +30,7 @@ test.meta("testID", "photos-001")("Scroll to top", async (t) => {
     .notOk()
     .expect(getcurrentPosition())
     .eql(0)
-    .expect(Selector('div[class="v-image__image v-image__image--cover"]').nth(0).visible)
+    .expect(Selector("div.image.clickable").nth(0).visible)
     .ok();
 
   await scroll(0, 1400);
@@ -241,6 +241,7 @@ test.meta("testID", "photos-005").meta({ type: "smoke" })("Edit photo/video", as
   } else {
     await toolbar.triggerToolbarAction("reload");
   }
+  await toolbar.search("uid:" + FirstPhotoUid);
 
   await t
     .expect(page.cardTitle.withAttribute("data-uid", FirstPhotoUid).innerText)

@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 21:44+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-06-19 07:51+0000\n"
+"Last-Translator: Chris Yang <chrisyx511@gmail.com>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/"
 "photoprism/frontend/ja/>\n"
 "Language: ja\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.13\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -963,7 +963,7 @@ msgstr "フォルダ"
 
 #: src/pages/auth/login.vue:1
 msgid "Forgot password?"
-msgstr "現在のパスワード?"
+msgstr "パスワードを忘れましたか？"
 
 #: src/dialog/photo/files.vue:113 src/dialog/photo/files.vue:110
 msgid "FPS"
@@ -1363,7 +1363,7 @@ msgstr "月光"
 #: src/pages/album/photos.vue:349 src/pages/photos.vue:389
 #: src/share/photos.vue:357
 msgid "More than %{n} pictures found"
-msgstr "0}以上の画像が見つかりました"
+msgstr "%{n}枚以上の画像が見つかりました"
 
 #: src/pages/albums.vue:389 src/share/albums.vue:308
 msgid "More than 20 albums found"
@@ -1421,7 +1421,7 @@ msgstr "なし"
 
 #: src/pages/people.vue:26
 msgid "New"
-msgstr "New"
+msgstr "新規"
 
 #: src/pages/settings/account.vue:81
 msgid "New Password"

@@ -35,8 +35,8 @@ test.meta("testID", "labels-001").meta({ type: "smoke" })(
     await t.expect(PhotoKeywords).contains("beacon");
 
     await t
-      .click(photoedit.labelsTab)
-      .click(photoedit.removeLabel)
+      .click(photoedit.labelsTab, { timeout: 7000 })
+      .click(photoedit.removeLabel, { timeout: 7000 })
       .typeText(photoedit.inputLabelName, "Test")
       .click(Selector(photoedit.addLabel))
       .click(photoedit.detailsTab);
@@ -60,9 +60,9 @@ test.meta("testID", "labels-001").meta({ type: "smoke" })(
     await toolbar.setFilter("view", "Cards");
     await t
       .click(page.cardTitle.withAttribute("data-uid", PhotoBeaconUid))
-      .click(photoedit.labelsTab)
-      .click(photoedit.deleteLabel)
-      .click(photoedit.activateLabel)
+      .click(photoedit.labelsTab, { timeout: 7000 })
+      .click(photoedit.deleteLabel, { timeout: 7000 })
+      .click(photoedit.activateLabel, { timeout: 7000 })
       .click(photoedit.detailsTab);
     const PhotoKeywordsAfterUndo = await photoedit.keywords.value;
 
@@ -200,6 +200,7 @@ test.meta("testID", "labels-004")("Delete label", async (t) => {
   await t.expect(Selector("div.no-results").visible).ok();
 
   await menu.openPage("browse");
+  await toolbar.search("uid:" + FirstPhotoDomeUid);
   await toolbar.setFilter("view", "Cards");
   await t
     .click(page.cardTitle.withAttribute("data-uid", FirstPhotoDomeUid))

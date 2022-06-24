@@ -2,7 +2,7 @@
 
 **By using the software and services we provide, you agree to our [Terms of Service](https://photoprism.app/terms), including our [Privacy Policy](https://photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with other community members.**
 
-*Last Updated: June 14, 2022*
+*Last Updated: June 21, 2022*
 
 ## Rules
 
@@ -22,7 +22,7 @@ Not everyone has experience with Open Source communities and intuitively knows w
 
 (b) Honor **Rule &#35;2**, [read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening invalid bug reports, starting a public "shitstorm", or insulting other community members in our chat rooms. Aside from being annoying for everyone, it also keeps our team from working on features and improvements that users like you are waiting for.
 
-(c) Reckless and ignorant communication that disregards **Rule &#35;1** is unacceptable, whether public or private. If you are having a bad day and want to offend someone, please go somewhere else. Based on previous incidents, we also recommend that you wait until the worst is over when you've had too much coffee.
+(c) Reckless, surprisingly harsh or ignorant communication that disregards **Rule &#35;1** is unacceptable, whether public or private. If you are having a bad day and want to offend someone, please go somewhere else. Based on previous incidents, we also recommend that you wait until the worst is over when you've had too much coffee.
 
 *Keep in mind that problems are actually quite rare. All in all, we have a pretty amazing community! Common sense and staying away from the computer when you're tired or hungry should generally be enough to get along with others.*
 
@@ -34,7 +34,7 @@ We encourage all community members to resolve problems on their own whenever pos
 
 Our community standards will be enforced as necessary to protect everyone's well-being and to ensure that our discussion forums, chat rooms, and other infrastructure can be used as intended.
 
-Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky). In serious cases, we will provide a link to this Code of Conduct to avoid misunderstandings.
+Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky), especially if your tone is harsh to begin with. In serious cases, we will provide a link to this Code of Conduct to avoid misunderstandings.
 
 Getting a simple **\*plonk\***[^1] in response finally signals that we have lost hope and you're being ignored according to **Rule &#35;3**. This old tradition from Usenet days is as time-saving as it is clear. It is not meant in a disrespectful way.
 

@@ -25,7 +25,7 @@ type Data struct {
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	FPS          float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
 	Frames       int           `meta:"FrameCount"`
-	Codec        string        `meta:"CompressorID,FileType"`
+	Codec        string        `meta:"CompressorID,VideoCodecID,CodecID,FileType"`
 	Title        string        `meta:"Headline,Title" xmp:"dc:title" dc:"title,title.Alt"`
 	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords     Keywords      `meta:"Keywords"`
@@ -56,8 +56,8 @@ type Data struct {
 	Lat          float32       `meta:"-"`
 	Lng          float32       `meta:"-"`
 	Altitude     int           `meta:"GlobalAltitude,GPSAltitude"`
-	Width        int           `meta:"PixelXDimension,ImageWidth,ExifImageWidth,SourceImageWidth"`
-	Height       int           `meta:"PixelYDimension,ImageHeight,ImageLength,ExifImageHeight,SourceImageHeight"`
+	Width        int           `meta:"ImageWidth,PixelXDimension,ExifImageWidth,SourceImageWidth"`
+	Height       int           `meta:"ImageHeight,ImageLength,PixelYDimension,ExifImageHeight,SourceImageHeight"`
 	Orientation  int           `meta:"-"`
 	Rotation     int           `meta:"Rotation"`
 	Views        int           `meta:"-"`

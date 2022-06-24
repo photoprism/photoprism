@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/photoprism/photoprism/pkg/video"
@@ -65,26 +66,34 @@ func GetVideo(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if mf, err := photoprism.NewMediaFile(fileName); err != nil {
-			log.Errorf("video: file %s is missing", clean.Log(f.FileName))
-			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
-
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			logError("video", f.Update("FileMissing", true))
 
-			return
-		} else if f.FileCodec != string(format.Codec) {
+			// Log error and default to 404.mp4
+			log.Errorf("video: file %s is missing", clean.Log(f.FileName))
+			fileName = service.Config().StaticFile("video/404.mp4")
+			AddContentTypeHeader(c, ContentTypeAvc)
+		} else if f.FileCodec != "" && f.FileCodec == string(format.Codec) || format.Codec == video.UnknownCodec && f.FileType == string(format.File) {
+			if f.FileCodec != "" && f.FileCodec != f.FileType {
+				log.Debugf("video: %s has matching codec %s", clean.Log(f.FileName), clean.Log(f.FileCodec))
+				AddContentTypeHeader(c, fmt.Sprintf("%s; codecs=\"%s\"", f.FileMime, clean.Codec(f.FileCodec)))
+			} else {
+				log.Debugf("video: %s has matching type %s", clean.Log(f.FileName), clean.Log(f.FileType))
+				AddContentTypeHeader(c, f.FileMime)
+			}
+		} else {
 			conv := service.Convert()
 
 			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegEncoder(), false, false); err != nil {
+				// Log error and default to 404.mp4
 				log.Errorf("video: transcoding %s failed", clean.Log(f.FileName))
-				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
-				return
+				fileName = service.Config().StaticFile("video/404.mp4")
 			} else {
 				fileName = avcFile.FileName()
 			}
-		}
 
-		AddContentTypeHeader(c, ContentTypeAvc)
+			AddContentTypeHeader(c, ContentTypeAvc)
+		}
 
 		if c.Query("download") != "" {
 			c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))

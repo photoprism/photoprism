@@ -20,13 +20,13 @@ const sharedialog = new ShareDialog();
 export default class Page {
   constructor() {
     this.selectOption = Selector("div.v-list__tile__title", { timeout: 15000 });
-    this.cardTitle = Selector("button.action-title-edit");
-    this.cardDescription = Selector('div[title="Description"]');
-    this.cardLocation = Selector("button.action-location");
-    this.nameInput = Selector(".input-name input");
-    this.passwordInput = Selector(".input-password input");
-    this.togglePasswordMode = Selector(".v-input__icon--append");
-    this.loginAction = Selector(".action-confirm");
+    this.cardTitle = Selector("button.action-title-edit", { timeout: 7000 });
+    this.cardDescription = Selector('div[title="Description"]', { timeout: 7000 });
+    this.cardLocation = Selector("button.action-location", { timeout: 7000 });
+    this.nameInput = Selector(".input-name input", { timeout: 7000 });
+    this.passwordInput = Selector(".input-password input", { timeout: 7000 });
+    this.togglePasswordMode = Selector(".v-input__icon--append", { timeout: 7000 });
+    this.loginAction = Selector(".action-confirm", { timeout: 7000 });
   }
 
   async login(username, password) {
@@ -65,6 +65,7 @@ export default class Page {
     await album.openAlbumWithUid(FirstAlbum);
     await toolbar.triggerToolbarAction("share", "");
     await t.click(sharedialog.expandLink.nth(0));
+    await t.wait(5000);
     const UrlAfterChange = await sharedialog.linkUrl.innerText;
     const ExpireAfterChange = await Selector("div.v-select__selections").innerText;
     await t
