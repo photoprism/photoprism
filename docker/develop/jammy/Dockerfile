@@ -90,6 +90,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       libheif-examples \
       exiftool \
       rawtherapee \
+      imagemagick \
       ffmpeg \
       ffmpegthumbnailer \
       libavcodec-extra \

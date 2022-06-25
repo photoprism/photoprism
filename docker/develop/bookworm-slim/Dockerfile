@@ -40,7 +40,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
       libc6 ca-certificates sudo bash tzdata \
       gpg zip unzip wget curl rsync make nano \
-      jq lsof lshw sqlite3 mariadb-client \
+      jq lsof lshw sqlite3 mariadb-client imagemagick \
       exiftool darktable rawtherapee libheif-examples librsvg2-bin \
       ffmpeg ffmpegthumbnailer libavcodec-extra \
       libmatroska7 libdvdread8 libebml5 libgav1-0 libatomic1 \

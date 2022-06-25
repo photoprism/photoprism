@@ -55,6 +55,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       librsvg2-bin \
       exiftool \
       rawtherapee \
+      imagemagick \
       ffmpeg \
       ffmpegthumbnailer \
       libavcodec-extra \
