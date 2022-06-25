@@ -13,11 +13,42 @@ func TestConfig_DisableBackups(t *testing.T) {
 
 func TestConfig_DisableWebDAV(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
+	c.options.Public = false
+	c.options.ReadOnly = false
+	c.options.Demo = false
+
 	assert.False(t, c.DisableWebDAV())
 
+	c.options.Public = true
+	c.options.ReadOnly = false
+	c.options.Demo = false
+
+	assert.True(t, c.DisableWebDAV())
+
+	c.options.Public = false
+	c.options.ReadOnly = true
+	c.options.Demo = false
+
+	assert.True(t, c.DisableWebDAV())
+
+	c.options.Public = false
+	c.options.ReadOnly = false
+	c.options.Demo = true
+
+	assert.True(t, c.DisableWebDAV())
+
+	c.options.Public = true
 	c.options.ReadOnly = true
 	c.options.Demo = true
+
 	assert.True(t, c.DisableWebDAV())
+
+	c.options.Public = false
+	c.options.ReadOnly = false
+	c.options.Demo = false
+
+	assert.False(t, c.DisableWebDAV())
 }
 
 func TestConfig_DisableExifTool(t *testing.T) {
