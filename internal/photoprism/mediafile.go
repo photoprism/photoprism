@@ -942,10 +942,19 @@ func (m *MediaFile) DecodeConfig() (_ *image.Config, err error) {
 
 	defer file.Close()
 
+	// Reset file offset.
+	// see https://github.com/golang/go/issues/45902#issuecomment-1007953723
+	_, err = file.Seek(0, 0)
+
+	if err != nil {
+		return nil, fmt.Errorf("%s on seek", err)
+	}
+
+	// Decode image config (dimensions).
 	cfg, _, err := image.DecodeConfig(file)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%s while decoding", err)
 	}
 
 	m.imageConfig = &cfg
@@ -1253,6 +1262,15 @@ func (m *MediaFile) ColorProfile() string {
 	}
 
 	defer fileReader.Close()
+
+	// Reset file offset.
+	// see https://github.com/golang/go/issues/45902#issuecomment-1007953723
+	_, err = fileReader.Seek(0, 0)
+
+	if err != nil {
+		log.Warnf("media: %s in %s on seek [%s]", err, logName, time.Since(start))
+		return ""
+	}
 
 	// Read color metadata.
 	md, _, err := autometa.Load(fileReader)

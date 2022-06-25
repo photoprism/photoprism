@@ -30,9 +30,18 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 
 	defer fileReader.Close()
 
+	// Reset file offset.
+	// see https://github.com/golang/go/issues/45902#issuecomment-1007953723
+	_, err = fileReader.Seek(0, 0)
+
+	if err != nil {
+		return result, fmt.Errorf("%s on seek", err)
+	}
+
 	// Read color metadata.
 	md, imgStream, err := autometa.Load(fileReader)
 
+	// Decode image.
 	var img image.Image
 
 	if err != nil {
@@ -43,7 +52,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 	}
 
 	if err != nil {
-		return result, err
+		return result, fmt.Errorf("%s while decoding", err)
 	}
 
 	// Read ICC profile and convert colors if possible.
