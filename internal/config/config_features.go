@@ -7,7 +7,7 @@ func Sponsor() bool {
 
 // DisableWebDAV checks if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
-	if c.ReadOnly() || c.Demo() {
+	if c.Public() || c.ReadOnly() || c.Demo() {
 		return true
 	}
 
