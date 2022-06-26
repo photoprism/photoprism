@@ -780,3 +780,21 @@ func TestFile_SetDuration(t *testing.T) {
 		assert.Equal(t, 216000, m.FileFrames)
 	})
 }
+
+func TestFile_Bitrate(t *testing.T) {
+	t.Run("HasDuration", func(t *testing.T) {
+		m := File{FileDuration: 1e9 * 20.302, FileSize: 1826192}
+
+		assert.InEpsilon(t, 0.719, m.Bitrate(), 0.01)
+	})
+	t.Run("NoDuration", func(t *testing.T) {
+		m := File{FileDuration: 0, FileSize: 1826192}
+
+		assert.Equal(t, float64(0), m.Bitrate())
+	})
+	t.Run("NoSize", func(t *testing.T) {
+		m := File{FileDuration: 1e9 * 20.302, FileSize: 0}
+
+		assert.Equal(t, float64(0), m.Bitrate())
+	})
+}

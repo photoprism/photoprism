@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/photoprism/photoprism/pkg/video"
 
@@ -64,6 +65,14 @@ func GetVideo(router *gin.RouterGroup) {
 		}
 
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
+		fileBitrate := f.Bitrate()
+
+		// File format supported by the client/browser?
+		supported := f.FileCodec != "" && f.FileCodec == string(format.Codec) || format.Codec == video.UnknownCodec && f.FileType == string(format.File)
+
+		// File bitrate too high (for streaming)?
+		conf := service.Config()
+		transcode := !supported || conf.FFmpegEnabled() && conf.FFmpegBitrateExceeded(fileBitrate)
 
 		if mf, err := photoprism.NewMediaFile(fileName); err != nil {
 			// Set missing flag so that the file doesn't show up in search results anymore.
@@ -73,15 +82,13 @@ func GetVideo(router *gin.RouterGroup) {
 			log.Errorf("video: file %s is missing", clean.Log(f.FileName))
 			fileName = service.Config().StaticFile("video/404.mp4")
 			AddContentTypeHeader(c, ContentTypeAvc)
-		} else if f.FileCodec != "" && f.FileCodec == string(format.Codec) || format.Codec == video.UnknownCodec && f.FileType == string(format.File) {
-			if f.FileCodec != "" && f.FileCodec != f.FileType {
-				log.Debugf("video: %s has matching codec %s", clean.Log(f.FileName), clean.Log(f.FileCodec))
-				AddContentTypeHeader(c, fmt.Sprintf("%s; codecs=\"%s\"", f.FileMime, clean.Codec(f.FileCodec)))
+		} else if transcode {
+			if f.FileCodec != "" {
+				log.Debugf("video: %s is %s compressed and cannot be streamed directly, average bitrate %.1f MBit/s", clean.Log(f.FileName), clean.Log(strings.ToUpper(f.FileCodec)), fileBitrate)
 			} else {
-				log.Debugf("video: %s has matching type %s", clean.Log(f.FileName), clean.Log(f.FileType))
-				AddContentTypeHeader(c, f.FileMime)
+				log.Debugf("video: %s cannot be streamed directly, average bitrate %.1f MBit/s", clean.Log(f.FileName), fileBitrate)
 			}
-		} else {
+
 			conv := service.Convert()
 
 			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegEncoder(), false, false); err != nil {
@@ -93,6 +100,14 @@ func GetVideo(router *gin.RouterGroup) {
 			}
 
 			AddContentTypeHeader(c, ContentTypeAvc)
+		} else {
+			if f.FileCodec != "" && f.FileCodec != f.FileType {
+				log.Debugf("video: %s is %s compressed and requires no transcoding, average bitrate %.1f MBit/s", clean.Log(f.FileName), clean.Log(strings.ToUpper(f.FileCodec)), fileBitrate)
+				AddContentTypeHeader(c, fmt.Sprintf("%s; codecs=\"%s\"", f.FileMime, clean.Codec(f.FileCodec)))
+			} else {
+				log.Debugf("video: %s is streamed directly, average bitrate %.1f MBit/s", clean.Log(f.FileName), fileBitrate)
+				AddContentTypeHeader(c, f.FileMime)
+			}
 		}
 
 		if c.Query("download") != "" {

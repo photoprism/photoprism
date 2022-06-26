@@ -139,9 +139,11 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg
 	case bitrate == "":
 		return nil, false, fmt.Errorf("convert: transcoding bitrate is empty - possible bug")
 	case ffmpegBin == "":
-		return nil, false, fmt.Errorf("convert: ffmpeg must be installed to transcode %s to avc", clean.Log(f.BaseName()))
+		return nil, false, fmt.Errorf("convert: ffmpeg must be installed to transcode %s", clean.Log(f.BaseName()))
+	case c.conf.DisableFFmpeg():
+		return nil, false, fmt.Errorf("convert: ffmpeg must be enabled to transcode %s", clean.Log(f.BaseName()))
 	case !f.IsAnimated():
-		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded to avc", f.FileType(), clean.Log(f.BaseName()))
+		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded", f.FileType(), clean.Log(f.BaseName()))
 	}
 
 	return ffmpeg.AvcConvertCommand(fileName, avcName, ffmpegBin, c.AvcBitrate(f), encoder)

@@ -661,6 +661,17 @@ func (m *File) SetDuration(d time.Duration) {
 	}
 }
 
+// Bitrate returns the average bitrate in MBit/s if the file has a duration.
+func (m *File) Bitrate() float64 {
+	// Make sure size and duration have a positive value.
+	if m.FileSize <= 0 || m.FileDuration <= 0 {
+		return 0
+	}
+
+	// Divide number of bits through the duration in seconds.
+	return ((float64(m.FileSize) * 8) / m.FileDuration.Seconds()) / 1e6
+}
+
 // SetFPS sets the average number of frames per second.
 func (m *File) SetFPS(frameRate float64) {
 	if frameRate <= 0 {

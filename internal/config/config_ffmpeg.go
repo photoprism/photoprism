@@ -28,3 +28,14 @@ func (c *Config) FFmpegBitrate() int {
 		return c.options.FFmpegBitrate
 	}
 }
+
+// FFmpegBitrateExceeded tests if the ffmpeg bitrate limit is exceeded.
+func (c *Config) FFmpegBitrateExceeded(mbit float64) bool {
+	if mbit <= 0 {
+		return false
+	} else if max := c.FFmpegBitrate(); max <= 0 {
+		return false
+	} else {
+		return mbit > float64(max)
+	}
+}
