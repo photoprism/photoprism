@@ -82,7 +82,7 @@ export default {
       uid: uid,
       results: [],
       scrollDisabled: true,
-      scrollDistance: window.innerHeight * 2,
+      scrollDistance: window.innerHeight * 6,
       batchSize: batchSize,
       offset: 0,
       page: 0,
@@ -177,7 +177,7 @@ export default {
       // Open Edit Dialog
       Event.publish("dialog.edit", {selection: selection, album: this.album, index: index});
     },
-    openPhoto(index, showMerged) {
+    openPhoto(index, showMerged = false, preferVideo = false) {
       if (this.loading || !this.listen || this.viewer.loading || !this.results[index]) {
         return false;
       }
@@ -189,7 +189,21 @@ export default {
         showMerged = false;
       }
 
-      if (showMerged && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
+      /**
+       * If the file is an video or an animation (like gif), then we always play
+       * it in the video-player.
+       * If the file is a live-image (an image with an embedded video), then we only
+       * play it in the video-player if specifically requested.
+       * This is because:
+       * 1. the lower-resolution video in these files is already
+       *    played when hovering the element (which does not happen for regular
+       *    video files)
+       * 2. The video in live-images is an addon. The main focus is usually still
+       *    the high resolution image inside
+       *
+       * preferVideo is true, when the user explicitly clicks the live-image-icon.
+       */
+      if (preferVideo && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
           this.$viewer.play({video: selected, album: this.album});
         } else {

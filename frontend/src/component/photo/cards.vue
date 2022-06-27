@@ -3,7 +3,10 @@
     <template v-if="photos.length === 0">
       <v-alert
           :value="true"
-          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+          color="secondary-dark"
+          :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
+          class="no-results ma-2 opacity-70"
+          outline
       >
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
@@ -13,9 +16,11 @@
         </h3>
         <p class="body-1 mt-2 mb-0 pa-0">
           <translate>Try again using other filters or keywords.</translate>
-          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-          <template v-if="$config.feature('review')">
-            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          <template v-if="!isSharedView">
+            <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
+            <template v-if="$config.feature('review')">
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+            </template>
           </template>
         </p>
       </v-alert>
@@ -94,9 +99,9 @@
             <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
                   class="input-open"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onOpen($event, index, true)"
+                  @touchend.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, true)">
+                  @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')">
                 <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
                 <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                 <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
@@ -108,13 +113,13 @@
                   class="input-view"
                   :title="$gettext('View')"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onOpen($event, index, false)"
+                  @touchend.stop.prevent="onOpen($event, index)"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, false)">
+                  @click.stop.prevent="onOpen($event, index)">
               <i class="action-fullscreen">zoom_in</i>
             </button>
 
-            <button v-if="featPrivate && photo.Private" class="input-private">
+            <button v-if="!isSharedView && featPrivate && photo.Private" class="input-private">
               <i class="select-on">lock</i>
             </button>
 
@@ -139,6 +144,7 @@
             </button>
 
             <button
+                  v-if="!isSharedView"
                   class="input-favorite"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="toggleLike($event, index)"
@@ -149,7 +155,7 @@
             </button>
           </div>
 
-          <v-card-actions v-if="photo.Quality < 3 && context === 'review'" class="card-details pa-0">
+          <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
             <v-layout row wrap align-center>
               <v-flex xs6 class="text-xs-center pa-1">
                 <v-btn color="accent lighten-2"
@@ -174,41 +180,41 @@
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID"
-                        @click.exact="editPhoto(index)">
+                        @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                   {{ photo.Title | truncate(80) }}
                 </button>
               </h3>
               <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">
-                <button @click.exact="editPhoto(index)">
+                <button @[!isSharedView&&`click`].exact="editPhoto(index)">
                   {{ photo.Description }}
                 </button>
               </div>
               <div class="caption">
                 <button class="action-date-edit" :data-uid="photo.UID"
-                        @click.exact="editPhoto(index)">
+                        @[!isSharedView&&`click`].exact="editPhoto(index)">
                   <i :title="$gettext('Taken')">date_range</i>
                   {{ photo.getDateString(true) }}
                 </button>
                 <br>
                 <button v-if="photo.Type === 'video'" :title="$gettext('Video')"
-                        @click.exact="openPhoto(index, true)">
+                        @[!isSharedView&&`click`].exact="openPhoto(index)">
                   <i>movie</i>
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'"
-                        @click.exact="openPhoto(index, true)">
+                        @[!isSharedView&&`click`].exact="openPhoto(index)">
                   <i>gif_box</i>
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else :title="$gettext('Camera')" class="action-camera-edit"
-                        :data-uid="photo.UID" @click.exact="editPhoto(index)">
+                        :data-uid="photo.UID" @[!isSharedView&&`click`].exact="editPhoto(index)">
                   <i>photo_camera</i>
                   {{ photo.getPhotoInfo() }}
                 </button>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
                   <br>
                   <button :title="$gettext('Name')"
-                          @click.exact="downloadFile(index)">
+                          @[!isSharedView&&`click`].exact="downloadFile(index)">
                     <i>insert_drive_file</i>
                     {{ photo.baseName() }}
                   </button>
@@ -216,7 +222,7 @@
                 <template v-if="featPlaces && photo.Country !== 'zz'">
                   <br>
                   <button :title="$gettext('Location')" class="action-location"
-                          :data-uid="photo.UID" @click.exact="openLocation(index)">
+                          :data-uid="photo.UID" @[!isSharedView&&`click`].exact="openLocation(index)">
                     <i>location_on</i>
                     {{ photo.locationInfo() }}
                   </button>
@@ -273,6 +279,10 @@ export default {
       default: "",
     },
     selectMode: Boolean,
+    isSharedView: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const featPlaces = this.$config.settings().features.places;
@@ -403,14 +413,14 @@ export default {
        */
       this.$forceUpdate();
     },
-    onOpen(ev, index, showMerged) {
+    onOpen(ev, index, showMerged, preferVideo) {
       const inputType = this.input.eval(ev, index);
 
       if (inputType !== ClickShort) {
         return;
       }
 
-      this.openPhoto(index, showMerged);
+      this.openPhoto(index, showMerged, preferVideo);
     },
     onClick(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -427,7 +437,7 @@ export default {
           this.toggle(this.photos[index]);
         }
       } else {
-        this.openPhoto(index, false);
+        this.openPhoto(index);
       }
     },
     onContextMenu(ev, index) {

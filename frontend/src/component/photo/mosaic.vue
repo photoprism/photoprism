@@ -3,7 +3,10 @@
     <template v-if="photos.length === 0">
       <v-alert
           :value="true"
-          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+          color="secondary-dark"
+          :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
+          class="no-results ma-2 opacity-70"
+          outline
       >
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
@@ -13,9 +16,11 @@
         </h3>
         <p class="body-1 mt-2 mb-0 pa-0">
           <translate>Try again using other filters or keywords.</translate>
-          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-          <template v-if="$config.feature('review')">
-            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          <template v-if="!isSharedView">
+            <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
+            <template v-if="$config.feature('review')">
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+            </template>
           </template>
         </p>
       </v-alert>
@@ -60,9 +65,9 @@
             <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
                   class="input-open"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onOpen($event, index, true)"
+                  @touchend.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, true)">
+                  @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')">
               <i v-if="photo.Type === 'raw'" color="white" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
               <i v-if="photo.Type === 'live'" color="white" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
               <i v-if="photo.Type === 'animated'" color="white" class="action-animated" :title="$gettext('Animated')">gif</i>
@@ -74,13 +79,13 @@
                   class="input-view"
                   :title="$gettext('View')"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onOpen($event, index, false)"
+                  @touchend.stop.prevent="onOpen($event, index)"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, index, false)">
+                  @click.stop.prevent="onOpen($event, index)">
               <i color="white" class="action-fullscreen">zoom_in</i>
             </button>
 
-            <button v-if="hidePrivate && photo.Private" class="input-private">
+            <button v-if="!isSharedView && hidePrivate && photo.Private" class="input-private">
               <i color="white" class="select-on">lock</i>
             </button>
 
@@ -105,7 +110,7 @@
               <i color="white" class="select-off">radio_button_off</i>
             </button>
 
-            <button
+            <button v-if="!isSharedView"
                 class="input-favorite"
                 @touchstart.stop.prevent="input.touchStart($event, index)"
                 @touchend.stop.prevent="toggleLike($event, index)"
@@ -157,6 +162,10 @@ export default {
       default: "",
     },
     selectMode: Boolean,
+    isSharedView: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -268,14 +277,14 @@ export default {
       this.$clipboard.toggle(photo);
       this.$forceUpdate();
     },
-    onOpen(ev, index, showMerged) {
+    onOpen(ev, index, showMerged, preferVideo) {
       const inputType = this.input.eval(ev, index);
 
       if (inputType !== ClickShort) {
         return;
       }
 
-      this.openPhoto(index, showMerged);
+      this.openPhoto(index, showMerged, preferVideo);
     },
     onClick(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -292,7 +301,7 @@ export default {
           this.toggle(this.photos[index]);
         }
       } else {
-        this.openPhoto(index, false);
+        this.openPhoto(index);
       }
     },
     onContextMenu(ev, index) {

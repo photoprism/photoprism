@@ -3,7 +3,10 @@
     <div v-if="photos.length === 0" class="pa-2">
       <v-alert
           :value="true"
-          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+          color="secondary-dark"
+          :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
+          class="no-results ma-2 opacity-70"
+          outline
       >
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
@@ -13,9 +16,11 @@
         </h3>
         <p class="body-1 mt-2 mb-0 pa-0">
           <translate>Try again using other filters or keywords.</translate>
-          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-          <template v-if="config.settings.features.review">
-            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          <template v-if="!isSharedView">
+            <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
+            <template v-if="config.settings.features.review">
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+            </template>
           </template>
         </p>
       </v-alert>
@@ -67,7 +72,7 @@
                   </button>
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'"
                         class="input-open"
-                        @click.stop.prevent="openPhoto(index, true)">
+                        @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
                     <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                     <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
                     <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
@@ -76,7 +81,7 @@
               </td>
 
               <td class="p-photo-desc clickable" :data-uid="photo.UID"
-                  @click.exact="editPhoto(index)">
+                  @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                 {{ photo.Title }}
               </td>
               <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">
@@ -102,27 +107,29 @@
                   {{ photo.locationInfo() }}
                 </span>
               </td>
-              <td class="text-xs-center">
-                <template v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex">
-                  <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
-                  <div class="v-btn v-btn--icon v-btn--small" />
-                </template>
+              <template v-if="!isSharedView">
+                <td class="text-xs-center">
+                  <template v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex">
+                    <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
+                    <div class="v-btn v-btn--icon v-btn--small" />
+                  </template>
 
-                <template v-else>
-                  <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
-                        :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
-                    <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">lock</v-icon>
-                    <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
-                  </v-btn>
-                  <v-btn class="input-like" icon small flat :ripple="false"
-                        :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
-                    <v-icon v-if="photo.Favorite" color="pink lighten-3" :data-uid="photo.UID" class="select-on">
-                      favorite
-                    </v-icon>
-                    <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">favorite_border</v-icon>
-                  </v-btn>
-                </template>
-              </td>
+                  <template v-else>
+                    <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
+                          :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
+                      <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">lock</v-icon>
+                      <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
+                    </v-btn>
+                    <v-btn class="input-like" icon small flat :ripple="false"
+                          :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
+                      <v-icon v-if="photo.Favorite" color="pink lighten-3" :data-uid="photo.UID" class="select-on">
+                        favorite
+                      </v-icon>
+                      <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">favorite_border</v-icon>
+                    </v-btn>
+                  </template>
+                </td>
+              </template>
             </tr>
           </tbody>
         </table>
@@ -171,13 +178,17 @@ export default {
       default: "",
     },
     selectMode: Boolean,
+    isSharedView: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     let m = this.$gettext("Couldn't find anything.");
 
     m += " " + this.$gettext("Try again using other filters or keywords.");
 
-    if (this.$config.feature("review")) {
+    if (!this.isSharedView && this.$config.feature("review")) {
       m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
     }
 
@@ -282,13 +293,7 @@ export default {
           this.toggle(this.photos[index]);
         }
       } else if (this.photos[index]) {
-        let photo = this.photos[index];
-
-        if ((photo.Type === 'video' || photo.Type === 'animated') && photo.isPlayable()) {
-          this.openPhoto(index, true);
-        } else {
-          this.openPhoto(index, false);
-        }
+        this.openPhoto(index);
       }
     },
     onContextMenu(ev, index) {
