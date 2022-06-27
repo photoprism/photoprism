@@ -58,9 +58,9 @@ Garn Penrod (Patreon, November 2020)
 
 [Łukasz Anwajler](https://github.com/anwajler) (GitHub Sponsors, November 2021)
 
-[Gyto6](https://github.com/gyto6) (GitHub Sponsors, Mai 2022)
+[Gyto6](https://github.com/gyto6) (GitHub Sponsors, May 2022)
 
-[Let us know if you do not want to be listed.](https://photoprism.app/contact)
+[Feel free to contact us if you have any change requests.](https://photoprism.app/contact)
 
 ## One-Time Donations ##
 
