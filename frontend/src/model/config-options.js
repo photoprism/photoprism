@@ -48,6 +48,8 @@ export class ConfigOptions extends Model {
       DisableHeifConvert: config.values.disable.heifconvert,
       DisableFFmpeg: config.values.disable.ffmpeg,
       DisableTensorFlow: config.values.disable.tensorflow,
+      DisableDeepStack: config.values.disable.deepstack,
+      DeepStackApiUrl: "",
       DetectNSFW: false,
       UploadNSFW: config.values.uploadNSFW,
       RawPresets: false,

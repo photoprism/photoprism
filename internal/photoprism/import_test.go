@@ -14,11 +14,12 @@ func TestNewImport(t *testing.T) {
 	conf := config.TestConfig()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
+	ds := classify.DeepStackNew("", false)
 	nd := nsfw.New(conf.NSFWModelPath())
 	fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
+	ind := NewIndex(conf, tf, ds, nd, fn, convert, NewFiles(), NewPhotos())
 	imp := NewImport(conf, ind, convert)
 
 	assert.IsType(t, &Import{}, imp)
@@ -30,11 +31,12 @@ func TestImport_DestinationFilename(t *testing.T) {
 	conf.InitializeTestData(t)
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
+	ds := classify.DeepStackNew("", false)
 	nd := nsfw.New(conf.NSFWModelPath())
 	fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
+	ind := NewIndex(conf, tf, ds, nd, fn, convert, NewFiles(), NewPhotos())
 
 	imp := NewImport(conf, ind, convert)
 
@@ -63,11 +65,12 @@ func TestImport_Start(t *testing.T) {
 	conf.InitializeTestData(t)
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
+	ds := classify.DeepStackNew("", false)
 	nd := nsfw.New(conf.NSFWModelPath())
 	fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
+	ind := NewIndex(conf, tf, ds, nd, fn, convert, NewFiles(), NewPhotos())
 
 	imp := NewImport(conf, ind, convert)
 

@@ -26,6 +26,7 @@ import (
 type Index struct {
 	conf         *config.Config
 	tensorFlow   *classify.TensorFlow
+	deepStack    *classify.DeepStack
 	nsfwDetector *nsfw.Detector
 	faceNet      *face.Net
 	convert      *Convert
@@ -36,7 +37,7 @@ type Index struct {
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
+func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, deepStack *classify.DeepStack, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
 	if conf == nil {
 		log.Errorf("index: config is nil")
 		return nil
@@ -45,6 +46,7 @@ func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
+		deepStack:    deepStack,
 		nsfwDetector: nsfwDetector,
 		faceNet:      faceNet,
 		convert:      convert,
@@ -99,10 +101,14 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 	}
 
 	defer mutex.MainWorker.Stop()
-
+	log.Infoln("loading tensorflow")
 	if err := ind.tensorFlow.Init(); err != nil {
-		log.Errorf("index: %s", err.Error())
-
+		log.Errorf("index tensorflow: %s", err.Error())
+		return done
+	}
+	log.Infoln("loading deepstack")
+	if err := ind.deepStack.DeepStackInit(); err != nil {
+		log.Errorf("index deepstack: %s", err.Error())
 		return done
 	}
 

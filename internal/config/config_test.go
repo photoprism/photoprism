@@ -75,6 +75,20 @@ func TestConfig_TensorFlowDisabled(t *testing.T) {
 	assert.Equal(t, false, version)
 }
 
+func TestConfig_DeepStackDisabled(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	version := c.DisableDeepStack()
+	assert.Equal(t, false, version)
+}
+
+func TestConfig_DeepStackApiUrl(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	url := c.DeepStackApiUrl()
+	assert.Equal(t, "", url)
+}
+
 func TestConfig_Copyright(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

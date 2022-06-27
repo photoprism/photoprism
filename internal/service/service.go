@@ -41,25 +41,26 @@ import (
 var conf *config.Config
 
 var services struct {
-	FolderCache *gc.Cache
-	CoverCache  *gc.Cache
-	ThumbCache  *gc.Cache
-	Classify    *classify.TensorFlow
-	Convert     *photoprism.Convert
-	Files       *photoprism.Files
-	Photos      *photoprism.Photos
-	Import      *photoprism.Import
-	Index       *photoprism.Index
-	Moments     *photoprism.Moments
-	Faces       *photoprism.Faces
-	Places      *photoprism.Places
-	Purge       *photoprism.Purge
-	CleanUp     *photoprism.CleanUp
-	Nsfw        *nsfw.Detector
-	FaceNet     *face.Net
-	Query       *query.Query
-	Resample    *photoprism.Resample
-	Session     *session.Session
+	FolderCache       *gc.Cache
+	CoverCache        *gc.Cache
+	ThumbCache        *gc.Cache
+	Classify          *classify.TensorFlow
+	DeepStackClassify *classify.DeepStack
+	Convert           *photoprism.Convert
+	Files             *photoprism.Files
+	Photos            *photoprism.Photos
+	Import            *photoprism.Import
+	Index             *photoprism.Index
+	Moments           *photoprism.Moments
+	Faces             *photoprism.Faces
+	Places            *photoprism.Places
+	Purge             *photoprism.Purge
+	CleanUp           *photoprism.CleanUp
+	Nsfw              *nsfw.Detector
+	FaceNet           *face.Net
+	Query             *query.Query
+	Resample          *photoprism.Resample
+	Session           *session.Session
 }
 
 func SetConfig(c *config.Config) {

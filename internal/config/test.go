@@ -103,6 +103,7 @@ func NewTestOptions(pkg string) *Options {
 		AdminPassword:   "photoprism",
 		OriginalsLimit:  66,
 		ResolutionLimit: 33,
+		DeepStackApiUrl: "http://localhost:5000/v1/vision/detection",
 	}
 
 	return c
@@ -199,6 +200,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.String("darktable-blacklist", config.DarktableBlacklist, "doc")
+	globalSet.String("deepstack-url", config.DeepStackApiUrl, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
 	globalSet.Bool("test", true, "doc")
 	globalSet.Bool("debug", false, "doc")

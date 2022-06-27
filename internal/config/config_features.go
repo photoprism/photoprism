@@ -53,6 +53,20 @@ func (c *Config) DisableTensorFlow() bool {
 	return c.options.DisableTensorFlow
 }
 
+// DisableDeepStack checks if all features depending on DeepStack should be disabled.
+func (c *Config) DisableDeepStack() bool {
+	if (LowMem && !c.options.DisableDeepStack) || c.options.DeepStackApiUrl == "" {
+		c.options.DisableDeepStack = true
+	}
+
+	return c.options.DisableDeepStack
+}
+
+// DeepStackApiUrl returns the DeepStack API URL.
+func (c *Config) DeepStackApiUrl() string {
+	return c.options.DeepStackApiUrl
+}
+
 // DisableFaces checks if facial recognition is disabled.
 func (c *Config) DisableFaces() bool {
 	if c.DisableTensorFlow() || c.options.DisableFaces {
@@ -64,11 +78,7 @@ func (c *Config) DisableFaces() bool {
 
 // DisableClassification checks if image classification is disabled.
 func (c *Config) DisableClassification() bool {
-	if c.DisableTensorFlow() || c.options.DisableClassification {
-		return true
-	}
-
-	return false
+	return (c.DisableTensorFlow() && c.DisableDeepStack()) || c.options.DisableClassification
 }
 
 // DisableFFmpeg checks if FFmpeg is disabled for video transcoding.

@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"errors"
 	"sort"
 	"time"
 
@@ -15,10 +16,15 @@ func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
 
 	var sizes []thumb.Name
 
-	if jpeg.AspectRatio() == 1 {
-		sizes = []thumb.Name{thumb.Tile224}
-	} else {
-		sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
+	if !conf.DisableDeepStack() {
+		//Deepstack doesn't work well with cropping so using full file, also different models in DS will need different input sizes
+		sizes = []thumb.Name{thumb.Fit1920}
+	} else if !conf.DisableTensorFlow() {
+		if jpeg.AspectRatio() == 1 {
+			sizes = []thumb.Name{thumb.Tile224}
+		} else {
+			sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
+		}
 	}
 
 	var labels classify.Labels
@@ -31,7 +37,17 @@ func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
 			continue
 		}
 
-		imageLabels, err := ind.tensorFlow.File(filename)
+		var imageLabels classify.Labels
+
+		if !conf.DisableDeepStack() {
+			log.Debugln("index: using deepstack")
+			imageLabels, err = ind.deepStack.DeepStackFile(filename)
+		} else if !conf.DisableTensorFlow() {
+			log.Debugln("index: using tensorflow")
+			imageLabels, err = ind.tensorFlow.File(filename)
+		} else {
+			err = errors.New("neither tensorflow or deepstack are enabled")
+		}
 
 		if err != nil {
 			log.Debugf("%s in %s", err, clean.Log(jpeg.BaseName()))

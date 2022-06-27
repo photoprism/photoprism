@@ -62,6 +62,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-settings", fmt.Sprintf("%t", c.DisableSettings())},
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
 		{"disable-tensorflow", fmt.Sprintf("%t", c.DisableTensorFlow())},
+		{"disable-deepstack", fmt.Sprintf("%t", c.DisableDeepStack())},
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
 		{"disable-classification", fmt.Sprintf("%t", c.DisableClassification())},
 		{"disable-ffmpeg", fmt.Sprintf("%t", c.DisableFFmpeg())},
@@ -81,6 +82,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"upload-nsfw", fmt.Sprintf("%t", c.UploadNSFW())},
 		{"tensorflow-version", c.TensorFlowVersion()},
 		{"tensorflow-model-path", c.TensorFlowModelPath()},
+
+		// DeepStack
+		{"deepstack-url", c.DeepStackApiUrl()},
 
 		// Customization.
 		{"default-locale", c.DefaultLocale()},

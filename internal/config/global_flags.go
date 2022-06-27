@@ -237,6 +237,19 @@ var Flags = CliFlags{
 		}},
 	CliFlag{
 		Flag: cli.BoolFlag{
+			Name:   "disable-deepstack",
+			Usage:  "disable all features depending on DeepStack",
+			EnvVar: "PHOTOPRISM_DISABLE_DEEPSTACK",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
+			Name:   "deepstack-url",
+			Usage:  "DeepStack API URL",
+			Value:  "",
+			EnvVar: "PHOTOPRISM_DEEPSTACK_URL",
+		}},
+	CliFlag{
+		Flag: cli.BoolFlag{
 			Name:   "disable-faces",
 			Usage:  "disable facial recognition",
 			EnvVar: "PHOTOPRISM_DISABLE_FACES",

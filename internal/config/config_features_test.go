@@ -46,10 +46,34 @@ func TestConfig_DisableClassification(t *testing.T) {
 	c.options.DisableClassification = true
 	assert.True(t, c.DisableClassification())
 	c.options.DisableClassification = false
+
+	c.options.DeepStackApiUrl = ""
+	c.options.DisableTensorFlow = false
+	c.options.DisableDeepStack = false
+	assert.False(t, c.DisableClassification())
 	c.options.DisableTensorFlow = true
+	c.options.DisableDeepStack = false
 	assert.True(t, c.DisableClassification())
+	c.options.DisableDeepStack = true
 	c.options.DisableTensorFlow = false
 	assert.False(t, c.DisableClassification())
+	c.options.DisableDeepStack = true
+	c.options.DisableTensorFlow = true
+	assert.True(t, c.DisableClassification())
+
+	c.options.DeepStackApiUrl = "http://..."
+	c.options.DisableTensorFlow = false
+	c.options.DisableDeepStack = false
+	assert.False(t, c.DisableClassification())
+	c.options.DisableTensorFlow = true
+	c.options.DisableDeepStack = false
+	assert.False(t, c.DisableClassification())
+	c.options.DisableDeepStack = true
+	c.options.DisableTensorFlow = false
+	assert.False(t, c.DisableClassification())
+	c.options.DisableDeepStack = true
+	c.options.DisableTensorFlow = true
+	assert.True(t, c.DisableClassification())
 }
 
 func TestConfig_DisableRaw(t *testing.T) {
