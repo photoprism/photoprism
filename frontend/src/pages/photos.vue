@@ -224,7 +224,7 @@ export default {
       // Open Edit Dialog
       Event.publish("dialog.edit", {selection: selection, album: null, index: index});
     },
-    openPhoto(index, showMerged, preferVideo = false) {
+    openPhoto(index, showMerged = false, preferVideo = false) {
       if (this.loading || !this.listen || this.viewer.loading || !this.results[index]) {
         return false;
       }
@@ -237,7 +237,7 @@ export default {
       }
 
       /**
-       * If the file is an video or an animation (like gif), then we always play
+       * If the file is a video or an animation (like gif), then we always play
        * it in the video-player.
        * If the file is a live-image (an image with an embedded video), then we only
        * play it in the video-player if specifically requested.
@@ -261,6 +261,8 @@ export default {
       } else {
         Viewer.show(this, index);
       }
+
+      return true;
     },
     loadMore() {
       if (this.scrollDisabled || this.$scrollbar.disabled()) return;

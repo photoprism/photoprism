@@ -250,7 +250,7 @@ export default {
       }
 
       /**
-       * If the file is an video or an animation (like gif), then we always play
+       * If the file is a video or an animation (like gif), then we always play
        * it in the video-player.
        * If the file is a live-image (an image with an embedded video), then we only
        * play it in the video-player if specifically requested.
@@ -263,7 +263,7 @@ export default {
        *
        * preferVideo is true, when the user explicitly clicks the live-image-icon.
        */
-      if (preferVideo && selected.Type === MediaLive || selected.Type === MediaVideo|| selected.Type === MediaAnimated) {
+      if (preferVideo && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
           this.$viewer.play({video: selected, album: this.album});
         } else {

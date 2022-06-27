@@ -190,7 +190,7 @@ export default {
       }
 
       /**
-       * If the file is an video or an animation (like gif), then we always play
+       * If the file is a video or an animation (like gif), then we always play
        * it in the video-player.
        * If the file is a live-image (an image with an embedded video), then we only
        * play it in the video-player if specifically requested.
