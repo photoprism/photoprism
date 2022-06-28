@@ -158,8 +158,6 @@ test.meta("testID", "sharing-002").meta({ type: "smoke" })(
 
     await contextmenu.clearSelection();
 
-    await t.expect(page.cardTitle.visible).notOk();
-
     await photoviewer.openPhotoViewer("nth", 0);
 
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
