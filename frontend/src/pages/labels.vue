@@ -431,6 +431,8 @@ export default {
           default:
             this.settings[key] = value;
         }
+
+        window.localStorage.setItem("labels_"+key, this.settings[key]);
       }
     },
     updateFilter(props) {

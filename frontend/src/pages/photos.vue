@@ -178,11 +178,11 @@ export default {
   },
   methods: {
     viewType() {
-      let queryParam = this.$route.query["view"];
-      let storedType = window.localStorage.getItem("photo_view");
+      let queryParam = this.$route.query['view'] ? this.$route.query['view'] : "";
+      let storedType = window.localStorage.getItem("photos_view");
 
       if (queryParam) {
-        window.localStorage.setItem("photo_view", queryParam);
+        window.localStorage.setItem("photos_view", queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
@@ -194,10 +194,10 @@ export default {
     },
     sortOrder() {
       let queryParam = this.$route.query["order"];
-      let storedType = window.localStorage.getItem("photo_order");
+      let storedType = window.localStorage.getItem("photos_order");
 
       if (queryParam) {
-        window.localStorage.setItem("photo_order", queryParam);
+        window.localStorage.setItem("photos_order", queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
@@ -339,6 +339,8 @@ export default {
           default:
             this.settings[key] = value;
         }
+
+        window.localStorage.setItem("photos_"+key, this.settings[key]);
       }
     },
     updateFilter(props) {

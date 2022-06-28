@@ -505,6 +505,8 @@ export default {
           default:
             this.settings[key] = value;
         }
+
+        window.localStorage.setItem("albums_"+key, this.settings[key]);
       }
     },
     updateFilter(props) {

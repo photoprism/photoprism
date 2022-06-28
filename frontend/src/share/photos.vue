@@ -201,12 +201,12 @@ export default {
       this.updateQuery();
     },
     viewType() {
-      let queryParam = this.$route.query['view'];
-      let defaultType = window.localStorage.getItem("photo_view_type");
-      let storedType = window.localStorage.getItem("album_view_type");
+      let queryParam = this.$route.query['view'] ? this.$route.query['view'] : "";
+      let defaultType = window.localStorage.getItem("photos_view");
+      let storedType = window.localStorage.getItem("share_photos_view");
 
       if (queryParam) {
-        window.localStorage.setItem("album_view_type", queryParam);
+        window.localStorage.setItem("share_photos_view", queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
@@ -354,6 +354,8 @@ export default {
           default:
             this.settings[key] = value;
         }
+
+        window.localStorage.setItem("share_photos_"+key, this.settings[key]);
       }
     },
     updateFilter(props) {
