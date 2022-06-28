@@ -76,7 +76,6 @@ body.chrome #photoprism .search-results .result {
     width: auto;
     height: 100%;
     position: absolute;
-    top: 0;
     overflow: hidden;
 }
 
@@ -504,5 +503,9 @@ body.chrome #photoprism .search-results .result {
        margins into consideration
     */
     padding-bottom: calc(100% - 8px)
+  }
+
+  #photoprism .live-player video {
+    margin-top: 100%;
   }
 }
