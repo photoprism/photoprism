@@ -102,7 +102,7 @@ class Viewer {
 
     const options = {
       index: index,
-      history: true,
+      history: false,
       preload: [1, 1],
       focus: true,
       modal: true,
