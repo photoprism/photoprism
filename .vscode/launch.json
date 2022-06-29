@@ -12,7 +12,7 @@
         "program": "cmd/photoprism/photoprism.go",
         "args": ["start"],
         "env": {
-          "PHOTOPRISM_DEEPSTACK_URL":"http://host.docker.internal:5000/v1/vision/detection",
+          "PHOTOPRISM_DEEPSTACK_URL":"http://host.docker.internal:5000/",
           "PHOTOPRISM_DISABLE_TENSORFLOW": "true",
           "PHOTOPRISM_DISABLE_DEEPSTACK": "false"
         }

@@ -32,6 +32,7 @@ type DeepStack struct {
 
 // New returns new DeepStack instance.
 func DeepStackNew(apiEndpointUrl string, disabled bool) *DeepStack {
+	apiEndpointUrl = strings.TrimSuffix(apiEndpointUrl, "/")
 	return &DeepStack{apiEndpointUrl: apiEndpointUrl, disabled: disabled}
 }
 
@@ -50,7 +51,9 @@ func (t *DeepStack) DeepStackFile(filename string) (result Labels, err error) {
 		return result, nil
 	}
 
-	log.Infof("classify: processing %s via DeepStack", filename)
+	pathDetectionUrl := fmt.Sprintf("%v/%v", t.apiEndpointUrl, DeepStackApiPathDetection)
+
+	log.Debugf("classify: processing %s via DeepStack, API: %s", filename, pathDetectionUrl)
 	//imageBuffer, err := os.ReadFile(filename)
 
 	if err != nil {
@@ -59,7 +62,7 @@ func (t *DeepStack) DeepStackFile(filename string) (result Labels, err error) {
 
 	var client http.Client
 
-	response, err := UploadMultipartFile(&client, t.apiEndpointUrl, "image", filename)
+	response, err := UploadMultipartFile(&client, pathDetectionUrl, "image", filename)
 
 	if err != nil {
 		return nil, err
