@@ -132,9 +132,10 @@ Pulling a new version can take several minutes, depending on your internet
 connection speed.
 
 Even when you use an image with the ":latest" tag, Docker does not automatically
-download new images for you. To update, you can either manually pull the most
-recent image and restart, or set up a service like Watchtower to get automatic
-updates.
+download new images for you. You can either manually upgrade as shown above, or
+set up a service like Watchtower to get automatic updates:
+
+  https://docs.photoprism.app/getting-started/updates/#watchtower
 
 ### Credits ###
 
