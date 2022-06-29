@@ -60,6 +60,8 @@ Garn Penrod (Patreon, November 2020)
 
 [Gyto6](https://github.com/gyto6) (GitHub Sponsors, May 2022)
 
+Sandro Petruzzi (Patreon, May 2022)
+
 [Feel free to contact us if you have any change requests.](https://photoprism.app/contact)
 
 ## One-Time Donations ##
