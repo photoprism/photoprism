@@ -90,8 +90,10 @@ from Docker Hub and restart your instance in the background:
 Pulling a new version can take several minutes, depending on your internet
 connection speed.
 
-Note that running an image with ":latest" tag does not cause Docker to
-automatically download new images.
+Even when you use an image with the ":latest" tag, Docker does not automatically
+download new images for you. To update, you can either manually pull the most
+recent image and restart, or set up a service like Watchtower to get automatic
+updates.
 
 ### Credits ###
 
