@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-26 19:51+0000\n"
+"PO-Revision-Date: 2022-06-29 23:51+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "frontend/fr/>\n"
@@ -167,7 +167,6 @@ msgstr "Titre de l'album"
 #: src/app/routes.js:128 src/app/routes.js:135 src/component/navigation.vue:164
 #: src/component/navigation.vue:174 src/component/navigation.vue:4
 #: src/component/navigation.vue:737 src/share/albums.vue:4
-#, fuzzy
 msgid "Albums"
 msgstr "Albums"
 
