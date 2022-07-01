@@ -11,9 +11,9 @@ revision:
 
 paths:
   exclude:
-    - ./build
-    - ./assets
     - ./.github
+    - ./assets
+    - ./build
     - ./docker
     - ./frontend/tests
     - ./storage
