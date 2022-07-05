@@ -20,7 +20,7 @@ func TestConfig_DefaultTheme(t *testing.T) {
 	assert.Equal(t, "grayscale", c.DefaultTheme())
 	c.options.Sponsor = false
 	c.options.Test = true
-	assert.Equal(t, "grayscale", c.DefaultTheme())
+	assert.Equal(t, "default", c.DefaultTheme())
 	c.options.Sponsor = false
 	c.options.Test = false
 	assert.Equal(t, "default", c.DefaultTheme())
@@ -96,9 +96,15 @@ func TestConfig_WallpaperUri(t *testing.T) {
 	c.options.WallpaperUri = "https://cdn.photoprism.app/wallpaper/welcome.jpg"
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.Test = false
-	assert.Equal(t, "", c.WallpaperUri())
+	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.Test = true
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
+	c.options.Sponsor = false
+	assert.Equal(t, "", c.WallpaperUri())
+	c.options.Sponsor = true
+	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
+	c.options.WallpaperUri = "kashmir"
+	assert.Equal(t, "/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
 	c.options.WallpaperUri = ""
 	assert.Equal(t, "", c.WallpaperUri())
 }

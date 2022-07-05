@@ -45,7 +45,7 @@ var PkgNameRegexp = regexp.MustCompile("[^a-zA-Z\\-_]+")
 func NewTestOptions(pkg string) *Options {
 	assetsPath := fs.Abs("../../assets")
 	storagePath := fs.Abs("../../storage")
-	testDataPath := filepath.Join(storagePath, "testdata")
+	dataPath := filepath.Join(storagePath, "testdata")
 
 	pkg = PkgNameRegexp.ReplaceAllString(pkg, "")
 	driver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
@@ -79,7 +79,8 @@ func NewTestOptions(pkg string) *Options {
 		Version:         "0.0.0",
 		Copyright:       "(c) 2018-2022 PhotoPrism UG. All rights reserved.",
 		Public:          true,
-		Auth:            false,
+		Sponsor:         true,
+		AuthMode:        "",
 		Test:            true,
 		Debug:           true,
 		Trace:           false,
@@ -91,13 +92,13 @@ func NewTestOptions(pkg string) *Options {
 		AssetsPath:      assetsPath,
 		AutoIndex:       -1,
 		AutoImport:      7200,
-		StoragePath:     testDataPath,
-		CachePath:       testDataPath + "/cache",
-		OriginalsPath:   testDataPath + "/originals",
-		ImportPath:      testDataPath + "/import",
-		TempPath:        testDataPath + "/temp",
-		ConfigPath:      testDataPath + "/config",
-		SidecarPath:     testDataPath + "/sidecar",
+		StoragePath:     dataPath,
+		CachePath:       dataPath + "/cache",
+		OriginalsPath:   dataPath + "/originals",
+		ImportPath:      dataPath + "/import",
+		TempPath:        dataPath + "/temp",
+		ConfigPath:      dataPath + "/config",
+		SidecarPath:     dataPath + "/sidecar",
 		DatabaseDriver:  driver,
 		DatabaseDsn:     dsn,
 		AdminPassword:   "photoprism",
@@ -200,9 +201,10 @@ func CliTestContext() *cli.Context {
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.String("darktable-blacklist", config.DarktableBlacklist, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
-	globalSet.Bool("test", true, "doc")
-	globalSet.Bool("debug", false, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
+	globalSet.Bool("debug", false, "doc")
+	globalSet.Bool("sponsor", true, "doc")
+	globalSet.Bool("test", true, "doc")
 	globalSet.Int("auto-index", config.AutoIndex, "doc")
 	globalSet.Int("auto-import", config.AutoImport, "doc")
 
@@ -225,6 +227,8 @@ func CliTestContext() *cli.Context {
 	LogError(c.Set("darktable-blacklist", "raf,cr3"))
 	LogError(c.Set("wakeup-interval", "1h34m9s"))
 	LogError(c.Set("detect-nsfw", "true"))
+	LogError(c.Set("debug", "false"))
+	LogError(c.Set("sponsor", "true"))
 	LogError(c.Set("test", "true"))
 	LogError(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))
 	LogError(c.Set("auto-import", strconv.Itoa(config.AutoImport)))

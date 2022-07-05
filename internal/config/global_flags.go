@@ -19,19 +19,12 @@ var Flags = CliFlags{
 			Name:   "admin-password, pw",
 			Usage:  fmt.Sprintf("initial admin `PASSWORD`, must have at least %d characters", entity.PasswordLength),
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
-		},
-	},
-	CliFlag{
-		Flag: cli.BoolFlag{
-			Name:   "public, p",
-			Usage:  "disable password authentication, WebDAV, and the advanced settings page",
-			EnvVar: "PHOTOPRISM_PUBLIC",
 		}},
 	CliFlag{
 		Flag: cli.BoolFlag{
-			Name:   "auth, a",
-			Usage:  "always require password authentication, overrides the public flag if it is set",
-			EnvVar: "PHOTOPRISM_AUTH",
+			Name:   "public",
+			Usage:  "disable password authentication, incl WebDAV and Advanced Settings",
+			EnvVar: "PHOTOPRISM_PUBLIC",
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{
@@ -39,8 +32,7 @@ var Flags = CliFlags{
 			Usage:  "log message verbosity `LEVEL` (trace, debug, info, warning, error, fatal, panic)",
 			Value:  "info",
 			EnvVar: "PHOTOPRISM_LOG_LEVEL",
-		},
-	},
+		}},
 	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "debug",
@@ -416,7 +408,8 @@ var Flags = CliFlags{
 			Usage:  "site `CAPTION`",
 			Value:  "AI-Powered Photos App",
 			EnvVar: "PHOTOPRISM_SITE_CAPTION",
-		}},
+		},
+	},
 	CliFlag{
 		Flag: cli.StringFlag{
 			Name:   "site-description",

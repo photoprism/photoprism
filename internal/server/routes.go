@@ -5,8 +5,10 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 func registerRoutes(router *gin.Engine, conf *config.Config) {
@@ -189,6 +191,15 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		if conf.ImportPath() != "" {
 			WebDAV(conf.ImportPath(), router.Group(conf.BaseUri(WebDAVImport), BasicAuth()), conf)
 			log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVImport))
+		}
+	}
+
+	// Initialize package extensions.
+	for _, ext := range Extensions() {
+		if err := ext.init(router, conf); err != nil {
+			log.Warnf("server: failed to initialize extension %s (%s)", clean.Log(ext.name), err)
+		} else {
+			log.Debugf("server: extension %s initialized", clean.Log(ext.name))
 		}
 	}
 

@@ -14,6 +14,13 @@ func (c *Config) FFmpegEnabled() bool {
 
 // FFmpegEncoder returns the FFmpeg AVC encoder name.
 func (c *Config) FFmpegEncoder() ffmpeg.AvcEncoder {
+	if c.options.FFmpegEncoder == "" || c.options.FFmpegEncoder == ffmpeg.SoftwareEncoder.String() {
+		return ffmpeg.SoftwareEncoder
+	} else if c.NoSponsor() {
+		log.Infof("ffmpeg: hardware transcoding is available to sponsors only")
+		return ffmpeg.SoftwareEncoder
+	}
+
 	return ffmpeg.FindEncoder(c.options.FFmpegEncoder)
 }
 

@@ -82,7 +82,7 @@ func (s *security) process(w http.ResponseWriter, r *http.Request) error {
 
 		if !isGoodHost {
 			s.opt.BadHostHandler.ServeHTTP(w, r)
-			return fmt.Errorf("http: bad host %s", clean.Log(r.Host))
+			return fmt.Errorf("server: bad host %s", clean.Log(r.Host))
 		}
 	}
 
@@ -115,7 +115,7 @@ func (s *security) process(w http.ResponseWriter, r *http.Request) error {
 			}
 
 			http.Redirect(w, r, url.String(), status)
-			return fmt.Errorf("http: https redirect")
+			return fmt.Errorf("server: https redirect")
 		}
 	}
 

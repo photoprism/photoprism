@@ -12,42 +12,62 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
-      <p class="body-2 lh-17">
-          <translate>Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
-          <a href="https://link.photoprism.app/roadmap" target="_blank">
-            <translate>The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next.</translate>
+      <p class="body-2">
+        <translate>PhotoPrism® is an AI-Powered Photos App for the Decentralized Web.</translate>
+        <translate>It makes use of the latest technologies to tag and find pictures automatically without getting in your way.</translate>
+        <translate>You can run it at home, on a private server, or in the cloud.</translate>
+      </p>
+
+      <p class="body-1 pb-1">
+        <span v-if="sponsor">
+          <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
+        </span>
+        <span v-else>
+          <translate>Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org.</translate>
+        </span>
+        <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
+      </p>
+
+      <div v-if="!sponsor">
+        <p class="text-xs-center my-4">
+          <v-btn
+              href="https://photoprism.app/membership"
+              target="_blank"
+              color="primary-button"
+              class="white--text px-3 py-2 action-sponsor"
+              round depressed small
+          >
+            <translate>Become a sponsor</translate>
+            <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>star</v-icon>
+          </v-btn>
+        </p>
+
+        <p class="body-1 pt-2">
+          <a target="_blank" href="https://link.photoprism.app/github">
+            <translate>Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going.</translate>
           </a>
-      </p>
+        </p>
+      </div>
 
-      <p v-if="!sponsor" class="text-xs-center my-4">
-        <v-btn
-            href="https://photoprism.app/membership"
-            target="_blank"
-            color="primary-button"
-            class="white--text px-3 py-2 action-sponsor"
-            round depressed small
-        >
-          <translate>Become a sponsor</translate>
-          <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>star</v-icon>
-        </v-btn>
+      <h3 class="subheading py-2">User Guide</h3>
+      <p>
+        <translate>Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures.</translate>
+        <translate>Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings.</translate>
+        <translate>Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide.</translate>
       </p>
+      <p><a href="https://docs.photoprism.app/user-guide/" class="text-link" target="_blank">Read the docs ›</a></p>
 
-      <p class="body-1">
-        <translate>Your continued support helps us provide regular updates and services like world maps.</translate>
-        <translate>Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org.</translate>
-      </p>
-      <p v-if="!sponsor" class="body-1 pb-2">
-        <a target="_blank" href="https://link.photoprism.app/github">
-        <translate>Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going.</translate>
-        </a>
-      </p>
-      <h2 class="mt-4 mb-2 body-2 lh-17">
+      <h3 class="subheading py-2">Knowledge Base</h3>
+      <p>Browse the Knowledge Base for detailed information on specific product features, services, and related resources.</p>
+      <p><a href="https://photoprism.app/kb" class="text-link" target="_blank">Learn more ›</a></p>
+
+      <h3 class="subheading py-2">
         <translate>Getting Support</translate>
-      </h2>
+      </h3>
       <p class="body-1">
         <a target="_blank" href="https://docs.photoprism.app/getting-started/troubleshooting/">
-        <translate>Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem.</translate>
-        <translate>If this doesn't help, or you have other questions:</translate>
+          <translate>Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem.</translate>
+          <translate>If this doesn't help, or you have other questions:</translate>
         </a>
       </p>
       <ul class="body-1 mb-3">
@@ -55,12 +75,11 @@
         <li><a target="_blank" href="https://link.photoprism.app/discussions"><translate>post your question in GitHub Discussions</translate></a></li>
         <li><a target="_blank" href="https://link.photoprism.app/chat"><translate>or ask in our Community Chat</translate></a></li>
       </ul>
-      <p class="body-1">
+      <p class="body-1 pb-2">
         <a target="_blank" href="https://photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
-      </p>
-
-      <p v-if="!sponsor" class="body-1 pb-2">
-        <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
+        <span v-if="!sponsor">
+          <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
+        </span>
       </p>
 
       <p v-if="sponsor" class="text-xs-center">

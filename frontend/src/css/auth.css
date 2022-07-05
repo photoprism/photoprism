@@ -13,9 +13,13 @@
     width: 190px;
     height: 30vh;
     max-height: 190px;
-    margin: 32px auto 16px auto;
+    margin: 20px auto 40px auto;
     position: relative;
     left: unset;
+}
+
+#photoprism .auth-login .action-buttons {
+    margin: 30px auto 20px auto;
 }
 
 #photoprism main .auth-login .logo img {

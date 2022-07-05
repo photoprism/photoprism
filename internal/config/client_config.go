@@ -12,6 +12,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+type ClientType string
+
+const (
+	ClientPublic ClientType = "public"
+	ClientGuest  ClientType = "guest"
+	ClientUser   ClientType = "user"
+)
+
 // ClientConfig represents HTTP client / Web UI config options.
 type ClientConfig struct {
 	Mode            string              `json:"mode"`
@@ -69,6 +77,7 @@ type ClientConfig struct {
 	Categories      CategoryLabels      `json:"categories"`
 	Clip            int                 `json:"clip"`
 	Server          env.Resources       `json:"server"`
+	Ext             Values              `json:"ext"`
 }
 
 // Years represents a list of years.
@@ -249,6 +258,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Clip:            txt.ClipDefault,
 		PreviewToken:    "public",
 		DownloadToken:   "public",
+		Ext:             ClientExt(c, ClientPublic),
 	}
 
 	return result
@@ -325,6 +335,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		PreviewToken:    c.PreviewToken(),
 		ManifestUri:     c.ClientManifestUri(),
 		Clip:            txt.ClipDefault,
+		Ext:             ClientExt(c, ClientGuest),
 	}
 
 	return result
@@ -395,6 +406,7 @@ func (c *Config) UserConfig() ClientConfig {
 		ManifestUri:     c.ClientManifestUri(),
 		Clip:            txt.ClipDefault,
 		Server:          env.Info(),
+		Ext:             ClientExt(c, ClientUser),
 	}
 
 	c.Db().

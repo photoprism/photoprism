@@ -31,7 +31,7 @@ func Logger() gin.HandlerFunc {
 		}
 
 		// Use debug level to keep production logs clean.
-		log.Debugf("http: %s %s (%3d) [%v]",
+		log.Debugf("server: %s %s (%3d) [%v]",
 			method,
 			clean.Log(path),
 			statusCode,

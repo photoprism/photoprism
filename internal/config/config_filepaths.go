@@ -362,6 +362,15 @@ func (c *Config) AssetsPath() string {
 	return fs.Abs(c.options.AssetsPath)
 }
 
+// CustomAssetsPath returns the path to custom assets such as icons, models and translations.
+func (c *Config) CustomAssetsPath() string {
+	if c.options.CustomAssetsPath != "" {
+		return fs.Abs(c.options.CustomAssetsPath)
+	}
+
+	return ""
+}
+
 // LocalesPath returns the translation locales path.
 func (c *Config) LocalesPath() string {
 	return filepath.Join(c.AssetsPath(), "locales")

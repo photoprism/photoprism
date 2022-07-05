@@ -15,7 +15,7 @@ require (
 	github.com/dsoprea/go-utility v0.0.0-20200717064901-2fccff4aa15e // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/esimov/pigo v1.4.5
-	github.com/gin-contrib/gzip v0.0.5
+	github.com/gin-contrib/gzip v0.0.6
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/sirupsen/logrus v1.8.1
-	github.com/stretchr/testify v1.7.5
+	github.com/stretchr/testify v1.8.0
 	github.com/studio-b12/gowebdav v0.0.0-20211106090535-29e74efa701f
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.14.1
@@ -51,7 +51,7 @@ require (
 	github.com/urfave/cli v1.22.9
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
-	golang.org/x/net v0.0.0-20220624214902-1bab6f366d9e
+	golang.org/x/net v0.0.0-20220630215102-69896b714898
 	gonum.org/v1/gonum v0.11.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.4.0
@@ -70,7 +70,7 @@ require (
 require (
 	github.com/google/uuid v1.3.0
 	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
-	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
+	golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e // indirect
 )
 
 require (
@@ -82,7 +82,7 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
-	github.com/goccy/go-json v0.9.7 // indirect
+	github.com/goccy/go-json v0.9.8 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect

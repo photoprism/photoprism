@@ -167,5 +167,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"log-filename", c.LogFilename()},
 	}
 
+	if p := c.CustomAssetsPath(); p != "" {
+		rows = append(rows, []string{"custom-assets-path", p})
+	}
+
 	return rows, cols
 }

@@ -214,7 +214,7 @@ export const Languages = () => [
   },
 ];
 
-export const Themes = () => [
+let themes = [
   {
     text: $gettext("Default"),
     value: "default",
@@ -281,6 +281,12 @@ export const Themes = () => [
     disabled: false,
   },
 ];
+
+export const Themes = () => themes;
+export const SetThemes = (v) => {
+  themes = v;
+};
+
 export const MapsAnimate = () => [
   {
     text: $gettext("None"),

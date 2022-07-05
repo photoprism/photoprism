@@ -109,6 +109,15 @@ func NewConfig(ctx *cli.Context) *Config {
 		}
 	}
 
+	// Initialize package extensions.
+	for _, ext := range Extensions() {
+		if err := ext.init(c); err != nil {
+			log.Warnf("config: failed to initialize extension %s (%s)", clean.Log(ext.name), err)
+		} else {
+			log.Debugf("config: extension %s initialized", clean.Log(ext.name))
+		}
+	}
+
 	return c
 }
 
@@ -409,7 +418,7 @@ func (c *Config) SiteDescription() string {
 
 // SitePreview returns the site preview image URL for sharing.
 func (c *Config) SitePreview() string {
-	if c.options.SitePreview == "" {
+	if c.options.SitePreview == "" || c.NoSponsor() {
 		return c.SiteUrl() + "static/img/preview.jpg"
 	}
 
@@ -462,9 +471,9 @@ func (c *Config) Demo() bool {
 	return c.options.Demo
 }
 
-// Sponsor reports if your continuous support helps to pay for development and operating expenses.
+// Sponsor reports if you support our mission, see https://photoprism.app/membership.
 func (c *Config) Sponsor() bool {
-	return c.options.Sponsor || c.Test()
+	return Sponsor || c.options.Sponsor
 }
 
 // NoSponsor reports if the instance is not operated by a sponsor.
@@ -515,9 +524,14 @@ func (c *Config) AdminPassword() string {
 	return c.options.AdminPassword
 }
 
-// Auth checks if authentication is always required.
+// AuthMode returns the authentication mode.
+func (c *Config) AuthMode() string {
+	return strings.ToLower(strings.TrimSpace(c.options.AuthMode))
+}
+
+// Auth checks if authentication is required.
 func (c *Config) Auth() bool {
-	return c.options.Auth
+	return c.AuthMode() != ""
 }
 
 // LogLevel returns the Logrus log level.
@@ -673,6 +687,10 @@ func (c *Config) OriginalsLimitBytes() int64 {
 
 // ResolutionLimit returns the maximum resolution of originals in megapixels (width x height).
 func (c *Config) ResolutionLimit() int {
+	if c.NoSponsor() {
+		return 100
+	}
+
 	result := c.options.ResolutionLimit
 
 	if result <= 0 {

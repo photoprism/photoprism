@@ -1,10 +1,7 @@
 <template>
   <div class="p-page p-page-support">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-      <v-toolbar-title v-if="sent">
-        <translate>Your message has been sent</translate>
-      </v-toolbar-title>
-      <v-toolbar-title v-else>
+      <v-toolbar-title>
         <translate>Contact Us</translate>
       </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -13,7 +10,16 @@
       </v-btn>
     </v-toolbar>
     <v-container v-if="sent" fluid class="pa-4">
-      <p class="body-1">We'll get back to you as soon as possible!</p>
+      <h3 class="title font-weight-bold pt-4 pb-2 text-xs-center">
+        <translate>We appreciate your feedback!</translate>
+      </h3>
+      <p class="body-2 py-4 text-xs-center">
+        <translate>Due to the high volume of emails we receive, our team may be unable to get back to you immediately.</translate>
+        <translate>We do our best to respond within five business days or less.</translate>
+      </p>
+      <p class="mt-4 text-xs-center">
+        <img src="https://cdn.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU">
+      </p>
     </v-container>
     <v-form v-else ref="form" v-model="valid"
             autocomplete="off"

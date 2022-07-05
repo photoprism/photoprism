@@ -29,6 +29,7 @@ import themes from "options/themes.json";
 import translations from "locales/translations.json";
 import { Languages } from "options/options";
 import { Photo } from "model/photo";
+import { onSetTheme } from "common/hooks";
 
 export default class Config {
   /**
@@ -340,13 +341,22 @@ export default class Config {
   }
 
   setTheme(name) {
-    this.themeName = name;
+    let theme = onSetTheme(name, this);
+
+    if (!theme) {
+      this.themeName = name;
+      theme = themes[name] ? themes[name] : themes["default"];
+    }
+
+    if (this.values.settings && this.values.settings.ui) {
+      this.values.settings.ui.theme = this.themeName;
+    }
 
     Event.publish("view.refresh", this);
 
-    this.theme = themes[name] ? themes[name] : themes["default"];
+    this.theme = theme;
 
-    this.setBodyTheme(name);
+    this.setBodyTheme(this.themeName);
 
     if (this.theme.dark) {
       this.setColorMode("dark");

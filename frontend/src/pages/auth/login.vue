@@ -4,7 +4,7 @@
       <v-flex xs12 sm8 md4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
           <v-card class="elevation-12 auth-login-box blur-7">
-            <v-card-text class="pa-3">
+            <v-card-text class="pa-4">
               <div class="logo text-xs-center">
                 <img :src="$config.getIcon()" :alt="config.name">
               </div>
@@ -43,10 +43,10 @@
                   @keyup.enter.native="login"
               ></v-text-field>
               <v-spacer></v-spacer>
-              <div class="pa-3 text-xs-center">
+              <div class="action-buttons text-xs-center">
                 <!-- a href="#" target="_blank" class="text-link px-2" :style="`color: ${colors.link}!important`"><translate>Forgot password?</translate></a -->
-                <v-btn :color="colors.primary" round :disabled="loginDisabled"
-                       class="white--text action-confirm px-3" @click.stop="login">
+                <v-btn :color="colors.primary" depressed :disabled="loginDisabled"
+                       class="white--text action-confirm px-4" @click.stop="login">
                   <translate>Sign in</translate>
                   <v-icon :right="!rtl" :left="rtl" dark>arrow_forward</v-icon>
                 </v-btn>
@@ -58,14 +58,17 @@
     </v-layout>
     <footer v-if="sponsor">
       <v-layout wrap align-top pa-0 ma-0>
-        <v-flex xs12 class="pa-0 body-2 text-selectable text-xs-center white--text"
-                :class="[config.imprint ? 'text-sm-left sm6' : '']">
-          <strong>{{ config.siteCaption ? config.siteCaption : config.siteTitle }}</strong>
+        <v-flex xs12 class="pa-0 body-2 text-selectable text-xs-center white--tex text-sm-left sm6">
+          {{ $config.getEdition() }}
         </v-flex>
+
         <v-flex v-if="config.imprint" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
           <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank" class="text-link"
              :style="`color: ${colors.link}!important`">{{ config.imprint }}</a>
           <span v-else>{{ config.imprint }}</span>
+        </v-flex>
+        <v-flex v-else xs12 class="pa-0 body-2 text-selectable text-xs-center white--text text-sm-right sm6">
+          <strong>{{ config.siteCaption ? config.siteCaption : config.siteTitle }}</strong>
         </v-flex>
       </v-layout>
     </footer>

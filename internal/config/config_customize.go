@@ -62,16 +62,14 @@ func (c *Config) AppName() string {
 		name = c.SiteTitle()
 	}
 
-	clean := func(r rune) rune {
+	name = strings.Map(func(r rune) rune {
 		switch r {
 		case '\'', '"':
 			return -1
 		}
 
 		return r
-	}
-
-	name = strings.Map(clean, name)
+	}, name)
 
 	return txt.Clip(name, 32)
 }
@@ -109,7 +107,7 @@ func (c *Config) WallpaperUri() string {
 
 	// Valid URI? Local file?
 	if p := clean.Path(c.options.WallpaperUri); p == "" {
-		return ""
+		c.options.WallpaperUri = ""
 	} else if fs.FileExists(filepath.Join(c.StaticPath(), assetPath, p)) {
 		c.options.WallpaperUri = path.Join(c.StaticUri(), assetPath, p)
 	} else {

@@ -28,7 +28,7 @@ type Options struct {
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Debug                 bool          `yaml:"Debug" json:"Debug" flag:"debug"`
 	Trace                 bool          `yaml:"Trace" json:"Trace" flag:"Trace"`
-	Auth                  bool          `yaml:"Auth" json:"-" flag:"auth"`
+	AuthMode              string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
 	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	Test                  bool          `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool          `yaml:"-" json:"-" flag:"unsafe"`
@@ -47,6 +47,7 @@ type Options struct {
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
 	AssetsPath            string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
+	CustomAssetsPath      string        `yaml:"-" json:"-" flag:"custom-assets-path"`
 	TempPath              string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	Workers               int           `yaml:"Workers" json:"Workers" flag:"workers"`
 	WakeupInterval        time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
