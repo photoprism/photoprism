@@ -5,6 +5,7 @@ import (
 	"image"
 
 	"github.com/disintegration/imaging"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -13,8 +14,14 @@ var StandardRGB = true
 
 // Open loads an image from disk, rotates it, and converts the color profile if necessary.
 func Open(fileName string, orientation int) (result image.Image, err error) {
+	// Filename missing?
 	if fileName == "" {
 		return result, fmt.Errorf("filename missing")
+	}
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return result, err
 	}
 
 	// Open JPEG?
@@ -29,7 +36,7 @@ func Open(fileName string, orientation int) (result image.Image, err error) {
 		return result, err
 	}
 
-	// Rotate?
+	// Adjust orientation.
 	if orientation > 1 {
 		img = Rotate(img, orientation)
 	}

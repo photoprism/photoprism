@@ -141,6 +141,13 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 				return filepath.SkipDir
 			}
 
+			// Skip if symlink does not point to existing directory.
+			if typ == os.ModeSymlink {
+				if info, err := os.Stat(fileName); err != nil || !info.IsDir() {
+					return filepath.SkipDir
+				}
+			}
+
 			if fileName != root {
 				if !recursive {
 					appendResult(fileName)
@@ -150,7 +157,7 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 					appendResult(fileName)
 
 					return nil
-				} else if resolved, err := filepath.EvalSymlinks(fileName); err == nil {
+				} else if resolved, err := Resolve(fileName); err == nil {
 					symlinksMutex.Lock()
 					defer symlinksMutex.Unlock()
 

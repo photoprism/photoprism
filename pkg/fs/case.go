@@ -8,15 +8,15 @@ import (
 
 // CaseInsensitive tests if a storage path is case-insensitive.
 func CaseInsensitive(storagePath string) (result bool, err error) {
-	tmpName := filepath.Join(storagePath, "caseTest.tmp")
+	tmpName := filepath.Join(storagePath, ".caseTest.tmp")
 
-	if err := os.WriteFile(tmpName, []byte("{}"), 0666); err != nil {
+	if err = os.WriteFile(tmpName, []byte("{}"), os.ModePerm); err != nil {
 		return false, fmt.Errorf("%s not writable", filepath.Base(storagePath))
 	}
 
 	defer os.Remove(tmpName)
 
-	result = FileExists(filepath.Join(storagePath, "CASETEST.TMP"))
+	result = FileExists(filepath.Join(storagePath, ".CASETEST.TMP"))
 
 	return result, err
 }

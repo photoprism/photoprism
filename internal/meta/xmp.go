@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"runtime/debug"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -23,9 +25,14 @@ func (data *Data) XMP(fileName string) (err error) {
 		}
 	}()
 
+	// Resolve file name e.g. in case it's a symlink.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return fmt.Errorf("metadata: %s %s (xmp)", err, clean.Log(filepath.Base(fileName)))
+	}
+
 	doc := XmpDocument{}
 
-	if err := doc.Load(fileName); err != nil {
+	if err = doc.Load(fileName); err != nil {
 		return fmt.Errorf("metadata: cannot read %s (xmp)", clean.Log(filepath.Base(fileName)))
 	}
 

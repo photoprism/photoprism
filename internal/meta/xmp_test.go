@@ -29,7 +29,6 @@ func TestXMP(t *testing.T) {
 		}
 
 		assert.Equal(t, "Night Shift / Berlin / 2020", data.Title)
-		t.Log(data.TakenAt)
 		assert.Equal(t, time.Date(2020, 1, 1, 17, 28, 25, 729626112, time.UTC), data.TakenAt)
 		assert.Equal(t, "Michael Mayer", data.Artist)
 		assert.Equal(t, "Example file for development", data.Description)

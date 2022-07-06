@@ -73,20 +73,20 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		thumbName := thumb.Name(clean.Token(c.Param("size")))
+		sizeName := thumb.Name(clean.Token(c.Param("size")))
 
-		size, ok := thumb.Sizes[thumbName]
+		size, ok := thumb.Sizes[sizeName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", logPrefix, clean.Log(thumbName.String()))
+			log.Errorf("%s: invalid size %s", logPrefix, clean.Log(sizeName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}
 
 		if size.Uncached() && !conf.ThumbUncached() {
-			thumbName, size = thumb.Find(conf.ThumbSizePrecached())
+			sizeName, size = thumb.Find(conf.ThumbSizePrecached())
 
-			if thumbName == "" {
+			if sizeName == "" {
 				log.Errorf("%s: invalid size %d", logPrefix, conf.ThumbSizePrecached())
 				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 				return
@@ -94,7 +94,7 @@ func GetThumb(router *gin.RouterGroup) {
 		}
 
 		cache := service.ThumbCache()
-		cacheKey := CacheKey("thumbs", fileHash, string(thumbName))
+		cacheKey := CacheKey("thumbs", fileHash, string(sizeName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
@@ -119,7 +119,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Return existing thumbs straight away.
 		if !download {
-			if fileName, err := thumb.FileName(fileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...); err == nil && fs.FileExists(fileName) {
+			if fileName, err := size.ResolvedName(fileHash, conf.ThumbCachePath()); err == nil {
 				AddThumbCacheHeader(c)
 				c.File(fileName)
 				return
@@ -152,7 +152,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
-		if !fs.FileExists(fileName) {
+		if fileName, err = fs.Resolve(fileName); err != nil {
 			log.Errorf("%s: file %s is missing", logPrefix, clean.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 
@@ -170,6 +170,12 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
+		// Choose the smallest fitting size if the original image is smaller.
+		if size.Fit && f.Bounds().In(size.Bounds()) {
+			size = thumb.FitBounds(f.Bounds())
+			log.Tracef("%s: smallest fitting size for %s is %s (width %d, height %d)", logPrefix, clean.Log(f.FileName), size.Name, size.Width, size.Height)
+		}
+
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
 		if size.ExceedsLimit() && c.Query("download") == "" {
 			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", logPrefix, size.Width, size.Height)
@@ -180,32 +186,37 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		var thumbnail string
+		// thumbName is the thumbnail filename.
+		var thumbName string
 
+		// Try to find or create thumbnail image.
 		if conf.ThumbUncached() || size.Uncached() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
+			thumbName, err = size.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), f.FileOrientation)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...)
+			thumbName, err = size.FromCache(fileName, f.FileHash, conf.ThumbCachePath())
 		}
 
+		// Failed?
 		if err != nil {
 			log.Errorf("%s: %s", logPrefix, err)
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
-		} else if thumbnail == "" {
+		} else if thumbName == "" {
 			log.Errorf("%s: %s has empty thumb name - possible bug", logPrefix, filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
-		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase(0)})
+		// Cache thumbnail filename to reduce the number of index queries.
+		cache.SetDefault(cacheKey, ThumbCache{thumbName, f.ShareBase(0)})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
+		// Set the download or cache header and return the thumbnail.
 		if download {
-			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
+			c.FileAttachment(thumbName, f.DownloadName(DownloadName(c), 0))
 		} else {
 			AddThumbCacheHeader(c)
-			c.File(thumbnail)
+			c.File(thumbName)
 		}
 	})
 }

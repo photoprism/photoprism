@@ -5,16 +5,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/face"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/disintegration/imaging"
+
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/thumb"
-
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestResample_Start(t *testing.T) {
@@ -78,21 +78,21 @@ func TestThumb_Filename(t *testing.T) {
 			t.FailNow()
 		}
 
-		assert.Equal(t, "resample: file hash is empty or too short (999)", err.Error())
+		assert.Equal(t, "thumb: file hash is empty or too short (999)", err.Error())
 	})
 	t.Run("invalid width", func(t *testing.T) {
 		_, err := thumb.FileName("99988", thumbsPath, -4, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		if err == nil {
 			t.FailNow()
 		}
-		assert.Equal(t, "resample: width exceeds limit (-4)", err.Error())
+		assert.Equal(t, "thumb: width exceeds limit (-4)", err.Error())
 	})
 	t.Run("invalid height", func(t *testing.T) {
 		_, err := thumb.FileName("99988", thumbsPath, 200, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		if err == nil {
 			t.FailNow()
 		}
-		assert.Equal(t, "resample: height exceeds limit (-1)", err.Error())
+		assert.Equal(t, "thumb: height exceeds limit (-1)", err.Error())
 	})
 	t.Run("empty thumbpath", func(t *testing.T) {
 		path := ""
@@ -100,7 +100,7 @@ func TestThumb_Filename(t *testing.T) {
 		if err == nil {
 			t.FailNow()
 		}
-		assert.Equal(t, "resample: folder is empty", err.Error())
+		assert.Equal(t, "thumb: folder is empty", err.Error())
 	})
 }
 
@@ -138,7 +138,7 @@ func TestThumb_FromFile(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "resample: invalid file hash 123", err.Error())
+		assert.Equal(t, "thumb: invalid file hash 123", err.Error())
 	})
 	t.Run("filename too short", func(t *testing.T) {
 		file := &entity.File{
@@ -147,7 +147,7 @@ func TestThumb_FromFile(t *testing.T) {
 		}
 
 		if _, err := thumb.FromFile(file.FileName, file.FileHash, thumbsPath, 224, 224, file.FileOrientation); err != nil {
-			assert.Equal(t, "resample: invalid file name xxx", err.Error())
+			assert.Equal(t, "thumb: invalid file name xxx", err.Error())
 		} else {
 			t.Error("error is nil")
 		}
@@ -241,7 +241,7 @@ func TestThumb_Create(t *testing.T) {
 
 		thumbnail := res
 
-		assert.Equal(t, "resample: width has an invalid value (-1)", err.Error())
+		assert.Equal(t, "thumb: width has an invalid value (-1)", err.Error())
 		bounds := thumbnail.Bounds()
 		assert.NotEqual(t, 150, bounds.Dx())
 	})
@@ -267,7 +267,7 @@ func TestThumb_Create(t *testing.T) {
 
 		thumbnail := res
 
-		assert.Equal(t, "resample: height has an invalid value (-1)", err.Error())
+		assert.Equal(t, "thumb: height has an invalid value (-1)", err.Error())
 		bounds := thumbnail.Bounds()
 		assert.NotEqual(t, 150, bounds.Dx())
 	})

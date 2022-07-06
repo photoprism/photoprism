@@ -45,7 +45,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 	var img image.Image
 
 	if err != nil {
-		log.Warnf("resample: %s in %s (read color metadata)", err, logName)
+		log.Warnf("thumb: %s in %s (read color metadata)", err, logName)
 		img, err = imaging.Decode(fileReader)
 	} else {
 		img, err = imaging.Decode(imgStream)
@@ -59,9 +59,9 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 	if md != nil {
 		if iccProfile, err := md.ICCProfile(); err != nil || iccProfile == nil {
 			// Do nothing.
-			log.Tracef("resample: %s has no color profile", logName)
+			log.Tracef("thumb: %s has no color profile", logName)
 		} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
-			log.Tracef("resample: %s has color profile %s", logName, clean.Log(profile))
+			log.Tracef("thumb: %s has color profile %s", logName, clean.Log(profile))
 			switch {
 			case colors.ProfileDisplayP3.Equal(profile):
 				img = colors.ToSRGB(img, colors.ProfileDisplayP3)
@@ -69,7 +69,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 		}
 	}
 
-	// Rotate?
+	// Adjust orientation.
 	if orientation > 1 {
 		img = Rotate(img, orientation)
 	}

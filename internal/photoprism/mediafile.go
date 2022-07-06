@@ -24,16 +24,11 @@ import (
 	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"
 
-	"github.com/disintegration/imaging"
 	"github.com/djherbis/times"
-	"github.com/dustin/go-humanize/english"
 	"github.com/mandykoh/prism/meta/autometa"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/meta"
-	"github.com/photoprism/photoprism/internal/thumb"
-
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -65,12 +60,13 @@ type MediaFile struct {
 }
 
 // NewMediaFile returns a new media file.
-func NewMediaFile(fileName string) (*MediaFile, error) {
-	m := &MediaFile{
+func NewMediaFile(fileName string) (m *MediaFile, err error) {
+	// Create struct.
+	m = &MediaFile{
 		fileName: fileName,
 		fileRoot: entity.RootUnknown,
 		fileType: fs.UnknownType,
-		metaData: meta.NewData(),
+		metaData: meta.New(),
 		width:    -1,
 		height:   -1,
 	}
@@ -91,7 +87,14 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 		return m.fileSize, m.modTime, m.statErr
 	}
 
-	if s, err := os.Stat(m.FileName()); err != nil {
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		m.statErr = err
+		m.modTime = time.Time{}
+		m.fileSize = -1
+	} else if s, err := os.Stat(fileName); err != nil {
 		m.statErr = err
 		m.modTime = time.Time{}
 		m.fileSize = -1
@@ -561,14 +564,29 @@ func (m *MediaFile) MimeType() string {
 		return m.mimeType
 	}
 
-	m.mimeType = fs.MimeType(m.FileName())
+	var err error
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return m.mimeType
+	}
+
+	m.mimeType = fs.MimeType(fileName)
 
 	return m.mimeType
 }
 
 // openFile opens the file and returns the descriptor.
-func (m *MediaFile) openFile() (*os.File, error) {
-	handle, err := os.Open(m.fileName)
+func (m *MediaFile) openFile() (handle *os.File, err error) {
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return nil, fmt.Errorf("%s %s", err, clean.Log(m.RootRelName()))
+	}
+
+	handle, err = os.Open(fileName)
 
 	if err != nil {
 		log.Error(err.Error())
@@ -934,7 +952,14 @@ func (m *MediaFile) DecodeConfig() (_ *image.Config, err error) {
 	m.fileMutex.Lock()
 	defer m.fileMutex.Unlock()
 
-	file, err := os.Open(m.FileName())
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return nil, fmt.Errorf("%s %s", err, clean.Log(m.RootRelName()))
+	}
+
+	file, err := os.Open(fileName)
 
 	if err != nil || file == nil {
 		return nil, err
@@ -1064,114 +1089,6 @@ func (m *MediaFile) Orientation() int {
 	return 1
 }
 
-// Thumbnail returns a thumbnail filename.
-func (m *MediaFile) Thumbnail(path string, sizeName thumb.Name) (filename string, err error) {
-	size, ok := thumb.Sizes[sizeName]
-
-	if !ok {
-		log.Errorf("media: invalid type %s", sizeName)
-		return "", fmt.Errorf("media: invalid type %s", sizeName)
-	}
-
-	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, size.Width, size.Height, m.Orientation(), size.Options...)
-
-	if err != nil {
-		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", clean.Log(m.BaseName()), err)
-		log.Debug(err)
-		return "", err
-	}
-
-	return thumbnail, nil
-}
-
-// Resample returns a resampled image of the file.
-func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image, err error) {
-	filename, err := m.Thumbnail(path, sizeName)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return imaging.Open(filename)
-}
-
-// CreateThumbnails creates the default thumbnail sizes if the media file
-// is a JPEG and they don't exist yet (except force is true).
-func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
-	if !m.IsJpeg() {
-		// Skip.
-		return
-	}
-
-	count := 0
-	start := time.Now()
-
-	defer func() {
-		switch count {
-		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("media: created no new thumbnails for %s", m.BasePrefix(false))))
-		default:
-			log.Info(capture.Time(start, fmt.Sprintf("media: created %s for %s", english.Plural(count, "thumbnail", "thumbnails"), m.BasePrefix(false))))
-		}
-	}()
-
-	hash := m.Hash()
-
-	var originalImg image.Image
-	var sourceImg image.Image
-	var sourceName thumb.Name
-
-	for _, name := range thumb.DefaultSizes {
-		size := thumb.Sizes[name]
-
-		if size.Uncached() {
-			// Skip, exceeds pre-cached size limit.
-			continue
-		}
-
-		if fileName, err := thumb.FileName(hash, thumbPath, size.Width, size.Height, size.Options...); err != nil {
-			log.Errorf("media: failed creating %s (%s)", clean.Log(string(name)), err)
-
-			return err
-		} else {
-			if !force && fs.FileExists(fileName) {
-				continue
-			}
-
-			if originalImg == nil {
-				img, err := thumb.Open(m.FileName(), m.Orientation())
-
-				if err != nil {
-					log.Debugf("media: %s in %s", err.Error(), clean.Log(m.BaseName()))
-					return err
-				}
-
-				originalImg = img
-			}
-
-			if size.Source != "" {
-				if size.Source == sourceName && sourceImg != nil {
-					_, err = thumb.Create(sourceImg, fileName, size.Width, size.Height, size.Options...)
-				} else {
-					_, err = thumb.Create(originalImg, fileName, size.Width, size.Height, size.Options...)
-				}
-			} else {
-				sourceImg, err = thumb.Create(originalImg, fileName, size.Width, size.Height, size.Options...)
-				sourceName = name
-			}
-
-			if err != nil {
-				log.Errorf("media: failed creating %s (%s)", clean.Log(string(name)), err)
-				return err
-			}
-
-			count++
-		}
-	}
-
-	return nil
-}
-
 // RenameSidecars moves related sidecar files.
 func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]string, err error) {
 	renamed = make(map[string]string)
@@ -1253,8 +1170,16 @@ func (m *MediaFile) ColorProfile() string {
 	m.fileMutex.Lock()
 	defer m.fileMutex.Unlock()
 
+	var err error
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return m.colorProfile
+	}
+
 	// Open file.
-	fileReader, err := os.Open(m.FileName())
+	fileReader, err := os.Open(fileName)
 
 	if err != nil {
 		m.noColorProfile = true

@@ -47,7 +47,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 	file, primaryFile := entity.File{}, entity.File{}
 
 	photo := entity.NewPhoto(o.Stack)
-	metaData := meta.NewData()
+	metaData := meta.New()
 	labels := classify.Labels{}
 	stripSequence := Config().Settings().StackSequences() && o.Stack
 

@@ -54,6 +54,11 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 		}
 	}()
 
+	// Resolve file name e.g. in case it's a symlink.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return err
+	}
+
 	// Extract raw Exif block.
 	rawExif, err := RawExif(fileName, fileFormat, bruteForce)
 

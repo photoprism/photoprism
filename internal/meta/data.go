@@ -66,8 +66,8 @@ type Data struct {
 	exif         map[string]string
 }
 
-// NewData creates a new metadata struct.
-func NewData() Data {
+// New returns a new metadata struct.
+func New() Data {
 	return Data{}
 }
 

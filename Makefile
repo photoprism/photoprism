@@ -236,35 +236,35 @@ reset-sqlite:
 	$(info Removing test database files...)
 	find ./internal -type f -name ".test.*" -delete
 run-test-short:
-	$(info Running short Go unit tests in parallel mode...)
+	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...
 run-test-go:
-	$(info Running all Go unit tests...)
+	$(info Running all Go tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
-	$(info Running all Go unit tests on MariaDB...)
+	$(info Running all Go tests on MariaDB...)
 	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
-	$(info Running all Go unit tests in "/pkg"...)
+	$(info Running all Go tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/...
 run-test-api:
-	$(info Running all API unit tests...)
+	$(info Running all API tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/api/...
 test-parallel:
-	$(info Running all Go unit tests in parallel mode...)
+	$(info Running all Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/... ./internal/...
 test-verbose:
-	$(info Running all Go unit tests in verbose mode...)
+	$(info Running all Go tests in verbose mode...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m -v ./pkg/... ./internal/...
 test-race:
-	$(info Running all Go unit tests with race detection in verbose mode...)
+	$(info Running all Go tests with race detection in verbose mode...)
 	$(GOTEST) -tags slow -race -timeout 60m -v ./pkg/... ./internal/...
 test-codecov:
-	$(info Running all Go unit tests with code coverage report for codecov...)
+	$(info Running all Go tests with code coverage report for codecov...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	scripts/codecov.sh -t $(CODECOV_TOKEN)
 test-coverage:
-	$(info Running all Go unit tests with code coverage report...)
+	$(info Running all Go tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 docker-develop: docker-develop-latest

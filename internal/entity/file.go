@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"image"
 	"math"
 	"path/filepath"
 	"sort"
@@ -570,6 +571,11 @@ func (m *File) Panorama() bool {
 
 	// Decide based on aspect ratio.
 	return float64(m.FileWidth)/float64(m.FileHeight) > 1.9
+}
+
+// Bounds returns the file dimensions as image.Rectangle.
+func (m *File) Bounds() image.Rectangle {
+	return image.Rectangle{Min: image.Point{}, Max: image.Point{X: m.FileWidth, Y: m.FileHeight}}
 }
 
 // Projection returns the panorama projection name if any.

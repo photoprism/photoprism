@@ -61,8 +61,8 @@ func init() {
 	}
 
 	// Init public thumb sizes for use in client apps.
-	for i := len(thumb.DefaultSizes) - 1; i >= 0; i-- {
-		name := thumb.DefaultSizes[i]
+	for i := len(thumb.Names) - 1; i >= 0; i-- {
+		name := thumb.Names[i]
 		t := thumb.Sizes[name]
 
 		if t.Public {
@@ -458,7 +458,7 @@ func (c *Config) Debug() bool {
 
 // Trace checks if trace mode is enabled, shows all log messages.
 func (c *Config) Trace() bool {
-	return c.options.Trace
+	return c.options.Trace || c.options.LogLevel == logrus.TraceLevel.String()
 }
 
 // Test checks if test mode is enabled.

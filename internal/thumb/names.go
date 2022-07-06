@@ -33,3 +33,35 @@ const (
 	Fit4096  Name = "fit_4096"
 	Fit7680  Name = "fit_7680"
 )
+
+// Names contains all default size names.
+var Names = []Name{
+	Fit7680,
+	Fit4096,
+	Fit3840,
+	Fit2560,
+	Fit2048,
+	Fit1920,
+	Fit1280,
+	Fit720,
+	Right224,
+	Left224,
+	Colors,
+	Tile500,
+	Tile224,
+	Tile100,
+	Tile50,
+}
+
+// Find returns the largest default thumbnail type for the given size limit.
+func Find(limit int) (name Name, size Size) {
+	for _, name = range Names {
+		t := Sizes[name]
+
+		if t.Width <= limit && t.Height <= limit {
+			return name, t
+		}
+	}
+
+	return "", Size{}
+}
