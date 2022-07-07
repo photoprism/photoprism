@@ -130,13 +130,13 @@ services:
       ## !! CHANGE site url if your server has a public domain name e.g. "https://photos.yourdomain.com/" !!
       PHOTOPRISM_SITE_URL: "https://_public_ip_/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
-      PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
+      PHOTOPRISM_SITE_DESCRIPTION: ""                  # meta site description
+      PHOTOPRISM_SITE_AUTHOR: ""                       # meta site author
+      PHOTOPRISM_AUTH_MODE: "password"                 # authentication mode (public, password)
       PHOTOPRISM_ADMIN_PASSWORD: "_admin_password_"    # YOUR INITIAL "admin" PASSWORD
       PHOTOPRISM_ORIGINALS_LIMIT: 5000                 # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_LOG_LEVEL: "info"                     # log level: trace, debug, info, warning, error, fatal, or panic
-      PHOTOPRISM_PUBLIC: "false"                       # no authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                     # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"                 # enables experimental features
       PHOTOPRISM_DISABLE_CHOWN: "false"                # disables storage permission updates on startup

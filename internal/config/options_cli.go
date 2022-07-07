@@ -12,8 +12,15 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
-// Flags lists all global command-line parameters.
+// Flags configures the global command-line interface (CLI) parameters.
 var Flags = CliFlags{
+	CliFlag{
+		Flag: cli.StringFlag{
+			Name:   "auth-mode, a",
+			Usage:  "authentication `MODE` (public, password)",
+			Value:  "password",
+			EnvVar: "PHOTOPRISM_AUTH_MODE",
+		}},
 	CliFlag{
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
@@ -22,8 +29,9 @@ var Flags = CliFlags{
 		}},
 	CliFlag{
 		Flag: cli.BoolFlag{
-			Name:   "public",
-			Usage:  "disable password authentication, incl WebDAV and Advanced Settings",
+			Name:   "public, p",
+			Hidden: true,
+			Usage:  "disable authentication, advanced settings, and WebDAV remote access",
 			EnvVar: "PHOTOPRISM_PUBLIC",
 		}},
 	CliFlag{

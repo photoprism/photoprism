@@ -481,24 +481,6 @@ func (c *Config) NoSponsor() bool {
 	return !c.Sponsor() && !c.Demo()
 }
 
-// Public checks if app runs in public mode and requires no authentication.
-func (c *Config) Public() bool {
-	if c.Auth() {
-		return false
-	} else if c.Demo() {
-		return true
-	}
-
-	return c.options.Public
-}
-
-// SetPublic changes authentication while instance is running, for testing purposes only.
-func (c *Config) SetPublic(p bool) {
-	if c.Debug() {
-		c.options.Public = p
-	}
-}
-
 // Experimental checks if experimental features should be enabled.
 func (c *Config) Experimental() bool {
 	return c.options.Experimental
@@ -517,21 +499,6 @@ func (c *Config) DetectNSFW() bool {
 // UploadNSFW checks if NSFW photos can be uploaded.
 func (c *Config) UploadNSFW() bool {
 	return c.options.UploadNSFW
-}
-
-// AdminPassword returns the initial admin password.
-func (c *Config) AdminPassword() string {
-	return c.options.AdminPassword
-}
-
-// AuthMode returns the authentication mode.
-func (c *Config) AuthMode() string {
-	return strings.ToLower(strings.TrimSpace(c.options.AuthMode))
-}
-
-// Auth checks if authentication is required.
-func (c *Config) Auth() bool {
-	return c.AuthMode() != ""
 }
 
 // LogLevel returns the Logrus log level.

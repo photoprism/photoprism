@@ -12,13 +12,13 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
-      <p class="body-2">
+      <p class="body-2 text-selectable">
         <translate>PhotoPrism® is an AI-Powered Photos App for the Decentralized Web.</translate>
         <translate>It makes use of the latest technologies to tag and find pictures automatically without getting in your way.</translate>
         <translate>You can run it at home, on a private server, or in the cloud.</translate>
       </p>
 
-      <p class="body-1 pb-1">
+      <p class="body-1 text-selectable pb-1">
         <span v-if="sponsor">
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
         </span>
@@ -50,7 +50,7 @@
       </div>
 
       <h3 class="subheading py-2">User Guide</h3>
-      <p>
+      <p class="text-selectable">
         <translate>Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures.</translate>
         <translate>Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings.</translate>
         <translate>Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide.</translate>
@@ -58,13 +58,13 @@
       <p><a href="https://docs.photoprism.app/user-guide/" class="text-link" target="_blank">Read the docs ›</a></p>
 
       <h3 class="subheading py-2">Knowledge Base</h3>
-      <p>Browse the Knowledge Base for detailed information on specific product features, services, and related resources.</p>
+      <p class="text-selectable"><translate>Browse the Knowledge Base for detailed information on specific product features, services, and related resources.</translate></p>
       <p><a href="https://photoprism.app/kb" class="text-link" target="_blank">Learn more ›</a></p>
 
       <h3 class="subheading py-2">
         <translate>Getting Support</translate>
       </h3>
-      <p class="body-1">
+      <p class="body-1 text-selectable">
         <a target="_blank" href="https://docs.photoprism.app/getting-started/troubleshooting/">
           <translate>Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem.</translate>
           <translate>If this doesn't help, or you have other questions:</translate>
@@ -75,7 +75,7 @@
         <li><a target="_blank" href="https://link.photoprism.app/discussions"><translate>post your question in GitHub Discussions</translate></a></li>
         <li><a target="_blank" href="https://link.photoprism.app/chat"><translate>or ask in our Community Chat</translate></a></li>
       </ul>
-      <p class="body-1 pb-2">
+      <p class="body-1 text-selectable pb-2">
         <a target="_blank" href="https://photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
         <span v-if="!sponsor">
           <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>

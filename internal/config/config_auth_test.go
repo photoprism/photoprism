@@ -6,6 +6,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAuthMode(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.Public = true
+	c.options.Demo = false
+	assert.Equal(t, AuthModePublic, c.AuthMode())
+	c.options.Public = false
+	c.options.Demo = false
+	assert.Equal(t, AuthModePassword, c.AuthMode())
+	c.options.Demo = true
+	assert.Equal(t, AuthModePublic, c.AuthMode())
+}
+
+func TestAuth(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.Public = true
+	c.options.Demo = false
+	assert.False(t, c.Auth())
+	c.options.Public = false
+	c.options.Demo = false
+	assert.True(t, c.Auth())
+	c.options.Demo = true
+	assert.False(t, c.Auth())
+}
+
 func TestUtils_CheckPassword(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

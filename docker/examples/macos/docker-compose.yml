@@ -49,12 +49,12 @@ services:
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
+      PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # YOUR INITIAL ADMIN PASSWORD (MINIMUM 8 CHARACTERS, USERNAME "admin")
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # public server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_LOG_LEVEL: "info"                   # log level: trace, debug, info, warning, error, fatal, or panic
-      PHOTOPRISM_PUBLIC: "false"                     # no authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"               # enables experimental features
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables storage permission updates on startup

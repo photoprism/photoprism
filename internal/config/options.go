@@ -24,12 +24,12 @@ type Options struct {
 	Version               string        `json:"-"`
 	Copyright             string        `json:"-"`
 	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
+	AuthMode              string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
+	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Debug                 bool          `yaml:"Debug" json:"Debug" flag:"debug"`
 	Trace                 bool          `yaml:"Trace" json:"Trace" flag:"Trace"`
-	AuthMode              string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
-	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	Test                  bool          `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool          `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                  bool          `yaml:"Demo" json:"-" flag:"demo"`

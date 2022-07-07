@@ -22,7 +22,7 @@ services:
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "false"
       PHOTOPRISM_READONLY: "false"
-      PHOTOPRISM_PUBLIC: "true"
+      PHOTOPRISM_AUTH_MODE: "public"          # authentication mode (public, password)
       PHOTOPRISM_PID_FILENAME: "photoprism.pid"
       PHOTOPRISM_LOG_FILENAME: "photoprism.log"
       PHOTOPRISM_DETACH_SERVER: "true"

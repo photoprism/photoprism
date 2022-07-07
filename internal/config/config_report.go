@@ -13,8 +13,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 	rows = [][]string{
 		// Authentication.
+		{"auth-mode", fmt.Sprintf("%s", c.AuthMode())},
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
-		{"auth", fmt.Sprintf("%t", c.Auth())},
 		{"public", fmt.Sprintf("%t", c.Public())},
 
 		// Logging.

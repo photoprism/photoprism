@@ -21,6 +21,7 @@ services:
     environment:
       PHOTOPRISM_UID: ${UID:-1000}                   # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                   # group id
+      PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
       ## Public server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_SITE_URL: "https://latest.localssl.dev/"
@@ -29,7 +30,6 @@ services:
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
-      PHOTOPRISM_PUBLIC: "true"
       PHOTOPRISM_EXPERIMENTAL: "false"
       PHOTOPRISM_SERVER_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
