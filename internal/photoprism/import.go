@@ -130,20 +130,22 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return errors.New("canceled")
 			}
 
-			isDir := info.IsDir()
+			isDir, _ := info.IsDirOrSymlinkToDir()
 			isSymlink := info.IsSymlink()
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
-				if isDir && result != filepath.SkipDir {
-					if fileName != importPath {
-						directories = append(directories, fileName)
-					}
+				if !isDir || result == filepath.SkipDir {
+					return result
+				}
 
-					folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.BirthTime(fileName))
+				if fileName != importPath {
+					directories = append(directories, fileName)
+				}
 
-					if err := folder.Create(); err == nil {
-						log.Infof("import: added folder /%s", folder.Path)
-					}
+				folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.BirthTime(fileName))
+
+				if err := folder.Create(); err == nil {
+					log.Infof("import: added folder /%s", folder.Path)
 				}
 
 				return result

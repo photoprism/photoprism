@@ -158,19 +158,21 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 
 			// Skip directories and known files.
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
-				if isDir {
-					if result != filepath.SkipDir {
-						folder := entity.NewFolder(entity.RootOriginals, relName, fs.BirthTime(fileName))
-
-						if err := folder.Create(); err == nil {
-							log.Infof("index: added folder /%s", folder.Path)
-						}
-					}
-
-					event.Publish("index.folder", event.Data{
-						"filePath": relName,
-					})
+				if !isDir {
+					return result
 				}
+
+				if result != filepath.SkipDir {
+					folder := entity.NewFolder(entity.RootOriginals, relName, fs.BirthTime(fileName))
+
+					if err := folder.Create(); err == nil {
+						log.Infof("index: added folder /%s", folder.Path)
+					}
+				}
+
+				event.Publish("index.folder", event.Data{
+					"filePath": relName,
+				})
 
 				return result
 			}
