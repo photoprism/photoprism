@@ -132,8 +132,15 @@ func DateTime(s, timeZone string) (t time.Time) {
 	}
 
 	// Create rounded timestamp from parsed input values.
+	// Year 0 is treated separately as it has a special meaning in exiftool. Golang
+	// does not seem to accept value 0 for the year, but considers a date to be
+	// "zero" when year is 1.
+	year := IntVal(m[v["year"]], 0, YearMax, time.Now().Year())
+	if year == 0 {
+		year = 1
+	}
 	t = time.Date(
-		IntVal(m[v["year"]], 1, YearMax, time.Now().Year()),
+		year,
 		time.Month(IntVal(m[v["month"]], 1, 12, 1)),
 		IntVal(m[v["day"]], 1, 31, 1),
 		IntVal(m[v["h"]], 0, 23, 0),
