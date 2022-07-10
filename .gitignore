@@ -5,6 +5,7 @@
 /storage/*
 /build/*
 /node_modules
+/pro
 /frontend/.eslintcache
 /frontend/node_modules/*
 /frontend/tests/*.html

@@ -1,4 +1,0 @@
-[submodule "pro"]
-	path = pro
-	url = git@github.com:photoprism/pro.git
-	branch = main
