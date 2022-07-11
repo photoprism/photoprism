@@ -3,7 +3,7 @@
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
-          <v-card class="elevation-12 auth-login-box blur-7">
+          <v-card class="elevation-12 auth-login-box blur-8">
             <v-card-text class="pa-4">
               <div class="logo text-xs-center">
                 <img :src="$config.getIcon()" :alt="config.name">
