@@ -132,7 +132,7 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""                  # meta site description
       PHOTOPRISM_SITE_AUTHOR: ""                       # meta site author
-      PHOTOPRISM_AUTH_MODE: "password"                 # authentication mode (public, password)
+      PHOTOPRISM_AUTH_MODE: "passwd"                   # authentication mode (public, passwd)
       PHOTOPRISM_ADMIN_PASSWORD: "_admin_password_"    # YOUR INITIAL "admin" PASSWORD
       PHOTOPRISM_ORIGINALS_LIMIT: 5000                 # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # improves transfer speed and bandwidth utilization (none or gzip)
@@ -170,7 +170,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
-    image: traefik:v2.6
+    image: traefik:v2.8
     container_name: traefik
     ports:
       - "80:80"

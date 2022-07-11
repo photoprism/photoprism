@@ -124,9 +124,9 @@ acceptance-stop:
 acceptance-private-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
-	./photoprism --auth-mode "password" --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
+	./photoprism --auth-mode "passwd" --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
 acceptance-private-stop:
-	./photoprism --auth-mode "password" --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
+	./photoprism --auth-mode "passwd" --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
 start:
 	./photoprism start -d
 stop:

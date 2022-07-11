@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	AuthModePublic   = "public"
-	AuthModePassword = "password"
+	AuthModePublic = "public"
+	AuthModePasswd = "passwd"
 )
 
 func isBcrypt(s string) bool {
@@ -46,11 +46,18 @@ func (c *Config) AdminPassword() string {
 func (c *Config) AuthMode() string {
 	if c.Public() {
 		return AuthModePublic
-	} else if m := strings.ToLower(strings.TrimSpace(c.options.AuthMode)); m != "" {
-		return m
 	}
 
-	return AuthModePassword
+	mode := strings.ToLower(strings.TrimSpace(c.options.AuthMode))
+
+	switch mode {
+	case AuthModePublic:
+		return AuthModePublic
+	case "", "pw", "pass", "passwd", "password", "passwort", "passwords":
+		return AuthModePasswd
+	default:
+		return AuthModePasswd
+	}
 }
 
 // Auth checks if authentication is required.
