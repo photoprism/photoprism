@@ -3,7 +3,7 @@
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
-          <v-card class="elevation-12 auth-login-box blur-8">
+          <v-card class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-4">
               <div class="logo text-xs-center">
                 <img :src="$config.getIcon()" :alt="config.name">
@@ -46,7 +46,7 @@
               <div class="action-buttons text-xs-center">
                 <!-- a href="#" target="_blank" class="text-link px-2" :style="`color: ${colors.link}!important`"><translate>Forgot password?</translate></a -->
                 <v-btn :color="colors.primary" depressed :disabled="loginDisabled"
-                       class="white--text action-confirm px-4" @click.stop="login">
+                       class="white--text action-confirm rounded-5 px-3" @click.stop="login">
                   <translate>Sign in</translate>
                   <v-icon :right="!rtl" :left="rtl" dark>arrow_forward</v-icon>
                 </v-btn>
