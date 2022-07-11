@@ -325,8 +325,8 @@
 <script>
 import Settings from "model/settings";
 import * as options from "options/options";
+import * as themes from "options/themes";
 import Event from "pubsub-js";
-import themes from "options/themes.json";
 
 export default {
   name: 'PSettingsGeneral',
@@ -340,7 +340,7 @@ export default {
       options: options,
       busy: this.$config.loading(),
       subscriptions: [],
-      themes: options.Themes(),
+      themes: [],
       currentTheme: this.$config.themeName,
       mapsStyle: options.MapsStyle(),
       currentMapsStyle: this.$config.settings().maps.style,
@@ -362,12 +362,13 @@ export default {
   methods: {
     load() {
       this.$config.load().then(() => {
+        this.themes = themes.Translated();
         this.settings.setValues(this.$config.settings());
         this.busy = false;
       });
     },
     onChangeTheme(value) {
-      if(!value || !themes[value]) {
+      if(!value || !themes.Get(value)) {
         return false;
       }
 
@@ -375,7 +376,7 @@ export default {
         this.currentTheme = value;
         this.onChange();
       }).catch(() => {
-        if (themes[value].sponsor) {
+        if (themes.Get(value).sponsor) {
           this.dialog.sponsor = true;
           this.$nextTick(() => {
             this.settings.ui.theme = this.currentTheme;

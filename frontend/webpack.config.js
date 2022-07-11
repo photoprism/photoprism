@@ -140,7 +140,7 @@ const config = {
       },
       {
         test: /\.css$/,
-        include: PATHS.css,
+        include: isCustom ? [PATHS.custom, PATHS.css] : [PATHS.css],
         exclude: /node_modules/,
         use: [
           {
