@@ -34,8 +34,8 @@ services:
       ## Switch to a non-root user after initialization (supported IDs are 33, 50-99, 500-600, and 900-1200):
       PHOTOPRISM_UID: ${UID:-1000}                   # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                   # group id
-      PHOTOPRISM_AUTH_MODE: "passwd"                 # authentication mode (public, passwd)
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "passwd"                 # authentication mode (public, passwd)
       ## External development server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
@@ -122,22 +122,17 @@ services:
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
 
-  ## HTTPS Reverse Proxy
-  ## includes "*.localssl.dev" SSL certificate for local development
+  ## HTTPS Reverse Proxy (recommended) ##
+  ## includes "*.localssl.dev" SSL certificate for test environments
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
-    image: photoprism/traefik:220405
+    image: photoprism/traefik:latest
+    container_name: traefik
     ports:
-      # - "80:80" # HTTP (redirects to HTTPS)
+      - "80:80" # HTTP (redirects to HTTPS)
       - "443:443" # HTTPS (required)
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.localssl.dev`)"
-      - "traefik.http.routers.traefik.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.traefik.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.traefik.tls=true"
-      - "traefik.http.routers.traefik.tls.certresolver=myresolver"
-      - "traefik.http.routers.traefik.service=api@internal"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
@@ -145,7 +140,7 @@ services:
   ## Login: user / photoprism
   ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:17.0.1
+    image: quay.io/keycloak/keycloak:18.0
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:app.localssl.dev"

@@ -132,8 +132,8 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""                  # meta site description
       PHOTOPRISM_SITE_AUTHOR: ""                       # meta site author
-      PHOTOPRISM_AUTH_MODE: "passwd"                   # authentication mode (public, passwd)
       PHOTOPRISM_ADMIN_PASSWORD: "_admin_password_"    # YOUR INITIAL "admin" PASSWORD
+      PHOTOPRISM_AUTH_MODE: "passwd"                   # authentication mode (public, passwd)
       PHOTOPRISM_ORIGINALS_LIMIT: 5000                 # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_LOG_LEVEL: "info"                     # log level: trace, debug, info, warning, error, fatal, or panic

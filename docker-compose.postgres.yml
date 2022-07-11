@@ -25,8 +25,8 @@ services:
       - "go-mod:/go/pkg/mod"
     shm_size: "2gb"
     environment:
-      PHOTOPRISM_AUTH_MODE: "passwd"                 # authentication mode (public, passwd)
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "passwd"                 # authentication mode (public, passwd)
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
