@@ -19,6 +19,7 @@
 /package-lock.json
 /frontend/tests_output
 *.log
+*.pid
 *.db
 *.db-journal
 docker-compose.override.yml

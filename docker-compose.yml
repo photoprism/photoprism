@@ -127,7 +127,6 @@ services:
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
     image: photoprism/traefik:latest
-    container_name: traefik
     ports:
       - "80:80" # HTTP (redirects to HTTPS)
       - "443:443" # HTTPS (required)
