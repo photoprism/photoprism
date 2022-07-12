@@ -2,16 +2,20 @@
 
 *Please keep in mind that some information may be outdated or missing, as these docs were automatically generated from the source code.*
 
-### Entity Relationships
+## Entity-Relationship Diagram
 
 ↪ [docs.photoprism.app/developer-guide/database/schema/](https://docs.photoprism.app/developer-guide/database/schema/)
 
-###  Mermaid.js Markup
+## Schema Migrations
+
+↪ [docs.photoprism.app/developer-guide/database/migrations/](https://docs.photoprism.app/developer-guide/database/migrations/)
+
+##  Mermaid.js Markup
 
 [Mermaid](https://mermaid-js.github.io/) lets you create diagrams and visualizations using text and code.
 
 ↪ [mariadb.mmd](mariadb.mmd)
 
-### MariaDB SQL
+## MariaDB SQL
 
 ↪ [mariadb.sql](mariadb.sql)
