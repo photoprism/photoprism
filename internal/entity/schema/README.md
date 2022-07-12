@@ -1,8 +1,8 @@
-# Entity Schema Documentation
+# Database Schema
 
-*For documentation purposes only. Any code you find here is not shipped and has not been thoroughly tested. Some information may be outdated or missing.*
+Please note that some information may be outdated or missing, as this documentation is automatically generated from the source code.
 
-### Entity-Relationship Diagram
+### Entity Relationships
 
 ↪ [docs.photoprism.app/developer-guide/database/schema/](https://docs.photoprism.app/developer-guide/database/schema/)
 
