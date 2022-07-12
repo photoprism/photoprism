@@ -1,6 +1,6 @@
 # Database Schema
 
-Please note that some information may be outdated or missing, as this documentation is automatically generated from the source code.
+*Please keep in mind that some information may be outdated or missing, as these docs were automatically generated from the source code.*
 
 ### Entity Relationships
 
