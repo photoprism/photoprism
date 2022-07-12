@@ -6,10 +6,6 @@
 
 ↪ [docs.photoprism.app/developer-guide/database/schema/](https://docs.photoprism.app/developer-guide/database/schema/)
 
-## Schema Migrations
-
-↪ [docs.photoprism.app/developer-guide/database/migrations/](https://docs.photoprism.app/developer-guide/database/migrations/)
-
 ##  Mermaid.js Markup
 
 [Mermaid](https://mermaid-js.github.io/) lets you create diagrams and visualizations using text and code.
@@ -19,3 +15,9 @@
 ## MariaDB SQL
 
 ↪ [mariadb.sql](mariadb.sql)
+
+## Schema Migrations
+
+↪ [docs.photoprism.app/developer-guide/database/migrations/](https://docs.photoprism.app/developer-guide/database/migrations/)
+
+↪ [github.com/photoprism/photoprism/tree/develop/internal/migrate](https://github.com/photoprism/photoprism/tree/develop/internal/migrate)
