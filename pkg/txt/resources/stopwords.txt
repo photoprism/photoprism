@@ -59,6 +59,15 @@ export
 abc
 val
 tmp
+drv
+sda
+sdb
+sdc
+sdd
+hda
+hdb
+hdc
+hdd
 xyz
 jpg
 jpeg
