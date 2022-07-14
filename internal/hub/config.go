@@ -27,10 +27,6 @@ const (
 	StatusUnknown   = ""
 	StatusNew       = "unregistered"
 	StatusCommunity = "ce"
-	StatusPlus      = "plus"
-	StatusDev       = "dev"
-	StatusInt       = "int"
-	StatusTest      = "test"
 )
 
 // Config represents backend api credentials for maps & geodata.
@@ -83,11 +79,9 @@ func (c *Config) Plus() bool {
 	switch c.Status {
 	case StatusUnknown, StatusNew, StatusCommunity:
 		return false
-	case StatusPlus, StatusDev, StatusInt, StatusTest:
-		return len(c.Session) > 0
-	default:
-		return false
 	}
+
+	return len(c.Session) > 0 && len(c.MapKey()) > 0
 }
 
 // Sanitize verifies and sanitizes backend api credentials.

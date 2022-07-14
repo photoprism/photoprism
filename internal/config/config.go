@@ -140,9 +140,6 @@ func (c *Config) Options() *Options {
 func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
-	// Update options.
-	c.Options().Sponsor = c.Hub().Plus() || c.Options().Sponsor
-
 	// Set thumbnail generation parameters.
 	thumb.StandardRGB = c.ThumbSRGB()
 	thumb.SizePrecached = c.ThumbSizePrecached()
@@ -473,7 +470,13 @@ func (c *Config) Demo() bool {
 
 // Sponsor reports if you have chosen to support our mission.
 func (c *Config) Sponsor() bool {
-	return Sponsor || c.options.Sponsor
+	if Sponsor || c.options.Sponsor {
+		return true
+	} else if c.hub != nil {
+		Sponsor = c.Hub().Plus()
+	}
+
+	return Sponsor
 }
 
 // NoSponsor reports if you prefer not to support our mission.
@@ -684,9 +687,9 @@ func (c *Config) UpdateHub() {
 func (c *Config) initHub() {
 	if c.hub != nil {
 		return
+	} else if h := hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial, c.env, c.UserAgent(), c.options.PartnerID); h != nil {
+		c.hub = h
 	}
-
-	c.hub = hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial, c.env, c.UserAgent(), c.options.PartnerID)
 
 	if err := c.hub.Load(); err == nil {
 		// Do nothing.
