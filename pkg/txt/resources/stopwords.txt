@@ -596,6 +596,9 @@ ml
 mm
 mn
 mo
+mnt
+uid
+ext
 moreover
 most
 mostly
