@@ -8,12 +8,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// FoldersByPath returns a slice of folders in a given directory incl sub directories in recursive mode.
+// FoldersByPath returns a slice of folders in a given directory incl sub-folders in recursive mode.
 func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders entity.Folders, err error) {
 	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive, true)
 
+	// Failed?
 	if err != nil {
-		return folders, err
+		if len(dirs) == 0 {
+			return folders, err
+		} else {
+			// At least one folder found.
+			log.Infof("folders: %s", err)
+		}
 	}
 
 	folders = make(entity.Folders, len(dirs))
@@ -21,7 +27,7 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	for i, dir := range dirs {
 		newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), fs.BirthTime(filepath.Join(rootPath, dir)))
 
-		if err := newFolder.Create(); err == nil {
+		if err = newFolder.Create(); err == nil {
 			folders[i] = newFolder
 		} else if folder := entity.FindFolder(rootName, filepath.Join(path, dir)); folder != nil {
 			folders[i] = *folder
