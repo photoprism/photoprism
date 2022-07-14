@@ -43,13 +43,13 @@ test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
-acceptance-auth-run-chromium: acceptance-auth-restart acceptance-auth acceptance-aut-stop
-acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
-acceptance-auth-run-firefox: acceptance-auth-restart acceptance-auth-firefox acceptance-auth-stop
-acceptance-public-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
-acceptance-run-chromium-short: acceptance-auth-restart acceptance-auth-short acceptance-auth-stop acceptance-restart acceptance-short acceptance-stop
-acceptance-run-chromium: acceptance-auth-restart acceptance-auth acceptance-auth-stop acceptance-restart acceptance acceptance-stop
-acceptance-run-firefox: acceptance-auth-restart acceptance-auth-firefox acceptance-auth-stop acceptance-restart acceptance-firefox acceptance-stop
+acceptance-auth-run-chromium: acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop
+acceptance-public-run-chromium: acceptance-sqlite-restart acceptance acceptance-sqlite-stop
+acceptance-auth-run-firefox: acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop
+acceptance-public-run-firefox: acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
+acceptance-run-chromium-short: acceptance-auth-sqlite-restart acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-short acceptance-sqlite-stop
+acceptance-run-chromium: acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance acceptance-sqlite-stop
+acceptance-run-firefox: acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go
 clean-local: clean-local-config clean-local-cache
@@ -108,9 +108,9 @@ install-tensorflow:
 	sudo scripts/dist/install-tensorflow.sh
 install-darktable:
 	sudo scripts/dist/install-darktable.sh
-acceptance-restart:
+acceptance-sqlite-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
-	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
+	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	rm -rf storage/acceptance/sidecar/2020
 	rm -rf storage/acceptance/sidecar/2011
 	rm -rf storage/acceptance/originals/2010
@@ -118,15 +118,15 @@ acceptance-restart:
 	rm -rf storage/acceptance/originals/2011
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
-	./photoprism -p --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
-acceptance-stop:
-	./photoprism -p --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
-acceptance-auth-restart:
+	./photoprism -p -c "./storage/acceptance/config-sqlite" --test start -d
+acceptance-sqlite-stop:
+	./photoprism -p -c "./storage/acceptance/config-sqlite" --test stop
+acceptance-auth-sqlite-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
-	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
-	./photoprism --auth-mode "passwd" --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
-acceptance-auth-stop:
-	./photoprism --auth-mode "passwd" --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
+	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
+	./photoprism --auth-mode "passwd" -c "./storage/acceptance/config-sqlite" --test start -d
+acceptance-auth-sqlite-stop:
+	./photoprism --auth-mode "passwd" -c "./storage/acceptance/config-sqlite" --test stop
 start:
 	./photoprism start -d
 stop:
