@@ -46,7 +46,7 @@
               <div class="action-buttons text-xs-center">
                 <!-- a href="#" target="_blank" class="text-link px-2" :style="`color: ${colors.link}!important`"><translate>Forgot password?</translate></a -->
                 <v-btn :color="colors.primary" depressed :disabled="loginDisabled"
-                       class="white--text action-confirm rounded-5 px-3" @click.stop="login">
+                       class="white--text action-confirm ra-6 px-3" @click.stop="login">
                   <translate>Sign in</translate>
                   <v-icon :right="!rtl" :left="rtl" dark>arrow_forward</v-icon>
                 </v-btn>
