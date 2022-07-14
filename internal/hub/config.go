@@ -23,6 +23,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+const (
+	StatusUnknown   = ""
+	StatusNew       = "unregistered"
+	StatusCommunity = "ce"
+	StatusPlus      = "plus"
+	StatusDev       = "dev"
+	StatusInt       = "int"
+	StatusTest      = "test"
+)
+
 // Config represents backend api credentials for maps & geodata.
 type Config struct {
 	Version   string `json:"version" yaml:"Version"`
@@ -66,6 +76,18 @@ func (c *Config) MapKey() string {
 func (c *Config) Propagate() {
 	places.Key = c.Key
 	places.Secret = c.Secret
+}
+
+// Plus reports if you have a community membership.
+func (c *Config) Plus() bool {
+	switch c.Status {
+	case StatusUnknown, StatusNew, StatusCommunity:
+		return false
+	case StatusPlus, StatusDev, StatusInt, StatusTest:
+		return len(c.Session) > 0
+	default:
+		return false
+	}
 }
 
 // Sanitize verifies and sanitizes backend api credentials.

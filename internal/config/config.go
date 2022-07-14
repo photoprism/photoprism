@@ -140,6 +140,9 @@ func (c *Config) Options() *Options {
 func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
+	// Update options.
+	c.Options().Sponsor = c.Hub().Plus() || c.Options().Sponsor
+
 	// Set thumbnail generation parameters.
 	thumb.StandardRGB = c.ThumbSRGB()
 	thumb.SizePrecached = c.ThumbSizePrecached()
@@ -174,12 +177,6 @@ func (c *Config) Init() error {
 
 	if err := c.initSerial(); err != nil {
 		return err
-	}
-
-	// Show funding info?
-	if !c.Sponsor() {
-		log.Info(MsgSponsor)
-		log.Info(MsgSignUp)
 	}
 
 	if insensitive, err := c.CaseInsensitive(); err != nil {
@@ -223,13 +220,16 @@ func (c *Config) Init() error {
 
 	c.Propagate()
 
-	err := c.connectDb()
-
-	if err == nil {
-		log.Debugf("config: successfully initialized [%s]", time.Since(start))
+	if err := c.connectDb(); err != nil {
+		return err
+	} else if !c.Sponsor() {
+		log.Info(MsgSponsor)
+		log.Info(MsgSignUp)
 	}
 
-	return err
+	log.Debugf("config: successfully initialized [%s]", time.Since(start))
+
+	return nil
 }
 
 // readSerial reads and returns the current storage serial.
@@ -471,12 +471,12 @@ func (c *Config) Demo() bool {
 	return c.options.Demo
 }
 
-// Sponsor reports if you support our mission, see https://photoprism.app/membership.
+// Sponsor reports if you have chosen to support our mission.
 func (c *Config) Sponsor() bool {
 	return Sponsor || c.options.Sponsor
 }
 
-// NoSponsor reports if the instance is not operated by a sponsor.
+// NoSponsor reports if you prefer not to support our mission.
 func (c *Config) NoSponsor() bool {
 	return !c.Sponsor() && !c.Demo()
 }
