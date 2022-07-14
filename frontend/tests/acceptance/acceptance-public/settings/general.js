@@ -24,37 +24,40 @@ const album = new Album();
 const settings = new Settings();
 const library = new Library();
 
-test.meta("testID", "settings-general-001").meta({ type: "smoke" })("Disable delete", async (t) => {
-  await menu.openPage("archive");
-  await photo.triggerHoverAction("nth", 0, "select");
-  await contextmenu.checkContextMenuActionAvailability("delete", true);
-  await contextmenu.clearSelection();
-  await menu.openPage("settings");
-  await t.click(settings.deleteCheckbox);
-  await menu.openPage("archive");
-  await photo.triggerHoverAction("nth", 0, "select");
+test.meta("testID", "settings-general-001").meta({ type: "short", mode: "public" })(
+  "Common: Disable delete",
+  async (t) => {
+    await menu.openPage("archive");
+    await photo.triggerHoverAction("nth", 0, "select");
+    await contextmenu.checkContextMenuActionAvailability("delete", true);
+    await contextmenu.clearSelection();
+    await menu.openPage("settings");
+    await t.click(settings.deleteCheckbox);
+    await menu.openPage("archive");
+    await photo.triggerHoverAction("nth", 0, "select");
 
-  await contextmenu.checkContextMenuActionAvailability("restore", true);
-  await contextmenu.checkContextMenuActionAvailability("delete", false);
-  await contextmenu.clearSelection();
+    await contextmenu.checkContextMenuActionAvailability("restore", true);
+    await contextmenu.checkContextMenuActionAvailability("delete", false);
+    await contextmenu.clearSelection();
 
-  await menu.openPage("browse");
-  await toolbar.search("stack:true");
-  await photo.triggerHoverAction("nth", 0, "select");
-  await contextmenu.triggerContextMenuAction("edit", "");
-  await t.click(photoedit.filesTab);
-  await t.click(photoedit.toggleExpandFile.nth(1));
+    await menu.openPage("browse");
+    await toolbar.search("stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.filesTab);
+    await t.click(photoedit.toggleExpandFile.nth(1));
 
-  await t.expect(photoedit.deleteFile.visible).notOk();
+    await t.expect(photoedit.deleteFile.visible).notOk();
 
-  await t.click(photoedit.dialogClose);
-  await contextmenu.clearSelection();
-  await menu.openPage("settings");
-  await t.click(settings.deleteCheckbox);
-});
+    await t.click(photoedit.dialogClose);
+    await contextmenu.clearSelection();
+    await menu.openPage("settings");
+    await t.click(settings.deleteCheckbox);
+  }
+);
 
-test.meta("testID", "settings-general-002").meta({ type: "smoke" })(
-  "Change language",
+test.meta("testID", "settings-general-002").meta({ type: "short", mode: "public" })(
+  "Common: Change language",
   async (t) => {
     await t.expect(Selector(".nav-browse").innerText).contains("Search");
 
@@ -76,8 +79,8 @@ test.meta("testID", "settings-general-002").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "settings-general-003").meta({ type: "smoke" })(
-  "Disable pages: import, originals, logs, moments, places, library",
+test.meta("testID", "settings-general-003").meta({ type: "short", mode: "public" })(
+  "Common: Disable pages: import, originals, logs, moments, places, library",
   async (t) => {
     await toolbar.setFilter("view", "Cards");
 
@@ -150,8 +153,8 @@ test.meta("testID", "settings-general-003").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "settings-general-004").meta({ type: "smoke" })(
-  "Disable people and labels",
+test.meta("testID", "settings-general-004").meta({ type: "short", mode: "public" })(
+  "Common: Disable people and labels",
   async (t) => {
     await toolbar.setFilter("view", "Cards");
     await t.click(page.cardTitle.nth(0));
@@ -193,8 +196,8 @@ test.meta("testID", "settings-general-004").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "settings-general-005").meta({ type: "smoke" })(
-  "Disable private, archive and quality filter",
+test.meta("testID", "settings-general-005").meta({ type: "short", mode: "public" })(
+  "Common: Disable private, archive and quality filter",
   async (t) => {
     await menu.checkMenuItemAvailability("archive", true);
     await menu.checkMenuItemAvailability("review", true);
@@ -279,8 +282,8 @@ test.meta("testID", "settings-general-005").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "settings-general-006").meta({ type: "smoke" })(
-  "Disable upload, download, edit and share",
+test.meta("testID", "settings-general-006").meta({ type: "short", mode: "public" })(
+  "Common: Disable upload, download, edit and share",
   async (t) => {
     await toolbar.checkToolbarActionAvailability("upload", true);
 

@@ -43,13 +43,13 @@ test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
-acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
+acceptance-auth-run-chromium: acceptance-auth-restart acceptance-auth acceptance-aut-stop
 acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
-acceptance-private-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop
+acceptance-auth-run-firefox: acceptance-auth-restart acceptance-auth-firefox acceptance-auth-stop
 acceptance-public-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
-acceptance-run-chromium-smoke: acceptance-private-restart acceptance-private-smoke acceptance-private-stop acceptance-restart acceptance-smoke acceptance-stop
-acceptance-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop acceptance-restart acceptance acceptance-stop
-acceptance-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop acceptance-restart acceptance-firefox acceptance-stop
+acceptance-run-chromium-short: acceptance-auth-restart acceptance-auth-short acceptance-auth-stop acceptance-restart acceptance-short acceptance-stop
+acceptance-run-chromium: acceptance-auth-restart acceptance-auth acceptance-auth-stop acceptance-restart acceptance acceptance-stop
+acceptance-run-firefox: acceptance-auth-restart acceptance-auth-firefox acceptance-auth-stop acceptance-restart acceptance-firefox acceptance-stop
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go
 clean-local: clean-local-config clean-local-cache
@@ -121,11 +121,11 @@ acceptance-restart:
 	./photoprism -p --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
 acceptance-stop:
 	./photoprism -p --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
-acceptance-private-restart:
+acceptance-auth-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
 	./photoprism --auth-mode "passwd" --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups start -d
-acceptance-private-stop:
+acceptance-auth-stop:
 	./photoprism --auth-mode "passwd" --url "http://localhost:2343/" --upload-nsfw=false --db "sqlite" --dsn "./storage/acceptance/index.db" --import-path "./storage/acceptance/import" --port 2343 -c "./storage/acceptance/config" -o "./storage/acceptance/originals" -s "./storage/acceptance" --test --backup-path "./storage/acceptance/backup" --disable-backups stop
 start:
 	./photoprism start -d
@@ -200,24 +200,27 @@ watch-js:
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && env NODE_ENV=development BABEL_ENV=test npm run test)
+acceptance-old:
+	$(info Running JS acceptance tests in Chrome...)
+	(cd frontend &&	npm run acceptance --first="chromium:headless" --second=plus --third=public && cd ..)
 acceptance:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run acceptance && cd ..)
-acceptance-smoke:
+	(cd frontend &&	npm run acceptance --first="chromium:headless" --second="^(Common|Core)\:*" --third=public --fourth="tests/acceptance" && cd ..)
+acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run acceptance-smoke && cd ..)
+	(cd frontend &&	npm run acceptance-short --first="chromium:headless" --second="^(Common|Core)\:*" --third=public --fourth="tests/acceptance" && cd ..)
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
-	(cd frontend &&	npm run acceptance-firefox && cd ..)
-acceptance-private:
-	$(info Running JS acceptance-private tests in Chrome...)
-	(cd frontend &&	npm run acceptance-private && cd ..)
-acceptance-private-smoke:
-	$(info Running JS acceptance-private tests in Chrome...)
-	(cd frontend &&	npm run acceptance-private-smoke && cd ..)
-acceptance-private-firefox:
-	$(info Running JS acceptance-private tests in Firefox...)
-	(cd frontend &&	npm run acceptance-private-firefox && cd ..)
+	(cd frontend &&	npm run acceptance --first="firefox:headless" --second="^(Common|Core)\:*" --third=public --fourth="tests/acceptance" && cd ..)
+acceptance-auth:
+	$(info Running JS acceptance-auth tests in Chrome...)
+	(cd frontend &&	npm run acceptance --first="chromium:headless" --second="^(Common|Core)\:*" --third=auth --fourth="tests/acceptance" && cd ..)
+acceptance-auth-short:
+	$(info Running JS acceptance-auth tests in Chrome...)
+	(cd frontend &&	npm run acceptance-short --first="chromium:headless" --second="^(Common|Core)\:*" --third=auth --fourth="tests/acceptance" && cd ..)
+acceptance-auth-firefox:
+	$(info Running JS acceptance-auth tests in Firefox...)
+	(cd frontend &&	npm run acceptance --first="firefox:headless" --second="^(Common|Core)\:*" --third=auth --fourth="tests/acceptance" && cd ..)
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
 	mysql < scripts/sql/reset-testdb.sql

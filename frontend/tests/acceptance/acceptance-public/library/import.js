@@ -12,8 +12,8 @@ const toolbar = new Toolbar();
 const page = new Page();
 const library = new Library();
 
-test.meta("testID", "library-import-001").meta({ type: "smoke" })(
-  "Import files from folder using copy",
+test.meta("testID", "library-import-001").meta({ type: "short", mode: "public" })(
+  "Common: Import files from folder using copy",
   async (t) => {
     await menu.openPage("labels");
     await toolbar.search("bakery");

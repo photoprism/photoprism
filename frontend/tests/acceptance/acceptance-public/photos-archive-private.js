@@ -20,8 +20,8 @@ const album = new Album();
 const label = new Label();
 const subject = new Subject();
 
-test.meta("testID", "photos-archive-private-001").meta({ type: "smoke" })(
-  "Private/unprivate photo/video using clipboard and list",
+test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "public" })(
+  "Common: Private/unprivate photo/video using clipboard and list",
   async (t) => {
     await toolbar.setFilter("view", "Mosaic");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
@@ -114,8 +114,8 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "photos-archive-private-002").meta({ type: "smoke" })(
-  "Archive/restore video, photos, private photos and review photos using clipboard",
+test.meta("testID", "photos-archive-private-002").meta({ type: "short", mode: "public" })(
+  "Common: Archive/restore video, photos, private photos and review photos using clipboard",
   async (t) => {
     await toolbar.setFilter("view", "Mosaic");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
@@ -216,8 +216,8 @@ test.meta("testID", "photos-archive-private-002").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "photos-archive-private-003")(
-  "Check that archived files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/private/videos/calendar/moments/states/labels/folders/originals",
+test.meta("testID", "photos-archive-private-003").meta({ mode: "public"})(
+  "Common: Check that archived files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/private/videos/calendar/moments/states/labels/folders/originals",
   async (t) => {
     await menu.openPage("archive");
     await toolbar.setFilter("view", "Mosaic");
@@ -347,8 +347,8 @@ test.meta("testID", "photos-archive-private-003")(
   }
 );
 
-test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
-  "Check that private files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/archive/videos/calendar/moments/states/labels/folders/originals",
+test.meta("testID", "photos-archive-private-004").meta({ type: "short", mode: "public" })(
+  "Common: Check that private files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/archive/videos/calendar/moments/states/labels/folders/originals",
   async (t) => {
     await menu.openPage("private");
     await toolbar.setFilter("view", "Mosaic");

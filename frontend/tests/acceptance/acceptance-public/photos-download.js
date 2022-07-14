@@ -22,8 +22,8 @@ const photo = new Photo();
 const photoviewer = new PhotoViewer();
 const page = new Page();
 
-test.meta("testID", "photos-download-001").meta({ type: "smoke" })(
-  "Test download jpg file from context menu and fullscreen",
+test.meta("testID", "photos-download-001").meta({ type: "short", mode: "public" })(
+  "Common: Test download jpg file from context menu and fullscreen",
   async (t) => {
     await toolbar.search("name:monochrome-2.jpg");
     const PhotoUid = await photo.getNthPhotoUid("all", 0);
@@ -50,8 +50,8 @@ test.meta("testID", "photos-download-001").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "photos-download-002").meta({ type: "smoke" })(
-  "Test download video from context menu",
+test.meta("testID", "photos-download-002").meta({ type: "short", mode: "public" })(
+  "Common: Test download video from context menu",
   async (t) => {
     await toolbar.search("name:Mohn.mp4");
     const PhotoUid = await photo.getNthPhotoUid("all", 0);
@@ -70,8 +70,8 @@ test.meta("testID", "photos-download-002").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "photos-download-003")(
-  "Test download multiple jpg files from context menu",
+test.meta("testID", "photos-download-003").meta({ mode: "public" })(
+  "Common: Test download multiple jpg files from context menu",
   async (t) => {
     await toolbar.search("name:panorama_2.jpg");
     const PhotoUid = await photo.getNthPhotoUid("all", 0);
@@ -92,8 +92,8 @@ test.meta("testID", "photos-download-003")(
 );
 
 //TODO Check RAW files as well
-test.meta("testID", "photos-download-004")(
-  "Test raw file from context menu and fullscreen mode",
+test.meta("testID", "photos-download-004").meta({ mode: "public" })(
+  "Common: Test raw file from context menu and fullscreen mode",
   async (t) => {
     await toolbar.search("name:elephantRAW");
     const PhotoUid = await photo.getNthPhotoUid("all", 0);

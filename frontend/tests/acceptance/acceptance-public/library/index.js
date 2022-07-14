@@ -16,8 +16,8 @@ const page = new Page();
 const library = new Library();
 const album = new Album();
 
-test.meta("testID", "library-index-001").meta({ type: "smoke" })(
-  "Index files from folder",
+test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })(
+  "Common: Index files from folder",
   async (t) => {
     await menu.openPage("labels");
     await toolbar.search("cheetah");

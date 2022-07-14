@@ -11,7 +11,7 @@ fixture`Search and open photo from places`.page`${testcafeconfig.url}`.skip(
 
 const menu = new Menu();
 
-test.meta("testID", "places-001")("Test places", async (t) => {
+test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places", async (t) => {
   await menu.openPage("places");
 
   await t

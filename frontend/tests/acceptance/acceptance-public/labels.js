@@ -20,8 +20,8 @@ const page = new Page();
 const label = new Label();
 const photoedit = new PhotoEdit();
 
-test.meta("testID", "labels-001").meta({ type: "smoke" })(
-  "Remove/Activate Add/Delete Label from photo",
+test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
+  "Common: Remove/Activate Add/Delete Label from photo",
   async (t) => {
     await menu.openPage("labels");
     await toolbar.search("beacon");
@@ -83,21 +83,24 @@ test.meta("testID", "labels-001").meta({ type: "smoke" })(
   }
 );
 
-test.meta("testID", "labels-002")("Toggle between important and all labels", async (t) => {
-  await menu.openPage("labels");
-  const ImportantLabelsCount = await label.getLabelCount();
-  await toolbar.triggerToolbarAction("show-all");
-  const AllLabelsCount = await label.getLabelCount();
+test.meta("testID", "labels-002").meta({ mode: "public" })(
+  "Common: Toggle between important and all labels",
+  async (t) => {
+    await menu.openPage("labels");
+    const ImportantLabelsCount = await label.getLabelCount();
+    await toolbar.triggerToolbarAction("show-all");
+    const AllLabelsCount = await label.getLabelCount();
 
-  await t.expect(AllLabelsCount).gt(ImportantLabelsCount);
+    await t.expect(AllLabelsCount).gt(ImportantLabelsCount);
 
-  await toolbar.triggerToolbarAction("show-important");
-  const ImportantLabelsCount2 = await label.getLabelCount();
+    await toolbar.triggerToolbarAction("show-important");
+    const ImportantLabelsCount2 = await label.getLabelCount();
 
-  await t.expect(ImportantLabelsCount).eql(ImportantLabelsCount2);
-});
+    await t.expect(ImportantLabelsCount).eql(ImportantLabelsCount2);
+  }
+);
 
-test.meta("testID", "labels-003")("Rename Label", async (t) => {
+test.meta("testID", "labels-003").meta({ mode: "public" })("Common: Rename Label", async (t) => {
   await menu.openPage("labels");
   await toolbar.search("zebra");
   const LabelZebraUid = await label.getNthLabeltUid(0);
@@ -147,45 +150,48 @@ test.meta("testID", "labels-003")("Rename Label", async (t) => {
   await t.expect(Selector("div.no-results").visible).ok();
 });
 
-test.meta("testID", "labels-003")("Add label to album", async (t) => {
-  await menu.openPage("albums");
-  await toolbar.search("Christmas");
-  const AlbumUid = await album.getNthAlbumUid("all", 0);
-  await album.openAlbumWithUid(AlbumUid);
-  const PhotoCount = await photo.getPhotoCount("all");
-  await menu.openPage("labels");
-  await toolbar.search("landscape");
-  const LabelLandscape = await label.getNthLabeltUid(1);
-  await label.openLabelWithUid(LabelLandscape);
-  const FirstPhotoLandscape = await photo.getNthPhotoUid("all", 0);
-  const SecondPhotoLandscape = await photo.getNthPhotoUid("all", 1);
-  const ThirdPhotoLandscape = await photo.getNthPhotoUid("all", 2);
-  const FourthPhotoLandscape = await photo.getNthPhotoUid("all", 3);
-  const FifthPhotoLandscape = await photo.getNthPhotoUid("all", 4);
-  const SixthPhotoLandscape = await photo.getNthPhotoUid("all", 5);
-  await menu.openPage("labels");
-  await label.triggerHoverAction("uid", LabelLandscape, "select");
-  await contextmenu.checkContextMenuCount("1");
-  await contextmenu.triggerContextMenuAction("album", "Christmas");
-  await menu.openPage("albums");
-  await album.openAlbumWithUid(AlbumUid);
-  const PhotoCountAfterAdd = await photo.getPhotoCount("all");
+test.meta("testID", "labels-003").meta({ mode: "public" })(
+  "Common: Add label to album",
+  async (t) => {
+    await menu.openPage("albums");
+    await toolbar.search("Christmas");
+    const AlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.openAlbumWithUid(AlbumUid);
+    const PhotoCount = await photo.getPhotoCount("all");
+    await menu.openPage("labels");
+    await toolbar.search("landscape");
+    const LabelLandscape = await label.getNthLabeltUid(1);
+    await label.openLabelWithUid(LabelLandscape);
+    const FirstPhotoLandscape = await photo.getNthPhotoUid("all", 0);
+    const SecondPhotoLandscape = await photo.getNthPhotoUid("all", 1);
+    const ThirdPhotoLandscape = await photo.getNthPhotoUid("all", 2);
+    const FourthPhotoLandscape = await photo.getNthPhotoUid("all", 3);
+    const FifthPhotoLandscape = await photo.getNthPhotoUid("all", 4);
+    const SixthPhotoLandscape = await photo.getNthPhotoUid("all", 5);
+    await menu.openPage("labels");
+    await label.triggerHoverAction("uid", LabelLandscape, "select");
+    await contextmenu.checkContextMenuCount("1");
+    await contextmenu.triggerContextMenuAction("album", "Christmas");
+    await menu.openPage("albums");
+    await album.openAlbumWithUid(AlbumUid);
+    const PhotoCountAfterAdd = await photo.getPhotoCount("all");
 
-  await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 6);
+    await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 6);
 
-  await photo.triggerHoverAction("uid", FirstPhotoLandscape, "select");
-  await photo.triggerHoverAction("uid", SecondPhotoLandscape, "select");
-  await photo.triggerHoverAction("uid", ThirdPhotoLandscape, "select");
-  await photo.triggerHoverAction("uid", FourthPhotoLandscape, "select");
-  await photo.triggerHoverAction("uid", FifthPhotoLandscape, "select");
-  await photo.triggerHoverAction("uid", SixthPhotoLandscape, "select");
-  await contextmenu.triggerContextMenuAction("remove", "");
-  const PhotoCountAfterDelete = await photo.getPhotoCount("all");
+    await photo.triggerHoverAction("uid", FirstPhotoLandscape, "select");
+    await photo.triggerHoverAction("uid", SecondPhotoLandscape, "select");
+    await photo.triggerHoverAction("uid", ThirdPhotoLandscape, "select");
+    await photo.triggerHoverAction("uid", FourthPhotoLandscape, "select");
+    await photo.triggerHoverAction("uid", FifthPhotoLandscape, "select");
+    await photo.triggerHoverAction("uid", SixthPhotoLandscape, "select");
+    await contextmenu.triggerContextMenuAction("remove", "");
+    const PhotoCountAfterDelete = await photo.getPhotoCount("all");
 
-  await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 6);
-});
+    await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 6);
+  }
+);
 
-test.meta("testID", "labels-004")("Delete label", async (t) => {
+test.meta("testID", "labels-004").meta({ mode: "public" })("Common: Delete label", async (t) => {
   await menu.openPage("labels");
   await toolbar.search("dome");
   const LabelDomeUid = await label.getNthLabeltUid(0);
