@@ -2209,9 +2209,8 @@ msgid "Selection restored"
 msgstr "Η επιλογή αποκαταστάθηκε"
 
 #: src/pages/about/feedback.vue:39
-#, fuzzy
 msgid "Send"
-msgstr "Στείλτε"
+msgstr "Αποστολή"
 
 #: src/pages/settings/library.vue:215
 #, fuzzy
