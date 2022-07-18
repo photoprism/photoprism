@@ -106,6 +106,10 @@ export const Languages = () => [
     value: "fr",
   },
   {
+    text: "Ελληνικά", // Greek
+    value: "el",
+  },
+  {
     text: "עברית", // Hebrew
     value: "he",
     rtl: true,
