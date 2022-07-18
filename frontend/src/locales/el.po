@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-07-18 10:34+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-07-18 11:31+0000\n"
+"Last-Translator: Chris Psarros <cpsarros@hotmail.com>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -60,7 +60,6 @@ msgid "4 hours"
 msgstr "4 ώρες"
 
 #: src/dialog/share.vue:73
-#, fuzzy
 msgid "A click will copy it to your clipboard."
 msgstr "Ένα κλικ θα το αντιγράψει στο πρόχειρο."
 
@@ -73,7 +72,6 @@ msgid "About"
 msgstr "Σχετικά"
 
 #: src/options/options.js:234
-#, fuzzy
 msgid "Abyss"
 msgstr "Άβυσσος"
 
@@ -103,9 +101,8 @@ msgid "Add Album"
 msgstr "Προσθήκη Συλλογής"
 
 #: src/pages/settings/general.vue:141
-#, fuzzy
 msgid "Add files to your library via Web Upload."
-msgstr "Προσθήκη αρχείων στην βιβλιοθήκη μέσω Web Upload"
+msgstr "Προσθήκη αρχείων στην βιβλιοθήκη μέσω Web Upload."
 
 #: src/dialog/share.vue:91
 msgid "Add Link"
@@ -198,102 +195,84 @@ msgstr "Οι Συλλογές διαγράφηκαν"
 
 #: src/pages/albums.vue:263
 #: src/share/albums.vue:220
-#, fuzzy
 msgid "All %{n} albums loaded"
-msgstr "Όλα τα άλμπουμ %{n} φορτώθηκαν"
+msgstr "%{n} Συλλογές φορτώθηκαν"
 
 #: src/pages/labels.vue:246
-#, fuzzy
 msgid "All %{n} labels loaded"
-msgstr "Όλες οι ετικέτες %{n} φορτώθηκαν"
+msgstr "%{n} ετικέτες φορτώθηκαν"
 
 #: src/pages/people/subjects.vue:333
-#, fuzzy
 msgid "All %{n} people loaded"
-msgstr "Όλοι οι %{n} άνθρωποι φορτώθηκαν"
+msgstr "%{n} άνθρωποι φορτώθηκαν"
 
 #: src/component/album/toolbar.vue:36
 #: src/component/photo/toolbar.vue:36
-#, fuzzy
 msgid "All Cameras"
-msgstr "Όλες οι κάμερες"
+msgstr "Όλες οι Κάμερες"
 
 #: src/component/photo/toolbar.vue:39
 #: src/pages/albums.vue:29
 #: src/pages/albums.vue:496
 #: src/share/albums.vue:27
 #: src/share/albums.vue:410
-#, fuzzy
 msgid "All Categories"
-msgstr "Όλες οι κατηγορίες"
+msgstr "Όλες οι Κατηγορίες"
 
 #: src/component/photo/toolbar.vue:38
-#, fuzzy
 msgid "All Colors"
-msgstr "Όλα τα χρώματα"
+msgstr "Όλα τα Χρώματα"
 
 #: src/component/album/toolbar.vue:40
 #: src/component/photo/toolbar.vue:35
-#, fuzzy
 msgid "All Countries"
-msgstr "Όλες οι χώρες"
+msgstr "Όλες οι Χώρες"
 
 #: src/pages/about/feedback.vue:31
-#, fuzzy
 msgid "All fields are required"
 msgstr "Όλα τα πεδία είναι υποχρεωτικά"
 
 #: src/pages/library/import.vue:12
-#, fuzzy
 msgid "All files from import folder"
 msgstr "Όλα τα αρχεία από το φάκελο εισαγωγής"
 
 #: src/component/photo/toolbar.vue:37
-#, fuzzy
 msgid "All Lenses"
-msgstr "Όλοι οι φακοί"
+msgstr "Όλοι οι Φακοί"
 
 #: src/component/photo/toolbar.vue:40
-#, fuzzy
 msgid "All Months"
-msgstr "Όλοι οι μήνες"
+msgstr "Όλοι οι Μήνες"
 
 #: src/pages/library/index.vue:12
-#, fuzzy
 msgid "All originals"
 msgstr "Όλα τα πρωτότυπα"
 
 #: src/component/photo/toolbar.vue:41
-#, fuzzy
 msgid "All Years"
 msgstr "Όλα τα έτη"
 
 #: src/pages/about/about.vue:34
-#, fuzzy
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
 msgstr ""
-"Επίσης, παρακαλώ αφήστε ένα αστέρι στο GitHub αν σας αρέσει αυτό το έργο. "
+"Επίσης, παρακαλώ δώστε ένα αστέρι στο GitHub αν σας αρέσει αυτό το έργο. "
 "Παρέχει επιπλέον κίνητρο για να συνεχίσουμε."
 
 #: src/dialog/share.vue:75
-#, fuzzy
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
 "Εναλλακτικά, μπορείτε να μεταφορτώσετε αρχεία απευθείας σε διακομιστές "
 "WebDAV όπως το Nextcloud."
 
 #: src/dialog/photo/info.vue:151
-#, fuzzy
 msgid "Altitude"
 msgstr "Υψόμετρο"
 
 #: src/dialog/photo/details.vue:267
-#, fuzzy
 msgid "Altitude (m)"
 msgstr "Υψόμετρο (m)"
 
 #: src/common/api.js:100
-#, fuzzy
 msgid "An error occurred - are you offline?"
 msgstr "Εμφανίστηκε σφάλμα - είστε εκτός σύνδεσης;"
 
@@ -304,36 +283,30 @@ msgstr "Εμφανίστηκε σφάλμα - είστε εκτός σύνδεσ
 #: src/component/photo/mosaic.vue:229
 #: src/model/file.js:210
 #: src/options/options.js:336
-#, fuzzy
 msgid "Animated"
-msgstr "Κινούμενα σχέδια"
+msgstr "Κινούμενη εικόνα"
 
 #: src/pages/settings/general.vue:533
-#, fuzzy
 msgid "Animation"
 msgstr "Animation"
 
 #: src/dialog/share.vue:74
-#, fuzzy
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr ""
 "Οποιεσδήποτε ιδιωτικές φωτογραφίες και βίντεο παραμένουν ιδιωτικές και δεν "
 "θα κοινοποιηθούν."
 
 #: src/dialog/account/edit.vue:477
-#, fuzzy
 msgid "API Key"
 msgstr "Κλειδί API"
 
 #: src/dialog/photo/details.vue:117
-#, fuzzy
 msgid "Apply"
 msgstr "Εφαρμογή"
 
 #: src/component/photo/cards.vue:416
 #: src/component/photo/clipboard.vue:100
 #: src/dialog/photo/details.vue:116
-#, fuzzy
 msgid "Approve"
 msgstr "Έγκριση"
 
@@ -342,129 +315,106 @@ msgstr "Έγκριση"
 #: src/component/photo/cards.vue:387
 #: src/component/photo/clipboard.vue:216
 #: src/pages/settings/general.vue:294
-#, fuzzy
 msgid "Archive"
 msgstr "Αρχείο"
 
 #: src/dialog/photo/info.vue:199
-#, fuzzy
 msgid "Archived"
 msgstr "Αρχειοθετημένο"
 
 #: src/dialog/photo/archive.vue:10
-#, fuzzy
 msgid "Are you sure you want to archive the selection?"
 msgstr "Είστε σίγουροι ότι θέλετε να αρχειοθετήσετε την επιλογή;"
 
 #: src/dialog/album/delete.vue:10
-#, fuzzy
 msgid "Are you sure you want to delete these albums?"
-msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτά τα άλμπουμ;"
+msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτές τις συλλογές;"
 
 #: src/dialog/label/delete.vue:10
-#, fuzzy
 msgid "Are you sure you want to delete these labels?"
 msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτές τις ετικέτες;"
 
 #: src/dialog/account/remove.vue:10
-#, fuzzy
 msgid "Are you sure you want to delete this account?"
 msgstr "Είστε σίγουρος ότι θέλετε να διαγράψετε αυτόν τον λογαριασμό;"
 
 #: src/dialog/photo/delete.vue:10
-#, fuzzy
 msgid "Are you sure you want to permanently delete these pictures?"
 msgstr "Είστε σίγουρος ότι θέλετε να διαγράψετε οριστικά αυτές τις φωτογραφίες;"
 
 #: src/dialog/file/delete.vue:10
-#, fuzzy
 msgid "Are you sure you want to permanently delete this file?"
 msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά αυτό το αρχείο;"
 
 #: src/dialog/confirm.vue:10
-#, fuzzy
 msgid "Are you sure?"
 msgstr "Είσαι σίγουρος;"
 
 #: src/dialog/photo/details.vue:497
-#, fuzzy
 msgid "Artist"
 msgstr "Καλλιτέχνης"
 
 #: src/dialog/photo/files.vue:149
 #: src/dialog/photo/files.vue:146
-#, fuzzy
 msgid "Aspect Ratio"
 msgstr "Αναλογία διαστάσεων"
 
 #: src/pages/settings/library.vue:114
-#, fuzzy
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr ""
 "Αυτόματη δημιουργία αρχείων JPEG για άλλους τύπους αρχείων, ώστε να μπορούν "
 "να εμφανιστούν σε ένα πρόγραμμα περιήγησης."
 
 #: src/pages/settings/general.vue:361
-#, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "Δημιουργεί αυτόματα άλμπουμ με ιδιαίτερες στιγμές, ταξίδια και μέρη."
+msgstr ""
+"Δημιουργεί αυτόματα άλμπουμ με ιδιαίτερες στιγμές, ταξίδια και τοποθεσίες."
 
 #: src/dialog/sponsor.vue:7
 #: src/pages/about/about.vue:23
 #: src/pages/auth/login.vue:44
-#, fuzzy
 msgid "Become a sponsor"
 msgstr "Γίνετε χορηγός"
 
 #: src/pages/about/about.vue:42
-#, fuzzy
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr ""
-"Πριν υποβάλετε αίτημα υποστήριξης, χρησιμοποιήστε τις λίστες ελέγχου "
-"αντιμετώπισης προβλημάτων για να προσδιορίσετε την αιτία του προβλήματός σας."
+"Πριν υποβάλετε αίτημα υποστήριξης, χρησιμοποιήστε τις Λίστες Αντιμετώπισης "
+"Προβλημάτων για να προσδιορίσετε την αιτία του προβλήματός σας."
 
 #: src/pages/people/subjects.vue:433
-#, fuzzy
 msgid "Bio"
-msgstr "Bio"
+msgstr "Βιογραφικό"
 
 #: src/options/options.js:436
-#, fuzzy
 msgid "Black"
 msgstr "Μαύρο"
 
 #: src/options/options.js:449
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Τροποποίηση Lanczos, λιγότερα αντικείμενα με δακτυλίους"
+msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
 #: src/options/options.js:432
-#, fuzzy
 msgid "Blue"
 msgstr "Μπλε"
 
 #: src/options/options.js:433
-#, fuzzy
 msgid "Brown"
 msgstr "Καφέ"
 
 #: src/pages/settings/general.vue:383
-#, fuzzy
 msgid "Browse and edit image classification labels."
 msgstr "Αναζήτηση και επεξεργασία ετικετών ταξινόμησης εικόνων."
 
 #: src/pages/settings/general.vue:317
-#, fuzzy
 msgid "Browse indexed files and folders in Library."
-msgstr "Περιήγηση σε ευρετηριασμένα αρχεία και φακέλους στη Βιβλιοθήκη."
+msgstr "Περιήγηση σε αρχεία και φακέλους στη Βιβλιοθήκη."
 
 #: src/options/options.js:443
-#, fuzzy
 msgid "Bug Report"
 msgstr "Αναφορά σφάλματος"
 
 #: src/common/notify.js:94
-#, fuzzy
 msgid "Busy, please wait…"
 msgstr "Απασχολημένος, παρακαλώ περιμένετε…"
 
@@ -472,7 +422,6 @@ msgstr "Απασχολημένος, παρακαλώ περιμένετε…"
 #: src/app/routes.js:148
 #: src/component/navigation.vue:270
 #: src/component/navigation.vue:1099
-#, fuzzy
 msgid "Calendar"
 msgstr "Ημερολόγιο"
 
@@ -480,21 +429,18 @@ msgstr "Ημερολόγιο"
 #: src/component/photo/list.vue:148
 #: src/component/photo/toolbar.vue:208
 #: src/dialog/photo/details.vue:335
-#, fuzzy
 msgid "Camera"
 msgstr "Κάμερα"
 
 #: src/dialog/photo/info.vue:79
-#, fuzzy
 msgid "Camera Serial"
 msgstr "Σειριακή κάμερα"
 
 #: src/pages/album/photos.vue:214
 #: src/pages/photos.vue:263
 #: src/share/photos.vue:229
-#, fuzzy
 msgid "Can't load more, limit reached"
-msgstr "Δεν μπορείτε να φορτώσετε περισσότερα, το όριο έφτασε"
+msgstr "Δεν μπορείτε να φορτώσετε περισσότερα διότι θα ξεπεράσετε το όριο"
 
 #: src/common/clipboard.js:100
 #: src/common/clipboard.js:137
@@ -510,9 +456,8 @@ msgstr "Δεν μπορείτε να φορτώσετε περισσότερα, 
 #: src/pages/people/subjects.vue:283
 #: src/share/albums.vue:350
 #: src/share/albums.vue:366
-#, fuzzy
 msgid "Can't select more items"
-msgstr "Δεν μπορείτε να επιλέξετε περισσότερα στοιχεία"
+msgstr "Δεν μπορείτε να επιλέξετε περισσότερα αντικείμενα"
 
 #: src/dialog/account/add.vue:17
 #: src/dialog/account/edit.vue:102
@@ -529,13 +474,11 @@ msgstr "Δεν μπορείτε να επιλέξετε περισσότερα �
 #: src/dialog/share/upload.vue:29
 #: src/pages/library/import.vue:34
 #: src/pages/library/index.vue:27
-#, fuzzy
 msgid "Cancel"
 msgstr "Ακύρωση"
 
 #: src/component/album/toolbar.vue:51
 #: src/component/photo/toolbar.vue:46
-#, fuzzy
 msgid "Cards"
 msgstr "Κάρτες"
 
@@ -543,33 +486,27 @@ msgstr "Κάρτες"
 #: src/dialog/album/edit.vue:162
 #: src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:129
-#, fuzzy
 msgid "Category"
 msgstr "Κατηγορία"
 
 #: src/pages/settings/account.vue:26
-#, fuzzy
 msgid "Change"
 msgstr "Αλλαγή"
 
 #: src/pages/settings/general.vue:185
-#, fuzzy
 msgid "Change photo titles, locations, and other metadata."
 msgstr "Αλλάξτε τίτλους φωτογραφιών, τοποθεσίες και άλλα μεταδεδομένα."
 
 #: src/component/photo/clipboard.vue:146
-#, fuzzy
 msgid "Change private flag"
-msgstr "Αλλαγή ιδιωτικής σημαίας"
+msgstr "Αλλαγή ιδιωτικής κατάστασης"
 
 #: src/dialog/photo/info.vue:191
-#, fuzzy
 msgid "Checked"
-msgstr "Ελέγχεται"
+msgstr "Σημειωμένο"
 
 #: src/dialog/photo/files.vue:175
 #: src/dialog/photo/files.vue:172
-#, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -577,167 +514,136 @@ msgstr "Chroma"
 #: src/dialog/photo/details.vue:113
 #: src/dialog/share.vue:87
 #: src/pages/library/errors.vue:60
-#, fuzzy
 msgid "Close"
-msgstr "Κλείστε το"
+msgstr "Κλείσιμο"
 
 #: src/dialog/photo/files.vue:95
 #: src/dialog/photo/files.vue:92
-#, fuzzy
 msgid "Codec"
-msgstr "Κωδικοποιητής"
+msgstr "Codec"
 
 #: src/component/photo/toolbar.vue:321
-#, fuzzy
 msgid "Color"
 msgstr "Χρώμα"
 
 #: src/dialog/photo/files.vue:163
 #: src/dialog/photo/files.vue:160
-#, fuzzy
 msgid "Color Profile"
 msgstr "Προφίλ χρώματος"
 
 #: src/pages/discover.vue:4
-#, fuzzy
 msgid "Colors"
 msgstr "Χρώματα"
 
 #: src/pages/library/index.vue:123
-#, fuzzy
 msgid "Complete Rescan"
 msgstr "Πλήρης σάρωση"
 
 #: src/dialog/photo/labels.vue:22
-#, fuzzy
 msgid "Confidence"
 msgstr "Εμπιστοσύνη"
 
 #: src/dialog/account/add.vue:18
-#, fuzzy
 msgid "Connect"
-msgstr "Συνδέστε το"
+msgstr "Σύνδεση"
 
 #: src/dialog/webdav.vue:4
 #: src/pages/settings/sync.vue:43
-#, fuzzy
 msgid "Connect via WebDAV"
 msgstr "Σύνδεση μέσω WebDAV"
 
 #: src/pages/about/feedback.vue:7
-#, fuzzy
 msgid "Contact Us"
 msgstr "Επικοινωνήστε μαζί μας"
 
 #: src/pages/albums.vue:93
 #: src/pages/labels.vue:74
 #: src/pages/people/subjects.vue:85
-#, fuzzy
 msgid "Contains %{n} pictures."
 msgstr "Περιέχει %{n} εικόνες."
 
 #: src/pages/albums.vue:90
 #: src/pages/labels.vue:71
 #: src/pages/people/subjects.vue:82
-#, fuzzy
 msgid "Contains one picture."
 msgstr "Περιέχει μία εικόνα."
 
 #: src/pages/settings/library.vue:113
-#, fuzzy
 msgid "Convert to JPEG"
 msgstr "Μετατροπή σε JPEG"
 
 #: src/pages/library/index.vue:163
-#, fuzzy
 msgid "Converting"
 msgstr "Μετατροπή"
 
 #: src/dialog/share.vue:58
 #: src/dialog/webdav.vue:36
-#, fuzzy
 msgid "Copied to clipboard"
 msgstr "Αντιγραφή στο πρόχειρο"
 
 #: src/dialog/photo/details.vue:520
-#, fuzzy
 msgid "Copyright"
 msgstr "Πνευματικά δικαιώματα"
 
 #: src/component/photo/list.vue:47
-#, fuzzy
 msgid "Couldn't find anything."
 msgstr "Δεν μπόρεσα να βρω τίποτα."
 
 #: src/component/photo/toolbar.vue:184
 #: src/dialog/photo/details.vue:240
-#, fuzzy
 msgid "Country"
 msgstr "Χώρα"
 
 #: src/dialog/photo/album.vue:21
-#, fuzzy
 msgid "Create album"
-msgstr "Δημιουργία άλμπουμ"
+msgstr "Δημιουργία Συλλογής"
 
 #: src/dialog/photo/info.vue:167
-#, fuzzy
 msgid "Created"
 msgstr "Δημιουργήθηκε"
 
 #: src/pages/library/index.vue:169
-#, fuzzy
 msgid "Creating thumbnails for"
 msgstr "Δημιουργία μικρογραφιών για"
 
 #: src/options/options.js:451
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Κυβικά: Ποιότητα μέτρια, καλή απόδοση"
+msgstr "Cubic: Moderate Quality, Good Performance"
 
 #: src/pages/settings/account.vue:57
-#, fuzzy
 msgid "Current Password"
 msgstr "Τρέχων κωδικός πρόσβασης"
 
 #: src/options/options.js:440
-#, fuzzy
 msgid "Customer Support"
 msgstr "Υποστήριξη πελατών"
 
 #: src/options/options.js:431
-#, fuzzy
 msgid "Cyan"
 msgstr "Κυανό"
 
 #: src/options/options.js:249
-#, fuzzy
 msgid "Cyano"
 msgstr "Κυανό"
 
 #: src/options/options.js:404
-#, fuzzy
 msgid "Daily"
 msgstr "Καθημερινά"
 
 #: src/dialog/photo/details.vue:118
-#, fuzzy
 msgid "Day"
 msgstr "Ημέρα"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Debug Logs"
 msgstr "Αρχεία καταγραφής σφαλμάτων"
 
 #: src/options/options.js:219
 #: src/options/options.js:355
-#, fuzzy
 msgid "Default"
 msgstr "Προεπιλογή"
 
 #: src/dialog/account/edit.vue:203
-#, fuzzy
 msgid "Default Folder"
 msgstr "Προεπιλεγμένος φάκελος"
 
@@ -754,7 +660,6 @@ msgstr "Προεπιλεγμένος φάκελος"
 #: src/dialog/share.vue:235
 #: src/pages/library/errors.vue:94
 #: src/pages/settings/general.vue:206
-#, fuzzy
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -763,81 +668,66 @@ msgstr "Διαγραφή"
 #: src/dialog/photo/details.vue:566
 #: src/pages/albums.vue:443
 #: src/share/albums.vue:243
-#, fuzzy
 msgid "Description"
 msgstr "Περιγραφή"
 
 #: src/dialog/webdav.vue:32
-#, fuzzy
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Λεπτομερείς οδηγίες μπορείτε να βρείτε στον Οδηγό χρήσης."
+msgstr "Λεπτομερείς οδηγίες μπορείτε να βρείτε στον Οδηγό Χρήσης."
 
 #: src/dialog/photo/edit.vue:27
 #: src/dialog/photo/edit.vue:1
 #: src/dialog/photo/edit.vue:177
-#, fuzzy
 msgid "Details"
 msgstr "Λεπτομέρειες"
 
 #: src/dialog/photo/files.vue:35
-#, fuzzy
 msgid "Dimensions"
 msgstr "Διαστάσεις"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Disable Backups"
 msgstr "Απενεργοποίηση αντιγράφων ασφαλείας"
 
 #: src/pages/settings/advanced.vue:166
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr ""
 "Απενεργοποίηση του ενσωματωμένου διακομιστή WebDAV. Απαιτεί επανεκκίνηση."
 
 #: src/pages/settings/advanced.vue:484
-#, fuzzy
 msgid "Disable Darktable"
 msgstr "Απενεργοποίηση Darktable"
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Disable ExifTool"
-msgstr "Απενεργοποίηση του ExifTool"
+msgstr "Απενεργοποίηση ExifTool"
 
 #: src/pages/settings/advanced.vue:526
-#, fuzzy
 msgid "Disable FFmpeg"
-msgstr "Απενεργοποίηση του FFmpeg"
+msgstr "Απενεργοποίηση FFmpeg"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disable Places"
-msgstr "Απενεργοποίηση θέσεων"
+msgstr "Απενεργοποίηση Places"
 
 #: src/pages/settings/advanced.vue:505
-#, fuzzy
 msgid "Disable RawTherapee"
-msgstr "Απενεργοποίηση του RawTherapee"
+msgstr "Απενεργοποίηση RawTherapee"
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
 msgid "Disable TensorFlow"
-msgstr "Απενεργοποίηση του TensorFlow"
+msgstr "Απενεργοποίηση TensorFlow"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable WebDAV"
-msgstr "Απενεργοποίηση του WebDAV"
+msgstr "Απενεργοποίηση WebDAV"
 
 #: src/dialog/account/edit.vue:66
 #: src/dialog/account/edit.vue:111
-#, fuzzy
 msgid "Disabled"
-msgstr "Άτομα με ειδικές ανάγκες"
+msgstr "Απενεργοποιημένο"
 
 #: src/pages/settings/advanced.vue:188
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "Απενεργοποιεί την αντίστροφη γεωκωδικοποίηση και τους χάρτες."
 
@@ -845,65 +735,52 @@ msgstr "Απενεργοποιεί την αντίστροφη γεωκωδικ�
 #: src/app/routes.js:381
 #: src/app/routes.js:388
 #: src/app/routes.js:395
-#, fuzzy
 msgid "Discover"
 msgstr "Ανακαλύψτε το"
 
 #: src/pages/settings/advanced.vue:144
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr ""
-"Μην δημιουργείτε αντίγραφα ασφαλείας των μεταδεδομένων φωτογραφιών και "
-"άλμπουμ σε αρχεία YAML."
+msgstr "Μην δημιουργείτε αντίγραφα ασφαλείας σε αρχεία YAML."
 
 #: src/pages/settings/advanced.vue:210
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 "Μην δημιουργείτε αρχεία ExifTool JSON για βελτιωμένη εξαγωγή μεταδεδομένων."
 
 #: src/pages/settings/advanced.vue:100
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Μην τροποποιείτε το φάκελο πρωτοτύπων. Απενεργοποιεί την εισαγωγή, τη "
 "μεταφόρτωση και τη διαγραφή."
 
 #: src/pages/settings/advanced.vue:527
-#, fuzzy
 msgid "Don't transcode videos with FFmpeg."
 msgstr "Μην μετακωδικοποιείτε βίντεο με το FFmpeg."
 
 #: src/pages/settings/advanced.vue:485
-#, fuzzy
 msgid "Don't use Darktable to convert RAW files."
 msgstr "Μην χρησιμοποιείτε το Darktable για τη μετατροπή αρχείων RAW."
 
 #: src/pages/settings/advanced.vue:506
-#, fuzzy
 msgid "Don't use RawTherapee to convert RAW files."
 msgstr "Μην χρησιμοποιείτε το RawTherapee για τη μετατροπή αρχείων RAW."
 
 #: src/pages/settings/advanced.vue:232
-#, fuzzy
 msgid "Don't use TensorFlow for image classification."
 msgstr "Μην χρησιμοποιείτε το TensorFlow για ταξινόμηση εικόνων."
 
 #: src/options/options.js:444
-#, fuzzy
 msgid "Donations"
 msgstr "Δωρεές"
 
 #: src/dialog/photo/details.vue:120
 #: src/dialog/share.vue:26
-#, fuzzy
 msgid "Done"
 msgstr "Έγινε"
 
 #: src/dialog/upload.vue:39
 #: src/pages/library/import.vue:7
 #: src/pages/library/index.vue:8
-#, fuzzy
 msgid "Done."
 msgstr "Έγινε."
 
@@ -919,19 +796,16 @@ msgstr "Έγινε."
 #: src/share/album/clipboard.vue:61
 #: src/share/photo/clipboard.vue:63
 #: src/share/photos.vue:78
-#, fuzzy
 msgid "Download"
 msgstr "Λήψη"
 
 #: src/dialog/account/edit.vue:322
-#, fuzzy
 msgid "Download remote files"
 msgstr "Λήψη απομακρυσμένων αρχείων"
 
 #: src/pages/settings/general.vue:163
-#, fuzzy
 msgid "Download single files and zip archives."
-msgstr "Λήψη μεμονωμένων αρχείων και αρχείων zip."
+msgstr "Λήψη μεμονωμένων αρχείων και αρχείων συμπίεσης."
 
 #: src/component/album/clipboard.vue:86
 #: src/component/album/toolbar.vue:101
@@ -947,45 +821,37 @@ msgstr "Λήψη μεμονωμένων αρχείων και αρχείων zip
 #: src/share/album/clipboard.vue:40
 #: src/share/photo/clipboard.vue:45
 #: src/share/photos.vue:499
-#, fuzzy
 msgid "Downloading…"
 msgstr "Λήψη…"
 
 #: src/pages/settings/advanced.vue:282
-#, fuzzy
 msgid "Downscaling Filter"
 msgstr "Φίλτρο υποβιβασμού κλίμακας"
 
 #: src/pages/library/files.vue:37
-#, fuzzy
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Τα διπλότυπα θα παραλείπονται και θα εμφανίζονται μόνο μία φορά."
 
 #: src/dialog/photo/files.vue:101
 #: src/dialog/photo/files.vue:98
-#, fuzzy
 msgid "Duration"
 msgstr "Διάρκεια"
 
 #: src/pages/settings/advanced.vue:305
-#, fuzzy
 msgid "Dynamic Previews"
 msgstr "Δυναμικές προεπισκοπήσεις"
 
 #: src/pages/settings/advanced.vue:306
-#, fuzzy
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr ""
 "Η δυναμική απόδοση απαιτεί έναν ισχυρό διακομιστή. Δεν συνιστάται για "
 "συσκευές NAS."
 
 #: src/pages/settings/advanced.vue:348
-#, fuzzy
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Όριο δυναμικού μεγέθους: %{n}px"
 
 #: src/pages/about/feedback.vue:181
-#, fuzzy
 msgid "E-Mail"
 msgstr "E-Mail"
 
@@ -994,211 +860,173 @@ msgstr "E-Mail"
 #: src/component/photo-viewer.vue:103
 #: src/component/photo/clipboard.vue:123
 #: src/pages/settings/general.vue:184
-#, fuzzy
 msgid "Edit"
 msgstr "Επεξεργασία"
 
 #: src/dialog/album/edit.vue:8
-#, fuzzy
 msgid "Edit %{name}"
 msgstr "Επεξεργασία %{name}"
 
 #: src/dialog/account/edit.vue:140
-#, fuzzy
 msgid "Edit Account"
-msgstr "Επεξεργασία λογαριασμού"
+msgstr "Επεξεργασία Λογαριασμού"
 
 #: src/dialog/photo/edit.vue:51
-#, fuzzy
 msgid "Edit Photo"
-msgstr "Επεξεργασία φωτογραφίας"
+msgstr "Επεξεργασία Φωτογραφίας"
 
 #: src/dialog/photo/info.vue:183
-#, fuzzy
 msgid "Edited"
-msgstr "Επεξεργασία"
+msgstr "Επεξεργάστηκε"
 
 #: src/pages/settings/advanced.vue:122
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "Ενεργοποίηση νέων χαρακτηριστικών που βρίσκονται υπό ανάπτυξη."
 
 #: src/dialog/account/edit.vue:66
 #: src/dialog/account/edit.vue:111
-#, fuzzy
 msgid "Enabled"
 msgstr "Ενεργοποιημένο"
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr ""
 "Ενεργοποιεί τις προεπιλογές μετατροπέα RAW. Μπορεί να μειώσει την απόδοση."
 
 #: src/app/routes.js:254
 #: src/component/navigation.vue:393
-#, fuzzy
 msgid "Errors"
 msgstr "Σφάλματα"
 
 #: src/pages/settings/library.vue:72
-#, fuzzy
 msgid "Estimate the approximate location of pictures without coordinates."
-msgstr "Εκτιμήστε την κατά προσέγγιση θέση εικόνων χωρίς συντεταγμένες."
+msgstr "Εκτιμήση της κατά προσέγγισης θέσης εικόνων χωρίς συντεταγμένες."
 
 #: src/pages/settings/library.vue:71
-#, fuzzy
 msgid "Estimates"
 msgstr "Εκτιμήσεις"
 
 #: src/options/options.js:405
-#, fuzzy
 msgid "Every two days"
 msgstr "Κάθε δύο ημέρες"
 
 #: src/pages/settings/general.vue:273
-#, fuzzy
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr ""
-"Αποκλείστε το περιεχόμενο που έχει χαρακτηριστεί ως ιδιωτικό από τα "
+"Εξαίρεση του περιεχομένου που έχει χαρακτηριστεί ως ιδιωτικό από τα "
 "αποτελέσματα αναζήτησης, τα κοινόχρηστα άλμπουμ, τις ετικέτες και τις "
 "τοποθεσίες."
 
 #: src/pages/people/faces.vue:100
 #: src/pages/people/subjects.vue:141
-#, fuzzy
 msgid "Exclude hidden"
 msgstr "Εξαίρεση κρυφών"
 
 #: src/component/navigation.vue:416
-#, fuzzy
 msgid "Expand"
-msgstr "Επεκτείνετε το"
+msgstr "Επέκταση"
 
 #: src/component/photo/toolbar.vue:145
-#, fuzzy
 msgid "Expand Search"
-msgstr "Αναπτύξτε την αναζήτηση"
+msgstr "Επεκταμένη Αναζήτηση"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Experimental Features"
-msgstr "Πειραματικά χαρακτηριστικά"
+msgstr "Πειραματικά Χαρακτηριστικά"
 
 #: src/dialog/account/edit.vue:240
 #: src/dialog/share.vue:64
-#, fuzzy
 msgid "Expires"
-msgstr "Λήγει"
+msgstr "Λήξη"
 
 #: src/dialog/photo/details.vue:383
-#, fuzzy
 msgid "Exposure"
 msgstr "Έκθεση"
 
 #: src/dialog/photo/details.vue:429
-#, fuzzy
 msgid "F Number"
 msgstr "Αριθμός F"
 
 #: src/model/face.js:163
-#, fuzzy
 msgid "Face"
 msgstr "Πρόσωπο"
 
 #: src/dialog/photo/info.vue:73
-#, fuzzy
 msgid "Faces"
 msgstr "Πρόσωπα"
 
 #: src/dialog/share.vue:60
 #: src/dialog/webdav.vue:38
-#, fuzzy
 msgid "Failed copying to clipboard"
-msgstr "Αποτυχημένη αντιγραφή στο πρόχειρο"
+msgstr "Αποτυχία αντιγραφής στο πρόχειρο"
 
 #: src/dialog/share.vue:93
-#, fuzzy
 msgid "Failed removing link"
-msgstr "Απέτυχε η αφαίρεση του συνδέσμου"
+msgstr "Αποτυχία αφαίρεσης συνδέσμου"
 
 #: src/dialog/share.vue:81
-#, fuzzy
 msgid "Failed updating link"
-msgstr "Αποτυχημένη ενημέρωση συνδέσμου"
+msgstr "Αποτυχία ενημέρωσης συνδέσμου"
 
 #: src/dialog/upload.vue:163
-#, fuzzy
 msgid "Failure while importing uploaded files"
 msgstr "Αποτυχία κατά την εισαγωγή μεταφορτωμένων αρχείων"
 
 #: src/options/options.js:290
-#, fuzzy
 msgid "Fast"
-msgstr "Γρήγορη"
+msgstr "Γρήγορα"
 
 #: src/dialog/photo/info.vue:94
-#, fuzzy
 msgid "Favorite"
 msgstr "Αγαπημένο"
 
 #: src/app/routes.js:174
 #: src/component/navigation.vue:244
 #: src/component/navigation.vue:1011
-#, fuzzy
 msgid "Favorites"
 msgstr "Αγαπημένα"
 
 #: src/options/options.js:442
-#, fuzzy
 msgid "Feature Request"
 msgstr "Αίτηση χαρακτηριστικών"
 
 #: src/component/navigation.vue:434
 #: src/component/navigation.vue:35
-#, fuzzy
 msgid "Feedback"
 msgstr "Ανατροφοδότηση"
 
 #: src/dialog/sponsor.vue:24
-#, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 "Μη διστάσετε να επικοινωνήσετε μαζί μας στο hello@photoprism.app αν έχετε "
 "οποιεσδήποτε ερωτήσεις."
 
 #: src/model/file.js:291
-#, fuzzy
 msgid "File"
 msgstr "Αρχείο"
 
 #: src/app/routes.js:241
-#, fuzzy
 msgid "File Browser"
 msgstr "Πρόγραμμα περιήγησης αρχείων"
 
 #: src/dialog/photo/files.vue:65
 #: src/dialog/photo/files.vue:62
-#, fuzzy
 msgid "Filename"
 msgstr "Όνομα αρχείου"
 
 #: src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:316
-#, fuzzy
 msgid "Files"
 msgstr "Αρχεία"
 
 #: src/pages/settings/library.vue:216
-#, fuzzy
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr ""
 "Αρχεία με διαδοχικά ονόματα όπως 'IMG_1234 (2)' και 'IMG_1234 (3)' ανήκουν "
 "στην ίδια εικόνα."
 
 #: src/dialog/photo/details.vue:449
-#, fuzzy
 msgid "Focal Length"
 msgstr "Εστιακό μήκος"
 
@@ -1208,17 +1036,14 @@ msgstr "Εστιακό μήκος"
 #: src/dialog/share/upload.vue:144
 #: src/model/folder.js:193
 #: src/pages/library/files.vue:72
-#, fuzzy
 msgid "Folder"
 msgstr "Φάκελος"
 
 #: src/pages/library/files.vue:305
-#, fuzzy
 msgid "Folder contains %{n} files"
 msgstr "Ο φάκελος περιέχει %{n} αρχεία"
 
 #: src/pages/library/files.vue:297
-#, fuzzy
 msgid "Folder is empty"
 msgstr "Ο φάκελος είναι άδειος"
 
@@ -1226,186 +1051,153 @@ msgstr "Ο φάκελος είναι άδειος"
 #: src/app/routes.js:161
 #: src/component/navigation.vue:330
 #: src/component/navigation.vue:1307
-#, fuzzy
 msgid "Folders"
 msgstr "Φάκελοι"
 
 #: src/pages/auth/login.vue:1
-#, fuzzy
 msgid "Forgot password?"
 msgstr "Ξεχάσατε τον κωδικό πρόσβασης;"
 
 #: src/dialog/photo/files.vue:113
 #: src/dialog/photo/files.vue:110
-#, fuzzy
 msgid "FPS"
 msgstr "FPS"
 
 #: src/dialog/photo/files.vue:107
 #: src/dialog/photo/files.vue:104
-#, fuzzy
 msgid "Frames"
 msgstr "Πλαίσια"
 
 #: src/component/photo-viewer.vue:174
-#, fuzzy
 msgid "Fullscreen"
 msgstr "Πλήρης οθόνη"
 
 #: src/options/options.js:259
 #, fuzzy
 msgid "Gemstone"
-msgstr "Πολύτιμοι λίθοι"
+msgstr "Gemstone"
 
 #: src/pages/settings.vue:30
-#, fuzzy
 msgid "General"
 msgstr "Γενικά"
 
 #: src/pages/about/about.vue:38
-#, fuzzy
 msgid "Getting Support"
 msgstr "Λήψη υποστήριξης"
 
 #: src/options/options.js:426
-#, fuzzy
 msgid "Gold"
 msgstr "Χρυσό"
 
 #: src/options/options.js:224
-#, fuzzy
 msgid "Grayscale"
 msgstr "Κλίμακα του γκρι"
 
 #: src/options/options.js:429
-#, fuzzy
 msgid "Green"
 msgstr "Πράσινο"
 
 #: src/options/options.js:435
-#, fuzzy
 msgid "Grey"
 msgstr "Γκρι"
 
 #: src/component/album/toolbar.vue:62
 #: src/component/photo/toolbar.vue:55
 #: src/dialog/album/edit.vue:23
-#, fuzzy
 msgid "Group by similarity"
 msgstr "Ομαδοποίηση με βάση την ομοιότητα"
 
 #: src/dialog/photo/files.vue:59
 #: src/dialog/photo/files.vue:56
-#, fuzzy
 msgid "Hash"
 msgstr "Κατακερματισμός"
 
 #: src/pages/help.vue:4
-#, fuzzy
 msgid "Help"
 msgstr "Βοήθεια"
 
 #: src/app/routes.js:76
-#, fuzzy
 msgid "Help & Support"
-msgstr "Βοήθεια & Υποστήριξη"
+msgstr "Βοήθεια &amp; Υποστήριξη"
 
 #: src/component/navigation.vue:384
-#, fuzzy
 msgid "Hidden"
 msgstr "Κρυφό"
 
 #: src/app/routes.js:247
-#, fuzzy
 msgid "Hidden Files"
 msgstr "Κρυμμένα αρχεία"
 
 #: src/pages/people/faces.vue:237
 #: src/pages/people/subjects.vue:298
-#, fuzzy
 msgid "Hide"
 msgstr "Απόκρυψη"
 
 #: src/pages/settings/general.vue:295
-#, fuzzy
 msgid "Hide photos that have been moved to archive."
-msgstr "Απόκρυψη φωτογραφιών που έχουν μεταφερθεί στο αρχείο."
+msgstr "Απόκρυψη φωτογραφιών που έχουν αρχειοθετηθεί."
 
 #: src/options/options.js:359
-#, fuzzy
 msgid "High"
 msgstr "Υψηλή"
 
 #: src/dialog/photo/files.vue:127
 #: src/dialog/photo/files.vue:124
-#, fuzzy
 msgid "High Dynamic Range (HDR)"
 msgstr "Υψηλό δυναμικό εύρος (HDR)"
 
 #: src/pages/about/feedback.vue:138
-#, fuzzy
 msgid "How can we help?"
 msgstr "Πώς μπορούμε να βοηθήσουμε;"
 
 #: src/options/options.js:314
-#, fuzzy
 msgid "Hybrid"
 msgstr "Υβριδικό"
 
 #: src/dialog/sponsor.vue:36
-#, fuzzy
 msgid "I'm a sponsor"
 msgstr "Είμαι χορηγός"
 
 #: src/pages/about/about.vue:43
-#, fuzzy
 msgid "If this doesn't help, or you have other questions:"
-msgstr "Εάν αυτό δεν σας βοηθά ή έχετε άλλες ερωτήσεις:"
+msgstr "Εάν αυτό δεν βοηθά ή έχετε άλλες ερωτήσεις:"
 
 #: src/dialog/photo/labels.vue:37
-#, fuzzy
 msgid "image"
 msgstr "εικόνα"
 
 #: src/model/file.js:216
 #: src/options/options.js:332
-#, fuzzy
 msgid "Image"
 msgstr "Εικόνα"
 
 #: src/pages/settings/advanced.vue:56
-#, fuzzy
 msgid "Images"
 msgstr "Εικόνες"
 
 #: src/pages/library.vue:42
 #: src/pages/library/import.vue:43
 #: src/pages/settings/general.vue:228
-#, fuzzy
 msgid "Import"
 msgstr "Εισαγωγή"
 
 #: src/pages/library/import.vue:116
-#, fuzzy
 msgid "Import failed"
 msgstr "Η εισαγωγή απέτυχε"
 
 #: src/pages/library/import.vue:25
-#, fuzzy
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr ""
 "Τα εισαγόμενα αρχεία θα ταξινομούνται ανά ημερομηνία και θα λαμβάνουν ένα "
-"μοναδικό όνομα για να αποφεύγονται τα αντίγραφα."
+"μοναδικό όνομα για να αποφεύγονται οι διπλές εγγραφές."
 
 #: src/pages/settings/general.vue:229
-#, fuzzy
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr ""
 "Τα εισαγόμενα αρχεία θα ταξινομηθούν κατά ημερομηνία και θα τους δοθεί ένα "
 "μοναδικό όνομα."
 
 #: src/pages/library/import.vue:5
-#, fuzzy
 msgid "Importing %{name}…"
 msgstr "Εισαγωγή %{name}…"
 
@@ -1418,12 +1210,10 @@ msgstr "Εισαγωγή αρχείων σε πρωτότυπα…"
 #: src/dialog/photo/files.vue:201
 #: src/dialog/photo/files.vue:189
 #: src/dialog/photo/files.vue:198
-#, fuzzy
 msgid "in"
 msgstr "στο"
 
 #: src/pages/about/about.vue:52
-#, fuzzy
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr ""
 "Επιπλέον, οι χορηγοί λαμβάνουν άμεση τεχνική υποστήριξη μέσω ηλεκτρονικού "
@@ -1439,33 +1229,29 @@ msgstr ""
 #: src/component/photo/mosaic.vue:1
 #: src/pages/labels.vue:35
 #: src/pages/library/files.vue:38
-#, fuzzy
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr ""
 "Σε περίπτωση που λείπουν οι εικόνες που περιμένατε, παρακαλούμε σαρώστε εκ "
-"νέου τη βιβλιοθήκη σας και περιμένετε μέχρι να ολοκληρωθεί η ευρετηρίαση."
+"νέου τη βιβλιοθήκη σας και περιμένετε μέχρι να ολοκληρωθεί η δημιουργία "
+"ευρετηρίου."
 
 #: src/pages/library.vue:32
 #: src/pages/settings/library.vue:6
-#, fuzzy
 msgid "Index"
 msgstr "Ευρετήριο"
 
 #: src/pages/library/index.vue:134
 #: src/pages/library/index.vue:140
-#, fuzzy
 msgid "Indexing"
-msgstr "Ευρετηρίαση"
+msgstr "Δημιουργία ευρετηρίου"
 
 #: src/pages/library/index.vue:116
-#, fuzzy
 msgid "Indexing failed"
-msgstr "Αποτυχία ευρετηρίασης"
+msgstr "Αποτυχία δημιουργίας ευρετηρίου"
 
 #: src/pages/library/index.vue:7
-#, fuzzy
 msgid "Indexing media and sidecar files…"
-msgstr "Ευρετηρίαση μέσων και αρχείων sidecar…"
+msgstr "Δημιουργία ευρετηρίου μέσων και αρχείων sidecar…"
 
 #: src/dialog/photo/files.vue:53
 #: src/dialog/photo/files.vue:50
@@ -1474,48 +1260,39 @@ msgid "Instance ID"
 msgstr "Αναγνωριστικό περίπτωσης"
 
 #: src/dialog/account/edit.vue:297
-#, fuzzy
 msgid "Interval"
 msgstr "Διάστημα"
 
 #: src/dialog/photo/details.vue:105
-#, fuzzy
 msgid "Invalid date"
 msgstr "Μη έγκυρη ημερομηνία"
 
 #: src/dialog/photo/edit.vue:116
-#, fuzzy
 msgid "Invalid photo selected"
 msgstr "Επιλογή μη έγκυρης φωτογραφίας"
 
 #: src/model/rest.js:167
-#, fuzzy
 msgid "Item"
-msgstr "Στοιχείο"
+msgstr "Αντικείμενο"
 
 #: src/pages/settings/advanced.vue:323
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "Ποιότητα JPEG: %{n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Όριο μεγέθους JPEG: %{n}px"
 
 #: src/pages/library/import.vue:26
-#, fuzzy
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "Τα JPEG και οι μικρογραφίες αποδίδονται αυτόματα όπως απαιτείται."
 
 #: src/dialog/photo/details.vue:589
-#, fuzzy
 msgid "Keywords"
 msgstr "Λέξεις κλειδιά"
 
 #: src/dialog/photo/labels.vue:20
 #: src/model/label.js:124
-#, fuzzy
 msgid "Label"
 msgstr "Ετικέτα"
 
@@ -1526,7 +1303,6 @@ msgstr "Ετικέτα"
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:215
 #: src/pages/settings/general.vue:382
-#, fuzzy
 msgid "Labels"
 msgstr "Ετικέτες"
 
@@ -1540,18 +1316,15 @@ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Διατήρηση λεπτομερειών, ελάχιστα τεχνουργήματα"
 
 #: src/pages/settings/general.vue:94
-#, fuzzy
 msgid "Language"
 msgstr "Γλώσσα"
 
 #: src/pages/settings/sync.vue:30
-#, fuzzy
 msgid "Last Sync"
 msgstr "Τελευταίος συγχρονισμός"
 
 #: src/dialog/photo/details.vue:291
 #: src/dialog/photo/info.vue:135
-#, fuzzy
 msgid "Latitude"
 msgstr "Γεωγραφικό πλάτος"
 
@@ -1561,9 +1334,8 @@ msgid "Lavender"
 msgstr "Λεβάντα"
 
 #: src/dialog/photo/details.vue:403
-#, fuzzy
 msgid "Lens"
-msgstr "Φακός"
+msgstr "Φακοί"
 
 #: src/app/routes.js:292
 #: src/app/routes.js:299
@@ -1574,7 +1346,6 @@ msgstr "Φακός"
 #: src/component/navigation.vue:1399
 #: src/pages/settings.vue:41
 #: src/pages/settings/general.vue:404
-#, fuzzy
 msgid "Library"
 msgstr "Βιβλιοθήκη"
 
@@ -1582,12 +1353,10 @@ msgstr "Βιβλιοθήκη"
 #: src/component/navigation.vue:43
 #: src/dialog/photo/details.vue:544
 #: src/pages/about/license.vue:4
-#, fuzzy
 msgid "License"
 msgstr "Άδεια"
 
 #: src/component/photo-viewer.vue:147
-#, fuzzy
 msgid "Like"
 msgstr "Όπως"
 
@@ -1607,13 +1376,11 @@ msgid "Linear: Very Smooth, Best Performance"
 msgstr "Γραμμική: Linear: Πολύ ομαλή, καλύτερη απόδοση"
 
 #: src/model/link.js:115
-#, fuzzy
 msgid "Link"
 msgstr "Σύνδεσμος"
 
 #: src/component/album/toolbar.vue:52
 #: src/component/photo/toolbar.vue:47
-#, fuzzy
 msgid "List"
 msgstr "Λίστα"
 
@@ -1623,74 +1390,62 @@ msgstr "Λίστα"
 #: src/component/photo/list.vue:195
 #: src/component/photo/mosaic.vue:219
 #: src/options/options.js:344
-#, fuzzy
 msgid "Live"
 msgstr "Ζωντανό"
 
 #: src/dialog/photo/details.vue:189
 #: src/options/options.js:10
-#, fuzzy
 msgid "Local Time"
 msgstr "Τοπική ώρα"
 
 #: src/dialog/photo/labels.vue:39
-#, fuzzy
 msgid "location"
 msgstr "τοποθεσία"
 
 #: src/component/photo/cards.vue:518
 #: src/component/photo/list.vue:151
 #: src/dialog/album/edit.vue:123
-#, fuzzy
 msgid "Location"
 msgstr "Τοποθεσία"
 
 #: src/pages/library/errors.vue:37
 #: src/pages/library/errors.vue:1
-#, fuzzy
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr ""
 "Τα μηνύματα καταγραφής εμφανίζονται εδώ κάθε φορά που το PhotoPrism συναντά "
-"σπασμένα αρχεία ή υπάρχουν άλλα πιθανά προβλήματα."
+"προβληματικά αρχεία ή υπάρχουν άλλα πιθανά προβλήματα."
 
 #: src/component/navigation.vue:456
 #: src/component/navigation.vue:1735
-#, fuzzy
 msgid "Login"
 msgstr "Σύνδεση"
 
 #: src/component/navigation.vue:503
 #: src/component/navigation.vue:1845
 #: src/component/navigation.vue:1876
-#, fuzzy
 msgid "Logout"
 msgstr "Αποσύνδεση"
 
 #: src/pages/library.vue:55
 #: src/pages/settings/general.vue:426
-#, fuzzy
 msgid "Logs"
-msgstr "Ημερολόγια"
+msgstr "Αρχεία καταγραφής"
 
 #: src/dialog/photo/details.vue:315
 #: src/dialog/photo/info.vue:143
-#, fuzzy
 msgid "Longitude"
 msgstr "Γεωγραφικό μήκος"
 
 #: src/options/options.js:363
-#, fuzzy
 msgid "Low"
 msgstr "Χαμηλή"
 
 #: src/options/options.js:422
-#, fuzzy
 msgid "Magenta"
 msgstr "Ματζέντα"
 
 #: src/dialog/photo/files.vue:169
 #: src/dialog/photo/files.vue:166
-#, fuzzy
 msgid "Main Color"
 msgstr "Κύριο χρώμα"
 
@@ -1700,12 +1455,10 @@ msgid "manual"
 msgstr "εγχειρίδιο"
 
 #: src/dialog/account/edit.vue:51
-#, fuzzy
 msgid "Manual Upload"
 msgstr "Χειροκίνητη φόρτωση"
 
 #: src/model/marker.js:146
-#, fuzzy
 msgid "Marker"
 msgstr "Δείκτης"
 
@@ -1715,7 +1468,6 @@ msgid "Medium"
 msgstr "Μεσαίο"
 
 #: src/dialog/people/merge.vue:25
-#, fuzzy
 msgid "Merge %{a} with %{b}?"
 msgstr "Συγχώνευση %{a} με %{b}?"
 
@@ -1725,22 +1477,19 @@ msgid "Message sent"
 msgstr "Αποστολή μηνύματος"
 
 #: src/component/navigation.vue:369
-#, fuzzy
 msgid "Minimize"
 msgstr "Ελαχιστοποίηση"
 
 #: src/dialog/photo/files.vue:181
 #: src/dialog/photo/files.vue:178
-#, fuzzy
 msgid "Missing"
-msgstr "Λείπει το"
+msgstr "Απουασιάζει"
 
 #: src/app/routes.js:115
 #: src/app/routes.js:122
 #: src/component/navigation.vue:257
 #: src/component/navigation.vue:1054
 #: src/pages/settings/general.vue:360
-#, fuzzy
 msgid "Moments"
 msgstr "Στιγμές"
 
@@ -1751,35 +1500,29 @@ msgstr "Μονοχρωμία"
 
 #: src/component/photo/toolbar.vue:297
 #: src/dialog/photo/details.vue:142
-#, fuzzy
 msgid "Month"
 msgstr "Μήνας"
 
 #: src/options/options.js:239
-#, fuzzy
 msgid "Moonlight"
 msgstr "Σεληνόφως"
 
 #: src/pages/album/photos.vue:363
 #: src/pages/photos.vue:405
 #: src/share/photos.vue:371
-#, fuzzy
 msgid "More than %{n} pictures found"
 msgstr "Βρέθηκαν περισσότερες από %{n} εικόνες"
 
 #: src/pages/albums.vue:389
 #: src/share/albums.vue:308
-#, fuzzy
 msgid "More than 20 albums found"
-msgstr "Βρέθηκαν περισσότερα από 20 άλμπουμ"
+msgstr "Βρέθηκαν περισσότερες από 20 συλλογές"
 
 #: src/pages/labels.vue:384
-#, fuzzy
 msgid "More than 20 labels found"
 msgstr "Βρέθηκαν περισσότερες από 20 ετικέτες"
 
 #: src/pages/people/subjects.vue:473
-#, fuzzy
 msgid "More than 20 people found"
 msgstr "Περισσότερα από 20 άτομα βρέθηκαν"
 
@@ -1792,17 +1535,14 @@ msgstr "Ψηφιδωτό"
 #: src/component/album/toolbar.vue:63
 #: src/component/photo/toolbar.vue:56
 #: src/dialog/album/edit.vue:24
-#, fuzzy
 msgid "Most relevant"
 msgstr "Το πιο σχετικό"
 
 #: src/pages/library/import.vue:132
-#, fuzzy
 msgid "Move Files"
 msgstr "Μετακίνηση αρχείων"
 
 #: src/pages/settings/account.vue:85
-#, fuzzy
 msgid "Must have at least 8 characters."
 msgstr "Πρέπει να έχει τουλάχιστον 8 χαρακτήρες."
 
@@ -1823,7 +1563,6 @@ msgstr "Πρέπει να έχει τουλάχιστον 8 χαρακτήρες
 #: src/pages/people/faces.vue:52
 #: src/pages/people/faces.vue:307
 #: src/pages/people/subjects.vue:396
-#, fuzzy
 msgid "Name"
 msgstr "Όνομα"
 
@@ -1835,31 +1574,26 @@ msgstr "Όνομα"
 #: src/pages/library/files.vue:40
 #: src/pages/people/faces.vue:46
 #: src/pages/people/subjects.vue:42
-#, fuzzy
 msgid "Name too long"
 msgstr "Όνομα πολύ μεγάλο"
 
 #: src/options/options.js:400
 #: src/options/options.js:410
 #: src/pages/settings/sync.vue:50
-#, fuzzy
 msgid "Never"
 msgstr "Ποτέ"
 
 #: src/pages/people.vue:26
-#, fuzzy
 msgid "New"
-msgstr "Νέα"
+msgstr "Νέο"
 
 #: src/pages/settings/account.vue:81
-#, fuzzy
 msgid "New Password"
 msgstr "Νέος κωδικός πρόσβασης"
 
 #: src/component/album/toolbar.vue:59
 #: src/component/photo/toolbar.vue:52
 #: src/dialog/album/edit.vue:20
-#, fuzzy
 msgid "Newest first"
 msgstr "Το νεότερο πρώτα"
 
@@ -1870,7 +1604,6 @@ msgstr "Το νεότερο πρώτα"
 #: src/dialog/photo/info.vue:328
 #: src/dialog/photo/info.vue:348
 #: src/dialog/photo/info.vue:368
-#, fuzzy
 msgid "No"
 msgstr "Όχι"
 
@@ -1878,14 +1611,12 @@ msgstr "Όχι"
 #: src/pages/albums.vue:382
 #: src/share/albums.vue:18
 #: src/share/albums.vue:301
-#, fuzzy
 msgid "No albums found"
-msgstr "Δεν βρέθηκαν άλμπουμ"
+msgstr "Δεν βρέθηκαν συλλογές"
 
 #: src/dialog/photo/labels.vue:33
 #: src/pages/labels.vue:31
 #: src/pages/labels.vue:377
-#, fuzzy
 msgid "No labels found"
 msgstr "Δεν βρέθηκαν ετικέτες"
 
@@ -1895,7 +1626,6 @@ msgstr "Δεν βρέθηκαν ετικέτες"
 #: src/pages/people/faces.vue:368
 #: src/pages/people/subjects.vue:33
 #: src/pages/people/subjects.vue:466
-#, fuzzy
 msgid "No people found"
 msgstr "Δεν βρέθηκαν άτομα"
 
@@ -1911,7 +1641,6 @@ msgstr "Δεν βρέθηκαν άτομα"
 #: src/pages/places.vue:207
 #: src/pages/places.vue:267
 #: src/share/photos.vue:364
-#, fuzzy
 msgid "No pictures found"
 msgstr "Δεν βρέθηκαν εικόνες"
 
@@ -1920,33 +1649,28 @@ msgstr "Δεν βρέθηκαν εικόνες"
 #: src/component/photo/list.vue:5
 #: src/component/photo/mosaic.vue:5
 #: src/component/photo/mosaic.vue:3
-#, fuzzy
 msgid "No recently edited pictures"
 msgstr "Δεν υπάρχουν πρόσφατα επεξεργασμένες εικόνες"
 
 #: src/pages/settings/sync.vue:49
-#, fuzzy
 msgid "No servers configured."
 msgstr "Δεν έχουν ρυθμιστεί διακομιστές."
 
 #: src/dialog/sponsor.vue:31
-#, fuzzy
 msgid "No thanks"
 msgstr "Όχι ευχαριστώ"
 
 #: src/component/photo-viewer.vue:94
 #: src/dialog/video/viewer.vue:55
-#, fuzzy
 msgid "No video selected"
 msgstr "Δεν έχει επιλεγεί βίντεο"
 
 #: src/pages/library/errors.vue:34
 #: src/pages/library/errors.vue:1
-#, fuzzy
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr ""
 "Δεν υπάρχουν προειδοποιήσεις ή σφάλματα που περιέχουν αυτή τη λέξη-κλειδί. "
-"Σημειώστε ότι η αναζήτηση είναι ευαίσθητη στην πεζότητα."
+"Σημειώστε ότι η αναζήτηση είναι ευαίσθητη σε κεφαλαία-πεζά."
 
 #: src/component/photo/cards.vue:15
 #: src/component/photo/cards.vue:13
@@ -1962,7 +1686,6 @@ msgstr ""
 #: src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50
 #: src/pages/settings/library.vue:93
-#, fuzzy
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 "Οι μη φωτογραφικές εικόνες και οι εικόνες χαμηλής ποιότητας απαιτούν "
@@ -1970,29 +1693,24 @@ msgstr ""
 
 #: src/options/options.js:286
 #: src/options/options.js:367
-#, fuzzy
 msgid "None"
 msgstr "Κανένα"
 
 #: src/model/thumb.js:70
-#, fuzzy
 msgid "Not Found"
 msgstr "Δεν βρέθηκε"
 
 #: src/pages/library/import.vue:28
-#, fuzzy
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr ""
 "Σημειώστε ότι μπορείτε να διαχειριστείτε χειροκίνητα το φάκελο πρωτοτύπων "
 "σας και η εισαγωγή είναι προαιρετική."
 
 #: src/pages/settings/sync.vue:35
-#, fuzzy
 msgid "Note:"
 msgstr "Σημείωση:"
 
 #: src/dialog/account/add.vue:22
-#, fuzzy
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr ""
 "Σημείωση: Μόνο οι διακομιστές WebDAV, όπως το Nextcloud ή το PhotoPrism, "
@@ -2000,19 +1718,16 @@ msgstr ""
 "ασφαλείας και τη μεταφόρτωση αρχείων."
 
 #: src/pages/settings/account.vue:20
-#, fuzzy
 msgid "Note: Updating the password will not revoke access from already authenticated users."
 msgstr ""
 "Σημείωση: Η ενημέρωση του κωδικού πρόσβασης δεν θα ανακαλέσει την πρόσβαση "
 "των ήδη πιστοποιημένων χρηστών."
 
 #: src/dialog/photo/details.vue:612
-#, fuzzy
 msgid "Notes"
 msgstr "Σημειώσεις"
 
 #: src/pages/library/logs.vue:5
-#, fuzzy
 msgid "Nothing to see here yet. Be patient."
 msgstr "Δεν υπάρχει τίποτα να δείτε εδώ ακόμα. Κάντε υπομονή."
 
@@ -2031,53 +1746,44 @@ msgid "Oldest first"
 msgstr "Ο παλαιότερος πρώτος"
 
 #: src/dialog/webdav.vue:17
-#, fuzzy
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr ""
 "Στα Windows, εισαγάγετε τον ακόλουθο πόρο στο παράθυρο διαλόγου σύνδεσης:"
 
 #: src/options/options.js:406
-#, fuzzy
 msgid "Once a week"
 msgstr "Μία φορά την εβδομάδα"
 
 #: src/pages/albums.vue:384
 #: src/share/albums.vue:303
-#, fuzzy
 msgid "One album found"
-msgstr "Βρέθηκε ένα άλμπουμ"
+msgstr "Βρέθηκε μια συλλογή"
 
 #: src/pages/library/files.vue:299
-#, fuzzy
 msgid "One file found"
 msgstr "Βρέθηκε ένα αρχείο"
 
 #: src/dialog/share/upload.vue:74
-#, fuzzy
 msgid "One file uploaded"
 msgstr "Ένα αρχείο μεταφορτώθηκε"
 
 #: src/pages/library/files.vue:301
-#, fuzzy
 msgid "One folder found"
 msgstr "Βρέθηκε ένας φάκελος"
 
 #: src/pages/labels.vue:379
-#, fuzzy
 msgid "One label found"
 msgstr "Μια ετικέτα βρέθηκε"
 
 #: src/pages/people/faces.vue:284
 #: src/pages/people/faces.vue:370
 #: src/pages/people/subjects.vue:468
-#, fuzzy
 msgid "One person found"
 msgstr "Ένα άτομο βρήκε"
 
 #: src/pages/album/photos.vue:358
 #: src/pages/photos.vue:400
 #: src/share/photos.vue:366
-#, fuzzy
 msgid "One picture found"
 msgstr "Μια εικόνα που βρέθηκε"
 
@@ -2087,35 +1793,29 @@ msgid "Onyx"
 msgstr "Onyx"
 
 #: src/pages/settings/advanced.vue:6
-#, fuzzy
 msgid "Options"
 msgstr "Επιλογές"
 
 #: src/pages/about/about.vue:49
-#, fuzzy
 msgid "or ask in our Community Chat"
 msgstr "ή ρωτήστε στο Community Chat"
 
 #: src/options/options.js:425
-#, fuzzy
 msgid "Orange"
 msgstr "Πορτοκαλί"
 
 #: src/dialog/photo/files.vue:155
 #: src/dialog/photo/files.vue:152
-#, fuzzy
 msgid "Orientation"
 msgstr "Προσανατολισμός"
 
 #: src/pages/library/import.vue:27
-#, fuzzy
 msgid "Original file names will be stored and indexed."
-msgstr "Τα αρχικά ονόματα αρχείων θα αποθηκεύονται και θα ευρετηριάζονται."
+msgstr "Τα αρχικά ονόματα αρχείων θα αποθηκεύονται και θα αρχειοθετούνται."
 
 #: src/dialog/photo/files.vue:77
 #: src/dialog/photo/files.vue:74
 #: src/dialog/photo/info.vue:37
-#, fuzzy
 msgid "Original Name"
 msgstr "Αρχικό όνομα"
 
@@ -2124,17 +1824,14 @@ msgstr "Αρχικό όνομα"
 #: src/model/file.js:194
 #: src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:316
-#, fuzzy
 msgid "Originals"
 msgstr "Πρωτότυπα"
 
 #: src/options/options.js:445
-#, fuzzy
 msgid "Other"
 msgstr "Άλλα"
 
 #: src/pages/about/about.vue:15
-#, fuzzy
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr ""
 "Αποστολή μας είναι να παρέχουμε την πιο φιλική προς το χρήστη και την "
@@ -2142,17 +1839,14 @@ msgstr ""
 "οργανωμένες και προσβάσιμες."
 
 #: src/options/options.js:324
-#, fuzzy
 msgid "Outdoor"
 msgstr "Υπαίθρια"
 
 #: src/dialog/photo/info.vue:118
-#, fuzzy
 msgid "Panorama"
 msgstr "Πανόραμα"
 
 #: src/component/navigation.vue:110
-#, fuzzy
 msgid "Panoramas"
 msgstr "Πανοράματα"
 
@@ -2161,7 +1855,6 @@ msgstr "Πανοράματα"
 #: src/dialog/share.vue:24
 #: src/pages/auth/login.vue:101
 #: src/pages/auth/login.vue:103
-#, fuzzy
 msgid "Password"
 msgstr "Κωδικός πρόσβασης"
 
@@ -2177,12 +1870,10 @@ msgstr "Ο κωδικός πρόσβασης άλλαξε"
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:266
 #: src/pages/settings/general.vue:338
-#, fuzzy
 msgid "People"
 msgstr "Άνθρωποι"
 
 #: src/dialog/share.vue:72
-#, fuzzy
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
 "Τα άτομα με τα οποία μοιράζεστε έναν σύνδεσμο θα μπορούν να βλέπουν το "
@@ -2193,37 +1884,30 @@ msgid "Permanently deleted"
 msgstr "Διαγράφηκε μόνιμα"
 
 #: src/pages/settings/general.vue:207
-#, fuzzy
 msgid "Permanently remove files to free up storage."
 msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερώσετε χώρο αποθήκευσης."
 
 #: src/model/photo.js:1057
-#, fuzzy
 msgid "Photo"
 msgstr "Φωτογραφία"
 
 #: src/dialog/reload.vue:4
-#, fuzzy
 msgid "PhotoPrism has been updated…"
 msgstr "Το PhotoPrism έχει ενημερωθεί…"
 
 #: src/app/routes.js:108
-#, fuzzy
 msgid "Photos"
 msgstr "Φωτογραφίες"
 
 #: src/options/options.js:423
-#, fuzzy
 msgid "Pink"
 msgstr "Ροζ"
 
 #: src/dialog/photo/info.vue:126
-#, fuzzy
 msgid "Place"
 msgstr "Τόπος"
 
 #: src/pages/settings/library.vue:173
-#, fuzzy
 msgid "Place & Time"
 msgstr "Τόπος και χρόνος"
 
@@ -2237,56 +1921,46 @@ msgstr "Τόπος και χρόνος"
 #: src/component/navigation.vue:1144
 #: src/pages/settings/general.vue:108
 #: src/pages/settings/general.vue:450
-#, fuzzy
 msgid "Places"
 msgstr "Μέρη"
 
 #: src/pages/settings/account.vue:110
-#, fuzzy
 msgid "Please confirm your new password."
 msgstr "Επιβεβαιώστε τον νέο σας κωδικό πρόσβασης."
 
 #: src/dialog/upload.vue:45
-#, fuzzy
 msgid "Please don't upload photos containing offensive content."
 msgstr ""
 "Παρακαλούμε μην ανεβάζετε φωτογραφίες που περιέχουν προσβλητικό περιεχόμενο."
 
 #: src/dialog/photo/files.vue:135
 #: src/dialog/photo/files.vue:132
-#, fuzzy
 msgid "Portrait"
 msgstr "Πορτρέτο"
 
 #: src/pages/about/about.vue:48
-#, fuzzy
 msgid "post your question in GitHub Discussions"
 msgstr "δημοσιεύστε την ερώτησή σας στο GitHub Discussions"
 
 #: src/dialog/account/edit.vue:340
-#, fuzzy
 msgid "Preserve filenames"
 msgstr "Διατήρηση ονομάτων αρχείων"
 
 #: src/pages/library/import.vue:8
-#, fuzzy
 msgid "Press button to start importing…"
 msgstr "Πατήστε το κουμπί για να ξεκινήσετε την εισαγωγή…"
 
 #: src/pages/library/index.vue:9
-#, fuzzy
 msgid "Press button to start indexing…"
-msgstr "Πατήστε το κουμπί για να ξεκινήσει η ευρετηρίαση…"
+msgstr "Πατήστε το κουμπί για να ξεκινήσει η δημιουργία ευρετηρίου…"
 
 #: src/dialog/upload.vue:22
 #: src/dialog/upload.vue:4
-#, fuzzy
 msgid "Press enter to create a new album."
 msgstr "Πιέστε enter για να δημιουργήσετε ένα νέο άλμπουμ."
 
 #: src/dialog/photo/files.vue:19
 #: src/dialog/photo/files.vue:16
-#, fuzzy
 msgid "Preview"
 msgstr "Προεπισκόπηση"
 
@@ -2295,16 +1969,14 @@ msgstr "Προεπισκόπηση"
 #: src/dialog/photo/files.vue:32
 #: src/dialog/photo/files.vue:116
 #: src/dialog/photo/files.vue:28
-#, fuzzy
 msgid "Primary"
-msgstr "Πρωτογενές"
+msgstr "Βασικό"
 
 #: src/app/routes.js:202
 #: src/component/navigation.vue:343
 #: src/component/navigation.vue:1352
 #: src/dialog/photo/info.vue:102
 #: src/pages/settings/general.vue:272
-#, fuzzy
 msgid "Private"
 msgstr "Ιδιωτικό"
 
@@ -2315,67 +1987,56 @@ msgstr "Ανατροφοδότηση προϊόντος"
 
 #: src/dialog/photo/files.vue:143
 #: src/dialog/photo/files.vue:140
-#, fuzzy
 msgid "Projection"
 msgstr "Προβολή"
 
 #: src/options/options.js:421
-#, fuzzy
 msgid "Purple"
 msgstr "Μωβ"
 
 #: src/pages/settings/library.vue:92
-#, fuzzy
 msgid "Quality Filter"
 msgstr "Φίλτρο ποιότητας"
 
 #: src/dialog/photo/info.vue:59
-#, fuzzy
 msgid "Quality Score"
 msgstr "Βαθμολογία ποιότητας"
 
 #: src/pages/discover.vue:16
-#, fuzzy
 msgid "Random"
-msgstr "Τυχαία"
+msgstr "Τυχαίο"
 
 #: src/options/options.js:264
-#, fuzzy
 msgid "Raspberry"
-msgstr "Βατόμουρο"
+msgstr "Raspberry"
 
 #: src/options/options.js:340
 #, fuzzy
 msgid "Raw"
-msgstr "Ακατέργαστο"
+msgstr "Raw"
 
 #: src/component/photo/cards.vue:290
 #: src/component/photo/mosaic.vue:211
-#, fuzzy
 msgid "RAW"
 msgstr "RAW"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
 msgid "RAW Conversion"
 msgstr "Μετατροπή RAW"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
-"Επανευρετηρίαση όλων των πρωτοτύπων, συμπεριλαμβανομένων των ήδη "
-"ευρετηριασμένων και αμετάβλητων αρχείων."
+"Δημιουργία ευρετηρίου όλων των πρωτοτύπων, συμπεριλαμβανομένων των ήδη "
+"καταχωρημένων και αμετάβλητων αρχείων."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Read-Only Mode"
 msgstr "Λειτουργία μόνο για ανάγνωση"
 
 #: src/component/album/toolbar.vue:57
 #: src/component/photo/toolbar.vue:50
 #: src/dialog/album/edit.vue:18
-#, fuzzy
 msgid "Recently added"
 msgstr "Πρόσφατα προστέθηκε"
 
@@ -2389,9 +2050,8 @@ msgstr "Πρόσφατη επεξεργασία"
 #: src/dialog/photo/people.vue:9
 #: src/pages/people/faces.vue:34
 #: src/pages/people/subjects.vue:38
-#, fuzzy
 msgid "Recognition starts after indexing has been completed."
-msgstr "Η αναγνώριση ξεκινά μετά την ολοκλήρωση της ευρετηρίασης."
+msgstr "Η αναγνώριση ξεκινά μετά την ολοκλήρωση της δημιουργίας ευρετηρίου."
 
 #: src/pages/people.vue:17
 #, fuzzy
@@ -2404,7 +2064,6 @@ msgid "Recognizes faces so that specific people can be found."
 msgstr "Αναγνωρίζει πρόσωπα ώστε να μπορούν να βρεθούν συγκεκριμένα άτομα."
 
 #: src/options/options.js:424
-#, fuzzy
 msgid "Red"
 msgstr "Κόκκινο"
 
@@ -2417,7 +2076,6 @@ msgstr "Κόκκινο"
 #: src/pages/library/files.vue:100
 #: src/pages/people/faces.vue:65
 #: src/pages/people/subjects.vue:106
-#, fuzzy
 msgid "Reload"
 msgstr "Επαναφόρτωση"
 
@@ -2430,24 +2088,20 @@ msgid "Reloading…"
 msgstr "Επαναγέμισμα…"
 
 #: src/dialog/account/edit.vue:96
-#, fuzzy
 msgid "Remote Sync"
 msgstr "Απομακρυσμένος συγχρονισμός"
 
 #: src/dialog/photo/people.vue:108
-#, fuzzy
 msgid "Remove"
-msgstr "Αφαιρέστε το"
+msgstr "Απομάκρυνση"
 
 #: src/component/photo/clipboard.vue:138
-#, fuzzy
 msgid "remove failed: unknown album"
-msgstr "remove failed: άγνωστο άλμπουμ"
+msgstr "remove failed: άγνωστη συλλογή"
 
 #: src/component/photo/clipboard.vue:261
-#, fuzzy
 msgid "Remove from album"
-msgstr "Αφαιρέστε από το άλμπουμ"
+msgstr "Αφαιρέση από τη συλλογή"
 
 #: src/pages/library/import.vue:133
 #, fuzzy
@@ -2458,14 +2112,12 @@ msgstr ""
 "τρέχουσα θέση τους."
 
 #: src/common/api.js:74
-#, fuzzy
 msgid "Request failed - invalid response"
 msgstr "Το αίτημα απέτυχε - άκυρη απάντηση"
 
 #: src/pages/about/feedback.vue:117
 #: src/pages/about/feedback.vue:137
 #: src/pages/about/feedback.vue:179
-#, fuzzy
 msgid "Required"
 msgstr "Απαιτούμενο"
 
@@ -2475,40 +2127,33 @@ msgid "Resolution"
 msgstr "Ψήφισμα"
 
 #: src/component/photo/clipboard.vue:239
-#, fuzzy
 msgid "Restore"
 msgstr "Επαναφορά"
 
 #: src/dialog/account/edit.vue:535
-#, fuzzy
 msgid "Retry Limit"
 msgstr "Όριο επανάληψης"
 
 #: src/pages/settings/account.vue:106
-#, fuzzy
 msgid "Retype Password"
 msgstr "Επαναλάβετε τον κωδικό πρόσβασης"
 
 #: src/app/routes.js:195
 #: src/component/navigation.vue:142
-#, fuzzy
 msgid "Review"
 msgstr "Ανασκόπηση"
 
 #: src/dialog/account/edit.vue:105
 #: src/dialog/album/edit.vue:45
 #: src/dialog/share.vue:61
-#, fuzzy
 msgid "Save"
 msgstr "Αποθήκευση"
 
 #: src/dialog/photo/info.vue:110
-#, fuzzy
 msgid "Scan"
 msgstr "Σάρωση"
 
 #: src/component/navigation.vue:134
-#, fuzzy
 msgid "Scans"
 msgstr "Σαρώσεις"
 
@@ -2522,17 +2167,14 @@ msgstr "Σαρώσεις"
 #: src/pages/library/errors.vue:65
 #: src/pages/people/subjects.vue:88
 #: src/pages/places.vue:34
-#, fuzzy
 msgid "Search"
 msgstr "Αναζήτηση"
 
 #: src/pages/settings/general.vue:451
-#, fuzzy
 msgid "Search and display photos on a map."
 msgstr "Αναζήτηση και εμφάνιση φωτογραφιών σε χάρτη."
 
 #: src/pages/discover.vue:12
-#, fuzzy
 msgid "Season"
 msgstr "Περίοδος"
 
@@ -2547,14 +2189,12 @@ msgid "Secret"
 msgstr "Μυστικό"
 
 #: src/component/photo-viewer.vue:119
-#, fuzzy
 msgid "Select"
 msgstr "Επιλέξτε"
 
 #: src/dialog/upload.vue:138
-#, fuzzy
 msgid "Select albums or create a new one"
-msgstr "Επιλέξτε άλμπουμ ή δημιουργήστε ένα νέο"
+msgstr "Επιλέξτε συλλογή ή δημιουργήστε μια νέα"
 
 #: src/component/photo/clipboard.vue:62
 msgid "Selection approved"
@@ -2569,9 +2209,8 @@ msgid "Selection restored"
 msgstr "Η επιλογή αποκαταστάθηκε"
 
 #: src/pages/about/feedback.vue:39
-#, fuzzy
 msgid "Send"
-msgstr "Στείλτε"
+msgstr "Αποστολή"
 
 #: src/pages/settings/library.vue:215
 #, fuzzy
@@ -2579,7 +2218,6 @@ msgid "Sequential Name"
 msgstr "Διαδοχικό όνομα"
 
 #: src/pages/settings/sync.vue:26
-#, fuzzy
 msgid "Server"
 msgstr "Διακομιστής"
 
@@ -2601,7 +2239,6 @@ msgstr "URL υπηρεσίας"
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:1573
-#, fuzzy
 msgid "Settings"
 msgstr "Ρυθμίσεις"
 
@@ -2612,12 +2249,10 @@ msgid "Settings saved"
 msgstr "Οι ρυθμίσεις αποθηκεύτηκαν"
 
 #: src/dialog/share/upload.vue:32
-#, fuzzy
 msgid "Setup"
 msgstr "Ρύθμιση"
 
 #: src/options/options.js:274
-#, fuzzy
 msgid "Shadow"
 msgstr "Σκιά"
 
@@ -2641,23 +2276,19 @@ msgstr "Μοιράζεται μαζί σας."
 
 #: src/pages/people/faces.vue:227
 #: src/pages/people/subjects.vue:288
-#, fuzzy
 msgid "Show"
 msgstr "Εμφάνιση"
 
 #: src/pages/people/faces.vue:66
-#, fuzzy
 msgid "Show all new faces"
 msgstr "Εμφάνιση όλων των νέων προσώπων"
 
 #: src/pages/people/faces.vue:83
 #: src/pages/people/subjects.vue:124
-#, fuzzy
 msgid "Show hidden"
-msgstr "Εμφάνιση κρυμμένου"
+msgstr "Εμφάνιση κρυφών"
 
 #: src/pages/labels.vue:129
-#, fuzzy
 msgid "Show less"
 msgstr "Εμφάνιση λιγότερων"
 
@@ -2667,17 +2298,14 @@ msgid "Show Library in navigation menu."
 msgstr "Εμφάνιση της Βιβλιοθήκης στο μενού πλοήγησης."
 
 #: src/pages/labels.vue:112
-#, fuzzy
 msgid "Show more"
 msgstr "Εμφάνιση περισσότερων"
 
 #: src/pages/settings/general.vue:427
-#, fuzzy
 msgid "Show server logs in Library."
 msgstr "Εμφάνιση των αρχείων καταγραφής του διακομιστή στη Βιβλιοθήκη."
 
 #: src/pages/settings/advanced.vue:78
-#, fuzzy
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Εμφανίζει πιο λεπτομερή μηνύματα καταγραφής. Απαιτεί επανεκκίνηση."
 
@@ -2723,12 +2351,10 @@ msgstr "Ταξινόμηση με βάση το όνομα του αρχείου
 
 #: src/component/photo/toolbar.vue:253
 #: src/dialog/album/edit.vue:180
-#, fuzzy
 msgid "Sort Order"
 msgstr "Σειρά ταξινόμησης"
 
 #: src/dialog/photo/labels.vue:21
-#, fuzzy
 msgid "Source"
 msgstr "Πηγή"
 
@@ -2761,13 +2387,11 @@ msgstr ""
 "τοποθεσία με βάση τα μεταδεδομένα τους."
 
 #: src/dialog/photo/info.vue:86
-#, fuzzy
 msgid "Stackable"
 msgstr "Στοιβαζόμενο"
 
 #: src/component/navigation.vue:126
 #: src/pages/settings/library.vue:34
-#, fuzzy
 msgid "Stacks"
 msgstr "Στοίβες"
 
@@ -2779,12 +2403,10 @@ msgstr ""
 "στην ποιότητα, τη μορφή, το μέγεθος ή το χρώμα."
 
 #: src/pages/library/index.vue:31
-#, fuzzy
 msgid "Start"
 msgstr "Έναρξη"
 
 #: src/component/photo-viewer.vue:183
-#, fuzzy
 msgid "Start/Stop Slideshow"
 msgstr "Έναρξη/διακοπή προβολής διαφανειών"
 
@@ -2810,18 +2432,15 @@ msgid "Storage"
 msgstr "Αποθήκευση"
 
 #: src/options/options.js:309
-#, fuzzy
 msgid "Streets"
 msgstr "Δρόμοι"
 
 #: src/pages/settings/general.vue:511
-#, fuzzy
 msgid "Style"
 msgstr "Στυλ"
 
 #: src/dialog/photo/details.vue:473
 #: src/model/subject.js:158
-#, fuzzy
 msgid "Subject"
 msgstr "Θέμα"
 
@@ -2834,7 +2453,6 @@ msgstr ""
 
 #: src/pages/settings.vue:63
 #: src/pages/settings/sync.vue:28
-#, fuzzy
 msgid "Sync"
 msgstr "Συγχρονισμός"
 
@@ -2882,7 +2500,6 @@ msgstr ""
 "JPEG ή να υπάρχουν αντίγραφα."
 
 #: src/pages/settings/general.vue:72
-#, fuzzy
 msgid "Theme"
 msgstr "Θέμα"
 
@@ -2903,17 +2520,14 @@ msgstr ""
 "υπολογιστή ή το smartphone σας σαν να ήταν τοπικά."
 
 #: src/pages/settings/advanced.vue:253
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "Δημιουργία μικρογραφιών"
 
 #: src/dialog/photo/details.vue:189
-#, fuzzy
 msgid "Time UTC"
 msgstr "Ώρα UTC"
 
 #: src/dialog/photo/details.vue:213
-#, fuzzy
 msgid "Time Zone"
 msgstr "Ζώνη ώρας"
 
@@ -2925,7 +2539,6 @@ msgstr "Timeout"
 #: src/component/photo/list.vue:142
 #: src/dialog/photo/details.vue:97
 #: src/dialog/photo/info.vue:45
-#, fuzzy
 msgid "Title"
 msgstr "Τίτλος"
 
@@ -2961,7 +2574,6 @@ msgid "Topographic"
 msgstr "Τοπογραφικό"
 
 #: src/pages/library/errors.vue:113
-#, fuzzy
 msgid "Troubleshooting Checklists"
 msgstr "Λίστες ελέγχου αντιμετώπισης προβλημάτων"
 
@@ -2994,7 +2606,6 @@ msgid "Undo"
 msgstr "Αναίρεση"
 
 #: src/pages/settings/library.vue:194
-#, fuzzy
 msgid "Unique ID"
 msgstr "Μοναδικό αναγνωριστικό"
 
@@ -3082,9 +2693,8 @@ msgid "Upload complete"
 msgstr "Ανέβασμα ολοκληρωμένο"
 
 #: src/dialog/upload.vue:38
-#, fuzzy
 msgid "Upload complete. Indexing…"
-msgstr "Το ανέβασμα ολοκληρώθηκε. Ευρετηρίαση…"
+msgstr "Το ανέβασμα ολοκληρώθηκε. Δημιουργία ευρετηρίου…"
 
 #: src/dialog/upload.vue:34
 #, fuzzy
@@ -3131,7 +2741,6 @@ msgid "Use Presets"
 msgstr "Χρήση Προεπιλογών"
 
 #: src/model/user.js:117
-#, fuzzy
 msgid "User"
 msgstr "Χρήστης"
 
@@ -3143,7 +2752,6 @@ msgstr "Διεπαφή χρήστη"
 #: src/dialog/account/add.vue:84
 #: src/dialog/account/edit.vue:438
 #: src/dialog/share.vue:23
-#, fuzzy
 msgid "Username"
 msgstr "Όνομα χρήστη"
 
@@ -3160,7 +2768,6 @@ msgstr "Vanta"
 #: src/model/photo.js:794
 #: src/model/photo.js:810
 #: src/options/options.js:348
-#, fuzzy
 msgid "Video"
 msgstr "Βίντεο"
 
@@ -3169,14 +2776,12 @@ msgstr "Βίντεο"
 #: src/component/navigation.vue:207
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:850
-#, fuzzy
 msgid "Videos"
 msgstr "Βίντεο"
 
 #: src/component/photo/cards.vue:329
 #: src/component/photo/mosaic.vue:254
 #: src/component/photo/toolbar.vue:232
-#, fuzzy
 msgid "View"
 msgstr "Προβολή"
 
@@ -3215,18 +2820,15 @@ msgid "WebDAV Upload"
 msgstr "Ανέβασμα WebDAV"
 
 #: src/options/options.js:434
-#, fuzzy
 msgid "White"
 msgstr "Λευκό"
 
 #: src/component/photo/toolbar.vue:274
 #: src/dialog/photo/details.vue:166
-#, fuzzy
 msgid "Year"
 msgstr "Έτος"
 
 #: src/options/options.js:427
-#, fuzzy
 msgid "Yellow"
 msgstr "Κίτρινο"
 
@@ -3251,7 +2853,6 @@ msgstr "Yellowstone"
 #: src/dialog/photo/info.vue:328
 #: src/dialog/photo/info.vue:348
 #: src/dialog/photo/info.vue:368
-#, fuzzy
 msgid "Yes"
 msgstr "Ναι"
 
@@ -3263,9 +2864,8 @@ msgstr "είστε ευπρόσδεκτοι να μας ακολουθήσετε
 #: src/component/album/clipboard.vue:82
 #: src/component/subject/clipboard.vue:42
 #: src/share/album/clipboard.vue:36
-#, fuzzy
 msgid "You can only download one album"
-msgstr "Μπορείτε να κατεβάσετε μόνο ένα άλμπουμ"
+msgstr "Μπορείτε να κατεβάσετε μόνο μια συλλογή"
 
 #: src/component/label/clipboard.vue:50
 #, fuzzy
@@ -3297,11 +2897,10 @@ msgstr ""
 
 #: src/pages/albums.vue:43
 #: src/pages/albums.vue:1
-#, fuzzy
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr ""
-"Η βιβλιοθήκη σας αναλύεται συνεχώς για να δημιουργούνται αυτόματα άλμπουμ με "
-"ιδιαίτερες στιγμές, ταξίδια και μέρη."
+"Η βιβλιοθήκη σας αναλύεται συνεχώς για να δημιουργούνται αυτόματα συλλογές "
+"με ιδιαίτερες στιγμές, ταξίδια και τοπθεσίες."
 
 #: src/pages/about/feedback.vue:4
 #, fuzzy
