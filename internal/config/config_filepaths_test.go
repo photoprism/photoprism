@@ -43,13 +43,46 @@ func TestConfig_FFmpegBin(t *testing.T) {
 
 func TestConfig_TempPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/temp", c.TempPath())
+
+	d0 := c.tempPath()
+
+	t.Logf("c.options.TempPath: '%s'", c.options.TempPath)
+	t.Logf("c.tempPath(): '%s'", d0)
+
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/temp", c.tempPath())
+
 	c.options.TempPath = ""
 
-	if dir := c.TempPath(); dir == "" {
+	d1 := c.tempPath()
+
+	if d1 == "" {
 		t.Fatal("temp path is empty")
-	} else if !strings.HasPrefix(dir, "/tmp/photoprism") {
-		t.Fatalf("unexpected temp path: %s", dir)
+	}
+
+	if !strings.HasPrefix(d1, "/tmp/photoprism_") {
+		t.Fatalf("unexpected temp path: %s", d1)
+	}
+
+	d2 := c.tempPath()
+
+	if d2 == "" {
+		t.Fatal("temp path is empty")
+	}
+
+	if !strings.HasPrefix(d2, "/tmp/photoprism_") {
+		t.Fatalf("unexpected temp path: %s", d2)
+	}
+
+	if d1 != d2 {
+		t.Fatalf("temp paths should match: '%s' <=> '%s'", d1, d2)
+	} else {
+		t.Logf("temp paths match: '%s' == '%s'", d1, d2)
+	}
+
+	if d4 := c.TempPath(); d4 != d0 {
+		t.Fatalf("temp paths should match: '%s' <=> '%s'", d4, d0)
+	} else {
+		t.Logf("temp paths match: '%s' == '%s'", d4, d0)
 	}
 }
 

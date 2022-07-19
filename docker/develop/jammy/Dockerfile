@@ -108,11 +108,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    /scripts/cleanup.sh && \
     cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
-      /var/lib/photoprism \
-      /tmp/photoprism \
       /photoprism/originals \
       /photoprism/import \
       /photoprism/storage \
@@ -120,10 +117,12 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache
+      /photoprism/storage/cache && \
+    /scripts/cleanup.sh
 
 # download models and testdata
-RUN wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
+RUN mkdir /tmp/photoprism && \
+    wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip

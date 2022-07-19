@@ -19,7 +19,6 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -85,7 +84,7 @@ func CreateZip(router *gin.RouterGroup) {
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		// Create temp directory.
-		if err := os.MkdirAll(zipPath, 0700); err != nil {
+		if err = os.MkdirAll(zipPath, 0700); err != nil {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
 		}
@@ -101,7 +100,9 @@ func CreateZip(router *gin.RouterGroup) {
 
 		// Create zip writer.
 		zipWriter := zip.NewWriter(newZipFile)
-		defer zipWriter.Close()
+		defer func(w *zip.Writer) {
+			logError("zip", w.Close())
+		}(zipWriter)
 
 		var aliases = make(map[string]int)
 
@@ -162,9 +163,9 @@ func DownloadZip(router *gin.RouterGroup) {
 
 		c.FileAttachment(zipFileName, zipBaseName)
 
-		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("download: failed removing %s (%s)", clean.Log(zipFileName), err.Error())
-		}
+		defer func(n string) {
+			logError("zip", os.Remove(n))
+		}(zipFileName)
 	})
 }
 

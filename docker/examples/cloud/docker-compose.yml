@@ -164,7 +164,6 @@ services:
       - "./originals:/photoprism/originals"     # original media files (photos and videos)
       - "./import:/photoprism/import"           # *optional* base folder from which files can be imported to originals
       - "./storage:/photoprism/storage"         # *writable* storage folder for cache, database, and sidecar files (never remove)
-      - "./backup:/var/lib/photoprism"          # *optional* storage folder for database backups
 
   ## Traefik Reverse Proxy (required)
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/

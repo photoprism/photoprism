@@ -96,9 +96,9 @@ func PathWritable(path string) bool {
 
 	if f, err := os.Create(tmpName); err != nil {
 		return false
-	} else if err := f.Close(); err != nil {
+	} else if err = f.Close(); err != nil {
 		return false
-	} else if err := os.Remove(tmpName); err != nil {
+	} else if err = os.Remove(tmpName); err != nil {
 		return false
 	}
 

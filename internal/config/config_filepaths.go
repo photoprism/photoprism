@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"os/user"
@@ -13,6 +14,7 @@ import (
 
 // binPaths stores known executable paths.
 var binPaths = make(map[string]string, 8)
+var tempPath = ""
 
 // findExecutable searches binaries by their name.
 func findExecutable(configBin, defaultBin string) (binPath string) {
@@ -267,19 +269,48 @@ func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }
 
-// TempPath returns a temporary directory name for uploads and downloads.
+// TempPath returns the cached temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
-	if c.options.TempPath != "" {
-		if c.options.TempPath[0] != '/' {
-			c.options.TempPath = fs.Abs(c.options.TempPath)
-		}
-	} else if dir, err := os.MkdirTemp(os.TempDir(), "photoprism"); err == nil {
-		c.options.TempPath = dir
-	} else {
-		c.options.TempPath = filepath.Join(os.TempDir(), "photoprism")
+	// Return cached value?
+	if tempPath == "" {
+		tempPath = c.tempPath()
 	}
 
-	return c.options.TempPath
+	return tempPath
+}
+
+// tempPath returns the uncached temporary directory name for uploads and downloads.
+func (c *Config) tempPath() string {
+	// Check configured temp path first.
+	if c.options.TempPath != "" {
+		if dir := fs.Abs(c.options.TempPath); dir == "" {
+			// Ignore.
+		} else if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			// Ignore.
+		} else if fs.PathWritable(dir) {
+			return dir
+		}
+	}
+
+	// Find alternative temp path based on storage serial checksum.
+	if dir := filepath.Join(os.TempDir(), "photoprism_"+c.SerialChecksum()); dir == "" {
+		// Ignore.
+	} else if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		// Ignore.
+	} else if fs.PathWritable(dir) {
+		return dir
+	}
+
+	// Find alternative temp path based on built-in TempDir() function.
+	if dir, err := ioutil.TempDir(os.TempDir(), "photoprism_"); err != nil || dir == "" {
+		// Ignore.
+	} else if err = os.MkdirAll(dir, os.ModePerm); err != nil {
+		// Ignore.
+	} else if fs.PathWritable(dir) {
+		return dir
+	}
+
+	return os.TempDir()
 }
 
 // CachePath returns the path for cache files.
