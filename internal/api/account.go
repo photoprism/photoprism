@@ -17,7 +17,6 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -89,7 +88,7 @@ func GetAccountFolders(router *gin.RouterGroup) {
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			cached := cacheData.(fs.FileInfos)
 
-			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api-v1: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			c.JSON(http.StatusOK, cached)
 			return

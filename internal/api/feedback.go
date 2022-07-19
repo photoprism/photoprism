@@ -3,13 +3,12 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
-
-	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/service"
 )
 
 // SendFeedback sends a feedback message.

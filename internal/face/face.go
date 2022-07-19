@@ -1,6 +1,6 @@
 /*
 
-Package face provides facial recognition.
+Package face provides face recognition.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

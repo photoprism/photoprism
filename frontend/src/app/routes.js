@@ -33,7 +33,8 @@ import Labels from "pages/labels.vue";
 import People from "pages/people.vue";
 import Library from "pages/library.vue";
 import Settings from "pages/settings.vue";
-import AuthLogin from "pages/auth/login.vue";
+import Login from "pages/auth/login.vue";
+import Connect from "pages/auth/connect.vue";
 import Discover from "pages/discover.vue";
 import About from "pages/about/about.vue";
 import Feedback from "pages/about/feedback.vue";
@@ -78,7 +79,7 @@ export default [
   {
     name: "login",
     path: "/auth/login",
-    component: AuthLogin,
+    component: Login,
     meta: { title: siteTitle, auth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
       if (session.isUser()) {
@@ -86,6 +87,17 @@ export default [
       } else {
         next();
       }
+    },
+  },
+  {
+    name: "connect",
+    path: "/connect/:name/:token",
+    component: Connect,
+    meta: {
+      title: siteTitle,
+      auth: true,
+      admin: true,
+      settings: true,
     },
   },
   {

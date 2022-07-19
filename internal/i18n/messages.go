@@ -36,6 +36,7 @@ const (
 	ErrInvalidName
 	ErrBusy
 	ErrWakeupInterval
+	ErrAccountConnect
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -117,6 +118,7 @@ var Messages = MessageMap{
 	ErrInvalidName:        gettext("Invalid name"),
 	ErrBusy:               gettext("Busy, please try again later"),
 	ErrWakeupInterval:     gettext("The wakeup interval is %s, but must be 1h or less"),
+	ErrAccountConnect:     gettext("Your account could not be connected"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),

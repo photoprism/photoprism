@@ -143,8 +143,13 @@ func (c *Config) DecodeSession() (Session, error) {
 	return result, nil
 }
 
-// Refresh updates backend api credentials.
-func (c *Config) Refresh() (err error) {
+// Update renews backend api credentials without a token.
+func (c *Config) Update() error {
+	return c.Resync("")
+}
+
+// Resync renews backend api credentials with an optional token.
+func (c *Config) Resync(token string) (err error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -176,8 +181,10 @@ func (c *Config) Refresh() (err error) {
 		log.Debugf("config: requesting new api key for maps and places")
 	}
 
-	// Create request.
-	if j, err := json.Marshal(NewRequest(c.Version, c.Serial, c.Env, c.PartnerID)); err != nil {
+	// Create JSON request.
+	var j []byte
+
+	if j, err = json.Marshal(NewRequest(c.Version, c.Serial, c.Env, c.PartnerID, token)); err != nil {
 		return err
 	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
 		return err

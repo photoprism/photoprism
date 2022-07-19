@@ -97,7 +97,7 @@
 <script>
 
 export default {
-  name: "PPageAuthLogin",
+  name: "PPageLogin",
   data() {
     const c = this.$config.values;
     const sponsor = this.$config.isSponsor();

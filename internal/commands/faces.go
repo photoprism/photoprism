@@ -18,10 +18,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// FacesCommand registers the facial recognition subcommands.
+// FacesCommand registers the face recognition subcommands.
 var FacesCommand = cli.Command{
 	Name:  "faces",
-	Usage: "Facial recognition subcommands",
+	Usage: "Face recognition subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "stats",

@@ -55,7 +55,7 @@ func TestNewConfig(t *testing.T) {
 }
 
 func TestNewRequest(t *testing.T) {
-	r := NewRequest("0.0.0", "zqkunt22r0bewti9", "test", "test")
+	r := NewRequest("0.0.0", "zqkunt22r0bewti9", "test", "test", "")
 
 	assert.IsType(t, &Request{}, r)
 
@@ -74,7 +74,7 @@ func TestConfig_Refresh(t *testing.T) {
 
 		c := NewConfig("0.0.0", fileName, "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 
-		if err := c.Refresh(); err != nil {
+		if err := c.Update(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -96,7 +96,7 @@ func TestConfig_Refresh(t *testing.T) {
 
 		assert.FileExists(t, fileName)
 
-		if err := c.Refresh(); err != nil {
+		if err := c.Update(); err != nil {
 			t.Fatal(err)
 		}
 

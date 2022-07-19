@@ -10,7 +10,7 @@ import (
 
 const (
 	AuthModePublic = "public"
-	AuthModePasswd = "passwd"
+	AuthModePasswd = "password"
 )
 
 func isBcrypt(s string) bool {
@@ -53,7 +53,7 @@ func (c *Config) AuthMode() string {
 	switch mode {
 	case AuthModePublic:
 		return AuthModePublic
-	case "", "pw", "pass", "passwd", "password", "passwort", "passwords":
+	case AuthModePasswd, "", "p", "pw", "pass", "passwd", "passwort", "passwords":
 		return AuthModePasswd
 	default:
 		return AuthModePasswd

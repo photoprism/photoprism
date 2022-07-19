@@ -396,7 +396,7 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 		return results, result.Error
 	}
 
-	log.Debugf("geo: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+	log.Debugf("places: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 	return results, nil
 }

@@ -44,7 +44,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	}()
 
 	if w.Disabled() {
-		return fmt.Errorf("facial recognition is disabled")
+		return fmt.Errorf("face recognition is disabled")
 	}
 
 	if err := mutex.FacesWorker.Start(); err != nil {
@@ -161,7 +161,7 @@ func (w *Faces) Canceled() bool {
 	return mutex.FacesWorker.Canceled() || mutex.MainWorker.Canceled() || mutex.MetaWorker.Canceled()
 }
 
-// Disabled tests if facial recognition is disabled.
+// Disabled tests if face recognition is disabled.
 func (w *Faces) Disabled() bool {
 	return w.conf.DisableFaces()
 }

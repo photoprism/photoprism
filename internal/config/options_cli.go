@@ -238,7 +238,7 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "disable-faces",
-			Usage:  "disable facial recognition",
+			Usage:  "disable face recognition",
 			EnvVar: "PHOTOPRISM_DISABLE_FACES",
 		}},
 	CliFlag{

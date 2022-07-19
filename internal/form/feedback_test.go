@@ -8,18 +8,18 @@ import (
 
 func TestFeedback_Empty(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		feedback := Feedback{}
-		assert.True(t, feedback.Empty())
+		f := Feedback{}
+		assert.True(t, f.Empty())
 	})
 	t.Run("false", func(t *testing.T) {
-		feedback := Feedback{Message: "I found a bug", Category: "Bug Report", UserEmail: "test@test.com"}
-		assert.False(t, feedback.Empty())
+		f := Feedback{Message: "I found a bug", Category: "Bug Report", UserEmail: "test@test.com"}
+		assert.False(t, f.Empty())
 	})
 	t.Run("false", func(t *testing.T) {
-		feedback, err := NewFeedback("")
-		if err != nil {
+		if f, err := NewFeedback(""); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.True(t, f.Empty())
 		}
-		assert.True(t, feedback.Empty())
 	})
 }

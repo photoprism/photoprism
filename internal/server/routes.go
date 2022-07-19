@@ -171,6 +171,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetErrors(v1)
 		api.DeleteErrors(v1)
 		api.SendFeedback(v1)
+		api.Connect(v1)
 		api.Websocket(v1)
 	}
 

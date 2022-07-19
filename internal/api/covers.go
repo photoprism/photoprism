@@ -5,13 +5,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -53,7 +53,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api-v1: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 
@@ -165,7 +165,7 @@ func LabelCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(labelCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api-v1: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 

@@ -27,6 +27,7 @@ import (
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/hub"
 	"github.com/photoprism/photoprism/internal/hub/places"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -151,7 +152,7 @@ func (c *Config) Propagate() {
 	places.UserAgent = c.UserAgent()
 	entity.GeoApi = c.GeoApi()
 
-	// Set facial recognition parameters.
+	// Set face recognition parameters.
 	face.ScoreThreshold = c.FaceScore()
 	face.OverlapThreshold = c.FaceOverlap()
 	face.ClusterScoreThreshold = c.FaceClusterScore()
@@ -672,15 +673,25 @@ func (c *Config) ResolutionLimit() int {
 	return result
 }
 
-// UpdateHub updates backend api credentials for maps & places.
+// UpdateHub renews backend api credentials for maps & places without a token.
 func (c *Config) UpdateHub() {
-	if err := c.hub.Refresh(); err != nil {
-		log.Debugf("config: %s", err)
-	} else if err := c.hub.Save(); err != nil {
-		log.Debugf("config: %s", err)
+	_ = c.ResyncHub("")
+}
+
+// ResyncHub renews backend api credentials for maps & places with an optional token.
+func (c *Config) ResyncHub(token string) error {
+	if err := c.hub.Resync(token); err != nil {
+		log.Debugf("config: %s (refresh backend api tokens)", err)
+		if token != "" {
+			return i18n.Error(i18n.ErrAccountConnect)
+		}
+	} else if err = c.hub.Save(); err != nil {
+		log.Debugf("config: %s (save backend api tokens)", err)
 	} else {
 		c.hub.Propagate()
 	}
+
+	return nil
 }
 
 // initHub initializes PhotoPrism hub config.
@@ -693,10 +704,10 @@ func (c *Config) initHub() {
 
 	if err := c.hub.Load(); err == nil {
 		// Do nothing.
-	} else if err := c.hub.Refresh(); err != nil {
-		log.Debugf("config: %s", err)
+	} else if err := c.hub.Update(); err != nil {
+		log.Debugf("config: %s (init backend api tokens)", err)
 	} else if err := c.hub.Save(); err != nil {
-		log.Debugf("config: %s", err)
+		log.Debugf("config: %s (save backend api tokens)", err)
 	}
 
 	c.hub.Propagate()

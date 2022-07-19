@@ -28,6 +28,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -60,7 +61,7 @@ func UpdateClientConfig() {
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 	resp := i18n.NewResponse(code, id, params...)
 
-	log.Debugf("api: abort %s with code %d (%s)", clean.Log(c.FullPath()), code, resp.String())
+	log.Debugf("api-v1: abort %s with code %d (%s)", clean.Log(c.FullPath()), code, strings.ToLower(resp.String()))
 
 	c.AbortWithStatusJSON(code, resp)
 }
@@ -70,7 +71,7 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...inter
 
 	if err != nil {
 		resp.Details = err.Error()
-		log.Errorf("api: error %s with code %d in %s (%s)", clean.Log(err.Error()), code, clean.Log(c.FullPath()), resp.String())
+		log.Errorf("api-v1: error %s with code %d in %s (%s)", clean.Log(err.Error()), code, clean.Log(c.FullPath()), strings.ToLower(resp.String()))
 	}
 
 	c.AbortWithStatusJSON(code, resp)

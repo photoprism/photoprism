@@ -12,7 +12,6 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -97,7 +96,7 @@ func GetThumb(router *gin.RouterGroup) {
 		cacheKey := CacheKey("thumbs", fileHash, string(sizeName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api-v1: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 

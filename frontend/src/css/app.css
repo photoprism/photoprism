@@ -349,6 +349,7 @@ ol, ul {
     border-radius: 4px;
 }
 
+.v-alert,
 #photoprism div.v-dialog > div.v-card,
 #photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panel__container {
     border-radius: 6px;
