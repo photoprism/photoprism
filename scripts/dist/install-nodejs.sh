@@ -18,5 +18,6 @@ curl -sL $SETUP_URL | bash  -
 apt-get update && apt-get -qq install nodejs
 npm install --unsafe-perm=true --allow-root -g npm testcafe
 npm config set cache ~/.cache/npm
+npm update --unsafe-perm=true --allow-root -g
 
 echo "Done."
