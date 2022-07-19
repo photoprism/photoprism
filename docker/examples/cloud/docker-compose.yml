@@ -133,7 +133,7 @@ services:
       PHOTOPRISM_SITE_DESCRIPTION: ""                  # meta site description
       PHOTOPRISM_SITE_AUTHOR: ""                       # meta site author
       PHOTOPRISM_ADMIN_PASSWORD: "_admin_password_"    # YOUR INITIAL "admin" PASSWORD
-      PHOTOPRISM_AUTH_MODE: "passwd"                   # authentication mode (public, passwd)
+      PHOTOPRISM_AUTH_MODE: "password"                 # authentication mode (public, password)
       PHOTOPRISM_ORIGINALS_LIMIT: 5000                 # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_LOG_LEVEL: "info"                     # log level: trace, debug, info, warning, error, fatal, or panic
@@ -143,7 +143,7 @@ services:
       PHOTOPRISM_DISABLE_WEBDAV: "false"               # disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"             # disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"           # disables all features depending on TensorFlow
-      PHOTOPRISM_DISABLE_FACES: "false"                # disables facial recognition
+      PHOTOPRISM_DISABLE_FACES: "false"                # disables face recognition
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"       # disables image classification
       PHOTOPRISM_DISABLE_RAW: "false"                  # disables indexing and conversion of RAW files
       PHOTOPRISM_RAW_PRESETS: "false"                  # enables applying user presets when converting RAW files (reduces performance)

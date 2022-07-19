@@ -100,7 +100,7 @@ system resources are running low:
   for high concurrency
 
 - As a last measure, you can disable the use of TensorFlow for image
-  classification and facial recognition
+  classification and face recognition
 
 Other issues? Our troubleshooting checklists help you quickly diagnose
 and solve them:
