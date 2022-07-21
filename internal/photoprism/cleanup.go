@@ -44,7 +44,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 	}()
 
 	if err = mutex.MainWorker.Start(); err != nil {
-		log.Warnf("cleanup: %s (start)", err.Error())
+		log.Warnf("cleanup: %s (start)", err)
 		return thumbs, orphans, err
 	}
 
@@ -112,6 +112,8 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 
 	var deleted []string
 
+	purgeOriginalSidecars := conf.OriginalsDeletable()
+
 	for _, p := range photos {
 		if mutex.MainWorker.Canceled() {
 			return thumbs, orphans, errors.New("cleanup canceled")
@@ -119,16 +121,17 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 
 		if opt.Dry {
 			orphans++
-			log.Infof("cleanup: orphan photo %s would be removed", clean.Log(p.PhotoUID))
+			log.Infof("cleanup: %s would be removed from index", p.String())
 			continue
 		}
 
-		if err := Delete(p); err != nil {
-			log.Errorf("cleanup: %s (remove orphan photo)", err.Error())
+		// Delete the photo from the index without removing remaining media files.
+		if err = DeletePhoto(p, true, purgeOriginalSidecars); err != nil {
+			log.Errorf("cleanup: %s (remove orphans)", err)
 		} else {
 			orphans++
 			deleted = append(deleted, p.PhotoUID)
-			log.Debugf("cleanup: removed orphan photo %s", p.PhotoUID)
+			log.Debugf("cleanup: removed %s from index", p.String())
 		}
 	}
 
@@ -142,7 +145,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 			log.Infof("index: found no orphan files")
 		}
 	} else {
-		if err := query.PurgeOrphans(); err != nil {
+		if err = query.PurgeOrphans(); err != nil {
 			log.Errorf("index: %s (purge orphans)", err)
 		}
 	}
@@ -150,12 +153,12 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 	// Only update counts if anything was deleted.
 	if len(deleted) > 0 {
 		// Update precalculated photo and file counts.
-		if err := entity.UpdateCounts(); err != nil {
+		if err = entity.UpdateCounts(); err != nil {
 			log.Warnf("index: %s (update counts)", err)
 		}
 
 		// Update album, subject, and label cover thumbs.
-		if err := query.UpdateCovers(); err != nil {
+		if err = query.UpdateCovers(); err != nil {
 			log.Warnf("index: %s (update covers)", err)
 		}
 

@@ -7,12 +7,48 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
-
-	"github.com/stretchr/testify/assert"
 )
+
+func TestMediaFile_Ok(t *testing.T) {
+	c := config.TestConfig()
+
+	exists, err := NewMediaFile(c.ExamplesPath() + "/cat_black.jpg")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.True(t, exists.Ok())
+
+	missing, err := NewMediaFile(c.ExamplesPath() + "/xxz.jpg")
+
+	assert.NotNil(t, missing)
+	assert.Error(t, err)
+	assert.False(t, missing.Ok())
+}
+
+func TestMediaFile_Empty(t *testing.T) {
+	c := config.TestConfig()
+
+	exists, err := NewMediaFile(c.ExamplesPath() + "/cat_black.jpg")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.False(t, exists.Empty())
+
+	missing, err := NewMediaFile(c.ExamplesPath() + "/xxz.jpg")
+
+	assert.NotNil(t, missing)
+	assert.Error(t, err)
+	assert.True(t, missing.Empty())
+}
 
 func TestMediaFile_DateCreated(t *testing.T) {
 	conf := config.TestConfig()
@@ -906,12 +942,16 @@ func TestMediaFile_Exists(t *testing.T) {
 
 	assert.NotNil(t, exists)
 	assert.True(t, exists.Exists())
+	assert.Equal(t, true, exists.Ok())
+	assert.Equal(t, false, exists.Empty())
 
 	missing, err := NewMediaFile(conf.ExamplesPath() + "/xxz.jpg")
 
-	assert.NotNil(t, exists)
+	assert.NotNil(t, missing)
 	assert.Error(t, err)
 	assert.Equal(t, int64(-1), missing.FileSize())
+	assert.Equal(t, false, missing.Ok())
+	assert.Equal(t, true, missing.Empty())
 }
 
 func TestMediaFile_Move(t *testing.T) {
@@ -1512,7 +1552,7 @@ func TestMediaFile_Jpeg(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "no jpeg found for "+mediaFile.FileName(), err.Error())
+		assert.Equal(t, "no jpeg found for Random.docx", err.Error())
 	})
 	t.Run("ferriswheel_colorful.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
@@ -1550,7 +1590,7 @@ func TestMediaFile_Jpeg(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "no jpeg found for "+mediaFile.FileName(), err.Error())
+		assert.Equal(t, "no jpeg found for test.md", err.Error())
 	})
 }
 
@@ -1566,7 +1606,7 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 
 		decodeErr := mediaFile.decodeDimensions()
 
-		assert.EqualError(t, decodeErr, "failed decoding dimensions of .docx file")
+		assert.EqualError(t, decodeErr, ".docx is not a valid media file")
 	})
 
 	t.Run("clock_purple.jpg", func(t *testing.T) {
@@ -1723,6 +1763,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("elephant_mono.jpg", func(t *testing.T) {
@@ -1730,6 +1772,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("telegram_2020-01-30_09-57-18.jpg", func(t *testing.T) {
@@ -1737,6 +1781,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 1, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("6720px_white.jpg", func(t *testing.T) {
@@ -1744,6 +1790,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 30, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
@@ -1751,6 +1799,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("example.bmp", func(t *testing.T) {
@@ -1758,6 +1808,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("panorama360.jpg", func(t *testing.T) {
@@ -1765,6 +1817,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("panorama360.json", func(t *testing.T) {
@@ -1772,6 +1826,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("2018-04-12 19_24_49.gif", func(t *testing.T) {
@@ -1779,13 +1835,16 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("2018-04-12 19_24_49.mov", func(t *testing.T) {
-		if _, err := NewMediaFile("testdata/2018-04-12 19_24_49.mov"); err != nil {
-			assert.ErrorContains(t, err, "testdata/2018-04-12 19_24_49.mov' is empty")
+		if f, err := NewMediaFile("testdata/2018-04-12 19_24_49.mov"); err != nil {
+			t.Fatal(err)
 		} else {
-			t.Errorf("error expected")
+			assert.False(t, f.Ok())
+			assert.True(t, f.Empty())
 		}
 	})
 	t.Run("rotate/6.png", func(t *testing.T) {
@@ -1793,6 +1852,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 1, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("rotate/6.tiff", func(t *testing.T) {
@@ -1800,6 +1861,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("norway-kjetil-moe.webp", func(t *testing.T) {
@@ -1807,6 +1870,8 @@ func TestMediaFile_Megapixels(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, f.Megapixels())
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 }
@@ -1819,6 +1884,8 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 			result, actual := f.ExceedsFileSize(3)
 			assert.False(t, result)
 			assert.Equal(t, 0, actual)
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("telegram_2020-01-30_09-57-18.jpg", func(t *testing.T) {
@@ -1828,6 +1895,8 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 			result, actual := f.ExceedsFileSize(-1)
 			assert.False(t, result)
 			assert.Equal(t, 0, actual)
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("6720px_white.jpg", func(t *testing.T) {
@@ -1837,6 +1906,8 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 			result, actual := f.ExceedsFileSize(0)
 			assert.False(t, result)
 			assert.Equal(t, 0, actual)
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
@@ -1846,6 +1917,8 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 			result, actual := f.ExceedsFileSize(10)
 			assert.False(t, result)
 			assert.Equal(t, 0, actual)
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 	t.Run("example.bmp", func(t *testing.T) {
@@ -1855,6 +1928,8 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 			result, actual := f.ExceedsFileSize(10)
 			assert.False(t, result)
 			assert.Equal(t, 0, actual)
+			assert.True(t, f.Ok())
+			assert.False(t, f.Empty())
 		}
 	})
 }

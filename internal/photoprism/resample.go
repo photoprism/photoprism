@@ -90,7 +90,7 @@ func (w *Resample) Start(force bool) (err error) {
 
 			mf, err := NewMediaFile(fileName)
 
-			if err != nil || !mf.IsJpeg() {
+			if err != nil || mf.Empty() || !mf.IsJpeg() {
 				return nil
 			}
 

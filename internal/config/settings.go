@@ -155,7 +155,7 @@ func (c *Config) initSettings() {
 	fileName := c.SettingsYaml()
 
 	if err := c.settings.Load(fileName); err == nil {
-		log.Debugf("settings: loaded from %s ", fileName)
+		log.Debugf("settings: loaded from %s", fileName)
 	} else if err := c.settings.Save(fileName); err != nil {
 		log.Errorf("settings: could not create %s (%s)", fileName, err)
 	} else {

@@ -24,7 +24,9 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 	}
 
 	if !f.Exists() {
-		return nil, fmt.Errorf("convert: %s not found", f.RootRelName())
+		return nil, fmt.Errorf("convert: %s not found", clean.Log(f.RootRelName()))
+	} else if f.Empty() {
+		return nil, fmt.Errorf("convert: %s is empty", clean.Log(f.RootRelName()))
 	}
 
 	avcName := fs.VideoAVC.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)

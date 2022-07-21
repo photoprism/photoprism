@@ -42,7 +42,7 @@ func (m *MediaFile) ExifToolJsonName() (string, error) {
 
 // NeedsExifToolJson tests if an ExifTool JSON file needs to be created.
 func (m *MediaFile) NeedsExifToolJson() bool {
-	if m.Root() == entity.RootSidecar || !m.IsMedia() {
+	if m.Root() == entity.RootSidecar || !m.IsMedia() || m.Empty() {
 		return false
 	}
 
@@ -68,6 +68,11 @@ func (m *MediaFile) ReadExifToolJson() error {
 
 // MetaData returns exif meta data of a media file.
 func (m *MediaFile) MetaData() (result meta.Data) {
+	if !m.Ok() || !m.IsMedia() {
+		// No valid media file.
+		return m.metaData
+	}
+
 	m.metaOnce.Do(func() {
 		var err error
 

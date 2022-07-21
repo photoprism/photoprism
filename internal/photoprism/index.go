@@ -189,6 +189,8 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 			if err != nil {
 				log.Warnf("index: %s", err)
 				return nil
+			} else if mf.Empty() {
+				return nil
 			}
 
 			// Ignore RAW images?
@@ -292,6 +294,10 @@ func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult)
 	if err != nil {
 		result.Err = err
 		result.Status = IndexFailed
+
+		return result
+	} else if file.Empty() {
+		result.Status = IndexSkipped
 
 		return result
 	}

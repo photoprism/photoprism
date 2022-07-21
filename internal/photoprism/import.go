@@ -163,6 +163,8 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			if err != nil {
 				log.Warnf("import: %s", err)
 				return nil
+			} else if mf.Empty() {
+				return nil
 			}
 
 			// Ignore RAW images?

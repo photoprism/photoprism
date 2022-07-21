@@ -64,11 +64,11 @@ func DeleteFile(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := mediaFile.Remove(); err != nil {
+		if err = mediaFile.Remove(); err != nil {
 			log.Errorf("photo: %s (delete %s from folder)", err, clean.Log(baseName))
 		}
 
-		if err := file.Delete(true); err != nil {
+		if err = file.Delete(true); err != nil {
 			log.Errorf("photo: %s (delete %s from index)", err, clean.Log(baseName))
 			AbortDeleteFailed(c)
 			return

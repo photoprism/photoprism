@@ -35,8 +35,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
-
-	"github.com/photoprism/photoprism/pkg/rnd"
+	"syscall"
 )
 
 var ignoreCase bool
@@ -86,23 +85,21 @@ func PathExists(path string) bool {
 	return m&os.ModeDir != 0 || m&os.ModeSymlink != 0
 }
 
+// Writable checks if the path is accessible for reading and writing.
+func Writable(path string) bool {
+	if path == "" {
+		return false
+	}
+	return syscall.Access(path, syscall.O_RDWR) == nil
+}
+
 // PathWritable tests if a path exists and is writable.
 func PathWritable(path string) bool {
 	if !PathExists(path) {
 		return false
 	}
 
-	tmpName := filepath.Join(path, "."+rnd.GenerateToken(8))
-
-	if f, err := os.Create(tmpName); err != nil {
-		return false
-	} else if err = f.Close(); err != nil {
-		return false
-	} else if err = os.Remove(tmpName); err != nil {
-		return false
-	}
-
-	return true
+	return Writable(path)
 }
 
 // Overwrite overwrites the file with data. Creates file if not present.

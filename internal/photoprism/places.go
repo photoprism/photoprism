@@ -142,15 +142,15 @@ func (w *Places) UpdatePhotos() (affected int, err error) {
 		model, err = query.PhotoByUID(u[i])
 
 		if err != nil {
-			log.Errorf("index: %s while loading %s", err, model.PhotoUID)
+			log.Errorf("index: %s while loading %s", err, model.String())
 			continue
 		} else if model.NoLatLng() {
-			log.Debugf("index: photo %s has no location", model.PhotoUID)
+			log.Debugf("index: photo %s has no location", model.String())
 			continue
 		}
 
 		if err = model.SaveLocation(); err != nil {
-			log.Errorf("index: %s while updating %s", err, model.PhotoUID)
+			log.Errorf("index: %s while updating %s", err, model.String())
 		} else {
 			affected++
 		}

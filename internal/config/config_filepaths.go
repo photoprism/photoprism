@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"os/user"
 	"path/filepath"
+	"runtime"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -240,6 +241,11 @@ func (c *Config) OriginalsPath() string {
 	return fs.Abs(c.options.OriginalsPath)
 }
 
+// OriginalsDeletable checks if originals can be deleted.
+func (c *Config) OriginalsDeletable() bool {
+	return !c.ReadOnly() && fs.Writable(c.OriginalsPath()) && c.Settings().Features.Delete
+}
+
 // ImportPath returns the import directory.
 func (c *Config) ImportPath() string {
 	if c.options.ImportPath == "" {
@@ -269,7 +275,7 @@ func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }
 
-// TempPath returns the cached temporary directory name for uploads and downloads.
+// TempPath returns the cached temporary directory name e.g. for uploads and downloads.
 func (c *Config) TempPath() string {
 	// Return cached value?
 	if tempPath == "" {
@@ -279,8 +285,24 @@ func (c *Config) TempPath() string {
 	return tempPath
 }
 
-// tempPath returns the uncached temporary directory name for uploads and downloads.
+// tempPath determines the temporary directory name e.g. for uploads and downloads.
 func (c *Config) tempPath() string {
+	osTempDir := os.TempDir()
+
+	// Empty default?
+	if osTempDir == "" {
+		switch runtime.GOOS {
+		case "android":
+			osTempDir = "/data/local/tmp"
+		case "windows":
+			osTempDir = "C:/Windows/Temp"
+		default:
+			osTempDir = "/tmp"
+		}
+
+		log.Infof("config: empty default temp folder path, using %s", clean.Log(osTempDir))
+	}
+
 	// Check configured temp path first.
 	if c.options.TempPath != "" {
 		if dir := fs.Abs(c.options.TempPath); dir == "" {
@@ -293,7 +315,7 @@ func (c *Config) tempPath() string {
 	}
 
 	// Find alternative temp path based on storage serial checksum.
-	if dir := filepath.Join(os.TempDir(), "photoprism_"+c.SerialChecksum()); dir == "" {
+	if dir := filepath.Join(osTempDir, "photoprism_"+c.SerialChecksum()); dir == "" {
 		// Ignore.
 	} else if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 		// Ignore.
@@ -302,7 +324,7 @@ func (c *Config) tempPath() string {
 	}
 
 	// Find alternative temp path based on built-in TempDir() function.
-	if dir, err := ioutil.TempDir(os.TempDir(), "photoprism_"); err != nil || dir == "" {
+	if dir, err := ioutil.TempDir(osTempDir, "photoprism_"); err != nil || dir == "" {
 		// Ignore.
 	} else if err = os.MkdirAll(dir, os.ModePerm); err != nil {
 		// Ignore.
@@ -310,7 +332,7 @@ func (c *Config) tempPath() string {
 		return dir
 	}
 
-	return os.TempDir()
+	return osTempDir
 }
 
 // CachePath returns the path for cache files.

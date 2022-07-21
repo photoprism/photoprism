@@ -75,10 +75,20 @@ func NewMediaFile(fileName string) (m *MediaFile, err error) {
 	if size, _, err := m.Stat(); err != nil {
 		return m, fmt.Errorf("%s not found", clean.Log(m.RootRelName()))
 	} else if size == 0 {
-		return m, fmt.Errorf("%s is empty", clean.Log(m.RootRelName()))
+		log.Infof("media: %s is empty", clean.Log(m.RootRelName()))
 	}
 
 	return m, nil
+}
+
+// Ok checks if the file has a name, exists and is not empty.
+func (m *MediaFile) Ok() bool {
+	return m.FileName() != "" && m.statErr == nil && !m.Empty()
+}
+
+// Empty checks if the file is empty.
+func (m *MediaFile) Empty() bool {
+	return m.FileSize() <= 0
 }
 
 // Stat returns the media file size and modification time rounded to seconds
@@ -99,6 +109,7 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 		m.modTime = time.Time{}
 		m.fileSize = -1
 	} else {
+		s.Mode()
 		m.statErr = nil
 		m.modTime = s.ModTime().UTC().Truncate(time.Second)
 		m.fileSize = s.Size()
@@ -338,7 +349,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	for _, fileName := range matches {
 		f, fileErr := NewMediaFile(fileName)
 
-		if fileErr != nil {
+		if fileErr != nil || f.Empty() {
 			continue
 		}
 
@@ -381,7 +392,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	// Add hidden JPEG if exists.
 	if !result.ContainsJpeg() {
 		if jpegName := fs.ImageJPEG.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
-			if resultFile, err := NewMediaFile(jpegName); err == nil {
+			if resultFile, _ := NewMediaFile(jpegName); resultFile.Ok() {
 				result.Files = append(result.Files, resultFile)
 			}
 		}
@@ -854,16 +865,18 @@ func (m *MediaFile) IsMedia() bool {
 func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	if m.IsJpeg() {
 		if !fs.FileExists(m.FileName()) {
-			return nil, fmt.Errorf("jpeg file should exist, but does not: %s", m.FileName())
+			return nil, fmt.Errorf("jpeg should exist, but does not: %s", m.RootRelName())
 		}
 
 		return m, nil
+	} else if m.Empty() {
+		return nil, fmt.Errorf("%s is empty", m.RootRelName())
 	}
 
 	jpegFilename := fs.ImageJPEG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegFilename == "" {
-		return nil, fmt.Errorf("no jpeg found for %s", m.FileName())
+		return nil, fmt.Errorf("no jpeg found for %s", m.RootRelName())
 	}
 
 	return NewMediaFile(jpegFilename)
@@ -892,13 +905,14 @@ func (m *MediaFile) HasJpeg() bool {
 }
 
 func (m *MediaFile) decodeDimensions() error {
-	if !m.IsMedia() {
-		return fmt.Errorf("failed decoding dimensions of %s file", clean.Log(m.Extension()))
-	}
-
 	// Media dimensions already known?
 	if m.width > 0 && m.height > 0 {
 		return nil
+	}
+
+	// Valid media file?
+	if !m.Ok() || !m.IsMedia() {
+		return fmt.Errorf("%s is not a valid media file", clean.Log(m.Extension()))
 	}
 
 	// Extract the actual width and height from natively supported formats.
@@ -989,7 +1003,8 @@ func (m *MediaFile) DecodeConfig() (_ *image.Config, err error) {
 
 // Width return the width dimension of a MediaFile.
 func (m *MediaFile) Width() int {
-	if !m.IsMedia() {
+	// Valid media file?
+	if !m.Ok() || !m.IsMedia() {
 		return 0
 	}
 
@@ -1004,7 +1019,8 @@ func (m *MediaFile) Width() int {
 
 // Height returns the height dimension of a MediaFile.
 func (m *MediaFile) Height() int {
-	if !m.IsMedia() {
+	// Valid media file?
+	if !m.Ok() || !m.IsMedia() {
 		return 0
 	}
 
@@ -1019,7 +1035,8 @@ func (m *MediaFile) Height() int {
 
 // Megapixels returns the resolution in megapixels if possible.
 func (m *MediaFile) Megapixels() (resolution int) {
-	if !m.IsMedia() {
+	// Valid media file?
+	if !m.Ok() || !m.IsMedia() {
 		return 0
 	}
 
@@ -1135,6 +1152,11 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 // RemoveSidecars permanently removes related sidecar files.
 func (m *MediaFile) RemoveSidecars() (err error) {
 	fileName := m.FileName()
+
+	if fileName == "" {
+		return fmt.Errorf("empty filename")
+	}
+
 	sidecarPath := Config().SidecarPath()
 	originalsPath := Config().OriginalsPath()
 

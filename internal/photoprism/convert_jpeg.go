@@ -24,6 +24,8 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 
 	if !f.Exists() {
 		return nil, fmt.Errorf("convert: %s not found", clean.Log(f.RootRelName()))
+	} else if f.Empty() {
+		return nil, fmt.Errorf("convert: %s is empty", clean.Log(f.RootRelName()))
 	}
 
 	if f.IsJpeg() {

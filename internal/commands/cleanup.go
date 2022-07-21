@@ -15,7 +15,7 @@ import (
 // CleanUpCommand registers the cleanup command.
 var CleanUpCommand = cli.Command{
 	Name:   "cleanup",
-	Usage:  "Removes orphan index entries and thumbnail files",
+	Usage:  "Removes orphaned index entries, sidecar and thumbnail files",
 	Flags:  cleanUpFlags,
 	Action: cleanUpAction,
 }
@@ -27,7 +27,7 @@ var cleanUpFlags = []cli.Flag{
 	},
 }
 
-// cleanUpAction removes orphan index entries and thumbnails.
+// cleanUpAction removes orphaned index entries, sidecar and thumbnail files.
 func cleanUpAction(ctx *cli.Context) error {
 	start := time.Now()
 

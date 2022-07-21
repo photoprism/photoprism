@@ -137,7 +137,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 
 			mf, err := photoprism.NewMediaFile(baseDir + file.RemoteName)
 
-			if err != nil || !mf.IsMedia() {
+			if err != nil || !mf.IsMedia() || mf.Empty() {
 				continue
 			}
 

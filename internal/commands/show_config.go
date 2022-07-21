@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
@@ -22,6 +23,11 @@ var ShowConfigCommand = cli.Command{
 func showConfigAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)
+	service.SetConfig(conf)
+
+	if err := conf.Init(); err != nil {
+		log.Debug(err)
+	}
 
 	rows, cols := conf.Report()
 

@@ -209,17 +209,17 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 
 // String returns the id or name as string.
 func (m *Photo) String() string {
-	if m.PhotoUID == "" {
-		if m.PhotoName != "" {
-			return clean.Log(m.PhotoName)
-		} else if m.OriginalName != "" {
-			return clean.Log(m.OriginalName)
-		}
-
-		return "(unknown)"
+	if m.PhotoName != "" {
+		return clean.Log(path.Join(m.PhotoPath, m.PhotoName))
+	} else if m.OriginalName != "" {
+		return clean.Log(m.OriginalName)
+	} else if m.PhotoUID != "" {
+		return "uid " + clean.Log(m.PhotoUID)
+	} else if m.ID > 0 {
+		return fmt.Sprintf("id %d", m.ID)
 	}
 
-	return "uid " + clean.Log(m.PhotoUID)
+	return "(unknown)"
 }
 
 // FirstOrCreate fetches an existing row from the database or inserts a new one.
@@ -732,8 +732,8 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 	files = m.AllFiles()
 
 	for _, file := range files {
-		if err := file.Delete(false); err != nil {
-			log.Errorf("photo: %s (remove file)", err)
+		if err = file.Delete(false); err != nil {
+			log.Errorf("index: %s (remove file)", err)
 		}
 	}
 
@@ -749,25 +749,25 @@ func (m *Photo) DeletePermanently() (files Files, err error) {
 	files = m.AllFiles()
 
 	for _, file := range files {
-		if err := file.DeletePermanently(); err != nil {
-			log.Errorf("photo: %s (remove file)", err)
+		if logErr := file.DeletePermanently(); logErr != nil {
+			log.Errorf("index: %s (remove file)", logErr)
 		}
 	}
 
-	if err := UnscopedDb().Delete(Details{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (remove details)", err)
+	if logErr := UnscopedDb().Delete(Details{}, "photo_id = ?", m.ID).Error; logErr != nil {
+		log.Errorf("index: %s (remove details)", logErr)
 	}
 
-	if err := UnscopedDb().Delete(PhotoKeyword{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (remove keywords)", err)
+	if logErr := UnscopedDb().Delete(PhotoKeyword{}, "photo_id = ?", m.ID).Error; logErr != nil {
+		log.Errorf("index: %s (remove keywords)", logErr)
 	}
 
-	if err := UnscopedDb().Delete(PhotoLabel{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (remove labels)", err)
+	if logErr := UnscopedDb().Delete(PhotoLabel{}, "photo_id = ?", m.ID).Error; logErr != nil {
+		log.Errorf("index: %s (remove labels)", logErr)
 	}
 
-	if err := UnscopedDb().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID).Error; err != nil {
-		log.Errorf("photo: %s (remove albums)", err)
+	if logErr := UnscopedDb().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID).Error; logErr != nil {
+		log.Errorf("index: %s (remove albums)", logErr)
 	}
 
 	return files, UnscopedDb().Delete(m).Error

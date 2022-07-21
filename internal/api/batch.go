@@ -383,7 +383,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		// Delete photos.
 		for _, p := range photos {
-			if err := photoprism.Delete(p); err != nil {
+			if err = photoprism.DeletePhoto(p, true, true); err != nil {
 				log.Errorf("delete: %s", err)
 			} else {
 				deleted = append(deleted, p)
