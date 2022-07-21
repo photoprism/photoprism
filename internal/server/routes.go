@@ -75,8 +75,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetThumb(v1)
 		api.GetDownload(v1)
 		api.GetVideo(v1)
-		api.CreateZip(v1)
-		api.DownloadZip(v1)
+		api.ZipCreate(v1)
+		api.ZipDownload(v1)
 
 		// Photos.
 		api.SearchPhotos(v1)

@@ -24,10 +24,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// CreateZip creates a zip file archive for download.
+// ZipCreate creates a zip file archive for download.
 //
 // POST /api/v1/zip
-func CreateZip(router *gin.RouterGroup) {
+func ZipCreate(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDownload)
 
@@ -120,33 +120,33 @@ func CreateZip(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
-					log.Errorf("download: failed adding %s to zip (%s)", clean.Log(file.FileName), err)
+					log.Errorf("zip: failed adding %s to zip (%s)", clean.Log(file.FileName), err)
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 
-				log.Infof("download: added %s as %s", clean.Log(file.FileName), clean.Log(alias))
+				log.Infof("zip: added %s as %s", clean.Log(file.FileName), clean.Log(alias))
 			} else {
-				log.Warnf("download: media file %s is missing", clean.Log(file.FileName))
-				logError("download", file.Update("FileMissing", true))
+				log.Warnf("zip: media file %s is missing", clean.Log(file.FileName))
+				logError("zip", file.Update("FileMissing", true))
 			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("download: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
+		log.Infof("zip: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
 	})
 }
 
-// DownloadZip downloads a zip file archive.
+// ZipDownload downloads a zip file archive.
 //
 // GET /api/v1/zip/:filename
-func DownloadZip(router *gin.RouterGroup) {
+func ZipDownload(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
-			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			log.Errorf("zip: %s", c.AbortWithError(http.StatusForbidden, fmt.Errorf("invalid download token")))
 			return
 		}
 
@@ -156,16 +156,28 @@ func DownloadZip(router *gin.RouterGroup) {
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
-			log.Errorf("could not find zip file: %s", clean.Log(zipFileName))
-			c.Data(404, "image/svg+xml", photoIconSvg)
+			log.Errorf("zip: %s", c.AbortWithError(http.StatusNotFound, fmt.Errorf("%s not found", clean.Log(zipFileName))))
 			return
 		}
 
-		c.FileAttachment(zipFileName, zipBaseName)
+		defer func(fileName, baseName string) {
+			log.Debugf("zip: %s has been downloaded", clean.Log(baseName))
 
-		defer func(n string) {
-			logError("zip", os.Remove(n))
-		}(zipFileName)
+			// Wait a moment before deleting the zip file, just to be sure:
+			// https://github.com/photoprism/photoprism/issues/2532
+			time.Sleep(time.Second)
+
+			// Remove the zip file to free up disk space.
+			if err := os.Remove(fileName); err != nil {
+				log.Warnf("zip: failed deleting %s (%s)", clean.Log(fileName), err)
+			} else {
+				log.Debugf("zip: deleted %s", clean.Log(baseName))
+			}
+		}(zipFileName, zipBaseName)
+
+		log.Debugf("zip: submitting %s", clean.Log(zipBaseName))
+
+		c.FileAttachment(zipFileName, zipBaseName)
 	})
 }
 
