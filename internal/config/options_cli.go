@@ -1,12 +1,9 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -24,7 +21,7 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
-			Usage:  fmt.Sprintf("initial admin `PASSWORD`, must have at least %d characters", entity.PasswordLength),
+			Usage:  "initial admin `PASSWORD`, must have at least 8 characters",
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 		}},
 	CliFlag{
@@ -238,13 +235,13 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "disable-faces",
-			Usage:  "disable face recognition",
+			Usage:  "disable face detection and recognition using TensorFlow",
 			EnvVar: "PHOTOPRISM_DISABLE_FACES",
 		}},
 	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "disable-classification",
-			Usage:  "disable image classification",
+			Usage:  "disable image classification using TensorFlow",
 			EnvVar: "PHOTOPRISM_DISABLE_CLASSIFICATION",
 		}},
 	CliFlag{
@@ -304,13 +301,13 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "detect-nsfw",
-			Usage:  "flag photos as private that may be offensive (requires TensorFlow)",
+			Usage:  "automatically flag photos as private that MAY be offensive (requires TensorFlow)",
 			EnvVar: "PHOTOPRISM_DETECT_NSFW",
 		}},
 	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "upload-nsfw, n",
-			Usage:  "allow uploads that may be offensive",
+			Usage:  "allow uploads that MAY be offensive (no effect without TensorFlow)",
 			EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 		}},
 	CliFlag{
@@ -643,7 +640,7 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.StringFlag{
 			Name:   "jpeg-quality, q",
-			Usage:  "`QUALITY` of created JPEG sidecars and thumbnails (25-100, best, high, default, low, worst)",
+			Usage:  "a higher value increases the `QUALITY` and file size of JPEG images and thumbnails (25-100)",
 			Value:  thumb.JpegQuality.String(),
 			EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 		}},

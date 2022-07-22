@@ -47,8 +47,8 @@ services:
       PHOTOPRISM_DISABLE_PLACES: "false"      # disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"    # disables creating JSON metadata sidecar files with ExifTool
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"  # disables all features depending on TensorFlow
-      PHOTOPRISM_DETECT_NSFW: "false"         # flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "false"         # allows uploads that may be offensive
+      PHOTOPRISM_DETECT_NSFW: "false"         # automatically flags photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "false"         # allows uploads that MAY be offensive (no effect without TensorFlow)
       PHOTOPRISM_RAW_PRESETS: "false"         # enables applying user presets when converting RAW files (reduces performance)
       PHOTOPRISM_THUMB_FILTER: "lanczos"      # resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
@@ -56,7 +56,7 @@ services:
       # PHOTOPRISM_THUMB_SIZE: 4096           # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # on-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
-      PHOTOPRISM_JPEG_QUALITY: 85             # image quality, a higher value reduces compression (25-100)
+      PHOTOPRISM_JPEG_QUALITY: 85             # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                 # show TensorFlow log messages for development
       PHOTOPRISM_INIT: "gpu tensorflow"       # Options: "update gpu tensorflow davfs clitools clean"
       PHOTOPRISM_FFMPEG_ENCODER: "nvidia"     # Options: "software", "intel", "nvidia", "apple", "raspberry"

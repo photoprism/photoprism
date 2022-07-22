@@ -55,7 +55,7 @@ services:
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # YOUR INITIAL ADMIN PASSWORD (MINIMUM 8 CHARACTERS, USERNAME "admin")
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # INITIAL PASSWORD FOR "admin" USER, MINIMUM 8 CHARACTERS
       PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # public server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
@@ -68,13 +68,13 @@ services:
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
-      PHOTOPRISM_DISABLE_FACES: "true"               # disables face recognition
-      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification
+      PHOTOPRISM_DISABLE_FACES: "true"               # disables face detection and recognition using TensorFlow
+      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification using TensorFlow
       PHOTOPRISM_DISABLE_RAW: "true"                 # disables indexing and conversion of RAW files
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW files (reduces performance)
-      PHOTOPRISM_JPEG_QUALITY: 85                    # image quality, a higher value reduces compression (25-100)
-      PHOTOPRISM_DETECT_NSFW: "false"                # flag photos as private that MAY be offensive
-      PHOTOPRISM_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive
+      PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
+      PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive (no effect without TensorFlow)
       # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
       PHOTOPRISM_DATABASE_DRIVER: "mysql"            # use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
       PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB or MySQL database server (hostname:port)
@@ -91,8 +91,9 @@ services:
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
+    ## See: https://www.raspberrypi.com/documentation/accessories/camera.html#driver-differences-when-using-libcamera-or-the-legacy-stack
     # devices:
-    #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
+    #  - "/dev/video11:/dev/video11" # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
