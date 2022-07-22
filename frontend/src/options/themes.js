@@ -1,4 +1,4 @@
-import { $gettext } from "common/vm";
+import { $gettext, T } from "common/vm";
 
 /* Theme Styles */
 
@@ -484,7 +484,7 @@ export const Translated = () => {
     }
 
     return {
-      text: $gettext(v.text),
+      text: T(v.text),
       value: v.value,
     };
   });
