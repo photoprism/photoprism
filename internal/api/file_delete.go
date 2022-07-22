@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 )
 
+// DeleteFile removes a file from storage.
 // DELETE /api/v1/photos/:uid/files/:file_uid
 //
 // Parameters:
@@ -41,42 +42,52 @@ func DeleteFile(router *gin.RouterGroup) {
 
 		file, err := query.FileByUID(fileUID)
 
+		// Found?
 		if err != nil {
-			log.Errorf("photo: %s (delete file)", err)
+			log.Errorf("files: %s (delete)", err)
 			AbortEntityNotFound(c)
 			return
 		}
 
+		// Primary file?
 		if file.FilePrimary {
-			log.Errorf("photo: cannot delete primary file")
+			log.Errorf("files: cannot delete primary file")
 			AbortDeleteFailed(c)
 			return
 		}
 
+		// Compose storage filename.
 		fileName := photoprism.FileName(file.FileRoot, file.FileName)
 		baseName := filepath.Base(fileName)
 
 		mediaFile, err := photoprism.NewMediaFile(fileName)
 
 		if err != nil {
-			log.Errorf("photo: %s (delete %s)", err, clean.Log(baseName))
+			log.Errorf("files: %s (delete %s)", err, clean.Log(baseName))
 			AbortEntityNotFound(c)
 			return
 		}
 
+		// Remove file from storage.
 		if err = mediaFile.Remove(); err != nil {
-			log.Errorf("photo: %s (delete %s from folder)", err, clean.Log(baseName))
+			log.Errorf("files: %s (delete %s from folder)", err, clean.Log(baseName))
+		} else {
+			log.Infof("files: deleted %s", clean.Log(baseName))
 		}
 
+		// Remove file from index.
 		if err = file.Delete(true); err != nil {
-			log.Errorf("photo: %s (delete %s from index)", err, clean.Log(baseName))
+			log.Errorf("files: %s (delete %s from index)", err, clean.Log(baseName))
 			AbortDeleteFailed(c)
 			return
+		} else {
+			log.Debugf("files: removed %s from index", clean.Log(baseName))
 		}
 
 		// Notify clients by publishing events.
 		PublishPhotoEvent(EntityUpdated, photoUID, c)
 
+		// Show translated success message.
 		event.SuccessMsg(i18n.MsgFileDeleted)
 
 		if p, err := query.PhotoPreloadByUID(photoUID); err != nil {

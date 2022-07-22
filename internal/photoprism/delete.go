@@ -10,31 +10,35 @@ import (
 )
 
 // DeletePhoto removes a photo from the index and optionally all related media files.
-func DeletePhoto(p entity.Photo, mediaFiles bool, originals bool) error {
+func DeletePhoto(p entity.Photo, mediaFiles bool, originals bool) (numFiles int, err error) {
 	yamlFileName := p.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
 	// Permanently remove photo from index.
 	files, err := p.DeletePermanently()
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	if mediaFiles {
-		DeleteFiles(files, originals)
+		numFiles = DeleteFiles(files, originals)
 	}
 
 	// Remove sidecar backup.
-	if fs.FileExists(yamlFileName) {
-		log.Debugf("media: removing yaml sidecar %s", clean.Log(filepath.Base(yamlFileName)))
-		logWarn("media", os.Remove(yamlFileName))
+	if !fs.FileExists(yamlFileName) {
+		return numFiles, nil
+	} else if err := os.Remove(yamlFileName); err != nil {
+		log.Warnf("files: failed deleting sidecar %s", clean.Log(filepath.Base(yamlFileName)))
+	} else {
+		numFiles++
+		log.Infof("files: deleted sidecar %s", clean.Log(filepath.Base(yamlFileName)))
 	}
 
-	return nil
+	return numFiles, nil
 }
 
 // DeleteFiles permanently deletes media and related sidecar files.
-func DeleteFiles(files entity.Files, originals bool) {
+func DeleteFiles(files entity.Files, originals bool) (numFiles int) {
 	for _, file := range files {
 		fileName := FileName(file.FileRoot, file.FileName)
 
@@ -48,37 +52,53 @@ func DeleteFiles(files entity.Files, originals bool) {
 
 		// Log media file error if any.
 		if err != nil {
-			log.Debugf("media: %s not found", clean.Log(file.FileName))
+			log.Tracef("files: %s", err)
 		}
 
-		// Remove sidecar JSON files.
-		if sidecarJson := f.SidecarJsonName(); fs.FileExists(sidecarJson) {
-			log.Debugf("media: removing json sidecar %s", clean.Log(filepath.Base(sidecarJson)))
-			logWarn("delete", os.Remove(sidecarJson))
-		}
-		if exifJson, err := f.ExifToolJsonName(); err == nil && fs.FileExists(exifJson) {
-			log.Debugf("media: removing exiftool sidecar %s", clean.Log(filepath.Base(exifJson)))
-			logWarn("media", os.Remove(exifJson))
+		// Remove original JSON sidecar file, if any.
+		if jsonFile := f.FileName() + ".json"; !originals && f.Root() == entity.RootOriginals || !fs.FileExists(jsonFile) {
+			// Do nothing.
+		} else if err = os.Remove(jsonFile); err != nil {
+			log.Warnf("files: failed deleting sidecar %s", clean.Log(filepath.Base(jsonFile)))
+		} else {
+			numFiles++
+			log.Infof("files: deleted sidecar %s", clean.Log(filepath.Base(jsonFile)))
 		}
 
-		// Remove any other sidecar files.
-		logWarn("media", f.RemoveSidecars())
+		// Remove Exiftool JSON file in cache folder.
+		if exifJson, _ := ExifToolCacheName(file.FileHash); !fs.FileExists(exifJson) {
+			// Do nothing.
+		} else if err = os.Remove(exifJson); err != nil {
+			log.Warnf("files: failed deleting sidecar %s", clean.Log(filepath.Base(exifJson)))
+		} else {
+			numFiles++
+			log.Infof("files: deleted sidecar %s", clean.Log(filepath.Base(exifJson)))
+		}
+
+		// Remove any other files in the sidecar folder.
+		if n, _ := f.RemoveSidecarFiles(); n > 0 {
+			numFiles += n
+		}
 
 		// Continue if the media file does not exist or should be preserved.
 		if !fs.FileExists(fileName) {
 			continue
-		} else if !originals && f.Root() == entity.RootOriginals {
-			log.Debugf("media: skipped original %s", clean.Log(file.FileName))
-			continue
 		}
 
-		log.Debugf("media: removing %s", clean.Log(file.FileName))
-
-		// Remove media file.
-		if err = f.Remove(); err != nil {
-			log.Errorf("media: removed %s", clean.Log(file.FileName))
+		// Remove the original media file, if it exists and is allowed.
+		if relName := f.RootRelName(); relName == "" {
+			log.Warnf("files: relative filename of %s must not be empty - bug?", clean.Log(fileName))
+			continue
+		} else if !originals && f.Root() == entity.RootOriginals {
+			log.Debugf("files: skipped deleting %s", clean.Log(relName))
+			continue
+		} else if err = f.Remove(); err != nil {
+			log.Errorf("files: failed deleting %s", clean.Log(relName))
 		} else {
-			log.Infof("media: failed removing %s", clean.Log(file.FileName))
+			numFiles++
+			log.Infof("files: deleted %s", clean.Log(relName))
 		}
 	}
+
+	return numFiles
 }

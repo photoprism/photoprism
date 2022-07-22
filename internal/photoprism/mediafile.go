@@ -1106,8 +1106,8 @@ func (m *MediaFile) Orientation() int {
 	return 1
 }
 
-// RenameSidecars moves related sidecar files.
-func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]string, err error) {
+// RenameSidecarFiles moves related sidecar files.
+func (m *MediaFile) RenameSidecarFiles(oldFileName string) (renamed map[string]string, err error) {
 	renamed = make(map[string]string)
 
 	sidecarPath := Config().SidecarPath()
@@ -1130,9 +1130,9 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 
 			if err := os.Remove(srcName); err != nil {
-				log.Errorf("media: failed removing sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
+				log.Errorf("files: failed removing sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
 			} else {
-				log.Infof("media: removed sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
+				log.Infof("files: removed sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
 			}
 
 			continue
@@ -1141,7 +1141,7 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 		if err := fs.Move(srcName, destName); err != nil {
 			return renamed, err
 		} else {
-			log.Infof("media: moved existing sidecar to %s", clean.Log(newName+filepath.Ext(srcName)))
+			log.Infof("files: moved existing sidecar to %s", clean.Log(newName+filepath.Ext(srcName)))
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 		}
 	}
@@ -1149,12 +1149,12 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 	return renamed, nil
 }
 
-// RemoveSidecars permanently removes related sidecar files.
-func (m *MediaFile) RemoveSidecars() (err error) {
+// RemoveSidecarFiles permanently removes related sidecar files.
+func (m *MediaFile) RemoveSidecarFiles() (numFiles int, err error) {
 	fileName := m.FileName()
 
 	if fileName == "" {
-		return fmt.Errorf("empty filename")
+		return numFiles, fmt.Errorf("empty filename")
 	}
 
 	sidecarPath := Config().SidecarPath()
@@ -1166,18 +1166,19 @@ func (m *MediaFile) RemoveSidecars() (err error) {
 	matches, err := filepath.Glob(regexp.QuoteMeta(globPrefix) + "*")
 
 	if err != nil {
-		return err
+		return numFiles, err
 	}
 
 	for _, sidecarName := range matches {
 		if err = os.Remove(sidecarName); err != nil {
-			log.Errorf("media: failed removing sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))
+			log.Errorf("files: failed deleting sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))
 		} else {
-			log.Infof("media: removed sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))
+			numFiles++
+			log.Infof("files: deleted sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))
 		}
 	}
 
-	return nil
+	return numFiles, nil
 }
 
 // ColorProfile returns the ICC color profile name.

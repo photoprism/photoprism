@@ -101,10 +101,11 @@ func indexAction(ctx *cli.Context) error {
 			Dry: false,
 		}
 
-		if thumbs, orphans, err := w.Start(opt); err != nil {
+		// Start cleanup worker.
+		if thumbnails, _, sidecars, err := w.Start(opt); err != nil {
 			return err
-		} else {
-			log.Infof("cleanup: removed %s and %s [%s]", english.Plural(orphans, "index entry", "index entries"), english.Plural(thumbs, "thumbnail", "thumbnails"), time.Since(cleanupStart))
+		} else if total := thumbnails + sidecars; total > 0 {
+			log.Infof("cleanup: removed %s in total [%s]", english.Plural(total, "file", "files"), time.Since(cleanupStart))
 		}
 	}
 

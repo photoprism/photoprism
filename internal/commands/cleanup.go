@@ -29,7 +29,7 @@ var cleanUpFlags = []cli.Flag{
 
 // cleanUpAction removes orphaned index entries, sidecar and thumbnail files.
 func cleanUpAction(ctx *cli.Context) error {
-	start := time.Now()
+	cleanupStart := time.Now()
 
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
@@ -53,10 +53,11 @@ func cleanUpAction(ctx *cli.Context) error {
 		Dry: ctx.Bool("dry"),
 	}
 
-	if thumbs, orphans, err := w.Start(opt); err != nil {
+	// Start cleanup worker.
+	if thumbnails, _, sidecars, err := w.Start(opt); err != nil {
 		return err
-	} else {
-		log.Infof("removed %s and %s in %s", english.Plural(orphans, "index entry", "index entries"), english.Plural(thumbs, "thumbnail", "thumbnails"), time.Since(start))
+	} else if total := thumbnails + sidecars; total > 0 {
+		log.Infof("removed %s in %s", english.Plural(total, "file", "files"), time.Since(cleanupStart))
 	}
 
 	conf.Shutdown()

@@ -2325,7 +2325,7 @@ func TestMediaFile_IsPlayableVideo(t *testing.T) {
 	})
 }
 
-func TestMediaFile_RenameSidecars(t *testing.T) {
+func TestMediaFile_RenameSidecarFiles(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		conf := config.TestConfig()
 
@@ -2354,7 +2354,7 @@ func TestMediaFile_RenameSidecars(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if renamed, err := mf.RenameSidecars(filepath.Join(conf.OriginalsPath(), "foo/bar.jpg")); err != nil {
+		if renamed, err := mf.RenameSidecarFiles(filepath.Join(conf.OriginalsPath(), "foo/bar.jpg")); err != nil {
 			t.Fatal(err)
 		} else if len(renamed) != 1 {
 			t.Errorf("len should be 2: %#v", renamed)
@@ -2375,7 +2375,7 @@ func TestMediaFile_RenameSidecars(t *testing.T) {
 	})
 }
 
-func TestMediaFile_RemoveSidecars(t *testing.T) {
+func TestMediaFile_RemoveSidecarFiles(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		conf := config.TestConfig()
 
@@ -2399,10 +2399,12 @@ func TestMediaFile_RemoveSidecars(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := mf.RemoveSidecars(); err != nil {
+		if n, err := mf.RemoveSidecarFiles(); err != nil {
 			t.Fatal(err)
 		} else if fs.FileExists(sidecarName) {
 			t.Errorf("src file still exists: %s", sidecarName)
+		} else if n == 0 {
+			t.Errorf("number of files should be > 0: %s", sidecarName)
 		}
 
 		_ = os.Remove(sidecarName)

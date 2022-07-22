@@ -37,7 +37,7 @@ func (m *MediaFile) ExifToolJsonName() (string, error) {
 		return "", fmt.Errorf("media: exiftool json files disabled")
 	}
 
-	return CacheName(m.Hash(), "json", "exiftool.json")
+	return ExifToolCacheName(m.Hash())
 }
 
 // NeedsExifToolJson tests if an ExifTool JSON file needs to be created.

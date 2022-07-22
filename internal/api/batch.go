@@ -2,6 +2,9 @@ package api
 
 import (
 	"net/http"
+	"time"
+
+	"github.com/dustin/go-humanize/english"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -371,7 +374,8 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		log.Infof("photos: deleting %s", clean.Log(f.String()))
 
-		// Fetch selection from index.
+		// Fetch selection from index and record time.
+		deleteStart := time.Now()
 		photos, err := query.SelectedPhotos(f)
 
 		if err != nil {
@@ -381,13 +385,23 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		var deleted entity.Photos
 
+		var numFiles = 0
+
 		// Delete photos.
 		for _, p := range photos {
-			if err = photoprism.DeletePhoto(p, true, true); err != nil {
+			n, err := photoprism.DeletePhoto(p, true, true)
+
+			numFiles += n
+
+			if err != nil {
 				log.Errorf("delete: %s", err)
 			} else {
 				deleted = append(deleted, p)
 			}
+		}
+
+		if numFiles > 0 {
+			log.Infof("delete: removed %s [%s]", english.Plural(numFiles, "file", "files"), time.Since(deleteStart))
 		}
 
 		// Any photos deleted?

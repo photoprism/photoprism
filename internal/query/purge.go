@@ -14,9 +14,9 @@ func PurgeOrphans() error {
 	if count, err := PurgeOrphanFiles(); err != nil {
 		return err
 	} else if count > 0 {
-		log.Warnf("purge: removed %d orphan files from index[%s]", count, time.Since(start))
+		log.Infof("index: removed %d orphan files [%s]", count, time.Since(start))
 	} else {
-		log.Infof("purge: found no orphan files in index [%s]", time.Since(start))
+		log.Debugf("index: found no orphan files [%s]", time.Since(start))
 	}
 
 	// Remove duplicates without an original file.

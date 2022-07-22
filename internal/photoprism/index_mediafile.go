@@ -107,7 +107,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (rename)", err, logName)
 			return result
-		} else if renamedSidecars, err := m.RenameSidecars(indFileName); err != nil {
+		} else if renamedSidecars, err := m.RenameSidecarFiles(indFileName); err != nil {
 			log.Errorf("index: %s in %s (rename sidecars)", err.Error(), logName)
 
 			fileRenamed = true
