@@ -1,12 +1,8 @@
 package config
 
 import (
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
@@ -343,30 +339,7 @@ func TestConfig_OriginalsDeletable(t *testing.T) {
 	c.Settings().Features.Delete = true
 	c.options.ReadOnly = false
 
-	t.Logf("(1) RO: %t, Writable: %t, Delete: %t", c.ReadOnly(), fs.Writable(c.OriginalsPath()), c.Settings().Features.Delete)
-
 	assert.True(t, c.OriginalsDeletable())
-
-	testDir, err := filepath.Abs("testdata/readonly")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if err = os.MkdirAll(testDir, os.ModeDir); err != nil {
-		t.Fatal(err)
-	}
-
-	defer func(testDir string) {
-		_ = os.Chmod(testDir, os.ModePerm)
-		_ = os.Remove(testDir)
-	}(testDir)
-
-	c.options.OriginalsPath = testDir
-
-	t.Logf("(2) RO: %t, Writable: %t, Delete: %t", c.ReadOnly(), fs.Writable(c.OriginalsPath()), c.Settings().Features.Delete)
-
-	assert.False(t, c.OriginalsDeletable())
 }
 
 func TestConfig_ImportPath2(t *testing.T) {
