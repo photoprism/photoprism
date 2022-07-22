@@ -66,7 +66,7 @@ Sandro Petruzzi (Patreon, May 2022)
 
 ## One-Time Donations ##
 
-[David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, Klemens
+[WarpinWolf](https://github.com/WarpinWolf), [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, Klemens
 Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel, [INIT_6](https://twitter.com/init_3), Sandro Rüegge,
 William Kray, Ovace Mamnoon, Clément Caplain Moreau, The Gordon Project, [@pluja](https://github.com/pluja),
 [@swingstate](https://github.com/photoprism/photoprism/issues/808#issuecomment-997467377), [Sola](https://github.com/solacrypto)
