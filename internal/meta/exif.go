@@ -25,8 +25,8 @@ import (
 var exifIfdMapping *exifcommon.IfdMapping
 var exifTagIndex = exif.NewTagIndex()
 var exifMutex = sync.Mutex{}
-var exifDateTimeTags = []string{"DateTimeOriginal", "DateTimeCreated", "CreateDate", "DateTimeDigitized", "DateTime"}
-var exifSubSecTags = []string{"SubSecTimeOriginal", "SubSecTimeDigitized", "SubSecTime"}
+var exifDateTimeTags = []string{"DateTimeOriginal", "DateTimeCreated", "CreateDate", "DateTime", "DateTimeDigitized"}
+var exifSubSecTags = []string{"SubSecTimeOriginal", "SubSecTime", "SubSecTimeDigitized"}
 
 func init() {
 	exifIfdMapping = exifcommon.NewIfdMapping()
