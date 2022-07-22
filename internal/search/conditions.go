@@ -139,7 +139,7 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 		for _, w := range strings.Split(k, txt.Or) {
 			w = strings.TrimSpace(w)
 
-			if w == txt.Empty {
+			if w == txt.EmptyString {
 				continue
 			}
 
@@ -236,7 +236,7 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 
 // OrLike returns a where condition and values for finding multiple terms combined with OR.
 func OrLike(col, s string) (where string, values []interface{}) {
-	if txt.IsEmpty(col) || txt.IsEmpty(s) {
+	if txt.Empty(col) || txt.Empty(s) {
 		return "", []interface{}{}
 	}
 

@@ -66,6 +66,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			for _, tagValue = range tagValues {
 				if r, ok := jsonValues[tagValue]; !ok {
 					continue
+				} else if txt.Empty(r.String()) {
+					continue
 				} else {
 					jsonValue = r
 					break

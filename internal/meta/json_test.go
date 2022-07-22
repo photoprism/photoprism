@@ -757,6 +757,31 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 	})
 
+	t.Run("datetime-zero.json", func(t *testing.T) {
+		data, err := JSON("testdata/datetime-zero.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, CodecJpeg, data.Codec)
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, "2015-03-20 12:07:53 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2015-03-20 12:07:53 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, 0, data.TakenNs)
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, 4608, data.Width)
+		assert.Equal(t, 3072, data.Height)
+		assert.Equal(t, 4608, data.ActualWidth())
+		assert.Equal(t, 3072, data.ActualHeight())
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "OLYMPUS IMAGING CORP.", data.CameraMake)
+		assert.Equal(t, "TG-830", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
 	t.Run("subject-1.json", func(t *testing.T) {
 		data, err := JSON("testdata/subject-1.json", "")
 

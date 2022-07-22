@@ -7,6 +7,21 @@ import (
 )
 
 func TestDateTime(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
+		result := DateTime("", "")
+		assert.True(t, result.IsZero())
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("0000-00-00 00:00:00", func(t *testing.T) {
+		result := DateTime("0000-00-00 00:00:00", "")
+		assert.True(t, result.IsZero())
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("0001-01-01 00:00:00 +0000 UTC", func(t *testing.T) {
+		result := DateTime("0001-01-01 00:00:00 +0000 UTC", "")
+		assert.True(t, result.IsZero())
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
 	t.Run("2016: :     :  :  ", func(t *testing.T) {
 		result := DateTime("2016: :     :  :  ", "")
 		assert.Equal(t, "2016-01-01 00:00:00 +0000 UTC", result.String())
