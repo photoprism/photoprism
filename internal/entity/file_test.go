@@ -13,6 +13,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/projection"
 )
 
+func TestFile_RegenerateIndex(t *testing.T) {
+	t.Run("FirstFileByHash", func(t *testing.T) {
+		f, err := FirstFileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		if err != nil {
+			t.Fatal(err)
+		}
+		f.RegenerateIndex()
+	})
+}
+
 func TestFirstFileByHash(t *testing.T) {
 	t.Run("not existing file", func(t *testing.T) {
 		f, err := FirstFileByHash("xxx")
