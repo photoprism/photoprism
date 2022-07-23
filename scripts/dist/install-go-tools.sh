@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin"
+PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:$PATH"
 
 # abort if not executed as root
 if [[ $(id -u) != "0" ]]; then

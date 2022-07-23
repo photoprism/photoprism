@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 # This script returns the normalized machine architecture (amd64, arm64, or arm).
 # An error is returned if the architecture is currently not supported by PhotoPrism.

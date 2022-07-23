@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 GOLANG_VERSION=1.18.4
 DESTDIR=$(realpath "${1:-/usr/local}")
@@ -15,7 +15,15 @@ echo "Installing Go in \"$DESTDIR\"..."
 
 set -e
 
-SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
+if command -v arch &> /dev/null
+then
+    SYSTEM_ARCH=$(arch)
+elif [[ $PHOTOPRISM_ARCH ]]; then
+    SYSTEM_ARCH=$PHOTOPRISM_ARCH
+else
+    SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
+fi
+
 DESTARCH=${2:-$SYSTEM_ARCH}
 
 mkdir -p "$DESTDIR"
