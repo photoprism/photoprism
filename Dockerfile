@@ -1,5 +1,5 @@
 # Debian 12, Codename 'Bookworm'
-FROM photoprism/develop:220719-bookworm
+FROM photoprism/develop:220723-bookworm
 
 ## alternative base images
 # FROM photoprism/develop:bullseye # Debian 11, Codename 'Bullseye'
