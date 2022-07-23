@@ -1,5 +1,5 @@
 import { Selector } from "testcafe";
-import testcafeconfig from "./testcafeconfig";
+import testcafeconfig from "../../testcafeconfig.json";
 import { RequestLogger } from "testcafe";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";

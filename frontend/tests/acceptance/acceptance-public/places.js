@@ -1,6 +1,6 @@
 import { Selector } from "testcafe";
 import { ClientFunction } from "testcafe";
-import testcafeconfig from "./testcafeconfig.json";
+import testcafeconfig from "../../testcafeconfig.json";
 import Menu from "../page-model/menu";
 
 const getLocation = ClientFunction(() => document.location.href);

@@ -1,6 +1,6 @@
 import { Selector } from "testcafe";
 import { Role } from "testcafe";
-import testcafeconfig from "../acceptance-public/testcafeconfig";
+import testcafeconfig from "../../testcafeconfig.json";
 import Page from "../page-model/page";
 import Menu from "../page-model/menu";
 import Toolbar from "../page-model/toolbar";

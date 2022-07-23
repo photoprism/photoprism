@@ -1,5 +1,5 @@
 import { Selector } from "testcafe";
-import testcafeconfig from "../testcafeconfig";
+import testcafeconfig from "../../../testcafeconfig.json";
 import Menu from "../../page-model/menu";
 
 fixture`Test about`.page`${testcafeconfig.url}`;

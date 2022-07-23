@@ -1,5 +1,5 @@
 import { Selector } from "testcafe";
-import testcafeconfig from "../acceptance-public/testcafeconfig";
+import testcafeconfig from "../../testcafeconfig.json";
 import Page from "../page-model/page";
 import Account from "../page-model/account";
 import Settings from "../page-model/settings";

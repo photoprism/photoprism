@@ -191,6 +191,9 @@ export default class Page {
   }
 
   async checkEditFormValuesNewNew(expectedValues) {
+    if (!expectedValues) {
+      return;
+    }
     expectedValues.forEach((el) => {
       this.checkEditFormValue(el[1], el[0]);
     });
