@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Installs NodeJS, NPM and TestCafe on Linux
+# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-nodejs.sh)
+
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 # abort if not executed as root
