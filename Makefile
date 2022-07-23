@@ -168,6 +168,9 @@ dep-tensorflow:
 	scripts/download-facenet.sh
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
+dep-acceptance: storage/acceptance
+storage/acceptance:
+	(cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)
 zip-facenet:
 	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
 zip-nasnet:
@@ -487,7 +490,7 @@ tidy:
 .PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
     install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
     docker-develop docker-preview docker-preview-all docker-preview-arm docker-release docker-release-all docker-release-arm \
-    install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell help \
+    install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell help dep-acceptance \
     docker-local docker-local-all docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish \
     docker-local-develop docker-local-develop-all docker-local-develop-bookworm docker-local-develop-bullseye \
     docker-local-develop-buster docker-local-develop-impish test-mariadb reset-acceptance run-test-mariadb;
