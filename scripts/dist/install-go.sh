@@ -15,9 +15,9 @@ echo "Installing Go in \"$DESTDIR\"..."
 
 set -e
 
-if command -v arch &> /dev/null
+if command -v uname &> /dev/null
 then
-    SYSTEM_ARCH=$(arch)
+    SYSTEM_ARCH=$(uname -m)
 elif [[ $PHOTOPRISM_ARCH ]]; then
     SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
