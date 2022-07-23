@@ -54,13 +54,13 @@ case $DESTARCH in
     ;;
 esac
 
-echo "Installing Go from \"$URL\". Please wait."
-
 # Replace current installation in "/usr/local/go".
+echo "Installing Go for ${DESTARCH^^} from \"$URL\". Please wait."
 rm -rf /usr/local/go
-wget -c https://go.dev/dl/go1.18.4.linux-amd64.tar.gz -O - | tar -xz -C /usr/local
+wget -c "$URL" -O - | tar -xz -C /usr/local
 
 # Add symlink to go binary.
+echo "Adding symbolic links for go and gofmt."
 ln -sf /usr/local/go/bin/go /usr/local/bin/go
 ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
