@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # abort if not executed as root
 if [[ $(id -u) != "0" ]]; then
