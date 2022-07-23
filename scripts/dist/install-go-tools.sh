@@ -11,6 +11,12 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
+if ! command -v go &> /dev/null
+then
+    echo "Go must be installed."
+    exit 1
+fi
+
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
@@ -18,12 +24,13 @@ else
 fi
 
 DESTARCH=${2:-$SYSTEM_ARCH}
+GOPATH=$(go env GOPATH)
 
 echo "Installing Go Tools for ${DESTARCH^^}..."
 
 set -e
 
-mkdir -p "$GOPATH/src" "$GOBIN"
+mkdir -p "$GOPATH/src"
 
 # Install gosu in "/usr/local/sbin".
 echo "Installing gosu in /usr/local/sbin..."
