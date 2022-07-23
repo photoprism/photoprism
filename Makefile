@@ -89,9 +89,7 @@ install:
 	rm -rf --preserve-root $(DESTDIR)/include
 	(cd $(DESTDIR) && mkdir -p bin sbin lib assets config config/examples)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
-	[ -f "$(GOBIN)/gosu" ] || go install github.com/tianon/gosu@latest
-	cp $(GOBIN)/gosu $(DESTDIR)/sbin/gosu
-	[ ! -f "$(GOBIN)/exif-read-tool" ] || cp $(GOBIN)/exif-read-tool $(DESTDIR)/bin/exif-read-tool
+	GOBIN="$(DESTDIR)/sbin" go install github.com/tianon/gosu@latest
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	wget -O $(DESTDIR)/assets/static/img/wallpaper/welcome.jpg https://cdn.photoprism.app/wallpaper/welcome.jpg
 	wget -O $(DESTDIR)/assets/static/img/preview.jpg https://cdn.photoprism.app/img/preview.jpg
