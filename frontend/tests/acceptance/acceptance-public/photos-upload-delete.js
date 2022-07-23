@@ -38,8 +38,8 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
     await toolbar.triggerToolbarAction("upload");
     await t
       .setFilesToUpload(Selector(".input-upload"), [
-        "./upload-files/digikam.jpg",
-        "./upload-files/digikam.json",
+        "../../upload-files/digikam.jpg",
+        "../../upload-files/digikam.json",
       ])
       .wait(15000);
     const PhotoCountAfterUpload = await photo.getPhotoCount("all");
@@ -107,7 +107,7 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })(
     await t.expect(PhotoCount).eql(0);
 
     await toolbar.triggerToolbarAction("upload");
-    await t.setFilesToUpload(Selector(".input-upload"), ["./upload-files/korn.mp4"]).wait(15000);
+    await t.setFilesToUpload(Selector(".input-upload"), ["../../upload-files/korn.mp4"]).wait(15000);
     const PhotoCountAfterUpload = await photo.getPhotoCount("all");
 
     await t.expect(PhotoCountAfterUpload).eql(1);
@@ -176,7 +176,7 @@ test.meta("testID", "photos-upload-delete-003").meta({ mode: "public" })(
     await t
       .click(Selector(".input-albums"))
       .click(page.selectOption.withText("Christmas"))
-      .setFilesToUpload(Selector(".input-upload"), ["./upload-files/ladybug.jpg"])
+      .setFilesToUpload(Selector(".input-upload"), ["../../upload-files/ladybug.jpg"])
       .wait(15000);
     const PhotoCountAfterUpload = await photo.getPhotoCount("all");
 
@@ -212,7 +212,7 @@ test.meta("testID", "photos-upload-delete-004").meta({ mode: "public" })(
       .click(Selector(".input-albums"))
       .typeText(Selector(".input-albums input"), "NewCreatedAlbum")
       .pressKey("enter")
-      .setFilesToUpload(Selector(".input-upload"), ["./upload-files/digikam.jpg"])
+      .setFilesToUpload(Selector(".input-upload"), ["../../upload-files/digikam.jpg"])
       .wait(15000);
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
@@ -261,7 +261,7 @@ test.meta("testID", "photos-upload-delete-005").meta({ type: "short", mode: "pub
   async (t) => {
     await toolbar.triggerToolbarAction("upload");
     await t
-      .setFilesToUpload(Selector(".input-upload"), ["./upload-files/hentai_2.jpg"])
+      .setFilesToUpload(Selector(".input-upload"), ["../../upload-files/hentai_2.jpg"])
       .wait(15000);
     await menu.openPage("library");
     await t.click(library.logsTab);
@@ -280,7 +280,7 @@ test.meta("testID", "photos-upload-delete-006").meta({ type: "short", mode: "pub
     await menu.openPage("browse");
 
     await toolbar.triggerToolbarAction("upload");
-    await t.setFilesToUpload(Selector(".input-upload"), ["./upload-files/foo.txt"]).wait(15000);
+    await t.setFilesToUpload(Selector(".input-upload"), ["../../upload-files/foo.txt"]).wait(15000);
     await menu.openNav();
     const OriginalsCountAfterUpload = await Selector(".nav-originals .nav-count", {
       timeout: 10000,
