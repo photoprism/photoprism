@@ -115,16 +115,16 @@ func (m File) RegenerateIndex() {
 
 	if m.PhotoID > 0 {
 		updateWhere = gorm.Expr("files.photo_id = ?", m.PhotoID)
-		scope = "partial file index"
+		scope = "index by photo id"
 	} else if m.PhotoUID != "" {
 		updateWhere = gorm.Expr("files.photo_uid = ?", m.PhotoUID)
-		scope = "partial file index"
+		scope = "index by photo uid"
 	} else if m.ID > 0 {
 		updateWhere = gorm.Expr("files.id = ?", m.ID)
-		scope = "partial file index"
+		scope = "index by file id"
 	} else {
 		updateWhere = gorm.Expr("files.photo_id IS NOT NULL")
-		scope = "file index"
+		scope = "index"
 	}
 
 	switch DbDialect() {

@@ -14,12 +14,24 @@ import (
 )
 
 func TestFile_RegenerateIndex(t *testing.T) {
+	t.Run("ID", func(t *testing.T) {
+		File{ID: 1000000}.RegenerateIndex()
+	})
+	t.Run("PhotoID", func(t *testing.T) {
+		File{PhotoID: 1000039}.RegenerateIndex()
+	})
+	t.Run("PhotoUID", func(t *testing.T) {
+		File{PhotoUID: "pr2xu7myk7wrbk32"}.RegenerateIndex()
+	})
 	t.Run("FirstFileByHash", func(t *testing.T) {
 		f, err := FirstFileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		if err != nil {
 			t.Fatal(err)
 		}
 		f.RegenerateIndex()
+	})
+	t.Run("All", func(t *testing.T) {
+		File{}.RegenerateIndex()
 	})
 }
 
