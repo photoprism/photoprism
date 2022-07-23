@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Installs Go Tools on Linux
+# Installs Go tools on Linux
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-go-tools.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:$PATH"
@@ -24,9 +24,14 @@ else
 fi
 
 DESTARCH=${2:-$SYSTEM_ARCH}
-GOPATH=$(go env GOPATH)
 
-echo "Installing Go Tools for ${DESTARCH^^}..."
+if [ -d "/go" ]; then
+  GOPATH="/go"
+elif [[ -z $GOPATH ]]; then
+  GOPATH=$(go env GOPATH)
+fi
+
+echo "Installing Go tools for ${DESTARCH^^} in $GOPATH..."
 
 set -e
 
