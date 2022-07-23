@@ -43,13 +43,13 @@ test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
-acceptance-auth-run-chromium: acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop
-acceptance-public-run-chromium: acceptance-sqlite-restart acceptance acceptance-sqlite-stop
-acceptance-auth-run-firefox: acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop
-acceptance-public-run-firefox: acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
-acceptance-run-chromium-short: acceptance-auth-sqlite-restart acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-short acceptance-sqlite-stop
-acceptance-run-chromium: acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance acceptance-sqlite-stop
-acceptance-run-firefox: acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
+acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop
+acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart acceptance acceptance-sqlite-stop
+acceptance-auth-run-firefox: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop
+acceptance-public-run-firefox: storage/acceptance acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
+acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-short acceptance-sqlite-stop
+acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance acceptance-sqlite-stop
+acceptance-run-firefox: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go
 clean-local: clean-local-config clean-local-cache
