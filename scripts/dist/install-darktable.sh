@@ -17,7 +17,7 @@ DESTARCH=${2:-$SYSTEM_ARCH}
 
 echo "Installing Darktable for ${DESTARCH^^}..."
 
-if [[ $DESTARCH == "amd64" ]]; then
+if [[ $DESTARCH == "amd64" || $DESTARCH == "x86_64" ]]; then
   if [[ $VERSION_CODENAME == "bullseye" ]]; then
     apt-get update
     apt-get -qq install -t bullseye-backports darktable

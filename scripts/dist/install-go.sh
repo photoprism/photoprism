@@ -30,7 +30,7 @@ mkdir -p "$DESTDIR"
 
 set -eux;
 
-if [[ $DESTARCH == "amd64" ]]; then
+if [[ $DESTARCH == "amd64" || $DESTARCH == "x86_64" ]]; then
     URL="https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"
     CHECKSUM="c9b099b68d93f5c5c8a8844a89f8db07eaa58270e3a1e01804f17f4cf8df02f5 *go.tgz"
 elif [[ $DESTARCH == "arm64" ]]; then
