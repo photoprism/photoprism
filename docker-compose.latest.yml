@@ -40,7 +40,7 @@ services:
       PHOTOPRISM_DATABASE_NAME: "latest"
       PHOTOPRISM_DATABASE_USER: "latest"
       PHOTOPRISM_DATABASE_PASSWORD: "latest"
-      PHOTOPRISM_DISABLE_CHOWN: "false"       # disables storage permission updates on startup
+      PHOTOPRISM_DISABLE_CHOWN: "false"       # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"     # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"      # disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"    # disables settings UI and API
