@@ -97,7 +97,7 @@ services:
     #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
     #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
     #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
-    #  - "/dev/video11:/dev/video11"                 # Raspberry V4L2
+    #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
