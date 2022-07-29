@@ -235,13 +235,13 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "disable-faces",
-			Usage:  "disable face detection and recognition using TensorFlow",
+			Usage:  "disable face detection and recognition (requires TensorFlow)",
 			EnvVar: "PHOTOPRISM_DISABLE_FACES",
 		}},
 	CliFlag{
 		Flag: cli.BoolFlag{
 			Name:   "disable-classification",
-			Usage:  "disable image classification using TensorFlow",
+			Usage:  "disable image classification (requires TensorFlow)",
 			EnvVar: "PHOTOPRISM_DISABLE_CLASSIFICATION",
 		}},
 	CliFlag{
