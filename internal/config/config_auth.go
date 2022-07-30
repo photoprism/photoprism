@@ -2,7 +2,6 @@ package config
 
 import (
 	"regexp"
-	"strings"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"golang.org/x/crypto/bcrypt"
@@ -21,13 +20,14 @@ func isBcrypt(s string) bool {
 	return b
 }
 
+// AdminPassword returns the initial admin password.
+func (c *Config) AdminPassword() string {
+	return c.options.AdminPassword
+}
+
 // Public checks if app runs in public mode and requires no authentication.
 func (c *Config) Public() bool {
-	if c.Demo() {
-		return true
-	}
-
-	return c.options.Public
+	return c.AuthMode() == AuthModePublic
 }
 
 // SetPublic changes authentication while instance is running, for testing purposes only.
@@ -37,24 +37,15 @@ func (c *Config) SetPublic(enabled bool) {
 	}
 }
 
-// AdminPassword returns the initial admin password.
-func (c *Config) AdminPassword() string {
-	return c.options.AdminPassword
-}
-
 // AuthMode returns the authentication mode.
 func (c *Config) AuthMode() string {
-	if c.Public() {
+	if c.options.Public || c.options.Demo {
 		return AuthModePublic
 	}
 
-	mode := strings.ToLower(strings.TrimSpace(c.options.AuthMode))
-
-	switch mode {
+	switch c.options.AuthMode {
 	case AuthModePublic:
 		return AuthModePublic
-	case AuthModePasswd, "", "p", "pw", "pass", "passwd", "passwort", "passwords":
-		return AuthModePasswd
 	default:
 		return AuthModePasswd
 	}
@@ -62,7 +53,7 @@ func (c *Config) AuthMode() string {
 
 // Auth checks if authentication is required.
 func (c *Config) Auth() bool {
-	return c.AuthMode() != AuthModePublic
+	return !c.Public()
 }
 
 // CheckPassword compares given password p with the admin password

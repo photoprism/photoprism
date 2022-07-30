@@ -495,10 +495,68 @@ func TestConfig_SerialChecksum(t *testing.T) {
 	assert.NotEmpty(t, result)
 }
 
-func TestConfigPublic(t *testing.T) {
+func TestConfig_Public(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	c.options.Demo = true
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "public"
 	assert.True(t, c.Public())
+	c.options.Demo = true
+	c.options.Public = false
+	c.options.AuthMode = "public"
+	assert.True(t, c.Public())
+	c.options.Demo = true
+	c.options.Public = true
+	c.options.AuthMode = "public"
+	assert.True(t, c.Public())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "other"
+	assert.False(t, c.Public())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "password"
+	assert.False(t, c.Public())
+	c.options.Demo = false
+	c.options.Public = true
+	c.options.AuthMode = "password"
+	assert.True(t, c.Public())
+	c.options.Demo = true
+	c.options.Public = false
+	c.options.AuthMode = "password"
+	assert.True(t, c.Public())
+}
+
+func TestConfig_Auth(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "public"
+	assert.False(t, c.Auth())
+	c.options.Demo = true
+	c.options.Public = false
+	c.options.AuthMode = "public"
+	assert.False(t, c.Auth())
+	c.options.Demo = true
+	c.options.Public = true
+	c.options.AuthMode = "public"
+	assert.False(t, c.Auth())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "other"
+	assert.True(t, c.Auth())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "password"
+	assert.True(t, c.Auth())
+	c.options.Demo = false
+	c.options.Public = true
+	c.options.AuthMode = "password"
+	assert.False(t, c.Auth())
+	c.options.Demo = true
+	c.options.Public = false
+	c.options.AuthMode = "password"
+	assert.False(t, c.Auth())
 }
 
 func TestConfigOptions(t *testing.T) {
