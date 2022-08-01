@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # INITIALIZES CONTAINER PACKAGES AND PERMISSIONS
-export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
+export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
 
 # abort if not executed as root
 if [[ $(id -u) != "0" ]]; then
@@ -17,8 +17,8 @@ case $DOCKER_ENV in
   prod)
     export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/usr/local/bin:/usr/bin:/scripts:/opt/photoprism/bin";
     INIT_SCRIPTS="/scripts"
-    CHOWN_DIRS=("/photoprism" "/opt/photoprism")
-    CHMOD_DIRS=("/opt/photoprism")
+    CHOWN_DIRS=("/photoprism/storage")
+    CHMOD_DIRS=("/photoprism/storage")
     ;;
 
   develop)
