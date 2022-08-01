@@ -6,333 +6,335 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-06-16 16:58+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
+"PO-Revision-Date: 2022-08-01 13:59+0000\n"
+"Last-Translator: Chris Psarros <cpsarros@hotmail.com>\n"
 "Language-Team: none\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.13.1\n"
 
 #: messages.go:85
 msgid "Unexpected error, please try again"
-msgstr ""
+msgstr "Απρόσμενο σφάλμα, δοκιμάστε ξανά"
 
 #: messages.go:86
 msgid "Invalid request"
-msgstr ""
+msgstr "Μη έγκυρο αίτημα"
 
 #: messages.go:87
 msgid "Changes could not be saved"
-msgstr ""
+msgstr "Οι αλλαγές δεν μπόρεσαν να αποθηκευτούν"
 
 #: messages.go:88
 msgid "Could not be deleted"
-msgstr ""
+msgstr "Δεν μπόρεσε να διαγραφεί"
 
 #: messages.go:89
 #, c-format
 msgid "%s already exists"
-msgstr ""
+msgstr "%s υπάρχει ήδη"
 
 #: messages.go:90
 msgid "Not found"
-msgstr ""
+msgstr "Δεν βρέθηκε"
 
 #: messages.go:91
 msgid "File not found"
-msgstr ""
+msgstr "Το αρχείο δεν βρέθηκε"
 
 #: messages.go:92
 msgid "Selection not found"
-msgstr ""
+msgstr "Η επιλογή δεν βρέθηκε"
 
 #: messages.go:93
 msgid "Entity not found"
-msgstr ""
+msgstr "Η οντότητα δεν βρέθηκε"
 
 #: messages.go:94
 msgid "Account not found"
-msgstr ""
+msgstr "Ο λογαριασμός δεν βρέθηκε"
 
 #: messages.go:95
 msgid "User not found"
-msgstr ""
+msgstr "Ο χρήστης δεν βρέθηκε"
 
 #: messages.go:96
 msgid "Label not found"
-msgstr ""
+msgstr "Η ετικέτα δεν βρέθηκε"
 
 #: messages.go:97
 msgid "Album not found"
-msgstr ""
+msgstr "Η Συλλογή δεν βρέθηκε"
 
 #: messages.go:98
 msgid "Subject not found"
-msgstr ""
+msgstr "Το Θέμα δεν βρέθηκε"
 
 #: messages.go:99
 msgid "Person not found"
-msgstr ""
+msgstr "Το Άτομο δεν βρέθηκε"
 
 #: messages.go:100
 msgid "Face not found"
-msgstr ""
+msgstr "Το Πρόσωπο δεν βρέθηκε"
 
 #: messages.go:101
 msgid "Not available in public mode"
-msgstr ""
+msgstr "Μη διαθέσιμο κατά τη δημόσια λειτουργία"
 
 #: messages.go:102
 msgid "not available in read-only mode"
-msgstr ""
+msgstr "μη διαθέσιμο στην κατάσταση \"μόνο για ανάγνωση\""
 
 #: messages.go:103
 msgid "Please log in and try again"
-msgstr ""
+msgstr "Παρακαλούμε συνδεθείτε και δοκιμάστε ξανά"
 
 #: messages.go:104
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "Η φόρτωση μπορεί να είναι προσβλητική"
 
 #: messages.go:105
 msgid "No items selected"
-msgstr ""
+msgstr "Δεν έχουν επιλεγεί αντικείμενα"
 
 #: messages.go:106
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Απέτυχε η δημιουργία αρχείου, παρακαλούμε ελέγξτε τα δικαιώματα"
 
 #: messages.go:107
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Απέτυχε η δημιουργία φακέλου, παρακαλούμε ελέγξτε τα δικαιώματα"
 
 #: messages.go:108
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η σύνδεση, παρακαλώ δοκιμάστε ξανά"
 
 #: messages.go:109
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Μη έγκυρος κωδικός πρόσβασης, παρακαλώ δοκιμάστε ξανά"
 
 #: messages.go:110
 msgid "Feature disabled"
-msgstr ""
+msgstr "Λειτουργία απενεργοποιημένη"
 
 #: messages.go:111
 msgid "No labels selected"
-msgstr ""
+msgstr "Δεν έχουν επιλεγεί ετικέτες"
 
 #: messages.go:112
 msgid "No albums selected"
-msgstr ""
+msgstr "Δεν έχουν επιλεγεί συλλογές"
 
 #: messages.go:113
 msgid "No files available for download"
-msgstr ""
+msgstr "Δεν υπάρχουν διαθέσιμα αρχεία για λήψη"
 
 #: messages.go:114
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Απέτυχε η δημιουργία αρχείου zip"
 
 #: messages.go:115
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Μη έγκυρα διαπιστευτήρια"
 
 #: messages.go:116
 msgid "Invalid link"
-msgstr ""
+msgstr "Μη έγκυρος σύνδεσμος"
 
 #: messages.go:117
 msgid "Invalid name"
-msgstr ""
+msgstr "Μη έγκυρο όνομα"
 
 #: messages.go:118
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "Απασχολημένος, προσπαθήστε ξανά αργότερα"
 
 #: messages.go:119
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Το διάστημα αφύπνισης είναι %s, αλλά πρέπει να είναι 1 ώρα ή λιγότερο"
 
 #: messages.go:122
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Οι αλλαγές αποθηκεύτηκαν επιτυχώς"
 
 #: messages.go:123
 msgid "Album created"
-msgstr ""
+msgstr "Η Συλλογή δημιουργήθηκε"
 
 #: messages.go:124
 msgid "Album saved"
-msgstr ""
+msgstr "Η Συλλογή αποθηκεύθηκε"
 
 #: messages.go:125
 #, c-format
 msgid "Album %s deleted"
-msgstr ""
+msgstr "Η Συλλογή %s διαγράφηκε"
 
 #: messages.go:126
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Τα περιεχόμενα της Συλλογής αντιγράφηκαν"
 
 #: messages.go:127
 msgid "File removed from stack"
-msgstr ""
+msgstr "Αφαίρεση αρχείου από τη στοίβα"
 
 #: messages.go:128
 msgid "File deleted"
-msgstr ""
+msgstr "Το αρχείο διαγράφηκε"
 
 #: messages.go:129
 #, c-format
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Η επιλογή προστέθηκε στο %s"
 
 #: messages.go:130
 #, c-format
 msgid "One entry added to %s"
-msgstr ""
+msgstr "Μία εγγραφή προστέθηκε στο %s"
 
 #: messages.go:131
 #, c-format
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d καταχωρήσεις προστέθηκαν στο %s"
 
 #: messages.go:132
 #, c-format
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "Μία καταχώρηση αφαιρέθηκε από %s"
 
 #: messages.go:133
 #, c-format
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d καταχωρήσεις αφαιρέθηκαν από %s"
 
 #: messages.go:134
 msgid "Account created"
-msgstr ""
+msgstr "Ο Λογαριασμός δημιουργήθηκε"
 
 #: messages.go:135
 msgid "Account saved"
-msgstr ""
+msgstr "Ο Λογαριασμός αποθηκεύθηκε"
 
 #: messages.go:136
 msgid "Account deleted"
-msgstr ""
+msgstr "Ο Λογαριασμός διαγράφηκε"
 
 #: messages.go:137
 msgid "Settings saved"
-msgstr ""
+msgstr "Οι ρυθμίσεις αποθηκεύτηκαν"
 
 #: messages.go:138
 msgid "Password changed"
-msgstr ""
+msgstr "Ο κωδικός πρόσβασης άλλαξε"
 
 #: messages.go:139
 #, c-format
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Η εισαγωγή ολοκληρώθηκε σε %d s"
 
 #: messages.go:140
 msgid "Import canceled"
-msgstr ""
+msgstr "Η εισαγωγή ακυρώθηκε"
 
 #: messages.go:141
 #, c-format
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Η δημιουργία ευρετηρίου σε %d s"
 
 #: messages.go:142
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Δημιουργία ευρετηρίου για τα πρωτότυπα..."
 
 #: messages.go:143
 #, c-format
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "Δημιουργία ευρετηρίου αρχείων σε %s"
 
 #: messages.go:144
 msgid "Indexing canceled"
-msgstr ""
+msgstr "Η δημιουργία ευρετηρίου ακυρώθηκε"
 
 #: messages.go:145
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "Αφαίρεση %d αρχείων και %d φωτογραφιών"
 
 #: messages.go:146
 #, c-format
 msgid "Moving files from %s"
-msgstr ""
+msgstr "Μετακίνηση αρχείων από %s"
 
 #: messages.go:147
 #, c-format
 msgid "Copying files from %s"
-msgstr ""
+msgstr "Αντιγραφή αρχείων από %s"
 
 #: messages.go:148
 msgid "Labels deleted"
-msgstr ""
+msgstr "Οι Ετικέτες διαγράφηκαν"
 
 #: messages.go:149
 msgid "Label saved"
-msgstr ""
+msgstr "Η Ετικέτα αποθηκεύτηκε"
 
 #: messages.go:150
 msgid "Subject saved"
-msgstr ""
+msgstr "Το Θέμα αποθηκεύθηκε"
 
 #: messages.go:151
 msgid "Subject deleted"
-msgstr ""
+msgstr "Το Θέμα διαγράφηκε"
 
 #: messages.go:152
 msgid "Person saved"
-msgstr ""
+msgstr "Το Άτομο αποθηκεύθηκε"
 
 #: messages.go:153
 msgid "Person deleted"
-msgstr ""
+msgstr "Το Άτομο διαγράφηκε"
 
 #: messages.go:154
 #, c-format
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d αρχεία μεταφορτώθηκαν σε %d s"
 
 #: messages.go:155
 msgid "Selection approved"
-msgstr ""
+msgstr "Η επιλογή εγκρίθηκε"
 
 #: messages.go:156
 msgid "Selection archived"
-msgstr ""
+msgstr "Η επιλογή αρχειοθετήθηκε"
 
 #: messages.go:157
 msgid "Selection restored"
-msgstr ""
+msgstr "Η επιλογή αποκαταστάθηκε"
 
 #: messages.go:158
 msgid "Selection marked as private"
-msgstr ""
+msgstr "Η επιλογή χαρακτηρίστηκε ως ιδιωτική"
 
 #: messages.go:159
 msgid "Albums deleted"
-msgstr ""
+msgstr "Οι Συλλογές διαγράφηκαν"
 
 #: messages.go:160
 #, c-format
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "Το αρχείο συμπίεσης δημιουργήθηκε σε %d s"
 
 #: messages.go:161
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Διαγράφηκε μόνιμα"
 
 #: messages.go:162
 #, c-format
 msgid "%s has been restored"
-msgstr ""
+msgstr "%s έχει αποκατασταθεί"
