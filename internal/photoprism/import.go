@@ -10,8 +10,6 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/media"
-
 	"github.com/karrick/godirwalk"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -20,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // Import represents an importer that can copy/move MediaFiles to the originals directory.
@@ -69,6 +68,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	ind := imp.index
 	importPath := opt.Path
 
+	// Check if the import folder exists.
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: %s does not exist", importPath))
 		return done
@@ -221,7 +221,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	if opt.RemoveEmptyDirectories {
 		// Remove empty directories from import path.
 		for _, directory := range directories {
-			if fs.IsEmpty(directory) {
+			if fs.DirIsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
 					log.Errorf("import: failed deleting empty folder %s (%s)", clean.Log(fs.RelName(directory, importPath)), err)
 				} else {

@@ -8,6 +8,7 @@ const (
 	ErrAlreadyExists
 	ErrNotFound
 	ErrFileNotFound
+	ErrOriginalsEmpty
 	ErrSelectionNotFound
 	ErrEntityNotFound
 	ErrAccountNotFound
@@ -90,6 +91,7 @@ var Messages = MessageMap{
 	ErrAlreadyExists:      gettext("%s already exists"),
 	ErrNotFound:           gettext("Not found"),
 	ErrFileNotFound:       gettext("File not found"),
+	ErrOriginalsEmpty:     gettext("Originals folder is empty"),
 	ErrSelectionNotFound:  gettext("Selection not found"),
 	ErrEntityNotFound:     gettext("Entity not found"),
 	ErrAccountNotFound:    gettext("Account not found"),
