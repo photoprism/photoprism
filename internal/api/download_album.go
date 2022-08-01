@@ -39,7 +39,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 

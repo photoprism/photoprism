@@ -429,17 +429,31 @@ func (c *Config) UserConfig() ClientConfig {
 		Select("COUNT(*) AS lenses").
 		Take(&result.Count)
 
-	c.Db().
-		Table("photos").
-		Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
-			"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
-			"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
-			"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
-			"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
-			"SUM(photo_private = 1 AND photo_quality > -1) AS private").
-		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
-		Where("deleted_at IS NULL").
-		Take(&result.Count)
+	if c.Settings().Features.Private {
+		c.Db().
+			Table("photos").
+			Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
+				"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
+				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
+				"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
+				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
+				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
+			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
+			Where("deleted_at IS NULL").
+			Take(&result.Count)
+	} else {
+		c.Db().
+			Table("photos").
+			Select("SUM(photo_type = 'video' AND photo_quality > -1) AS videos, " +
+				"SUM(photo_type = 'live' AND photo_quality > -1) AS live, " +
+				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_quality > -1) AS photos, " +
+				"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1) AS review, " +
+				"SUM(photo_favorite = 1 AND photo_quality > -1) AS favorites, " +
+				"0 AS private").
+			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
+			Where("deleted_at IS NULL").
+			Take(&result.Count)
+	}
 
 	result.Count.All = result.Count.Photos + result.Count.Live + result.Count.Videos
 

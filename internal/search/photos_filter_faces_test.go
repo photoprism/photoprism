@@ -19,6 +19,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "yes"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -31,6 +36,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "1"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -45,6 +55,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "2"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -58,6 +73,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "4"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -70,6 +90,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "%gold"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -85,6 +110,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "I love % dog"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -99,6 +129,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "sale%"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -111,6 +146,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "&IlikeFood"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -126,6 +166,16 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "Pets & Dogs"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -138,6 +188,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "Light&"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -152,6 +207,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "'Family"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -165,6 +225,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "Father's faces"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -181,6 +246,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "Ice Cream'"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -194,6 +264,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "*Forrest"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -206,6 +281,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "My*Kids"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -221,6 +301,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "Yoga***"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -234,6 +319,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "|Banana"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -246,6 +336,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "Red|Green"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -261,6 +356,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "Blue|"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -274,6 +374,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "345 Shirt"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -289,6 +394,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 		f.Faces = "faces555 Blue"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -301,6 +411,11 @@ func TestPhotosFilterFaces(t *testing.T) {
 
 		f.Faces = "Route 66"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -324,6 +439,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:yes"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -336,6 +456,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:1"
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -350,6 +475,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:2"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -363,6 +493,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:5"
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -375,6 +510,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:\"%gold\""
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -390,6 +530,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"I love % dog\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -404,6 +549,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"sale%\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -416,6 +566,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:\"&IlikeFood\""
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -431,6 +586,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"Pets & Dogs\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -443,6 +603,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:\"Light&\""
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -457,6 +622,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"'Family\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -470,6 +640,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:\"Father's faces\""
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -486,6 +661,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"Ice Cream'\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -499,6 +679,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"*Forrest\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -511,6 +696,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:\"My*Kids\""
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -526,6 +716,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"Yoga***\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -539,6 +734,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"|Banana\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -551,6 +751,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:\"Red|Green\""
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -566,6 +771,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"Blue|\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -578,6 +788,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:\"345 Shirt\""
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -593,6 +808,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 		f.Query = "faces:\"faces555 Blue\""
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -605,6 +825,11 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 		f.Query = "faces:\"Route 66\""
 		f.Primary = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

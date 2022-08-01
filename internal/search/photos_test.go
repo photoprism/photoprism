@@ -4,10 +4,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/entity"
-
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
@@ -43,6 +42,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -71,6 +75,11 @@ func TestPhotos(t *testing.T) {
 		frm.UID = "pt9jtdre2lvl0yh7"
 		frm.Merged = true
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -86,6 +95,11 @@ func TestPhotos(t *testing.T) {
 		frm.Offset = 0
 		frm.UID = "pt9jtdre2lvl0yh7"
 		frm.Merged = false
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -110,9 +124,15 @@ func TestPhotos(t *testing.T) {
 	t.Run("label query landscape", func(t *testing.T) {
 		var frm form.SearchPhotos
 
-		frm.Query = "label:landscape Order:relevance"
+		frm.Query = "label:landscape"
 		frm.Count = 10
 		frm.Offset = 0
+		frm.Order = "relevance"
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 		if err != nil {
@@ -142,6 +162,11 @@ func TestPhotos(t *testing.T) {
 		frm.Offset = 0
 		frm.Geo = true
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -159,6 +184,11 @@ func TestPhotos(t *testing.T) {
 		frm.Geo = true
 		frm.Error = false
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -174,6 +204,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 5000
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -188,6 +223,11 @@ func TestPhotos(t *testing.T) {
 		frm.Query = "flower"
 		frm.Count = 5000
 		frm.Offset = 0
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -205,6 +245,11 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Archived = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -221,6 +266,11 @@ func TestPhotos(t *testing.T) {
 		f.Private = true
 		f.Error = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -236,6 +286,11 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Public = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -250,6 +305,11 @@ func TestPhotos(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 		f.Review = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -267,6 +327,11 @@ func TestPhotos(t *testing.T) {
 		f.Quality = 3
 		f.Private = false
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -281,6 +346,11 @@ func TestPhotos(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 		f.Error = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -297,6 +367,11 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Camera = "Canon EOS 6D"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -311,6 +386,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = "camera:\"Canon EOS 6D\""
 		f.Count = 10
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -328,6 +408,11 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Camera = "1000003"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -343,6 +428,11 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Color = "blue"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -356,6 +446,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = "favorite:true"
 		f.Count = 10
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -371,6 +466,11 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -385,6 +485,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = "title:Neckarbrücke"
 		f.Count = 10
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -402,6 +507,11 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -416,6 +526,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = "face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZK"
 		f.Count = 10
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -432,6 +547,11 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -446,6 +566,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = "subjects:John"
 		f.Count = 10
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -462,6 +587,11 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -476,6 +606,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = "hash:2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		f.Count = 3
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -492,6 +627,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = "portrait:true"
 		f.Count = 10
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -510,6 +650,11 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Archived = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -518,11 +663,16 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.chroma >9 Order:similar", func(t *testing.T) {
+	t.Run("form.chroma:25", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "chroma:25 Order:similar"
+		f.Query = "chroma:25"
 		f.Count = 3
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -540,6 +690,11 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Error = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -549,11 +704,17 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
-	t.Run("form.fmin and Order:oldest", func(t *testing.T) {
+	t.Run("form.fmin", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Fmin:5 Order:oldest"
+		f.Query = "Fmin:5"
 		f.Count = 10
 		f.Offset = 0
+		f.Order = "oldest"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -563,11 +724,17 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.fmax and Order:newest", func(t *testing.T) {
+	t.Run("form.fmax", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Fmax:2 Order:newest"
+		f.Query = "Fmax:2"
 		f.Count = 10
 		f.Offset = 0
+		f.Order = "newest"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -578,11 +745,17 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("form.Lat and form.Lng and Order:imported", func(t *testing.T) {
+	t.Run("form.Lat and form.Lng", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:2000 Order:imported"
+		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:2000"
 		f.Count = 10
 		f.Offset = 0
+		f.Order = "imported"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -592,11 +765,17 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("form.Lat and form.Lng and Order:imported Dist:6000", func(t *testing.T) {
+	t.Run("form.Lat and form.Lng and Dist:6000", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:6000 Order:imported"
+		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:6000"
 		f.Count = 10
 		f.Offset = 0
+		f.Order = "imported"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -608,10 +787,16 @@ func TestPhotos(t *testing.T) {
 	})
 	t.Run("form.Before and form.After Order:relevance", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Before:2016-01-01 After:2013-01-01 Order:relevance"
+		f.Query = "Before:2016-01-01 After:2013-01-01"
 		f.Count = 5000
 		f.Offset = 0
 		f.Merged = true
+		f.Order = "relevance"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -626,6 +811,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = "Diff:800"
 		f.Count = 5000
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -642,6 +832,11 @@ func TestPhotos(t *testing.T) {
 		f.Camera = "canon"
 		f.Lens = ""
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -656,6 +851,11 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Camera = ""
 		f.Lens = "apple"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -672,6 +872,11 @@ func TestPhotos(t *testing.T) {
 		f.Camera = ""
 		f.Lens = "Apple F380"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -685,6 +890,11 @@ func TestPhotos(t *testing.T) {
 		f.Count = 1
 		f.Offset = 0
 		f.Camera = ""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -703,6 +913,11 @@ func TestPhotos(t *testing.T) {
 		f.Year = strconv.Itoa(2790)
 		f.Album = "at9lxuqxpogaaba8"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -714,6 +929,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Albums = "Berlin"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -727,6 +947,11 @@ func TestPhotos(t *testing.T) {
 		f.Query = ""
 		f.Album = "Berlin"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -737,6 +962,11 @@ func TestPhotos(t *testing.T) {
 	t.Run("search for state", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.State = "KwaZulu-Natal"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -749,6 +979,11 @@ func TestPhotos(t *testing.T) {
 	t.Run("search for category", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Category = "botanical garden"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -763,6 +998,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Label = "botanical-garden|nature|landscape|park"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -776,6 +1016,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Primary = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -788,6 +1033,11 @@ func TestPhotos(t *testing.T) {
 	t.Run("search for landscape", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "landscape"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -809,6 +1059,11 @@ func TestPhotos(t *testing.T) {
 		f.Original = "xxyy"
 		f.Path = "/xxx/xxx/"
 		f.Order = entity.SortOrderName
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -834,6 +1089,11 @@ func TestPhotos(t *testing.T) {
 		f.Filter = ""
 		f.Order = entity.SortOrderAdded
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -849,6 +1109,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 		frm.Order = entity.SortOrderEdited
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -878,6 +1143,11 @@ func TestPhotos(t *testing.T) {
 		frm.Panorama = true
 		frm.Stackable = false
 		frm.Unstacked = true
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -909,6 +1179,11 @@ func TestPhotos(t *testing.T) {
 		frm.Title = "xxx|photowitheditedatdate"
 		frm.Hash = "xxx|pcad9a68fa6acc5c5ba965adf6ec465ca42fd887"
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -934,6 +1209,11 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -945,6 +1225,11 @@ func TestPhotos(t *testing.T) {
 	t.Run("faces:yes", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "Yes"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -958,6 +1243,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "No"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -970,6 +1260,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Face = "yes"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -981,6 +1276,11 @@ func TestPhotos(t *testing.T) {
 	t.Run("faces:2", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "2"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -996,6 +1296,11 @@ func TestPhotos(t *testing.T) {
 		frm.Subject = "jqu0xs11qekk9jx8"
 		frm.Count = 10
 		frm.Offset = 0
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -1023,6 +1328,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1037,6 +1347,11 @@ func TestPhotos(t *testing.T) {
 		frm.Query = "videos"
 		frm.Count = 10
 		frm.Offset = 0
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -1068,6 +1383,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1098,6 +1418,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1125,6 +1450,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1150,6 +1480,11 @@ func TestPhotos(t *testing.T) {
 		frm.Query = "raws"
 		frm.Count = 10
 		frm.Offset = 0
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -1178,6 +1513,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1203,6 +1543,11 @@ func TestPhotos(t *testing.T) {
 		frm.Query = "faces"
 		frm.Count = 10
 		frm.Offset = 0
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -1230,11 +1575,17 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.LessOrEqual(t, 1, len(photos))
 
 		for _, r := range photos {
@@ -1254,6 +1605,11 @@ func TestPhotos(t *testing.T) {
 		frm.Query = "people"
 		frm.Count = 10
 		frm.Offset = 0
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -1281,6 +1637,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1307,6 +1668,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1331,6 +1697,11 @@ func TestPhotos(t *testing.T) {
 		frm.Query = "panoramas"
 		frm.Count = 10
 		frm.Offset = 0
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(frm)
 
@@ -1358,6 +1729,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1384,6 +1760,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1409,6 +1790,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(frm)
 
 		if err != nil {
@@ -1431,6 +1817,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Filename = "1990/04/Quality1FavoriteTrue.jpg"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1442,6 +1833,11 @@ func TestPhotos(t *testing.T) {
 	t.Run("original name or original name", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Original = "my-videos/IMG_88888" + "|" + "Vacation/exampleFileNameOriginal"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -1455,6 +1851,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Stack = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1467,6 +1868,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "keywords:kuh|bridge"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1474,6 +1880,11 @@ func TestPhotos(t *testing.T) {
 		}
 
 		f.Query = "keywords:bridge&kuh"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -1486,6 +1897,11 @@ func TestPhotos(t *testing.T) {
 	t.Run("AlbumsOrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "albums:Holiday|Berlin"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -1500,6 +1916,11 @@ func TestPhotos(t *testing.T) {
 
 		f.Query = "albums:\"Berlin&Holiday\""
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1507,9 +1928,14 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), 0)
 	})
-	t.Run("people and and or search", func(t *testing.T) {
+	t.Run("SubjectsAndOrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.People = "Actor A|Actress A"
+		f.Subjects = "Actor A|Actress A"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -1517,7 +1943,12 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		f.People = "Actor A&Actress A"
+		f.Subjects = "Actor A&Actress A"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -1531,6 +1962,11 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.People = "Actor"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1539,6 +1975,11 @@ func TestPhotos(t *testing.T) {
 		var f2 form.SearchPhotos
 
 		f2.Subjects = "Actor"
+
+		// Parse query string and filter.
+		if err := f2.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos2, _, err2 := Photos(f2)
 
@@ -1552,6 +1993,11 @@ func TestPhotos(t *testing.T) {
 
 		f3.Person = "Actor A"
 
+		// Parse query string and filter.
+		if err := f3.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos3, _, err3 := Photos(f3)
 
 		if err3 != nil {
@@ -1560,6 +2006,11 @@ func TestPhotos(t *testing.T) {
 
 		var f4 form.SearchPhotos
 		f4.Subject = "Actor A"
+
+		// Parse query string and filter.
+		if err := f4.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos4, _, err4 := Photos(f4)
 
@@ -1577,6 +2028,11 @@ func TestPhotos(t *testing.T) {
 		f.Title = ""
 		f.Count = 10
 		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

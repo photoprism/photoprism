@@ -42,11 +42,6 @@ func PhotoIds(f form.SearchPhotos) (files PhotoResults, count int, err error) {
 func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
-	// Parse query string into fields.
-	if err := f.ParseQueryString(); err != nil {
-		return PhotoResults{}, 0, err
-	}
-
 	s := UnscopedDb()
 	// s = s.LogMode(true)
 

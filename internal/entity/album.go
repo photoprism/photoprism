@@ -60,6 +60,18 @@ type Album struct {
 	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID;association_foreignkey:AlbumUID;" json:"-" yaml:"Photos,omitempty"`
 }
 
+// AfterUpdate flushes the album cache.
+func (m *Album) AfterUpdate(tx *gorm.DB) (err error) {
+	FlushAlbumCache()
+	return
+}
+
+// AfterDelete flushes the album cache.
+func (m *Album) AfterDelete(tx *gorm.DB) (err error) {
+	FlushAlbumCache()
+	return
+}
+
 // TableName returns the entity database table name.
 func (Album) TableName() string {
 	return "albums"
@@ -298,8 +310,11 @@ func FindFolderAlbum(albumPath string) *Album {
 // Find returns an entity from the database.
 func (m *Album) Find() (err error) {
 	if rnd.EntityUID(m.AlbumUID, 'a') {
-		if err := UnscopedDb().First(m, "album_uid = ?", m.AlbumUID).Error; err != nil {
+		if err = UnscopedDb().First(m, "album_uid = ?", m.AlbumUID).Error; err != nil {
 			return err
+		} else if m.AlbumUID != "" {
+			albumCache.SetDefault(m.AlbumUID, *m)
+			return nil
 		}
 	}
 
@@ -319,9 +334,15 @@ func (m *Album) Find() (err error) {
 		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", m.AlbumSlug, m.AlbumTitle)
 	}
 
-	err = stmt.First(m).Error
+	if err = stmt.First(m).Error; err != nil {
+		return err
+	}
 
-	return err
+	if m.AlbumUID != "" {
+		albumCache.SetDefault(m.AlbumUID, *m)
+	}
+
+	return nil
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -496,13 +517,13 @@ func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 		return nil
 	}
 
-	if err := UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{
+	if err := UnscopedDb().Model(m).Updates(map[string]interface{}{
 		"AlbumPath":   albumPath,
 		"AlbumFilter": albumFilter,
 		"AlbumSlug":   albumSlug,
 	}).Error; err != nil {
 		return err
-	} else if err := UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_path = ? AND id <> ?", albumPath, m.ID).Error; err != nil {
+	} else if err = UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_path = ? AND id <> ?", albumPath, m.ID).Error; err != nil {
 		return err
 	}
 

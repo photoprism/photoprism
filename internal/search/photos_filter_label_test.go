@@ -14,6 +14,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "flower"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -26,6 +31,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "cake"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -40,6 +50,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "cake|flower"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -52,6 +67,16 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "cake | flower"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -66,6 +91,16 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "%tennis"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -79,6 +114,16 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "chem%stry"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -91,6 +136,16 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "cell%"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -106,6 +161,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "&friendship"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -119,6 +179,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "construction&failure"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -134,6 +199,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "goal&"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -147,6 +217,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "'activity"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -162,6 +237,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "funera'l"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -175,6 +255,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "technology'"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -190,6 +275,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "*tea"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -203,6 +293,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "soup*menu"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -218,6 +313,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "proposal*"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -231,6 +331,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "|college"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -246,6 +351,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "potato|couch"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -259,6 +369,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "mall|"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -274,6 +389,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "2020-world"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -286,6 +406,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "sport-2021-event"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -301,6 +426,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "oven-3000"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -314,6 +444,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "\"king"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -329,6 +464,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "sal\"mon"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -343,6 +483,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		f.Label = "ladder\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -356,6 +501,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		f.Label = "oven-3000 | sport-2021-event"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -373,6 +523,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"flower\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -385,6 +540,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"cake\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -399,6 +559,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"cake|flower\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -411,6 +576,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"cake | flower\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -425,6 +595,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"%tennis\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -438,6 +613,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"chem%stry\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -450,6 +630,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"cell%\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -465,6 +650,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"&friendship\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -478,6 +668,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"construction&failure\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -493,6 +688,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"goal&\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -506,6 +706,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"'activity\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -521,6 +726,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"funera'l\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -534,6 +744,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"technology'\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -549,6 +764,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"*tea\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -562,6 +782,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"soup*menu\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -577,6 +802,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"proposal*\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -590,6 +820,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"|college\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -605,6 +840,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"potato|couch\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -618,6 +858,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"mall|\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -633,6 +878,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"2020-world\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -645,6 +895,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"sport-2021-event\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -660,6 +915,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"oven-3000\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -673,6 +933,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"\"king\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -688,6 +953,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"sal\"mon\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -702,6 +972,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 		f.Query = "label:\"ladder\"\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -715,6 +990,11 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		f.Query = "label:\"oven-3000 | sport-2021-event\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

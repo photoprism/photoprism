@@ -78,6 +78,12 @@ func SharePreview(router *gin.RouterGroup) {
 		f.Count = 12
 		f.Order = "relevance"
 
+		if err := f.ParseQueryString(); err != nil {
+			log.Errorf("preview: %s", err)
+			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		}
+
 		p, count, err := search.Photos(f)
 
 		if err != nil {

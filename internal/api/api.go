@@ -85,6 +85,10 @@ func AbortEntityNotFound(c *gin.Context) {
 	Abort(c, http.StatusNotFound, i18n.ErrEntityNotFound)
 }
 
+func AbortAlbumNotFound(c *gin.Context) {
+	Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+}
+
 func AbortSaveFailed(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 }

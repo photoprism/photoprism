@@ -29,6 +29,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "%gold"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -41,6 +46,11 @@ func TestPhotosFilterColor(t *testing.T) {
 
 		f.Color = "I love % dog"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -55,6 +65,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "sale%"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -67,6 +82,11 @@ func TestPhotosFilterColor(t *testing.T) {
 
 		f.Color = "&IlikeFood"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -81,6 +101,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Pets & Dogs"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -93,6 +118,11 @@ func TestPhotosFilterColor(t *testing.T) {
 
 		f.Color = "Light&"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -107,6 +137,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "'Family"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -119,6 +154,11 @@ func TestPhotosFilterColor(t *testing.T) {
 
 		f.Color = "Father's Day"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -134,6 +174,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Ice Cream'"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -146,6 +191,11 @@ func TestPhotosFilterColor(t *testing.T) {
 
 		f.Color = "*Forrest"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -160,6 +210,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "My*Kids"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -172,6 +227,11 @@ func TestPhotosFilterColor(t *testing.T) {
 
 		f.Color = "Yoga***"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -186,6 +246,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "|Banana"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -198,6 +263,11 @@ func TestPhotosFilterColor(t *testing.T) {
 
 		f.Color = "Red|Green"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -213,6 +283,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Blue|"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -227,6 +302,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "345 Shirt"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -240,6 +320,11 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Color555 Blue"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -252,6 +337,11 @@ func TestPhotosFilterColor(t *testing.T) {
 
 		f.Color = "Route 66"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -283,6 +373,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"%gold\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -295,6 +390,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"I love % dog\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -309,6 +409,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"sale%\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -321,6 +426,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"&IlikeFood\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -335,6 +445,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Pets & Dogs\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -347,6 +462,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"Light&\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -361,6 +481,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"'Family\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -373,6 +498,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"Father's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -388,6 +518,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Ice Cream'\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -400,6 +535,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"*Forrest\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -414,6 +554,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"My*Kids\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -426,6 +571,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"Yoga***\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -440,6 +590,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"|Banana\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -452,6 +607,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"Red|Green\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -467,6 +627,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Blue|\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -479,6 +644,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"345 Shirt\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -493,6 +663,11 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Color555 Blue\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -505,6 +680,11 @@ func TestPhotosQueryColor(t *testing.T) {
 
 		f.Query = "color:\"Route 66\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
@@ -35,6 +37,25 @@ func SearchPhotos(router *gin.RouterGroup) {
 			return f, err
 		}
 
+		// Limit results to a specific album?
+		if f.Album == "" {
+			// Do nothing.
+		} else if a, err := entity.CachedAlbumByUID(f.Album); err != nil {
+			AbortAlbumNotFound(c)
+			return f, i18n.Error(i18n.ErrAlbumNotFound)
+		} else {
+			f.Filter = a.AlbumFilter
+		}
+
+		// Parse query string and filter.
+		if err = f.ParseQueryString(); err != nil {
+			log.Debugf("search: %s", err)
+			AbortBadRequest(c)
+			return f, err
+		}
+
+		conf := service.Config()
+
 		// Guests may only see public content in shared albums.
 		if s.Guest() {
 			if f.Album == "" || !s.HasShare(f.Album) {
@@ -49,6 +70,8 @@ func SearchPhotos(router *gin.RouterGroup) {
 			f.Hidden = false
 			f.Archived = false
 			f.Review = false
+		} else if !conf.Settings().Features.Private {
+			f.Public = false
 		}
 
 		return f, nil
@@ -91,6 +114,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		}
 
 		conf := service.Config()
+
 		result, count, err := search.PhotosViewerResults(f, conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
 
 		if err != nil {

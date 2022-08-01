@@ -26,11 +26,6 @@ var GeoCols = SelectString(GeoResult{}, []string{"*"})
 func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	start := time.Now()
 
-	// Parse query string into fields.
-	if err := f.ParseQueryString(); err != nil {
-		return GeoResults{}, err
-	}
-
 	S2Levels := 7
 
 	// Search for nearby photos?
