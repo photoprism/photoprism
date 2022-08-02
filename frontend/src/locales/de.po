@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-02 08:41+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-08-02 07:06+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Weblate 4.13.1\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:388 src/share/albums.vue:305
@@ -1207,8 +1207,8 @@ msgid ""
 "It makes use of the latest technologies to tag and find pictures "
 "automatically without getting in your way."
 msgstr ""
-"Es nutzt die neuesten Technologien, um Bilder automatisch zu markieren und "
-"zu finden, ohne Sie dabei zu behindern."
+"Sie nutzt die neuesten Technologien, um Bilder automatisch zu organisieren "
+"und zu finden, ohne dir dabei in die Quere zu kommen."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1744,8 +1744,7 @@ msgstr "PhotoPrism wurde aktualisiert…"
 
 #: src/pages/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
-"PhotoPrism® ist eine KI-gesteuerte Foto-App für das dezentralisierte Web."
+msgstr "PhotoPrism® ist eine KI-gestützte Foto-App für das dezentrale Web."
 
 #: src/app/routes.js:120
 msgid "Photos"
@@ -2572,7 +2571,7 @@ msgstr "Es kann nur eine Kategorie gleichzeitig heruntergeladen werden"
 #: src/pages/about/about.vue:17
 msgid "You can run it at home, on a private server, or in the cloud."
 msgstr ""
-"Sie können es zu Hause, auf einem privaten Server oder in der Cloud "
+"Du kannst sie zu Hause, auf einem privaten Server oder in der Cloud "
 "betreiben."
 
 #: src/component/album/clipboard.vue:35 src/component/album/clipboard.vue:48
