@@ -40,6 +40,6 @@ describe("options/options", () => {
 
   it("should get languages", () => {
     const Languages = options.Languages();
-    assert.equal(Languages[1].value, "cs");
+    assert.equal(Languages[0].value, "en");
   });
 });
