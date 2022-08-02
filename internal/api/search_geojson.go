@@ -70,8 +70,8 @@ func SearchGeo(router *gin.RouterGroup) {
 			f.Private = false
 			f.Archived = false
 			f.Review = false
-		} else if !conf.Settings().Features.Private {
-			f.Public = false
+		} else {
+			f.Public = conf.Settings().Features.Private
 		}
 
 		// Find matching pictures.
