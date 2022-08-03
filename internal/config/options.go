@@ -130,6 +130,7 @@ type Options struct {
 	FaceMatchDist         float64       `yaml:"-" json:"-" flag:"face-match-dist"`
 	PIDFilename           string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
 	LogFilename           string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
+	StripSequenceRegex    string        `yaml:"StripSequenceRegex" json:"StripSequenceRegex" flag:"strip-sequence-regex"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:

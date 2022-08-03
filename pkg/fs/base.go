@@ -2,31 +2,24 @@ package fs
 
 import (
 	"path/filepath"
-	"strconv"
+	"regexp"
 	"strings"
 )
 
+// StripSequenceRegex is the pattern used in StripSequence.
+// Default pattern matches:
+// - numeric extensions like .00000, .00001, .4542353245,.... (at least 5 digits) with: \.\d{5,}$
+// - sequential naming schemes like IMG_1234 copy 2 with: copy.*$
+// - sequential naming schemes like IMG_1234 (2) with: \(.*$
+var StripSequenceRegex = regexp.MustCompile(`\.\d{5,}$| copy.*$|\(.*$`)
+
 // StripSequence removes common sequence patterns at the end of file names.
 func StripSequence(name string) string {
-	// Strip numeric extensions like .00000, .00001, .4542353245,.... (at least 5 digits).
-	if dot := strings.LastIndex(name, "."); dot != -1 && len(name[dot+1:]) >= 5 {
-		if i, err := strconv.Atoi(name[dot+1:]); err == nil && i >= 0 {
-			name = name[:dot]
-		}
+	idx := StripSequenceRegex.FindStringIndex(name)
+	if idx != nil {
+		name = name[0:idx[0]]
 	}
-
-	// Other common sequential naming schemes.
-	if end := strings.Index(name, "("); end != -1 {
-		// Copies created by Chrome & Windows, example: IMG_1234 (2).
-		name = name[:end]
-	} else if end := strings.Index(name, " copy"); end != -1 {
-		// Copies created by OS X, example: IMG_1234 copy 2.
-		name = name[:end]
-	}
-
-	name = strings.TrimSpace(name)
-
-	return name
+	return strings.TrimSpace(name)
 }
 
 // BasePrefix returns the filename base without any extensions and path.

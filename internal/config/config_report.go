@@ -165,6 +165,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Daemon Mode.
 		{"pid-filename", c.PIDFilename()},
 		{"log-filename", c.LogFilename()},
+
+		// File System.
+		{"strip-sequence-regex", c.StripSequenceRegex().String()},
 	}
 
 	if p := c.CustomAssetsPath(); p != "" {

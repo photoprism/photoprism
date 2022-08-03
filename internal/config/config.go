@@ -161,6 +161,9 @@ func (c *Config) Propagate() {
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
 
+	// Set file system parameters
+	fs.StripSequenceRegex = c.StripSequenceRegex()
+
 	c.Settings().Propagate()
 	c.Hub().Propagate()
 }

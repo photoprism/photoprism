@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/klauspost/cpuid/v2"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/face"
@@ -730,5 +731,12 @@ var Flags = CliFlags{
 			Usage:  "server log `FILE` *daemon-mode only*",
 			EnvVar: "PHOTOPRISM_LOG_FILENAME",
 			Value:  "",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
+			Name:   "strip-sequence-regex",
+			Usage:  "regex for strip sequence",
+			Value:  fs.StripSequenceRegex.String(),
+			EnvVar: "PHOTOPRISM_STRIP_SEQUENCE_REGEX",
 		}},
 }
