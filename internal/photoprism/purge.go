@@ -41,6 +41,13 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 	}()
 
+	originalsPath := w.conf.OriginalsPath()
+
+	// Check if originals folder is empty.
+	if fs.DirIsEmpty(originalsPath) {
+		return purgedFiles, purgedPhotos, err
+	}
+
 	var ignore fs.Done
 
 	if opt.Ignore != nil {

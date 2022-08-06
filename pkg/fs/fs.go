@@ -213,8 +213,8 @@ func Download(filepath string, url string) error {
 	return nil
 }
 
-// IsEmpty returns true if a directory is empty.
-func IsEmpty(path string) bool {
+// DirIsEmpty returns true if a directory is empty.
+func DirIsEmpty(path string) bool {
 	f, err := os.Open(path)
 
 	if err != nil {

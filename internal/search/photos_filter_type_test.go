@@ -15,6 +15,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "video"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -27,6 +32,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "raw"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -41,6 +51,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "animated"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -53,6 +68,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "raw|video"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -67,6 +87,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "raw | video"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -79,6 +104,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "raw or video"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -93,6 +123,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "raw OR video"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -105,6 +140,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "%gold"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -119,6 +159,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "I love % dog"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -131,6 +176,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "sale%"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -145,6 +195,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "&IlikeFood"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -157,6 +212,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "Pets & Dogs"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -171,6 +231,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "Light&"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -184,6 +249,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "'Family"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -196,6 +266,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "Father's type"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -211,6 +286,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "Ice Cream'"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -223,6 +303,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "*Forrest"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -237,6 +322,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "My*Kids"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -249,6 +339,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "Yoga***"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -263,6 +358,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "|Banana"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -275,6 +375,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "Red|Green"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -290,6 +395,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "Blue|"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -304,6 +414,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "345 Shirt"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -317,6 +432,11 @@ func TestPhotosFilterType(t *testing.T) {
 		f.Type = "type555 Blue"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -329,6 +449,11 @@ func TestPhotosFilterType(t *testing.T) {
 
 		f.Type = "Route 66"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -346,6 +471,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"video\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -358,6 +488,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"raw\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -372,6 +507,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"animated\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -384,6 +524,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"raw|video\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -398,6 +543,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"raw | video\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -410,6 +560,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"raw or video\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -424,6 +579,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"raw OR video\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -436,6 +596,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"%gold\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -450,6 +615,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"I love % dog\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -462,6 +632,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"sale%\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -476,6 +651,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"&IlikeFood\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -488,6 +668,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"Pets & Dogs\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -502,6 +687,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"Light&\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -515,6 +705,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"'Family\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -527,6 +722,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"Father's type\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -542,6 +742,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"Ice Cream'\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -554,6 +759,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"*Forrest\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -568,6 +778,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"My*Kids\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -580,6 +795,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"Yoga***\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -594,6 +814,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"|Banana\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -606,6 +831,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"Red|Green\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -621,6 +851,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"Blue|\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -633,6 +868,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"345 Shirt\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -647,6 +887,11 @@ func TestPhotosQueryType(t *testing.T) {
 		f.Query = "type:\"type555 Blue\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -659,6 +904,11 @@ func TestPhotosQueryType(t *testing.T) {
 
 		f.Query = "type:\"Route 66\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

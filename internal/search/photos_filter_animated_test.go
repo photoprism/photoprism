@@ -13,6 +13,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 	f0.Query = "animated:true"
 	f0.Merged = true
 
+	// Parse query string and filter.
+	if err := f0.ParseQueryString(); err != nil {
+		t.Fatal(err)
+	}
+
 	photos0, _, err := Photos(f0)
 
 	if err != nil {
@@ -25,6 +30,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:yes"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -39,6 +49,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:yes"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -47,6 +62,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		assert.Equal(t, len(photos), len(photos0))
 		f.Query = "animated:false"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -61,6 +81,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"%gold\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -73,6 +98,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"I love % dog\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -87,6 +117,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"sale%\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -99,6 +134,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"&IlikeFood\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -114,6 +154,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"Pets & Dogs\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -126,6 +171,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"Light&\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -141,6 +191,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"'Family\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -153,6 +208,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"Mother's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -168,6 +228,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"Ice Cream'\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -181,6 +246,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"*Forrest\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -196,6 +266,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"My*Kids\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -209,6 +284,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"Yoga***\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -224,6 +304,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"|Banana\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -237,6 +322,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"Red|Green\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -252,6 +342,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"Blue|\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -265,6 +360,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"345 Shirt\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -280,6 +380,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"Color555 Blue\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -293,6 +398,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"Route 66\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -308,6 +418,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		f.Query = "animated:\"Route 66 & Father's Day\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -321,6 +436,11 @@ func TestPhotosQueryAnimated(t *testing.T) {
 
 		f.Query = "animated:\"Route %66 | *Father's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

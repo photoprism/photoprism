@@ -13,6 +13,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 	f0.Query = "unstacked:true"
 	f0.Merged = true
 
+	// Parse query string and filter.
+	if err := f0.ParseQueryString(); err != nil {
+		t.Fatal(err)
+	}
+
 	photos0, _, err := Photos(f0)
 
 	if err != nil {
@@ -26,6 +31,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:yes"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -34,6 +44,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		assert.Equal(t, len(photos), len(photos0))
 		f.Query = "unstacked:false"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -48,6 +63,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"%gold\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -60,6 +80,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"I love % dog\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -74,6 +99,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"sale%\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -86,6 +116,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"&IlikeFood\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -101,6 +136,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"Pets & Dogs\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -113,6 +153,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"Light&\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -128,6 +173,16 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"'Family\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -141,6 +196,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		// Note: If the string in unstacked starts with f/F, the txt package will assume it means false,
 		f.Query = "unstacked:\"Mother's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -156,6 +216,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"Ice Cream'\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -169,6 +234,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"*Forrest\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -184,6 +254,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"My*Kids\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -197,6 +272,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"Yoga***\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -212,6 +292,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"|Banana\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -225,6 +310,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"Red|Green\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -240,6 +330,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"Blue|\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -253,6 +348,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"345 Shirt\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -268,6 +368,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"Color555 Blue\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -281,6 +386,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"Route 66\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -296,6 +406,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 		f.Query = "unstacked:\"Route 66 & Father's Day\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -309,6 +424,11 @@ func TestPhotosQueryUnstacked(t *testing.T) {
 
 		f.Query = "unstacked:\"Route %66 | *Father's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

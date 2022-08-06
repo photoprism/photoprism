@@ -13,9 +13,8 @@ func TestLabelSearchForm(t *testing.T) {
 }
 
 func TestParseQueryStringLabel(t *testing.T) {
-
 	t.Run("valid query", func(t *testing.T) {
-		form := &SearchLabels{Query: "name:cat favorite:true count:10 all:false query:\"query text\""}
+		form := &SearchLabels{Query: "name:cat favorite:true all:false q:\"query text\""}
 
 		err := form.ParseQueryString()
 
@@ -24,14 +23,15 @@ func TestParseQueryStringLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal("err should be nil")
 		}
+
 		assert.Equal(t, "cat", form.Name)
 		assert.Equal(t, true, form.Favorite)
-		assert.Equal(t, 10, form.Count)
+		assert.Equal(t, 0, form.Count)
 		assert.Equal(t, false, form.All)
 		assert.Equal(t, "query text", form.Query)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
-		form := &SearchLabels{Query: "slug:cat favorite:false offset:2 order:oldest"}
+		form := &SearchLabels{Query: "slug:cat favorite:false"}
 
 		err := form.ParseQueryString()
 
@@ -40,13 +40,15 @@ func TestParseQueryStringLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal("err should be nil")
 		}
+
 		assert.Equal(t, "cat", form.Slug)
 		assert.Equal(t, false, form.Favorite)
-		assert.Equal(t, 2, form.Offset)
-		assert.Equal(t, "oldest", form.Order)
+		assert.Equal(t, 0, form.Count)
+		assert.Equal(t, 0, form.Offset)
+		assert.Equal(t, "", form.Order)
 	})
 	t.Run("valid query with umlauts", func(t *testing.T) {
-		form := &SearchLabels{Query: "query:\"tübingen\""}
+		form := &SearchLabels{Query: "q:\"tübingen\""}
 
 		err := form.ParseQueryString()
 
@@ -69,7 +71,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		// log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "unknown filter: Xxx", err.Error())
+		assert.Equal(t, "unknown filter: xxx", err.Error())
 	})
 	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
 		form := &SearchLabels{Query: "favorite:0.99"}
@@ -83,17 +85,15 @@ func TestParseQueryStringLabel(t *testing.T) {
 		assert.False(t, form.Favorite)
 	})
 	t.Run("query for count with invalid type", func(t *testing.T) {
-		form := &SearchLabels{Query: "count:2019-01-15"}
+		form := &SearchLabels{Query: "all:2019-01-15"}
 
 		err := form.ParseQueryString()
 
-		if err == nil {
-			t.Fatal("err should NOT be nil")
+		if err != nil {
+			t.Fatal(err)
 		}
 
-		// log.Debugf("%+v\n", form)
-
-		assert.Equal(t, "strconv.Atoi: parsing \"2019-01-15\": invalid syntax", err.Error())
+		assert.True(t, form.All)
 	})
 }
 

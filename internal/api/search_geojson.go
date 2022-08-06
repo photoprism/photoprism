@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
@@ -38,6 +40,25 @@ func SearchGeo(router *gin.RouterGroup) {
 			return
 		}
 
+		// Limit results to a specific album?
+		if f.Album == "" {
+			// Do nothing.
+		} else if a, err := entity.CachedAlbumByUID(f.Album); err != nil {
+			AbortAlbumNotFound(c)
+			return
+		} else {
+			f.Filter = a.AlbumFilter
+		}
+
+		// Parse query string and filter.
+		if err = f.ParseQueryString(); err != nil {
+			log.Debugf("search: %s", err)
+			AbortBadRequest(c)
+			return
+		}
+
+		conf := service.Config()
+
 		// Guests may only see public content.
 		if s.Guest() {
 			if f.Album == "" || !s.HasShare(f.Album) {
@@ -49,6 +70,8 @@ func SearchGeo(router *gin.RouterGroup) {
 			f.Private = false
 			f.Archived = false
 			f.Review = false
+		} else {
+			f.Public = conf.Settings().Features.Private
 		}
 
 		// Find matching pictures.

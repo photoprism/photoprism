@@ -7,7 +7,7 @@ import (
 // SearchPhotos represents search form fields for "/api/v1/photos".
 type SearchPhotos struct {
 	Query     string    `form:"q"`
-	Filter    string    `form:"filter" notes:"-"`
+	Filter    string    `form:"filter" notes:"-" serialize:"-"`
 	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Internal Unique ID, only exact matches"`
 	Type      string    `form:"type" example:"type:raw" notes:"Media Type (image, video, raw, live, animated); OR search with |"`
 	Path      string    `form:"path" example:"path:2020/Holiday" notes:"Path Name, OR search with |, supports * wildcards"`
@@ -90,17 +90,23 @@ func (f *SearchPhotos) ParseQueryString() error {
 		return err
 	}
 
-	if f.Path == "" && f.Folder != "" {
+	if f.Path != "" {
+		f.Folder = ""
+	} else if f.Folder != "" {
 		f.Path = f.Folder
 		f.Folder = ""
 	}
 
-	if f.Subject == "" && f.Person != "" {
+	if f.Subject != "" {
+		f.Person = ""
+	} else if f.Person != "" {
 		f.Subject = f.Person
 		f.Person = ""
 	}
 
-	if f.Subjects == "" && f.People != "" {
+	if f.Subjects != "" {
+		f.People = ""
+	} else if f.People != "" {
 		f.Subjects = f.People
 		f.People = ""
 	}

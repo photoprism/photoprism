@@ -13,6 +13,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "1ef744d1e283"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -24,6 +30,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "85d1ea7d382c"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -35,6 +47,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "%gold"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -46,6 +64,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "I love % dog"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -57,6 +81,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "sale%"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -68,6 +98,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "&IlikeFood"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -79,6 +115,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Pets & Dogs"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -90,6 +132,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Light&"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -101,6 +149,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "'Family"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -112,6 +166,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Father's type"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -124,6 +184,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Ice Cream'"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -135,6 +201,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "*Forrest"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -146,6 +218,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "My*Kids"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -157,6 +235,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Yoga***"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -168,6 +252,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "|Banana"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -179,6 +269,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Red|Green"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -191,6 +287,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Blue|"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -203,6 +305,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "345 Shirt"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -214,6 +322,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "type555 Blue"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -225,6 +339,12 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Route 66"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -239,6 +359,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:1ef744d1e283"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -250,6 +376,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:85d1ea7d382c"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -261,6 +393,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:85d1ea7d382c|1ef744d1e283"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -272,6 +410,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"%gold\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -283,6 +427,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"I love % dog\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -294,6 +444,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"sale%\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -305,6 +461,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"&IlikeFood\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -316,6 +478,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Pets & Dogs\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -327,6 +495,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Light&\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -338,6 +512,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"'Family\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -349,6 +529,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Father's type\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -361,6 +547,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Ice Cream'\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -372,6 +564,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"*Forrest\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -383,6 +581,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"My*Kids\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -394,6 +598,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Yoga***\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -405,6 +615,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"|Banana\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -416,6 +632,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Red|Green\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -428,6 +650,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Blue|\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -439,6 +667,12 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"345 Shirt\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -451,6 +685,11 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 
 		f.Query = "s2:\"type555 Blue\""
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -462,6 +701,11 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Route 66\""
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, err := PhotosGeo(f)
 

@@ -3,14 +3,17 @@ package search
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestLabels(t *testing.T) {
 	t.Run("search with query", func(t *testing.T) {
-		query := form.NewLabelSearch("Query:C Count:1005 Order:slug")
+		query := form.NewLabelSearch("q:C")
+		query.Count = 1005
+		query.Order = "slug"
 		result, err := Labels(query)
 
 		if err != nil {
@@ -37,7 +40,9 @@ func TestLabels(t *testing.T) {
 	})
 
 	t.Run("search for cow", func(t *testing.T) {
-		query := form.NewLabelSearch("Query:cow Count:1005 Order:slug")
+		query := form.NewLabelSearch("Q:cow")
+		query.Count = 1005
+		query.Order = "slug"
 		result, err := Labels(query)
 
 		if err != nil {
@@ -63,7 +68,8 @@ func TestLabels(t *testing.T) {
 		}
 	})
 	t.Run("search for favorites", func(t *testing.T) {
-		query := form.NewLabelSearch("Favorite:true Count:15")
+		query := form.NewLabelSearch("Favorite:true")
+		query.Count = 15
 		result, err := Labels(query)
 
 		if err != nil {

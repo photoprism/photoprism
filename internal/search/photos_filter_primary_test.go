@@ -13,6 +13,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 	f0.Query = "primary:true"
 	f0.Merged = true
 
+	// Parse query string and filter.
+	if err := f0.ParseQueryString(); err != nil {
+		t.Fatal(err)
+	}
+
 	photos0, _, err := Photos(f0)
 
 	if err != nil {
@@ -25,6 +30,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:yes"
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -32,6 +42,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), len(photos0))
 		f.Query = "primary:false"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -46,6 +61,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"%gold\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -58,6 +78,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"I love % dog\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -72,6 +97,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"sale%\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -84,6 +114,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"&IlikeFood\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -99,6 +134,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Pets & Dogs\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -111,6 +151,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"Light&\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -126,6 +171,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"'Family\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -139,6 +189,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		// Note: If the string in primary starts with f/F, the txt package will assume it means false,
 		f.Query = "primary:\"Mother's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -154,6 +209,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Ice Cream'\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -167,6 +227,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"*Forrest\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -182,6 +247,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"My*Kids\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -195,6 +265,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"Yoga***\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -210,6 +285,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"|Banana\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -223,6 +303,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"Red|Green\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -238,6 +323,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Blue|\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -251,6 +341,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"345 Shirt\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -266,6 +361,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Color555 Blue\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -279,6 +379,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"Route 66\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -294,6 +399,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Route 66 & Father's Day\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -307,6 +417,11 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:\"Route %66 | *Father's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

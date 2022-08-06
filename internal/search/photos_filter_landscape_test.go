@@ -13,6 +13,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 	f0.Query = "landscape:true"
 	f0.Merged = true
 
+	// Parse query string and filter.
+	if err := f0.ParseQueryString(); err != nil {
+		t.Fatal(err)
+	}
+
 	photos0, _, err := Photos(f0)
 
 	if err != nil {
@@ -27,6 +32,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:yes"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -40,6 +50,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:yes"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -48,6 +63,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		assert.Equal(t, len(photos), len(photos0))
 		f.Query = "landscape:false"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -62,6 +82,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"%gold\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -74,6 +99,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"I love % dog\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -88,6 +118,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"sale%\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -100,6 +135,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"&IlikeFood\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -115,6 +155,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"Pets & Dogs\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -127,6 +172,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"Light&\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -142,6 +192,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"'Family\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -154,6 +209,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"Mother's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -169,6 +229,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"Ice Cream'\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -182,6 +247,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"*Forrest\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -197,6 +267,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"My*Kids\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -210,6 +285,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"Yoga***\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -225,6 +305,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"|Banana\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -238,6 +323,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"Red|Green\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -253,6 +343,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"Blue|\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -266,6 +361,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"345 Shirt\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -281,6 +381,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"Color555 Blue\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -294,6 +399,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"Route 66\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -309,6 +419,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		f.Query = "landscape:\"Route 66 & Father's Day\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -322,6 +437,11 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 		f.Query = "landscape:\"Route %66 | *Father's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

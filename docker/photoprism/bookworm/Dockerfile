@@ -86,10 +86,8 @@ WORKDIR /photoprism
 EXPOSE 2342
 
 # copy dist files
-COPY --from=build /opt/photoprism/ /opt/photoprism
-RUN mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu && \
-    chown root:root /usr/local/sbin/gosu && \
-    chmod 755 /usr/local/sbin/gosu
+COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+RUN mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu
 
 # set container entrypoint script
 ENTRYPOINT ["/scripts/entrypoint.sh"]

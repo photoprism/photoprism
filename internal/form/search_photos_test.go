@@ -92,7 +92,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, "123abc/,EFG", form.Path)
 	})
 	t.Run("valid query", func(t *testing.T) {
-		form := &SearchPhotos{Query: "label:cat query:\"fooBar baz\" before:2019-01-15 camera:23 favorite:false dist:25000 lat:33.45343166666667"}
+		form := &SearchPhotos{Query: "label:cat q:\"fooBar baz\" before:2019-01-15 camera:23 favorite:false dist:25000 lat:33.45343166666667"}
 
 		err := form.ParseQueryString()
 
@@ -165,7 +165,7 @@ func TestParseQueryString(t *testing.T) {
 
 		// log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "unknown filter: Xxx", err.Error())
+		assert.Equal(t, "unknown filter: xxx", err.Error())
 	})
 	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
 		form := &SearchPhotos{Query: "favorite:cat"}
@@ -444,11 +444,7 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.True(t, form.Merged)
+		assert.Error(t, err)
 	})
 	t.Run("query for landscape with uncommon bool value", func(t *testing.T) {
 		form := &SearchPhotos{Query: "landscape:test$5123"}
@@ -599,20 +595,14 @@ func TestParseQueryString(t *testing.T) {
 		assert.Contains(t, err.Error(), "invalid syntax")
 	})
 	t.Run("query for count with invalid type", func(t *testing.T) {
-		form := &SearchPhotos{Query: "count:ca(%t"}
+		form := &SearchPhotos{Query: "dist:ca(%t"}
 
 		err := form.ParseQueryString()
 
-		if err == nil {
-			t.Fatal(err)
-		}
-
-		// log.Debugf("%+v\n", form)
-
-		assert.Contains(t, err.Error(), "invalid syntax")
+		assert.Error(t, err)
 	})
 	t.Run("query for offset with invalid type", func(t *testing.T) {
-		form := &SearchPhotos{Query: "offset:&cat"}
+		form := &SearchPhotos{Query: "lat:&cat"}
 
 		err := form.ParseQueryString()
 

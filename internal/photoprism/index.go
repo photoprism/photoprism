@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -89,7 +90,10 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 	optionsPath := filepath.Join(originalsPath, o.Path)
 
 	if !fs.PathExists(optionsPath) {
-		event.Error(fmt.Sprintf("index: %s does not exist", clean.Log(optionsPath)))
+		event.Error(fmt.Sprintf("%s does not exist", clean.Log(optionsPath)))
+		return done
+	} else if fs.DirIsEmpty(originalsPath) {
+		event.InfoMsg(i18n.ErrOriginalsEmpty)
 		return done
 	}
 

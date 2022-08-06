@@ -13,10 +13,10 @@ func TestAccountSearchForm(t *testing.T) {
 }
 
 func TestAccountSearch_GetQuery(t *testing.T) {
-	form := &SearchAccounts{Query: "query: webdav, share:true, sync:false, status:test, count:10"}
+	form := &SearchAccounts{Query: "q: webdav, share:true, sync:false, status:test"}
 
 	r := form.GetQuery()
-	assert.Equal(t, "query: webdav, share:true, sync:false, status:test, count:10", r)
+	assert.Equal(t, "q: webdav, share:true, sync:false, status:test", r)
 }
 
 func TestAccountSearch_SetQuery(t *testing.T) {
@@ -29,7 +29,7 @@ func TestAccountSearch_SetQuery(t *testing.T) {
 func TestAccountSearch_ParseQueryString(t *testing.T) {
 
 	t.Run("valid query", func(t *testing.T) {
-		form := &SearchAccounts{Query: "query: webdäv share:true sync:false status:test count:10"}
+		form := &SearchAccounts{Query: "q: webdäv share:true sync:false status:test"}
 
 		err := form.ParseQueryString()
 
@@ -42,7 +42,7 @@ func TestAccountSearch_ParseQueryString(t *testing.T) {
 		assert.Equal(t, "webdäv", form.Query)
 		assert.Equal(t, true, form.Share)
 		assert.Equal(t, false, form.Sync)
-		assert.Equal(t, 10, form.Count)
+		assert.Equal(t, 0, form.Count)
 	})
 
 	t.Run("query for invalid filter", func(t *testing.T) {
@@ -56,7 +56,7 @@ func TestAccountSearch_ParseQueryString(t *testing.T) {
 
 		// log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "unknown filter: Xxx", err.Error())
+		assert.Equal(t, "unknown filter: xxx", err.Error())
 	})
 	t.Run("query for sync with uncommon bool value", func(t *testing.T) {
 		form := &SearchAccounts{Query: "sync:cat"}
@@ -74,13 +74,7 @@ func TestAccountSearch_ParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		if err == nil {
-			t.FailNow()
-		}
-
-		// log.Debugf("%+v\n", form)
-
-		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
+		assert.Error(t, err)
 	})
 }
 

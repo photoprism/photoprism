@@ -14,7 +14,7 @@ func TestAlbumSearchForm(t *testing.T) {
 
 func TestParseQueryStringAlbum(t *testing.T) {
 	t.Run("valid query", func(t *testing.T) {
-		form := &SearchAlbums{Query: "slug:album1 favorite:true count:10"}
+		form := &SearchAlbums{Query: "slug:album1 favorite:true"}
 
 		err := form.ParseQueryString()
 
@@ -26,10 +26,10 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		assert.Equal(t, "album1", form.Slug)
 		assert.Equal(t, true, form.Favorite)
-		assert.Equal(t, 10, form.Count)
+		assert.Equal(t, 0, form.Count)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
-		form := &SearchAlbums{Query: "title:album1 favorite:false offset:100 order:newest query:\"query text\""}
+		form := &SearchAlbums{Query: "title:album1 favorite:false q:\"query text\""}
 
 		err := form.ParseQueryString()
 
@@ -41,12 +41,12 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		assert.Equal(t, "album1", form.Title)
 		assert.Equal(t, false, form.Favorite)
-		assert.Equal(t, 100, form.Offset)
-		assert.Equal(t, "newest", form.Order)
+		assert.Equal(t, 0, form.Offset)
+		assert.Equal(t, "", form.Order)
 		assert.Equal(t, "query text", form.Query)
 	})
 	t.Run("valid query with umlauts", func(t *testing.T) {
-		form := &SearchAlbums{Query: "query:\"tübingen\""}
+		form := &SearchAlbums{Query: "q:\"tübingen\""}
 
 		err := form.ParseQueryString()
 
@@ -69,7 +69,7 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		// log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "unknown filter: Xxx", err.Error())
+		assert.Equal(t, "unknown filter: xxx", err.Error())
 	})
 	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
 		form := &SearchAlbums{Query: "favorite:cat"}
@@ -87,13 +87,7 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		if err == nil {
-			t.FailNow()
-		}
-
-		// log.Debugf("%+v\n", form)
-
-		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
+		assert.Error(t, err)
 	})
 }
 

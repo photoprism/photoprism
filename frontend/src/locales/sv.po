@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 21:48+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-08-01 13:59+0000\n"
+"Last-Translator: Joaquim Homrighausen <joho@boojam.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/sv/>\n"
 "Language: sv\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.13.1\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -259,10 +259,8 @@ msgstr "Ett fel inträffade - är du offline?"
 #: src/options/options.js:331 src/share/photo/cards.vue:201
 #: src/share/photo/cards.vue:376 src/share/photo/list.vue:176
 #: src/share/photo/mosaic.vue:182
-#, fuzzy
-#| msgid "Animation"
 msgid "Animated"
-msgstr "Animering"
+msgstr "Animerad"
 
 #: src/pages/settings/general.vue:533
 msgid "Animation"
@@ -747,10 +745,8 @@ msgid "Duplicates will be skipped and only appear once."
 msgstr "Dubletter kommer att hoppas över och visas endast en gång."
 
 #: src/dialog/photo/files.vue:101 src/dialog/photo/files.vue:98
-#, fuzzy
-#| msgid "Donations"
 msgid "Duration"
-msgstr "Donationer"
+msgstr "Varaktighet"
 
 #: src/pages/settings/advanced.vue:305
 msgid "Dynamic Previews"
@@ -876,7 +872,7 @@ msgstr "Misslyckades med att ta bort länken"
 
 #: src/dialog/share.vue:81
 msgid "Failed updating link"
-msgstr "Misslyckades att uppdatera länken"
+msgstr "Misslyckades med att uppdatera länken"
 
 #: src/dialog/upload.vue:163
 msgid "Failure while importing uploaded files"
@@ -917,10 +913,8 @@ msgid "File Browser"
 msgstr "Filhanterare"
 
 #: src/dialog/photo/files.vue:65 src/dialog/photo/files.vue:62
-#, fuzzy
-#| msgid "File"
 msgid "Filename"
-msgstr "Fil"
+msgstr "Filnamn"
 
 #: src/dialog/photo/edit.vue:65 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:316
@@ -963,14 +957,12 @@ msgid "Forgot password?"
 msgstr "Glömt lösenord?"
 
 #: src/dialog/photo/files.vue:113 src/dialog/photo/files.vue:110
-#, fuzzy
 msgid "FPS"
 msgstr "FPS"
 
 #: src/dialog/photo/files.vue:107 src/dialog/photo/files.vue:104
-#, fuzzy
 msgid "Frames"
-msgstr "Ramar"
+msgstr "Bildrutor"
 
 #: src/component/photo-viewer.vue:174
 msgid "Fullscreen"
@@ -1011,17 +1003,15 @@ msgstr "Gruppera efter likhet"
 
 #: src/dialog/photo/files.vue:59 src/dialog/photo/files.vue:56
 msgid "Hash"
-msgstr "Hash"
+msgstr "Kontrollsumma"
 
 #: src/pages/help.vue:4
 msgid "Help"
 msgstr "Hjälp"
 
 #: src/app/routes.js:76
-#, fuzzy
-#| msgid "Getting Support"
 msgid "Help & Support"
-msgstr "Få stöd"
+msgstr "Hjälp och Support"
 
 #: src/component/navigation.vue:384
 msgid "Hidden"
@@ -1137,7 +1127,7 @@ msgstr "Indexeringen misslyckades"
 
 #: src/pages/library/index.vue:7
 msgid "Indexing media and sidecar files…"
-msgstr "Indexaerar media och sidecar-filer…"
+msgstr "Indexerar media och sidecar-filer…"
 
 #: src/dialog/photo/files.vue:53 src/dialog/photo/files.vue:50
 msgid "Instance ID"
@@ -1199,9 +1189,8 @@ msgid "Language"
 msgstr "Språk"
 
 #: src/pages/settings/sync.vue:30
-#, fuzzy
 msgid "Last Sync"
-msgstr "Sync"
+msgstr "Senaste synkronisering"
 
 #: src/dialog/photo/details.vue:291 src/dialog/photo/info.vue:135
 msgid "Latitude"
@@ -1390,10 +1379,8 @@ msgid "Move Files"
 msgstr "Flytta filer"
 
 #: src/pages/settings/account.vue:85
-#, fuzzy
-#| msgid "At least 6 characters."
 msgid "Must have at least 8 characters."
-msgstr "Minst 6 tecken."
+msgstr "Måste ha minst 8 tecken."
 
 #: src/component/photo/cards.vue:574 src/component/photo/list.vue:59
 #: src/component/photo/list.vue:246 src/dialog/account/edit.vue:402
@@ -1523,47 +1510,40 @@ msgid "Note:"
 msgstr "Observera:"
 
 #: src/dialog/account/add.vue:22
-#, fuzzy
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
 msgstr ""
-"Obs: Endast WebDAV-servrar, som Nextcloud eller PhotoPrism, kan konfigureras "
+"OBS: Endast WebDAV-servrar, som Nextcloud eller PhotoPrism, kan konfigureras "
 "som fjärrtjänst för säkerhetskopiering och filuppladdning."
 
 #: src/pages/settings/account.vue:20
-#, fuzzy
 msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
 msgstr ""
-"Observera: Uppdatering av lösenordet återkallar inte åtkomst för redan "
+"OBS: Uppdatering av lösenordet återkallar inte åtkomst för redan "
 "autentiserade användare."
 
 #: src/dialog/photo/details.vue:612
-#, fuzzy
 msgid "Notes"
 msgstr "Anteckningar"
 
 #: src/pages/library/logs.vue:5
-#, fuzzy
 msgid "Nothing to see here yet. Be patient."
-msgstr "Det finns inget att se här ännu. Ha tålamod."
+msgstr "Inget att se här ännu. Ha tålamod."
 
 #: src/component/navigation.vue:472 src/component/navigation.vue:1780
 #: src/options/options.js:300
-#, fuzzy
 msgid "Offline"
 msgstr "Offline"
 
 #: src/component/album/toolbar.vue:60 src/component/photo/toolbar.vue:53
 #: src/dialog/album/edit.vue:21
-#, fuzzy
 msgid "Oldest first"
 msgstr "Äldsta först"
 
 #: src/dialog/webdav.vue:17
-#, fuzzy
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "I Windows anger du följande resurs i anslutningsdialogen:"
 
@@ -1598,12 +1578,10 @@ msgstr "En person hittad"
 
 #: src/pages/album/photos.vue:344 src/pages/photos.vue:384
 #: src/share/photos.vue:352
-#, fuzzy
 msgid "One picture found"
 msgstr "En bild hittades"
 
 #: src/options/options.js:239
-#, fuzzy
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1612,45 +1590,37 @@ msgid "Options"
 msgstr "Alternativ"
 
 #: src/pages/about/about.vue:49
-#, fuzzy
 msgid "or ask in our Community Chat"
 msgstr "eller fråga i vår gemenskapschatt"
 
 #: src/options/options.js:420
-#, fuzzy
 msgid "Orange"
 msgstr "Orange"
 
 #: src/dialog/photo/files.vue:155 src/dialog/photo/files.vue:152
-#, fuzzy
 msgid "Orientation"
-msgstr "Orientering"
+msgstr "Layout"
 
 #: src/pages/library/import.vue:27
-#, fuzzy
 msgid "Original file names will be stored and indexed."
-msgstr "De ursprungliga filnamnen sparas och indexeras."
+msgstr "De ursprungliga filnamnen kommer att lagras och indexeras."
 
 #: src/dialog/photo/files.vue:77 src/dialog/photo/files.vue:74
 #: src/dialog/photo/info.vue:37
-#, fuzzy
 msgid "Original Name"
 msgstr "Ursprungligt namn"
 
 #: src/component/navigation.vue:375 src/dialog/account/edit.vue:104
 #: src/model/file.js:194 src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:316
-#, fuzzy
 msgid "Originals"
-msgstr "Originals"
+msgstr "Original"
 
 #: src/options/options.js:440
-#, fuzzy
 msgid "Other"
-msgstr "Övriga"
+msgstr "Övrigt"
 
 #: src/pages/about/about.vue:15
-#, fuzzy
 msgid ""
 "Our mission is to provide the most user- and privacy-friendly solution to "
 "keep your pictures organized and accessible."
@@ -1684,12 +1654,10 @@ msgstr "Lösenordet har ändrats"
 #: src/component/navigation.vue:966 src/dialog/photo/edit.vue:52
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:266
 #: src/pages/settings/general.vue:338
-#, fuzzy
 msgid "People"
 msgstr "Människor"
 
 #: src/dialog/share.vue:72
-#, fuzzy
 msgid "People you share a link with will be able to view public contents."
 msgstr "Personer som du delar en länk med kan se det offentliga innehållet."
 
@@ -1698,206 +1666,168 @@ msgid "Permanently deleted"
 msgstr "Permanent borttagen"
 
 #: src/pages/settings/general.vue:207
-#, fuzzy
 msgid "Permanently remove files to free up storage."
 msgstr "Ta bort filer permanent för att frigöra lagringsutrymme."
 
 #: src/model/photo.js:967
-#, fuzzy
 msgid "Photo"
 msgstr "Foto"
 
 #: src/dialog/reload.vue:4
-#, fuzzy
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism har uppdaterats…"
 
 #: src/app/routes.js:108
-#, fuzzy
 msgid "Photos"
-msgstr "Bilder"
+msgstr "Foton"
 
 #: src/options/options.js:418
-#, fuzzy
 msgid "Pink"
 msgstr "Rosa"
 
 #: src/dialog/photo/info.vue:126
-#, fuzzy
 msgid "Place"
 msgstr "Plats"
 
 #: src/pages/settings/library.vue:173
-#, fuzzy
 msgid "Place & Time"
-msgstr "Plats & Tid"
+msgstr "Plats och Tid"
 
 #: src/app/routes.js:216 src/app/routes.js:222 src/app/routes.js:228
 #: src/app/routes.js:235 src/component/navigation.vue:283
 #: src/component/navigation.vue:293 src/component/navigation.vue:4
 #: src/component/navigation.vue:1144 src/pages/settings/general.vue:108
 #: src/pages/settings/general.vue:450
-#, fuzzy
 msgid "Places"
 msgstr "Platser"
 
 #: src/component/photo/cards.vue:293 src/component/photo/mosaic.vue:267
 #: src/share/photo/cards.vue:266 src/share/photo/mosaic.vue:248
-#, fuzzy
 msgid "Play"
 msgstr "Spela"
 
 #: src/pages/settings/account.vue:110
-#, fuzzy
 msgid "Please confirm your new password."
 msgstr "Bekräfta ditt nya lösenord."
 
 #: src/dialog/upload.vue:45
-#, fuzzy
 msgid "Please don't upload photos containing offensive content."
 msgstr "Ladda inte upp bilder med stötande innehåll."
 
 #: src/dialog/photo/files.vue:135 src/dialog/photo/files.vue:132
-#, fuzzy
 msgid "Portrait"
 msgstr "Porträtt"
 
 #: src/pages/about/about.vue:48
-#, fuzzy
 msgid "post your question in GitHub Discussions"
-msgstr "Ställ din fråga i GitHub Discussions"
+msgstr "ställa din fråga i GitHub Discussions"
 
 #: src/dialog/account/edit.vue:340
-#, fuzzy
 msgid "Preserve filenames"
 msgstr "Bevara filnamn"
 
 #: src/pages/library/import.vue:8
-#, fuzzy
 msgid "Press button to start importing…"
 msgstr "Tryck på knappen för att börja importera…"
 
 #: src/pages/library/index.vue:9
-#, fuzzy
 msgid "Press button to start indexing…"
 msgstr "Tryck på knappen för att starta indexeringen…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
-#, fuzzy
 msgid "Press enter to create a new album."
 msgstr "Tryck på enter för att skapa ett nytt album."
 
 #: src/dialog/photo/files.vue:19 src/dialog/photo/files.vue:16
-#, fuzzy
 msgid "Preview"
 msgstr "Förhandsgranska"
 
 #: src/dialog/photo/files.vue:35 src/dialog/photo/files.vue:119
 #: src/dialog/photo/files.vue:32 src/dialog/photo/files.vue:116
 #: src/dialog/photo/files.vue:28
-#, fuzzy
 msgid "Primary"
-msgstr "Primärt"
+msgstr "Primär"
 
 #: src/app/routes.js:202 src/component/navigation.vue:343
 #: src/component/navigation.vue:1352 src/dialog/photo/info.vue:102
 #: src/pages/settings/general.vue:272
-#, fuzzy
 msgid "Private"
 msgstr "Privat"
 
 #: src/options/options.js:436
-#, fuzzy
 msgid "Product Feedback"
 msgstr "Produktåterkoppling"
 
 #: src/dialog/photo/files.vue:143 src/dialog/photo/files.vue:140
-#, fuzzy
 msgid "Projection"
 msgstr "Projektion"
 
 #: src/options/options.js:416
-#, fuzzy
 msgid "Purple"
 msgstr "Lila"
 
 #: src/pages/settings/library.vue:92
-#, fuzzy
 msgid "Quality Filter"
 msgstr "Kvalitetsfilter"
 
 #: src/dialog/photo/info.vue:59
-#, fuzzy
 msgid "Quality Score"
 msgstr "Kvalitetspoäng"
 
 #: src/pages/discover.vue:16
-#, fuzzy
 msgid "Random"
 msgstr "Slumpmässig"
 
 #: src/options/options.js:259
-#, fuzzy
 msgid "Raspberry"
 msgstr "Hallon"
 
 #: src/options/options.js:335
-#, fuzzy
 msgid "Raw"
-msgstr "Rått"
+msgstr "Rå"
 
 #: src/component/photo/cards.vue:208 src/component/photo/mosaic.vue:181
 #: src/share/photo/cards.vue:181 src/share/photo/mosaic.vue:162
-#, fuzzy
 msgid "RAW"
 msgstr "RAW"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
 msgid "RAW Conversion"
 msgstr "Konvertering av RAW-filer"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 "Återindexera alla original, inklusive redan indexerade och oförändrade filer."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Read-Only Mode"
-msgstr "Läsbart läge"
+msgstr "Skrivskyddat läge"
 
 #: src/component/album/toolbar.vue:57 src/component/photo/toolbar.vue:50
 #: src/dialog/album/edit.vue:18
-#, fuzzy
 msgid "Recently added"
-msgstr "Nyligen tillagd"
+msgstr "Nyligen tillagt"
 
 #: src/component/album/toolbar.vue:58 src/component/photo/toolbar.vue:51
 #: src/dialog/album/edit.vue:19
-#, fuzzy
 msgid "Recently edited"
-msgstr "Nyligen redigerad"
+msgstr "Nyligen redigerat"
 
 #: src/dialog/photo/people.vue:9 src/pages/people/faces.vue:34
 #: src/pages/people/subjects.vue:38
-#, fuzzy
 msgid "Recognition starts after indexing has been completed."
 msgstr "Identifieringen börjar när indexeringen har slutförts."
 
 #: src/pages/people.vue:17
-#, fuzzy
 msgid "Recognized"
-msgstr "Erkänd"
+msgstr "Igenkänd"
 
 #: src/pages/settings/general.vue:339
-#, fuzzy
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Känner igen ansikten så att specifika personer kan hittas."
 
 #: src/options/options.js:419
-#, fuzzy
 msgid "Red"
 msgstr "Röd"
 
@@ -1905,38 +1835,31 @@ msgstr "Röd"
 #: src/dialog/reload.vue:15 src/pages/albums.vue:141 src/pages/labels.vue:94
 #: src/pages/library/errors.vue:76 src/pages/library/files.vue:100
 #: src/pages/people/faces.vue:65 src/pages/people/subjects.vue:106
-#, fuzzy
 msgid "Reload"
 msgstr "Ladda om"
 
 #: src/component/navigation.vue:100 src/dialog/reload.vue:26
 #: src/pages/settings/general.vue:99 src/pages/settings/library.vue:46
-#, fuzzy
 msgid "Reloading…"
-msgstr "Omladdning…"
+msgstr "Laddar om …"
 
 #: src/dialog/account/edit.vue:96
-#, fuzzy
 msgid "Remote Sync"
 msgstr "Fjärrsynkronisering"
 
 #: src/dialog/photo/people.vue:108
-#, fuzzy
 msgid "Remove"
-msgstr "Ta bort"
+msgstr "Radera"
 
 #: src/component/photo/clipboard.vue:138
-#, fuzzy
 msgid "remove failed: unknown album"
 msgstr "borttagning misslyckades: okänt album"
 
 #: src/component/photo/clipboard.vue:261
-#, fuzzy
 msgid "Remove from album"
-msgstr "Ta bort från albumet"
+msgstr "Radera från albumet"
 
 #: src/pages/library/import.vue:133
-#, fuzzy
 msgid ""
 "Remove imported files to save storage. Unsupported file types will never be "
 "deleted, they remain in their current location."
@@ -1945,54 +1868,44 @@ msgstr ""
 "stöds tas aldrig bort, utan förblir på sin nuvarande plats."
 
 #: src/common/api.js:74
-#, fuzzy
 msgid "Request failed - invalid response"
 msgstr "Förfrågan misslyckades - ogiltigt svar"
 
 #: src/pages/about/feedback.vue:117 src/pages/about/feedback.vue:137
 #: src/pages/about/feedback.vue:179
-#, fuzzy
 msgid "Required"
 msgstr "Krävs"
 
 #: src/dialog/photo/info.vue:67
-#, fuzzy
 msgid "Resolution"
 msgstr "Upplösning"
 
 #: src/component/photo/clipboard.vue:239
-#, fuzzy
 msgid "Restore"
 msgstr "Återställ"
 
 #: src/dialog/account/edit.vue:535
-#, fuzzy
 msgid "Retry Limit"
-msgstr "Begränsning av antalet omprövningar"
+msgstr "Gräns för antalet försök"
 
 #: src/pages/settings/account.vue:106
-#, fuzzy
 msgid "Retype Password"
-msgstr "Ange lösenordet på nytt"
+msgstr "Upprepa lösenordet"
 
 #: src/app/routes.js:195 src/component/navigation.vue:142
-#, fuzzy
 msgid "Review"
-msgstr "Översyn av"
+msgstr "Granska"
 
 #: src/dialog/account/edit.vue:105 src/dialog/album/edit.vue:45
 #: src/dialog/share.vue:61
-#, fuzzy
 msgid "Save"
 msgstr "Spara"
 
 #: src/dialog/photo/info.vue:110
-#, fuzzy
 msgid "Scan"
 msgstr "Skanna"
 
 #: src/component/navigation.vue:134
-#, fuzzy
 msgid "Scans"
 msgstr "Skannar"
 
@@ -2001,73 +1914,59 @@ msgstr "Skannar"
 #: src/component/photo/toolbar.vue:50 src/pages/albums.vue:114
 #: src/pages/labels.vue:81 src/pages/library/errors.vue:65
 #: src/pages/people/subjects.vue:88 src/pages/places.vue:34
-#, fuzzy
 msgid "Search"
-msgstr "Sök på"
+msgstr "Sök"
 
 #: src/pages/settings/general.vue:451
-#, fuzzy
 msgid "Search and display photos on a map."
 msgstr "Sök och visa foton på en karta."
 
 #: src/pages/discover.vue:12
-#, fuzzy
 msgid "Season"
 msgstr "Säsong"
 
 #: src/options/options.js:264
-#, fuzzy
 msgid "Seaweed"
 msgstr "Sjögräs"
 
 #: src/dialog/share.vue:213
-#, fuzzy
 msgid "Secret"
 msgstr "Hemlig"
 
 #: src/component/photo-viewer.vue:119
-#, fuzzy
 msgid "Select"
 msgstr "Välj"
 
 #: src/dialog/upload.vue:138
-#, fuzzy
 msgid "Select albums or create a new one"
 msgstr "Välj album eller skapa ett nytt"
 
 #: src/component/photo/clipboard.vue:62
-#, fuzzy
 msgid "Selection approved"
 msgstr "Urvalet är godkänt"
 
 #: src/component/photo/clipboard.vue:87
-#, fuzzy
 msgid "Selection archived"
 msgstr "Urval arkiverat"
 
 #: src/component/photo/clipboard.vue:112
-#, fuzzy
 msgid "Selection restored"
 msgstr "Urvalet har återställts"
 
 #: src/pages/about/feedback.vue:39
-#, fuzzy
 msgid "Send"
 msgstr "Skicka"
 
 #: src/pages/settings/library.vue:215
-#, fuzzy
 msgid "Sequential Name"
 msgstr "Sekventiellt namn"
 
 #: src/pages/settings/sync.vue:26
-#, fuzzy
 msgid "Server"
 msgstr "Server"
 
 #: src/dialog/account/add.vue:65 src/dialog/account/edit.vue:420
 #: src/dialog/share.vue:22
-#, fuzzy
 msgid "Service URL"
 msgstr "Tjänstens URL"
 
@@ -2076,131 +1975,106 @@ msgstr "Tjänstens URL"
 #: src/component/navigation.vue:417 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
 #: src/component/navigation.vue:1573
-#, fuzzy
 msgid "Settings"
 msgstr "Inställningar"
 
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:103
 #: src/pages/settings/library.vue:50
-#, fuzzy
 msgid "Settings saved"
-msgstr "Inställningar sparade"
+msgstr "Inställningarna har sparats"
 
 #: src/dialog/share/upload.vue:32
-#, fuzzy
 msgid "Setup"
 msgstr "Konfigurera"
 
 #: src/options/options.js:269
-#, fuzzy
 msgid "Shadow"
 msgstr "Skugga"
 
 #: src/component/album/clipboard.vue:70 src/component/album/toolbar.vue:88
 #: src/component/photo/clipboard.vue:77 src/pages/settings/general.vue:250
-#, fuzzy
 msgid "Share"
 msgstr "Dela"
 
 #: src/dialog/share.vue:7
-#, fuzzy
 msgid "Share %{name}"
 msgstr "Dela %{name}"
 
 #: src/share/albums.vue:51
-#, fuzzy
 msgid "Shared with you."
-msgstr "Vi delar den med dig."
+msgstr "Delad med dig."
 
 #: src/pages/people/faces.vue:227 src/pages/people/subjects.vue:288
-#, fuzzy
 msgid "Show"
 msgstr "Visa"
 
 #: src/pages/people/faces.vue:66
-#, fuzzy
 msgid "Show all new faces"
 msgstr "Visa alla nya ansikten"
 
 #: src/pages/people/faces.vue:83 src/pages/people/subjects.vue:124
-#, fuzzy
 msgid "Show hidden"
 msgstr "Visa dolda"
 
 #: src/pages/labels.vue:129
-#, fuzzy
 msgid "Show less"
 msgstr "Visa mindre"
 
 #: src/pages/settings/general.vue:405
-#, fuzzy
 msgid "Show Library in navigation menu."
 msgstr "Visa biblioteket i navigeringsmenyn."
 
 #: src/pages/labels.vue:112
-#, fuzzy
 msgid "Show more"
 msgstr "Visa mer"
 
 #: src/pages/settings/general.vue:427
-#, fuzzy
 msgid "Show server logs in Library."
 msgstr "Visa serverloggar i biblioteket."
 
 #: src/pages/settings/advanced.vue:78
-#, fuzzy
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Visar mer detaljerade loggmeddelanden. Kräver en omstart."
 
 #: src/model/file.js:212
-#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
 #: src/pages/auth/login.vue:17
-#, fuzzy
 msgid "Sign in"
 msgstr "Logga in"
 
 #: src/dialog/sponsor.vue:39
-#, fuzzy
 msgid "Sign Up"
 msgstr "Registrera dig"
 
 #: src/pages/discover.vue:8
-#, fuzzy
 msgid "Similar"
 msgstr "Liknande"
 
 #: src/dialog/account/edit.vue:219 src/dialog/photo/files.vue:83
 #: src/dialog/photo/files.vue:80 src/dialog/photo/files.vue:36
-#, fuzzy
 msgid "Size"
 msgstr "Storlek"
 
 #: src/options/options.js:293
-#, fuzzy
 msgid "Slow"
 msgstr "Långsam"
 
 #: src/component/album/toolbar.vue:61 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:22
-#, fuzzy
 msgid "Sort by file name"
 msgstr "Sortera efter filnamn"
 
 #: src/component/photo/toolbar.vue:253 src/dialog/album/edit.vue:180
-#, fuzzy
 msgid "Sort Order"
 msgstr "Sortering"
 
 #: src/dialog/photo/labels.vue:21
-#, fuzzy
 msgid "Source"
 msgstr "Källa"
 
 #: src/pages/about/about.vue:30
-#, fuzzy
 msgid ""
 "Sponsors get access to additional features, receive direct technical support "
 "via email, and can join our private chat room on matrix.org."
@@ -2210,17 +2084,14 @@ msgstr ""
 
 #: src/component/photo/cards.vue:248 src/component/photo/mosaic.vue:221
 #: src/share/photo/cards.vue:221 src/share/photo/mosaic.vue:202
-#, fuzzy
 msgid "Stack"
-msgstr "Stack"
+msgstr "Samling"
 
 #: src/pages/settings/library.vue:195
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "Stapla filer som har samma unika bild- eller instansidentifierare."
 
 #: src/pages/settings/library.vue:174
-#, fuzzy
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
@@ -2229,17 +2100,14 @@ msgstr ""
 "metadata."
 
 #: src/dialog/photo/info.vue:86
-#, fuzzy
 msgid "Stackable"
 msgstr "Stapelbar"
 
 #: src/component/navigation.vue:126 src/pages/settings/library.vue:34
-#, fuzzy
 msgid "Stacks"
 msgstr "Staplar"
 
 #: src/pages/settings/library.vue:140
-#, fuzzy
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
@@ -2248,52 +2116,42 @@ msgstr ""
 "kvalitet, format, storlek eller färg."
 
 #: src/pages/library/index.vue:31
-#, fuzzy
 msgid "Start"
 msgstr "Starta"
 
 #: src/component/photo-viewer.vue:183
-#, fuzzy
 msgid "Start/Stop Slideshow"
 msgstr "Starta/stoppa bildspel"
 
 #: src/component/navigation.vue:303
-#, fuzzy
 msgid "States"
 msgstr "Stater"
 
 #: src/pages/settings/advanced.vue:374
-#, fuzzy
 msgid "Static Size Limit: %{n}px"
 msgstr "Statisk storleksgräns: %{n}px"
 
 #: src/dialog/photo/files.vue:38
-#, fuzzy
 msgid "Status"
 msgstr "Status"
 
 #: src/dialog/photo/files.vue:71 src/dialog/photo/files.vue:68
-#, fuzzy
 msgid "Storage"
-msgstr "Förvaringsmapp"
+msgstr "Förvaringsplats"
 
 #: src/options/options.js:304
-#, fuzzy
 msgid "Streets"
 msgstr "Gator"
 
 #: src/pages/settings/general.vue:511
-#, fuzzy
 msgid "Style"
 msgstr "Stil"
 
 #: src/dialog/photo/details.vue:473 src/model/subject.js:158
-#, fuzzy
 msgid "Subject"
 msgstr "Ämne"
 
 #: src/dialog/account/add.vue:23
-#, fuzzy
 msgid ""
 "Support for additional services, like Google Drive, will be added over time."
 msgstr ""
@@ -2301,48 +2159,40 @@ msgstr ""
 "tiden."
 
 #: src/pages/settings.vue:63 src/pages/settings/sync.vue:28
-#, fuzzy
 msgid "Sync"
-msgstr "Sync"
+msgstr "Synkronisera"
 
 #: src/dialog/account/edit.vue:377
-#, fuzzy
 msgid "Sync raw and video files"
 msgstr "Synkronisera raw- och videofiler"
 
 #: src/component/photo/cards.vue:517 src/component/photo/list.vue:56
 #: src/dialog/photo/info.vue:52 src/share/photo/cards.vue:349
 #: src/share/photo/list.vue:52
-#, fuzzy
 msgid "Taken"
-msgstr "Tagna"
+msgstr "Taget"
 
 #: src/options/options.js:425
-#, fuzzy
 msgid "Teal"
-msgstr "Blåkråka"
+msgstr "Blågrön"
 
 #: src/dialog/photo/details.vue:25 src/pages/people/faces.vue:55
-#, fuzzy
 msgid "Text too long"
 msgstr "Texten är för lång"
 
 #: src/pages/library/index.vue:36
-#, fuzzy
 msgid "The index currently contains %{n} hidden files."
 msgstr "Indexet innehåller för närvarande %{n} dolda filer."
 
 #: src/pages/about/about.vue:17
-#, fuzzy
 msgid ""
 "The roadmap shows what tasks are in progress, what needs testing, and which "
 "feature requests are going to be implemented next."
 msgstr ""
-"Färdplanen visar vilka uppgifter som pågår, vad som behöver testas och vilka "
-"funktioner som kommer att implementeras härnäst."
+"Utvecklingsplanen visar vilka uppgifter som pågår, vad som behöver testas "
+"och vilka funktioner som kommer att implementeras härnäst."
 
 #: src/pages/library/index.vue:37
-#, fuzzy
 msgid ""
 "Their format may not be supported, they haven't been converted to JPEG yet "
 "or there are duplicates."
@@ -2351,12 +2201,10 @@ msgstr ""
 "det finns dubbletter."
 
 #: src/pages/settings/general.vue:72
-#, fuzzy
 msgid "Theme"
 msgstr "Tema"
 
 #: src/dialog/sponsor.vue:17
-#, fuzzy
 msgid ""
 "This currently is a sponsor feature to thank everyone who supports the "
 "development of this application."
@@ -2365,71 +2213,59 @@ msgstr ""
 "utvecklingen av programmet."
 
 #: src/dialog/webdav.vue:26 src/pages/settings/sync.vue:37
-#, fuzzy
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
 "edit, and delete files from your computer or smartphone as if they were "
 "local."
 msgstr ""
-"Detta gör att mappen med originalen monteras som en nätverksenhet så att du "
+"Detta gör att mappen med originalen monteras som en nätverksenhet, så att du "
 "kan öppna, redigera och ta bort filer från din dator eller smartphone som om "
 "de vore lokala."
 
 #: src/pages/settings/advanced.vue:253
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "Generering av miniatyrbilder"
 
 #: src/dialog/photo/details.vue:189
-#, fuzzy
 msgid "Time UTC"
 msgstr "Tid UTC"
 
 #: src/dialog/photo/details.vue:213
-#, fuzzy
 msgid "Time Zone"
 msgstr "Tidszon"
 
 #: src/dialog/account/edit.vue:515
-#, fuzzy
 msgid "Timeout"
-msgstr "Tidszon"
+msgstr "Timeout"
 
 #: src/component/photo/list.vue:55 src/dialog/photo/details.vue:97
 #: src/dialog/photo/info.vue:45 src/share/photo/list.vue:51
-#, fuzzy
 msgid "Title"
-msgstr "Titel"
+msgstr "Rubrik"
 
 #: src/pages/albums.vue:57 src/share/albums.vue:53
-#, fuzzy
 msgid "Title too long"
-msgstr "Titeln är för lång"
+msgstr "Rubriken är för lång"
 
 #: src/share.js:159
-#, fuzzy
 msgid "to"
 msgstr "till"
 
 #: src/component/album/toolbar.vue:125 src/component/album/toolbar.vue:142
 #: src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:77
 #: src/component/photo/toolbar.vue:94 src/component/photo/toolbar.vue:110
-#, fuzzy
 msgid "Toggle View"
 msgstr "Växla vy"
 
 #: src/dialog/share.vue:214
-#, fuzzy
 msgid "Token"
-msgstr "Token"
+msgstr "Kod"
 
 #: src/options/options.js:314
-#, fuzzy
 msgid "Topographic"
 msgstr "Topografisk"
 
 #: src/pages/library/errors.vue:113
-#, fuzzy
 msgid "Troubleshooting Checklists"
 msgstr "Checklistor för felsökning"
 
@@ -2439,24 +2275,20 @@ msgstr "Checklistor för felsökning"
 #: src/pages/people/subjects.vue:36 src/share/albums.vue:21
 #: src/share/photo/cards.vue:10 src/share/photo/list.vue:11
 #: src/share/photo/list.vue:40 src/share/photo/mosaic.vue:10
-#, fuzzy
 msgid "Try again using other filters or keywords."
 msgstr "Försök igen med andra filter eller nyckelord."
 
 #: src/dialog/account/edit.vue:495 src/dialog/photo/files.vue:89
 #: src/dialog/photo/files.vue:86 src/dialog/photo/files.vue:37
 #: src/dialog/photo/info.vue:15
-#, fuzzy
 msgid "Type"
 msgstr "Typ"
 
 #: src/dialog/photo/people.vue:151
-#, fuzzy
 msgid "Undo"
 msgstr "Ångra"
 
 #: src/pages/settings/library.vue:194
-#, fuzzy
 msgid "Unique ID"
 msgstr "Unikt ID"
 
@@ -2467,48 +2299,39 @@ msgstr "Unikt ID"
 #: src/options/options.js:51 src/options/options.js:65
 #: src/options/options.js:77 src/pages/library/errors.vue:168
 #: src/pages/library/errors.vue:175 src/pages/library/logs.vue:16
-#, fuzzy
 msgid "Unknown"
 msgstr "Okänd"
 
 #: src/app/routes.js:167 src/component/navigation.vue:184
-#, fuzzy
 msgid "Unsorted"
 msgstr "Osorterad"
 
 #: src/dialog/photo/files.vue:38 src/dialog/photo/files.vue:35
-#, fuzzy
 msgid "Unstack"
 msgstr "Avstapla"
 
 #: src/dialog/photo/files.vue:198 src/dialog/photo/files.vue:195
 #: src/dialog/photo/info.vue:175
-#, fuzzy
 msgid "Updated"
 msgstr "Uppdaterad"
 
 #: src/pages/library/index.vue:151
-#, fuzzy
 msgid "Updating faces"
 msgstr "Uppdatering av ansikten"
 
 #: src/pages/library/index.vue:155
-#, fuzzy
 msgid "Updating index"
 msgstr "Uppdatering av index"
 
 #: src/pages/library/index.vue:149
-#, fuzzy
 msgid "Updating moments"
 msgstr "Uppdatering av ögonblick"
 
 #: src/pages/library/index.vue:153
-#, fuzzy
 msgid "Updating previews"
 msgstr "Uppdatering av förhandsgranskningar"
 
 #: src/pages/library/index.vue:147
-#, fuzzy
 msgid "Updating stacks"
 msgstr "Uppdatering av staplar"
 
@@ -2517,79 +2340,64 @@ msgstr "Uppdatering av staplar"
 #: src/dialog/upload.vue:54 src/pages/albums.vue:159
 #: src/pages/library/import.vue:38 src/pages/settings/general.vue:140
 #: src/pages/settings/sync.vue:27
-#, fuzzy
 msgid "Upload"
 msgstr "Ladda upp"
 
 #: src/dialog/upload.vue:159
-#, fuzzy
 msgid "Upload complete"
-msgstr "Ladda upp komplett"
+msgstr "Uppladdningen är klar"
 
 #: src/dialog/upload.vue:38
-#, fuzzy
 msgid "Upload complete. Indexing…"
-msgstr "Uppladdningen är klar. Indexering…"
+msgstr "Uppladdningen är klar. Indexerar…"
 
 #: src/dialog/upload.vue:34
-#, fuzzy
 msgid "Upload failed"
-msgstr "Uppladdning misslyckades"
+msgstr "Uppladdningen misslyckades"
 
 #: src/dialog/account/edit.vue:359
-#, fuzzy
 msgid "Upload local files"
 msgstr "Ladda upp lokala filer"
 
 #: src/pages/settings/general.vue:251
-#, fuzzy
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Ladda upp till WebDAV och dela länkar med vänner."
 
 #: src/dialog/upload.vue:36
-#, fuzzy
 msgid "Uploading %{n} of %{t}…"
-msgstr "Uppladdning av %{n} av %{t}…"
+msgstr "Laddar upp %{n} av %{t}…"
 
 #: src/dialog/upload.vue:59 src/dialog/upload.vue:67 src/dialog/upload.vue:112
-#, fuzzy
 msgid "Uploading photos…"
-msgstr "Uppladdning av foton…"
+msgstr "Laddar upp foton…"
 
 #: src/dialog/upload.vue:46
-#, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 "Uppladdningar som kan innehålla sådana bilder kommer automatiskt att avvisas."
 
 #: src/dialog/share.vue:165
-#, fuzzy
 msgid "URL"
 msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "Använd förinställningar"
 
 #: src/model/user.js:117
-#, fuzzy
 msgid "User"
 msgstr "Användare"
 
 #: src/pages/settings/general.vue:6
-#, fuzzy
 msgid "User Interface"
 msgstr "Användargränssnitt"
 
 #: src/dialog/account/add.vue:84 src/dialog/account/edit.vue:438
 #: src/dialog/share.vue:23
-#, fuzzy
 msgid "Username"
 msgstr "Användarnamn"
 
 #: src/options/options.js:224
-#, fuzzy
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2599,26 +2407,22 @@ msgstr "Vanta"
 #: src/options/options.js:343 src/share/photo/cards.vue:211
 #: src/share/photo/cards.vue:363 src/share/photo/list.vue:186
 #: src/share/photo/mosaic.vue:192
-#, fuzzy
 msgid "Video"
 msgstr "Video"
 
 #: src/app/routes.js:188 src/component/navigation.vue:197
 #: src/component/navigation.vue:207 src/component/navigation.vue:4
 #: src/component/navigation.vue:850
-#, fuzzy
 msgid "Videos"
 msgstr "Videor"
 
 #: src/component/photo/cards.vue:265 src/component/photo/mosaic.vue:239
 #: src/component/photo/toolbar.vue:232 src/share/photo/cards.vue:238
 #: src/share/photo/mosaic.vue:220
-#, fuzzy
 msgid "View"
 msgstr "Visa"
 
 #: src/pages/about/about.vue:56
-#, fuzzy
 msgid ""
 "We'll do our best to answer all your questions. In return, we ask you to "
 "back us on Patreon or GitHub Sponsors."
@@ -2627,7 +2431,6 @@ msgstr ""
 "stödja oss på Patreon eller GitHub Sponsors."
 
 #: src/dialog/sponsor.vue:18
-#, fuzzy
 msgid ""
 "We'll let you know how to enable it when you sign up on Patreon or GitHub "
 "Sponsors."
@@ -2636,12 +2439,10 @@ msgstr ""
 "GitHub Sponsors."
 
 #: src/dialog/webdav.vue:8
-#, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV-klienter kan ansluta till PhotoPrism via följande URL:"
 
 #: src/pages/settings/sync.vue:36
-#, fuzzy
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
 "connect directly to PhotoPrism."
@@ -2650,27 +2451,22 @@ msgstr ""
 "ansluta direkt till PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
-#, fuzzy
 msgid "WebDAV Upload"
 msgstr "WebDAV-uppladdning"
 
 #: src/options/options.js:429
-#, fuzzy
 msgid "White"
 msgstr "Vit"
 
 #: src/component/photo/toolbar.vue:274 src/dialog/photo/details.vue:166
-#, fuzzy
 msgid "Year"
 msgstr "År"
 
 #: src/options/options.js:422
-#, fuzzy
 msgid "Yellow"
 msgstr "Gul"
 
 #: src/options/options.js:274
-#, fuzzy
 msgid "Yellowstone"
 msgstr "Yellowstone"
 
@@ -2682,48 +2478,40 @@ msgstr "Yellowstone"
 #: src/dialog/photo/files.vue:181 src/dialog/photo/info.vue:287
 #: src/dialog/photo/info.vue:308 src/dialog/photo/info.vue:328
 #: src/dialog/photo/info.vue:348 src/dialog/photo/info.vue:368
-#, fuzzy
 msgid "Yes"
 msgstr "Ja"
 
 #: src/pages/about/about.vue:47
-#, fuzzy
 msgid "you are welcome to join us on Reddit"
-msgstr "Du är välkommen att ansluta dig till oss på Reddit."
+msgstr "du är välkommen att hänga med oss på Reddit"
 
 #: src/component/album/clipboard.vue:82 src/component/subject/clipboard.vue:42
 #: src/share/album/clipboard.vue:36
-#, fuzzy
 msgid "You can only download one album"
 msgstr "Du kan bara ladda ner ett album"
 
 #: src/component/label/clipboard.vue:50
-#, fuzzy
 msgid "You can only download one label"
 msgstr "Du kan bara ladda ner en etikett"
 
 #: src/component/album/clipboard.vue:35 src/component/album/clipboard.vue:48
-#, fuzzy
 msgid "You may only select one item"
-msgstr "Du får bara välja en artikel."
+msgstr "Du kan bara välja ett objekt"
 
 #: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:33
 #: src/pages/people/subjects.vue:37
-#, fuzzy
 msgid "You may rescan your library to find additional faces."
 msgstr "Du kan söka igenom ditt bibliotek på nytt för att hitta fler ansikten."
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
-#, fuzzy
 msgid ""
 "Your continued support helps us provide regular updates and services like "
 "world maps."
 msgstr ""
 "Ditt fortsatta stöd hjälper oss att tillhandahålla regelbundna uppdateringar "
-"och tjänster som t.ex. världskartor."
+"och tjänster som t ex världskartor."
 
 #: src/pages/albums.vue:43 src/pages/albums.vue:1
-#, fuzzy
 msgid ""
 "Your library is continuously analyzed to automatically create albums of "
 "special moments, trips, and places."
@@ -2732,12 +2520,10 @@ msgstr ""
 "speciella ögonblick, resor och platser."
 
 #: src/pages/about/feedback.vue:4
-#, fuzzy
 msgid "Your message has been sent"
 msgstr "Ditt meddelande har skickats"
 
 #: src/component/photo-viewer.vue:178
-#, fuzzy
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
 

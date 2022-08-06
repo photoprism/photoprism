@@ -18,6 +18,13 @@ const (
 
 func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
 	f := form.SearchPhotos{UID: uid, Merged: true}
+
+	if err := f.ParseQueryString(); err != nil {
+		log.Errorf("publish: %s", err)
+		AbortBadRequest(c)
+		return
+	}
+
 	result, _, err := search.Photos(f)
 
 	if err != nil {

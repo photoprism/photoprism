@@ -55,7 +55,7 @@ func GetAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -144,7 +144,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -200,7 +200,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -253,7 +253,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -291,7 +291,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -325,7 +325,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -391,7 +391,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -451,7 +451,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 

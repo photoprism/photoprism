@@ -14,6 +14,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "2790/07/27900704_070228_D6D51B6C.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -26,6 +31,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "1990*"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -40,6 +50,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "1990*|2790/07/27900704_070228_D6D51B6C.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -52,6 +67,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "1990* | 2790/07/27900704_070228_D6D51B6C.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -66,6 +86,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "1990* or 2790/07/27900704_070228_D6D51B6C.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -78,6 +103,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "*photo29%.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -92,6 +122,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "*photo%30.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -104,6 +139,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "*photo29%.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -119,6 +159,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "*&photo31.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -132,6 +177,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "*photo&32.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -147,6 +197,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "*photo33&.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -160,6 +215,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "'2020/'vacation/'photo34.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -175,6 +235,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "20'20/vacat'ion/photo'35.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -188,6 +253,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "2020'/vacation'/photo36'.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -203,6 +273,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "*2020/*vacation/*photo37.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -216,6 +291,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "202*3/vac*ation/photo*38.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -231,6 +311,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "2023*/vacatio*/photo39*.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -245,6 +330,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "*photo40*"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -258,6 +348,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "*photo*41*"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, count, err := Photos(f)
 
@@ -278,6 +373,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "*photo42*"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -291,6 +391,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "|202/|vacation/|photo40.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -306,6 +411,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "20|22/vacat|ion/photo|41.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -319,6 +429,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "2022|/vacation|/photo42|.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -334,6 +449,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "2000/holiday/43photo.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -346,6 +466,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "2000/02/pho44to.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -361,6 +486,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "2000/02/photo45.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -374,6 +504,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "\"2000/\"02/\"photo46.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -389,6 +524,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "20\"00/0\"2/photo\"47.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -402,6 +542,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "2000\"/02\"/photo48\".jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -417,6 +562,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = " 2000/ 02/ photo49.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -429,6 +579,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "20 00/ 0 2/photo 50.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -444,6 +599,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "2000 /02 /photo51 .jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -458,6 +618,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "*%photo28.jpg | *photo'35.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -470,6 +635,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "*photo*38.jpg | *photo'35.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -484,6 +654,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 		f.Filename = "*photo|41.jpg | *&photo31.jpg"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -496,6 +671,11 @@ func TestPhotosFilterFilename(t *testing.T) {
 
 		f.Filename = "London/bridge1.jpg  | 1990/04/bridge2.jpg"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -513,6 +693,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"2790/07/27900704_070228_D6D51B6C.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -525,6 +710,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"1990*\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -539,6 +729,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"1990*|2790/07/27900704_070228_D6D51B6C.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -551,6 +746,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"1990* | 2790/07/27900704_070228_D6D51B6C.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -565,6 +765,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*photo29%.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -578,6 +783,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*photo%30.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -590,6 +800,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"*photo29%.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -605,6 +820,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*&photo31.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -618,6 +838,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"*photo&32.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -633,6 +858,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*photo33&.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -646,6 +876,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"'2020/'vacation/'photo34.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -661,6 +896,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"20'20/vacat'ion/photo'35.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -674,6 +914,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"2020'/vacation'/photo36'.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -689,6 +934,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*2020/*vacation/*photo37.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -702,6 +952,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"202*3/vac*ation/photo*38.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -717,6 +972,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"2023*/vacatio*/photo39*.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -731,6 +991,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*photo40*\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -744,6 +1009,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"*photo*41*\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, count, err := Photos(f)
 
@@ -764,6 +1034,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*photo42*\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -777,6 +1052,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"|202/|vacation/|photo40.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -792,6 +1072,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"20|22/vacat|ion/photo|41.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -805,6 +1090,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"2022|/vacation|/photo42|.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -820,6 +1110,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"2000/holiday/43photo.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -832,6 +1127,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"2000/02/pho44to.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -847,6 +1147,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"2000/02/photo45.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -860,6 +1165,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"\"2000/\"02/\"photo46.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -876,6 +1186,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"20\"00/0\"2/photo\"47.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -890,6 +1205,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"2000\"/02\"/photo48\".jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -906,6 +1226,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\" 2000/ 02/ photo49.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -918,6 +1243,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"20 00/ 0 2/photo 50.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -933,6 +1263,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"2000 /02 /photo51 .jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -947,6 +1282,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*%photo28.jpg | *photo'35.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -960,6 +1300,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 		f.Query = "filename:\"*photo*38.jpg | *photo'35.jpg\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -972,6 +1317,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"*photo|41.jpg | *&photo31.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -987,6 +1337,11 @@ func TestPhotosQueryFilename(t *testing.T) {
 
 		f.Query = "filename:\"London/bridge1.jpg  | 1990/04/bridge2.jpg\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

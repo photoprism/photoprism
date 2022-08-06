@@ -82,9 +82,30 @@ func Unserialize(f SearchForm, q string) (result error) {
 	var key, value []rune
 	var escaped, isKeyValue bool
 
-	f.SetQuery("")
+	v := reflect.ValueOf(f)
 
-	formValues := reflect.ValueOf(f).Elem()
+	formValues := v.Elem()
+
+	n := formValues.NumField()
+
+	fieldNames := make(map[string]string, n)
+
+	// Iterate through all form fields.
+	for i := 0; i < formValues.NumField(); i++ {
+		fieldName := formValues.Type().Field(i).Name
+		formName := strings.ToLower(formValues.Type().Field(i).Tag.Get("form"))
+		formSerialize := strings.ToLower(formValues.Type().Field(i).Tag.Get("serialize"))
+
+		if fieldName == "" || formSerialize == "-" {
+			continue
+		} else if formName == "" {
+			formName = strings.ToLower(fieldName)
+		}
+
+		fieldNames[formName] = fieldName
+	}
+
+	f.SetQuery("")
 
 	q = strings.TrimSpace(q) + "\n"
 
@@ -93,13 +114,16 @@ func Unserialize(f SearchForm, q string) (result error) {
 	for _, char := range q {
 		if unicode.IsSpace(char) && !escaped {
 			if isKeyValue {
-				fieldName := txt.UpperFirst(string(key))
+				formName := strings.ToLower(string(key))
+				fieldName := fieldNames[formName]
+
 				field := formValues.FieldByNameFunc(func(name string) bool {
 					return strings.EqualFold(name, fieldName)
 				})
+
 				stringValue := string(value)
 
-				if field.CanSet() {
+				if fieldName != "" && field.CanSet() {
 					switch field.Interface().(type) {
 					case time.Time:
 						if timeValue, err := dateparse.ParseAny(stringValue); err != nil {
@@ -130,10 +154,10 @@ func Unserialize(f SearchForm, q string) (result error) {
 					case bool:
 						field.SetBool(txt.Bool(stringValue))
 					default:
-						result = fmt.Errorf("unsupported type: %s", fieldName)
+						result = fmt.Errorf("unsupported type: %s", formName)
 					}
 				} else {
-					result = fmt.Errorf("unknown filter: %s", fieldName)
+					result = fmt.Errorf("unknown filter: %s", formName)
 				}
 			} else if len(strings.TrimSpace(string(key))) > 0 {
 				queryStrings = append(queryStrings, strings.TrimSpace(string(key)))

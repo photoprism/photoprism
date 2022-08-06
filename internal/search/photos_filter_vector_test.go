@@ -13,6 +13,11 @@ func TestPhotosQueryVector(t *testing.T) {
 	f0.Query = "vector:true"
 	f0.Merged = true
 
+	// Parse query string and filter.
+	if err := f0.ParseQueryString(); err != nil {
+		t.Fatal(err)
+	}
+
 	photos0, _, err := Photos(f0)
 
 	if err != nil {
@@ -25,6 +30,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:yes"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -39,6 +49,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:yes"
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -47,6 +62,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		assert.Equal(t, len(photos), len(photos0))
 		f.Query = "vector:false"
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -61,6 +81,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"%gold\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -73,6 +98,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"I love % dog\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -87,6 +117,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"sale%\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -99,6 +134,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"&IlikeFood\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -114,6 +154,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Pets & Dogs\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -126,6 +171,16 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"Light&\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -141,6 +196,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"'Family\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -153,6 +213,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"Mother's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -168,6 +233,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Ice Cream'\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -181,6 +251,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"*Forrest\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -196,6 +271,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"My*Kids\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -209,6 +289,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"Yoga***\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -224,6 +309,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"|Banana\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -237,6 +327,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"Red|Green\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -252,6 +347,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Blue|\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -265,6 +365,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"345 Shirt\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -280,6 +385,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Color555 Blue\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -293,6 +403,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"Route 66\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 
@@ -308,6 +423,11 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Route 66 & Father's Day\""
 		f.Merged = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -321,6 +441,11 @@ func TestPhotosQueryVector(t *testing.T) {
 
 		f.Query = "vector:\"Route %66 | *Father's Day\""
 		f.Merged = true
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		photos, _, err := Photos(f)
 

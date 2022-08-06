@@ -8,19 +8,23 @@ import (
 
 func TestAlbumByUID(t *testing.T) {
 	t.Run("existing uid", func(t *testing.T) {
-		album, err := AlbumByUID("at9lxuqxpogaaba7")
-
-		if err != nil {
+		if album, err := AlbumByUID("at9lxuqxpogaaba7"); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.Equal(t, "Christmas 2030", album.AlbumTitle)
 		}
 
-		assert.Equal(t, "Christmas 2030", album.AlbumTitle)
+		if cached, err := AlbumByUID("at9lxuqxpogaaba7"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, "Christmas 2030", cached.AlbumTitle)
+		}
 	})
 
 	t.Run("not existing uid", func(t *testing.T) {
 		album, err := AlbumByUID("3765")
+		assert.NotNil(t, album)
 		assert.Error(t, err, "record not found")
-		t.Log(album)
 	})
 }
 

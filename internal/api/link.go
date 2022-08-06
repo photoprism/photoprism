@@ -136,7 +136,7 @@ func CreateLink(c *gin.Context) {
 func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
 		if _, err := query.AlbumByUID(clean.IdString(c.Param("uid"))); err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -164,7 +164,7 @@ func GetAlbumLinks(router *gin.RouterGroup) {
 		m, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -204,7 +204,7 @@ func GetPhotoLinks(router *gin.RouterGroup) {
 		m, err := query.PhotoByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -244,7 +244,7 @@ func GetLabelLinks(router *gin.RouterGroup) {
 		m, err := query.LabelByUID(clean.IdString(c.Param("uid")))
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 

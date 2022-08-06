@@ -18,21 +18,21 @@ func Albums(offset, limit int) (results entity.Albums, err error) {
 
 // AlbumByUID returns a Album based on the UID.
 func AlbumByUID(albumUID string) (album entity.Album, err error) {
-	if err := Db().Where("album_uid = ?", albumUID).First(&album).Error; err != nil {
-		return album, err
-	}
-
-	return album, nil
+	return entity.CachedAlbumByUID(albumUID)
 }
 
 // AlbumCoverByUID returns an album cover file based on the uid.
 func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	a := entity.Album{}
 
-	if err := UnscopedDb().Where("album_uid = ?", uid).First(&a).Error; err != nil {
+	if a, err = AlbumByUID(uid); err != nil {
 		return file, err
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
 		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
+
+		if err = f.ParseQueryString(); err != nil {
+			return file, err
+		}
 
 		if photos, _, err := search.Photos(f); err != nil {
 			return file, err
@@ -111,7 +111,7 @@ func AlbumEntryFound(uid string) error {
 	}
 }
 
-// AlbumsPhotoUIDs returns up to 10000 photo UIDs that belong to the specified albums.
+// AlbumsPhotoUIDs returns up to 100000 photo UIDs that belong to the specified albums.
 func AlbumsPhotoUIDs(albums []string, includeDefault, includePrivate bool) (photos []string, err error) {
 	for _, albumUid := range albums {
 		a, err := AlbumByUID(albumUid)
@@ -128,12 +128,16 @@ func AlbumsPhotoUIDs(albums []string, includeDefault, includePrivate bool) (phot
 		frm := form.SearchPhotos{
 			Album:    a.AlbumUID,
 			Filter:   a.AlbumFilter,
-			Count:    10000,
+			Count:    100000,
 			Offset:   0,
 			Public:   !includePrivate,
 			Hidden:   false,
 			Archived: false,
 			Quality:  1,
+		}
+
+		if err := frm.ParseQueryString(); err != nil {
+			return photos, err
 		}
 
 		res, count, err := search.PhotoIds(frm)

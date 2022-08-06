@@ -16,6 +16,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -25,6 +30,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -42,6 +52,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -51,6 +66,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet*"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -68,6 +88,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -77,6 +102,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet*|Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -95,6 +125,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -104,6 +139,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet* | Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -121,6 +161,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -130,6 +175,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet* or Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -147,6 +197,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -156,6 +211,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet* OR Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -174,6 +234,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -183,6 +248,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet*&Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -200,6 +270,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -209,6 +284,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet* & Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -226,6 +306,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -235,6 +320,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet* and Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -252,6 +342,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -261,6 +356,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pet* AND Berlin 2019"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -278,6 +378,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -288,6 +393,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "%gold"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -304,6 +414,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -314,6 +429,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "I love % dog"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -330,6 +450,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -339,6 +464,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "sale%"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -356,6 +486,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -366,6 +501,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "&IlikeFood"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -382,6 +522,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -392,6 +537,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Pets & Dogs"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -408,6 +558,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -417,6 +572,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Light&"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -434,6 +594,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -444,6 +609,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "'Family"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -460,6 +630,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -469,6 +644,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Father's Day"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -486,6 +666,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -495,6 +680,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Ice Cream'"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -512,6 +702,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -522,6 +717,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "*Forrest"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -538,6 +738,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -547,6 +752,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "My*Kids"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -564,6 +774,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -573,6 +788,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Yoga***"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -590,6 +810,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -600,6 +825,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "|Banana"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -616,6 +846,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, count, err := Photos(f)
 
 		if err != nil {
@@ -630,6 +865,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Red|Green"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -647,6 +887,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -656,6 +901,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Blue|"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -673,6 +923,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -682,6 +937,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "345 Shirt"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -699,6 +959,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -708,6 +973,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Color555 Blue"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -725,6 +995,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -734,6 +1009,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Route 66"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -751,6 +1031,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -760,6 +1045,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Route 66 & Father's Day"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -777,6 +1067,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -786,6 +1081,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Route 66 | Father's Day"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -803,6 +1103,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -812,6 +1117,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Red|Green & Father's Day"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -829,6 +1139,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -838,6 +1153,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Red|Green | Father's Day"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -855,6 +1175,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -864,6 +1189,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Light& & Red|Green"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -881,6 +1211,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -890,6 +1225,11 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Albums = "Red|Green | Light&"
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -910,6 +1250,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -919,6 +1264,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -937,6 +1287,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -945,6 +1300,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet*\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -962,6 +1322,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -970,6 +1335,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet*|Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -987,6 +1357,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -995,6 +1370,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet* | Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1012,6 +1392,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1020,6 +1405,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet* or Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1037,6 +1427,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1045,6 +1440,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet* OR Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1062,6 +1462,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1070,6 +1475,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet*&Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1087,6 +1497,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1095,6 +1510,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet* & Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1112,6 +1532,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1120,6 +1545,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet* and Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1137,6 +1567,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1145,6 +1580,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pet* AND Berlin 2019\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1162,6 +1602,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1170,6 +1615,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"%gold\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1186,6 +1636,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1194,6 +1649,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"I love % dog\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1210,6 +1670,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1218,6 +1683,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"sale%\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1235,6 +1705,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1243,6 +1718,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"&IlikeFood\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1259,6 +1739,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1267,6 +1752,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Pets & Dogs\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1283,6 +1773,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1291,6 +1786,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Light&\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1308,6 +1808,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1316,6 +1821,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"'Family\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1332,6 +1842,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1341,6 +1856,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Father's Day\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1358,6 +1878,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1366,6 +1891,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Ice Cream'\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1383,6 +1913,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1391,6 +1926,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"*Forrest\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1407,6 +1947,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1415,6 +1960,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"My*Kids\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1432,6 +1982,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1440,6 +1995,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Yoga***\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1457,6 +2017,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1465,6 +2030,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"|Banana\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1481,6 +2051,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, count, err := Photos(f)
 
 		if err != nil {
@@ -1495,6 +2070,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Red|Green\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1512,6 +2092,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1520,6 +2105,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Blue|\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1537,6 +2127,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1545,6 +2140,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"345 Shirt\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1562,6 +2162,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1570,6 +2175,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Color555 Blue\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1587,6 +2197,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1595,6 +2210,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Route 66\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1612,6 +2232,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1620,6 +2245,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Route 66 & Father's Day\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1637,6 +2267,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1645,6 +2280,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Route 66 | Father's Day\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1662,6 +2302,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1670,6 +2315,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Red|Green & Father's Day\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1687,6 +2337,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1695,6 +2350,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Red|Green | Father's Day\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1712,6 +2372,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1720,6 +2385,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Light& & Red|Green\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 
@@ -1737,6 +2407,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1745,6 +2420,11 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "albums:\"Red|Green | Light&\""
+
+		// Parse query string and filter.
+		if err = geo.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
 
 		geophotos, err2 := PhotosGeo(geo)
 

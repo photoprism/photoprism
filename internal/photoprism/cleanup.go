@@ -44,6 +44,13 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 		}
 	}()
 
+	originalsPath := w.conf.OriginalsPath()
+
+	// Check if originals folder is empty.
+	if fs.DirIsEmpty(originalsPath) {
+		return thumbs, orphans, sidecars, err
+	}
+
 	if err = mutex.MainWorker.Start(); err != nil {
 		log.Warnf("cleanup: %s (start)", err)
 		return thumbs, orphans, sidecars, err

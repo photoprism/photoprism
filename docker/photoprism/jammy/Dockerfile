@@ -77,7 +77,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_IMPORT=300
 
 # copy dist files and scripts
-COPY --from=build /opt/photoprism/ /opt/photoprism
+COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 
 # install additional distribution packages
@@ -87,8 +87,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu && \
-    chown root:root /usr/local/sbin/gosu && \
-    chmod 755 /usr/local/sbin/gosu && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       ca-certificates \
       jq \
