@@ -428,17 +428,27 @@ export default {
           layers: ['clusters']
         });
         const clusterId = features[0].properties.cluster_id;
-        this.map.getSource('photos').getClusterExpansionZoom(
-          clusterId,
-          (err, zoom) => {
-            if (err) return;
+        this.map.getSource('photos').getClusterLeaves(clusterId, -1, undefined, (error, clusterFeatures) => {
 
-            this.map.easeTo({
-              center: features[0].geometry.coordinates,
-              zoom: zoom
-            });
+          let latMin,latMax,lngMin,lngMax;
+          for (const feature of clusterFeatures) {
+            const [lng,lat] = feature.geometry.coordinates;
+            if (latMin === undefined || lat < latMin) {
+              latMin = lat;
+            }
+            if (latMax === undefined || lat > latMax) {
+              latMax = lat;
+            }
+            if (lngMin === undefined || lng < lngMin) {
+              lngMin = lng;
+            }
+            if (lngMax === undefined || lng > lngMax) {
+              lngMax = lng;
+            }
           }
-        );
+
+          this.$router.push({name: 'all', query: {q: `latmin:${latMin} latmax:${latMax} lngmin:${lngMin} lngmax:${lngMax}`}, props:{staticFilter: { quality: "3" }}}).catch(() => {});
+        });
       });
 
       this.map.on('mouseenter', 'clusters', () => {
