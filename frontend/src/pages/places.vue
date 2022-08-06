@@ -18,6 +18,11 @@
         </div>
       </div>
     </div>
+    <v-dialog v-model="showPictures" overflowed>
+      <v-card>
+        <p-page-photos v-if="showPictures" :static-filter="selectedClusterBounds"></p-page-photos>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -25,9 +30,13 @@
 import maplibregl from "maplibre-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";
+import PPagePhotos from 'pages/photos.vue';
 
 export default {
   name: 'PPagePlaces',
+  components: {
+    PPagePhotos,
+  },
   props: {
     staticFilter: {
       type: Object,
@@ -52,6 +61,8 @@ export default {
       lastFilter: {},
       config: this.$config.values,
       settings: this.$config.values.settings.maps,
+      selectedClusterBounds: undefined,
+      showPictures: false,
     };
   },
   watch: {
@@ -63,7 +74,9 @@ export default {
     }
   },
   mounted() {
-    this.$scrollbar.hide();
+    // TODO: this scrollbar hiding breaks `loadMore` in photo-view.
+    // fix it (maybe by triggering Scrollbars hideDefault?)
+    // this.$scrollbar.hide();
     this.configureMap().then(() => this.renderMap());
   },
   destroyed() {
@@ -447,7 +460,13 @@ export default {
             }
           }
 
-          this.$router.push({name: 'all', query: {q: `latmin:${latMin} latmax:${latMax} lngmin:${lngMin} lngmax:${lngMax}`}, props:{staticFilter: { quality: "3" }}}).catch(() => {});
+          this.selectedClusterBounds = {
+            latmin: latMin,
+            latmax: latMax,
+            lngmin: lngMin,
+            lngmax: lngMax,
+          };
+          this.showPictures = true;
         });
       });
 
