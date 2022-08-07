@@ -1,0 +1,23 @@
+[Unit]
+Description=Podman pod-photoprism.service
+Documentation=man:podman-generate-systemd(1)
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=
+Requires=container-mariadb.service container-webserver.service
+Before=container-mariadb.service container-webserver.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=on-failure
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/pod-photoprism.pid %t/pod-photoprism.pod-id
+ExecStartPre=/usr/bin/podman pod create --infra-conmon-pidfile %t/pod-photoprism.pid --pod-id-file %t/pod-photoprism.pod-id --name photoprism -p 2342:2342 --replace
+ExecStart=/usr/bin/podman pod start --pod-id-file %t/pod-photoprism.pod-id
+ExecStop=/usr/bin/podman pod stop --ignore --pod-id-file %t/pod-photoprism.pod-id -t 10
+ExecStopPost=/usr/bin/podman pod rm --ignore -f --pod-id-file %t/pod-photoprism.pod-id
+PIDFile=%t/pod-photoprism.pid
+Type=forking
+
+[Install]
+WantedBy=default.target
