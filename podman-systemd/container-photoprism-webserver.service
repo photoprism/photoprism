@@ -1,14 +1,16 @@
 [Unit]
-Description=Podman container-mariadb.service
+Description=Podman container-photoprism-webserver.service
 Documentation=man:podman-generate-systemd(1)
 Wants=network-online.target
 After=network-online.target
 RequiresMountsFor=%t/containers
 BindsTo=pod-photoprism.service
-After=pod-photoprism.service
+After=pod-photoprism.service container-photoprism-database.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
+EnvironmentFile=%h/.config/systemd/user/volumes-photoprism-default.env
+EnvironmentFile=-%h/.config/systemd/user/volumes-photoprism-user.env
 Restart=on-failure
 TimeoutStopSec=70
 ExecStartPre=/bin/rm -f %t/%n.ctr-id
@@ -20,19 +22,15 @@ ExecStart=/usr/bin/podman run \
         --sdnotify=conmon \
         --replace \
         -d \
-        --name mariadb \
+        --name photoprism-webserver \
         --label io.containers.autoupdate=image \
-        -v /home/photoprism/database/:/var/lib/mysql:Z \
-	--env-file=%h/.config/systemd/user/container-mariadb-default.env
-	--env-file=%h/.config/systemd/user/container-mariadb-user.env
-	 docker.io/mariadb:10.8 \
-        --innodb-buffer-pool-size=128M \
-        --transaction-isolation=READ-COMMITTED \
-        --character-set-server=utf8mb4 \
-        --collation-server=utf8mb4_unicode_ci \
-        --max-connections=512 \
-        --innodb-rollback-on-timeout=OFF \
-        --innodb-lock-wait-timeout=120
+        --device=/dev/dri:/dev/dri \
+        -v $ORIGINALS:/photoprism/originals:Z \
+        -v $IMPORT:/photoprism/import:Z \
+        -v $STORAGE:/photoprism/storage:Z \
+	--env-file=%h/.config/systemd/user/container-photoprism-webserver-default.env
+	--env-file=%h/.config/systemd/user/container-photoprism-webserver-user.env
+	docker.io/photoprism/photoprism:latest
 ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
 ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
 Type=notify

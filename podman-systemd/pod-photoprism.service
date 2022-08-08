@@ -4,8 +4,8 @@ Documentation=man:podman-generate-systemd(1)
 Wants=network-online.target
 After=network-online.target
 RequiresMountsFor=
-Requires=container-mariadb.service container-webserver.service
-Before=container-mariadb.service container-webserver.service
+Requires=container-photoprism-database.service container-photoprism-webserver.service
+Before=container-photoprism-database.service container-photoprism-webserver.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n

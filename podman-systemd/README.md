@@ -78,37 +78,37 @@ All relevant files are located in `podman-systemd`
 #### creating your config files
 
 ```shell
-cp podman-systemd/container-mariadb-user.template podman-systemd/container-mariadb-user.env
-cp podman-systemd/container-webserver-user.template podman-systemd/container-webserver-user.env
+cp podman-systemd/container-photoprism-database-user.template podman-systemd/container-photoprism-database-user.env
+cp podman-systemd/container-photoprism-webserver-user.template podman-systemd/container-photoprism-webserver-user.env
 ```
 
 #### database
 
 By default, a **schema** called *photoprism* as well as a **user** called *photoprism* are created in the database (the DBMS **mariadb**). The user's default password is *insecure*.
 
-You can change this by editing the two files `container-mariadb-user.env` and `container-webserver-user.env`:
+You can change this by editing the two files `container-photoprism-database-user.env` and `container-photoprism-webserver-user.env`:
 
 - schema
-  - MARIADB_DATABASE=**photoprism** in `container-mariadb-user.env`
-  - PHOTOPRISM_DATABASE_NAME=**photoprism** in `container-webserver-user.env`
+  - MARIADB_DATABASE=**photoprism** in `container-photoprism-database-user.env`
+  - PHOTOPRISM_DATABASE_NAME=**photoprism** in `container-photoprism-webserver-user.env`
 - user
-  - MARIADB_USER=**photoprism** in `container-mariadb-user.env`
-  - PHOTOPRISM_DATABASE_USER=**photoprism** in `ccontainer-webserver-user.env`
+  - MARIADB_USER=**photoprism** in `container-photoprism-database-user.env`
+  - PHOTOPRISM_DATABASE_USER=**photoprism** in `ccontainer-photoprism-webserver-user.env`
 - schema
-  - MARIADB_PASSWORD=**insecure** in `container-mariadb-user.env`
-  - PHOTOPRISM_DATABASE_PASSWORD=**insecure** in `container-webserver-user.env`
+  - MARIADB_PASSWORD=**insecure** in `container-photoprism-database-user.env`
+  - PHOTOPRISM_DATABASE_PASSWORD=**insecure** in `container-photoprism-webserver-user.env`
 
 #### local storage / volumes (optional)
 
 In case you decided to persist your data in non-standard directories, you would need to create a new `.env`file and adjust it accordingly:
 
 ```shell
-cp podman-systemd/volumes-user.template podman-systemd/volumes-user.env
+cp podman-systemd/volumes-photoprism-user.template podman-systemd/volumes-photoprism-user.env
 ```
 
 #### initial admin password for photoprism
 
-You might want to change the admin password in `container-webserver-user.env`:
+You might want to change the admin password in `container-photoprism-webserver-user.env`:
 
 - PHOTOPRISM_ADMIN_PASSWORD="**please-change-me**"
 
@@ -137,7 +137,7 @@ Now we can start the pod and both containers
 systemctl --user enable --now pod-photoprism.service
 ```
 
-let's try to access the the webserver on the command line
+let's try to access the webserver on the command line
 
 ```shell
 curl http://localhost:2342
