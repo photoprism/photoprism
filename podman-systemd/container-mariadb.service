@@ -23,10 +23,8 @@ ExecStart=/usr/bin/podman run \
         --name mariadb \
         --label io.containers.autoupdate=image \
         -v /home/photoprism/database/:/var/lib/mysql:Z \
-        -e MARIADB_DATABASE=photoprism \
-        -e MARIADB_USER=photoprism \
-        -e MARIADB_PASSWORD=insecure \
-        -e MARIADB_RANDOM_ROOT_PASSWORD=true \
+	--env-file=%h/.config/systemd/user/container-mariadb-default.env
+	--env-file=%h/.config/systemd/user/container-mariadb-user.env
 	 docker.io/mariadb:10.8 \
         --innodb-buffer-pool-size=128M \
         --transaction-isolation=READ-COMMITTED \

@@ -35,7 +35,9 @@ su photoprism
 
 ### preparations
 
-You are going to need 4 directories, 1 for the database container (`database`) and 3 for the webserver container (`originals`, `import`, `storage`)
+You are going to need 4 directories, 1 for the database container (`database`) and 3 for the webserver container (`originals`, `import`, `storage`).
+
+(In case you want to create any of these directories elsewhere or want to name them differently, you'll have to adjust the config; detailed instructions below below)
 
 ```shell
 mkdir ~/{database,originals,import,storage}
@@ -73,37 +75,40 @@ cd photoprism
 
 All relevant files are located in `podman-systemd`
 
+#### creating your config files
+
+```shell
+cp podman-systemd/container-mariadb-user.template podman-systemd/container-mariadb-user.env
+cp podman-systemd/container-webserver-user.template podman-systemd/container-webserver-user.env
+```
+
 #### database
 
 By default, a **schema** called *photoprism* as well as a **user** called *photoprism* are created in the database (the DBMS **mariadb**). The user's default password is *insecure*.
 
-You can change this by editing the two files `container-mariadb.service` and `container-webserver.service`:
+You can change this by editing the two files `container-mariadb-user.env` and `container-webserver-user.env`:
 
 - schema
-  - MARIADB_DATABASE=**photoprism** in `container-mariadb.service`
-  - PHOTOPRISM_DATABASE_NAME=**photoprism** in `container-webserver.service`
+  - MARIADB_DATABASE=**photoprism** in `container-mariadb-user.env`
+  - PHOTOPRISM_DATABASE_NAME=**photoprism** in `container-webserver-user.env`
 - user
-  - MARIADB_USER=**photoprism** in `container-mariadb.service`
-  - PHOTOPRISM_DATABASE_USER=**photoprism** in `container-webserver.service`
+  - MARIADB_USER=**photoprism** in `container-mariadb-user.env`
+  - PHOTOPRISM_DATABASE_USER=**photoprism** in `ccontainer-webserver-user.env`
 - schema
-  - MARIADB_PASSWORD=**insecure** in `container-mariadb.service`
-  - PHOTOPRISM_DATABASE_PASSWORD=**insecure** in `container-webserver.service`
+  - MARIADB_PASSWORD=**insecure** in `container-mariadb-user.env`
+  - PHOTOPRISM_DATABASE_PASSWORD=**insecure** in `container-webserver-user.env`
 
-#### local storage / volumes
+#### local storage / volumes (optional)
 
-The 4 directories you created are being referenced in the following places:
+In case you decided to persist your data in non-standard directories, you would need to create a new `.env`file and adjust it accordingly:
 
-- database
-  - **~/database/**:/var/lib/mysql:Z in `container-mariadb.service`
-- originals, import, storage
-  - **~/originals/**:/photoprism/originals:Z
-  - **~/import/**:/photoprism/import:Z
-  - **~/storage/**:/photoprism/storage:Z
-  - in `container-webserver.service`
+```shell
+cp podman-systemd/volumes-user.template podman-systemd/volumes-user.env
+```
 
 #### initial admin password for photoprism
 
-You might want to change the admin password in `container-webserver.service`:
+You might want to change the admin password in `container-webserver-user.env`:
 
 - PHOTOPRISM_ADMIN_PASSWORD="**please-change-me**"
 
@@ -113,9 +118,8 @@ You might want to change the admin password in `container-webserver.service`:
 
 ```shell
 ln \
- podman-systemd/pod-photoprism.service \
- podman-systemd/container-mariadb.service \
- podman-systemd/container-webserver.service \
+ podman-systemd/*.service \
+ podman-systemd/*.env \
  ~/.config/systemd/user/
 ```
 

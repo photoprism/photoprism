@@ -9,6 +9,8 @@ After=pod-photoprism.service container-mariadb.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
+EnvironmentFile=%h/.config/systemd/user/volumes-default.env
+EnvironmentFile=-%h/.config/systemd/user/volumes-user.env
 Restart=on-failure
 TimeoutStopSec=70
 ExecStartPre=/bin/rm -f %t/%n.ctr-id
@@ -23,16 +25,11 @@ ExecStart=/usr/bin/podman run \
         --name webserver \
         --label io.containers.autoupdate=image \
         --device=/dev/dri:/dev/dri \
-        -v /home/photoprism/originals/:/photoprism/originals:Z \
-        -v /home/photoprism/import/:/photoprism/import:Z \
-        -v /home/photoprism/storage/:/photoprism/storage:Z \
-        -e PHOTOPRISM_SITE_URL=http://localhost/ \
-        -e PHOTOPRISM_DATABASE_DRIVER=mysql \
-        -e PHOTOPRISM_DATABASE_SERVER=localhost:3306 \
-        -e PHOTOPRISM_DATABASE_NAME=photoprism \
-        -e PHOTOPRISM_DATABASE_USER=photoprism \
-        -e PHOTOPRISM_DATABASE_PASSWORD=insecure \
-	-e PHOTOPRISM_ADMIN_PASSWORD="please-change-me" \
+        -v $ORIGINALS:/photoprism/originals:Z \
+        -v $IMPORT:/photoprism/import:Z \
+        -v $STORAGE:/photoprism/storage:Z \
+	--env-file=%h/.config/systemd/user/container-webserver-default.env
+	--env-file=%h/.config/systemd/user/container-webserver-user.env
 	docker.io/photoprism/photoprism:latest
 ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
 ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id

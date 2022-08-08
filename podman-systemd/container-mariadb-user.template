@@ -1,0 +1,3 @@
+MARIADB_DATABASE=photoprism \
+MARIADB_USER=photoprism \
+MARIADB_PASSWORD=insecure \
