@@ -28,7 +28,7 @@ sudo useradd -m photoprism && sudo passwd photoprism
 **All the next steps are done as the newly created user photoprism.**
 
 ```shell
-su photoprism
+su - photoprism
 ```
 
 ### 
