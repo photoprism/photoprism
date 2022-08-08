@@ -94,7 +94,7 @@ You can change this by editing the two files `container-photoprism-database-user
 - user
   - MARIADB_USER=**photoprism** in `container-photoprism-database-user.env`
   - PHOTOPRISM_DATABASE_USER=**photoprism** in `ccontainer-photoprism-webserver-user.env`
-- schema
+- password
   - MARIADB_PASSWORD=**insecure** in `container-photoprism-database-user.env`
   - PHOTOPRISM_DATABASE_PASSWORD=**insecure** in `container-photoprism-webserver-user.env`
 
