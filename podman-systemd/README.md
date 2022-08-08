@@ -37,7 +37,7 @@ su photoprism
 
 You are going to need 4 directories, 1 for the database container (`database`) and 3 for the webserver container (`originals`, `import`, `storage`).
 
-(In case you want to create any of these directories elsewhere or want to name them differently, you'll have to adjust the config; detailed instructions below below)
+(In case you want to create any of these directories elsewhere or want to name them differently, you'll have to adjust the config; detailed instructions below)
 
 ```shell
 mkdir ~/{database,originals,import,storage}
@@ -129,7 +129,7 @@ Next we are going to tell systemd about the new units
 systemctl --user daemon-reload
 ```
 
-## Runing photoprism
+## Running photoprism
 
 Now we can start the pod and both containers
 
