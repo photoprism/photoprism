@@ -46,7 +46,7 @@ mkdir ~/{database,originals,import,storage}
 You need to tell the system that this user is allowed to keep processes running even after the user logged out:
 
 ```shell
-loginctl enable-linger photoprism
+loginctl enable-linger $(whoami)
 ```
 
 We are going to store the unit files for systemd in *~/.config/systemd/user/*. As this directory might not exist, we are going to create it:
@@ -100,7 +100,7 @@ You can change this by editing the two files `container-photoprism-database-user
 
 #### local storage / volumes (optional)
 
-In case you decided to persist your data in non-standard directories, you would need to create a new `.env`file and adjust it accordingly:
+In case you decided to persist your data in non-standard directories or you are running photoprism as another user, you would need to create a new `.env`file and adjust it accordingly:
 
 ```shell
 cp podman-systemd/volumes-photoprism-user.template podman-systemd/volumes-photoprism-user.env
