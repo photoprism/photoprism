@@ -117,9 +117,9 @@ You might want to change the admin password in `container-photoprism-webserver-u
 ### installing the pod and containers as systemd units
 
 ```shell
-ln \
- podman-systemd/*.service \
- podman-systemd/*.env \
+ln -s \
+ $(pwd)/podman-systemd/*.service \
+ $(pwd)/podman-systemd/*.env \
  ~/.config/systemd/user/
 ```
 

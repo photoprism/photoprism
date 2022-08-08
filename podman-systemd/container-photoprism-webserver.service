@@ -25,9 +25,9 @@ ExecStart=/usr/bin/podman run \
         --name photoprism-webserver \
         --label io.containers.autoupdate=image \
         --device=/dev/dri:/dev/dri \
-        -v $ORIGINALS:/photoprism/originals:Z \
-        -v $IMPORT:/photoprism/import:Z \
-        -v $STORAGE:/photoprism/storage:Z \
+        -v ${ORIGINALS}:/photoprism/originals:Z \
+        -v ${IMPORT}:/photoprism/import:Z \
+        -v ${STORAGE}:/photoprism/storage:Z \
 	--env-file=%h/.config/systemd/user/container-photoprism-webserver-default.env \
 	--env-file=%h/.config/systemd/user/container-photoprism-webserver-user.env \
 	docker.io/photoprism/photoprism:latest

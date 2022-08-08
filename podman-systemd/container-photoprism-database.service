@@ -24,7 +24,7 @@ ExecStart=/usr/bin/podman run \
         -d \
         --name photoprism-database \
         --label io.containers.autoupdate=image \
-        -v $DATABASE:/var/lib/mysql:Z \
+        -v ${DATABASE}:/var/lib/mysql:Z \
 	--env-file=%h/.config/systemd/user/container-photoprism-database-default.env \
 	--env-file=%h/.config/systemd/user/container-photoprism-database-user.env \
 	 docker.io/mariadb:10.8 \
