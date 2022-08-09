@@ -287,8 +287,8 @@ docker-develop-bookworm-slim:
 	docker pull --platform=arm64 debian:bookworm-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm-slim /bookworm-slim
 docker-develop-bullseye:
-	docker pull --platform=amd64 golang:1.18-bullseye
-	docker pull --platform=arm64 golang:1.18-bullseye
+	docker pull --platform=amd64 golang:1-bullseye
+	docker pull --platform=arm64 golang:1-bullseye
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye
 docker-develop-bullseye-slim:
 	docker pull --platform=amd64 debian:bullseye-slim
@@ -298,8 +298,8 @@ docker-develop-armv7:
 	docker pull --platform=arm debian:bookworm-slim
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
 docker-develop-buster:
-	docker pull --platform=amd64 golang:buster
-	docker pull --platform=arm64 golang:buster
+	docker pull --platform=amd64 golang:1-buster
+	docker pull --platform=arm64 golang:1-buster
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 buster /buster
 docker-develop-impish:
 	docker pull --platform=amd64 ubuntu:impish
@@ -431,10 +431,10 @@ docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
 docker-local-develop-bullseye:
-	docker pull golang:1.18-bullseye
+	docker pull golang:1-bullseye
 	scripts/docker/build.sh develop bullseye /bullseye
 docker-local-develop-buster:
-	docker pull golang:1.18-buster
+	docker pull golang:1-buster
 	scripts/docker/build.sh develop buster /buster
 docker-local-develop-impish:
 	docker pull ubuntu:impish
