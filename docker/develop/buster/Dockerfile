@@ -1,5 +1,5 @@
 #### Base Image: Debian 10, Codename 'Buster'
-FROM golang:1.18-buster
+FROM golang:1.19-buster
 
 # Open Container Initiative (OCI) Annotations
 # see https://github.com/opencontainers/image-spec/blob/main/annotations.md

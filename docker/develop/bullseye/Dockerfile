@@ -1,5 +1,5 @@
 #### Base Image: Debian 11, Codename 'Bullseye'
-FROM golang:1.18-bullseye
+FROM golang:1.19-bullseye
 
 # Open Container Initiative (OCI) Annotations
 # see https://github.com/opencontainers/image-spec/blob/main/annotations.md
