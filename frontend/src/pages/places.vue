@@ -46,7 +46,7 @@ export default {
       attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
       maxCount: 500000,
       options: {},
-      mapFont: [],
+      mapFont: ["Open Sans Regular"],
       result: {},
       filter: {q: this.query()},
       lastFilter: {},
@@ -80,7 +80,8 @@ export default {
         let mapKey = "";
 
         if (this.$config.has("mapKey")) {
-          mapKey = this.$config.get("mapKey");
+          // Remove non-alphanumeric characters from key.
+          mapKey = this.$config.get("mapKey").replace(/[^a-z0-9]/gi, '');
         }
 
         const settings = this.$config.settings();
@@ -93,18 +94,16 @@ export default {
           filter.quality = "3";
         }
 
-        let mapFont = ['Roboto', 'sans-serif'];
-
         let mapOptions = {
           container: "map",
           style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=" + mapKey,
+          glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=" + mapKey,
           attributionControl: true,
           customAttribution: this.attribution,
           zoom: 0,
         };
 
         if (!mapKey || s.style === "offline") {
-          mapFont = ["Open Sans Semibold"];
           mapOptions = {
             container: "map",
             style: {
@@ -194,12 +193,13 @@ export default {
             customAttribution: this.attribution,
             zoom: 0,
           };
+          this.url = '';
+        } else {
+          this.url = 'https://api.maptiler.com/maps/' + s.style + '/{z}/{x}/{y}.png?key=' + mapKey;
         }
 
         this.filter = filter;
-        this.url = 'https://api.maptiler.com/maps/' + s.style + '/{z}/{x}/{y}.png?key=' + mapKey;
         this.options = mapOptions;
-        this.mapFont = mapFont;
       });
     },
     query: function () {
