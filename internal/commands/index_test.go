@@ -47,7 +47,6 @@ func TestIndexCommand(t *testing.T) {
 	if output := logs; output != "" {
 		// Expected index command output.
 		assert.Contains(t, output, "indexing originals")
-		assert.Contains(t, output, "classify: loading")
 		assert.Contains(t, output, "indexed")
 		assert.Contains(t, output, "files")
 	} else {
