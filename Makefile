@@ -277,7 +277,7 @@ docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-debian docker-develop-armv7
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
 docker-develop-ubuntu: docker-develop-jammy
-docker-develop-other: docker-develop-bullseye docker-develop-bullseye-slim docker-develop-jammy
+docker-develop-other: docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster docker-develop-jammy
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
