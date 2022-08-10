@@ -17,7 +17,10 @@ then
     exit 1
 fi
 
-echo "Installing CLI Tools..."
-
+echo "Installing 'duf',  a better 'df' alternative..."
 GOBIN="/usr/local/bin" go install github.com/muesli/duf@latest
+
+echo "Installing 'muffet', a fast website link checker..."
+GOBIN="/usr/local/bin" go install github.com/raviqqe/muffet@latest
+
 ln -sf /usr/local/bin/duf /usr/local/bin/df
