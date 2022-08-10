@@ -124,7 +124,11 @@ You might want to change the admin password in `container-photoprism-webserver-u
 
 - PHOTOPRISM_ADMIN_PASSWORD=**please-change-me**
 
-### 
+#### other configuration
+
+All [config option described here](https://docs.photoprism.app/getting-started/config-options/) are still available. just add the corresponding options to `container-photoprism-webserver-user.env` 
+
+
 
 ### installing the pod and containers as systemd units
 
@@ -141,6 +145,8 @@ Next we are going to tell systemd about the new units
 systemctl --user daemon-reload
 ```
 
+(you would need to run this after the unit files changed, i.e. after you ran `git pull`)
+
 ## Running photoprism
 
 Now we can start the pod and both containers
@@ -153,6 +159,12 @@ let's try to access the webserver on the command line
 
 ```shell
 curl http://localhost:2342
+```
+
+### restarting photoprism
+
+```shell
+systemctl --user restart pod-photoprism.service
 ```
 
 ## Auto updates
@@ -169,4 +181,9 @@ systemctl --user enable --now podman-auto-update.timer
 
 - proxy, e.g. nginx
 - allow writing to `import` e.g. via smb
-- user mapping / access to files written from within the container
+
+
+
+# meta information
+
+- tested with `Fedora Server 36` and `podman 4.1.1`
