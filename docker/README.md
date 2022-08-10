@@ -18,9 +18,9 @@ can be easily made available to users via Internet. It provides a common standar
 systems and devices, which saves our team a lot of time that we can then spend [more effectively](https://docs.photoprism.app/developer-guide/issues/#effectiveness-efficiency), for example,
 providing support and developing one of the many features that users are waiting for.
 
-Human-readable and versioned Dockerfiles as part of our public source code also help avoid "works for me" moments and
-other unwelcome surprises by enabling teams to have the exact same environment everywhere in [development](develop/impish/Dockerfile), staging,
-and [production](photoprism/impish/Dockerfile).
+Human-readable and [versioned Dockerfiles as part of our public source code](https://github.com/photoprism/photoprism/tree/develop/docker)
+also help avoid "works for me" moments and other unwelcome surprises by enabling teams to have the exact same environment everywhere in [development](https://github.com/photoprism/photoprism/blob/develop/docker/develop/bookworm/Dockerfile), staging,
+and [production](https://github.com/photoprism/photoprism/blob/develop/docker/photoprism/bookworm/Dockerfile).
 
 Last but not least, virtually all file format parsers have vulnerabilities that just haven't been discovered yet.
 This is a known risk that can affect you even if your computer is not directly connected to the Internet.
