@@ -24,9 +24,10 @@ const (
 // GET /api/v1/folders/t/:hash/:token/:size
 //
 // Parameters:
-//   uid: string folder uid
-//   token: string url security token, see config
-//   size: string thumb type, see thumb.Sizes
+//
+//	uid: string folder uid
+//	token: string url security token, see config
+//	size: string thumb type, see thumb.Sizes
 func FolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

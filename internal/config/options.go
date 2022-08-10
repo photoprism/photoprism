@@ -136,8 +136,8 @@ type Options struct {
 //
 // 1. Load: This will initialize options from a yaml config file.
 //
-// 2. SetContext: Which comes after Load and overrides
-//    any previous options giving an option two override file configs through the CLI.
+//  2. SetContext: Which comes after Load and overrides
+//     any previous options giving an option two override file configs through the CLI.
 func NewOptions(ctx *cli.Context) *Options {
 	c := &Options{}
 

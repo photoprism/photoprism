@@ -21,9 +21,10 @@ import (
 // GET /api/v1/t/:thumb/:token/:size
 //
 // Parameters:
-//   thumb: string sha1 file hash plus optional crop area
-//   token: string url security token, see config
-//   size: string thumb type, see thumb.Sizes
+//
+//	thumb: string sha1 file hash plus optional crop area
+//	token: string url security token, see config
+//	size: string thumb type, see thumb.Sizes
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:thumb/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

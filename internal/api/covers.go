@@ -26,9 +26,10 @@ const (
 // GET /api/v1/albums/:uid/t/:token/:size
 //
 // Parameters:
-//   uid: string album uid
-//   token: string security token (see config)
-//   size: string thumb type, see photoprism.ThumbnailTypes
+//
+//	uid: string album uid
+//	token: string security token (see config)
+//	size: string thumb type, see photoprism.ThumbnailTypes
 func AlbumCover(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -138,9 +139,10 @@ func AlbumCover(router *gin.RouterGroup) {
 // GET /api/v1/labels/:uid/t/:token/:size
 //
 // Parameters:
-//   uid: string label uid
-//   token: string security token (see config)
-//   size: string thumb type, see photoprism.ThumbnailTypes
+//
+//	uid: string label uid
+//	token: string security token (see config)
+//	size: string thumb type, see photoprism.ThumbnailTypes
 func LabelCover(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

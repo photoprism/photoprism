@@ -19,8 +19,9 @@ import (
 // DELETE /api/v1/photos/:uid/files/:file_uid
 //
 // Parameters:
-//   uid: string Photo UID as returned by the API
-//   file_uid: string File UID as returned by the API
+//
+//	uid: string Photo UID as returned by the API
+//	file_uid: string File UID as returned by the API
 func DeleteFile(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/files/:file_uid", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceFiles, acl.ActionDelete)
