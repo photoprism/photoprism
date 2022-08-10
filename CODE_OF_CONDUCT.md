@@ -2,7 +2,7 @@
 
 **By using the software and services we provide, you agree to our [Terms of Service](https://photoprism.app/terms), including our [Privacy Policy](https://photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with other community members.**
 
-*Last Updated: July 1, 2022*
+*Last Updated: August 10, 2022*
 
 ## Rules
 
@@ -22,7 +22,7 @@ Not everyone has experience with Open Source communities and intuitively knows w
 
 (b) Honor **Rule &#35;2**, [read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening invalid bug reports, starting a public "shitstorm", or insulting other community members in our chat rooms. Aside from being annoying for everyone, it also keeps our team from working on features and improvements that users like you are waiting for.
 
-(c) Reckless, surprisingly harsh or ignorant communication that disregards **Rule &#35;1** is unacceptable, whether public or private. If you are having a bad day and want to offend someone, please go somewhere else. Based on previous incidents, we also recommend that you wait until the worst is over when you've had too much coffee.
+(c) Reckless, [surprisingly harsh](https://github.com/photoprism/photoprism/issues/281#issuecomment-1207233135) or ignorant communication that disregards **Rule &#35;1** is unacceptable, whether public or private. If you are having a bad day and want to offend someone, please go somewhere else.
 
 *PhotoPrism has an amazing community, so problems are rare in practice. Common sense and staying away from the computer when you are tired or hungry should usually be enough to get along with others.*
 
