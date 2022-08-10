@@ -100,7 +100,7 @@ You can change this by editing the two files `container-photoprism-database-user
 
 #### local storage / volumes (optional)
 
-In case you decided to persist your data in non-standard directories or you are running photoprism as another user, you would need to create a new `.env`file and adjust it accordingly:
+In case you decided to persist your data in non-standard directories or you are running photoprism as another user, you would need to create a new `.env` file and adjust it accordingly:
 
 ```shell
 cp podman-systemd/volumes-photoprism-user.template podman-systemd/volumes-photoprism-user.env
@@ -143,7 +143,18 @@ let's try to access the webserver on the command line
 curl http://localhost:2342
 ```
 
+## Auto updates
+
+Next you are going to enable automaic updates of our images. The containers are being created with this flag: `--label "io.containers.autoupdate=image"` in the `.service` files. Containers with this label which are controlled via systemd can be automatically updated regularly. To do so, we enable a *systemd timer*:
+
+```shell
+sudo systemctl enable --now podman-auto-update.timer
+```
+
+(you might have to run this with your main user or *any user who is allowed to use* `sudo`)
+
+
+
 ## next steps / TODO
 
 - proxy, e.g. nginx
-- auto updates
