@@ -55,7 +55,19 @@ We are going to store the unit files for systemd in *~/.config/systemd/user/*. A
 mkdir -p ~/.config/systemd/user/
 ```
 
-### 
+In order to execute some commands related to systemd as a user, we need to set an environment variable (find out which shell you are using via `echo $0`):
+
+#### bash
+
+```shell
+echo "export XDG_RUNTIME_DIR=/run/user/\$(id -u)" >> ~/.bashrc && source ~/.bashrc
+```
+
+#### zsh
+
+```shell
+echo "export XDG_RUNTIME_DIR=/run/user/\$(id -u)" >> ~/.zshrc && source ~/.zshrc
+```
 
 ### cloning this project
 
@@ -110,7 +122,7 @@ cp podman-systemd/volumes-photoprism-user.template podman-systemd/volumes-photop
 
 You might want to change the admin password in `container-photoprism-webserver-user.env`:
 
-- PHOTOPRISM_ADMIN_PASSWORD="**please-change-me**"
+- PHOTOPRISM_ADMIN_PASSWORD=**please-change-me**
 
 ### 
 
@@ -153,6 +165,8 @@ systemctl --user enable --now podman-auto-update.timer
 
 
 
-## next steps / TODO
+## next steps / TODOs / known issues
 
 - proxy, e.g. nginx
+- allow writing to `import` e.g. via smb
+- user mapping / access to files written from within the container
