@@ -14,11 +14,13 @@ fi
 set -e
 
 SETUP_URL="https://deb.nodesource.com/setup_18.x"
-wget --inet4-only -c -qO- https://deb.nodesource.com/setup_18.x | bash -
-echo "Installing NodeJS and NPM from \"$SETUP_URL\"..."
 
-curl -sL $SETUP_URL | bash  -
+echo "Fetching packages from \"$SETUP_URL\"..."
+wget --inet4-only -c -qO- $SETUP_URL | bash -
+
+echo "Installing NodeJS, NPM, and TestCafe..."
 apt-get update && apt-get -qq install nodejs
+
 npm install --unsafe-perm=true --allow-root -g npm testcafe
 npm config set cache ~/.cache/npm
 npm update --unsafe-perm=true --allow-root -g
