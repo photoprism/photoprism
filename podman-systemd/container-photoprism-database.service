@@ -15,26 +15,26 @@ Restart=on-failure
 TimeoutStopSec=70
 ExecStartPre=/bin/rm -f %t/%n.ctr-id
 ExecStart=/usr/bin/podman run \
-        --cidfile=%t/%n.ctr-id \
-        --cgroups=no-conmon \
-        --rm \
-        --pod-id-file %t/pod-photoprism.pod-id \
-        --sdnotify=conmon \
-        --replace \
-        -d \
-        --name photoprism-database \
-        --label io.containers.autoupdate=image \
-        -v ${DATABASE}:/var/lib/mysql:Z \
+	--cidfile=%t/%n.ctr-id \
+	--cgroups=no-conmon \
+	--rm \
+	--pod-id-file %t/pod-photoprism.pod-id \
+	--sdnotify=conmon \
+	--replace \
+	-d \
+	--name photoprism-database \
+	--label io.containers.autoupdate=image \
+	-v ${DATABASE}:/var/lib/mysql:Z \
 	--env-file=%h/.config/systemd/user/container-photoprism-database-default.env \
 	--env-file=%h/.config/systemd/user/container-photoprism-database-user.env \
-	 docker.io/mariadb:10.8 \
-        --innodb-buffer-pool-size=128M \
-        --transaction-isolation=READ-COMMITTED \
-        --character-set-server=utf8mb4 \
-        --collation-server=utf8mb4_unicode_ci \
-        --max-connections=512 \
-        --innodb-rollback-on-timeout=OFF \
-        --innodb-lock-wait-timeout=120
+	docker.io/mariadb:10.8 \
+	--innodb-buffer-pool-size=128M \
+	--transaction-isolation=READ-COMMITTED \
+	--character-set-server=utf8mb4 \
+	--collation-server=utf8mb4_unicode_ci \
+	--max-connections=512 \
+	--innodb-rollback-on-timeout=OFF \
+	--innodb-lock-wait-timeout=120
 ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
 ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
 Type=notify
