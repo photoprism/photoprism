@@ -145,13 +145,11 @@ curl http://localhost:2342
 
 ## Auto updates
 
-Next you are going to enable automaic updates of our images. The containers are being created with this flag: `--label "io.containers.autoupdate=image"` in the `.service` files. Containers with this label which are controlled via systemd can be automatically updated regularly. To do so, we enable a *systemd timer*:
+Next you are going to enable automatic updates of our images. The containers are being created with this flag: `--label "io.containers.autoupdate=image"` (in the `.service` files). Containers with this label which are controlled via systemd can be automatically updated regularly. To do so, we enable a *systemd timer*:
 
 ```shell
-sudo systemctl enable --now podman-auto-update.timer
+systemctl --user enable --now podman-auto-update.timer
 ```
-
-(you might have to run this with your main user or *any user who is allowed to use* `sudo`)
 
 
 
