@@ -29,7 +29,7 @@ to determine the cause of your problem. If you have a general question, need hel
 (yet) been clearly identified:
 
 - You are welcome to ask in our [Community Chat](https://link.photoprism.app/chat)
-- or post your question in [GitHub Discussions](https://link.photoprism.app/discussions
+- or post your question in [GitHub Discussions](https://link.photoprism.app/discussions)
 
 ### GitHub Issues ###
 
