@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-02 08:45+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-08-23 11:07+0000\n"
+"Last-Translator: Acer Acer Acer <acer.wang@protonmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Weblate 4.14\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:388 src/share/albums.vue:305
@@ -113,7 +113,7 @@ msgstr "新增到相簿"
 
 #: src/dialog/photo/files.vue:189 src/dialog/photo/files.vue:186
 msgid "Added"
-msgstr "新增了"
+msgstr "已新增"
 
 #: src/pages/settings.vue:52
 msgid "Advanced"
@@ -143,7 +143,7 @@ msgstr "1 年過後"
 msgid ""
 "After selecting pictures from search results, you can add them to an album "
 "using the context menu."
-msgstr "從搜索結果中選擇圖片後，您可以使用上下文菜單將它們添加到相冊。"
+msgstr "從搜索結果中選擇圖片後，您可以使用上下文菜單將它們添加到相簿。"
 
 #: src/options/options.js:366
 msgid "After two months"
@@ -169,7 +169,7 @@ msgstr "相簿"
 
 #: src/component/album/clipboard.vue:77
 msgid "Albums deleted"
-msgstr "已删除的专辑"
+msgstr "已刪除相簿"
 
 #: src/pages/albums.vue:263 src/share/albums.vue:220
 msgid "All %{n} albums loaded"
@@ -206,7 +206,7 @@ msgstr "所有的欄位都是必填的"
 
 #: src/pages/library/import.vue:12
 msgid "All files from import folder"
-msgstr "引入資料夾中所有的檔案"
+msgstr "匯入資料夾中所有的檔案"
 
 #: src/component/photo/toolbar.vue:37
 msgid "All Lenses"
@@ -236,7 +236,7 @@ msgstr ""
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
-msgstr "或者，你也可以直接使用WebDAV從像是 NextCloud 的服務上傳檔案。"
+msgstr "或者，你也可以直接使用WebDAV（例如 NextCloud）等服務上傳檔案。"
 
 #: src/dialog/photo/info.vue:151
 msgid "Altitude"
@@ -267,7 +267,7 @@ msgstr "所有私人相片跟影片都會保持私人，不會被分享。"
 
 #: src/dialog/account/edit.vue:477
 msgid "API Key"
-msgstr "API密钥"
+msgstr "API鑰匙"
 
 #: src/dialog/photo/details.vue:117
 msgid "Apply"
@@ -380,7 +380,7 @@ msgstr "瀏覽以及編輯分類標籤。"
 
 #: src/pages/settings/general.vue:317
 msgid "Browse indexed files and folders in Library."
-msgstr "在收藏庫中瀏覽索引好的檔案和資料夾。"
+msgstr "瀏覽收藏庫中索引好的檔案和資料夾。"
 
 #: src/pages/about/about.vue:54
 msgid ""
@@ -413,7 +413,7 @@ msgstr "相機系列"
 #: src/pages/album/photos.vue:214 src/pages/photos.vue:263
 #: src/share/photos.vue:229
 msgid "Can't load more, limit reached"
-msgstr "沒辦法載入更多了，已經極限了"
+msgstr "已達極限，無法載入更多"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
 #: src/pages/albums.vue:436 src/pages/albums.vue:452 src/pages/labels.vue:178
@@ -451,7 +451,7 @@ msgstr "更改"
 
 #: src/pages/settings/general.vue:185
 msgid "Change photo titles, locations, and other metadata."
-msgstr "更改照片标题，位置和其他元数据。"
+msgstr "更改照片標題，位置和其他數據。"
 
 #: src/component/photo/clipboard.vue:146
 msgid "Change private flag"
@@ -494,7 +494,7 @@ msgstr "使用我們提供的故障排除清單可以快速診斷和解決常見
 
 #: src/pages/library/index.vue:123
 msgid "Complete Rescan"
-msgstr "完整索引"
+msgstr "完整重新索引"
 
 #: src/dialog/photo/labels.vue:22
 msgid "Confidence"
@@ -529,7 +529,7 @@ msgstr "包含一張圖片。"
 
 #: src/pages/settings/library.vue:113
 msgid "Convert to JPEG"
-msgstr "轉為 JPEG"
+msgstr "轉成 JPEG"
 
 #: src/pages/library/index.vue:163
 msgid "Converting"
@@ -569,7 +569,7 @@ msgstr "立方：中等質量，良好性能"
 
 #: src/pages/settings/account.vue:57
 msgid "Current Password"
-msgstr "當前密碼"
+msgstr "現任密碼"
 
 #: src/options/options.js:390
 msgid "Customer Support"
@@ -1024,7 +1024,7 @@ msgstr "說明"
 
 #: src/app/routes.js:77
 msgid "Help & Support"
-msgstr "幫助 & 支援"
+msgstr "支援與幫助"
 
 #: src/component/navigation.vue:384
 msgid "Hidden"
@@ -1200,7 +1200,7 @@ msgstr "標籤"
 
 #: src/component/label/clipboard.vue:45
 msgid "Labels deleted"
-msgstr "删除的标签"
+msgstr "已刪除標籤"
 
 #: src/options/options.js:400
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1657,7 +1657,7 @@ msgstr "密碼"
 
 #: src/pages/settings/account.vue:22
 msgid "Password changed"
-msgstr "密码已修改"
+msgstr "已更改密碼"
 
 #: src/app/routes.js:278 src/app/routes.js:298 src/component/navigation.vue:231
 #: src/component/navigation.vue:966 src/dialog/photo/edit.vue:52
@@ -1949,15 +1949,15 @@ msgstr "選擇或新增相簿"
 
 #: src/component/photo/clipboard.vue:62
 msgid "Selection approved"
-msgstr "选择已批准"
+msgstr "選擇已核准"
 
 #: src/component/photo/clipboard.vue:87
 msgid "Selection archived"
-msgstr "所选项目已被归档"
+msgstr "選取項目已封存"
 
 #: src/component/photo/clipboard.vue:112
 msgid "Selection restored"
-msgstr "所选项目已被恢复"
+msgstr "選取項目已被恢復"
 
 #: src/pages/about/feedback.vue:45
 msgid "Send"
@@ -1987,7 +1987,7 @@ msgstr "设置"
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:104
 #: src/pages/settings/library.vue:50
 msgid "Settings saved"
-msgstr "设置已保存"
+msgstr "已儲存設定"
 
 #: src/dialog/share/upload.vue:32
 msgid "Setup"
@@ -2126,7 +2126,7 @@ msgstr "開始/停止 幻燈片"
 
 #: src/component/navigation.vue:303
 msgid "States"
-msgstr "省"
+msgstr "州"
 
 #: src/pages/settings/advanced.vue:374
 msgid "Static Size Limit: %{n}px"
@@ -2184,7 +2184,7 @@ msgstr "文字太長了"
 
 #: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
-msgstr "索引當前包含%{n}個隱藏檔案。"
+msgstr "索引目前包含%{n}個隱藏檔案。"
 
 #: src/pages/library/index.vue:37
 msgid ""
@@ -2496,7 +2496,7 @@ msgstr "你只能下載一個標籤"
 
 #: src/pages/about/about.vue:17
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "您可以在家裡、私人服務器或云端運行它。"
+msgstr "您可以在家裡、個人的伺服器或在雲端使用它。"
 
 #: src/component/album/clipboard.vue:35 src/component/album/clipboard.vue:48
 msgid "You may only select one item"
@@ -2528,7 +2528,7 @@ msgstr "您的持續支持有助於我們提供衛星地圖等服務並開發新
 msgid ""
 "Your library is continuously analyzed to automatically create albums of "
 "special moments, trips, and places."
-msgstr "您的資料庫會持續進行分析，以自動創建有關特殊時刻、旅行和地點的相冊。"
+msgstr "您的資料庫會持續進行分析，以自動創建有關特殊時刻、旅行和地點的相簿。"
 
 #: src/component/photo-viewer.vue:178
 msgid "Zoom in/out"
