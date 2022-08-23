@@ -3,29 +3,26 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 21:46+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-08-23 11:07+0000\n"
+"Last-Translator: Jirapong Pansak <tangpansak@gmail.com>\n"
 "Language-Team: \n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.14\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
-#, fuzzy
 msgid "%{n} albums found"
 msgstr "พบ %{n} อัลบั้ม"
 
 #: src/dialog/share/upload.vue:76
-#, fuzzy
 msgid "%{n} files uploaded"
 msgstr "อัปโหลดแล้ว %{n} ไฟล์"
 
 #: src/pages/library/files.vue:303
-#, fuzzy
 msgid "%{n} folders found"
 msgstr "พบ %{n} โฟลเดอร์"
 
@@ -35,9 +32,8 @@ msgid "%{n} labels found"
 msgstr "พบ %{n} ป้ายกำกับ"
 
 #: src/pages/people/faces.vue:286 src/pages/people/faces.vue:372 src/pages/people/subjects.vue:470
-#, fuzzy
 msgid "%{n} people found"
-msgstr "พบ %{n} บุคคล"
+msgstr "พบบุคคล %{n} คน"
 
 #: src/pages/album/photos.vue:194 src/pages/album/photos.vue:346 src/pages/photos.vue:241
 #: src/pages/photos.vue:386 src/share/photos.vue:209 src/share/photos.vue:354
@@ -46,28 +42,23 @@ msgid "%{n} pictures found"
 msgstr "พบ %{n} รูปภาพ"
 
 #: src/options/options.js:396
-#, fuzzy
 msgid "1 hour"
 msgstr "1 ชั่วโมง"
 
 #: src/options/options.js:398
-#, fuzzy
 msgid "12 hours"
 msgstr "12 ชั่วโมง"
 
 #: src/options/options.js:397
-#, fuzzy
 msgid "4 hours"
 msgstr "4 ชั่วโมง"
 
 #: src/dialog/share.vue:73
-#, fuzzy
 msgid "A click will copy it to your clipboard."
-msgstr "การคลิกครั้งเดียวจะเป็นการคัดลอกไปยังคลิปบอร์ด"
+msgstr "คลิกเพื่อคัดลอกไปยังคลิปบอร์ด"
 
 #: src/component/navigation.vue:426 src/component/navigation.vue:27 src/pages/about/about.vue:4
 #: src/pages/about/about.vue:179 src/pages/help.vue:45
-#, fuzzy
 msgid "About"
 msgstr "เกี่ยวกับ"
 
@@ -78,12 +69,10 @@ msgstr "เหว"
 
 #: src/component/navigation.vue:73 src/dialog/share/upload.vue:112 src/model/account.js:98
 #: src/pages/settings.vue:74
-#, fuzzy
 msgid "Account"
 msgstr "บัญชี"
 
 #: src/dialog/photo/info.vue:159
-#, fuzzy
 msgid "Accuracy"
 msgstr "ความแม่นยำ"
 
@@ -98,17 +87,14 @@ msgid "Actions"
 msgstr "การกระทำ"
 
 #: src/pages/albums.vue:122 src/pages/albums.vue:178
-#, fuzzy
 msgid "Add Album"
 msgstr "เพิ่มอัลบั้ม"
 
 #: src/pages/settings/general.vue:141
-#, fuzzy
 msgid "Add files to your library via Web Upload."
-msgstr "เพิ่มไฟล์ไปยังห้องสมุดของคุณผ่านการอัปโหลดทางเว็บ"
+msgstr "เพิ่มไฟล์ผ่านการอัปโหลด"
 
 #: src/dialog/share.vue:91
-#, fuzzy
 msgid "Add Link"
 msgstr "เพิ่มลิงก์"
 
@@ -118,14 +104,12 @@ msgid "Add pictures from search results by selecting them."
 msgstr "เพิ่มรูปภาพจากผลการค้นหาโดยเลือกรูปภาพเหล่านั้น"
 
 #: src/dialog/account/add.vue:6 src/pages/settings/sync.vue:47
-#, fuzzy
 msgid "Add Server"
 msgstr "เพิ่มเซิร์ฟเวอร์"
 
 #: src/component/album/clipboard.vue:136 src/component/file/clipboard.vue:89
 #: src/component/label/clipboard.vue:67 src/component/photo/clipboard.vue:192
 #: src/component/subject/clipboard.vue:89 src/dialog/photo/album.vue:20
-#, fuzzy
 msgid "Add to album"
 msgstr "เพิ่มไปยังอัลบั้ม"
 
@@ -140,27 +124,22 @@ msgid "Advanced"
 msgstr "ขั้นสูง"
 
 #: src/options/options.js:406
-#, fuzzy
 msgid "After 1 day"
 msgstr "หลังจาก 1 วัน"
 
 #: src/options/options.js:407
-#, fuzzy
 msgid "After 3 days"
 msgstr "หลังจาก 3 วัน"
 
 #: src/options/options.js:408
-#, fuzzy
 msgid "After 7 days"
 msgstr "หลังจาก 7 วัน"
 
 #: src/options/options.js:410
-#, fuzzy
 msgid "After one month"
 msgstr "หลังจากหนึ่งเดือน"
 
 #: src/options/options.js:412
-#, fuzzy
 msgid "After one year"
 msgstr "หลังจากหนึ่งปี"
 
@@ -171,7 +150,6 @@ msgid ""
 msgstr "หลังจากเลือกรูปภาพจากผลการค้นหาแล้ว คุณสามารถเพิ่มรูปภาพลงในอัลบั้มโดยใช้เมนูบริบท"
 
 #: src/options/options.js:411
-#, fuzzy
 msgid "After two months"
 msgstr "หลังจากสองเดือน"
 
@@ -186,14 +164,12 @@ msgid "Album"
 msgstr "อัลบั้ม"
 
 #: src/dialog/photo/album.vue:71 src/dialog/photo/album.vue:79
-#, fuzzy
 msgid "Album Name"
 msgstr "ชื่ออัลบั้ม"
 
 #: src/app/routes.js:128 src/app/routes.js:135 src/component/navigation.vue:164
 #: src/component/navigation.vue:174 src/component/navigation.vue:4 src/component/navigation.vue:737
 #: src/share/albums.vue:4
-#, fuzzy
 msgid "Albums"
 msgstr "อัลบั้ม"
 
@@ -259,7 +235,6 @@ msgid "All Months"
 msgstr "เดือนทั้งหมด"
 
 #: src/pages/library/index.vue:12
-#, fuzzy
 msgid "All originals"
 msgstr "ต้นฉบับทั้งหมด"
 
@@ -326,7 +301,6 @@ msgstr "ปรับใช้"
 
 #: src/component/photo/cards.vue:458 src/component/photo/clipboard.vue:100
 #: src/dialog/photo/details.vue:116
-#, fuzzy
 msgid "Approve"
 msgstr "อนุมัติ"
 
@@ -414,7 +388,6 @@ msgid "Bio"
 msgstr "ไปโอ"
 
 #: src/options/options.js:431
-#, fuzzy
 msgid "Black"
 msgstr "สีดำ"
 
@@ -424,12 +397,10 @@ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
 #: src/options/options.js:427
-#, fuzzy
 msgid "Blue"
 msgstr "สีฟ้า"
 
 #: src/options/options.js:428
-#, fuzzy
 msgid "Brown"
 msgstr "สีน้ำตาล"
 
@@ -455,14 +426,12 @@ msgstr "ไม่ว่าง โปรดรอ…"
 
 #: src/app/routes.js:141 src/app/routes.js:148 src/component/navigation.vue:270
 #: src/component/navigation.vue:1099
-#, fuzzy
 msgid "Calendar"
 msgstr "ปฏิทิน"
 
 #: src/component/photo/cards.vue:557 src/component/photo/list.vue:57
 #: src/component/photo/toolbar.vue:208 src/dialog/photo/details.vue:335 src/share/photo/cards.vue:388
 #: src/share/photo/list.vue:53
-#, fuzzy
 msgid "Camera"
 msgstr "กล้อง"
 
@@ -490,7 +459,6 @@ msgstr "ไม่สามารถเลือกรายการเพิ่
 #: src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:14
 #: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:11 src/dialog/share.vue:25
 #: src/dialog/share/upload.vue:29 src/pages/library/import.vue:34 src/pages/library/index.vue:27
-#, fuzzy
 msgid "Cancel"
 msgstr "ยกเลิก"
 
@@ -501,12 +469,10 @@ msgstr "การ์ด"
 
 #: src/component/photo/toolbar.vue:344 src/dialog/album/edit.vue:162 src/pages/about/feedback.vue:108
 #: src/pages/albums.vue:129
-#, fuzzy
 msgid "Category"
 msgstr "หมวดหมู่"
 
 #: src/pages/settings/account.vue:26
-#, fuzzy
 msgid "Change"
 msgstr "เปลี่ยน"
 
@@ -526,13 +492,11 @@ msgid "Checked"
 msgstr "ตรวจสอบแล้ว"
 
 #: src/dialog/photo/files.vue:175 src/dialog/photo/files.vue:172
-#, fuzzy
 msgid "Chroma"
 msgstr "โครมา"
 
 #: src/component/photo-viewer.vue:79 src/dialog/photo/details.vue:113 src/dialog/share.vue:87
 #: src/pages/library/errors.vue:60
-#, fuzzy
 msgid "Close"
 msgstr "ปิด"
 
@@ -542,14 +506,12 @@ msgid "Codec"
 msgstr "ตัวแปลงสัญญาณ"
 
 #: src/component/photo/toolbar.vue:321
-#, fuzzy
 msgid "Color"
 msgstr "สี"
 
 #: src/dialog/photo/files.vue:163 src/dialog/photo/files.vue:160
-#, fuzzy
 msgid "Color Profile"
-msgstr "โปรไฟล์สี"
+msgstr "สีโปรไฟล์"
 
 #: src/pages/discover.vue:4
 #, fuzzy
@@ -562,7 +524,6 @@ msgid "Complete Rescan"
 msgstr "สแกนใหม่ให้เสร็จ"
 
 #: src/dialog/photo/labels.vue:22
-#, fuzzy
 msgid "Confidence"
 msgstr "ค่าความมั่นใจ"
 
@@ -572,7 +533,6 @@ msgid "Connect"
 msgstr "เชื่อมต่อ"
 
 #: src/dialog/webdav.vue:4 src/pages/settings/sync.vue:43
-#, fuzzy
 msgid "Connect via WebDAV"
 msgstr "เชื่อมต่อผ่าน WebDAV"
 
@@ -592,12 +552,10 @@ msgid "Contains one picture."
 msgstr "ประกอบด้วยหนึ่งภาพ"
 
 #: src/pages/settings/library.vue:113
-#, fuzzy
 msgid "Convert to JPEG"
 msgstr "แปลงเป็น JPEG"
 
 #: src/pages/library/index.vue:163
-#, fuzzy
 msgid "Converting"
 msgstr "กำลังแปลง"
 
@@ -627,7 +585,6 @@ msgid "Create album"
 msgstr "สร้างอัลบั้ม"
 
 #: src/dialog/photo/info.vue:167
-#, fuzzy
 msgid "Created"
 msgstr "สร้างเมื่อ"
 
@@ -1096,7 +1053,6 @@ msgid "Folder contains %{n} files"
 msgstr "โฟลเดอร์มี %{n} ไฟล์"
 
 #: src/pages/library/files.vue:297
-#, fuzzy
 msgid "Folder is empty"
 msgstr "โฟลเดอร์ว่างเปล่า"
 
@@ -1112,7 +1068,6 @@ msgid "Forgot password?"
 msgstr "ลืมรหัสผ่าน?"
 
 #: src/dialog/photo/files.vue:113 src/dialog/photo/files.vue:110
-#, fuzzy
 msgid "FPS"
 msgstr "FPS"
 
@@ -1137,12 +1092,10 @@ msgid "General"
 msgstr "ทั่วไป"
 
 #: src/pages/about/about.vue:38
-#, fuzzy
 msgid "Getting Support"
-msgstr "รับการสนับสนุน"
+msgstr "การขอช่วยเหลือ"
 
 #: src/options/options.js:421
-#, fuzzy
 msgid "Gold"
 msgstr "ทอง"
 
@@ -1152,12 +1105,10 @@ msgid "Grayscale"
 msgstr "ระดับสีเทา"
 
 #: src/options/options.js:424
-#, fuzzy
 msgid "Green"
 msgstr "สีเขียว"
 
 #: src/options/options.js:430
-#, fuzzy
 msgid "Grey"
 msgstr "สีเทา"
 
@@ -1222,7 +1173,6 @@ msgid "Hybrid"
 msgstr "ไฮบริด"
 
 #: src/dialog/sponsor.vue:36
-#, fuzzy
 msgid "I'm a sponsor"
 msgstr "ฉันเป็นสปอนเซอร์"
 
@@ -1948,9 +1898,8 @@ msgid "Place"
 msgstr "สถานที่"
 
 #: src/pages/settings/library.vue:173
-#, fuzzy
 msgid "Place & Time"
-msgstr "สถานที่ & เวลา"
+msgstr "สถานที่และเวลา"
 
 #: src/app/routes.js:216 src/app/routes.js:222 src/app/routes.js:228 src/app/routes.js:235
 #: src/component/navigation.vue:283 src/component/navigation.vue:293 src/component/navigation.vue:4
@@ -2823,7 +2772,6 @@ msgid "WebDAV Upload"
 msgstr "อัพโหลด WebDAV"
 
 #: src/options/options.js:429
-#, fuzzy
 msgid "White"
 msgstr "สีขาว"
 
@@ -2833,7 +2781,6 @@ msgid "Year"
 msgstr "ปี"
 
 #: src/options/options.js:422
-#, fuzzy
 msgid "Yellow"
 msgstr "สีเหลือง"
 
