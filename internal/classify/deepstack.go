@@ -54,7 +54,8 @@ func (t *DeepStack) DeepStackFile(filename string) (result Labels, err error) {
 	pathDetectionUrl := fmt.Sprintf("%v/%v", t.apiEndpointUrl, DeepStackApiPathDetection)
 
 	log.Debugf("classify: processing %s via DeepStack, API: %s", filename, pathDetectionUrl)
-	//imageBuffer, err := os.ReadFile(filename)
+
+	_, err = os.Stat(filename)
 
 	if err != nil {
 		return nil, err
