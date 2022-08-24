@@ -208,7 +208,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	// Check plausibility of the local <> UTC time difference.
 	if !data.TakenAt.IsZero() && !data.TakenAtLocal.IsZero() {
 		if d := data.TakenAt.Sub(data.TakenAtLocal).Abs(); d > time.Hour*27 {
-			log.Warnf("metadata: invalid local time offset %.1fh in %s (exiftool)", d.Hours(), logName)
+			log.Warnf("metadata: %s has an invalid local <> utc time offset (%s)", logName, d.String())
 			data.TakenAtLocal = data.TakenAt
 			data.TakenAt = data.TakenAt.UTC()
 		}
@@ -220,7 +220,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	} else if mt, ok := data.json["MIMEType"]; ok && data.TakenAtLocal.IsZero() && (mt == MimeVideoMP4 || mt == MimeQuicktime) {
 		// Assume default time zone for MP4 & Quicktime videos is UTC.
 		// see https://exiftool.org/TagNames/QuickTime.html
-		log.Debugf("metadata: using UTC as default time zone in %s (%s)", logName, clean.Log(mt))
+		log.Debugf("metadata: %s uses utc by default (%s)", logName, clean.Log(mt))
 		data.TimeZone = time.UTC.String()
 		data.TakenAt = data.TakenAt.UTC()
 		data.TakenAtLocal = time.Time{}
