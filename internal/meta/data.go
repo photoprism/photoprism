@@ -17,7 +17,7 @@ type Data struct {
 	FileName      string        `meta:"FileName"`
 	DocumentID    string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID,DigitalImageGUID"`
 	InstanceID    string        `meta:"InstanceID,DocumentID"`
-	CreatedAt     time.Time     `meta:"SubSecCreateDate,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate,MetadataDate"`
+	CreatedAt     time.Time     `meta:"SubSecCreateDate,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate"`
 	TakenAt       time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized" xmp:"DateCreated"`
 	TakenAtLocal  time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized"`
 	TakenGps      time.Time     `meta:"GPSDateTime,GPSDateStamp"`

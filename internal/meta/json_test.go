@@ -732,6 +732,23 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 	})
 
+	t.Run("aurora.jpg.json", func(t *testing.T) {
+		data, err := JSON("testdata/aurora.jpg.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "jpeg", data.Codec)
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, "2021-10-27 10:43:46 +0200 UTC+02:00", data.TakenAtLocal.String())
+		assert.Equal(t, "2021-10-27 10:43:46 +0200 UTC+02:00", data.TakenAt.String())
+		assert.Equal(t, "", data.TimeZone) // Local Time
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+	})
+
 	t.Run("MVI_1724.MOV.json", func(t *testing.T) {
 		data, err := JSON("testdata/MVI_1724.MOV.json", "")
 

@@ -208,7 +208,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	// Check plausibility of the local <> UTC time difference.
 	if !data.TakenAt.IsZero() && !data.TakenAtLocal.IsZero() {
 		if d := data.TakenAt.Sub(data.TakenAtLocal).Abs(); d > time.Hour*27 {
-			log.Warnf("metadata: %s has an invalid local <> utc time offset (%s)", logName, d.String())
+			log.Infof("metadata: %s has an invalid local time offset (%s)", logName, d.String())
+			log.Debugf("metadata: %s was taken at %s, local time %s, create time %s, time zone %s", logName, clean.Log(data.TakenAt.UTC().String()), clean.Log(data.TakenAtLocal.String()), clean.Log(data.CreatedAt.String()), clean.Log(data.TimeZone))
 			data.TakenAtLocal = data.TakenAt
 			data.TakenAt = data.TakenAt.UTC()
 		}
