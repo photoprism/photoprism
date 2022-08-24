@@ -27,7 +27,6 @@ type DeepStackPredictions struct {
 type DeepStack struct {
 	disabled       bool
 	apiEndpointUrl string
-	labels         []string
 }
 
 // New returns new DeepStack instance.
