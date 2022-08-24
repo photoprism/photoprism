@@ -46,12 +46,12 @@ require (
 	github.com/stretchr/testify v1.8.0
 	github.com/studio-b12/gowebdav v0.0.0-20211106090535-29e74efa701f
 	github.com/tensorflow/tensorflow v1.15.2
-	github.com/tidwall/gjson v1.14.2
+	github.com/tidwall/gjson v1.14.3
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.9
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa
-	golang.org/x/net v0.0.0-20220812174116-3211cb980234
+	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8
+	golang.org/x/net v0.0.0-20220822230855-b0a4917ee28c
 	gonum.org/v1/gonum v0.11.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.4.0
