@@ -33,8 +33,14 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	j := gjson.GetBytes(jsonData, "@flatten|@join")
 
+	logName := "json file"
+
+	if originalName != "" {
+		logName = clean.Log(filepath.Base(originalName))
+	}
+
 	if !j.IsObject() {
-		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", clean.Log(filepath.Base(originalName)))
+		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", logName)
 	}
 
 	data.json = make(map[string]string)
@@ -46,6 +52,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	if fileName, ok := data.json["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
 		return fmt.Errorf("metadata: original name %s does not match %s (exiftool)", clean.Log(originalName), clean.Log(fileName))
+	} else if fileName != "" && originalName == "" {
+		logName = clean.Log(filepath.Base(fileName))
 	}
 
 	v := reflect.ValueOf(data).Elem()
@@ -185,18 +193,34 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	hasTimeOffset := false
 
-	// Fallback to GPS timestamp.
+	// Has Media Create Date?
+	if !data.CreatedAt.IsZero() {
+		data.TakenAt = data.CreatedAt
+	}
+
+	// Fallback to GPS UTC Time?
 	if data.TakenAt.IsZero() && data.TakenAtLocal.IsZero() && !data.TakenGps.IsZero() {
 		data.TimeZone = time.UTC.String()
 		data.TakenAt = data.TakenGps.UTC()
 		data.TakenAtLocal = time.Time{}
 	}
 
+	// Check plausibility of the local <> UTC time difference.
+	if !data.TakenAt.IsZero() && !data.TakenAtLocal.IsZero() {
+		if d := data.TakenAt.Sub(data.TakenAtLocal).Abs(); d > time.Hour*27 {
+			log.Warnf("metadata: invalid local time offset %.1fh in %s (exiftool)", d.Hours(), logName)
+			data.TakenAtLocal = data.TakenAt
+			data.TakenAt = data.TakenAt.UTC()
+		}
+	}
+
+	// Has time zone offset?
 	if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
 		hasTimeOffset = true
-	} else if mt, ok := data.json["MIMEType"]; ok && (mt == MimeVideoMP4 || mt == MimeQuicktime) {
+	} else if mt, ok := data.json["MIMEType"]; ok && data.TakenAtLocal.IsZero() && (mt == MimeVideoMP4 || mt == MimeQuicktime) {
 		// Assume default time zone for MP4 & Quicktime videos is UTC.
 		// see https://exiftool.org/TagNames/QuickTime.html
+		log.Debugf("metadata: using UTC as default time zone in %s (%s)", logName, clean.Log(mt))
 		data.TimeZone = time.UTC.String()
 		data.TakenAt = data.TakenAt.UTC()
 		data.TakenAtLocal = time.Time{}
