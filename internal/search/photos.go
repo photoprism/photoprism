@@ -73,6 +73,14 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 		s = s.Order("files.time_index")
 	case entity.SortOrderOldest:
 		s = s.Order("files.photo_taken_at, files.media_id")
+	case entity.SortOrderBiggest:
+		s = s.Order("files.file_size DESC")
+	case entity.SortOrderSmallest:
+		s = s.Order("files.file_size")
+	case entity.SortOrderLongest:
+		s = s.Order("files.file_duration DESC")
+	case entity.SortOrderShortest:
+		s = s.Order("files.file_duration")
 	case entity.SortOrderSimilar:
 		s = s.Where("files.file_diff > 0")
 		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.time_index")
