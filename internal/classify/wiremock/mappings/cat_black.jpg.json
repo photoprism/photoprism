@@ -1,0 +1,31 @@
+{
+    "request": {
+        "method": "POST",
+        "url": "/v1/vision/detection",
+        "headers": {
+            "Content-Type": {
+                "contains": "multipart/form-data"
+            }
+        },
+        "multipartPatterns": [
+            {
+                "matchingType": "ANY",
+                "headers": {
+                    "Content-Disposition": {
+                        "contains": "cat_black.jpg"
+                    },
+                    "Content-Type": {
+                        "contains": "application/octet-stream"
+                    }
+                }
+            }
+        ]
+    },
+    "response": {
+        "status": 200,
+        "body": "{\"success\":true,\"predictions\":[{\"confidence\":0.42859283,\"label\":\"couch\",\"y_min\":1,\"x_min\":2,\"y_max\":312,\"x_max\":429},{\"confidence\":0.6032759,\"label\":\"cat\",\"y_min\":93,\"x_min\":10,\"y_max\":295,\"x_max\":419}],\"duration\":0}",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

@@ -67,7 +67,7 @@ services:
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_DEEPSTACK: "false"         # disables all features depending on DeepStack
-      PHOTOPRISM_DEEPSTACK_URL: "http://localhost:5000/v1/vision/detection"
+      PHOTOPRISM_DEEPSTACK_URL: "http://wiremock:8080/"
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW files
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW files (reduces performance)
       PHOTOPRISM_DETECT_NSFW: "false"                # flag photos as private that MAY be offensive (requires TensorFlow)
@@ -197,6 +197,12 @@ services:
       - "traefik.http.routers.dummy-webdav.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.dummy-webdav.tls=true"
+
+  ## WireMock for DeepStack API testing
+  wiremock:
+    image: wiremock/wiremock:2.33.2
+    volumes:
+      - "./internal/classify/wiremock:/home/wiremock"
 
 ## Create named volume for Go module cache
 volumes:
