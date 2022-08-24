@@ -168,6 +168,10 @@ export const Languages = () => [
     value: "sk",
   },
   {
+    text: "Slovenščina", // Slovene
+    value: "sl",
+  },
+  {
     text: "Suomi", // Finnish
     value: "fi",
   },
