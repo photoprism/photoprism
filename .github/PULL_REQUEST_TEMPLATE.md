@@ -16,7 +16,7 @@ You can also do this when viewing the pull request after it was created:
 
 Acceptance Criteria:
 
-- [ ] **Features and improvements are fully implemented** so that they can be released at any time without additional work
+- [ ] **Features and enhancements are fully implemented** so that they can be released at any time without additional work
 - [ ] **Automated unit and/or acceptance tests have been added** to ensure the changes work as expected and to reduce repetitive manual work
 - [ ] **User interface changes are fully responsive** and have been tested on all major browsers and various devices
 - [ ] Database-related changes are compatible with SQLite and MariaDB

@@ -79,11 +79,11 @@ Visit [docs.photoprism.app/user-guide](https://docs.photoprism.app/user-guide/) 
 
 Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/). Eligible [sponsors](https://photoprism.app/membership) are also welcome to [email us for technical support](https://photoprism.app/contact) and personalized advice.
 
-## Upcoming Features and Improvements ##
+## Upcoming Features and Enhancements ##
 
 Our [Project Roadmap](https://link.photoprism.app/roadmap) shows what tasks are in progress and what features will be implemented next. You are invited to give ideas you like a thumbs-up, so we know what's most popular.
 
-Be aware that we have a zero-bug policy and do our best to help users when they need support or have other questions. This comes at a price though, as we can't give exact release dates for new features. Our team receives many more requests than can be implemented, so we want to emphasize that we are in no way obligated to implement the features, improvements, or other changes you request. We do, however, appreciate your feedback and carefully consider all requests.
+Be aware that we have a zero-bug policy and do our best to help users when they need support or have other questions. This comes at a price though, as we can't give exact release dates for new features. Our team receives many more requests than can be implemented, so we want to emphasize that we are in no way obligated to implement the features, enhancements, or other changes you request. We do, however, appreciate your feedback and carefully consider all requests.
 
 **Because sustained funding is key to quickly releasing new features, we encourage you to support our mission by [signing up as a sponsor](https://link.photoprism.app/sponsor) or purchasing a [commercial license](https://photoprism.app/teams). Ultimately, that's what's best for the product and the community.**
 
