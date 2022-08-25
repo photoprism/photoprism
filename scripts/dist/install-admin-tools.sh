@@ -26,7 +26,4 @@ GOBIN="/usr/local/bin" go install github.com/raviqqe/muffet@latest
 echo "Installing nuclei, a fast and customizable vulnerability scanner..."
 GOBIN="/usr/local/bin" go install github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 
-echo "Installing zgrab, a modular application-layer network scanner..."
-GOBIN="/usr/local/bin" go install github.com/zmap/zgrab2@latest
-
 ln -sf /usr/local/bin/duf /usr/local/bin/df
