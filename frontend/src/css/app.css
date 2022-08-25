@@ -335,17 +335,21 @@ ol, ul {
 /* Rounded Elements */
 
 .v-progress-linear,
-#photoprism .search-results.mosaic-view .result,
-#photoprism .search-results.list-view .result .v-image,
 .v-progress-linear .v-progress-linear__bar__determinate,
 .v-progress-linear .v-progress-linear__bar__indeterminate--active {
     border-radius: 3px;
 }
 
 
+/* Result Border Radius */
+
 .v-menu__content,
 .v-btn.v-btn--depressed:not(.v-btn--round):not(.v-btn--icon),
-.v-text-field.v-text-field--solo > .v-input__control > .v-input__slot {
+.v-text-field.v-text-field--solo > .v-input__control > .v-input__slot,
+#photoprism .v-dialog .v-responsive.v-image,
+#photoprism .cards-view .result,
+#photoprism .mosaic-view .result.image,
+#photoprism .list-view .result .image {
     border-radius: 4px;
 }
 
