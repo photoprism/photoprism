@@ -249,6 +249,9 @@ export default {
     }
   },
   created() {
+    if (!this.$route.matched.params.backNavigationUsed) {
+      this.setOffset(0);
+    }
     this.search();
 
     this.subscriptions.push(Event.subscribe("subjects", (ev, data) => this.onUpdate(ev, data)));

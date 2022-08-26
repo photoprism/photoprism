@@ -190,6 +190,9 @@ export default {
     }
   },
   created() {
+    if (!this.$route.matched.params.backNavigationUsed) {
+      this.setOffset(0);
+    }
     const token = this.$route.params.token;
 
     if (this.$session.hasToken(token)) {
