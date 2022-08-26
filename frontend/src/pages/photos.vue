@@ -146,7 +146,6 @@ export default {
   },
   watch: {
     '$route'() {
-      console.log('route changed', this.$route);
       const query = this.$route.query;
 
       this.filter.q = query['q'] ? query['q'] : '';
@@ -490,9 +489,7 @@ export default {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
-            console.log('viewer', this.viewer.open);
             const lastOpenedPhotoId = window.localStorage.getItem("last_opened_photo");
-            console.log('lastOpenedPhotoId', lastOpenedPhotoId);
             if (!this.viewer.open && lastOpenedPhotoId) {
               window.localStorage.removeItem("last_opened_photo");
               this.$nextTick(() => {
