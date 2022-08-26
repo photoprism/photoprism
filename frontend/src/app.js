@@ -116,7 +116,10 @@ Vue.use(Dialogs);
 window.popStateDetected = false;
 window.addEventListener("popstate", (event) => {
   window.popStateDetected = true;
-  console.log("popstate detected");
+  // give components time to react to popStateDetected in `created` or '$route'-watcher
+  setTimeout(() => {
+    window.popStateDetected = false;
+  });
 });
 
 Vue.use(Router);
@@ -143,9 +146,6 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  to.params.backNavigationUsed = window.popStateDetected;
-  window.popStateDetected = false;
-
   if (document.querySelector(".v-dialog--active.v-dialog--fullscreen")) {
     // Disable back button in full-screen viewers and editors.
     next(false);

@@ -33,7 +33,10 @@
           :data-index="index"
           class="flex xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex"
       >
-        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-3 result placeholder">
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
+             :data-uid="photo.UID"
+             class="accent lighten-3 result placeholder"
+        >
           <div class="accent lighten-2 image"/>
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
           <div class="pa-3 card-details">

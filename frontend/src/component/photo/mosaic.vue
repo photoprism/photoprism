@@ -38,7 +38,10 @@
          re-layout all elements in the list when the children of one of them changes
         -->
         <div class="image-container">
-          <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="accent lighten-2 result image" />
+          <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
+               :data-uid="photo.UID"
+               class="accent lighten-2 result image"
+          />
           <div  v-else
                 :key="photo.Hash"
                 tile

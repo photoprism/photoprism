@@ -204,7 +204,7 @@ export default {
     },
   },
   created() {
-    if (!this.$route.matched.params.backNavigationUsed) {
+    if (!window.popStateDetected) {
       this.setOffset(0);
     }
     this.search();
