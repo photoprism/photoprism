@@ -467,6 +467,7 @@ let options = [
 
 /* Theme Functions */
 
+// Returns a theme by name.
 export const Get = (name) => {
   if (typeof themes[name] === "undefined") {
     return themes[options[0].value];
@@ -475,8 +476,29 @@ export const Get = (name) => {
   return themes[name];
 };
 
-export const Set = (name, val) => (themes[name] = val);
+// Adds or replaces a theme by name.
+export const Set = (name, val) => {
+  if (typeof themes[name] === "undefined") {
+    options.push({
+      text: val.title,
+      value: val.name,
+      disabled: false,
+    });
+  }
 
+  themes[name] = val;
+};
+
+// Removes a theme by name.
+export const Remove = (name) => {
+  delete themes[name];
+  const i = options.findIndex((el) => el.value === name);
+  if (i > -1) {
+    options.splice(i, 1);
+  }
+};
+
+// Returns translated theme options.
 export const Translated = () => {
   return options.map((v) => {
     if (v.disabled) {

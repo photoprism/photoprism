@@ -196,6 +196,7 @@ body.chrome #photoprism .search-results .result {
     transition-duration: 15ms !important;
     margin: 4px !important;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12) !important;
+    border-radius: 4px;
 }
 
 #photoprism .search-results .image-container {
@@ -213,7 +214,6 @@ body.chrome #photoprism .search-results .result {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  border-radius: 3px;
   overflow: hidden;
 }
 
