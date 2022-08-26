@@ -175,7 +175,7 @@ nav .v-list__tile__title.title {
     display: none;
     position: fixed;
     overflow: hidden;
-    z-index: 1;
+    z-index: 3;
     top: 0;
     right: 0;
     left: 0;
@@ -184,6 +184,11 @@ nav .v-list__tile__title.title {
     padding: 0;
     width: 0;
     height: 0;
+}
+
+#photoprism #mobile-menu .v-icon {
+    fill: rgba(255,255,255,.93);
+    color: rgba(255,255,255,.93);
 }
 
 #mobile-menu.active {
@@ -225,9 +230,9 @@ nav .v-list__tile__title.title {
     text-align: center;
 }
 
-#mobile-menu .menu-icons a {
-    fill: rgba(255,255,255,.8);
-    color: rgba(255,255,255,.8);
+#photoprism #mobile-menu .menu-icons a {
+    fill: rgba(255,255,255,.83);
+    color: rgba(255,255,255,.83);
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
     cursor: pointer;
@@ -259,18 +264,19 @@ nav .v-list__tile__title.title {
     margin: 0;
 }
 
-#mobile-menu .menu-actions .menu-action {
+#mobile-menu .menu-action {
     display: block;
     padding: 0;
     margin: 0;
 }
 
-#mobile-menu .menu-actions .menu-action:hover {
+#mobile-menu .menu-action:hover {
     background: #3f4042;
 }
 
-#mobile-menu .menu-actions .menu-action a {
-    color: #c2c4c5;
+#photoprism #mobile-menu .menu-action a {
+    fill: rgba(255,255,255,.85);
+    color: rgba(255,255,255,.85);
     display: inline-block;
     min-width: 200px;
     font-size: 15px;
@@ -280,13 +286,16 @@ nav .v-list__tile__title.title {
     margin: 0;
 }
 
-#mobile-menu .menu-actions .menu-action a i {
+#mobile-menu .menu-action a i {
     padding: 0 16px 0 0;
     font-size: 20px;
 }
 
-#mobile-menu .menu-icons a:hover i,
-#mobile-menu .menu-actions .menu-action:hover a,
-#mobile-menu .menu-actions .menu-action:hover a i{
+#photoprism #mobile-menu .menu-icons a:hover i,
+#photoprism #mobile-menu .menu-icons a:hover .v-icon,
+#photoprism #mobile-menu .menu-action:hover a,
+#photoprism #mobile-menu .menu-action:hover .v-icon,
+#photoprism #mobile-menu .menu-action:hover a i{
+    fill: #ffffff;
     color: #ffffff;
 }
