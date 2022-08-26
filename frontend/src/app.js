@@ -112,6 +112,13 @@ Vue.use(VueFullscreen);
 Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Dialogs);
+
+window.popStateDetected = false;
+window.addEventListener("popstate", (event) => {
+  window.popStateDetected = true;
+  console.log("popstate detected");
+});
+
 Vue.use(Router);
 
 // Configure client-side routing
@@ -136,6 +143,9 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  to.params.backNavigationUsed = window.popStateDetected;
+  window.popStateDetected = false;
+
   if (document.querySelector(".v-dialog--active.v-dialog--fullscreen")) {
     // Disable back button in full-screen viewers and editors.
     next(false);
