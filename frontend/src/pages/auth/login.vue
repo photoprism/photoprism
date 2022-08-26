@@ -79,7 +79,7 @@
         </v-flex>
         <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
           <v-btn
-              href="https://photoprism.app/membership"
+              href="https://link.photoprism.app/membership"
               target="_blank"
               color="transparent"
               class="white--text px-3 py-2 ma-0 action-sponsor"

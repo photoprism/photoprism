@@ -158,27 +158,135 @@ nav .v-list__tile__title.title {
     font-size: 19px;
 }
 
-/* MOBILE NAV SPEED DIAL */
+/* Mobile Menu */
 
-#photoprism .mobile-dial .v-btn.nav-menu-trigger {
+#photoprism #p-navigation .mobile-menu-trigger {
     width: 48px;
+    padding: 0;
+    margin: 0;
 }
 
-#photoprism .mobile-dial .v-btn:after,
-#photoprism .mobile-dial .v-btn:before {
+#photoprism .v-btn.mobile-menu-trigger:after,
+#photoprism .v-btn.mobile-menu-trigger:before {
     display: none!important;
 }
 
-#photoprism .mobile-dial .v-speed-dial__list .v-btn {
-    color: white!important;
-    background-color: #8916ff;
+#mobile-menu {
+    display: none;
+    position: fixed;
+    overflow: hidden;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    width: 0;
+    height: 0;
 }
 
-#photoprism .mobile-dial .v-speed-dial__list .v-btn.highlight {
-    background-color: #5f30fe;
+#mobile-menu.active {
+    display: block;
+    width: 100vw;
+    height: 100vh;
 }
 
-#photoprism .mobile-dial .v-speed-dial__list .v-btn:hover,
-#photoprism .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
-    background-color: #6600cc;
+#mobile-menu .menu-content {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: auto;
+    width: auto;
+    height: auto;
+    margin: 10px;
+    overflow: hidden;
+    background: #393a3c;
+    border-radius: 8px;
+}
+
+#mobile-menu .menu-icons {
+    -ms-flex-pack: distribute;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-box-align: stretch;
+    -ms-flex-align: stretch;
+    -ms-flex-flow: row nowrap;
+    align-items: stretch;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    background: rgba(250, 250, 255,.1);
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+#mobile-menu .menu-icons a {
+    fill: rgba(255,255,255,.8);
+    color: rgba(255,255,255,.8);
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    cursor: pointer;
+    display: inline-block;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 12px 11px 10px 11px;
+    margin: 0;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    z-index: 1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#mobile-menu .menu-icons a:hover {
+    background: rgba(250, 250, 255,.08);
+}
+
+#mobile-menu .menu-icons a i {
+    font-size: 22px;
+}
+
+#mobile-menu .menu-actions {
+    display: block;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+}
+
+#mobile-menu .menu-actions .menu-action {
+    display: block;
+    padding: 0;
+    margin: 0;
+}
+
+#mobile-menu .menu-actions .menu-action:hover {
+    background: #3f4042;
+}
+
+#mobile-menu .menu-actions .menu-action a {
+    color: #c2c4c5;
+    display: inline-block;
+    min-width: 200px;
+    font-size: 15px;
+    line-height: 50px;
+    text-decoration: none;
+    padding: 0 20px;
+    margin: 0;
+}
+
+#mobile-menu .menu-actions .menu-action a i {
+    padding: 0 16px 0 0;
+    font-size: 20px;
+}
+
+#mobile-menu .menu-icons a:hover i,
+#mobile-menu .menu-actions .menu-action:hover a,
+#mobile-menu .menu-actions .menu-action:hover a i{
+    color: #ffffff;
 }
