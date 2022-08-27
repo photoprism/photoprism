@@ -190,9 +190,6 @@ export default {
     }
   },
   created() {
-    if (!window.popStateDetected) {
-      this.setOffset(0);
-    }
     const token = this.$route.params.token;
 
     if (this.$session.hasToken(token)) {
@@ -385,6 +382,15 @@ export default {
       return params;
     },
     search() {
+      /**
+       * re-creating the last scroll-position should only ever happen when using
+       * back-navigation. We therefore reset the remembered scroll-position
+       * in any other scenario
+       */
+      if (!window.backwardsNavigationDetected) {
+        this.setOffset(0);
+      }
+
       this.scrollDisabled = true;
 
       // Don't query the same data more than once
