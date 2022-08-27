@@ -113,12 +113,12 @@ Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Dialogs);
 
-window.popStateDetected = false;
+window.backwardsNavigationDetected = false;
 window.addEventListener("popstate", (event) => {
-  window.popStateDetected = true;
-  // give components time to react to popStateDetected in `created` or '$route'-watcher
+  window.backwardsNavigationDetected = true;
+  // give components time to react to backwardsNavigationDetected in `created` or '$route'-watcher
   setTimeout(() => {
-    window.popStateDetected = false;
+    window.backwardsNavigationDetected = false;
   });
 });
 

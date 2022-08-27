@@ -444,7 +444,12 @@ export default {
         return;
       }
 
-      if (!window.popStateDetected) {
+      /**
+       * re-creating the last scroll-position should only ever happen when using
+       * back-navigation. We therefore reset the remembered scroll-position
+       * in any other scenario
+       */
+      if (!window.backwardsNavigationDetected) {
         window.localStorage.removeItem("last_opened_photo");
         this.setOffset(0);
       }
