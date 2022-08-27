@@ -494,23 +494,29 @@ export default {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
-            const lastOpenedPhotoId = window.localStorage.getItem("last_opened_photo");
-            if (!this.viewer.open && lastOpenedPhotoId) {
-              window.localStorage.removeItem("last_opened_photo");
-              this.$nextTick(() => {
-                document.querySelector(`[data-uid="${lastOpenedPhotoId}"]`)?.scrollIntoView({
-                  behavior: 'auto',
-                  block: 'center',
-                  inline: 'center'
-                });
-              });
-            }
+
+            this.restoreScrollPosition();
           });
         }
       }).finally(() => {
         this.dirty = false;
         this.loading = false;
         this.listen = true;
+      });
+    },
+    restoreScrollPosition() {
+      const lastOpenedPhotoId = window.localStorage.getItem("last_opened_photo");
+      if (lastOpenedPhotoId === undefined || lastOpenedPhotoId === null || this.viewer.open) {
+        return;
+      }
+
+      window.localStorage.removeItem("last_opened_photo");
+      this.$nextTick(() => {
+        document.querySelector(`[data-uid="${lastOpenedPhotoId}"]`)?.scrollIntoView({
+          behavior: 'auto',
+          block: 'center',
+          inline: 'center'
+        });
       });
     },
     onImportCompleted() {
