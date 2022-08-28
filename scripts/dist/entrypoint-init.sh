@@ -23,7 +23,7 @@ case $DOCKER_ENV in
 
   develop)
     export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/usr/local/bin:/usr/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin";
-    INIT_SCRIPTS="/go/src/github.com/photoprism/photoprism/scripts/dist"
+    INIT_SCRIPTS="/scripts"
     CHOWN_DIRS=("/photoprism" "/opt/photoprism" "/go" "/tmp/photoprism")
     CHMOD_DIRS=("/opt/photoprism" "/tmp/photoprism")
     ;;
