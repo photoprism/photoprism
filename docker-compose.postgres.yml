@@ -34,7 +34,7 @@ services:
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_EXPERIMENTAL: "true"
-      PHOTOPRISM_SERVER_MODE: "debug"
+      PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # improves transfer speed and bandwidth utilization (none or gzip)
