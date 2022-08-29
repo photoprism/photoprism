@@ -546,7 +546,7 @@
           <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action"><router-link :to="{ name: 'settings_account' }"><v-icon>person</v-icon> <translate>Account</translate></router-link></div>
           <div class="menu-action"><a href="https://link.photoprism.app/docs" target="_blank"><v-icon>auto_stories</v-icon> <translate>User Guide</translate></a></div>
           <div v-if="!isSponsor" class="menu-action"><a href="https://link.photoprism.app/membership" target="_blank"><v-icon>workspace_premium</v-icon> <translate>Become a sponsor</translate></a></div>
-          <div v-if="config.imprintUrl" class="menu-action"><a :href="config.imprintUrl" target="_blank"><v-icon>info</v-icon> <translate>Legal Information</translate></a></div>
+          <div v-if="config.imprintUrl && isSponsor" class="menu-action"><a :href="config.imprintUrl" target="_blank"><v-icon>info</v-icon> <translate>Legal Information</translate></a></div>
         </div>
       </div>
     </div>
