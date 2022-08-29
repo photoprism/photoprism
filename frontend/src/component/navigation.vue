@@ -526,27 +526,27 @@
     <div id="mobile-menu" :class="{'active': speedDial}" @click.stop="speedDial = false">
       <div class="menu-content grow-top-right">
         <div class="menu-icons">
-          <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" @click.prevent="logout"><v-icon>power_settings_new</v-icon></a>
-          <a href="#" :title="$gettext('Reload')" @click.prevent="reloadApp"><v-icon>refresh</v-icon></a>
-          <router-link v-if="!auth && !isPublic" :to="{ name: 'login' }" :title="$gettext('Login')">
+          <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" class="menu-action nav-logout" @click.prevent="logout"><v-icon>power_settings_new</v-icon></a>
+          <a href="#" :title="$gettext('Reload')" class="menu-action nav-reload" @click.prevent="reloadApp"><v-icon>refresh</v-icon></a>
+          <router-link v-if="!auth && !isPublic" :to="{ name: 'login' }" :title="$gettext('Login')" class="menu-action nav-login">
             <v-icon>login</v-icon>
           </router-link>
-          <router-link v-if="auth && !routeName('library') && $config.feature('library')" :to="{ name: 'library_logs' }" :title="$gettext('Logs')"><v-icon>feed</v-icon></router-link>
-          <router-link v-if="auth && !config.disable.settings && !routeName('settings')" to="/settings" :title="$gettext('Settings')">
+          <router-link v-if="auth && !routeName('library') && $config.feature('library')" :to="{ name: 'library_logs' }" :title="$gettext('Logs')" class="menu-action nav-logs"><v-icon>feed</v-icon></router-link>
+          <router-link v-if="auth && !config.disable.settings && !routeName('settings')" to="/settings" :title="$gettext('Settings')" class="menu-action nav-settings">
             <v-icon>settings</v-icon>
           </router-link>
-          <a v-if="auth && !config.readonly && $config.feature('upload')" href="#" :title="$gettext('Upload')" @click.prevent="openUpload()"><v-icon>cloud_upload</v-icon></a>
+          <a v-if="auth && !config.readonly && $config.feature('upload')" href="#" :title="$gettext('Upload')" class="menu-action nav-upload" @click.prevent="openUpload()"><v-icon>cloud_upload</v-icon></a>
         </div>
         <div class="menu-actions">
-          <div v-if="auth && !routeName('browse')" class="menu-action"><router-link to="/browse"><v-icon>search</v-icon> <translate>Search</translate></router-link></div>
-          <div v-if="auth && !routeName('albums') && $config.feature('albums')" class="menu-action"><router-link to="/albums"><v-icon>bookmark</v-icon> <translate>Albums</translate></router-link></div>
-          <div v-if="auth && !routeName('library') && $config.feature('library')" class="menu-action"><router-link :to="{ name: 'library' }"><v-icon>camera_roll</v-icon> <translate>Index</translate></router-link></div>
-          <div v-if="auth && !routeName('files') && $config.feature('library')" class="menu-action"><router-link to="/library/files"><v-icon>folder</v-icon> <translate>Files</translate></router-link></div>
-          <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action"><router-link :to="{ name: 'settings_sync' }"><v-icon>sync</v-icon> <translate>Connect</translate></router-link></div>
-          <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action"><router-link :to="{ name: 'settings_account' }"><v-icon>person</v-icon> <translate>Account</translate></router-link></div>
-          <div class="menu-action"><a href="https://link.photoprism.app/docs" target="_blank"><v-icon>auto_stories</v-icon> <translate>User Guide</translate></a></div>
-          <div v-if="!isSponsor" class="menu-action"><a href="https://link.photoprism.app/membership" target="_blank"><v-icon>workspace_premium</v-icon> <translate>Become a sponsor</translate></a></div>
-          <div v-if="config.imprintUrl && isSponsor" class="menu-action"><a :href="config.imprintUrl" target="_blank"><v-icon>info</v-icon> <translate>Legal Information</translate></a></div>
+          <div v-if="auth && !routeName('browse')" class="menu-action nav-search"><router-link to="/browse"><v-icon>search</v-icon> <translate>Search</translate></router-link></div>
+          <div v-if="auth && !routeName('albums') && $config.feature('albums')" class="menu-action nav-albums"><router-link to="/albums"><v-icon>bookmark</v-icon> <translate>Albums</translate></router-link></div>
+          <div v-if="auth && !routeName('library') && $config.feature('library')" class="menu-action nav-library"><router-link :to="{ name: 'library' }"><v-icon>camera_roll</v-icon> <translate>Index</translate></router-link></div>
+          <div v-if="auth && !routeName('files') && $config.feature('library')" class="menu-action nav-files"><router-link to="/library/files"><v-icon>folder</v-icon> <translate>Files</translate></router-link></div>
+          <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action nav-sync"><router-link :to="{ name: 'settings_sync' }"><v-icon>sync</v-icon> <translate>Connect</translate></router-link></div>
+          <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action nav-account"><router-link :to="{ name: 'settings_account' }"><v-icon>person</v-icon> <translate>Account</translate></router-link></div>
+          <div class="menu-action nav-manual"><a href="https://link.photoprism.app/docs" target="_blank"><v-icon>auto_stories</v-icon> <translate>User Guide</translate></a></div>
+          <div v-if="!isSponsor" class="menu-action nav-membership"><a href="https://link.photoprism.app/membership" target="_blank"><v-icon>workspace_premium</v-icon> <translate>Become a sponsor</translate></a></div>
+          <div v-if="config.imprintUrl && isSponsor" class="menu-action nav-legal"><a :href="config.imprintUrl" target="_blank"><v-icon>info</v-icon> <translate>Legal Information</translate></a></div>
         </div>
       </div>
     </div>
