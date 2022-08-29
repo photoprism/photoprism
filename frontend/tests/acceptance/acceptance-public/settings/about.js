@@ -13,7 +13,7 @@ test.meta("testID", "about-001").meta({ mode: "public" })(
     await t
       .expect(Selector('a[href="https://photoprism.app/"]').visible)
       .ok()
-      .expect(Selector('a[href="https://link.photoprism.app/membership"]').visible)
+      .expect(Selector('a[href="https://link.photoprism.app/membership"]').exists)
       .ok();
   }
 );
