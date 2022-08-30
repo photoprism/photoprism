@@ -541,7 +541,7 @@
           <div v-if="auth && !routeName('browse')" class="menu-action nav-search"><router-link to="/browse"><v-icon>search</v-icon> <translate>Search</translate></router-link></div>
           <div v-if="auth && !routeName('albums') && $config.feature('albums')" class="menu-action nav-albums"><router-link to="/albums"><v-icon>bookmark</v-icon> <translate>Albums</translate></router-link></div>
           <div v-if="auth && !routeName('library') && $config.feature('library')" class="menu-action nav-library"><router-link :to="{ name: 'library' }"><v-icon>camera_roll</v-icon> <translate>Index</translate></router-link></div>
-          <div v-if="auth && !routeName('files') && $config.feature('files')" class="menu-action nav-files"><router-link to="/library/files"><v-icon>folder</v-icon> <translate>Files</translate></router-link></div>
+          <div v-if="auth && !routeName('files') && $config.feature('files') && $config.feature('library')" class="menu-action nav-files"><router-link to="/library/files"><v-icon>folder</v-icon> <translate>Files</translate></router-link></div>
           <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action nav-sync"><router-link :to="{ name: 'settings_sync' }"><v-icon>sync</v-icon> <translate>Connect</translate></router-link></div>
           <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action nav-account"><router-link :to="{ name: 'settings_account' }"><v-icon>person</v-icon> <translate>Account</translate></router-link></div>
           <div class="menu-action nav-manual"><a href="https://link.photoprism.app/docs" target="_blank"><v-icon>auto_stories</v-icon> <translate>User Guide</translate></a></div>
