@@ -25,14 +25,8 @@ export default class Page {
       if (await this.openMobileToolbar.exists) {
         await t.click(this.openMobileToolbar);
       }
-      if (await this.openMobileToolbar.exists) {
-        await t.click(this.openMobileToolbar);
-      }
-      if (visible) {
-        await t.expect(Selector("button.nav-menu-" + action).visible).ok();
-      } else {
-        await t.expect(Selector("button.nav-menu-" + action).visible).notOk();
-      }
+      await this.checkMobileMenuActionAvailability(action, visible);
+      await t.click(Selector("#photoprism"), { offsetX: 1, offsetY: 1 });
     } else if (visible) {
       await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).ok();
     } else {
