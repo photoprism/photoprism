@@ -10,7 +10,7 @@ export default class Page {
     this.toolbarDescription = Selector(".v-card__text").nth(0);
     this.toolbarTitle = Selector("#p-navigation div.v-toolbar__title");
     this.toolbarSecondTitle = Selector("main.v-content div.v-toolbar__title");
-    this.openMobileToolbar = Selector("button.nav-menu-trigger");
+    this.openMobileToolbar = Selector("button.mobile-menu-trigger");
   }
 
   async checkToolbarActionAvailability(action, visible) {
@@ -37,6 +37,44 @@ export default class Page {
       await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).ok();
     } else {
       await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).notOk();
+    }
+  }
+
+  async checkMobileMenuActionAvailability(action, visible) {
+    if (
+      (action !== "login") &
+      (action !== "logout") &
+      (action !== "reload") &
+      (action !== "logs") &
+      (action !== "upload") &
+      (action !== "settings")
+    ) {
+      if (visible) {
+        await t.expect(Selector("#mobile-menu div.nav-" + action).visible).ok();
+      } else {
+        await t.expect(Selector("#mobile-menu div.nav-" + action).visible).notOk();
+      }
+    } else {
+      if (visible) {
+        await t.expect(Selector("#mobile-menu a.nav-" + action).visible).ok();
+      } else {
+        await t.expect(Selector("#mobile-menu a.nav-" + action).visible).notOk();
+      }
+    }
+  }
+
+  async triggerMobileMenuAction(action) {
+    if (
+      (action !== "login") &
+      (action !== "logout") &
+      (action !== "reload") &
+      (action !== "logs") &
+      (action !== "upload") &
+      (action !== "settings")
+    ) {
+      await t.click(Selector("#mobile-menu div.nav-" + action + " a"));
+    } else {
+      await t.click(Selector("#mobile-menu a.nav-" + action));
     }
   }
 
