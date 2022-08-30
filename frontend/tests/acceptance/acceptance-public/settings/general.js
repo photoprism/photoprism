@@ -84,7 +84,29 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "public"
   async (t) => {
     await toolbar.setFilter("view", "Cards");
 
+    await toolbar.search("Tübingen");
     await t.expect(page.cardLocation.exists).ok();
+
+    if (t.browser.platform === "mobile") {
+      if (await toolbar.openMobileToolbar.visible) {
+        await t.click(toolbar.openMobileToolbar);
+      }
+      await toolbar.checkMobileMenuActionAvailability("login", false);
+      await toolbar.checkMobileMenuActionAvailability("logout", false);
+      await toolbar.checkMobileMenuActionAvailability("reload", true);
+      await toolbar.checkMobileMenuActionAvailability("logs", true);
+      await toolbar.checkMobileMenuActionAvailability("settings", true);
+      await toolbar.checkMobileMenuActionAvailability("upload", true);
+      await toolbar.checkMobileMenuActionAvailability("reload", true);
+      await toolbar.checkMobileMenuActionAvailability("search", false);
+      await toolbar.checkMobileMenuActionAvailability("albums", true);
+      await toolbar.checkMobileMenuActionAvailability("library", true);
+      await toolbar.checkMobileMenuActionAvailability("files", true);
+      await toolbar.checkMobileMenuActionAvailability("sync", true);
+      await toolbar.checkMobileMenuActionAvailability("account", true);
+      await toolbar.checkMobileMenuActionAvailability("manual", true);
+      await t.click(toolbar.search1);
+    }
 
     await menu.openPage("library");
 
@@ -109,6 +131,23 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "public"
       .click(settings.logsCheckbox)
       .click(settings.placesCheckbox);
     await t.eval(() => location.reload());
+
+    if (t.browser.platform === "mobile") {
+      if (await toolbar.openMobileToolbar.visible) {
+        await t.click(toolbar.openMobileToolbar);
+      }
+      await toolbar.checkMobileMenuActionAvailability("login", false);
+      await toolbar.checkMobileMenuActionAvailability("logout", false);
+      await toolbar.checkMobileMenuActionAvailability("reload", true);
+      await toolbar.checkMobileMenuActionAvailability("logs", false);
+      await toolbar.checkMobileMenuActionAvailability("settings", false);
+      await toolbar.checkMobileMenuActionAvailability("upload", true);
+      await toolbar.checkMobileMenuActionAvailability("search", true);
+      await toolbar.checkMobileMenuActionAvailability("albums", true);
+      await toolbar.checkMobileMenuActionAvailability("library", true);
+      await toolbar.checkMobileMenuActionAvailability("files", false);
+      await t.click(Selector("#tab-settings-general"));
+    }
 
     await menu.openPage("browse");
     await toolbar.setFilter("view", "Cards");
@@ -146,10 +185,38 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "public"
     await menu.checkMenuItemAvailability("library", false);
 
     await menu.openPage("settings");
+
+    if (t.browser.platform === "mobile") {
+      if (await toolbar.openMobileToolbar.visible) {
+        await t.click(toolbar.openMobileToolbar);
+      }
+      await toolbar.checkMobileMenuActionAvailability("login", false);
+      await toolbar.checkMobileMenuActionAvailability("logout", false);
+      await toolbar.checkMobileMenuActionAvailability("reload", true);
+      await toolbar.checkMobileMenuActionAvailability("logs", false);
+      await toolbar.checkMobileMenuActionAvailability("settings", false);
+      await toolbar.checkMobileMenuActionAvailability("upload", true);
+      await toolbar.checkMobileMenuActionAvailability("search", true);
+      await toolbar.checkMobileMenuActionAvailability("albums", true);
+      await toolbar.checkMobileMenuActionAvailability("library", false);
+      await toolbar.checkMobileMenuActionAvailability("files", false);
+      await t.click(Selector("#tab-settings-general"));
+    }
+    await menu.openPage("settings");
+    await t.eval(() => location.reload());
+
     await t.click(settings.libraryCheckbox);
 
     await menu.checkMenuItemAvailability("originals", true);
     await menu.checkMenuItemAvailability("library", true);
+
+    if (t.browser.platform === "mobile") {
+      if (await toolbar.openMobileToolbar.visible) {
+        await t.click(toolbar.openMobileToolbar);
+      }
+      await toolbar.checkMobileMenuActionAvailability("library", true);
+      await toolbar.checkMobileMenuActionAvailability("files", true);
+    }
   }
 );
 
@@ -311,6 +378,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "public"
       .click(photoedit.dialogClose);
 
     await contextmenu.clearSelection();
+    await toolbar.search("photo:true");
     await photoviewer.openPhotoViewer("nth", 0);
 
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
