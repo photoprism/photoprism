@@ -43,6 +43,9 @@ test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
+testcafe: testcafe-auth-chromium
+testcafe-auth-chromium: storage/acceptance acceptance-sqlite-restart run-testcafe-auth-chromium acceptance-sqlite-stop
+testcafe-public-chromium: storage/acceptance acceptance-sqlite-restart run-testcafe-public-chromium acceptance-sqlite-stop
 acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop
 acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart acceptance acceptance-sqlite-stop
 acceptance-auth-run-firefox: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop
@@ -204,6 +207,12 @@ test-js:
 acceptance-old:
 	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run acceptance --first="chromium:headless" --second=plus --third=public && cd ..)
+run-testcafe-auth-chromium:
+	$(info Running auth-mode tests in 'chromium:headless'...)
+	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
+run-testcafe-public-chromium:
+	$(info Running public-mode tests in 'chromium:headless'...)
+	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance:
 	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run acceptance --first="chromium:headless" --second="^(Common|Core)\:*" --third=public --fourth="tests/acceptance" && cd ..)
@@ -491,4 +500,4 @@ tidy:
     install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell help dep-acceptance \
     docker-local docker-local-all docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish \
     docker-local-develop docker-local-develop-all docker-local-develop-bookworm docker-local-develop-bullseye \
-    docker-local-develop-buster docker-local-develop-impish test-mariadb reset-acceptance run-test-mariadb;
+    docker-local-develop-buster docker-local-develop-impish test-mariadb reset-acceptance run-test-mariadb testcafe;

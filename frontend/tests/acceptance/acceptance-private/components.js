@@ -10,7 +10,7 @@ const toolbar = new Toolbar();
 const menu = new Menu();
 const page = new Page();
 
-test.meta("testID", "components-001").only.meta({ mode: "private" })(
+test.meta("testID", "components-001").meta({ mode: "private" })(
   "Common: Mobile Toolbar",
   async (t) => {
     if (t.browser.platform === "mobile") {

@@ -13,6 +13,7 @@
     "fmt": "eslint --cache --fix src/ *.js .eslintrc.js",
     "test": "karma start",
     "upgrade": "npm --depth 10 update && npm audit fix",
+    "testcafe": "testcafe",
     "acceptance": "testcafe $npm_config_first --test-grep $npm_config_second --test-meta mode=$npm_config_third --config-file ./testcaferc.json $npm_config_fourth",
     "acceptance-short": "testcafe $npm_config_first --test-grep $npm_config_second --test-meta mode=$npm_config_third,type=short --config-file ./testcaferc.json $npm_config_fourth",
     "acceptance-local": "testcafe chromium --selector-timeout 5000 -S -s tests/acceptance/screenshots tests/acceptance",
