@@ -37,6 +37,7 @@ endif
 all: dep build-js
 dep: dep-tensorflow dep-npm dep-js dep-go
 build: build-go
+pull: docker-pull
 test: test-js test-go
 test-go: reset-sqlite run-test-go
 test-pkg: reset-sqlite run-test-pkg
@@ -281,6 +282,13 @@ test-coverage:
 	$(info Running all Go tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
+docker-pull:
+	docker pull mariadb:10.8
+	docker pull photoprism/traefik:latest
+	docker pull photoprism/develop:bookworm
+	docker pull photoprism/develop:bookworm-slim
+	docker pull photoprism/photoprism:preview
+	docker pull photoprism/photoprism:latest
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-debian docker-develop-armv7
@@ -448,8 +456,6 @@ docker-local-develop-buster:
 docker-local-develop-impish:
 	docker pull ubuntu:impish
 	scripts/docker/build.sh develop impish /impish
-docker-pull:
-	docker pull photoprism/photoprism:preview photoprism/photoprism:latest
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
@@ -500,4 +506,5 @@ tidy:
     install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell help dep-acceptance \
     docker-local docker-local-all docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish \
     docker-local-develop docker-local-develop-all docker-local-develop-bookworm docker-local-develop-bullseye \
-    docker-local-develop-buster docker-local-develop-impish test-mariadb reset-acceptance run-test-mariadb testcafe;
+    docker-local-develop-buster docker-local-develop-impish test-mariadb reset-acceptance run-test-mariadb testcafe \
+    pull docker-pull;
