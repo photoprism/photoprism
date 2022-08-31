@@ -445,9 +445,16 @@ func (c *Config) ImprintUrl() string {
 	return c.options.ImprintUrl
 }
 
+// Prod checks if production mode is enabled, hides non-essential log messages.
+func (c *Config) Prod() bool {
+	return c.options.Prod
+}
+
 // Debug checks if debug mode is enabled, shows non-essential log messages.
 func (c *Config) Debug() bool {
-	if c.Trace() {
+	if c.Prod() {
+		return false
+	} else if c.Trace() {
 		return true
 	}
 
@@ -456,6 +463,10 @@ func (c *Config) Debug() bool {
 
 // Trace checks if trace mode is enabled, shows all log messages.
 func (c *Config) Trace() bool {
+	if c.Prod() {
+		return false
+	}
+
 	return c.options.Trace || c.options.LogLevel == logrus.TraceLevel.String()
 }
 

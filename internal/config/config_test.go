@@ -36,8 +36,29 @@ func TestNewConfig(t *testing.T) {
 	assert.IsType(t, new(Config), c)
 
 	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath())
+	assert.False(t, c.Prod())
 	assert.False(t, c.Debug())
 	assert.False(t, c.ReadOnly())
+}
+
+func TestConfig_Prod(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.Prod())
+	assert.False(t, c.Debug())
+	assert.False(t, c.Trace())
+	c.options.Prod = true
+	c.options.Debug = true
+	assert.True(t, c.Prod())
+	assert.False(t, c.Debug())
+	assert.False(t, c.Trace())
+	c.options.Prod = false
+	assert.True(t, c.Debug())
+	assert.False(t, c.Trace())
+	c.options.Debug = false
+	assert.False(t, c.Debug())
+	assert.False(t, c.Debug())
+	assert.False(t, c.Trace())
 }
 
 func TestConfig_Name(t *testing.T) {

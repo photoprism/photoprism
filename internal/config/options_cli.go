@@ -40,6 +40,13 @@ var Flags = CliFlags{
 		}},
 	CliFlag{
 		Flag: cli.BoolFlag{
+			Name:   "prod",
+			Hidden: true,
+			Usage:  "enable production mode, hide non-essential log messages",
+			EnvVar: "PHOTOPRISM_PROD",
+		}},
+	CliFlag{
+		Flag: cli.BoolFlag{
 			Name:   "debug",
 			Usage:  "enable debug mode, show non-essential log messages",
 			EnvVar: "PHOTOPRISM_DEBUG",

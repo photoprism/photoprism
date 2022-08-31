@@ -19,6 +19,10 @@ var ThumbsCommand = cli.Command{
 			Name:  "force, f",
 			Usage: "replace existing thumbnails",
 		},
+		cli.BoolFlag{
+			Name:  "originals, o",
+			Usage: "originals only, skip sidecar files",
+		},
 	},
 	Action: thumbsAction,
 }
@@ -34,16 +38,16 @@ func thumbsAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("creating thumbnails in %s", clean.Log(conf.ThumbCachePath()))
+	log.Infof("creating thumbs in %s", clean.Log(conf.ThumbCachePath()))
 
-	rs := service.Resample()
+	rs := service.Thumbs()
 
-	if err := rs.Start(ctx.Bool("force")); err != nil {
+	if err := rs.Start(ctx.Bool("force"), ctx.Bool("originals")); err != nil {
 		log.Error(err)
 		return err
 	}
 
-	log.Infof("thumbnails created in %s", time.Since(start))
+	log.Infof("thumbs created in %s", time.Since(start))
 
 	return nil
 }

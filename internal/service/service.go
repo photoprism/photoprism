@@ -56,7 +56,7 @@ var services struct {
 	Nsfw        *nsfw.Detector
 	FaceNet     *face.Net
 	Query       *query.Query
-	Resample    *photoprism.Resample
+	Thumbs      *photoprism.Thumbs
 	Session     *session.Session
 }
 

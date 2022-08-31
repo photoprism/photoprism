@@ -163,3 +163,11 @@ func (l *IgnoreList) Ignore(fileName string) bool {
 
 	return false
 }
+
+// Reset resets ignored and hidden files.
+func (l *IgnoreList) Reset() {
+	l.items = []IgnoreItem{}
+	l.hiddenFiles = []string{}
+	l.ignoredFiles = []string{}
+	l.configFiles = make(map[string][]string)
+}
