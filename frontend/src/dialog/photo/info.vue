@@ -128,7 +128,7 @@
             ></v-switch>
           </td>
         </tr>
-        <tr>
+        <tr v-if="$config.feature('private')">
           <td>
             <translate>Private</translate>
           </td>
