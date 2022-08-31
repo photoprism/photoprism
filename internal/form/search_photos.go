@@ -2,6 +2,8 @@ package form
 
 import (
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // SearchPhotos represents search form fields for "/api/v1/photos".
@@ -115,6 +117,11 @@ func (f *SearchPhotos) ParseQueryString() error {
 		if err := Unserialize(f, f.Filter); err != nil {
 			return err
 		}
+	}
+
+	// Strip file extensions if any.
+	if f.Name != "" {
+		f.Name = fs.StripKnownExt(f.Name)
 	}
 
 	return nil

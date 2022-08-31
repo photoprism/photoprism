@@ -1,6 +1,10 @@
 package form
 
-import "time"
+import (
+	"time"
+
+	"github.com/photoprism/photoprism/pkg/fs"
+)
 
 // SearchPhotosGeo represents search form fields for "/api/v1/geo".
 type SearchPhotosGeo struct {
@@ -96,6 +100,11 @@ func (f *SearchPhotosGeo) ParseQueryString() error {
 		if err := Unserialize(f, f.Filter); err != nil {
 			return err
 		}
+	}
+
+	// Strip file extensions if any.
+	if f.Name != "" {
+		f.Name = fs.StripKnownExt(f.Name)
 	}
 
 	return err
