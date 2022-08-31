@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/search"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -33,9 +34,14 @@ func SearchAlbums(router *gin.RouterGroup) {
 			return
 		}
 
+		conf := service.Config()
+
 		// Guest permissions are limited to shared albums.
 		if s.Guest() {
 			f.UID = s.Shares.Join(txt.Or)
+			f.Public = true
+		} else {
+			f.Public = conf.Settings().Features.Private
 		}
 
 		result, err := search.Albums(f)

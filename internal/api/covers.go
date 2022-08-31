@@ -75,7 +75,7 @@ func AlbumCover(router *gin.RouterGroup) {
 			return
 		}
 
-		f, err := query.AlbumCoverByUID(uid)
+		f, err := query.AlbumCoverByUID(uid, conf.Settings().Features.Private)
 
 		if err != nil {
 			log.Debugf("%s: %s contains no photos, using generic cover", albumCover, uid)

@@ -14,6 +14,7 @@ type SearchAlbums struct {
 	Month    int    `json:"month"`
 	Day      int    `json:"day"`
 	Favorite bool   `form:"favorite"`
+	Public   bool   `form:"public"`
 	Private  bool   `form:"private"`
 	Count    int    `form:"count" binding:"required" serialize:"-"`
 	Offset   int    `form:"offset" serialize:"-"`

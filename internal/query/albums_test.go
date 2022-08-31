@@ -30,7 +30,7 @@ func TestAlbumByUID(t *testing.T) {
 
 func TestAlbumCoverByUID(t *testing.T) {
 	t.Run("existing uid default album", func(t *testing.T) {
-		file, err := AlbumCoverByUID("at9lxuqxpogaaba8")
+		file, err := AlbumCoverByUID("at9lxuqxpogaaba8", true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -40,7 +40,7 @@ func TestAlbumCoverByUID(t *testing.T) {
 	})
 
 	t.Run("existing uid folder album", func(t *testing.T) {
-		file, err := AlbumCoverByUID("at1lxuqipogaaba1")
+		file, err := AlbumCoverByUID("at1lxuqipogaaba1", true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -50,20 +50,20 @@ func TestAlbumCoverByUID(t *testing.T) {
 	})
 
 	t.Run("existing uid empty moment album", func(t *testing.T) {
-		file, err := AlbumCoverByUID("at7axuzitogaaiax")
+		file, err := AlbumCoverByUID("at7axuzitogaaiax", true)
 
 		assert.EqualError(t, err, "no cover found", err)
 		assert.Equal(t, "", file.FileName)
 	})
 
 	t.Run("not existing uid", func(t *testing.T) {
-		file, err := AlbumCoverByUID("3765")
+		file, err := AlbumCoverByUID("3765", true)
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
 
 	t.Run("existing uid empty month album", func(t *testing.T) {
-		file, err := AlbumCoverByUID("at1lxuqipogaabj9")
+		file, err := AlbumCoverByUID("at1lxuqipogaabj9", true)
 
 		assert.EqualError(t, err, "no cover found", err)
 		assert.Equal(t, "", file.FileName)
