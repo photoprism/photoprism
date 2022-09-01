@@ -44,16 +44,13 @@ test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
-testcafe: testcafe-auth-chromium
-testcafe-auth-chromium: storage/acceptance acceptance-sqlite-restart run-testcafe-auth-chromium acceptance-sqlite-stop
-testcafe-public-chromium: storage/acceptance acceptance-sqlite-restart run-testcafe-public-chromium acceptance-sqlite-stop
+acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance acceptance-sqlite-stop
+acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-short acceptance-sqlite-stop
 acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop
 acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart acceptance acceptance-sqlite-stop
+acceptance-run-firefox: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
 acceptance-auth-run-firefox: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop
 acceptance-public-run-firefox: storage/acceptance acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
-acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-short acceptance-sqlite-stop
-acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance acceptance-sqlite-stop
-acceptance-run-firefox: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth-firefox acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance-firefox acceptance-sqlite-stop
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go
 clean-local: clean-local-config clean-local-cache
@@ -205,33 +202,24 @@ watch-js:
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && env NODE_ENV=development BABEL_ENV=test npm run test)
-acceptance-old:
-	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run acceptance --first="chromium:headless" --second=plus --third=public && cd ..)
-run-testcafe-auth-chromium:
-	$(info Running auth-mode tests in 'chromium:headless'...)
-	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
-run-testcafe-public-chromium:
+acceptance:
 	$(info Running public-mode tests in 'chromium:headless'...)
 	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
-acceptance:
-	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run acceptance --first="chromium:headless" --second="^(Common|Core)\:*" --third=public --fourth="tests/acceptance" && cd ..)
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run acceptance-short --first="chromium:headless" --second="^(Common|Core)\:*" --third=public --fourth="tests/acceptance" && cd ..)
+	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
-	(cd frontend &&	npm run acceptance --first="firefox:headless" --second="^(Common|Core)\:*" --third=public --fourth="tests/acceptance" && cd ..)
+	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	npm run acceptance --first="chromium:headless" --second="^(Common|Core)\:*" --third=auth --fourth="tests/acceptance" && cd ..)
+	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	npm run acceptance-short --first="chromium:headless" --second="^(Common|Core)\:*" --third=auth --fourth="tests/acceptance" && cd ..)
+	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-firefox:
 	$(info Running JS acceptance-auth tests in Firefox...)
-	(cd frontend &&	npm run acceptance --first="firefox:headless" --second="^(Common|Core)\:*" --third=auth --fourth="tests/acceptance" && cd ..)
+	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
 	mysql < scripts/sql/reset-testdb.sql
