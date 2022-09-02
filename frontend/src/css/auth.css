@@ -28,8 +28,8 @@
 
 #photoprism main .auth-login .auth-login-form .v-card
 {
-    background: transparent !important;
-    border-radius: 12px;
+    background: #ccc1 !important;
+    border-radius: 16px;
     z-index: 1;
 }
 
