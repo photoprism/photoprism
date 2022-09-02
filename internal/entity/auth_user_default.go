@@ -5,19 +5,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-const DefaultAdminUserName = "admin"
-const DefaultAdminFullName = "Admin"
-
-const DisplayNameUnknown = "Public"
-const DisplayNameGuest = "Guest"
+const AdminUserName = "admin"
+const AdminDisplayName = "Admin"
+const GuestDisplayName = "Guest"
 
 // Admin is the default admin user.
 var Admin = User{
 	ID:          1,
 	UserSlug:    "admin",
-	Username:    DefaultAdminUserName,
+	Username:    AdminUserName,
 	UserRole:    acl.RoleAdmin.String(),
-	DisplayName: DefaultAdminFullName,
+	DisplayName: AdminDisplayName,
 	SuperAdmin:  true,
 	CanLogin:    true,
 	CanInvite:   true,
@@ -27,11 +25,11 @@ var Admin = User{
 // UnknownUser is an anonymous, public user without own account.
 var UnknownUser = User{
 	ID:          -1,
-	UserSlug:    "1",
+	UserSlug:    "",
 	UserUID:     "u000000000000001",
 	UserRole:    "",
 	Username:    "",
-	DisplayName: DisplayNameUnknown,
+	DisplayName: "",
 	SuperAdmin:  false,
 	CanLogin:    false,
 	CanInvite:   false,
@@ -41,11 +39,11 @@ var UnknownUser = User{
 // Guest is a user without own account e.g. for link sharing.
 var Guest = User{
 	ID:          -2,
-	UserSlug:    "2",
+	UserSlug:    "guest",
 	UserUID:     "u000000000000002",
 	UserRole:    acl.RoleGuest.String(),
-	Username:    "",
-	DisplayName: DisplayNameGuest,
+	Username:    "guest",
+	DisplayName: GuestDisplayName,
 	SuperAdmin:  false,
 	CanLogin:    false,
 	CanInvite:   false,

@@ -14,7 +14,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ResetCommand resets the index, clears the cache, and removes sidecar files after confirmation.
@@ -181,8 +180,8 @@ func resetIndexDb(c *config.Config) {
 	// Reset admin account?
 	if c.AdminPassword() == "" {
 		log.Warnf("password required to reset admin account")
-	} else if entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword()) {
-		log.Infof("user %s has been restored", clean.LogQuote(c.AdminUser()))
+	} else {
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
 	log.Infof("database reset completed in %s", time.Since(start))

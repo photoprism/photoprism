@@ -275,8 +275,8 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	// Init admin account?
 	if c.AdminPassword() == "" {
 		log.Warnf("config: password required to initialize %s account", clean.LogQuote(c.AdminUser()))
-	} else if entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword()) {
-		log.Infof("config: %s account has been initialized", clean.LogQuote(c.AdminUser()))
+	} else {
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
 	go entity.SaveErrorMessages()
@@ -290,8 +290,8 @@ func (c *Config) InitTestDb() {
 
 	if c.AdminPassword() == "" {
 		// Do nothing.
-	} else if entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword()) {
-		log.Debugf("config: %s account has been initialized", clean.LogQuote(c.AdminUser()))
+	} else {
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
 	go entity.SaveErrorMessages()

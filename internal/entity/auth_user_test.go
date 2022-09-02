@@ -232,7 +232,7 @@ func TestFindUserByUID(t *testing.T) {
 
 		assert.Equal(t, -2, m.ID)
 		assert.NotEmpty(t, m.UserUID)
-		assert.Equal(t, "", m.Username)
+		assert.Equal(t, "guest", m.Username)
 		assert.Equal(t, "Guest", m.DisplayName)
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)

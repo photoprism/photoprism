@@ -111,7 +111,7 @@ func (m *Migration) Execute(db *gorm.DB) error {
 			} else if strings.HasPrefix(q, "DROP TABLE ") &&
 				strings.Contains(e, "DROP") {
 				log.Tracef("migrate: %s (ignored, probably didn't exist anymore)", err)
-			} else if strings.Contains(q, " IGNORE ") &&
+			} else if (strings.Contains(q, " IGNORE ") || strings.Contains(q, "REPLACE")) &&
 				(strings.Contains(e, "NO SUCH TABLE") || strings.Contains(e, "DOESN'T EXIST")) {
 				log.Tracef("migrate: %s (ignored, old table does not exist anymore)", err)
 			} else {

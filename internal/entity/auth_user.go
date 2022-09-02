@@ -25,7 +25,7 @@ type Users []User
 type User struct {
 	ID             int        `gorm:"primary_key" json:"-" yaml:"-"`
 	UserUID        string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	UserSlug       string     `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug,omitempty"`
+	UserSlug       string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
 	Username       string     `gorm:"size:64;index;" json:"Username" yaml:"Username,omitempty"`
 	Email          string     `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
 	UserRole       string     `gorm:"size:32;" json:"Role" yaml:"Role,omitempty"`
@@ -102,12 +102,6 @@ func (m *User) InitAccount(login, password string) (updated bool) {
 		return false
 	}
 
-	// Update username as well if needed.
-	if err := m.UpdateName(login); err != nil {
-		log.Errorf("user: %s", err.Error())
-		return false
-	}
-
 	existing := FindPassword(m.UserUID)
 
 	if existing != nil {
@@ -116,10 +110,15 @@ func (m *User) InitAccount(login, password string) (updated bool) {
 
 	pw := NewPassword(m.UserUID, password)
 
-	// Update password in database.
+	// Save password.
 	if err := pw.Save(); err != nil {
 		log.Error(err)
 		return false
+	}
+
+	// Change username.
+	if err := m.UpdateName(login); err != nil {
+		log.Debugf("auth: cannot change username of %s to %s (%s)", clean.Log(m.UserUID), clean.LogQuote(login), err.Error())
 	}
 
 	return true
@@ -174,7 +173,7 @@ func FirstOrCreateUser(m *User) *User {
 
 	m.UserSlug = m.GenerateSlug()
 
-	if err := Db().Where("id = ? OR user_uid = ?", m.ID, m.UserUID).First(&result).Error; err == nil {
+	if err := Db().Where("id = ? OR (user_uid = ? AND user_uid <> '') OR (user_slug = ? AND user_slug <> '') OR (username = ? AND username <> '')", m.ID, m.UserUID, m.UserSlug, m.Username).First(&result).Error; err == nil {
 		return &result
 	} else if err := m.Create(); err != nil {
 		log.Debugf("user: %s", err)
@@ -307,7 +306,7 @@ func (m *User) SetUsername(login string) (err error) {
 	m.UserSlug = m.GenerateSlug()
 
 	// Update display name.
-	if m.DisplayName == "" || m.DisplayName == DefaultAdminFullName {
+	if m.DisplayName == "" || m.DisplayName == AdminDisplayName {
 		m.DisplayName = clean.Name(login)
 	}
 
