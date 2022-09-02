@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -16,9 +17,16 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// handler for the path with (without) the trailing slash exists.
 	router.RedirectTrailingSlash = true
 
+	// Static favicon image.
+	router.StaticFile(conf.BaseUri("/favicon.ico"), filepath.Join(conf.ImgPath(), "favicon.ico"))
+
 	// Static assets like js, css and font files.
 	router.Static(conf.BaseUri(config.StaticUri), conf.StaticPath())
-	router.StaticFile(conf.BaseUri("/favicon.ico"), filepath.Join(conf.ImgPath(), "favicon.ico"))
+
+	// Serve custom static assets if dir exists.
+	if dir := conf.CustomStaticPath(); dir != "" {
+		router.Static(conf.BaseUri(config.CustomStaticUri), dir)
+	}
 
 	// PWA Manifest.
 	router.GET(conf.BaseUri("/manifest.json"), func(c *gin.Context) {
@@ -197,10 +205,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Initialize package extensions.
 	for _, ext := range Extensions() {
+		start := time.Now()
+
 		if err := ext.init(router, conf); err != nil {
-			log.Warnf("server: failed to initialize extension %s (%s)", clean.Log(ext.name), err)
+			log.Warnf("server: %s in %s extension[%s]", err, clean.Log(ext.name), time.Since(start))
 		} else {
-			log.Debugf("server: extension %s initialized", clean.Log(ext.name))
+			log.Debugf("server: %s extension loaded [%s]", clean.Log(ext.name), time.Since(start))
 		}
 	}
 

@@ -81,11 +81,9 @@ func Start(ctx context.Context, conf *config.Config) {
 		Handler: router,
 	}
 
-	log.Debugf("server: successfully initialized [%s]", time.Since(start))
-
 	// Start HTTP server.
 	go func() {
-		log.Infof("server: listening at %s", server.Addr)
+		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 
 		if err := server.ListenAndServe(); err != nil {
 			if err == http.ErrServerClosed {
