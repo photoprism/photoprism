@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -65,9 +66,9 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 
 				var clientConfig config.ClientConfig
 
-				if sess.User.Guest() {
+				if sess.User.IsGuest() {
 					clientConfig = conf.GuestConfig()
-				} else if sess.User.Registered() {
+				} else if sess.User.IsRegistered() {
 					clientConfig = conf.UserConfig()
 				} else {
 					clientConfig = conf.PublicConfig()
@@ -150,7 +151,7 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 
 			wsAuth.mutex.RUnlock()
 
-			if user.Registered() {
+			if user.IsRegistered() {
 				writeMutex.Lock()
 
 				if err := ws.SetWriteDeadline(time.Now().Add(30 * time.Second)); err != nil {

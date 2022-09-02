@@ -26,6 +26,7 @@ type Options struct {
 	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode              string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
 	Public                bool          `yaml:"Public" json:"-" flag:"public"`
+	AdminUser             string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Prod                  bool          `yaml:"Prod" json:"Prod" flag:"prod"`

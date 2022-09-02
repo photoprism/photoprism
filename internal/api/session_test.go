@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
+
+	"github.com/photoprism/photoprism/internal/i18n"
 )
 
 func TestCreateSession(t *testing.T) {
@@ -14,7 +15,8 @@ func TestCreateSession(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateSession(router)
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
-		val2 := gjson.Get(r.Body.String(), "data.user.UserName")
+		log.Debugf("BODY: %s", r.Body.String())
+		val2 := gjson.Get(r.Body.String(), "data.user.Username")
 		assert.Equal(t, "admin", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
@@ -48,8 +50,8 @@ func TestCreateSession(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateSession(router)
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "alice", "password": "Alice123!"}`)
-		resEmail := gjson.Get(r.Body.String(), "data.user.PrimaryEmail")
-		resUsername := gjson.Get(r.Body.String(), "data.user.UserName")
+		resEmail := gjson.Get(r.Body.String(), "data.user.Email")
+		resUsername := gjson.Get(r.Body.String(), "data.user.Username")
 		assert.Equal(t, "alice@example.com", resEmail.String())
 		assert.Equal(t, "alice", resUsername.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -58,8 +60,8 @@ func TestCreateSession(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateSession(router)
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "bob", "password": "Bobbob123!"}`)
-		resEmail := gjson.Get(r.Body.String(), "data.user.PrimaryEmail")
-		resUsername := gjson.Get(r.Body.String(), "data.user.UserName")
+		resEmail := gjson.Get(r.Body.String(), "data.user.Email")
+		resUsername := gjson.Get(r.Body.String(), "data.user.Username")
 		assert.Equal(t, "bob@example.com", resEmail.String())
 		assert.Equal(t, "bob", resUsername.String())
 		assert.Equal(t, http.StatusOK, r.Code)

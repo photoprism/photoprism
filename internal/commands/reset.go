@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ResetCommand resets the index, clears the cache, and removes sidecar files after confirmation.
@@ -166,30 +167,32 @@ func resetAction(ctx *cli.Context) error {
 }
 
 // resetIndexDb resets the index database schema.
-func resetIndexDb(conf *config.Config) {
+func resetIndexDb(c *config.Config) {
 	start := time.Now()
 
 	tables := entity.Entities
 
 	log.Infoln("dropping existing tables")
-	tables.Drop(conf.Db())
+	tables.Drop(c.Db())
 
 	log.Infoln("restoring default schema")
 	entity.InitDb(true, false, nil)
 
-	if conf.AdminPassword() != "" {
-		log.Infoln("restoring initial admin password")
-		entity.Admin.InitPassword(conf.AdminPassword())
+	// Reset admin account?
+	if c.AdminPassword() == "" {
+		log.Warnf("password required to reset admin account")
+	} else if entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword()) {
+		log.Infof("user %s has been restored", clean.LogQuote(c.AdminUser()))
 	}
 
 	log.Infof("database reset completed in %s", time.Since(start))
 }
 
 // resetCache removes all cache files and folders.
-func resetCache(conf *config.Config) {
+func resetCache(c *config.Config) {
 	start := time.Now()
 
-	matches, err := filepath.Glob(regexp.QuoteMeta(conf.CachePath()) + "/**")
+	matches, err := filepath.Glob(regexp.QuoteMeta(c.CachePath()) + "/**")
 
 	if err != nil {
 		log.Errorf("reset: %s (find cache files)", err)
@@ -216,10 +219,10 @@ func resetCache(conf *config.Config) {
 }
 
 // resetSidecarJson removes generated *.json sidecar files.
-func resetSidecarJson(conf *config.Config) {
+func resetSidecarJson(c *config.Config) {
 	start := time.Now()
 
-	matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.json")
+	matches, err := filepath.Glob(regexp.QuoteMeta(c.SidecarPath()) + "/**/*.json")
 
 	if err != nil {
 		log.Errorf("reset: %s (find *.json sidecar files)", err)
@@ -230,7 +233,7 @@ func resetSidecarJson(conf *config.Config) {
 		log.Infof("removing %d *.json sidecar files", len(matches))
 
 		for _, name := range matches {
-			if err := os.Remove(name); err != nil {
+			if err = os.Remove(name); err != nil {
 				fmt.Print("E")
 			} else {
 				fmt.Print(".")
@@ -246,10 +249,10 @@ func resetSidecarJson(conf *config.Config) {
 }
 
 // resetSidecarYaml removes generated *.yml files.
-func resetSidecarYaml(conf *config.Config) {
+func resetSidecarYaml(c *config.Config) {
 	start := time.Now()
 
-	matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.yml")
+	matches, err := filepath.Glob(regexp.QuoteMeta(c.SidecarPath()) + "/**/*.yml")
 
 	if err != nil {
 		log.Errorf("reset: %s (find *.yml metadata files)", err)

@@ -3,6 +3,7 @@ package config
 import (
 	"regexp"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -20,9 +21,20 @@ func isBcrypt(s string) bool {
 	return b
 }
 
+// AdminUser returns the admin username.
+func (c *Config) AdminUser() string {
+	c.options.AdminUser = clean.Login(c.options.AdminUser)
+
+	if c.options.AdminUser == "" {
+		c.options.AdminUser = "admin"
+	}
+
+	return c.options.AdminUser
+}
+
 // AdminPassword returns the initial admin password.
 func (c *Config) AdminPassword() string {
-	return c.options.AdminPassword
+	return clean.Password(c.options.AdminPassword)
 }
 
 // Public checks if app runs in public mode and requires no authentication.

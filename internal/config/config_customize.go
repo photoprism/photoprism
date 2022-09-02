@@ -108,8 +108,10 @@ func (c *Config) WallpaperUri() string {
 	// Valid URI? Local file?
 	if p := clean.Path(c.options.WallpaperUri); p == "" {
 		c.options.WallpaperUri = ""
-	} else if fs.FileExists(filepath.Join(c.StaticPath(), assetPath, p)) {
+	} else if fs.FileExists(path.Join(c.StaticPath(), assetPath, p)) {
 		c.options.WallpaperUri = path.Join(c.StaticUri(), assetPath, p)
+	} else if fs.FileExists(c.CustomStaticFile(path.Join(assetPath, p))) {
+		c.options.WallpaperUri = path.Join(c.CustomStaticUri(), assetPath, p)
 	} else {
 		c.options.WallpaperUri = ""
 	}

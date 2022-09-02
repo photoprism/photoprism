@@ -31,7 +31,7 @@ var DialectMySQL = Migrations{
 	{
 		ID:         "20220329-060000",
 		Dialect:    "mysql",
-		Statements: []string{"ALTER TABLE accounts MODIFY acc_url VARCHAR(255);", "ALTER TABLE addresses MODIFY address_notes VARCHAR(1024);", "ALTER TABLE albums MODIFY album_caption VARCHAR(1024);", "ALTER TABLE albums MODIFY album_description VARCHAR(2048);", "ALTER TABLE albums MODIFY album_notes VARCHAR(1024);", "ALTER TABLE cameras MODIFY camera_description VARCHAR(2048);", "ALTER TABLE cameras MODIFY camera_notes VARCHAR(1024);", "ALTER TABLE countries MODIFY country_description VARCHAR(2048);", "ALTER TABLE countries MODIFY country_notes VARCHAR(1024);", "ALTER TABLE details MODIFY keywords VARCHAR(2048);", "ALTER TABLE details MODIFY notes VARCHAR(2048);", "ALTER TABLE details MODIFY subject VARCHAR(1024);", "ALTER TABLE details MODIFY artist VARCHAR(1024);", "ALTER TABLE details MODIFY copyright VARCHAR(1024);", "ALTER TABLE details MODIFY license VARCHAR(1024);", "ALTER TABLE folders MODIFY folder_description VARCHAR(2048);", "ALTER TABLE labels MODIFY label_description VARCHAR(2048);", "ALTER TABLE labels MODIFY label_notes VARCHAR(1024);", "ALTER TABLE lenses MODIFY lens_description VARCHAR(2048);", "ALTER TABLE lenses MODIFY lens_notes VARCHAR(1024);", "ALTER TABLE subjects MODIFY subj_bio VARCHAR(2048);", "ALTER TABLE subjects MODIFY subj_notes VARCHAR(1024);"},
+		Statements: []string{"ALTER TABLE accounts MODIFY acc_url VARCHAR(255);", "ALTER TABLE albums MODIFY album_caption VARCHAR(1024);", "ALTER TABLE albums MODIFY album_description VARCHAR(2048);", "ALTER TABLE albums MODIFY album_notes VARCHAR(1024);", "ALTER TABLE cameras MODIFY camera_description VARCHAR(2048);", "ALTER TABLE cameras MODIFY camera_notes VARCHAR(1024);", "ALTER TABLE countries MODIFY country_description VARCHAR(2048);", "ALTER TABLE countries MODIFY country_notes VARCHAR(1024);", "ALTER TABLE details MODIFY keywords VARCHAR(2048);", "ALTER TABLE details MODIFY notes VARCHAR(2048);", "ALTER TABLE details MODIFY subject VARCHAR(1024);", "ALTER TABLE details MODIFY artist VARCHAR(1024);", "ALTER TABLE details MODIFY copyright VARCHAR(1024);", "ALTER TABLE details MODIFY license VARCHAR(1024);", "ALTER TABLE folders MODIFY folder_description VARCHAR(2048);", "ALTER TABLE labels MODIFY label_description VARCHAR(2048);", "ALTER TABLE labels MODIFY label_notes VARCHAR(1024);", "ALTER TABLE lenses MODIFY lens_description VARCHAR(2048);", "ALTER TABLE lenses MODIFY lens_notes VARCHAR(1024);", "ALTER TABLE subjects MODIFY subj_bio VARCHAR(2048);", "ALTER TABLE subjects MODIFY subj_notes VARCHAR(1024);"},
 	},
 	{
 		ID:         "20220329-061000",
@@ -97,5 +97,10 @@ var DialectMySQL = Migrations{
 		ID:         "20220521-000003",
 		Dialect:    "mysql",
 		Statements: []string{"ALTER TABLE files MODIFY file_chroma SMALLINT DEFAULT -1;"},
+	},
+	{
+		ID:         "20220901-000100",
+		Dialect:    "mysql",
+		Statements: []string{"INSERT IGNORE INTO auth_users (id, user_uid, super_admin, user_role, display_name, user_slug, username, email, login_attempts, login_at, created_at, updated_at) SELECT id, user_uid, role_admin, 'admin', full_name, user_name, user_name, primary_email, login_attempts, login_at, created_at, updated_at FROM users WHERE user_name <> '' AND user_name IS NOT NULL AND role_admin = 1 AND user_disabled = 0;"},
 	},
 }

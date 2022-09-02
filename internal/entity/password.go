@@ -14,6 +14,11 @@ type Password struct {
 	UpdatedAt time.Time `deepcopier:"skip" json:"UpdatedAt"`
 }
 
+// TableName returns the entity database table name.
+func (Password) TableName() string {
+	return "passwords"
+}
+
 // NewPassword creates a new password instance.
 func NewPassword(uid, password string) Password {
 	if uid == "" {

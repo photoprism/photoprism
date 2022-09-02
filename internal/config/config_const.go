@@ -8,6 +8,9 @@ const ApiUri = "/api/v1"
 // StaticUri is the relative path for serving static content.
 const StaticUri = "/static"
 
+// CustomStaticUri is the relative path for serving custom static content.
+const CustomStaticUri = "/c/static"
+
 // MsgSponsor and MsgSignUp provide sponsorship info messages;
 // SignUpURL a signup link.
 const MsgSponsor = "PhotoPrism® needs your support!"

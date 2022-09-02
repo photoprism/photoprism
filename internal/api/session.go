@@ -3,15 +3,15 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // POST /api/v1/session
@@ -52,11 +52,11 @@ func CreateSession(router *gin.RouterGroup) {
 			}
 
 			// Upgrade from anonymous to guest. Don't downgrade.
-			if data.User.Anonymous() {
+			if data.User.IsAnonymous() {
 				data.User = entity.Guest
 			}
 		} else if f.HasCredentials() {
-			user := entity.FindUserByName(f.UserName)
+			user := entity.FindUserByLogin(f.Username)
 
 			if user == nil {
 				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
@@ -80,7 +80,7 @@ func CreateSession(router *gin.RouterGroup) {
 
 		AddSessionHeader(c, id)
 
-		if data.User.Anonymous() {
+		if data.User.IsAnonymous() {
 			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id, "data": data, "config": conf.GuestConfig()})
 		} else {
 			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id, "data": data, "config": conf.UserConfig()})
@@ -99,7 +99,7 @@ func DeleteSession(router *gin.RouterGroup) {
 	})
 }
 
-// Gets session id from HTTP header.
+// SessionID returns the session id from the HTTP header.
 func SessionID(c *gin.Context) string {
 	return c.GetHeader("X-Session-ID")
 }
@@ -119,7 +119,7 @@ func Session(id string) session.Data {
 func Auth(id string, resource acl.Resource, action acl.Action) session.Data {
 	sess := Session(id)
 
-	if acl.Permissions.Deny(resource, sess.User.Role(), action) {
+	if acl.Permissions.Deny(resource, sess.User.AclRole(), action) {
 		return session.Data{}
 	}
 

@@ -20,6 +20,13 @@ var Flags = CliFlags{
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{
+			Name:   "admin-user, login",
+			Usage:  "admin login `USERNAME`",
+			EnvVar: "PHOTOPRISM_ADMIN_USER",
+			Value:  "admin",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
 			Usage:  "initial admin `PASSWORD`, must have at least 8 characters",
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",

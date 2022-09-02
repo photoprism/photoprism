@@ -211,6 +211,15 @@ func TestConfig_DetectNSFW(t *testing.T) {
 	assert.Equal(t, true, result)
 }
 
+func TestConfig_AdminUser(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.AdminUser = "foo  "
+	assert.Equal(t, "foo", c.AdminUser())
+	c.options.AdminUser = "  Admin"
+	assert.Equal(t, "admin", c.AdminUser())
+}
+
 func TestConfig_AdminPassword(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

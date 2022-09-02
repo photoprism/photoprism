@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/clean"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -270,7 +272,12 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	entity.SetDbProvider(c)
 	entity.InitDb(true, runFailed, ids)
 
-	entity.Admin.InitPassword(c.AdminPassword())
+	// Init admin account?
+	if c.AdminPassword() == "" {
+		log.Warnf("config: password required to initialize %s account", clean.LogQuote(c.AdminUser()))
+	} else if entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword()) {
+		log.Infof("config: %s account has been initialized", clean.LogQuote(c.AdminUser()))
+	}
 
 	go entity.SaveErrorMessages()
 }
@@ -281,7 +288,11 @@ func (c *Config) InitTestDb() {
 	entity.SetDbProvider(c)
 	entity.ResetTestFixtures()
 
-	entity.Admin.InitPassword(c.AdminPassword())
+	if c.AdminPassword() == "" {
+		// Do nothing.
+	} else if entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword()) {
+		log.Debugf("config: %s account has been initialized", clean.LogQuote(c.AdminUser()))
+	}
 
 	go entity.SaveErrorMessages()
 }

@@ -4,13 +4,12 @@ import "github.com/photoprism/photoprism/pkg/clean"
 
 // UserCreate represents a User with a new password.
 type UserCreate struct {
-	UserName string `json:"username"`
-	FullName string `json:"fullname"`
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-// Username returns the normalized username in lowercase and without whitespace padding.
-func (f UserCreate) Username() string {
-	return clean.Username(f.UserName)
+// UsernameClean returns the username in lowercase and with whitespace trimmed.
+func (f UserCreate) UsernameClean() string {
+	return clean.Login(f.Username)
 }

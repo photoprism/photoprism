@@ -14,6 +14,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	rows = [][]string{
 		// Authentication.
 		{"auth-mode", fmt.Sprintf("%s", c.AuthMode())},
+		{"admin-user", c.AdminUser()},
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
 		{"public", fmt.Sprintf("%t", c.Public())},
 
@@ -167,8 +168,12 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"log-filename", c.LogFilename()},
 	}
 
-	if p := c.CustomAssetsPath(); p != "" {
-		rows = append(rows, []string{"custom-assets-path", p})
+	if v := c.CustomAssetsPath(); v != "" {
+		rows = append(rows, []string{"custom-assets-path", v})
+	}
+
+	if v := c.CustomStaticUri(); v != "" {
+		rows = append(rows, []string{"custom-static-uri", v})
 	}
 
 	return rows, cols

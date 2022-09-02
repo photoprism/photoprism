@@ -631,11 +631,11 @@ export default {
     },
     displayName() {
       const user = this.$session.getUser();
-      return user.FullName ? user.FullName : user.UserName;
+      return user.DisplayName ? user.DisplayName : user.Username;
     },
     accountInfo() {
       const user = this.$session.getUser();
-      return user.PrimaryEmail ? user.PrimaryEmail : this.$gettext("Account");
+      return user.Email ? user.Email : this.$gettext("Account");
     },
   },
   created() {

@@ -15,7 +15,12 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/report"
 )
+
+const UsernameUsage = "unique login identifier"
+const EmailUsage = "unique email address"
+const PasswordUsage = "secure login password"
 
 // UsersCommand registers user management subcommands.
 var UsersCommand = cli.Command{
@@ -23,55 +28,56 @@ var UsersCommand = cli.Command{
 	Usage: "User management subcommands",
 	Subcommands: []cli.Command{
 		{
-			Name:   "list",
-			Usage:  "Lists registered users",
-			Action: usersListAction,
+			Name:    "ls",
+			Aliases: []string{"list"},
+			Usage:   "Shows registered users",
+			Flags:   report.CliFlags,
+			Action:  usersListAction,
 		},
 		{
-			Name:   "add",
-			Usage:  "Adds a new user",
-			Action: usersAddAction,
+			Name:    "add",
+			Aliases: []string{"create"},
+			Usage:   "Adds a new user account",
+			Action:  usersAddAction,
 			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "fullname, n",
-					Usage: "full name of the new user",
-				},
 				cli.StringFlag{
 					Name:  "username, u",
-					Usage: "unique username",
-				},
-				cli.StringFlag{
-					Name:  "password, p",
-					Usage: "sets the users password",
+					Usage: UsernameUsage,
 				},
 				cli.StringFlag{
 					Name:  "email, m",
-					Usage: "sets the users email",
+					Usage: EmailUsage,
+				},
+				cli.StringFlag{
+					Name:  "password, p",
+					Usage: PasswordUsage,
 				},
 			},
 		},
 		{
-			Name:   "update",
-			Usage:  "Updates user information",
-			Action: usersUpdateAction,
+			Name:    "mod",
+			Aliases: []string{"update"},
+			Usage:   "Updates a user account",
+			Action:  usersUpdateAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "fullname, n",
-					Usage: "full name of the new user",
-				},
-				cli.StringFlag{
-					Name:  "password, p",
-					Usage: "sets the users password",
+					Name:  "username, u",
+					Usage: UsernameUsage,
 				},
 				cli.StringFlag{
 					Name:  "email, m",
-					Usage: "sets the users email",
+					Usage: EmailUsage,
+				},
+				cli.StringFlag{
+					Name:  "password, p",
+					Usage: PasswordUsage,
 				},
 			},
 		},
 		{
-			Name:      "delete",
-			Usage:     "Removes an existing user",
+			Name:      "rm",
+			Aliases:   []string{"delete"},
+			Usage:     "Removes a user account",
 			Action:    usersDeleteAction,
 			ArgsUsage: "[username]",
 		},
@@ -82,49 +88,43 @@ func usersAddAction(ctx *cli.Context) error {
 	return callWithDependencies(ctx, func(conf *config.Config) error {
 
 		uc := form.UserCreate{
-			UserName: strings.TrimSpace(ctx.String("username")),
-			FullName: strings.TrimSpace(ctx.String("fullname")),
+			Username: strings.TrimSpace(ctx.String("username")),
 			Email:    strings.TrimSpace(ctx.String("email")),
 			Password: strings.TrimSpace(ctx.String("password")),
 		}
 
 		interactive := true
 
-		if uc.UserName != "" && uc.Password != "" {
+		if uc.Username != "" && uc.Password != "" {
 			log.Debugf("creating user in non-interactive mode")
 			interactive = false
 		}
 
-		if interactive && uc.FullName == "" {
-			prompt := promptui.Prompt{
-				Label: "Full Name",
-			}
-			res, err := prompt.Run()
-			if err != nil {
-				return err
-			}
-			uc.FullName = strings.TrimSpace(res)
-		}
-
-		if interactive && uc.UserName == "" {
+		if interactive && uc.Username == "" {
 			prompt := promptui.Prompt{
 				Label: "Username",
 			}
+
 			res, err := prompt.Run()
+
 			if err != nil {
 				return err
 			}
-			uc.UserName = strings.TrimSpace(res)
+
+			uc.Username = strings.TrimSpace(res)
 		}
 
 		if interactive && uc.Email == "" {
 			prompt := promptui.Prompt{
-				Label: "E-Mail",
+				Label: "Email",
 			}
+
 			res, err := prompt.Run()
+
 			if err != nil {
 				return err
 			}
+
 			uc.Email = strings.TrimSpace(res)
 		}
 
@@ -176,24 +176,24 @@ func usersAddAction(ctx *cli.Context) error {
 
 func usersDeleteAction(ctx *cli.Context) error {
 	return callWithDependencies(ctx, func(conf *config.Config) error {
-		userName := strings.TrimSpace(ctx.Args().First())
+		login := strings.TrimSpace(ctx.Args().First())
 
-		if userName == "" {
+		if login == "" {
 			return errors.New("please provide a username")
 		}
 
 		actionPrompt := promptui.Prompt{
-			Label:     fmt.Sprintf("Delete %s?", clean.Log(userName)),
+			Label:     fmt.Sprintf("Delete %s?", clean.Log(login)),
 			IsConfirm: true,
 		}
 
 		if _, err := actionPrompt.Run(); err == nil {
-			if m := entity.FindUserByName(userName); m == nil {
-				return errors.New("user not found")
+			if m := entity.FindUserByLogin(login); m == nil {
+				return errors.New("login name not found")
 			} else if err := m.Delete(); err != nil {
 				return err
 			} else {
-				log.Infof("%s deleted", clean.Log(userName))
+				log.Infof("%s deleted", clean.LogQuote(login))
 			}
 		} else {
 			log.Infof("keeping user")
@@ -205,36 +205,46 @@ func usersDeleteAction(ctx *cli.Context) error {
 
 func usersListAction(ctx *cli.Context) error {
 	return callWithDependencies(ctx, func(conf *config.Config) error {
+		cols := []string{"UID", "Role", "Username", "Email", "Display Name"}
+
 		users := query.RegisteredUsers()
+		rows := make([][]string, len(users))
+
 		log.Infof("found %s", english.Plural(len(users), "user", "users"))
 
-		fmt.Printf("%-4s %-16s %-16s %-16s\n", "ID", "LOGIN", "NAME", "EMAIL")
-
-		for _, user := range users {
-			fmt.Printf("%-4d %-16s %-16s %-16s", user.ID, user.Username(), user.FullName, user.PrimaryEmail)
-			fmt.Printf("\n")
+		for i, user := range users {
+			rows[i] = []string{user.UserUID, user.AclRole().String(), user.UserName(), user.UserEmail(), user.RealName()}
 		}
 
-		return nil
+		result, err := report.Render(rows, cols, report.CliFormat(ctx))
+
+		fmt.Println(result)
+
+		return err
 	})
 }
 
 func usersUpdateAction(ctx *cli.Context) error {
 	return callWithDependencies(ctx, func(conf *config.Config) error {
-		username := ctx.Args().First()
-		if username == "" {
-			return errors.New("pass username as argument")
+		login := ctx.Args().First()
+
+		if login == "" {
+			return errors.New("please provide the username as argument")
 		}
 
-		u := entity.FindUserByName(username)
+		u := entity.FindUserByLogin(login)
 		if u == nil {
-			return errors.New("user not found")
+			return errors.New("username not found")
 		}
 
 		uc := form.UserCreate{
-			FullName: strings.TrimSpace(ctx.String("fullname")),
+			Username: strings.TrimSpace(ctx.String("username")),
 			Email:    strings.TrimSpace(ctx.String("email")),
 			Password: strings.TrimSpace(ctx.String("password")),
+		}
+
+		if ctx.IsSet("email") && len(uc.Email) > 0 {
+			u.Email = uc.Email
 		}
 
 		if ctx.IsSet("password") {
@@ -242,15 +252,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("password successfully changed: %s\n", clean.Log(u.Username()))
-		}
-
-		if ctx.IsSet("fullname") {
-			u.FullName = uc.FullName
-		}
-
-		if ctx.IsSet("email") && len(uc.Email) > 0 {
-			u.PrimaryEmail = uc.Email
+			fmt.Printf("password successfully changed: %s\n", clean.Log(u.UserName()))
 		}
 
 		if err := u.Validate(); err != nil {
@@ -261,7 +263,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			return err
 		}
 
-		fmt.Printf("user successfully updated: %s\n", clean.Log(u.Username()))
+		fmt.Printf("user account successfully updated: %s\n", clean.Log(u.UserName()))
 
 		return nil
 	})
