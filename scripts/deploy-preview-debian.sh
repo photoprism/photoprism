@@ -6,14 +6,11 @@ set -ex
 # Use QEMU for multi-arch builds.
 scripts/install-qemu.sh
 
-# Run test suite.
-scripts/test.sh
-
 # Build preview image.
-make docker-preview
+make docker-preview-debian
 
 # Wait 2s.
 sleep 2
 
-# Build demo image.
-make docker-demo
+# Build debian-based image.
+make docker-demo-debian

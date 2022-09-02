@@ -274,10 +274,6 @@ test-verbose:
 test-race:
 	$(info Running all Go tests with race detection in verbose mode...)
 	$(GOTEST) -tags slow -race -timeout 60m -v ./pkg/... ./internal/...
-test-codecov:
-	$(info Running all Go tests with code coverage report for codecov...)
-	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
-	scripts/codecov.sh -t $(CODECOV_TOKEN)
 test-coverage:
 	$(info Running all Go tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
@@ -291,14 +287,14 @@ docker-pull:
 	docker pull photoprism/photoprism:latest
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
-docker-develop-latest: docker-develop-debian docker-develop-armv7
+docker-develop-latest: docker-develop-ubuntu docker-develop-armv7
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
 docker-develop-ubuntu: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster docker-develop-jammy
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/develop:latest -t photoprism/develop:debian"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/develop:debian"
 docker-develop-bookworm-slim:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
@@ -325,14 +321,14 @@ docker-develop-impish:
 docker-develop-jammy:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy "-t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
 docker-develop-jammy-slim:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy-slim /jammy-slim
 docker-preview: docker-preview-latest
 docker-preview-all: docker-preview-latest docker-preview-other
-docker-preview-latest: docker-preview-debian
+docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
 docker-preview-ubuntu: docker-preview-jammy
 docker-preview-other: docker-preview-bullseye docker-preview-ubuntu
@@ -342,7 +338,7 @@ docker-preview-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /bookworm "-t photoprism/photoprism:preview-debian"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bookworm /bookworm "-t photoprism/photoprism:preview-debian"
 docker-preview-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm debian:bookworm-slim
@@ -368,7 +364,7 @@ docker-preview-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-jammy /jammy "-t photoprism/photoprism:preview-ubuntu"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /jammy "-t photoprism/photoprism:preview-ubuntu"
 docker-preview-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
@@ -377,7 +373,7 @@ docker-preview-impish:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
-docker-release-latest: docker-release-debian
+docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
 docker-release-ubuntu: docker-release-jammy
 docker-release-other: docker-release-bullseye docker-release-ubuntu
@@ -387,7 +383,7 @@ docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/photoprism:latest -t photoprism/photoprism:debian"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/photoprism:debian"
 docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm debian:bookworm-slim
@@ -413,7 +409,7 @@ docker-release-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy "-t photoprism/photoprism:ubuntu"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy "-t photoprism/photoprism:latest -t photoprism/photoprism:ubuntu"
 docker-release-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
@@ -467,11 +463,15 @@ docker-goproxy:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh goproxy linux/amd64,linux/arm64 $(BUILD_DATE)
 docker-demo: docker-demo-latest
-docker-demo-all: docker-demo-latest docker-demo-ubuntu
+docker-demo-all: docker-demo-latest docker-demo-debian
 docker-demo-latest:
 	docker pull photoprism/photoprism:preview
 	scripts/docker/build.sh demo $(BUILD_DATE)
 	scripts/docker/push.sh demo $(BUILD_DATE)
+docker-demo-debian:
+	docker pull photoprism/photoprism:preview-debian
+	scripts/docker/build.sh demo debian /debian
+	scripts/docker/push.sh demo debian
 docker-demo-ubuntu:
 	docker pull photoprism/photoprism:preview-ubuntu
 	scripts/docker/build.sh demo ubuntu /ubuntu
