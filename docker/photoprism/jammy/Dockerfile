@@ -1,36 +1,49 @@
 ##################################################### BUILD STAGE ######################################################
 FROM photoprism/develop:jammy as build
 
+# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
+
+# Declare build parameters.
 ARG TARGETARCH
+ARG TARGETPLATFORM
 ARG BUILD_TAG
 
-# set up project directory
+# Copy project files.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
-# build and install dist files for prod env
+# Build app.
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Ubuntu 22.04, Codename "Jammy Jellyfish"
-FROM ubuntu:jammy
+#### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
+FROM photoprism/develop:jammy-slim
 
-LABEL maintainer="Michael Mayer <hello@photoprism.app>"
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism CE"
+LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
+LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set environment variables, see https://docs.photoprism.app/getting-started/config-options/
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PS1="\u@$DOCKER_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
-    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
-    PROG="photoprism" \
     PHOTOPRISM_ASSETS_PATH="/opt/photoprism/assets" \
     PHOTOPRISM_IMPORT_PATH="/photoprism/import" \
     PHOTOPRISM_ORIGINALS_PATH="/photoprism/originals" \
@@ -76,67 +89,26 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
-# copy dist files and scripts
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+# Copy scripts.
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 
-# install additional distribution packages
-RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
-    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
-    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
-    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu && \
-    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
-      ca-certificates \
-      jq \
-      lshw \
-      gpg \
-      wget \
-      curl \
-      make \
-      sudo \
-      bash \
-      mariadb-client \
-      sqlite3 \
-      tzdata \
-      libc6 \
-      libatomic1 \
-      libheif-examples \
-      librsvg2-bin \
-      exiftool \
-      rawtherapee \
-      imagemagick \
-      ffmpeg \
-      ffmpegthumbnailer \
-      libavcodec-extra \
-    && \
-    /scripts/install-darktable.sh && \
-    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
-    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
-    cp /etc/skel/.bashrc /root/.bashrc && \
-    /scripts/create-users.sh && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
-    install -d -m 0777 -o 1000 -g 1000 \
-      /photoprism/originals \
-      /photoprism/import \
-      /photoprism/storage \
-      /photoprism/storage/sidecar \
-      /photoprism/storage/albums \
-      /photoprism/storage/backups \
-      /photoprism/storage/config \
-      /photoprism/storage/cache && \
+# Update pre-installed packages.
+RUN apt-get update && \
+    apt-get -qq dist-upgrade && \
     /scripts/cleanup.sh
 
-# define default directory and user
+# Default working directory.
 WORKDIR /photoprism
 
-# expose default http port 2342
+# Expose HTTP port.
 EXPOSE 2342
 
-# set container entrypoint script
+# Copy app files.
+COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+RUN mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu
+
+# Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]
 
-# start app server
+# Start app.
 CMD ["/opt/photoprism/bin/photoprism", "start"]

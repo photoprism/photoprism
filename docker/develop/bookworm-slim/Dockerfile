@@ -3,7 +3,7 @@ FROM debian:bookworm-slim
 
 # Open Container Initiative (OCI) Annotations
 # see https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism Production Base Image"
+LABEL org.opencontainers.image.title="PhotoPrism"
 LABEL org.opencontainers.image.description="Debian 12, Codename 'Bookworm'"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"

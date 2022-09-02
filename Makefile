@@ -293,7 +293,7 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-debian docker-develop-armv7
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-jammy
+docker-develop-ubuntu: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster docker-develop-jammy
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
@@ -326,6 +326,10 @@ docker-develop-jammy:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy "-t photoprism/develop:ubuntu"
+docker-develop-jammy-slim:
+	docker pull --platform=amd64 ubuntu:jammy
+	docker pull --platform=arm64 ubuntu:jammy
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy-slim /jammy-slim
 docker-preview: docker-preview-latest
 docker-preview-all: docker-preview-latest docker-preview-other
 docker-preview-latest: docker-preview-debian

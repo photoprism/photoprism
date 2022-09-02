@@ -1,20 +1,26 @@
-#### Base Image: Debian 11, Codename 'Bullseye'
-FROM debian:bullseye-slim
+#### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
+FROM ubuntu:jammy
 
-# Open Container Initiative (OCI) Annotations
-# see https://github.com/opencontainers/image-spec/blob/main/annotations.md
+# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
+
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism"
-LABEL org.opencontainers.image.description="Debian 11, Codename 'Bullseye'"
+LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
 LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set environment variables, see https://docs.photoprism.app/getting-started/config-options/
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
@@ -26,46 +32,25 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     TF_CPP_MIN_LOG_LEVEL="2" \
     PROG="photoprism"
 
-# copy scripts and debian backports sources list
+# Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
-COPY --chown=root:root --chmod=644 /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
 
-# install additional distribution packages
+# Update base image and add dependencies.
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
-      ca-certificates \
-      jq \
-      zip \
-      gpg \
-      lshw \
-      wget \
-      curl \
-      make \
-      sudo \
-      bash \
-      sqlite3 \
-      tzdata \
-      libc6 \
-      libatomic1 \
-      libheif-examples \
-      librsvg2-bin \
-      exiftool \
-      rawtherapee \
-      imagemagick \
-      ffmpeg \
-      ffmpegthumbnailer \
-      libavcodec-extra \
-      x264 \
-      x265 \
-      libvpx6 \
-      libwebm1 \
+    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get -qq install \
+      libc6 ca-certificates sudo bash tzdata \
+      gpg zip unzip wget curl rsync make nano \
+      jq lsof lshw sqlite3 mariadb-client imagemagick \
+      exiftool darktable rawtherapee libheif-examples librsvg2-bin \
+      ffmpeg ffmpegthumbnailer libavcodec-extra \
+      libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+      x264 x265 libvpx7 libwebm1 \
     && \
-    /scripts/install-mariadb.sh mariadb-client && \
-    /scripts/install-darktable.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
@@ -83,11 +68,11 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
-# define default directory and user
+# Default working directory.
 WORKDIR /photoprism
 
-# expose default http port 2342
-EXPOSE 2342
+# Expose HTTP and HTTPS ports.
+EXPOSE 2342 2442 2443
 
-# keep container running
+# Keep container running.
 CMD ["tail", "-f", "/dev/null"]

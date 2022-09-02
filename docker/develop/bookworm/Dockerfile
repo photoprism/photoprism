@@ -31,12 +31,12 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
     PROG="photoprism"
 
-# copy scripts and debian backports sources list
+# Copy scripts and debian backports sources list.
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 COPY --chown=root:root --chmod=644 /docker/develop/bookworm/sources.list /etc/apt/sources.list.d/bookworm.list
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
-# update image and install build dependencies
+# Update image and install build dependencies.
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \

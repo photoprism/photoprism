@@ -1,20 +1,26 @@
-#### Base Image: Ubuntu 22.04, Codename 'Jammy Jellyfish'
+#### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
 FROM ubuntu:jammy
 
-# Open Container Initiative (OCI) Annotations
-# see https://github.com/opencontainers/image-spec/blob/main/annotations.md
+# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
+
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism Build Environment"
-LABEL org.opencontainers.image.description="Ubuntu 22.04, Codename 'Jammy Jellyfish'"
+LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
 LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set environment variables
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
@@ -31,11 +37,11 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
     PROG="photoprism"
 
-# copy scripts and debian backports sources list
+# Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
-# update image and install build dependencies
+# Update base image and add dependencies.
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
@@ -120,25 +126,27 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
-# download models and testdata
+# Download models and testdata.
 RUN mkdir /tmp/photoprism && \
     wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# set up project directory
+# Default working directory.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# expose the following container ports:
+# Expose the following container ports:
 # - 2342 (HTTP)
 # - 2343 (Acceptance Tests)
+# - 2442 (HTTP)
+# - 2443 (HTTPS)
 # - 9515 (Chromedriver)
 # - 40000 (Go Debugger)
-EXPOSE 2342 2343 9515 40000
+EXPOSE 2342 2343 2442 2443 9515 40000
 
-# set container entrypoint script
+# Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]
 
-# keep container running
+# Keep container running.
 CMD ["tail", "-f", "/dev/null"]
