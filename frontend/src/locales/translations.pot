@@ -1594,11 +1594,11 @@ msgstr ""
 
 #: src/dialog/people/merge.vue:15
 #: src/dialog/photo/archive.vue:15
-#: src/dialog/photo/info.vue:287
-#: src/dialog/photo/info.vue:308
-#: src/dialog/photo/info.vue:328
-#: src/dialog/photo/info.vue:348
-#: src/dialog/photo/info.vue:368
+#: src/dialog/photo/info.vue:288
+#: src/dialog/photo/info.vue:309
+#: src/dialog/photo/info.vue:330
+#: src/dialog/photo/info.vue:351
+#: src/dialog/photo/info.vue:371
 msgid "No"
 msgstr ""
 
@@ -2629,7 +2629,7 @@ msgstr ""
 msgid "Use Presets"
 msgstr ""
 
-#: src/model/user.js:117
+#: src/model/user.js:134
 msgid "User"
 msgstr ""
 
@@ -2742,11 +2742,11 @@ msgstr ""
 #: src/dialog/photo/files.vue:127
 #: src/dialog/photo/files.vue:135
 #: src/dialog/photo/files.vue:181
-#: src/dialog/photo/info.vue:287
-#: src/dialog/photo/info.vue:308
-#: src/dialog/photo/info.vue:328
-#: src/dialog/photo/info.vue:348
-#: src/dialog/photo/info.vue:368
+#: src/dialog/photo/info.vue:288
+#: src/dialog/photo/info.vue:309
+#: src/dialog/photo/info.vue:330
+#: src/dialog/photo/info.vue:351
+#: src/dialog/photo/info.vue:371
 msgid "Yes"
 msgstr ""
 
