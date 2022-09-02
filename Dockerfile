@@ -1,14 +1,15 @@
-# Debian 12, Codename 'Bookworm'
-FROM photoprism/develop:220828-bookworm
+# Ubuntu 22.04 LTS (Jammy Jellyfish)
+FROM photoprism/develop:220902-jammy
 
-## alternative base images
-# FROM photoprism/develop:bullseye # Debian 11, Codename 'Bullseye'
-# FROM photoprism/develop:buster   # Debian 10, Codename 'Buster'
-# FROM photoprism/develop:impish   # Ubuntu 21.10, Codename 'Impish Indri'
+## Alternative Environments:
+# FROM photoprism/develop:bookworm # Debian 12 (Bookworm)
+# FROM photoprism/develop:bullseye # Debian 11 (Bullseye)
+# FROM photoprism/develop:buster   # Debian 10 (Buster)
+# FROM photoprism/develop:impish   # Ubuntu 21.10 (Impish Indri)
 
-# define working directory in container
+# Set default working directory.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# copy project source code to container
+# Add source to image.
 COPY . .
 COPY --chown=root:root /scripts/dist/* /scripts/
