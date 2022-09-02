@@ -11,7 +11,7 @@ ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILD_TAG
 
-# Copy project files.
+# Copy source to image.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
@@ -24,11 +24,11 @@ FROM photoprism/develop:jammy-slim
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism CE"
+LABEL org.opencontainers.image.title="PhotoPrism® Community Edition (Ubuntu 22.04 LTS)"
 LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
-LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
 LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 

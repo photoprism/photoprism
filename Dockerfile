@@ -10,6 +10,6 @@ FROM photoprism/develop:220902-jammy
 # Set default working directory.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Add source to image.
+# Copy source to image.
 COPY . .
 COPY --chown=root:root /scripts/dist/* /scripts/

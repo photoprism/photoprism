@@ -1,4 +1,4 @@
-#### Base Image: Debian 12, Codename 'Bookworm'
+#### Base Image: Debian 12 (Bookworm)
 FROM debian:bookworm-slim
 
 # Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
@@ -8,8 +8,8 @@ FROM debian:bookworm-slim
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism Develop (ARMv7)"
-LABEL org.opencontainers.image.description="Debian 12, Codename 'Bookworm'"
+LABEL org.opencontainers.image.title="PhotoPrism® Dev (ARMv7)"
+LABEL org.opencontainers.image.description="Debian 12 (Bookworm)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
