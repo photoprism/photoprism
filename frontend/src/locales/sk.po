@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-30 11:29+0000\n"
+"PO-Revision-Date: 2022-09-01 11:29+0000\n"
 "Last-Translator: Jozef Gaal <preklady@mayday.sk>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
 "frontend/sk/>\n"
@@ -1450,7 +1450,7 @@ msgstr "Nenašli sa žiadne štítky"
 #: src/pages/people/faces.vue:282 src/pages/people/faces.vue:368
 #: src/pages/people/subjects.vue:33 src/pages/people/subjects.vue:466
 msgid "No people found"
-msgstr "Neboli nájdené žiadny ľudia"
+msgstr "Neboli nájdení žiadny ľudia"
 
 #: src/common/viewer.js:263 src/component/photo/cards.vue:7
 #: src/component/photo/list.vue:8 src/component/photo/mosaic.vue:7
