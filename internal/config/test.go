@@ -115,7 +115,7 @@ func NewTestOptionsError() *Options {
 	testDataPath := fs.Abs("../../storage/testdata")
 
 	c := &Options{
-		DarktableBin:   "/usr/bin/darktable-cli",
+		DarktableBin:   "/bin/darktable-cli",
 		AssetsPath:     assetsPath,
 		StoragePath:    testDataPath,
 		CachePath:      testDataPath + "/cache",

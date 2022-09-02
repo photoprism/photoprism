@@ -1,6 +1,7 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,8 +15,7 @@ func TestConfig_ExifBruteForce(t *testing.T) {
 func TestConfig_ExifToolBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	bin := c.ExifToolBin()
-	assert.Equal(t, "/usr/bin/exiftool", bin)
+	assert.True(t, strings.Contains(c.ExifToolBin(), "/bin/exiftool"))
 }
 
 func TestConfig_ExifToolJson(t *testing.T) {
