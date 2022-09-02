@@ -40,10 +40,10 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
+    PROG="photoprism" \
     PHOTOPRISM_ASSETS_PATH="/opt/photoprism/assets" \
     PHOTOPRISM_IMPORT_PATH="/photoprism/import" \
     PHOTOPRISM_ORIGINALS_PATH="/photoprism/originals" \
@@ -94,7 +94,7 @@ COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 
 # Update pre-installed packages.
 RUN apt-get update && \
-    apt-get -qq dist-upgrade && \
+    apt-get -qq upgrade && \
     /scripts/cleanup.sh
 
 # Default working directory.

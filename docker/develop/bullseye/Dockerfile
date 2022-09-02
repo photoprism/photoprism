@@ -1,8 +1,13 @@
 #### Base Image: Debian 11, Codename 'Bullseye'
 FROM golang:1-bullseye
 
-# Open Container Initiative (OCI) Annotations
-# see https://github.com/opencontainers/image-spec/blob/main/annotations.md
+# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
+
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism Build Environment"
 LABEL org.opencontainers.image.description="Debian 11, Codename 'Bullseye'"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
@@ -11,10 +16,11 @@ LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/develo
 LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set environment variables
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \

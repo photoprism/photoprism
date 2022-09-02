@@ -8,7 +8,7 @@ FROM ubuntu:jammy
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism Build Environment"
+LABEL org.opencontainers.image.title="PhotoPrism Develop (Ubuntu 22.04 LTS)"
 LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
@@ -24,10 +24,10 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
+    NODE_ENV="production" \
     PS1="\u@$DOCKER_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
-    NODE_ENV="production" \
     DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
     TF_CPP_MIN_LOG_LEVEL="0" \
@@ -47,65 +47,25 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
-      apt-utils \
-      gpg \
-      gpg-agent \
-      pkg-config \
-      software-properties-common \
-      ca-certificates \
-      build-essential \
-      g++ \
-      gcc \
-      sudo \
-      bash \
-      make \
-      nano \
-      lsof \
-      lshw \
-      wget \
-      curl \
-      jq \
-      git \
-      zip \
-      unzip \
-      gettext \
-      firefox \
-      mariadb-client \
-      davfs2 \
-      chrpath \
-      libc6-dev \
-      libssl-dev \
-      libxft-dev \
-      libfreetype6 \
-      libfreetype6-dev \
-      libfontconfig1 \
-      libfontconfig1-dev \
-      libhdf5-serial-dev \
-      libpng-dev \
-      libzmq3-dev \
-      libx264-dev \
-      libx265-dev \
-      libnss3 \
-      libxtst6 \
-      librsvg2-bin \
-      rsync \
-      sqlite3 \
-      tzdata \
-      libheif-examples \
-      exiftool \
-      rawtherapee \
-      imagemagick \
-      ffmpeg \
-      ffmpegthumbnailer \
-      libavcodec-extra \
-      apache2-utils \
-      fonts-roboto \
-      npm \
+        libc6 ca-certificates sudo bash tzdata \
+        gpg zip unzip wget curl rsync make nano \
+        jq lsof lshw sqlite3 mariadb-client imagemagick \
+        exiftool darktable rawtherapee libheif-examples librsvg2-bin \
+        ffmpeg ffmpegthumbnailer libavcodec-extra \
+        libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+        x264 x265 libvpx7 libwebm1 \
     && \
+    apt-get -qq install \
+        apt-utils pkg-config software-properties-common \
+        build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
+        libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
+        libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
+        libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
+    && \
+    /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \
-    /scripts/install-darktable.sh && \
     /scripts/install-chrome.sh && \
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
@@ -116,14 +76,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/create-users.sh && \
     cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
-      /photoprism/originals \
-      /photoprism/import \
-      /photoprism/storage \
-      /photoprism/storage/sidecar \
-      /photoprism/storage/albums \
-      /photoprism/storage/backups \
-      /photoprism/storage/config \
-      /photoprism/storage/cache && \
+        /photoprism/originals \
+        /photoprism/import \
+        /photoprism/storage \
+        /photoprism/storage/sidecar \
+        /photoprism/storage/albums \
+        /photoprism/storage/backups \
+        /photoprism/storage/config \
+        /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
 # Download models and testdata.

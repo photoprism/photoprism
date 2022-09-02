@@ -8,7 +8,7 @@ FROM ubuntu:jammy
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism"
+LABEL org.opencontainers.image.title="PhotoPrism Base Image (Ubuntu 22.04 LTS)"
 LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
@@ -41,15 +41,15 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
-      libc6 ca-certificates sudo bash tzdata \
-      gpg zip unzip wget curl rsync make nano \
-      jq lsof lshw sqlite3 mariadb-client imagemagick \
-      exiftool darktable rawtherapee libheif-examples librsvg2-bin \
-      ffmpeg ffmpegthumbnailer libavcodec-extra \
-      libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-      x264 x265 libvpx7 libwebm1 \
+        libc6 ca-certificates sudo bash tzdata \
+        gpg zip unzip wget curl rsync make nano \
+        jq lsof lshw sqlite3 mariadb-client imagemagick \
+        exiftool darktable rawtherapee libheif-examples librsvg2-bin \
+        ffmpeg ffmpegthumbnailer libavcodec-extra \
+        libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+        x264 x265 libvpx7 libwebm1 \
     && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
@@ -58,14 +58,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/create-users.sh && \
     cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
-      /photoprism/originals \
-      /photoprism/import \
-      /photoprism/storage \
-      /photoprism/storage/sidecar \
-      /photoprism/storage/albums \
-      /photoprism/storage/backups \
-      /photoprism/storage/config \
-      /photoprism/storage/cache && \
+        /photoprism/originals \
+        /photoprism/import \
+        /photoprism/storage \
+        /photoprism/storage/sidecar \
+        /photoprism/storage/albums \
+        /photoprism/storage/backups \
+        /photoprism/storage/config \
+        /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
 # Default working directory.

@@ -26,6 +26,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_ENV="prod" \
     PS1="\u@$DOCKER_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
+    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
@@ -87,7 +88,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu && \
-    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+    apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
       libc6 ca-certificates sudo bash tzdata \
       gpg zip unzip wget curl rsync make nano \
       jq lsof lshw sqlite3 mariadb-client imagemagick \

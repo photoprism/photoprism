@@ -76,7 +76,7 @@ COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 
 # update pre-installed packages if needed
 RUN apt-get update && \
-    apt-get -qq dist-upgrade && \
+    apt-get -qq upgrade && \
     /scripts/cleanup.sh
 
 # define default directory and user
