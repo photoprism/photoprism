@@ -344,9 +344,9 @@ docker-preview-armv7:
 	docker pull --platform=arm debian:bookworm-slim
 	scripts/docker/buildx.sh photoprism linux/arm preview-armv7 /armv7
 docker-preview-arm64:
-	docker pull --platform=arm64 photoprism/develop:bookworm
-	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /bookworm
+	docker pull --platform=arm64 photoprism/develop:jammy
+	docker pull --platform=arm64 photoprism/develop:jammy-slim
+	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /jammy
 docker-preview-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=amd64 photoprism/develop:bullseye-slim
@@ -389,9 +389,9 @@ docker-release-armv7:
 	docker pull --platform=arm debian:bookworm-slim
 	scripts/docker/buildx.sh photoprism linux/arm armv7 /armv7
 docker-release-arm64:
-	docker pull --platform=arm64 photoprism/develop:bookworm
-	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx.sh photoprism linux/arm64 arm64 /bookworm
+	docker pull --platform=arm64 photoprism/develop:jammy
+	docker pull --platform=arm64 photoprism/develop:jammy-slim
+	scripts/docker/buildx.sh photoprism linux/arm64 arm64 /jammy
 docker-release-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=amd64 photoprism/develop:bullseye-slim
