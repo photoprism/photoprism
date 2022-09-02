@@ -8,6 +8,7 @@
 /storage
 /build
 /photoprism
+/photoprism-*
 /coverage.*
 /frontend/tests/acceptance/screenshots
 .dockerignore
