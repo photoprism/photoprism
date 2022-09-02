@@ -365,9 +365,9 @@ docker-preview-buster:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-buster /buster
 docker-preview-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
+	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	docker pull --platform=arm64 photoprism/develop:jammy
-	docker pull --platform=amd64 ubuntu:jammy
-	docker pull --platform=arm64 ubuntu:jammy
+	docker pull --platform=arm64 photoprism/develop:jammy-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-jammy /jammy "-t photoprism/photoprism:preview-ubuntu"
 docker-preview-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
@@ -410,9 +410,9 @@ docker-release-buster:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
 docker-release-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
+	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	docker pull --platform=arm64 photoprism/develop:jammy
-	docker pull --platform=amd64 ubuntu:jammy
-	docker pull --platform=arm64 ubuntu:jammy
+	docker pull --platform=arm64 photoprism/develop:jammy-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy "-t photoprism/photoprism:ubuntu"
 docker-release-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
