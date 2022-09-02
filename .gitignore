@@ -1,5 +1,6 @@
 # Application files and directories
 /photoprism
+/photoprism-*
 /photos/originals/*
 /photos/import/*
 /storage/*

@@ -1,12 +1,18 @@
+# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
+
 export GO111MODULE=on
 
 -include .env
 export
 
-GOIMPORTS=goimports
+# Binary file names.
 BINARY_NAME=photoprism
+GOIMPORTS=goimports
 
-# Build Parameters
+# Build parameters.
 BUILD_PATH ?= $(shell realpath "./build")
 BUILD_DATE ?= $(shell date -u +%y%m%d)
 BUILD_VERSION ?= $(shell git describe --always)
@@ -15,7 +21,7 @@ BUILD_OS ?= $(shell uname -s)
 BUILD_ARCH ?= $(shell scripts/dist/arch.sh)
 JS_BUILD_PATH ?= $(shell realpath "./assets/static/build")
 
-# Installation Parameters
+# Install parameters.
 INSTALL_PATH ?= $(BUILD_PATH)/photoprism-$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
 DESTDIR ?= $(INSTALL_PATH)
 DESTUID ?= 1000
@@ -34,6 +40,7 @@ else
     GOTEST=go test
 endif
 
+# Declare "make" targets.
 all: dep build-js
 dep: dep-tensorflow dep-npm dep-js dep-go
 build: build-go
@@ -42,6 +49,7 @@ test: test-js test-go
 test-go: reset-sqlite run-test-go
 test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
+test-commands: reset-sqlite run-test-commands
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance acceptance-sqlite-stop
@@ -138,13 +146,14 @@ root-terminal:
 migrate:
 	go run cmd/photoprism/photoprism.go migrations run
 generate:
+	POT_SIZE_BEFORE=$(shell stat -L -c %s assets/locales/messages.pot)
 	go generate ./pkg/... ./internal/...
 	go fmt ./pkg/... ./internal/...
-	# revert unnecessary pot file change
-	# POT_UNCHANGED='1 file changed, 1 insertion(+), 1 deletion(-)'
-	# @if [ ${$(shell git diff --shortstat assets/locales/messages.pot):1:45} == $(POT_UNCHANGED) ]; then\
-	# 	git checkout -- assets/locales/messages.pot;\
-	# fi
+	POT_SIZE_AFTER=$(shell stat -L -c %s assets/locales/messages.pot)
+	@if [ $(POT_SIZE_BEFORE) == $(POT_SIZE_AFTER) ]; then\
+		git checkout -- assets/locales/messages.pot;\
+		echo "Reverted unnecessary change in assets/locales/messages.pot.";\
+	fi
 clean-local-assets:
 	rm -rf $(BUILD_PATH)/assets/*
 clean-local-cache:
@@ -169,7 +178,7 @@ dep-tensorflow:
 	scripts/download-nsfw.sh
 dep-acceptance: storage/acceptance
 storage/acceptance:
-	(cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)
+	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)
 zip-facenet:
 	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
 zip-nasnet:
@@ -253,6 +262,9 @@ run-test-pkg:
 run-test-api:
 	$(info Running all API tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/api/...
+run-test-commands:
+	$(info Running all CLI command tests...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/commands/...
 test-parallel:
 	$(info Running all Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/... ./internal/...
@@ -488,11 +500,6 @@ fmt-go:
 tidy:
 	go mod tidy -go=1.16 && go mod tidy -go=1.17
 
-.PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
-    install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
-    docker-develop docker-preview docker-preview-all docker-preview-arm docker-release docker-release-all docker-release-arm \
-    install-go install-darktable install-tensorflow devtools tar.gz fix-permissions rootshell help dep-acceptance \
-    docker-local docker-local-all docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-impish \
-    docker-local-develop docker-local-develop-all docker-local-develop-bookworm docker-local-develop-bullseye \
-    docker-local-develop-buster docker-local-develop-impish test-mariadb reset-acceptance run-test-mariadb testcafe \
-    pull docker-pull;
+# Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
+MAKEFLAGS += --always-make
+.PHONY: all assets build cmd docker frontend internal pkg scripts storage photoprism install;
