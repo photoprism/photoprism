@@ -23,6 +23,7 @@ const (
 	ResourcePasswords     Resource = "passwords"
 	ResourceUsers         Resource = "users"
 	ResourcePhotos        Resource = "photos"
+	ResourcePrivate       Resource = "private"
 	ResourcePlaces        Resource = "places"
 	ResourceFeedback      Resource = "feedback"
 )

@@ -1,20 +1,33 @@
 package acl
 
+import (
+	"strings"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+)
+
 type Role string
 type Roles map[Role]Actions
 
 const (
-	RoleDefault     Role = "*"
-	RoleAdmin       Role = "admin"
-	RolePartner     Role = "partner"
-	RoleFamily      Role = "family"
-	RoleSibling     Role = "sibling"
-	RoleParent      Role = "parent"
-	RoleGrandparent Role = "grandparent"
-	RoleChild       Role = "child"
-	RoleFriend      Role = "friend"
-	RoleBestFriend  Role = "best-friend"
-	RoleClassmate   Role = "classmate"
-	RoleWorkmate    Role = "workmate"
-	RoleGuest       Role = "guest"
+	RoleAdmin   Role = "admin"
+	RoleEditor  Role = "editor"
+	RoleViewer  Role = "viewer"
+	RoleGuest   Role = "guest"
+	RoleDefault Role = "*"
 )
+
+// String returns the type as string.
+func (t Role) String() string {
+	return clean.Role(string(t))
+}
+
+// Equal checks if the type matches.
+func (t Role) Equal(s string) bool {
+	return strings.EqualFold(s, t.String())
+}
+
+// NotEqual checks if the type is different.
+func (t Role) NotEqual(s string) bool {
+	return !t.Equal(s)
+}
