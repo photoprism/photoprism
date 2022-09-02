@@ -8,14 +8,18 @@ import (
 
 // Name sanitizes and capitalizes names.
 func Name(name string) string {
+	// Empty or too long?
 	if name == "" || reject(name, txt.ClipDefault) {
 		return ""
 	}
 
-	// Remove double quotes and other special characters.
+	// Remove unwanted characters.
 	name = strings.Map(func(r rune) rune {
+		if r < 32 || r == 127 {
+			return -1
+		}
 		switch r {
-		case '"', '`', '~', '\\', '/', '*', '%', '_', '&', '|', '+', '=', '$', '@', '!', '?', ':', ';', '<', '>', '{', '}':
+		case '"', '$', '%', '\\', '*', '`', ';', '<', '>', '{', '}':
 			return -1
 		}
 		return r
@@ -23,6 +27,7 @@ func Name(name string) string {
 
 	name = strings.TrimSpace(name)
 
+	// Now empty?
 	if name == "" {
 		return ""
 	}
