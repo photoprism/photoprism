@@ -18,6 +18,7 @@
         </div>
       </div>
     </div>
+    <!-- TODO: Add close-button to the dialog -->
     <v-dialog v-model="showPictures" overflowed>
       <v-card>
         <p-page-photos v-if="showPictures" :static-filter="selectedClusterBounds"></p-page-photos>
@@ -460,6 +461,7 @@ export default {
             }
           }
 
+          // Todo: set these options via url, so that the back-button closes the dialog!
           this.selectedClusterBounds = {
             latmin: latMin,
             latmax: latMax,
