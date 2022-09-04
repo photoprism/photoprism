@@ -637,4 +637,18 @@ func TestExif(t *testing.T) {
 			assert.Equal(t, "found no exif data", err.Error())
 		}
 	})
+	t.Run("aurora.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/aurora.jpg", fs.ImageJPEG, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2021-10-29 13:42:00 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2021-10-29 13:42:00 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "", data.TimeZone) // Local Time
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+	})
 }

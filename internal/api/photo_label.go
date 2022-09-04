@@ -19,7 +19,8 @@ import (
 // POST /api/v1/photos/:uid/label
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
@@ -93,8 +94,9 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 // DELETE /api/v1/photos/:uid/label/:id
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
-//   id: int LabelId as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
+//	id: int LabelId as returned by the API
 func RemovePhotoLabel(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
@@ -157,8 +159,9 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 // PUT /api/v1/photos/:uid/label/:id
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
-//   id: int LabelId as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
+//	id: int LabelId as returned by the API
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)

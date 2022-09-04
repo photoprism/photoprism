@@ -99,7 +99,8 @@ func UpdateSubject(router *gin.RouterGroup) {
 // POST /api/v1/subjects/:uid/like
 //
 // Parameters:
-//   uid: string Subject UID
+//
+//	uid: string Subject UID
 func LikeSubject(router *gin.RouterGroup) {
 	router.POST("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceSubjects, acl.ActionUpdate)
@@ -133,7 +134,8 @@ func LikeSubject(router *gin.RouterGroup) {
 // DELETE /api/v1/subjects/:uid/like
 //
 // Parameters:
-//   uid: string Subject UID
+//
+//	uid: string Subject UID
 func DislikeSubject(router *gin.RouterGroup) {
 	router.DELETE("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceSubjects, acl.ActionUpdate)

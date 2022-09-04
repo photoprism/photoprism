@@ -6,17 +6,20 @@ import (
 
 const (
 	Ellipsis      = "…"
+	ClipRole      = 32
 	ClipKeyword   = 40
-	ClipUsername  = 64
+	ClipUserName  = 64
 	ClipSlug      = 80
 	ClipCategory  = 100
 	ClipDefault   = 160
 	ClipName      = 160
 	ClipTitle     = 200
+	ClipEmail     = 255
 	ClipPath      = 500
 	ClipShortText = 1024
 	ClipText      = 2048
 	ClipLongText  = 4096
+	ClipPassword  = 4096
 )
 
 // Clip shortens a string to the given number of runes, and removes all leading and trailing white space.

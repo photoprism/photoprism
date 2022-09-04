@@ -424,6 +424,35 @@ func (c *Config) CustomAssetsPath() string {
 	return ""
 }
 
+// CustomStaticPath returns the custom static assets' path.
+func (c *Config) CustomStaticPath() string {
+	if dir := c.CustomAssetsPath(); dir == "" {
+		return ""
+	} else if dir = filepath.Join(dir, "static"); !fs.PathExists(dir) {
+		return ""
+	} else {
+		return dir
+	}
+}
+
+// CustomStaticFile returns the path to a custom static file.
+func (c *Config) CustomStaticFile(fileName string) string {
+	if dir := c.CustomStaticPath(); dir == "" {
+		return ""
+	} else {
+		return filepath.Join(dir, fileName)
+	}
+}
+
+// CustomStaticUri returns the URI to a custom static resource.
+func (c *Config) CustomStaticUri() string {
+	if dir := c.CustomAssetsPath(); dir == "" {
+		return ""
+	} else {
+		return c.CdnUrl(c.BaseUri(CustomStaticUri))
+	}
+}
+
 // LocalesPath returns the translation locales path.
 func (c *Config) LocalesPath() string {
 	return filepath.Join(c.AssetsPath(), "locales")

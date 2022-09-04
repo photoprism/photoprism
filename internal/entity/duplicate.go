@@ -18,6 +18,11 @@ type Duplicate struct {
 	ModTime  int64  `json:"ModTime" yaml:"-"`
 }
 
+// TableName returns the entity database table name.
+func (Duplicate) TableName() string {
+	return "duplicates"
+}
+
 // AddDuplicate adds a duplicate.
 func AddDuplicate(fileName, fileRoot, fileHash string, fileSize, modTime int64) error {
 	if fileName == "" {

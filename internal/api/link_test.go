@@ -223,7 +223,7 @@ func TestUpdatePhotoLink(t *testing.T) {
 	})
 }
 
-//TODO Fully assert once functionality exists
+// TODO Fully assert once functionality exists
 func TestDeletePhotoLink(t *testing.T) {
 	app, router, _ := NewApiTest()
 

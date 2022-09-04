@@ -38,7 +38,8 @@ func TestConfig_SidecarWritable(t *testing.T) {
 
 func TestConfig_FFmpegBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/usr/bin/ffmpeg", c.FFmpegBin())
+
+	assert.True(t, strings.Contains(c.FFmpegBin(), "/bin/ffmpeg"))
 }
 
 func TestConfig_TempPath(t *testing.T) {

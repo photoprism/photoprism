@@ -1,5 +1,5 @@
 Debug: false
-DarktableBin: /usr/bin/darktable-cli
+DarktableBin: /bin/darktable-cli
 AssetsPath: /srv/photoprism
 CachePath: /srv/photoprism/cache
 OriginalsPath: /srv/photoprism/photos/originals

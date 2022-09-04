@@ -1,26 +1,41 @@
 ##################################################### BUILD STAGE ######################################################
 FROM photoprism/develop:buster as build
 
+# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
+
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set up project directory
+# Copy source to image.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
-# build and install dist files for prod env
+# Build app.
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Debian 10, Codename "Buster"
+#### Base Image: Debian 10 (Buster)
 FROM debian:buster-slim
 
-LABEL maintainer="Michael Mayer <hello@photoprism.app>"
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism® Community Edition (Debian 10)"
+LABEL org.opencontainers.image.description="Debian 10 (Buster)"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
+LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set environment variables, see https://docs.photoprism.app/getting-started/config-options/
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
@@ -76,12 +91,12 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
-# copy dist files, scripts, and debian backports sources list
+# Copy dist files, scripts, and debian backports sources list.
 COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
 COPY --chown=root:root --chmod=644 /docker/develop/buster/sources.list /etc/apt/sources.list.d/buster.list
 
-# install additional distribution packages
+# Update base image and add dependencies.
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
@@ -130,14 +145,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
-# define default directory and user
+# Default working directory.
 WORKDIR /photoprism
 
-# expose default http port 2342
+# Expose HTTP port.
 EXPOSE 2342
 
-# set container entrypoint script
+# Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]
 
-# start app server
+# Start app.
 CMD ["/opt/photoprism/bin/photoprism", "start"]

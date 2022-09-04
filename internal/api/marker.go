@@ -73,9 +73,10 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 // PUT /api/v1/markers/:marker_uid
 //
 // Parameters:
-//   uid: string Photo UID as returned by the API
-//   file_uid: string File UID as returned by the API
-//   id: int Marker ID as returned by the API
+//
+//	uid: string Photo UID as returned by the API
+//	file_uid: string File UID as returned by the API
+//	id: int Marker ID as returned by the API
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
@@ -157,9 +158,10 @@ func UpdateMarker(router *gin.RouterGroup) {
 // DELETE /api/v1/markers/:marker_uid/subject
 //
 // Parameters:
-//   uid: string Photo UID as returned by the API
-//   file_uid: string File UID as returned by the API
-//   id: int Marker ID as returned by the API
+//
+//	uid: string Photo UID as returned by the API
+//	file_uid: string File UID as returned by the API
+//	id: int Marker ID as returned by the API
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.

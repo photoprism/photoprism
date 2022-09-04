@@ -25,11 +25,11 @@ if [[ -f ${MODEL_ZIP} ]] && [[ $(sha1sum ${MODEL_ZIP}) == "${MODEL_HASH}" ]]; th
 else
   # Download model
   echo "Downloading latest model from $MODEL_URL..."
-  wget "${MODEL_URL}" -O ${MODEL_ZIP}
+  wget --inet4-only -c "${MODEL_URL}" -O ${MODEL_ZIP}
 
   TMP_HASH=$(sha1sum ${MODEL_ZIP})
 
-  echo ${TMP_HASH}
+  echo "${TMP_HASH}"
 fi
 
 # Create backup

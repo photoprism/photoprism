@@ -16,6 +16,11 @@ type Keyword struct {
 	Skip    bool
 }
 
+// TableName returns the entity database table name.
+func (Keyword) TableName() string {
+	return "keywords"
+}
+
 // NewKeyword registers a new keyword in database
 func NewKeyword(keyword string) *Keyword {
 	keyword = strings.ToLower(txt.Clip(keyword, txt.ClipKeyword))

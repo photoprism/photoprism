@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height class="auth-login wallpaper background-welcome pa-3" :style="wallpaper()">
+  <v-container fluid fill-height class="auth-login wallpaper background-welcome pa-4" :style="wallpaper()">
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
@@ -79,7 +79,7 @@
         </v-flex>
         <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
           <v-btn
-              href="https://photoprism.app/membership"
+              href="https://link.photoprism.app/membership"
               target="_blank"
               color="transparent"
               class="white--text px-3 py-2 ma-0 action-sponsor"

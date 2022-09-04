@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
-# exit on error
+# Exit on error.
 set -ex
 
-# install QEMU for multi-arch builds
+# Use QEMU for multi-arch builds.
 scripts/install-qemu.sh
 
-# run tests
+# Run test suite.
 scripts/test.sh
 
-# build preview image
+# Build preview image.
 make docker-preview
 
-# wait 2s
+# Wait 2s.
 sleep 2
 
-# build demo image
+# Build demo image.
 make docker-demo

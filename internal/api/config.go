@@ -5,8 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v2"
 
@@ -14,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -31,9 +30,9 @@ func GetConfig(router *gin.RouterGroup) {
 
 		conf := service.Config()
 
-		if s.User.Guest() {
+		if s.User.IsGuest() {
 			c.JSON(http.StatusOK, conf.GuestConfig())
-		} else if s.User.Registered() {
+		} else if s.User.IsRegistered() {
 			c.JSON(http.StatusOK, conf.UserConfig())
 		} else {
 			c.JSON(http.StatusOK, conf.PublicConfig())

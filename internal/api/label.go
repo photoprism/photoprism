@@ -59,7 +59,8 @@ func UpdateLabel(router *gin.RouterGroup) {
 // POST /api/v1/labels/:uid/like
 //
 // Parameters:
-//   uid: string Label UID
+//
+//	uid: string Label UID
 func LikeLabel(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/like", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
@@ -99,7 +100,8 @@ func LikeLabel(router *gin.RouterGroup) {
 // DELETE /api/v1/labels/:uid/like
 //
 // Parameters:
-//   uid: string Label UID
+//
+//	uid: string Label UID
 func DislikeLabel(router *gin.RouterGroup) {
 	router.DELETE("/labels/:uid/like", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)

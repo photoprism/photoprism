@@ -8,12 +8,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/form"
-
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/service"
 )
 
 // NewApiTest returns new API test helper.
@@ -35,7 +35,7 @@ func AuthenticateAdmin(app *gin.Engine, router *gin.RouterGroup) (sessId string)
 func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, username string, password string) (sessId string) {
 	CreateSession(router)
 	f := form.Login{
-		UserName: username,
+		Username: username,
 		Password: password,
 	}
 	loginStr, err := json.Marshal(f)

@@ -100,6 +100,33 @@
     animation: stretch 1.5s ease-out 0s alternate infinite none running;
 }
 
+@keyframes slide-left {
+    0% {
+        transform:  translateX(105%);;
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+#photoprism .animate-slide-left {
+    animation: slide-left 300ms ease-in-out forwards;
+}
+
+@keyframes grow {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#photoprism .grow-top-right {
+    transform-origin: top right;
+    animation: grow 200ms ease-in-out forwards;
+}
+
 #photoprism .select-transition {
     -webkit-transition-duration: 15ms !important;
     -moz-transition-duration: 15ms !important;

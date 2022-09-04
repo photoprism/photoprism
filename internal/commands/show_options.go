@@ -19,15 +19,8 @@ var ShowOptionsCommand = cli.Command{
 	Action:  showOptionsAction,
 }
 
-var faceOptionsInfo = `!!! info ""    
-    To [recognize faces](https://docs.photoprism.app/user-guide/organize/people/), PhotoPrism first extracts crops from your images using a
-    [library](https://github.com/esimov/pigo) based on [pixel intensity comparisons](https://arxiv.org/pdf/1305.4537.pdf).
-    These are then fed into TensorFlow to compute [512-dimensional vectors](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf)
-    for characterization. In the final step, the [DBSCAN algorithm](https://en.wikipedia.org/wiki/DBSCAN)
-    attempts to cluster these so-called face embeddings, so they can be matched to persons with just a few clicks.
-    A reasonable range for the similarity distance between face embeddings is between 0.60 and 0.70, with a higher
-    value being more aggressive and leading to larger clusters with more false positives.
-    To cluster a smaller number of faces, you can reduce the core to 3 or 2 similar faces.
+var faceOptionsInfo = `!!! info ""
+    To [recognize faces](https://docs.photoprism.app/user-guide/organize/people/), PhotoPrism first extracts crops from your images using a [library](https://github.com/esimov/pigo) based on [pixel intensity comparisons](https://dl.photoprism.app/pdf/20140820-Pixel_Intensity_Comparisons.pdf). These are then fed into TensorFlow to compute [512-dimensional vectors](https://dl.photoprism.app/pdf/20150101-FaceNet.pdf) for characterization. In the final step, the [DBSCAN algorithm](https://en.wikipedia.org/wiki/DBSCAN) attempts to cluster these so-called face embeddings, so they can be matched to persons with just a few clicks. A reasonable range for the similarity distance between face embeddings is between 0.60 and 0.70, with a higher value being more aggressive and leading to larger clusters with more false positives. To cluster a smaller number of faces, you can reduce the core to 3 or 2 similar faces.
 
 We recommend that only advanced users change these parameters:`
 

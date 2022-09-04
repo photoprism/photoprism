@@ -1,8 +1,8 @@
 package form
 
 type Login struct {
+	Username string `json:"username"`
 	Email    string `json:"email"`
-	UserName string `json:"username"`
 	Password string `json:"password"`
 	Token    string `json:"token"`
 }
@@ -11,8 +11,8 @@ func (f Login) HasToken() bool {
 	return f.Token != ""
 }
 
-func (f Login) HasUserName() bool {
-	return f.UserName != "" && len(f.UserName) <= 255
+func (f Login) HasUsername() bool {
+	return f.Username != "" && len(f.Username) <= 255
 }
 
 func (f Login) HasPassword() bool {
@@ -20,5 +20,5 @@ func (f Login) HasPassword() bool {
 }
 
 func (f Login) HasCredentials() bool {
-	return f.HasUserName() && f.HasPassword()
+	return f.HasUsername() && f.HasPassword()
 }

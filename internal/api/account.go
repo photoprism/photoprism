@@ -31,7 +31,8 @@ const (
 // GET /api/v1/accounts/:id
 //
 // Parameters:
-//   id: string Account ID as returned by the API
+//
+//	id: string Account ID as returned by the API
 func GetAccount(router *gin.RouterGroup) {
 	router.GET("/accounts/:id", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
@@ -63,7 +64,8 @@ func GetAccount(router *gin.RouterGroup) {
 // GET /api/v1/accounts/:id/folders
 //
 // Parameters:
-//   id: string Account ID as returned by the API
+//
+//	id: string Account ID as returned by the API
 func GetAccountFolders(router *gin.RouterGroup) {
 	router.GET("/accounts/:id/folders", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
@@ -121,7 +123,8 @@ func GetAccountFolders(router *gin.RouterGroup) {
 // GET /api/v1/accounts/:id/share
 //
 // Parameters:
-//   id: string Account ID as returned by the API
+//
+//	id: string Account ID as returned by the API
 func ShareWithAccount(router *gin.RouterGroup) {
 	router.POST("/accounts/:id/share", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpload)
@@ -230,7 +233,8 @@ func CreateAccount(router *gin.RouterGroup) {
 // PUT /api/v1/accounts/:id
 //
 // Parameters:
-//   id: string Account ID as returned by the API
+//
+//	id: string Account ID as returned by the API
 func UpdateAccount(router *gin.RouterGroup) {
 	router.PUT("/accounts/:id", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpdate)
@@ -301,7 +305,8 @@ func UpdateAccount(router *gin.RouterGroup) {
 // DELETE /api/v1/accounts/:id
 //
 // Parameters:
-//   id: string Account ID as returned by the API
+//
+//	id: string Account ID as returned by the API
 func DeleteAccount(router *gin.RouterGroup) {
 	router.DELETE("/accounts/:id", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionDelete)

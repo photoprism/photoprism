@@ -6,7 +6,6 @@ import (
 
 // CreateDefaultFixtures inserts default fixtures for test and production.
 func CreateDefaultFixtures() {
-	CreateUnknownAddress()
 	CreateDefaultUsers()
 	CreateUnknownPlace()
 	CreateUnknownLocation()

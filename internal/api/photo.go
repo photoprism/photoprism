@@ -162,7 +162,8 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 // GET /api/v1/photos/:uid/yaml
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
 func GetPhotoYaml(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/yaml", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionExport)
@@ -197,7 +198,8 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 // POST /api/v1/photos/:uid/approve
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
 func ApprovePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/approve", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
@@ -232,7 +234,8 @@ func ApprovePhoto(router *gin.RouterGroup) {
 // POST /api/v1/photos/:uid/like
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
 func LikePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/like", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionLike)
@@ -267,7 +270,8 @@ func LikePhoto(router *gin.RouterGroup) {
 // DELETE /api/v1/photos/:uid/like
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
 func DislikePhoto(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/like", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionLike)
@@ -302,8 +306,9 @@ func DislikePhoto(router *gin.RouterGroup) {
 // POST /api/v1/photos/:uid/files/:file_uid/primary
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
-//   file_uid: string File UID as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
+//	file_uid: string File UID as returned by the API
 func PhotoPrimary(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/primary", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)

@@ -3,11 +3,12 @@ package api
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/gin-gonic/gin"
 )
 
 // GET /api/v1/moments/time
@@ -20,7 +21,9 @@ func GetMomentsTime(router *gin.RouterGroup) {
 			return
 		}
 
-		result, err := query.MomentsTime(1)
+		conf := service.Config()
+
+		result, err := query.MomentsTime(1, conf.Settings().Features.Private)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})

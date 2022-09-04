@@ -57,7 +57,7 @@ esac
 # Replace current installation in "/usr/local/go".
 echo "Installing Go for ${DESTARCH^^} from \"$URL\". Please wait."
 rm -rf /usr/local/go
-wget -c "$URL" -O - | tar -xz -C /usr/local
+wget --inet4-only -c "$URL" -O - | tar -xz -C /usr/local
 
 # Add symlink to go binary.
 echo "Adding symbolic links for go and gofmt."

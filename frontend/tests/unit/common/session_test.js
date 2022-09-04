@@ -61,10 +61,10 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        NickName: "Foo",
+        DisplayName: "Foo",
         FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values);
@@ -72,10 +72,10 @@ describe("common/session", () => {
     assert.equal(result, "test@test.com");
     const values2 = {
       user: {
-        NickName: "Foo",
+        DisplayName: "Foo",
         FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values2);
@@ -90,25 +90,25 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        NickName: "Foo",
+        DisplayName: "Foo",
         FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values);
-    const result = session.getNickName();
+    const result = session.getDisplayName();
     assert.equal(result, "Foo");
     const values2 = {
       user: {
-        NickName: "Bar",
+        DisplayName: "Bar",
         FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values2);
-    const result2 = session.getNickName();
+    const result2 = session.getDisplayName();
     assert.equal(result2, "");
     session.deleteData();
   });
@@ -119,25 +119,25 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        NickName: "Foo",
+        DisplayName: "Foo",
         FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values);
-    const result = session.getFullName();
-    assert.equal(result, "Max Last");
+    const result = session.getDisplayName();
+    assert.equal(result, "Foo");
     const values2 = {
       user: {
-        NickName: "Bar",
+        DisplayName: "Bar",
         FullName: "Max New",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values2);
-    const result2 = session.getFullName();
+    const result2 = session.getDisplayName();
     assert.equal(result2, "");
     session.deleteData();
   });
@@ -148,10 +148,10 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        NickName: "Foo",
+        DisplayName: "Foo",
         FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values);
@@ -166,10 +166,10 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        NickName: "Foo",
+        DisplayName: "Foo",
         FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values);
@@ -184,10 +184,10 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        NickName: "Foo",
+        DisplayName: "Foo",
         FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
+        Email: "test@test.com",
+        Role: "admin",
       },
     };
     session.setData(values);

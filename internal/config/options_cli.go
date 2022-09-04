@@ -20,6 +20,13 @@ var Flags = CliFlags{
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{
+			Name:   "admin-user, login",
+			Usage:  "admin login `USERNAME`",
+			EnvVar: "PHOTOPRISM_ADMIN_USER",
+			Value:  "admin",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
 			Usage:  "initial admin `PASSWORD`, must have at least 8 characters",
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
@@ -37,6 +44,13 @@ var Flags = CliFlags{
 			Usage:  "log message verbosity `LEVEL` (trace, debug, info, warning, error, fatal, panic)",
 			Value:  "info",
 			EnvVar: "PHOTOPRISM_LOG_LEVEL",
+		}},
+	CliFlag{
+		Flag: cli.BoolFlag{
+			Name:   "prod",
+			Hidden: true,
+			Usage:  "enable production mode, hide non-essential log messages",
+			EnvVar: "PHOTOPRISM_PROD",
 		}},
 	CliFlag{
 		Flag: cli.BoolFlag{

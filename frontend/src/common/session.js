@@ -131,23 +131,36 @@ export default class Session {
 
   getEmail() {
     if (this.isUser()) {
-      return this.user.PrimaryEmail;
+      return this.user.Email;
     }
 
     return "";
   }
 
-  getNickName() {
+  getUsername() {
     if (this.isUser()) {
-      return this.user.NickName;
+      if (this.user.Username) {
+        return this.user.Username;
+      }
     }
 
     return "";
   }
 
-  getFullName() {
+  getDisplayName() {
     if (this.isUser()) {
-      return this.user.FullName;
+      if (this.user.DisplayName) {
+        return this.user.DisplayName;
+      }
+      if (this.user.ArtistName) {
+        return this.user.ArtistName;
+      }
+      if (this.user.FullName) {
+        return this.user.FullName;
+      }
+      if (this.user.Username) {
+        return this.user.Username;
+      }
     }
 
     return "";
@@ -158,7 +171,7 @@ export default class Session {
   }
 
   isAdmin() {
-    return this.user && this.user.hasId() && this.user.RoleAdmin;
+    return this.user && this.user.hasId() && (this.user.Role === "admin" || this.user.SuperAdmin);
   }
 
   isAnonymous() {

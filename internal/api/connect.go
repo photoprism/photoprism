@@ -49,7 +49,7 @@ func Connect(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceConfigOptions, acl.ActionUpdate)
 
 		if s.Invalid() {
-			log.Errorf("connect: %s not authorized", clean.Log(s.User.UserName))
+			log.Errorf("connect: %s not authorized", clean.Log(s.User.Username))
 			AbortUnauthorized(c)
 			return
 		}

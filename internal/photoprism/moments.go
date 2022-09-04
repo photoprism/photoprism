@@ -117,7 +117,7 @@ func (w *Moments) Start() (err error) {
 	}
 
 	// All years and months.
-	if results, err := query.MomentsTime(1); err != nil {
+	if results, err := query.MomentsTime(1, w.conf.Settings().Features.Private); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
@@ -144,7 +144,7 @@ func (w *Moments) Start() (err error) {
 	}
 
 	// Countries by year.
-	if results, err := query.MomentsCountries(threshold); err != nil {
+	if results, err := query.MomentsCountries(threshold, w.conf.Settings().Features.Private); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
@@ -179,7 +179,7 @@ func (w *Moments) Start() (err error) {
 	}
 
 	// States and countries.
-	if results, err := query.MomentsStates(1); err != nil {
+	if results, err := query.MomentsStates(1, w.conf.Settings().Features.Private); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
@@ -216,7 +216,7 @@ func (w *Moments) Start() (err error) {
 	}
 
 	// Popular labels.
-	if results, err := query.MomentsLabels(threshold); err != nil {
+	if results, err := query.MomentsLabels(threshold, w.conf.Settings().Features.Private); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {

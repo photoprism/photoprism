@@ -26,9 +26,10 @@ const (
 // GET /api/v1/albums/:uid/t/:token/:size
 //
 // Parameters:
-//   uid: string album uid
-//   token: string security token (see config)
-//   size: string thumb type, see photoprism.ThumbnailTypes
+//
+//	uid: string album uid
+//	token: string security token (see config)
+//	size: string thumb type, see photoprism.ThumbnailTypes
 func AlbumCover(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -74,7 +75,7 @@ func AlbumCover(router *gin.RouterGroup) {
 			return
 		}
 
-		f, err := query.AlbumCoverByUID(uid)
+		f, err := query.AlbumCoverByUID(uid, conf.Settings().Features.Private)
 
 		if err != nil {
 			log.Debugf("%s: %s contains no photos, using generic cover", albumCover, uid)
@@ -138,9 +139,10 @@ func AlbumCover(router *gin.RouterGroup) {
 // GET /api/v1/labels/:uid/t/:token/:size
 //
 // Parameters:
-//   uid: string label uid
-//   token: string security token (see config)
-//   size: string thumb type, see photoprism.ThumbnailTypes
+//
+//	uid: string label uid
+//	token: string security token (see config)
+//	size: string thumb type, see photoprism.ThumbnailTypes
 func LabelCover(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

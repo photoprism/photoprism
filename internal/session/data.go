@@ -44,7 +44,7 @@ func (s Data) Valid() bool {
 }
 
 func (s Data) Guest() bool {
-	return s.User.Guest()
+	return s.User.IsGuest()
 }
 
 func (s Data) NoShares() bool {

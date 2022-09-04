@@ -13,7 +13,7 @@ fi
 
 if ! command -v go &> /dev/null
 then
-    echo "Go must be installed."
+    echo "Go must be installed to run this."
     exit 1
 fi
 

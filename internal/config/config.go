@@ -112,10 +112,12 @@ func NewConfig(ctx *cli.Context) *Config {
 
 	// Initialize package extensions.
 	for _, ext := range Extensions() {
+		start := time.Now()
+
 		if err := ext.init(c); err != nil {
-			log.Warnf("config: failed to initialize extension %s (%s)", clean.Log(ext.name), err)
+			log.Warnf("config: %s in %s extension[%s]", err, clean.Log(ext.name), time.Since(start))
 		} else {
-			log.Debugf("config: extension %s initialized", clean.Log(ext.name))
+			log.Debugf("config: %s extension loaded [%s]", clean.Log(ext.name), time.Since(start))
 		}
 	}
 
@@ -445,9 +447,16 @@ func (c *Config) ImprintUrl() string {
 	return c.options.ImprintUrl
 }
 
+// Prod checks if production mode is enabled, hides non-essential log messages.
+func (c *Config) Prod() bool {
+	return c.options.Prod
+}
+
 // Debug checks if debug mode is enabled, shows non-essential log messages.
 func (c *Config) Debug() bool {
-	if c.Trace() {
+	if c.Prod() {
+		return false
+	} else if c.Trace() {
 		return true
 	}
 
@@ -456,6 +465,10 @@ func (c *Config) Debug() bool {
 
 // Trace checks if trace mode is enabled, shows all log messages.
 func (c *Config) Trace() bool {
+	if c.Prod() {
+		return false
+	}
+
 	return c.options.Trace || c.options.LogLevel == logrus.TraceLevel.String()
 }
 

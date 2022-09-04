@@ -42,9 +42,9 @@ func TestResample_Start(t *testing.T) {
 
 	imp.Start(opt)
 
-	rs := NewResample(conf)
+	rs := NewThumbs(conf)
 
-	err := rs.Start(true)
+	err := rs.Start(true, false)
 
 	if err != nil {
 		t.Fatal(err)

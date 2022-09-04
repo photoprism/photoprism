@@ -81,7 +81,7 @@ func TestQuery(t *testing.T) {
 }
 
 func TestResample(t *testing.T) {
-	assert.IsType(t, &photoprism.Resample{}, Resample())
+	assert.IsType(t, &photoprism.Thumbs{}, Thumbs())
 }
 
 func TestSession(t *testing.T) {

@@ -69,3 +69,11 @@ const (
 	SortOrderCategory  = "category"
 	SortOrderSimilar   = "similar"
 )
+
+// User feature flags.
+const (
+	IsEnabled   = "enabled"
+	IsDisabled  = "disabled"
+	CanUpload   = "upload"
+	CanDownload = "download"
+)

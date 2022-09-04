@@ -29,6 +29,11 @@ type Link struct {
 	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
 
+// TableName returns the entity database table name.
+func (Link) TableName() string {
+	return "links"
+}
+
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Link) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.ValidID(m.LinkUID, 's') {

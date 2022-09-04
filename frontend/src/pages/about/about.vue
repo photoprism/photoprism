@@ -31,7 +31,7 @@
       <div v-if="!sponsor">
         <p class="text-xs-center my-4">
           <v-btn
-              href="https://photoprism.app/membership"
+              href="https://link.photoprism.app/membership"
               target="_blank"
               color="primary-button"
               class="white--text px-3 py-2 action-sponsor"
@@ -49,17 +49,17 @@
         </p>
       </div>
 
-      <h3 class="subheading py-2">User Guide</h3>
+      <h3 class="subheading py-2"><translate>User Guide</translate></h3>
       <p class="text-selectable">
         <translate>Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures.</translate>
         <translate>Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings.</translate>
         <translate>Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide.</translate>
       </p>
-      <p><a href="https://docs.photoprism.app/user-guide/" class="text-link" target="_blank">Read the docs ›</a></p>
+      <p><a href="https://link.photoprism.app/docs" class="text-link" target="_blank"><translate>Read the Docs</translate> ›</a></p>
 
-      <h3 class="subheading py-2">Knowledge Base</h3>
+      <h3 class="subheading py-2"><translate>Knowledge Base</translate></h3>
       <p class="text-selectable"><translate>Browse the Knowledge Base for detailed information on specific product features, services, and related resources.</translate></p>
-      <p><a href="https://photoprism.app/kb" class="text-link" target="_blank">Learn more ›</a></p>
+      <p><a href="https://photoprism.app/kb" class="text-link" target="_blank"><translate>Learn more</translate> ›</a></p>
 
       <h3 class="subheading py-2">
         <translate>Getting Support</translate>

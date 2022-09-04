@@ -17,11 +17,11 @@ func TestName(t *testing.T) {
 		assert.Equal(t, "William HenRy Gates'", Name("william \"HenRy\" gates' "))
 	})
 	t.Run("Slash", func(t *testing.T) {
-		assert.Equal(t, "William McCorn Gates'", Name("william\\ \"McCorn\" / gates' "))
+		assert.Equal(t, "William McCorn / Gates'", Name("william\\ \"McCorn\" / gates' "))
 	})
 	t.Run("SpecialCharacters", func(t *testing.T) {
 		assert.Equal(t,
-			"'', '', '', '', '', '', '', '', '', '', '', '', Foo '', '', '', '', '', '', '', McBar '', ''",
+			"'', '', '~', '', ' / ', '', '', '&', '|', '+', '=', '', Foo '@', '!', '?', ':', '', '', '', McBar '', ''",
 			Name("'\"', '`', '~', '\\\\', '/', '*', '%', '&', '|', '+', '=', '$', Foo '@', '!', '?', ':', ';', '<', '>', McBar '{', '}'"),
 		)
 	})

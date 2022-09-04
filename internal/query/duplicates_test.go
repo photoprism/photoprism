@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//TODO find duplicates
+// TODO find duplicates
 func TestDuplicates(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		if files, err := Duplicates(10, 0, ""); err != nil {

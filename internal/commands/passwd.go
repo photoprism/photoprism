@@ -39,7 +39,7 @@ func passwdAction(ctx *cli.Context) error {
 
 	user := entity.Admin
 
-	log.Infof("please enter a new password for %s (at least 6 characters)\n", clean.Log(user.Username()))
+	log.Infof("please enter a new password for %s (mininum 8 characters)\n", clean.Log(user.UserName()))
 
 	newPassword := getPassword("New Password: ")
 
@@ -57,7 +57,7 @@ func passwdAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("changed password for %s\n", clean.Log(user.Username()))
+	log.Infof("changed password for %s\n", clean.Log(user.UserName()))
 
 	conf.Shutdown()
 

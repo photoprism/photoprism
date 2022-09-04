@@ -1,20 +1,26 @@
-#### Base Image: Debian 10, Codename 'Buster'
-FROM golang:1.18-buster
+#### Base Image: Debian 10 (Buster)
+FROM golang:1-buster
+
+# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
 
 # Open Container Initiative (OCI) Annotations
 # see https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism Build Environment"
-LABEL org.opencontainers.image.description="Debian 10, Codename 'Buster'"
+LABEL org.opencontainers.image.title="PhotoPrism® Dev (Debian 10)"
+LABEL org.opencontainers.image.description="Debian 10 (Buster)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
 LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set environment variables
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
