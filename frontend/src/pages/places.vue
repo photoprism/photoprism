@@ -75,7 +75,7 @@ export default {
   },
   mounted() {
     // TODO: this scrollbar hiding breaks `loadMore` in photo-view.
-    // fix it (maybe by triggering Scrollbars hideDefault?)
+    // try to find out why it exists at all here.
     // this.$scrollbar.hide();
     this.configureMap().then(() => this.renderMap());
   },
