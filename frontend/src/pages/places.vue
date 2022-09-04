@@ -19,9 +19,9 @@
       </div>
     </div>
     <!-- TODO: Add close-button to the dialog -->
-    <v-dialog v-model="showPictures" overflowed>
+    <v-dialog v-model="showClusterPictures" overflowed>
       <v-card>
-        <p-page-photos v-if="showPictures" :static-filter="selectedClusterBounds"></p-page-photos>
+        <p-page-photos v-if="showClusterPictures" :static-filter="selectedClusterBounds"></p-page-photos>
       </v-card>
     </v-dialog>
   </v-container>
@@ -63,13 +63,25 @@ export default {
       config: this.$config.values,
       settings: this.$config.values.settings.maps,
       selectedClusterBounds: undefined,
-      showPictures: false,
+      showClusterPictures: false,
     };
   },
   watch: {
     '$route'() {
       this.filter.q = this.query();
       this.lastFilter = {};
+
+      const {latmin, latmax, lngmin, lngmax} = this.$route.query || {};
+      const clusterIsDefined = latmin !== undefined
+                            && latmax !== undefined
+                            && lngmin !== undefined
+                            && lngmax !== undefined;
+      this.selectedClusterBounds = clusterIsDefined
+        ? {latmin, latmax, lngmin, lngmax}
+        : {};
+        
+      console.log(this.$route.query);
+      this.showClusterPictures = this.$route.query.showClusterPictures ?? false;
 
       this.search();
     }
@@ -462,13 +474,16 @@ export default {
           }
 
           // Todo: set these options via url, so that the back-button closes the dialog!
-          this.selectedClusterBounds = {
-            latmin: latMin,
-            latmax: latMax,
-            lngmin: lngMin,
-            lngmax: lngMax,
-          };
-          this.showPictures = true;
+
+          this.$router.push({
+            query: {
+              latmin: latMin,
+              latmax: latMax,
+              lngmin: lngMin,
+              lngmax: lngMax,
+              showClusterPictures: true,
+            }
+          });
         });
       });
 
