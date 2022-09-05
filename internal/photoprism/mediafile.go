@@ -36,39 +36,53 @@ import (
 
 // MediaFile represents a single photo, video or sidecar file.
 type MediaFile struct {
-	fileName       string
-	fileRoot       string
-	statErr        error
-	modTime        time.Time
-	fileSize       int64
-	fileType       fs.Type
-	mimeType       string
-	takenAt        time.Time
-	takenAtSrc     string
-	hash           string
-	checksum       string
-	hasJpeg        bool
-	noColorProfile bool
-	colorProfile   string
-	width          int
-	height         int
-	metaData       meta.Data
-	metaOnce       sync.Once
-	fileMutex      sync.Mutex
-	location       *entity.Cell
-	imageConfig    *image.Config
+	fileName         string
+	fileNameResolved string
+	fileRoot         string
+	statErr          error
+	modTime          time.Time
+	fileSize         int64
+	fileType         fs.Type
+	mimeType         string
+	takenAt          time.Time
+	takenAtSrc       string
+	hash             string
+	checksum         string
+	hasJpeg          bool
+	noColorProfile   bool
+	colorProfile     string
+	width            int
+	height           int
+	metaData         meta.Data
+	metaOnce         sync.Once
+	fileMutex        sync.Mutex
+	location         *entity.Cell
+	imageConfig      *image.Config
 }
 
 // NewMediaFile returns a new media file.
 func NewMediaFile(fileName string) (m *MediaFile, err error) {
+	fileNameResolved, err := fs.Resolve(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewMediaFileSkipResolve(fileName, fileNameResolved)
+}
+
+// NewMediaFileSkipResolve returns a new media file without resolving symlinks.
+// This is useful because if it's known fileName is fully resolved it's a lot
+// faster.
+func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (m *MediaFile, err error) {
 	// Create struct.
 	m = &MediaFile{
-		fileName: fileName,
-		fileRoot: entity.RootUnknown,
-		fileType: fs.UnknownType,
-		metaData: meta.New(),
-		width:    -1,
-		height:   -1,
+		fileName:         fileName,
+		fileNameResolved: fileNameResolved,
+		fileRoot:         entity.RootUnknown,
+		fileType:         fs.UnknownType,
+		metaData:         meta.New(),
+		width:            -1,
+		height:           -1,
 	}
 
 	// Check if file exists and is not empty.
@@ -97,14 +111,7 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 		return m.fileSize, m.modTime, m.statErr
 	}
 
-	fileName := m.FileName()
-
-	// Resolve symlinks.
-	if fileName, err = fs.Resolve(fileName); err != nil {
-		m.statErr = err
-		m.modTime = time.Time{}
-		m.fileSize = -1
-	} else if s, err := os.Stat(fileName); err != nil {
+	if s, err := os.Stat(m.fileNameResolved); err != nil {
 		m.statErr = err
 		m.modTime = time.Time{}
 		m.fileSize = -1
