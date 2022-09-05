@@ -187,7 +187,15 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 				return nil
 			}
 
-			mf, err := NewMediaFile(fileName)
+			var mf *MediaFile
+			var err error
+			if isSymlink {
+				mf, err = NewMediaFile(fileName)
+			} else {
+				// If the file found while scanning is not a symlink we can
+				// skip resolving the fileName, which is resource intensive.
+				mf, err = NewMediaFileSkipResolve(fileName, fileName)
+			}
 
 			// Check if file exists and is not empty.
 			if err != nil {
