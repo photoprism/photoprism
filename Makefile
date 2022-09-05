@@ -213,19 +213,19 @@ test-js:
 	(cd frontend && env NODE_ENV=development BABEL_ENV=test npm run test)
 acceptance:
 	$(info Running public-mode tests in 'chromium:headless'...)
-	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	npm run testcafe -- chromium:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-firefox:
 	$(info Running JS acceptance-auth tests in Firefox...)
 	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
