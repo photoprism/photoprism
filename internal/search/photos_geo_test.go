@@ -517,6 +517,23 @@ func TestGeo(t *testing.T) {
 
 		assert.Equal(t, 2, len(photos))
 	})
+	t.Run("City", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+		f.City = "Teotihuacán"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 8, len(photos))
+	})
 	t.Run("PathOrPath", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 		f.Path = "1990/04" + "|" + "2015/11"

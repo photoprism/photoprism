@@ -49,6 +49,7 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 
 	s = s.Table("photos").Select(GeoCols).
 		Joins(`JOIN files ON files.photo_id = photos.id AND files.file_primary = 1 AND files.media_id IS NOT NULL`).
+		Joins("LEFT JOIN places ON photos.place_id = places.id").
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
 
@@ -270,6 +271,16 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	// Filter by location country?
 	if f.Country != "" {
 		s = s.Where("photos.photo_country IN (?)", SplitOr(strings.ToLower(f.Country)))
+	}
+
+	// Filter by location state?
+	if txt.NotEmpty(f.State) {
+		s = s.Where("places.place_state IN (?)", SplitOr(f.State))
+	}
+
+	// Filter by location city?
+	if txt.NotEmpty(f.City) {
+		s = s.Where("places.place_city IN (?)", SplitOr(f.City))
 	}
 
 	// Filter by media type?

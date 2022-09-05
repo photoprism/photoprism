@@ -51,6 +51,8 @@ type SearchPhotosGeo struct {
 	Album     string    `form:"album"`
 	Albums    string    `form:"albums"`
 	Country   string    `form:"country"`
+	State     string    `form:"state"` // Moments
+	City      string    `form:"city"`
 	Year      string    `form:"year"`  // Moments
 	Month     string    `form:"month"` // Moments
 	Day       string    `form:"day"`   // Moments
