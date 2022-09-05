@@ -71,19 +71,13 @@ export default {
       this.filter.q = this.query();
       this.lastFilter = {};
 
-      const {latmin, latmax, lngmin, lngmax} = this.$route.query || {};
-      const clusterIsDefined = latmin !== undefined
-                            && latmax !== undefined
-                            && lngmin !== undefined
-                            && lngmax !== undefined;
-      this.selectedClusterBounds = clusterIsDefined
-        ? {latmin, latmax, lngmin, lngmax}
-        : {};
-        
-      console.log(this.$route.query);
-      this.showClusterPictures = this.$route.query.showClusterPictures ?? false;
-
+      this.updateSelectedClusterFromUrl();
       this.search();
+    },
+    showClusterPictures:function(newValue, old){
+      if(!newValue){
+        this.unselectCluster();
+      }
     }
   },
   mounted() {
@@ -91,9 +85,12 @@ export default {
     // try to find out why it exists at all here.
     // this.$scrollbar.hide();
     this.configureMap().then(() => this.renderMap());
+    this.updateSelectedClusterFromUrl();
   },
   destroyed() {
-    this.$scrollbar.show();
+    // TODO: this scrollbar hiding breaks `loadMore` in photo-view.
+    // try to find out why it exists at all here.
+    // this.$scrollbar.show();
   },
   methods: {
     configureMap() {
@@ -226,6 +223,30 @@ export default {
 
         this.filter = filter;
         this.options = mapOptions;
+      });
+    },
+    updateSelectedClusterFromUrl: function() {
+      const clusterIsSelected = this.$route.query.selectedCluster !== undefined
+                            && this.$route.query.selectedCluster !== '';
+      if (clusterIsSelected) {
+        const [latmin, latmax, lngmin, lngmax] = this.$route.query.selectedCluster.split(',');
+        this.selectedClusterBounds = {latmin, latmax, lngmin, lngmax};
+      } else {
+        this.selectedClusterBounds = undefined;
+      }
+
+      this.showClusterPictures = this.selectedClusterBounds !== undefined;
+    },
+    selectCluster: function(latMin, latMax, lngMin, lngMax) {
+      this.$router.push({
+        query: {
+          selectedCluster: [latMin, latMax, lngMin, lngMax].join(','),
+        }
+      });
+    },
+    unselectCluster: function() {
+      this.$router.push({
+        query: {}
       });
     },
     query: function () {
@@ -473,17 +494,7 @@ export default {
             }
           }
 
-          // Todo: set these options via url, so that the back-button closes the dialog!
-
-          this.$router.push({
-            query: {
-              latmin: latMin,
-              latmax: latMax,
-              lngmin: lngMin,
-              lngmax: lngMax,
-              showClusterPictures: true,
-            }
-          });
+          this.selectCluster(latMin, latMax, lngMin, lngMax);
         });
       });
 
