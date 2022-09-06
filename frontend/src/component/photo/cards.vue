@@ -230,6 +230,12 @@
                     {{ photo.locationInfo() }}
                   </button>
                 </template>
+		<div>
+		    Keywords: {{ photo.getKeywords() }}
+		</div>
+		<div>
+		    Notes: {{ photo.getNotes() }}
+		</div>
               </div>
             </div>
           </div>

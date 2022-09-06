@@ -367,6 +367,22 @@ export class Photo extends RestModel {
     return "https://www.google.com/maps/place/" + this.Lat + "," + this.Lng;
   }
 
+  getKeywords() {
+    Api.get(this.getEntityResource())
+	.then((response) => {
+	    this.keywords= response.data.Details.Keywords;
+	});
+    return this.keywords;
+  }
+
+  getNotes() {
+    Api.get(this.getEntityResource())
+	.then((response) => {
+	    this.notes= response.data.Details.Notes;
+	});
+    return this.notes;
+  }
+
   refreshFileAttr() {
     const file = this.mainFile();
 
