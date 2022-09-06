@@ -18,7 +18,6 @@
         </div>
       </div>
     </div>
-    <!-- TODO: Add close-button to the dialog -->
     <v-dialog v-model="showClusterPictures" overflowed>
       <v-card>
         <p-page-photos
