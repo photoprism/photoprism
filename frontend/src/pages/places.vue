@@ -21,7 +21,12 @@
     <!-- TODO: Add close-button to the dialog -->
     <v-dialog v-model="showClusterPictures" overflowed>
       <v-card>
-        <p-page-photos v-if="showClusterPictures" :static-filter="selectedClusterBounds"></p-page-photos>
+        <p-page-photos
+          v-if="showClusterPictures"
+          :static-filter="selectedClusterBounds"
+          :on-close="unselectCluster"
+          sticky-toolbar
+        />
       </v-card>
     </v-dialog>
   </v-container>
@@ -225,29 +230,38 @@ export default {
         this.options = mapOptions;
       });
     },
-    updateSelectedClusterFromUrl: function() {
+    getSelectedClusterFromUrl() {
       const clusterIsSelected = this.$route.query.selectedCluster !== undefined
                             && this.$route.query.selectedCluster !== '';
-      if (clusterIsSelected) {
-        const [latmin, latmax, lngmin, lngmax] = this.$route.query.selectedCluster.split(',');
-        this.selectedClusterBounds = {latmin, latmax, lngmin, lngmax};
-      } else {
-        this.selectedClusterBounds = undefined;
+      if (!clusterIsSelected) {
+        return undefined;
       }
 
+      const [latmin, latmax, lngmin, lngmax] = this.$route.query.selectedCluster.split(',');
+      return {latmin, latmax, lngmin, lngmax};
+    },
+    updateSelectedClusterFromUrl: function() {
+      this.selectedClusterBounds = this.getSelectedClusterFromUrl();
       this.showClusterPictures = this.selectedClusterBounds !== undefined;
     },
     selectCluster: function(latMin, latMax, lngMin, lngMax) {
       this.$router.push({
         query: {
           selectedCluster: [latMin, latMax, lngMin, lngMax].join(','),
-        }
+        },
+        params: this.filter,
       });
     },
     unselectCluster: function() {
-      this.$router.push({
-        query: {}
-      });
+      const aClusterIsSelected = this.getSelectedClusterFromUrl() !== undefined;
+      if (aClusterIsSelected) {
+        // TODO: This kills the search, because route params are lost.
+        // on the upside: it acts the same as pressing the back-button.
+        // It would be strange if it were to act differently to the back button.
+        // Maybe there is a better way to not lose the search. May with back-
+        // navigation-detection in the $route-watcher?
+        this.$router.go(-1);
+      }
     },
     query: function () {
       return this.$route.params.q ? this.$route.params.q : '';
