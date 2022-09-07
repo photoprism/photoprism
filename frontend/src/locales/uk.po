@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-08-01 13:59+0000\n"
-"Last-Translator: Erazel <tretyaksergiy@gmail.com>\n"
+"PO-Revision-Date: 2022-09-07 23:29+0000\n"
+"Last-Translator: 2andgi <andrew.grushka@gmail.com>\n"
 "Language: uk\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.13.1\n"
+"X-Generator: Weblate 4.14\n"
 "Generated-By: easygettext\n"
 
 #: src/dialog/photo/labels.vue:164
@@ -687,27 +687,27 @@ msgstr "Розміри"
 
 #: src/pages/settings/advanced.vue:143
 msgid "Disable Backups"
-msgstr "Відключити резервній копії"
+msgstr "Вимкнути резервній копії"
 
 #: src/pages/settings/advanced.vue:166
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Відключити вбудований WevDAV сервер. Необхідне перезавантаження."
+msgstr "Вимкнути вбудований WevDAV сервер. Необхідне перезавантаження."
 
 #: src/pages/settings/advanced.vue:484
 msgid "Disable Darktable"
-msgstr "Відключити Darktable"
+msgstr "Вимкнути Darktable"
 
 #: src/pages/settings/advanced.vue:209
 msgid "Disable ExifTool"
-msgstr "Відключити ExifTool"
+msgstr "Вимкнути ExifTool"
 
 #: src/pages/settings/advanced.vue:526
 msgid "Disable FFmpeg"
-msgstr "Відключити FFmpeg"
+msgstr "Вимкнути FFmpeg"
 
 #: src/pages/settings/advanced.vue:187
 msgid "Disable Places"
-msgstr "Відключити Places"
+msgstr "Вимкнути Місця"
 
 #: src/pages/settings/advanced.vue:505
 msgid "Disable RawTherapee"
@@ -912,8 +912,8 @@ msgstr "Кожні два дні"
 #: src/pages/settings/general.vue:273
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr ""
-"Виключити контент промаркований як приватний з результатів пошуку, "
-"розшарених альбомів, відміток та місць."
+"Виключити контент, відмічений як приватний, з результатів пошуку, спільних "
+"альбомів, міток та місць."
 
 #: src/pages/people/faces.vue:100
 #: src/pages/people/subjects.vue:141
@@ -1567,7 +1567,7 @@ msgstr "Ніколи"
 
 #: src/pages/people.vue:26
 msgid "New"
-msgstr "Новий"
+msgstr "Нові"
 
 #: src/pages/settings/account.vue:81
 msgid "New Password"
@@ -1711,7 +1711,7 @@ msgstr "Примітки"
 
 #: src/pages/library/logs.vue:5
 msgid "Nothing to see here yet. Be patient."
-msgstr "Тут ще нічого не видно. Наберіться терпіння."
+msgstr "Поки що нічого відобразити. Наберіться терпіння."
 
 #: src/component/navigation.vue:472
 #: src/component/navigation.vue:1780
@@ -2033,7 +2033,7 @@ msgstr "Розпізнані"
 
 #: src/pages/settings/general.vue:339
 msgid "Recognizes faces so that specific people can be found."
-msgstr "Розпізнає обличчя, щоб можна було знайти конкретних людей."
+msgstr "Розпізнавання облич для пошуку конкретних людей."
 
 #: src/options/options.js:424
 msgid "Red"
@@ -2109,7 +2109,7 @@ msgstr "Введіть пароль повторно"
 #: src/app/routes.js:195
 #: src/component/navigation.vue:142
 msgid "Review"
-msgstr "Огляд"
+msgstr "Перевірити"
 
 #: src/dialog/account/edit.vue:105
 #: src/dialog/album/edit.vue:45
@@ -2123,7 +2123,7 @@ msgstr "Сканувати"
 
 #: src/component/navigation.vue:134
 msgid "Scans"
-msgstr "Сканування"
+msgstr "Відскановані"
 
 #: src/component/navigation.vue:82
 #: src/component/navigation.vue:92
@@ -2360,7 +2360,7 @@ msgstr "Почати/зупинити показ слайдів"
 
 #: src/component/navigation.vue:303
 msgid "States"
-msgstr "Штати"
+msgstr "Райони"
 
 #: src/pages/settings/advanced.vue:374
 msgid "Static Size Limit: %{n}px"
@@ -2554,7 +2554,7 @@ msgstr "Невідомий"
 #: src/app/routes.js:167
 #: src/component/navigation.vue:184
 msgid "Unsorted"
-msgstr "Несортований"
+msgstr "Невідсортовані"
 
 #: src/dialog/photo/files.vue:38
 #: src/dialog/photo/files.vue:35
@@ -2617,7 +2617,7 @@ msgstr "Вивантажити локальні файли"
 
 #: src/pages/settings/general.vue:251
 msgid "Upload to WebDAV and share links with friends."
-msgstr "Вивантажуйте в WebDAV і поділитися посиланнями з друзями."
+msgstr "Вивантажити в WebDAV і поділитися посиланнями з друзями."
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
