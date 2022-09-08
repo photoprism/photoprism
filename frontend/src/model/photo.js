@@ -368,19 +368,11 @@ export class Photo extends RestModel {
   }
 
   getKeywords() {
-    Api.get(this.getEntityResource())
-	.then((response) => {
-	    this.keywords= response.data.Details.Keywords;
-	});
-    return this.keywords;
+    return this.Keywords;
   }
 
   getNotes() {
-    Api.get(this.getEntityResource())
-	.then((response) => {
-	    this.notes= response.data.Details.Notes;
-	});
-    return this.notes;
+    return this.Notes;
   }
 
   refreshFileAttr() {
