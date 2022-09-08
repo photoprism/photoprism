@@ -59,7 +59,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		Joins("JOIN photos ON files.photo_id = photos.id AND files.media_id IS NOT NULL").
 		Joins("LEFT JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("LEFT JOIN lenses ON photos.lens_id = lenses.id").
-		Joins("LEFT JOIN places ON photos.place_id = places.id")
+		Joins("LEFT JOIN places ON photos.place_id = places.id").
+		Joins("LEFT JOIN details ON details .photo_id = photos.id")
 
 	// Accept the album UID as scope for backward compatibility.
 	if rnd.IsUID(f.Album, entity.AlbumUID) {

@@ -101,6 +101,8 @@ type Photo struct {
 	DeletedAt        time.Time     `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
 
 	Files []entity.File `json:"Files"`
+	Keywords	string	       `json:"Keywords" select:"details.keywords"`
+	Notes		string	       `json:"Notes" select:"details.notes"`
 }
 
 // IsPlayable returns true if the photo has a related video/animation that is playable.
