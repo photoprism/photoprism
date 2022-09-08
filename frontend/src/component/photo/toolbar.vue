@@ -150,6 +150,49 @@
         </v-layout>
       </v-card-text>
     </v-card>
+    <v-card
+      v-if="settings.view === 'cards'"
+      v-show="searchExpanded"
+      class="pt-1"
+      flat
+      color="secondary-light"
+    >
+      <v-card-title primary-title class="pb-2">
+        <h3 class="body-2 mb-0">
+          <translate key="Card View Display options"
+            >Card View Display options</translate
+          >
+        </h3>
+      </v-card-title>
+      <v-card-text>
+        <v-layout row wrap>
+          <v-flex xs12 sm6 md3 pa-2 class="px-2 pb-2 pt-2">
+            <v-checkbox
+	      :v-value="displayOption.keywords"
+              :label="$gettext('Keywords')"
+              class="ma-0 pa-0"
+              :hint="$gettext('Show Keywords')"
+              persistent-hint
+              color="secondary-dark"
+	      @change="(v) => {updateDisplayOption({'name': 'keywords', 'v': v})}"
+            >
+            </v-checkbox>
+          </v-flex>
+          <v-flex xs12 sm6 md3 pa-2 class="px-2 pb-2 pt-2">
+            <v-checkbox
+	      :v-value="displayOption.notes"
+              :label="$gettext('Notes')"
+              class="ma-0 pa-0"
+              :hint="$gettext('Show Notes')"
+              persistent-hint
+              color="secondary-dark"
+	      @change="(v) => {updateDisplayOption({'name': 'notes', 'v': v})}"
+            >
+            </v-checkbox>
+          </v-flex>
+        </v-layout>
+      </v-card-text>
+    </v-card>
   </v-form>
 </template>
 <script>
@@ -171,12 +214,20 @@ export default {
       type: Function,
       default: () => {},
     },
+    updateDisplayOption: {
+      type: Function,
+      default: () => {},
+    },
     settings: {
       type: Object,
       default: () => {},
     },
     refresh: {
       type: Function,
+      default: () => {},
+    },
+    displayOption: {
+      type: Object,
       default: () => {},
     },
   },
@@ -246,7 +297,7 @@ export default {
     },
     showUpload() {
       Event.publish("dialog.upload");
-    }
+    },
   },
 };
 </script>

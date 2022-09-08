@@ -230,12 +230,20 @@
                     {{ photo.locationInfo() }}
                   </button>
                 </template>
-		<div>
-		    Keywords: {{ photo.getKeywords() }}
-		</div>
-		<div>
-		    Notes: {{ photo.getNotes() }}
-		</div>
+		<template
+		    v-if="displayOption.keywords"
+		    :title="$gettext('Keywords')"
+		>
+                    <br>
+		    <translate key="Keywords">Keywords</translate>: {{ photo.getKeywords() }}
+                </template>
+		<template
+		    v-if="displayOption.notes"
+		    :title="$gettext('Notes')"
+		>
+                    <br>
+		    <translate key="Notes">Notes</translate>: {{ photo.getNotes() }}
+                </template>
               </div>
             </div>
           </div>
@@ -289,6 +297,10 @@ export default {
     isSharedView: {
       type: Boolean,
       default: false,
+    },
+    displayOption: {
+      type: Object,
+      default: () => {},
     },
   },
   data() {

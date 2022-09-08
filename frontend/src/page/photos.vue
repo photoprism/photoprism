@@ -3,8 +3,13 @@
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <p-photo-toolbar :filter="filter" :settings="settings" :refresh="refresh"
-                     :update-filter="updateFilter" :update-query="updateQuery"></p-photo-toolbar>
+    <p-photo-toolbar :filter="filter"
+                     :settings="settings"
+                     :refresh="refresh"
+                     :update-filter="updateFilter"
+                     :update-query="updateQuery"
+                     :display-option="displayOption"
+                     :update-display-option="updateDisplayOption"></p-photo-toolbar>
 
     <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
@@ -39,6 +44,7 @@
                      :open-photo="openPhoto"
                      :edit-photo="editPhoto"
                      :open-location="openLocation"
+                     :display-option="displayOption"
                      :is-shared-view="isShared"></p-photo-cards>
     </v-container>
   </div>
@@ -83,6 +89,10 @@ export default {
       order: order,
       q: q,
     };
+    const displayOption = {
+        "keywords": false,
+        "notes": false,
+    };
 
     const settings = this.$config.settings();
     const features = settings.features;
@@ -118,6 +128,7 @@ export default {
       settings: {
         view,
       },
+      displayOption: displayOption,
       filter: filter,
       lastFilter: {},
       routeName: routeName,
@@ -455,6 +466,10 @@ export default {
       }
 
       this.$router.replace({query});
+    },
+    updateDisplayOption(props) {
+      if (this.loading) return;
+      this.displayOption[props.name] = props.v;
     },
     searchParams() {
       const params = {
