@@ -18,6 +18,7 @@ var Extensions = FileExtensions{
 	".jfi":      ImageJPEG,
 	".thm":      ImageJPEG,
 	".heif":     ImageHEIF,
+	".hif":      ImageHEIF,
 	".heic":     ImageHEIF,
 	".heifs":    ImageHEIF,
 	".heics":    ImageHEIF,
