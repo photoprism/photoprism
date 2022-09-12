@@ -2,8 +2,15 @@
   <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <p-album-toolbar :filter="filter" :album="model" :settings="settings" :refresh="refresh"
-                     :update-filter="updateFilter" :update-query="updateQuery"></p-album-toolbar>
+    <p-album-toolbar :filter="filter"
+		     :album="model"
+		     :settings="settings"
+		     :refresh="refresh"
+		     :update-filter="updateFilter"
+		     :update-query="updateQuery"
+		     :display-option="displayOption"
+		     :update-display-option="updateDisplayOption">
+    </p-album-toolbar>
 
     <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
@@ -42,6 +49,7 @@
                      :album="model"
                      :open-photo="openPhoto"
                      :edit-photo="editPhoto"
+                     :display-option="displayOption"
                      :open-location="openLocation"
                      :is-shared-view="isShared"></p-photo-cards>
     </v-container>
@@ -76,6 +84,11 @@ export default {
     const settings = {view: view};
     const batchSize = Photo.batchSize();
 
+    const displayOption = {
+	"keywords": false,
+	"notes": false,
+    };
+
     return {
       isShared: this.$config.deny("photos", "manage"),
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
@@ -96,6 +109,7 @@ export default {
       page: 0,
       selection: this.$clipboard.selection,
       settings: settings,
+      displayOption: displayOption,
       filter: filter,
       lastFilter: {},
       routeName: routeName,
@@ -378,6 +392,10 @@ export default {
       }
 
       this.$router.replace({query: query});
+    },
+    updateDisplayOption(props) {
+      if (this.loading) return;
+      this.displayOption[props.name] = props.v;
     },
     searchParams() {
       const params = {

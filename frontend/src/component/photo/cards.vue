@@ -68,6 +68,20 @@
                   <i/>
                   {{ photo.locationInfo() }}
                 </template>
+		<template
+		    v-if="displayOption.keywords"
+		    :title="$gettext('Keywords')"
+		>
+                    <br>
+		    <translate key="Keywords">Keywords</translate>: {{ photo.getKeywords() }}
+                </template>
+		<template
+		    v-if="displayOption.notes"
+		    :title="$gettext('Notes')"
+		>
+                    <br>
+		    <translate key="Notes">Notes</translate>: {{ photo.getNotes() }}
+                </template>
               </div>
             </div>
           </div>
