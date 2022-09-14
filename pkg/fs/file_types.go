@@ -12,13 +12,14 @@ import (
 
 // File types.
 const (
-	RawImage     Type = "raw"  // RAW image file.
-	ImageJPEG    Type = "jpg"  // JPEG image file.
-	ImageHEIF    Type = "heif" // High Efficiency Image File Format
-	ImageTIFF    Type = "tiff" // TIFF image file.
-	ImagePNG     Type = "png"  // PNG image file.
-	ImageGIF     Type = "gif"  // GIF image file.
-	ImageBMP     Type = "bmp"  // BMP image file.
+	RawImage     Type = "raw"  // RAW image
+	ImageJPEG    Type = "jpg"  // JPEG image
+	ImageAVIF    Type = "avif" // AV1 Image File Format (AVIF)
+	ImageHEIF    Type = "heif" // High Efficiency Image File Format (HEIF/HEIC)
+	ImageTIFF    Type = "tiff" // TIFF image
+	ImagePNG     Type = "png"  // PNG image
+	ImageGIF     Type = "gif"  // GIF image
+	ImageBMP     Type = "bmp"  // BMP image
 	ImageMPO     Type = "mpo"  // Stereoscopic Image that consists of two JPG images that are combined into one 3D image
 	ImageWebP    Type = "webp" // Google WebP Image
 	VideoWebM    Type = "webm" // Google WebM Video
@@ -40,12 +41,12 @@ const (
 	VideoOGV     Type = "ogv"  // Ogg container format maintained by the Xiph.Org, free and open
 	VideoASF     Type = "asf"  // Advanced Systems/Streaming Format (ASF)
 	VideoWMV     Type = "wmv"  // Windows Media Video (based on ASF)
-	XmpFile      Type = "xmp"  // Adobe XMP sidecar file (XML).
-	AaeFile      Type = "aae"  // Apple image edits sidecar file (based on XML).
-	XmlFile      Type = "xml"  // XML metadata / config / sidecar file.
-	YamlFile     Type = "yml"  // YAML metadata / config / sidecar file.
-	JsonFile     Type = "json" // JSON metadata / config / sidecar file.
-	TextFile     Type = "txt"  // Text config / sidecar file.
-	MarkdownFile Type = "md"   // Markdown text sidecar file.
-	UnknownType  Type = ""     // Unknown file type.
+	XmpFile      Type = "xmp"  // Adobe XMP sidecar file (XML)
+	AaeFile      Type = "aae"  // Apple image edits sidecar file (based on XML)
+	XmlFile      Type = "xml"  // XML metadata / config / sidecar file
+	YamlFile     Type = "yml"  // YAML metadata / config / sidecar file
+	JsonFile     Type = "json" // JSON metadata / config / sidecar file
+	TextFile     Type = "txt"  // Text config / sidecar file
+	MarkdownFile Type = "md"   // Markdown text sidecar file
+	UnknownType  Type = ""     // Unknown file
 )

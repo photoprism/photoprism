@@ -17,6 +17,8 @@ var Extensions = FileExtensions{
 	".jfif":     ImageJPEG,
 	".jfi":      ImageJPEG,
 	".thm":      ImageJPEG,
+	".avif":     ImageAVIF,
+	".avifs":    ImageAVIF,
 	".heif":     ImageHEIF,
 	".hif":      ImageHEIF,
 	".heic":     ImageHEIF,
@@ -24,8 +26,6 @@ var Extensions = FileExtensions{
 	".heics":    ImageHEIF,
 	".avci":     ImageHEIF,
 	".avcs":     ImageHEIF,
-	".avif":     ImageHEIF,
-	".avifs":    ImageHEIF,
 	".webp":     ImageWebP,
 	".tif":      ImageTIFF,
 	".tiff":     ImageTIFF,
@@ -133,7 +133,7 @@ func (m FileExtensions) Known(name string) bool {
 	return false
 }
 
-// TypesExt returns known extensions by file type.
+// Types returns known extensions by file type.
 func (m FileExtensions) Types(noUppercase bool) TypesExt {
 	result := make(TypesExt)
 

@@ -96,6 +96,11 @@ func (c *Config) SipsBin() string {
 	return findExecutable(c.options.SipsBin, "sips")
 }
 
+// SipsBlacklist returns the Sips file extension blacklist.
+func (c *Config) SipsBlacklist() string {
+	return c.options.SipsBlacklist
+}
+
 // HeifConvertBin returns the heif-convert executable file name.
 func (c *Config) HeifConvertBin() string {
 	return findExecutable(c.options.HeifConvertBin, "heif-convert")

@@ -11,6 +11,7 @@ var Formats = map[fs.Type]Type{
 	fs.ImageTIFF:    Image,
 	fs.ImageBMP:     Image,
 	fs.ImageMPO:     Image,
+	fs.ImageAVIF:    Image,
 	fs.ImageHEIF:    Image,
 	fs.VideoHEVC:    Video,
 	fs.ImageWebP:    Image,

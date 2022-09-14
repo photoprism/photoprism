@@ -558,7 +558,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "rawtherapee-blacklist",
 			Usage:  "do not use RawTherapee to convert files with these `EXTENSIONS`",
-			Value:  "",
+			Value:  "avif,avifs",
 			EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 		}},
 	CliFlag{
@@ -567,6 +567,13 @@ var Flags = CliFlags{
 			Usage:  "Sips `COMMAND` for RAW to JPEG conversion *macOS only*",
 			Value:  "sips",
 			EnvVar: "PHOTOPRISM_SIPS_BIN",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
+			Name:   "sips-blacklist",
+			Usage:  "do not use Sips to convert files with these `EXTENSIONS` *macOS only*",
+			Value:  "avif,avifs",
+			EnvVar: "PHOTOPRISM_SIPS_BLACKLIST",
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{

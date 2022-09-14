@@ -136,6 +136,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"rawtherapee-bin", c.RawtherapeeBin()},
 		{"rawtherapee-blacklist", c.RawtherapeeBlacklist()},
 		{"sips-bin", c.SipsBin()},
+		{"sips-blacklist", c.SipsBlacklist()},
 		{"heifconvert-bin", c.HeifConvertBin()},
 		{"ffmpeg-bin", c.FFmpegBin()},
 		{"ffmpeg-encoder", c.FFmpegEncoder().String()},

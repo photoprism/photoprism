@@ -9,6 +9,7 @@ var TypeInfo = map[Type]string{
 	ImageTIFF:    "Tag Image File Format",
 	ImageBMP:     "Bitmap",
 	ImageMPO:     "Stereoscopic JPEG (3D)",
+	ImageAVIF:    "AV1 Image File Format",
 	ImageHEIF:    "High Efficiency Image File Format",
 	ImageWebP:    "Google WebP",
 	VideoWebM:    "Google WebM",
