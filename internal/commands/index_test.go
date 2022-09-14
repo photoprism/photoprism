@@ -46,7 +46,6 @@ func TestIndexCommand(t *testing.T) {
 
 	if l != "" {
 		// Expected index command output.
-		assert.Contains(t, l, "classify: loading labels")
 		assert.NotContains(t, l, "error")
 		assert.Contains(t, l, "found no .ppignore file")
 	} else {
