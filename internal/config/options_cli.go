@@ -530,7 +530,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "darktable-blacklist",
 			Usage:  "do not use Darktable to convert files with these `EXTENSIONS`",
-			Value:  "dng,cr3",
+			Value:  "dng",
 			EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 		}},
 	CliFlag{
