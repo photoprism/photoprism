@@ -29,7 +29,7 @@ func Title(s string) string {
 
 			if match, ok := SpecialWords[search]; ok {
 				words[i] = strings.Replace(strings.ToLower(w), search, match, 1)
-			} else if i > 0 && SmallWords[search] {
+			} else if i > 0 && SmallWords[search] == true {
 				words[i] = strings.ToLower(w)
 			} else {
 				prev := ' '
