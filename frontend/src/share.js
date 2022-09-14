@@ -25,6 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+import "common/navigation";
 import Api from "common/api";
 import Notify from "common/notify";
 import Scrollbar from "common/scrollbar";

@@ -25,6 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+import "common/navigation";
 import Api from "common/api";
 import Notify from "common/notify";
 import Scrollbar from "common/scrollbar";
@@ -112,16 +113,6 @@ Vue.use(VueFullscreen);
 Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Dialogs);
-
-window.backwardsNavigationDetected = false;
-window.addEventListener("popstate", () => {
-  window.backwardsNavigationDetected = true;
-  // give components time to react to backwardsNavigationDetected in `created` or '$route'-watcher
-  setTimeout(() => {
-    window.backwardsNavigationDetected = false;
-  });
-});
-
 Vue.use(Router);
 
 // Configure client-side routing
