@@ -68,7 +68,7 @@ func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 	return folders, nil
 }
 
-// UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
+// UpdateFolderDates updates the year, month and day of the folder based on the indexed photo metadata.
 func UpdateFolderDates() error {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()

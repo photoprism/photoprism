@@ -86,7 +86,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 	return file, nil
 }
 
-// UpdateAlbumDates updates album year, month and day based on indexed photo metadata.
+// UpdateAlbumDates updates the year, month and day of the album based on the indexed photo metadata.
 func UpdateAlbumDates() error {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()

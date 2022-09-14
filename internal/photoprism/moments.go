@@ -3,6 +3,7 @@ package photoprism
 import (
 	"fmt"
 	"math"
+	"path/filepath"
 	"runtime/debug"
 	"strconv"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Moments represents a worker that creates albums based on popular locations, dates and labels.
@@ -82,7 +84,7 @@ func (w *Moments) Start() (err error) {
 		return nil
 	}
 
-	// Important folders.
+	// Create an album for each folder that contains originals.
 	if results, err := query.AlbumFolders(1); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
@@ -116,7 +118,7 @@ func (w *Moments) Start() (err error) {
 		}
 	}
 
-	// All years and months.
+	// Create an album for each month and year.
 	if results, err := query.MomentsTime(1, w.conf.Settings().Features.Private); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
@@ -143,7 +145,7 @@ func (w *Moments) Start() (err error) {
 		}
 	}
 
-	// Countries by year.
+	// Create moments based on country and year.
 	if results, err := query.MomentsCountries(threshold, w.conf.Settings().Features.Private); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
@@ -178,7 +180,7 @@ func (w *Moments) Start() (err error) {
 		}
 	}
 
-	// States and countries.
+	// Create moments based on states and countries.
 	if results, err := query.MomentsStates(1, w.conf.Settings().Features.Private); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
@@ -215,7 +217,7 @@ func (w *Moments) Start() (err error) {
 		}
 	}
 
-	// Popular labels.
+	// Create moments based on related image classifications.
 	if results, err := query.MomentsLabels(threshold, w.conf.Settings().Features.Private); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
@@ -254,15 +256,21 @@ func (w *Moments) Start() (err error) {
 		}
 	}
 
+	// UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
 	if err := query.UpdateFolderDates(); err != nil {
 		log.Errorf("moments: %s (update folder dates)", err.Error())
 	}
 
+	// UpdateAlbumDates updates the year, month and day of the album based on the indexed photo metadata.
 	if err := query.UpdateAlbumDates(); err != nil {
 		log.Errorf("moments: %s (update album dates)", err.Error())
 	}
 
-	if count, err := BackupAlbums(w.conf.AlbumsPath(), false); err != nil {
+	// Make sure that the albums have been backed up before, otherwise back up all albums.
+	if fs.PathExists(filepath.Join(w.conf.AlbumsPath(), entity.AlbumDefault)) &&
+		fs.PathExists(filepath.Join(w.conf.AlbumsPath(), entity.AlbumMonth)) {
+		// Skip.
+	} else if count, err := BackupAlbums(w.conf.AlbumsPath(), false); err != nil {
 		log.Errorf("moments: %s (backup albums)", err.Error())
 	} else if count > 0 {
 		log.Debugf("moments: %d albums saved as yaml files", count)

@@ -12,14 +12,14 @@ import (
 
 // BackupAlbums creates a YAML file backup of all albums.
 func BackupAlbums(backupPath string, force bool) (count int, result error) {
-
 	c := Config()
+
 	if !c.BackupYaml() && !force {
 		log.Debugf("backup: album yaml files disabled")
 		return count, nil
 	}
 
-	albums, err := query.Albums(0, 9999)
+	albums, err := query.Albums(0, 1000000)
 
 	if err != nil {
 		return count, err
