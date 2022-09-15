@@ -326,6 +326,7 @@ docker-develop-jammy-slim:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy-slim /jammy-slim
+preview: docker-preview
 docker-preview: docker-preview-latest
 docker-preview-all: docker-preview-latest docker-preview-other
 docker-preview-latest: docker-preview-ubuntu
@@ -371,6 +372,7 @@ docker-preview-impish:
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
+release: docker-release-all
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
@@ -462,6 +464,7 @@ docker-ddns:
 docker-goproxy:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh goproxy linux/amd64,linux/arm64 $(BUILD_DATE)
+demo: docker-demo
 docker-demo: docker-demo-latest
 docker-demo-all: docker-demo-latest docker-demo-debian
 docker-demo-latest:
