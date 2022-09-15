@@ -483,16 +483,16 @@ var Flags = CliFlags{
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{
-			Name:   "database-server, db-server",
-			Usage:  "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
-			EnvVar: "PHOTOPRISM_DATABASE_SERVER",
-		}},
-	CliFlag{
-		Flag: cli.StringFlag{
 			Name:   "database-name, db-name",
 			Value:  "photoprism",
 			Usage:  "database schema `NAME`",
 			EnvVar: "PHOTOPRISM_DATABASE_NAME",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
+			Name:   "database-server, db-server",
+			Usage:  "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
+			EnvVar: "PHOTOPRISM_DATABASE_SERVER",
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{

@@ -90,8 +90,8 @@ type Options struct {
 	ImprintUrl            string        `yaml:"ImprintUrl" json:"ImprintUrl" flag:"imprint-url"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
-	DatabaseServer        string        `yaml:"DatabaseServer" json:"-" flag:"database-server"`
 	DatabaseName          string        `yaml:"DatabaseName" json:"-" flag:"database-name"`
+	DatabaseServer        string        `yaml:"DatabaseServer" json:"-" flag:"database-server"`
 	DatabaseUser          string        `yaml:"DatabaseUser" json:"-" flag:"database-user"`
 	DatabasePassword      string        `yaml:"DatabasePassword" json:"-" flag:"database-password"`
 	DatabaseConns         int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
