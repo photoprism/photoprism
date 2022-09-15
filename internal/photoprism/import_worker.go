@@ -23,13 +23,15 @@ type ImportJob struct {
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
 		var destMainFileName string
-		relatedOriginalNames := make(map[string]string)
 
 		o := job.IndexOpt
 		imp := job.Imp
 		impOpt := job.ImportOpt
 		impPath := job.ImportOpt.Path
 		related := job.Related
+
+		// relatedOriginalNames contains the original filenames of related files.
+		relatedOriginalNames := make(map[string]string, len(related.Files))
 
 		if related.Main == nil {
 			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, impPath)))
@@ -61,7 +63,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			if destFileName, err := imp.DestinationFilename(related.Main, f); err == nil {
 				destDir := filepath.Dir(destFileName)
 
-				// Keep original name of related files after they are renamed, so they are indexed with the original name.
+				// Remember the original filenames of related files, so they can later be indexed and searched.
 				relatedOriginalNames[destFileName] = relFileName
 
 				if fs.PathExists(destDir) {
@@ -235,7 +237,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					}
 				}
 
-				// Index related MediaFile.
+				// Index related media file including its original filename.
 				res := ind.MediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID)
 
 				// Save file error.
