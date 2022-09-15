@@ -23,6 +23,7 @@ type ImportJob struct {
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
 		var destMainFileName string
+		relatedOriginalNames := make(map[string]string)
 
 		o := job.IndexOpt
 		imp := job.Imp
@@ -59,6 +60,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			if destFileName, err := imp.DestinationFilename(related.Main, f); err == nil {
 				destDir := filepath.Dir(destFileName)
+
+				// Keep original name of related files after they are renamed, so they are indexed with the original name.
+				relatedOriginalNames[destFileName] = relFileName
 
 				if fs.PathExists(destDir) {
 					// Do nothing.
@@ -232,7 +236,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index related MediaFile.
-				res := ind.MediaFile(f, o, "", photoUID)
+				res := ind.MediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID)
 
 				// Save file error.
 				if fileUid, err := res.FileError(); err != nil {
