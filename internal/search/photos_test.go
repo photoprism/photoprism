@@ -480,6 +480,26 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
+	t.Run("form.city", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = "city:Mandeni"
+		f.Count = 10
+		f.Offset = 0
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+	})
 	t.Run("form.title", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "title:Neckarbrücke"
@@ -962,6 +982,23 @@ func TestPhotos(t *testing.T) {
 	t.Run("search for state", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.State = "KwaZulu-Natal"
+
+		// Parse query string and filter.
+		if err := f.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for city", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.City = "Mandeni"
 
 		// Parse query string and filter.
 		if err := f.ParseQueryString(); err != nil {

@@ -197,14 +197,14 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 				return nil
 			}
 
-			// Ignore RAW images?
-			if mf.IsRaw() && skipRaw {
-				log.Infof("index: skipped raw %s", clean.Log(mf.RootRelName()))
+			// Skip already indexed?
+			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) {
 				return nil
 			}
 
-			// Skip?
-			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) {
+			// Skip RAW image?
+			if mf.IsRaw() && skipRaw {
+				log.Infof("index: skipped raw %s", clean.Log(mf.RootRelName()))
 				return nil
 			}
 

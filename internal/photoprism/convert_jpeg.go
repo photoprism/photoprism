@@ -134,9 +134,9 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 	maxSize := strconv.Itoa(c.conf.JpegSize())
 
 	// Select conversion command depending on the file type and runtime environment.
-	if c.conf.SipsEnabled() && (f.IsRaw() || f.IsHEIF()) {
+	if (f.IsRaw() || f.IsHEIF() || f.IsAVIF()) && c.conf.SipsEnabled() && c.sipsBlacklist.Ok(fileExt) {
 		result = exec.Command(c.conf.SipsBin(), "-Z", maxSize, "-s", "format", "jpeg", "--out", jpegName, f.FileName())
-	} else if f.IsRaw() && c.conf.RawEnabled() {
+	} else if f.IsRaw() && c.conf.RawEnabled() || f.IsAVIF() {
 		if c.conf.DarktableEnabled() && c.darktableBlacklist.Ok(fileExt) {
 
 			var args []string

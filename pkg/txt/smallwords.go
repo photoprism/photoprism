@@ -35,6 +35,7 @@ var SmallWords = map[string]bool{
 	"und":            true,
 	"uns":            true,
 	"des":            true,
+	"van":            true,
 	"von":            true,
 	"für":            true,
 	"ein":            true,

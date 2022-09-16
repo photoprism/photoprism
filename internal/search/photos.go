@@ -401,6 +401,11 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 		s = s.Where("places.place_state IN (?)", SplitOr(f.State))
 	}
 
+	// Filter by location city?
+	if txt.NotEmpty(f.City) {
+		s = s.Where("places.place_city IN (?)", SplitOr(f.City))
+	}
+
 	// Filter by location category?
 	if txt.NotEmpty(f.Category) {
 		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").

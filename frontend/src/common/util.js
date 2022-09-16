@@ -235,6 +235,8 @@ export default class Util {
         return "Moving Picture Experts Group (MPEG)";
       case "mjpg":
         return "Motion JPEG (M-JPEG)";
+      case "avif":
+        return "AV1 Image File Format (AVIF)";
       case "heif":
         return "High Efficiency Image File Format (HEIF)";
       case "heic":

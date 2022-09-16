@@ -27,7 +27,12 @@ echo "Installing Darktable for ${DESTARCH^^}..."
 
 case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)
-    if [[ $VERSION_CODENAME == "bullseye" ]]; then
+    if [[ $VERSION_CODENAME == "jammy" ]]; then
+      echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_22.04/ /' | tee /etc/apt/sources.list.d/graphics:darktable.list
+      curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_22.04/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
+      apt-get update
+      apt-get -qq install darktable
+    elif [[ $VERSION_CODENAME == "bullseye" ]]; then
       apt-get update
       apt-get -qq install -t bullseye-backports darktable
     elif [[ $VERSION_CODENAME == "buster" ]]; then

@@ -503,6 +503,15 @@ export default {
       this.loadMore();
     },
     search() {
+      /**
+       * re-creating the last scroll-position should only ever happen when using
+       * back-navigation. We therefore reset the remembered scroll-position
+       * in any other scenario
+       */
+      if (!window.backwardsNavigationDetected) {
+        this.setOffset(0);
+      }
+
       this.scrollDisabled = true;
 
       // Don't query the same data more than once

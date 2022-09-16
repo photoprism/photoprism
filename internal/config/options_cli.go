@@ -483,16 +483,16 @@ var Flags = CliFlags{
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{
-			Name:   "database-server, db-server",
-			Usage:  "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
-			EnvVar: "PHOTOPRISM_DATABASE_SERVER",
-		}},
-	CliFlag{
-		Flag: cli.StringFlag{
 			Name:   "database-name, db-name",
 			Value:  "photoprism",
 			Usage:  "database schema `NAME`",
 			EnvVar: "PHOTOPRISM_DATABASE_NAME",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
+			Name:   "database-server, db-server",
+			Usage:  "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
+			EnvVar: "PHOTOPRISM_DATABASE_SERVER",
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{
@@ -530,7 +530,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "darktable-blacklist",
 			Usage:  "do not use Darktable to convert files with these `EXTENSIONS`",
-			Value:  "dng,cr3",
+			Value:  "dng",
 			EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 		}},
 	CliFlag{
@@ -558,7 +558,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "rawtherapee-blacklist",
 			Usage:  "do not use RawTherapee to convert files with these `EXTENSIONS`",
-			Value:  "",
+			Value:  "avif,avifs",
 			EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 		}},
 	CliFlag{
@@ -567,6 +567,13 @@ var Flags = CliFlags{
 			Usage:  "Sips `COMMAND` for RAW to JPEG conversion *macOS only*",
 			Value:  "sips",
 			EnvVar: "PHOTOPRISM_SIPS_BIN",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
+			Name:   "sips-blacklist",
+			Usage:  "do not use Sips to convert files with these `EXTENSIONS` *macOS only*",
+			Value:  "avif,avifs",
+			EnvVar: "PHOTOPRISM_SIPS_BLACKLIST",
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{

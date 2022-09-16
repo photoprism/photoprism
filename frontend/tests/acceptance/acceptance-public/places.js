@@ -5,9 +5,7 @@ import Menu from "../page-model/menu";
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture`Search and open photo from places`.page`${testcafeconfig.url}`.skip(
-  "Places don't loadin chrome from within the container"
-);
+fixture`Search and open photo from places`.page`${testcafeconfig.url}`;
 
 const menu = new Menu();
 
@@ -17,16 +15,8 @@ test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places"
   await t
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()
-    .expect(Selector("div.p-map-control").visible)
+    .expect(Selector("div.map-control").visible)
     .ok();
-
-  await t.typeText(Selector('input[aria-label="Search"]'), "Berlin").pressKey("enter");
-
-  await t
-    .expect(Selector("div.p-map-control").visible)
-    .ok()
-    .expect(getLocation())
-    .contains("Berlin");
 
   await menu.openPage("browse");
 
@@ -37,7 +27,7 @@ test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places"
   await t
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()
-    .expect(Selector("div.p-map-control").visible)
+    .expect(Selector("div.map-control").visible)
     .ok();
 
   await t

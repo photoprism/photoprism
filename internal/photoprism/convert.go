@@ -19,6 +19,7 @@ import (
 type Convert struct {
 	conf                 *config.Config
 	cmdMutex             sync.Mutex
+	sipsBlacklist        fs.Blacklist
 	darktableBlacklist   fs.Blacklist
 	rawtherapeeBlacklist fs.Blacklist
 }
@@ -27,6 +28,7 @@ type Convert struct {
 func NewConvert(conf *config.Config) *Convert {
 	c := &Convert{
 		conf:                 conf,
+		sipsBlacklist:        fs.NewBlacklist(conf.SipsBlacklist()),
 		darktableBlacklist:   fs.NewBlacklist(conf.DarktableBlacklist()),
 		rawtherapeeBlacklist: fs.NewBlacklist(conf.RawtherapeeBlacklist()),
 	}
@@ -97,7 +99,7 @@ func (c *Convert) Start(path string, force bool) (err error) {
 
 			f, err := NewMediaFile(fileName)
 
-			if err != nil || f.Empty() || !(f.IsRaw() || f.IsHEIF() || f.IsImageOther() || f.IsVideo()) {
+			if err != nil || f.Empty() || !(f.IsRaw() || f.IsHEIF() || f.IsAVIF() || f.IsImageOther() || f.IsVideo()) {
 				return nil
 			}
 

@@ -363,6 +363,8 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			result.Main = f
 		} else if f.IsRaw() {
 			result.Main = f
+		} else if f.IsAVIF() {
+			result.Main = f
 		} else if f.IsHEIF() {
 			isHEIF = true
 			result.Main = f
@@ -726,6 +728,11 @@ func (m *MediaFile) IsHEIF() bool {
 	return m.MimeType() == fs.MimeTypeHEIF
 }
 
+// IsAVIF returns true if this is an AV1 Image File Format image.
+func (m *MediaFile) IsAVIF() bool {
+	return m.MimeType() == fs.MimeTypeAVIF
+}
+
 // IsBitmap returns true if this is a bitmap image.
 func (m *MediaFile) IsBitmap() bool {
 	return m.MimeType() == fs.MimeTypeBitmap
@@ -765,6 +772,8 @@ func (m *MediaFile) FileType() fs.Type {
 		return fs.ImagePNG
 	case m.IsGif():
 		return fs.ImageGIF
+	case m.IsAVIF():
+		return fs.ImageAVIF
 	case m.IsHEIF():
 		return fs.ImageHEIF
 	case m.IsBitmap():
@@ -835,7 +844,7 @@ func (m *MediaFile) IsImageNative() bool {
 
 // IsImage checks if the file is an image
 func (m *MediaFile) IsImage() bool {
-	return m.IsImageNative() || m.IsRaw() || m.IsHEIF()
+	return m.IsImageNative() || m.IsRaw() || m.IsAVIF() || m.IsHEIF()
 }
 
 // IsLive checks if the file is a live photo.
@@ -858,7 +867,7 @@ func (m *MediaFile) ExifSupported() bool {
 
 // IsMedia returns true if this is a media file (photo or video, not sidecar or other).
 func (m *MediaFile) IsMedia() bool {
-	return m.IsJpeg() || m.IsVideo() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
+	return m.IsJpeg() || m.IsVideo() || m.IsRaw() || m.IsAVIF() || m.IsHEIF() || m.IsImageOther()
 }
 
 // Jpeg returns the JPEG version of the media file (if exists).

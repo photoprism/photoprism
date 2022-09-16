@@ -133,6 +133,7 @@ export default {
         results: [],
         loading: false,
         complete: false,
+        open: false,
         dirty: false,
         batchSize: batchSize > 160 ? 480 : batchSize * 3
       },
@@ -183,6 +184,14 @@ export default {
     this.subscriptions.push(Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
     this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
 
+    this.subscriptions.push(Event.subscribe("viewer.show", (ev, data) => {
+      this.viewer.open = true;
+    }));
+    this.subscriptions.push(Event.subscribe("viewer.hide", (ev, data) => {
+      this.viewer.open = false;
+    }));
+
+
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
@@ -192,6 +201,17 @@ export default {
     }
   },
   methods: {
+    searchCount() {
+      const offset = parseInt(window.localStorage.getItem("photos_offset"));
+      if(this.offset > 0 || !offset) {
+        return this.batchSize;
+      }
+      return offset + this.batchSize;
+    },
+    setOffset(offset) {
+      this.offset = offset;
+      window.localStorage.setItem("photos_offset", offset);
+    },
     viewType() {
       let queryParam = this.$route.query['view'] ? this.$route.query['view'] : "";
       let storedType = window.localStorage.getItem("photos_view");
@@ -265,6 +285,7 @@ export default {
        *
        * preferVideo is true, when the user explicitly clicks the live-image-icon.
        */
+      window.localStorage.setItem("last_opened_photo", selected.UID);
       if (preferVideo && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
           this.$viewer.play({video: selected});
@@ -305,22 +326,23 @@ export default {
       }
 
       Photo.search(params).then(response => {
-        this.results = Photo.mergeResponse(this.results, response);
-        this.complete = (response.count < count);
+        this.results = this.dirty ? response.models : Photo.mergeResponse(this.results, response);
+        this.complete = (response.count < response.limit);
         this.scrollDisabled = this.complete;
 
         if (this.complete) {
-          this.offset = offset;
+          this.setOffset(response.offset);
 
           if (this.results.length > 1) {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
           }
         } else if (this.results.length >= Photo.limit()) {
-          this.offset = offset;
+          this.setOffset(response.offset);
           this.complete = true;
           this.scrollDisabled = true;
           this.$notify.warn(this.$gettext("Can't load more, limit reached"));
         } else {
+          this.setOffset(response.offset + response.limit);
           this.offset = offset + count;
           this.page++;
 
@@ -401,7 +423,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.batchSize,
+        count: this.searchCount(),
         offset: this.offset,
         merged: true,
       };
@@ -428,6 +450,24 @@ export default {
       this.loadMore();
     },
     search() {
+      /**
+       * search is called on mount or route change. If the route changed to an
+       * open viewer, no search is required. There is no reason to do an
+       * initial results load, if the results aren't currently visible
+       */
+      if (this.viewer.open) {
+        return;
+      }
+
+      /**
+       * re-creating the last scroll-position should only ever happen when using
+       * back-navigation. We therefore reset the remembered scroll-position
+       * in any other scenario
+       */
+      if (!window.backwardsNavigationDetected) {
+        window.localStorage.removeItem("last_opened_photo");
+        this.setOffset(0);
+      }
       this.scrollDisabled = true;
 
       // Don't query the same data more than once
@@ -447,11 +487,11 @@ export default {
       const params = this.searchParams();
 
       Photo.search(params).then(response => {
-        this.offset = this.batchSize;
+        this.offset = response.limit;
         this.results = response.models;
         this.viewer.results = [];
         this.viewer.complete = false;
-        this.complete = (response.count < this.batchSize);
+        this.complete = (response.count < response.limit);
         this.scrollDisabled = this.complete;
 
         if (this.complete) {
@@ -469,12 +509,29 @@ export default {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
+
+            this.restoreScrollPosition();
           });
         }
       }).finally(() => {
         this.dirty = false;
         this.loading = false;
         this.listen = true;
+      });
+    },
+    restoreScrollPosition() {
+      const lastOpenedPhotoId = window.localStorage.getItem("last_opened_photo");
+      if (lastOpenedPhotoId === undefined || lastOpenedPhotoId === null || this.viewer.open) {
+        return;
+      }
+
+      window.localStorage.removeItem("last_opened_photo");
+      this.$nextTick(() => {
+        document.querySelector(`[data-uid="${lastOpenedPhotoId}"]`)?.scrollIntoView({
+          behavior: 'auto',
+          block: 'center',
+          inline: 'center'
+        });
       });
     },
     onImportCompleted() {

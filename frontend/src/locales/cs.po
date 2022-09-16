@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-15 04:36+0000\n"
+"PO-Revision-Date: 2022-09-14 04:47+0000\n"
 "Last-Translator: Shamshala <156468948648@seznam.cz>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
 "frontend/cs/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Weblate 4.14\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -405,7 +405,7 @@ msgstr "Fotoaparát"
 
 #: src/dialog/photo/info.vue:79
 msgid "Camera Serial"
-msgstr "Sériová kamera"
+msgstr "Sériové číslo kamery"
 
 #: src/pages/album/photos.vue:200 src/pages/photos.vue:247
 #: src/share/photos.vue:215

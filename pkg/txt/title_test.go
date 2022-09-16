@@ -6,48 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIsSeparator(t *testing.T) {
-	t.Run("rune A", func(t *testing.T) {
-		assert.Equal(t, false, isSeparator('A'))
-	})
-	t.Run("rune 99", func(t *testing.T) {
-		assert.Equal(t, false, isSeparator('9'))
-	})
-	t.Run("rune /", func(t *testing.T) {
-		assert.Equal(t, true, isSeparator('/'))
-	})
-	t.Run("rune \\", func(t *testing.T) {
-		assert.Equal(t, true, isSeparator('\\'))
-	})
-	t.Run("rune ♥ ", func(t *testing.T) {
-		assert.Equal(t, false, isSeparator('♥'))
-	})
-	t.Run("rune  space", func(t *testing.T) {
-		assert.Equal(t, true, isSeparator(' '))
-	})
-	t.Run("rune '", func(t *testing.T) {
-		assert.Equal(t, false, isSeparator('\''))
-	})
-	t.Run("rune ý", func(t *testing.T) {
-		assert.Equal(t, false, isSeparator('ý'))
-	})
-}
-
-func TestUcFirst(t *testing.T) {
-	t.Run("photo-lover", func(t *testing.T) {
-		assert.Equal(t, "Photo-lover", UpperFirst("photo-lover"))
-	})
-	t.Run("cat", func(t *testing.T) {
-		assert.Equal(t, "Cat", UpperFirst("Cat"))
-	})
-	t.Run("KwaZulu natal", func(t *testing.T) {
-		assert.Equal(t, "KwaZulu Natal", Title("KwaZulu natal"))
-	})
-	t.Run("empty string", func(t *testing.T) {
-		assert.Equal(t, "", UpperFirst(""))
-	})
-}
-
 func TestTitle(t *testing.T) {
 	t.Run("Cour d'Honneur", func(t *testing.T) {
 		assert.Equal(t, "Cour d'Honneur", Title("Cour d'Honneur"))
@@ -106,5 +64,8 @@ func TestTitle(t *testing.T) {
 	})
 	t.Run("NYC", func(t *testing.T) {
 		assert.Equal(t, "NYC, NY - LonDon, UK - NYC, NY and London, UK.", Title("NYC, NY - LonDon, UK - Nyc, Ny and London, Uk."))
+	})
+	t.Run("KoosVanDriemond", func(t *testing.T) {
+		assert.Equal(t, "Koos van Driemond", Title("Koos van Driemond"))
 	})
 }

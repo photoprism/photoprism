@@ -1,5 +1,5 @@
-#### Base Image: Debian 12 (Bookworm)
-FROM debian:bookworm-slim
+#### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
+FROM ubuntu:jammy
 
 # Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
 #
@@ -9,7 +9,7 @@ FROM debian:bookworm-slim
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism® Dev (ARMv7)"
-LABEL org.opencontainers.image.description="Debian 12 (Bookworm)"
+LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
@@ -39,7 +39,6 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
 
 # Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
-COPY --chown=root:root --chmod=644 /docker/develop/bookworm/sources.list /etc/apt/sources.list.d/bookworm.list
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
 # Update base image and add dependencies.

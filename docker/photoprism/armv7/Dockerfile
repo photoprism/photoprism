@@ -18,13 +18,13 @@ COPY . .
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Debian 12 (Bookworm)
-FROM debian:bookworm-slim
+#### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
+FROM ubuntu:jammy
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism® Community Edition (ARMv7)"
-LABEL org.opencontainers.image.description="Debian 12 (Bookworm)"
+LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
@@ -94,7 +94,6 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
 # Copy dist files, scripts, and debian backports sources list.
 COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
 COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
-COPY /docker/develop/bookworm/sources.list /etc/apt/sources.list.d/bookworm.list
 
 # Update base image and add dependencies.
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
