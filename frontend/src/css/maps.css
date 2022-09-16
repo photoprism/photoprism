@@ -21,6 +21,24 @@
     cursor: pointer;
 }
 
+#photoprism #map .cluster-marker {
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-color: #fff;
+    color: rgba(0, 0, 0, 0.87);
+    display: block;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#photoprism #map .cluster-marker > div {
+  width: 50%;
+  height: auto;
+}
+
 #photoprism .maplibregl-ctrl-attrib-inner a {
     color: #333 !important;
 }

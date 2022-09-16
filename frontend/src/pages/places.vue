@@ -391,47 +391,124 @@ export default {
 
       this.map.on("load", () => this.onMapLoad());
     },
+    getClusterFeatures(clusterId, callback) {
+      this.map.getSource('photos').getClusterLeaves(clusterId, -1, undefined, (error, clusterFeatures) => {
+        callback(clusterFeatures);
+      });;
+    },
+    getMultipleClusterFeatures(clusterIds, callback) {
+      const result = {};
+      let handledClusterLeaveResultCount = 0;
+      for (const clusterId of clusterIds) {
+        this.getClusterFeatures(clusterId, (clusterFeatures) => {
+          result[clusterId] = clusterFeatures;
+          handledClusterLeaveResultCount += 1;
+
+          if (handledClusterLeaveResultCount === clusterIds.length) {
+            callback(result);
+          }
+        });
+      }
+    },
+    getClusterRadiusFromItemCount(itemCount) {
+      // see config of cluster-layer for these values
+      if (itemCount > 750) {
+        return 50;
+      }
+      if (itemCount > 100) {
+        return 30;
+      }
+
+      return 20;
+    },
     updateMarkers() {
       if (this.loading) return;
       let newMarkers = {};
       let features = this.map.querySourceFeatures("photos");
+      const clusterIds = features
+        .filter(feature => feature.properties.cluster)
+        .map(feature => feature.properties.cluster_id);
 
-      for (let i = 0; i < features.length; i++) {
-        let coords = features[i].geometry.coordinates;
-        let props = features[i].properties;
-        if (props.cluster) continue;
-        let id = features[i].id;
+      this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
+        console.log(features);
+        for (let i = 0; i < features.length; i++) {
+          let coords = features[i].geometry.coordinates;
+          let props = features[i].properties;
+          let id = features[i].id;
 
-        let marker = this.markers[id];
-        let token = this.$config.previewToken();
-        if (!marker) {
-          let el = document.createElement('div');
-          el.className = 'marker';
-          el.title = props.Title;
-          el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
-          el.style.width = '50px';
-          el.style.height = '50px';
+          let marker = this.markers[id];
+          let token = this.$config.previewToken();
+          if (!marker) {
+            let el = document.createElement('div');
+            if (props.cluster) {
+              el.className = 'cluster-marker';
+              const radius = this.getClusterRadiusFromItemCount(props.point_count); 
+              el.style.width = `${radius * 2}px`;
+              el.style.height = `${radius * 2}px`;
 
-          el.addEventListener('click', () => this.openPhoto(props.UID));
-          marker = this.markers[id] = new maplibregl.Marker({
-            element: el
-          }).setLngLat(coords);
-        } else {
-          marker.setLngLat(coords);
+              const clusterFeatures = clusterFeaturesById[props.cluster_id];
+              const previewImageCount = clusterFeaturesById[props.cluster_id].length > 3 ? 4 : 2;
+              const images = clusterFeatures
+                .slice(0, previewImageCount)
+                .map((feature) => {
+                  const imageHash = feature.properties.Hash;
+                  const image = document.createElement('div');
+                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${imageHash}/${token}/tile_${50})`;
+                  return image;
+                });
+              el.append(...images);
+
+              // TODO. add counter-bubble
+
+              el.addEventListener('click', () => {
+                let latMin,latMax,lngMin,lngMax;
+                for (const feature of clusterFeatures) {
+                  const [lng,lat] = feature.geometry.coordinates;
+                  if (latMin === undefined || lat < latMin) {
+                    latMin = lat;
+                  }
+                  if (latMax === undefined || lat > latMax) {
+                    latMax = lat;
+                  }
+                  if (lngMin === undefined || lng < lngMin) {
+                    lngMin = lng;
+                  }
+                  if (lngMax === undefined || lng > lngMax) {
+                    lngMax = lng;
+                  }
+                }
+
+                this.selectCluster(latMin, latMax, lngMin, lngMax);
+              });
+            } else {
+              el.className = 'marker';
+              el.title = props.Title;
+              el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
+              el.style.width = '50px';
+              el.style.height = '50px';
+
+              el.addEventListener('click', () => this.openPhoto(props.UID));
+            }
+            marker = this.markers[id] = new maplibregl.Marker({
+              element: el
+            }).setLngLat(coords);
+          } else {
+            marker.setLngLat(coords);
+          }
+
+          newMarkers[id] = marker;
+
+          if (!this.markersOnScreen[id]) {
+            marker.addTo(this.map);
+          }
         }
-
-        newMarkers[id] = marker;
-
-        if (!this.markersOnScreen[id]) {
-          marker.addTo(this.map);
+        for (let id in this.markersOnScreen) {
+          if (!newMarkers[id]) {
+            this.markersOnScreen[id].remove();
+          }
         }
-      }
-      for (let id in this.markersOnScreen) {
-        if (!newMarkers[id]) {
-          this.markersOnScreen[id].remove();
-        }
-      }
-      this.markersOnScreen = newMarkers;
+        this.markersOnScreen = newMarkers;
+      });
     },
     onMapLoad() {
       this.map.addSource('photos', {
@@ -442,6 +519,7 @@ export default {
         clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
       });
 
+      // TODO: can this rendering of empty colored circles be removed?
       this.map.addLayer({
         id: 'clusters',
         type: 'circle',
@@ -469,54 +547,8 @@ export default {
         }
       });
 
-      this.map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'photos',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': this.mapFont,
-          'text-size': 13
-        }
-      });
-
       this.map.on('render', this.updateMarkers);
 
-      this.map.on('click', 'clusters', (e) => {
-        const features = this.map.queryRenderedFeatures(e.point, {
-          layers: ['clusters']
-        });
-        const clusterId = features[0].properties.cluster_id;
-        this.map.getSource('photos').getClusterLeaves(clusterId, -1, undefined, (error, clusterFeatures) => {
-
-          let latMin,latMax,lngMin,lngMax;
-          for (const feature of clusterFeatures) {
-            const [lng,lat] = feature.geometry.coordinates;
-            if (latMin === undefined || lat < latMin) {
-              latMin = lat;
-            }
-            if (latMax === undefined || lat > latMax) {
-              latMax = lat;
-            }
-            if (lngMin === undefined || lng < lngMin) {
-              lngMin = lng;
-            }
-            if (lngMax === undefined || lng > lngMax) {
-              lngMax = lng;
-            }
-          }
-
-          this.selectCluster(latMin, latMax, lngMin, lngMax);
-        });
-      });
-
-      this.map.on('mouseenter', 'clusters', () => {
-        this.map.getCanvas().style.cursor = 'pointer';
-      });
-      this.map.on('mouseleave', 'clusters', () => {
-        this.map.getCanvas().style.cursor = '';
-      });
 
       this.search();
     },
