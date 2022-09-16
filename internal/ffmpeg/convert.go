@@ -78,6 +78,23 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			avcName,
 		)
 
+	case VAAPIEncoder:
+		format := "format=nv12,hwupload"
+		result = exec.Command(
+			ffmpegBin,
+			"-hwaccel", "vaapi",
+			"-i", fileName,
+			"-c:a", "aac",
+			"-vf", format,
+			"-c:v", string(encoder),
+			"-vsync", "vfr",
+			"-r", "30",
+			"-b:v", bitrate,
+			"-f", "mp4",
+			"-y",
+			avcName,
+		)
+
 	case NvidiaEncoder:
 		// ffmpeg -hide_banner -h encoder=h264_nvenc
 		result = exec.Command(
