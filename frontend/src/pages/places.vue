@@ -243,12 +243,34 @@ export default {
       this.selectedClusterBounds = this.getSelectedClusterFromUrl();
       this.showClusterPictures = this.selectedClusterBounds !== undefined;
     },
-    selectCluster: function(latMin, latMax, lngMin, lngMax) {
+    selectClusterByCoords: function(latMin, latMax, lngMin, lngMax) {
       this.$router.push({
         query: {
           selectedCluster: [latMin, latMax, lngMin, lngMax].join(','),
         },
         params: this.filter,
+      });
+    },
+    selectClusterById: function(clusterId) {
+      this.getClusterFeatures(clusterId, (clusterFeatures) => {
+        let latMin,latMax,lngMin,lngMax;
+        for (const feature of clusterFeatures) {
+          const [lng,lat] = feature.geometry.coordinates;
+          if (latMin === undefined || lat < latMin) {
+            latMin = lat;
+          }
+          if (latMax === undefined || lat > latMax) {
+            latMax = lat;
+          }
+          if (lngMin === undefined || lng < lngMin) {
+            lngMin = lng;
+          }
+          if (lngMax === undefined || lng > lngMax) {
+            lngMax = lng;
+          }
+        }
+
+        this.selectClusterByCoords(latMin, latMax, lngMin, lngMax);
       });
     },
     unselectCluster: function() {
@@ -413,7 +435,7 @@ export default {
     getClusterRadiusFromItemCount(itemCount) {
       // see config of cluster-layer for these values
       if (itemCount > 750) {
-        return 50;
+        return 40;
       }
       if (itemCount > 100) {
         return 30;
@@ -441,13 +463,15 @@ export default {
           if (!marker) {
             let el = document.createElement('div');
             if (props.cluster) {
-              el.className = 'cluster-marker';
-              const radius = this.getClusterRadiusFromItemCount(props.point_count); 
-              el.style.width = `${radius * 2}px`;
-              el.style.height = `${radius * 2}px`;
+              const radius = this.getClusterRadiusFromItemCount(props.point_count);
+
+              const imageContainer = document.createElement('div');
+              imageContainer.className = 'cluster-marker';
+              imageContainer.style.width = `${radius * 2}px`;
+              imageContainer.style.height = `${radius * 2}px`;
 
               const clusterFeatures = clusterFeaturesById[props.cluster_id];
-              const previewImageCount = clusterFeaturesById[props.cluster_id].length > 3 ? 4 : 2;
+              const previewImageCount = clusterFeatures.length > 3 ? 4 : 2;
               const images = clusterFeatures
                 .slice(0, previewImageCount)
                 .map((feature) => {
@@ -456,29 +480,12 @@ export default {
                   image.style.backgroundImage = `url(${this.$config.contentUri}/t/${imageHash}/${token}/tile_${50})`;
                   return image;
                 });
-              el.append(...images);
+              imageContainer.append(...images);
+              el.append(imageContainer);
 
               // TODO. add counter-bubble
-
               el.addEventListener('click', () => {
-                let latMin,latMax,lngMin,lngMax;
-                for (const feature of clusterFeatures) {
-                  const [lng,lat] = feature.geometry.coordinates;
-                  if (latMin === undefined || lat < latMin) {
-                    latMin = lat;
-                  }
-                  if (latMax === undefined || lat > latMax) {
-                    latMax = lat;
-                  }
-                  if (lngMin === undefined || lng < lngMin) {
-                    lngMin = lng;
-                  }
-                  if (lngMax === undefined || lng > lngMax) {
-                    lngMax = lng;
-                  }
-                }
-
-                this.selectCluster(latMin, latMax, lngMin, lngMax);
+                this.selectClusterById(props.cluster_id);
               });
             } else {
               el.className = 'marker';
