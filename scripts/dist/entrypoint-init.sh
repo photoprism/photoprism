@@ -15,14 +15,14 @@ re='^[0-9]+$'
 # detect environment
 case $DOCKER_ENV in
   prod)
-    export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/usr/local/bin:/usr/bin:/scripts:/opt/photoprism/bin";
+    export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin";
     INIT_SCRIPTS="/scripts"
     CHOWN_DIRS=("/photoprism/storage")
     CHMOD_DIRS=("/photoprism/storage")
     ;;
 
   develop)
-    export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/usr/local/bin:/usr/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin";
+    export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin";
     INIT_SCRIPTS="/scripts"
     CHOWN_DIRS=("/photoprism" "/opt/photoprism" "/go" "/tmp/photoprism")
     CHMOD_DIRS=("/opt/photoprism" "/tmp/photoprism")

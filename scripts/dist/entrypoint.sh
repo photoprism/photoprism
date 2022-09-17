@@ -12,12 +12,12 @@ export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scrip
 # detect environment
 case $DOCKER_ENV in
   prod)
-    export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/scripts:/opt/photoprism/bin:/usr/local/bin:/usr/bin";
+    export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin";
     INIT_SCRIPT="/scripts/entrypoint-init.sh";
     ;;
 
   develop)
-    export PATH="/usr/local/sbin:/usr/sbin:/sbin:/bin:/scripts:/usr/local/go/bin:/go/bin:/usr/local/bin:/usr/bin";
+    export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/go/bin:/go/bin:/usr/local/bin:/usr/bin:/bin:/scripts";
     INIT_SCRIPT="/scripts/entrypoint-init.sh";
     ;;
 
