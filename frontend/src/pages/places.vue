@@ -466,7 +466,7 @@ export default {
               const radius = this.getClusterRadiusFromItemCount(props.point_count);
 
               const imageContainer = document.createElement('div');
-              imageContainer.className = 'cluster-marker';
+              imageContainer.className = 'marker cluster-marker';
               imageContainer.style.width = `${radius * 2}px`;
               imageContainer.style.height = `${radius * 2}px`;
 
