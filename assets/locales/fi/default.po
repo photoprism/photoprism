@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-08-01 15:07+0000\n"
-"PO-Revision-Date: 2022-08-02 08:31+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-09-17 12:49+0000\n"
+"Last-Translator: latteetanne <late91@gmail.com>\n"
 "Language-Team: none\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1.1\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: messages.go:87
 msgid "Unexpected error, please try again"
@@ -285,7 +286,7 @@ msgstr "Tiedostojen kopiointi %s"
 
 #: messages.go:152
 msgid "Labels deleted"
-msgstr "Tarrat poistettu"
+msgstr "Tunnisteet poistettu"
 
 #: messages.go:153
 msgid "Label saved"
@@ -339,7 +340,7 @@ msgstr "Zip luotu %d s"
 
 #: messages.go:165
 msgid "Permanently deleted"
-msgstr "Poistetaan pysyvästi"
+msgstr "Poistettu pysyvästi"
 
 #: messages.go:166
 #, c-format
