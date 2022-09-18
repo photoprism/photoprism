@@ -119,5 +119,5 @@ services:
 ## Join shared "photoprism-develop" network
 networks:
   default:
-    external:
-      name: photoprism-develop
+    name: photoprism-develop
+    external: true
