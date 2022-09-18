@@ -128,7 +128,7 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.IntFlag{
 			Name:   "resolution-limit, mp",
-			Value:  100,
+			Value:  DefaultResolutionLimit,
 			Usage:  "maximum resolution of media files in `MEGAPIXELS` (1-900; -1 to disable)",
 			EnvVar: "PHOTOPRISM_RESOLUTION_LIMIT",
 		},

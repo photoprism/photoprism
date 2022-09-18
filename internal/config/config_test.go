@@ -409,7 +409,7 @@ func TestConfig_ResolutionLimit(t *testing.T) {
 	c.options.ResolutionLimit = -1
 	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = false
-	assert.Equal(t, 100, c.ResolutionLimit())
+	assert.Equal(t, 150, c.ResolutionLimit())
 	c.options.Sponsor = true
 	assert.Equal(t, -1, c.ResolutionLimit())
 }
