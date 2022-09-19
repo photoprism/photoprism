@@ -52,7 +52,6 @@ export class Subject extends RestModel {
       PhotoCount: 0,
       Thumb: "",
       ThumbSrc: "",
-      Metadata: {},
       CreatedAt: "",
       UpdatedAt: "",
       DeletedAt: "",

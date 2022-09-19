@@ -14,7 +14,7 @@ msgstr ""
 msgid "%{n} albums found"
 msgstr ""
 
-#: src/dialog/share/upload.vue:76
+#: src/dialog/share/upload.vue:81
 msgid "%{n} files uploaded"
 msgstr ""
 
@@ -108,7 +108,7 @@ msgid "Add pictures from search results by selecting them."
 msgstr ""
 
 #: src/dialog/account/add.vue:6
-#: src/pages/settings/sync.vue:47
+#: src/pages/settings/sync.vue:52
 msgid "Add Server"
 msgstr ""
 
@@ -547,7 +547,7 @@ msgid "Connect"
 msgstr ""
 
 #: src/dialog/webdav.vue:4
-#: src/pages/settings/sync.vue:43
+#: src/pages/settings/sync.vue:48
 msgid "Connect via WebDAV"
 msgstr ""
 
@@ -1314,7 +1314,7 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: src/pages/settings/sync.vue:30
+#: src/pages/settings/sync.vue:29
 msgid "Last Sync"
 msgstr ""
 
@@ -1574,7 +1574,7 @@ msgstr ""
 
 #: src/options/options.js:354
 #: src/options/options.js:364
-#: src/pages/settings/sync.vue:50
+#: src/pages/settings/sync.vue:53
 msgid "Never"
 msgstr ""
 
@@ -1647,6 +1647,7 @@ msgstr ""
 msgid "No recently edited pictures"
 msgstr ""
 
+#: src/dialog/share/upload.vue:66
 #: src/pages/settings/sync.vue:49
 msgid "No servers configured."
 msgstr ""
@@ -1695,7 +1696,7 @@ msgstr ""
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr ""
 
-#: src/pages/settings/sync.vue:35
+#: src/pages/settings/sync.vue:36
 msgid "Note:"
 msgstr ""
 
@@ -1744,7 +1745,7 @@ msgstr ""
 msgid "One file found"
 msgstr ""
 
-#: src/dialog/share/upload.vue:74
+#: src/dialog/share/upload.vue:79
 msgid "One file uploaded"
 msgstr ""
 
@@ -1835,7 +1836,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: src/pages/settings/account.vue:22
+#: src/pages/settings/account.vue:26
 msgid "Password changed"
 msgstr ""
 
@@ -2186,7 +2187,7 @@ msgstr ""
 msgid "Sequential Name"
 msgstr ""
 
-#: src/pages/settings/sync.vue:26
+#: src/pages/settings/sync.vue:25
 msgid "Server"
 msgstr ""
 
@@ -2211,7 +2212,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:39
+#: src/pages/settings/advanced.vue:42
 #: src/pages/settings/general.vue:104
 #: src/pages/settings/library.vue:50
 msgid "Settings saved"
@@ -2380,7 +2381,7 @@ msgid "Style"
 msgstr ""
 
 #: src/dialog/photo/details.vue:473
-#: src/model/subject.js:158
+#: src/model/subject.js:157
 msgid "Subject"
 msgstr ""
 
@@ -2393,7 +2394,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr ""
 
 #: src/pages/settings.vue:63
-#: src/pages/settings/sync.vue:28
+#: src/pages/settings/sync.vue:27
 msgid "Sync"
 msgstr ""
 
@@ -2432,8 +2433,13 @@ msgstr ""
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
 
+#: src/pages/settings/sync.vue:40
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"          from your computer or smartphone as if they were local."
+msgstr ""
+
 #: src/dialog/webdav.vue:26
-#: src/pages/settings/sync.vue:37
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr ""
 
@@ -2464,7 +2470,7 @@ msgstr ""
 msgid "Title too long"
 msgstr ""
 
-#: src/share.js:159
+#: src/share.js:160
 msgid "to"
 msgstr ""
 
@@ -2583,7 +2589,7 @@ msgstr ""
 #: src/pages/albums.vue:159
 #: src/pages/library/import.vue:38
 #: src/pages/settings/general.vue:140
-#: src/pages/settings/sync.vue:27
+#: src/pages/settings/sync.vue:26
 msgid "Upload"
 msgstr ""
 
@@ -2705,8 +2711,10 @@ msgstr ""
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
 
-#: src/pages/settings/sync.vue:36
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
+#: src/pages/settings/sync.vue:37
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"          PhotoPrism."
 msgstr ""
 
 #: src/dialog/share.vue:82

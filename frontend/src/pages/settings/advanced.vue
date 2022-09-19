@@ -334,24 +334,27 @@ import * as options from "options/options";
 export default {
   name: 'PSettingsServer',
   data() {
-    const isDemo = this.$config.get("demo");
-
     return {
-      demo: isDemo,
+      busy: this.$config.get("demo"),
+      isDemo: this.$config.get("demo"),
+      isPublic: this.$config.get("public"),
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
       config: this.$config.values,
-      settings: new ConfigOptions(),
+      settings: new ConfigOptions(false),
       options: options,
-      busy: this.$config.values.demo,
     };
   },
   created() {
-    this.load();
+    if (this.isPublic && !this.isDemo) {
+      this.$router.push({ name: "settings" });
+    } else {
+      this.load();
+    }
   },
   methods: {
     load() {
-      if (this.busy || this.config.demo) {
+      if (this.busy || this.isDemo) {
         return;
       }
 
@@ -359,7 +362,7 @@ export default {
       this.settings.load().finally(() => this.busy = false);
     },
     onChange() {
-      if (this.busy || this.config.demo) {
+      if (this.busy || this.isDemo) {
         return;
       }
 
