@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 21:37+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-09-19 07:58+0000\n"
+"Last-Translator: Krisztián Vanyolai <vanyolai@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
 msgid "%{n} albums found"
@@ -1192,7 +1192,7 @@ msgstr "Címkék"
 
 #: src/component/label/clipboard.vue:45
 msgid "Labels deleted"
-msgstr "A címkék törölve"
+msgstr "Címkék törölve"
 
 #: src/options/options.js:445
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
