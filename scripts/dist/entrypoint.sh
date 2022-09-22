@@ -96,15 +96,15 @@ if [[ ${INIT_SCRIPT} ]] && [[ $(/usr/bin/id -u) == "0" ]] && [[ ${PHOTOPRISM_UID
     echo "${@}"
 
     # run command as uid:gid
-    ([[ ${DOCKER_ENV} != "prod" ]] || /usr/local/sbin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "/scripts/audit.sh") \
-     && /usr/local/sbin/gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
+    ([[ ${DOCKER_ENV} != "prod" ]] || /usr/bin/setpriv --reuid "${PHOTOPRISM_UID}" --regid "${PHOTOPRISM_GID}" --init-groups --inh-caps -all "/scripts/audit.sh") \
+     && /usr/bin/setpriv --reuid "${PHOTOPRISM_UID}" --regid "${PHOTOPRISM_GID}" --init-groups --inh-caps -all "$@" &
   else
     echo "switching to uid ${PHOTOPRISM_UID}"
     echo "${@}"
 
     # run command as uid
-    ([[ ${DOCKER_ENV} != "prod" ]] || /usr/local/sbin/gosu "${PHOTOPRISM_UID}" "/scripts/audit.sh") \
-     && /usr/local/sbin/gosu "${PHOTOPRISM_UID}" "$@" &
+    ([[ ${DOCKER_ENV} != "prod" ]] || /usr/bin/setpriv --reuid "${PHOTOPRISM_UID}" --regid "$(/usr/bin/id -g "${PHOTOPRISM_UID}")" --init-groups --inh-caps -all "/scripts/audit.sh") \
+     && /usr/bin/setpriv --reuid "${PHOTOPRISM_UID}" --regid "$(/usr/bin/id -g "${PHOTOPRISM_UID}")" --init-groups --inh-caps -all "$@" &
   fi
 else
   echo "running as uid $(id -u)"
