@@ -98,7 +98,6 @@ install:
 	rm -rf --preserve-root $(DESTDIR)/include
 	(cd $(DESTDIR) && mkdir -p bin sbin lib assets config config/examples)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
-	GOBIN="$(DESTDIR)/sbin" go install github.com/tianon/gosu@latest
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	wget -O $(DESTDIR)/assets/static/img/wallpaper/welcome.jpg https://cdn.photoprism.app/wallpaper/welcome.jpg
 	wget -O $(DESTDIR)/assets/static/img/preview.jpg https://cdn.photoprism.app/img/preview.jpg
