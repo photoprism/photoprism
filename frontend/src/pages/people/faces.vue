@@ -2,7 +2,7 @@
   <div class="p-page p-page-faces" style="user-select: none">
 
     <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar dense flat color="secondary-light pa-0">
+      <v-toolbar dense class="page-toolbar" flat color="secondary-light pa-0">
         <v-spacer></v-spacer>
         <v-divider vertical></v-divider>
 
