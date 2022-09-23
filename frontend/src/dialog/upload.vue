@@ -10,7 +10,7 @@
           <translate key="Upload">Upload</translate>
         </v-toolbar-title>
       </v-toolbar>
-      <v-container grid-list-xs :text-xs-left="!rtl" :text-xs-right="rtl" fluid>
+      <v-container grid-list-xs ext-xs-left fluid>
         <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
           <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="upload()">
 

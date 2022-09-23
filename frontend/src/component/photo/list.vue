@@ -31,16 +31,16 @@
           <thead>
             <tr>
               <th class="p-col-select" />
-              <th :class="!$rtl ? 'text-xs-left' : 'text-xs-right'">
+              <th class="text-xs-left">
                 {{$gettext('Title')}}
               </th>
-              <th :class="!$rtl ? 'text-xs-left' : 'text-xs-right'" class="hidden-xs-only">
+              <th class="text-xs-left hidden-xs-only">
                 {{$gettext('Taken')}}
               </th>
-              <th :class="!$rtl ? 'text-xs-left' : 'text-xs-right'" class="hidden-sm-and-down">
+              <th class="text-xs-left hidden-sm-and-down">
                 {{$gettext('Camera')}}
               </th>
-              <th :class="!$rtl ? 'text-xs-left' : 'text-xs-right'" class="hidden-xs-only">
+              <th class="text-xs-left hidden-xs-only">
                 {{showName ? $gettext('Name') : $gettext('Location')}}
               </th>
               <th class="text-xs-center hidden-xs-only" />
