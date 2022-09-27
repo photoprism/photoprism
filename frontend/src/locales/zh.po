@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-02 08:45+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-09-18 20:49+0000\n"
+"Last-Translator: SettingDust <settingdust@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:388 src/share/albums.vue:305
@@ -1319,7 +1319,7 @@ msgstr "主色调"
 
 #: src/dialog/photo/labels.vue:35
 msgid "manual"
-msgstr "手册"
+msgstr "手动"
 
 #: src/dialog/account/edit.vue:51
 msgid "Manual Upload"

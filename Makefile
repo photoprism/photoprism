@@ -279,12 +279,8 @@ test-coverage:
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 docker-pull:
-	docker pull mariadb:10.8
-	docker pull photoprism/traefik:latest
-	docker pull photoprism/develop:bookworm
-	docker pull photoprism/develop:bookworm-slim
-	docker pull photoprism/photoprism:preview
-	docker pull photoprism/photoprism:latest
+	docker-compose pull --ignore-pull-failures
+	docker-compose -f docker-compose.latest.yml pull --ignore-pull-failures
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu docker-develop-armv7
@@ -308,7 +304,7 @@ docker-develop-bullseye-slim:
 	docker pull --platform=arm64 debian:bullseye-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye-slim /bullseye-slim
 docker-develop-armv7:
-	docker pull --platform=arm debian:bookworm-slim
+	docker pull --platform=arm ubuntu:jammy
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
 docker-develop-buster:
 	docker pull --platform=amd64 golang:1-buster
@@ -342,7 +338,7 @@ docker-preview-bookworm:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bookworm /bookworm "-t photoprism/photoprism:preview-debian"
 docker-preview-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
-	docker pull --platform=arm debian:bookworm-slim
+	docker pull --platform=arm ubuntu:jammy
 	scripts/docker/buildx.sh photoprism linux/arm preview-armv7 /armv7
 docker-preview-arm64:
 	docker pull --platform=arm64 photoprism/develop:jammy
@@ -388,7 +384,7 @@ docker-release-bookworm:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/photoprism:debian"
 docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
-	docker pull --platform=arm debian:bookworm-slim
+	docker pull --platform=arm ubuntu:jammy
 	scripts/docker/buildx.sh photoprism linux/arm armv7 /armv7
 docker-release-arm64:
 	docker pull --platform=arm64 photoprism/develop:jammy

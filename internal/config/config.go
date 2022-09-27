@@ -672,7 +672,7 @@ func (c *Config) OriginalsLimitBytes() int64 {
 // ResolutionLimit returns the maximum resolution of originals in megapixels (width x height).
 func (c *Config) ResolutionLimit() int {
 	if c.NoSponsor() {
-		return 100
+		return DefaultResolutionLimit
 	}
 
 	result := c.options.ResolutionLimit

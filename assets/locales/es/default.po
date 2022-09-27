@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-08-01 15:07+0000\n"
-"PO-Revision-Date: 2022-08-02 08:36+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-09-21 18:49+0000\n"
+"Last-Translator: jpgaroto <jpgorgati@gmail.com>\n"
 "Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
 "backend/es/>\n"
 "Language: es\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: messages.go:87
 msgid "Unexpected error, please try again"
@@ -142,7 +142,7 @@ msgstr "Ningún archivo disponible para descargar"
 
 #: messages.go:117
 msgid "Failed to create zip file"
-msgstr "La creación de lo archivo zip falló"
+msgstr "La creación del archivo zip falló"
 
 #: messages.go:118
 msgid "Invalid credentials"

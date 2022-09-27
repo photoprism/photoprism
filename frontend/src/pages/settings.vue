@@ -93,7 +93,7 @@ export default {
         'class': '',
         'path': '/settings/sync',
         'icon': 'sync_alt',
-        'public': true,
+        'public': false,
         'admin': true,
         'demo': true,
       },

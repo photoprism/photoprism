@@ -84,20 +84,24 @@
 export default {
   name: 'PSettingsAccount',
   data() {
-    const isDemo = this.$config.get("demo");
-
     return {
-      demo: isDemo,
+      busy: false,
+      isDemo: this.$config.get("demo"),
+      isPublic: this.$config.get("public"),
       oldPassword: "",
       newPassword: "",
       confirmPassword: "",
-      busy: false,
       rtl: this.$rtl,
     };
   },
+  created() {
+    if(this.isPublic && !this.isDemo) {
+      this.$router.push({ name: "settings" });
+    }
+  },
   methods: {
     disabled() {
-      return (this.demo || this.busy || this.oldPassword === "" || this.newPassword.length < 8 || (this.newPassword !== this.confirmPassword));
+      return (this.isDemo || this.busy || this.oldPassword === "" || this.newPassword.length < 8 || (this.newPassword !== this.confirmPassword));
     },
     confirm() {
       this.busy = true;

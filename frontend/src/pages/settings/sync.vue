@@ -28,7 +28,8 @@
           <v-btn icon small flat :ripple="false"
                  class="action-toggle-sync"
                  @click.stop.prevent="editSync(props.item)">
-            <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">report_problem</v-icon>
+            <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">report_problem
+            </v-icon>
             <v-icon v-else-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
             <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
           </v-btn>
@@ -51,8 +52,12 @@
     <v-container fluid>
       <p class="caption pa-0 clickable" @click.stop.prevent="webdavDialog">
         <translate>Note:</translate>
-        <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism.</translate>
-        <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
+        <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to
+          PhotoPrism.
+        </translate>
+        <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files
+          from your computer or smartphone as if they were local.
+        </translate>
       </p>
 
       <v-form ref="form" lazy-validation
@@ -60,13 +65,13 @@
               @submit.prevent="add">
 
         <v-btn depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2"
-               :disabled="demo" @click.stop="webdavDialog">
+               :disabled="isPublic || isDemo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
         </v-btn>
 
         <v-btn color="primary-button"
                class="white--text compact ml-0 my-2 mr-2"
-               :disabled="demo"
+               :disabled="isPublic || isDemo"
                depressed @click.stop="add">
           <translate>Add Server</translate>
           <v-icon :right="!rtl" :left="rtl" dark>add</v-icon>
@@ -92,10 +97,9 @@ import {DateTime} from "luxon";
 export default {
   name: 'PSettingsSync',
   data() {
-    const isDemo = this.$config.get("demo");
-
     return {
-      demo: isDemo,
+      isDemo: this.$config.get("demo"),
+      isPublic: this.$config.get("public"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
       settings: new Settings(this.$config.values.settings),
@@ -126,7 +130,11 @@ export default {
     };
   },
   created() {
-    this.load();
+    if (this.isPublic && !this.isDemo) {
+      this.$router.push({ name: "settings" });
+    } else {
+      this.load();
+    }
   },
   methods: {
     webdavDialog() {
@@ -142,7 +150,7 @@ export default {
       return DateTime.fromISO(time).toLocaleString(DateTime.DATE_FULL);
     },
     load() {
-      Account.search({count: 100}).then(r => this.results = r.models);
+      Account.search({count: 1000}).then(r => this.results = r.models);
     },
     remove(model) {
       this.model = model.clone();

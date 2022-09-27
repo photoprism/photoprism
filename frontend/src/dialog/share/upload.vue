@@ -52,11 +52,11 @@
             <v-btn depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn v-if="noAccounts" color="primary-button" depressed dark
+            <v-btn v-if="noAccounts" :disabled="isPublic && !isDemo" color="primary-button" depressed dark
                    class="action-setup ma-0" @click.stop="setup">
               <translate>Setup</translate>
             </v-btn>
-            <v-btn v-else color="primary-button" depressed dark
+            <v-btn v-else :disabled="noAccounts" color="primary-button" depressed dark
                    class="action-upload ma-0" @click.stop="confirm">
               <translate>Upload</translate>
             </v-btn>
@@ -85,6 +85,8 @@ export default {
   },
   data() {
     return {
+      isDemo: this.$config.get("demo"),
+      isPublic: this.$config.get("public"),
       noAccounts: false,
       loading: true,
       search: null,
@@ -129,7 +131,10 @@ export default {
       this.$router.push({name: "settings_sync"});
     },
     confirm() {
-      if (this.loading) {
+      if (this.noAccounts) {
+        this.$notify.warn(this.$gettext('No servers configured.'));
+        return;
+      } else if (this.loading) {
         this.$notify.wait();
         return;
       }

@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-27 12:29+0000\n"
-"Last-Translator: Michael Maldonado <michael@maldonado.tech>\n"
+"PO-Revision-Date: 2022-09-21 07:49+0000\n"
+"Last-Translator: jpgaroto <jpgorgati@gmail.com>\n"
 "Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/es/>\n"
 "Language: es\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/pages/albums.vue:386 src/share/albums.vue:305
@@ -231,8 +231,8 @@ msgid ""
 "Also, please leave a star on GitHub if you like this project. It provides "
 "additional motivation to keep going."
 msgstr ""
-"También, por favor, deja una estrella en GitHub si te gusta este proyecto. "
-"Es una motivación adicional para seguir adelante."
+"Además, por favor, deja una estrella en GitHub si te gusta este proyecto. Es "
+"una motivación adicional para seguir adelante."
 
 #: src/dialog/share.vue:75
 msgid ""
@@ -367,7 +367,7 @@ msgstr "Negro"
 
 #: src/options/options.js:444
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Modificación de los Lanczos, menos artefactos de timbre"
+msgstr "Blackman: Modificación de Lanczos, menos artefactos de timbre"
 
 #: src/options/options.js:427
 msgid "Blue"
@@ -421,7 +421,7 @@ msgstr "No se puede cargar más, límite alcanzado"
 #: src/pages/people/subjects.vue:283 src/share/albums.vue:350
 #: src/share/albums.vue:366
 msgid "Can't select more items"
-msgstr "No puedes selecionar más itenes"
+msgstr "No puedes seleccionar más elementos"
 
 #: src/dialog/account/add.vue:17 src/dialog/account/edit.vue:102
 #: src/dialog/account/remove.vue:15 src/dialog/album/delete.vue:15
@@ -641,7 +641,7 @@ msgstr "Desactivar FFmpeg"
 
 #: src/pages/settings/advanced.vue:187
 msgid "Disable Places"
-msgstr "Deshabilitado"
+msgstr "Desactivar Lugares"
 
 #: src/pages/settings/advanced.vue:505
 msgid "Disable RawTherapee"
@@ -653,7 +653,7 @@ msgstr "Desactivar TensorFlow"
 
 #: src/pages/settings/advanced.vue:165
 msgid "Disable WebDAV"
-msgstr "Deshabilitado"
+msgstr "Desactivar WebDAV"
 
 #: src/dialog/account/edit.vue:66 src/dialog/account/edit.vue:111
 msgid "Disabled"
@@ -671,35 +671,35 @@ msgstr "Descubrir"
 #: src/pages/settings/advanced.vue:144
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr ""
-"No hagas una copia de seguridad de los metadatos de las fotos y los álbumes "
+"No hacer una copia de seguridad de los metadatos de las fotos y los álbumes "
 "en los archivos YAML."
 
 #: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
-"No cree archivos ExifTool JSON para mejorar la extracción de metadatos."
+"No crear archivos ExifTool JSON para mejorar la extracción de metadatos."
 
 #: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
-"No modifique la carpeta de originales. Desactiva la importación, la carga y "
+"No modificar la carpeta de originales. Desactiva la importación, la carga y "
 "la eliminación."
 
 #: src/pages/settings/advanced.vue:527
 msgid "Don't transcode videos with FFmpeg."
-msgstr "No transcodifiques los vídeos con FFmpeg."
+msgstr "No transcodificar los vídeos con FFmpeg."
 
 #: src/pages/settings/advanced.vue:485
 msgid "Don't use Darktable to convert RAW files."
-msgstr "No utilices Darktable para convertir archivos RAW."
+msgstr "No utilizar Darktable para convertir archivos RAW."
 
 #: src/pages/settings/advanced.vue:506
 msgid "Don't use RawTherapee to convert RAW files."
-msgstr "No utilice RawTherapee para convertir archivos RAW."
+msgstr "No utilizar RawTherapee para convertir archivos RAW."
 
 #: src/pages/settings/advanced.vue:232
 msgid "Don't use TensorFlow for image classification."
-msgstr "Navegar y editar las etiquetas de clasificación de las imágenes."
+msgstr "No usar TensorFlow para clasificar las imágenes."
 
 #: src/options/options.js:439
 msgid "Donations"
@@ -729,7 +729,7 @@ msgstr "Descargar archivos remotos"
 
 #: src/pages/settings/general.vue:163
 msgid "Download single files and zip archives."
-msgstr "Descargue archivos individuales y zip."
+msgstr "Descargar archivos individuales y zip."
 
 #: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:101
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:59
@@ -757,19 +757,19 @@ msgstr "Duración"
 
 #: src/pages/settings/advanced.vue:305
 msgid "Dynamic Previews"
-msgstr "Previsiones no reveladas"
+msgstr "Previsualizaciones dinámicas"
 
 #: src/pages/settings/advanced.vue:306
 msgid ""
 "Dynamic rendering requires a powerful server. It is not recommended for NAS "
 "devices."
 msgstr ""
-"La renderización bajo demanda requiere una CPU potente y no se recomienda "
-"para servidores domésticos más pequeños, o dispositivos NAS."
+"La renderización a demanda requiere una CPU potente. No se recomienda para "
+"servidores pequeños o dispositivos NAS."
 
 #: src/pages/settings/advanced.vue:348
 msgid "Dynamic Size Limit: %{n}px"
-msgstr "Límite de tamaño no alcanzado: %{n}px"
+msgstr "Límite de tamaño dinámico: %{n}px"
 
 #: src/pages/about/feedback.vue:181
 msgid "E-Mail"
@@ -799,8 +799,7 @@ msgstr "Editado"
 
 #: src/pages/settings/advanced.vue:122
 msgid "Enable new features currently under development."
-msgstr ""
-"Habilitar las nuevas características que se están desarrollando actualmente."
+msgstr "Habilitar las nuevas características actualmente en desarrollo."
 
 #: src/dialog/account/edit.vue:66 src/dialog/account/edit.vue:111
 msgid "Enabled"
@@ -1251,7 +1250,7 @@ msgstr "Límite alcanzado, mostrando los primeros %{n} archivos"
 
 #: src/options/options.js:447
 msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineal: Muy suave, la mejor actuación"
+msgstr "Lineal: Muy suave, el mejor rendimiento"
 
 #: src/model/link.js:115
 msgid "Link"
@@ -1367,7 +1366,7 @@ msgstr "Mes"
 
 #: src/options/options.js:234
 msgid "Moonlight"
-msgstr "Luz de la luna"
+msgstr "Luz de luna"
 
 #: src/pages/album/photos.vue:349 src/pages/photos.vue:389
 #: src/share/photos.vue:357
@@ -1596,7 +1595,7 @@ msgstr "Una etiqueta encontrada"
 #: src/pages/people/faces.vue:284 src/pages/people/faces.vue:370
 #: src/pages/people/subjects.vue:468
 msgid "One person found"
-msgstr "Una persona encontró"
+msgstr "Una persona encontrada"
 
 #: src/pages/album/photos.vue:344 src/pages/photos.vue:384
 #: src/share/photos.vue:352
@@ -1808,16 +1807,16 @@ msgstr "Frambuesa"
 
 #: src/options/options.js:335
 msgid "Raw"
-msgstr "RAW"
+msgstr "Raw"
 
 #: src/component/photo/cards.vue:208 src/component/photo/mosaic.vue:181
 #: src/share/photo/cards.vue:181 src/share/photo/mosaic.vue:162
 msgid "RAW"
-msgstr "Raw"
+msgstr "RAW"
 
 #: src/pages/settings/advanced.vue:96
 msgid "RAW Conversion"
-msgstr "Conversión"
+msgstr "Conversión de RAW"
 
 #: src/pages/library/index.vue:124
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -1894,7 +1893,7 @@ msgstr ""
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
-msgstr "Solicitud ha fallado - respuesta inválida"
+msgstr "La solicitud ha fallado - respuesta inválida"
 
 #: src/pages/about/feedback.vue:117 src/pages/about/feedback.vue:137
 #: src/pages/about/feedback.vue:179
@@ -2129,7 +2128,7 @@ msgstr ""
 
 #: src/dialog/photo/info.vue:86
 msgid "Stackable"
-msgstr "ES Stackable"
+msgstr "Apilable"
 
 #: src/component/navigation.vue:126 src/pages/settings/library.vue:34
 msgid "Stacks"
@@ -2157,7 +2156,7 @@ msgstr "Estados"
 
 #: src/pages/settings/advanced.vue:374
 msgid "Static Size Limit: %{n}px"
-msgstr "Límite de tamaño de pre-rendimiento: %{n}px"
+msgstr "Límite de tamaño de miniaturas estáticas: %{n}px"
 
 #: src/dialog/photo/files.vue:38
 msgid "Status"
@@ -2184,8 +2183,8 @@ msgstr "Sujeto"
 msgid ""
 "Support for additional services, like Google Drive, will be added over time."
 msgstr ""
-"El soporte para servicios adicionales, como Google Drive, se añadirá "
-"futuramente."
+"El soporte para servicios adicionales, como Google Drive, se añadirá a "
+"futuro."
 
 #: src/pages/settings.vue:63 src/pages/settings/sync.vue:28
 msgid "Sync"
@@ -2193,7 +2192,7 @@ msgstr "Sincronizar"
 
 #: src/dialog/account/edit.vue:377
 msgid "Sync raw and video files"
-msgstr "Sincronizar imágenes raw"
+msgstr "Sincronizar imágenes raw y videos"
 
 #: src/component/photo/cards.vue:517 src/component/photo/list.vue:56
 #: src/dialog/photo/info.vue:52 src/share/photo/cards.vue:349
@@ -2238,8 +2237,8 @@ msgid ""
 "This currently is a sponsor feature to thank everyone who supports the "
 "development of this application."
 msgstr ""
-"Este es un artículo de acceso anticipado para dar las gracias a nuestros "
-"patrocinadores y colaboradores."
+"Esta característica es solo para patrocinadores, para dar las gracias a "
+"todos los que apoyan el desarrollo de esta aplicación."
 
 #: src/dialog/webdav.vue:26 src/pages/settings/sync.vue:37
 msgid ""
@@ -2347,23 +2346,23 @@ msgstr "Actualizado"
 
 #: src/pages/library/index.vue:151
 msgid "Updating faces"
-msgstr "Actualización de las caras"
+msgstr "Actualizando caras"
 
 #: src/pages/library/index.vue:155
 msgid "Updating index"
-msgstr "Índice de actualización"
+msgstr "Actualizando índice"
 
 #: src/pages/library/index.vue:149
 msgid "Updating moments"
-msgstr "Momentos de actualización"
+msgstr "Actualizando Momentos"
 
 #: src/pages/library/index.vue:153
 msgid "Updating previews"
-msgstr "Actualización de las vistas previas"
+msgstr "Actualizando vistas previas"
 
 #: src/pages/library/index.vue:147
 msgid "Updating stacks"
-msgstr "Desagrupar"
+msgstr "Actualizando pilas"
 
 #: src/component/album/toolbar.vue:176 src/component/photo/toolbar.vue:128
 #: src/dialog/share/upload.vue:35 src/dialog/upload.vue:8
@@ -2541,9 +2540,8 @@ msgid ""
 "Your continued support helps us provide regular updates and services like "
 "world maps."
 msgstr ""
-"Su apoyo continuo nos ayuda a financiar los costes de funcionamiento, a "
-"ofrecer servicios como los mapas por satélite y a desarrollar nuevas "
-"funciones."
+"Su apoyo continuo nos ayuda a ofrecer actualizaciones regulares y servicios "
+"como los mapas por satélite."
 
 #: src/pages/albums.vue:43 src/pages/albums.vue:1
 msgid ""
