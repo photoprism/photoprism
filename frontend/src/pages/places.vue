@@ -464,11 +464,11 @@ export default {
             let el = document.createElement('div');
             if (props.cluster) {
               const radius = this.getClusterRadiusFromItemCount(props.point_count);
+              el.style.width = `${radius * 2}px`;
+              el.style.height = `${radius * 2}px`;
 
               const imageContainer = document.createElement('div');
               imageContainer.className = 'marker cluster-marker';
-              imageContainer.style.width = `${radius * 2}px`;
-              imageContainer.style.height = `${radius * 2}px`;
 
               const clusterFeatures = clusterFeaturesById[props.cluster_id];
               const previewImageCount = clusterFeatures.length > 3 ? 4 : 2;
@@ -481,8 +481,13 @@ export default {
                   return image;
                 });
               imageContainer.append(...images);
-              el.append(imageContainer);
 
+              const counterBubble = document.createElement('div');
+              counterBubble.className = 'counter-bubble';
+              counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
+
+              el.append(imageContainer);
+              el.append(counterBubble);
               // TODO. add counter-bubble
               el.addEventListener('click', () => {
                 this.selectClusterById(props.cluster_id);
