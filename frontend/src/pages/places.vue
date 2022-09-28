@@ -452,7 +452,6 @@ export default {
         .map(feature => feature.properties.cluster_id);
 
       this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
-        console.log(features);
         for (let i = 0; i < features.length; i++) {
           let coords = features[i].geometry.coordinates;
           let props = features[i].properties;
