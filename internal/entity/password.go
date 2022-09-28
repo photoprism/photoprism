@@ -14,7 +14,7 @@ type Password struct {
 	UpdatedAt time.Time `deepcopier:"skip" json:"UpdatedAt"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Password) TableName() string {
 	return "passwords"
 }

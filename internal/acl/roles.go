@@ -1,33 +1,31 @@
 package acl
 
-import (
-	"strings"
-
-	"github.com/photoprism/photoprism/pkg/clean"
-)
-
-type Role string
-type Roles map[Role]Actions
-
+// Roles that can be assigned to users.
 const (
-	RoleAdmin   Role = "admin"
-	RoleEditor  Role = "editor"
-	RoleViewer  Role = "viewer"
-	RoleGuest   Role = "guest"
-	RoleDefault Role = "*"
+	RoleAdmin        Role = "admin"
+	RoleVisitor      Role = "visitor"
+	RoleUnauthorized Role = "unauthorized"
+	RoleDefault      Role = "default"
+	RoleUnknown      Role = ""
 )
 
-// String returns the type as string.
-func (t Role) String() string {
-	return clean.Role(string(t))
+// ValidRoles specifies the valid user roles.
+var ValidRoles = map[string]Role{
+	string(RoleAdmin):        RoleAdmin,
+	string(RoleVisitor):      RoleVisitor,
+	string(RoleUnauthorized): RoleUnauthorized,
 }
 
-// Equal checks if the type matches.
-func (t Role) Equal(s string) bool {
-	return strings.EqualFold(s, t.String())
-}
+// Roles grants permissions to roles.
+type Roles map[Role]Grant
 
-// NotEqual checks if the type is different.
-func (t Role) NotEqual(s string) bool {
-	return !t.Equal(s)
+// Allow checks whether the permission is granted based on the role.
+func (roles Roles) Allow(role Role, grant Permission) bool {
+	if a, ok := roles[role]; ok {
+		return a.Allow(grant)
+	} else if a, ok = roles[RoleDefault]; ok {
+		return a.Allow(grant)
+	}
+
+	return false
 }

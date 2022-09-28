@@ -24,10 +24,9 @@ import (
 //	file_uid: string File UID as returned by the API
 func DeleteFile(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/files/:file_uid", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceFiles, acl.ActionDelete)
+		s := Auth(c, acl.ResourceFiles, acl.ActionDelete)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
@@ -38,8 +37,8 @@ func DeleteFile(router *gin.RouterGroup) {
 			return
 		}
 
-		photoUID := clean.IdString(c.Param("uid"))
-		fileUID := clean.IdString(c.Param("file_uid"))
+		photoUID := clean.UID(c.Param("uid"))
+		fileUID := clean.UID(c.Param("file_uid"))
 
 		file, err := query.FileByUID(fileUID)
 

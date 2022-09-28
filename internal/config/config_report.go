@@ -9,7 +9,7 @@ import (
 
 // Report returns global config values as a table for reporting.
 func (c *Config) Report() (rows [][]string, cols []string) {
-	cols = []string{"Value", "Name"}
+	cols = []string{"Config Option", "Current Value"}
 
 	var dbKey string
 

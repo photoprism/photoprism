@@ -40,7 +40,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		thumbName := thumb.Name(clean.Token(c.Param("size")))
-		uid := clean.IdString(c.Param("uid"))
+		uid := clean.UID(c.Param("uid"))
 
 		size, ok := thumb.Sizes[thumbName]
 
@@ -153,7 +153,7 @@ func LabelCover(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		thumbName := thumb.Name(clean.Token(c.Param("size")))
-		uid := clean.IdString(c.Param("uid"))
+		uid := clean.UID(c.Param("uid"))
 
 		size, ok := thumb.Sizes[thumbName]
 

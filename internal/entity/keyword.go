@@ -16,7 +16,7 @@ type Keyword struct {
 	Skip    bool
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Keyword) TableName() string {
 	return "keywords"
 }

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -46,6 +45,7 @@ func indexAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
+
 	service.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
@@ -56,6 +56,7 @@ func indexAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	// Use first argument to limit scope if set.
 	subPath := strings.TrimSpace(ctx.Args().First())
@@ -112,8 +113,6 @@ func indexAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
-
-	conf.Shutdown()
 
 	return nil
 }

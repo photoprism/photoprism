@@ -8,8 +8,8 @@ type PhotoAlbums []PhotoAlbum
 
 // PhotoAlbum represents the many_to_many relation between Photo and Album
 type PhotoAlbum struct {
-	PhotoUID  string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"PhotoUID" yaml:"UID"`
-	AlbumUID  string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;index" json:"AlbumUID" yaml:"-"`
+	PhotoUID  string    `gorm:"type:VARBINARY(64);primary_key;auto_increment:false" json:"PhotoUID" yaml:"UID"`
+	AlbumUID  string    `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;index" json:"AlbumUID" yaml:"-"`
 	Order     int       `json:"Order" yaml:"Order,omitempty"`
 	Hidden    bool      `json:"Hidden" yaml:"Hidden,omitempty"`
 	Missing   bool      `json:"Missing" yaml:"Missing,omitempty"`
@@ -19,7 +19,7 @@ type PhotoAlbum struct {
 	Album     *Album    `gorm:"PRELOAD:true" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (PhotoAlbum) TableName() string {
 	return "photos_albums"
 }

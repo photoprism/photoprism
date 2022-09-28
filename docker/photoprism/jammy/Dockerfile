@@ -105,7 +105,6 @@ EXPOSE 2342
 
 # Copy app files.
 COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
-RUN mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu
 
 # Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]

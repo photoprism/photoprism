@@ -1,5 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-labels" style="user-select: none"
+  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none"
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 

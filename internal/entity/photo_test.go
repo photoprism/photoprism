@@ -4,13 +4,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSavePhotoForm(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		f := form.Photo{
 			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
 			TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
@@ -69,7 +70,7 @@ func TestSavePhotoForm(t *testing.T) {
 }
 
 func TestPhoto_SaveLabels(t *testing.T) {
-	t.Run("new photo", func(t *testing.T) {
+	t.Run("NewPhoto", func(t *testing.T) {
 		photo := Photo{
 			ID:               11111,
 			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
@@ -112,7 +113,7 @@ func TestPhoto_SaveLabels(t *testing.T) {
 		assert.EqualError(t, err, "photo: cannot save to database, id is empty")
 	})
 
-	t.Run("existing photo", func(t *testing.T) {
+	t.Run("ExistingPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		err := m.SaveLabels()
 		if err != nil {
@@ -122,19 +123,19 @@ func TestPhoto_SaveLabels(t *testing.T) {
 }
 
 func TestPhoto_ClassifyLabels(t *testing.T) {
-	t.Run("new photo", func(t *testing.T) {
+	t.Run("NewPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo19")
 		Db().Set("gorm:auto_preload", true).Model(&m).Related(&m.Labels)
 		labels := m.ClassifyLabels()
 		assert.Empty(t, labels)
 	})
-	t.Run("existing photo", func(t *testing.T) {
+	t.Run("ExistingPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		Db().Set("gorm:auto_preload", true).Model(&m).Related(&m.Labels)
 		labels := m.ClassifyLabels()
 		assert.LessOrEqual(t, 2, labels.Len())
 	})
-	t.Run("empty label", func(t *testing.T) {
+	t.Run("EmptyLabel", func(t *testing.T) {
 		p := Photo{}
 		labels := p.ClassifyLabels()
 		assert.Empty(t, labels)
@@ -142,7 +143,7 @@ func TestPhoto_ClassifyLabels(t *testing.T) {
 }
 
 func TestPhoto_PreloadFiles(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Files)
 		m.PreloadFiles()
@@ -151,7 +152,7 @@ func TestPhoto_PreloadFiles(t *testing.T) {
 }
 
 func TestPhoto_PreloadKeywords(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Keywords)
 		m.PreloadKeywords()
@@ -160,7 +161,7 @@ func TestPhoto_PreloadKeywords(t *testing.T) {
 }
 
 func TestPhoto_PreloadAlbums(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Albums)
 		m.PreloadAlbums()
@@ -169,7 +170,7 @@ func TestPhoto_PreloadAlbums(t *testing.T) {
 }
 
 func TestPhoto_PreloadMany(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Albums)
 		assert.Empty(t, m.Files)
@@ -184,18 +185,18 @@ func TestPhoto_PreloadMany(t *testing.T) {
 }
 
 func TestPhoto_NoCameraSerial(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo04")
 		assert.True(t, m.NoCameraSerial())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo05")
 		assert.False(t, m.NoCameraSerial())
 	})
 }
 
 func TestPhoto_GetDetails(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		result := m.GetDetails()
 
@@ -207,7 +208,7 @@ func TestPhoto_GetDetails(t *testing.T) {
 			t.Fatal("PhotoID should not be 1000000")
 		}
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
 		result := m.GetDetails()
 
@@ -219,7 +220,7 @@ func TestPhoto_GetDetails(t *testing.T) {
 			t.Fatal("PhotoID should not be 1000012")
 		}
 	})
-	t.Run("no ID", func(t *testing.T) {
+	t.Run("NoID", func(t *testing.T) {
 		m := Photo{}
 		result := m.GetDetails()
 		assert.Equal(t, uint(0x0), result.PhotoID)
@@ -232,14 +233,14 @@ func TestPhoto_GetDetails(t *testing.T) {
 }
 
 func TestPhoto_AddLabels(t *testing.T) {
-	t.Run("add label", func(t *testing.T) {
+	t.Run("Add", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		classifyLabels := classify.Labels{{Name: "cactus", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"plant"}}}
 		len1 := len(m.Labels)
 		m.AddLabels(classifyLabels)
 		assert.Greater(t, len(m.Labels), len1)
 	})
-	t.Run("update label", func(t *testing.T) {
+	t.Run("Update", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		classifyLabels := classify.Labels{{Name: "landscape", Uncertainty: 10, Source: SrcManual, Priority: 5, Categories: []string{"plant"}}}
 		assert.Equal(t, 20, m.Labels[0].Uncertainty)
@@ -265,7 +266,7 @@ func TestPhoto_SetDescription(t *testing.T) {
 		m.SetDescription("new photo description", SrcName)
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 		m.SetDescription("new photo description", SrcMeta)
@@ -274,7 +275,7 @@ func TestPhoto_SetDescription(t *testing.T) {
 }
 
 func TestPhoto_Delete(t *testing.T) {
-	t.Run("not permanent", func(t *testing.T) {
+	t.Run("NotPermanent", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo16")
 		files, err := m.Delete(false)
 		if err != nil {
@@ -282,7 +283,7 @@ func TestPhoto_Delete(t *testing.T) {
 		}
 		assert.Len(t, files, 1)
 	})
-	t.Run("permanent", func(t *testing.T) {
+	t.Run("Permanent", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo16")
 		files, err := m.Delete(true)
 		if err != nil {
@@ -293,7 +294,7 @@ func TestPhoto_Delete(t *testing.T) {
 }
 
 func TestPhotos_UIDs(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo1 := Photo{PhotoUID: "abc123"}
 		photo2 := Photo{PhotoUID: "abc456"}
 		photos := Photos{photo1, photo2}
@@ -302,18 +303,18 @@ func TestPhotos_UIDs(t *testing.T) {
 }
 
 func TestPhoto_String(t *testing.T) {
-	t.Run("return original", func(t *testing.T) {
+	t.Run("ReturnOriginal", func(t *testing.T) {
 		photo := Photo{PhotoUID: "", PhotoName: "", OriginalName: "holidayOriginal"}
 		assert.Equal(t, "holidayOriginal", photo.String())
 	})
-	t.Run("unknown", func(t *testing.T) {
+	t.Run("Unknown", func(t *testing.T) {
 		photo := Photo{PhotoUID: "", PhotoName: "", OriginalName: ""}
 		assert.Equal(t, "(unknown)", photo.String())
 	})
 }
 
 func TestPhoto_Create(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := Photo{PhotoUID: "567", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Create()
 		if err != nil {
@@ -323,53 +324,53 @@ func TestPhoto_Create(t *testing.T) {
 }
 
 func TestPhoto_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := Photo{PhotoUID: "567", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
 	})
-	t.Run("error", func(t *testing.T) {
+	t.Run("Error", func(t *testing.T) {
 		photo := Photo{PhotoUID: "pt9jtdre2lvl0yh0"}
 		assert.Error(t, photo.Save())
 	})
 }
 
-func TestPhoto_Find(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+func TestFindPhoto(t *testing.T) {
+	t.Run("Save", func(t *testing.T) {
 		photo := Photo{PhotoUID: "pt9atdre2lvl0yhx", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
-		err := photo.Save()
-		if err != nil {
+
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
-		err = photo.Find()
-		if err != nil {
-			t.Fatal(err)
-		}
+
+		assert.NotNil(t, FindPhoto(photo))
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Found", func(t *testing.T) {
 		photo := Photo{PhotoUID: "pt9jtdre2lvl0yh0"}
-		err := photo.Find()
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NotNil(t, photo.Find())
+		assert.NotNil(t, FindPhoto(photo))
 	})
-	t.Run("photo uid and id empty", func(t *testing.T) {
+	t.Run("EmptyStruct", func(t *testing.T) {
 		photo := Photo{}
-		assert.Error(t, photo.Find())
+		assert.Nil(t, FindPhoto(photo))
+		assert.Nil(t, photo.Find())
 	})
-	t.Run("error", func(t *testing.T) {
+	t.Run("InvalidID", func(t *testing.T) {
 		photo := Photo{ID: 647487}
-		assert.Error(t, photo.Find())
+		assert.Nil(t, FindPhoto(photo))
+		assert.Nil(t, photo.Find())
 	})
-	t.Run("error", func(t *testing.T) {
+	t.Run("InvalidUID", func(t *testing.T) {
 		photo := Photo{PhotoUID: "pt9jtdre2lvl0iuj"}
-		assert.Error(t, photo.Find())
+		assert.Nil(t, FindPhoto(photo))
+		assert.Nil(t, photo.Find())
 	})
 }
+
 func TestPhoto_RemoveKeyword(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		keyword := Keyword{Keyword: "snake"}
 		keyword2 := Keyword{Keyword: "otter"}
 		keywords := []Keyword{keyword, keyword2}
@@ -388,7 +389,7 @@ func TestPhoto_RemoveKeyword(t *testing.T) {
 }
 
 func TestPhoto_SyncKeywordLabels(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		keyword := Keyword{Keyword: "snake"}
 		keyword2 := Keyword{Keyword: "otter"}
 		keywords := []Keyword{keyword, keyword2}
@@ -417,11 +418,11 @@ func TestPhoto_SyncKeywordLabels(t *testing.T) {
 }
 
 func TestPhoto_LocationLoaded(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+	t.Run("Photo", func(t *testing.T) {
 		photo := Photo{PhotoUID: "56798", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		assert.False(t, photo.LocationLoaded())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("PhotoWithCell", func(t *testing.T) {
 		location := &Cell{Place: nil}
 		photo := Photo{PhotoName: "Holiday", Cell: location}
 		assert.False(t, photo.LocationLoaded())
@@ -429,19 +430,18 @@ func TestPhoto_LocationLoaded(t *testing.T) {
 }
 
 func TestPhoto_LoadLocation(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo03")
-		err := photo.LoadLocation()
-		if err != nil {
+		if err := photo.LoadLocation(); err != nil {
 			t.Fatal(err)
 		}
 	})
-	t.Run("unknown location", func(t *testing.T) {
+	t.Run("UnknownLocation", func(t *testing.T) {
 		location := &Cell{Place: nil}
 		photo := Photo{PhotoName: "Holiday", Cell: location}
 		assert.Error(t, photo.LoadLocation())
 	})
-	t.Run("known location", func(t *testing.T) {
+	t.Run("KnownLocation", func(t *testing.T) {
 		location := CellFixtures.Pointer("mexico")
 		photo := Photo{PhotoName: "Holiday", Cell: location}
 		assert.Error(t, photo.LoadLocation())
@@ -449,21 +449,21 @@ func TestPhoto_LoadLocation(t *testing.T) {
 }
 
 func TestPhoto_PlaceLoaded(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		photo := Photo{PhotoUID: "56798", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		assert.False(t, photo.PlaceLoaded())
 	})
 }
 
 func TestPhoto_LoadPlace(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo03")
 		err := photo.LoadPlace()
 		if err != nil {
 			t.Fatal(err)
 		}
 	})
-	t.Run("unknown location", func(t *testing.T) {
+	t.Run("UnknownLocation", func(t *testing.T) {
 		location := &Cell{Place: nil}
 		photo := Photo{PhotoName: "Holiday", Cell: location}
 		assert.Error(t, photo.LoadPlace())
@@ -471,45 +471,49 @@ func TestPhoto_LoadPlace(t *testing.T) {
 }
 
 func TestPhoto_HasDescription(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		photo := Photo{PhotoDescription: ""}
 		assert.False(t, photo.HasDescription())
 	})
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		photo := Photo{PhotoDescription: "bcss"}
 		assert.True(t, photo.HasDescription())
 	})
 }
 
 func TestPhoto_NoDescription(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		photo := Photo{PhotoDescription: ""}
 		assert.True(t, photo.NoDescription())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		photo := Photo{PhotoDescription: "bcss"}
 		assert.False(t, photo.NoDescription())
 	})
 }
 
 func TestPhoto_AllFilesMissing(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		photo := Photo{ID: 6969866}
 		assert.True(t, photo.AllFilesMissing())
 	})
 }
 
 func TestPhoto_Updates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := Photo{PhotoDescription: "bcss", PhotoName: "InitialName"}
-		photo.Save()
+
+		if err := photo.Save(); err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "InitialName", photo.PhotoName)
 		assert.Equal(t, "bcss", photo.PhotoDescription)
 
-		err := photo.Updates(Photo{PhotoName: "UpdatedName", PhotoDescription: "UpdatedDesc"})
-		if err != nil {
+		if err := photo.Updates(Photo{PhotoName: "UpdatedName", PhotoDescription: "UpdatedDesc"}); err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "UpdatedName", photo.PhotoName)
 		assert.Equal(t, "UpdatedDesc", photo.PhotoDescription)
 
@@ -517,7 +521,7 @@ func TestPhoto_Updates(t *testing.T) {
 }
 
 func TestPhoto_SetFavorite(t *testing.T) {
-	t.Run("set to true", func(t *testing.T) {
+	t.Run("SetTrue", func(t *testing.T) {
 		photo := Photo{PhotoFavorite: true}
 
 		if err := photo.Save(); err != nil {
@@ -530,7 +534,7 @@ func TestPhoto_SetFavorite(t *testing.T) {
 
 		assert.Equal(t, false, photo.PhotoFavorite)
 	})
-	t.Run("set to false", func(t *testing.T) {
+	t.Run("SetFalse", func(t *testing.T) {
 		photo := Photo{PhotoFavorite: false}
 
 		if err := photo.Save(); err != nil {
@@ -563,7 +567,7 @@ func TestPhoto_SetStack(t *testing.T) {
 }
 
 func TestPhoto_Approve(t *testing.T) {
-	t.Run("quality = 4", func(t *testing.T) {
+	t.Run("Quality4", func(t *testing.T) {
 		photo := Photo{PhotoQuality: 4}
 
 		if err := photo.Save(); err != nil {
@@ -576,7 +580,7 @@ func TestPhoto_Approve(t *testing.T) {
 
 		assert.Equal(t, 4, photo.PhotoQuality)
 	})
-	t.Run("quality = 1", func(t *testing.T) {
+	t.Run("Quality1", func(t *testing.T) {
 		photo := Photo{PhotoQuality: 1}
 
 		if err := photo.Save(); err != nil {
@@ -592,7 +596,7 @@ func TestPhoto_Approve(t *testing.T) {
 }
 
 func TestPhoto_Links(t *testing.T) {
-	t.Run("1 result", func(t *testing.T) {
+	t.Run("OneResult", func(t *testing.T) {
 		photo := Photo{PhotoUID: "pt9k3pw1wowuy3c3"}
 		links := photo.Links()
 		assert.Equal(t, "7jxf3jfn2k", links[0].LinkToken)
@@ -600,7 +604,7 @@ func TestPhoto_Links(t *testing.T) {
 }
 
 func TestPhoto_SetPrimary(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 
 		if err := m.SetPrimary(""); err != nil {
@@ -614,41 +618,48 @@ func TestMapKey(t *testing.T) {
 }
 
 func TestNewPhoto(t *testing.T) {
-	t.Run("stackable", func(t *testing.T) {
+	t.Run("Stackable", func(t *testing.T) {
 		m := NewPhoto(true)
 		assert.Equal(t, IsStackable, m.PhotoStack)
 	})
-	t.Run("not stackable", func(t *testing.T) {
+	t.Run("NotStackable", func(t *testing.T) {
 		m := NewPhoto(false)
 		assert.Equal(t, IsUnstacked, m.PhotoStack)
 	})
 }
 
 func TestPhoto_FirstOrCreate(t *testing.T) {
-	t.Run("photo already existing", func(t *testing.T) {
-		photo := Photo{PhotoUID: "567454", PhotoName: "Light", OriginalName: "lightBlub.jpg"}
-		err := photo.Save()
-		if err != nil {
+	t.Run("ExistingPhoto", func(t *testing.T) {
+		initialUID := "567454"
+		photo := Photo{PhotoUID: initialUID, PhotoName: "Light", OriginalName: "lightBlub.jpg"}
+
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
-		err2 := photo.Find()
-		if err2 != nil {
-			t.Fatal(err2)
-		}
-		err3 := photo.FirstOrCreate()
-		if err3 != nil {
-			t.Fatal(err3)
-		}
+
+		assert.NotNil(t, FindPhoto(photo))
+		assert.Nil(t, FindPhoto(Photo{PhotoUID: initialUID}))
+
+		created := photo.FirstOrCreate()
+
+		assert.NotNil(t, created)
+		assert.Equal(t, photo.ID, created.ID)
+		assert.Equal(t, photo.PhotoUID, created.PhotoUID)
 	})
-	t.Run("photo not yet existing", func(t *testing.T) {
-		photo := Photo{PhotoUID: "567459", PhotoName: "Light2", OriginalName: "lightBlub2.jpg"}
-		err3 := photo.FirstOrCreate()
-		if err3 != nil {
-			t.Fatal(err3)
-		}
-		err2 := photo.Find()
-		if err2 != nil {
-			t.Fatal(err2)
+	t.Run("NewPhoto", func(t *testing.T) {
+		initialUID := "567459"
+		photo := Photo{PhotoUID: initialUID, PhotoName: "Light2", OriginalName: "lightBlub2.jpg"}
+
+		assert.Nil(t, FindPhoto(photo))
+
+		if created := photo.FirstOrCreate(); created == nil {
+			t.Fatal("created must not be nil")
+		} else {
+			assert.Truef(t, created.ID > 0, "%d should be > 0", created.ID)
+			assert.Equal(t, photo.PhotoUID, created.PhotoUID)
+			assert.Nil(t, FindPhoto(Photo{PhotoUID: initialUID}))
+			assert.NotNil(t, FindPhoto(photo))
+			assert.NotNil(t, FindPhoto(*created))
 		}
 	})
 }

@@ -38,7 +38,7 @@ create table addresses
 (
     id              int auto_increment
         primary key,
-    cell_id         varbinary(42) default 'zz' null,
+    cell_id         varbinary(64) default 'zz' null,
     address_src     varbinary(8)               null,
     address_lat     float                      null,
     address_lng     float                      null,
@@ -70,8 +70,8 @@ create table albums
 (
     id                int unsigned auto_increment
         primary key,
-    album_uid         varbinary(42)                   null,
-    parent_uid        varbinary(42)   default ''      null,
+    album_uid         varbinary(64)                   null,
+    parent_uid        varbinary(64)   default ''      null,
     album_slug        varbinary(160)                  null,
     album_path        varbinary(500)                  null,
     album_type        varbinary(8)    default 'album' null,
@@ -160,13 +160,13 @@ create table categories
 
 create table cells
 (
-    id            varbinary(42)              not null
+    id            varbinary(64)              not null
         primary key,
     cell_name     varchar(200)               null,
     cell_street   varchar(100)               null,
     cell_postcode varchar(50)                null,
     cell_category varchar(50)                null,
-    place_id      varbinary(42) default 'zz' null,
+    place_id      varbinary(64) default 'zz' null,
     created_at    datetime                   null,
     updated_at    datetime                   null
 );
@@ -233,12 +233,12 @@ create index idx_errors_error_time
 
 create table faces
 (
-    id               varbinary(42)            not null
+    id               varbinary(64)            not null
         primary key,
     face_src         varbinary(8)             null,
     face_kind        int                      null,
     face_hidden      tinyint(1)               null,
-    subj_uid         varbinary(42) default '' null,
+    subj_uid         varbinary(64) default '' null,
     samples          int                      null,
     sample_radius    double                   null,
     collisions       int                      null,
@@ -257,13 +257,13 @@ create table files
     id                 int unsigned auto_increment
         primary key,
     photo_id           int unsigned              null,
-    photo_uid          varbinary(42)             null,
+    photo_uid          varbinary(64)             null,
     photo_taken_at     datetime                  null,
     time_index         varbinary(48)             null,
     media_id           varbinary(32)             null,
     media_utc          bigint                    null,
-    instance_id        varbinary(42)             null,
-    file_uid           varbinary(42)             null,
+    instance_id        varbinary(64)             null,
+    file_uid           varbinary(64)             null,
     file_name          varbinary(755)            null,
     file_root          varbinary(16) default '/' null,
     original_name      varbinary(755)            null,
@@ -374,7 +374,7 @@ create table folders
 (
     path               varbinary(500)             null,
     root               varbinary(16) default ''   null,
-    folder_uid         varbinary(42)              not null
+    folder_uid         varbinary(64)              not null
         primary key,
     folder_type        varbinary(16)              null,
     folder_title       varchar(200)               null,
@@ -421,7 +421,7 @@ create table labels
 (
     id                int unsigned auto_increment
         primary key,
-    label_uid         varbinary(42)             null,
+    label_uid         varbinary(64)             null,
     label_slug        varbinary(160)            null,
     custom_slug       varbinary(160)            null,
     label_name        varchar(160)              null,
@@ -473,9 +473,9 @@ create index idx_lenses_deleted_at
 
 create table links
 (
-    link_uid     varbinary(42)  not null
+    link_uid     varbinary(64)  not null
         primary key,
-    share_uid    varbinary(42)  null,
+    share_uid    varbinary(64)  null,
     share_slug   varbinary(160) null,
     link_token   varbinary(160) null,
     link_expires int            null,
@@ -495,17 +495,17 @@ create index idx_links_share_slug
 
 create table markers
 (
-    marker_uid      varbinary(42)             not null
+    marker_uid      varbinary(64)             not null
         primary key,
-    file_uid        varbinary(42)  default '' null,
+    file_uid        varbinary(64)  default '' null,
     marker_type     varbinary(8)   default '' null,
     marker_src      varbinary(8)   default '' null,
     marker_name     varchar(160)              null,
     marker_review   tinyint(1)                null,
     marker_invalid  tinyint(1)                null,
-    subj_uid        varbinary(42)             null,
+    subj_uid        varbinary(64)             null,
     subj_src        varbinary(8)   default '' null,
-    face_id         varbinary(42)             null,
+    face_id         varbinary(64)             null,
     face_dist       double         default -1 null,
     embeddings_json mediumblob                null,
     landmarks_json  mediumblob                null,
@@ -561,11 +561,11 @@ create table photos
 (
     id                 int unsigned auto_increment
         primary key,
-    uuid               varbinary(42)                 null,
+    uuid               varbinary(64)                 null,
     taken_at           datetime                      null,
     taken_at_local     datetime                      null,
     taken_src          varbinary(8)                  null,
-    photo_uid          varbinary(42)                 null,
+    photo_uid          varbinary(64)                 null,
     photo_type         varbinary(8)  default 'image' null,
     type_src           varbinary(8)                  null,
     photo_title        varchar(200)                  null,
@@ -581,7 +581,7 @@ create table photos
     photo_scan         tinyint(1)                    null,
     photo_panorama     tinyint(1)                    null,
     time_zone          varbinary(64)                 null,
-    place_id           varbinary(42) default 'zz'    null,
+    place_id           varbinary(64) default 'zz'    null,
     place_src          varbinary(8)                  null,
     cell_id            varbinary(42) default 'zz'    null,
     cell_accuracy      int                           null,

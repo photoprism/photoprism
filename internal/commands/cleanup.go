@@ -42,6 +42,7 @@ func cleanUpAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	if conf.ReadOnly() {
 		log.Infof("config: read-only mode enabled")
@@ -59,8 +60,6 @@ func cleanUpAction(ctx *cli.Context) error {
 	} else if total := thumbnails + sidecars; total > 0 {
 		log.Infof("removed %s in %s", english.Plural(total, "file", "files"), time.Since(cleanupStart))
 	}
-
-	conf.Shutdown()
 
 	return nil
 }

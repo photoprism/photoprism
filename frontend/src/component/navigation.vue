@@ -4,7 +4,7 @@
       <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small elevation-2"
                  @click.stop.prevent>
         <v-avatar tile :size="28" :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">
-          <img :src="appIcon" :alt="config.name">
+          <img :src="appIcon" :alt="config.name" :class="{'animate-hue': indexing}">
         </v-avatar>
         <v-toolbar-title class="nav-title">
           <span :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
@@ -77,7 +77,7 @@
           </v-list-tile-action>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini" to="/browse" class="nav-browse" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('search')" to="/browse" class="nav-browse" @click.stop="">
           <v-list-tile-action :title="$gettext('Search')">
             <v-icon>search</v-icon>
           </v-list-tile-action>
@@ -89,7 +89,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini" prepend-icon="search" no-action>
+        <v-list-group v-if="!isMini && $config.feature('search')" prepend-icon="search" no-action>
           <template #activator>
             <v-list-tile to="/browse" class="nav-browse" @click.stop="">
               <v-list-tile-content>
@@ -177,9 +177,10 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini && $config.feature('albums')" prepend-icon="bookmark" no-action>
+        <template v-if="!isMini && $config.feature('albums')">
+        <v-list-group v-if="canSearch" prepend-icon="bookmark" no-action>
           <template #activator>
-            <v-list-tile to="/albums" class="nav-albums" @click.stop="">
+            <v-list-tile :to="{ name: 'albums' }" class="nav-albums" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title class="p-flex-menuitem">
                   <translate key="Albums">Albums</translate>
@@ -198,6 +199,20 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list-group>
+        <v-list-tile v-else :to="{ name: 'albums' }" class="nav-albums" @click.stop="">
+          <v-list-tile-action :title="$gettext('Albums')">
+            <v-icon>bookmark</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title class="p-flex-menuitem">
+              <translate key="Albums">Albums</translate>
+              <span v-if="config.count.albums > 0"
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.albums | abbreviateCount }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        </template>
 
         <v-list-tile v-if="isMini && $config.feature('videos')" to="/videos" class="nav-video" @click.stop="">
           <v-list-tile-action :title="$gettext('Videos')">
@@ -235,7 +250,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-show="$config.feature('people')" :to="{ name: 'people' }" class="nav-people" @click.stop="">
+        <v-list-tile v-show="$config.feature('people') && (canManagePeople || config.count.people > 0)" :to="{ name: 'people' }" class="nav-people" @click.stop="">
           <v-list-tile-action :title="$gettext('People')">
             <v-icon>person</v-icon>
           </v-list-tile-action>
@@ -249,7 +264,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile to="/favorites" class="nav-favorites" @click.stop="">
+        <v-list-tile v-show="$config.feature('favorites')" :to="{ name: 'favorites' }" class="nav-favorites" @click.stop="">
           <v-list-tile-action :title="$gettext('Favorites')">
             <v-icon>favorite</v-icon>
           </v-list-tile-action>
@@ -278,7 +293,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
+        <v-list-tile v-show="$config.feature('moments')" :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
           <v-list-tile-action :title="$gettext('Calendar')">
             <v-icon>date_range</v-icon>
           </v-list-tile-action>
@@ -455,7 +470,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="!isPublic" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
+            <v-list-tile v-show="!isPublic && isAdmin" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
                          @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
@@ -575,10 +590,16 @@
               <translate>Albums</translate>
             </router-link>
           </div>
-          <div v-if="auth && !routeName('library') && $config.feature('library')" class="menu-action nav-library">
-            <router-link :to="{ name: 'library' }">
-              <v-icon>camera_roll</v-icon>
-              <translate>Index</translate>
+          <div v-if="auth && canManagePeople && !routeName('people') && $config.feature('people')" class="menu-action nav-people">
+            <router-link to="/places">
+              <v-icon>person</v-icon>
+              <translate>People</translate>
+            </router-link>
+          </div>
+          <div v-if="auth && !routeName('places') && $config.feature('places')" class="menu-action nav-places">
+            <router-link to="/places">
+              <v-icon>place</v-icon>
+              <translate>Places</translate>
             </router-link>
           </div>
           <div v-if="auth && !routeName('files') && $config.feature('files') && $config.feature('library')"
@@ -588,23 +609,29 @@
               <translate>Files</translate>
             </router-link>
           </div>
-          <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action nav-sync">
-            <router-link :to="{ name: 'settings_sync' }">
-              <v-icon>sync</v-icon>
-              <translate>Connect</translate>
+          <div v-if="auth && !routeName('library') && $config.feature('library')" class="menu-action nav-library">
+            <router-link :to="{ name: 'library' }">
+              <v-icon>camera_roll</v-icon>
+              <translate>Index</translate>
             </router-link>
           </div>
-          <div v-if="auth && !config.disable.settings && !routeName('settings')" class="menu-action nav-account">
+          <div v-if="auth && $config.feature('sync') && !routeName('settings')" class="menu-action nav-sync">
+            <router-link :to="{ name: 'settings_sync' }">
+              <v-icon>sync</v-icon>
+              <translate>Sync</translate>
+            </router-link>
+          </div>
+          <!-- div v-if="auth && $config.feature('account') && !routeName('settings')" class="menu-action nav-account">
             <router-link :to="{ name: 'settings_account' }">
               <v-icon>person</v-icon>
               <translate>Account</translate>
             </router-link>
-          </div>
+          </div -->
           <div class="menu-action nav-manual"><a href="https://link.photoprism.app/docs" target="_blank">
             <v-icon>auto_stories</v-icon>
             <translate>User Guide</translate>
           </a></div>
-          <div v-if="!isSponsor" class="menu-action nav-membership"><a href="https://link.photoprism.app/membership"
+          <div v-if="!isSponsor && isAdmin" class="menu-action nav-membership"><a href="https://link.photoprism.app/membership"
                                                                        target="_blank">
             <v-icon>workspace_premium</v-icon>
             <translate>Become a sponsor</translate>
@@ -657,6 +684,8 @@ export default {
     }
 
     return {
+      canSearch: this.$config.allow("photos", "search"),
+      canManagePeople: this.$config.allow("people", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
       appEdition: this.$config.getEdition(),
@@ -666,6 +695,7 @@ export default {
       isMini: localStorage.getItem('last_navigation_mode') !== 'false',
       isPublic: this.$config.get("public"),
       isDemo: this.$config.get("demo"),
+      isAdmin: this.$session.isAdmin(),
       isSponsor: this.$config.isSponsor(),
       isTest: this.$config.test,
       isReadOnly: this.$config.get("readonly"),
@@ -698,19 +728,19 @@ export default {
     },
     displayName() {
       const user = this.$session.getUser();
-      if (!user) {
-        return '';
-      } else if (user.DisplayName) {
-        return user.DisplayName;
-      } else if (user.Username) {
-        return user.Username;
-      } else {
-        return 'User';
+      if (user) {
+        return user.getDisplayName();
       }
+
+      return this.$gettext("Unregistered");
     },
     accountInfo() {
       const user = this.$session.getUser();
-      return user.Email ? user.Email : this.$gettext("Account");
+      if (user) {
+        return user.getAccountInfo();
+      }
+
+      return this.$gettext("Account");
     },
   },
   created() {
@@ -734,6 +764,10 @@ export default {
   },
   methods: {
     routeName(name) {
+      if (!name || !this.$route.name) {
+        return false;
+      }
+
       return this.$route.name.startsWith(name);
     },
     reloadApp() {

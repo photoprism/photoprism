@@ -1,5 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-photos" style="user-select: none"
+  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('photos')" class="p-page p-page-photos" style="user-select: none"
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
@@ -27,7 +27,8 @@
                       :select-mode="selectMode"
                       :filter="filter"
                       :edit-photo="editPhoto"
-                      :open-photo="openPhoto"></p-photo-mosaic>
+                      :open-photo="openPhoto"
+                      :is-shared-view="isShared"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'"
                     :context="context"
                     :photos="results"
@@ -35,7 +36,8 @@
                     :filter="filter"
                     :open-photo="openPhoto"
                     :edit-photo="editPhoto"
-                    :open-location="openLocation"></p-photo-list>
+                    :open-location="openLocation"
+                    :is-shared-view="isShared"></p-photo-list>
       <p-photo-cards v-else
                      :context="context"
                      :photos="results"
@@ -43,7 +45,8 @@
                      :filter="filter"
                      :open-photo="openPhoto"
                      :edit-photo="editPhoto"
-                     :open-location="openLocation"></p-photo-cards>
+                     :open-location="openLocation"
+                     :is-shared-view="isShared"></p-photo-cards>
     </v-container>
   </div>
 </template>
@@ -97,13 +100,14 @@ export default {
     };
 
     const settings = this.$config.settings();
+    const features = settings.features;
 
     if (settings) {
-      if (settings.features.private) {
+      if (features.private) {
         filter.public = "true";
       }
 
-      if (settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
+      if (features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
         filter.quality = "3";
       }
     }
@@ -111,6 +115,9 @@ export default {
     const batchSize = Photo.batchSize();
 
     return {
+      isShared: this.$config.deny("photos", "manage"),
+      canEdit: this.$config.allow("photos", "update") && features.edit,
+      hasPlaces: this.$config.allow("places", "view") && features.places,
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -241,6 +248,10 @@ export default {
       return "newest";
     },
     openLocation(index) {
+      if (!this.hasPlaces) {
+        return;
+      }
+
       const photo = this.results[index];
 
       if (photo.CellID && photo.CellID !== "zz") {
@@ -252,6 +263,10 @@ export default {
       }
     },
     editPhoto(index) {
+      if (!this.canEdit) {
+        return this.openPhoto(index);
+      }
+
       let selection = this.results.map((p) => {
         return p.getId();
       });

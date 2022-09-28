@@ -40,6 +40,7 @@ func optimizeAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	if conf.ReadOnly() {
 		log.Infof("config: read-only mode enabled")
@@ -63,8 +64,6 @@ func optimizeAction(ctx *cli.Context) error {
 
 		log.Infof("completed in %s", elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }

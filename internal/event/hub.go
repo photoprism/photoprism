@@ -4,12 +4,15 @@ import (
 	"strings"
 
 	"github.com/leandro-lugaresi/hub"
+
 	"github.com/photoprism/photoprism/internal/i18n"
 )
 
 type Hub = hub.Hub
 type Data = hub.Fields
 type Message = hub.Message
+
+const TopicSep = "."
 
 var channelCap = 100
 var sharedHub = NewHub()
@@ -20,6 +23,30 @@ func NewHub() *Hub {
 
 func SharedHub() *Hub {
 	return sharedHub
+}
+
+// Publish publishes a message to all subscribers.
+func Publish(event string, data Data) {
+	SharedHub().Publish(Message{
+		Name:   event,
+		Fields: data,
+	})
+}
+
+// Subscribe creates a topic subscription and returns i
+func Subscribe(topics ...string) hub.Subscription {
+	return SharedHub().NonBlockingSubscribe(channelCap, topics...)
+}
+
+// Unsubscribe deletes the subscription of a topic.
+func Unsubscribe(s hub.Subscription) {
+	SharedHub().Unsubscribe(s)
+}
+
+// Topic splits the topic name into the channel and event names.
+func Topic(topic string) (ch, ev string) {
+	ch, ev, _ = strings.Cut(topic, TopicSep)
+	return ch, ev
 }
 
 func Error(msg string) {
@@ -37,7 +64,7 @@ func Info(msg string) {
 	Publish("notify.info", Data{"message": msg})
 }
 
-func Warning(msg string) {
+func Warn(msg string) {
 	Log.Warn(strings.ToLower(msg))
 	Publish("notify.warning", Data{"message": msg})
 }
@@ -54,21 +81,6 @@ func InfoMsg(id i18n.Message, params ...interface{}) {
 	Info(i18n.Msg(id, params...))
 }
 
-func WarningMsg(id i18n.Message, params ...interface{}) {
-	Warning(i18n.Msg(id, params...))
-}
-
-func Publish(event string, data Data) {
-	SharedHub().Publish(Message{
-		Name:   event,
-		Fields: data,
-	})
-}
-
-func Subscribe(topics ...string) hub.Subscription {
-	return SharedHub().NonBlockingSubscribe(channelCap, topics...)
-}
-
-func Unsubscribe(s hub.Subscription) {
-	SharedHub().Unsubscribe(s)
+func WarnMsg(id i18n.Message, params ...interface{}) {
+	Warn(i18n.Msg(id, params...))
 }

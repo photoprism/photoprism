@@ -28,7 +28,7 @@ func TestResample_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())

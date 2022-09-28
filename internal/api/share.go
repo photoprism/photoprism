@@ -27,7 +27,7 @@ func Shares(router *gin.RouterGroup) {
 			return
 		}
 
-		clientConfig := conf.GuestConfig()
+		clientConfig := conf.ClientShare()
 		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s", clientConfig.SiteUrl, token)
 
 		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
@@ -48,7 +48,7 @@ func Shares(router *gin.RouterGroup) {
 		}
 
 		uid := links[0].ShareUID
-		clientConfig := conf.GuestConfig()
+		clientConfig := conf.ClientShare()
 
 		if uid != share {
 			c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("%ss/%s/%s", clientConfig.SiteUrl, token, uid))

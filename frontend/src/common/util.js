@@ -175,6 +175,8 @@ export default class Util {
       case "avc":
       case "avc1":
         return "Advanced Video Coding (AVC) / H.264";
+      case "avif":
+        return "AV1 Image File Format (AVIF)";
       case "hevc":
       case "hvc":
       case "hvc1":

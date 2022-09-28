@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-library">
+  <div :class="$config.aclClasses('library')" class="p-page p-page-library">
     <v-tabs
         v-model="active"
         flat
@@ -44,7 +44,10 @@ function initTabs(flag, tabs) {
 export default {
   name: 'PPageLibrary',
   props: {
-    tab: String,
+    tab: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     const config = this.$config.values;

@@ -18,7 +18,9 @@ var Entities = Tables{
 	Error{}.TableName():             &Error{},
 	Password{}.TableName():          &Password{},
 	User{}.TableName():              &User{},
-	Token{}.TableName():             &Token{},
+	UserDetails{}.TableName():       &UserDetails{},
+	UserSettings{}.TableName():      &UserSettings{},
+	Session{}.TableName():           &Session{},
 	Account{}.TableName():           &Account{},
 	Folder{}.TableName():            &Folder{},
 	Duplicate{}.TableName():         &Duplicate{},
@@ -43,6 +45,7 @@ var Entities = Tables{
 	Subject{}.TableName():           &Subject{},
 	Face{}.TableName():              &Face{},
 	Marker{}.TableName():            &Marker{},
+	Reaction{}.TableName():          &Reaction{},
 }
 
 // WaitForMigration waits for the database migration to be successful.

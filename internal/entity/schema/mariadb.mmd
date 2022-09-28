@@ -30,7 +30,7 @@ class accounts {
    int(10) unsigned id
 }
 class addresses {
-   varbinary(42) cell_id
+   varbinary(64) cell_id
    varbinary(8) address_src
    float address_lat
    float address_lng
@@ -47,8 +47,8 @@ class addresses {
    int(11) id
 }
 class albums {
-   varbinary(42) album_uid
-   varbinary(42) parent_uid
+   varbinary(64) album_uid
+   varbinary(64) parent_uid
    varbinary(160) album_slug
    varbinary(500) album_path
    varbinary(8) album_type
@@ -97,10 +97,10 @@ class cells {
    varchar(100) cell_street
    varchar(50) cell_postcode
    varchar(50) cell_category
-   varbinary(42) place_id
+   varbinary(64) place_id
    datetime created_at
    datetime updated_at
-   varbinary(42) id
+   varbinary(64) id
 }
 class countries {
    varbinary(160) country_slug
@@ -146,7 +146,7 @@ class faces {
    varbinary(8) face_src
    int(11) face_kind
    tinyint(1) face_hidden
-   varbinary(42) subj_uid
+   varbinary(64) subj_uid
    int(11) samples
    double sample_radius
    int(11) collisions
@@ -155,17 +155,17 @@ class faces {
    datetime matched_at
    datetime created_at
    datetime updated_at
-   varbinary(42) id
+   varbinary(64) id
 }
 class files {
    int(10) unsigned photo_id
-   varbinary(42) photo_uid
+   varbinary(64) photo_uid
    datetime photo_taken_at
    varbinary(48) time_index
    varbinary(32) media_id
    bigint(20) media_utc
-   varbinary(42) instance_id
-   varbinary(42) file_uid
+   varbinary(64) instance_id
+   varbinary(64) file_uid
    varbinary(755) file_name
    varbinary(16) file_root
    varbinary(755) original_name
@@ -248,7 +248,7 @@ class folders {
    datetime updated_at
    datetime modified_at
    datetime deleted_at
-   varbinary(42) folder_uid
+   varbinary(64) folder_uid
 }
 class keywords {
    varchar(64) keyword
@@ -256,7 +256,7 @@ class keywords {
    int(10) unsigned id
 }
 class labels {
-   varbinary(42) label_uid
+   varbinary(64) label_uid
    varbinary(160) label_slug
    varbinary(160) custom_slug
    varchar(160) label_name
@@ -286,7 +286,7 @@ class lenses {
    int(10) unsigned id
 }
 class links {
-   varbinary(42) share_uid
+   varbinary(64) share_uid
    varbinary(160) share_slug
    varbinary(160) link_token
    int(11) link_expires
@@ -297,18 +297,18 @@ class links {
    tinyint(1) can_edit
    datetime created_at
    datetime modified_at
-   varbinary(42) link_uid
+   varbinary(64) link_uid
 }
 class markers {
-   varbinary(42) file_uid
+   varbinary(64) file_uid
    varbinary(8) marker_type
    varbinary(8) marker_src
    varchar(160) marker_name
    tinyint(1) marker_review
    tinyint(1) marker_invalid
-   varbinary(42) subj_uid
+   varbinary(64) subj_uid
    varbinary(8) subj_src
-   varbinary(42) face_id
+   varbinary(64) face_id
    double face_dist
    mediumblob embeddings_json
    mediumblob landmarks_json
@@ -323,7 +323,7 @@ class markers {
    datetime matched_at
    datetime created_at
    datetime updated_at
-   varbinary(42) marker_uid
+   varbinary(64) marker_uid
 }
 class migrations {
    varchar(16) dialect
@@ -340,11 +340,11 @@ class passwords {
    varbinary(255) uid
 }
 class photos {
-   varbinary(42) uuid
+   varbinary(64) uuid
    datetime taken_at
    datetime taken_at_local
    varbinary(8) taken_src
-   varbinary(42) photo_uid
+   varbinary(64) photo_uid
    varbinary(8) photo_type
    varbinary(8) type_src
    varchar(200) photo_title
@@ -360,9 +360,9 @@ class photos {
    tinyint(1) photo_scan
    tinyint(1) photo_panorama
    varbinary(64) time_zone
-   varbinary(42) place_id
+   varbinary(64) place_id
    varbinary(8) place_src
-   varbinary(42) cell_id
+   varbinary(64) cell_id
    int(11) cell_accuracy
    int(11) photo_altitude
    float photo_lat
@@ -397,8 +397,8 @@ class photos_albums {
    tinyint(1) missing
    datetime created_at
    datetime updated_at
-   varbinary(42) photo_uid
-   varbinary(42) album_uid
+   varbinary(64) photo_uid
+   varbinary(64) album_uid
 }
 class photos_keywords {
    int(10) unsigned photo_id
@@ -421,7 +421,7 @@ class places {
    int(11) photo_count
    datetime created_at
    datetime updated_at
-   varbinary(42) id
+   varbinary(64) id
 }
 class subjects {
    varbinary(8) subj_type
@@ -443,14 +443,14 @@ class subjects {
    datetime created_at
    datetime updated_at
    datetime deleted_at
-   varbinary(42) subj_uid
+   varbinary(64) subj_uid
 }
 class users {
    int(11) address_id
-   varbinary(42) user_uid
-   varbinary(42) mother_uid
-   varbinary(42) father_uid
-   varbinary(42) global_uid
+   varbinary(64) user_uid
+   varbinary(64) mother_uid
+   varbinary(64) father_uid
+   varbinary(64) global_uid
    varchar(128) full_name
    varchar(64) nick_name
    varchar(64) maiden_name

@@ -22,7 +22,8 @@
                       :filter="filter"
                       :album="model"
                       :edit-photo="editPhoto"
-                      :open-photo="openPhoto"></p-photo-mosaic>
+                      :open-photo="openPhoto"
+                      :is-shared-view="isShared"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'"
                     context="album"
                     :photos="results"
@@ -31,7 +32,8 @@
                     :album="model"
                     :open-photo="openPhoto"
                     :edit-photo="editPhoto"
-                    :open-location="openLocation"></p-photo-list>
+                    :open-location="openLocation"
+                    :is-shared-view="isShared"></p-photo-list>
       <p-photo-cards v-else
                      context="album"
                      :photos="results"
@@ -40,7 +42,8 @@
                      :album="model"
                      :open-photo="openPhoto"
                      :edit-photo="editPhoto"
-                     :open-location="openLocation"></p-photo-cards>
+                     :open-location="openLocation"
+                     :is-shared-view="isShared"></p-photo-cards>
     </v-container>
   </div>
 </template>
@@ -74,6 +77,9 @@ export default {
     const batchSize = Photo.batchSize();
 
     return {
+      isShared: this.$config.deny("photos", "manage"),
+      canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
+      hasPlaces: this.$config.allow("places", "view") && this.$config.feature("places"),
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -159,6 +165,10 @@ export default {
       return 'cards';
     },
     openLocation(index) {
+      if (!this.hasPlaces) {
+        return;
+      }
+
       const photo = this.results[index];
 
       if (photo.CellID && photo.CellID !== "zz") {
@@ -170,6 +180,10 @@ export default {
       }
     },
     editPhoto(index) {
+      if (!this.canEdit) {
+        return this.openPhoto(index);
+      }
+
       let selection = this.results.map((p) => {
         return p.getId();
       });

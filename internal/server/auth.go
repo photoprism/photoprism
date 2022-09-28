@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -16,7 +17,7 @@ var basicAuth = struct {
 	mutex sync.RWMutex
 }{user: make(map[string]entity.User)}
 
-func GetCredentials(c *gin.Context) (username, password, raw string) {
+func GetCredentials(c *gin.Context) (name, password, raw string) {
 	data := c.GetHeader("Authorization")
 
 	if !strings.HasPrefix(data, "Basic ") {
@@ -47,7 +48,7 @@ func BasicAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		invalid := true
 
-		username, password, raw := GetCredentials(c)
+		name, password, raw := GetCredentials(c)
 
 		basicAuth.mutex.Lock()
 		defer basicAuth.mutex.Unlock()
@@ -57,12 +58,16 @@ func BasicAuth() gin.HandlerFunc {
 			return
 		}
 
-		user := entity.FindUserByLogin(username)
+		// Check credentials and authorization.
+		user := entity.FindUserByName(name)
 
-		if user != nil {
+		if user == nil {
+			invalid = true
+		} else if user.SyncAllowed() {
 			invalid = user.InvalidPassword(password)
 		}
 
+		// Successful?
 		if user == nil || invalid {
 			c.Header("WWW-Authenticate", realm)
 			c.AbortWithStatus(http.StatusUnauthorized)

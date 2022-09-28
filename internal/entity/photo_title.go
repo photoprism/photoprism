@@ -28,7 +28,7 @@ func (m *Photo) NoTitle() bool {
 func (m *Photo) SetTitle(title, source string) {
 	title = strings.Trim(title, "_&|{}<>: \n\r\t\\")
 	title = strings.ReplaceAll(title, "\"", "'")
-	title = txt.Shorten(title, txt.ClipTitle, txt.Ellipsis)
+	title = txt.Shorten(title, txt.ClipLongName, txt.Ellipsis)
 
 	if title == "" {
 		return

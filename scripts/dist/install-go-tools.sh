@@ -37,12 +37,6 @@ set -e
 
 mkdir -p "$GOPATH/src"
 
-# Install gosu in "/usr/local/sbin".
-echo "Installing gosu in /usr/local/sbin..."
-GOBIN="/usr/local/sbin" go install github.com/tianon/gosu@latest
-chown root:root /usr/local/sbin/gosu
-chmod 755 /usr/local/sbin/gosu
-
 # Install remaining tools in "/usr/local/bin".
 case $DESTARCH in
   arm | ARM | aarch | armv7l | armhf)

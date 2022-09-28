@@ -21,6 +21,7 @@ const (
 	ErrPublic
 	ErrReadOnly
 	ErrUnauthorized
+	ErrForbidden
 	ErrOffensiveUpload
 	ErrNoItemsSelected
 	ErrCreateFile
@@ -102,8 +103,9 @@ var Messages = MessageMap{
 	ErrPersonNotFound:     gettext("Person not found"),
 	ErrFaceNotFound:       gettext("Face not found"),
 	ErrPublic:             gettext("Not available in public mode"),
-	ErrReadOnly:           gettext("not available in read-only mode"),
-	ErrUnauthorized:       gettext("Please log in and try again"),
+	ErrReadOnly:           gettext("Not available in read-only mode"),
+	ErrUnauthorized:       gettext("Please log in to your account"),
+	ErrForbidden:          gettext("Access denied"),
 	ErrOffensiveUpload:    gettext("Upload might be offensive"),
 	ErrNoItemsSelected:    gettext("No items selected"),
 	ErrCreateFile:         gettext("Failed creating file, please check permissions"),

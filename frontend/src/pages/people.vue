@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-people">
+  <div class="p-page p-page-people" :class="$config.aclClasses('people')">
     <v-tabs
         v-model="active"
         flat
@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import Subjects from "pages/people/subjects.vue";
-import Faces from "pages/people/faces.vue";
+import Recognized from "pages/people/recognized.vue";
+import NewFaces from "pages/people/new.vue";
 
 export default {
   name: 'PPagePeople',
@@ -47,24 +47,27 @@ export default {
     const tabs = [
       {
         'name': 'people',
-        'component': Subjects,
+        'component': Recognized,
         'filter': {files: 1, type: "person"},
         'label': this.$gettext('Recognized'),
         'class': '',
         'path': '/people',
         'icon': 'people_alt',
       },
-      {
+    ];
+
+    if (this.$config.allow("people", "manage")) {
+      tabs.push({
         'name': 'people_faces',
-        'component': Faces,
+        'component': NewFaces,
         'filter': {markers: true, unknown: true},
         'label': this.$gettext('New'),
         'class': '',
         'path': '/people/new',
         'icon': 'person_add',
         'count': 0,
-      },
-    ];
+      });
+    }
 
     return {
       tabs: tabs,

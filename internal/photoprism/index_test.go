@@ -19,7 +19,7 @@ func TestIndex_Start(t *testing.T) {
 
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
@@ -45,7 +45,7 @@ func TestIndex_File(t *testing.T) {
 
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())

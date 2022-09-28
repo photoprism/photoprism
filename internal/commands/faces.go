@@ -90,6 +90,7 @@ func facesStatsAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	w := service.Faces()
 
@@ -100,8 +101,6 @@ func facesStatsAction(ctx *cli.Context) error {
 
 		log.Infof("completed in %s", elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }
@@ -121,6 +120,7 @@ func facesAuditAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	w := service.Faces()
 
@@ -131,8 +131,6 @@ func facesAuditAction(ctx *cli.Context) error {
 
 		log.Infof("completed in %s", elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }
@@ -165,6 +163,7 @@ func facesResetAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	w := service.Faces()
 
@@ -175,8 +174,6 @@ func facesResetAction(ctx *cli.Context) error {
 
 		log.Infof("completed in %s", elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }
@@ -205,6 +202,7 @@ func facesResetAllAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	if err := query.RemovePeopleAndFaces(); err != nil {
 		return err
@@ -213,8 +211,6 @@ func facesResetAllAction(ctx *cli.Context) error {
 
 		log.Infof("completed in %s", elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }
@@ -234,6 +230,7 @@ func facesIndexAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	// Use first argument to limit scope if set.
 	subPath := strings.TrimSpace(ctx.Args().First())
@@ -276,8 +273,6 @@ func facesIndexAction(ctx *cli.Context) error {
 
 	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
 
-	conf.Shutdown()
-
 	return nil
 }
 
@@ -296,6 +291,7 @@ func facesUpdateAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	opt := photoprism.FacesOptions{
 		Force: ctx.Bool("force"),
@@ -310,8 +306,6 @@ func facesUpdateAction(ctx *cli.Context) error {
 
 		log.Infof("completed in %s", elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }
@@ -331,6 +325,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	w := service.Faces()
 
@@ -341,8 +336,6 @@ func facesOptimizeAction(ctx *cli.Context) error {
 
 		log.Infof("merged %s in %s", english.Plural(res.Merged, "face cluster", "face clusters"), elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }

@@ -26,17 +26,17 @@ const (
 
 // Marker represents an image marker point.
 type Marker struct {
-	MarkerUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	FileUID        string          `gorm:"type:VARBINARY(42);index;default:'';" json:"FileUID" yaml:"FileUID"`
+	MarkerUID      string          `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	FileUID        string          `gorm:"type:VARBINARY(64);index;default:'';" json:"FileUID" yaml:"FileUID"`
 	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerName     string          `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
 	MarkerReview   bool            `json:"Review" yaml:"Review,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
-	SubjUID        string          `gorm:"type:VARBINARY(42);index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
+	SubjUID        string          `gorm:"type:VARBINARY(64);index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	SubjSrc        string          `gorm:"type:VARBINARY(8);index:idx_markers_subj_uid_src;default:'';" json:"SubjSrc" yaml:"SubjSrc,omitempty"`
 	subject        *Subject        `gorm:"foreignkey:SubjUID;association_foreignkey:SubjUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
-	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	FaceID         string          `gorm:"type:VARBINARY(64);index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
 	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
@@ -55,14 +55,14 @@ type Marker struct {
 	UpdatedAt      time.Time
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Marker) TableName() string {
 	return "markers"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.MarkerUID, 'm') {
+	if rnd.IsUnique(m.MarkerUID, 'm') {
 		return nil
 	}
 

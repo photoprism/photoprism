@@ -66,7 +66,7 @@ var DialectMySQL = Migrations{
 	{
 		ID:         "20220329-090000",
 		Dialect:    "mysql",
-		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS time_index VARBINARY(48) AFTER photo_taken_at;", "ALTER TABLE files ADD IF NOT EXISTS time_index VARBINARY(48) AFTER photo_taken_at;"},
+		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS time_index VARBINARY(64) AFTER photo_taken_at;", "ALTER TABLE files ADD IF NOT EXISTS time_index VARBINARY(64) AFTER photo_taken_at;"},
 	},
 	{
 		ID:         "20220329-091000",
@@ -99,8 +99,13 @@ var DialectMySQL = Migrations{
 		Statements: []string{"ALTER TABLE files MODIFY file_chroma SMALLINT DEFAULT -1;"},
 	},
 	{
-		ID:         "20220901-000100",
+		ID:         "20220927-000100",
 		Dialect:    "mysql",
-		Statements: []string{"REPLACE INTO auth_users (id, user_uid, super_admin, user_role, display_name, user_slug, username, email, login_attempts, login_at, created_at, updated_at) SELECT id, user_uid, role_admin, 'admin', full_name, user_name, user_name, primary_email, login_attempts, login_at, created_at, updated_at FROM users WHERE role_admin = 1 AND user_name NOT IN (SELECT user_slug FROM auth_users UNION SELECT user_slug FROM auth_users) AND user_name <> '' AND user_name IS NOT NULL;"},
+		Statements: []string{"ALTER TABLE files MODIFY time_index VARBINARY(64);"},
+	},
+	{
+		ID:         "20220927-000200",
+		Dialect:    "mysql",
+		Statements: []string{"REPLACE INTO auth_users_dev (id, user_uid, super_admin, can_login, can_sync, user_role, display_name, user_name, user_email, login_at, created_at, updated_at) SELECT id, user_uid, role_admin, 1, 1, 'admin', full_name, user_name, primary_email, login_at, created_at, updated_at FROM users WHERE role_admin = 1 AND user_name NOT IN (SELECT user_name FROM auth_users) AND user_name <> '' AND user_name IS NOT NULL;"},
 	},
 }

@@ -98,7 +98,6 @@ install:
 	rm -rf --preserve-root $(DESTDIR)/include
 	(cd $(DESTDIR) && mkdir -p bin sbin lib assets config config/examples)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
-	GOBIN="$(DESTDIR)/sbin" go install github.com/tianon/gosu@latest
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	wget -O $(DESTDIR)/assets/static/img/wallpaper/welcome.jpg https://cdn.photoprism.app/wallpaper/welcome.jpg
 	wget -O $(DESTDIR)/assets/static/img/preview.jpg https://cdn.photoprism.app/img/preview.jpg
@@ -229,6 +228,9 @@ acceptance-auth-short:
 acceptance-auth-firefox:
 	$(info Running JS acceptance-auth tests in Firefox...)
 	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
+reset-mariadb:
+	$(info Resetting photoprism database...)
+	mysql < scripts/sql/reset-photoprism.sql
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
 	mysql < scripts/sql/reset-testdb.sql
@@ -238,10 +240,7 @@ reset-mariadb-local:
 reset-mariadb-acceptance:
 	$(info Resetting acceptance database...)
 	mysql < scripts/sql/reset-acceptance.sql
-reset-mariadb-photoprism:
-	$(info Resetting photoprism database...)
-	mysql < scripts/sql/reset-photoprism.sql
-reset-mariadb: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-photoprism
+reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-photoprism
 reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:
@@ -322,6 +321,12 @@ docker-develop-jammy-slim:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy-slim /jammy-slim
+unstable: docker-unstable
+docker-unstable: docker-unstable-jammy
+docker-unstable-jammy:
+	docker pull --platform=amd64 photoprism/develop:jammy
+	docker pull --platform=amd64 photoprism/develop:jammy-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable /jammy
 preview: docker-preview
 docker-preview: docker-preview-latest
 docker-preview-all: docker-preview-latest docker-preview-other

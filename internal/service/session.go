@@ -10,8 +10,8 @@ import (
 var onceSession sync.Once
 
 func initSession() {
-	// keep sessions for 7 days by default
-	services.Session = session.New(168*time.Hour, Config().CachePath())
+	// Sessions are valid for 7 days by default.
+	services.Session = session.New(168*time.Hour, Config())
 }
 
 func Session() *session.Session {

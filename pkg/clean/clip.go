@@ -3,8 +3,8 @@ package clean
 import "strings"
 
 const (
-	ClipType      = 64
 	ClipShortType = 8
+	ClipType      = 64
 )
 
 // Clip shortens a string to the given number of characters, and removes all leading and trailing white space.

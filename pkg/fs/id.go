@@ -86,7 +86,7 @@ func IsGenerated(fileName string) bool {
 		return true
 	} else if IsUniqueName(base) {
 		return true
-	} else if rnd.ValidID(base, 0) {
+	} else if rnd.IsUnique(base, 0) {
 		return true
 	} else if IsCanonical(base) {
 		return true

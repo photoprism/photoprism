@@ -4,15 +4,15 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -23,14 +23,13 @@ import (
 //	uid: string PhotoUID as returned by the API
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
-		m, err := query.PhotoByUID(clean.IdString(c.Param("uid")))
+		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -71,7 +70,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			}
 		}
 
-		p, err := query.PhotoPreloadByUID(clean.IdString(c.Param("uid")))
+		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -99,14 +98,13 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 //	id: int LabelId as returned by the API
 func RemovePhotoLabel(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
-		m, err := query.PhotoByUID(clean.IdString(c.Param("uid")))
+		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -134,7 +132,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			logError("label", entity.Db().Save(&label).Error)
 		}
 
-		p, err := query.PhotoPreloadByUID(clean.IdString(c.Param("uid")))
+		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -148,7 +146,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, clean.IdString(c.Param("uid")), c)
+		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label removed")
 
@@ -164,16 +162,15 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 //	id: int LabelId as returned by the API
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
 		// TODO: Code clean-up, simplify
 
-		m, err := query.PhotoByUID(clean.IdString(c.Param("uid")))
+		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -204,7 +201,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(clean.IdString(c.Param("uid")))
+		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -216,7 +213,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, clean.IdString(c.Param("uid")), c)
+		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label saved")
 

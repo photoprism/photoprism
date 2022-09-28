@@ -40,7 +40,7 @@ elif [[ $2 =~ $NUMERIC ]]; then
       -t photoprism/$1:latest \
       -t photoprism/$1:$2 \
       -f docker/${1/-//}$3/Dockerfile .
-elif [[ $2 == *"preview"* ]]; then
+elif [[ $2 == *"preview"* || $2 == *"unstable"* || $2 == *"test"* || $2 == *"local"* || $2 == *"develop"* ]]; then
     echo "Build Tags: $2"
 
     if [[ $4 ]]; then

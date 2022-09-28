@@ -83,7 +83,7 @@ export default [
     meta: { title: siteTitle, auth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
       if (session.isUser()) {
-        next({ name: "home" });
+        next({ name: session.getHome() });
       } else {
         next();
       }
@@ -283,7 +283,11 @@ export default [
         config.load().finally(() => {
           // Open new faces tab when there are no people.
           if (config.values.count.people === 0) {
-            next({ name: "people_faces" });
+            if (config.allow("people", "manage")) {
+              next({ name: "people_faces" });
+            } else {
+              next({ name: "albums" });
+            }
           } else {
             next();
           }
@@ -409,6 +413,6 @@ export default [
   },
   {
     path: "*",
-    redirect: "/browse",
+    redirect: "/albums",
   },
 ];

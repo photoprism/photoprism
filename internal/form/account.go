@@ -19,7 +19,7 @@ type Account struct {
 	AccError      string `json:"AccError"`
 	AccShare      bool   `json:"AccShare"`   // Manual upload enabled, see SharePath, ShareSize, and ShareExpires.
 	AccSync       bool   `json:"AccSync"`    // Background sync enabled, see SyncDownload and SyncUpload.
-	RetryLimit    int    `json:"RetryLimit"` // Number of remote request retry attempts.
+	RetryLimit    int    `json:"RetryLimit"` // Maximum number of failed requests.
 	SharePath     string `json:"SharePath"`
 	ShareSize     string `json:"ShareSize"`
 	ShareExpires  int    `json:"ShareExpires"`
@@ -31,12 +31,14 @@ type Account struct {
 	SyncRaw       bool   `json:"SyncRaw"`
 }
 
+// NewAccount creates a new account form.
 func NewAccount(m interface{}) (f Account, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err
 }
 
+// ServiceDiscovery performs automatic service discovery.
 func (f *Account) ServiceDiscovery() error {
 	acc, err := remote.Discover(f.AccURL, f.AccUser, f.AccPass)
 

@@ -14,36 +14,40 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
+var MigrationsStatusCommand = cli.Command{
+	Name:      "ls",
+	Aliases:   []string{"status", "show"},
+	Usage:     "Lists the status of schema migrations",
+	ArgsUsage: "[migrations...]",
+	Flags:     report.CliFlags,
+	Action:    migrationsStatusAction,
+}
+
+var MigrationsRunCommand = cli.Command{
+	Name:      "run",
+	Aliases:   []string{"execute", "migrate"},
+	Usage:     "Executes database schema migrations",
+	ArgsUsage: "[migrations...]",
+	Flags: []cli.Flag{
+		cli.BoolFlag{
+			Name:  "failed, f",
+			Usage: "run previously failed migrations",
+		},
+		cli.BoolFlag{
+			Name:  "trace, t",
+			Usage: "show trace logs for debugging",
+		},
+	},
+	Action: migrationsRunAction,
+}
+
 // MigrationsCommand registers the "migrations" CLI command.
 var MigrationsCommand = cli.Command{
 	Name:  "migrations",
 	Usage: "Database schema migration subcommands",
 	Subcommands: []cli.Command{
-		{
-			Name:      "ls",
-			Aliases:   []string{"status", "show"},
-			Usage:     "Lists the status of schema migrations",
-			ArgsUsage: "[migrations...]",
-			Flags:     report.CliFlags,
-			Action:    migrationsStatusAction,
-		},
-		{
-			Name:      "run",
-			Aliases:   []string{"execute", "migrate"},
-			Usage:     "Executes database schema migrations",
-			ArgsUsage: "[migrations...]",
-			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "failed, f",
-					Usage: "run previously failed migrations",
-				},
-				cli.BoolFlag{
-					Name:  "trace, t",
-					Usage: "show trace logs for debugging",
-				},
-			},
-			Action: migrationsRunAction,
-		},
+		MigrationsStatusCommand,
+		MigrationsRunCommand,
 	},
 }
 
@@ -58,6 +62,7 @@ func migrationsStatusAction(ctx *cli.Context) error {
 		return err
 	}
 
+	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	var ids []string
@@ -136,6 +141,7 @@ func migrationsRunAction(ctx *cli.Context) error {
 		return err
 	}
 
+	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	if ctx.Bool("trace") {

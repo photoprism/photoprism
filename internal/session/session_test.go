@@ -4,8 +4,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestMain(m *testing.M) {

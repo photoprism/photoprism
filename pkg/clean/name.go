@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Name sanitizes and capitalizes names.
+// Name returns the sanitized and capitalized names.
 func Name(name string) string {
 	// Empty or too long?
 	if name == "" || reject(name, txt.ClipDefault) {

@@ -17,7 +17,7 @@ import (
 // PUT /api/v1/connect/:name
 func Connect(router *gin.RouterGroup) {
 	router.PUT("/connect/:name", func(c *gin.Context) {
-		name := clean.IdString(c.Param("name"))
+		name := clean.ID(c.Param("name"))
 
 		if name == "" {
 			log.Errorf("connect: empty service name")
@@ -46,11 +46,11 @@ func Connect(router *gin.RouterGroup) {
 			return
 		}
 
-		s := Auth(SessionID(c), acl.ResourceConfigOptions, acl.ActionUpdate)
+		s := Auth(c, acl.ResourceConfig, acl.ActionUpdate)
 
 		if s.Invalid() {
-			log.Errorf("connect: %s not authorized", clean.Log(s.User.Username))
-			AbortUnauthorized(c)
+			log.Errorf("connect: %s not authorized", clean.Log(s.User().UserName))
+			AbortForbidden(c)
 			return
 		}
 

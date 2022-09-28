@@ -17,16 +17,16 @@ func TestIndex_MediaFile(t *testing.T) {
 	}
 
 	t.Run("flash.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		conf.InitializeTestData(t)
+		cfg.InitializeTestData()
 
-		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
-		nd := nsfw.New(conf.NSFWModelPath())
-		fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-		convert := NewConvert(conf)
+		tf := classify.New(cfg.AssetsPath(), cfg.DisableTensorFlow())
+		nd := nsfw.New(cfg.NSFWModelPath())
+		fn := face.NewNet(cfg.FaceNetModelPath(), "", cfg.DisableTensorFlow())
+		convert := NewConvert(cfg)
 
-		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(cfg, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 		mediaFile, err := NewMediaFile("testdata/flash.jpg")
 
@@ -42,8 +42,8 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		t.Logf("size in megapixel: %d", mediaFile.Megapixels())
 
-		exceeds, actual := mediaFile.ExceedsResolution(conf.ResolutionLimit())
-		t.Logf("megapixel limit exceeded: %t, %d / %d MP", exceeds, actual, conf.ResolutionLimit())
+		exceeds, actual := mediaFile.ExceedsResolution(cfg.ResolutionLimit())
+		t.Logf("megapixel limit exceeded: %t, %d / %d MP", exceeds, actual, cfg.ResolutionLimit())
 
 		assert.Contains(t, words, "marienkäfer")
 		assert.Contains(t, words, "burst")
@@ -54,18 +54,18 @@ func TestIndex_MediaFile(t *testing.T) {
 	})
 
 	t.Run("blue-go-video.mp4", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		conf.InitializeTestData(t)
+		cfg.InitializeTestData()
 
-		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
-		nd := nsfw.New(conf.NSFWModelPath())
-		fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-		convert := NewConvert(conf)
+		tf := classify.New(cfg.AssetsPath(), cfg.DisableTensorFlow())
+		nd := nsfw.New(cfg.NSFWModelPath())
+		fn := face.NewNet(cfg.FaceNetModelPath(), "", cfg.DisableTensorFlow())
+		convert := NewConvert(cfg)
 
-		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(cfg, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -76,16 +76,16 @@ func TestIndex_MediaFile(t *testing.T) {
 		assert.Equal(t, IndexStatus("added"), result.Status)
 	})
 	t.Run("error", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		conf.InitializeTestData(t)
+		cfg.InitializeTestData()
 
-		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
-		nd := nsfw.New(conf.NSFWModelPath())
-		fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-		convert := NewConvert(conf)
+		tf := classify.New(cfg.AssetsPath(), cfg.DisableTensorFlow())
+		nd := nsfw.New(cfg.NSFWModelPath())
+		fn := face.NewNet(cfg.FaceNetModelPath(), "", cfg.DisableTensorFlow())
+		convert := NewConvert(cfg)
 
-		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(cfg, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 
 		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4", "")

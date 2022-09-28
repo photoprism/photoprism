@@ -8,7 +8,7 @@ type Category struct {
 	Category   *Label
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Category) TableName() string {
 	return "categories"
 }

@@ -14,7 +14,7 @@ import (
 func TestImportWorker_OriginalFileNames(t *testing.T) {
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())

@@ -17,7 +17,6 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -27,10 +26,9 @@ import (
 // POST /api/v1/import*
 func StartImport(router *gin.RouterGroup) {
 	router.POST("/import/*path", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionImport)
+		s := Auth(c, acl.ResourceFiles, acl.ActionManage)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
@@ -126,10 +124,9 @@ func StartImport(router *gin.RouterGroup) {
 // DELETE /api/v1/import
 func CancelImport(router *gin.RouterGroup) {
 	router.DELETE("/import", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionImport)
+		s := Auth(c, acl.ResourceFiles, acl.ActionManage)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 

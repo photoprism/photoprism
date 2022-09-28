@@ -24,6 +24,7 @@ const (
 	AlbumMoment  = "moment"
 	AlbumMonth   = "month"
 	AlbumState   = "state"
+	AlbumUID     = 'a'
 )
 
 type Albums []Album
@@ -31,8 +32,8 @@ type Albums []Album
 // Album represents a photo album
 type Album struct {
 	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
-	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	ParentUID        string      `gorm:"type:VARBINARY(42);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
+	AlbumUID         string      `gorm:"type:VARBINARY(64);unique_index;" json:"UID" yaml:"UID"`
+	ParentUID        string      `gorm:"type:VARBINARY(64);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
 	AlbumSlug        string      `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug"`
 	AlbumPath        string      `gorm:"type:VARBINARY(500);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
 	AlbumType        string      `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
@@ -72,7 +73,7 @@ func (m *Album) AfterDelete(tx *gorm.DB) (err error) {
 	return
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Album) TableName() string {
 	return "albums"
 }
@@ -84,7 +85,7 @@ func AddPhotoToAlbums(photo string, albums []string) (err error) {
 		return nil
 	}
 
-	if !rnd.EntityUID(photo, 'p') {
+	if !rnd.IsUID(photo, PhotoUID) {
 		return fmt.Errorf("album: invalid photo uid %s", photo)
 	}
 
@@ -96,13 +97,13 @@ func AddPhotoToAlbums(photo string, albums []string) (err error) {
 			continue
 		}
 
-		if rnd.EntityUID(album, 'a') {
+		if rnd.IsUID(album, AlbumUID) {
 			aUID = album
 		} else {
 			a := NewAlbum(album, AlbumDefault)
 
-			if err = a.Find(); err == nil {
-				aUID = a.AlbumUID
+			if found := a.Find(); found != nil {
+				aUID = found.AlbumUID
 			} else if err = a.Create(); err == nil {
 				aUID = a.AlbumUID
 			} else {
@@ -249,27 +250,29 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 
 // FindMonthAlbum finds a matching month album or returns nil.
 func FindMonthAlbum(year, month int) *Album {
-	result := Album{}
+	m := Album{}
 
-	if err := UnscopedDb().Where("album_year = ? AND album_month = ? AND album_type = ?", year, month, AlbumMonth).First(&result).Error; err != nil {
+	if UnscopedDb().First(&m, "album_year = ? AND album_month = ? AND album_type = ?", year, month, AlbumMonth).RecordNotFound() {
 		return nil
 	}
 
-	return &result
+	return &m
 }
 
 // FindAlbumBySlug finds a matching album or returns nil.
-func FindAlbumBySlug(albumSlug, albumType string) (*Album, error) {
-	result := Album{}
+func FindAlbumBySlug(albumSlug, albumType string) *Album {
+	m := Album{}
 
-	err := UnscopedDb().Where("album_slug = ? AND album_type = ?", albumSlug, albumType).First(&result).Error
+	if UnscopedDb().First(&m, "album_slug = ? AND album_type = ?", albumSlug, albumType).RecordNotFound() {
+		return nil
+	}
 
-	return &result, err
+	return &m
 }
 
 // FindAlbumByAttr finds an album by filters and slugs, or returns nil.
 func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
-	result := Album{}
+	m := Album{}
 
 	stmt := UnscopedDb()
 
@@ -279,11 +282,11 @@ func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 
 	stmt = stmt.Where("album_slug IN (?) OR album_filter IN (?)", slugs, filters)
 
-	if err := stmt.First(&result).Error; err != nil {
+	if stmt.First(&m).RecordNotFound() {
 		return nil
 	}
 
-	return &result
+	return &m
 }
 
 // FindFolderAlbum finds a matching folder album or returns nil.
@@ -295,63 +298,70 @@ func FindFolderAlbum(albumPath string) *Album {
 		return nil
 	}
 
-	result := Album{}
+	m := Album{}
 
-	stmt := UnscopedDb().Where("album_type = ?", AlbumFolder)
-	stmt = stmt.Where("album_slug = ? OR album_path = ?", albumSlug, albumPath)
+	stmt := UnscopedDb().Where("album_type = ?", AlbumFolder).
+		Where("album_slug = ? OR album_path = ?", albumSlug, albumPath)
 
-	if err := stmt.First(&result).Error; err != nil {
+	if stmt.First(&m).RecordNotFound() {
 		return nil
 	}
 
-	return &result
+	return &m
 }
 
-// Find returns an entity from the database.
-func (m *Album) Find() (err error) {
-	if rnd.EntityUID(m.AlbumUID, 'a') {
-		if err = UnscopedDb().First(m, "album_uid = ?", m.AlbumUID).Error; err != nil {
-			return err
-		} else if m.AlbumUID != "" {
-			albumCache.SetDefault(m.AlbumUID, *m)
+// FindAlbum retrieves the matching record from the database and updates the entity.
+func FindAlbum(find Album) *Album {
+	m := Album{}
+
+	// Search by UID.
+	if rnd.IsUID(find.AlbumUID, AlbumUID) {
+		if UnscopedDb().First(&m, "album_uid = ?", find.AlbumUID).RecordNotFound() {
 			return nil
+		} else if m.AlbumUID != "" {
+			albumCache.SetDefault(m.AlbumUID, m)
+			return &m
 		}
 	}
 
-	if m.AlbumType == "" {
-		return fmt.Errorf("album type missing")
+	// Otherwise, album type and slug are required.
+	if find.AlbumType == "" || find.AlbumSlug == "" {
+		return nil
 	}
 
-	if m.AlbumSlug == "" {
-		return fmt.Errorf("album slug missing")
-	}
-
-	stmt := UnscopedDb().Where("album_type = ?", m.AlbumType)
-
-	if m.AlbumType != AlbumDefault && m.AlbumFilter != "" {
-		stmt = stmt.Where("album_slug = ? OR album_filter = ?", m.AlbumSlug, m.AlbumFilter)
+	// Create search condition.
+	stmt := UnscopedDb().Where("album_type = ?", find.AlbumType)
+	if find.AlbumType != AlbumDefault && find.AlbumFilter != "" {
+		stmt = stmt.Where("album_slug = ? OR album_filter = ?", find.AlbumSlug, find.AlbumFilter)
 	} else {
-		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", m.AlbumSlug, m.AlbumTitle)
+		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
 	}
 
-	if err = stmt.First(m).Error; err != nil {
-		return err
+	// Find first matching record.
+	if stmt.First(&m).RecordNotFound() {
+		return nil
 	}
 
+	// Cache result.
 	if m.AlbumUID != "" {
-		albumCache.SetDefault(m.AlbumUID, *m)
+		albumCache.SetDefault(m.AlbumUID, m)
 	}
 
-	return nil
+	return &m
+}
+
+// Find retrieves the matching record from the database and updates the entity.
+func (m *Album) Find() *Album {
+	return FindAlbum(*m)
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.AlbumUID, 'a') {
+	if rnd.IsUnique(m.AlbumUID, AlbumUID) {
 		return nil
 	}
 
-	return scope.SetColumn("AlbumUID", rnd.GenerateUID('a'))
+	return scope.SetColumn("AlbumUID", rnd.GenerateUID(AlbumUID))
 }
 
 // String returns the id or name as string.

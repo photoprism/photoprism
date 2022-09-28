@@ -9,9 +9,9 @@ import (
 type Values map[string]interface{}
 
 // ModelValues extracts Values from an entity model.
-func ModelValues(m interface{}, keyNames ...string) (result Values, keys []interface{}, err error) {
-	isKey := func(name string) bool {
-		for _, s := range keyNames {
+func ModelValues(m interface{}, omit ...string) (result Values, omitted []interface{}, err error) {
+	mustOmit := func(name string) bool {
+		for _, s := range omit {
 			if name == s {
 				return true
 			}
@@ -23,19 +23,19 @@ func ModelValues(m interface{}, keyNames ...string) (result Values, keys []inter
 	r := reflect.ValueOf(m)
 
 	if r.Kind() != reflect.Pointer {
-		return result, keys, fmt.Errorf("model interface expected")
+		return result, omitted, fmt.Errorf("model interface expected")
 	}
 
 	values := r.Elem()
 
 	if kind := values.Kind(); kind != reflect.Struct {
-		return result, keys, fmt.Errorf("model expected")
+		return result, omitted, fmt.Errorf("model expected")
 	}
 
 	t := values.Type()
 	num := t.NumField()
 
-	keys = make([]interface{}, 0, len(keyNames))
+	omitted = make([]interface{}, 0, len(omit))
 	result = make(map[string]interface{}, num)
 
 	// Add exported fields to result.
@@ -70,10 +70,10 @@ func ModelValues(m interface{}, keyNames ...string) (result Values, keys []inter
 			continue
 		}
 
-		// Skip keys.
-		if isKey(fieldName) {
+		// Skip omitted.
+		if mustOmit(fieldName) {
 			if !v.IsZero() {
-				keys = append(keys, v.Interface())
+				omitted = append(omitted, v.Interface())
 			}
 			continue
 		}
@@ -83,8 +83,8 @@ func ModelValues(m interface{}, keyNames ...string) (result Values, keys []inter
 	}
 
 	if len(result) == 0 {
-		return result, keys, fmt.Errorf("no values")
+		return result, omitted, fmt.Errorf("no values")
 	}
 
-	return result, keys, nil
+	return result, omitted, nil
 }

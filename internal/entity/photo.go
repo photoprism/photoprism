@@ -4,11 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/react"
 
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
@@ -19,6 +20,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
+)
+
+const (
+	PhotoUID = 'p'
 )
 
 var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
@@ -47,11 +52,11 @@ func MapKey(takenAt time.Time, cellId string) string {
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
-	UUID             string       `gorm:"type:VARBINARY(42);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
+	UUID             string       `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time    `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time    `gorm:"type:DATETIME;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	PhotoUID         string       `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
+	PhotoUID         string       `gorm:"type:VARBINARY(64);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string       `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
 	TypeSrc          string       `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
 	PhotoTitle       string       `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
@@ -67,9 +72,9 @@ type Photo struct {
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool         `json:"Panorama" yaml:"Panorama,omitempty"`
 	TimeZone         string       `gorm:"type:VARBINARY(64);" json:"TimeZone" yaml:"TimeZone,omitempty"`
-	PlaceID          string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
+	PlaceID          string       `gorm:"type:VARBINARY(64);index;default:'zz'" json:"PlaceID" yaml:"-"`
 	PlaceSrc         string       `gorm:"type:VARBINARY(8);" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
-	CellID           string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID" yaml:"-"`
+	CellID           string       `gorm:"type:VARBINARY(64);index;default:'zz'" json:"CellID" yaml:"-"`
 	CellAccuracy     int          `json:"CellAccuracy" yaml:"CellAccuracy,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
@@ -107,7 +112,7 @@ type Photo struct {
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Photo) TableName() string {
 	return "photos"
 }
@@ -223,17 +228,12 @@ func (m *Photo) String() string {
 }
 
 // FirstOrCreate fetches an existing row from the database or inserts a new one.
-func (m *Photo) FirstOrCreate() error {
+func (m *Photo) FirstOrCreate() *Photo {
 	if err := m.Create(); err == nil {
-		return nil
-	} else if fErr := m.Find(); fErr != nil {
-		name := filepath.Join(m.PhotoPath, m.PhotoName)
-		log.Debugf("photo: %s in %s (create)", err, name)
-		log.Debugf("photo: %s in %s (find after create failed)", fErr, name)
-		return fmt.Errorf("%s / %s", err, fErr)
+		return m
 	}
 
-	return nil
+	return FindPhoto(*m)
 }
 
 // Create inserts a new photo to the database.
@@ -268,13 +268,15 @@ func (m *Photo) Save() error {
 	return m.ResolvePrimary()
 }
 
-// Find returns a photo from the database.
-func (m *Photo) Find() error {
-	if m.PhotoUID == "" && m.ID == 0 {
-		return fmt.Errorf("photo: id and uid must not be empty (find)")
+// FindPhoto fetches the matching photo record.
+func FindPhoto(find Photo) *Photo {
+	if find.PhotoUID == "" && find.ID == 0 {
+		return nil
 	}
 
-	q := UnscopedDb().
+	m := Photo{}
+
+	stmt := UnscopedDb().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
@@ -286,15 +288,26 @@ func (m *Photo) Find() error {
 		Preload("Cell").
 		Preload("Cell.Place")
 
-	if rnd.EntityUID(m.PhotoUID, 'p') {
-		if err := q.First(m, "photo_uid = ?", m.PhotoUID).Error; err != nil {
-			return err
+	// Search for UID.
+	if rnd.IsUID(find.PhotoUID, PhotoUID) {
+		if !stmt.First(&m, "photo_uid = ?", find.PhotoUID).RecordNotFound() {
+			return &m
 		}
-	} else if err := q.First(m, "id = ?", m.ID).Error; err != nil {
-		return err
+	}
+
+	// Search for ID.
+	if find.ID > 0 {
+		if !stmt.First(&m, "id = ?", find.ID).RecordNotFound() {
+			return &m
+		}
 	}
 
 	return nil
+}
+
+// Find fetches the matching record.
+func (m *Photo) Find() *Photo {
+	return FindPhoto(*m)
 }
 
 // SaveLabels updates the photo after labels have changed.
@@ -365,11 +378,12 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 		}
 	}
 
-	if rnd.ValidID(m.PhotoUID, 'p') {
+	if rnd.IsUnique(m.PhotoUID, PhotoUID) {
 		return nil
 	}
 
-	return scope.SetColumn("PhotoUID", rnd.GenerateUID('p'))
+	m.PhotoUID = rnd.GenerateUID(PhotoUID)
+	return scope.SetColumn("PhotoUID", m.PhotoUID)
 }
 
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
@@ -786,6 +800,32 @@ func (m *Photo) Update(attr string, value interface{}) error {
 // Updates multiple columns in the database.
 func (m *Photo) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
+}
+
+// React adds or updates a user reaction.
+func (m *Photo) React(user *User, reaction react.Emoji) error {
+	if user == nil {
+		return fmt.Errorf("unknown user")
+	}
+
+	if reaction.Unknown() {
+		return m.UnReact(user)
+	}
+
+	return NewReaction(m.PhotoUID, user.UID()).React(reaction).Save()
+}
+
+// UnReact deletes a previous user reaction, if any.
+func (m *Photo) UnReact(user *User) error {
+	if user == nil {
+		return fmt.Errorf("unknown user")
+	}
+
+	if r := FindReaction(m.PhotoUID, user.UID()); r != nil {
+		return r.Delete()
+	}
+
+	return nil
 }
 
 // SetFavorite updates the favorite flag of a photo.

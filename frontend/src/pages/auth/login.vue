@@ -10,11 +10,11 @@
               </div>
               <v-spacer></v-spacer>
               <v-text-field
-                  v-model="username"
+                  v-model="name"
                   required hide-details solo flat light autofocus
                   type="text"
                   :disabled="loading"
-                  name="username"
+                  name="name"
                   autocorrect="off"
                   autocapitalize="none"
                   :label="$gettext('Name')"
@@ -99,9 +99,6 @@
 export default {
   name: "PPageLogin",
   data() {
-    const c = this.$config.values;
-    const sponsor = this.$config.isSponsor();
-
     return {
       colors: {
         accent: "#05dde1",
@@ -110,19 +107,19 @@ export default {
       },
       loading: false,
       showPassword: false,
-      username: "",
+      name: "",
       password: "",
-      sponsor: sponsor,
+      sponsor: this.$config.isSponsor(),
       config: this.$config.values,
-      siteDescription: c.siteDescription ? c.siteDescription : c.siteCaption,
+      siteDescription: this.$config.getSiteDescription(),
       nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
-      wallpaperUri: c.wallpaperUri,
+      wallpaperUri: this.$config.values.wallpaperUri,
       rtl: this.$rtl,
     };
   },
   computed: {
     loginDisabled() {
-      return this.loading || this.username.trim() === "" || this.password.trim() === "";
+      return this.loading || this.name.trim() === "" || this.password.trim() === "";
     }
   },
   created() {
@@ -139,19 +136,27 @@ export default {
 
       return "";
     },
+    load() {
+      this.$notify.blockUI();
+
+      let route = this.$router.resolve({
+        name: this.$session.getHome(),
+      });
+
+      setTimeout(() => { window.location = route.href; }, 100);
+    },
     login() {
-      const username = this.username.trim();
+      const name = this.name.trim();
       const password = this.password.trim();
 
-      if (username === "" || password === "") {
+      if (name === "" || password === "") {
         return;
       }
 
       this.loading = true;
-      this.$session.login(username, password).then(
+      this.$session.login(name, password).then(
         () => {
-          this.loading = false;
-          this.$router.push(this.nextUrl);
+          this.load();
         }
       ).catch(() => this.loading = false);
     },

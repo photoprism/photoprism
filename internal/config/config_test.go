@@ -6,9 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMain(m *testing.M) {
@@ -301,45 +302,6 @@ func TestConfig_ImgPath(t *testing.T) {
 
 	path := c.ImgPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", path)
-}
-
-func TestConfig_ClientConfig(t *testing.T) {
-	c := TestConfig()
-
-	cc := c.UserConfig()
-
-	assert.IsType(t, ClientConfig{}, cc)
-
-	if cc.JsUri == "" {
-		t.Error("the JavaScript asset URI must not be empty, make sure that the frontend has been built")
-	}
-
-	if cc.CssUri == "" {
-		t.Error("the CSS asset URI must not be empty, make sure that the frontend has been built")
-	}
-
-	assert.NotEmpty(t, cc.Name)
-	assert.NotEmpty(t, cc.Version)
-	assert.NotEmpty(t, cc.Copyright)
-	assert.NotEmpty(t, cc.Thumbs)
-	assert.NotEmpty(t, cc.ManifestUri)
-	assert.Equal(t, true, cc.Debug)
-	assert.Equal(t, false, cc.Demo)
-	assert.Equal(t, true, cc.Sponsor)
-	assert.Equal(t, false, cc.ReadOnly)
-
-	// Counts.
-	assert.NotEmpty(t, cc.Count.All)
-	assert.NotEmpty(t, cc.Count.Photos)
-	assert.LessOrEqual(t, 20, cc.Count.Photos)
-	assert.LessOrEqual(t, 1, cc.Count.Live)
-	assert.LessOrEqual(t, 4, cc.Count.Videos)
-	assert.LessOrEqual(t, cc.Count.Photos+cc.Count.Live+cc.Count.Videos, cc.Count.All)
-	assert.LessOrEqual(t, 6, cc.Count.Cameras)
-	assert.LessOrEqual(t, 1, cc.Count.Lenses)
-	assert.LessOrEqual(t, 13, cc.Count.Review)
-	assert.LessOrEqual(t, 1, cc.Count.Private)
-	assert.LessOrEqual(t, 4, cc.Count.Albums)
 }
 
 func TestConfig_Workers(t *testing.T) {

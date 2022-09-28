@@ -40,6 +40,7 @@ var ResetCommand = cli.Command{
 // resetAction resets the index and removes sidecar files after confirmation.
 func resetAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
+
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -47,9 +48,8 @@ func resetAction(ctx *cli.Context) error {
 		return err
 	}
 
+	conf.RegisterDb()
 	defer conf.Shutdown()
-
-	entity.SetDbProvider(conf)
 
 	if !ctx.Bool("yes") {
 		log.Warnf("This will delete and recreate your index database after confirmation")

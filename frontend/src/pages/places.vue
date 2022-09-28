@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height class="pa-0 p-page p-page-places">
+  <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
     <div id="map" style="width: 100%; height: 100%;">
       <div class="map-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group">

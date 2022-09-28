@@ -7,8 +7,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var Log *logrus.Logger
-var LastLog Buffer
+// TextFormatter for log messages.
+var TextFormatter = &logrus.TextFormatter{
+	DisableColors: false,
+	FullTimestamp: true,
+}
+
+// Log is the global default logger.
+var Log Logger
+var LogBuffer Buffer
 
 // Hook represents a log event hook.
 type Hook struct {
@@ -26,9 +33,9 @@ func (h *Hook) Fire(entry *logrus.Entry) error {
 		return fmt.Errorf("log entry is empty")
 	} else if entry.Message == "" {
 		return fmt.Errorf("log message is empty")
-	} else if LastLog.Get() == entry.Message {
+	} else if LogBuffer.Get() == entry.Message {
 		return nil
-	} else if err := LastLog.Set(entry.Message); err != nil {
+	} else if err := LogBuffer.Set(entry.Message); err != nil {
 		return err
 	}
 

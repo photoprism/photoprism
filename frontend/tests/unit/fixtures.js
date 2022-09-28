@@ -36,7 +36,11 @@ const putEntityResponse = {
 };
 
 const deleteEntityResponse = null;
-Mock.onPost("api/v1/users/55/profile").reply(200, { FullName: "Max New" }, mockHeaders);
+Mock.onPost("api/v1/users/urii20d30w2wqzjf/profile").reply(
+  200,
+  { DisplayName: "Max New" },
+  mockHeaders
+);
 Mock.onGet("api/v1/foo").reply(200, getCollectionResponse, mockHeaders);
 Mock.onGet("api/v1/foo/123").reply(200, getEntityResponse, mockHeaders);
 Mock.onPost("api/v1/foo").reply(201, postEntityResponse, mockHeaders);
@@ -260,9 +264,9 @@ Mock.onPut("api/v1/albums/abc").reply(
   mockHeaders
 );
 
-//Mock.onPost("api/v1/users/55/profile").reply(200, { FullName: "Max New" }, mockHeaders);
-//Mock.onPost("users/55/profile").reply(200, { FullName: "Max New" }, mockHeaders);
-//Mock.onPost("api/v1/users/55/profile").reply(200, { FullName: "Max New" }, mockHeaders);
+//Mock.onPost("api/v1/users/55/profile").reply(200, { DisplayName: "Max New" }, mockHeaders);
+//Mock.onPost("users/55/profile").reply(200, { DisplayName: "Max New" }, mockHeaders);
+//Mock.onPost("api/v1/users/55/profile").reply(200, { DisplayName: "Max New" }, mockHeaders);
 
 Mock.onAny("api/v1/users/52/register").reply(200, { foo: "register" }, mockHeaders);
 
@@ -335,7 +339,6 @@ Mock.onDelete("api/v1/subjects/s123ghytrfggd/like").reply(200, { status: "ok" },
 Mock.onGet("api/v1/config/options").reply(200, { success: "ok" }, mockHeaders);
 Mock.onPost("api/v1/config/options").reply(200, { success: "ok" }, mockHeaders);
 Mock.onPost("api/v1/albums").reply(200, { success: "ok" }, mockHeaders);
-
 
 //Mock.onPost().reply(200);
 //Mock.onDelete().reply(200);

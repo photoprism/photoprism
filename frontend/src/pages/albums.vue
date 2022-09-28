@@ -1,5 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-albums" style="user-select: none"
+  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none"
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
@@ -103,7 +103,7 @@
                   @mousedown.stop.prevent="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="featureShare && album.LinkCount > 0" :ripple="false"
+                <v-btn v-if="canShare && album.LinkCount > 0" :ripple="false"
                        icon flat absolute
                        class="action-share"
                        @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -191,7 +191,7 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <div v-if="staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
+        <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
           <v-btn class="action-add" color="secondary" round @click.prevent="create">
             <translate>Add Album</translate>
           </v-btn>
@@ -234,6 +234,7 @@ export default {
     const category = query["category"] ? query["category"] : "";
     const filter = {q, category};
     const settings = {};
+    const features = this.$config.settings().features;
 
     let categories = [{"value": "", "text": this.$gettext("All Categories")}];
 
@@ -244,8 +245,12 @@ export default {
     }
 
     return {
+      canUpload: features.upload,
+      canShare: this.$config.allow("albums", "share") && features.share,
+      canManage: this.$config.allow("albums", "manage"),
+      canEdit: this.$config.allow("albums", "update"),
       config: this.$config.values,
-      featureShare: this.$config.feature('share'),
+      featureShare: features.share,
       categories: categories,
       subscriptions: [],
       listen: false,
@@ -271,7 +276,7 @@ export default {
         upload: false,
         edit: false,
       },
-      model: new Album(),
+      model: new Album(false),
     };
   },
   computed: {
@@ -328,7 +333,7 @@ export default {
       window.localStorage.setItem("albums_offset", offset);
     },
     share(album) {
-      if (!album) {
+      if (!album || !this.canShare) {
         return;
       }
 
@@ -338,19 +343,34 @@ export default {
     edit(album) {
       if (!album) {
         return;
+      } else if (!this.canManage) {
+        this.$router.push(album.route(this.view));
+        return;
       }
 
       this.model = album;
       this.dialog.edit = true;
     },
     webdavUpload() {
+      if (!this.canShare) {
+        return;
+      }
+
       this.dialog.share = false;
       this.dialog.upload = true;
     },
     showUpload() {
+      if (!this.canUpload) {
+        return;
+      }
+
       Event.publish("dialog.upload");
     },
     toggleLike(ev, index) {
+      if (!this.canManage) {
+        return;
+      }
+
       const inputType = this.input.eval(ev, index);
 
       if (inputType !== ClickShort) {
@@ -391,6 +411,10 @@ export default {
       return (rangeEnd - rangeStart) + 1;
     },
     onShare(ev, index) {
+      if (!this.canShare) {
+        return;
+      }
+
       const inputType = this.input.eval(ev, index);
 
       if (inputType !== ClickShort) {

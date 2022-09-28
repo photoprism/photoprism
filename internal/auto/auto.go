@@ -28,7 +28,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-
 	"github.com/photoprism/photoprism/internal/event"
 )
 
@@ -36,9 +35,9 @@ var log = event.Log
 
 var stop = make(chan bool, 1)
 
-// Wait starts waiting for indexing & importing opportunities.
+// Start periodically checks if the library needs to be indexed or files need to be imported.
 func Start(conf *config.Config) {
-	// Don't start ticker if both are disabled.
+	// Do not start the ticker if both are disabled.
 	if conf.AutoIndex().Seconds() <= 0 && conf.AutoImport().Seconds() <= 0 {
 		return
 	}

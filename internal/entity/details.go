@@ -31,7 +31,7 @@ type Details struct {
 	UpdatedAt    time.Time `yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Details) TableName() string {
 	return "details"
 }

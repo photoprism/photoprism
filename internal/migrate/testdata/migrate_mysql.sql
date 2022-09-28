@@ -86,7 +86,7 @@ DROP TABLE IF EXISTS `addresses`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `addresses` (
                              `id` int(11) NOT NULL AUTO_INCREMENT,
-                             `cell_id` varbinary(42) DEFAULT 'zz',
+                             `cell_id` varbinary(64) DEFAULT 'zz',
                              `address_src` varbinary(8) DEFAULT NULL,
                              `address_lat` float DEFAULT NULL,
                              `address_lng` float DEFAULT NULL,
@@ -127,8 +127,8 @@ DROP TABLE IF EXISTS `albums`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `albums` (
                           `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                          `album_uid` varbinary(42) DEFAULT NULL,
-                          `parent_uid` varbinary(42) DEFAULT '',
+                          `album_uid` varbinary(64) DEFAULT NULL,
+                          `parent_uid` varbinary(64) DEFAULT '',
                           `album_slug` varbinary(160) DEFAULT NULL,
                           `album_path` varbinary(500) DEFAULT NULL,
                           `album_type` varbinary(8) DEFAULT 'album',
@@ -245,12 +245,12 @@ DROP TABLE IF EXISTS `cells`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cells` (
-                         `id` varbinary(42) NOT NULL,
+                         `id` varbinary(64) NOT NULL,
                          `cell_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                          `cell_street` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                          `cell_postcode` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                          `cell_category` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                         `place_id` varbinary(42) DEFAULT 'zz',
+                         `place_id` varbinary(64) DEFAULT 'zz',
                          `created_at` datetime DEFAULT NULL,
                          `updated_at` datetime DEFAULT NULL,
                          PRIMARY KEY (`id`)
@@ -396,11 +396,11 @@ DROP TABLE IF EXISTS `faces`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `faces` (
-                         `id` varbinary(42) NOT NULL,
+                         `id` varbinary(64) NOT NULL,
                          `face_src` varbinary(8) DEFAULT NULL,
                          `face_kind` int(11) DEFAULT NULL,
                          `face_hidden` tinyint(1) DEFAULT NULL,
-                         `subj_uid` varbinary(42) DEFAULT '',
+                         `subj_uid` varbinary(64) DEFAULT '',
                          `samples` int(11) DEFAULT NULL,
                          `sample_radius` double DEFAULT NULL,
                          `collisions` int(11) DEFAULT NULL,
