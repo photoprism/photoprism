@@ -45,7 +45,7 @@ elif [[ $3 =~ $NUMERIC ]]; then
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 $5 \
       --push .
-elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
+elif [[ $4 ]] && [[ $3 == *"preview"* || $3 == *"unstable"* || $3 == *"test"* ]]; then
     echo "Build Tags: $3"
 
     if [[ $5 ]]; then

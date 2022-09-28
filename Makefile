@@ -321,6 +321,12 @@ docker-develop-jammy-slim:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy-slim /jammy-slim
+unstable: docker-unstable
+docker-unstable: docker-unstable-jammy
+docker-unstable-jammy:
+	docker pull --platform=amd64 photoprism/develop:jammy
+	docker pull --platform=amd64 photoprism/develop:jammy-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable /jammy
 preview: docker-preview
 docker-preview: docker-preview-latest
 docker-preview-all: docker-preview-latest docker-preview-other
