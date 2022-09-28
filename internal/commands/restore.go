@@ -84,6 +84,9 @@ func restoreAction(ctx *cli.Context) error {
 		return err
 	}
 
+	conf.RegisterDb()
+	defer conf.Shutdown()
+
 	if restoreIndex {
 		// If empty, use default backup file name.
 		if indexFileName == "" {
@@ -132,7 +135,6 @@ func restoreAction(ctx *cli.Context) error {
 			return err
 		}
 
-		entity.SetDbProvider(conf)
 		tables := entity.Entities
 
 		var cmd *exec.Cmd
@@ -218,8 +220,6 @@ func restoreAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("restored in %s", elapsed)
-
-	conf.Shutdown()
 
 	return nil
 }

@@ -23,6 +23,7 @@
                               hide-details autofocus
                               :rules="[titleRule]"
                               :label="$gettext('Name')"
+                              :disabled="disabled"
                               color="secondary-dark"
                               class="input-title"
                               @keyup.enter.native="confirm"
@@ -32,6 +33,7 @@
                 <v-text-field v-model="model.Location"
                               hide-details
                               :label="$gettext('Location')"
+                              :disabled="disabled"
                               color="secondary-dark"
                               class="input-location"
                 ></v-text-field>
@@ -43,6 +45,7 @@
                             browser-autocomplete="off"
                             :label="$gettext('Description')"
                             :rows="1"
+                            :disabled="disabled"
                             class="input-description"
                             color="secondary-dark">
                 </v-textarea>
@@ -51,6 +54,7 @@
                 <v-combobox v-model="model.Category" hide-details
                             :search-input.sync="model.Category"
                             :items="categories"
+                            :disabled="disabled"
                             :label="$gettext('Category')"
                             :allow-overflow="false"
                             return-masked-value
@@ -65,6 +69,7 @@
                     :label="$gettext('Sort Order')"
                     hide-details
                     :items="sorting"
+                    :disabled="disabled"
                     item-value="value"
                     item-text="text"
                     color="secondary-dark">
@@ -83,6 +88,7 @@
               </v-btn>
               <v-btn depressed dark color="primary-button"
                      class="action-confirm"
+                     :disabled="disabled"
                      @click.stop="confirm">
                 <translate>Save</translate>
               </v-btn>
@@ -107,6 +113,7 @@ export default {
   },
   data() {
     return {
+      disabled: !this.$config.allow("albums", "manage"),
       model: new Album(),
       growDesc: false,
       loading: false,
@@ -138,6 +145,11 @@ export default {
       this.$emit('close');
     },
     confirm() {
+      if (this.disabled) {
+        this.close();
+        return;
+      }
+
       this.model.update().then((m) => {
         this.categories = this.$config.albumCategories();
         this.$emit('close');

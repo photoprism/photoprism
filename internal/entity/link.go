@@ -15,8 +15,8 @@ type Links []Link
 
 // Link represents a sharing link.
 type Link struct {
-	LinkUID     string    `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
-	ShareUID    string    `gorm:"type:VARBINARY(42);unique_index:idx_links_uid_token;" json:"Share" yaml:"Share"`
+	LinkUID     string    `gorm:"type:VARBINARY(64);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	ShareUID    string    `gorm:"type:VARBINARY(64);unique_index:idx_links_uid_token;" json:"Share" yaml:"Share"`
 	ShareSlug   string    `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug,omitempty"`
 	LinkToken   string    `gorm:"type:VARBINARY(160);unique_index:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
 	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
@@ -29,14 +29,14 @@ type Link struct {
 	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Link) TableName() string {
 	return "links"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Link) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.LinkUID, 's') {
+	if rnd.IsUnique(m.LinkUID, 's') {
 		return nil
 	}
 
@@ -117,7 +117,7 @@ func (m *Link) InvalidPassword(password string) bool {
 
 // Save inserts a new row to the database or updates a row if the primary key already exists.
 func (m *Link) Save() error {
-	if !rnd.EntityUID(m.ShareUID, 0) {
+	if !rnd.IsUID(m.ShareUID, 0) {
 		return fmt.Errorf("link: invalid share uid (%s)", m.ShareUID)
 	}
 
@@ -159,6 +159,8 @@ func FindLink(linkUID string) *Link {
 
 // FindLinks returns a slice of links for a token and share UID (at least one must be provided).
 func FindLinks(token, share string) (result Links) {
+	token = clean.ShareToken(token)
+
 	if token == "" && share == "" {
 		log.Errorf("link: share token and uid must not be empty at the same time (find links)")
 		return []Link{}
@@ -171,7 +173,7 @@ func FindLinks(token, share string) (result Links) {
 	}
 
 	if share != "" {
-		if rnd.EntityUID(share, 'a') {
+		if rnd.IsUID(share, 'a') {
 			q = q.Where("share_uid = ?", share)
 		} else {
 			q = q.Where("share_slug = ?", share)

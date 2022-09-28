@@ -18,7 +18,7 @@ type Duplicate struct {
 	ModTime  int64  `json:"ModTime" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Duplicate) TableName() string {
 	return "duplicates"
 }

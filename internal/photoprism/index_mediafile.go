@@ -244,8 +244,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		if yamlName := fs.YamlFile.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
-			} else if err := photo.Find(); err != nil {
-				log.Infof("index: %s restored from %s", clean.Log(m.BaseName()), clean.Log(filepath.Base(yamlName)))
 			} else {
 				photoExists = true
 				log.Infof("index: uid %s restored from %s", photo.PhotoUID, clean.Log(filepath.Base(yamlName)))
@@ -691,10 +689,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 			return result
 		}
 	} else {
-		if err := photo.FirstOrCreate(); err != nil {
+		if p := photo.FirstOrCreate(); p == nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (find or create photo)", err, logName)
 			return result
+		} else {
+			photo = *p
 		}
 
 		if photo.PhotoPrivate {

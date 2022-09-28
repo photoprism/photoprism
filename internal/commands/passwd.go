@@ -10,6 +10,8 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/photoprism/photoprism/internal/service"
+
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -20,13 +22,14 @@ import (
 // PasswdCommand updates a password.
 var PasswdCommand = cli.Command{
 	Name:   "passwd",
-	Usage:  "Changes the admin password",
+	Usage:  "Changes the admin account password",
 	Action: passwdAction,
 }
 
 // passwdAction updates a password.
 func passwdAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -36,10 +39,11 @@ func passwdAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	user := entity.Admin
 
-	log.Infof("please enter a new password for %s (mininum 8 characters)\n", clean.Log(user.UserName()))
+	log.Infof("please enter a new password for %s (mininum 8 characters)\n", clean.Log(user.Name()))
 
 	newPassword := getPassword("New Password: ")
 
@@ -57,9 +61,7 @@ func passwdAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("changed password for %s\n", clean.Log(user.UserName()))
-
-	conf.Shutdown()
+	log.Infof("changed password for %s\n", clean.Log(user.Name()))
 
 	return nil
 }

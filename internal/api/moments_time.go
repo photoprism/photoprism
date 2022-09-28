@@ -11,13 +11,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// GetMomentsTime returns monthly albums as JSON.
+//
 // GET /api/v1/moments/time
 func GetMomentsTime(router *gin.RouterGroup) {
 	router.GET("/moments/time", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionExport)
+		s := Auth(c, acl.ResourceCalendar, acl.ActionSearch)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 

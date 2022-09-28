@@ -6,9 +6,7 @@ import (
 
 // AccountByID finds an account by primary key.
 func AccountByID(id uint) (result entity.Account, err error) {
-	if err := Db().Where("id = ?", id).First(&result).Error; err != nil {
-		return result, err
-	}
+	err = Db().Where("id = ?", id).First(&result).Error
 
-	return result, nil
+	return result, err
 }

@@ -14,8 +14,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/face"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -23,15 +23,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
-)
-
-type DownloadName string
-
-const (
-	DownloadNameFile     DownloadName = "file"
-	DownloadNameOriginal DownloadName = "original"
-	DownloadNameShare    DownloadName = "share"
-	DownloadNameDefault               = DownloadNameFile
 )
 
 // Files represents a file result set.
@@ -46,13 +37,13 @@ type File struct {
 	ID               uint          `gorm:"primary_key" json:"-" yaml:"-"`
 	Photo            *Photo        `json:"-" yaml:"-"`
 	PhotoID          uint          `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
-	PhotoUID         string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
+	PhotoUID         string        `gorm:"type:VARBINARY(64);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	PhotoTakenAt     time.Time     `gorm:"type:DATETIME;index;" json:"TakenAt" yaml:"TakenAt"`
-	TimeIndex        *string       `gorm:"type:VARBINARY(48);" json:"TimeIndex" yaml:"TimeIndex"`
+	TimeIndex        *string       `gorm:"type:VARBINARY(64);" json:"TimeIndex" yaml:"TimeIndex"`
 	MediaID          *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	MediaUTC         int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
-	InstanceID       string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
-	FileUID          string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	InstanceID       string        `gorm:"type:VARBINARY(64);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	FileUID          string        `gorm:"type:VARBINARY(64);unique_index;" json:"UID" yaml:"UID"`
 	FileName         string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
 	FileRoot         string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
@@ -96,7 +87,7 @@ type File struct {
 	markers          *Markers
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (File) TableName() string {
 	return "files"
 }
@@ -202,7 +193,7 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	// Return if uid exists.
-	if rnd.ValidID(m.FileUID, 'f') {
+	if rnd.IsUnique(m.FileUID, 'f') {
 		return nil
 	}
 
@@ -210,11 +201,11 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 }
 
 // DownloadName returns the download file name.
-func (m *File) DownloadName(n DownloadName, seq int) string {
+func (m *File) DownloadName(n customize.DownloadName, seq int) string {
 	switch n {
-	case DownloadNameFile:
+	case customize.DownloadNameFile:
 		return m.Base(seq)
-	case DownloadNameOriginal:
+	case customize.DownloadNameOriginal:
 		return m.OriginalBase(seq)
 	default:
 		return m.ShareBase(seq)

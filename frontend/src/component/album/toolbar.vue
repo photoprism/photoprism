@@ -13,16 +13,16 @@
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon class="action-edit" :title="$gettext('Edit')" @click.stop="dialog.edit = true">
+      <v-btn v-if="canManage" icon class="action-edit" :title="$gettext('Edit')" @click.stop="dialog.edit = true">
         <v-icon>edit</v-icon>
       </v-btn>
 
-      <v-btn v-if="$config.feature('share')" icon class="action-share" :title="$gettext('Share')"
+      <v-btn v-if="canShare" icon class="action-share" :title="$gettext('Share')"
              @click.stop="dialog.share = true">
         <v-icon>share</v-icon>
       </v-btn>
 
-      <v-btn v-if="$config.feature('download')" icon class="hidden-xs-only action-download" :title="$gettext('Download')"
+      <v-btn v-if="canDownload" icon class="hidden-xs-only action-download" :title="$gettext('Download')"
              @click.stop="download()">
         <v-icon>get_app</v-icon>
       </v-btn>
@@ -37,7 +37,7 @@
         <v-icon>view_column</v-icon>
       </v-btn>
 
-      <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down action-upload"
+      <v-btn v-if="canUpload" icon class="hidden-sm-and-down action-upload"
              :title="$gettext('Upload')" @click.stop="showUpload()">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
@@ -109,8 +109,12 @@ export default {
       ID: '',
       Name: this.$gettext('All Countries')
     }].concat(this.$config.get('countries'));
-
+    const features = this.$config.settings().features;
     return {
+      canUpload: this.$config.allow("albums", "upload") && features.upload,
+      canDownload: this.$config.allow("albums", "download") && features.download,
+      canShare: this.$config.allow("albums", "share") && features.share,
+      canManage: this.$config.allow("albums", "manage"),
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
       categories: this.$config.albumCategories(),

@@ -28,7 +28,7 @@ type FileSync struct {
 	UpdatedAt  time.Time
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (FileSync) TableName() string {
 	return "files_sync"
 }

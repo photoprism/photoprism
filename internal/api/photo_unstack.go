@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -15,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // PhotoUnstack removes a file from an existing photo stack.
@@ -27,15 +27,14 @@ import (
 //	file_uid: string File UID as returned by the API
 func PhotoUnstack(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/unstack", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
 		conf := service.Config()
-		fileUID := clean.IdString(c.Param("file_uid"))
+		fileUID := clean.UID(c.Param("file_uid"))
 		file, err := query.FileByUID(fileUID)
 
 		if err != nil {

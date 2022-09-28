@@ -11,8 +11,10 @@ func TestAlbum_Yaml(t *testing.T) {
 	t.Run("berlin-2019", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
-		if err := m.Find(); err != nil {
-			t.Fatal(err)
+		if found := m.Find(); found == nil {
+			t.Fatal("should find album")
+		} else {
+			m = *found
 		}
 
 		result, err := m.Yaml()
@@ -26,8 +28,10 @@ func TestAlbum_Yaml(t *testing.T) {
 	t.Run("christmas2030", func(t *testing.T) {
 		m := AlbumFixtures.Get("christmas2030")
 
-		if err := m.Find(); err != nil {
-			t.Fatal(err)
+		if found := m.Find(); found == nil {
+			t.Fatal("should find album")
+		} else {
+			m = *found
 		}
 
 		result, err := m.Yaml()
@@ -44,8 +48,10 @@ func TestAlbum_SaveAsYaml(t *testing.T) {
 	t.Run("berlin-2019", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
-		if err := m.Find(); err != nil {
-			t.Fatal(err)
+		if found := m.Find(); found == nil {
+			t.Fatal("should find album")
+		} else {
+			m = *found
 		}
 
 		fileName := m.YamlFileName("testdata")
@@ -80,8 +86,10 @@ func TestAlbum_LoadFromYaml(t *testing.T) {
 
 		a := Album{AlbumUID: "at9lxuqxpoaaaaaa"}
 
-		if err := a.Find(); err != nil {
-			t.Fatal(err)
+		if found := a.Find(); found == nil {
+			t.Fatal("should find album")
+		} else {
+			a = *found
 		}
 
 		if existingYaml, err := os.ReadFile(fileName); err != nil {
@@ -108,8 +116,10 @@ func TestAlbum_YamlFileName(t *testing.T) {
 	t.Run("berlin-2019", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
-		if err := m.Find(); err != nil {
-			t.Fatal(err)
+		if found := m.Find(); found == nil {
+			t.Fatal("should find album")
+		} else {
+			m = *found
 		}
 
 		fileName := m.YamlFileName("/foo/bar")

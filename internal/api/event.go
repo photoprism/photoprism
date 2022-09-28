@@ -14,6 +14,7 @@ const (
 	EntityUpdated EntityEvent = "updated"
 	EntityCreated EntityEvent = "created"
 	EntityDeleted EntityEvent = "deleted"
+	EntityReacted EntityEvent = "reacted"
 )
 
 func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {

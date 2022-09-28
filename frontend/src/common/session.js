@@ -28,34 +28,46 @@ import Event from "pubsub-js";
 import User from "model/user";
 import Socket from "websocket.js";
 
+const SessionHeader = "X-Session-ID";
+
 export default class Session {
   /**
    * @param {Storage} storage
    * @param {Config} config
    */
   constructor(storage, config) {
+    this.storage_key = "session_storage";
     this.auth = false;
     this.config = config;
+    this.user = new User(false);
+    this.data = null;
 
-    if (storage.getItem("session_storage") === "true") {
+    // Set session storage.
+    if (storage.getItem(this.storage_key) === "true") {
       this.storage = window.sessionStorage;
     } else {
       this.storage = storage;
     }
 
+    // Restore from session storage.
     if (this.applyId(this.storage.getItem("session_id"))) {
       const dataJson = this.storage.getItem("data");
-      this.data = dataJson !== "undefined" ? JSON.parse(dataJson) : null;
+      if (dataJson !== "undefined") {
+        this.data = JSON.parse(dataJson);
+      }
+
+      const userJson = this.storage.getItem("user");
+      if (userJson !== "undefined") {
+        this.user = new User(JSON.parse(userJson));
+      }
     }
 
-    if (this.data && this.data.user) {
-      this.user = new User(this.data.user);
-    }
-
+    // Authenticated?
     if (this.isUser()) {
       this.auth = true;
     }
 
+    // Subscribe to session events.
     Event.subscribe("session.logout", () => {
       return this.onLogout();
     });
@@ -64,17 +76,18 @@ export default class Session {
       this.sendClientInfo();
     });
 
+    // Say hello.
     this.sendClientInfo();
   }
 
   useSessionStorage() {
     this.deleteId();
-    this.storage.setItem("session_storage", "true");
+    this.storage.setItem(this.storage_key, "true");
     this.storage = window.sessionStorage;
   }
 
   useLocalStorage() {
-    this.storage.setItem("session_storage", "false");
+    this.storage.setItem(this.storage_key, "false");
     this.storage = window.localStorage;
   }
 
@@ -85,7 +98,8 @@ export default class Session {
     }
 
     this.session_id = id;
-    Api.defaults.headers.common["X-Session-ID"] = id;
+
+    Api.defaults.headers.common[SessionHeader] = id;
 
     return true;
   }
@@ -110,8 +124,10 @@ export default class Session {
   deleteId() {
     this.session_id = null;
     this.storage.removeItem("session_id");
-    delete Api.defaults.headers.common["X-Session-ID"];
-    this.deleteData();
+
+    delete Api.defaults.headers.common[SessionHeader];
+
+    this.deleteAll();
   }
 
   setData(data) {
@@ -120,13 +136,11 @@ export default class Session {
     }
 
     this.data = data;
-    this.user = new User(this.data.user);
     this.storage.setItem("data", JSON.stringify(data));
-    this.auth = true;
-  }
 
-  getUser() {
-    return this.user;
+    if (data.user) {
+      this.setUser(data.user);
+    }
   }
 
   getEmail() {
@@ -137,37 +151,40 @@ export default class Session {
     return "";
   }
 
-  getUsername() {
+  getDisplayName() {
     if (this.isUser()) {
-      if (this.user.Username) {
-        return this.user.Username;
-      }
+      return this.user.getEntityName();
     }
 
     return "";
   }
 
-  getDisplayName() {
-    if (this.isUser()) {
-      if (this.user.DisplayName) {
-        return this.user.DisplayName;
-      }
-      if (this.user.ArtistName) {
-        return this.user.ArtistName;
-      }
-      if (this.user.FullName) {
-        return this.user.FullName;
-      }
-      if (this.user.Username) {
-        return this.user.Username;
-      }
+  setUser(user) {
+    if (!user) {
+      return;
     }
 
-    return "";
+    this.user = new User(user);
+    this.storage.setItem("user", JSON.stringify(user));
+    this.auth = this.isUser();
+  }
+
+  getUser() {
+    return this.user;
   }
 
   isUser() {
     return this.user && this.user.hasId();
+  }
+
+  getHome() {
+    if (!this.isUser()) {
+      return "login";
+    } else if (this.user.Role === "guest") {
+      return "albums";
+    } else {
+      return "browse";
+    }
   }
 
   isAdmin() {
@@ -187,10 +204,19 @@ export default class Session {
   }
 
   deleteData() {
-    this.auth = false;
-    this.user = new User();
     this.data = null;
     this.storage.removeItem("data");
+  }
+
+  deleteUser() {
+    this.auth = false;
+    this.user = new User(false);
+    this.storage.removeItem("user");
+  }
+
+  deleteAll() {
+    this.deleteData();
+    this.deleteUser();
   }
 
   sendClientInfo() {
@@ -211,14 +237,19 @@ export default class Session {
     }
   }
 
-  login(username, password, token) {
+  login(name, password, token) {
     this.deleteId();
 
-    return Api.post("session", { username, password, token }).then((resp) => {
+    return Api.post("session", { name, password, token }).then((resp) => {
+      const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
+
       this.setConfig(resp.data.config);
       this.setId(resp.data.id);
+      this.setUser(resp.data.user);
       this.setData(resp.data.data);
       this.sendClientInfo();
+
+      return Promise.resolve(reload);
     });
   }
 
@@ -226,6 +257,7 @@ export default class Session {
     return Api.post("session", { token }).then((resp) => {
       this.setConfig(resp.data.config);
       this.setId(resp.data.id);
+      this.setUser(resp.data.user);
       this.setData(resp.data.data);
       this.sendClientInfo();
     });

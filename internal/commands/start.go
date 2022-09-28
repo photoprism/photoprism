@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auto"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/internal/service"
@@ -31,6 +32,7 @@ var StartCommand = cli.Command{
 	Action:  startAction,
 }
 
+// startFlags specifies the start command parameters.
 var startFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "detach-server, d",
@@ -43,7 +45,7 @@ var startFlags = []cli.Flag{
 	},
 }
 
-// startAction start the web server and initializes the daemon
+// startAction starts the web server and initializes the daemon.
 func startAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
@@ -63,17 +65,17 @@ func startAction(ctx *cli.Context) error {
 		log.Fatal("server port must be a number between 1 and 65535")
 	}
 
-	// pass this context down the chain
+	// Pass this context down the chain.
 	cctx, cancel := context.WithCancel(context.Background())
 
 	if err := conf.Init(); err != nil {
 		log.Fatal(err)
 	}
 
-	// initialize the database
+	// Initialize the index database.
 	conf.InitDb()
 
-	// check if daemon is running, if not initialize the daemon
+	// Check if the daemon is running, if not, initialize the daemon.
 	dctx := new(daemon.Context)
 	dctx.LogFileName = conf.LogFilename()
 	dctx.PidFileName = conf.PIDFilename()
@@ -107,7 +109,7 @@ func startAction(ctx *cli.Context) error {
 		log.Infof("config: read-only mode enabled")
 	}
 
-	// start web server
+	// Start web server.
 	go server.Start(cctx, conf)
 
 	if count, err := photoprism.RestoreAlbums(conf.AlbumsPath(), false); err != nil {
@@ -116,30 +118,31 @@ func startAction(ctx *cli.Context) error {
 		log.Infof("%d albums restored", count)
 	}
 
-	// start share & sync workers
+	// Start background workers.
 	workers.Start(conf)
 	auto.Start(conf)
 
-	// set up proper shutdown of daemon and web server
+	// Wait for signal to initiate server shutdown.
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
 
-	// stop share & sync workers
-	workers.Stop()
+	// Stop all background activity.
 	auto.Stop()
+	workers.Stop()
+	mutex.CancelAll()
 
 	log.Info("shutting down...")
-	conf.Shutdown()
 	cancel()
-	err := dctx.Release()
 
-	if err != nil {
+	if err := dctx.Release(); err != nil {
 		log.Error(err)
 	}
 
-	time.Sleep(3 * time.Second)
+	// Finally, close the DB connection after a short grace period.
+	time.Sleep(2 * time.Second)
+	conf.Shutdown()
 
 	return nil
 }

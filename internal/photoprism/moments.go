@@ -38,7 +38,8 @@ func (w *Moments) MigrateSlug(m query.Moment, albumType string) {
 		return
 	}
 
-	if a, err := entity.FindAlbumBySlug(m.TitleSlug(), albumType); err == nil {
+	// Find and update matching album.
+	if a := entity.FindAlbumBySlug(m.TitleSlug(), albumType); a != nil {
 		logWarn("moments", a.Update("album_slug", m.Slug()))
 	}
 }

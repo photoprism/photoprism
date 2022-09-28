@@ -29,10 +29,9 @@ import (
 // POST /api/v1/zip
 func ZipCreate(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDownload)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionDownload)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 

@@ -43,6 +43,7 @@ func importAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	// get cli first argument
 	sourcePath := strings.TrimSpace(ctx.Args().First())
@@ -73,8 +74,6 @@ func importAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("import completed in %s", elapsed)
-
-	conf.Shutdown()
 
 	return nil
 }

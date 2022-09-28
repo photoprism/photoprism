@@ -63,7 +63,7 @@ type Account struct {
 	DeletedAt     *time.Time `deepcopier:"skip" sql:"index"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Account) TableName() string {
 	return "accounts"
 }

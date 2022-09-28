@@ -24,7 +24,7 @@ import (
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
-			AbortUnauthorized(c)
+			AbortForbidden(c)
 			return
 		}
 
@@ -36,7 +36,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
+		a, err := query.AlbumByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortAlbumNotFound(c)

@@ -38,6 +38,9 @@ func thumbsAction(ctx *cli.Context) error {
 		return err
 	}
 
+	conf.RegisterDb()
+	defer conf.Shutdown()
+
 	log.Infof("creating thumbs in %s", clean.Log(conf.ThumbCachePath()))
 
 	rs := service.Thumbs()

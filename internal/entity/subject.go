@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"sync"
@@ -11,7 +10,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -21,36 +19,35 @@ var subjectMutex = sync.Mutex{}
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	SubjType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
-	SubjSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
-	SubjSlug     string          `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
-	SubjName     string          `gorm:"type:VARCHAR(160);unique_index;default:'';" json:"Name" yaml:"Name"`
-	SubjAlias    string          `gorm:"type:VARCHAR(160);default:'';" json:"Alias" yaml:"Alias"`
-	SubjBio      string          `gorm:"type:VARCHAR(2048);" json:"Bio" yaml:"Bio,omitempty"`
-	SubjNotes    string          `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	SubjFavorite bool            `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
-	SubjHidden   bool            `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
-	SubjPrivate  bool            `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
-	SubjExcluded bool            `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
-	FileCount    int             `gorm:"default:0;" json:"FileCount" yaml:"-"`
-	PhotoCount   int             `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
-	Thumb        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
-	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
-	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
-	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
-	DeletedAt    *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	SubjUID      string     `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	SubjType     string     `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjSrc      string     `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjSlug     string     `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
+	SubjName     string     `gorm:"type:VARCHAR(160);unique_index;default:'';" json:"Name" yaml:"Name"`
+	SubjAlias    string     `gorm:"type:VARCHAR(160);default:'';" json:"Alias" yaml:"Alias"`
+	SubjBio      string     `gorm:"type:VARCHAR(2048);" json:"Bio" yaml:"Bio,omitempty"`
+	SubjNotes    string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	SubjFavorite bool       `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
+	SubjHidden   bool       `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
+	SubjPrivate  bool       `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
+	SubjExcluded bool       `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
+	FileCount    int        `gorm:"default:0;" json:"FileCount" yaml:"-"`
+	PhotoCount   int        `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
+	Thumb        string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc     string     `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time  `json:"UpdatedAt" yaml:"-"`
+	DeletedAt    *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Subject) TableName() string {
 	return "subjects"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.SubjUID, 'j') {
+	if rnd.IsUnique(m.SubjUID, 'j') {
 		return nil
 	}
 

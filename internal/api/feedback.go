@@ -23,10 +23,10 @@ func SendFeedback(router *gin.RouterGroup) {
 			return
 		}
 
-		s := Auth(SessionID(c), acl.ResourceFeedback, acl.ActionCreate)
+		s := Auth(c, acl.ResourceFeedback, acl.ActionCreate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		// Abort if permission was not granted.
+		if s.Abort(c) {
 			return
 		}
 

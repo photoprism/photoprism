@@ -76,6 +76,7 @@ func backupAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -83,6 +84,9 @@ func backupAction(ctx *cli.Context) error {
 	if err := conf.Init(); err != nil {
 		return err
 	}
+
+	conf.RegisterDb()
+	defer conf.Shutdown()
 
 	if backupIndex {
 		// If empty, use default backup file name.
@@ -167,9 +171,6 @@ func backupAction(ctx *cli.Context) error {
 	}
 
 	if backupAlbums {
-		service.SetConfig(conf)
-		conf.InitDb()
-
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
 				log.Warnf("album files path not writable, using default")
@@ -190,8 +191,6 @@ func backupAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("backup completed in %s", elapsed)
-
-	conf.Shutdown()
 
 	return nil
 }

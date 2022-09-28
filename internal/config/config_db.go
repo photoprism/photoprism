@@ -266,15 +266,20 @@ func (c *Config) SetDbOptions() {
 	}
 }
 
+// RegisterDb sets the database options and connection provider.
+func (c *Config) RegisterDb() {
+	c.SetDbOptions()
+	entity.SetDbProvider(c)
+}
+
 // InitDb initializes the database without running previously failed migrations.
 func (c *Config) InitDb() {
+	c.RegisterDb()
 	c.MigrateDb(false, nil)
 }
 
 // MigrateDb initializes the database and migrates the schema if needed.
 func (c *Config) MigrateDb(runFailed bool, ids []string) {
-	c.SetDbOptions()
-	entity.SetDbProvider(c)
 	entity.InitDb(true, runFailed, ids)
 
 	// Init admin account?
@@ -284,13 +289,11 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
-	go entity.SaveErrorMessages()
+	go entity.Error{}.LogEvents()
 }
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
-	c.SetDbOptions()
-	entity.SetDbProvider(c)
 	entity.ResetTestFixtures()
 
 	if c.AdminPassword() == "" {
@@ -299,7 +302,7 @@ func (c *Config) InitTestDb() {
 		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
-	go entity.SaveErrorMessages()
+	go entity.Error{}.LogEvents()
 }
 
 // connectDb establishes a database connection.

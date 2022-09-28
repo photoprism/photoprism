@@ -43,13 +43,13 @@
         </v-card-actions>
       </v-card>
 
-      <v-card flat tile class="mt-0 px-1 application">
+      <v-card v-if="isDemo || isAdmin" flat tile class="mt-0 px-1 application">
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.upload"
-                  :disabled="busy || config.readonly || demo"
+                  :disabled="busy || config.readonly || isDemo"
                   class="ma-0 pa-0 input-upload"
                   color="secondary-dark"
                   :label="$gettext('Upload')"
@@ -64,7 +64,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.download"
-                  :disabled="busy || demo"
+                  :disabled="busy || isDemo"
                   class="ma-0 pa-0 input-download"
                   color="secondary-dark"
                   :label="$gettext('Download')"
@@ -79,7 +79,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.edit"
-                  :disabled="busy || demo"
+                  :disabled="busy || isDemo"
                   class="ma-0 pa-0 input-edit"
                   color="secondary-dark"
                   :label="$gettext('Edit')"
@@ -109,7 +109,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.import"
-                  :disabled="busy || config.readonly || demo"
+                  :disabled="busy || config.readonly || isDemo"
                   class="ma-0 pa-0 input-import"
                   color="secondary-dark"
                   :label="$gettext('Import')"
@@ -229,7 +229,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.library"
-                  :disabled="busy || demo"
+                  :disabled="busy || isDemo"
                   class="ma-0 pa-0 input-library"
                   color="secondary-dark"
                   :label="$gettext('Library')"
@@ -259,7 +259,7 @@
             <v-flex v-if="!config.disable.places" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.places"
-                  :disabled="busy || demo"
+                  :disabled="busy || isDemo"
                   class="ma-0 pa-0 input-places"
                   color="secondary-dark"
                   :label="$gettext('Places')"
@@ -331,10 +331,10 @@ import Event from "pubsub-js";
 export default {
   name: 'PSettingsGeneral',
   data() {
-    const isDemo = this.$config.get("demo");
-
     return {
-      demo: isDemo,
+      isDemo: this.$config.get("demo"),
+      isAdmin: this.$session.isAdmin(),
+      isPublic: this.$config.get("public"),
       config: this.$config.values,
       settings: new Settings(this.$config.settings()),
       options: options,
@@ -421,6 +421,7 @@ export default {
       }
 
       this.settings.save().then(() => {
+        this.$config.setSettings(this.settings);
         if (reload) {
           this.$notify.info(this.$gettext("Reloading…"));
           this.$notify.blockUI();

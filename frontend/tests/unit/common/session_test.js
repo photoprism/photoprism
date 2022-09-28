@@ -34,24 +34,46 @@ describe("common/session", () => {
     const storage = new StorageShim();
     const session = new Session(storage, config);
     assert.isFalse(session.user.hasId());
-    const values = {
-      user: {
-        ID: 5,
-        NickName: "Foo",
-        FullName: "Max Last",
-        PrimaryEmail: "test@test.com",
-        RoleAdmin: true,
-      },
+
+    const user = {
+      ID: 5,
+      NickName: "Foo",
+      GivenName: "Max",
+      DisplayName: "Max Example",
+      Email: "test@test.com",
+      SuperAdmin: true,
+      Role: "admin",
     };
+
+    const data = {
+      user,
+    };
+
     session.setData();
-    assert.equal(session.user.FullName, "");
-    session.setData(values);
-    assert.equal(session.user.FullName, "Max Last");
-    assert.equal(session.user.RoleAdmin, true);
+    assert.equal(session.user.DisplayName, "");
+    session.setData(data);
+    assert.equal(session.user.DisplayName, "Max Example");
+    assert.equal(session.user.SuperAdmin, true);
+    assert.equal(session.user.Role, "admin");
+    session.deleteAll();
+    assert.equal(session.user.DisplayName, "");
+    assert.equal(session.user.SuperAdmin, false);
+    assert.equal(session.user.Role, "");
+    session.setUser(user);
+    assert.equal(session.user.DisplayName, "Max Example");
+    assert.equal(session.user.SuperAdmin, true);
+    assert.equal(session.user.Role, "admin");
+
     const result = session.getUser();
+
+    assert.equal(result.DisplayName, "Max Example");
+    assert.equal(result.SuperAdmin, true);
+    assert.equal(result.Role, "admin");
+    assert.equal(result.Email, "test@test.com");
     assert.equal(result.ID, 5);
-    assert.equal(result.PrimaryEmail, "test@test.com");
     session.deleteData();
+    assert.isTrue(session.user.hasId());
+    session.deleteUser();
     assert.isFalse(session.user.hasId());
   });
 
@@ -61,8 +83,8 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        DisplayName: "Foo",
-        FullName: "Max Last",
+        Name: "foo",
+        DisplayName: "Max Last",
         Email: "test@test.com",
         Role: "admin",
       },
@@ -72,8 +94,8 @@ describe("common/session", () => {
     assert.equal(result, "test@test.com");
     const values2 = {
       user: {
-        DisplayName: "Foo",
-        FullName: "Max Last",
+        Name: "foo",
+        DisplayName: "Max Last",
         Email: "test@test.com",
         Role: "admin",
       },
@@ -84,32 +106,33 @@ describe("common/session", () => {
     session.deleteData();
   });
 
-  it("should get user nick name", () => {
+  it("should get user display name", () => {
     const storage = new StorageShim();
     const session = new Session(storage, config);
     const values = {
       user: {
         ID: 5,
-        DisplayName: "Foo",
-        FullName: "Max Last",
+        Name: "foo",
+        DisplayName: "Max Last",
         Email: "test@test.com",
         Role: "admin",
       },
     };
     session.setData(values);
     const result = session.getDisplayName();
-    assert.equal(result, "Foo");
+    assert.equal(result, "Max Last");
     const values2 = {
       user: {
-        DisplayName: "Bar",
-        FullName: "Max Last",
+        ID: 5,
+        Name: "bar",
+        DisplayName: "",
         Email: "test@test.com",
         Role: "admin",
       },
     };
     session.setData(values2);
     const result2 = session.getDisplayName();
-    assert.equal(result2, "");
+    assert.equal(result2, "Bar");
     session.deleteData();
   });
 
@@ -119,19 +142,19 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        DisplayName: "Foo",
-        FullName: "Max Last",
+        Name: "foo",
+        DisplayName: "Max Last",
         Email: "test@test.com",
         Role: "admin",
       },
     };
     session.setData(values);
     const result = session.getDisplayName();
-    assert.equal(result, "Foo");
+    assert.equal(result, "Max Last");
     const values2 = {
       user: {
-        DisplayName: "Bar",
-        FullName: "Max New",
+        Name: "bar",
+        DisplayName: "Max New",
         Email: "test@test.com",
         Role: "admin",
       },
@@ -148,8 +171,8 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        DisplayName: "Foo",
-        FullName: "Max Last",
+        Name: "foo",
+        DisplayName: "Max Last",
         Email: "test@test.com",
         Role: "admin",
       },
@@ -166,8 +189,8 @@ describe("common/session", () => {
     const values = {
       user: {
         ID: 5,
-        DisplayName: "Foo",
-        FullName: "Max Last",
+        Name: "foo",
+        DisplayName: "Max Last",
         Email: "test@test.com",
         Role: "admin",
       },

@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strconv"
 	"sync"
-	"testing"
 	"time"
 
 	"github.com/urfave/cli"
@@ -16,6 +15,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -112,16 +112,16 @@ func NewTestOptions(pkg string) *Options {
 // NewTestOptionsError returns invalid config options for tests.
 func NewTestOptionsError() *Options {
 	assetsPath := fs.Abs("../..")
-	testDataPath := fs.Abs("../../storage/testdata")
+	dataPath := fs.Abs("../../storage/testdata")
 
 	c := &Options{
 		DarktableBin:   "/bin/darktable-cli",
 		AssetsPath:     assetsPath,
-		StoragePath:    testDataPath,
-		CachePath:      testDataPath + "/cache",
-		OriginalsPath:  testDataPath + "/originals",
-		ImportPath:     testDataPath + "/import",
-		TempPath:       testDataPath + "/temp",
+		StoragePath:    dataPath,
+		CachePath:      dataPath + "/cache",
+		OriginalsPath:  dataPath + "/originals",
+		ImportPath:     dataPath + "/import",
+		TempPath:       dataPath + "/temp",
 		DatabaseDriver: SQLite3,
 		DatabaseDsn:    ".test-error.db",
 	}
@@ -152,7 +152,7 @@ func NewTestConfig(pkg string) *Config {
 		token:   rnd.GenerateToken(8),
 	}
 
-	s := NewSettings(c)
+	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale())
 
 	if err := os.MkdirAll(c.ConfigPath(), os.ModePerm); err != nil {
 		log.Fatalf("config: %s", err.Error())
@@ -166,6 +166,7 @@ func NewTestConfig(pkg string) *Config {
 		log.Fatalf("config: %s", err.Error())
 	}
 
+	c.RegisterDb()
 	c.InitTestDb()
 
 	thumb.SizePrecached = c.ThumbSizePrecached()
@@ -237,64 +238,80 @@ func CliTestContext() *cli.Context {
 }
 
 // RemoveTestData deletes files in import, export, originals, and cache folders.
-func (c *Config) RemoveTestData(t *testing.T) {
+func (c *Config) RemoveTestData() error {
 	if err := os.RemoveAll(c.ImportPath()); err != nil {
-		t.Fatal(err)
+		return err
 	}
 
 	if err := os.RemoveAll(c.TempPath()); err != nil {
-		t.Fatal(err)
+		return err
 	}
 
 	if err := os.RemoveAll(c.OriginalsPath()); err != nil {
-		t.Fatal(err)
+		return err
 	}
 
 	if err := os.RemoveAll(c.CachePath()); err != nil {
-		t.Logf("test: %s (remove cache)", err)
+		log.Warnf("test: %s (remove cache)", err)
 	}
+
+	return nil
 }
 
 // DownloadTestData downloads the test files from the file server.
-func (c *Config) DownloadTestData(t *testing.T) {
+func (c *Config) DownloadTestData() error {
 	if fs.FileExists(TestDataZip) {
 		hash := fs.Hash(TestDataZip)
 
 		if hash != TestDataHash {
 			if err := os.Remove(TestDataZip); err != nil {
-				t.Fatalf("config: %s", err.Error())
+				return fmt.Errorf("config: %s", err.Error())
 			}
 
-			t.Logf("config: removed outdated test data zip file (fingerprint %s)", hash)
+			log.Debugf("config: removed outdated test data zip file (fingerprint %s)", hash)
 		}
 	}
 
 	if !fs.FileExists(TestDataZip) {
-		t.Logf("config: downloading latest test data zip file from %s", TestDataURL)
+		log.Debugf("config: downloading latest test data zip file from %s", TestDataURL)
 
 		if err := fs.Download(TestDataZip, TestDataURL); err != nil {
-			t.Fatalf("config: test data download failed: %s", err.Error())
+			return fmt.Errorf("config: test data download failed: %s", err.Error())
 		}
 	}
+
+	return nil
 }
 
 // UnzipTestData extracts tests files from the zip archive.
-func (c *Config) UnzipTestData(t *testing.T) {
+func (c *Config) UnzipTestData() error {
 	if _, err := fs.Unzip(TestDataZip, c.StoragePath()); err != nil {
-		t.Fatalf("config: could not unzip test data: %s", err.Error())
+		return fmt.Errorf("config: could not unzip test data: %s", err.Error())
 	}
+
+	return nil
 }
 
 // InitializeTestData resets the test file directory.
-func (c *Config) InitializeTestData(t *testing.T) {
+func (c *Config) InitializeTestData() (err error) {
 	testDataMutex.Lock()
 	defer testDataMutex.Unlock()
 
 	start := time.Now()
 
-	c.RemoveTestData(t)
-	c.DownloadTestData(t)
-	c.UnzipTestData(t)
+	if err = c.RemoveTestData(); err != nil {
+		return err
+	}
 
-	t.Logf("config: initialized test data [%s]", time.Since(start))
+	if err = c.DownloadTestData(); err != nil {
+		return err
+	}
+
+	if err = c.UnzipTestData(); err != nil {
+		return err
+	}
+
+	log.Infof("config: initialized test data [%s]", time.Since(start))
+
+	return nil
 }

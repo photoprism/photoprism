@@ -3,9 +3,10 @@ package config
 import (
 	"regexp"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -21,9 +22,9 @@ func isBcrypt(s string) bool {
 	return b
 }
 
-// AdminUser returns the admin username.
+// AdminUser returns the admin auth name.
 func (c *Config) AdminUser() string {
-	c.options.AdminUser = clean.Login(c.options.AdminUser)
+	c.options.AdminUser = clean.Username(c.options.AdminUser)
 
 	if c.options.AdminUser == "" {
 		c.options.AdminUser = "admin"

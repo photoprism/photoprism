@@ -5,19 +5,22 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-const AdminUserName = "admin"
-const AdminDisplayName = "Admin"
-const GuestDisplayName = "Guest"
+// Role defaults.
+const (
+	AdminUserName    = "admin"
+	AdminDisplayName = "Admin"
+	GuestDisplayName = "Visitor"
+)
 
 // Admin is the default admin user.
 var Admin = User{
 	ID:          1,
-	UserSlug:    "admin",
-	Username:    AdminUserName,
+	UserName:    AdminUserName,
 	UserRole:    acl.RoleAdmin.String(),
 	DisplayName: AdminDisplayName,
 	SuperAdmin:  true,
 	CanLogin:    true,
+	CanSync:     true,
 	CanInvite:   true,
 	InviteToken: rnd.GenerateToken(8),
 }
@@ -25,27 +28,27 @@ var Admin = User{
 // UnknownUser is an anonymous, public user without own account.
 var UnknownUser = User{
 	ID:          -1,
-	UserSlug:    "",
 	UserUID:     "u000000000000001",
-	UserRole:    "",
-	Username:    "",
+	UserRole:    acl.RoleUnauthorized.String(),
+	UserName:    "",
 	DisplayName: "",
 	SuperAdmin:  false,
 	CanLogin:    false,
+	CanSync:     false,
 	CanInvite:   false,
 	InviteToken: "",
 }
 
-// Guest is a user without own account e.g. for link sharing.
-var Guest = User{
+// Visitor is a user without own account e.g. for link sharing.
+var Visitor = User{
 	ID:          -2,
-	UserSlug:    "guest",
 	UserUID:     "u000000000000002",
-	UserRole:    acl.RoleGuest.String(),
-	Username:    "guest",
+	UserRole:    acl.RoleVisitor.String(),
+	UserName:    "",
 	DisplayName: GuestDisplayName,
 	SuperAdmin:  false,
 	CanLogin:    false,
+	CanSync:     false,
 	CanInvite:   false,
 	InviteToken: "",
 }
@@ -60,7 +63,7 @@ func CreateDefaultUsers() {
 		UnknownUser = *user
 	}
 
-	if user := FirstOrCreateUser(&Guest); user != nil {
-		Guest = *user
+	if user := FirstOrCreateUser(&Visitor); user != nil {
+		Visitor = *user
 	}
 }

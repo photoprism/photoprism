@@ -22,7 +22,7 @@ type Labels []Label
 // Label is used for photo, album and location categorization
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
-	LabelUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	LabelUID         string     `gorm:"type:VARBINARY(64);unique_index;" json:"UID" yaml:"UID"`
 	LabelSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
 	CustomSlug       string     `gorm:"type:VARBINARY(160);index;" json:"CustomSlug" yaml:"-"`
 	LabelName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
@@ -40,14 +40,14 @@ type Label struct {
 	New              bool       `gorm:"-" json:"-" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Label) TableName() string {
 	return "labels"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.LabelUID, 'l') {
+	if rnd.IsUnique(m.LabelUID, 'l') {
 		return nil
 	}
 

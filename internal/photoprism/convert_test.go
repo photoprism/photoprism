@@ -25,7 +25,7 @@ func TestConvert_Start(t *testing.T) {
 
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	convert := NewConvert(conf)
 

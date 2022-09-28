@@ -1,5 +1,5 @@
 /*
-Package acl provides access control lists for authorization checking of user actions.
+Package acl provides access control lists for authorization checks.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
@@ -24,43 +24,56 @@ Additional information can be found in our Developer Guide:
 */
 package acl
 
-type Permission struct {
-	Roles   Roles
-	Actions Actions
-}
-
+// ACL represents an access control list based on Resource, Roles, and Permissions.
 type ACL map[Resource]Roles
 
-func (l ACL) Deny(resource Resource, role Role, action Action) bool {
-	return !l.Allow(resource, role, action)
+// Deny checks whether the role must be denied access to the specified resource.
+func (acl ACL) Deny(resource Resource, role Role, perm Permission) bool {
+	return !acl.Allow(resource, role, perm)
 }
 
-func (l ACL) Allow(resource Resource, role Role, action Action) bool {
-	if p, ok := l[resource]; ok {
-		return p.Allow(role, action)
-	} else if p, ok := l[ResourceDefault]; ok {
-		return p.Allow(role, action)
+// DenyAll checks whether the role is granted none of the permissions for the specified resource.
+func (acl ACL) DenyAll(resource Resource, role Role, perms Permissions) bool {
+	return !acl.AllowAny(resource, role, perms)
+}
+
+// Allow checks whether the role is granted permission for the specified resource.
+func (acl ACL) Allow(resource Resource, role Role, perm Permission) bool {
+	if p, ok := acl[resource]; ok {
+		return p.Allow(role, perm)
+	} else if p, ok = acl[ResourceDefault]; ok {
+		return p.Allow(role, perm)
 	}
 
 	return false
 }
 
-func (a Actions) Allow(action Action) bool {
-	if result, ok := a[action]; ok {
-		return result
-	} else if result, ok := a[ActionDefault]; ok {
-		return result
+// AllowAny checks whether the role is granted any of the permissions for the specified resource.
+func (acl ACL) AllowAny(resource Resource, role Role, perms Permissions) bool {
+	if len(perms) == 0 {
+		return false
+	}
+
+	for i := range perms {
+		if acl.Allow(resource, role, perms[i]) {
+			return true
+		}
 	}
 
 	return false
 }
 
-func (r Roles) Allow(role Role, action Action) bool {
-	if a, ok := r[role]; ok {
-		return a.Allow(action)
-	} else if a, ok := r[RoleDefault]; ok {
-		return a.Allow(action)
+// AllowAll checks whether the role is granted all of the permissions for the specified resource.
+func (acl ACL) AllowAll(resource Resource, role Role, perms Permissions) bool {
+	if len(perms) == 0 {
+		return false
 	}
 
-	return false
+	for i := range perms {
+		if acl.Deny(resource, role, perms[i]) {
+			return false
+		}
+	}
+
+	return true
 }

@@ -42,12 +42,12 @@ func mustIndex(delay time.Duration) bool {
 	indexMutex.Lock()
 	defer indexMutex.Unlock()
 
-	return !autoIndex.IsZero() && autoIndex.Sub(time.Now()) < -1*delay && !mutex.MainWorker.Busy()
+	return !autoIndex.IsZero() && autoIndex.Sub(time.Now()) < -1*delay && !mutex.MainWorker.Running()
 }
 
 // Index starts indexing originals e.g. after WebDAV uploads.
 func Index() error {
-	if mutex.MainWorker.Busy() {
+	if mutex.MainWorker.Running() {
 		return nil
 	}
 

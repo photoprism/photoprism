@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
@@ -456,11 +457,11 @@ func TestFile_DownloadName(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "originalName.jpg", FileName: "filename.jpg"}
 
-		filename := file.DownloadName(DownloadNameFile, 0)
+		filename := file.DownloadName(customize.DownloadNameFile, 0)
 		assert.Contains(t, filename, "filename")
 		assert.Contains(t, filename, fs.ExtJPEG)
 
-		filename2 := file.DownloadName(DownloadNameOriginal, 1)
+		filename2 := file.DownloadName(customize.DownloadNameOriginal, 1)
 		assert.Contains(t, filename2, "originalName")
 		assert.Contains(t, filename2, "(1)")
 		assert.Contains(t, filename2, fs.ExtJPEG)

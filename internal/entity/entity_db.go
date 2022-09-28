@@ -34,7 +34,7 @@ func DbDialect() string {
 	return Db().Dialect().GetName()
 }
 
-// SetDbProvider sets the provider to get a gorm db connection.
+// SetDbProvider sets the Gorm database connection provider.
 func SetDbProvider(provider DbProvider) {
 	dbProvider = provider
 }
@@ -44,7 +44,7 @@ func HasDbProvider() bool {
 	return dbProvider != nil
 }
 
-// Db returns a database connection.
+// Db returns the database connection.
 func Db() *gorm.DB {
 	return dbProvider.Db()
 }

@@ -24,10 +24,9 @@ func Upload(router *gin.RouterGroup) {
 			return
 		}
 
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpload)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpload)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 

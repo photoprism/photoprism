@@ -17,11 +17,11 @@ var faceMutex = sync.Mutex{}
 
 // Face represents the face of a Subject.
 type Face struct {
-	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	ID              string          `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
 	FaceKind        int             `json:"Kind" yaml:"Kind,omitempty"`
 	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
-	SubjUID         string          `gorm:"type:VARBINARY(42);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
+	SubjUID         string          `gorm:"type:VARBINARY(64);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
@@ -36,7 +36,7 @@ type Face struct {
 // Faceless can be used as argument to match unmatched face markers.
 var Faceless = []string{""}
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Face) TableName() string {
 	return "faces"
 }
@@ -76,13 +76,13 @@ func (m *Face) SkipMatching() bool {
 // SetEmbeddings assigns face embeddings.
 func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	if len(embeddings) == 0 {
-		return fmt.Errorf("empty")
+		return fmt.Errorf("invalid embedding")
 	}
 
 	m.embedding, m.SampleRadius, m.Samples = face.EmbeddingsMidpoint(embeddings)
 
 	if len(m.embedding) != len(face.NullEmbedding) {
-		return fmt.Errorf("invalid number of values")
+		return fmt.Errorf("embedding has invalid number of values")
 	}
 
 	// Limit sample radius to reduce false positives.
@@ -411,7 +411,7 @@ func FindFace(id string) *Face {
 
 // ValidFaceCount counts the number of valid face markers for a file uid.
 func ValidFaceCount(fileUID string) (c int) {
-	if !rnd.EntityUID(fileUID, 'f') {
+	if !rnd.IsUID(fileUID, 'f') {
 		return
 	}
 

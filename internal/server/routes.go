@@ -33,7 +33,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		c.Header("Cache-Control", "no-store")
 		c.Header("Content-Type", "application/json")
 
-		clientConfig := conf.PublicConfig()
+		clientConfig := conf.ClientPublic()
 		c.HTML(http.StatusOK, "manifest.json", gin.H{"config": clientConfig})
 	})
 
@@ -45,32 +45,35 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Rainbow Page.
 	router.GET(conf.BaseUri("/_rainbow"), func(c *gin.Context) {
-		clientConfig := conf.PublicConfig()
+		clientConfig := conf.ClientPublic()
 		c.HTML(http.StatusOK, "rainbow.tmpl", gin.H{"config": clientConfig})
 	})
 
 	// Splash Screen.
 	router.GET(conf.BaseUri("/_splash"), func(c *gin.Context) {
-		clientConfig := conf.PublicConfig()
+		clientConfig := conf.ClientPublic()
 		c.HTML(http.StatusOK, "splash.tmpl", gin.H{"config": clientConfig})
 	})
 
 	// JSON-REST API Version 1
 	v1 := router.Group(conf.BaseUri(config.ApiUri))
 	{
-		// Config options.
-		api.GetConfig(v1)
+		// Global App Config.
 		api.GetConfigOptions(v1)
 		api.SaveConfigOptions(v1)
 
-		// User profile and settings.
+		// Custom Settings.
+		api.GetClientConfig(v1)
 		api.GetSettings(v1)
 		api.SaveSettings(v1)
+
+		// User Authentication.
 		api.ChangePassword(v1)
 		api.CreateSession(v1)
+		api.GetSession(v1)
 		api.DeleteSession(v1)
 
-		// External account management.
+		// External Account Management.
 		api.SearchAccounts(v1)
 		api.GetAccount(v1)
 		api.GetAccountFolders(v1)
@@ -79,14 +82,21 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteAccount(v1)
 		api.UpdateAccount(v1)
 
-		// Thumbnails and downloads.
+		// Thumbs, Downloads, and Videos.
 		api.GetThumb(v1)
 		api.GetDownload(v1)
 		api.GetVideo(v1)
 		api.ZipCreate(v1)
 		api.ZipDownload(v1)
 
-		// Photos.
+		// Index, Upload, and Import.
+		api.Upload(v1)
+		api.StartImport(v1)
+		api.CancelImport(v1)
+		api.StartIndexing(v1)
+		api.CancelIndexing(v1)
+
+		// Search & Organization.
 		api.SearchPhotos(v1)
 		api.SearchGeo(v1)
 		api.GetPhoto(v1)
@@ -111,7 +121,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.PhotoPrimary(v1)
 		api.PhotoUnstack(v1)
 
-		// Albums.
+		// Photo Albums.
 		api.SearchAlbums(v1)
 		api.GetAlbum(v1)
 		api.AlbumCover(v1)
@@ -129,7 +139,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.AddPhotosToAlbum(v1)
 		api.RemovePhotosFromAlbum(v1)
 
-		// Labels.
+		// Photo Labels.
 		api.SearchLabels(v1)
 		api.LabelCover(v1)
 		api.UpdateLabel(v1)
@@ -140,12 +150,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.LikeLabel(v1)
 		api.DislikeLabel(v1)
 
-		// Folders.
+		// Files and Folders.
 		api.SearchFoldersOriginals(v1)
 		api.SearchFoldersImport(v1)
 		api.FolderCover(v1)
 
-		// People and other subjects.
+		// People.
 		api.SearchSubjects(v1)
 		api.GetSubject(v1)
 		api.UpdateSubject(v1)
@@ -157,14 +167,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetFace(v1)
 		api.UpdateFace(v1)
 
-		// Indexing and importing.
-		api.Upload(v1)
-		api.StartImport(v1)
-		api.CancelImport(v1)
-		api.StartIndexing(v1)
-		api.CancelIndexing(v1)
-
-		// Batch operations.
+		// Batch Operations.
 		api.BatchPhotosApprove(v1)
 		api.BatchPhotosArchive(v1)
 		api.BatchPhotosRestore(v1)
@@ -173,14 +176,14 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.BatchAlbumsDelete(v1)
 		api.BatchLabelsDelete(v1)
 
-		// Other.
+		// Technical Endpoints.
 		api.GetSvg(v1)
 		api.GetStatus(v1)
 		api.GetErrors(v1)
 		api.DeleteErrors(v1)
 		api.SendFeedback(v1)
 		api.Connect(v1)
-		api.Websocket(v1)
+		api.WebSocket(v1)
 	}
 
 	// Configure link sharing.
@@ -217,7 +220,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Default HTML page for client-side rendering and routing via VueJS.
 	router.NoRoute(func(c *gin.Context) {
 		signUp := gin.H{"message": config.MsgSponsor, "url": config.SignUpURL}
-		values := gin.H{"signUp": signUp, "config": conf.PublicConfig()}
+		values := gin.H{"signUp": signUp, "config": conf.ClientPublic()}
 		c.HTML(http.StatusOK, conf.TemplateName(), values)
 	})
 }

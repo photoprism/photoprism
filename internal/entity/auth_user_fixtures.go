@@ -7,6 +7,7 @@ import (
 
 type UserMap map[string]User
 
+// Get returns a user fixture for use in tests.
 func (m UserMap) Get(name string) User {
 	if result, ok := m[name]; ok {
 		return result
@@ -15,6 +16,7 @@ func (m UserMap) Get(name string) User {
 	return User{}
 }
 
+// Pointer returns a user fixture pointer for use in tests.
 func (m UserMap) Pointer(name string) *User {
 	if result, ok := m[name]; ok {
 		return &result
@@ -23,60 +25,145 @@ func (m UserMap) Pointer(name string) *User {
 	return &User{}
 }
 
+// UserFixtures specifies user fixtures for use in tests.
 var UserFixtures = UserMap{
 	"alice": {
 		ID:          5,
 		UserUID:     "uqxetse3cy5eo9z2",
-		UserSlug:    "alice",
-		Username:    "alice",
-		Email:       "alice@example.com",
+		UserName:    "alice",
+		DisplayName: "Alice",
+		UserEmail:   "alice@example.com",
 		UserRole:    acl.RoleAdmin.String(),
 		SuperAdmin:  true,
-		DisplayName: "Alice",
 		CanLogin:    true,
+		CanSync:     true,
 		CanInvite:   true,
 		InviteToken: rnd.GenerateToken(8),
+		UserSettings: &UserSettings{
+			UITheme:     "",
+			MapsStyle:   "",
+			MapsAnimate: -1,
+			UILanguage:  "",
+			UITimeZone:  "",
+		},
+		UserDetails: &UserDetails{
+			NickName:   "Lys",
+			UserGender: GenderFemale,
+		},
 	},
 	"bob": {
 		ID:          7,
 		UserUID:     "uqxc08w3d0ej2283",
-		UserSlug:    "bob",
-		Username:    "bob",
-		Email:       "bob@example.com",
-		UserRole:    acl.RoleEditor.String(),
+		UserName:    "bob",
+		DisplayName: "Robert Rich",
+		UserEmail:   "bob@example.com",
+		UserRole:    acl.RoleAdmin.String(),
 		SuperAdmin:  false,
-		DisplayName: "Bob",
 		CanLogin:    true,
+		CanSync:     true,
 		CanInvite:   false,
+		UserSettings: &UserSettings{
+			UITheme:     "grayscale",
+			MapsStyle:   "topographique",
+			MapsAnimate: 6250,
+			UILanguage:  "pt_BR",
+			UITimeZone:  "",
+		},
+		UserDetails: &UserDetails{
+			NickName:   "Bob",
+			UserGender: GenderMale,
+			BirthDay:   22,
+			BirthMonth: 1,
+			BirthYear:  1981,
+		},
 	},
 	"friend": {
 		ID:          8,
 		UserUID:     "uqxqg7i1kperxvu7",
-		UserSlug:    "friend",
-		Username:    "friend",
-		Email:       "friend@example.com",
-		UserRole:    acl.RoleViewer.String(),
+		UserName:    "friend",
+		UserEmail:   "friend@example.com",
+		UserRole:    acl.RoleAdmin.String(),
 		SuperAdmin:  false,
 		DisplayName: "Guy Friend",
 		CanLogin:    true,
+		CanSync:     false,
 		CanInvite:   false,
+		UserSettings: &UserSettings{
+			UITheme:     "gemstone",
+			MapsStyle:   "hybrid",
+			MapsAnimate: 0,
+			UILanguage:  "es_US",
+			UITimeZone:  "America/Los_Angeles",
+		},
+		UserDetails: &UserDetails{
+			UserGender: GenderOther,
+		},
 	},
 	"deleted": {
 		ID:          10000008,
 		UserUID:     "uqxqg7i1kperxvu8",
-		UserSlug:    "deleted",
-		Username:    "deleted",
-		Email:       "",
+		UserName:    "deleted",
+		UserEmail:   "",
 		DisplayName: "Deleted User",
 		SuperAdmin:  false,
-		UserRole:    acl.RoleGuest.String(),
+		UserRole:    acl.RoleVisitor.String(),
 		CanLogin:    false,
+		CanSync:     true,
 		CanInvite:   false,
-		DeletedAt:   &deleteTime,
+		DeletedAt:   TimePointer(),
+		UserSettings: &UserSettings{
+			UITheme:     "",
+			MapsStyle:   "",
+			MapsAnimate: 0,
+			UILanguage:  "de",
+			UITimeZone:  "",
+		},
+	},
+	"unauthorized": {
+		ID:          10000009,
+		UserUID:     "uriku0138hqql4bz",
+		UserName:    "jens.mander",
+		UserEmail:   "jens.mander@microsoft.com",
+		UserRole:    acl.RoleUnauthorized.String(),
+		SuperAdmin:  false,
+		DisplayName: "Jens Mander",
+		CanLogin:    true,
+		CanSync:     true,
+		CanInvite:   false,
+		UserSettings: &UserSettings{
+			UITheme:     "",
+			MapsStyle:   "",
+			MapsAnimate: 0,
+			UILanguage:  "de",
+			UITimeZone:  "",
+		},
+		UserDetails: &UserDetails{
+			UserGender: GenderMale,
+		},
+	},
+	"fowler": {
+		ID:          10000023,
+		UserUID:     "urinotv3d6jedvlm",
+		UserName:    "fowler",
+		DisplayName: "Martin Fowler",
+		UserEmail:   "martin@fowler.org",
+		UserRole:    acl.RoleAdmin.String(),
+		SuperAdmin:  false,
+		CanLogin:    true,
+		CanSync:     true,
+		CanInvite:   true,
+		InviteToken: rnd.GenerateToken(8),
+		UserSettings: &UserSettings{
+			UITheme:     "custom",
+			MapsStyle:   "invalid",
+			MapsAnimate: -1,
+			UILanguage:  "en",
+			UITimeZone:  "UTC",
+		},
 	},
 }
 
-// CreateUserFixtures inserts known entities into the database for testing.
+// CreateUserFixtures creates the user fixtures specified above
 func CreateUserFixtures() {
 	for _, entity := range UserFixtures {
 		Db().Create(&entity)

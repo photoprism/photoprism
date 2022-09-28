@@ -13,7 +13,7 @@ var placeMutex = sync.Mutex{}
 
 // Place represents a distinct region identified by city, district, state, and country.
 type Place struct {
-	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
+	ID            string    `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
 	PlaceLabel    string    `gorm:"type:VARCHAR(400);" json:"Label" yaml:"Label"`
 	PlaceDistrict string    `gorm:"type:VARCHAR(100);index;" json:"District" yaml:"District,omitempty"`
 	PlaceCity     string    `gorm:"type:VARCHAR(100);index;" json:"City" yaml:"City,omitempty"`
@@ -26,7 +26,7 @@ type Place struct {
 	UpdatedAt     time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Place) TableName() string {
 	return "places"
 }
@@ -51,23 +51,14 @@ func CreateUnknownPlace() {
 
 // FindPlace finds a matching place or returns nil.
 func FindPlace(id string) *Place {
-	place := Place{}
+	m := Place{}
 
-	if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
+	if Db().First(&m, "id = ?", id).RecordNotFound() {
 		log.Debugf("place: %s not found", clean.Log(id))
 		return nil
-	} else {
-		return &place
-	}
-}
-
-// Find fetches entity values from the database the primary key.
-func (m *Place) Find() error {
-	if err := Db().First(m, "id = ?", m.ID).Error; err != nil {
-		return err
 	}
 
-	return nil
+	return &m
 }
 
 // Create inserts a new row to the database.

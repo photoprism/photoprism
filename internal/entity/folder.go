@@ -24,7 +24,7 @@ type Folders []Folder
 type Folder struct {
 	Path              string     `gorm:"type:VARBINARY(500);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
 	Root              string     `gorm:"type:VARBINARY(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
-	FolderUID         string     `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	FolderUID         string     `gorm:"type:VARBINARY(64);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderType        string     `gorm:"type:VARBINARY(16);" json:"Type" yaml:"Type,omitempty"`
 	FolderTitle       string     `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title,omitempty"`
 	FolderCategory    string     `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
@@ -45,14 +45,14 @@ type Folder struct {
 	DeletedAt         *time.Time `sql:"index" json:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Folder) TableName() string {
 	return "folders"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.FolderUID, 'd') {
+	if rnd.IsUnique(m.FolderUID, 'd') {
 		return nil
 	}
 
@@ -136,7 +136,7 @@ func (m *Folder) SetValuesFromPath() {
 	}
 
 	if m.FolderTitle == "" {
-		m.FolderTitle = txt.Clip(txt.Title(s), txt.ClipTitle)
+		m.FolderTitle = txt.Clip(txt.Title(s), txt.ClipLongName)
 	}
 }
 
@@ -238,7 +238,7 @@ func (m *Folder) SetForm(f form.Folder) error {
 		return err
 	}
 
-	m.FolderTitle = txt.Clip(m.FolderTitle, txt.ClipTitle)
+	m.FolderTitle = txt.Clip(m.FolderTitle, txt.ClipLongName)
 	m.FolderCategory = txt.Clip(m.FolderCategory, txt.ClipCategory)
 
 	return nil

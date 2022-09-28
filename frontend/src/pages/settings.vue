@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-settings">
+  <div :class="$config.aclClasses('settings')" class="p-page p-page-settings">
     <v-tabs
         v-model="active"
         flat
@@ -13,7 +13,8 @@
              @click="changePath(item.path)">
         <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
-          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon> {{ item.label }}
+          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon>
+          {{ item.label }}
         </template>
       </v-tab>
 
@@ -32,6 +33,7 @@ import Library from "pages/settings/library.vue";
 import Advanced from "pages/settings/advanced.vue";
 import Sync from "pages/settings/sync.vue";
 import Account from "pages/settings/account.vue";
+import {config} from "app/session";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -47,11 +49,15 @@ function initTabs(flag, tabs) {
 export default {
   name: 'PPageSettings',
   props: {
-    tab: String,
+    tab: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     const isDemo = this.$config.get("demo");
     const isPublic = this.$config.get("public");
+
     const tabs = [
       {
         'name': 'settings-general',
@@ -63,6 +69,7 @@ export default {
         'public': true,
         'admin': true,
         'demo': true,
+        'show': config.feature('settings'),
       },
       {
         'name': 'settings-library',
@@ -74,6 +81,7 @@ export default {
         'public': true,
         'admin': true,
         'demo': true,
+        'show': config.feature('advanced'),
       },
       {
         'name': 'settings-advanced',
@@ -85,6 +93,7 @@ export default {
         'public': false,
         'admin': true,
         'demo': true,
+        'show': config.feature('advanced'),
       },
       {
         'name': 'settings-sync',
@@ -96,6 +105,7 @@ export default {
         'public': false,
         'admin': true,
         'demo': true,
+        'show': config.feature('sync'),
       },
       {
         'name': 'settings-account',
@@ -107,13 +117,16 @@ export default {
         'public': false,
         'admin': true,
         'demo': true,
+        'show': config.feature('account'),
       },
     ];
 
-    if(isDemo) {
+    if (isDemo) {
       initTabs("demo", tabs);
-    } else if(isPublic) {
+    } else if (isPublic) {
       initTabs("public", tabs);
+    } else {
+      initTabs("show", tabs);
     }
 
     let active = 0;

@@ -74,7 +74,7 @@ func Stop() {
 
 // StartMeta runs the metadata worker once.
 func StartMeta(conf *config.Config) {
-	if !mutex.WorkersBusy() {
+	if !mutex.WorkersRunning() {
 		go func() {
 			worker := NewMeta(conf)
 
@@ -90,7 +90,7 @@ func StartMeta(conf *config.Config) {
 
 // StartShare runs the share worker once.
 func StartShare(conf *config.Config) {
-	if !mutex.ShareWorker.Busy() {
+	if !mutex.ShareWorker.Running() {
 		go func() {
 			worker := NewShare(conf)
 			if err := worker.Start(); err != nil {
@@ -102,7 +102,7 @@ func StartShare(conf *config.Config) {
 
 // StartSync runs the sync worker once.
 func StartSync(conf *config.Config) {
-	if !mutex.SyncWorker.Busy() {
+	if !mutex.SyncWorker.Running() {
 		go func() {
 			worker := NewSync(conf)
 			if err := worker.Start(); err != nil {

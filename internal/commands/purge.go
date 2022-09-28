@@ -51,6 +51,7 @@ func purgeAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	// get cli first argument
 	subPath := strings.TrimSpace(ctx.Args().First())
@@ -78,8 +79,6 @@ func purgeAction(ctx *cli.Context) error {
 	} else {
 		log.Infof("purged %s and %s in %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(start))
 	}
-
-	conf.Shutdown()
 
 	return nil
 }

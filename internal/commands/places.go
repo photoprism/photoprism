@@ -46,12 +46,13 @@ func placesUpdateAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.InitDb()
-
 	if !conf.Sponsor() && !conf.Test() {
 		log.Errorf(config.MsgSponsorCommand)
 		return nil
 	}
+
+	conf.InitDb()
+	defer conf.Shutdown()
 
 	if !ctx.Bool("yes") {
 		confirmPrompt := promptui.Prompt{
@@ -101,8 +102,6 @@ func placesUpdateAction(ctx *cli.Context) error {
 	}
 
 	log.Infof("completed in %s", time.Since(start))
-
-	conf.Shutdown()
 
 	return nil
 }

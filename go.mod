@@ -20,7 +20,7 @@ require (
 	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
-	github.com/google/open-location-code/go v0.0.0-20220627184029-8a4173398f7e
+	github.com/google/open-location-code/go v0.0.0-20220922185916-75f4f40254f8
 	github.com/gorilla/websocket v1.5.0
 	github.com/gosimple/slug v1.12.0
 	github.com/h2non/filetype v1.1.3
@@ -50,8 +50,8 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.10
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
-	golang.org/x/net v0.0.0-20220909164309-bea034e7d591
+	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
+	golang.org/x/net v0.0.0-20220927171203-f486391704dc
 	gonum.org/v1/gonum v0.12.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.4.0

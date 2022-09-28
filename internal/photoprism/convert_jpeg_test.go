@@ -16,7 +16,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 	}
 
 	conf := config.TestConfig()
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 	convert := NewConvert(conf)
 
 	t.Run("Video", func(t *testing.T) {

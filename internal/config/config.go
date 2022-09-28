@@ -22,6 +22,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/face"
@@ -45,7 +46,7 @@ type Config struct {
 	once     sync.Once
 	db       *gorm.DB
 	options  *Options
-	settings *Settings
+	settings *customize.Settings
 	hub      *hub.Config
 	token    string
 	serial   string
@@ -543,12 +544,7 @@ func (c *Config) SetLogLevel(level logrus.Level) {
 
 // Shutdown services and workers.
 func (c *Config) Shutdown() {
-	mutex.People.Cancel()
-	mutex.MainWorker.Cancel()
-	mutex.ShareWorker.Cancel()
-	mutex.SyncWorker.Cancel()
-	mutex.MetaWorker.Cancel()
-	mutex.FacesWorker.Cancel()
+	mutex.CancelAll()
 
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)

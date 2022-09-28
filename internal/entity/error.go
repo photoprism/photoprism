@@ -18,13 +18,13 @@ type Error struct {
 // Errors represents a list of error log messages.
 type Errors []Error
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Error) TableName() string {
 	return "errors"
 }
 
-// SaveErrorMessages subscribes to error logs and stored them in the errors table.
-func SaveErrorMessages() {
+// LogEvents logs published error events.
+func (Error) LogEvents() {
 	s := event.Subscribe("log.*")
 
 	defer func() {

@@ -129,7 +129,7 @@ export default class Config {
     return Api.get("config")
       .then(
         (response) => this.setValues(response.data),
-        () => console.warn("failed pulling updated client config")
+        () => console.warn("config update failed")
       )
       .finally(() => Promise.resolve());
   }
@@ -138,7 +138,7 @@ export default class Config {
     if (!values) return;
 
     if (this.debug) {
-      console.log("config: new values", values);
+      console.log("config: updated", values);
     }
 
     if (values.jsUri && this.values.jsUri !== values.jsUri) {
@@ -146,13 +146,14 @@ export default class Config {
     }
 
     for (let key in values) {
-      if (values.hasOwnProperty(key)) {
+      if (values.hasOwnProperty(key) && values[key] != null) {
         this.set(key, values[key]);
       }
     }
 
     if (values.settings) {
       this.setBatchSize(values.settings);
+      this.setLanguage(values.settings.ui.language);
       this.setTheme(values.settings.ui.theme);
     }
 
@@ -232,7 +233,7 @@ export default class Config {
       return result[0];
     } else {
       if (this.debug) {
-        console.warn("more than one person matching the same name", result);
+        console.warn("more than one person having the same name", result);
       }
       return result[0];
     }
@@ -343,6 +344,82 @@ export default class Config {
     }
   }
 
+  aclClasses(resource) {
+    let result = [];
+    const perms = ["update", "search", "manage", "share", "delete"];
+
+    perms.forEach((perm) => {
+      if (this.deny(resource, perm)) result.push(`disable-${perm}`);
+    });
+
+    return result;
+  }
+
+  allow(resource, perm) {
+    if (this.values["acl"] && this.values["acl"][resource]) {
+      return !!this.values["acl"][resource][perm] || !!this.values["acl"][resource]["full_access"];
+    }
+
+    return false;
+  }
+
+  deny(resource, perm) {
+    return !this.allow(resource, perm);
+  }
+
+  settings() {
+    return this.values.settings;
+  }
+
+  setSettings(settings) {
+    if (!settings) return;
+
+    if (this.debug) {
+      console.log("config: new settings", settings);
+    }
+
+    this.values.settings = settings;
+
+    this.setBatchSize(settings);
+    this.setLanguage(settings.ui.language);
+    this.setTheme(settings.ui.theme);
+
+    return this;
+  }
+
+  setLanguage(locale) {
+    if (!locale || this.loading()) {
+      return;
+    }
+
+    if (this.values.settings && this.values.settings.ui) {
+      this.values.settings.ui.language = locale;
+      this.storage.setItem(this.storage_key + ".locale", locale);
+      Api.defaults.headers.common["Accept-Language"] = locale;
+    }
+
+    return this;
+  }
+
+  getLanguage() {
+    let locale = "en";
+
+    if (this.loading()) {
+      const stored = this.storage.getItem(this.storage_key + ".locale");
+      if (stored) {
+        locale = stored;
+      }
+    } else if (
+      this.values.settings &&
+      this.values.settings.ui &&
+      this.values.settings.ui.language
+    ) {
+      locale = this.values.settings.ui.language;
+    }
+
+    return locale;
+  }
+
   setTheme(name) {
     let theme = onSetTheme(name, this);
 
@@ -383,6 +460,14 @@ export default class Config {
     return this;
   }
 
+  restoreValues() {
+    const json = this.storage.getItem(this.storage_key);
+    if (json !== "undefined") {
+      this.setValues(JSON.parse(json));
+    }
+    return this;
+  }
+
   set(key, value) {
     this.values[key] = value;
     return this;
@@ -397,11 +482,7 @@ export default class Config {
   }
 
   feature(name) {
-    return this.values.settings.features[name];
-  }
-
-  settings() {
-    return this.values.settings;
+    return this.values.settings.features[name] === true;
   }
 
   rtl() {
@@ -471,5 +552,9 @@ export default class Config {
 
   getVersion() {
     return this.get("version");
+  }
+
+  getSiteDescription() {
+    return this.values.siteDescription ? this.values.siteDescription : this.values.siteCaption;
   }
 }

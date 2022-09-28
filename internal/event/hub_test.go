@@ -77,7 +77,7 @@ func TestWarning(t *testing.T) {
 
 	assert.IsType(t, hub.Subscription{}, s)
 
-	Warning("warning message")
+	Warn("warning message")
 	msg := <-s.Receiver
 
 	assert.Equal(t, "notify.warning", msg.Name)

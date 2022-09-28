@@ -6,6 +6,7 @@ import (
 
 	gc "github.com/patrickmn/go-cache"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -19,8 +20,8 @@ func FlushAlbumCache() {
 // CachedAlbumByUID returns an existing album or nil if not found.
 func CachedAlbumByUID(uid string) (m Album, err error) {
 	// Valid album UID?
-	if uid == "" || !rnd.EntityUID(uid, 'a') {
-		return m, fmt.Errorf("invalid album uid")
+	if uid == "" || !rnd.IsUID(uid, 'a') {
+		return m, fmt.Errorf("invalid album uid %s", clean.LogQuote(uid))
 	}
 
 	// Cached?
