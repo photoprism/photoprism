@@ -72,6 +72,8 @@ export default {
   },
   watch: {
     '$route'() {
+      // todo: prevent search/filter from being killed when the back-button is pressed
+      console.log(window.backwardsNavigationDetected, this.filter.q, this.$route.params.q);
       this.filter.q = this.query();
       this.lastFilter = {};
 
