@@ -18,8 +18,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/media"
-
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"
@@ -31,10 +29,11 @@ import (
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// MediaFile represents a single photo, video or sidecar file.
+// MediaFile represents a single photo, video, sidecar, or other supported media file.
 type MediaFile struct {
 	fileName         string
 	fileNameResolved string
@@ -60,22 +59,21 @@ type MediaFile struct {
 	imageConfig      *image.Config
 }
 
-// NewMediaFile returns a new media file.
-func NewMediaFile(fileName string) (m *MediaFile, err error) {
-	fileNameResolved, err := fs.Resolve(fileName)
-	if err != nil {
-		return nil, err
+// NewMediaFile returns a new media file and automatically resolves any symlinks.
+func NewMediaFile(fileName string) (*MediaFile, error) {
+	if fileNameResolved, err := fs.Resolve(fileName); err != nil {
+		// Don't return nil on error, as this would change the previous behavior.
+		return &MediaFile{}, err
+	} else {
+		return NewMediaFileSkipResolve(fileName, fileNameResolved)
 	}
-
-	return NewMediaFileSkipResolve(fileName, fileNameResolved)
 }
 
 // NewMediaFileSkipResolve returns a new media file without resolving symlinks.
-// This is useful because if it's known fileName is fully resolved it's a lot
-// faster.
-func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (m *MediaFile, err error) {
-	// Create struct.
-	m = &MediaFile{
+// This is useful because if it is known that the filename is fully resolved, it is much faster.
+func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (*MediaFile, error) {
+	// Create and initialize the new media file.
+	m := &MediaFile{
 		fileName:         fileName,
 		fileNameResolved: fileNameResolved,
 		fileRoot:         entity.RootUnknown,
@@ -85,10 +83,12 @@ func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (m *Media
 		height:           -1,
 	}
 
-	// Check if file exists and is not empty.
+	// Check if the file exists and is not empty.
 	if size, _, err := m.Stat(); err != nil {
+		// Return error if os.Stat() failed.
 		return m, fmt.Errorf("%s not found", clean.Log(m.RootRelName()))
 	} else if size == 0 {
+		// Notify the user that the file is empty.
 		log.Infof("media: %s is empty", clean.Log(m.RootRelName()))
 	}
 
@@ -105,7 +105,8 @@ func (m *MediaFile) Empty() bool {
 	return m.FileSize() <= 0
 }
 
-// Stat returns the media file size and modification time rounded to seconds
+// Stat calls os.Stat() to return the file size and modification time,
+// or an error if this failed.
 func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 	if m.fileSize > 0 {
 		return m.fileSize, m.modTime, m.statErr
