@@ -488,7 +488,6 @@ export default {
 
               el.append(imageContainer);
               el.append(counterBubble);
-              // TODO. add counter-bubble
               el.addEventListener('click', () => {
                 this.selectClusterById(props.cluster_id);
               });
