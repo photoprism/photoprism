@@ -15,11 +15,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "Apple"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -32,11 +27,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "Apple iPhone SE back camera 4.15mm f/2.2"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -52,11 +42,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "*4.15mm f/2.2"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -69,11 +54,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "%gold"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -88,11 +68,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "I love % dog"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -105,11 +80,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "sale%"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -124,11 +94,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "&IlikeFood"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -141,11 +106,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "Pets & Dogs"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -160,11 +120,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "Light&"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -178,11 +133,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "'Family"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -195,11 +145,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "Father's lens"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -215,11 +160,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "Ice Cream'"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -232,11 +172,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "*Forrest"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -251,11 +186,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "My*Kids"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -268,11 +198,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "Yoga***"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -287,11 +212,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "|Banana"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -304,11 +224,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "Red|Green"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -324,11 +239,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "Blue|"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -343,11 +253,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "345 Shirt"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -361,11 +266,6 @@ func TestPhotosFilterLens(t *testing.T) {
 		f.Lens = "lens555 Blue"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -378,11 +278,6 @@ func TestPhotosFilterLens(t *testing.T) {
 
 		f.Lens = "Route 66"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -400,11 +295,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"Apple\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -417,11 +307,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"Apple iPhone SE back camera 4.15mm f/2.2\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -437,11 +322,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"*4.15mm f/2.2\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -454,11 +334,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"%gold\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -473,11 +348,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"I love % dog\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -490,11 +360,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"sale%\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -509,11 +374,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"&IlikeFood\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -526,11 +386,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"Pets & Dogs\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -545,11 +400,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"Light&\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -563,11 +413,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"'Family\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -580,11 +425,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"Father's lens\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -600,11 +440,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"Ice Cream'\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -617,11 +452,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"*Forrest\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -636,11 +466,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"My*Kids\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -653,11 +478,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"Yoga***\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -672,11 +492,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"|Banana\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -689,11 +504,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"Red|Green\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -709,11 +519,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"Blue|\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -726,11 +531,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"345 Shirt\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -745,11 +545,6 @@ func TestPhotosQueryLens(t *testing.T) {
 		f.Query = "lens:\"lens555 Blue\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -762,11 +557,6 @@ func TestPhotosQueryLens(t *testing.T) {
 
 		f.Query = "lens:\"Route 66\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

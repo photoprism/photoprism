@@ -1,5 +1,5 @@
 /*
-Package commands provides photoprism CLI (sub-)commands.
+Package commands provides the CLI commands of PhotoPrism.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
@@ -29,13 +29,12 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 

@@ -15,23 +15,26 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+// Upload adds files to the import folder, from where supported file types are moved to the originals folders.
+//
 // POST /api/v1/upload/:path
 func Upload(router *gin.RouterGroup) {
-	router.POST("/upload/:path", func(c *gin.Context) {
+	router.POST("/upload/:token", func(c *gin.Context) {
 		conf := service.Config()
+
 		if conf.ReadOnly() || !conf.Settings().Features.Upload {
 			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
 			return
 		}
 
-		s := Auth(c, acl.ResourcePhotos, acl.ActionUpload)
+		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})
 
 		if s.Abort(c) {
 			return
 		}
 
 		start := time.Now()
-		subPath := clean.Path(c.Param("path"))
+		token := clean.Token(c.Param("token"))
 
 		f, err := c.MultipartForm()
 
@@ -45,18 +48,19 @@ func Upload(router *gin.RouterGroup) {
 
 		files := f.File["files"]
 		uploaded := len(files)
+
 		var uploads []string
 
-		p := path.Join(conf.ImportPath(), "upload", subPath)
+		uploadDir := path.Join(conf.ImportPath(), "upload", s.RefID+token)
 
-		if err := os.MkdirAll(p, os.ModePerm); err != nil {
-			log.Errorf("upload: failed creating folder %s", clean.Log(subPath))
+		if err = os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+			log.Errorf("upload: failed creating folder %s", clean.Log(filepath.Base(uploadDir)))
 			AbortBadRequest(c)
 			return
 		}
 
 		for _, file := range files {
-			filename := path.Join(p, filepath.Base(file.Filename))
+			filename := path.Join(uploadDir, filepath.Base(file.Filename))
 
 			log.Debugf("upload: saving file %s", clean.Log(file.Filename))
 

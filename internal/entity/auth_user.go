@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/mail"
+	"path"
 	"strings"
 	"time"
 
@@ -18,8 +19,8 @@ import (
 
 // User identifier prefixes.
 const (
+	UserUID    = byte('u')
 	UserPrefix = "user"
-	UserUID    = 'u'
 )
 
 // LenNameMin specifies the minimum length of the username in characters.
@@ -47,6 +48,8 @@ type User struct {
 	SuperAdmin    bool          `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
 	CanLogin      bool          `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
 	LoginAt       *time.Time    `json:"LoginAt,omitempty" yaml:"LoginAt,omitempty"`
+	BasePath      string        `gorm:"type:VARBINARY(1024);" json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
+	UploadPath    string        `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
 	CanSync       bool          `json:"CanSync,omitempty" yaml:"CanSync,omitempty"`
 	CanInvite     bool          `json:"CanInvite,omitempty" yaml:"CanInvite,omitempty"`
 	InviteToken   string        `gorm:"type:VARBINARY(64);index;" json:"-" yaml:"-"`
@@ -277,7 +280,7 @@ func (m *User) Disabled() bool {
 	return m.Deleted() || m.Expired()
 }
 
-// LoginAllowed checks if logging in with the user account is possible.
+// LoginAllowed checks if the user is allowed to log in and use the web UI.
 func (m *User) LoginAllowed() bool {
 	if role := m.AclRole(); m.Disabled() || !m.CanLogin || m.UserName == "" || role == acl.RoleUnauthorized {
 		return false
@@ -287,13 +290,40 @@ func (m *User) LoginAllowed() bool {
 
 }
 
-// SyncAllowed checks if file sync with the user account is possible.
+// SyncAllowed checks whether the user is allowed to use WebDAV to synchronize files.
 func (m *User) SyncAllowed() bool {
 	if role := m.AclRole(); m.Disabled() || !m.CanSync || m.UserName == "" || role == acl.RoleUnauthorized {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
 	}
+}
+
+// UploadAllowed checks if the user is allowed to upload files.
+func (m *User) UploadAllowed() bool {
+	if role := m.AclRole(); m.Disabled() || role == acl.RoleUnauthorized {
+		return false
+	} else {
+		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
+	}
+}
+
+// SetBasePath changes the user's base folder.
+func (m *User) SetBasePath(dir string) *User {
+	m.BasePath = clean.UserPath(dir)
+
+	return m
+}
+
+// SetUploadPath changes the user's upload folder.
+func (m *User) SetUploadPath(dir string) *User {
+	if m.BasePath == "" {
+		m.UploadPath = clean.UserPath(dir)
+	} else {
+		m.UploadPath = path.Join(m.BasePath, clean.UserPath(dir))
+	}
+
+	return m
 }
 
 // String returns an identifier that can be used in logs.
@@ -326,7 +356,7 @@ func (m *User) SetName(login string) (err error) {
 
 	// Update display name.
 	if m.DisplayName == "" || m.DisplayName == AdminDisplayName {
-		m.DisplayName = clean.Name(login)
+		m.DisplayName = clean.NameCapitalized(login)
 	}
 
 	return nil
@@ -568,6 +598,8 @@ func (m *User) SetFormValues(frm form.User) *User {
 	m.CanSync = frm.CanSync
 	m.UserRole = frm.Role()
 	m.UserAttr = frm.Attr()
+	m.SetBasePath(frm.BasePath)
+	m.SetUploadPath(frm.UploadPath)
 
 	return m
 }

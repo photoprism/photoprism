@@ -103,6 +103,7 @@ export default {
       isShared: this.$config.deny("photos", "manage"),
       canEdit: this.$config.allow("photos", "update") && features.edit,
       hasPlaces: this.$config.allow("places", "view") && features.places,
+      canSearchPlaces: this.$config.allow("places", "search") && features.places,
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -233,7 +234,7 @@ export default {
       return "newest";
     },
     openLocation(index) {
-      if (!this.hasPlaces) {
+      if (!this.canSearchPlaces) {
         return;
       }
 

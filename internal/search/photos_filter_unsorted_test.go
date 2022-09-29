@@ -31,11 +31,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:yes"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -44,11 +39,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		assert.Equal(t, len(photos), len(photos0))
 		f.Query = "unsorted:false"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -63,11 +53,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"%gold\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -80,11 +65,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"I love % dog\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -99,11 +79,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"sale%\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -116,11 +91,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"&IlikeFood\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -136,11 +106,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"Pets & Dogs\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -153,11 +118,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"Light&\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -173,11 +133,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"'Family\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -191,11 +146,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		// Note: If the string in unsorted starts with f/F, the txt package will assume it means false,
 		f.Query = "unsorted:\"Mother's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -211,11 +161,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"Ice Cream'\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -229,11 +174,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"*Forrest\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -249,11 +189,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"My*Kids\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -267,11 +202,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"Yoga***\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -287,11 +217,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"|Banana\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -305,11 +230,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"Red|Green\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -325,11 +245,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"Blue|\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -343,11 +258,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"345 Shirt\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -363,11 +273,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"Color555 Blue\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -381,11 +286,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"Route 66\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -401,11 +301,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 		f.Query = "unsorted:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -419,11 +314,6 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 
 		f.Query = "unsorted:\"Route %66 | *Father's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

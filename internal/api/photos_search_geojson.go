@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/photoprism/photoprism/internal/acl"
-	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
@@ -16,71 +16,48 @@ import (
 )
 
 // SearchGeo finds photos and returns results as JSON, so they can be displayed on a map or in a viewer.
+// See form.SearchPhotosGeo for supported search params and data types.
 //
 // GET /api/v1/geo
-//
-// See form.SearchPhotosGeo for supported search params and data types.
 func SearchGeo(router *gin.RouterGroup) {
 	handler := func(c *gin.Context) {
-		s := Auth(c, acl.ResourcePhotos, acl.ActionSearch)
+		s := AuthAny(c, acl.ResourcePlaces, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.AccessShared})
 
+		// Abort if permission was not granted.
 		if s.Abort(c) {
 			return
 		}
 
 		var f form.SearchPhotosGeo
+		var err error
 
-		err := c.MustBindWith(&f, binding.Form)
-
-		if err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		// Limit results to a specific album?
-		if f.Album == "" {
-			// Do nothing.
-		} else if a, err := entity.CachedAlbumByUID(f.Album); err != nil {
-			AbortAlbumNotFound(c)
-			return
-		} else {
-			f.Filter = a.AlbumFilter
-		}
-
-		// Parse query string and filter.
-		if err = f.ParseQueryString(); err != nil {
-			log.Debugf("search: %s", err)
+		// Abort if request params are invalid.
+		if err = c.MustBindWith(&f, binding.Form); err != nil {
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePlaces), "form invalid", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
 			return
 		}
 
 		conf := service.Config()
 
-		// Sharing link visitors may only see public content.
-		if s.IsVisitor() {
-			if f.Album == "" || !s.HasShare(f.Album) {
-				AbortForbidden(c)
-				return
-			}
-
-			f.Public = true
-			f.Private = false
-			f.Archived = false
-			f.Review = false
-		} else {
-			f.Public = conf.Settings().Features.Private
+		// Ignore private flag if feature is disabled.
+		if !conf.Settings().Features.Private {
+			f.Public = false
 		}
 
 		// Find matching pictures.
-		photos, err := search.PhotosGeo(f)
+		photos, err := search.UserPhotosGeo(f, s)
 
 		if err != nil {
-			log.Warnf("search: %s", err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePlaces), "search", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
 			return
 		}
 
 		// Add response headers.
+		AddCountHeader(c, len(photos))
+		AddLimitHeader(c, f.Count)
+		AddOffsetHeader(c, f.Offset)
 		AddTokenHeaders(c)
 
 		var resp []byte
@@ -88,7 +65,6 @@ func SearchGeo(router *gin.RouterGroup) {
 		// Render JSON response.
 		switch clean.Token(c.Param("format")) {
 		case "view":
-			conf := service.Config()
 			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
 		default:
 			resp, err = photos.GeoJSON()

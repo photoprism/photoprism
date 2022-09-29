@@ -1,7 +1,7 @@
 <template>
   <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
     <div id="map" style="width: 100%; height: 100%;">
-      <div class="map-control">
+      <div v-if="canSearch" class="map-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group">
           <v-text-field v-model.lazy.trim="filter.q"
                         solo hide-details clearable flat single-line validate-on-blur
@@ -37,6 +37,7 @@ export default {
   },
   data() {
     return {
+      canSearch: this.$config.allow("places", "search"),
       initialized: false,
       map: null,
       markers: {},
@@ -48,7 +49,7 @@ export default {
       options: {},
       mapFont: ["Open Sans Regular"],
       result: {},
-      filter: {q: this.query()},
+      filter: {q: this.query(), album: this.album()},
       lastFilter: {},
       config: this.$config.values,
       settings: this.$config.values.settings.maps,
@@ -57,6 +58,7 @@ export default {
   watch: {
     '$route'() {
       this.filter.q = this.query();
+      this.filter.album = this.album();
       this.lastFilter = {};
 
       this.search();
@@ -75,6 +77,7 @@ export default {
         const s = this.$config.values.settings.maps;
         const filter = {
           q: this.query(),
+          album: this.album(),
         };
 
         let mapKey = "";
@@ -205,6 +208,9 @@ export default {
     query: function () {
       return this.$route.params.q ? this.$route.params.q : '';
     },
+    album: function () {
+      return this.$route.params.album ? this.$route.params.album : '';
+    },
     openPhoto(uid) {
       // Abort if uid is empty or results aren't loaded.
       if (!uid || this.loading || !this.result || !this.result.features || this.result.features.length === 0) {
@@ -218,6 +224,10 @@ export default {
           count: 1000,
         },
       };
+
+      if (this.filter.album) {
+        options.params.album = this.filter.album;
+      }
 
       this.loading = true;
 
@@ -246,7 +256,9 @@ export default {
       if (this.loading) return;
 
       if (this.query() !== this.filter.q) {
-        if (this.filter.q) {
+        if (this.filter.album) {
+          this.$router.replace({name: "album_place", params: {album: this.filter.album, q: this.filter.q}});
+        } else if (this.filter.q) {
           this.$router.replace({name: "place", params: {q: this.filter.q}});
         } else {
           this.$router.replace({name: "places"});

@@ -77,7 +77,9 @@ export default class Session {
     });
 
     // Say hello.
-    this.sendClientInfo();
+    this.refresh().then(() => {
+      this.sendClientInfo();
+    });
   }
 
   useSessionStorage() {
@@ -251,6 +253,27 @@ export default class Session {
 
       return Promise.resolve(reload);
     });
+  }
+
+  refresh() {
+    if (this.hasId()) {
+      return Api.get("session/" + this.getId())
+        .then((resp) => {
+          if (resp.data && resp.data.config) {
+            this.setConfig(resp.data.config);
+            this.setUser(resp.data.user);
+            this.setData(resp.data.data);
+          }
+          return Promise.resolve();
+        })
+        .catch(() => {
+          this.deleteId();
+          window.location.reload();
+          return Promise.reject();
+        });
+    } else {
+      return Promise.resolve();
+    }
   }
 
   redeemToken(token) {

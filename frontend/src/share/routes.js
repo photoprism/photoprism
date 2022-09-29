@@ -1,5 +1,6 @@
 import Albums from "share/albums.vue";
 import AlbumPhotos from "share/photos.vue";
+import Places from "pages/places.vue";
 
 const c = window.__CONFIG__;
 const siteTitle = c.siteAuthor ? c.siteAuthor : c.name;
@@ -22,6 +23,12 @@ export default [
     name: "album",
     path: "/s/:token/:uid",
     component: AlbumPhotos,
+    meta: { title: shareTitle, auth: true, hideNav: true },
+  },
+  {
+    name: "album_place",
+    path: "/places/:album/:q",
+    component: Places,
     meta: { title: shareTitle, auth: true, hideNav: true },
   },
   {

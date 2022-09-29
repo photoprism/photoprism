@@ -18,23 +18,12 @@ const (
 )
 
 func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.SearchPhotos{UID: uid, Merged: true}
-
-	if err := f.ParseQueryString(); err != nil {
-		log.Errorf("publish: %s", err)
-		AbortBadRequest(c)
-		return
-	}
-
-	result, _, err := search.Photos(f)
-
-	if err != nil {
-		log.Error(err)
+	if result, _, err := search.Photos(form.SearchPhotos{UID: uid, Merged: true}); err != nil {
+		log.Warnf("search: %s", err)
 		AbortUnexpected(c)
-		return
+	} else {
+		event.PublishEntities("photos", string(e), result)
 	}
-
-	event.PublishEntities("photos", string(e), result)
 }
 
 func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {

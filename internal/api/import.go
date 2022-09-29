@@ -3,10 +3,12 @@ package api
 import (
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -21,12 +23,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+const (
+	UploadPath = "/upload"
+)
+
 // StartImport imports media files from a directory and converts/indexes them as needed.
 //
 // POST /api/v1/import*
 func StartImport(router *gin.RouterGroup) {
 	router.POST("/import/*path", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceFiles, acl.ActionManage)
+		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})
 
 		if s.Abort(c) {
 			return
@@ -48,66 +54,93 @@ func StartImport(router *gin.RouterGroup) {
 			return
 		}
 
-		subPath := ""
-		path := conf.ImportPath()
+		srcFolder := ""
+		importPath := conf.ImportPath()
 
-		if subPath = clean.Path(c.Param("path")); subPath != "" && subPath != "/" {
-			subPath = strings.Replace(subPath, ".", "", -1)
-			path = filepath.Join(path, subPath)
+		// Import from sub-folder?
+		if srcFolder = clean.Path(c.Param("path")); srcFolder != "" && srcFolder != "/" {
+			srcFolder = strings.Replace(srcFolder, ".", "", -1)
 		} else if f.Path != "" {
-			subPath = strings.Replace(f.Path, ".", "", -1)
-			path = filepath.Join(path, subPath)
+			srcFolder = strings.Replace(f.Path, ".", "", -1)
 		}
 
-		path = filepath.Clean(path)
+		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".
+		if token := path.Base(srcFolder); token != "" && path.Dir(srcFolder) == UploadPath {
+			srcFolder = path.Join(UploadPath, s.RefID+token)
+			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", "granted"}, s.RefID, clean.Log(srcFolder), s.User().AclRole().String())
+		} else if acl.Resources.Deny(acl.ResourceFiles, s.User().AclRole(), acl.ActionManage) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", "denied"}, s.RefID, clean.Log(srcFolder), s.User().AclRole().String())
+			AbortForbidden(c)
+			return
+		}
+
+		importPath = path.Join(importPath, srcFolder)
 
 		imp := service.Import()
 
 		RemoveFromFolderCache(entity.RootImport)
 
-		var opt photoprism.ImportOptions
-
-		if f.Move {
-			event.InfoMsg(i18n.MsgMovingFilesFrom, clean.Log(filepath.Base(path)))
-			opt = photoprism.ImportOptionsMove(path)
-		} else {
-			event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(path)))
-			opt = photoprism.ImportOptionsCopy(path)
+		var destFolder string
+		if destFolder = s.User().UploadPath; destFolder == "" {
+			destFolder = conf.ImportDest()
 		}
 
-		if len(f.Albums) > 0 {
+		var opt photoprism.ImportOptions
+
+		// Copy or move files to the destination folder?
+		if f.Move {
+			event.InfoMsg(i18n.MsgMovingFilesFrom, clean.Log(filepath.Base(importPath)))
+			opt = photoprism.ImportOptionsMove(importPath, destFolder)
+		} else {
+			event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(importPath)))
+			opt = photoprism.ImportOptionsCopy(importPath, destFolder)
+		}
+
+		// Add imported files to albums if allowed.
+		if len(f.Albums) > 0 &&
+			acl.Resources.AllowAny(acl.ResourceAlbums, s.User().AclRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
 			log.Debugf("import: adding files to album %s", clean.Log(strings.Join(f.Albums, " and ")))
 			opt.Albums = f.Albums
 		}
 
-		imp.Start(opt)
+		// Start import.
+		imported := imp.Start(opt)
 
-		if subPath != "" && path != conf.ImportPath() && fs.DirIsEmpty(path) {
-			if err := os.Remove(path); err != nil {
-				log.Errorf("import: failed deleting empty folder %s: %s", clean.Log(path), err)
+		// Delete empty import directory.
+		if srcFolder != "" && importPath != conf.ImportPath() && fs.DirIsEmpty(importPath) {
+			if err := os.Remove(importPath); err != nil {
+				log.Errorf("import: failed deleting empty folder %s: %s", clean.Log(importPath), err)
 			} else {
-				log.Infof("import: deleted empty folder %s", clean.Log(path))
+				log.Infof("import: deleted empty folder %s", clean.Log(importPath))
 			}
 		}
 
-		moments := service.Moments()
-
-		if err := moments.Start(); err != nil {
-			log.Warnf("moments: %s", err)
+		// Update moments if files have been imported.
+		if n := len(imported); n == 0 {
+			log.Infof("import: no new files found to import", clean.Log(importPath))
+		} else {
+			log.Infof("import: imported %s", english.Plural(n, "file", "files"))
+			if moments := service.Moments(); moments == nil {
+				log.Warnf("import: moments service not set - possible bug")
+			} else if err := moments.Start(); err != nil {
+				log.Warnf("moments: %s", err)
+			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())
 
+		// Show success message.
 		msg := i18n.Msg(i18n.MsgImportCompletedIn, elapsed)
 
 		event.Success(msg)
-		event.Publish("import.completed", event.Data{"path": path, "seconds": elapsed})
-		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("import.completed", event.Data{"path": importPath, "seconds": elapsed})
+		event.Publish("index.completed", event.Data{"path": importPath, "seconds": elapsed})
 
 		for _, uid := range f.Albums {
 			PublishAlbumEvent(EntityUpdated, uid, c)
 		}
 
+		// Update the user interface.
 		UpdateClientConfig()
 
 		// Update album, label, and subject cover thumbs.

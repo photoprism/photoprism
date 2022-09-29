@@ -25,16 +25,18 @@ func ImportWorker(jobs <-chan ImportJob) {
 		var destMainFileName string
 
 		o := job.IndexOpt
+
 		imp := job.Imp
-		impOpt := job.ImportOpt
-		impPath := job.ImportOpt.Path
+		opt := job.ImportOpt
+		src := job.ImportOpt.Path
+
 		related := job.Related
 
 		// relatedOriginalNames contains the original filenames of related files.
 		relatedOriginalNames := make(map[string]string, len(related.Files))
 
 		if related.Main == nil {
-			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, impPath)))
+			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, src)))
 			continue
 		}
 
@@ -50,17 +52,18 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 		}
 
-		originalName := related.Main.RelName(impPath)
+		originalName := related.Main.RelName(src)
 
 		event.Publish("import.file", event.Data{
-			"fileName": originalName,
-			"baseName": filepath.Base(related.Main.FileName()),
+			"fileName":  originalName,
+			"baseName":  filepath.Base(related.Main.FileName()),
+			"subFolder": opt.DestFolder,
 		})
 
 		for _, f := range related.Files {
-			relFileName := f.RelName(impPath)
+			relFileName := f.RelName(src)
 
-			if destFileName, err := imp.DestinationFilename(related.Main, f); err == nil {
+			if destFileName, err := imp.DestinationFilename(related.Main, f, opt.DestFolder); err == nil {
 				destDir := filepath.Dir(destFileName)
 
 				// Remember the original filenames of related files, so they can later be indexed and searched.
@@ -87,7 +90,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Infof("import: moving related %s file %s to %s", f.FileType(), clean.Log(relFileName), clean.Log(fs.RelName(destFileName, imp.originalsPath())))
 				}
 
-				if impOpt.Move {
+				if opt.Move {
 					if err := f.Move(destFileName); err != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
 						log.Debugf("import: %s", err.Error())
@@ -108,12 +111,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 					// Do nothing.
 				} else if file, err := entity.FirstFileByHash(fileHash); err != nil {
 					// Do nothing.
-				} else if err := entity.AddPhotoToAlbums(file.PhotoUID, impOpt.Albums); err != nil {
+				} else if err := entity.AddPhotoToAlbums(file.PhotoUID, opt.Albums); err != nil {
 					log.Warn(err)
 				}
 
 				// Remove duplicates to save storage.
-				if impOpt.RemoveExistingFiles {
+				if opt.RemoveExistingFiles {
 					if err := f.Remove(); err != nil {
 						log.Errorf("import: failed deleting %s (%s)", clean.Log(f.BaseName()), err.Error())
 					} else {
@@ -201,7 +204,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					photoUID = res.PhotoUID
 
 					// Add photo to album if a list of albums was provided when importing.
-					if err := entity.AddPhotoToAlbums(photoUID, impOpt.Albums); err != nil {
+					if err := entity.AddPhotoToAlbums(photoUID, opt.Albums); err != nil {
 						log.Warn(err)
 					}
 				}

@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	PhotoUID = 'p'
+	PhotoUID = byte('p')
 )
 
 var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
@@ -63,7 +63,7 @@ type Photo struct {
 	TitleSrc         string       `gorm:"type:VARBINARY(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
 	PhotoDescription string       `gorm:"type:VARCHAR(4096);" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string       `gorm:"type:VARBINARY(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
-	PhotoPath        string       `gorm:"type:VARBINARY(500);index:idx_photos_path_name;" json:"Path" yaml:"-"`
+	PhotoPath        string       `gorm:"type:VARBINARY(1024);index:idx_photos_path_name;" json:"Path" yaml:"-"`
 	PhotoName        string       `gorm:"type:VARBINARY(255);index:idx_photos_path_name;" json:"Name" yaml:"-"`
 	OriginalName     string       `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoStack       int8         `json:"Stack" yaml:"Stack,omitempty"`

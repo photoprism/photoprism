@@ -36,7 +36,7 @@
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-label-clipboard :refresh="refresh" :selection="selection"
+      <p-label-clipboard v-if="canSelect" :refresh="refresh" :selection="selection"
                          :clear-selection="clearSelection"></p-label-clipboard>
 
       <p-scroll-top></p-scroll-top>
@@ -81,7 +81,7 @@
                   @mousedown.stop.prevent="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn :ripple="false"
+                <v-btn v-if="canSelect" :ripple="false"
                        icon flat absolute
                        class="input-select"
                        @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -105,7 +105,7 @@
               </v-img>
 
               <v-card-title primary-title class="pa-3 card-details" style="user-select: none;" @click.stop.prevent="">
-                <v-edit-dialog
+                <v-edit-dialog v-if="canManage"
                     :return-value.sync="label.Name"
                     lazy
                     class="inline-edit"
@@ -128,6 +128,9 @@
                     ></v-text-field>
                   </template>
                 </v-edit-dialog>
+                <span v-else class="body-2 ma-0">
+                  {{ label.Name }}
+                </span>
               </v-card-title>
 
               <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none;"
@@ -160,7 +163,10 @@ import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 export default {
   name: 'PPageLabels',
   props: {
-    staticFilter: Object
+    staticFilter: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     const query = this.$route.query;
@@ -168,7 +174,12 @@ export default {
     const q = query['q'] ? query['q'] : '';
     const all = query['all'] ? query['all'] : '';
 
+    const canManage = this.$config.allow("labels", "manage");
+    const canAddAlbums = this.$config.allow("albums", "create") && this.$config.feature("albums");
+
     return {
+      canManage: canManage,
+      canSelect: canManage || canAddAlbums,
       view: 'all',
       config: this.$config.values,
       subscriptions: [],
@@ -231,6 +242,10 @@ export default {
       window.localStorage.setItem("labels_offset", offset);
     },
     toggleLike(ev, index) {
+      if (!this.canManage) {
+        return;
+      }
+
       const inputType = this.input.eval(ev, index);
 
       if (inputType !== ClickShort) {
@@ -246,7 +261,9 @@ export default {
       label.toggleLike();
     },
     selectRange(rangeEnd, models) {
-      if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
+      if (!this.canSelect) {
+        return;
+      } else if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
         console.warn("selectRange() - invalid arguments:", rangeEnd, models);
         return;
       }
@@ -271,6 +288,10 @@ export default {
       return (rangeEnd - rangeStart) + 1;
     },
     onSelect(ev, index) {
+      if (!this.canSelect) {
+        return;
+      }
+
       const inputType = this.input.eval(ev, index);
 
       if (inputType !== ClickShort) {
@@ -302,6 +323,10 @@ export default {
       }
     },
     onContextMenu(ev, index) {
+      if (!this.canSelect) {
+        return;
+      }
+
       if (this.$isMobile) {
         ev.preventDefault();
         ev.stopPropagation();
@@ -312,6 +337,10 @@ export default {
       }
     },
     onSave(label) {
+      if (!this.canManage) {
+        return;
+      }
+
       label.update();
     },
     showAll() {
@@ -336,6 +365,10 @@ export default {
       }
     },
     toggleSelection(uid) {
+      if (!this.canSelect) {
+        return;
+      }
+
       const pos = this.selection.indexOf(uid);
 
       if (pos !== -1) {

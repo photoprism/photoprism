@@ -153,6 +153,10 @@ export default class Util {
     return s.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
   }
 
+  static generateToken() {
+    return (Math.random() + 1).toString(36).substring(6);
+  }
+
   static fileType(value) {
     if (!value || typeof value !== "string") {
       return "";

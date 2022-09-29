@@ -36,11 +36,10 @@
             <v-icon>cloud_download</v-icon>
         </v-btn -->
         <v-btn
-            v-if="$config.feature('albums')"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"
-            :disabled="selection.length === 0"
+            :disabled="!canAddAlbums || selection.length === 0"
             class="action-album"
             @click.stop="dialog.album = true"
         >
@@ -50,7 +49,7 @@
             fab dark small
             color="remove"
             :title="$gettext('Delete')"
-            :disabled="selection.length === 0"
+            :disabled="!canManage || selection.length === 0"
             class="action-delete"
             @click.stop="dialog.delete = true"
         >
@@ -85,11 +84,20 @@ export default {
       type: Array,
       default: () => [],
     },
-    refresh: Function,
-    clearSelection: Function,
+    refresh: {
+      type: Function,
+      default: () => {},
+    },
+    clearSelection: {
+      type: Function,
+      default: () => {},
+    },
   },
   data() {
     return {
+      canManage: this.$config.allow("labels", "manage"),
+      canDownload: this.$config.allow("labels", "download"),
+      canAddAlbums: this.$config.allow("albums", "create") && this.$config.feature("albums"),
       expanded: false,
       dialog: {
         delete: false,
@@ -105,6 +113,10 @@ export default {
       this.expanded = false;
     },
     addToAlbum(ppid) {
+      if (!this.canAddAlbums) {
+        return;
+      }
+
       this.dialog.album = false;
 
       Api.post(`albums/${ppid}/photos`, {"labels": this.selection}).then(() => this.onAdded());
@@ -113,6 +125,10 @@ export default {
       this.clearClipboard();
     },
     batchDelete() {
+      if (!this.canManage) {
+        return;
+      }
+
       this.dialog.delete = false;
 
       Api.post("batch/labels/delete", {"labels": this.selection}).then(this.onDeleted.bind(this));
@@ -122,6 +138,10 @@ export default {
       this.clearClipboard();
     },
     download() {
+      if (!this.canDownload) {
+        return;
+      }
+
       if (this.selection.length !== 1) {
         Notify.error(this.$gettext("You can only download one label"));
         return;

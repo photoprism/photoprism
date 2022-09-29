@@ -176,7 +176,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 					FileName:  mf.FileName(),
 					Related:   related,
 					IndexOpt:  photoprism.IndexOptionsAll(),
-					ImportOpt: photoprism.ImportOptionsMove(baseDir),
+					ImportOpt: photoprism.ImportOptionsMove(baseDir, worker.conf.ImportDest()),
 					Imp:       service.Import(),
 				}
 			}

@@ -234,6 +234,12 @@ export default [
     meta: { title: $gettext("Places"), auth: true },
   },
   {
+    name: "album_place",
+    path: "/places/:album/:q",
+    component: Places,
+    meta: { title: $gettext("Places"), auth: true },
+  },
+  {
     name: "states",
     path: "/states",
     component: Albums,

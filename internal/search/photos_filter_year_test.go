@@ -20,11 +20,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "2008"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -37,11 +32,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "2018"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -56,11 +46,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "19*"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -73,11 +58,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "2018|2008"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -92,11 +72,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "2018 | 2008"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -109,11 +84,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "%gold"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -128,11 +98,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "I love % dog"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -145,11 +110,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "sale%"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -164,11 +124,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "&IlikeFood"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -181,11 +136,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "Pets & Dogs"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -200,11 +150,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Light&"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -218,11 +163,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "'Family"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -235,11 +175,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "Father's year"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -255,11 +190,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Ice Cream'"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -272,11 +202,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "*Forrest"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -291,11 +216,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "My*Kids"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -308,11 +228,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "Yoga***"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -327,11 +242,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "|Banana"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -344,11 +254,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "Red|Green"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -364,11 +269,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Blue|"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -383,11 +283,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "345 Shirt"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -401,11 +296,6 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "year555 Blue"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -418,11 +308,6 @@ func TestPhotosFilterYear(t *testing.T) {
 
 		f.Year = "Route 66"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -446,11 +331,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"2008\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -463,11 +343,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"2018\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -482,11 +357,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"19*\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -499,11 +369,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"2018|2008\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -518,11 +383,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"2018 | 2008\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -535,11 +395,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"%gold\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -554,11 +409,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"I love % dog\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -571,11 +421,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"sale%\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -590,11 +435,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"&IlikeFood\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -607,11 +447,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"Pets & Dogs\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -626,11 +461,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Light&\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -644,11 +474,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"'Family\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -661,11 +486,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"Father's year\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -681,11 +501,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Ice Cream'\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -698,11 +513,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"*Forrest\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -717,11 +527,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"My*Kids\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -734,11 +539,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"Yoga***\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -753,11 +553,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"|Banana\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -770,11 +565,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"Red|Green\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -790,11 +580,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Blue|\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -807,11 +592,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"345 Shirt\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -826,11 +606,6 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"year555 Blue\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -843,11 +618,6 @@ func TestPhotosQueryYear(t *testing.T) {
 
 		f.Query = "year:\"Route 66\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

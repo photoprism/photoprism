@@ -36,12 +36,12 @@
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down action-upload"
+        <v-btn v-if="canUpload" icon class="hidden-sm-and-down action-upload"
                :title="$gettext('Upload')" @click.stop="showUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
 
-        <v-btn v-if="staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')"
+        <v-btn v-if="canManage && staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')"
                @click.prevent="create()">
           <v-icon>add</v-icon>
         </v-btn>
@@ -245,7 +245,7 @@ export default {
     }
 
     return {
-      canUpload: features.upload,
+      canUpload: this.$config.allow("files", "upload") && features.upload,
       canShare: this.$config.allow("albums", "share") && features.share,
       canManage: this.$config.allow("albums", "manage"),
       canEdit: this.$config.allow("albums", "update"),

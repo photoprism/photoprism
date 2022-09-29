@@ -82,6 +82,17 @@ type ClientConfig struct {
 	Ext             Values              `json:"ext"`
 }
 
+// ApplyACL updates the client config values based on the ACL and Role provided.
+func (c ClientConfig) ApplyACL(a acl.ACL, r acl.Role) ClientConfig {
+	if c.Settings != nil {
+		c.Settings = c.Settings.ApplyACL(a, r)
+	}
+
+	c.ACL = a.Grants(r)
+
+	return c
+}
+
 // Years represents a list of years.
 type Years []int
 
@@ -189,7 +200,7 @@ func (c *Config) Flags() (flags []string) {
 // ClientPublic returns config values for use by the JavaScript UI and other clients.
 func (c *Config) ClientPublic() ClientConfig {
 	if c.Public() {
-		return c.ClientUser(true)
+		return c.ClientUser(true).ApplyACL(acl.Resources, acl.RoleAdmin)
 	}
 
 	a := c.ClientAssets()
@@ -548,18 +559,13 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 
 // ClientRole provides the client config values for the specified user role.
 func (c *Config) ClientRole(role acl.Role) ClientConfig {
-	result := c.ClientUser(true)
-	result.Settings = result.Settings.ApplyACL(acl.Resources, role)
-	result.ACL = acl.Resources.Grants(role)
-
-	return result
+	return c.ClientUser(true).ApplyACL(acl.Resources, role)
 }
 
 // ClientSession provides the client config values for the specified session.
 func (c *Config) ClientSession(sess *entity.Session) ClientConfig {
-	result := c.ClientUser(false)
+	result := c.ClientUser(false).ApplyACL(acl.Resources, sess.User().AclRole())
 	result.Settings = c.SessionSettings(sess)
-	result.ACL = acl.Resources.Grants(sess.User().AclRole())
 
 	return result
 }

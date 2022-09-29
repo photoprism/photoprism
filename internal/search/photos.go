@@ -9,9 +9,10 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -28,38 +29,46 @@ var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGI
 
 // Photos finds photos based on the search form provided and returns them as PhotoResults.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
-	return searchPhotos(f, PhotosColsAll)
+	return searchPhotos(f, nil, PhotosColsAll)
+}
+
+// UserPhotos finds photos based on the search form and user session then returns them as PhotoResults.
+func UserPhotos(f form.SearchPhotos, sess *entity.Session) (results PhotoResults, count int, err error) {
+	return searchPhotos(f, sess, PhotosColsAll)
 }
 
 // PhotoIds finds photo and file ids based on the search form provided and returns them as PhotoResults.
 func PhotoIds(f form.SearchPhotos) (files PhotoResults, count int, err error) {
 	f.Merged = false
 	f.Primary = true
-	return searchPhotos(f, "photos.id, photos.photo_uid, files.file_uid")
+	return searchPhotos(f, nil, "photos.id, photos.photo_uid, files.file_uid")
 }
 
-// photos searches for photos based on a Form and returns PhotoResults ([]Photo).
-func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults, count int, err error) {
+// searchPhotos finds photos based on the search form and user session then returns them as PhotoResults.
+func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
-	s := UnscopedDb()
-	// s = s.LogMode(true)
+	// Parse query string and filter.
+	if err = f.ParseQueryString(); err != nil {
+		log.Debugf("search: %s", err)
+		return PhotoResults{}, 0, ErrBadRequest
+	}
 
-	// Database tables.
-	s = s.Table("files").Select(resultCols).
+	// Specify table names and joins.
+	s := UnscopedDb().Table(entity.File{}.TableName()).Select(resultCols).
 		Joins("JOIN photos ON files.photo_id = photos.id AND files.media_id IS NOT NULL").
 		Joins("LEFT JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("LEFT JOIN lenses ON photos.lens_id = lenses.id").
 		Joins("LEFT JOIN places ON photos.place_id = places.id")
 
-	// Offset and count.
+	// Limit offset and count.
 	if f.Count > 0 && f.Count <= MaxResults {
 		s = s.Limit(f.Count).Offset(f.Offset)
 	} else {
 		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
-	// Sort order.
+	// Set sort order.
 	switch f.Order {
 	case entity.SortOrderEdited:
 		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.media_id")
@@ -81,7 +90,61 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 	case entity.SortOrderDefault, entity.SortOrderImported, entity.SortOrderAdded:
 		s = s.Order("files.media_id")
 	default:
-		return PhotoResults{}, 0, fmt.Errorf("invalid sort order")
+		return PhotoResults{}, 0, ErrBadSortOrder
+	}
+
+	// Limit search results to a specific UID scope, e.g. when sharing.
+	if txt.NotEmpty(f.In) {
+		f.In = strings.ToLower(f.In)
+		if idType, idPrefix := rnd.IdType(f.In); idType != rnd.TypeUID || idPrefix != entity.AlbumUID {
+			return PhotoResults{}, 0, ErrInvalidId
+		} else if a, err := entity.CachedAlbumByUID(f.In); err != nil || a.AlbumUID == "" {
+			return PhotoResults{}, 0, ErrInvalidId
+		} else if a.AlbumFilter == "" {
+			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
+				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", a.AlbumUID)
+		} else if err = form.Unserialize(&f, a.AlbumFilter); err != nil {
+			return PhotoResults{}, 0, ErrBadFilter
+		} else {
+			f.Filter = a.AlbumFilter
+			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
+		}
+	} else {
+		f.In = ""
+	}
+
+	// Check session permissions and apply as needed.
+	if sess != nil {
+		aclRole := sess.User().AclRole()
+
+		// Visitors and other restricted users can only access shared content.
+		if !sess.HasShare(f.In) && (sess.IsVisitor() || sess.Unregistered()) ||
+			f.In == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
+			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
+			return PhotoResults{}, 0, ErrForbidden
+		}
+
+		// Exclude private content?
+		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+			f.Public = true
+			f.Private = false
+		}
+
+		// Exclude archived content?
+		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
+			f.Archived = false
+			f.Review = false
+		}
+
+		// Exclude hidden files?
+		if acl.Resources.Deny(acl.ResourceFiles, aclRole, acl.AccessAll) {
+			f.Hidden = false
+		}
+
+		// Restrict the search to a sub-folder, if specified.
+		if dir := sess.User().BasePath; f.In == "" && dir != "" {
+			s = s.Where("photos.photo_path LIKE ?", dir+"%")
+		}
 	}
 
 	// Limit the result file types if hidden images/videos should not be found.
@@ -102,10 +165,27 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 
 	// Find only certain unique IDs?
 	if txt.NotEmpty(f.UID) {
-		s = s.Where("photos.photo_uid IN (?)", SplitOr(strings.ToLower(f.UID)))
+		ids := SplitOr(strings.ToLower(f.UID))
 
-		// Take shortcut?
-		if f.Album == "" && f.Query == "" {
+		if idType, prefix := rnd.ContainsType(ids); idType == rnd.TypeUID {
+			switch prefix {
+			case entity.PhotoUID:
+				s = s.Where("photos.photo_uid IN (?)", ids)
+			case entity.FileUID:
+				s = s.Where("files.file_uid IN (?)", ids)
+			default:
+				log.Debugf("(1) idType: %s, prefix: %s", idType, prefix)
+				return PhotoResults{}, 0, fmt.Errorf("invalid %s specified", idType)
+			}
+		} else if idType.SHA() {
+			s = s.Where("files.file_hash IN (?)", ids)
+		} else {
+			log.Debugf("(2) idType: %s, prefix: %s", idType, prefix)
+			return PhotoResults{}, 0, ErrInvalidId
+		}
+
+		// Find UIDs only to improve performance?
+		if sess == nil && f.FindUidOnly() {
 			s = s.Order("files.media_id")
 
 			if result := s.Scan(&results); result.Error != nil {
@@ -120,13 +200,14 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 
 			return results, len(results), nil
 		}
+	} else {
+		f.UID = ""
 	}
 
 	// Filter by label, label category and keywords.
 	var categories []entity.Category
 	var labels []entity.Label
 	var labelIds []uint
-
 	if txt.NotEmpty(f.Label) {
 		if err := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Debugf("search: label %s not found", txt.LogParamLower(f.Label))
@@ -550,15 +631,20 @@ func searchPhotos(f form.SearchPhotos, resultCols string) (results PhotoResults,
 		}
 	}
 
-	if err := s.Scan(&results).Error; err != nil {
+	// Query database.
+	if err = s.Scan(&results).Error; err != nil {
 		return results, 0, err
 	}
 
+	// Log number of results.
 	log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
+	// Merge files that belong to the same photo?
 	if f.Merged {
+		// Return merged files.
 		return results.Merge()
 	}
 
+	// Return unmerged files.
 	return results, len(results), nil
 }

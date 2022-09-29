@@ -35,6 +35,8 @@ import (
 
 var log = event.Log
 
+var ExpiresAfter = 168 * time.Hour
+
 // Session represents a session store.
 type Session struct {
 	conf         *config.Config

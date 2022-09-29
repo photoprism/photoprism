@@ -665,3 +665,9 @@ func TestUser_SyncAllowed(t *testing.T) {
 	assert.False(t, UserFixtures.Pointer("deleted").SyncAllowed())
 	assert.False(t, UserFixtures.Pointer("friend").SyncAllowed())
 }
+
+func TestUser_UploadAllowed(t *testing.T) {
+	assert.True(t, UserFixtures.Pointer("alice").UploadAllowed())
+	assert.False(t, UserFixtures.Pointer("deleted").UploadAllowed())
+	assert.True(t, UserFixtures.Pointer("friend").UploadAllowed())
+}

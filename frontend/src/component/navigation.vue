@@ -70,7 +70,7 @@
       </v-toolbar>
 
       <v-list class="pt-3 p-flex-menu">
-        <v-list-tile v-if="isMini" class="nav-expand" @click.stop="toggleIsMini()">
+        <v-list-tile v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
           <v-list-tile-action :title="$gettext('Expand')">
             <v-icon v-if="!rtl">chevron_right</v-icon>
             <v-icon v-else>chevron_left</v-icon>
@@ -165,7 +165,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-if="isMini && $config.feature('albums')" to="/albums" class="nav-albums" @click.stop="">
+        <v-list-tile v-if="isMini" v-show="$config.feature('albums')" to="/albums" class="nav-albums" @click.stop="">
           <v-list-tile-action :title="$gettext('Albums')">
             <v-icon>bookmark</v-icon>
           </v-list-tile-action>
@@ -177,8 +177,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <template v-if="!isMini && $config.feature('albums')">
-        <v-list-group v-if="canSearch" prepend-icon="bookmark" no-action>
+        <v-list-group v-if="!isMini" v-show="$config.feature('albums')" prepend-icon="bookmark" no-action>
           <template #activator>
             <v-list-tile :to="{ name: 'albums' }" class="nav-albums" @click.stop="">
               <v-list-tile-content>
@@ -199,20 +198,6 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list-group>
-        <v-list-tile v-else :to="{ name: 'albums' }" class="nav-albums" @click.stop="">
-          <v-list-tile-action :title="$gettext('Albums')">
-            <v-icon>bookmark</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title class="p-flex-menuitem">
-              <translate key="Albums">Albums</translate>
-              <span v-if="config.count.albums > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.albums | abbreviateCount }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        </template>
 
         <v-list-tile v-if="isMini && $config.feature('videos')" to="/videos" class="nav-video" @click.stop="">
           <v-list-tile-action :title="$gettext('Videos')">
@@ -307,7 +292,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini" v-show="$config.feature('places')" :to="{ name: 'places' }" class="nav-places"
+        <v-list-tile v-if="isMini" v-show="canSearchPlaces && $config.feature('places')" :to="{ name: 'places' }" class="nav-places"
                      @click.stop="">
           <v-list-tile-action :title="$gettext('Places')">
             <v-icon>place</v-icon>
@@ -320,7 +305,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini" v-show="$config.feature('places')" prepend-icon="place" no-action>
+        <v-list-group v-if="!isMini" v-show="canSearchPlaces && $config.feature('places')" prepend-icon="place" no-action>
           <template #activator>
             <v-list-tile to="/places" class="nav-places" @click.stop="">
               <v-list-tile-content>
@@ -578,7 +563,7 @@
           </a>
         </div>
         <div class="menu-actions">
-          <div v-if="auth && !routeName('browse')" class="menu-action nav-search">
+          <div v-if="auth && !routeName('browse')&& $config.feature('search')" class="menu-action nav-search">
             <router-link to="/browse">
               <v-icon>search</v-icon>
               <translate>Search</translate>
@@ -596,7 +581,7 @@
               <translate>People</translate>
             </router-link>
           </div>
-          <div v-if="auth && !routeName('places') && $config.feature('places')" class="menu-action nav-places">
+          <div v-if="auth && canSearchPlaces && !routeName('places') && $config.feature('places')" class="menu-action nav-places">
             <router-link to="/places">
               <v-icon>place</v-icon>
               <translate>Places</translate>
@@ -683,8 +668,11 @@ export default {
       appNameSuffix = appNameParts.slice(1, 9).join(" ");
     }
 
+    const isRestricted= this.$config.deny("photos", "access_library");
+
     return {
-      canSearch: this.$config.allow("photos", "search"),
+      canSearchPlaces: this.$config.allow("places", "search"),
+      canAccessAll: !isRestricted,
       canManagePeople: this.$config.allow("people", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
@@ -692,7 +680,8 @@ export default {
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,
-      isMini: localStorage.getItem('last_navigation_mode') !== 'false',
+      isRestricted: isRestricted,
+      isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
       isPublic: this.$config.get("public"),
       isDemo: this.$config.get("demo"),
       isAdmin: this.$session.isAdmin(),
@@ -790,7 +779,7 @@ export default {
     showNavigation() {
       if (this.auth) {
         this.drawer = true;
-        this.isMini = false;
+        this.isMini = this.isRestricted;
       }
     },
     createAlbum() {

@@ -32,11 +32,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:yes"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -45,11 +40,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		assert.Equal(t, len(photos), len(photos0))
 		f.Query = "portrait:false"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -64,11 +54,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"%gold\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -81,11 +66,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"I love % dog\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -100,11 +80,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"sale%\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -117,11 +92,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"&IlikeFood\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -137,16 +107,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"Pets & Dogs\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -159,11 +119,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"Light&\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -179,11 +134,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"'Family\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -197,11 +147,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		// Note: If the string in portrait starts with f/F, the txt package will assume it means false,
 		f.Query = "portrait:\"Mother's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -217,11 +162,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"Ice Cream'\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -235,11 +175,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"*Forrest\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -255,11 +190,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"My*Kids\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -273,11 +203,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"Yoga***\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -293,11 +218,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"|Banana\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -311,11 +231,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"Red|Green\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -331,11 +246,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"Blue|\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -349,11 +259,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"345 Shirt\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -369,11 +274,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"Color555 Blue\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -387,11 +287,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"Route 66\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -407,11 +302,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "portrait:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -425,11 +315,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "portrait:\"Route %66 | *Father's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -445,11 +330,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		f.Query = "landscape:true"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -463,11 +343,6 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		f.Query = "square:true"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

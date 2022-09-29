@@ -82,6 +82,10 @@ func (data SessionData) HasShares() bool {
 
 // HasShare if the session includes the specified share
 func (data SessionData) HasShare(uid string) bool {
+	if uid == "" || data.NoShares() {
+		return false
+	}
+
 	for _, share := range data.Shares {
 		if share == uid {
 			return true

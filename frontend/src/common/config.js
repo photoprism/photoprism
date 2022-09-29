@@ -355,16 +355,43 @@ export default class Config {
     return result;
   }
 
+  // allow checks whether the current user is granted permission for the specified resource.
   allow(resource, perm) {
     if (this.values["acl"] && this.values["acl"][resource]) {
-      return !!this.values["acl"][resource][perm] || !!this.values["acl"][resource]["full_access"];
+      if (this.values["acl"][resource]["full_access"]) {
+        return true;
+      } else if (this.values["acl"][resource][perm]) {
+        return true;
+      }
     }
 
     return false;
   }
 
+  // allowAny checks whether the current user is granted any of the permissions for the specified resource.
+  allowAny(resource, perms) {
+    if (this.values["acl"] && this.values["acl"][resource]) {
+      if (this.values["acl"][resource]["full_access"]) {
+        return true;
+      }
+      for (const perm of perms) {
+        if (this.values["acl"][resource][perm]) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  // deny checks whether the current user must be denied access to the specified resource.
   deny(resource, perm) {
     return !this.allow(resource, perm);
+  }
+
+  // denyAll checks whether the current user is granted none of the permissions for the specified resource.
+  denyAll(resource, perm) {
+    return !this.allowAny(resource, perm);
   }
 
   settings() {

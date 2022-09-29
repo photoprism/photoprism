@@ -14,7 +14,9 @@ import (
 func TestImportWorker_OriginalFileNames(t *testing.T) {
 	conf := config.TestConfig()
 
-	conf.InitializeTestData()
+	if err := conf.InitializeTestData(); err != nil {
+		t.Fatal(err)
+	}
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
@@ -55,7 +57,7 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 		FileName:  mediaFile.FileName(),
 		Related:   relatedFiles,
 		IndexOpt:  IndexOptionsAll(),
-		ImportOpt: ImportOptionsCopy(conf.ImportPath()),
+		ImportOpt: ImportOptionsCopy(conf.ImportPath(), conf.ImportDest()),
 		Imp:       imp,
 	}
 

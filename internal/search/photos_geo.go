@@ -9,9 +9,10 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -19,12 +20,23 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// GeoCols contains the geo query column names.
+// GeoCols specifies the UserPhotosGeo result column names.
 var GeoCols = SelectString(GeoResult{}, []string{"*"})
 
-// PhotosGeo searches for photos based on Form values and returns GeoResults ([]GeoResult).
+// PhotosGeo finds photos based on the search form and returns them as GeoResults.
 func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
+	return UserPhotosGeo(f, nil)
+}
+
+// UserPhotosGeo finds photos based on the search form and user session then returns them as GeoResults.
+func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoResults, err error) {
 	start := time.Now()
+
+	// Parse query string and filter.
+	if err = f.ParseQueryString(); err != nil {
+		log.Debugf("search: %s", err)
+		return GeoResults{}, ErrBadRequest
+	}
 
 	S2Levels := 7
 
@@ -32,7 +44,8 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	if f.Near != "" {
 		photo := Photo{}
 
-		if err := Db().First(&photo, "photo_uid = ?", f.Near).Error; err != nil {
+		// Find photo to get location.
+		if err = Db().First(&photo, "photo_uid = ?", f.Near).Error; err != nil {
 			return GeoResults{}, err
 		}
 
@@ -43,15 +56,109 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 		S2Levels = 12
 	}
 
-	s := UnscopedDb()
-
-	// s.LogMode(true)
-
-	s = s.Table("photos").Select(GeoCols).
+	// Specify table names and joins.
+	s := UnscopedDb().Table(entity.Photo{}.TableName()).Select(GeoCols).
 		Joins(`JOIN files ON files.photo_id = photos.id AND files.file_primary = 1 AND files.media_id IS NOT NULL`).
 		Joins("LEFT JOIN places ON photos.place_id = places.id").
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
+
+	// Limit offset and count.
+	if f.Count > 0 {
+		s = s.Limit(f.Count).Offset(f.Offset)
+	} else {
+		s = s.Limit(1000000).Offset(f.Offset)
+	}
+
+	// Limit search results to a specific UID scope, e.g. when sharing.
+	if txt.NotEmpty(f.In) {
+		f.In = strings.ToLower(f.In)
+		if idType, idPrefix := rnd.IdType(f.In); idType != rnd.TypeUID || idPrefix != entity.AlbumUID {
+			return GeoResults{}, ErrInvalidId
+		} else if a, err := entity.CachedAlbumByUID(f.In); err != nil || a.AlbumUID == "" {
+			return GeoResults{}, ErrInvalidId
+		} else if a.AlbumFilter == "" {
+			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
+				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", a.AlbumUID)
+		} else if err = form.Unserialize(&f, a.AlbumFilter); err != nil {
+			return GeoResults{}, ErrBadFilter
+		} else {
+			f.Filter = a.AlbumFilter
+			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
+		}
+	} else {
+		f.In = ""
+	}
+
+	// Check session permissions and apply as needed.
+	if sess != nil {
+		aclRole := sess.User().AclRole()
+
+		// Visitors and other restricted users can only access shared content.
+		if !sess.HasShare(f.In) && (sess.IsVisitor() || sess.Unregistered()) ||
+			f.In == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) ||
+			f.In == "" && acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.ActionSearch) {
+			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePlaces), aclRole)
+			return GeoResults{}, ErrForbidden
+		}
+
+		// Exclude private content?
+		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+			f.Public = true
+			f.Private = false
+		}
+
+		// Exclude archived content?
+		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
+			f.Archived = false
+			f.Review = false
+		}
+
+		// Restrict the search to a sub-folder, if specified.
+		if dir := sess.User().BasePath; f.In == "" && dir != "" {
+			s = s.Where("photos.photo_path LIKE ?", dir+"%")
+		}
+	}
+
+	// Set sort order.
+	if f.Near == "" {
+		s = s.Order("taken_at, photos.photo_uid")
+	} else {
+		// Sort by distance to UID.
+		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", f.Near, f.Lat, f.Lng))
+	}
+
+	// Find only certain unique IDs?
+	if txt.NotEmpty(f.UID) {
+		ids := SplitOr(strings.ToLower(f.UID))
+
+		if idType, prefix := rnd.ContainsType(ids); idType == rnd.TypeUID {
+			switch prefix {
+			case entity.PhotoUID:
+				s = s.Where("photos.photo_uid IN (?)", ids)
+			case entity.FileUID:
+				s = s.Where("files.file_uid IN (?)", ids)
+			default:
+				return GeoResults{}, fmt.Errorf("invalid %s specified", idType)
+			}
+		} else if idType.SHA() {
+			s = s.Where("files.file_hash IN (?)", ids)
+		}
+
+		// Find UIDs only to improve performance?
+		if f.FindByIdOnly() {
+			// Fetch results.
+			if result := s.Scan(&results); result.Error != nil {
+				return results, result.Error
+			}
+
+			log.Debugf("places: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+
+			return results, nil
+		}
+	} else {
+		f.UID = ""
+	}
 
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
@@ -197,6 +304,7 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 
 	// Filter by album?
 	if rnd.IsUID(f.Album, 'a') {
+		S2Levels = 15
 		if f.Filter != "" {
 			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", f.Album)
 		} else {
@@ -382,19 +490,6 @@ func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	// Find photos taken after date?
 	if !f.After.IsZero() {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
-	}
-
-	if f.Near == "" {
-		// Default sort order.
-		s = s.Order("taken_at, photos.photo_uid")
-	} else {
-		// Sort by distance to UID.
-		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", f.Near, f.Lat, f.Lng))
-	}
-
-	// Limit result count?
-	if f.Count > 0 {
-		s = s.Limit(f.Count).Offset(f.Offset)
 	}
 
 	// Fetch results.

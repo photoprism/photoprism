@@ -9,8 +9,9 @@ import (
 // SearchPhotos represents search form fields for "/api/v1/photos".
 type SearchPhotos struct {
 	Query     string    `form:"q"`
-	Filter    string    `form:"filter" notes:"-" serialize:"-"`
-	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Internal Unique ID, only exact matches"`
+	In        string    `form:"in" serialize:"-" example:"in:ariqwb43p5dh9h13" notes:"Limits results to the album UID specified"`
+	Filter    string    `form:"filter" serialize:"-" notes:"-"`
+	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Search for specific files or photos, only exact matches"`
 	Type      string    `form:"type" example:"type:raw" notes:"Media Type (image, video, raw, live, animated); OR search with |"`
 	Path      string    `form:"path" example:"path:2020/Holiday" notes:"Path Name, OR search with |, supports * wildcards"`
 	Folder    string    `form:"folder" example:"folder:\"*/2020\"" notes:"Path Name, OR search with |, supports * wildcards"` // Alias for Path
@@ -136,6 +137,11 @@ func (f *SearchPhotos) Serialize() string {
 // SerializeAll returns a string containing all non-empty fields and values of a struct.
 func (f *SearchPhotos) SerializeAll() string {
 	return Serialize(f, true)
+}
+
+// FindUidOnly checks if search filters other than UID may be skipped to improve performance.
+func (f *SearchPhotos) FindUidOnly() bool {
+	return f.UID != "" && f.Query == "" && f.In == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
 }
 
 func NewPhotoSearch(query string) SearchPhotos {

@@ -105,7 +105,7 @@ var Messages = MessageMap{
 	ErrPublic:             gettext("Not available in public mode"),
 	ErrReadOnly:           gettext("Not available in read-only mode"),
 	ErrUnauthorized:       gettext("Please log in to your account"),
-	ErrForbidden:          gettext("Access denied"),
+	ErrForbidden:          gettext("Permission denied"),
 	ErrOffensiveUpload:    gettext("Upload might be offensive"),
 	ErrNoItemsSelected:    gettext("No items selected"),
 	ErrCreateFile:         gettext("Failed creating file, please check permissions"),

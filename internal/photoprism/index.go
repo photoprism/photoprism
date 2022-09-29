@@ -39,7 +39,7 @@ type Index struct {
 // NewIndex returns a new indexer and expects its dependencies as arguments.
 func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
 	if conf == nil {
-		log.Errorf("index: config is nil")
+		log.Errorf("index: config is not set")
 		return nil
 	}
 
@@ -82,7 +82,7 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 	done := make(fs.Done)
 
 	if ind.conf == nil {
-		log.Errorf("index: config is nil")
+		log.Errorf("index: config is not set")
 		return done
 	}
 

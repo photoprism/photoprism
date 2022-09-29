@@ -35,13 +35,6 @@ func TestIsUID(t *testing.T) {
 	assert.False(t, IsUID(RefID(""), 'r'))
 }
 
-func TestContainsUID(t *testing.T) {
-	assert.True(t, ContainsUID([]string{"lt9k3pw1wowuy3c2", "ltxk3pwawowuy0c0"}, 'l'))
-	assert.True(t, ContainsUID([]string{"dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"}, 'l'))
-	assert.False(t, ContainsUID([]string{"_"}, '_'))
-	assert.False(t, ContainsUID([]string{""}, '_'))
-}
-
 func TestInvalidUID(t *testing.T) {
 	prefix := byte('x')
 

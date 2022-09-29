@@ -31,11 +31,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"%gold\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -48,11 +43,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"I love % dog\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -67,11 +57,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"sale%\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -84,11 +69,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"&IlikeFood\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -104,11 +84,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Pets & Dogs\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -121,11 +96,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"Light&\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -141,11 +111,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"'Family\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -159,11 +124,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		// Note: If the string in geo starts with f/F, the txt package will assume it means false,
 		f.Query = "geo:\"Mother's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -179,11 +139,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Ice Cream'\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -197,11 +152,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"*Forrest\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -217,11 +167,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"My*Kids\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -235,11 +180,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"Yoga***\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -255,11 +195,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"|Banana\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -273,11 +208,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"Red|Green\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -293,11 +223,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Blue|\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -311,11 +236,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"345 Shirt\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -331,11 +251,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Color555 Blue\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -349,11 +264,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"Route 66\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -369,11 +279,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -387,11 +292,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 
 		f.Query = "geo:\"Route %66 | *Father's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

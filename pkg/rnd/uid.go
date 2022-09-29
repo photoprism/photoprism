@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const (
+	PrefixNone  = byte(0)
+	PrefixMixed = byte('*')
+)
+
 // GenerateUID returns a unique id with prefix as string.
 func GenerateUID(prefix byte) string {
 	result := make([]byte, 0, 16)

@@ -14,11 +14,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "2790/07"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -31,11 +26,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "2790*"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -50,11 +40,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "London"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -67,11 +52,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "London|2790/07"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -86,11 +66,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "%abc/%folderx"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -104,11 +79,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "ab%c/fol%de"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -121,11 +91,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "abc%/folde%"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -141,11 +106,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "&abc/&folde"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -159,11 +119,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "tes&r/lo&c"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -179,11 +134,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "2020&/vacation&"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -197,11 +147,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "'2020/'vacation"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -217,11 +162,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "20'20/vacat'ion"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -235,11 +175,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "2020'/vacation'"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -255,11 +190,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "*2020/*vacation"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -273,11 +203,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "202*3/vac*ation"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -293,11 +218,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "2023*/vacatio*"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -311,11 +231,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "|202/|vacation"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -331,11 +246,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "20|22/vacat|ion"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -349,11 +259,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "2022|/vacation|"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -369,11 +274,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "2000/holiday"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -386,11 +286,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "2000/02"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -406,11 +301,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "2000/02"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -424,11 +314,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "\"2000/\"02"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -444,11 +329,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "20\"00/0\"2"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -462,11 +342,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "2000\"/02\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -482,11 +357,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = " 2000/ 02"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -499,11 +369,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "20 00/ 0 2"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -519,11 +384,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "2000 /02 "
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -538,11 +398,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "%abc/%folderx|20'20/vacat'ion"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -555,11 +410,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "202*3/vac*ation|20'20/vacat'ion"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -574,11 +424,6 @@ func TestPhotosFilterPath(t *testing.T) {
 		f.Path = "20'20/vacat'ion|&abc/&folde"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -591,11 +436,6 @@ func TestPhotosFilterPath(t *testing.T) {
 
 		f.Path = "London|1990/04"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -613,11 +453,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"2790/07\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -630,11 +465,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"2790*\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -649,11 +479,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"London\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -666,11 +491,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"London|2790/07\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -685,11 +505,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"%abc/%folderx\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -703,11 +518,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"ab%c/fol%de\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -720,11 +530,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"abc%/folde%\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -740,11 +545,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"&abc/&folde\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -758,11 +558,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"tes&r/lo&c\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -778,11 +573,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"2020&/vacation&\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -796,11 +586,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"'2020/'vacation\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -816,11 +601,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"20'20/vacat'ion\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -834,11 +614,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"2020'/vacation'\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -854,11 +629,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"*2020/*vacation\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -872,11 +642,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"202*3/vac*ation\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -892,11 +657,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"2023*/vacatio*\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -910,11 +670,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"|202/|vacation\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -930,11 +685,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"20|22/vacat|ion\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -948,11 +698,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"2022|/vacation|\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -968,11 +713,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"2000/holiday\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -985,11 +725,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"2000/02\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -1005,11 +740,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"2000/02\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1024,11 +754,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"\"2000/\"02\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1042,11 +767,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"20\"00/0\"2\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -1064,11 +784,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"2000\"/02\"\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1083,11 +798,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\" 2000/ 02\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1100,11 +810,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"20 00/ 0 2\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -1120,11 +825,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"2000 /02 \""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1139,11 +839,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"%abc/%folderx|20'20/vacat'ion\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1156,11 +851,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"202*3/vac*ation|20'20/vacat'ion\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -1175,11 +865,6 @@ func TestPhotosQueryPath(t *testing.T) {
 		f.Query = "path:\"20'20/vacat'ion|&abc/&folde\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -1192,11 +877,6 @@ func TestPhotosQueryPath(t *testing.T) {
 
 		f.Query = "path:\"London|1990/04\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

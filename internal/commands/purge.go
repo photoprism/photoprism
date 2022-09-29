@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"

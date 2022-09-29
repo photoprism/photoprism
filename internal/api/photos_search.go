@@ -16,10 +16,9 @@ import (
 )
 
 // SearchPhotos searches the pictures index and returns the result as JSON.
+// See form.SearchPhotos for supported search params and data types.
 //
 // GET /api/v1/photos
-//
-// See form.SearchPhotos for supported search params and data types.
 func SearchPhotos(router *gin.RouterGroup) {
 	// searchPhotos checking authorization and parses the search request.
 	searchForm := func(c *gin.Context) (f form.SearchPhotos, s *entity.Session, err error) {
@@ -32,59 +31,13 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		// Abort if request params are invalid.
 		if err = c.MustBindWith(&f, binding.Form); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "photos", "form invalid", "%s"}, s.RefID, err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "form invalid", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
 			return f, s, err
 		}
 
-		// Limit results to a specific album?
-		if f.Album == "" {
-			if acl.Resources.Deny(acl.ResourcePhotos, s.User().AclRole(), acl.ActionSearch) {
-				event.AuditErr([]string{ClientIP(c), "session %s", "%s %s as %s", "denied"}, s.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), s.User().AclRole().String())
-				c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
-				return f, s, i18n.Error(i18n.ErrForbidden)
-			}
-		} else if a, err := entity.CachedAlbumByUID(f.Album); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "photos", "album", f.Album, "not found"}, s.RefID)
-			AbortAlbumNotFound(c)
-			return f, s, i18n.Error(i18n.ErrAlbumNotFound)
-		} else {
-			f.Filter = a.AlbumFilter
-		}
-
-		// Parse query string and filter.
-		if err = f.ParseQueryString(); err != nil {
-			log.Debugf("search: %s", err)
-			AbortBadRequest(c)
-			return f, s, err
-		}
-
-		conf := service.Config()
-
-		// Enforce ACL.
-		if acl.Resources.Deny(acl.ResourcePhotos, s.User().AclRole(), acl.AccessPrivate) {
-			f.Public = true
-			f.Private = false
-		}
-		if acl.Resources.Deny(acl.ResourcePhotos, s.User().AclRole(), acl.ActionDelete) {
-			f.Archived = false
-			f.Review = false
-		}
-		if acl.Resources.Deny(acl.ResourceFiles, s.User().AclRole(), acl.ActionManage) {
-			f.Hidden = false
-		}
-
-		// Sharing link visitors may only see public content in shared albums.
-		if s.IsVisitor() {
-			if f.Album == "" || !s.HasShare(f.Album) {
-				event.AuditErr([]string{ClientIP(c), "session %s", "photos", "shared album", f.Album, "not shared"}, s.RefID)
-				AbortForbidden(c)
-				return f, s, i18n.Error(i18n.ErrUnauthorized)
-			}
-
-			f.UID = ""
-			f.Albums = ""
-		} else if !conf.Settings().Features.Private {
+		// Ignore private flag if feature is disabled.
+		if !service.Config().Settings().Features.Private {
 			f.Public = false
 		}
 
@@ -100,10 +53,10 @@ func SearchPhotos(router *gin.RouterGroup) {
 			return
 		}
 
-		result, count, err := search.Photos(f)
+		result, count, err := search.UserPhotos(f, s)
 
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "photos", "search", "%s"}, s.RefID, err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "search", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
 			return
 		}
@@ -129,10 +82,10 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		conf := service.Config()
 
-		result, count, err := search.PhotosViewerResults(f, conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
+		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
 
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "photos", "view", "%s"}, s.RefID, err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "view", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
 			return
 		}

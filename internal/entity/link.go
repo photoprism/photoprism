@@ -11,6 +11,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+const (
+	LinkUID = byte('s')
+)
+
 type Links []Link
 
 // Link represents a sharing link.
@@ -36,11 +40,11 @@ func (Link) TableName() string {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Link) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUnique(m.LinkUID, 's') {
+	if rnd.IsUnique(m.LinkUID, LinkUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LinkUID", rnd.GenerateUID('s'))
+	return scope.SetColumn("LinkUID", rnd.GenerateUID(LinkUID))
 }
 
 // NewLink creates a sharing link.
@@ -48,7 +52,7 @@ func NewLink(shareUID string, canComment, canEdit bool) Link {
 	now := TimeStamp()
 
 	result := Link{
-		LinkUID:    rnd.GenerateUID('s'),
+		LinkUID:    rnd.GenerateUID(LinkUID),
 		ShareUID:   shareUID,
 		LinkToken:  rnd.GenerateToken(10),
 		CanComment: canComment,

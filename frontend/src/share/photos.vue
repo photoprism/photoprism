@@ -121,6 +121,8 @@ export default {
     const batchSize = Photo.batchSize();
 
     return {
+      hasPlaces: this.$config.allow("places", "view") && this.$config.feature("places"),
+      canSearchPlaces: this.$config.allow("places", "search") && this.$config.feature("places"),
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -219,14 +221,16 @@ export default {
       return 'cards';
     },
     openLocation(index) {
+      if (!this.hasPlaces) {
+        return;
+      }
+
       const photo = this.results[index];
 
-      if (photo.CellID && photo.CellID !== "zz") {
-        this.$router.push({name: "place", params: {q: photo.CellID}});
-      } else if (photo.Country && photo.Country !== "zz") {
-        this.$router.push({name: "place", params: {q: "country:" + photo.Country}});
+      if (photo && photo.CellID && photo.CellID !== "zz") {
+        this.$router.push({name: "album_place", params: {album: this.uid, q: photo.CellID}});
       } else {
-        this.$notify.warn("unknown location");
+        this.$router.push({name: "album_place", params: {album: this.uid, q: ""}});
       }
     },
     editPhoto(index) {

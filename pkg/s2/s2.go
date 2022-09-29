@@ -30,7 +30,7 @@ import (
 	gs2 "github.com/golang/geo/s2"
 )
 
-// Default cell level, see https://s2geometry.io/resources/s2cell_statistics.html.
+// DefaultLevel see https://s2geometry.io/resources/s2cell_statistics.html.
 var DefaultLevel = 21
 
 // Token returns the S2 cell token for coordinates using the default level.
@@ -38,7 +38,7 @@ func Token(lat, lng float64) string {
 	return TokenLevel(lat, lng, DefaultLevel)
 }
 
-// Token returns the S2 cell token for coordinates.
+// TokenLevel returns the S2 cell token for coordinates.
 func TokenLevel(lat, lng float64, level int) string {
 	if lat == 0.0 && lng == 0.0 {
 		return ""

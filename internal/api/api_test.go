@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
-	c := config.NewTestConfig("api")
+	c := config.TestConfig()
 	service.SetConfig(c)
 
 	code := m.Run()

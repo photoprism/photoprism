@@ -256,6 +256,11 @@ func (c *Config) ImportPath() string {
 	return fs.Abs(c.options.ImportPath)
 }
 
+// ImportDest returns the relative originals path to which the files should be imported by default.
+func (c *Config) ImportDest() string {
+	return clean.UserPath(c.options.ImportDest)
+}
+
 // SidecarPath returns the storage path for generated sidecar files (relative or absolute).
 func (c *Config) SidecarPath() string {
 	if c.options.SidecarPath == "" {
