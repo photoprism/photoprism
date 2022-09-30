@@ -10,6 +10,15 @@ func TestTitle(t *testing.T) {
 	t.Run("Cour d'Honneur", func(t *testing.T) {
 		assert.Equal(t, "Cour d'Honneur", Title("Cour d'Honneur"))
 	})
+	t.Run("Ducs de La Force", func(t *testing.T) {
+		assert.Equal(t, "Ducs de la Force", Title("Ducs de La Force"))
+	})
+	t.Run("ducs de la force", func(t *testing.T) {
+		assert.Equal(t, "Ducs de la Force", Title("ducs de la force"))
+	})
+	t.Run("Broglie", func(t *testing.T) {
+		assert.Equal(t, "Broglie, des Cars", Title("broglie, des cars"))
+	})
 	t.Run("Île-de-France", func(t *testing.T) {
 		assert.Equal(t, "Île-de-France", Title("Île-de-France"))
 	})
