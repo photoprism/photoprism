@@ -5,6 +5,8 @@ import (
 )
 
 const (
+	TypeEmpty     Type = "empty"
+	TypeMixed     Type = "mixed"
 	TypeUUID      Type = "UUID"
 	TypeUID       Type = "UID"
 	TypeRefID     Type = "RID"
@@ -16,8 +18,6 @@ const (
 	TypeSHA256    Type = "SHA256"
 	TypeSHA384    Type = "SHA384"
 	TypeSHA512    Type = "SHA512"
-	TypeNone      Type = "none"
-	TypeMixed     Type = "mixed"
 	TypeUnknown   Type = "unknown"
 )
 
@@ -25,7 +25,7 @@ const (
 // and returns it along with the id prefix, if any.
 func IdType(id string) (Type, byte) {
 	if l := len(id); l == 0 {
-		return TypeNone, PrefixNone
+		return TypeEmpty, PrefixNone
 	} else if l < 14 || l > 128 {
 		return TypeUnknown, PrefixNone
 	}

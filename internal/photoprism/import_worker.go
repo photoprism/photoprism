@@ -111,7 +111,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					// Do nothing.
 				} else if file, err := entity.FirstFileByHash(fileHash); err != nil {
 					// Do nothing.
-				} else if err := entity.AddPhotoToAlbums(file.PhotoUID, opt.Albums); err != nil {
+				} else if err := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, opt.OwnerUID); err != nil {
 					log.Warn(err)
 				}
 
@@ -191,7 +191,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index main MediaFile.
-				res := ind.MediaFile(f, o, originalName, "")
+				res := ind.UserMediaFile(f, o, originalName, "", opt.OwnerUID)
 
 				// Log result.
 				log.Infof("import: %s main %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
@@ -204,7 +204,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					photoUID = res.PhotoUID
 
 					// Add photo to album if a list of albums was provided when importing.
-					if err := entity.AddPhotoToAlbums(photoUID, opt.Albums); err != nil {
+					if err := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, opt.OwnerUID); err != nil {
 						log.Warn(err)
 					}
 				}
@@ -241,7 +241,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index related media file including its original filename.
-				res := ind.MediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID)
+				res := ind.UserMediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID, opt.OwnerUID)
 
 				// Save file error.
 				if fileUid, err := res.FileError(); err != nil {

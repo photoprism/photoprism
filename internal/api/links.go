@@ -16,6 +16,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// UpdateLink updates a share link and return it as JSON.
+//
 // PUT /api/v1/:entity/:uid/links/:link
 func UpdateLink(c *gin.Context) {
 	s := Auth(c, acl.ResourceShares, acl.ActionUpdate)
@@ -28,6 +30,7 @@ func UpdateLink(c *gin.Context) {
 	var f form.Link
 
 	if err := c.BindJSON(&f); err != nil {
+		log.Debugf("share: %s", err)
 		AbortBadRequest(c)
 		return
 	}
@@ -63,6 +66,8 @@ func UpdateLink(c *gin.Context) {
 	c.JSON(http.StatusOK, link)
 }
 
+// DeleteLink deletes a share link.
+//
 // DELETE /api/v1/:entity/:uid/links/:link
 func DeleteLink(c *gin.Context) {
 	s := Auth(c, acl.ResourceShares, acl.ActionDelete)
@@ -88,23 +93,32 @@ func DeleteLink(c *gin.Context) {
 	c.JSON(http.StatusOK, link)
 }
 
-// CreateLink returns a new link entity initialized with request data
+// CreateLink adds a new share link and return it as JSON.
+//
+// POST /api/v1/:entity/:uid/links
 func CreateLink(c *gin.Context) {
 	s := Auth(c, acl.ResourceShares, acl.ActionCreate)
 
-	if s.Invalid() {
-		AbortForbidden(c)
+	if s.Abort(c) {
+		return
+	}
+
+	uid := clean.UID(c.Param("uid"))
+
+	if uid == "" {
+		AbortBadRequest(c)
 		return
 	}
 
 	var f form.Link
 
 	if err := c.BindJSON(&f); err != nil {
+		log.Debugf("share: %s", err)
 		AbortBadRequest(c)
 		return
 	}
 
-	link := entity.NewLink(clean.UID(c.Param("uid")), f.CanComment, f.CanEdit)
+	link := entity.NewUserLink(uid, f.CanComment, f.CanEdit, s.UserUID)
 
 	link.SetSlug(f.ShareSlug)
 	link.MaxViews = f.MaxViews
@@ -131,9 +145,17 @@ func CreateLink(c *gin.Context) {
 	c.JSON(http.StatusOK, link)
 }
 
+// CreateAlbumLink adds a new album share link and return it as JSON.
+//
 // POST /api/v1/albums/:uid/links
 func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		if _, err := query.AlbumByUID(clean.UID(c.Param("uid"))); err != nil {
 			AbortAlbumNotFound(c)
 			return
@@ -143,23 +165,47 @@ func CreateAlbumLink(router *gin.RouterGroup) {
 	})
 }
 
+// UpdateAlbumLink updates an album share link and return it as JSON.
+//
 // PUT /api/v1/albums/:uid/links/:link
 func UpdateAlbumLink(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid/links/:link", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		UpdateLink(c)
 	})
 }
 
+// DeleteAlbumLink deletes an album share link.
+//
 // DELETE /api/v1/albums/:uid/links/:link
 func DeleteAlbumLink(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/links/:link", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		DeleteLink(c)
 	})
 }
 
+// GetAlbumLinks returns all share links for the given UID as JSON.
+//
 // GET /api/v1/albums/:uid/links
 func GetAlbumLinks(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/links", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		m, err := query.AlbumByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
@@ -171,9 +217,19 @@ func GetAlbumLinks(router *gin.RouterGroup) {
 	})
 }
 
+/*
+
+// CreatePhotoLink adds a new photo share link and return it as JSON.
+//
 // POST /api/v1/photos/:uid/links
 func CreatePhotoLink(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/links", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		if _, err := query.PhotoByUID(clean.UID(c.Param("uid"))); err != nil {
 			AbortEntityNotFound(c)
 			return
@@ -183,23 +239,47 @@ func CreatePhotoLink(router *gin.RouterGroup) {
 	})
 }
 
+// UpdatePhotoLink updates an existing photo sharing link.
+//
 // PUT /api/v1/photos/:uid/links/:link
 func UpdatePhotoLink(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/links/:link", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		UpdateLink(c)
 	})
 }
 
+// DeletePhotoLink deletes a photo sharing link.
+//
 // DELETE /api/v1/photos/:uid/links/:link
 func DeletePhotoLink(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/links/:link", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		DeleteLink(c)
 	})
 }
 
+// GetPhotoLinks returns all share links for the given UID as JSON.
+//
 // GET /api/v1/photos/:uid/links
 func GetPhotoLinks(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/links", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
@@ -211,9 +291,17 @@ func GetPhotoLinks(router *gin.RouterGroup) {
 	})
 }
 
+// CreateLabelLink adds a new label share link and return it as JSON.
+//
 // POST /api/v1/labels/:uid/links
 func CreateLabelLink(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/links", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceLabels, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		if _, err := query.LabelByUID(clean.UID(c.Param("uid"))); err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
@@ -223,23 +311,47 @@ func CreateLabelLink(router *gin.RouterGroup) {
 	})
 }
 
+// UpdateLabelLink updates a label share link and return it as JSON.
+//
 // PUT /api/v1/labels/:uid/links/:link
 func UpdateLabelLink(router *gin.RouterGroup) {
 	router.PUT("/labels/:uid/links/:link", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceLabels, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		UpdateLink(c)
 	})
 }
 
+// DeleteLabelLink deletes a label share link.
+//
 // DELETE /api/v1/labels/:uid/links/:link
 func DeleteLabelLink(router *gin.RouterGroup) {
 	router.DELETE("/labels/:uid/links/:link", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceLabels, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		DeleteLink(c)
 	})
 }
 
+// GetLabelLinks returns all share links for the given UID as JSON.
+//
 // GET /api/v1/labels/:uid/links
 func GetLabelLinks(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/links", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceLabels, acl.ActionShare)
+
+		if s.Abort(c) {
+			return
+		}
+
 		m, err := query.LabelByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
@@ -250,3 +362,4 @@ func GetLabelLinks(router *gin.RouterGroup) {
 		c.JSON(http.StatusOK, m.Links())
 	})
 }
+*/

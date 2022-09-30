@@ -9,8 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/react"
-
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
@@ -18,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/react"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -104,6 +103,7 @@ type Photo struct {
 	Albums           []Album      `json:"-" yaml:"-"`
 	Files            []File       `yaml:"-"`
 	Labels           []PhotoLabel `yaml:"-"`
+	OwnerUID         string       `gorm:"type:VARBINARY(64);index" json:"OwnerUID,omitempty" yaml:"OwnerUID,omitempty"`
 	CreatedAt        time.Time    `yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
@@ -117,9 +117,15 @@ func (Photo) TableName() string {
 	return "photos"
 }
 
-// NewPhoto creates a photo entity.
+// NewPhoto creates a new photo with default values.
 func NewPhoto(stackable bool) Photo {
+	return NewUserPhoto(stackable, "")
+}
+
+// NewUserPhoto creates a photo owned by a user.
+func NewUserPhoto(stackable bool, userUID string) Photo {
 	m := Photo{
+		OwnerUID:     userUID,
 		PhotoTitle:   UnknownTitle,
 		PhotoType:    MediaImage,
 		PhotoCountry: UnknownCountry.ID,

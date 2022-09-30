@@ -174,12 +174,12 @@ export default {
 
       if (photo && photo.CellID && photo.CellID !== "zz") {
         if (this.canSearchPlaces) {
-          this.$router.push({name: "place", params: {q: photo.CellID}});
+          this.$router.push({name: "places_query", params: {q: photo.CellID}});
         } else {
-          this.$router.push({name: "album_place", params: {album: this.uid, q: photo.CellID}});
+          this.$router.push({name: "places_scope", params: {s: this.uid, q: photo.CellID}});
         }
       } else {
-        this.$router.push({name: "album_place", params: {album: this.uid, q: ""}});
+        this.$router.push({name: "places_scope", params: {s: this.uid, q: ""}});
       }
     },
     editPhoto(index) {
@@ -250,8 +250,7 @@ export default {
       const params = {
         count: count,
         offset: offset,
-        album: this.uid,
-        filter: this.model.Filter ? this.model.Filter : "",
+        s: this.uid,
         merged: true,
       };
 
@@ -365,8 +364,7 @@ export default {
       const params = {
         count: this.batchSize,
         offset: this.offset,
-        album: this.uid,
-        filter: this.model.Filter ? this.model.Filter : "",
+        s: this.uid,
         merged: true,
       };
 

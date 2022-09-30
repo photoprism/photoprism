@@ -55,9 +55,18 @@ export default {
       type: Array,
       default: () => [],
     },
-    refresh: Function,
-    clearSelection: Function,
-    context: String,
+    refresh: {
+      type: Function,
+      default: () => {},
+    },
+    clearSelection: {
+      type: Function,
+      default: () => {},
+    },
+    context: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {

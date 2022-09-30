@@ -19,8 +19,9 @@ import (
 
 // User identifier prefixes.
 const (
-	UserUID    = byte('u')
-	UserPrefix = "user"
+	UserUID      = byte('u')
+	UserPrefix   = "user"
+	OwnerUnknown = ""
 )
 
 // LenNameMin specifies the minimum length of the username in characters.
@@ -35,8 +36,8 @@ type Users []User
 // User represents a person that may optionally log in as user.
 type User struct {
 	ID            int           `gorm:"primary_key" json:"-" yaml:"-"`
+	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
 	UserUID       string        `gorm:"type:VARBINARY(64);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
-	UserUUID      string        `gorm:"type:VARBINARY(128);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
 	AuthID        string        `gorm:"type:VARBINARY(128);index;default:'';" json:"AuthID,omitempty" yaml:"AuthID,omitempty"`
 	UserName      string        `gorm:"size:64;index;" json:"Name" yaml:"Name,omitempty"`
@@ -449,7 +450,7 @@ func (m *User) IsRegistered() bool {
 
 // IsAdmin checks if the user is an admin with username.
 func (m *User) IsAdmin() bool {
-	return m.IsRegistered() && m.AclRole() == acl.RoleAdmin
+	return m.IsRegistered() && (m.SuperAdmin || m.AclRole() == acl.RoleAdmin)
 }
 
 // IsVisitor checks if the user is a sharing link visitor.

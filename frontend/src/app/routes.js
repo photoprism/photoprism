@@ -228,14 +228,14 @@ export default [
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "place",
+    name: "places_query",
     path: "/places/:q",
     component: Places,
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "album_place",
-    path: "/places/:album/:q",
+    name: "places_scope",
+    path: "/places/:s/:q",
     component: Places,
     meta: { title: $gettext("Places"), auth: true },
   },

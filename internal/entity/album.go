@@ -55,6 +55,7 @@ type Album struct {
 	AlbumPrivate     bool        `json:"Private" yaml:"Private,omitempty"`
 	Thumb            string      `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	ThumbSrc         string      `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	OwnerUID         string      `gorm:"type:VARBINARY(64);index" json:"OwnerUID,omitempty" yaml:"OwnerUID,omitempty"`
 	CreatedAt        time.Time   `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time   `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 	DeletedAt        *time.Time  `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
@@ -79,43 +80,48 @@ func (Album) TableName() string {
 }
 
 // AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them if needed.
-func AddPhotoToAlbums(photo string, albums []string) (err error) {
-	if photo == "" || len(albums) == 0 {
+func AddPhotoToAlbums(uid string, albums []string) (err error) {
+	return AddPhotoToUserAlbums(uid, albums, OwnerUnknown)
+}
+
+// AddPhotoToUserAlbums adds a photo UID to multiple albums and automatically creates them as a user if needed.
+func AddPhotoToUserAlbums(uid string, albums []string, userUID string) (err error) {
+	if uid == "" || len(albums) == 0 {
 		// Do nothing.
 		return nil
 	}
 
-	if !rnd.IsUID(photo, PhotoUID) {
-		return fmt.Errorf("album: invalid photo uid %s", photo)
+	if !rnd.IsUID(uid, PhotoUID) {
+		return fmt.Errorf("album: invalid photo uid %s", uid)
 	}
 
 	for _, album := range albums {
 		var aUID string
 
 		if album == "" {
-			log.Debugf("album: empty album identifier while adding photo %s", photo)
+			log.Debugf("album: empty album identifier while adding photo %s", uid)
 			continue
 		}
 
 		if rnd.IsUID(album, AlbumUID) {
 			aUID = album
 		} else {
-			a := NewAlbum(album, AlbumDefault)
+			a := NewUserAlbum(album, AlbumDefault, userUID)
 
 			if found := a.Find(); found != nil {
 				aUID = found.AlbumUID
 			} else if err = a.Create(); err == nil {
 				aUID = a.AlbumUID
 			} else {
-				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photo)
+				log.Errorf("album: %s (add photo %s to albums)", err.Error(), uid)
 			}
 		}
 
 		if aUID != "" {
-			entry := PhotoAlbum{AlbumUID: aUID, PhotoUID: photo, Hidden: false}
+			entry := PhotoAlbum{AlbumUID: aUID, PhotoUID: uid, Hidden: false}
 
 			if err = entry.Save(); err != nil {
-				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photo)
+				log.Errorf("album: %s (add photo %s to albums)", err.Error(), uid)
 			}
 		}
 	}
@@ -123,21 +129,30 @@ func AddPhotoToAlbums(photo string, albums []string) (err error) {
 	return err
 }
 
-// NewAlbum creates a new album; default name is current month and year
+// NewAlbum creates a new album of the given type.
 func NewAlbum(albumTitle, albumType string) *Album {
+	return NewUserAlbum(albumTitle, albumType, OwnerUnknown)
+}
+
+// NewUserAlbum creates a new album owned by a user.
+func NewUserAlbum(albumTitle, albumType, userUID string) *Album {
 	now := TimeStamp()
 
+	// Set default type.
 	if albumType == "" {
 		albumType = AlbumDefault
 	}
 
+	// Set default values.
 	result := &Album{
+		OwnerUID:   userUID,
 		AlbumOrder: SortOrderOldest,
 		AlbumType:  albumType,
 		CreatedAt:  now,
 		UpdatedAt:  now,
 	}
 
+	// Set album title.
 	result.SetTitle(albumTitle)
 
 	return result

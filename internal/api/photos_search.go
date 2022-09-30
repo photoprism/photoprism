@@ -53,8 +53,10 @@ func SearchPhotos(router *gin.RouterGroup) {
 			return
 		}
 
+		// Find matching pictures.
 		result, count, err := search.UserPhotos(f, s)
 
+		// Ok?
 		if err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "search", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
@@ -67,7 +69,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		AddOffsetHeader(c, f.Offset)
 		AddTokenHeaders(c)
 
-		// Render as JSON.
+		// Return as JSON.
 		c.JSON(http.StatusOK, result)
 	}
 
@@ -96,7 +98,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		AddOffsetHeader(c, f.Offset)
 		AddTokenHeaders(c)
 
-		// Render as JSON.
+		// Return as JSON.
 		c.JSON(http.StatusOK, result)
 	}
 

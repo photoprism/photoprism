@@ -12,7 +12,7 @@ import (
 
 func TestGeo(t *testing.T) {
 	t.Run("Near", func(t *testing.T) {
-		query := form.NewGeoSearch("near:pt9jtdre2lvl0y43")
+		query := form.NewSearchPhotosGeo("near:pt9jtdre2lvl0y43")
 
 		// Parse query string and filter.
 		if err := query.ParseQueryString(); err != nil {
@@ -27,7 +27,7 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("UnknownFaces", func(t *testing.T) {
-		query := form.NewGeoSearch("face:none")
+		query := form.NewSearchPhotosGeo("face:none")
 
 		// Parse query string and filter.
 		if err := query.ParseQueryString(); err != nil {
@@ -41,7 +41,7 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("form.keywords", func(t *testing.T) {
-		query := form.NewGeoSearch("keywords:bridge")
+		query := form.NewSearchPhotosGeo("keywords:bridge")
 
 		// Parse query string and filter.
 		if err := query.ParseQueryString(); err != nil {
@@ -55,7 +55,7 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("form.subjects", func(t *testing.T) {
-		query := form.NewGeoSearch("subjects:John")
+		query := form.NewSearchPhotosGeo("subjects:John")
 
 		// Parse query string and filter.
 		if err := query.ParseQueryString(); err != nil {
@@ -69,7 +69,7 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("find_all", func(t *testing.T) {
-		query := form.NewGeoSearch("")
+		query := form.NewSearchPhotosGeo("")
 
 		// Parse query string and filter.
 		if err := query.ParseQueryString(); err != nil {
@@ -84,7 +84,7 @@ func TestGeo(t *testing.T) {
 	})
 
 	t.Run("search for bridge", func(t *testing.T) {
-		query := form.NewGeoSearch("q:bridge Before:3006-01-02")
+		query := form.NewSearchPhotosGeo("q:bridge Before:3006-01-02")
 
 		// Parse query string and filter.
 		if err := query.ParseQueryString(); err != nil {
@@ -103,7 +103,7 @@ func TestGeo(t *testing.T) {
 	})
 
 	t.Run("search for date range", func(t *testing.T) {
-		query := form.NewGeoSearch("After:2014-12-02 Before:3006-01-02")
+		query := form.NewSearchPhotosGeo("After:2014-12-02 Before:3006-01-02")
 
 		// Parse query string and filter.
 		if err := query.ParseQueryString(); err != nil {

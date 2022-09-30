@@ -228,9 +228,9 @@ export default {
       const photo = this.results[index];
 
       if (photo && photo.CellID && photo.CellID !== "zz") {
-        this.$router.push({name: "album_place", params: {album: this.uid, q: photo.CellID}});
+        this.$router.push({name: "places_scope", params: {s: this.uid, q: photo.CellID}});
       } else {
-        this.$router.push({name: "album_place", params: {album: this.uid, q: ""}});
+        this.$router.push({name: "places_scope", params: {s: this.uid, q: ""}});
       }
     },
     editPhoto(index) {
@@ -297,7 +297,7 @@ export default {
       const params = {
         count: count,
         offset: offset,
-        album: this.uid,
+        s: this.uid,
         filter: this.model.Filter ? this.model.Filter : "",
         merged: true,
       };
@@ -405,7 +405,7 @@ export default {
       const params = {
         count: this.batchSize,
         offset: this.offset,
-        album: this.uid,
+        s: this.uid,
         filter: this.model.Filter ? this.model.Filter : "",
         merged: true,
       };

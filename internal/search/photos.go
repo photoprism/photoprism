@@ -27,12 +27,12 @@ var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}
 // FileTypes contains a list of browser-compatible file formats returned by search queries.
 var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageWebP.String()}
 
-// Photos finds photos based on the search form provided and returns them as PhotoResults.
+// Photos finds PhotoResults based on the search form without checking rights or permissions.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	return searchPhotos(f, nil, PhotosColsAll)
 }
 
-// UserPhotos finds photos based on the search form and user session then returns them as PhotoResults.
+// UserPhotos finds PhotoResults based on the search form and user session.
 func UserPhotos(f form.SearchPhotos, sess *entity.Session) (results PhotoResults, count int, err error) {
 	return searchPhotos(f, sess, PhotosColsAll)
 }
@@ -61,11 +61,74 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		Joins("LEFT JOIN lenses ON photos.lens_id = lenses.id").
 		Joins("LEFT JOIN places ON photos.place_id = places.id")
 
-	// Limit offset and count.
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
+	// Accept the album UID as scope for backward compatibility.
+	if rnd.IsUID(f.Album, 'a') {
+		if txt.Empty(f.Scope) {
+			f.Scope = f.Album
+		}
+
+		f.Album = ""
+	}
+
+	// Limit search results to a specific UID scope, e.g. when sharing.
+	if txt.NotEmpty(f.Scope) {
+		f.Scope = strings.ToLower(f.Scope)
+
+		if idType, idPrefix := rnd.IdType(f.Scope); idType != rnd.TypeUID || idPrefix != entity.AlbumUID {
+			return PhotoResults{}, 0, ErrInvalidId
+		} else if a, err := entity.CachedAlbumByUID(f.Scope); err != nil || a.AlbumUID == "" {
+			return PhotoResults{}, 0, ErrInvalidId
+		} else if a.AlbumFilter == "" {
+			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
+				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", a.AlbumUID)
+		} else if err = form.Unserialize(&f, a.AlbumFilter); err != nil {
+			return PhotoResults{}, 0, ErrBadFilter
+		} else {
+			f.Filter = a.AlbumFilter
+			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
+		}
 	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
+		f.Scope = ""
+	}
+
+	// Check session permissions and apply as needed.
+	if sess != nil {
+		user := sess.User()
+		aclRole := user.AclRole()
+
+		// Visitors and other restricted users can only access shared content.
+		if !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.Unregistered()) ||
+			f.Scope == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
+			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
+			return PhotoResults{}, 0, ErrForbidden
+		}
+
+		// Exclude private content?
+		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+			f.Public = true
+			f.Private = false
+		}
+
+		// Exclude archived content?
+		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
+			f.Archived = false
+			f.Review = false
+		}
+
+		// Exclude hidden files?
+		if acl.Resources.Deny(acl.ResourceFiles, aclRole, acl.AccessAll) {
+			f.Hidden = false
+		}
+
+		// Limit results by owner and path?
+		if f.Scope == "" && acl.Resources.DenyAll(acl.ResourcePhotos, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+			if user.BasePath == "" {
+				s = s.Where("photos.owner_uid = ?", user.UserUID)
+			} else {
+				s = s.Where("photos.owner_uid = ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
+					user.UserUID, user.BasePath, user.BasePath+"/%")
+			}
+		}
 	}
 
 	// Set sort order.
@@ -93,60 +156,6 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		return PhotoResults{}, 0, ErrBadSortOrder
 	}
 
-	// Limit search results to a specific UID scope, e.g. when sharing.
-	if txt.NotEmpty(f.In) {
-		f.In = strings.ToLower(f.In)
-		if idType, idPrefix := rnd.IdType(f.In); idType != rnd.TypeUID || idPrefix != entity.AlbumUID {
-			return PhotoResults{}, 0, ErrInvalidId
-		} else if a, err := entity.CachedAlbumByUID(f.In); err != nil || a.AlbumUID == "" {
-			return PhotoResults{}, 0, ErrInvalidId
-		} else if a.AlbumFilter == "" {
-			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
-				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", a.AlbumUID)
-		} else if err = form.Unserialize(&f, a.AlbumFilter); err != nil {
-			return PhotoResults{}, 0, ErrBadFilter
-		} else {
-			f.Filter = a.AlbumFilter
-			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
-		}
-	} else {
-		f.In = ""
-	}
-
-	// Check session permissions and apply as needed.
-	if sess != nil {
-		aclRole := sess.User().AclRole()
-
-		// Visitors and other restricted users can only access shared content.
-		if !sess.HasShare(f.In) && (sess.IsVisitor() || sess.Unregistered()) ||
-			f.In == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
-			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
-			return PhotoResults{}, 0, ErrForbidden
-		}
-
-		// Exclude private content?
-		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
-			f.Public = true
-			f.Private = false
-		}
-
-		// Exclude archived content?
-		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
-			f.Archived = false
-			f.Review = false
-		}
-
-		// Exclude hidden files?
-		if acl.Resources.Deny(acl.ResourceFiles, aclRole, acl.AccessAll) {
-			f.Hidden = false
-		}
-
-		// Restrict the search to a sub-folder, if specified.
-		if dir := sess.User().BasePath; f.In == "" && dir != "" {
-			s = s.Where("photos.photo_path LIKE ?", dir+"%")
-		}
-	}
-
 	// Limit the result file types if hidden images/videos should not be found.
 	if !f.Hidden {
 		s = s.Where("files.file_type IN (?) OR files.file_video = 1", FileTypes)
@@ -163,7 +172,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("files.file_primary = 1")
 	}
 
-	// Find only certain unique IDs?
+	// Find specific UIDs only?
 	if txt.NotEmpty(f.UID) {
 		ids := SplitOr(strings.ToLower(f.UID))
 
@@ -174,20 +183,14 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 			case entity.FileUID:
 				s = s.Where("files.file_uid IN (?)", ids)
 			default:
-				log.Debugf("(1) idType: %s, prefix: %s", idType, prefix)
 				return PhotoResults{}, 0, fmt.Errorf("invalid %s specified", idType)
 			}
 		} else if idType.SHA() {
 			s = s.Where("files.file_hash IN (?)", ids)
-		} else {
-			log.Debugf("(2) idType: %s, prefix: %s", idType, prefix)
-			return PhotoResults{}, 0, ErrInvalidId
 		}
 
 		// Find UIDs only to improve performance?
 		if sess == nil && f.FindUidOnly() {
-			s = s.Order("files.media_id")
-
 			if result := s.Scan(&results); result.Error != nil {
 				return results, 0, result.Error
 			}
@@ -200,8 +203,6 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 			return results, len(results), nil
 		}
-	} else {
-		f.UID = ""
 	}
 
 	// Filter by label, label category and keywords.
@@ -612,23 +613,25 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.id IN (SELECT a.photo_id FROM files a JOIN files b ON a.id != b.id AND a.photo_id = b.photo_id AND a.file_type = b.file_type WHERE a.file_type='jpg')")
 	}
 
-	// Filter by album?
-	if rnd.IsUID(f.Album, 'a') {
-		if f.Filter != "" {
-			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", f.Album)
-		} else {
-			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
-				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
+	// Find photos in albums or not in an album, unless search results are limited to a scope.
+	if f.Scope == "" {
+		if f.Unsorted {
+			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
+		} else if txt.NotEmpty(f.Album) {
+			v := strings.Trim(f.Album, "*%") + "%"
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
+		} else if txt.NotEmpty(f.Albums) {
+			for _, where := range LikeAnyWord("a.album_title", f.Albums) {
+				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (?))", gorm.Expr(where))
+			}
 		}
-	} else if f.Unsorted && f.Filter == "" {
-		s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
-	} else if txt.NotEmpty(f.Album) {
-		v := strings.Trim(f.Album, "*%") + "%"
-		s = s.Where("files.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
-	} else if txt.NotEmpty(f.Albums) {
-		for _, where := range LikeAnyWord("a.album_title", f.Albums) {
-			s = s.Where("files.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (?))", gorm.Expr(where))
-		}
+	}
+
+	// Limit offset and count.
+	if f.Count > 0 && f.Count <= MaxResults {
+		s = s.Limit(f.Count).Offset(f.Offset)
+	} else {
+		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	// Query database.

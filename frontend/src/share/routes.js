@@ -26,8 +26,8 @@ export default [
     meta: { title: shareTitle, auth: true, hideNav: true },
   },
   {
-    name: "album_place",
-    path: "/places/:album/:q",
+    name: "places_scope",
+    path: "/places/:s/:q",
     component: Places,
     meta: { title: shareTitle, auth: true, hideNav: true },
   },

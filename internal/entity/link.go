@@ -29,6 +29,7 @@ type Link struct {
 	HasPassword bool      `json:"HasPassword" yaml:"HasPassword,omitempty"`
 	CanComment  bool      `json:"CanComment" yaml:"CanComment,omitempty"`
 	CanEdit     bool      `json:"CanEdit" yaml:"CanEdit,omitempty"`
+	OwnerUID    string    `gorm:"type:VARBINARY(64);index" json:"OwnerUID,omitempty" yaml:"OwnerUID,omitempty"`
 	CreatedAt   time.Time `deepcopier:"skip" json:"CreatedAt" yaml:"CreatedAt"`
 	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
@@ -49,9 +50,15 @@ func (m *Link) BeforeCreate(scope *gorm.Scope) error {
 
 // NewLink creates a sharing link.
 func NewLink(shareUID string, canComment, canEdit bool) Link {
+	return NewUserLink(shareUID, canComment, canEdit, OwnerUnknown)
+}
+
+// NewUserLink creates a sharing link owned by a user.
+func NewUserLink(shareUID string, canComment, canEdit bool, userUID string) Link {
 	now := TimeStamp()
 
 	result := Link{
+		OwnerUID:   userUID,
 		LinkUID:    rnd.GenerateUID(LinkUID),
 		ShareUID:   shareUID,
 		LinkToken:  rnd.GenerateToken(10),

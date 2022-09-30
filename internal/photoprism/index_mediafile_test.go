@@ -3,6 +3,8 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/classify"
@@ -71,7 +73,8 @@ func TestIndex_MediaFile(t *testing.T) {
 		}
 		assert.Equal(t, "", mediaFile.metaData.Title)
 
-		result := ind.MediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "")
+		result := ind.UserMediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "", entity.Admin.UID())
+
 		assert.Equal(t, "Blue Gopher", mediaFile.metaData.Title)
 		assert.Equal(t, IndexStatus("added"), result.Status)
 	})

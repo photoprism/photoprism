@@ -241,9 +241,9 @@ export default {
       const photo = this.results[index];
 
       if (photo.CellID && photo.CellID !== "zz") {
-        this.$router.push({name: "place", params: {q: photo.CellID}});
+        this.$router.push({name: "places_query", params: {q: photo.CellID}});
       } else if (photo.Country && photo.Country !== "zz") {
-        this.$router.push({name: "place", params: {q: "country:" + photo.Country}});
+        this.$router.push({name: "places_query", params: {q: "country:" + photo.Country}});
       } else {
         this.$notify.warn("unknown location");
       }

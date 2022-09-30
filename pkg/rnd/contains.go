@@ -25,7 +25,7 @@ func ContainsUID(s []string, prefix byte) bool {
 // ContainsType checks if a slice of strings contains only random IDs of a given type and returns it.
 func ContainsType(ids []string) (idType Type, idPrefix byte) {
 	if len(ids) < 1 {
-		return TypeNone, PrefixNone
+		return TypeEmpty, PrefixNone
 	}
 
 	idType = TypeUnknown

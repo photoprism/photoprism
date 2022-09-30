@@ -14,7 +14,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -22,6 +21,11 @@ import (
 
 // MediaFile indexes a single media file.
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID string) (result IndexResult) {
+	return ind.UserMediaFile(m, o, originalName, photoUID, entity.OwnerUnknown)
+}
+
+// UserMediaFile indexes a single media file owned by a user.
+func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, photoUID, userUID string) (result IndexResult) {
 	if m == nil {
 		result.Status = IndexFailed
 		result.Err = errors.New("index: media file is nil - possible bug")
@@ -46,7 +50,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 
 	file, primaryFile := entity.File{}, entity.File{}
 
-	photo := entity.NewPhoto(o.Stack)
+	photo := entity.NewUserPhoto(o.Stack, userUID)
 	metaData := meta.New()
 	labels := classify.Labels{}
 	stripSequence := Config().Settings().StackSequences() && o.Stack

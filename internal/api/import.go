@@ -103,6 +103,11 @@ func StartImport(router *gin.RouterGroup) {
 			opt.Albums = f.Albums
 		}
 
+		// Set user UID if known.
+		if s.UserUID != "" {
+			opt.OwnerUID = s.UserUID
+		}
+
 		// Start import.
 		imported := imp.Start(opt)
 

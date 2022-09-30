@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGeoSearch(t *testing.T) {
+func TestSearchPhotosGeo(t *testing.T) {
 	t.Run("subjects", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "subjects:\"Jens Mander\""}
 
@@ -177,19 +177,19 @@ func TestGeoSearch(t *testing.T) {
 	})
 }
 
-func TestGeoSearch_Serialize(t *testing.T) {
+func TestSearchPhotosGeo_Serialize(t *testing.T) {
 	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: true}
 
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.Serialize())
 }
 
-func TestGeoSearch_SerializeAll(t *testing.T) {
+func TestSearchPhotosGeo_SerializeAll(t *testing.T) {
 	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: true}
 
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.SerializeAll())
 }
 
-func TestNewGeoSearch(t *testing.T) {
-	r := NewGeoSearch("Berlin")
+func TestNewSearchPhotosGeo(t *testing.T) {
+	r := NewSearchPhotosGeo("Berlin")
 	assert.IsType(t, SearchPhotosGeo{}, r)
 }

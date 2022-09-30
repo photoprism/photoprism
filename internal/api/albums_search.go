@@ -26,12 +26,11 @@ func SearchAlbums(router *gin.RouterGroup) {
 			return
 		}
 
+		var err error
 		var f form.SearchAlbums
 
-		err := c.MustBindWith(&f, binding.Form)
-
 		// Abort if request params are invalid.
-		if err != nil {
+		if err = c.MustBindWith(&f, binding.Form); err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "albums", "search", "form invalid", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
 			return
@@ -39,21 +38,15 @@ func SearchAlbums(router *gin.RouterGroup) {
 
 		conf := service.Config()
 
-		// Sharing link visitors permissions are limited to shared albums.
-		if s.IsVisitor() {
-			f.UID = s.SharedUIDs().Join(txt.Or)
-			f.Public = true
-			event.AuditDebug([]string{ClientIP(c), "session %s", "albums", "search", "shared", "%s"}, s.RefID, f.UID)
-		} else if conf.Settings().Features.Private {
-			f.Public = true
-			event.AuditDebug([]string{ClientIP(c), "session %s", "albums", "search", "all public"}, s.RefID)
-		} else {
+		// Ignore private flag if feature is disabled.
+		if !conf.Settings().Features.Private {
 			f.Public = false
-			event.AuditDebug([]string{ClientIP(c), "session %s", "albums", "search", "all public and private"}, s.RefID)
 		}
 
-		result, err := search.Albums(f)
+		// Find matching albums.
+		result, err := search.UserAlbums(f, s)
 
+		// Ok?
 		if err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "albums", "search", "%s"}, s.RefID, err)
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})
@@ -65,6 +58,7 @@ func SearchAlbums(router *gin.RouterGroup) {
 		AddOffsetHeader(c, f.Offset)
 		AddTokenHeaders(c)
 
+		// Return as JSON.
 		c.JSON(http.StatusOK, result)
 	})
 }

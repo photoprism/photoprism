@@ -9,7 +9,7 @@ import (
 // SearchPhotos represents search form fields for "/api/v1/photos".
 type SearchPhotos struct {
 	Query     string    `form:"q"`
-	In        string    `form:"in" serialize:"-" example:"in:ariqwb43p5dh9h13" notes:"Limits results to the album UID specified"`
+	Scope     string    `form:"s" serialize:"-" example:"s:ariqwb43p5dh9h13" notes:"Limits the results to one album or another scope, if specified"`
 	Filter    string    `form:"filter" serialize:"-" notes:"-"`
 	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Search for specific files or photos, only exact matches"`
 	Type      string    `form:"type" example:"type:raw" notes:"Media Type (image, video, raw, live, animated); OR search with |"`
@@ -141,9 +141,9 @@ func (f *SearchPhotos) SerializeAll() string {
 
 // FindUidOnly checks if search filters other than UID may be skipped to improve performance.
 func (f *SearchPhotos) FindUidOnly() bool {
-	return f.UID != "" && f.Query == "" && f.In == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
+	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
 }
 
-func NewPhotoSearch(query string) SearchPhotos {
+func NewSearchPhotos(query string) SearchPhotos {
 	return SearchPhotos{Query: query}
 }

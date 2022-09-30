@@ -28,8 +28,8 @@ func SearchGeo(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.SearchPhotosGeo
 		var err error
+		var f form.SearchPhotosGeo
 
 		// Abort if request params are invalid.
 		if err = c.MustBindWith(&f, binding.Form); err != nil {
@@ -48,6 +48,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		// Find matching pictures.
 		photos, err := search.UserPhotosGeo(f, s)
 
+		// Ok?
 		if err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePlaces), "search", "%s"}, s.RefID, err)
 			AbortBadRequest(c)

@@ -19,7 +19,7 @@ func TestContainsUID(t *testing.T) {
 func TestContainsType(t *testing.T) {
 	t.Run("None", func(t *testing.T) {
 		result, prefix := ContainsType([]string{})
-		assert.Equal(t, TypeNone, result)
+		assert.Equal(t, TypeEmpty, result)
 		assert.Equal(t, PrefixNone, prefix)
 	})
 	t.Run("Unknown", func(t *testing.T) {

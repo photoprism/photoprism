@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPhotoSearchForm(t *testing.T) {
+func TestSearchPhotosForm(t *testing.T) {
 	form := &SearchPhotos{}
 
 	assert.IsType(t, new(SearchPhotos), form)
@@ -664,12 +664,12 @@ func TestParseQueryString(t *testing.T) {
 	})
 }
 
-func TestNewPhotoSearch(t *testing.T) {
-	r := NewPhotoSearch("cat")
+func TestNewSearchPhotos(t *testing.T) {
+	r := NewSearchPhotos("cat")
 	assert.IsType(t, SearchPhotos{}, r)
 }
 
-func TestPhotoSearch_Serialize(t *testing.T) {
+func TestSearchPhotos_Serialize(t *testing.T) {
 	form := SearchPhotos{
 		Query:   "foo BAR",
 		Private: true,
@@ -689,7 +689,7 @@ func TestPhotoSearch_Serialize(t *testing.T) {
 	assert.IsType(t, "string", result)
 }
 
-func TestPhotoSearch_SerializeAll(t *testing.T) {
+func TestSearchPhotos_SerializeAll(t *testing.T) {
 	form := SearchPhotos{
 		Query:   "foo BAR",
 		Private: true,
@@ -707,4 +707,71 @@ func TestPhotoSearch_SerializeAll(t *testing.T) {
 	t.Logf("SERIALIZED: %s", result)
 
 	assert.IsType(t, "string", result)
+}
+
+func TestSearchPhotos_Filter(t *testing.T) {
+	t.Run("WithScope", func(t *testing.T) {
+		f := &SearchPhotos{Query: "album:cat filter:\"name:foo.jpg\" s:ariqwb43p5dh9h13 search-string", Scope: "ariqwb43p5dh2244", Filter: "name:foo.jpg album:ariqwb43p5dh5555 q:foo uid:priqwb43p5dh7777"}
+
+		err := f.ParseQueryString()
+
+		t.Logf("WithScope: %+v\n", f)
+
+		assert.ErrorContains(t, err, "unknown filter: s")
+		assert.Equal(t, "search-string", f.Query)
+		assert.Equal(t, "ariqwb43p5dh2244", f.Scope)
+		assert.Equal(t, "name:foo.jpg album:ariqwb43p5dh5555 q:foo uid:priqwb43p5dh7777", f.Filter)
+		assert.Equal(t, "", f.Name)
+		assert.Equal(t, "", f.UID)
+		assert.Equal(t, "cat", f.Album)
+	})
+	t.Run("ScopeInQuery", func(t *testing.T) {
+		f := &SearchPhotos{Query: "album:cat filter:\"name:foo.jpg\" s:ariqwb43p5dh9h13 search-string", Filter: "name:foo.jpg album:ariqwb43p5dh5555 q:foo uid:priqwb43p5dh7777"}
+
+		err := f.ParseQueryString()
+
+		t.Logf("ScopeInQuery: %+v\n", f)
+
+		assert.ErrorContains(t, err, "unknown filter: s")
+		assert.Equal(t, "search-string", f.Query)
+		assert.Equal(t, "", f.Scope)
+		assert.Equal(t, "name:foo.jpg album:ariqwb43p5dh5555 q:foo uid:priqwb43p5dh7777", f.Filter)
+		assert.Equal(t, "", f.Name)
+		assert.Equal(t, "", f.UID)
+		assert.Equal(t, "cat", f.Album)
+	})
+	t.Run("NoScope", func(t *testing.T) {
+		f := &SearchPhotos{Query: "album:cat search-string", Filter: "name:foo.jpg album:ariqwb43p5dh5555 q:foo uid:priqwb43p5dh7777"}
+
+		err := f.ParseQueryString()
+
+		t.Logf("ScopeInQuery: %+v\n", f)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "foo", f.Query)
+		assert.Equal(t, "", f.Scope)
+		assert.Equal(t, "name:foo.jpg album:ariqwb43p5dh5555 q:foo uid:priqwb43p5dh7777", f.Filter)
+		assert.Equal(t, "foo", f.Name)
+		assert.Equal(t, "priqwb43p5dh7777", f.UID)
+		assert.Equal(t, "ariqwb43p5dh5555", f.Album)
+	})
+}
+
+func TestSearchPhotos_Unserialize(t *testing.T) {
+	t.Run("Filter", func(t *testing.T) {
+		f := &SearchPhotos{Query: "bar album:ariqwb43p5dh9999 uid:priqwb43p5dh4321 albums:baz s:ariqwb43p5dh1122 search-string", Scope: "ariqwb43p5dh2244"}
+
+		if err := Unserialize(f, "name:foo.jpg album:ariqwb43p5dh5555 q:foo uid:priqwb43p5dh7777"); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("UnserializeFilter: %+v\n", f)
+
+		assert.Equal(t, "foo", f.Query)
+		assert.Equal(t, "ariqwb43p5dh2244", f.Scope)
+		assert.Equal(t, "", f.Filter)
+		assert.Equal(t, "foo.jpg", f.Name)
+		assert.Equal(t, "priqwb43p5dh7777", f.UID)
+		assert.Equal(t, "ariqwb43p5dh5555", f.Album)
+	})
 }

@@ -23,7 +23,7 @@ import (
 // GeoCols specifies the UserPhotosGeo result column names.
 var GeoCols = SelectString(GeoResult{}, []string{"*"})
 
-// PhotosGeo finds photos based on the search form and returns them as GeoResults.
+// PhotosGeo finds GeoResults based on the search form without checking rights or permissions.
 func PhotosGeo(f form.SearchPhotosGeo) (results GeoResults, err error) {
 	return UserPhotosGeo(f, nil)
 }
@@ -63,19 +63,22 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
 
-	// Limit offset and count.
-	if f.Count > 0 {
-		s = s.Limit(f.Count).Offset(f.Offset)
-	} else {
-		s = s.Limit(1000000).Offset(f.Offset)
+	// Accept the album UID as scope for backward compatibility.
+	if rnd.IsUID(f.Album, 'a') {
+		if txt.Empty(f.Scope) {
+			f.Scope = f.Album
+		}
+
+		f.Album = ""
 	}
 
 	// Limit search results to a specific UID scope, e.g. when sharing.
-	if txt.NotEmpty(f.In) {
-		f.In = strings.ToLower(f.In)
-		if idType, idPrefix := rnd.IdType(f.In); idType != rnd.TypeUID || idPrefix != entity.AlbumUID {
+	if txt.NotEmpty(f.Scope) {
+		f.Scope = strings.ToLower(f.Scope)
+
+		if idType, idPrefix := rnd.IdType(f.Scope); idType != rnd.TypeUID || idPrefix != entity.AlbumUID {
 			return GeoResults{}, ErrInvalidId
-		} else if a, err := entity.CachedAlbumByUID(f.In); err != nil || a.AlbumUID == "" {
+		} else if a, err := entity.CachedAlbumByUID(f.Scope); err != nil || a.AlbumUID == "" {
 			return GeoResults{}, ErrInvalidId
 		} else if a.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
@@ -86,18 +89,21 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			f.Filter = a.AlbumFilter
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
 		}
+
+		S2Levels = 15
 	} else {
-		f.In = ""
+		f.Scope = ""
 	}
 
 	// Check session permissions and apply as needed.
 	if sess != nil {
-		aclRole := sess.User().AclRole()
+		user := sess.User()
+		aclRole := user.AclRole()
 
 		// Visitors and other restricted users can only access shared content.
-		if !sess.HasShare(f.In) && (sess.IsVisitor() || sess.Unregistered()) ||
-			f.In == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) ||
-			f.In == "" && acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.ActionSearch) {
+		if !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.Unregistered()) ||
+			f.Scope == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) ||
+			f.Scope == "" && acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePlaces), aclRole)
 			return GeoResults{}, ErrForbidden
 		}
@@ -114,9 +120,14 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			f.Review = false
 		}
 
-		// Restrict the search to a sub-folder, if specified.
-		if dir := sess.User().BasePath; f.In == "" && dir != "" {
-			s = s.Where("photos.photo_path LIKE ?", dir+"%")
+		// Limit results by owner and path?
+		if f.Scope == "" && acl.Resources.DenyAll(acl.ResourcePhotos, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+			if user.BasePath == "" {
+				s = s.Where("photos.owner_uid = ?", user.UserUID)
+			} else {
+				s = s.Where("photos.owner_uid = ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
+					user.UserUID, user.BasePath, user.BasePath+"/%")
+			}
 		}
 	}
 
@@ -128,7 +139,7 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", f.Near, f.Lat, f.Lng))
 	}
 
-	// Find only certain unique IDs?
+	// Find specific UIDs only?
 	if txt.NotEmpty(f.UID) {
 		ids := SplitOr(strings.ToLower(f.UID))
 
@@ -156,8 +167,6 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 
 			return results, nil
 		}
-	} else {
-		f.UID = ""
 	}
 
 	// Set search filters based on search terms.
@@ -302,23 +311,17 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		}
 	}
 
-	// Filter by album?
-	if rnd.IsUID(f.Album, 'a') {
-		S2Levels = 15
-		if f.Filter != "" {
-			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", f.Album)
-		} else {
-			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").
-				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
-		}
-	} else if f.Unsorted && f.Filter == "" {
-		s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
-	} else if txt.NotEmpty(f.Album) {
-		v := strings.Trim(f.Album, "*%") + "%"
-		s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
-	} else if txt.NotEmpty(f.Albums) {
-		for _, where := range LikeAnyWord("a.album_title", f.Albums) {
-			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (?))", gorm.Expr(where))
+	// Find photos in albums or not in an album, unless search results are limited to a scope.
+	if f.Scope == "" {
+		if f.Unsorted {
+			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
+		} else if txt.NotEmpty(f.Album) {
+			v := strings.Trim(f.Album, "*%") + "%"
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
+		} else if txt.NotEmpty(f.Albums) {
+			for _, where := range LikeAnyWord("a.album_title", f.Albums) {
+				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (?))", gorm.Expr(where))
+			}
 		}
 	}
 
@@ -490,6 +493,13 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 	// Find photos taken after date?
 	if !f.After.IsZero() {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
+	}
+
+	// Limit offset and count.
+	if f.Count > 0 {
+		s = s.Limit(f.Count).Offset(f.Offset)
+	} else {
+		s = s.Limit(1000000).Offset(f.Offset)
 	}
 
 	// Fetch results.

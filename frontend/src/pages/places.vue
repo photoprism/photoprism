@@ -49,7 +49,7 @@ export default {
       options: {},
       mapFont: ["Open Sans Regular"],
       result: {},
-      filter: {q: this.query(), album: this.album()},
+      filter: {q: this.query(), s: this.scope()},
       lastFilter: {},
       config: this.$config.values,
       settings: this.$config.values.settings.maps,
@@ -58,7 +58,7 @@ export default {
   watch: {
     '$route'() {
       this.filter.q = this.query();
-      this.filter.album = this.album();
+      this.filter.s = this.scope();
       this.lastFilter = {};
 
       this.search();
@@ -77,7 +77,7 @@ export default {
         const s = this.$config.values.settings.maps;
         const filter = {
           q: this.query(),
-          album: this.album(),
+          s: this.scope(),
         };
 
         let mapKey = "";
@@ -208,8 +208,8 @@ export default {
     query: function () {
       return this.$route.params.q ? this.$route.params.q : '';
     },
-    album: function () {
-      return this.$route.params.album ? this.$route.params.album : '';
+    scope: function () {
+      return this.$route.params.s ? this.$route.params.s : '';
     },
     openPhoto(uid) {
       // Abort if uid is empty or results aren't loaded.
@@ -225,8 +225,8 @@ export default {
         },
       };
 
-      if (this.filter.album) {
-        options.params.album = this.filter.album;
+      if (this.filter.s) {
+        options.params.s = this.filter.s;
       }
 
       this.loading = true;
@@ -256,10 +256,10 @@ export default {
       if (this.loading) return;
 
       if (this.query() !== this.filter.q) {
-        if (this.filter.album) {
-          this.$router.replace({name: "album_place", params: {album: this.filter.album, q: this.filter.q}});
+        if (this.filter.s) {
+          this.$router.replace({name: "places_scope", params: {s: this.filter.s, q: this.filter.q}});
         } else if (this.filter.q) {
-          this.$router.replace({name: "place", params: {q: this.filter.q}});
+          this.$router.replace({name: "places_query", params: {q: this.filter.q}});
         } else {
           this.$router.replace({name: "places"});
         }
