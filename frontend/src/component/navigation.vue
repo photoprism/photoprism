@@ -576,7 +576,7 @@
             </router-link>
           </div>
           <div v-if="auth && canManagePeople && !routeName('people') && $config.feature('people')" class="menu-action nav-people">
-            <router-link to="/places">
+            <router-link to="/people">
               <v-icon>person</v-icon>
               <translate>People</translate>
             </router-link>
