@@ -43,7 +43,7 @@ func InitDb(dropDeprecated, runFailed bool, ids []string) {
 }
 
 // InitTestDb connects to and completely initializes the test database incl fixtures.
-func InitTestDb(driver, dsn string) *Gorm {
+func InitTestDb(driver, dsn string) *DbConn {
 	if HasDbProvider() {
 		return nil
 	}
@@ -68,13 +68,13 @@ func InitTestDb(driver, dsn string) *Gorm {
 
 	log.Infof("initializing %s test db in %s", driver, dsn)
 
-	// Create ORM instance.
-	db := &Gorm{
+	// Create gorm.DB connection provider.
+	db := &DbConn{
 		Driver: driver,
 		Dsn:    dsn,
 	}
 
-	// Insert test fixtures.
+	// Insert test fixtures into the database.
 	SetDbProvider(db)
 	ResetTestFixtures()
 	File{}.RegenerateIndex()
