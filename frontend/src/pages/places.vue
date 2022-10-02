@@ -472,10 +472,10 @@ export default {
     },
     getClusterRadiusFromItemCount(itemCount) {
       // see config of cluster-layer for these values
-      if (itemCount > 750) {
+      if (itemCount >= 750) {
         return 40;
       }
-      if (itemCount > 100) {
+      if (itemCount >= 100) {
         return 30;
       }
 
@@ -577,11 +577,11 @@ export default {
           'circle-color': [
             'step',
             ['get', 'point_count'],
-            '#2DC4B2',
+            'transparent',
             100,
-            '#3BB3C3',
+            'transparent',
             750,
-            '#669EC4'
+            'transparent'
           ],
           'circle-radius': [
             'step',
