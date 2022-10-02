@@ -73,13 +73,37 @@ export default {
   },
   watch: {
     '$route'() {
-      // todo: prevent search/filter from being killed when the back-button is pressed
-      console.log(window.backwardsNavigationDetected, this.filter.q, this.$route.params.q);
+
+      const clusterWasOpenBeforeRouterChange = this.selectedClusterBounds !== undefined;
+      const clusterIsOpenAfterRouteChange = this.getSelectedClusterFromUrl() !== undefined;
+      const lastRouteChangeWasClusterOpenOrClose = clusterWasOpenBeforeRouterChange !== clusterIsOpenAfterRouteChange;
+
+      if (lastRouteChangeWasClusterOpenOrClose) {
+        this.updateSelectedClusterFromUrl();
+
+        /**
+         * dont touch any filters or searches if the only action taken was
+         * opening or closing a cluster.
+         * This currently assumes that when a cluster was opened or closed,
+         * nothing else changed. I currently can't think of a scenario, where
+         * a route-change is triggered by the user wanting to open/close a cluster
+         * AND for example update the filter at the same time.
+         *
+         * Without this, opening or closing a cluster triggers a search, even
+         * though no search parameter changed. Also without this, closing a
+         * cluster resets the filter, because closing a cluster is done via
+         * backwards navigation.
+         * (closing is cluster is done via backwards navigation so that it can
+         * be closed using the back-button. This is especially useful on android
+         * smartphones)
+         */
+        return;
+      }
+
       this.filter.q = this.query();
       this.filter.s = this.scope();
       this.lastFilter = {};
 
-      this.updateSelectedClusterFromUrl();
       this.search();
     },
     showClusterPictures:function(newValue, old){
