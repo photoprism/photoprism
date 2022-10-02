@@ -12,16 +12,21 @@ import (
 )
 
 func TestSession_Save(t *testing.T) {
-	s := New(ExpiresAfter, config.TestConfig())
-
-	data := entity.NewSessionData()
+	s := New(config.TestConfig())
 
 	id := ID()
 
 	assert.Equal(t, 48, len(id))
 	assert.Falsef(t, s.Exists(id), "session %s should not exist", clean.LogQuote(id))
 
-	m, err := s.Save(id, &entity.Admin, nil, data)
+	var err error
+	m := s.New(nil)
+
+	// t.Logf("new session: %#v", m)
+
+	m, err = s.Save(m)
+
+	// t.Logf("saved session: %#v, %s", m, err)
 
 	if err != nil {
 		t.Fatal(err)
@@ -34,24 +39,27 @@ func TestSession_Save(t *testing.T) {
 		Shares: entity.UIDs{"a000000000000001"},
 	}
 
-	if sess, err := s.Save(m.ID, nil, nil, newData); err != nil {
+	m.SetData(newData)
+
+	if sess, err := s.Save(m); err != nil {
 		t.Fatal(err)
 	} else {
 		assert.NotNil(t, sess)
 		assert.Equal(t, sess.ID, m.ID)
+		assert.Truef(t, s.Exists(sess.ID), "session %s should exist", clean.LogQuote(sess.ID))
 	}
 
 	assert.Truef(t, s.Exists(m.ID), "session %s should exist", clean.LogQuote(m.ID))
 }
 
 func TestSession_Create(t *testing.T) {
-	s := New(ExpiresAfter, config.TestConfig())
+	s := New(config.TestConfig())
 
 	data := entity.NewSessionData()
 
 	sess, err := s.Create(&entity.Admin, nil, data)
 
-	t.Logf("Created: %#v", sess)
+	// t.Logf("created session: %#v", sess)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, sess)

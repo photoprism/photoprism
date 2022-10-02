@@ -44,7 +44,7 @@ func (m *PhotoLabel) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// Save saves the entity in the database.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *PhotoLabel) Save() error {
 	if m.Photo != nil {
 		m.Photo = nil

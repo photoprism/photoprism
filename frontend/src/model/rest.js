@@ -104,8 +104,8 @@ export class Rest extends Model {
       Password: password ? password : "",
       Expires: expires ? expires : 0,
       Slug: this.getSlug(),
-      CanEdit: false,
-      CanComment: false,
+      Comment: "",
+      Perm: 0,
     }).then((resp) => Promise.resolve(new Link(resp.data)));
   }
 

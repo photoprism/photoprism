@@ -42,7 +42,7 @@ func (s *Settings) ApplyACL(list acl.ACL, role acl.Role) *Settings {
 	// Settings.
 	m.Features.Account = s.Features.Account && list.Allow(acl.ResourcePassword, role, acl.ActionUpdate)
 	m.Features.Advanced = s.Features.Advanced && list.Allow(acl.ResourceConfig, role, acl.ActionManage)
-	m.Features.Settings = s.Features.Settings && list.Allow(acl.ResourceSettings, role, acl.ActionUpdate)
+	m.Features.Settings = s.Features.Settings && list.AllowAny(acl.ResourceSettings, role, acl.Permissions{acl.ActionUpdate})
 	m.Features.Sync = s.Features.Sync && list.Allow(acl.ResourceAccounts, role, acl.ActionManage)
 
 	return &m

@@ -6,7 +6,11 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// New returns a new session store with an optional cachePath.
-func New(expiresAfter time.Duration, conf *config.Config) *Session {
-	return &Session{expiresAfter: expiresAfter, conf: conf}
+// MaxAge is the maximum duration after which a session expires.
+var MaxAge = 168 * time.Hour * 24 * 7
+var Timeout = 168 * time.Hour * 24 * 3
+
+// New creates a new session store with default values.
+func New(conf *config.Config) *Session {
+	return &Session{MaxAge: MaxAge, Timeout: Timeout, conf: conf}
 }

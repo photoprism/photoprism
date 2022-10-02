@@ -64,7 +64,7 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		Where("photos.photo_lat <> 0")
 
 	// Accept the album UID as scope for backward compatibility.
-	if rnd.IsUID(f.Album, 'a') {
+	if rnd.IsUID(f.Album, entity.AlbumUID) {
 		if txt.Empty(f.Scope) {
 			f.Scope = f.Album
 		}
@@ -90,7 +90,7 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
 		}
 
-		S2Levels = 15
+		S2Levels = 18
 	} else {
 		f.Scope = ""
 	}
@@ -101,31 +101,30 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		aclRole := user.AclRole()
 
 		// Visitors and other restricted users can only access shared content.
-		if !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.Unregistered()) ||
-			f.Scope == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) ||
+		if !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.NotRegistered()) ||
 			f.Scope == "" && acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePlaces), aclRole)
 			return GeoResults{}, ErrForbidden
 		}
 
 		// Exclude private content?
-		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+		if acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.AccessPrivate) {
 			f.Public = true
 			f.Private = false
 		}
 
 		// Exclude archived content?
-		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
+		if acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.ActionDelete) {
 			f.Archived = false
 			f.Review = false
 		}
 
 		// Limit results by owner and path?
-		if f.Scope == "" && acl.Resources.DenyAll(acl.ResourcePhotos, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+		if f.Scope == "" && acl.Resources.DenyAll(acl.ResourcePlaces, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 			if user.BasePath == "" {
-				s = s.Where("photos.owner_uid = ?", user.UserUID)
+				s = s.Where("photos.created_by = ?", user.UserUID)
 			} else {
-				s = s.Where("photos.owner_uid = ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
+				s = s.Where("photos.created_by = ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
 					user.UserUID, user.BasePath, user.BasePath+"/%")
 			}
 		}
@@ -142,22 +141,25 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 	// Find specific UIDs only?
 	if txt.NotEmpty(f.UID) {
 		ids := SplitOr(strings.ToLower(f.UID))
+		idType, prefix := rnd.ContainsType(ids)
 
-		if idType, prefix := rnd.ContainsType(ids); idType == rnd.TypeUID {
+		if idType == rnd.TypeUnknown {
+			return GeoResults{}, fmt.Errorf("%s ids specified", idType)
+		} else if idType.SHA() {
+			s = s.Where("files.file_hash IN (?)", ids)
+		} else if idType == rnd.TypeUID {
 			switch prefix {
 			case entity.PhotoUID:
 				s = s.Where("photos.photo_uid IN (?)", ids)
 			case entity.FileUID:
 				s = s.Where("files.file_uid IN (?)", ids)
 			default:
-				return GeoResults{}, fmt.Errorf("invalid %s specified", idType)
+				return GeoResults{}, fmt.Errorf("invalid ids specified")
 			}
-		} else if idType.SHA() {
-			s = s.Where("files.file_hash IN (?)", ids)
 		}
 
 		// Find UIDs only to improve performance?
-		if f.FindByIdOnly() {
+		if sess == nil && f.FindUidOnly() {
 			// Fetch results.
 			if result := s.Scan(&results); result.Error != nil {
 				return results, result.Error

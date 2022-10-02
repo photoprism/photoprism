@@ -724,7 +724,7 @@ DROP TABLE IF EXISTS `links`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `links` (
                          `link_uid` varbinary(42) NOT NULL,
-                         `share_uid` varbinary(42) DEFAULT NULL,
+                         `shared_uid` varbinary(42) DEFAULT NULL,
                          `share_slug` varbinary(160) DEFAULT NULL,
                          `link_token` varbinary(160) DEFAULT NULL,
                          `link_expires` int(11) DEFAULT NULL,
@@ -736,7 +736,7 @@ CREATE TABLE `links` (
                          `created_at` datetime DEFAULT NULL,
                          `modified_at` datetime DEFAULT NULL,
                          PRIMARY KEY (`link_uid`),
-                         UNIQUE KEY `idx_links_uid_token` (`share_uid`,`link_token`),
+                         UNIQUE KEY `idx_links_uid_token` (`shared_uid`,`link_token`),
                          KEY `idx_links_share_slug` (`share_slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

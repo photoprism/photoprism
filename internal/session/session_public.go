@@ -15,7 +15,7 @@ func (s *Session) Public() *entity.Session {
 		return Public
 	}
 
-	Public = entity.NewSession(s.expiresAfter)
+	Public = entity.NewSession(s.MaxAge, s.Timeout)
 	Public.ID = PublicID
 	Public.AuthMethod = "public"
 	Public.SetUser(&entity.Admin)

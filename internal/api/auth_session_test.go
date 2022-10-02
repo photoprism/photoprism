@@ -41,13 +41,32 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": 123, "password": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("InvalidShareToken", func(t *testing.T) {
+	t.Run("PublicInvalidToken", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateSession(router)
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": "admin", "password": "photoprism", "token": "xxx"}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-	t.Run("ValidShareToken", func(t *testing.T) {
+	t.Run("AdminInvalidToken", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		// CreateSession(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"token": "xxx"}`, sessId)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("VisitorInvalidToken", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CreateSession(router)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"token": "xxx"}`, "345346")
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("AdminValidToken", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"token": "1jxf3jfn2k"}`, sessId)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("PublicValidToken", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateSession(router)
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": "admin", "password": "photoprism", "token": "1jxf3jfn2k"}`)

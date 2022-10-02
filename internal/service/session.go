@@ -9,8 +9,7 @@ import (
 var onceSession sync.Once
 
 func initSession() {
-	// Sessions are valid for 7 days by default.
-	services.Session = session.New(session.ExpiresAfter, Config())
+	services.Session = session.New(Config())
 }
 
 func Session() *session.Session {

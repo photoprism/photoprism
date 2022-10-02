@@ -190,8 +190,8 @@ Mock.onPost("api/v1/albums/66/links").reply(
     Password: "passwd",
     Expires: 8000,
     Slug: "christmas-2019",
-    CanEdit: false,
-    CanComment: false,
+    Comment: "",
+    Perm: 0,
   },
   mockHeaders
 );
@@ -199,8 +199,8 @@ Mock.onDelete("api/v1/albums/66/links/5").reply(200, { Success: "ok" }, mockHead
 Mock.onGet("api/v1/albums/66/links").reply(
   200,
   [
-    { UID: "sqcwh80ifesw74ht", Share: "aqcwh7weohhk49q2", Slug: "july-2020" },
-    { UID: "sqcwhxh1h58rf3c2", Share: "aqcwh7weohhk49q2" },
+    { UID: "sqcwh80ifesw74ht", ShareUID: "aqcwh7weohhk49q2", Slug: "july-2020" },
+    { UID: "sqcwhxh1h58rf3c2", ShareUID: "aqcwh7weohhk49q2" },
   ],
   mockHeaders
 );

@@ -71,9 +71,9 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 			s = s.Where("albums.album_uid IN (?)", sess.SharedUIDs())
 		} else if acl.Resources.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 			if user.BasePath == "" {
-				s = s.Where("albums.album_uid IN (?) OR albums.owner_uid = ?", sess.SharedUIDs(), user.UserUID)
+				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ?", sess.SharedUIDs(), user.UserUID)
 			} else {
-				s = s.Where("albums.album_uid IN (?) OR albums.owner_uid = ? OR (albums.album_type = ? AND (albums.album_path = ? OR albums.album_path LIKE ?))",
+				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.album_type = ? AND (albums.album_path = ? OR albums.album_path LIKE ?)",
 					sess.SharedUIDs(), user.UserUID, entity.AlbumFolder, user.BasePath, user.BasePath+"/%")
 			}
 		}

@@ -40,7 +40,7 @@ func GetSettings(router *gin.RouterGroup) {
 // POST /api/v1/settings
 func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {
-		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.ActionUpdate, acl.ActionManage})
+		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.ActionView, acl.ActionUpdate, acl.ActionManage})
 
 		// Abort if permission was not granted.
 		if s.Abort(c) {
@@ -56,8 +56,8 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		var settings *customize.Settings
 
-		// Only admins can change the global config.
 		if s.User().IsAdmin() {
+			// Only admins may change the global config.
 			settings = conf.Settings()
 
 			if err := c.BindJSON(settings); err != nil {
@@ -73,6 +73,7 @@ func SaveSettings(router *gin.RouterGroup) {
 
 			UpdateClientConfig()
 		} else {
+			// Apply to user preferences and keep current values if unspecified.
 			user := s.User()
 
 			if user == nil {
@@ -87,8 +88,11 @@ func SaveSettings(router *gin.RouterGroup) {
 				return
 			}
 
-			// Apply to user preferences and keep current values if unspecified.
-			if err := user.Settings().Apply(settings).Save(); err != nil {
+			if acl.Resources.DenyAll(acl.ResourceSettings, s.User().AclRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
+				event.InfoMsg(i18n.MsgSettingsSaved)
+				c.JSON(http.StatusOK, user.Settings().Apply(settings).ApplyTo(conf.Settings().ApplyACL(acl.Resources, user.AclRole())))
+				return
+			} else if err := user.Settings().Apply(settings).Save(); err != nil {
 				log.Debugf("config: %s (save user settings)", err)
 				AbortSaveFailed(c)
 				return

@@ -27,10 +27,11 @@
   <link rel="manifest" href="{{ .config.ManifestUri }}" crossorigin="use-credentials">
 
   <script>
+    window.__SHARED__ = {{ .shared }};
     window.__CONFIG__ = {{ .config }};
   </script>
 </head>
-<body class="shared {{ .config.Flags }} nojs">
+<body class="{{ .config.Flags }} nojs">
 
 {{template "app.tmpl" .}}
 

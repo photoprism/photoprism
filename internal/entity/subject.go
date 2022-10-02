@@ -19,7 +19,7 @@ var subjectMutex = sync.Mutex{}
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjUID      string     `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	SubjUID      string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
 	SubjType     string     `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
 	SubjSrc      string     `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
 	SubjSlug     string     `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
@@ -90,7 +90,7 @@ func NewSubject(name, subjType, subjSrc string) *Subject {
 	return result
 }
 
-// Save updates the existing or inserts a new entity.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Subject) Save() error {
 	subjectMutex.Lock()
 	defer subjectMutex.Unlock()

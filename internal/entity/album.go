@@ -32,8 +32,8 @@ type Albums []Album
 // Album represents a photo album
 type Album struct {
 	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
-	AlbumUID         string      `gorm:"type:VARBINARY(64);unique_index;" json:"UID" yaml:"UID"`
-	ParentUID        string      `gorm:"type:VARBINARY(64);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
+	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	ParentUID        string      `gorm:"type:VARBINARY(42);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
 	AlbumSlug        string      `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug"`
 	AlbumPath        string      `gorm:"type:VARBINARY(1024);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
 	AlbumType        string      `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
@@ -55,9 +55,10 @@ type Album struct {
 	AlbumPrivate     bool        `json:"Private" yaml:"Private,omitempty"`
 	Thumb            string      `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	ThumbSrc         string      `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
-	OwnerUID         string      `gorm:"type:VARBINARY(64);index" json:"OwnerUID,omitempty" yaml:"OwnerUID,omitempty"`
+	CreatedBy        string      `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt        time.Time   `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time   `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
+	PublishedAt      *time.Time  `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt        *time.Time  `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
 	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID;association_foreignkey:AlbumUID;" json:"-" yaml:"Photos,omitempty"`
 }
@@ -85,43 +86,43 @@ func AddPhotoToAlbums(uid string, albums []string) (err error) {
 }
 
 // AddPhotoToUserAlbums adds a photo UID to multiple albums and automatically creates them as a user if needed.
-func AddPhotoToUserAlbums(uid string, albums []string, userUID string) (err error) {
-	if uid == "" || len(albums) == 0 {
+func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err error) {
+	if photoUid == "" || len(albums) == 0 {
 		// Do nothing.
 		return nil
 	}
 
-	if !rnd.IsUID(uid, PhotoUID) {
-		return fmt.Errorf("album: invalid photo uid %s", uid)
+	if !rnd.IsUID(photoUid, PhotoUID) {
+		return fmt.Errorf("album: can not add invalid photo uid %s", clean.Log(photoUid))
 	}
 
 	for _, album := range albums {
-		var aUID string
+		var albumUid string
 
 		if album == "" {
-			log.Debugf("album: empty album identifier while adding photo %s", uid)
+			log.Debugf("album: cannot add photo uid %s because album id was not specified", clean.Log(photoUid))
 			continue
 		}
 
 		if rnd.IsUID(album, AlbumUID) {
-			aUID = album
+			albumUid = album
 		} else {
-			a := NewUserAlbum(album, AlbumDefault, userUID)
+			a := NewUserAlbum(album, AlbumDefault, userUid)
 
 			if found := a.Find(); found != nil {
-				aUID = found.AlbumUID
+				albumUid = found.AlbumUID
 			} else if err = a.Create(); err == nil {
-				aUID = a.AlbumUID
+				albumUid = a.AlbumUID
 			} else {
-				log.Errorf("album: %s (add photo %s to albums)", err.Error(), uid)
+				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
 			}
 		}
 
-		if aUID != "" {
-			entry := PhotoAlbum{AlbumUID: aUID, PhotoUID: uid, Hidden: false}
+		if albumUid != "" {
+			entry := PhotoAlbum{AlbumUID: albumUid, PhotoUID: photoUid, Hidden: false}
 
 			if err = entry.Save(); err != nil {
-				log.Errorf("album: %s (add photo %s to albums)", err.Error(), uid)
+				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
 			}
 		}
 	}
@@ -135,7 +136,7 @@ func NewAlbum(albumTitle, albumType string) *Album {
 }
 
 // NewUserAlbum creates a new album owned by a user.
-func NewUserAlbum(albumTitle, albumType, userUID string) *Album {
+func NewUserAlbum(albumTitle, albumType, userUid string) *Album {
 	now := TimeStamp()
 
 	// Set default type.
@@ -145,11 +146,11 @@ func NewUserAlbum(albumTitle, albumType, userUID string) *Album {
 
 	// Set default values.
 	result := &Album{
-		OwnerUID:   userUID,
 		AlbumOrder: SortOrderOldest,
 		AlbumType:  albumType,
 		CreatedAt:  now,
 		UpdatedAt:  now,
+		CreatedBy:  userUid,
 	}
 
 	// Set album title.
@@ -372,11 +373,13 @@ func (m *Album) Find() *Album {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUnique(m.AlbumUID, AlbumUID) {
+	if rnd.IsUID(m.AlbumUID, AlbumUID) {
 		return nil
 	}
 
-	return scope.SetColumn("AlbumUID", rnd.GenerateUID(AlbumUID))
+	m.AlbumUID = rnd.GenerateUID(AlbumUID)
+
+	return scope.SetColumn("AlbumUID", m.AlbumUID)
 }
 
 // String returns the id or name as string.
@@ -525,6 +528,7 @@ func (m *Album) SaveForm(f form.Album) error {
 
 // Update sets a new value for a database column.
 func (m *Album) Update(attr string, value interface{}) error {
+
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
@@ -555,9 +559,14 @@ func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 	return nil
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Album) Save() error {
-	return Db().Save(m).Error
+	if err := Db().Save(m).Error; err != nil {
+		return err
+	} else {
+		event.PublishUserEntities("albums", event.EntityUpdated, []*Album{m}, m.CreatedBy)
+		return nil
+	}
 }
 
 // Create inserts a new row to the database.
@@ -567,6 +576,7 @@ func (m *Album) Create() error {
 	}
 
 	m.PublishCountChange(1)
+	event.PublishUserEntities("albums", event.EntityCreated, []*Album{m}, m.CreatedBy)
 
 	return nil
 }
@@ -598,6 +608,7 @@ func (m *Album) Delete() error {
 	}
 
 	m.PublishCountChange(-1)
+	event.EntitiesDeleted("albums", []string{m.AlbumUID})
 
 	return DeleteShareLinks(m.AlbumUID)
 }
@@ -612,6 +623,7 @@ func (m *Album) DeletePermanently() error {
 
 	if !wasDeleted {
 		m.PublishCountChange(-1)
+		event.EntitiesDeleted("albums", []string{m.AlbumUID})
 	}
 
 	return DeleteShareLinks(m.AlbumUID)
@@ -639,6 +651,7 @@ func (m *Album) Restore() error {
 	m.DeletedAt = nil
 
 	m.PublishCountChange(1)
+	event.PublishUserEntities("albums", event.EntityCreated, []*Album{m}, m.CreatedBy)
 
 	return nil
 }

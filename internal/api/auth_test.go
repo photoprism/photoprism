@@ -43,7 +43,11 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, pas
 // Performs authenticated API request with empty request body.
 func AuthenticatedRequest(r http.Handler, method, path, sess string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(method, path, nil)
-	req.Header.Add(session.Header, sess)
+
+	if sess != "" {
+		req.Header.Add(session.Header, sess)
+	}
+
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
@@ -54,7 +58,10 @@ func AuthenticatedRequest(r http.Handler, method, path, sess string) *httptest.R
 func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, sess string) *httptest.ResponseRecorder {
 	reader := strings.NewReader(body)
 	req, _ := http.NewRequest(method, path, reader)
-	req.Header.Add(session.Header, sess)
+
+	if sess != "" {
+		req.Header.Add(session.Header, sess)
+	}
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)

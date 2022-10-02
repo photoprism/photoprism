@@ -11,7 +11,7 @@ import (
 )
 
 func TestSession_Get(t *testing.T) {
-	s := New(ExpiresAfter, config.TestConfig())
+	s := New(config.TestConfig())
 
 	assert.Error(t, s.Delete("abc"))
 
@@ -40,7 +40,7 @@ func TestSession_Get(t *testing.T) {
 }
 
 func TestSession_Exists(t *testing.T) {
-	s := New(ExpiresAfter, config.TestConfig())
+	s := New(config.TestConfig())
 
 	assert.False(t, s.Exists("xyz"))
 

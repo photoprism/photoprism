@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/event"
+
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -17,19 +19,20 @@ const (
 
 type Links []Link
 
-// Link represents a sharing link.
+// Link represents a link to share content.
 type Link struct {
-	LinkUID     string    `gorm:"type:VARBINARY(64);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
-	ShareUID    string    `gorm:"type:VARBINARY(64);unique_index:idx_links_uid_token;" json:"Share" yaml:"Share"`
+	LinkUID     string    `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	ShareUID    string    `gorm:"type:VARBINARY(42);unique_index:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
 	ShareSlug   string    `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug,omitempty"`
 	LinkToken   string    `gorm:"type:VARBINARY(160);unique_index:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
 	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
 	LinkViews   uint      `json:"Views" yaml:"-"`
 	MaxViews    uint      `json:"MaxViews" yaml:"-"`
 	HasPassword bool      `json:"HasPassword" yaml:"HasPassword,omitempty"`
-	CanComment  bool      `json:"CanComment" yaml:"CanComment,omitempty"`
-	CanEdit     bool      `json:"CanEdit" yaml:"CanEdit,omitempty"`
-	OwnerUID    string    `gorm:"type:VARBINARY(64);index" json:"OwnerUID,omitempty" yaml:"OwnerUID,omitempty"`
+	Comment     string    `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
+	Perm        uint      `json:"Perm,omitempty" yaml:"Perm,omitempty"`
+	RefID       string    `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
+	CreatedBy   string    `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt   time.Time `deepcopier:"skip" json:"CreatedAt" yaml:"CreatedAt"`
 	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
@@ -41,6 +44,11 @@ func (Link) TableName() string {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Link) BeforeCreate(scope *gorm.Scope) error {
+	if rnd.InvalidRefID(m.RefID) {
+		m.RefID = rnd.RefID(SessionPrefix)
+		Log("link", "set ref id", scope.SetColumn("RefID", m.RefID))
+	}
+
 	if rnd.IsUnique(m.LinkUID, LinkUID) {
 		return nil
 	}
@@ -49,21 +57,19 @@ func (m *Link) BeforeCreate(scope *gorm.Scope) error {
 }
 
 // NewLink creates a sharing link.
-func NewLink(shareUID string, canComment, canEdit bool) Link {
-	return NewUserLink(shareUID, canComment, canEdit, OwnerUnknown)
+func NewLink(shareUid string, canComment, canEdit bool) Link {
+	return NewUserLink(shareUid, OwnerUnknown)
 }
 
 // NewUserLink creates a sharing link owned by a user.
-func NewUserLink(shareUID string, canComment, canEdit bool, userUID string) Link {
+func NewUserLink(shareUid, userUid string) Link {
 	now := TimeStamp()
 
 	result := Link{
-		OwnerUID:   userUID,
 		LinkUID:    rnd.GenerateUID(LinkUID),
-		ShareUID:   shareUID,
+		ShareUID:   shareUid,
 		LinkToken:  rnd.GenerateToken(10),
-		CanComment: canComment,
-		CanEdit:    canEdit,
+		CreatedBy:  userUid,
 		CreatedAt:  now,
 		ModifiedAt: now,
 	}
@@ -71,35 +77,48 @@ func NewUserLink(shareUID string, canComment, canEdit bool, userUID string) Link
 	return result
 }
 
-func (m *Link) Redeem() {
+// Redeem increases the number of link visitors by one.
+func (m *Link) Redeem() *Link {
 	m.LinkViews += 1
 
-	result := Db().Model(m).UpdateColumn("LinkViews", m.LinkViews)
-
-	if result.RowsAffected == 0 {
-		log.Warnf("link: failed updating share view counter for %s", m.LinkUID)
+	if err := Db().Model(m).UpdateColumn("link_views", gorm.Expr("link_views + 1")).Error; err != nil {
+		event.AuditWarn([]string{"link %s", "failed to update view counter"}, clean.Log(m.RefID), err)
 	}
+
+	return m
 }
 
+// ExpiresAt returns the time when the share link expires or nil if it never expires.
+func (m *Link) ExpiresAt() *time.Time {
+	if m.LinkExpires <= 0 {
+		return nil
+	}
+
+	expires := TimeStamp()
+	expires = m.ModifiedAt.Add(Seconds(m.LinkExpires))
+
+	return &expires
+}
+
+// Expired checks if the share link has expired.
 func (m *Link) Expired() bool {
 	if m.MaxViews > 0 && m.LinkViews >= m.MaxViews {
 		return true
 	}
 
-	if m.LinkExpires <= 0 {
+	if expires := m.ExpiresAt(); expires == nil {
 		return false
+	} else {
+		return TimeStamp().After(*expires)
 	}
-
-	now := TimeStamp()
-	expires := m.ModifiedAt.Add(Seconds(m.LinkExpires))
-
-	return now.After(expires)
 }
 
+// SetSlug sets the URL slug of the link.
 func (m *Link) SetSlug(s string) {
 	m.ShareSlug = txt.Slug(s)
 }
 
+// SetPassword sets the password required to use the share link.
 func (m *Link) SetPassword(password string) error {
 	pw := NewPassword(m.LinkUID, password)
 
@@ -112,6 +131,7 @@ func (m *Link) SetPassword(password string) error {
 	return nil
 }
 
+// InvalidPassword checks if the password provided to use the share link is invalid.
 func (m *Link) InvalidPassword(password string) bool {
 	if !m.HasPassword {
 		return false
@@ -126,14 +146,14 @@ func (m *Link) InvalidPassword(password string) bool {
 	return pw.InvalidPassword(password)
 }
 
-// Save inserts a new row to the database or updates a row if the primary key already exists.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Link) Save() error {
 	if !rnd.IsUID(m.ShareUID, 0) {
-		return fmt.Errorf("link: invalid share uid (%s)", m.ShareUID)
+		return fmt.Errorf("invalid share uid")
 	}
 
 	if m.LinkToken == "" {
-		return fmt.Errorf("link: empty share token")
+		return fmt.Errorf("empty link token")
 	}
 
 	m.ModifiedAt = TimeStamp()
@@ -141,40 +161,43 @@ func (m *Link) Save() error {
 	return Db().Save(m).Error
 }
 
-// Delete the link.
+// Delete permanently deletes the link.
 func (m *Link) Delete() error {
 	if m.LinkToken == "" {
-		return fmt.Errorf("link: empty share token")
+		return fmt.Errorf("empty link token")
 	}
 
 	return Db().Delete(m).Error
 }
 
-// DeleteShareLinks removed all links matching the share uid.
-func DeleteShareLinks(shareUID string) error {
-	return Db().Delete(&Link{}, "share_uid = ?", shareUID).Error
+// DeleteShareLinks removes all links that match the shared UID.
+func DeleteShareLinks(shareUid string) error {
+	return Db().Delete(&Link{}, "share_uid = ?", shareUid).Error
 }
 
-// FindLink returns an entity pointer if exists.
-func FindLink(linkUID string) *Link {
-	result := Link{}
-
-	if err := Db().Where("link_uid = ?", linkUID).First(&result).Error; err == nil {
-		return &result
-	} else {
-		log.Errorf("link: %s (not found)", err)
+// FindLink finds the link with the specified UID or nil if it is not found.
+func FindLink(linkUid string) *Link {
+	if rnd.InvalidUID(linkUid, LinkUID) {
+		return nil
 	}
 
-	return nil
+	result := Link{}
+
+	if Db().Where("link_uid = ?", linkUid).First(&result).RecordNotFound() {
+		event.AuditWarn([]string{"link %s", "not found"}, clean.Log(linkUid))
+		return nil
+	}
+
+	return &result
 }
 
-// FindLinks returns a slice of links for a token and share UID (at least one must be provided).
-func FindLinks(token, share string) (result Links) {
+// FindLinks returns a slice of links for a token and a share UID (at least one must be specified).
+func FindLinks(token, shared string) (found Links) {
+	found = Links{}
 	token = clean.ShareToken(token)
 
-	if token == "" && share == "" {
-		log.Errorf("link: share token and uid must not be empty at the same time (find links)")
-		return []Link{}
+	if token == "" && shared == "" {
+		return found
 	}
 
 	q := Db()
@@ -183,33 +206,37 @@ func FindLinks(token, share string) (result Links) {
 		q = q.Where("link_token = ?", token)
 	}
 
-	if share != "" {
-		if rnd.IsUID(share, 'a') {
-			q = q.Where("share_uid = ?", share)
+	if shared != "" {
+		if rnd.IsUID(shared, 0) {
+			q = q.Where("share_uid = ?", shared)
 		} else {
-			q = q.Where("share_slug = ?", share)
+			q = q.Where("share_slug = ?", shared)
 		}
 	}
 
-	if err := q.Order("modified_at DESC").Find(&result).Error; err != nil {
-		log.Errorf("link: %s (not found)", err)
+	if err := q.Order("modified_at DESC").Find(&found).Error; err != nil {
+		event.AuditErr([]string{"token %s", "%s"}, clean.Log(token), err)
 	}
 
-	return result
+	return found
 }
 
 // FindValidLinks returns a slice of non-expired links for a token and share UID (at least one must be provided).
-func FindValidLinks(token, share string) (result Links) {
-	for _, link := range FindLinks(token, share) {
-		if !link.Expired() {
-			result = append(result, link)
+func FindValidLinks(token, shared string) (found Links) {
+	found = Links{}
+
+	for _, link := range FindLinks(token, shared) {
+		if link.Expired() {
+			continue
 		}
+
+		found = append(found, link)
 	}
 
-	return result
+	return found
 }
 
-// String returns an human readable identifier for logging.
+// String returns a human-readable identifier for use in logs.
 func (m *Link) String() string {
 	return clean.Log(m.LinkUID)
 }

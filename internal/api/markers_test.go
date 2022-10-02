@@ -24,15 +24,15 @@ func TestUpdateMarker(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, r.Code)
 
-		photoUID := gjson.Get(r.Body.String(), "UID").String()
-		fileUID := gjson.Get(r.Body.String(), "Files.0.UID").String()
-		markerUID := gjson.Get(r.Body.String(), "Files.0.Markers.0.UID").String()
+		photoUid := gjson.Get(r.Body.String(), "UID").String()
+		fileUid := gjson.Get(r.Body.String(), "Files.0.UID").String()
+		markerUid := gjson.Get(r.Body.String(), "Files.0.Markers.0.UID").String()
 
-		assert.NotEmpty(t, photoUID)
-		assert.NotEmpty(t, fileUID)
-		assert.NotEmpty(t, markerUID)
+		assert.NotEmpty(t, photoUid)
+		assert.NotEmpty(t, fileUid)
+		assert.NotEmpty(t, markerUid)
 
-		u := fmt.Sprintf("/api/v1/markers/%s", markerUID)
+		u := fmt.Sprintf("/api/v1/markers/%s", markerUid)
 
 		var m = form.Marker{
 			SubjSrc:       "manual",
@@ -193,15 +193,15 @@ func TestClearMarkerSubject(t *testing.T) {
 			t.Fatal("body is empty")
 		}
 
-		photoUID := gjson.Get(photoResp.Body.String(), "UID").String()
-		fileUID := gjson.Get(photoResp.Body.String(), "Files.0.UID").String()
-		markerUID := gjson.Get(photoResp.Body.String(), "Files.0.Markers.0.UID").String()
+		photoUid := gjson.Get(photoResp.Body.String(), "UID").String()
+		fileUid := gjson.Get(photoResp.Body.String(), "Files.0.UID").String()
+		markerUid := gjson.Get(photoResp.Body.String(), "Files.0.Markers.0.UID").String()
 
-		assert.NotEmpty(t, photoUID)
-		assert.NotEmpty(t, fileUID)
-		assert.NotEmpty(t, markerUID)
+		assert.NotEmpty(t, photoUid)
+		assert.NotEmpty(t, fileUid)
+		assert.NotEmpty(t, markerUid)
 
-		u := fmt.Sprintf("/api/v1/markers/%s/subject", markerUID)
+		u := fmt.Sprintf("/api/v1/markers/%s/subject", markerUid)
 
 		// t.Logf("DELETE %s", u)
 

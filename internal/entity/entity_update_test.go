@@ -84,12 +84,11 @@ func TestUpdate(t *testing.T) {
 	})
 	t.Run("NonExistentKeys", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
-		m.ID = uint(99999 + r.Intn(10000))
+		m.ID = uint(10000000 + r.Intn(10000))
 		m.PhotoUID = rnd.GenerateUID(PhotoUID)
 		updatedAt := m.UpdatedAt
 		if err := Update(m, "ID", "PhotoUID"); err == nil {
-			t.Fatal("error expected")
-			return
+			t.Errorf("expected error: %#v", m)
 		} else {
 			assert.ErrorContains(t, err, "record not found")
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())

@@ -37,7 +37,7 @@ type Users []User
 type User struct {
 	ID            int           `gorm:"primary_key" json:"-" yaml:"-"`
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
-	UserUID       string        `gorm:"type:VARBINARY(64);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
+	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
 	AuthID        string        `gorm:"type:VARBINARY(128);index;default:'';" json:"AuthID,omitempty" yaml:"AuthID,omitempty"`
 	UserName      string        `gorm:"size:64;index;" json:"Name" yaml:"Name,omitempty"`
@@ -49,6 +49,7 @@ type User struct {
 	SuperAdmin    bool          `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
 	CanLogin      bool          `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
 	LoginAt       *time.Time    `json:"LoginAt,omitempty" yaml:"LoginAt,omitempty"`
+	ExpiresAt     *time.Time    `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 	BasePath      string        `gorm:"type:VARBINARY(1024);" json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
 	UploadPath    string        `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
 	CanSync       bool          `json:"CanSync,omitempty" yaml:"CanSync,omitempty"`
@@ -69,8 +70,8 @@ type User struct {
 	RefID         string        `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
 	CreatedAt     time.Time     `json:"CreatedAt" yaml:"-"`
 	UpdatedAt     time.Time     `json:"UpdatedAt" yaml:"-"`
-	ExpiresAt     *time.Time    `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 	DeletedAt     *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	Shares        Shares        `gorm:"-" json:"Shares,omitempty" yaml:"Shares,omitempty"`
 }
 
 // TableName returns the entity table name.
@@ -124,7 +125,7 @@ func FindUserByName(name string) *User {
 
 // FindUserByUID returns an existing user or nil if not found.
 func FindUserByUID(uid string) *User {
-	if uid == "" {
+	if rnd.InvalidUID(uid, UserUID) {
 		return nil
 	}
 
@@ -132,7 +133,6 @@ func FindUserByUID(uid string) *User {
 
 	// Find matching record.
 	if UnscopedDb().First(m, "user_uid = ?", uid).RecordNotFound() {
-		event.AuditWarn([]string{"user", "failed to find uid %s"}, clean.Log(uid))
 		return nil
 	}
 
@@ -142,7 +142,22 @@ func FindUserByUID(uid string) *User {
 
 // UID returns the unique id as string.
 func (m *User) UID() string {
+	if m == nil {
+		return ""
+	}
+
 	return m.UserUID
+}
+
+// SameUID checks if the given uid matches the own uid.
+func (m *User) SameUID(uid string) bool {
+	if m == nil {
+		return false
+	} else if m.UserUID == "" || rnd.InvalidUID(uid, UserUID) {
+		return false
+	}
+
+	return m.UserUID == uid
 }
 
 // InitAccount sets the name and password of the initial admin account.
@@ -167,13 +182,13 @@ func (m *User) InitAccount(login, password string) (updated bool) {
 
 	// Save password.
 	if err := pw.Save(); err != nil {
-		event.AuditErr([]string{"user", "failed to change password for %s", "%s"}, clean.LogQuote(login), err)
+		event.AuditErr([]string{"user %s", "failed to change password", "%s"}, m.RefID, err)
 		return false
 	}
 
 	// Change username.
 	if err := m.UpdateName(login); err != nil {
-		event.AuditErr([]string{"user", m.UserUID, "failed to change name to %s", "%s"}, clean.LogQuote(login), err)
+		event.AuditErr([]string{"user %s", "failed to change username to %s", "%s"}, m.RefID, clean.Log(login), err)
 	}
 
 	return true
@@ -190,7 +205,7 @@ func (m *User) Create() (err error) {
 	return err
 }
 
-// Save entity properties.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *User) Save() (err error) {
 	err = Db().Save(m).Error
 
@@ -230,10 +245,10 @@ func (m *User) LoadRelated() *User {
 // SaveRelated saves related settings and details.
 func (m *User) SaveRelated() *User {
 	if err := m.Settings().Save(); err != nil {
-		event.AuditErr([]string{"user", m.UserUID, "failed to save settings", "%s"}, err)
+		event.AuditErr([]string{"user %s", "failed to save settings", "%s"}, m.RefID, err)
 	}
 	if err := m.Details().Save(); err != nil {
-		event.AuditErr([]string{"user", m.UserUID, "failed to save details", "%s"}, err)
+		event.AuditErr([]string{"user %s", "failed to save details", "%s"}, m.RefID, err)
 	}
 
 	return m
@@ -256,7 +271,7 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(UserPrefix)
-		_ = scope.SetColumn("RefID", m.RefID)
+		Log("user", "set ref id", scope.SetColumn("RefID", m.RefID))
 	}
 
 	if rnd.IsUnique(m.UserUID, UserUID) {
@@ -445,11 +460,24 @@ func (m *User) Attr() string {
 
 // IsRegistered checks if the user is registered e.g. has a username.
 func (m *User) IsRegistered() bool {
-	return m.UserName != "" && rnd.IsUID(m.UserUID, UserUID)
+	if m == nil {
+		return false
+	}
+
+	return m.UserName != "" && rnd.IsUID(m.UserUID, UserUID) && !m.IsVisitor()
+}
+
+// NotRegistered checks if the user is not registered with an own account.
+func (m *User) NotRegistered() bool {
+	return !m.IsRegistered()
 }
 
 // IsAdmin checks if the user is an admin with username.
 func (m *User) IsAdmin() bool {
+	if m == nil {
+		return false
+	}
+
 	return m.IsRegistered() && (m.SuperAdmin || m.AclRole() == acl.RoleAdmin)
 }
 
@@ -474,14 +502,14 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 	sess := Sessions{}
 
 	if err := stmt.Find(&sess).Error; err != nil {
-		event.AuditErr([]string{"user", "failed to invalidate sessions", "%s"}, m.UserUID, err)
+		event.AuditErr([]string{"user %s", "failed to invalidate sessions", "%s"}, m.RefID, err)
 		return 0
 	}
 
 	// This will also remove the session from the cache.
 	for _, s := range sess {
 		if err := s.Delete(); err != nil {
-			event.AuditWarn([]string{"user", "failed to invalidate session %s"}, m.UserUID, clean.Log(s.RefID))
+			event.AuditWarn([]string{"user %s", "failed to invalidate session %s", "%s"}, m.RefID, clean.Log(s.RefID), err)
 		} else {
 			deleted++
 		}
@@ -603,4 +631,76 @@ func (m *User) SetFormValues(frm form.User) *User {
 	m.SetUploadPath(frm.UploadPath)
 
 	return m
+}
+
+// RefreshShares updates the list of shares.
+func (m *User) RefreshShares() *User {
+	m.Shares = FindShares(m.UID())
+	return m
+}
+
+// NoShares checks if the user has no shares yet.
+func (m *User) NoShares() bool {
+	if !m.IsRegistered() {
+		return true
+	}
+
+	return m.Shares.Empty()
+}
+
+// HasShares checks if the user has any shares.
+func (m *User) HasShares() bool {
+	return !m.NoShares()
+}
+
+// HasShare if a uid was shared with the user.
+func (m *User) HasShare(uid string) bool {
+	if !m.IsRegistered() || m.NoShares() {
+		return false
+	}
+
+	return m.Shares.Contains(uid)
+}
+
+// SharedUIDs returns shared entity UIDs.
+func (m *User) SharedUIDs() UIDs {
+	if m.IsRegistered() && m.Shares.Empty() {
+		m.RefreshShares()
+	}
+
+	return m.Shares.UIDs()
+}
+
+// RedeemToken updates shared entity UIDs using the specified token.
+func (m *User) RedeemToken(token string) (n int) {
+	if !m.IsRegistered() {
+		return 0
+	}
+
+	// Find links.
+	links := FindValidLinks(token, "")
+
+	// Found?
+	if n = len(links); n == 0 {
+		return n
+	}
+
+	// Find shares.
+	for _, link := range links {
+		if found := FindShare(Share{UserUID: m.UID(), ShareUID: link.ShareUID}); found == nil {
+			share := NewShare(m.UID(), link.ShareUID, link.Perm, link.ExpiresAt())
+			share.LinkUID = link.LinkUID
+			share.Comment = link.Comment
+
+			if err := share.Save(); err != nil {
+				event.AuditErr([]string{"user %s", "token %s", "failed to redeem shares", "%s"}, m.RefID, clean.Log(token), err)
+			} else {
+				link.Redeem()
+			}
+		} else if err := found.UpdateLink(link); err != nil {
+			event.AuditErr([]string{"user %s", "token %s", "failed to update shares", "%s"}, m.RefID, clean.Log(token), err)
+		}
+	}
+
+	return n
 }

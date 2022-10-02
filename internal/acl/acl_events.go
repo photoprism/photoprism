@@ -5,6 +5,10 @@ var Events = ACL{
 	ResourceDefault: Roles{
 		RoleAdmin: GrantFullAccess,
 	},
+	ChannelUser: Roles{
+		RoleAdmin:   GrantFullAccess,
+		RoleVisitor: GrantSubscribeOwn,
+	},
 	ChannelSession: Roles{
 		RoleAdmin:   GrantFullAccess,
 		RoleVisitor: GrantSubscribeOwn,

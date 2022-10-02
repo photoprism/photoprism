@@ -16,12 +16,12 @@ const (
 
 // UserDetails represents user profile information.
 type UserDetails struct {
-	UserUID     string    `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
-	SubjUID     string    `gorm:"type:VARBINARY(64);index;" json:"SubjUID,omitempty" yaml:"SubjUID,omitempty"`
+	UserUID     string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
+	SubjUID     string    `gorm:"type:VARBINARY(42);index;" json:"SubjUID,omitempty" yaml:"SubjUID,omitempty"`
 	SubjSrc     string    `gorm:"type:VARBINARY(8);default:'';" json:"SubjSrc,omitempty" yaml:"SubjSrc,omitempty"`
-	PlaceID     string    `gorm:"type:VARBINARY(64);index;default:'zz'" json:"PlaceID,omitempty" yaml:"-"`
+	PlaceID     string    `gorm:"type:VARBINARY(42);index;default:'zz'" json:"PlaceID,omitempty" yaml:"-"`
 	PlaceSrc    string    `gorm:"type:VARBINARY(8);" json:"PlaceSrc,omitempty" yaml:"PlaceSrc,omitempty"`
-	CellID      string    `gorm:"type:VARBINARY(64);index;default:'zz'" json:"CellID,omitempty" yaml:"CellID,omitempty"`
+	CellID      string    `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID,omitempty" yaml:"CellID,omitempty"`
 	IdURL       string    `gorm:"type:VARBINARY(512);column:id_url;" json:"IdURL,omitempty" yaml:"IdURL,omitempty"`
 	AvatarURL   string    `gorm:"type:VARBINARY(512);column:avatar_url" json:"AvatarURL,omitempty" yaml:"AvatarURL,omitempty"`
 	SiteURL     string    `gorm:"type:VARBINARY(512);column:site_url" json:"SiteURL,omitempty" yaml:"SiteURL,omitempty"`
@@ -87,7 +87,7 @@ func (m *UserDetails) Create() error {
 	return Db().Create(m).Error
 }
 
-// Save entity properties.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *UserDetails) Save() error {
 	return Db().Save(m).Error
 }

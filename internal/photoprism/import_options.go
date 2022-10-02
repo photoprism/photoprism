@@ -5,7 +5,7 @@ type ImportOptions struct {
 	Albums                 []string
 	Path                   string
 	Move                   bool
-	OwnerUID               string
+	UserUID                string
 	DestFolder             string
 	RemoveDotFiles         bool
 	RemoveExistingFiles    bool

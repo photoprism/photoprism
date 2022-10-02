@@ -4,6 +4,12 @@
           @submit.prevent="updateQuery()">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
       <v-toolbar-title :title="album.Title">
+        <span class="hidden-xs-only">
+        <router-link :to="{ name: collRoute }">
+          {{ $gettext(collName) }}
+        </router-link>
+        <v-icon>{{ navIcon }}</v-icon>
+        </span>
         {{ album.Title }}
       </v-toolbar-title>
 
@@ -118,6 +124,9 @@ export default {
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
       categories: this.$config.albumCategories(),
+      collName: this.$route.meta && this.$route.meta.collName ? this.$route.meta.collName : this.$gettext("Albums"),
+      collRoute: this.$route.meta && this.$route.meta.collRoute ? this.$route.meta.collRoute : "albums",
+      navIcon: this.$rtl ? 'navigate_before' : 'navigate_next',
       searchExpanded: false,
       options: {
         'views': [

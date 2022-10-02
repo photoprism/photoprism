@@ -11,24 +11,24 @@ import (
 
 func TestNewSession(t *testing.T) {
 	t.Run("NoSessionData", func(t *testing.T) {
-		m := NewSession(time.Hour)
+		m := NewSession(time.Hour*24, time.Hour*6)
 
 		assert.True(t, rnd.IsSessionID(m.ID))
 		assert.False(t, m.CreatedAt.IsZero())
 		assert.False(t, m.UpdatedAt.IsZero())
-		assert.False(t, m.ExpiresAt.IsZero())
+		assert.False(t, m.ExpiresAt().IsZero())
 		assert.NotEmpty(t, m.ID)
 		assert.NotNil(t, m.Data())
 		assert.Equal(t, 0, len(m.Data().Tokens))
 	})
 	t.Run("EmptySessionData", func(t *testing.T) {
-		m := NewSession(time.Hour)
+		m := NewSession(time.Hour*24, time.Hour*6)
 		m.SetData(NewSessionData())
 
 		assert.True(t, rnd.IsSessionID(m.ID))
 		assert.False(t, m.CreatedAt.IsZero())
 		assert.False(t, m.UpdatedAt.IsZero())
-		assert.False(t, m.ExpiresAt.IsZero())
+		assert.False(t, m.ExpiresAt().IsZero())
 		assert.NotEmpty(t, m.ID)
 		assert.NotNil(t, m.Data())
 		assert.Equal(t, 0, len(m.Data().Tokens))
@@ -36,13 +36,13 @@ func TestNewSession(t *testing.T) {
 	t.Run("WithSessionData", func(t *testing.T) {
 		data := NewSessionData()
 		data.Tokens = []string{"foo", "bar"}
-		m := NewSession(time.Hour)
+		m := NewSession(time.Hour*24, time.Hour*6)
 		m.SetData(data)
 
 		assert.True(t, rnd.IsSessionID(m.ID))
 		assert.False(t, m.CreatedAt.IsZero())
 		assert.False(t, m.UpdatedAt.IsZero())
-		assert.False(t, m.ExpiresAt.IsZero())
+		assert.False(t, m.ExpiresAt().IsZero())
 		assert.NotEmpty(t, m.ID)
 		assert.NotNil(t, m.Data())
 		assert.Len(t, m.Data().Tokens, 2)
@@ -55,7 +55,7 @@ func TestNewSession(t *testing.T) {
 
 func TestSession_SetData(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
-		m := NewSession(time.Hour)
+		m := NewSession(time.Hour*24, time.Hour*6)
 
 		assert.NotNil(t, m)
 

@@ -53,7 +53,7 @@ func (m *Details) Create() error {
 	return UnscopedDb().Create(m).Error
 }
 
-// Save updates existing photo details or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Details) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("details: photo id must not be empty (save)")

@@ -244,8 +244,8 @@ func PhotoPrimary(router *gin.RouterGroup) {
 		}
 
 		uid := clean.UID(c.Param("uid"))
-		fileUID := clean.UID(c.Param("file_uid"))
-		err := query.SetPhotoPrimary(uid, fileUID)
+		fileUid := clean.UID(c.Param("file_uid"))
+		err := query.SetPhotoPrimary(uid, fileUid)
 
 		if err != nil {
 			AbortEntityNotFound(c)

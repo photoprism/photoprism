@@ -1,6 +1,7 @@
 package acl
 
 const (
+	ChannelUser      Resource = "user"
 	ChannelSession   Resource = "session"
 	ChannelAudit     Resource = "audit"
 	ChannelLog       Resource = "log"

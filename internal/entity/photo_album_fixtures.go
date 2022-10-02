@@ -4,20 +4,20 @@ import "time"
 
 type PhotoAlbumMap map[string]PhotoAlbum
 
-func (m PhotoAlbumMap) Get(name, photoUID, albumUID string) PhotoAlbum {
+func (m PhotoAlbumMap) Get(name, photoUid, albumUid string) PhotoAlbum {
 	if result, ok := m[name]; ok {
 		return result
 	}
 
-	return *NewPhotoAlbum(photoUID, albumUID)
+	return *NewPhotoAlbum(photoUid, albumUid)
 }
 
-func (m PhotoAlbumMap) Pointer(name, photoUID, albumUID string) *PhotoAlbum {
+func (m PhotoAlbumMap) Pointer(name, photoUid, albumUid string) *PhotoAlbum {
 	if result, ok := m[name]; ok {
 		return &result
 	}
 
-	return NewPhotoAlbum(photoUID, albumUID)
+	return NewPhotoAlbum(photoUid, albumUid)
 }
 
 var PhotoAlbumFixtures = PhotoAlbumMap{

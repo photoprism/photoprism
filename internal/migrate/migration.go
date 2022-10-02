@@ -95,25 +95,27 @@ func (m *Migration) Execute(db *gorm.DB) error {
 	for _, s := range m.Statements { //  ADD
 		if err := db.Exec(s).Error; err != nil {
 			// Normalize query and error for comparison.
-			q := strings.ToUpper(s)
-			e := strings.ToUpper(err.Error())
+			q := strings.ToLower(s)
+			e := strings.ToLower(err.Error())
 
 			// Log the errors triggered by ALTER and DROP statements
 			// and otherwise ignore them, since some databases do not
 			// support "IF EXISTS".
-			if strings.HasPrefix(q, "ALTER TABLE ") &&
-				strings.Contains(s, " ADD ") &&
-				strings.Contains(e, "DUPLICATE") {
+			if strings.HasPrefix(q, "alter table ") &&
+				strings.Contains(s, " add ") &&
+				strings.Contains(e, "duplicate") {
 				log.Tracef("migrate: %s (ignored, column already exists)", err)
-			} else if strings.HasPrefix(q, "DROP INDEX ") &&
-				strings.Contains(e, "DROP") {
-				log.Tracef("migrate: %s (ignored, probably didn't exist anymore)", err)
-			} else if strings.HasPrefix(q, "DROP TABLE ") &&
-				strings.Contains(e, "DROP") {
-				log.Tracef("migrate: %s (ignored, probably didn't exist anymore)", err)
-			} else if (strings.Contains(q, " IGNORE ") || strings.Contains(q, "REPLACE")) &&
-				(strings.Contains(e, "NO SUCH TABLE") || strings.Contains(e, "DOESN'T EXIST")) {
-				log.Tracef("migrate: %s (ignored, old table does not exist anymore)", err)
+			} else if strings.HasPrefix(q, "drop index ") &&
+				strings.Contains(e, "drop") {
+				log.Tracef("migrate: %s (ignored, probably no longer existed)", err)
+			} else if strings.HasPrefix(q, "drop table ") &&
+				strings.Contains(e, "drop") {
+				log.Tracef("migrate: %s (ignored, probably no longer existed)", err)
+			} else if (strings.Contains(q, " ignore ") || strings.Contains(q, "replace")) &&
+				(strings.Contains(e, "no such table") || strings.Contains(e, "doesn't exist")) {
+				log.Tracef("migrate: %s (ignored, old table no longer exists)", err)
+			} else if strings.Contains(q, "rename column") && strings.Contains(e, "no such column") {
+				log.Tracef("migrate: %s (ignored, column no longer exists)", err)
 			} else {
 				return err
 			}

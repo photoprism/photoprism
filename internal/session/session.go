@@ -35,11 +35,10 @@ import (
 
 var log = event.Log
 
-var ExpiresAfter = 168 * time.Hour
-
 // Session represents a session store.
 type Session struct {
-	conf         *config.Config
-	cache        *gc.Cache
-	expiresAfter time.Duration
+	conf    *config.Config
+	cache   *gc.Cache
+	MaxAge  time.Duration
+	Timeout time.Duration
 }

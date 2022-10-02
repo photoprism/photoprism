@@ -10,8 +10,6 @@ import (
 func TestNewLink(t *testing.T) {
 	link := NewLink("st9lxuqxpogaaba1", true, false)
 	assert.Equal(t, "st9lxuqxpogaaba1", link.ShareUID)
-	assert.Equal(t, false, link.CanEdit)
-	assert.Equal(t, true, link.CanComment)
 	assert.Equal(t, 10, len(link.LinkToken))
 	assert.Equal(t, 16, len(link.LinkUID))
 }
@@ -46,7 +44,7 @@ func TestLink_Expired(t *testing.T) {
 }
 
 func TestLink_Redeem(t *testing.T) {
-	link := NewLink(rnd.GenerateUID('a'), false, false)
+	link := NewLink(rnd.GenerateUID(AlbumUID), false, false)
 
 	assert.Equal(t, uint(0), link.LinkViews)
 

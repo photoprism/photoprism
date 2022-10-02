@@ -414,15 +414,15 @@ export default {
       });
     },
     onChange() {
-      const reload = this.settings.changed("ui", "language");
+      const locale = this.settings.changed("ui", "language");
 
-      if (reload) {
+      if (locale) {
         this.busy = true;
       }
 
       this.settings.save().then(() => {
         this.$config.setSettings(this.settings);
-        if (reload) {
+        if (locale) {
           this.$notify.info(this.$gettext("Reloading…"));
           this.$notify.blockUI();
           setTimeout(() => window.location.reload(), 100);

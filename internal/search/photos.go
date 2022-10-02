@@ -62,7 +62,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		Joins("LEFT JOIN places ON photos.place_id = places.id")
 
 	// Accept the album UID as scope for backward compatibility.
-	if rnd.IsUID(f.Album, 'a') {
+	if rnd.IsUID(f.Album, entity.AlbumUID) {
 		if txt.Empty(f.Scope) {
 			f.Scope = f.Album
 		}
@@ -97,7 +97,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		aclRole := user.AclRole()
 
 		// Visitors and other restricted users can only access shared content.
-		if !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.Unregistered()) ||
+		if !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.NotRegistered()) ||
 			f.Scope == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
 			return PhotoResults{}, 0, ErrForbidden
@@ -123,9 +123,9 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		// Limit results by owner and path?
 		if f.Scope == "" && acl.Resources.DenyAll(acl.ResourcePhotos, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 			if user.BasePath == "" {
-				s = s.Where("photos.owner_uid = ?", user.UserUID)
+				s = s.Where("photos.created_by = ?", user.UserUID)
 			} else {
-				s = s.Where("photos.owner_uid = ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
+				s = s.Where("photos.created_by = ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
 					user.UserUID, user.BasePath, user.BasePath+"/%")
 			}
 		}
@@ -176,17 +176,21 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	if txt.NotEmpty(f.UID) {
 		ids := SplitOr(strings.ToLower(f.UID))
 
-		if idType, prefix := rnd.ContainsType(ids); idType == rnd.TypeUID {
+		idType, prefix := rnd.ContainsType(ids)
+
+		if idType == rnd.TypeUnknown {
+			return PhotoResults{}, 0, fmt.Errorf("%s ids specified", idType)
+		} else if idType.SHA() {
+			s = s.Where("files.file_hash IN (?)", ids)
+		} else if idType == rnd.TypeUID {
 			switch prefix {
 			case entity.PhotoUID:
 				s = s.Where("photos.photo_uid IN (?)", ids)
 			case entity.FileUID:
 				s = s.Where("files.file_uid IN (?)", ids)
 			default:
-				return PhotoResults{}, 0, fmt.Errorf("invalid %s specified", idType)
+				return PhotoResults{}, 0, fmt.Errorf("invalid ids specified")
 			}
-		} else if idType.SHA() {
-			s = s.Where("files.file_hash IN (?)", ids)
 		}
 
 		// Find UIDs only to improve performance?

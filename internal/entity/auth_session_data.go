@@ -55,7 +55,7 @@ func (data *SessionData) RedeemToken(token string) (n int) {
 
 	// No valid links found?
 	if n = len(links); n == 0 {
-		return 0
+		return n
 	}
 
 	// Append new token.

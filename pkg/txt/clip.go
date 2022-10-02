@@ -18,6 +18,7 @@ const (
 	ClipLongName  = 200
 	ClipEmail     = 255
 	ClipPath      = 500
+	ClipComment   = 512
 	ClipURL       = 512
 	ClipLog       = 512
 	ClipFlags     = 767

@@ -8,7 +8,7 @@
           </router-link>
 
           <router-link v-for="(item, index) in breadcrumbs" :key="index" :to="item.path">
-            <v-icon>navigate_next</v-icon>
+            <v-icon>{{ navIcon }}</v-icon>
             {{ item.name }}
           </router-link>
         </v-toolbar-title>
@@ -137,6 +137,7 @@ export default {
 
     return {
       config: this.$config.values,
+      navIcon: this.$rtl ? 'navigate_before' : 'navigate_next',
       subscriptions: [],
       listen: false,
       dirty: false,

@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -150,7 +151,8 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 
 	// Subscribe to events.
 	e := event.Subscribe(
-		"session.*",
+		"user.*.*.*",
+		"session.*.*.*",
 		"log.fatal",
 		"log.error",
 		"log.warning",
@@ -212,19 +214,26 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 
 			wsAuth.mutex.RUnlock()
 
-			// Split topic into channel and event name.
-			ch, ev := event.Topic(msg.Topic())
+			// Split topic into sub-channels.
+			ev := msg.Topic()
+			ch := strings.Split(ev, ".")
 
-			// Message intended for a specific session only?
-			if acl.ChannelSession.Equal(ch) {
-				if s, topic := event.Topic(ev); s == sid && topic != "" {
-					// Send to client with the matching session ID.
-					wsSendMessage(topic, msg.Fields, ws, writeMutex)
+			// Send the message only to authorized recipients.
+			switch len(ch) {
+			case 2:
+				// Send to everyone who is allowed to subscribe.
+				if res := acl.Resource(ch[0]); acl.Events.AllowAll(res, user.AclRole(), wsSubscribePerms) {
+					wsSendMessage(ev, msg.Fields, ws, writeMutex)
 				}
-			} else if chRes := acl.Resource(ch); acl.Events.AllowAll(chRes, user.AclRole(), wsSubscribePerms) {
-				// Send the message to authorized recipient.
-				// event.AuditDebug([]string{"websocket", "session %s", "%s %s as %s", "granted"}, rid, wsSubscribePerms.String(), chRes.String(), user.AclRole().String())
-				wsSendMessage(msg.Topic(), msg.Fields, ws, writeMutex)
+			case 4:
+				ev = strings.Join(ch[2:4], ".")
+				if acl.ChannelUser.Equal(ch[0]) && ch[1] == user.UID() || acl.Events.AllowAll(acl.Resource(ch[2]), user.AclRole(), wsSubscribePerms) {
+					// Send to matching user uid.
+					wsSendMessage(ev, msg.Fields, ws, writeMutex)
+				} else if acl.ChannelSession.Equal(ch[0]) && ch[1] == sid {
+					// Send to matching session id.
+					wsSendMessage(ev, msg.Fields, ws, writeMutex)
+				}
 			}
 		}
 	}

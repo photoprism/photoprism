@@ -11,7 +11,7 @@ import (
 )
 
 func TestSession_Delete(t *testing.T) {
-	s := New(ExpiresAfter, config.TestConfig())
+	s := New(config.TestConfig())
 
 	assert.Error(t, s.Delete("abc"))
 
