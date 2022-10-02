@@ -50,7 +50,7 @@ type UserDetails struct {
 
 // TableName returns the entity table name.
 func (UserDetails) TableName() string {
-	return "auth_users_details_dev"
+	return "auth_users_details"
 }
 
 // NewUserDetails creates new user details.

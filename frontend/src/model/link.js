@@ -33,7 +33,7 @@ export default class Link extends Model {
   getDefaults() {
     return {
       UID: "",
-      Share: "",
+      ShareUID: "",
       Slug: "",
       Token: "",
       Expires: 0,
@@ -41,8 +41,8 @@ export default class Link extends Model {
       MaxViews: 0,
       Password: "",
       HasPassword: false,
-      CanComment: false,
-      CanEdit: false,
+      Comment: "",
+      Perm: 0,
       CreatedAt: "",
       ModifiedAt: "",
     };
@@ -74,7 +74,7 @@ export default class Link extends Model {
       return `${siteUrl}s/${token}/${this.Slug}`;
     }
 
-    return `${siteUrl}s/${token}/${this.Share}`;
+    return `${siteUrl}s/${token}/${this.ShareUID}`;
   }
 
   caption() {

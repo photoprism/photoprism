@@ -50,67 +50,68 @@ func MapKey(takenAt time.Time, cellId string) string {
 
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
-	ID               uint         `gorm:"primary_key" yaml:"-"`
-	UUID             string       `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
-	TakenAt          time.Time    `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
-	TakenAtLocal     time.Time    `gorm:"type:DATETIME;" yaml:"-"`
-	TakenSrc         string       `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	PhotoUID         string       `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
-	PhotoType        string       `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
-	TypeSrc          string       `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
-	PhotoTitle       string       `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
-	TitleSrc         string       `gorm:"type:VARBINARY(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
-	PhotoDescription string       `gorm:"type:VARCHAR(4096);" json:"Description" yaml:"Description,omitempty"`
-	DescriptionSrc   string       `gorm:"type:VARBINARY(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
-	PhotoPath        string       `gorm:"type:VARBINARY(1024);index:idx_photos_path_name;" json:"Path" yaml:"-"`
-	PhotoName        string       `gorm:"type:VARBINARY(255);index:idx_photos_path_name;" json:"Name" yaml:"-"`
-	OriginalName     string       `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
-	PhotoStack       int8         `json:"Stack" yaml:"Stack,omitempty"`
-	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
-	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
-	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
-	PhotoPanorama    bool         `json:"Panorama" yaml:"Panorama,omitempty"`
-	TimeZone         string       `gorm:"type:VARBINARY(64);" json:"TimeZone" yaml:"TimeZone,omitempty"`
-	PlaceID          string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
-	PlaceSrc         string       `gorm:"type:VARBINARY(8);" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
-	CellID           string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID" yaml:"-"`
-	CellAccuracy     int          `json:"CellAccuracy" yaml:"CellAccuracy,omitempty"`
-	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
-	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
-	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
-	PhotoCountry     string       `gorm:"type:VARBINARY(2);index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
-	PhotoYear        int          `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
-	PhotoMonth       int          `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`
-	PhotoDay         int          `gorm:"index:idx_photos_ymd" json:"Day" yaml:"Day"`
-	PhotoIso         int          `json:"Iso" yaml:"ISO,omitempty"`
-	PhotoExposure    string       `gorm:"type:VARBINARY(64);" json:"Exposure" yaml:"Exposure,omitempty"`
-	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
-	PhotoFocalLength int          `json:"FocalLength" yaml:"FocalLength,omitempty"`
-	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
-	PhotoFaces       int          `json:"Faces,omitempty" yaml:"Faces,omitempty"`
-	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
-	PhotoColor       int16        `json:"Color" yaml:"-"`
-	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
-	CameraSerial     string       `gorm:"type:VARBINARY(160);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
-	CameraSrc        string       `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`
-	LensID           uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
-	Details          *Details     `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Details" yaml:"Details"`
-	Camera           *Camera      `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Camera" yaml:"-"`
-	Lens             *Lens        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
-	Cell             *Cell        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Cell" yaml:"-"`
-	Place            *Place       `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Place" yaml:"-"`
-	Keywords         []Keyword    `json:"-" yaml:"-"`
-	Albums           []Album      `json:"-" yaml:"-"`
-	Files            []File       `yaml:"-"`
-	Labels           []PhotoLabel `yaml:"-"`
-	CreatedBy        string       `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
-	CreatedAt        time.Time    `yaml:"CreatedAt,omitempty"`
-	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
-	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
-	PublishedAt      *time.Time   `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	CheckedAt        *time.Time   `sql:"index" yaml:"-"`
-	EstimatedAt      *time.Time   `json:"EstimatedAt,omitempty" yaml:"-"`
-	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
+	ID               uint          `gorm:"primary_key" yaml:"-"`
+	UUID             string        `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
+	TakenAt          time.Time     `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
+	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" yaml:"-"`
+	TakenSrc         string        `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
+	PhotoUID         string        `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
+	PhotoType        string        `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
+	TypeSrc          string        `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
+	PhotoTitle       string        `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
+	TitleSrc         string        `gorm:"type:VARBINARY(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
+	PhotoDescription string        `gorm:"type:VARCHAR(4096);" json:"Description" yaml:"Description,omitempty"`
+	DescriptionSrc   string        `gorm:"type:VARBINARY(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
+	PhotoPath        string        `gorm:"type:VARBINARY(1024);index:idx_photos_path_name;" json:"Path" yaml:"-"`
+	PhotoName        string        `gorm:"type:VARBINARY(255);index:idx_photos_path_name;" json:"Name" yaml:"-"`
+	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	PhotoStack       int8          `json:"Stack" yaml:"Stack,omitempty"`
+	PhotoFavorite    bool          `json:"Favorite" yaml:"Favorite,omitempty"`
+	PhotoPrivate     bool          `json:"Private" yaml:"Private,omitempty"`
+	PhotoScan        bool          `json:"Scan" yaml:"Scan,omitempty"`
+	PhotoPanorama    bool          `json:"Panorama" yaml:"Panorama,omitempty"`
+	TimeZone         string        `gorm:"type:VARBINARY(64);" json:"TimeZone" yaml:"TimeZone,omitempty"`
+	PlaceID          string        `gorm:"type:VARBINARY(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
+	PlaceSrc         string        `gorm:"type:VARBINARY(8);" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
+	CellID           string        `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID" yaml:"-"`
+	CellAccuracy     int           `json:"CellAccuracy" yaml:"CellAccuracy,omitempty"`
+	PhotoAltitude    int           `json:"Altitude" yaml:"Altitude,omitempty"`
+	PhotoLat         float32       `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
+	PhotoLng         float32       `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
+	PhotoCountry     string        `gorm:"type:VARBINARY(2);index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
+	PhotoYear        int           `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
+	PhotoMonth       int           `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`
+	PhotoDay         int           `gorm:"index:idx_photos_ymd" json:"Day" yaml:"Day"`
+	PhotoIso         int           `json:"Iso" yaml:"ISO,omitempty"`
+	PhotoExposure    string        `gorm:"type:VARBINARY(64);" json:"Exposure" yaml:"Exposure,omitempty"`
+	PhotoFNumber     float32       `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
+	PhotoFocalLength int           `json:"FocalLength" yaml:"FocalLength,omitempty"`
+	PhotoQuality     int           `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
+	PhotoFaces       int           `json:"Faces,omitempty" yaml:"Faces,omitempty"`
+	PhotoResolution  int           `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
+	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"Duration,omitempty"`
+	PhotoColor       int16         `json:"Color" yaml:"-"`
+	CameraID         uint          `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
+	CameraSerial     string        `gorm:"type:VARBINARY(160);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
+	CameraSrc        string        `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`
+	LensID           uint          `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
+	Details          *Details      `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Details" yaml:"Details"`
+	Camera           *Camera       `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Camera" yaml:"-"`
+	Lens             *Lens         `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
+	Cell             *Cell         `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Cell" yaml:"-"`
+	Place            *Place        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Place" yaml:"-"`
+	Keywords         []Keyword     `json:"-" yaml:"-"`
+	Albums           []Album       `json:"-" yaml:"-"`
+	Files            []File        `yaml:"-"`
+	Labels           []PhotoLabel  `yaml:"-"`
+	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
+	CreatedAt        time.Time     `yaml:"CreatedAt,omitempty"`
+	UpdatedAt        time.Time     `yaml:"UpdatedAt,omitempty"`
+	EditedAt         *time.Time    `yaml:"EditedAt,omitempty"`
+	PublishedAt      *time.Time    `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	CheckedAt        *time.Time    `sql:"index" yaml:"-"`
+	EstimatedAt      *time.Time    `json:"EstimatedAt,omitempty" yaml:"-"`
+	DeletedAt        *time.Time    `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.

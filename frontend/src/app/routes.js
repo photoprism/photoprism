@@ -82,10 +82,12 @@ export default [
     component: Login,
     meta: { title: siteTitle, auth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
-      if (session.isUser()) {
-        next({ name: session.getHome() });
-      } else {
+      if (!session.isUser()) {
         next();
+      } else if (config.deny("photos", "search")) {
+        next({ name: "albums" });
+      } else {
+        next({ name: "browse" });
       }
     },
   },
@@ -105,6 +107,15 @@ export default [
     path: "/browse",
     component: Photos,
     meta: { title: siteTitle, icon: true, auth: true },
+    beforeEnter: (to, from, next) => {
+      if (!session.isUser()) {
+        next({ name: "login" });
+      } else if (config.deny("photos", "search")) {
+        next({ name: "albums" });
+      } else {
+        next();
+      }
+    },
   },
   {
     name: "all",

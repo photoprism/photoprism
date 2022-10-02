@@ -22,19 +22,19 @@ func (m ReactionMap) Pointer(name string) *Reaction {
 
 var ReactionFixtures = ReactionMap{
 	"SubjectJohnLike": Reaction{
-		EntityUID: SubjectFixtures.Get("john-doe").SubjUID,
-		UserUID:   UserFixtures.Get("alice").UserUID,
-		Reaction:  react.Like.String(),
+		UID:      SubjectFixtures.Get("john-doe").SubjUID,
+		UserUID:  UserFixtures.Get("alice").UserUID,
+		Reaction: react.Like.String(),
 	},
 	"PhotoAliceLove": Reaction{
-		EntityUID: PhotoFixtures.Get("Photo01").PhotoUID,
-		UserUID:   UserFixtures.Pointer("alice").UserUID,
-		Reaction:  react.Love.String(),
+		UID:      PhotoFixtures.Get("Photo01").PhotoUID,
+		UserUID:  UserFixtures.Pointer("alice").UserUID,
+		Reaction: react.Love.String(),
 	},
 	"PhotoBobLove": Reaction{
-		EntityUID: PhotoFixtures.Get("Photo01").PhotoUID,
-		UserUID:   UserFixtures.Pointer("bob").UserUID,
-		Reaction:  react.Love.String(),
+		UID:      PhotoFixtures.Get("Photo01").PhotoUID,
+		UserUID:  UserFixtures.Pointer("bob").UserUID,
+		Reaction: react.Love.String(),
 	},
 }
 

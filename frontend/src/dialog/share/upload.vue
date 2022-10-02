@@ -184,7 +184,7 @@ export default {
 
       const params = {
         share: true,
-        count: 1000,
+        count: 2000,
         offset: 0,
       };
 

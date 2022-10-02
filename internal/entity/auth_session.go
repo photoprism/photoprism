@@ -29,9 +29,9 @@ type Sessions []Session
 type Session struct {
 	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	Status        int             `json:"Status,omitempty" yaml:"-"`
-	AuthDomain    string          `gorm:"type:VARBINARY(253);default:'';" json:"-" yaml:"AuthDomain,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthMethod,omitempty"`
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthProvider,omitempty"`
+	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"-" yaml:"AuthDomain,omitempty"`
 	AuthScope     string          `gorm:"size:1024;default:'';" json:"-" yaml:"AuthScope,omitempty"`
 	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"-" yaml:"AuthID,omitempty"`
 	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
@@ -46,18 +46,18 @@ type Session struct {
 	ClientIP      string          `gorm:"size:64;column:client_ip;" json:"-" yaml:"ClientIP,omitempty"`
 	LoginIP       string          `gorm:"size:64;column:login_ip" json:"-" yaml:"-"`
 	LoginAt       time.Time       `json:"-" yaml:"-"`
-	MaxAge        time.Duration   `json:"MaxAge,omitempty" yaml:"MaxAge,omitempty"`
-	Timeout       time.Duration   `json:"Timeout,omitempty" yaml:"Timeout,omitempty"`
 	DataJSON      json.RawMessage `gorm:"type:VARBINARY(4096);" json:"Data,omitempty" yaml:"Data,omitempty"`
 	data          *SessionData    `gorm:"-"`
 	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"-" yaml:"-"`
 	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
+	MaxAge        time.Duration   `json:"MaxAge,omitempty" yaml:"MaxAge,omitempty"`
 	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
+	Timeout       time.Duration   `json:"Timeout,omitempty" yaml:"Timeout,omitempty"`
 }
 
 // TableName returns the entity table name.
 func (Session) TableName() string {
-	return "auth_sessions_dev"
+	return "auth_sessions"
 }
 
 // NewSession creates a new session and returns it.

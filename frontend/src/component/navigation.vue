@@ -332,7 +332,7 @@
         </template>
         <v-list-tile v-else v-show="$config.feature('places')" to="/states" class="nav-states" @click.stop="">
           <v-list-tile-action :title="$gettext('States')">
-            <v-icon>map</v-icon>
+            <v-icon>near_me</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>

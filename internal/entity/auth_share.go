@@ -76,7 +76,7 @@ type Share struct {
 
 // TableName returns the entity table name.
 func (Share) TableName() string {
-	return "auth_shares_dev"
+	return "auth_users_shares"
 }
 
 // NewShare creates a new entity model.

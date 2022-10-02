@@ -172,14 +172,14 @@ export default {
 
       const photo = this.results[index];
 
-      if (photo && photo.CellID && photo.CellID !== "zz") {
-        if (this.canSearchPlaces) {
-          this.$router.push({name: "places_query", params: {q: photo.CellID}});
-        } else {
-          this.$router.push({name: "places_scope", params: {s: this.uid, q: photo.CellID}});
-        }
-      } else {
-        this.$router.push({name: "places_scope", params: {s: this.uid, q: ""}});
+      if (!photo) {
+        return;
+      }
+
+      if (this.canSearchPlaces && photo.CellID && photo.CellID !== "zz") {
+        this.$router.push({name: "places_query", params: {q: photo.CellID}});
+      } else if (this.uid) {
+        this.$router.push({name: "places_scope", params: {s: this.uid, q: photo.CellID}});
       }
     },
     editPhoto(index) {

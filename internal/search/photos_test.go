@@ -11,6 +11,21 @@ import (
 )
 
 func TestPhotos(t *testing.T) {
+	t.Run("OrderDuration", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Order = "duration"
+
+		photos, _, err := Photos(frm)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 2, len(photos))
+	})
 	t.Run("Chinese", func(t *testing.T) {
 		var frm form.SearchPhotos
 

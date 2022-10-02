@@ -76,7 +76,7 @@ type User struct {
 
 // TableName returns the entity table name.
 func (User) TableName() string {
-	return "auth_users_dev"
+	return "auth_users"
 }
 
 // NewUser creates a new user and returns it.

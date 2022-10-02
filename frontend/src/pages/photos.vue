@@ -234,11 +234,15 @@ export default {
       return "newest";
     },
     openLocation(index) {
-      if (!this.canSearchPlaces) {
+      if (!this.hasPlaces || !this.canSearchPlaces) {
         return;
       }
 
       const photo = this.results[index];
+
+      if (!photo) {
+        return;
+      }
 
       if (photo.CellID && photo.CellID !== "zz") {
         this.$router.push({name: "places_query", params: {q: photo.CellID}});

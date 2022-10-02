@@ -9,7 +9,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -55,26 +54,20 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 			aclResource = acl.ResourcePlaces
 		}
 
-		// Check user rights.
+		// Check user permissions.
 		if acl.Resources.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary, acl.AccessShared, acl.AccessOwn}) {
 			return AlbumResults{}, ErrForbidden
 		}
 
-		// Visitors and other restricted users can only access shared content.
-		if sess.IsVisitor() && sess.NoShares() {
-			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.AccessShared.String(), string(aclResource), aclRole)
-			return AlbumResults{}, ErrForbidden
-		}
-
 		// Limit results by UID, owner and path.
-		if sess.IsVisitor() {
-			s = s.Where("albums.album_uid IN (?)", sess.SharedUIDs())
+		if sess.IsVisitor() || sess.NotRegistered() {
+			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
 		} else if acl.Resources.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 			if user.BasePath == "" {
-				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ?", sess.SharedUIDs(), user.UserUID)
+				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
 			} else {
-				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.album_type = ? AND (albums.album_path = ? OR albums.album_path LIKE ?)",
-					sess.SharedUIDs(), user.UserUID, entity.AlbumFolder, user.BasePath, user.BasePath+"/%")
+				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ? OR albums.album_type = ? AND (albums.album_path = ? OR albums.album_path LIKE ?)",
+					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, user.BasePath, user.BasePath+"/%")
 			}
 		}
 

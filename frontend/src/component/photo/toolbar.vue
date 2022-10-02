@@ -209,6 +209,7 @@ export default {
           {value: 'name', text: this.$gettext('Sort by file name')},
           {value: 'similar', text: this.$gettext('Group by similarity')},
           {value: 'relevance', text: this.$gettext('Most relevant')},
+          {value: 'duration', text: this.$gettext('Duration')},
         ],
       },
     };

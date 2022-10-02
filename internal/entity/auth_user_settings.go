@@ -28,7 +28,7 @@ type UserSettings struct {
 
 // TableName returns the entity table name.
 func (UserSettings) TableName() string {
-	return "auth_users_settings_dev"
+	return "auth_users_settings"
 }
 
 // NewUserSettings creates new user preferences.
