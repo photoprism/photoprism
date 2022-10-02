@@ -18,8 +18,8 @@
         </div>
       </div>
     </div>
-    <v-dialog v-model="showClusterPictures" overflowed>
-      <v-card>
+    <v-dialog v-model="showClusterPictures" overflowed width="100%">
+      <v-card min-height="80vh">
         <p-page-photos
           v-if="showClusterPictures"
           :static-filter="selectedClusterBounds"
