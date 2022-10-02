@@ -11,8 +11,8 @@ import (
 
 // Reaction represents a human response to content such as photos and albums.
 type Reaction struct {
-	EntityUID string     `gorm:"type:VARBINARY(64);primary_key;auto_increment:false" json:"EntityUID,omitempty" yaml:"EntityUID,omitempty"`
-	UserUID   string     `gorm:"type:VARBINARY(64);primary_key;auto_increment:false" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
+	EntityUID string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"EntityUID,omitempty" yaml:"EntityUID,omitempty"`
+	UserUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
 	Reaction  string     `gorm:"type:VARBINARY(64);primary_key;auto_increment:false" json:"Reaction,omitempty" yaml:"Reaction,omitempty"`
 	Reacted   int        `json:"Reacted,omitempty" yaml:"Reacted,omitempty"`
 	ReactedAt *time.Time `sql:"index" json:"ReactedAt,omitempty" yaml:"ReactedAt,omitempty"`
@@ -24,22 +24,22 @@ func (Reaction) TableName() string {
 }
 
 // NewReaction creates a new Reaction struct.
-func NewReaction(entityUID, userUID string) *Reaction {
+func NewReaction(entityUid, userUid string) *Reaction {
 	return &Reaction{
-		EntityUID: entityUID,
-		UserUID:   userUID,
+		EntityUID: entityUid,
+		UserUID:   userUid,
 	}
 }
 
 // FindReaction returns the matching Reaction record or nil if it was not found.
-func FindReaction(entityUID, userUID string) (m *Reaction) {
-	if entityUID == "" || userUID == "" {
+func FindReaction(entityUid, userUid string) (m *Reaction) {
+	if entityUid == "" || userUid == "" {
 		return nil
 	}
 
 	m = &Reaction{}
 
-	if Db().First(m, "entity_uid = ? AND user_uid = ?", entityUID, userUID).RecordNotFound() {
+	if Db().First(m, "entity_uid = ? AND user_uid = ?", entityUid, userUid).RecordNotFound() {
 		return nil
 	}
 
@@ -77,7 +77,7 @@ func (m *Reaction) Unknown() bool {
 	return len(m.Reaction) == 0
 }
 
-// Save saves the Reaction.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Reaction) Save() (err error) {
 	if m.Unknown() {
 		return fmt.Errorf("unknown reaction")
@@ -89,11 +89,11 @@ func (m *Reaction) Save() (err error) {
 
 	reactedAt := TimePointer()
 
-	cols := Values{"reaction": m.Reaction, "reacted": gorm.Expr("reacted + 1"), "reacted_at": reactedAt}
+	values := Values{"reaction": m.Reaction, "reacted": gorm.Expr("reacted + 1"), "reacted_at": reactedAt}
 
 	if err = Db().Model(Reaction{}).
 		Where("entity_uid = ? AND user_uid = ?", m.EntityUID, m.UserUID).
-		UpdateColumns(cols).Error; err == nil {
+		UpdateColumns(values).Error; err == nil {
 		m.Reacted += 1
 		m.ReactedAt = reactedAt
 	}

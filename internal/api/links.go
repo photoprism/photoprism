@@ -118,7 +118,7 @@ func CreateLink(c *gin.Context) {
 		return
 	}
 
-	link := entity.NewUserLink(uid, f.CanComment, f.CanEdit, s.UserUID)
+	link := entity.NewUserLink(uid, s.UserUID)
 
 	link.SetSlug(f.ShareSlug)
 	link.MaxViews = f.MaxViews

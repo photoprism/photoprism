@@ -131,7 +131,7 @@ export default [
     name: "moment",
     path: "/moments/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Moments"), auth: true },
+    meta: { collName: "Moments", collRoute: "moments", auth: true },
   },
   {
     name: "albums",
@@ -144,7 +144,7 @@ export default [
     name: "album",
     path: "/albums/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Albums"), auth: true },
+    meta: { collName: "Albums", collRoute: "albums", auth: true },
   },
   {
     name: "calendar",
@@ -157,7 +157,7 @@ export default [
     name: "month",
     path: "/calendar/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Calendar"), auth: true },
+    meta: { collName: "Calendar", collRoute: "calendar", auth: true },
   },
   {
     name: "folders",
@@ -170,7 +170,7 @@ export default [
     name: "folder",
     path: "/folders/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Folders"), auth: true },
+    meta: { collName: "Folders", collRoute: "folders", auth: true },
   },
   {
     name: "unsorted",
@@ -250,7 +250,7 @@ export default [
     name: "state",
     path: "/states/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Places"), auth: true },
+    meta: { collName: "Places", collRoute: "states", auth: true },
   },
   {
     name: "files",

@@ -32,10 +32,7 @@ func TestCreateAlbumLink(t *testing.T) {
 		assert.NotEmpty(t, link.LinkUID)
 		assert.NotEmpty(t, link.ShareUID)
 		assert.NotEmpty(t, link.LinkToken)
-		assert.Equal(t, true, link.CanEdit)
 		assert.Equal(t, 0, link.LinkExpires)
-		assert.False(t, link.CanComment)
-		assert.True(t, link.CanEdit)
 	})
 	t.Run("album does not exist", func(t *testing.T) {
 		app, router, _ := NewApiTest()

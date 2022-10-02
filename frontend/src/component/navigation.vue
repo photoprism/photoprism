@@ -292,6 +292,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
+        <template v-if="canSearchPlaces">
         <v-list-tile v-if="isMini" v-show="canSearchPlaces && $config.feature('places')" :to="{ name: 'places' }" class="nav-places"
                      @click.stop="">
           <v-list-tile-action :title="$gettext('Places')">
@@ -328,6 +329,20 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list-group>
+        </template>
+        <v-list-tile v-else v-show="$config.feature('places')" to="/states" class="nav-states" @click.stop="">
+          <v-list-tile-action :title="$gettext('States')">
+            <v-icon>map</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title class="p-flex-menuitem" @click.stop="">
+              <translate key="States">States</translate>
+              <span v-show="config.count.states > 0"
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states | abbreviateCount }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
 
         <v-list-tile v-show="$config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
           <v-list-tile-action :title="$gettext('Labels')">
@@ -424,7 +439,7 @@
         </v-list-group>
 
         <template v-if="!config.disable.settings">
-          <v-list-tile v-if="isMini" to="/settings" class="nav-settings" @click.stop="">
+          <v-list-tile v-if="isMini" v-show="$config.feature('settings')" to="/settings" class="nav-settings" @click.stop="">
             <v-list-tile-action :title="$gettext('Settings')">
               <v-icon>settings</v-icon>
             </v-list-tile-action>
@@ -436,7 +451,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-group v-else prepend-icon="settings" no-action>
+          <v-list-group v-else v-show="$config.feature('settings')" prepend-icon="settings" no-action>
             <template #activator>
               <v-list-tile to="/settings" class="nav-settings" @click.stop="">
                 <v-list-tile-content>
@@ -503,7 +518,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="auth && !isPublic" to="/settings/account" class="p-profile">
+        <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" to="/settings/account" class="p-profile">
           <v-list-tile-avatar color="grey" size="36">
             <span class="white--text headline">{{ !!displayName ? displayName[0].toUpperCase() : "E" }}</span>
           </v-list-tile-avatar>
@@ -553,7 +568,7 @@
                        :to="{ name: 'library_logs' }" :title="$gettext('Logs')" class="menu-action nav-logs">
             <v-icon>feed</v-icon>
           </router-link>
-          <router-link v-if="auth && !config.disable.settings && !routeName('settings')" to="/settings"
+          <router-link v-if="auth && $config.feature('settings') && !routeName('settings')" to="/settings"
                        :title="$gettext('Settings')" class="menu-action nav-settings">
             <v-icon>settings</v-icon>
           </router-link>

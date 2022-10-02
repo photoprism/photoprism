@@ -4,15 +4,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const UnknownIP = "0.0.0.0"
+
 // ClientIP returns the client IP address from the request context or a placeholder if it is unknown.
 func ClientIP(c *gin.Context) (ip string) {
 	if c == nil {
 		// Should never happen.
-		return "0.0.0.0"
+		return UnknownIP
 	} else if ip = c.ClientIP(); ip == "" {
-		// Unit tests generally do not set a client IP. According to RFC 5737, the 192.0.2.0/24 subnet
-		// is intended for use in documentation and examples.
-		return "192.0.2.42"
+		// Unit tests often do not set a client IP.
+		return UnknownIP
 	}
 
 	return ip

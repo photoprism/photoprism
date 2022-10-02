@@ -55,7 +55,7 @@ type Photo struct {
 	TakenAt          time.Time    `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time    `gorm:"type:DATETIME;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	PhotoUID         string       `gorm:"type:VARBINARY(64);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
+	PhotoUID         string       `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string       `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
 	TypeSrc          string       `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
 	PhotoTitle       string       `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
@@ -71,9 +71,9 @@ type Photo struct {
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool         `json:"Panorama" yaml:"Panorama,omitempty"`
 	TimeZone         string       `gorm:"type:VARBINARY(64);" json:"TimeZone" yaml:"TimeZone,omitempty"`
-	PlaceID          string       `gorm:"type:VARBINARY(64);index;default:'zz'" json:"PlaceID" yaml:"-"`
+	PlaceID          string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
 	PlaceSrc         string       `gorm:"type:VARBINARY(8);" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
-	CellID           string       `gorm:"type:VARBINARY(64);index;default:'zz'" json:"CellID" yaml:"-"`
+	CellID           string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID" yaml:"-"`
 	CellAccuracy     int          `json:"CellAccuracy" yaml:"CellAccuracy,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
@@ -103,10 +103,11 @@ type Photo struct {
 	Albums           []Album      `json:"-" yaml:"-"`
 	Files            []File       `yaml:"-"`
 	Labels           []PhotoLabel `yaml:"-"`
-	OwnerUID         string       `gorm:"type:VARBINARY(64);index" json:"OwnerUID,omitempty" yaml:"OwnerUID,omitempty"`
+	CreatedBy        string       `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt        time.Time    `yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
+	PublishedAt      *time.Time   `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	CheckedAt        *time.Time   `sql:"index" yaml:"-"`
 	EstimatedAt      *time.Time   `json:"EstimatedAt,omitempty" yaml:"-"`
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
@@ -123,9 +124,8 @@ func NewPhoto(stackable bool) Photo {
 }
 
 // NewUserPhoto creates a photo owned by a user.
-func NewUserPhoto(stackable bool, userUID string) Photo {
+func NewUserPhoto(stackable bool, userUid string) Photo {
 	m := Photo{
-		OwnerUID:     userUID,
 		PhotoTitle:   UnknownTitle,
 		PhotoType:    MediaImage,
 		PhotoCountry: UnknownCountry.ID,
@@ -137,6 +137,7 @@ func NewUserPhoto(stackable bool, userUID string) Photo {
 		Lens:         &UnknownLens,
 		Cell:         &UnknownLocation,
 		Place:        &UnknownPlace,
+		CreatedBy:    userUid,
 	}
 
 	if stackable {
@@ -258,7 +259,7 @@ func (m *Photo) Create() error {
 	return nil
 }
 
-// Save updates an existing photo or inserts a new one.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Photo) Save() error {
 	photoMutex.Lock()
 	defer photoMutex.Unlock()
@@ -274,7 +275,7 @@ func (m *Photo) Save() error {
 	return m.ResolvePrimary()
 }
 
-// FindPhoto fetches the matching photo record.
+// FindPhoto fetches the matching record or returns null if it was not found.
 func FindPhoto(find Photo) *Photo {
 	if find.PhotoUID == "" && find.ID == 0 {
 		return nil
@@ -906,14 +907,14 @@ func (m *Photo) PrimaryFile() (*File, error) {
 }
 
 // SetPrimary sets a new primary file.
-func (m *Photo) SetPrimary(fileUID string) (err error) {
+func (m *Photo) SetPrimary(fileUid string) (err error) {
 	if m.PhotoUID == "" {
 		return fmt.Errorf("photo uid is empty")
 	}
 
 	var files []string
 
-	if fileUID != "" {
+	if fileUid != "" {
 		// Do nothing.
 	} else if err = Db().Model(File{}).
 		Where("photo_uid = ? AND file_type = 'jpg' AND file_missing = 0 AND file_error = ''", m.PhotoUID).
@@ -923,18 +924,18 @@ func (m *Photo) SetPrimary(fileUID string) (err error) {
 	} else if len(files) == 0 {
 		return fmt.Errorf("found no jpeg for photo uid %s", clean.Log(m.PhotoUID))
 	} else {
-		fileUID = files[0]
+		fileUid = files[0]
 	}
 
-	if fileUID == "" {
+	if fileUid == "" {
 		return fmt.Errorf("file uid is empty")
 	}
 
 	if err = Db().Model(File{}).
-		Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUID).
+		Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUid).
 		UpdateColumn("file_primary", 0).Error; err != nil {
 		return err
-	} else if err = Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUID).
+	} else if err = Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUid).
 		UpdateColumn("file_primary", 1).Error; err != nil {
 		return err
 	} else if m.PhotoQuality < 0 {

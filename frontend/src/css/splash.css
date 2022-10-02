@@ -43,6 +43,47 @@
     display: block;
 }
 
+#photoprism .splash-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    text-align: center !important;
+}
+
+#photoprism .splash-center .splash-logo {
+    width: 125px;
+    height: 125px;
+    left: 50%;
+    right: 50%;
+    margin: auto auto 42px auto;
+    text-align: center !important;
+}
+
+#splash-animation .splash-logo svg {
+    -webkit-animation: hue 4s infinite linear;
+    -moz-animation: hue 4s infinite linear;
+    animation: hue 4s infinite linear;
+}
+
+#photoprism .splash-center #progress {
+    width: 175px;
+}
+
+@media (min-width: 900px) {
+    #photoprism .splash-center .splash-logo {
+        width: 140px;
+        height: 140px;
+    }
+
+    #photoprism .splash-center #progress {
+        width: 225px;
+    }
+}
+
 #photoprism div.loading-animation,
 #photoprism div.loading-logo,
 #photoprism div.loading-logo svg {

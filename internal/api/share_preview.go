@@ -27,12 +27,12 @@ import (
 // GET /s/:token/:uid/preview
 // TODO: Proof of concept, needs refactoring.
 func SharePreview(router *gin.RouterGroup) {
-	router.GET("/:token/:share/preview", func(c *gin.Context) {
+	router.GET("/:token/:shared/preview", func(c *gin.Context) {
 		conf := service.Config()
 
 		token := clean.Token(c.Param("token"))
-		share := clean.Token(c.Param("share"))
-		links := entity.FindLinks(token, share)
+		shared := clean.Token(c.Param("shared"))
+		links := entity.FindLinks(token, shared)
 
 		if len(links) != 1 {
 			log.Warn("share: invalid token (preview)")
@@ -48,17 +48,17 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		previewFilename := fmt.Sprintf("%s/%s.jpg", thumbPath, share)
+		previewFilename := fmt.Sprintf("%s/%s.jpg", thumbPath, shared)
 		yesterday := time.Now().Add(-24 * time.Hour)
 
 		if info, err := os.Stat(previewFilename); err != nil {
-			log.Debugf("share: creating new preview for %s", clean.Log(share))
+			log.Debugf("share: creating new preview for %s", clean.Log(shared))
 		} else if info.ModTime().After(yesterday) {
-			log.Debugf("share: using cached preview for %s", clean.Log(share))
+			log.Debugf("share: using cached preview for %s", clean.Log(shared))
 			c.File(previewFilename)
 			return
 		} else if err := os.Remove(previewFilename); err != nil {
-			log.Errorf("share: could not remove old preview of %s", clean.Log(share))
+			log.Errorf("share: could not remove old preview of %s", clean.Log(shared))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -66,7 +66,7 @@ func SharePreview(router *gin.RouterGroup) {
 		var f form.SearchPhotos
 
 		// Covers may only contain public content in shared albums.
-		f.Album = share
+		f.Album = shared
 		f.Public = true
 		f.Private = false
 		f.Hidden = false

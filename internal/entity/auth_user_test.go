@@ -18,7 +18,7 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestFindUserByName(t *testing.T) {
-	t.Run("admin", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		m := FindUserByName("admin")
 
 		if m == nil {
@@ -43,7 +43,7 @@ func TestFindUserByName(t *testing.T) {
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
 
-	t.Run("alice", func(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -64,7 +64,7 @@ func TestFindUserByName(t *testing.T) {
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
 
-	t.Run("bob", func(t *testing.T) {
+	t.Run("Bob", func(t *testing.T) {
 		m := FindUserByName("bob")
 
 		if m == nil {
@@ -83,7 +83,7 @@ func TestFindUserByName(t *testing.T) {
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
 
-	t.Run("unknown", func(t *testing.T) {
+	t.Run("Unknown", func(t *testing.T) {
 		m := FindUserByName("")
 
 		if m != nil {
@@ -91,7 +91,7 @@ func TestFindUserByName(t *testing.T) {
 		}
 	})
 
-	t.Run("not found", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		m := FindUserByName("xxx")
 
 		if m != nil {
@@ -670,4 +670,16 @@ func TestUser_UploadAllowed(t *testing.T) {
 	assert.True(t, UserFixtures.Pointer("alice").UploadAllowed())
 	assert.False(t, UserFixtures.Pointer("deleted").UploadAllowed())
 	assert.True(t, UserFixtures.Pointer("friend").UploadAllowed())
+}
+
+func TestUser_SharedUIDs(t *testing.T) {
+	t.Run("AliceAlbum", func(t *testing.T) {
+		m := UserFixtures.Pointer("alice")
+		assert.NotNil(t, m)
+
+		result := m.SharedUIDs()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 1)
+		assert.Equal(t, UIDs{"at9lxuqxpogaaba9"}, result)
+	})
 }

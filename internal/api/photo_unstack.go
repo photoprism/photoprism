@@ -34,8 +34,8 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		conf := service.Config()
-		fileUID := clean.UID(c.Param("file_uid"))
-		file, err := query.FileByUID(fileUID)
+		fileUid := clean.UID(c.Param("file_uid"))
+		file, err := query.FileByUID(fileUid)
 
 		if err != nil {
 			log.Errorf("photo: %s (unstack)", err)
@@ -67,13 +67,13 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			AbortEntityNotFound(c)
 			return
 		} else if file.Photo == nil {
-			log.Errorf("photo: cannot find photo for file uid %s (unstack)", fileUID)
+			log.Errorf("photo: cannot find photo for file uid %s (unstack)", fileUid)
 			AbortEntityNotFound(c)
 			return
 		}
 
 		stackPhoto := *file.Photo
-		ownerUID := stackPhoto.OwnerUID
+		createdBy := stackPhoto.CreatedBy
 		stackPrimary, err := stackPhoto.PrimaryFile()
 
 		if err != nil {
@@ -126,7 +126,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		// Create new photo, also flagged as unstacked / not stackable.
-		newPhoto := entity.NewUserPhoto(false, ownerUID)
+		newPhoto := entity.NewUserPhoto(false, createdBy)
 		newPhoto.PhotoPath = unstackFile.RootRelPath()
 		newPhoto.PhotoName = unstackFile.BasePrefix(false)
 

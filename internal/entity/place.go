@@ -13,7 +13,7 @@ var placeMutex = sync.Mutex{}
 
 // Place represents a distinct region identified by city, district, state, and country.
 type Place struct {
-	ID            string    `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
+	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
 	PlaceLabel    string    `gorm:"type:VARCHAR(400);" json:"Label" yaml:"Label"`
 	PlaceDistrict string    `gorm:"type:VARCHAR(100);index;" json:"District" yaml:"District,omitempty"`
 	PlaceCity     string    `gorm:"type:VARCHAR(100);index;" json:"City" yaml:"City,omitempty"`
@@ -69,7 +69,7 @@ func (m *Place) Create() error {
 	return Db().Create(m).Error
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Place) Save() error {
 	placeMutex.Lock()
 	defer placeMutex.Unlock()

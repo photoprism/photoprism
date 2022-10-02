@@ -37,10 +37,10 @@ func DeleteFile(router *gin.RouterGroup) {
 			return
 		}
 
-		photoUID := clean.UID(c.Param("uid"))
-		fileUID := clean.UID(c.Param("file_uid"))
+		photoUid := clean.UID(c.Param("uid"))
+		fileUid := clean.UID(c.Param("file_uid"))
 
-		file, err := query.FileByUID(fileUID)
+		file, err := query.FileByUID(fileUid)
 
 		// Found?
 		if err != nil {
@@ -85,12 +85,12 @@ func DeleteFile(router *gin.RouterGroup) {
 		}
 
 		// Notify clients by publishing events.
-		PublishPhotoEvent(EntityUpdated, photoUID, c)
+		PublishPhotoEvent(EntityUpdated, photoUid, c)
 
 		// Show translated success message.
 		event.SuccessMsg(i18n.MsgFileDeleted)
 
-		if p, err := query.PhotoPreloadByUID(photoUID); err != nil {
+		if p, err := query.PhotoPreloadByUID(photoUid); err != nil {
 			AbortEntityNotFound(c)
 			return
 		} else {

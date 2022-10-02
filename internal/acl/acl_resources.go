@@ -15,11 +15,11 @@ var Resources = ACL{
 	},
 	ResourceAlbums: Roles{
 		RoleAdmin:   GrantFullAccess,
-		RoleVisitor: Grant{AccessShared: true, ActionView: true, ActionDownload: true},
+		RoleVisitor: GrantSearchShared,
 	},
 	ResourceFolders: Roles{
 		RoleAdmin:   GrantFullAccess,
-		RoleVisitor: Grant{AccessShared: true, ActionView: true, ActionDownload: true},
+		RoleVisitor: GrantSearchShared,
 	},
 	ResourcePlaces: Roles{
 		RoleAdmin:   GrantFullAccess,
@@ -27,11 +27,11 @@ var Resources = ACL{
 	},
 	ResourceCalendar: Roles{
 		RoleAdmin:   GrantFullAccess,
-		RoleVisitor: Grant{AccessShared: true, ActionView: true, ActionDownload: true},
+		RoleVisitor: GrantSearchShared,
 	},
 	ResourceMoments: Roles{
 		RoleAdmin:   GrantFullAccess,
-		RoleVisitor: Grant{AccessShared: true, ActionView: true, ActionDownload: true},
+		RoleVisitor: GrantSearchShared,
 	},
 	ResourcePeople: Roles{
 		RoleAdmin: GrantFullAccess,
@@ -46,7 +46,8 @@ var Resources = ACL{
 		RoleAdmin: GrantFullAccess,
 	},
 	ResourceSettings: Roles{
-		RoleAdmin: GrantFullAccess,
+		RoleAdmin:   GrantFullAccess,
+		RoleVisitor: Grant{AccessOwn: true, ActionView: true},
 	},
 	ResourceFeedback: Roles{
 		RoleAdmin: GrantFullAccess,

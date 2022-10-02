@@ -6,10 +6,10 @@ import (
 
 // Login represents a login form.
 type Login struct {
-	UserName  string `json:"name"`
-	UserEmail string `json:"email"`
-	Password  string `json:"password"`
-	AuthToken string `json:"token"`
+	UserName  string `json:"name,omitempty"`
+	UserEmail string `json:"email,omitempty"`
+	Password  string `json:"password,omitempty"`
+	AuthToken string `json:"token,omitempty"`
 }
 
 // Name returns the sanitized username in lowercase.

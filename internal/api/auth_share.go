@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"path"
 
 	"github.com/gin-gonic/gin"
 
@@ -12,50 +13,46 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+// Shares handles link share
+//
 // GET /s/:token/...
 func Shares(router *gin.RouterGroup) {
 	router.GET("/:token", func(c *gin.Context) {
 		conf := service.Config()
 
 		token := clean.Token(c.Param("token"))
-
 		links := entity.FindValidLinks(token, "")
 
 		if len(links) == 0 {
-			log.Warn("share: invalid token")
-			c.Redirect(http.StatusTemporaryRedirect, "/")
+			log.Debugf("share: invalid token")
+			c.Redirect(http.StatusTemporaryRedirect, conf.BaseUri(""))
 			return
 		}
 
 		clientConfig := conf.ClientShare()
 		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s", clientConfig.SiteUrl, token)
 
-		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
+		uri := conf.BaseUri("/albums")
+		c.HTML(http.StatusOK, "share.tmpl", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})
 
-	router.GET("/:token/:share", func(c *gin.Context) {
+	router.GET("/:token/:shared", func(c *gin.Context) {
 		conf := service.Config()
 
 		token := clean.Token(c.Param("token"))
-		share := clean.Token(c.Param("share"))
+		shared := clean.Token(c.Param("shared"))
 
-		links := entity.FindValidLinks(token, share)
+		links := entity.FindValidLinks(token, shared)
 
 		if len(links) < 1 {
-			log.Warn("share: invalid token or share")
-			c.Redirect(http.StatusTemporaryRedirect, "/")
+			log.Debugf("share: invalid token or slug")
+			c.Redirect(http.StatusTemporaryRedirect, conf.BaseUri(""))
 			return
 		}
 
 		uid := links[0].ShareUID
 		clientConfig := conf.ClientShare()
-
-		if uid != share {
-			c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("%ss/%s/%s", clientConfig.SiteUrl, token, uid))
-			return
-		}
-
-		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s/%s", clientConfig.SiteUrl, token, uid)
+		clientConfig.SiteUrl = fmt.Sprintf("%s/%s", clientConfig.SiteUrl, path.Join("s", token, uid))
 		clientConfig.SitePreview = fmt.Sprintf("%s/preview", clientConfig.SiteUrl)
 
 		if a, err := query.AlbumByUID(uid); err == nil {
@@ -66,6 +63,8 @@ func Shares(router *gin.RouterGroup) {
 			}
 		}
 
-		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
+		uri := conf.BaseUri(path.Join("/albums", uid, shared))
+
+		c.HTML(http.StatusOK, "share.tmpl", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})
 }

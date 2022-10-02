@@ -69,8 +69,8 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 	result := config.ClientShare()
 	assert.IsType(t, ClientConfig{}, result)
 	assert.Equal(t, true, result.Public)
-	assert.Equal(t, false, result.Experimental)
-	assert.Equal(t, true, result.ReadOnly)
+	assert.Equal(t, true, result.Experimental)
+	assert.Equal(t, false, result.ReadOnly)
 }
 
 func TestConfig_ClientRoleConfig(t *testing.T) {
@@ -141,12 +141,12 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
-			Folders:   false,
+			Folders:   true,
 			Import:    false,
 			Labels:    false,
 			Library:   false,
 			Logs:      false,
-			Moments:   false,
+			Moments:   true,
 			People:    false,
 			Places:    true,
 			Private:   false,
@@ -268,7 +268,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Search)
 		assert.False(t, f.Videos)
 		assert.True(t, f.Albums)
-		assert.False(t, f.Moments)
+		assert.True(t, f.Moments)
+		assert.True(t, f.Folders)
 		assert.False(t, f.Labels)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)

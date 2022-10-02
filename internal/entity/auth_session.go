@@ -6,13 +6,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -20,6 +19,7 @@ import (
 // SessionPrefix for RefID.
 const (
 	SessionPrefix = "sess"
+	UnknownIP     = "0.0.0.0"
 )
 
 // Sessions represents a list of sessions.
@@ -28,12 +28,13 @@ type Sessions []Session
 // Session represents a User session.
 type Session struct {
 	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	Status        int             `gorm:"-"`
-	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
-	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
-	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope,omitempty" yaml:"AuthScope,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"AuthID,omitempty" yaml:"AuthID,omitempty"`
-	UserUID       string          `gorm:"type:VARBINARY(64);index;default:'';" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
+	Status        int             `json:"Status,omitempty" yaml:"-"`
+	AuthDomain    string          `gorm:"type:VARBINARY(253);default:'';" json:"-" yaml:"AuthDomain,omitempty"`
+	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthMethod,omitempty"`
+	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthProvider,omitempty"`
+	AuthScope     string          `gorm:"size:1024;default:'';" json:"-" yaml:"AuthScope,omitempty"`
+	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"-" yaml:"AuthID,omitempty"`
+	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
 	UserName      string          `gorm:"size:64;index;" json:"UserName,omitempty" yaml:"UserName,omitempty"`
 	user          *User           `gorm:"-"`
 	PreviewToken  string          `gorm:"type:VARBINARY(64);column:preview_token;default:'';" json:"-" yaml:"-"`
@@ -41,16 +42,17 @@ type Session struct {
 	AccessToken   string          `gorm:"type:VARBINARY(4096);column:access_token;default:'';" json:"-" yaml:"-"`
 	RefreshToken  string          `gorm:"type:VARBINARY(512);column:refresh_token;default:'';" json:"-" yaml:"-"`
 	IdToken       string          `gorm:"type:VARBINARY(1024);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
-	UserAgent     string          `gorm:"size:512;" json:"UserAgent,omitempty" yaml:"UserAgent,omitempty"`
-	ClientIP      string          `gorm:"size:64;column:client_ip;" json:"ClientIP,omitempty" yaml:"ClientIP,omitempty"`
+	UserAgent     string          `gorm:"size:512;" json:"-" yaml:"UserAgent,omitempty"`
+	ClientIP      string          `gorm:"size:64;column:client_ip;" json:"-" yaml:"ClientIP,omitempty"`
 	LoginIP       string          `gorm:"size:64;column:login_ip" json:"-" yaml:"-"`
 	LoginAt       time.Time       `json:"-" yaml:"-"`
+	MaxAge        time.Duration   `json:"MaxAge,omitempty" yaml:"MaxAge,omitempty"`
+	Timeout       time.Duration   `json:"Timeout,omitempty" yaml:"Timeout,omitempty"`
 	DataJSON      json.RawMessage `gorm:"type:VARBINARY(4096);" json:"Data,omitempty" yaml:"Data,omitempty"`
 	data          *SessionData    `gorm:"-"`
 	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"-" yaml:"-"`
 	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
-	ExpiresAt     time.Time       `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 }
 
 // TableName returns the entity table name.
@@ -59,13 +61,25 @@ func (Session) TableName() string {
 }
 
 // NewSession creates a new session and returns it.
-func NewSession(expiresAfter time.Duration) (m *Session) {
+func NewSession(maxAge, timeout time.Duration) (m *Session) {
+	created := TimeStamp()
+
+	// Makes no sense for the timeout to be longer than the max age.
+	if timeout >= maxAge {
+		maxAge = timeout
+		timeout = 0
+	} else if maxAge == 0 {
+		// Set maxAge to default if not specified.
+		maxAge = time.Hour * 24 * 7
+	}
+
 	m = &Session{
 		ID:        rnd.SessionID(),
+		MaxAge:    maxAge,
+		Timeout:   timeout,
 		RefID:     rnd.RefID(SessionPrefix),
-		CreatedAt: TimeStamp(),
-		UpdatedAt: TimeStamp(),
-		ExpiresAt: time.Now().Add(expiresAfter),
+		CreatedAt: created,
+		UpdatedAt: created,
 	}
 
 	return m
@@ -79,6 +93,26 @@ func SessionStatusUnauthorized() *Session {
 // SessionStatusForbidden returns a session with status forbidden (403).
 func SessionStatusForbidden() *Session {
 	return &Session{Status: http.StatusForbidden}
+}
+
+// RegenerateID regenerated the random session ID.
+func (m *Session) RegenerateID() *Session {
+	if m.ID == "" {
+		// Do not delete the old session if no ID is set yet.
+	} else if err := m.Delete(); err != nil {
+		event.AuditErr([]string{m.IP(), "session %s", "failed to delete", "%s"}, m.RefID, err)
+	} else {
+		event.AuditErr([]string{m.IP(), "session %s", "deleted"}, m.RefID)
+	}
+
+	generated := TimeStamp()
+
+	m.ID = rnd.SessionID()
+	m.RefID = rnd.RefID(SessionPrefix)
+	m.CreatedAt = generated
+	m.UpdatedAt = generated
+
+	return m
 }
 
 // CacheDuration updates the session entity cache.
@@ -104,13 +138,15 @@ func (m *Session) Create() (err error) {
 	return err
 }
 
-// Save entity properties.
-func (m *Session) Save() (err error) {
-	if err = Db().Save(m).Error; err == nil && rnd.IsSessionID(m.ID) {
+// Save updates the record in the database or inserts a new record if it does not already exist.
+func (m *Session) Save() error {
+	if err := Db().Save(m).Error; err != nil {
+		return err
+	} else if rnd.IsSessionID(m.ID) {
 		m.Cache()
 	}
 
-	return err
+	return nil
 }
 
 // Delete removes a session.
@@ -128,7 +164,7 @@ func (m *Session) Updates(values interface{}) error {
 func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(SessionPrefix)
-		_ = scope.SetColumn("RefID", m.RefID)
+		Log("session", "set ref id", scope.SetColumn("RefID", m.RefID))
 	}
 
 	if rnd.IsSessionID(m.ID) {
@@ -147,7 +183,7 @@ func (m *Session) User() *User {
 	}
 
 	if u := FindUserByUID(m.UserUID); u != nil {
-		m.user = u
+		m.SetUser(u)
 		return m.user
 	}
 
@@ -164,7 +200,7 @@ func (m *Session) RefreshUser() *Session {
 
 	// Fetch matching record.
 	if u := FindUserByUID(m.UserUID); u != nil {
-		m.user = u
+		m.SetUser(u)
 	}
 
 	return m
@@ -237,12 +273,22 @@ func (m *Session) SetData(data *SessionData) *Session {
 
 // SetContext updates the session's request context.
 func (m *Session) SetContext(c *gin.Context) *Session {
-	if c == nil {
+	if c == nil || m == nil {
 		return m
 	}
 
-	m.SetClientIP(c.ClientIP())
-	m.SetUserAgent(c.GetHeader("User-Agent"))
+	// Set client ip address.
+	if ip := c.ClientIP(); ip != "" {
+		m.SetClientIP(ip)
+	} else if m.ClientIP == "" {
+		// Unit tests often do not set a client IP.
+		m.SetClientIP(UnknownIP)
+	}
+
+	// Set client user agent.
+	if ua := c.GetHeader("User-Agent"); ua != "" {
+		m.SetUserAgent(ua)
+	}
 
 	return m
 }
@@ -254,36 +300,79 @@ func (m *Session) IsVisitor() bool {
 
 // IsRegistered checks if the session belongs to a registered user account.
 func (m *Session) IsRegistered() bool {
+	if m == nil || m.user == nil || rnd.InvalidUID(m.UserUID, UserUID) {
+		return false
+	}
+
 	return m.User().IsRegistered()
 }
 
-// Unregistered checks if the session belongs to a unregistered user.
-func (m *Session) Unregistered() bool {
-	return !m.User().IsRegistered()
+// NotRegistered checks if the user is not registered with an own account.
+func (m *Session) NotRegistered() bool {
+	return !m.IsRegistered()
 }
 
 // NoShares checks if the session has no shares yet.
 func (m *Session) NoShares() bool {
-	return m.Data().NoShares()
+	return !m.HasShares()
 }
 
 // HasShares checks if the session has any shares.
 func (m *Session) HasShares() bool {
-	return m.Data().HasShares()
+	if user := m.User(); user.IsRegistered() {
+		return user.HasShares()
+	} else if data := m.Data(); data == nil {
+		return false
+	} else {
+		return data.HasShares()
+	}
 }
 
 // HasShare if the session includes the specified share
 func (m *Session) HasShare(uid string) bool {
-	return m.Data().HasShare(uid)
+	if user := m.User(); user.IsRegistered() {
+		return user.HasShare(uid)
+	} else if data := m.Data(); data == nil {
+		return false
+	} else {
+		return data.HasShare(uid)
+	}
+}
+
+// SharedUIDs returns shared entity UIDs.
+func (m *Session) SharedUIDs() UIDs {
+	if user := m.User(); user.IsRegistered() {
+		return user.SharedUIDs()
+	} else if data := m.Data(); data == nil {
+		return UIDs{}
+	} else {
+		return data.SharedUIDs()
+	}
+}
+
+// RedeemToken updates shared entity UIDs using the specified token.
+func (m *Session) RedeemToken(token string) (n int) {
+	if user := m.User(); user.IsRegistered() {
+		return user.RedeemToken(token)
+	} else if data := m.Data(); data == nil {
+		return 0
+	} else {
+		return data.RedeemToken(token)
+	}
+}
+
+// ExpiresAt returns the time when the session expires.
+func (m *Session) ExpiresAt() time.Time {
+	return m.CreatedAt.Add(m.MaxAge)
 }
 
 // Expired checks if the session has expired.
 func (m *Session) Expired() bool {
-	if m.ExpiresAt.IsZero() {
+	if m.MaxAge <= 0 {
 		return false
 	}
 
-	return m.ExpiresAt.Before(time.Now())
+	return m.ExpiresAt().Before(UTC())
 }
 
 // Invalid checks if the session does not belong to a registered user or a visitor with shares.
@@ -313,20 +402,9 @@ func (m *Session) Abort(c *gin.Context) bool {
 	return true
 }
 
-// SharedUIDs returns shared entity UIDs.
-func (m *Session) SharedUIDs() UIDs {
-	data := m.Data()
-
-	if data == nil {
-		return UIDs{}
-	}
-
-	return data.SharedUIDs()
-}
-
 // SetUserAgent sets the client user agent.
 func (m *Session) SetUserAgent(ua string) {
-	if ua == "" {
+	if m == nil || ua == "" {
 		return
 	} else if ua = txt.Clip(ua, 512); ua == "" {
 		return
@@ -335,11 +413,13 @@ func (m *Session) SetUserAgent(ua string) {
 	}
 
 	m.UserAgent = ua
+
+	return
 }
 
 // SetClientIP sets the client IP address.
 func (m *Session) SetClientIP(ip string) {
-	if ip == "" {
+	if m == nil || ip == "" {
 		return
 	} else if parsed := net.ParseIP(ip); parsed == nil {
 		return
@@ -355,6 +435,8 @@ func (m *Session) SetClientIP(ip string) {
 		m.LoginIP = ip
 		m.LoginAt = TimeStamp()
 	}
+
+	return
 }
 
 // IP returns the client IP address, or "unknown" if it is unknown.
@@ -362,6 +444,17 @@ func (m *Session) IP() string {
 	if m.ClientIP != "" {
 		return m.ClientIP
 	} else {
-		return "unknown"
+		return "0.0.0.0"
 	}
+}
+
+// HttpStatus returns the session status as HTTP code for the client.
+func (m *Session) HttpStatus() int {
+	if m.Status > 0 {
+		return m.Status
+	} else if m.Valid() {
+		return http.StatusOK
+	}
+
+	return http.StatusUnauthorized
 }

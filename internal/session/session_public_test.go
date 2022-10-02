@@ -10,7 +10,7 @@ import (
 )
 
 func TestSession_Public(t *testing.T) {
-	s := New(ExpiresAfter, config.TestConfig())
+	s := New(config.TestConfig())
 
 	sess := s.Public()
 

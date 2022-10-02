@@ -54,8 +54,11 @@ import "common/maptiler-lang";
 import { T, Mount } from "common/vm";
 import * as offline from "@lcdp/offline-plugin/runtime";
 
+config.progress(50);
+
 config.load().finally(() => {
-  // Initialize helpers.
+  // Initialize libs and framework.
+  config.progress(66);
   const viewer = new Viewer();
   const isPublic = config.get("public");
   const isMobile =
@@ -204,7 +207,6 @@ config.load().finally(() => {
 
   // Start application.
   Mount(Vue, PhotoPrism, router);
-
   if (config.baseUri === "") {
     offline.install();
   }

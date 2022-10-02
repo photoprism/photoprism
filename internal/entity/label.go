@@ -26,7 +26,7 @@ type Labels []Label
 // Label is used for photo, album and location categorization
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
-	LabelUID         string     `gorm:"type:VARBINARY(64);unique_index;" json:"UID" yaml:"UID"`
+	LabelUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	LabelSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
 	CustomSlug       string     `gorm:"type:VARBINARY(160);index;" json:"CustomSlug" yaml:"-"`
 	LabelName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
@@ -40,6 +40,7 @@ type Label struct {
 	ThumbSrc         string     `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt        time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`
+	PublishedAt      *time.Time `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt        *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	New              bool       `gorm:"-" json:"-" yaml:"-"`
 }
@@ -80,7 +81,7 @@ func NewLabel(name string, priority int) *Label {
 	return result
 }
 
-// Save updates the existing or inserts a new label.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Label) Save() error {
 	labelMutex.Lock()
 	defer labelMutex.Unlock()

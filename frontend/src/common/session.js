@@ -35,7 +35,7 @@ export default class Session {
    * @param {Storage} storage
    * @param {Config} config
    */
-  constructor(storage, config) {
+  constructor(storage, config, shared) {
     this.storage_key = "session_storage";
     this.auth = false;
     this.config = config;
@@ -77,9 +77,23 @@ export default class Session {
     });
 
     // Say hello.
-    this.refresh().then(() => {
-      this.sendClientInfo();
-    });
+    if (shared && shared.token) {
+      this.config.progress(80);
+      this.redeemToken(shared.token).finally(() => {
+        this.config.progress(99);
+        if (shared.uri) {
+          window.location = shared.uri;
+        } else {
+          window.location = this.config.baseUri + "/";
+        }
+      });
+    } else {
+      this.config.progress(80);
+      this.refresh().then(() => {
+        this.config.progress(90);
+        this.sendClientInfo();
+      });
+    }
   }
 
   useSessionStorage() {

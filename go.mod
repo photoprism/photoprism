@@ -76,7 +76,7 @@ require (
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
-	github.com/zitadel/oidc v1.8.0
+	github.com/zitadel/oidc v1.9.0
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
 	golang.org/x/sys v0.0.0-20220913175220-63ea55921009 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect

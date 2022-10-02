@@ -7,9 +7,9 @@ import (
 
 // Role defaults.
 const (
-	AdminUserName    = "admin"
-	AdminDisplayName = "Admin"
-	GuestDisplayName = "Visitor"
+	AdminUserName      = "admin"
+	AdminDisplayName   = "Admin"
+	VisitorDisplayName = "Visitor"
 )
 
 // Admin is the default admin user.
@@ -45,7 +45,7 @@ var Visitor = User{
 	UserUID:     "u000000000000002",
 	UserRole:    acl.RoleVisitor.String(),
 	UserName:    "",
-	DisplayName: GuestDisplayName,
+	DisplayName: VisitorDisplayName,
 	SuperAdmin:  false,
 	CanLogin:    false,
 	CanSync:     false,

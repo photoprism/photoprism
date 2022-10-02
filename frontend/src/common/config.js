@@ -29,8 +29,7 @@ import * as themes from "options/themes";
 import translations from "locales/translations.json";
 import { Languages } from "options/options";
 import { Photo } from "model/photo";
-import { onSetTheme } from "common/hooks";
-import { onInit } from "common/hooks";
+import { onInit, onSetTheme } from "common/hooks";
 
 onInit();
 
@@ -583,5 +582,12 @@ export default class Config {
 
   getSiteDescription() {
     return this.values.siteDescription ? this.values.siteDescription : this.values.siteCaption;
+  }
+
+  progress(p) {
+    const el = document.getElementById("progress");
+    if (el) {
+      el.value = p;
+    }
   }
 }

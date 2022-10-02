@@ -28,6 +28,7 @@ var Entities = Tables{
 	FileShare{}.TableName():         &FileShare{},
 	FileSync{}.TableName():          &FileSync{},
 	Photo{}.TableName():             &Photo{},
+	PhotoAuth{}.TableName():         &PhotoAuth{},
 	Details{}.TableName():           &Details{},
 	Place{}.TableName():             &Place{},
 	Cell{}.TableName():              &Cell{},
@@ -35,6 +36,7 @@ var Entities = Tables{
 	Lens{}.TableName():              &Lens{},
 	Country{}.TableName():           &Country{},
 	Album{}.TableName():             &Album{},
+	AlbumAuth{}.TableName():         &AlbumAuth{},
 	PhotoAlbum{}.TableName():        &PhotoAlbum{},
 	Label{}.TableName():             &Label{},
 	Category{}.TableName():          &Category{},
@@ -46,6 +48,7 @@ var Entities = Tables{
 	Face{}.TableName():              &Face{},
 	Marker{}.TableName():            &Marker{},
 	Reaction{}.TableName():          &Reaction{},
+	Share{}.TableName():             &Share{},
 }
 
 // WaitForMigration waits for the database migration to be successful.

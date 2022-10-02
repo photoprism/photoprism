@@ -21,7 +21,7 @@ type Face struct {
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
 	FaceKind        int             `json:"Kind" yaml:"Kind,omitempty"`
 	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
-	SubjUID         string          `gorm:"type:VARBINARY(64);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
+	SubjUID         string          `gorm:"type:VARBINARY(42);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
@@ -264,12 +264,12 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 }
 
 // SetSubjectUID updates the face's subject uid and related markers.
-func (m *Face) SetSubjectUID(subjUID string) (err error) {
+func (m *Face) SetSubjectUID(subjUid string) (err error) {
 	// Update face.
-	if err = m.Update("SubjUID", subjUID); err != nil {
+	if err = m.Update("SubjUID", subjUid); err != nil {
 		return err
 	} else {
-		m.SubjUID = subjUID
+		m.SubjUID = subjUid
 	}
 
 	// Update related markers.
@@ -410,13 +410,13 @@ func FindFace(id string) *Face {
 }
 
 // ValidFaceCount counts the number of valid face markers for a file uid.
-func ValidFaceCount(fileUID string) (c int) {
-	if !rnd.IsUID(fileUID, FileUID) {
+func ValidFaceCount(fileUid string) (c int) {
+	if !rnd.IsUID(fileUid, FileUID) {
 		return
 	}
 
 	if err := Db().Model(Marker{}).
-		Where("file_uid = ? AND marker_type = ?", fileUID, MarkerFace).
+		Where("file_uid = ? AND marker_type = ?", fileUid, MarkerFace).
 		Where("marker_invalid = 0").
 		Count(&c).Error; err != nil {
 		log.Errorf("file: %s (count faces)", err)

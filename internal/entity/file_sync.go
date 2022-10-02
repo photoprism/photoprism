@@ -54,7 +54,7 @@ func (m *FileSync) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *FileSync) Save() error {
 	return Db().Save(m).Error
 }

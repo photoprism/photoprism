@@ -61,7 +61,7 @@ func (m *Password) Create() error {
 	return Db().Create(m).Error
 }
 
-// Save inserts a new row to the database or updates a row if the primary key already exists.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Password) Save() error {
 	return Db().Save(m).Error
 }

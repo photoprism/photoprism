@@ -10,7 +10,7 @@ import (
 
 // UserSettings represents user preferences.
 type UserSettings struct {
-	UserUID     string    `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
+	UserUID     string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
 	UITheme     string    `gorm:"type:VARBINARY(32);column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
 	UILanguage  string    `gorm:"type:VARBINARY(32);column:ui_language;" json:"UILanguage,omitempty" yaml:"UILanguage,omitempty"`
 	UITimeZone  string    `gorm:"type:VARBINARY(64);column:ui_time_zone;" json:"UITimeZone,omitempty" yaml:"UITimeZone,omitempty"`
@@ -65,7 +65,7 @@ func (m *UserSettings) Create() error {
 	return Db().Create(m).Error
 }
 
-// Save entity properties.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *UserSettings) Save() error {
 	return Db().Save(m).Error
 }

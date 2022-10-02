@@ -4,9 +4,14 @@ import "time"
 
 const Day = time.Hour * 24
 
+// UTC returns the current Coordinated Universal Time (UTC).
+func UTC() time.Time {
+	return time.Now().UTC()
+}
+
 // TimeStamp returns the current timestamp in UTC rounded to seconds.
 func TimeStamp() time.Time {
-	return time.Now().UTC().Truncate(time.Second)
+	return UTC().Truncate(time.Second)
 }
 
 // TimePointer returns a pointer to the current timestamp.
@@ -22,5 +27,5 @@ func Seconds(s int) time.Duration {
 
 // Yesterday returns the time 24 hours ago.
 func Yesterday() time.Time {
-	return time.Now().Add(-24 * time.Hour)
+	return UTC().Add(-24 * time.Hour)
 }

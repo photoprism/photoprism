@@ -49,12 +49,12 @@ func (m *FileShare) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Updates a column in the database.
+// Update updates a column value in the database.
 func (m *FileShare) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *FileShare) Save() error {
 	return Db().Save(m).Error
 }

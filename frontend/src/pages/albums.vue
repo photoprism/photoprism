@@ -19,7 +19,7 @@
                       @click:clear="() => {updateQuery({'q': ''})}"
         ></v-text-field>
 
-        <v-overflow-btn :value="filter.category"
+        <v-overflow-btn v-if="canManage" :value="filter.category"
                   solo hide-details single-line
                   :label="$gettext('Category')"
                   color="secondary-dark"

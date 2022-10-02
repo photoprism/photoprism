@@ -115,7 +115,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 
 		// Publish event and create/update YAML backup.
 		UpdateClientConfig()
-		PublishAlbumEvent(EntityCreated, a.AlbumUID, c)
+		// PublishAlbumEvent(EntityCreated, a.AlbumUID, c)
 		SaveAlbumAsYaml(*a)
 
 		// Return as JSON.
@@ -169,7 +169,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 		event.SuccessMsg(i18n.MsgAlbumSaved)
 
-		PublishAlbumEvent(EntityUpdated, uid, c)
+		// PublishAlbumEvent(EntityUpdated, uid, c)
 
 		SaveAlbumAsYaml(a)
 
@@ -215,7 +215,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishAlbumEvent(EntityDeleted, id, c)
+		// PublishAlbumEvent(EntityDeleted, id, c)
 
 		UpdateClientConfig()
 

@@ -147,11 +147,11 @@ func (m *Markers) AppendWithEmbedding(marker Marker) {
 }
 
 // FindMarkers returns up to 1000 markers for a given file uid.
-func FindMarkers(fileUID string) (Markers, error) {
+func FindMarkers(fileUid string) (Markers, error) {
 	m := Markers{}
 
 	err := Db().
-		Where("file_uid = ?", fileUID).
+		Where("file_uid = ?", fileUid).
 		Order("x").
 		Offset(0).Limit(1000).
 		Find(&m).Error

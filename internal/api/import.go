@@ -105,7 +105,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Set user UID if known.
 		if s.UserUID != "" {
-			opt.OwnerUID = s.UserUID
+			opt.UserUID = s.UserUID
 		}
 
 		// Start import.

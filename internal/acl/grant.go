@@ -3,6 +3,7 @@ package acl
 // Predefined grants to simplify configuration.
 var (
 	GrantFullAccess   = Grant{FullAccess: true, AccessAll: true, AccessLibrary: true, ActionCreate: true, ActionUpdate: true, ActionDelete: true, ActionDownload: true, ActionShare: true, ActionRate: true, ActionReact: true, ActionManage: true, ActionSubscribe: true}
+	GrantSearchShared = Grant{AccessShared: true, ActionSearch: true, ActionView: true, ActionDownload: true}
 	GrantSubscribeAll = Grant{AccessAll: true, ActionSubscribe: true}
 	GrantSubscribeOwn = Grant{AccessOwn: true, ActionSubscribe: true}
 )

@@ -124,8 +124,8 @@ func (f *SearchPhotosGeo) SerializeAll() string {
 	return Serialize(f, true)
 }
 
-// FindByIdOnly checks if search filters other than UID may be skipped to improve performance.
-func (f *SearchPhotosGeo) FindByIdOnly() bool {
+// FindUidOnly checks if search filters other than UID may be skipped to improve performance.
+func (f *SearchPhotosGeo) FindUidOnly() bool {
 	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
 }
 
