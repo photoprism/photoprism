@@ -111,7 +111,7 @@ export default {
     }].concat(this.$config.get('countries'));
     const features = this.$config.settings().features;
     return {
-      canUpload: this.$config.allow("albums", "upload") && features.upload,
+      canUpload: this.$config.allow("files", "upload") && features.upload,
       canDownload: this.$config.allow("albums", "download") && features.download,
       canShare: this.$config.allow("albums", "share") && features.share,
       canManage: this.$config.allow("albums", "manage"),

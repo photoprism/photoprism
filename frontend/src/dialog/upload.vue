@@ -90,6 +90,7 @@
 import Api from "common/api";
 import Notify from "common/notify";
 import Album from "model/album";
+import Util from "common/util";
 
 export default {
   name: 'PTabUpload',
@@ -109,7 +110,7 @@ export default {
       current: 0,
       total: 0,
       completed: 0,
-      started: 0,
+      token: "",
       review: this.$config.feature("review"),
       safe: !this.$config.get("uploadNSFW"),
       rtl: this.$rtl,
@@ -174,7 +175,7 @@ export default {
       this.current = 0;
       this.total = 0;
       this.completed = 0;
-      this.started = 0;
+      this.token = "";
     },
     upload() {
       if (this.busy) {
@@ -188,7 +189,7 @@ export default {
         return;
       }
 
-      this.started = Date.now();
+      this.token = Util.generateToken();
       this.selected = this.$refs.upload.files;
       this.total = this.selected.length;
       this.busy = true;
@@ -221,7 +222,7 @@ export default {
 
           formData.append('files', file);
 
-          await Api.post('upload/' + ctx.started,
+          await Api.post('upload/' + ctx.token,
             formData,
             {
               headers: {
@@ -240,7 +241,7 @@ export default {
         this.indexing = true;
         const ctx = this;
 
-        Api.post('import/upload/' + this.started, {
+        Api.post('import/upload/' + this.token, {
           move: true,
           albums: addToAlbums,
         }).then(() => {

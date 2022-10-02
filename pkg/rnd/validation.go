@@ -12,21 +12,6 @@ func IsUnique(s string, prefix byte) bool {
 	return IsUID(s, prefix)
 }
 
-// ContainsUID checks if a slice of strings contains ContainsUID only.
-func ContainsUID(s []string, prefix byte) bool {
-	if len(s) < 1 {
-		return false
-	}
-
-	for _, id := range s {
-		if !IsUnique(id, prefix) {
-			return false
-		}
-	}
-
-	return true
-}
-
 // IsUID checks if the string is a valid entity UID.
 func IsUID(s string, prefix byte) bool {
 	if len(s) != 16 {

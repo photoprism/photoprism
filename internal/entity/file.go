@@ -25,6 +25,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+const (
+	FileUID = byte('f')
+)
+
 // Files represents a file result set.
 type Files []File
 
@@ -44,7 +48,7 @@ type File struct {
 	MediaUTC         int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
 	InstanceID       string        `gorm:"type:VARBINARY(64);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID          string        `gorm:"type:VARBINARY(64);unique_index;" json:"UID" yaml:"UID"`
-	FileName         string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileName         string        `gorm:"type:VARBINARY(1024);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
 	FileRoot         string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash         string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
@@ -193,11 +197,11 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	// Return if uid exists.
-	if rnd.IsUnique(m.FileUID, 'f') {
+	if rnd.IsUnique(m.FileUID, FileUID) {
 		return nil
 	}
 
-	return scope.SetColumn("FileUID", rnd.GenerateUID('f'))
+	return scope.SetColumn("FileUID", rnd.GenerateUID(FileUID))
 }
 
 // DownloadName returns the download file name.

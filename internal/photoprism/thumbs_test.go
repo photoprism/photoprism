@@ -38,7 +38,7 @@ func TestResample_Start(t *testing.T) {
 	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 
 	imp := NewImport(conf, ind, convert)
-	opt := ImportOptionsMove(conf.ImportPath())
+	opt := ImportOptionsMove(conf.ImportPath(), "")
 
 	imp.Start(opt)
 

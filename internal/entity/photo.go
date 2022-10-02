@@ -9,8 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/react"
-
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
@@ -18,12 +16,13 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/react"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (
-	PhotoUID = 'p'
+	PhotoUID = byte('p')
 )
 
 var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
@@ -63,7 +62,7 @@ type Photo struct {
 	TitleSrc         string       `gorm:"type:VARBINARY(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
 	PhotoDescription string       `gorm:"type:VARCHAR(4096);" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string       `gorm:"type:VARBINARY(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
-	PhotoPath        string       `gorm:"type:VARBINARY(500);index:idx_photos_path_name;" json:"Path" yaml:"-"`
+	PhotoPath        string       `gorm:"type:VARBINARY(1024);index:idx_photos_path_name;" json:"Path" yaml:"-"`
 	PhotoName        string       `gorm:"type:VARBINARY(255);index:idx_photos_path_name;" json:"Name" yaml:"-"`
 	OriginalName     string       `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoStack       int8         `json:"Stack" yaml:"Stack,omitempty"`
@@ -104,6 +103,7 @@ type Photo struct {
 	Albums           []Album      `json:"-" yaml:"-"`
 	Files            []File       `yaml:"-"`
 	Labels           []PhotoLabel `yaml:"-"`
+	OwnerUID         string       `gorm:"type:VARBINARY(64);index" json:"OwnerUID,omitempty" yaml:"OwnerUID,omitempty"`
 	CreatedAt        time.Time    `yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
@@ -117,9 +117,15 @@ func (Photo) TableName() string {
 	return "photos"
 }
 
-// NewPhoto creates a photo entity.
+// NewPhoto creates a new photo with default values.
 func NewPhoto(stackable bool) Photo {
+	return NewUserPhoto(stackable, "")
+}
+
+// NewUserPhoto creates a photo owned by a user.
+func NewUserPhoto(stackable bool, userUID string) Photo {
 	m := Photo{
+		OwnerUID:     userUID,
 		PhotoTitle:   UnknownTitle,
 		PhotoType:    MediaImage,
 		PhotoCountry: UnknownCountry.ID,

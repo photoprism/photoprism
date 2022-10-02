@@ -31,11 +31,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:yes"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -44,11 +39,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		assert.Equal(t, len(photos), len(photos0))
 		f.Query = "favorite:false"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -63,11 +53,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"%gold\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -80,11 +65,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"I love % dog\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -99,11 +79,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"sale%\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -116,11 +91,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"&IlikeFood\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -136,11 +106,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Pets & Dogs\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -153,16 +118,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Light&\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -178,11 +133,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"'Family\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -196,11 +146,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		// Note: If the string in favorite starts with f/F, the txt package will assume it means false,
 		f.Query = "favorite:\"Mother's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -216,11 +161,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Ice Cream'\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -234,11 +174,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"*Forrest\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -254,11 +189,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"My*Kids\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -272,11 +202,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Yoga***\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -292,11 +217,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"|Banana\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -310,11 +230,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Red|Green\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -330,11 +245,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Blue|\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -348,11 +258,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"345 Shirt\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -368,11 +273,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Color555 Blue\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -386,11 +286,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Route 66\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -406,11 +301,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -424,11 +314,6 @@ func TestPhotosQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Route %66 | *Father's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

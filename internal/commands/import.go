@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ImportCommand registers the import cli command.
@@ -19,8 +20,14 @@ var ImportCommand = cli.Command{
 	Name:      "mv",
 	Aliases:   []string{"import"},
 	Usage:     "Moves media files to originals",
-	ArgsUsage: "[path]",
-	Action:    importAction,
+	ArgsUsage: "[SOURCE PATH]",
+	Flags: []cli.Flag{
+		cli.BoolFlag{
+			Name:  "dest, d",
+			Usage: "relative originals `PATH` to which the files should be imported",
+		},
+	},
+	Action: importAction,
 }
 
 // importAction moves photos to originals path. Default import path is used if no path argument provided
@@ -64,10 +71,17 @@ func importAction(ctx *cli.Context) error {
 		return errors.New("import path is identical with originals")
 	}
 
-	log.Infof("moving media files from %s to %s", sourcePath, conf.OriginalsPath())
+	var destFolder string
+	if ctx.IsSet("dest") {
+		destFolder = clean.UserPath(ctx.String("dest"))
+	} else {
+		destFolder = conf.ImportDest()
+	}
+
+	log.Infof("moving media files from %s to %s", sourcePath, filepath.Join(conf.OriginalsPath(), destFolder))
 
 	w := service.Import()
-	opt := photoprism.ImportOptionsMove(sourcePath)
+	opt := photoprism.ImportOptionsMove(sourcePath, destFolder)
 
 	w.Start(opt)
 

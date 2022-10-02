@@ -73,6 +73,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		stackPhoto := *file.Photo
+		ownerUID := stackPhoto.OwnerUID
 		stackPrimary, err := stackPhoto.PrimaryFile()
 
 		if err != nil {
@@ -125,7 +126,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		// Create new photo, also flagged as unstacked / not stackable.
-		newPhoto := entity.NewPhoto(false)
+		newPhoto := entity.NewUserPhoto(false, ownerUID)
 		newPhoto.PhotoPath = unstackFile.RootRelPath()
 		newPhoto.PhotoName = unstackFile.BasePrefix(false)
 

@@ -31,11 +31,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:yes"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -44,11 +39,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		assert.Equal(t, len(photos), len(photos0))
 		f.Query = "review:false"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos2, _, err2 := Photos(f)
 
@@ -63,11 +53,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"%gold\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -80,11 +65,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"I love % dog\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -99,11 +79,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"sale%\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -116,11 +91,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"&IlikeFood\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -136,11 +106,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Pets & Dogs\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -153,11 +118,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"Light&\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -173,11 +133,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"'Family\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -191,11 +146,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		// Note: If the string in review starts with f/F, the txt package will assume it means false,
 		f.Query = "review:\"Mother's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -211,11 +161,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Ice Cream'\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -229,11 +174,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"*Forrest\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -249,11 +189,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"My*Kids\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -267,11 +202,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"Yoga***\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -287,11 +217,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"|Banana\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -305,11 +230,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"Red|Green\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -325,11 +245,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Blue|\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -343,11 +258,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"345 Shirt\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -363,11 +273,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Color555 Blue\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -381,11 +286,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"Route 66\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -401,11 +301,6 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -419,11 +314,6 @@ func TestPhotosQueryReview(t *testing.T) {
 
 		f.Query = "review:\"Route %66 | *Father's Day\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

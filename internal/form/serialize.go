@@ -8,9 +8,9 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/araddon/dateparse"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -35,7 +35,7 @@ func Serialize(f interface{}, all bool) string {
 		fieldInfo := v.Type().Field(i).Tag.Get("serialize")
 
 		// Serialize field values as string.
-		if fieldName != "" && (fieldInfo != "-" || all) {
+		if fieldName != "" && fieldName != "-" && (fieldInfo != "-" || all) {
 			switch t := fieldValue.Interface().(type) {
 			case time.Time:
 				if val := fieldValue.Interface().(time.Time); !val.IsZero() {
@@ -123,7 +123,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 
 				stringValue := string(value)
 
-				if fieldName != "" && field.CanSet() {
+				if fieldName != "" && fieldName != "-" && field.CanSet() {
 					switch field.Interface().(type) {
 					case time.Time:
 						if timeValue, err := dateparse.ParseAny(stringValue); err != nil {

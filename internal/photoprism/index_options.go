@@ -1,6 +1,6 @@
 package photoprism
 
-// IndexOptions represents media file indexing options.
+// IndexOptions represents file indexing options.
 type IndexOptions struct {
 	Path            string
 	Rescan          bool

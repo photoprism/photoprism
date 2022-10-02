@@ -2,7 +2,6 @@ package session
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -11,7 +10,7 @@ import (
 )
 
 func TestSession_Public(t *testing.T) {
-	s := New(time.Hour, config.TestConfig())
+	s := New(ExpiresAfter, config.TestConfig())
 
 	sess := s.Public()
 
@@ -19,5 +18,5 @@ func TestSession_Public(t *testing.T) {
 	assert.Truef(t, s.Exists(sess.ID), "session %s should exist", clean.LogQuote(sess.ID))
 	assert.Equal(t, PublicID, sess.ID)
 
-	// t.Logf("Public Session: %#v", sess)
+	t.Logf("Public Session: %#v", sess)
 }

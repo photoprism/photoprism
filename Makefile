@@ -507,6 +507,9 @@ fmt-go:
 	goimports -w pkg internal cmd
 tidy:
 	go mod tidy -go=1.16 && go mod tidy -go=1.17
+users:
+	./photoprism users add -p photoprism -r admin -s -a test:true -n "Alice Austen" superadmin
+	./photoprism users ls
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make

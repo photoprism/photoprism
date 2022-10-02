@@ -148,7 +148,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Logs:      false,
 			Moments:   false,
 			People:    false,
-			Places:    false,
+			Places:    true,
 			Private:   false,
 			Ratings:   false,
 			Reactions: false,

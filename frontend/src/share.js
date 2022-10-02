@@ -50,7 +50,7 @@ import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 import Hls from "hls.js";
-import { $gettext, Mount } from "common/vm";
+import { Mount, T } from "common/vm";
 import * as options from "./options/options";
 
 config.load().finally(() => {
@@ -160,12 +160,28 @@ config.load().finally(() => {
   });
 
   router.afterEach((to) => {
-    if (to.meta.title && config.values.siteTitle !== to.meta.title) {
-      config.page.title = $gettext(to.meta.title);
-      window.document.title = config.page.title;
+    const t = to.meta["title"] ? to.meta["title"] : "";
+
+    if (t !== "" && config.values.siteTitle !== t && config.values.name !== t) {
+      config.page.title = T(t);
+
+      if (config.page.title.startsWith(config.values.siteTitle)) {
+        window.document.title = config.page.title;
+      } else if (config.page.title === "") {
+        window.document.title = config.values.siteTitle;
+      } else {
+        window.document.title = config.page.title + " – " + config.values.siteTitle;
+      }
     } else {
-      config.page.title = config.values.siteTitle;
-      window.document.title = config.values.siteTitle;
+      config.page.title = config.values.name;
+
+      if (!config.values.sponsor) {
+        window.document.title = config.values.name;
+      } else if (config.values.siteCaption === "") {
+        window.document.title = config.values.siteTitle;
+      } else {
+        window.document.title = config.values.siteCaption;
+      }
     }
   });
 

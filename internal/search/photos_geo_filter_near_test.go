@@ -14,11 +14,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "pt9jtdre2lvl0y24"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -30,11 +25,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "pr2xu7myk7wrbk30"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -65,11 +55,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "sale%"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -81,11 +66,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "&IlikeFood"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -99,11 +79,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "Pets & Dogs"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -115,11 +90,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Light&"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -133,11 +103,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "'Family"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -149,11 +114,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Father's type"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -168,11 +128,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "Ice Cream'"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -184,11 +139,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "*Forrest"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -202,11 +152,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "My*Kids"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -218,11 +163,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Yoga***"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -236,11 +176,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "|Banana"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -252,11 +187,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Red|Green"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -271,11 +201,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "Blue|"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -289,11 +214,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "345 Shirt"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -306,11 +226,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 
 		f.Near = "type555 Blue"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -322,11 +237,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Route 66"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -343,11 +253,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:pt9jtdre2lvl0y24"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -359,11 +264,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:pr2xu7myk7wrbk30"
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -378,11 +278,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:pt9jtdre2lvl0y24|pr2xu7myk7wrbk30"
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -394,11 +289,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"%gold\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -412,11 +302,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"I love % dog\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -428,11 +313,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"sale%\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -446,11 +326,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"&IlikeFood\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -462,11 +337,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Pets & Dogs\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -480,11 +350,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"Light&\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -497,11 +362,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"'Family\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -513,11 +373,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Father's type\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -532,11 +387,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"Ice Cream'\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -548,11 +398,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"*Forrest\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -566,11 +411,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"My*Kids\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -582,11 +422,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Yoga***\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -600,11 +435,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"|Banana\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -616,11 +446,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Red|Green\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -635,11 +460,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"Blue|\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -651,11 +471,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"345 Shirt\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 
@@ -669,11 +484,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		f.Query = "near:\"type555 Blue\""
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -685,11 +495,6 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Route 66\""
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, err := PhotosGeo(f)
 

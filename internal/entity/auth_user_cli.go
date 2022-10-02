@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -16,18 +17,13 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	}
 
 	// Display name.
-	if ctx.IsSet("displayname") {
-		m.DisplayName = frm.DisplayName
+	if ctx.IsSet("name") {
+		m.DisplayName = clean.Name(frm.DisplayName)
 	}
 
 	// User role.
 	if ctx.IsSet("role") {
 		m.UserRole = frm.Role()
-	}
-
-	// Custom attributes.
-	if ctx.IsSet("attr") {
-		m.UserAttr = frm.Attr()
 	}
 
 	// Super-admin status.
@@ -36,13 +32,28 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	}
 
 	// Disable Web UI?
-	if ctx.IsSet("disable-login") {
+	if ctx.IsSet("no-login") {
 		m.CanLogin = frm.CanLogin
 	}
 
 	// Can use WebDAV.
 	if ctx.IsSet("can-sync") {
 		m.CanSync = frm.CanSync
+	}
+
+	// Custom attributes.
+	if ctx.IsSet("attr") {
+		m.UserAttr = frm.Attr()
+	}
+
+	// Originals base folder.
+	if ctx.IsSet("base-path") {
+		m.SetBasePath(frm.BasePath)
+	}
+
+	// Sub-folder for uploads.
+	if ctx.IsSet("upload-path") {
+		m.SetUploadPath(frm.UploadPath)
 	}
 
 	return m.Validate()

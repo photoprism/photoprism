@@ -8,7 +8,7 @@ var conf *config.Config
 
 func SetConfig(c *config.Config) {
 	if c == nil {
-		panic("config is nil")
+		panic("config is missing")
 	}
 
 	conf = c
@@ -16,7 +16,7 @@ func SetConfig(c *config.Config) {
 
 func Config() *config.Config {
 	if conf == nil {
-		panic("config is nil")
+		panic("config is missing")
 	}
 
 	return conf

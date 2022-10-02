@@ -24,19 +24,18 @@
         </template>
 
         <v-btn
-            v-if="features.download"
             fab dark small
             :title="$gettext('Download')"
             color="download"
             class="action-download"
-            :disabled="selection.length !== 1"
+            :disabled="!canDownload || selection.length !== 1"
             @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
         </v-btn>
 
         <v-btn
-            v-if="features.albums"
+            v-if="canAddAlbums"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"
@@ -73,11 +72,20 @@ export default {
       type: Array,
       default: () => [],
     },
-    refresh: Function,
-    clearSelection: Function,
+    refresh: {
+      type: Function,
+      default: () => {},
+    },
+    clearSelection: {
+      type: Function,
+      default: () => {},
+    },
   },
   data() {
     return {
+      canManage: this.$config.allow("people", "manage"),
+      canDownload: this.$config.allow("people", "download") && this.$config.feature("download"),
+      canAddAlbums: this.$config.allow("albums", "create") && this.$config.feature("albums"),
       features: this.$config.settings().features,
       expanded: false,
       dialog: {

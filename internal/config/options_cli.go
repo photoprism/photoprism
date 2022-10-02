@@ -166,6 +166,12 @@ var Flags = CliFlags{
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{
+			Name:   "import-dest",
+			Usage:  "relative originals `PATH` to which the files should be imported by default *optional*",
+			EnvVar: "PHOTOPRISM_IMPORT_DEST",
+		}},
+	CliFlag{
+		Flag: cli.StringFlag{
 			Name:   "assets-path, as",
 			Usage:  "assets `PATH` containing static resources like icons, models, and translations",
 			EnvVar: "PHOTOPRISM_ASSETS_PATH",

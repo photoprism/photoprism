@@ -11,6 +11,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+const (
+	LinkUID = byte('s')
+)
+
 type Links []Link
 
 // Link represents a sharing link.
@@ -25,6 +29,7 @@ type Link struct {
 	HasPassword bool      `json:"HasPassword" yaml:"HasPassword,omitempty"`
 	CanComment  bool      `json:"CanComment" yaml:"CanComment,omitempty"`
 	CanEdit     bool      `json:"CanEdit" yaml:"CanEdit,omitempty"`
+	OwnerUID    string    `gorm:"type:VARBINARY(64);index" json:"OwnerUID,omitempty" yaml:"OwnerUID,omitempty"`
 	CreatedAt   time.Time `deepcopier:"skip" json:"CreatedAt" yaml:"CreatedAt"`
 	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
@@ -36,19 +41,25 @@ func (Link) TableName() string {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Link) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUnique(m.LinkUID, 's') {
+	if rnd.IsUnique(m.LinkUID, LinkUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LinkUID", rnd.GenerateUID('s'))
+	return scope.SetColumn("LinkUID", rnd.GenerateUID(LinkUID))
 }
 
 // NewLink creates a sharing link.
 func NewLink(shareUID string, canComment, canEdit bool) Link {
+	return NewUserLink(shareUID, canComment, canEdit, OwnerUnknown)
+}
+
+// NewUserLink creates a sharing link owned by a user.
+func NewUserLink(shareUID string, canComment, canEdit bool, userUID string) Link {
 	now := TimeStamp()
 
 	result := Link{
-		LinkUID:    rnd.GenerateUID('s'),
+		OwnerUID:   userUID,
+		LinkUID:    rnd.GenerateUID(LinkUID),
 		ShareUID:   shareUID,
 		LinkToken:  rnd.GenerateToken(10),
 		CanComment: canComment,

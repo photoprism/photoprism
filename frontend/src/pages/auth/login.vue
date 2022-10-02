@@ -23,6 +23,7 @@
                   :color="colors.accent"
                   :placeholder="$gettext('Name')"
                   prepend-icon="person"
+                  @keyup.enter.native="login"
               ></v-text-field>
               <v-text-field
                   v-model="password"

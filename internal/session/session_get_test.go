@@ -2,7 +2,6 @@ package session
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -12,7 +11,7 @@ import (
 )
 
 func TestSession_Get(t *testing.T) {
-	s := New(time.Hour, config.TestConfig())
+	s := New(ExpiresAfter, config.TestConfig())
 
 	assert.Error(t, s.Delete("abc"))
 
@@ -41,7 +40,7 @@ func TestSession_Get(t *testing.T) {
 }
 
 func TestSession_Exists(t *testing.T) {
-	s := New(time.Hour, config.TestConfig())
+	s := New(ExpiresAfter, config.TestConfig())
 
 	assert.False(t, s.Exists("xyz"))
 

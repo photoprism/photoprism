@@ -12,10 +12,12 @@ type User struct {
 	UserEmail   string `json:"Email,omitempty" yaml:"Email,omitempty"`
 	DisplayName string `json:"DisplayName,omitempty" yaml:"DisplayName,omitempty"`
 	UserRole    string `json:"Role,omitempty" yaml:"Role,omitempty"`
-	UserAttr    string `json:"Attr,omitempty" yaml:"Attr,omitempty"`
 	SuperAdmin  bool   `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
 	CanLogin    bool   `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
 	CanSync     bool   `json:"CanSync,omitempty" yaml:"CanSync,omitempty"`
+	UserAttr    string `json:"Attr,omitempty" yaml:"Attr,omitempty"`
+	BasePath    string `json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
+	UploadPath  string `json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
 	Password    string `json:"Password,omitempty" yaml:"Password,omitempty"`
 }
 
@@ -24,12 +26,14 @@ func NewUserFromCli(ctx *cli.Context) User {
 	return User{
 		UserName:    clean.Username(ctx.Args().First()),
 		UserEmail:   clean.Email(ctx.String("email")),
-		DisplayName: clean.Name(ctx.String("displayname")),
+		DisplayName: clean.Name(ctx.String("name")),
 		UserRole:    clean.Role(ctx.String("role")),
-		UserAttr:    clean.Attr(ctx.String("attr")),
 		SuperAdmin:  ctx.Bool("superadmin"),
-		CanLogin:    !ctx.Bool("disable-login"),
+		CanLogin:    !ctx.Bool("no-login"),
 		CanSync:     ctx.Bool("can-sync"),
+		UserAttr:    clean.Attr(ctx.String("attr")),
+		BasePath:    clean.Path(ctx.String("base-path")),
+		UploadPath:  clean.Path(ctx.String("upload-path")),
 		Password:    clean.Password(ctx.String("password")),
 	}
 }

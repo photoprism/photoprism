@@ -17,7 +17,7 @@ import (
 var ConvertCommand = cli.Command{
 	Name:      "convert",
 	Usage:     "Converts files in other formats to JPEG and AVC as needed",
-	ArgsUsage: "[originals folder]",
+	ArgsUsage: "[SUB-FOLDER]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",

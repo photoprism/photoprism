@@ -4,17 +4,17 @@ import (
 	"strings"
 )
 
-// Empty tests if a string represents an empty/invalid value.
+// Empty checks whether a string represents an empty, unset, or undefined value.
 func Empty(s string) bool {
-	s = strings.Trim(strings.TrimSpace(s), "%*")
-
-	if s == "" || s == "0" || s == "-1" || EmptyTime(s) {
+	if s == "" {
+		return true
+	} else if s = strings.Trim(s, "%* "); s == "" || s == "0" || s == "-1" || EmptyTime(s) {
+		return true
+	} else if s = strings.ToLower(s); s == "nil" || s == "null" || s == "nan" {
 		return true
 	}
 
-	s = strings.ToLower(s)
-
-	return s == "nil" || s == "null" || s == "nan"
+	return false
 }
 
 // NotEmpty tests if a string does not represent an empty/invalid value.

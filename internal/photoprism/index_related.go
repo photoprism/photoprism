@@ -7,7 +7,6 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 

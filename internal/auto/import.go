@@ -71,9 +71,9 @@ func Import() error {
 	var opt photoprism.ImportOptions
 
 	if conf.Settings().Import.Move {
-		opt = photoprism.ImportOptionsMove(path)
+		opt = photoprism.ImportOptionsMove(path, conf.ImportDest())
 	} else {
-		opt = photoprism.ImportOptionsCopy(path)
+		opt = photoprism.ImportOptionsCopy(path, conf.ImportDest())
 	}
 
 	imported := imp.Start(opt)

@@ -26,6 +26,7 @@ func TestShowConfigCommand(t *testing.T) {
 	assert.Contains(t, output, "config-path")
 	assert.Contains(t, output, "originals-path")
 	assert.Contains(t, output, "import-path")
+	assert.Contains(t, output, "import-dest")
 	assert.Contains(t, output, "cache-path")
 	assert.Contains(t, output, "assets-path")
 	assert.Contains(t, output, "darktable-cli")

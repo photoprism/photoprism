@@ -13,22 +13,28 @@ func Auth(c *gin.Context, resource acl.Resource, grant acl.Permission) *entity.S
 }
 
 // AuthAny checks if at least one permission allows access and returns the session in this case.
-func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) *entity.Session {
-	// Get session ID, if any.
+func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *entity.Session) {
+	// Get client IP address and session ID, if any.
+	ip := ClientIP(c)
 	sessId := SessionID(c)
 
-	// Find and return the client session after all checks have passed.
-	if s := Session(sessId); s == nil {
-		event.AuditWarn([]string{ClientIP(c), "unauthenticated", "%s %s as unknown user", "denied"}, grants.String(), string(resource))
+	// Find client session.
+	if s = Session(sessId); s == nil {
+		event.AuditWarn([]string{ip, "unauthenticated", "%s %s as unknown user", "denied"}, grants.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
-	} else if s.User() == nil {
-		event.AuditWarn([]string{ClientIP(c), "session %s", "%s %s as unknown user", "denied"}, s.RefID, grants.String(), string(resource))
+	} else {
+		s.SetClientIP(ip)
+	}
+
+	// Check authorization.
+	if s.User() == nil {
+		event.AuditWarn([]string{ip, "session %s", "%s %s as unknown user", "denied"}, s.RefID, grants.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
 	} else if acl.Resources.DenyAll(resource, s.User().AclRole(), grants) {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s %s as %s", "denied"}, s.RefID, grants.String(), string(resource), s.User().AclRole().String())
+		event.AuditErr([]string{ip, "session %s", "%s %s as %s", "denied"}, s.RefID, grants.String(), string(resource), s.User().AclRole().String())
 		return entity.SessionStatusForbidden()
 	} else {
-		event.AuditInfo([]string{ClientIP(c), "session %s", "%s %s as %s", "granted"}, s.RefID, grants.String(), string(resource), s.User().AclRole().String())
+		event.AuditInfo([]string{ip, "session %s", "%s %s as %s", "granted"}, s.RefID, grants.String(), string(resource), s.User().AclRole().String())
 		return s
 	}
 }

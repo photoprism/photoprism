@@ -47,10 +47,10 @@ type Account struct {
 	AccShare      bool
 	AccSync       bool
 	RetryLimit    int
-	SharePath     string `gorm:"type:VARBINARY(500);"`
+	SharePath     string `gorm:"type:VARBINARY(1024);"`
 	ShareSize     string `gorm:"type:VARBINARY(16);"`
 	ShareExpires  int
-	SyncPath      string `gorm:"type:VARBINARY(500);"`
+	SyncPath      string `gorm:"type:VARBINARY(1024);"`
 	SyncStatus    string `gorm:"type:VARBINARY(16);"`
 	SyncInterval  int
 	SyncDate      sql.NullTime `deepcopier:"skip"`

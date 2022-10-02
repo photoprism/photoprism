@@ -3,12 +3,10 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/internal/config"
-
-	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -50,7 +48,7 @@ func GetSession(router *gin.RouterGroup) {
 		var clientConfig config.ClientConfig
 
 		if conf := service.Config(); conf == nil {
-			log.Errorf("session: config is nil - possible bug")
+			log.Errorf("session: config is not set - possible bug")
 			AbortUnexpected(c)
 			return
 		} else if sess.User().IsVisitor() {

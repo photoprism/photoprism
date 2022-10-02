@@ -118,6 +118,7 @@ export default {
       isShared: this.$config.deny("photos", "manage"),
       canEdit: this.$config.allow("photos", "update") && features.edit,
       hasPlaces: this.$config.allow("places", "view") && features.places,
+      canSearchPlaces: this.$config.allow("places", "search") && features.places,
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -248,16 +249,16 @@ export default {
       return "newest";
     },
     openLocation(index) {
-      if (!this.hasPlaces) {
+      if (!this.canSearchPlaces) {
         return;
       }
 
       const photo = this.results[index];
 
       if (photo.CellID && photo.CellID !== "zz") {
-        this.$router.push({name: "place", params: {q: photo.CellID}});
+        this.$router.push({name: "places_query", params: {q: photo.CellID}});
       } else if (photo.Country && photo.Country !== "zz") {
-        this.$router.push({name: "place", params: {q: "country:" + photo.Country}});
+        this.$router.push({name: "places_query", params: {q: "country:" + photo.Country}});
       } else {
         this.$notify.warn("unknown location");
       }

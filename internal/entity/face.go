@@ -411,7 +411,7 @@ func FindFace(id string) *Face {
 
 // ValidFaceCount counts the number of valid face markers for a file uid.
 func ValidFaceCount(fileUID string) (c int) {
-	if !rnd.IsUID(fileUID, 'f') {
+	if !rnd.IsUID(fileUID, FileUID) {
 		return
 	}
 

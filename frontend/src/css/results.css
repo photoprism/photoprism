@@ -347,6 +347,10 @@ body.chrome #photoprism .search-results .result {
     visibility: hidden;
 }
 
+#photoprism .disable-manage .search-results .result .input-favorite.v-btn:before {
+    visibility: hidden;
+}
+
 #photoprism .cards-view .input-reject,
 #photoprism .mosaic-view .input-reject {
     opacity: 0.75;

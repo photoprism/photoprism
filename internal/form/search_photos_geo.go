@@ -9,7 +9,9 @@ import (
 // SearchPhotosGeo represents search form fields for "/api/v1/geo".
 type SearchPhotosGeo struct {
 	Query     string    `form:"q"`
-	Filter    string    `form:"filter"`
+	Scope     string    `form:"s" serialize:"-" example:"s:ariqwb43p5dh9h13" notes:"Limits the results to one album or another scope, if specified"`
+	Filter    string    `form:"filter" serialize:"-" notes:"-"`
+	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Search for specific files or photos, only exact matches"`
 	Near      string    `form:"near"`
 	Type      string    `form:"type"`
 	Path      string    `form:"path"`
@@ -48,8 +50,8 @@ type SearchPhotosGeo struct {
 	Subjects  string    `form:"subjects"` // Text
 	People    string    `form:"people"`   // Alias for Subjects
 	Keywords  string    `form:"keywords"`
-	Album     string    `form:"album"`
-	Albums    string    `form:"albums"`
+	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`
+	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names, can be combined with & and |"`
 	Country   string    `form:"country"`
 	State     string    `form:"state"` // Moments
 	City      string    `form:"city"`
@@ -122,6 +124,11 @@ func (f *SearchPhotosGeo) SerializeAll() string {
 	return Serialize(f, true)
 }
 
-func NewGeoSearch(query string) SearchPhotosGeo {
+// FindByIdOnly checks if search filters other than UID may be skipped to improve performance.
+func (f *SearchPhotosGeo) FindByIdOnly() bool {
+	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
+}
+
+func NewSearchPhotosGeo(query string) SearchPhotosGeo {
 	return SearchPhotosGeo{Query: query}
 }

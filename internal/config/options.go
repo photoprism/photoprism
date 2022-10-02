@@ -48,6 +48,7 @@ type Options struct {
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
+	ImportDest            string        `yaml:"ImportDest" json:"-" flag:"import-dest"`
 	AssetsPath            string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
 	CustomAssetsPath      string        `yaml:"-" json:"-" flag:"custom-assets-path"`
 	TempPath              string        `yaml:"TempPath" json:"-" flag:"temp-path"`

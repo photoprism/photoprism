@@ -43,8 +43,10 @@ export class User extends RestModel {
       Role: "",
       Attr: "",
       SuperAdmin: false,
-      WebLogin: false,
-      WebDAV: false,
+      CanLogin: false,
+      BasePath: "",
+      UploadPath: "",
+      CanSync: false,
       CanInvite: false,
       Thumb: "",
       ThumbSrc: "",
@@ -59,6 +61,7 @@ export class User extends RestModel {
         ImportPath: "",
         ImportMove: 0,
         UploadPath: "",
+        DefaultPage: "",
         CreatedAt: "",
         UpdatedAt: "",
       },
@@ -119,7 +122,7 @@ export class User extends RestModel {
       return T(Util.capitalize(this.Role));
     }
 
-    return this.$gettext("Unregistered");
+    return $gettext("Unregistered");
   }
 
   getAccountInfo() {
@@ -133,7 +136,7 @@ export class User extends RestModel {
       return this.Name;
     }
 
-    return this.$gettext("Account");
+    return $gettext("Account");
   }
 
   getEntityName() {

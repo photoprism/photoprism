@@ -2,7 +2,6 @@ package session
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -13,7 +12,7 @@ import (
 )
 
 func TestSession_Save(t *testing.T) {
-	s := New(time.Hour, config.TestConfig())
+	s := New(ExpiresAfter, config.TestConfig())
 
 	data := entity.NewSessionData()
 
@@ -46,7 +45,7 @@ func TestSession_Save(t *testing.T) {
 }
 
 func TestSession_Create(t *testing.T) {
-	s := New(time.Hour, config.TestConfig())
+	s := New(ExpiresAfter, config.TestConfig())
 
 	data := entity.NewSessionData()
 

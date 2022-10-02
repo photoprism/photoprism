@@ -27,7 +27,9 @@ func TestNewImport(t *testing.T) {
 func TestImport_DestinationFilename(t *testing.T) {
 	conf := config.TestConfig()
 
-	conf.InitializeTestData()
+	if err := conf.InitializeTestData(); err != nil {
+		t.Fatal(err)
+	}
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
@@ -44,13 +46,25 @@ func TestImport_DestinationFilename(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fileName, err := imp.DestinationFilename(rawFile, rawFile)
+	t.Run("NoBasePath", func(t *testing.T) {
+		fileName, err := imp.DestinationFilename(rawFile, rawFile, "")
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	assert.Equal(t, conf.OriginalsPath()+"/2019/07/20190705_153230_C167C6FD.cr2", fileName)
+		assert.Equal(t, conf.OriginalsPath()+"/2019/07/20190705_153230_C167C6FD.cr2", fileName)
+	})
+
+	t.Run("WithBasePath", func(t *testing.T) {
+		fileName, err := imp.DestinationFilename(rawFile, rawFile, "users/guest")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, conf.OriginalsPath()+"/users/guest/2019/07/20190705_153230_C167C6FD.cr2", fileName)
+	})
 }
 
 func TestImport_Start(t *testing.T) {
@@ -71,7 +85,7 @@ func TestImport_Start(t *testing.T) {
 
 	imp := NewImport(conf, ind, convert)
 
-	opt := ImportOptionsMove(conf.ImportPath())
+	opt := ImportOptionsMove(conf.ImportPath(), "")
 
 	imp.Start(opt)
 }

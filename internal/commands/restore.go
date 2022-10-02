@@ -31,7 +31,7 @@ var RestoreCommand = cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,
 	Usage:       "Restores the index from an SQL dump and optionally albums from YAML files",
-	ArgsUsage:   "[filename.sql]",
+	ArgsUsage:   "filename.sql",
 	Flags:       restoreFlags,
 	Action:      restoreAction,
 }

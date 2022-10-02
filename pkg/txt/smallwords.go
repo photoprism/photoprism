@@ -20,7 +20,11 @@ var SmallWords = map[string]bool{
 	"from":           true,
 	"with":           true,
 	"de":             true, // French ↓
+	"des":            true,
 	"en":             true,
+	"le":             true,
+	"la":             true,
+	"van":            true, // Dutch  ↓
 	"zu":             true, // German ↓
 	"ab":             true,
 	"um":             true,
@@ -34,8 +38,6 @@ var SmallWords = map[string]bool{
 	"ist":            true,
 	"und":            true,
 	"uns":            true,
-	"des":            true,
-	"van":            true,
 	"von":            true,
 	"für":            true,
 	"ein":            true,

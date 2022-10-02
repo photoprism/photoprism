@@ -14,6 +14,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+const (
+	LabelUID = byte('l')
+)
+
 var labelMutex = sync.Mutex{}
 var labelCategoriesMutex = sync.Mutex{}
 
@@ -47,11 +51,11 @@ func (Label) TableName() string {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUnique(m.LabelUID, 'l') {
+	if rnd.IsUnique(m.LabelUID, LabelUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LabelUID", rnd.GenerateUID('l'))
+	return scope.SetColumn("LabelUID", rnd.GenerateUID(LabelUID))
 }
 
 // NewLabel returns a new label.
@@ -168,7 +172,7 @@ func (m *Label) AfterCreate(scope *gorm.Scope) error {
 
 // SetName changes the label name.
 func (m *Label) SetName(name string) {
-	name = clean.Name(name)
+	name = clean.NameCapitalized(name)
 
 	if name == "" {
 		return

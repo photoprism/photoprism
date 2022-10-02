@@ -15,7 +15,6 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -83,7 +82,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 		albumMutex.Lock()
 		defer albumMutex.Unlock()
 
-		a := entity.NewAlbum(f.AlbumTitle, entity.AlbumDefault)
+		a := entity.NewUserAlbum(f.AlbumTitle, entity.AlbumDefault, s.UserUID)
 		a.AlbumFavorite = f.AlbumFavorite
 
 		// Existing album?

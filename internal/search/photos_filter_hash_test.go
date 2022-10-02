@@ -15,11 +15,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -32,11 +27,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -51,11 +41,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340|2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -68,11 +53,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 | 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -87,11 +67,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -104,11 +79,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -123,11 +93,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd34*"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -140,11 +105,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "%gold"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -159,11 +119,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "I love % dog"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -176,11 +131,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "sale%"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -195,11 +145,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "&IlikeFood"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -212,11 +157,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "Pets & Dogs"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -231,11 +171,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "Light&"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -249,11 +184,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "'Family"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -266,11 +196,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "Father's hash"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -286,11 +211,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "Ice Cream'"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -303,11 +223,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "*Forrest"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -322,11 +237,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "My*Kids"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -339,11 +249,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "Yoga***"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -358,11 +263,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "|Banana"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -375,11 +275,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "Red|Green"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -395,11 +290,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "Blue|"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -414,11 +304,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "345 Shirt"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -432,11 +317,6 @@ func TestPhotosFilterHash(t *testing.T) {
 		f.Hash = "hash555 Blue"
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -449,11 +329,6 @@ func TestPhotosFilterHash(t *testing.T) {
 
 		f.Hash = "Route 66"
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -471,11 +346,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -488,11 +358,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -507,11 +372,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340|2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -524,11 +384,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 | 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -543,11 +398,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -560,11 +410,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -579,11 +424,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd34*\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -596,11 +436,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"%gold\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -615,11 +450,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"I love % dog\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -632,11 +462,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"sale%\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -651,11 +476,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"&IlikeFood\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -668,11 +488,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"Pets & Dogs\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -687,11 +502,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"Light&\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -705,11 +515,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"'Family\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -722,11 +527,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"Father's hash\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -742,11 +542,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"Ice Cream'\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -759,11 +554,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"*Forrest\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -778,11 +568,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"My*Kids\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -795,11 +580,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"Yoga***\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -814,11 +594,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"|Banana\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -831,11 +606,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"Red|Green\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -851,11 +621,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"Blue|\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -868,11 +633,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"345 Shirt\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 
@@ -887,11 +647,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		f.Query = "hash:\"hash555 Blue\""
 		f.Merged = true
 
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
-
 		photos, _, err := Photos(f)
 
 		if err != nil {
@@ -904,11 +659,6 @@ func TestPhotosQueryHash(t *testing.T) {
 
 		f.Query = "hash:\"Route 66\""
 		f.Merged = true
-
-		// Parse query string and filter.
-		if err := f.ParseQueryString(); err != nil {
-			t.Fatal(err)
-		}
 
 		photos, _, err := Photos(f)
 

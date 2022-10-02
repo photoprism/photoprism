@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
@@ -238,20 +241,25 @@ func (m *Session) SetContext(c *gin.Context) *Session {
 		return m
 	}
 
-	if ip := txt.Clip(c.ClientIP(), 48); ip != "" {
-		m.ClientIP = net.ParseIP(ip).String()
-
-		if m.LoginIP == "" {
-			m.LoginIP = net.ParseIP(ip).String()
-			m.LoginAt = TimeStamp()
-		}
-	}
-
-	if ua := txt.Clip(c.GetHeader("User-Agent"), 512); ua != "" {
-		m.UserAgent = ua
-	}
+	m.SetClientIP(c.ClientIP())
+	m.SetUserAgent(c.GetHeader("User-Agent"))
 
 	return m
+}
+
+// IsVisitor checks if the session belongs to a sharing link visitor.
+func (m *Session) IsVisitor() bool {
+	return m.User().IsVisitor()
+}
+
+// IsRegistered checks if the session belongs to a registered user account.
+func (m *Session) IsRegistered() bool {
+	return m.User().IsRegistered()
+}
+
+// Unregistered checks if the session belongs to a unregistered user.
+func (m *Session) Unregistered() bool {
+	return !m.User().IsRegistered()
 }
 
 // NoShares checks if the session has no shares yet.
@@ -267,11 +275,6 @@ func (m *Session) HasShares() bool {
 // HasShare if the session includes the specified share
 func (m *Session) HasShare(uid string) bool {
 	return m.Data().HasShare(uid)
-}
-
-// IsVisitor checks if the session belongs to a sharing link visitor.
-func (m *Session) IsVisitor() bool {
-	return m.User().IsVisitor()
 }
 
 // Expired checks if the session has expired.
@@ -319,4 +322,46 @@ func (m *Session) SharedUIDs() UIDs {
 	}
 
 	return data.SharedUIDs()
+}
+
+// SetUserAgent sets the client user agent.
+func (m *Session) SetUserAgent(ua string) {
+	if ua == "" {
+		return
+	} else if ua = txt.Clip(ua, 512); ua == "" {
+		return
+	} else if m.UserAgent != "" && m.UserAgent != ua {
+		event.AuditWarn([]string{m.IP(), "session %s", "user agent has changed from %s to %s"}, m.RefID, clean.LogQuote(m.UserAgent), clean.LogQuote(ua))
+	}
+
+	m.UserAgent = ua
+}
+
+// SetClientIP sets the client IP address.
+func (m *Session) SetClientIP(ip string) {
+	if ip == "" {
+		return
+	} else if parsed := net.ParseIP(ip); parsed == nil {
+		return
+	} else if ip = parsed.String(); ip == "" {
+		return
+	} else if m.ClientIP != "" && m.ClientIP != ip {
+		event.AuditWarn([]string{ip, "session %s", "client address has changed from %s to %s"}, m.RefID, clean.LogQuote(m.ClientIP), clean.LogQuote(ip))
+	}
+
+	m.ClientIP = ip
+
+	if m.LoginIP == "" {
+		m.LoginIP = ip
+		m.LoginAt = TimeStamp()
+	}
+}
+
+// IP returns the client IP address, or "unknown" if it is unknown.
+func (m *Session) IP() string {
+	if m.ClientIP != "" {
+		return m.ClientIP
+	} else {
+		return "unknown"
+	}
 }

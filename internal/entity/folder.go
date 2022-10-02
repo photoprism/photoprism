@@ -22,7 +22,7 @@ type Folders []Folder
 
 // Folder represents a file system directory.
 type Folder struct {
-	Path              string     `gorm:"type:VARBINARY(500);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
+	Path              string     `gorm:"type:VARBINARY(1024);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
 	Root              string     `gorm:"type:VARBINARY(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
 	FolderUID         string     `gorm:"type:VARBINARY(64);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderType        string     `gorm:"type:VARBINARY(16);" json:"Type" yaml:"Type,omitempty"`
