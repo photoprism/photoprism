@@ -305,11 +305,9 @@ export default {
     unselectCluster: function() {
       const aClusterIsSelected = this.getSelectedClusterFromUrl() !== undefined;
       if (aClusterIsSelected) {
-        // TODO: This kills the search, because route params are lost.
-        // on the upside: it acts the same as pressing the back-button.
-        // It would be strange if it were to act differently to the back button.
-        // Maybe there is a better way to not lose the search. May with back-
-        // navigation-detection in the $route-watcher?
+        // it shouldn't matter wether a cluster was closed by pressing the back
+        // button on a browser or the x-button on the dialog. We therefore make
+        // both actions do the exact same thing: navigate backwards
         this.$router.go(-1);
       }
     },
