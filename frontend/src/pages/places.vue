@@ -564,7 +564,7 @@ export default {
         data: null,
         cluster: true,
         clusterMaxZoom: 18, // Max zoom to cluster points on
-        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+        clusterRadius: 80 // Radius of each cluster when clustering points (defaults to 50)
       });
 
       // TODO: can this rendering of empty colored circles be removed?
