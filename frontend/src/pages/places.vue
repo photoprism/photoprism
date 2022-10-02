@@ -473,13 +473,13 @@ export default {
     getClusterRadiusFromItemCount(itemCount) {
       // see config of cluster-layer for these values
       if (itemCount >= 750) {
-        return 40;
+        return 50;
       }
       if (itemCount >= 100) {
-        return 30;
+        return 40;
       }
 
-      return 20;
+      return 30;
     },
     updateMarkers() {
       if (this.loading) return;
@@ -586,11 +586,11 @@ export default {
           'circle-radius': [
             'step',
             ['get', 'point_count'],
-            20,
-            100,
             30,
+            100,
+            40,
             750,
-            40
+            50
           ]
         }
       });
