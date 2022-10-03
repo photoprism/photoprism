@@ -29,37 +29,35 @@ func DeleteFromSessionCache(id string) {
 }
 
 // FindSession returns an existing session or nil if not found.
-func FindSession(id string) (s Session, err error) {
-	s = Session{}
+func FindSession(id string) (*Session, error) {
+	found := &Session{}
 
 	// Valid id?
 	if !rnd.IsSessionID(id) {
-		return s, fmt.Errorf("id %s is invalid", clean.LogQuote(id))
+		return found, fmt.Errorf("id %s is invalid", clean.LogQuote(id))
 	}
 
-	// Find cached session.
-	if cacheData, ok := sessionCache.Get(id); ok {
-		s = cacheData.(Session)
-		s.LastActive = UnixTime()
-		return s, nil
-	}
-
-	// Search database and return session if found.
-	if r := Db().First(&s, "id = ?", id); r.RecordNotFound() {
-		return s, fmt.Errorf("not found")
-	} else if r.Error != nil {
-		return s, r.Error
-	} else if !rnd.IsSessionID(s.ID) {
-		return s, fmt.Errorf("has invalid id %s", clean.LogQuote(s.ID))
-	} else if s.Expired() {
-		if err = s.Delete(); err != nil {
-			event.AuditErr([]string{s.IP(), "session %s", "failed to delete after expiration", "%s"}, s.RefID, err)
+	// Find the session in the cache with a fallback to the database.
+	if cacheData, ok := sessionCache.Get(id); ok && cacheData != nil {
+		if cached := cacheData.(*Session); !cached.Expired() {
+			cached.LastActive = UnixTime()
+			return cached, nil
+		} else if err := cached.Delete(); err != nil {
+			event.AuditErr([]string{cached.IP(), "session %s", "failed to delete after expiration", "%s"}, cached.RefID, err)
 		}
-		return s, fmt.Errorf("expired")
-	} else {
-		s.UpdateLastActive()
-		sessionCache.SetDefault(s.ID, s)
+	} else if res := Db().First(&found, "id = ?", id); res.RecordNotFound() {
+		return found, fmt.Errorf("not found")
+	} else if res.Error != nil {
+		return found, res.Error
+	} else if !rnd.IsSessionID(found.ID) {
+		return found, fmt.Errorf("has invalid id %s", clean.LogQuote(found.ID))
+	} else if !found.Expired() {
+		found.UpdateLastActive()
+		sessionCache.SetDefault(found.ID, found)
+		return found, nil
+	} else if err := found.Delete(); err != nil {
+		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", "%s"}, found.RefID, err)
 	}
 
-	return s, err
+	return found, fmt.Errorf("expired")
 }

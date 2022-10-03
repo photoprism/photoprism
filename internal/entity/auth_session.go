@@ -139,7 +139,7 @@ func (m *Session) CacheDuration(d time.Duration) {
 		return
 	}
 
-	sessionCache.Set(m.ID, *m, d)
+	sessionCache.Set(m.ID, m, d)
 }
 
 // Cache caches the session with the default expiration duration.
