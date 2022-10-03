@@ -6,7 +6,7 @@
       <v-toolbar-title :title="album.Title">
         <span class="hidden-xs-only">
         <router-link :to="{ name: collRoute }">
-          {{ $gettext(collName) }}
+          {{ T(collName) }}
         </router-link>
         <v-icon>{{ navIcon }}</v-icon>
         </span>
@@ -77,6 +77,7 @@
 import Event from "pubsub-js";
 import Notify from "common/notify";
 import download from "common/download";
+import { T } from "common/vm";
 
 export default {
   name: 'PAlbumToolbar',
@@ -156,6 +157,9 @@ export default {
     };
   },
   methods: {
+    T() {
+      return T.apply(this, arguments);
+    },
     webdavUpload() {
       this.dialog.share = false;
       this.dialog.upload = true;
