@@ -280,6 +280,9 @@ test-coverage:
 docker-pull:
 	docker-compose pull --ignore-pull-failures
 	docker-compose -f docker-compose.latest.yml pull --ignore-pull-failures
+docker-build:
+	docker-compose pull --ignore-pull-failures
+	docker-compose build
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu docker-develop-armv7
