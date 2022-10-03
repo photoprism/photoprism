@@ -9,9 +9,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-func TestNewShare(t *testing.T) {
+func TestNewUserShare(t *testing.T) {
 	expires := TimeStamp().Add(time.Hour * 48)
-	m := NewShare(Admin.UID(), AlbumFixtures.Get("berlin-2019").AlbumUID, PermReact, &expires)
+	m := NewUserShare(Admin.UID(), AlbumFixtures.Get("berlin-2019").AlbumUID, PermReact, &expires)
 
 	assert.True(t, m.HasID())
 	assert.True(t, rnd.IsRefID(m.RefID))
@@ -35,11 +35,11 @@ func TestPerm(t *testing.T) {
 	assert.Equal(t, uint(128), PermAll)
 }
 
-func TestFindShare(t *testing.T) {
+func TestFindUserShare(t *testing.T) {
 	t.Run("AliceAlbum", func(t *testing.T) {
-		m := FindShare(Share{UserUID: "uqxetse3cy5eo9z2", ShareUID: "at9lxuqxpogaaba9"})
+		m := FindUserShare(UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "at9lxuqxpogaaba9"})
 
-		expected := ShareFixtures.Get("AliceAlbum")
+		expected := UserShareFixtures.Get("AliceAlbum")
 
 		assert.NotNil(t, m)
 		assert.True(t, m.HasID())
@@ -55,13 +55,13 @@ func TestFindShare(t *testing.T) {
 	})
 }
 
-func TestFindShares(t *testing.T) {
-	found := FindShares(UserFixtures.Pointer("alice").UID())
+func TestFindUserShares(t *testing.T) {
+	found := FindUserShares(UserFixtures.Pointer("alice").UID())
 	assert.NotNil(t, found)
 	assert.Len(t, found, 1)
 
 	m := found[0]
-	expected := ShareFixtures.Get("AliceAlbum")
+	expected := UserShareFixtures.Get("AliceAlbum")
 
 	assert.NotNil(t, m)
 	assert.True(t, m.HasID())

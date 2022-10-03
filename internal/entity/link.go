@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/event"
-
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// LinkPrefix for RefID.
 const (
-	LinkUID = byte('s')
+	LinkUID    = byte('s')
+	LinkPrefix = "link"
 )
 
 type Links []Link
@@ -45,7 +46,7 @@ func (Link) TableName() string {
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Link) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.InvalidRefID(m.RefID) {
-		m.RefID = rnd.RefID(SessionPrefix)
+		m.RefID = rnd.RefID(LinkPrefix)
 		Log("link", "set ref id", scope.SetColumn("RefID", m.RefID))
 	}
 
@@ -165,6 +166,13 @@ func (m *Link) Save() error {
 func (m *Link) Delete() error {
 	if m.LinkToken == "" {
 		return fmt.Errorf("empty link token")
+	} else if m.LinkUID == "" {
+		return fmt.Errorf("empty link uid")
+	}
+
+	// Remove related user shares.
+	if err := UnscopedDb().Delete(UserShare{}, "link_uid = ?", m.LinkUID).Error; err != nil {
+		event.AuditErr([]string{"link %s", "failed to remove related user shares", "%s"}, clean.Log(m.RefID), err)
 	}
 
 	return Db().Delete(m).Error
@@ -172,6 +180,15 @@ func (m *Link) Delete() error {
 
 // DeleteShareLinks removes all links that match the shared UID.
 func DeleteShareLinks(shareUid string) error {
+	if shareUid == "" {
+		return fmt.Errorf("empty share uid")
+	}
+
+	// Remove related user shares.
+	if err := UnscopedDb().Delete(UserShare{}, "share_uid = ?", shareUid).Error; err != nil {
+		event.AuditErr([]string{"share %s", "failed to remove related user shares", "%s"}, clean.Log(shareUid), err)
+	}
+
 	return Db().Delete(&Link{}, "share_uid = ?", shareUid).Error
 }
 

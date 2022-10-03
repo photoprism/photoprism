@@ -62,6 +62,7 @@ type User struct {
 	BornAt        *time.Time    `sql:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
 	UserDetails   *UserDetails  `gorm:"PRELOAD:true;foreignkey:UserUID;association_foreignkey:UserUID;" json:"Details,omitempty" yaml:"Details,omitempty"`
 	UserSettings  *UserSettings `gorm:"PRELOAD:true;foreignkey:UserUID;association_foreignkey:UserUID;" json:"Settings,omitempty" yaml:"Settings,omitempty"`
+	UserShares    UserShares    `gorm:"-" json:"Shares,omitempty" yaml:"Shares,omitempty"`
 	ResetToken    string        `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
 	PreviewToken  string        `gorm:"type:VARBINARY(64);column:preview_token;" json:"-" yaml:"-"`
 	DownloadToken string        `gorm:"type:VARBINARY(64);column:download_token;" json:"-" yaml:"-"`
@@ -71,7 +72,6 @@ type User struct {
 	CreatedAt     time.Time     `json:"CreatedAt" yaml:"-"`
 	UpdatedAt     time.Time     `json:"UpdatedAt" yaml:"-"`
 	DeletedAt     *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
-	Shares        Shares        `gorm:"-" json:"Shares,omitempty" yaml:"Shares,omitempty"`
 }
 
 // TableName returns the entity table name.
@@ -635,7 +635,7 @@ func (m *User) SetFormValues(frm form.User) *User {
 
 // RefreshShares updates the list of shares.
 func (m *User) RefreshShares() *User {
-	m.Shares = FindShares(m.UID())
+	m.UserShares = FindUserShares(m.UID())
 	return m
 }
 
@@ -645,7 +645,7 @@ func (m *User) NoShares() bool {
 		return true
 	}
 
-	return m.Shares.Empty()
+	return m.UserShares.Empty()
 }
 
 // HasShares checks if the user has any shares.
@@ -659,16 +659,16 @@ func (m *User) HasShare(uid string) bool {
 		return false
 	}
 
-	return m.Shares.Contains(uid)
+	return m.UserShares.Contains(uid)
 }
 
 // SharedUIDs returns shared entity UIDs.
 func (m *User) SharedUIDs() UIDs {
-	if m.IsRegistered() && m.Shares.Empty() {
+	if m.IsRegistered() && m.UserShares.Empty() {
 		m.RefreshShares()
 	}
 
-	return m.Shares.UIDs()
+	return m.UserShares.UIDs()
 }
 
 // RedeemToken updates shared entity UIDs using the specified token.
@@ -687,8 +687,8 @@ func (m *User) RedeemToken(token string) (n int) {
 
 	// Find shares.
 	for _, link := range links {
-		if found := FindShare(Share{UserUID: m.UID(), ShareUID: link.ShareUID}); found == nil {
-			share := NewShare(m.UID(), link.ShareUID, link.Perm, link.ExpiresAt())
+		if found := FindUserShare(UserShare{UserUID: m.UID(), ShareUID: link.ShareUID}); found == nil {
+			share := NewUserShare(m.UID(), link.ShareUID, link.Perm, link.ExpiresAt())
 			share.LinkUID = link.LinkUID
 			share.Comment = link.Comment
 

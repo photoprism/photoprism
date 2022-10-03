@@ -27,11 +27,11 @@ const (
 	SharePrefix = "share"
 )
 
-// Shares represents shared content.
-type Shares []Share
+// UserShares represents shared content.
+type UserShares []UserShare
 
 // UIDs returns shared UIDs.
-func (m Shares) UIDs() UIDs {
+func (m UserShares) UIDs() UIDs {
 	result := make(UIDs, len(m))
 
 	for i, share := range m {
@@ -42,12 +42,12 @@ func (m Shares) UIDs() UIDs {
 }
 
 // Empty checks if there are no shares.
-func (m Shares) Empty() bool {
+func (m UserShares) Empty() bool {
 	return m == nil || len(m) == 0
 }
 
 // Contains checks the uid is shared.
-func (m Shares) Contains(uid string) bool {
+func (m UserShares) Contains(uid string) bool {
 	if len(m) == 0 {
 		return false
 	}
@@ -61,8 +61,8 @@ func (m Shares) Contains(uid string) bool {
 	return false
 }
 
-// Share represents content shared with a user.
-type Share struct {
+// UserShare represents content shared with a user.
+type UserShare struct {
 	UserUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
 	ShareUID  string     `gorm:"type:VARBINARY(42);primary_key;index;" json:"ShareUID" yaml:"ShareUID"`
 	LinkUID   string     `gorm:"type:VARBINARY(42);" json:"LinkUID,omitempty" yaml:"LinkUID,omitempty"`
@@ -75,13 +75,13 @@ type Share struct {
 }
 
 // TableName returns the entity table name.
-func (Share) TableName() string {
+func (UserShare) TableName() string {
 	return "auth_users_shares"
 }
 
-// NewShare creates a new entity model.
-func NewShare(userUID, shareUid string, perm uint, expires *time.Time) *Share {
-	result := &Share{
+// NewUserShare creates a new entity model.
+func NewUserShare(userUID, shareUid string, perm uint, expires *time.Time) *UserShare {
+	result := &UserShare{
 		UserUID:   userUID,
 		ShareUID:  shareUid,
 		Perm:      perm,
@@ -94,13 +94,13 @@ func NewShare(userUID, shareUid string, perm uint, expires *time.Time) *Share {
 	return result
 }
 
-// FindShare fetches the matching record or returns null if it was not found.
-func FindShare(find Share) *Share {
+// FindUserShare fetches the matching record or returns null if it was not found.
+func FindUserShare(find UserShare) *UserShare {
 	if !find.HasID() {
 		return nil
 	}
 
-	m := &Share{}
+	m := &UserShare{}
 
 	// Find matching record.
 	if UnscopedDb().First(m, "user_uid = ? AND share_uid = ?", find.UserUID, find.ShareUID).RecordNotFound() {
@@ -110,9 +110,9 @@ func FindShare(find Share) *Share {
 	return m
 }
 
-// FindShares finds all shares to which the user has access.
-func FindShares(userUid string) Shares {
-	found := Shares{}
+// FindUserShares finds all shares to which the user has access.
+func FindUserShares(userUid string) UserShares {
+	found := UserShares{}
 
 	if rnd.InvalidUID(userUid, UserUID) {
 		return found
@@ -128,27 +128,27 @@ func FindShares(userUid string) Shares {
 }
 
 // HasID tests if the entity has a valid uid.
-func (m *Share) HasID() bool {
+func (m *UserShare) HasID() bool {
 	return rnd.IsUID(m.UserUID, UserUID) && rnd.IsUID(m.ShareUID, 0)
 }
 
 // Create inserts a new record into the database.
-func (m *Share) Create() error {
+func (m *UserShare) Create() error {
 	return Db().Create(m).Error
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.
-func (m *Share) Save() error {
+func (m *UserShare) Save() error {
 	return Db().Save(m).Error
 }
 
 // Updates changes multiple record values.
-func (m *Share) Updates(values interface{}) error {
+func (m *UserShare) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // UpdateLink updates the share data using the Link provided.
-func (m *Share) UpdateLink(link Link) error {
+func (m *UserShare) UpdateLink(link Link) error {
 	if m.ShareUID != link.ShareUID {
 		return fmt.Errorf("shared uid does not match")
 	}

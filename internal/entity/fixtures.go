@@ -31,5 +31,5 @@ func CreateTestFixtures() {
 	CreateSessionFixtures()
 	CreateReactionFixtures()
 	CreatePasswordFixtures()
-	CreateShareFixtures()
+	CreateUserShareFixtures()
 }

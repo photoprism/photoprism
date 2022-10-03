@@ -4,28 +4,28 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-type ShareMap map[string]Share
+type UserShareMap map[string]UserShare
 
 // Get returns a fixture for use in tests.
-func (m ShareMap) Get(name string) Share {
+func (m UserShareMap) Get(name string) UserShare {
 	if result, ok := m[name]; ok {
 		return result
 	}
 
-	return Share{}
+	return UserShare{}
 }
 
 // Pointer returns a fixture pointer for use in tests.
-func (m ShareMap) Pointer(name string) *Share {
+func (m UserShareMap) Pointer(name string) *UserShare {
 	if result, ok := m[name]; ok {
 		return &result
 	}
 
-	return &Share{}
+	return &UserShare{}
 }
 
-// ShareFixtures specifies fixtures for use in tests.
-var ShareFixtures = ShareMap{
+// UserShareFixtures specifies fixtures for use in tests.
+var UserShareFixtures = UserShareMap{
 	"AliceAlbum": {
 		UserUID:   "uqxetse3cy5eo9z2",
 		ShareUID:  "at9lxuqxpogaaba9",
@@ -38,9 +38,9 @@ var ShareFixtures = ShareMap{
 	},
 }
 
-// CreateShareFixtures creates the fixtures specified above.
-func CreateShareFixtures() {
-	for _, entity := range ShareFixtures {
+// CreateUserShareFixtures creates the fixtures specified above.
+func CreateUserShareFixtures() {
+	for _, entity := range UserShareFixtures {
 		Db().Create(&entity)
 	}
 }

@@ -48,7 +48,7 @@ var Entities = Tables{
 	Face{}.TableName():              &Face{},
 	Marker{}.TableName():            &Marker{},
 	Reaction{}.TableName():          &Reaction{},
-	Share{}.TableName():             &Share{},
+	UserShare{}.TableName():         &UserShare{},
 }
 
 // WaitForMigration waits for the database migration to be successful.
