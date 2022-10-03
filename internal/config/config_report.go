@@ -25,6 +25,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"admin-user", c.AdminUser()},
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
 		{"public", fmt.Sprintf("%t", c.Public())},
+		{"sess-maxage", fmt.Sprintf("%d", c.SessMaxAge())},
+		{"sess-timeout", fmt.Sprintf("%d", c.SessTimeout())},
 
 		// Logging.
 		{"log-level", c.LogLevel().String()},

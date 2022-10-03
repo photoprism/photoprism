@@ -19,6 +19,13 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_AUTH_MODE",
 		}},
 	CliFlag{
+		Flag: cli.BoolFlag{
+			Name:   "public, p",
+			Hidden: true,
+			Usage:  "disable authentication, advanced settings, and WebDAV remote access",
+			EnvVar: "PHOTOPRISM_PUBLIC",
+		}},
+	CliFlag{
 		Flag: cli.StringFlag{
 			Name:   "admin-user, login",
 			Usage:  "admin login `USERNAME`",
@@ -32,11 +39,18 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 		}},
 	CliFlag{
-		Flag: cli.BoolFlag{
-			Name:   "public, p",
-			Hidden: true,
-			Usage:  "disable authentication, advanced settings, and WebDAV remote access",
-			EnvVar: "PHOTOPRISM_PUBLIC",
+		Flag: cli.Int64Flag{
+			Name:   "sess-maxage",
+			Value:  DefaultSessMaxAge,
+			Usage:  "time in `SECONDS` until user sessions expire automatically (-1 to disable)",
+			EnvVar: "PHOTOPRISM_SESS_MAXAGE",
+		}},
+	CliFlag{
+		Flag: cli.Int64Flag{
+			Name:   "sess-timeout",
+			Value:  DefaultSessTimeout,
+			Usage:  "time in `SECONDS` until user sessions expire due to inactivity (-1 to disable)",
+			EnvVar: "PHOTOPRISM_SESS_TIMEOUT",
 		}},
 	CliFlag{
 		Flag: cli.StringFlag{

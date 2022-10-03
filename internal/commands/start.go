@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -119,6 +120,7 @@ func startAction(ctx *cli.Context) error {
 	}
 
 	// Start background workers.
+	session.Monitor(time.Hour)
 	workers.Start(conf)
 	auto.Start(conf)
 
@@ -131,6 +133,7 @@ func startAction(ctx *cli.Context) error {
 	// Stop all background activity.
 	auto.Stop()
 	workers.Stop()
+	session.Shutdown()
 	mutex.CancelAll()
 
 	log.Info("shutting down...")

@@ -64,24 +64,24 @@ func resetAction(ctx *cli.Context) error {
 		log.Infoln("reset: enabled trace mode")
 	}
 
-	resetIndex := ctx.Bool("yes")
+	confirmed := ctx.Bool("yes")
 
 	// Show prompt?
-	if !resetIndex {
+	if !confirmed {
 		removeIndexPrompt := promptui.Prompt{
 			Label:     "Delete and recreate index database?",
 			IsConfirm: true,
 		}
 
 		if _, err := removeIndexPrompt.Run(); err == nil {
-			resetIndex = true
+			confirmed = true
 		} else {
 			log.Infof("keeping index database")
 		}
 	}
 
 	// Reset index?
-	if resetIndex {
+	if confirmed {
 		resetIndexDb(conf)
 	}
 

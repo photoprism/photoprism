@@ -15,7 +15,7 @@ import (
 )
 
 // Uploads local files to a remote account
-func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
+func (w *Sync) upload(a entity.Account) (complete bool, err error) {
 	maxResults := 250
 
 	// Get upload file list from database
@@ -51,7 +51,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 		}
 
 		if err := client.Upload(fileName, remoteName); err != nil {
-			worker.logError(err)
+			w.logError(err)
 			continue // try again next time
 		}
 
@@ -69,7 +69,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 			return false, nil
 		}
 
-		worker.logError(entity.Db().Save(&fileSync).Error)
+		w.logError(entity.Db().Save(&fileSync).Error)
 	}
 
 	return false, nil

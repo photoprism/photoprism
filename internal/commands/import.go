@@ -20,7 +20,7 @@ var ImportCommand = cli.Command{
 	Name:      "mv",
 	Aliases:   []string{"import"},
 	Usage:     "Moves media files to originals",
-	ArgsUsage: "[SOURCE PATH]",
+	ArgsUsage: "[source]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "dest, d",

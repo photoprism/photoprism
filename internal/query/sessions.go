@@ -1,25 +1,56 @@
 package query
 
 import (
-	"time"
+	"fmt"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Sessions returns stored sessions.
-func Sessions() (result entity.Sessions, err error) {
-	err = Db().
-		Table(entity.Session{}.TableName()).
-		Select("*").
-		Where("expires_at > ?", time.Now()).
-		Scan(&result).Error
+// Session finds an existing session by its id.
+func Session(id string) (result entity.Session, err error) {
+	if l := len(id); l < 6 && l > 2048 {
+		return result, fmt.Errorf("invalid session id")
+	} else if rnd.IsRefID(id) {
+		err = Db().Where("ref_id = ?", id).First(&result).Error
+	} else {
+		err = Db().Where("id LIKE ?", id).First(&result).Error
+	}
 
 	return result, err
 }
 
-// Session finds an existing session by id.
-func Session(id string) (result entity.Session, err error) {
-	err = Db().Where("id = ?", id).First(&result).Error
+// Sessions finds user sessions and returns them.
+func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessions, err error) {
+	result = entity.Sessions{}
+	stmt := Db()
+
+	search = strings.TrimSpace(search)
+
+	if search == "expired" {
+		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", entity.UnixTime())
+	} else if rnd.IsSessionID(search) {
+		stmt = stmt.Where("id = ?", search)
+	} else if rnd.IsUID(search, entity.UserUID) {
+		stmt = stmt.Where("user_uid = ?", search)
+	} else if search != "" {
+		stmt = stmt.Where("user_name LIKE ?", search+"%")
+	}
+
+	if sortOrder == "" {
+		sortOrder = "last_active, user_name"
+	}
+
+	if limit > 0 {
+		stmt = stmt.Limit(limit)
+
+		if offset > 0 {
+			stmt = stmt.Offset(offset)
+		}
+	}
+
+	err = stmt.Order(sortOrder).Find(&result).Error
 
 	return result, err
 }

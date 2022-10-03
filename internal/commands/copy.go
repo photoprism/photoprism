@@ -20,7 +20,7 @@ var CopyCommand = cli.Command{
 	Name:      "cp",
 	Aliases:   []string{"copy"},
 	Usage:     "Copies media files to originals",
-	ArgsUsage: "[IMPORT PATH]",
+	ArgsUsage: "[source]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "dest, d",

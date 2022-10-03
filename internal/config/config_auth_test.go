@@ -37,6 +37,24 @@ func TestAuth(t *testing.T) {
 	assert.False(t, c.Auth())
 }
 
+func TestSessMaxAge(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, DefaultSessMaxAge, c.SessMaxAge())
+	c.options.SessMaxAge = -1
+	assert.Equal(t, int64(0), c.SessMaxAge())
+	c.options.SessMaxAge = 0
+	assert.Equal(t, DefaultSessMaxAge, c.SessMaxAge())
+}
+
+func TestSessTimeout(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, DefaultSessTimeout, c.SessTimeout())
+	c.options.SessTimeout = -1
+	assert.Equal(t, int64(0), c.SessTimeout())
+	c.options.SessTimeout = 0
+	assert.Equal(t, DefaultSessTimeout, c.SessTimeout())
+}
+
 func TestUtils_CheckPassword(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

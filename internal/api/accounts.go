@@ -173,7 +173,7 @@ func ShareWithAccount(router *gin.RouterGroup) {
 			entity.FirstOrCreateFileShare(entity.NewFileShare(file.ID, m.ID, alias))
 		}
 
-		workers.StartShare(service.Config())
+		workers.RunShare(service.Config())
 
 		c.JSON(http.StatusOK, files)
 	})
@@ -288,7 +288,7 @@ func UpdateAccount(router *gin.RouterGroup) {
 		}
 
 		if m.AccSync {
-			workers.StartSync(service.Config())
+			workers.RunSync(service.Config())
 		}
 
 		c.JSON(http.StatusOK, m)

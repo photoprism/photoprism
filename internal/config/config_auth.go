@@ -38,6 +38,28 @@ func (c *Config) AdminPassword() string {
 	return clean.Password(c.options.AdminPassword)
 }
 
+// SessMaxAge returns the time in seconds until browser sessions expire automatically.
+func (c *Config) SessMaxAge() int64 {
+	if c.options.SessMaxAge < 0 {
+		return 0
+	} else if c.options.SessMaxAge == 0 {
+		return DefaultSessMaxAge
+	}
+
+	return c.options.SessMaxAge
+}
+
+// SessTimeout returns the time in seconds until browser sessions expire due to inactivity
+func (c *Config) SessTimeout() int64 {
+	if c.options.SessTimeout < 0 {
+		return 0
+	} else if c.options.SessTimeout == 0 {
+		return DefaultSessTimeout
+	}
+
+	return c.options.SessTimeout
+}
+
 // Public checks if app runs in public mode and requires no authentication.
 func (c *Config) Public() bool {
 	return c.AuthMode() == AuthModePublic

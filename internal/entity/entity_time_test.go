@@ -3,7 +3,38 @@ package entity
 import (
 	"testing"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/assert"
 )
+
+func TestUTC(t *testing.T) {
+	t.Run("Zone", func(t *testing.T) {
+		utc := UTC()
+
+		if zone, offset := utc.Zone(); zone != time.UTC.String() {
+			t.Error("should be utc")
+		} else if offset != 0 {
+			t.Error("offset should be 0")
+		}
+	})
+	t.Run("Gorm", func(t *testing.T) {
+		utc := UTC()
+		utcGorm := gorm.NowFunc()
+
+		t.Logf("NOW: %s, %s", utc.String(), utcGorm.String())
+
+		assert.True(t, utcGorm.After(utc))
+
+		if zone, offset := utcGorm.Zone(); zone != time.UTC.String() {
+			t.Error("gorm time should be utc")
+		} else if offset != 0 {
+			t.Error("gorm time offset should be 0")
+		}
+
+		assert.InEpsilon(t, utc.Unix(), utcGorm.Unix(), 2)
+	})
+}
 
 func TestTimeStamp(t *testing.T) {
 	t.Run("UTC", func(t *testing.T) {

@@ -6,6 +6,7 @@ import (
 
 	gc "github.com/patrickmn/go-cache"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -38,17 +39,25 @@ func FindSession(id string) (s Session, err error) {
 
 	// Find cached session.
 	if cacheData, ok := sessionCache.Get(id); ok {
-		return cacheData.(Session), nil
+		s = cacheData.(Session)
+		s.LastActive = UnixTime()
+		return s, nil
 	}
 
 	// Search database and return session if found.
 	if r := Db().First(&s, "id = ?", id); r.RecordNotFound() {
-		err = fmt.Errorf("not found")
+		return s, fmt.Errorf("not found")
 	} else if r.Error != nil {
-		err = r.Error
+		return s, r.Error
 	} else if !rnd.IsSessionID(s.ID) {
-		err = fmt.Errorf("has invalid id %s", clean.LogQuote(s.ID))
+		return s, fmt.Errorf("has invalid id %s", clean.LogQuote(s.ID))
+	} else if s.Expired() {
+		if err = s.Delete(); err != nil {
+			event.AuditErr([]string{s.IP(), "session %s", "failed to delete after expiration", "%s"}, s.RefID, err)
+		}
+		return s, fmt.Errorf("expired")
 	} else {
+		s.UpdateLastActive()
 		sessionCache.SetDefault(s.ID, s)
 	}
 
