@@ -11,22 +11,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Create a new session cache with an expiration time of 15 minutes.
 var sessionCacheExpiration = 15 * time.Minute
 var sessionCache = gc.New(sessionCacheExpiration, 5*time.Minute)
-
-// FlushSessionCache resets the session cache.
-func FlushSessionCache() {
-	sessionCache.Flush()
-}
-
-// DeleteFromSessionCache deletes a cached session.
-func DeleteFromSessionCache(id string) {
-	if id == "" {
-		return
-	}
-
-	sessionCache.Delete(id)
-}
 
 // FindSession returns an existing session or nil if not found.
 func FindSession(id string) (*Session, error) {
@@ -60,4 +47,18 @@ func FindSession(id string) (*Session, error) {
 	}
 
 	return found, fmt.Errorf("expired")
+}
+
+// FlushSessionCache resets the session cache.
+func FlushSessionCache() {
+	sessionCache.Flush()
+}
+
+// DeleteFromSessionCache deletes a session from the cache.
+func DeleteFromSessionCache(id string) {
+	if id == "" {
+		return
+	}
+
+	sessionCache.Delete(id)
 }
