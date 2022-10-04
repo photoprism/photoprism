@@ -156,6 +156,18 @@ export default {
     '$route'() {
       const query = this.$route.query;
 
+      const settings = this.$config.settings();
+
+      if (settings.features) {
+        if (settings.features.private) {
+          this.filter.public = "true";
+        }
+
+        if (settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
+          this.filter.quality = "3";
+        }
+      }
+
       this.filter.q = query['q'] ? query['q'] : '';
       this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
       this.filter.country = query['country'] ? query['country'] : '';
@@ -165,6 +177,7 @@ export default {
       this.filter.color = query['color'] ? query['color'] : '';
       this.filter.label = query['label'] ? query['label'] : '';
       this.filter.order = this.sortOrder();
+
       this.settings.view = this.viewType();
       this.lastFilter = {};
       this.routeName = this.$route.name;

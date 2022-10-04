@@ -145,7 +145,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile v-if="$config.feature('review')" to="/review" class="nav-review"
+          <v-list-tile v-if="canManagePhotos" v-show="$config.feature('review')" to="/review" class="nav-review"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
@@ -688,6 +688,7 @@ export default {
     return {
       canSearchPlaces: this.$config.allow("places", "search"),
       canAccessAll: !isRestricted,
+      canManagePhotos: this.$config.allow("photos", "manage"),
       canManagePeople: this.$config.allow("people", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),

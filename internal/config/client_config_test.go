@@ -152,7 +152,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Private:   false,
 			Ratings:   false,
 			Reactions: false,
-			Review:    false,
+			Review:    true,
 			Search:    false,
 			Settings:  false,
 			Share:     false,
@@ -185,7 +185,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.Import)
 		assert.False(t, f.Library)
 		assert.False(t, f.Logs)
-		assert.False(t, f.Review)
+		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 		assert.False(t, f.Favorites)
 		assert.False(t, f.Reactions)
@@ -210,7 +210,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.Import)
 		assert.False(t, f.Library)
 		assert.False(t, f.Logs)
-		assert.False(t, f.Review)
+		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 		assert.False(t, f.Favorites)
 		assert.False(t, f.Reactions)
@@ -283,7 +283,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Import)
 		assert.False(t, f.Library)
 		assert.False(t, f.Logs)
-		assert.False(t, f.Review)
+		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 	})
 	t.Run("RoleUnauthorized", func(t *testing.T) {
@@ -314,7 +314,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Import)
 		assert.False(t, f.Library)
 		assert.False(t, f.Logs)
-		assert.False(t, f.Review)
+		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 	})
 	t.Run("Bob", func(t *testing.T) {

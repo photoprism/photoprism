@@ -36,9 +36,18 @@ func SearchPhotos(router *gin.RouterGroup) {
 			return f, s, err
 		}
 
+		settings := service.Config().Settings()
+
 		// Ignore private flag if feature is disabled.
-		if !service.Config().Settings().Features.Private {
+		if !settings.Features.Private {
 			f.Public = false
+		}
+
+		// Ignore private flag if feature is disabled.
+		if f.Scope == "" &&
+			settings.Features.Review &&
+			acl.Resources.Deny(acl.ResourcePhotos, s.User().AclRole(), acl.ActionManage) {
+			f.Quality = 3
 		}
 
 		return f, s, nil
