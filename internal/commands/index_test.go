@@ -44,11 +44,10 @@ func TestIndexCommand(t *testing.T) {
 
 	time.Sleep(time.Second)
 
+	// Check command output.
 	if l != "" {
-		// Expected index command output.
 		assert.NotContains(t, l, "error")
 		assert.NotContains(t, l, "warning")
-		assert.NotContains(t, l, "failed")
 		assert.Contains(t, l, "closed database connection")
 	} else {
 		t.Fatal("log output missing")

@@ -34,19 +34,18 @@ var CopyCommand = cli.Command{
 func copyAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
-
-	// very if copy directory exist and is writable
-	if conf.ReadOnly() {
-		return config.ErrReadOnly
-	}
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
+	}
+
+	// very if copy directory exist and is writable
+	if conf.ReadOnly() {
+		return config.ErrReadOnly
 	}
 
 	conf.InitDb()

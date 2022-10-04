@@ -31,18 +31,17 @@ var ConvertCommand = cli.Command{
 func convertAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
-
-	if !conf.SidecarWritable() {
-		return config.ErrReadOnly
-	}
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
+	}
+
+	if !conf.SidecarWritable() {
+		return config.ErrReadOnly
 	}
 
 	conf.RegisterDb()

@@ -36,13 +36,12 @@ var PlacesCommand = cli.Command{
 // placesUpdateAction fetches updated location data.
 func placesUpdateAction(ctx *cli.Context) error {
 	// Load config.
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 

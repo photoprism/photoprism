@@ -13,11 +13,9 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/auto"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -48,8 +46,11 @@ var startFlags = []cli.Flag{
 
 // startAction starts the web server and initializes the daemon.
 func startAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
+
+	if err != nil {
+		return err
+	}
 
 	if ctx.IsSet("config") {
 		fmt.Printf("Name                  Value\n")
