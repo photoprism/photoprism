@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-09-28 02:49+0000\n"
+"PO-Revision-Date: 2022-10-05 06:41+0000\n"
 "Last-Translator: 2andgi <andrew.grushka@gmail.com>\n"
 "Language: uk\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -1479,7 +1479,7 @@ msgstr "Моменти"
 
 #: src/component/navigation.vue:102
 msgid "Monochrome"
-msgstr "Монохромний"
+msgstr "Монохромні"
 
 #: src/component/photo/toolbar.vue:297
 #: src/dialog/photo/details.vue:142
