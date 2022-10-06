@@ -464,27 +464,10 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "public"
     await contextmenu.clearSelection();
     await toolbar.setFilter("view", "Cards");
 
-    await t.click(page.cardTitle.nth(0));
-
-    await photoedit.checkAllDetailsFieldsDisabled(true);
-    await t.expect(photoedit.infoTab.visible).notOk();
-
-    await t.click(photoedit.filesTab);
-
-    await t
-      .expect(photoedit.downloadFile.nth(0).visible)
-      .notOk()
-      .click(photoedit.toggleExpandFile.nth(1))
-      .expect(photoedit.downloadFile.nth(1).visible)
-      .notOk()
-      .expect(photoedit.deleteFile.visible)
-      .ok();
-
-    await t.click(photoedit.dialogClose);
     await toolbar.search("photo:true");
     await photoviewer.openPhotoViewer("nth", 0);
     await photoviewer.checkPhotoViewerActionAvailability("download", false);
-    await photoviewer.checkPhotoViewerActionAvailability("edit", true);
+    await photoviewer.checkPhotoViewerActionAvailability("edit", false);
     await photoviewer.triggerPhotoViewerAction("close");
 
     await menu.openPage("settings");
