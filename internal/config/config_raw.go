@@ -106,6 +106,11 @@ func (c *Config) HeifConvertBin() string {
 	return findExecutable(c.options.HeifConvertBin, "heif-convert")
 }
 
+// HeifConvertScript returns the heif-convert wrapper script name.
+func (c *Config) HeifConvertScript() string {
+	return findExecutable("heif-convert.sh", "")
+}
+
 // HeifConvertEnabled checks if heif-convert is enabled for HEIF conversion.
 func (c *Config) HeifConvertEnabled() bool {
 	return !c.DisableHeifConvert()

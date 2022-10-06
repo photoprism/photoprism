@@ -149,6 +149,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"sips-bin", c.SipsBin()},
 		{"sips-blacklist", c.SipsBlacklist()},
 		{"heifconvert-bin", c.HeifConvertBin()},
+		{"heifconvert-script", c.HeifConvertScript()},
 		{"ffmpeg-bin", c.FFmpegBin()},
 		{"ffmpeg-encoder", c.FFmpegEncoder().String()},
 		{"ffmpeg-bitrate", fmt.Sprintf("%d", c.FFmpegBitrate())},
