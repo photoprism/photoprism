@@ -29,13 +29,20 @@ type Location struct {
 // ApiName is the backend API name.
 const ApiName = "places"
 
+// ServiceUrls specifies the reverse geocoding service URLs.
+var ServiceUrls = []string{
+	"https://places.photoprism.app/v1/location/%s",
+}
+
+// Retries specifies the number of attempts to retry the service request.
+var Retries = 2
+
+// RetryDelay specifies the waiting time between retries.
+var RetryDelay = 100 * time.Millisecond
+
 var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca"
 var Secret = "photoprism"
 var UserAgent = ""
-var ReverseLookupURL = "https://places.photoprism.app/v1/location/%s"
-
-var Retries = 3
-var RetryDelay = 33 * time.Millisecond
 
 // FindLocation retrieves location details from the backend API.
 func FindLocation(id string) (result Location, err error) {
@@ -69,57 +76,61 @@ func FindLocation(id string) (result Location, err error) {
 		return cached, nil
 	}
 
-	// Compose request URL.
-	url := fmt.Sprintf(ReverseLookupURL, id)
-
-	// Log request URL.
-	log.Tracef("places: sending request to %s", url)
-
-	// Create GET request instance.
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-
-	// Ok?
-	if err != nil {
-		log.Errorf("places: %s", err.Error())
-		return result, err
-	}
-
-	// Set user agent.
-	if UserAgent != "" {
-		req.Header.Set("User-Agent", UserAgent)
-	} else {
-		req.Header.Set("User-Agent", "PhotoPrism/Test")
-	}
-
-	// Add API key?
-	if Key != "" {
-		req.Header.Set("X-Key", Key)
-		req.Header.Set("X-Signature", fmt.Sprintf("%x", sha1.Sum([]byte(Key+url+Secret))))
-	}
-
 	var r *http.Response
+	var req *http.Request
 
-	// Create new http.Client.
-	//
-	// NOTE: Timeout specifies a time limit for requests made by
-	// this Client. The timeout includes connection time, any
-	// redirects, and reading the response body. The timer remains
-	// running after Get, Head, Post, or Do return and will
-	// interrupt reading of the Response.Body.
-	client := &http.Client{Timeout: 60 * time.Second}
+	// Try all the specified backend service URLs.
+	for _, serviceUrl := range ServiceUrls {
+		// Compose request URL with S2 cell ID.
+		reqUrl := fmt.Sprintf(serviceUrl, id)
 
-	// Perform request.
-	for i := 0; i < Retries; i++ {
-		r, err = client.Do(req)
+		// Log request URL.
+		log.Tracef("places: sending request to %s", reqUrl)
 
-		// Successful?
-		if err == nil {
-			break
+		// Create GET request instance.
+		req, err = http.NewRequest(http.MethodGet, reqUrl, nil)
+
+		// Ok?
+		if err != nil {
+			log.Errorf("places: %s", err.Error())
+			return result, err
 		}
 
-		// Wait before trying again?
-		if RetryDelay.Nanoseconds() > 0 {
-			time.Sleep(RetryDelay)
+		// Set user agent.
+		if UserAgent != "" {
+			req.Header.Set("User-Agent", UserAgent)
+		} else {
+			req.Header.Set("User-Agent", "PhotoPrism/Test")
+		}
+
+		// Add API key?
+		if Key != "" {
+			req.Header.Set("X-Key", Key)
+			req.Header.Set("X-Signature", fmt.Sprintf("%x", sha1.Sum([]byte(Key+reqUrl+Secret))))
+		}
+
+		// Create new http.Client.
+		//
+		// NOTE: Timeout specifies a time limit for requests made by
+		// this Client. The timeout includes connection time, any
+		// redirects, and reading the response body. The timer remains
+		// running after Get, Head, Post, or Do return and will
+		// interrupt reading of the Response.Body.
+		client := &http.Client{Timeout: 60 * time.Second}
+
+		// Perform request.
+		for i := 0; i < Retries; i++ {
+			r, err = client.Do(req)
+
+			// Successful?
+			if err == nil {
+				break
+			}
+
+			// Wait before trying again?
+			if RetryDelay.Nanoseconds() > 0 {
+				time.Sleep(RetryDelay)
+			}
 		}
 	}
 
