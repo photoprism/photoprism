@@ -46,10 +46,10 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libc6 ca-certificates sudo bash tzdata \
         gpg zip unzip wget curl rsync make nano \
         jq lsof lshw sqlite3 mariadb-client imagemagick \
-        exiftool rawtherapee libheif-examples librsvg2-bin \
+        exiftool rawtherapee librsvg2-bin \
         ffmpeg ffmpegthumbnailer libavcodec-extra \
         libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-        x264 x265 libvpx7 libwebm1 \
+        x264 x265 libde265-dev libjpeg8 libvpx7 libwebm1 \
     && \
     /scripts/install-darktable.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
@@ -57,7 +57,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
+    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert.sh && \
+    (wget --inet4-only -c "https://dl.photoprism.app/dist/libheif/libheif.jammy.tar.gz" -O - | tar -xz -C /usr/local) && \
+    ldconfig && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \
         /photoprism/import \
