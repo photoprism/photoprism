@@ -81,13 +81,6 @@ func TestConfig_HeifConvertBin(t *testing.T) {
 	assert.Contains(t, bin, "/bin/heif-convert")
 }
 
-func TestConfig_HeifConvertScript(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	bin := c.HeifConvertScript()
-	assert.Contains(t, bin, "/bin/heif-convert.sh")
-}
-
 func TestConfig_HeifConvertEnabled(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.True(t, c.HeifConvertEnabled())

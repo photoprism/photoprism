@@ -182,11 +182,7 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 	} else if f.IsVideo() && c.conf.FFmpegEnabled() {
 		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
 	} else if f.IsHEIF() && c.conf.HeifConvertEnabled() {
-		if scriptName := c.conf.HeifConvertScript(); scriptName != "" {
-			result = exec.Command(scriptName, f.FileName(), jpegName)
-		} else {
-			result = exec.Command(c.conf.HeifConvertBin(), f.FileName(), jpegName)
-		}
+		result = exec.Command(c.conf.HeifConvertBin(), "-q", c.conf.JpegQuality().String(), f.FileName(), jpegName)
 	} else {
 		return nil, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
 	}
