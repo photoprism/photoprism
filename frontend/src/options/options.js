@@ -233,6 +233,11 @@ export const Languages = () => [
     text: "ภาษาไทย", // Thai
     value: "th",
   },
+  {
+    text: "فارسی", // Persian
+    value: "fa",
+    rtl: true,
+  },
 ];
 
 export const MapsAnimate = () => [
