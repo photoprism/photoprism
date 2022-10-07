@@ -550,7 +550,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "darktable-blacklist",
 			Usage:  "do not use Darktable to convert files with these `EXTENSIONS`",
-			Value:  "dng",
+			Value:  "",
 			EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 		}},
 	CliFlag{
@@ -578,7 +578,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "rawtherapee-blacklist",
 			Usage:  "do not use RawTherapee to convert files with these `EXTENSIONS`",
-			Value:  "avif,avifs",
+			Value:  "dng",
 			EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 		}},
 	CliFlag{
@@ -598,7 +598,7 @@ var Flags = CliFlags{
 	CliFlag{
 		Flag: cli.StringFlag{
 			Name:   "heifconvert-bin",
-			Usage:  "HEIC/HEIF image conversion `COMMAND`",
+			Usage:  "HEIC/HEIF/AVIF image conversion `COMMAND`",
 			Value:  "heif-convert",
 			EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
 		}},

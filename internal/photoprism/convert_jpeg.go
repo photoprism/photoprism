@@ -4,14 +4,16 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"time"
 
+	"github.com/gabriel-vasile/mimetype"
+
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/thumb"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -31,6 +33,8 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	if f.IsJpeg() {
 		return f, nil
 	}
+
+	var err error
 
 	jpegName := fs.ImageJPEG.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
@@ -56,7 +60,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	}
 
 	fileName := f.RelName(c.conf.OriginalsPath())
-	xmpName := fs.XmpFile.Find(f.FileName(), false)
+	xmpName := fs.SidecarXMP.Find(f.FileName(), false)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": f.FileType(),
@@ -81,10 +85,12 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 		return NewMediaFile(jpegName)
 	}
 
-	cmd, useMutex, err := c.JpegConvertCommand(f, jpegName, xmpName)
+	cmds, useMutex, err := c.JpegConvertCommands(f, jpegName, xmpName)
 
 	if err != nil {
 		return nil, err
+	} else if len(cmds) == 0 {
+		return nil, fmt.Errorf("file type %s not supported", f.FileType())
 	}
 
 	if useMutex {
@@ -98,47 +104,78 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 		return NewMediaFile(jpegName)
 	}
 
-	// Fetch command output.
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	cmd.Env = []string{fmt.Sprintf("HOME=%s", c.conf.CmdCachePath())}
+	for _, cmd := range cmds {
+		// Fetch command output.
+		var out bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &out
+		cmd.Stderr = &stderr
+		cmd.Env = []string{fmt.Sprintf("HOME=%s", c.conf.CmdCachePath())}
 
-	log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(jpegName)), filepath.Base(cmd.Path))
+		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(jpegName)), filepath.Base(cmd.Path))
 
-	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+		// Log exact command for debugging in trace mode.
+		log.Trace(cmd.String())
 
-	// Run convert command.
-	if err := cmd.Run(); err != nil {
-		if stderr.String() != "" {
-			return nil, errors.New(stderr.String())
+		// Run convert command.
+		if err = cmd.Run(); err != nil {
+			if stderr.String() != "" {
+				err = errors.New(stderr.String())
+			}
+
+			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
+			continue
+		} else if fs.FileExistsNotEmpty(jpegName) {
+			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(jpegName)), time.Since(start), filepath.Base(cmd.Path))
+			break
+		} else if res := out.Bytes(); len(res) < 512 || !mimetype.Detect(res).Is(fs.MimeTypeJpeg) {
+			continue
+		} else if err = os.WriteFile(jpegName, res, os.ModePerm); err != nil {
+			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
+			continue
 		} else {
-			return nil, err
+			break
 		}
 	}
 
-	log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(jpegName)), time.Since(start), filepath.Base(cmd.Path))
+	// Ok?
+	if err != nil {
+		return nil, err
+	}
 
 	return NewMediaFile(jpegName)
 }
 
-// JpegConvertCommand returns the command for converting files to JPEG, depending on the format.
-func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
+// JpegConvertCommands returns the command for converting files to JPEG, depending on the format.
+func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName string) (result []*exec.Cmd, useMutex bool, err error) {
+	result = make([]*exec.Cmd, 0, 2)
+
 	if f == nil {
 		return result, useMutex, fmt.Errorf("file is nil - possible bug")
 	}
 
+	// Find conversion command depending on the file type and runtime environment.
 	fileExt := f.Extension()
 	maxSize := strconv.Itoa(c.conf.JpegSize())
 
-	// Select conversion command depending on the file type and runtime environment.
-	if (f.IsRaw() || f.IsHEIF() || f.IsAVIF()) && c.conf.SipsEnabled() && c.sipsBlacklist.Ok(fileExt) {
-		result = exec.Command(c.conf.SipsBin(), "-Z", maxSize, "-s", "format", "jpeg", "--out", jpegName, f.FileName())
-	} else if f.IsRaw() && c.conf.RawEnabled() || f.IsAVIF() {
-		if c.conf.DarktableEnabled() && c.darktableBlacklist.Ok(fileExt) {
+	// Apple Scriptable image processing system: https://ss64.com/osx/sips.html
+	if (f.IsRaw() || f.IsHEIC() || f.IsAVIF()) && c.conf.SipsEnabled() && c.sipsBlacklist.Allow(fileExt) {
+		result = append(result, exec.Command(c.conf.SipsBin(), "-Z", maxSize, "-s", "format", "jpeg", "--out", jpegName, f.FileName()))
+	}
 
+	// Use heif-convert for HEIC/HEIF and AVIF image files.
+	if (f.IsHEIC() || f.IsAVIF()) && c.conf.HeifConvertEnabled() {
+		result = append(result, exec.Command(c.conf.HeifConvertBin(), "-q", c.conf.JpegQuality().String(), f.FileName(), jpegName))
+	}
+
+	// Video thumbnails can be created with FFmpeg.
+	if f.IsVideo() && c.conf.FFmpegEnabled() {
+		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName))
+	}
+
+	// RAW files may be concerted with Darktable and Rawtherapee.
+	if f.IsRaw() && c.conf.RawEnabled() {
+		if c.conf.DarktableEnabled() && c.darktableBlacklist.Allow(fileExt) {
 			var args []string
 
 			// Set RAW, XMP, and JPEG filenames.
@@ -168,28 +205,37 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 				args = append(args, "--cachedir", dir)
 			}
 
-			result = exec.Command(c.conf.DarktableBin(), args...)
-		} else if c.conf.RawtherapeeEnabled() && c.rawtherapeeBlacklist.Ok(fileExt) {
+			result = append(result, exec.Command(c.conf.DarktableBin(), args...))
+		}
+
+		if c.conf.RawtherapeeEnabled() && c.rawtherapeeBlacklist.Allow(fileExt) {
 			jpegQuality := fmt.Sprintf("-j%d", c.conf.JpegQuality())
 			profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")
 
 			args := []string{"-o", jpegName, "-p", profile, "-s", "-d", jpegQuality, "-js3", "-b8", "-c", f.FileName()}
 
-			result = exec.Command(c.conf.RawtherapeeBin(), args...)
-		} else {
-			return nil, useMutex, fmt.Errorf("no suitable converter found")
+			result = append(result, exec.Command(c.conf.RawtherapeeBin(), args...))
 		}
-	} else if f.IsVideo() && c.conf.FFmpegEnabled() {
-		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
-	} else if f.IsHEIF() && c.conf.HeifConvertEnabled() {
-		result = exec.Command(c.conf.HeifConvertBin(), "-q", c.conf.JpegQuality().String(), f.FileName(), jpegName)
-	} else {
-		return nil, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
+	}
+
+	// Extract preview image from DNG files.
+	if f.IsDNG() && c.conf.ExifToolEnabled() {
+		// Example: exiftool -b -PreviewImage -w IMG_4691.DNG.jpg IMG_4691.DNG
+		result = append(result, exec.Command(c.conf.ExifToolBin(), "-q", "-q", "-b", "-PreviewImage", f.FileName()))
+	}
+
+	// No suitable converter found?
+	if len(result) == 0 {
+		return result, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
 	}
 
 	// Log convert command in trace mode only as it exposes server internals.
-	if result != nil {
-		log.Tracef("convert: %s", result.String())
+	for i, cmd := range result {
+		if i == 0 {
+			log.Tracef("convert: %s", cmd.String())
+		} else {
+			log.Tracef("convert: %s (alternative)", cmd.String())
+		}
 	}
 
 	return result, useMutex, nil

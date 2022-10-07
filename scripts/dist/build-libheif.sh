@@ -1,31 +1,58 @@
 #!/usr/bin/env bash
 
-# Abort if not executed as root.
-if [[ $(id -u) != "0" ]]; then
-  echo "Usage: run ${0##*/} as root" 1>&2
-  exit 1
-fi
-
 # Build "heif-convert", "heif-enc", "heif-info", and "heif-thumbnailer" from source.
 CURRENT_DIR=$(pwd)
-apt-get update
-apt-get -qq install git autoconf automake cmake libtool libjpeg8 libjpeg8-dev libde265-dev
+
+# Query architecture.
+if [[ $PHOTOPRISM_ARCH ]]; then
+  SYSTEM_ARCH=$PHOTOPRISM_ARCH
+else
+  SYSTEM_ARCH=$(uname -m)
+fi
+
+. /etc/os-release
+
+LATEST=$(curl --silent "https://api.github.com/repos/strukturag/libheif/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+LIBHEIF_VERSION=${1:-$LATEST}
+DESTARCH=${2:-$SYSTEM_ARCH}
+
+BUILD="libheif-$VERSION_CODENAME-$DESTARCH-$LIBHEIF_VERSION"
+
+DESTDIR="${CURRENT_DIR}/build/$BUILD"
+
+mkdir -p "$DESTDIR"
+
+ARCHIVE="${CURRENT_DIR}/build/$BUILD.tar.gz"
+
+echo "------------------------------------------------"
+echo "VERSION: $LIBHEIF_VERSION"
+echo "LATEST : $LATEST"
+echo "ARCHIVE: $ARCHIVE"
+echo "------------------------------------------------"
+
+echo "Installing build deps..."
+
+sudo apt-get -qq update
+sudo apt-get -qq install build-essential gcc g++ gettext git autoconf automake cmake libtool libjpeg8 libjpeg8-dev libde265-dev libaom-dev
+
 cd "/tmp" || exit
 rm -rf "/tmp/libheif"
-git clone https://github.com/strukturag/libheif.git
+
+echo "Cloning git repository..."
+git clone -c advice.detachedHead=false -b "$LIBHEIF_VERSION" --depth 1 https://github.com/strukturag/libheif.git libheif
 cd libheif || exit
 ./autogen.sh
 ./configure
 make
 
 # Install "heif-convert", "heif-enc", "heif-info", and "heif-thumbnailer" in "/usr/local".
-make install-exec
+echo "Installing binaries..."
+DESTDIR=$DESTDIR make install-exec
 cd "$CURRENT_DIR" || exit
 rm -rf "/tmp/libheif"
 
-# Create a tar archive to distribute the binaries on demand.
-if [[ $1 ]]; then
-    echo "creating $1..."
-    (cd /usr/local && tar -czf "$1" lib/libheif.* bin/heif-convert bin/heif-enc bin/heif-info bin/heif-thumbnailer)
-fi
+# Create a tar archive to distribute the binaries.
+echo "Creating $ARCHIVE..."
+tar -czf "$ARCHIVE" -C "$DESTDIR/usr/local" bin lib
 
+echo "Done."

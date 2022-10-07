@@ -8,6 +8,8 @@ import (
 const (
 	ExtYAML = ".yml"
 	ExtJPEG = ".jpg"
+	ExtDNG  = ".dng"
+	ExtTHM  = ".thm"
 	ExtAVC  = ".avc"
 )
 

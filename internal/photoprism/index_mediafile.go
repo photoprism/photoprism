@@ -245,7 +245,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.PhotoStack = entity.IsStackable
 		}
 
-		if yamlName := fs.YamlFile.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
+		if yamlName := fs.SidecarYAML.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
 			} else {
@@ -431,7 +431,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			log.Warn(err.Error())
 			file.FileError = err.Error()
 		}
-	case m.IsRaw(), m.IsHEIF(), m.IsImageOther():
+	case m.IsRaw(), m.IsDNG(), m.IsHEIC(), m.IsAVIF(), m.IsImageOther():
 		if metaData := m.MetaData(); metaData.Error == nil {
 			// Update basic metadata.
 			photo.SetTitle(metaData.Title, entity.SrcMeta)

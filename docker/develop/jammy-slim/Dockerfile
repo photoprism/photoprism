@@ -49,16 +49,15 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         exiftool rawtherapee librsvg2-bin \
         ffmpeg ffmpegthumbnailer libavcodec-extra \
         libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-        x264 x265 libde265-dev libjpeg8 libvpx7 libwebm1 \
+        x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
     && \
     /scripts/install-darktable.sh && \
+    /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    (wget --inet4-only -c "https://dl.photoprism.app/dist/libheif/libheif.jammy.tar.gz" -O - | tar -xz -C /usr/local) && \
-    ldconfig && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \
         /photoprism/import \

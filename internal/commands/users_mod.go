@@ -22,6 +22,8 @@ var UsersModCommand = cli.Command{
 // usersModAction modifies an existing user account.
 func usersModAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		conf.MigrateDb(false, nil)
+
 		username := clean.Username(ctx.Args().First())
 
 		// Username provided?

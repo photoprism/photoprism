@@ -59,6 +59,14 @@ func TestConfig_DisableExifTool(t *testing.T) {
 	assert.True(t, c.DisableExifTool())
 }
 
+func TestConfig_ExifToolEnabled(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.True(t, c.ExifToolEnabled())
+
+	c.options.ExifToolBin = "XXX"
+	assert.False(t, c.ExifToolEnabled())
+}
+
 func TestConfig_DisableFaces(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.False(t, c.DisableFaces())
