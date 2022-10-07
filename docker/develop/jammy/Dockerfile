@@ -68,6 +68,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \
     /scripts/install-darktable.sh && \
+    /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
@@ -76,8 +77,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    (wget --inet4-only -c "https://dl.photoprism.app/dist/libheif/libheif.jammy.tar.gz" -O - | tar -xz -C /usr/local) && \
-    ldconfig && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \
         /photoprism/import \
