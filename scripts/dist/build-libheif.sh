@@ -33,7 +33,7 @@ echo "------------------------------------------------"
 echo "Installing build deps..."
 
 sudo apt-get -qq update
-sudo apt-get -qq install build-essential gcc g++ gettext git autoconf automake cmake libtool libjpeg8 libjpeg8-dev libde265-dev
+sudo apt-get -qq install build-essential gcc g++ gettext git autoconf automake cmake libtool libjpeg8 libjpeg8-dev libde265-dev libaom-dev
 
 cd "/tmp" || exit
 rm -rf "/tmp/libheif"
