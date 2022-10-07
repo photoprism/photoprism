@@ -23,6 +23,8 @@ var UsersRemoveCommand = cli.Command{
 // usersRemoveAction deletes a user account.
 func usersRemoveAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		conf.MigrateDb(false, nil)
+
 		username := clean.Username(ctx.Args().First())
 
 		// Username provided?
