@@ -49,7 +49,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         exiftool rawtherapee librsvg2-bin \
         ffmpeg ffmpegthumbnailer libavcodec-extra \
         libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-        x264 x265 libde265-dev libjpeg8 libvpx7 libwebm1 \
+        x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
     && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \

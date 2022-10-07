@@ -50,14 +50,16 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
         apt-utils gpg pkg-config software-properties-common ca-certificates \
         build-essential gcc g++ sudo bash make nano lsof lshw git jq \
+        autoconf automake cmake libtool libjpeg8 libjpeg8-dev \
         zip unzip wget curl rsync sqlite3 chrpath gettext libc6-dev \
         libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 \
         libfontconfig1-dev libhdf5-serial-dev libpng-dev libzmq3-dev \
-        libx264-dev libx265-dev libnss3 libxtst6 librsvg2-bin tzdata \
-        libheif-examples exiftool ffmpeg ffmpegthumbnailer libavcodec-extra \
+        libx264-dev libx265-dev libde265-dev libaom-dev libnss3 libxtst6 librsvg2-bin tzdata \
+        exiftool ffmpeg ffmpegthumbnailer libavcodec-extra \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \
+    /scripts/install-libheif.sh && \
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
@@ -65,7 +67,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \
         /photoprism/import \
