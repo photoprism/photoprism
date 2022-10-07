@@ -266,9 +266,9 @@ msgstr ""
 
 #: src/component/navigation.vue:101
 #: src/component/photo/cards.vue:301
-#: src/component/photo/cards.vue:480
+#: src/component/photo/cards.vue:481
 #: src/component/photo/list.vue:191
-#: src/component/photo/mosaic.vue:224
+#: src/component/photo/mosaic.vue:225
 #: src/model/file.js:210
 #: src/options/options.js:290
 msgid "Animated"
@@ -290,7 +290,7 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: src/component/photo/cards.vue:410
+#: src/component/photo/cards.vue:411
 #: src/component/photo/clipboard.vue:88
 #: src/dialog/photo/details.vue:116
 msgid "Approve"
@@ -298,7 +298,7 @@ msgstr ""
 
 #: src/app/routes.js:232
 #: src/component/navigation.vue:134
-#: src/component/photo/cards.vue:381
+#: src/component/photo/cards.vue:382
 #: src/component/photo/clipboard.vue:204
 #: src/pages/settings/general.vue:294
 msgid "Archive"
@@ -415,7 +415,7 @@ msgstr ""
 msgid "Calendar"
 msgstr ""
 
-#: src/component/photo/cards.vue:488
+#: src/component/photo/cards.vue:489
 #: src/component/photo/list.vue:137
 #: src/component/photo/toolbar.vue:202
 #: src/dialog/photo/details.vue:331
@@ -469,7 +469,7 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:337
+#: src/component/photo/toolbar.vue:338
 #: src/dialog/album/edit.vue:163
 #: src/pages/about/feedback.vue:121
 #: src/pages/albums.vue:113
@@ -509,7 +509,7 @@ msgstr ""
 msgid "Codec"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:314
+#: src/component/photo/toolbar.vue:315
 msgid "Color"
 msgstr ""
 
@@ -657,13 +657,13 @@ msgstr ""
 #: src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:41
 #: src/dialog/photo/files.vue:38
-#: src/dialog/share.vue:222
+#: src/dialog/share.vue:223
 #: src/pages/library/errors.vue:88
 #: src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr ""
 
-#: src/component/photo/cards.vue:449
+#: src/component/photo/cards.vue:450
 #: src/dialog/album/edit.vue:141
 #: src/dialog/photo/details.vue:562
 #: src/pages/albums.vue:428
@@ -1389,7 +1389,7 @@ msgstr ""
 #: src/component/navigation.vue:200
 #: src/component/photo/cards.vue:292
 #: src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:214
+#: src/component/photo/mosaic.vue:215
 #: src/options/options.js:298
 msgid "Live"
 msgstr ""
@@ -1403,7 +1403,7 @@ msgstr ""
 msgid "location"
 msgstr ""
 
-#: src/component/photo/cards.vue:512
+#: src/component/photo/cards.vue:513
 #: src/component/photo/list.vue:138
 #: src/dialog/album/edit.vue:121
 msgid "Location"
@@ -1540,7 +1540,7 @@ msgstr ""
 msgid "Must have at least 8 characters."
 msgstr ""
 
-#: src/component/photo/cards.vue:500
+#: src/component/photo/cards.vue:501
 #: src/component/photo/list.vue:138
 #: src/component/photo/list.vue:227
 #: src/dialog/account/edit.vue:399
@@ -1991,7 +1991,7 @@ msgid "Raw"
 msgstr ""
 
 #: src/component/photo/cards.vue:285
-#: src/component/photo/mosaic.vue:206
+#: src/component/photo/mosaic.vue:207
 msgid "RAW"
 msgstr ""
 
@@ -2316,7 +2316,7 @@ msgid "Sponsors get access to additional features, receive direct technical supp
 msgstr ""
 
 #: src/component/photo/cards.vue:315
-#: src/component/photo/mosaic.vue:240
+#: src/component/photo/mosaic.vue:241
 msgid "Stack"
 msgstr ""
 
@@ -2400,7 +2400,7 @@ msgstr ""
 msgid "Sync raw and video files"
 msgstr ""
 
-#: src/component/photo/cards.vue:463
+#: src/component/photo/cards.vue:464
 #: src/component/photo/list.vue:136
 #: src/dialog/photo/info.vue:52
 msgid "Taken"
@@ -2467,9 +2467,9 @@ msgstr ""
 msgid "Title too long"
 msgstr ""
 
-#: src/component/album/toolbar.vue:138
-#: src/component/album/toolbar.vue:155
-#: src/component/album/toolbar.vue:171
+#: src/component/album/toolbar.vue:139
+#: src/component/album/toolbar.vue:157
+#: src/component/album/toolbar.vue:174
 #: src/component/photo/toolbar.vue:71
 #: src/component/photo/toolbar.vue:88
 #: src/component/photo/toolbar.vue:104
@@ -2582,7 +2582,7 @@ msgstr ""
 msgid "Updating stacks"
 msgstr ""
 
-#: src/component/album/toolbar.vue:189
+#: src/component/album/toolbar.vue:192
 #: src/component/navigation.vue:1958
 #: src/component/photo/toolbar.vue:122
 #: src/dialog/share/upload.vue:35
@@ -2666,9 +2666,9 @@ msgid "Verified"
 msgstr ""
 
 #: src/component/photo/cards.vue:308
-#: src/component/photo/cards.vue:471
+#: src/component/photo/cards.vue:472
 #: src/component/photo/list.vue:198
-#: src/component/photo/mosaic.vue:232
+#: src/component/photo/mosaic.vue:233
 #: src/model/file.js:219
 #: src/model/photo.js:794
 #: src/model/photo.js:810
@@ -2685,7 +2685,7 @@ msgid "Videos"
 msgstr ""
 
 #: src/component/photo/cards.vue:324
-#: src/component/photo/mosaic.vue:249
+#: src/component/photo/mosaic.vue:250
 #: src/component/photo/toolbar.vue:226
 msgid "View"
 msgstr ""

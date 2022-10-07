@@ -34,16 +34,16 @@ func TestNewBlacklist(t *testing.T) {
 func TestBlacklist_Ok(t *testing.T) {
 	t.Run("CanonCR2", func(t *testing.T) {
 		list := NewBlacklist("cr2")
-		assert.False(t, list.Ok(".cr2"))
+		assert.False(t, list.Allow(".cr2"))
 		assert.True(t, list.Contains(".cr2"))
 	})
 	t.Run("Raw", func(t *testing.T) {
 		list := NewBlacklist("RAF, Cr3, aaf ")
-		assert.False(t, list.Ok(".raf"))
-		assert.False(t, list.Ok("cr3"))
-		assert.False(t, list.Ok("AAF"))
-		assert.True(t, list.Ok(""))
-		assert.True(t, list.Ok(".raw"))
-		assert.True(t, list.Ok("raw"))
+		assert.False(t, list.Allow(".raf"))
+		assert.False(t, list.Allow("cr3"))
+		assert.False(t, list.Allow("AAF"))
+		assert.True(t, list.Allow(""))
+		assert.True(t, list.Allow(".raw"))
+		assert.True(t, list.Allow("raw"))
 	})
 }

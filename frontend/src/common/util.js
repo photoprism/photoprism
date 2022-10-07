@@ -163,6 +163,8 @@ export default class Util {
     }
 
     switch (value) {
+      case "jpg":
+        return "JPEG";
       case "raw":
         return "Unprocessed Sensor Data (RAW)";
       case "mov":
@@ -176,11 +178,13 @@ export default class Util {
         return "TIFF";
       case "gif":
         return "GIF";
+      case "dng":
+        return "Adobe Digital Negative";
       case "avc":
       case "avc1":
         return "Advanced Video Coding (AVC) / H.264";
       case "avif":
-        return "AV1 Image File Format (AVIF)";
+        return "AOMedia Video 1 (AV1)";
       case "hevc":
       case "hvc":
       case "hvc1":
@@ -257,6 +261,7 @@ export default class Util {
         return "T6/Group 4 Fax";
       case "5":
         return "LZW";
+      case "jpg":
       case "jpeg":
       case "6":
       case "7":
