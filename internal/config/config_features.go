@@ -41,6 +41,11 @@ func (c *Config) DisableExifTool() bool {
 	return c.options.DisableExifTool
 }
 
+// ExifToolEnabled checks if the use of ExifTool is possible.
+func (c *Config) ExifToolEnabled() bool {
+	return !c.DisableExifTool()
+}
+
 // DisableTensorFlow checks if all features depending on TensorFlow should be disabled.
 func (c *Config) DisableTensorFlow() bool {
 	if LowMem && !c.options.DisableTensorFlow {

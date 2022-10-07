@@ -13,15 +13,14 @@ require (
 	github.com/dsoprea/go-png-image-structure/v2 v2.0.0-20210512210324-29b889a6093d
 	github.com/dsoprea/go-tiff-image-structure/v2 v2.0.0-20221003165014-8ecc4f52edca
 	github.com/dustin/go-humanize v1.0.0
-	github.com/esimov/pigo v1.4.5
+	github.com/esimov/pigo v1.4.6
 	github.com/gin-contrib/gzip v0.0.6
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/google/open-location-code/go v0.0.0-20220922185916-75f4f40254f8
 	github.com/gorilla/websocket v1.5.0
-	github.com/gosimple/slug v1.13.0
-	github.com/h2non/filetype v1.1.3
+	github.com/gosimple/slug v1.13.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
@@ -48,8 +47,8 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.10
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
-	golang.org/x/net v0.0.0-20221002022538-bcab6841153b
+	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b
+	golang.org/x/net v0.0.0-20221004154528-8021a29435af
 	gonum.org/v1/gonum v0.12.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.4.0
@@ -78,6 +77,8 @@ require (
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
+
+require github.com/gabriel-vasile/mimetype v1.4.1
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

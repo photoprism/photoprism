@@ -50,6 +50,7 @@ test-go: reset-sqlite run-test-go
 test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
 test-commands: reset-sqlite run-test-commands
+test-photoprism: reset-sqlite run-test-photoprism
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance acceptance-sqlite-stop
@@ -263,6 +264,9 @@ run-test-api:
 run-test-commands:
 	$(info Running all CLI command tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/commands/...
+run-test-photoprism:
+	$(info Running all Go tests in "/internal/photoprism"...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/photoprism/...
 test-parallel:
 	$(info Running all Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/... ./internal/...

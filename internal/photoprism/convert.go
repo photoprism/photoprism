@@ -99,7 +99,7 @@ func (c *Convert) Start(path string, force bool) (err error) {
 
 			f, err := NewMediaFile(fileName)
 
-			if err != nil || f.Empty() || !(f.IsRaw() || f.IsHEIF() || f.IsAVIF() || f.IsImageOther() || f.IsVideo()) {
+			if err != nil || f.Empty() || !(f.IsRaw() || f.IsHEIC() || f.IsAVIF() || f.IsImageOther() || f.IsVideo()) {
 				return nil
 			}
 

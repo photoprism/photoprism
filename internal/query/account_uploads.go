@@ -11,7 +11,7 @@ func AccountUploads(a entity.Account, limit int) (results entity.Files, err erro
 		Where("files.id NOT IN (SELECT file_id FROM files_sync WHERE file_id > 0 AND account_id = ?)", a.ID)
 
 	if !a.SyncRaw {
-		s = s.Where("files.file_type <> ? OR files.file_type IS NULL", fs.RawImage)
+		s = s.Where("files.file_type <> ? OR files.file_type IS NULL", fs.ImageRaw)
 	}
 
 	s = s.Order("files.file_name ASC")
