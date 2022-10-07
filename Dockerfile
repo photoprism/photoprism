@@ -1,5 +1,5 @@
 # Ubuntu 22.04 LTS (Jammy Jellyfish)
-FROM photoprism/develop:221006-jammy
+FROM photoprism/develop:221007-jammy
 
 ## Alternative Environments:
 # FROM photoprism/develop:bookworm # Debian 12 (Bookworm)
