@@ -122,13 +122,15 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 		// Limit results for external users.
 		if f.Scope == "" && acl.Resources.DenyAll(acl.ResourcePhotos, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+			sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND missing = 0 AND album_uid IN (?)) OR "
+
 			if sess.IsVisitor() || sess.NotRegistered() {
-				s = s.Where("photos.published_at > ?", entity.TimeStamp())
+				s = s.Where(sharedAlbums+"photos.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
 			} else if user.BasePath == "" {
-				s = s.Where("photos.created_by = ? OR photos.published_at > ?", user.UserUID, entity.TimeStamp())
+				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
 			} else {
-				s = s.Where("photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
-					user.UserUID, entity.TimeStamp(), user.BasePath, user.BasePath+"/%")
+				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
+					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), user.BasePath, user.BasePath+"/%")
 			}
 		}
 	}

@@ -81,6 +81,7 @@ export default {
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
       hasPlaces: this.$config.allow("places", "view") && this.$config.feature("places"),
       canSearchPlaces: this.$config.allow("places", "search") && this.$config.feature("places"),
+      canAccessLibrary: this.$config.allow("photos", "access_library"),
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -176,7 +177,7 @@ export default {
         return;
       }
 
-      if (this.canSearchPlaces && photo.CellID && photo.CellID !== "zz") {
+      if (this.canAccessLibrary && photo.CellID && photo.CellID !== "zz") {
         this.$router.push({name: "places_query", params: {q: photo.CellID}});
       } else if (this.uid) {
         this.$router.push({name: "places_scope", params: {s: this.uid, q: photo.CellID}});

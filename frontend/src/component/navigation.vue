@@ -292,6 +292,20 @@
           </v-list-tile-content>
         </v-list-tile>
 
+        <v-list-tile v-if="isRestricted" v-show="$config.feature('places')" to="/states" class="nav-states" @click.stop="">
+          <v-list-tile-action :title="$gettext('States')">
+            <v-icon>near_me</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title class="p-flex-menuitem" @click.stop="">
+              <translate key="States">States</translate>
+              <span v-show="config.count.states > 0"
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states | abbreviateCount }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
         <template v-if="canSearchPlaces">
         <v-list-tile v-if="isMini" v-show="canSearchPlaces && $config.feature('places')" :to="{ name: 'places' }" class="nav-places"
                      @click.stop="">
@@ -330,19 +344,6 @@
           </v-list-tile>
         </v-list-group>
         </template>
-        <v-list-tile v-else v-show="$config.feature('places')" to="/states" class="nav-states" @click.stop="">
-          <v-list-tile-action :title="$gettext('States')">
-            <v-icon>near_me</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title class="p-flex-menuitem" @click.stop="">
-              <translate key="States">States</translate>
-              <span v-show="config.count.states > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states | abbreviateCount }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
 
         <v-list-tile v-show="$config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
           <v-list-tile-action :title="$gettext('Labels')">
@@ -683,7 +684,7 @@ export default {
       appNameSuffix = appNameParts.slice(1, 9).join(" ");
     }
 
-    const isRestricted= this.$config.deny("photos", "access_library");
+    const isRestricted = this.$config.deny("photos", "access_library");
 
     return {
       canSearchPlaces: this.$config.allow("places", "search"),
