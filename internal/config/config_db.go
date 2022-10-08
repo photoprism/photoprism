@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SQL Databases.
@@ -307,9 +307,11 @@ func (c *Config) InitTestDb() {
 
 // connectDb establishes a database connection.
 func (c *Config) connectDb() error {
+	// Make sure this is not running twice.
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
 
+	// Get database driver and data source name.
 	dbDriver := c.DatabaseDriver()
 	dbDsn := c.DatabaseDsn()
 
@@ -321,6 +323,7 @@ func (c *Config) connectDb() error {
 		return errors.New("config: database DSN not specified")
 	}
 
+	// Open database connection.
 	db, err := gorm.Open(dbDriver, dbDsn)
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
@@ -338,12 +341,33 @@ func (c *Config) connectDb() error {
 		}
 	}
 
+	// Configure database logging.
 	db.LogMode(false)
 	db.SetLogger(log)
 
+	// Set database connection parameters.
 	db.DB().SetMaxOpenConns(c.DatabaseConns())
 	db.DB().SetMaxIdleConns(c.DatabaseConnsIdle())
-	db.DB().SetConnMaxLifetime(10 * time.Minute)
+	db.DB().SetConnMaxLifetime(time.Hour)
+
+	// Check database server version.
+	switch dbDriver {
+	case MySQL:
+		type Res struct {
+			Value string `gorm:"column:Value;"`
+		}
+		var res Res
+		if err = db.Raw("SHOW VARIABLES LIKE 'innodb_version'").Scan(&res).Error; err != nil {
+			return err
+		} else if v := strings.Split(res.Value, "."); len(v) < 3 {
+			log.Warnf("config: unknown database server version")
+		} else if major := txt.UInt(v[0]); major < 10 {
+			err = fmt.Errorf("config: MySQL %s is not supported, please upgrade to MariaDB 10.5.12 or later (https://docs.photoprism.app/getting-started/#databases)", res.Value)
+			return err
+		} else if txt.UInt(v[1]) <= 5 && txt.UInt(v[2]) <= 12 {
+			log.Errorf("config: MariaDB %s is not supported, please upgrade to MariaDB 10.5.12 or later (https://docs.photoprism.app/getting-started/#databases)", res.Value)
+		}
+	}
 
 	c.db = db
 

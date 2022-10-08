@@ -429,6 +429,12 @@ start-local:
 	docker-compose -f docker-compose.local.yml up -d
 stop-local:
 	docker-compose -f docker-compose.local.yml stop
+start-mysql:
+	docker-compose -f docker-compose.mysql.yml up -d mysql
+stop-mysql:
+	docker-compose -f docker-compose.mysql.yml stop mysql
+logs-mysql:
+	docker-compose -f docker-compose.mysql.yml logs -f mysql
 docker-local: docker-local-bookworm
 docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:
