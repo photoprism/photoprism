@@ -18,6 +18,91 @@ import (
 const WebDAVOriginals = "/originals"
 const WebDAVImport = "/import"
 
+var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Handler) {
+	srv.ServeHTTP(c.Writer, c.Request)
+}
+
+// WebDAV handles requests to the /originals and /import endpoints.
+func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
+	if router == nil {
+		log.Error("webdav: router is nil")
+		return
+	}
+
+	if conf == nil {
+		log.Error("webdav: conf is nil")
+		return
+	}
+
+	// Native file system restricted to a specific directory.
+	fileSystem := webdav.Dir(filePath)
+
+	// Request logger function.
+	loggerFunc := func(r *http.Request, err error) {
+		if err != nil {
+			switch r.Method {
+			case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
+				log.Errorf("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
+			case MethodPropfind:
+				log.Tracef("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
+			default:
+				log.Debugf("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
+			}
+		} else {
+			// Mark uploaded files as favorite if X-Favorite HTTP header is "1".
+			if r.Method == MethodPut && r.Header.Get("X-Favorite") == "1" {
+				if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
+					MarkUploadAsFavorite(filepath.Join(conf.OriginalsPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
+				} else if router.BasePath() == conf.BaseUri(WebDAVImport) {
+					MarkUploadAsFavorite(filepath.Join(conf.ImportPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
+				}
+			}
+
+			switch r.Method {
+			case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
+				log.Infof("webdav: %s %s", clean.Log(r.Method), clean.Log(r.URL.String()))
+
+				if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
+					auto.ShouldIndex()
+				} else if router.BasePath() == conf.BaseUri(WebDAVImport) {
+					auto.ShouldImport()
+				}
+			default:
+				log.Tracef("webdav: %s %s", clean.Log(r.Method), clean.Log(r.URL.String()))
+			}
+		}
+	}
+
+	// WebDAV request handler.
+	srv := &webdav.Handler{
+		Prefix:     router.BasePath(),
+		FileSystem: fileSystem,
+		LockSystem: webdav.NewMemLS(),
+		Logger:     loggerFunc,
+	}
+
+	// Request handler wrapper function.
+	handlerFunc := func(c *gin.Context) {
+		WebDAVHandler(c, router, srv)
+	}
+
+	// Handle supported HTTP request methods.
+	router.Handle(MethodHead, "/*path", handlerFunc)
+	router.Handle(MethodGet, "/*path", handlerFunc)
+	router.Handle(MethodPut, "/*path", handlerFunc)
+	router.Handle(MethodPost, "/*path", handlerFunc)
+	router.Handle(MethodPatch, "/*path", handlerFunc)
+	router.Handle(MethodDelete, "/*path", handlerFunc)
+	router.Handle(MethodOptions, "/*path", handlerFunc)
+	router.Handle(MethodMkcol, "/*path", handlerFunc)
+	router.Handle(MethodCopy, "/*path", handlerFunc)
+	router.Handle(MethodMove, "/*path", handlerFunc)
+	router.Handle(MethodLock, "/*path", handlerFunc)
+	router.Handle(MethodUnlock, "/*path", handlerFunc)
+	router.Handle(MethodPropfind, "/*path", handlerFunc)
+	router.Handle(MethodProppatch, "/*path", handlerFunc)
+}
+
 // MarkUploadAsFavorite sets the favorite flag for newly uploaded files.
 func MarkUploadAsFavorite(fileName string) {
 	yamlName := fs.AbsPrefix(fileName, false) + fs.ExtYAML
@@ -42,82 +127,4 @@ func MarkUploadAsFavorite(fileName string) {
 
 	// Log success.
 	log.Infof("webdav: marked %s as favorite", clean.Log(filepath.Base(fileName)))
-}
-
-// WebDAV handles any requests to /originals|import/*
-func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
-	if router == nil {
-		log.Error("webdav: router is nil")
-		return
-	}
-
-	if conf == nil {
-		log.Error("webdav: conf is nil")
-		return
-	}
-
-	f := webdav.Dir(path)
-
-	srv := &webdav.Handler{
-		Prefix:     router.BasePath(),
-		FileSystem: f,
-		LockSystem: webdav.NewMemLS(),
-		Logger: func(r *http.Request, err error) {
-			if err != nil {
-				switch r.Method {
-				case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
-					log.Errorf("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
-				case MethodPropfind:
-					log.Tracef("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
-				default:
-					log.Debugf("webdav: %s in %s %s", clean.Log(err.Error()), clean.Log(r.Method), clean.Log(r.URL.String()))
-				}
-
-			} else {
-				// Mark uploaded files as favorite if X-Favorite HTTP header is "1".
-				if r.Method == MethodPut && r.Header.Get("X-Favorite") == "1" {
-					if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
-						MarkUploadAsFavorite(filepath.Join(conf.OriginalsPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
-					} else if router.BasePath() == conf.BaseUri(WebDAVImport) {
-						MarkUploadAsFavorite(filepath.Join(conf.ImportPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
-					}
-				}
-
-				switch r.Method {
-				case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
-					log.Infof("webdav: %s %s", clean.Log(r.Method), clean.Log(r.URL.String()))
-
-					if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
-						auto.ShouldIndex()
-					} else if router.BasePath() == conf.BaseUri(WebDAVImport) {
-						auto.ShouldImport()
-					}
-				default:
-					log.Tracef("webdav: %s %s", clean.Log(r.Method), clean.Log(r.URL.String()))
-				}
-			}
-		},
-	}
-
-	handler := func(c *gin.Context) {
-		w := c.Writer
-		r := c.Request
-
-		srv.ServeHTTP(w, r)
-	}
-
-	router.Handle(MethodHead, "/*path", handler)
-	router.Handle(MethodGet, "/*path", handler)
-	router.Handle(MethodPut, "/*path", handler)
-	router.Handle(MethodPost, "/*path", handler)
-	router.Handle(MethodPatch, "/*path", handler)
-	router.Handle(MethodDelete, "/*path", handler)
-	router.Handle(MethodOptions, "/*path", handler)
-	router.Handle(MethodMkcol, "/*path", handler)
-	router.Handle(MethodCopy, "/*path", handler)
-	router.Handle(MethodMove, "/*path", handler)
-	router.Handle(MethodLock, "/*path", handler)
-	router.Handle(MethodUnlock, "/*path", handler)
-	router.Handle(MethodPropfind, "/*path", handler)
-	router.Handle(MethodProppatch, "/*path", handler)
 }
