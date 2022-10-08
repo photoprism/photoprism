@@ -73,7 +73,7 @@ require (
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
-	github.com/zitadel/oidc v1.9.0
+	github.com/zitadel/oidc v1.9.1
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
@@ -103,7 +103,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
-	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec // indirect
+	golang.org/x/sys v0.0.0-20221006211917-84dc82d7e875 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
