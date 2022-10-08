@@ -22,27 +22,31 @@ func (m ReactionMap) Pointer(name string) *Reaction {
 
 var ReactionFixtures = ReactionMap{
 	"SubjectJohnLike": Reaction{
-		UID:      SubjectFixtures.Get("john-doe").SubjUID,
-		UserUID:  UserFixtures.Get("alice").UserUID,
-		Reaction: react.Like.String(),
+		UID:       SubjectFixtures.Get("john-doe").SubjUID,
+		UserUID:   UserFixtures.Get("alice").UserUID,
+		Reaction:  react.Like.String(),
+		Reacted:   1,
+		ReactedAt: TimePointer(),
 	},
 	"PhotoAliceLove": Reaction{
-		UID:      PhotoFixtures.Get("Photo01").PhotoUID,
-		UserUID:  UserFixtures.Pointer("alice").UserUID,
-		Reaction: react.Love.String(),
+		UID:       PhotoFixtures.Get("Photo01").PhotoUID,
+		UserUID:   UserFixtures.Pointer("alice").UserUID,
+		Reaction:  react.Love.String(),
+		Reacted:   3,
+		ReactedAt: TimePointer(),
 	},
 	"PhotoBobLove": Reaction{
-		UID:      PhotoFixtures.Get("Photo01").PhotoUID,
-		UserUID:  UserFixtures.Pointer("bob").UserUID,
-		Reaction: react.Love.String(),
+		UID:       PhotoFixtures.Get("Photo01").PhotoUID,
+		UserUID:   UserFixtures.Pointer("bob").UserUID,
+		Reaction:  react.Love.String(),
+		Reacted:   1,
+		ReactedAt: TimePointer(),
 	},
 }
 
 // CreateReactionFixtures inserts known entities into the database for testing.
 func CreateReactionFixtures() {
 	for _, entity := range ReactionFixtures {
-		if err := entity.Create(); err != nil {
-			log.Error(err)
-		}
+		Db().Create(&entity)
 	}
 }
