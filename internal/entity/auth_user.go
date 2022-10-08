@@ -298,7 +298,7 @@ func (m *User) Disabled() bool {
 
 // LoginAllowed checks if the user is allowed to log in and use the web UI.
 func (m *User) LoginAllowed() bool {
-	if role := m.AclRole(); m.Disabled() || !m.CanLogin || m.UserName == "" || role == acl.RoleUnauthorized {
+	if role := m.AclRole(); m.Disabled() || !m.CanLogin || m.ID <= 0 || m.UserName == "" || role == acl.RoleUnauthorized {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourceConfig, role, acl.AccessOwn)
@@ -308,7 +308,7 @@ func (m *User) LoginAllowed() bool {
 
 // SyncAllowed checks whether the user is allowed to use WebDAV to synchronize files.
 func (m *User) SyncAllowed() bool {
-	if role := m.AclRole(); m.Disabled() || !m.CanSync || m.UserName == "" || role == acl.RoleUnauthorized {
+	if role := m.AclRole(); m.Disabled() || !m.CanSync || m.ID <= 0 || m.UserName == "" || role == acl.RoleUnauthorized {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)

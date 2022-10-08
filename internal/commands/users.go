@@ -29,6 +29,7 @@ var UsersCommand = cli.Command{
 		UsersShowCommand,
 		UsersModCommand,
 		UsersRemoveCommand,
+		UsersResetCommand,
 	},
 }
 
