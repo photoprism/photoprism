@@ -1,5 +1,5 @@
 /*
-Package server provides REST and web server routing, request handling and logging.
+Package header provides common response header names and default values.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
@@ -22,4 +22,4 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package server
+package header

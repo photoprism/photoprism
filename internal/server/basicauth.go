@@ -76,23 +76,23 @@ func BasicAuth() gin.HandlerFunc {
 			message := "account not found"
 
 			event.AuditWarn([]string{api.ClientIP(c), "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(api.ClientIP(c), name, api.UserAgent(c), message)
+			event.LoginError(api.ClientIP(c), "webdav", name, api.UserAgent(c), message)
 		} else if !user.SyncAllowed() {
 			// Sync disabled for this account.
 			message := "sync disabled"
 
 			event.AuditWarn([]string{api.ClientIP(c), "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(api.ClientIP(c), name, api.UserAgent(c), message)
+			event.LoginError(api.ClientIP(c), "webdav", name, api.UserAgent(c), message)
 		} else if valid = !user.InvalidPassword(password); !valid {
 			// Wrong password.
 			message := "incorrect password"
 
 			event.AuditErr([]string{api.ClientIP(c), "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(api.ClientIP(c), name, api.UserAgent(c), message)
+			event.LoginError(api.ClientIP(c), "webdav", name, api.UserAgent(c), message)
 		} else {
 			// Successfully authenticated.
 			event.AuditInfo([]string{api.ClientIP(c), "webdav login as %s", "succeeded"}, clean.LogQuote(name))
-			event.LoginSuccess(api.ClientIP(c), name, api.UserAgent(c))
+			event.LoginSuccess(api.ClientIP(c), "webdav", name, api.UserAgent(c))
 
 			// Cache successful authentication.
 			basicAuthCache.SetDefault(key, user)

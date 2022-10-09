@@ -2,7 +2,7 @@ package config
 
 // ClientExt returns optional client config values by namespace.
 func ClientExt(c *Config, t ClientType) Values {
-	configs := Extensions()
+	configs := Ext()
 	result := make(Values, len(configs))
 
 	for _, conf := range configs {

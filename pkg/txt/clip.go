@@ -9,6 +9,7 @@ const (
 	ClipRole      = 32
 	ClipKeyword   = 40
 	ClipIP        = 48
+	ClipRealm     = 64
 	ClipUserName  = 64
 	ClipSlug      = 80
 	ClipCategory  = 100

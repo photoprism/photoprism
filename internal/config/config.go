@@ -111,16 +111,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		}
 	}
 
-	// Initialize package extensions.
-	for _, ext := range Extensions() {
-		start := time.Now()
-
-		if err := ext.init(c); err != nil {
-			log.Warnf("config: %s in %s extension[%s]", err, clean.Log(ext.name), time.Since(start))
-		} else {
-			log.Debugf("config: %s extension loaded [%s]", clean.Log(ext.name), time.Since(start))
-		}
-	}
+	Ext().Init(c)
 
 	return c
 }

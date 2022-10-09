@@ -70,10 +70,6 @@ func startAction(ctx *cli.Context) error {
 	// Pass this context down the chain.
 	cctx, cancel := context.WithCancel(context.Background())
 
-	if err := conf.Init(); err != nil {
-		log.Fatal(err)
-	}
-
 	// Initialize the index database.
 	conf.InitDb()
 

@@ -1,104 +1,25 @@
+/*
+Package server provides REST and web server routing, request handling and logging.
+
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+
+	This program is free software: you can redistribute it and/or modify
+	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+	<https://docs.photoprism.app/license/agpl>
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	The AGPL is supplemented by our Trademark and Brand Guidelines,
+	which describe how our Brand Assets may be used:
+	<https://photoprism.app/trademark>
+
+Feel free to send an email to hello@photoprism.app if you have questions,
+want to support our work, or just want to say hello.
+
+Additional information can be found in our Developer Guide:
+<https://docs.photoprism.app/developer-guide/>
+*/
 package server
-
-import (
-	"context"
-	"fmt"
-	"net/http"
-	"time"
-
-	"github.com/gin-contrib/gzip"
-	"github.com/gin-gonic/gin"
-
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/event"
-)
-
-var log = event.Log
-
-// Start the REST API server using the configuration provided
-func Start(ctx context.Context, conf *config.Config) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Error(err)
-		}
-	}()
-
-	start := time.Now()
-
-	// Set HTTP server mode.
-	if conf.HttpMode() != "" {
-		gin.SetMode(conf.HttpMode())
-	} else if conf.Debug() == false {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
-	// Create new HTTP router engine without standard middleware.
-	router := gin.New()
-
-	// Register logger middleware.
-	router.Use(Logger(), Recovery())
-
-	// Register security middleware.
-	router.Use(Security(SecurityOptions{
-		IsDevelopment:         gin.Mode() != gin.ReleaseMode || conf.Test(),
-		AllowedHosts:          []string{},
-		SSLRedirect:           false,
-		SSLHost:               "",
-		SSLProxyHeaders:       map[string]string{"X-Forwarded-Proto": "https"},
-		STSSeconds:            0,
-		STSIncludeSubdomains:  false,
-		FrameDeny:             true,
-		ContentTypeNosniff:    false,
-		BrowserXssFilter:      false,
-		ContentSecurityPolicy: "frame-ancestors 'none';",
-	}))
-
-	// Enable HTTP compression?
-	switch conf.HttpCompression() {
-	case "gzip":
-		log.Infof("server: enabling gzip compression")
-		router.Use(gzip.Gzip(
-			gzip.DefaultCompression,
-			gzip.WithExcludedPaths([]string{
-				conf.BaseUri(config.ApiUri + "/t"),
-				conf.BaseUri(config.ApiUri + "/folders/t"),
-				conf.BaseUri(config.ApiUri + "/zip"),
-				conf.BaseUri(config.ApiUri + "/albums"),
-				conf.BaseUri(config.ApiUri + "/labels"),
-				conf.BaseUri(config.ApiUri + "/videos"),
-			})))
-	}
-
-	// Find and load templates.
-	router.LoadHTMLFiles(conf.TemplateFiles()...)
-
-	// Register HTTP route handlers.
-	registerRoutes(router, conf)
-
-	// Create new HTTP server instance.
-	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-		Handler: router,
-	}
-
-	// Start HTTP server.
-	go func() {
-		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
-
-		if err := server.ListenAndServe(); err != nil {
-			if err == http.ErrServerClosed {
-				log.Info("server: shutdown complete")
-			} else {
-				log.Errorf("server: %s", err)
-			}
-		}
-	}()
-
-	// Graceful HTTP server shutdown.
-	<-ctx.Done()
-	log.Info("server: shutting down")
-	err := server.Close()
-	if err != nil {
-		log.Errorf("server: shutdown failed (%s)", err)
-	}
-}

@@ -7,23 +7,24 @@ import (
 )
 
 // LoginData returns a login event message.
-func LoginData(level logrus.Level, ip, username, useragent, error string) Data {
+func LoginData(level logrus.Level, ip, realm, name, browser, message string) Data {
 	return Data{
-		"time":      TimeStamp(),
-		"level":     level.String(),
-		"ip":        txt.Clip(ip, txt.ClipIP),
-		"message":   txt.Clip(error, txt.ClipLog),
-		"username":  txt.Clip(username, txt.ClipUserName),
-		"useragent": txt.Clip(useragent, txt.ClipLog),
+		"time":    TimeStamp(),
+		"level":   level.String(),
+		"ip":      txt.Clip(ip, txt.ClipIP),
+		"realm":   txt.Clip(realm, txt.ClipRealm),
+		"name":    txt.Clip(name, txt.ClipUserName),
+		"browser": txt.Clip(browser, txt.ClipLog),
+		"message": txt.Clip(message, txt.ClipLog),
 	}
 }
 
 // LoginSuccess publishes a successful login event.
-func LoginSuccess(ip, username, useragent string) {
-	Publish("audit.login", LoginData(logrus.InfoLevel, ip, username, useragent, ""))
+func LoginSuccess(ip, realm, name, browser string) {
+	Publish("audit.login", LoginData(logrus.InfoLevel, ip, realm, name, browser, ""))
 }
 
 // LoginError publishes a login error event.
-func LoginError(ip, username, useragent, error string) {
-	Publish("audit.login", LoginData(logrus.ErrorLevel, ip, username, useragent, error))
+func LoginError(ip, realm, name, browser, error string) {
+	Publish("audit.login", LoginData(logrus.ErrorLevel, ip, realm, name, browser, error))
 }

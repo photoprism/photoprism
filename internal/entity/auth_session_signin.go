@@ -30,7 +30,7 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 		if user == nil {
 			message := "account not found"
 			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), name, m.UserAgent, message)
+			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
 			return i18n.Error(i18n.ErrInvalidCredentials)
 		}
@@ -39,7 +39,7 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 		if !user.LoginAllowed() {
 			message := "account disabled"
 			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), name, m.UserAgent, message)
+			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
 			return i18n.Error(i18n.ErrInvalidCredentials)
 		}
@@ -48,12 +48,12 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 		if user.InvalidPassword(f.Password) {
 			message := "incorrect password"
 			event.AuditErr([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), name, m.UserAgent, message)
+			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
 			return i18n.Error(i18n.ErrInvalidCredentials)
 		} else {
 			event.AuditInfo([]string{m.IP(), "session %s", "login as %s", "succeeded"}, m.RefID, clean.LogQuote(name))
-			event.LoginSuccess(m.IP(), name, m.UserAgent)
+			event.LoginSuccess(m.IP(), "api", name, m.UserAgent)
 		}
 
 		m.SetUser(user)
@@ -77,7 +77,7 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 			return i18n.Error(i18n.ErrUnexpected)
 		} else if shares := data.RedeemToken(f.AuthToken); shares == 0 {
 			event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.AuthToken))
-			event.LoginError(m.IP(), "", m.UserAgent, "invalid share token")
+			event.LoginError(m.IP(), "api", "", m.UserAgent, "invalid share token")
 			m.Status = http.StatusNotFound
 			return i18n.Error(i18n.ErrInvalidLink)
 		} else {
