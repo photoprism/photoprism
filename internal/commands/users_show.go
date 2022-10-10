@@ -44,7 +44,7 @@ func usersShowAction(ctx *cli.Context) error {
 		report.Sort(rows)
 
 		// Show user information.
-		result, err := report.Render(rows, cols, report.CliFormat(ctx))
+		result, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 
 		fmt.Printf("\n%s\n", result)
 

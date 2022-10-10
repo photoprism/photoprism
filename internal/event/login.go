@@ -19,12 +19,12 @@ func LoginData(level logrus.Level, ip, realm, name, browser, message string) Dat
 	}
 }
 
-// LoginSuccess publishes a successful login event.
-func LoginSuccess(ip, realm, name, browser string) {
-	Publish("audit.login", LoginData(logrus.InfoLevel, ip, realm, name, browser, ""))
+// LoginInfo publishes a successful login event.
+func LoginInfo(ip, realm, name, browser string) {
+	Publish("login.info", LoginData(logrus.InfoLevel, ip, realm, name, browser, ""))
 }
 
 // LoginError publishes a login error event.
 func LoginError(ip, realm, name, browser, error string) {
-	Publish("audit.login", LoginData(logrus.ErrorLevel, ip, realm, name, browser, error))
+	Publish("login.error", LoginData(logrus.ErrorLevel, ip, realm, name, browser, error))
 }

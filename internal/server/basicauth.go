@@ -92,7 +92,7 @@ func BasicAuth() gin.HandlerFunc {
 		} else {
 			// Successfully authenticated.
 			event.AuditInfo([]string{api.ClientIP(c), "webdav login as %s", "succeeded"}, clean.LogQuote(name))
-			event.LoginSuccess(api.ClientIP(c), "webdav", name, api.UserAgent(c))
+			event.LoginInfo(api.ClientIP(c), "webdav", name, api.UserAgent(c))
 
 			// Cache successful authentication.
 			basicAuthCache.SetDefault(key, user)

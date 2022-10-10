@@ -117,7 +117,7 @@ func migrationsStatusAction(ctx *cli.Context) error {
 	}
 
 	// Display report.
-	info, err := report.Render(rows, cols, report.CliFormat(ctx))
+	info, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 
 	if err != nil {
 		return err

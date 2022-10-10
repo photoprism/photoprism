@@ -53,7 +53,7 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 			return i18n.Error(i18n.ErrInvalidCredentials)
 		} else {
 			event.AuditInfo([]string{m.IP(), "session %s", "login as %s", "succeeded"}, m.RefID, clean.LogQuote(name))
-			event.LoginSuccess(m.IP(), "api", name, m.UserAgent)
+			event.LoginInfo(m.IP(), "api", name, m.UserAgent)
 		}
 
 		m.SetUser(user)

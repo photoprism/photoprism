@@ -46,7 +46,7 @@ func usersListAction(ctx *cli.Context) error {
 			}
 		}
 
-		result, err := report.Render(rows, cols, report.CliFormat(ctx))
+		result, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 
 		fmt.Printf("\n%s\n", result)
 

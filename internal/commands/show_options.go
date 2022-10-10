@@ -33,7 +33,7 @@ func showOptionsAction(ctx *cli.Context) error {
 
 	// CSV Export?
 	if ctx.Bool("csv") || ctx.Bool("tsv") {
-		result, err := report.Render(rows, cols, report.CliFormat(ctx))
+		result, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 
 		fmt.Println(result)
 
@@ -96,7 +96,7 @@ func showOptionsAction(ctx *cli.Context) error {
 			}
 		}
 
-		result, err := report.Render(secRows, cols, report.CliFormat(ctx))
+		result, err := report.RenderFormat(secRows, cols, report.CliFormat(ctx))
 
 		if err != nil {
 			return err

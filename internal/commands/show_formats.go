@@ -26,7 +26,7 @@ var ShowFormatsCommand = cli.Command{
 func showFormatsAction(ctx *cli.Context) error {
 	rows, cols := media.Report(fs.Extensions.Types(true), !ctx.Bool("short"), true, true)
 
-	result, err := report.Render(rows, cols, report.CliFormat(ctx))
+	result, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 
 	fmt.Println(result)
 
