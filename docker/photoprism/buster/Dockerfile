@@ -147,8 +147,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
 # Default working directory.
 WORKDIR /photoprism
 
-# Expose HTTP port.
-EXPOSE 2342
+# Expose HTTP(S) ports.
+EXPOSE 2342 2443
 
 # Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]

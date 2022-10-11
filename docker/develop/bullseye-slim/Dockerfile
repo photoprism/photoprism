@@ -92,8 +92,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
 # define default directory and user
 WORKDIR /photoprism
 
-# expose default http port 2342
-EXPOSE 2342
+# Expose HTTP(S) ports.
+EXPOSE 2342 2443
 
 # keep container running
 CMD ["tail", "-f", "/dev/null"]

@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service"
 )
 
@@ -16,6 +17,12 @@ import (
 // POST /api/v1/session
 func CreateSession(router *gin.RouterGroup) {
 	router.POST("/session", func(c *gin.Context) {
+		// Check limit for failed auth requests (max. 10 per minute).
+		if limiter.Auth.Reject(ClientIP(c)) {
+			limiter.AbortJSON(c)
+			return
+		}
+
 		var f form.Login
 
 		if err := c.BindJSON(&f); err != nil {
@@ -37,8 +44,8 @@ func CreateSession(router *gin.RouterGroup) {
 			isNew = true
 		}
 
-		// Sign in and save session.
-		if err := sess.SignIn(f, c); err != nil {
+		// Try to log in and save session if successful.
+		if err := sess.LogIn(f, c); err != nil {
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if sess, err = service.Session().Save(sess); err != nil {

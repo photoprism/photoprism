@@ -28,18 +28,33 @@ func TestPassword_SetPassword(t *testing.T) {
 	})
 }
 
-func TestPassword_InvalidPasswordPassword(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+func TestPassword_Is(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		p := Password{Hash: ""}
-		assert.False(t, p.InvalidPassword(""))
+		assert.True(t, p.Is(""))
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		p := NewPassword("abc567", "")
-		assert.False(t, p.InvalidPassword(""))
+		assert.True(t, p.Is(""))
 	})
-	t.Run("true", func(t *testing.T) {
+	t.Run("Wrong", func(t *testing.T) {
 		p := NewPassword("abc567", "passwd")
-		assert.True(t, p.InvalidPassword("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
+		assert.False(t, p.Is("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
+	})
+}
+
+func TestPassword_IsWrong(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		p := Password{Hash: ""}
+		assert.False(t, p.IsWrong(""))
+	})
+	t.Run("Ok", func(t *testing.T) {
+		p := NewPassword("abc567", "")
+		assert.False(t, p.IsWrong(""))
+	})
+	t.Run("Wrong", func(t *testing.T) {
+		p := NewPassword("abc567", "passwd")
+		assert.True(t, p.IsWrong("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
 	})
 }
 
@@ -73,14 +88,14 @@ func TestFindPassword(t *testing.T) {
 		if p := FindPassword("uqxetse3cy5eo9z2"); p == nil {
 			t.Fatal("password not found")
 		} else {
-			assert.False(t, p.InvalidPassword("Alice123!"))
+			assert.False(t, p.IsWrong("Alice123!"))
 		}
 	})
 	t.Run("bob", func(t *testing.T) {
 		if p := FindPassword("uqxc08w3d0ej2283"); p == nil {
 			t.Fatal("password not found")
 		} else {
-			assert.False(t, p.InvalidPassword("Bobbob123!"))
+			assert.False(t, p.IsWrong("Bobbob123!"))
 		}
 	})
 }

@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"time"
 
+	"golang.org/x/crypto/acme/autocert"
+	"golang.org/x/sync/errgroup"
+
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
@@ -14,6 +17,7 @@ import (
 )
 
 var log = event.Log
+var httpsRedirect = http.StatusMovedPermanently
 
 // Start the REST API server using the configuration provided
 func Start(ctx context.Context, conf *config.Config) {
@@ -35,8 +39,13 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Create new HTTP router engine without standard middleware.
 	router := gin.New()
 
+	// Set proxy addresses from which headers related to the client and protocol can be trusted
+	if err := router.SetTrustedProxies(conf.Proxies()); err != nil {
+		log.Warnf("server: %s", err)
+	}
+
 	// Register common middleware.
-	router.Use(Logger(), Recovery(), Security(conf))
+	router.Use(Recovery(), Security(conf), Logger())
 
 	// Initialize package extensions.
 	Ext().Init(router, conf)
@@ -63,24 +72,37 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Register HTTP route handlers.
 	registerRoutes(router, conf)
 
-	// Create new HTTP server instance.
-	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-		Handler: router,
-	}
+	var tlsErr error
+	var tlsManager *autocert.Manager
+	var server *http.Server
 
-	// Start HTTP server.
-	go func() {
-		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
-
-		if err := server.ListenAndServe(); err != nil {
-			if err == http.ErrServerClosed {
-				log.Info("server: shutdown complete")
-			} else {
-				log.Errorf("server: %s", err)
-			}
+	// Enable TLS?
+	if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
+		httpsRedirect = conf.HttpsRedirect()
+		server = &http.Server{
+			Addr:      fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpsPort()),
+			TLSConfig: tlsManager.TLSConfig(),
+			Handler:   router,
 		}
-	}()
+		log.Infof("server: starting in auto tls mode on %s [%s]", server.Addr, time.Since(start))
+		go StartAutoTLS(server, tlsManager, conf)
+	} else if httpsCert, privateKey := conf.TLS(); httpsCert != "" && privateKey != "" {
+		log.Infof("server: starting in manual tls mode")
+		server = &http.Server{
+			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpsPort()),
+			Handler: router,
+		}
+		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
+		go StartTLS(server, httpsCert, privateKey)
+	} else {
+		log.Infof("server: %s", tlsErr)
+		server = &http.Server{
+			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
+			Handler: router,
+		}
+		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
+		go StartHttp(server)
+	}
 
 	// Graceful HTTP server shutdown.
 	<-ctx.Done()
@@ -89,4 +111,53 @@ func Start(ctx context.Context, conf *config.Config) {
 	if err != nil {
 		log.Errorf("server: shutdown failed (%s)", err)
 	}
+}
+
+// StartHttp starts the web server in http mode.
+func StartHttp(s *http.Server) {
+	if err := s.ListenAndServe(); err != nil {
+		if err == http.ErrServerClosed {
+			log.Info("server: shutdown complete")
+		} else {
+			log.Errorf("server: %s", err)
+		}
+	}
+}
+
+// StartTLS starts the web server in https mode.
+func StartTLS(s *http.Server, httpsCert, privateKey string) {
+	if err := s.ListenAndServeTLS(httpsCert, privateKey); err != nil {
+		if err == http.ErrServerClosed {
+			log.Info("server: shutdown complete")
+		} else {
+			log.Errorf("server: %s", err)
+		}
+	}
+}
+
+// StartAutoTLS starts the web server with auto tls enabled.
+func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
+	var g errgroup.Group
+
+	g.Go(func() error {
+		return http.ListenAndServe(fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()), m.HTTPHandler(http.HandlerFunc(redirect)))
+	})
+
+	g.Go(func() error {
+		return s.ListenAndServeTLS("", "")
+	})
+
+	if err := g.Wait(); err != nil {
+		if err == http.ErrServerClosed {
+			log.Info("server: shutdown complete")
+		} else {
+			log.Errorf("server: %s", err)
+		}
+	}
+}
+
+func redirect(w http.ResponseWriter, req *http.Request) {
+	target := "https://" + req.Host + req.RequestURI
+
+	http.Redirect(w, req, target, httpsRedirect)
 }

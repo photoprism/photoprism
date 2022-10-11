@@ -31,7 +31,7 @@ func showConfigAction(ctx *cli.Context) error {
 
 	rows, cols := conf.Report()
 
-	result, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))
+	result, err := report.Render(rows, cols, report.Options{Format: report.CliFormat(ctx), NoWrap: true})
 
 	fmt.Println(result)
 

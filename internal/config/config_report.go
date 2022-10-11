@@ -50,6 +50,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"albums-path", c.AlbumsPath()},
 		{"backup-path", c.BackupPath()},
 		{"cache-path", c.CachePath()},
+		{"cert-cache-path", c.CertsConfigPath()},
 		{"cmd-cache-path", c.CmdCachePath()},
 		{"thumb-cache-path", c.ThumbCachePath()},
 		{"import-path", c.ImportPath()},
@@ -122,11 +123,19 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"api-uri", c.ApiUri()},
 		{"base-uri", c.BaseUri("/")},
 
+		// HTTP(S) Proxy.
+		{"proxy", c.Proxy()},
+		{"proxy-proto-header", strings.Join(c.ProxyProtoHeader(), ", ")},
+		{"proxy-proto-https", strings.Join(c.ProxyProtoHttps(), ", ")},
+
 		// Web Server.
-		{"http-host", c.HttpHost()},
-		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
+		{"http-host", c.HttpHost()},
+		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
+		{"auto-tls", c.AutoTLS()},
+		{"https-port", fmt.Sprintf("%d", c.HttpsPort())},
+		{"https-redirect", fmt.Sprintf("%d", c.HttpsRedirect())},
 
 		// Database.
 		{"database-driver", c.DatabaseDriver()},

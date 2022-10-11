@@ -522,7 +522,7 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 // SetPassword sets a new password stored as hash.
 func (m *User) SetPassword(password string) error {
 	if !m.IsRegistered() {
-		return fmt.Errorf("only registered users may change their password")
+		return fmt.Errorf("only registered users can change their password")
 	}
 
 	if len(password) < LenPasswordMin {
@@ -534,16 +534,21 @@ func (m *User) SetPassword(password string) error {
 	return pw.Save()
 }
 
-// InvalidPassword returns true if the given password does not match the hash.
-func (m *User) InvalidPassword(password string) bool {
+// HasPassword checks if the user has the specified password and the account is registered.
+func (m *User) HasPassword(s string) bool {
+	return !m.WrongPassword(s)
+}
+
+// WrongPassword checks if the given password is incorrect or the account is not registered.
+func (m *User) WrongPassword(s string) bool {
 	// Registered user?
 	if !m.IsRegistered() {
-		log.Warn("only registered users may change their password")
+		log.Warn("only registered users can log in")
 		return true
 	}
 
 	// Empty password?
-	if password == "" {
+	if s == "" {
 		return true
 	}
 
@@ -556,7 +561,7 @@ func (m *User) InvalidPassword(password string) bool {
 	}
 
 	// Invalid?
-	if pw.InvalidPassword(password) {
+	if pw.IsWrong(s) {
 		return true
 	}
 
@@ -567,7 +572,7 @@ func (m *User) InvalidPassword(password string) bool {
 func (m *User) Validate() (err error) {
 	// Empty name?
 	if m.Name() == "" {
-		return errors.New("username cannot be empty")
+		return errors.New("username must not be empty")
 	}
 
 	// Name too short?

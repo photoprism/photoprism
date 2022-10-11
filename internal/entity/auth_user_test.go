@@ -151,7 +151,7 @@ func TestUser_SetName(t *testing.T) {
 	})
 }
 
-func TestUser_InvalidPassword(t *testing.T) {
+func TestUser_WrongPassword(t *testing.T) {
 	t.Run("admin", func(t *testing.T) {
 		m := FindUserByName("admin")
 
@@ -159,7 +159,7 @@ func TestUser_InvalidPassword(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.False(t, m.InvalidPassword("photoprism"))
+		assert.False(t, m.WrongPassword("photoprism"))
 	})
 	t.Run("admin invalid password", func(t *testing.T) {
 		m := FindUserByName("admin")
@@ -168,7 +168,7 @@ func TestUser_InvalidPassword(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.True(t, m.InvalidPassword("wrong-password"))
+		assert.True(t, m.WrongPassword("wrong-password"))
 	})
 	t.Run("no password existing", func(t *testing.T) {
 		p := User{UserUID: "u000000000000010", UserName: "Hans", DisplayName: ""}
@@ -176,16 +176,16 @@ func TestUser_InvalidPassword(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.True(t, p.InvalidPassword("abcdef"))
+		assert.True(t, p.WrongPassword("abcdef"))
 
 	})
 	t.Run("NotRegistered", func(t *testing.T) {
 		p := User{UserUID: "u12", UserName: "", DisplayName: ""}
-		assert.True(t, p.InvalidPassword("abcdef"))
+		assert.True(t, p.WrongPassword("abcdef"))
 	})
 	t.Run("PasswordEmpty", func(t *testing.T) {
 		p := User{UserUID: "u000000000000011", UserName: "User", DisplayName: ""}
-		assert.True(t, p.InvalidPassword(""))
+		assert.True(t, p.WrongPassword(""))
 	})
 }
 

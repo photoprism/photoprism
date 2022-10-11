@@ -44,9 +44,10 @@ var TotalMem uint64
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
 	once     sync.Once
-	db       *gorm.DB
+	cliCtx   *cli.Context
 	options  *Options
 	settings *customize.Settings
+	db       *gorm.DB
 	hub      *hub.Config
 	token    string
 	serial   string
@@ -97,6 +98,7 @@ func NewConfig(ctx *cli.Context) *Config {
 
 	// Initialize options from config file and CLI context.
 	c := &Config{
+		cliCtx:  ctx,
 		options: NewOptions(ctx),
 		token:   rnd.GenerateToken(8),
 		env:     os.Getenv("DOCKER_ENV"),
@@ -119,6 +121,15 @@ func NewConfig(ctx *cli.Context) *Config {
 // Unsafe checks if unsafe settings are allowed.
 func (c *Config) Unsafe() bool {
 	return c.options.Unsafe
+}
+
+// CliContext returns the cli context if set.
+func (c *Config) CliContext() *cli.Context {
+	if c.cliCtx == nil {
+		log.Warnf("config: cli context not set - possible bug")
+	}
+
+	return c.cliCtx
 }
 
 // Options returns the raw config options.
@@ -373,6 +384,15 @@ func (c *Config) SiteUrl() string {
 	}
 
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
+}
+
+// SiteHttps checks if the site URL uses HTTPS.
+func (c *Config) SiteHttps() bool {
+	if c.options.SiteUrl == "" {
+		return false
+	}
+
+	return strings.HasPrefix(c.options.SiteUrl, "https://")
 }
 
 // SiteDomain returns the public server domain.

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"reflect"
 	"time"
 
 	"github.com/urfave/cli"
@@ -12,7 +11,6 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Options hold the global configuration values without further validation or processing.
@@ -33,7 +31,7 @@ type Options struct {
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Prod                  bool          `yaml:"Prod" json:"Prod" flag:"prod"`
 	Debug                 bool          `yaml:"Debug" json:"Debug" flag:"debug"`
-	Trace                 bool          `yaml:"Trace" json:"Trace" flag:"Trace"`
+	Trace                 bool          `yaml:"Trace" json:"Trace" flag:"trace"`
 	Test                  bool          `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool          `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                  bool          `yaml:"Demo" json:"-" flag:"demo"`
@@ -81,6 +79,8 @@ type Options struct {
 	AppIcon               string        `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
 	AppName               string        `yaml:"AppName" json:"AppName" flag:"app-name"`
 	AppMode               string        `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
+	Imprint               string        `yaml:"Imprint" json:"Imprint" flag:"imprint"`
+	ImprintUrl            string        `yaml:"ImprintUrl" json:"ImprintUrl" flag:"imprint-url"`
 	WallpaperUri          string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
 	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
 	SiteUrl               string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
@@ -89,8 +89,18 @@ type Options struct {
 	SiteCaption           string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription       string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string        `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
-	Imprint               string        `yaml:"Imprint" json:"Imprint" flag:"imprint"`
-	ImprintUrl            string        `yaml:"ImprintUrl" json:"ImprintUrl" flag:"imprint-url"`
+	Proxy                 []string      `yaml:"Proxy" json:"-" flag:"proxy"`
+	ProxyProtoHeader      []string      `yaml:"ProxyProtoHeader" json:"-" flag:"proxy-proto-header"`
+	ProxyProtoHttps       []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
+	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
+	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
+	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
+	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
+	AutoTLS               string        `yaml:"AutoTLS" json:"AutoTLS" flag:"auto-tls"` // AutoTLS enabled automatic HTTPS via Let's Encrypt if set a valid email address.
+	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
+	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
+	HttpsPort             int           `yaml:"HttpsPort" json:"HttpsPort" flag:"https-port"` // HttpsPort is the port number to be used for HTTPS connections.
+	HttpsRedirect         int           `yaml:"HttpsRedirect" json:"HttpsRedirect" flag:"https-redirect"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseName          string        `yaml:"DatabaseName" json:"-" flag:"database-name"`
@@ -99,10 +109,6 @@ type Options struct {
 	DatabasePassword      string        `yaml:"DatabasePassword" json:"-" flag:"database-password"`
 	DatabaseConns         int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
 	DatabaseConnsIdle     int           `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
-	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
-	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
-	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
-	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
 	DarktableBin          string        `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
 	DarktableCachePath    string        `yaml:"DarktableCachePath" json:"-" flag:"darktable-cache-path"`
 	DarktableConfigPath   string        `yaml:"DarktableConfigPath" json:"-" flag:"darktable-config-path"`
@@ -142,7 +148,7 @@ type Options struct {
 //
 // 1. Load: This will initialize options from a yaml config file.
 //
-//  2. SetContext: Which comes after Load and overrides
+//  2. ApplyCliContext: Which comes after Load and overrides
 //     any previous options giving an option two override file configs through the CLI.
 func NewOptions(ctx *cli.Context) *Options {
 	c := &Options{}
@@ -175,7 +181,7 @@ func NewOptions(ctx *cli.Context) *Options {
 		log.Warnf("config: failed loading defaults from %s (%s)", clean.Log(c.DefaultsYaml), err)
 	}
 
-	if err := c.SetContext(ctx); err != nil {
+	if err := c.ApplyCliContext(ctx); err != nil {
 		log.Error(err)
 	}
 
@@ -215,87 +221,8 @@ func (c *Options) Load(fileName string) error {
 	return yaml.Unmarshal(yamlConfig, c)
 }
 
-// SetContext uses options from the CLI to setup configuration overrides
+// ApplyCliContext uses options from the CLI to setup configuration overrides
 // for the entity.
-func (c *Options) SetContext(ctx *cli.Context) error {
-	v := reflect.ValueOf(c).Elem()
-
-	// Iterate through all config fields.
-	for i := 0; i < v.NumField(); i++ {
-		fieldValue := v.Field(i)
-
-		tagValue := v.Type().Field(i).Tag.Get("flag")
-
-		// Assign value to field with "flag" tag.
-		if tagValue != "" {
-			switch t := fieldValue.Interface().(type) {
-			case time.Duration:
-				var s string
-
-				// Get duration string.
-				if ctx.IsSet(tagValue) {
-					s = ctx.String(tagValue)
-				} else if ctx.GlobalIsSet(tagValue) || fieldValue.Interface().(time.Duration) == 0 {
-					s = ctx.GlobalString(tagValue)
-				}
-
-				// Parse duration string.
-				if s == "" {
-					// Omit.
-				} else if sec := txt.UInt(s); sec > 0 {
-					fieldValue.Set(reflect.ValueOf(time.Duration(sec) * time.Second))
-				} else if d, err := time.ParseDuration(s); err == nil {
-					fieldValue.Set(reflect.ValueOf(d))
-				}
-			case float64:
-				// Only if explicitly set or current value is empty (use default).
-				if ctx.IsSet(tagValue) {
-					f := ctx.Float64(tagValue)
-					fieldValue.SetFloat(f)
-				} else if ctx.GlobalIsSet(tagValue) || fieldValue.Float() == 0 {
-					f := ctx.GlobalFloat64(tagValue)
-					fieldValue.SetFloat(f)
-				}
-			case int, int64:
-				// Only if explicitly set or current value is empty (use default).
-				if ctx.IsSet(tagValue) {
-					f := ctx.Int64(tagValue)
-					fieldValue.SetInt(f)
-				} else if ctx.GlobalIsSet(tagValue) || fieldValue.Int() == 0 {
-					f := ctx.GlobalInt64(tagValue)
-					fieldValue.SetInt(f)
-				}
-			case uint, uint64:
-				// Only if explicitly set or current value is empty (use default).
-				if ctx.IsSet(tagValue) {
-					f := ctx.Uint64(tagValue)
-					fieldValue.SetUint(f)
-				} else if ctx.GlobalIsSet(tagValue) || fieldValue.Uint() == 0 {
-					f := ctx.GlobalUint64(tagValue)
-					fieldValue.SetUint(f)
-				}
-			case string:
-				// Only if explicitly set or current value is empty (use default)
-				if ctx.IsSet(tagValue) {
-					f := ctx.String(tagValue)
-					fieldValue.SetString(f)
-				} else if ctx.GlobalIsSet(tagValue) || fieldValue.String() == "" {
-					f := ctx.GlobalString(tagValue)
-					fieldValue.SetString(f)
-				}
-			case bool:
-				if ctx.IsSet(tagValue) {
-					f := ctx.Bool(tagValue)
-					fieldValue.SetBool(f)
-				} else if ctx.GlobalIsSet(tagValue) {
-					f := ctx.GlobalBool(tagValue)
-					fieldValue.SetBool(f)
-				}
-			default:
-				log.Warnf("cannot assign value of type %s from cli flag %s", t, tagValue)
-			}
-		}
-	}
-
-	return nil
+func (c *Options) ApplyCliContext(ctx *cli.Context) error {
+	return ApplyCliContext(c, ctx)
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -25,6 +26,12 @@ func ChangePassword(router *gin.RouterGroup) {
 		// You cannot change any passwords without authentication and settings enabled.
 		if conf.Public() || conf.DisableSettings() {
 			Abort(c, http.StatusForbidden, i18n.ErrPublic)
+			return
+		}
+
+		// Check limit for failed auth requests (max. 10 per minute).
+		if limiter.Auth.Reject(ClientIP(c)) {
+			limiter.AbortJSON(c)
 			return
 		}
 
@@ -57,7 +64,8 @@ func ChangePassword(router *gin.RouterGroup) {
 		}
 
 		// Verify that the old password is correct.
-		if m.InvalidPassword(f.OldPassword) {
+		if m.WrongPassword(f.OldPassword) {
+			limiter.Auth.Reserve(ClientIP(c))
 			Abort(c, http.StatusBadRequest, i18n.ErrInvalidPassword)
 			return
 		}

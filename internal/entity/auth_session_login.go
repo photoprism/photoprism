@@ -8,11 +8,12 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// SignIn checks user authentication based on the login form.
-func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
+// LogIn performs authentication checks against the specified login form.
+func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 	if c != nil {
 		m.SetContext(c)
 	}
@@ -29,6 +30,7 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 		// User found?
 		if user == nil {
 			message := "account not found"
+			limiter.Auth.Reserve(m.IP())
 			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
 			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
@@ -45,8 +47,9 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 		}
 
 		// Password valid?
-		if user.InvalidPassword(f.Password) {
+		if user.WrongPassword(f.Password) {
 			message := "incorrect password"
+			limiter.Auth.Reserve(m.IP())
 			event.AuditErr([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
 			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
@@ -66,6 +69,7 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 		// Redeem token.
 		if user.IsRegistered() {
 			if shares := user.RedeemToken(f.AuthToken); shares == 0 {
+				limiter.Auth.Reserve(m.IP())
 				event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.AuthToken))
 				m.Status = http.StatusNotFound
 				return i18n.Error(i18n.ErrInvalidLink)
@@ -76,6 +80,7 @@ func (m *Session) SignIn(f form.Login, c *gin.Context) (err error) {
 			m.Status = http.StatusInternalServerError
 			return i18n.Error(i18n.ErrUnexpected)
 		} else if shares := data.RedeemToken(f.AuthToken); shares == 0 {
+			limiter.Auth.Reserve(m.IP())
 			event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.AuthToken))
 			event.LoginError(m.IP(), "api", "", m.UserAgent, "invalid share token")
 			m.Status = http.StatusNotFound

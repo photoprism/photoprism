@@ -100,8 +100,8 @@ RUN apt-get update && \
 # Default working directory.
 WORKDIR /photoprism
 
-# Expose HTTP port.
-EXPOSE 2342
+# Expose HTTP(S) ports.
+EXPOSE 2342 2443
 
 # Copy app files.
 COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism

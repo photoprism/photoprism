@@ -4,8 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestConfig_FindExecutable(t *testing.T) {
@@ -84,6 +85,15 @@ func TestConfig_TempPath(t *testing.T) {
 		t.Fatalf("temp paths should match: '%s' <=> '%s'", d4, d0)
 	} else {
 		t.Logf("temp paths match: '%s' == '%s'", d4, d0)
+	}
+}
+
+func TestConfig_CertsConfigPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	if dir := c.CertsConfigPath(); dir == "" {
+		t.Fatal("cert config path is empty")
+	} else if !strings.HasPrefix(dir, c.ConfigPath()) {
+		t.Fatalf("unexpected cert config path: %s", dir)
 	}
 }
 

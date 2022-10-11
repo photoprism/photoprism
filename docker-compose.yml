@@ -13,8 +13,9 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342"   # default HTTP port (host:container)
-      - "2343:2343"   # acceptance Test HTTP port (host:container)
+      - "2342:2342"   # Default HTTP port (host:container)
+      - "2443:2443"   # Default TLS port (host:container)
+      - "2343:2343"   # Acceptance Test HTTP port (host:container)
       - "40000:40000" # Go Debugger (host:container)
     shm_size: "2gb"
     links:

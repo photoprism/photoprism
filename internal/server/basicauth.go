@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -55,15 +56,28 @@ func BasicAuth() gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
-		name, password, key, valid := validate(c)
+		if c == nil {
+			return
+		}
 
-		if valid {
+		name, password, key, ok := validate(c)
+
+		if ok {
 			// Already authenticated.
 			return
 		} else if key == "" {
 			// Incomplete credentials.
 			c.Header("WWW-Authenticate", BasicAuthRealm)
 			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		// Get client IP address.
+		clientIp := api.ClientIP(c)
+
+		// Check limit for failed auth requests (max. 10 per minute).
+		if limiter.Auth.Reject(clientIp) {
+			limiter.Abort(c)
 			return
 		}
 
@@ -75,24 +89,26 @@ func BasicAuth() gin.HandlerFunc {
 			// Username not found.
 			message := "account not found"
 
-			event.AuditWarn([]string{api.ClientIP(c), "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(api.ClientIP(c), "webdav", name, api.UserAgent(c), message)
+			limiter.Auth.Reserve(clientIp)
+			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
+			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
 		} else if !user.SyncAllowed() {
 			// Sync disabled for this account.
 			message := "sync disabled"
 
-			event.AuditWarn([]string{api.ClientIP(c), "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(api.ClientIP(c), "webdav", name, api.UserAgent(c), message)
-		} else if valid = !user.InvalidPassword(password); !valid {
+			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
+			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
+		} else if ok = user.HasPassword(password); !ok {
 			// Wrong password.
 			message := "incorrect password"
 
-			event.AuditErr([]string{api.ClientIP(c), "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(api.ClientIP(c), "webdav", name, api.UserAgent(c), message)
+			limiter.Auth.Reserve(clientIp)
+			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
+			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
 		} else {
 			// Successfully authenticated.
-			event.AuditInfo([]string{api.ClientIP(c), "webdav login as %s", "succeeded"}, clean.LogQuote(name))
-			event.LoginInfo(api.ClientIP(c), "webdav", name, api.UserAgent(c))
+			event.AuditInfo([]string{clientIp, "webdav login as %s", "succeeded"}, clean.LogQuote(name))
+			event.LoginInfo(clientIp, "webdav", name, api.UserAgent(c))
 
 			// Cache successful authentication.
 			basicAuthCache.SetDefault(key, user)
