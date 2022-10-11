@@ -25,8 +25,6 @@ Additional information can be found in our Developer Guide:
 package session
 
 import (
-	gc "github.com/patrickmn/go-cache"
-
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 )
@@ -35,8 +33,7 @@ var log = event.Log
 
 // Session represents a session store.
 type Session struct {
-	conf  *config.Config
-	cache *gc.Cache
+	conf *config.Config
 }
 
 // New creates a new session store with default values.
