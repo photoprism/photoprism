@@ -1,17 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Ehsan Sabet <ehsan.sabet@hotmail.com>\n"
+"PO-Revision-Date: 2022-10-11 00:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 3.1.1\n"
 
 #: src/pages/albums.vue:421
 msgid "%{n} albums found"
@@ -351,8 +352,9 @@ msgid "Black"
 msgstr "سیاه"
 
 #: src/options/options.js:403
+#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr ""
+msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
 #: src/options/options.js:386
 msgid "Blue"
@@ -560,8 +562,9 @@ msgid "Cyan"
 msgstr "فیروزه ای"
 
 #: src/options/themes.js:432
+#, fuzzy
 msgid "Cyano"
-msgstr ""
+msgstr "سیانو"
 
 #: src/options/options.js:358
 msgid "Daily"
@@ -719,8 +722,9 @@ msgid "Downloading…"
 msgstr "درحال دانلود…"
 
 #: src/pages/settings/advanced.vue:279
+#, fuzzy
 msgid "Downscaling Filter"
-msgstr ""
+msgstr "فیلتر کاهش مقیاس"
 
 #: src/pages/library/files.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -800,16 +804,19 @@ msgid "Exclude content marked as private from search results, shared albums, lab
 msgstr "محتوای علامت‌گذاری‌شده به‌عنوان خصوصی را از نتایج جستجو، آلبوم‌های مشترک، برچسب‌ها و مکان‌ها حذف کنید."
 
 #: src/pages/people/new.vue:92 src/pages/people/recognized.vue:134
+#, fuzzy
 msgid "Exclude hidden"
-msgstr ""
+msgstr "حذف پنهان"
 
 #: src/component/navigation.vue:298
+#, fuzzy
 msgid "Expand"
-msgstr ""
+msgstr "بسط دادن"
 
 #: src/component/photo/toolbar.vue:139
+#, fuzzy
 msgid "Expand Search"
-msgstr ""
+msgstr "جستجو را گسترش دهید"
 
 #: src/pages/settings/advanced.vue:118
 msgid "Experimental Features"
@@ -824,8 +831,9 @@ msgid "Exposure"
 msgstr "قرارگیری در معرض"
 
 #: src/dialog/photo/details.vue:425
+#, fuzzy
 msgid "F Number"
-msgstr ""
+msgstr "شماره F"
 
 #: src/model/face.js:163
 msgid "Face"
@@ -926,8 +934,9 @@ msgid "Forgot password?"
 msgstr "رمز عبور را فراموش کرده‌اید؟"
 
 #: src/dialog/photo/files.vue:113 src/dialog/photo/files.vue:110
+#, fuzzy
 msgid "FPS"
-msgstr ""
+msgstr "FPS"
 
 #: src/dialog/photo/files.vue:107 src/dialog/photo/files.vue:104
 msgid "Frames"
@@ -942,8 +951,9 @@ msgid "Fullscreen"
 msgstr "تمام صفحه"
 
 #: src/options/themes.js:442
+#, fuzzy
 msgid "Gemstone"
-msgstr ""
+msgstr "سنگ قیمتی"
 
 #: src/pages/settings.vue:35
 msgid "General"
@@ -1166,8 +1176,9 @@ msgid "Labels deleted"
 msgstr "برچسب ها حذف شدند"
 
 #: src/options/options.js:404
+#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr ""
+msgstr "Lanczos: حفظ جزئیات، حداقل مصنوعات"
 
 #: src/pages/settings/general.vue:92
 msgid "Language"
@@ -1182,8 +1193,9 @@ msgid "Latitude"
 msgstr "عرض جغرافیایی"
 
 #: src/options/themes.js:437
+#, fuzzy
 msgid "Lavender"
-msgstr ""
+msgstr "اسطوخودوس"
 
 #: src/pages/about/about.vue:55
 msgid "Learn more"
@@ -1213,16 +1225,18 @@ msgid "Like"
 msgstr "پسندیدن"
 
 #: src/options/options.js:382
+#, fuzzy
 msgid "Lime"
-msgstr ""
+msgstr "اهک"
 
 #: src/pages/library/files.vue:308
 msgid "Limit reached, showing first %{n} files"
 msgstr "به حد مجاز رسیده است، اولین %{n} فایل را نشان می دهد"
 
 #: src/options/options.js:406
+#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
-msgstr ""
+msgstr "خطی: بسیار روان، بهترین عملکرد"
 
 #: src/model/link.js:115
 msgid "Link"
@@ -1533,8 +1547,9 @@ msgid "One picture found"
 msgstr "یک تصویر پیدا شد"
 
 #: src/options/themes.js:427
+#, fuzzy
 msgid "Onyx"
-msgstr ""
+msgstr "اونیکس"
 
 #: src/pages/settings/advanced.vue:6
 msgid "Options"
@@ -1730,8 +1745,9 @@ msgid "Raw"
 msgstr "خام"
 
 #: src/component/photo/cards.vue:285 src/component/photo/mosaic.vue:206
+#, fuzzy
 msgid "RAW"
-msgstr ""
+msgstr "خام"
 
 #: src/pages/settings/advanced.vue:96
 msgid "RAW Conversion"
@@ -2281,8 +2297,9 @@ msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "آپلودهایی که ممکن است حاوی چنین تصاویری باشند به طور خودکار رد می شوند."
 
 #: src/dialog/share.vue:153
+#, fuzzy
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/pages/settings/advanced.vue:460
 msgid "Use Presets"
@@ -2305,8 +2322,9 @@ msgid "Username"
 msgstr "نام کاربری"
 
 #: src/options/themes.js:412
+#, fuzzy
 msgid "Vanta"
-msgstr ""
+msgstr "وانتا"
 
 #: src/pages/auth/connect.vue:9
 msgid "Verified"
@@ -2390,8 +2408,9 @@ msgid "Yellow"
 msgstr "زرد"
 
 #: src/options/themes.js:462
+#, fuzzy
 msgid "Yellowstone"
-msgstr ""
+msgstr "یلوستون"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18 src/dialog/photo/archive.vue:18
 #: src/dialog/photo/files.vue:122 src/dialog/photo/files.vue:130 src/dialog/photo/files.vue:138
