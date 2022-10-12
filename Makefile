@@ -492,6 +492,10 @@ docker-demo-ubuntu:
 	docker pull photoprism/photoprism:preview-ubuntu
 	scripts/docker/build.sh demo ubuntu /ubuntu
 	scripts/docker/push.sh demo ubuntu
+docker-demo-unstable:
+	docker pull photoprism/photoprism:unstable
+	scripts/docker/build.sh demo unstable /unstable
+	scripts/docker/push.sh demo unstable
 docker-demo-local:
 	scripts/docker/build.sh photoprism
 	scripts/docker/build.sh demo $(BUILD_DATE) /debian
