@@ -15,6 +15,15 @@ import (
 // GET /api/v1/session/:id
 func GetSession(router *gin.RouterGroup) {
 	router.GET("/session/:id", func(c *gin.Context) {
+		conf := service.Config()
+
+		// Skip authentication if app is running in public mode.
+		if conf.Public() {
+			sess := service.Session().Public()
+			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": sess.ID, "user": sess.User(), "data": sess.Data(), "config": conf.ClientPublic()})
+			return
+		}
+
 		id := clean.ID(c.Param("id"))
 
 		if id == "" {
@@ -47,7 +56,7 @@ func GetSession(router *gin.RouterGroup) {
 
 		var clientConfig config.ClientConfig
 
-		if conf := service.Config(); conf == nil {
+		if conf == nil {
 			log.Errorf("session: config is not set - possible bug")
 			AbortUnexpected(c)
 			return

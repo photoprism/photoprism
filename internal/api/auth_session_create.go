@@ -1,6 +1,8 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -17,6 +19,15 @@ import (
 // POST /api/v1/session
 func CreateSession(router *gin.RouterGroup) {
 	router.POST("/session", func(c *gin.Context) {
+		conf := service.Config()
+
+		// Skip authentication if app is running in public mode.
+		if conf.Public() {
+			sess := service.Session().Public()
+			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": sess.ID, "user": sess.User(), "data": sess.Data(), "config": conf.ClientPublic()})
+			return
+		}
+
 		// Check limit for failed auth requests (max. 10 per minute).
 		if limiter.Auth.Reject(ClientIP(c)) {
 			limiter.AbortJSON(c)
@@ -66,7 +77,7 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Get config values for use by the JavaScript UI and other clients.
 		var clientConfig config.ClientConfig
-		if conf := service.Config(); sess.User().IsVisitor() {
+		if sess.User().IsVisitor() {
 			clientConfig = conf.ClientShare()
 		} else if sess.User().IsRegistered() {
 			clientConfig = conf.ClientSession(sess)
