@@ -82,7 +82,7 @@ export default [
     component: Login,
     meta: { title: siteTitle, auth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
-      if (!session.isUser()) {
+      if (session.loginRequired()) {
         next();
       } else if (config.deny("photos", "search")) {
         next({ name: "albums" });
@@ -108,7 +108,7 @@ export default [
     component: Photos,
     meta: { title: siteTitle, icon: true, auth: true },
     beforeEnter: (to, from, next) => {
-      if (!session.isUser()) {
+      if (session.loginRequired()) {
         next({ name: "login" });
       } else if (config.deny("photos", "search")) {
         next({ name: "albums" });

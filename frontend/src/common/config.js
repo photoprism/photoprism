@@ -535,6 +535,10 @@ export default class Config {
     return [];
   }
 
+  isPublic() {
+    return this.values && this.values.public;
+  }
+
   isSponsor() {
     if (!this.values || !this.values.sponsor) {
       return false;
