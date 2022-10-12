@@ -10,7 +10,7 @@ import (
 )
 
 func TestConfig_FindExecutable(t *testing.T) {
-	assert.Equal(t, "", findExecutable("yyy", "xxx"))
+	assert.Equal(t, "", findBin("yyy", "xxx"))
 }
 
 func TestConfig_SidecarPath(t *testing.T) {

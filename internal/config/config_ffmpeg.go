@@ -4,7 +4,7 @@ import "github.com/photoprism/photoprism/internal/ffmpeg"
 
 // FFmpegBin returns the ffmpeg executable file name.
 func (c *Config) FFmpegBin() string {
-	return findExecutable(c.options.FFmpegBin, "ffmpeg")
+	return findBin(c.options.FFmpegBin, "ffmpeg")
 }
 
 // FFmpegEnabled checks if FFmpeg is enabled for video transcoding.

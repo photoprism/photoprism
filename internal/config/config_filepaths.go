@@ -8,40 +8,50 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"sync"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // binPaths stores known executable paths.
-var binPaths = make(map[string]string, 8)
-var tempPath = ""
+var (
+	binPaths = make(map[string]string, 8)
+	binMu    = sync.RWMutex{}
+	tempPath = ""
+)
 
-// findExecutable searches binaries by their name.
-func findExecutable(configBin, defaultBin string) (binPath string) {
-	// Cached?
+// findBin resolves the absolute file path of external binaries.
+func findBin(configBin, defaultBin string) (binPath string) {
 	cacheKey := defaultBin + configBin
-	if cached, ok := binPaths[cacheKey]; ok {
+	binMu.RLock()
+	cached, found := binPaths[cacheKey]
+	binMu.RUnlock()
+
+	// Already found?
+	if found {
 		return cached
 	}
 
-	// Default if config value is empty.
+	// Default binary name?
 	if configBin == "" {
 		binPath = defaultBin
 	} else {
 		binPath = configBin
 	}
 
-	// Search.
+	// Search for binary.
 	if path, err := exec.LookPath(binPath); err == nil {
 		binPath = path
 	}
 
-	// Exists?
+	// Found?
 	if !fs.FileExists(binPath) {
 		binPath = ""
 	} else {
+		binMu.Lock()
 		binPaths[cacheKey] = binPath
+		binMu.Unlock()
 	}
 
 	return binPath
@@ -481,17 +491,17 @@ func (c *Config) TestdataPath() string {
 
 // MysqlBin returns the mysql executable file name.
 func (c *Config) MysqlBin() string {
-	return findExecutable("", "mysql")
+	return findBin("", "mysql")
 }
 
 // MysqldumpBin returns the mysqldump executable file name.
 func (c *Config) MysqldumpBin() string {
-	return findExecutable("", "mysqldump")
+	return findBin("", "mysqldump")
 }
 
 // SqliteBin returns the sqlite executable file name.
 func (c *Config) SqliteBin() string {
-	return findExecutable("", "sqlite3")
+	return findBin("", "sqlite3")
 }
 
 // AlbumsPath returns the storage path for album YAML files.

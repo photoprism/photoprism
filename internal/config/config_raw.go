@@ -18,7 +18,7 @@ func (c *Config) RawPresets() bool {
 
 // DarktableBin returns the darktable-cli executable file name.
 func (c *Config) DarktableBin() string {
-	return findExecutable(c.options.DarktableBin, "darktable-cli")
+	return findBin(c.options.DarktableBin, "darktable-cli")
 }
 
 // DarktableBlacklist returns the darktable file extension blacklist.
@@ -73,7 +73,7 @@ func (c *Config) DarktableEnabled() bool {
 
 // RawtherapeeBin returns the rawtherapee-cli executable file name.
 func (c *Config) RawtherapeeBin() string {
-	return findExecutable(c.options.RawtherapeeBin, "rawtherapee-cli")
+	return findBin(c.options.RawtherapeeBin, "rawtherapee-cli")
 }
 
 // RawtherapeeBlacklist returns the RawTherapee file extension blacklist.
@@ -93,7 +93,7 @@ func (c *Config) SipsEnabled() bool {
 
 // SipsBin returns the SIPS executable file name.
 func (c *Config) SipsBin() string {
-	return findExecutable(c.options.SipsBin, "sips")
+	return findBin(c.options.SipsBin, "sips")
 }
 
 // SipsBlacklist returns the Sips file extension blacklist.
@@ -103,7 +103,7 @@ func (c *Config) SipsBlacklist() string {
 
 // HeifConvertBin returns the heif-convert executable file name.
 func (c *Config) HeifConvertBin() string {
-	return findExecutable(c.options.HeifConvertBin, "heif-convert")
+	return findBin(c.options.HeifConvertBin, "heif-convert")
 }
 
 // HeifConvertEnabled checks if heif-convert is enabled for HEIF conversion.
