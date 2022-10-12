@@ -387,22 +387,10 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_SITE_PREVIEW",
 		}, Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringSliceFlag{
-			Name:   "proxy",
-			Usage:  "proxy server `IP` range from which client and protocol headers can be trusted",
+			Name:   "trusted-proxy",
+			Usage:  "`CIDR` range from which IP and HTTPS proxy headers can be trusted",
 			Value:  &cli.StringSlice{header.CidrDockerInternal},
-			EnvVar: "PHOTOPRISM_PROXY",
-		}}, {
-		Flag: cli.StringSliceFlag{
-			Name:   "proxy-proto-header",
-			Usage:  "forwarded protocol `HEADER`",
-			Value:  &cli.StringSlice{header.ForwardedProto},
-			EnvVar: "PHOTOPRISM_PROXY_PROTO_HEADER",
-		}}, {
-		Flag: cli.StringSliceFlag{
-			Name:   "proxy-proto-https",
-			Usage:  "forwarded HTTPS protocol `NAME`",
-			Value:  &cli.StringSlice{header.ProtoHttps},
-			EnvVar: "PHOTOPRISM_PROXY_PROTO_HTTPS",
+			EnvVar: "PHOTOPRISM_TRUSTED_PROXY",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-mode, mode",
@@ -429,17 +417,30 @@ var Flags = CliFlags{
 			Name:   "auto-tls",
 			Usage:  "`EMAIL` address to enable automatic HTTPS via Let's Encrypt",
 			EnvVar: "PHOTOPRISM_AUTO_TLS",
+			Hidden: true,
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "https-port",
 			Value:  2443,
-			Usage:  "HTTPS server port `NUMBER` if site URL uses HTTPS",
+			Usage:  "HTTPS server port `NUMBER` if TLS is configured",
 			EnvVar: "PHOTOPRISM_HTTPS_PORT",
+		}}, {
+		Flag: cli.StringSliceFlag{
+			Name:   "https-proxy-header",
+			Usage:  "proxy protocol header `NAME`",
+			Value:  &cli.StringSlice{header.ForwardedProto},
+			EnvVar: "PHOTOPRISM_HTTPS_PROXY_HEADER",
+		}}, {
+		Flag: cli.StringSliceFlag{
+			Name:   "https-proxy-proto",
+			Usage:  "forwarded HTTPS protocol `NAME`",
+			Value:  &cli.StringSlice{header.ProtoHttps},
+			EnvVar: "PHOTOPRISM_HTTPS_PROXY_PROTO",
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "https-redirect",
 			Value:  301,
-			Usage:  "status `CODE` for redirect if site URL uses HTTPS (300-399 or 0 to disable)",
+			Usage:  "status `CODE` when redirecting from HTTP to HTTPS (300-399 or 0 to disable)",
 			EnvVar: "PHOTOPRISM_HTTPS_REDIRECT",
 		}}, {
 		Flag: cli.StringFlag{

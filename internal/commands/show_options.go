@@ -41,34 +41,34 @@ func showOptionsAction(ctx *cli.Context) error {
 	}
 
 	type Section struct {
-		Start   string
-		Caption string
-		Info    string
+		Start string
+		Title string
+		Info  string
 	}
 
 	s := []Section{
-		{Start: "PHOTOPRISM_ADMIN_PASSWORD", Caption: "Authentication"},
-		{Start: "PHOTOPRISM_LOG_LEVEL", Caption: "Logging"},
-		{Start: "PHOTOPRISM_CONFIG_PATH", Caption: "Storage"},
-		{Start: "PHOTOPRISM_WORKERS", Caption: "Index Workers"},
-		{Start: "PHOTOPRISM_READONLY", Caption: "Feature Flags"},
-		{Start: "PHOTOPRISM_DEFAULT_LOCALE", Caption: "Customization"},
-		{Start: "PHOTOPRISM_CDN_URL", Caption: "Site Information"},
-		{Start: "PHOTOPRISM_HTTP_PORT", Caption: "Web Server"},
-		{Start: "PHOTOPRISM_DATABASE_DRIVER", Caption: "Database Connection"},
-		{Start: "PHOTOPRISM_DARKTABLE_BIN", Caption: "File Converters"},
-		{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Caption: "Security Tokens"},
-		{Start: "PHOTOPRISM_THUMB_COLOR", Caption: "Image Quality"},
-		{Start: "PHOTOPRISM_FACE_SIZE", Caption: "Face Recognition",
+		{Start: "PHOTOPRISM_ADMIN_PASSWORD", Title: "Authentication"},
+		{Start: "PHOTOPRISM_LOG_LEVEL", Title: "Logging"},
+		{Start: "PHOTOPRISM_CONFIG_PATH", Title: "Storage"},
+		{Start: "PHOTOPRISM_WORKERS", Title: "Index Workers"},
+		{Start: "PHOTOPRISM_READONLY", Title: "Feature Flags"},
+		{Start: "PHOTOPRISM_DEFAULT_LOCALE", Title: "Customization"},
+		{Start: "PHOTOPRISM_CDN_URL", Title: "Site Information"},
+		{Start: "PHOTOPRISM_HTTP_PORT", Title: "Web Server"},
+		{Start: "PHOTOPRISM_DATABASE_DRIVER", Title: "Database Connection"},
+		{Start: "PHOTOPRISM_DARKTABLE_BIN", Title: "File Converters"},
+		{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Title: "Security Tokens"},
+		{Start: "PHOTOPRISM_THUMB_COLOR", Title: "Image Quality"},
+		{Start: "PHOTOPRISM_FACE_SIZE", Title: "Face Recognition",
 			Info: faceOptionsInfo},
-		{Start: "PHOTOPRISM_PID_FILENAME", Caption: "Daemon Mode",
+		{Start: "PHOTOPRISM_PID_FILENAME", Title: "Daemon Mode",
 			Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
 	}
 
 	j := 0
 
 	for i, sec := range s {
-		fmt.Printf("### %s ###\n\n", sec.Caption)
+		fmt.Printf("### %s ###\n\n", sec.Title)
 		if sec.Info != "" && ctx.Bool("md") {
 			fmt.Printf("%s\n\n", sec.Info)
 		}

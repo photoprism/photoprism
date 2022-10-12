@@ -19,6 +19,13 @@ var ShowConfigCommand = cli.Command{
 	Action: showConfigAction,
 }
 
+// ConfigReports specifies which configuration reports to display.
+var ConfigReports = []Report{
+	{Title: "Config Options", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
+		return conf.Report()
+	}},
+}
+
 // showConfigAction shows global config option names and values.
 func showConfigAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
@@ -29,11 +36,23 @@ func showConfigAction(ctx *cli.Context) error {
 		log.Debug(err)
 	}
 
-	rows, cols := conf.Report()
+	fmt.Println("")
 
-	result, err := report.Render(rows, cols, report.Options{Format: report.CliFormat(ctx), NoWrap: true})
+	for _, rep := range ConfigReports {
+		// Get values.
+		rows, cols := rep.Report(conf)
 
-	fmt.Println(result)
+		// Render report.
+		opt := report.Options{Format: report.CliFormat(ctx), NoWrap: rep.NoWrap}
+		result, _ := report.Render(rows, cols, opt)
 
-	return err
+		// Show report.
+		if opt.Format == report.Default {
+			fmt.Printf("### %s ###\n\n", rep.Title)
+		}
+
+		fmt.Println(result)
+	}
+
+	return nil
 }

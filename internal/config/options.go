@@ -89,9 +89,7 @@ type Options struct {
 	SiteCaption           string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription       string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string        `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
-	Proxy                 []string      `yaml:"Proxy" json:"-" flag:"proxy"`
-	ProxyProtoHeader      []string      `yaml:"ProxyProtoHeader" json:"-" flag:"proxy-proto-header"`
-	ProxyProtoHttps       []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
+	TrustedProxies        []string      `yaml:"TrustedProxies" json:"-" flag:"trusted-proxy"`
 	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
 	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
@@ -100,6 +98,8 @@ type Options struct {
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
 	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
 	HttpsPort             int           `yaml:"HttpsPort" json:"HttpsPort" flag:"https-port"` // HttpsPort is the port number to be used for HTTPS connections.
+	HttpsProxyHeaders     []string      `yaml:"HttpsProxyHeaders" json:"-" flag:"https-proxy-header"`
+	HttpsProxyProto       []string      `yaml:"HttpsProxyProto" json:"-" flag:"https-proxy-proto"`
 	HttpsRedirect         int           `yaml:"HttpsRedirect" json:"HttpsRedirect" flag:"https-redirect"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`

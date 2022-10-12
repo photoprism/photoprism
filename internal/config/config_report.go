@@ -9,7 +9,7 @@ import (
 
 // Report returns global config values as a table for reporting.
 func (c *Config) Report() (rows [][]string, cols []string) {
-	cols = []string{"Config Option", "Current Value"}
+	cols = []string{"Name", "Value"}
 
 	var dbKey string
 
@@ -124,9 +124,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"base-uri", c.BaseUri("/")},
 
 		// HTTP(S) Proxy.
-		{"proxy", c.Proxy()},
-		{"proxy-proto-header", strings.Join(c.ProxyProtoHeader(), ", ")},
-		{"proxy-proto-https", strings.Join(c.ProxyProtoHttps(), ", ")},
+		{"trusted-proxy", c.TrustedProxy()},
 
 		// Web Server.
 		{"http-mode", c.HttpMode()},
@@ -135,6 +133,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
 		{"auto-tls", c.AutoTLS()},
 		{"https-port", fmt.Sprintf("%d", c.HttpsPort())},
+		{"https-proxy-header", strings.Join(c.HttpsProxyHeader(), ", ")},
+		{"https-proxy-proto", strings.Join(c.HttpsProxyProto(), ", ")},
 		{"https-redirect", fmt.Sprintf("%d", c.HttpsRedirect())},
 
 		// Database.

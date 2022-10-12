@@ -40,7 +40,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	router := gin.New()
 
 	// Set proxy addresses from which headers related to the client and protocol can be trusted
-	if err := router.SetTrustedProxies(conf.Proxies()); err != nil {
+	if err := router.SetTrustedProxies(conf.TrustedProxies()); err != nil {
 		log.Warnf("server: %s", err)
 	}
 

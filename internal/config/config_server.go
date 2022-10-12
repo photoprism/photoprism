@@ -14,29 +14,29 @@ func (c *Config) DetachServer() bool {
 	return c.options.DetachServer
 }
 
-// Proxies returns proxy server ranges from which client and protocol headers can be trusted.
-func (c *Config) Proxies() []string {
-	return c.options.Proxy
+// TrustedProxy returns the list of trusted proxy servers as comma-separated list.
+func (c *Config) TrustedProxy() string {
+	return strings.Join(c.options.TrustedProxies, ", ")
 }
 
-// Proxy returns the list of trusted proxy servers as comma-separated list.
-func (c *Config) Proxy() string {
-	return strings.Join(c.options.Proxy, ", ")
+// TrustedProxies returns proxy server ranges from which client and protocol headers can be trusted.
+func (c *Config) TrustedProxies() []string {
+	return c.options.TrustedProxies
 }
 
-// ProxyProtoHeader returns the proxy protocol header names.
-func (c *Config) ProxyProtoHeader() []string {
-	return c.options.ProxyProtoHeader
+// HttpsProxyHeader returns the proxy protocol header names.
+func (c *Config) HttpsProxyHeader() []string {
+	return c.options.HttpsProxyHeaders
 }
 
-// ProxyProtoHttps returns the proxy protocol header HTTPS values.
-func (c *Config) ProxyProtoHttps() []string {
-	return c.options.ProxyProtoHttps
+// HttpsProxyProto returns the proxy protocol header HTTPS values.
+func (c *Config) HttpsProxyProto() []string {
+	return c.options.HttpsProxyProto
 }
 
-// ProxyHttpsHeaders returns a map with the proxy https protocol headers.
-func (c *Config) ProxyHttpsHeaders() map[string]string {
-	p := len(c.options.ProxyProtoHeader)
+// HttpsProxyHeaders returns a map with the proxy https protocol headers.
+func (c *Config) HttpsProxyHeaders() map[string]string {
+	p := len(c.options.HttpsProxyHeaders)
 	h := make(map[string]string, p+1)
 
 	if p == 0 {
@@ -44,13 +44,13 @@ func (c *Config) ProxyHttpsHeaders() map[string]string {
 		return h
 	}
 
-	for k, v := range c.options.ProxyProtoHeader {
-		if l := len(c.options.ProxyProtoHttps); l == 0 {
+	for k, v := range c.options.HttpsProxyHeaders {
+		if l := len(c.options.HttpsProxyProto); l == 0 {
 			h[v] = header.ProtoHttps
 		} else if l > k {
-			h[v] = c.options.ProxyProtoHttps[k]
+			h[v] = c.options.HttpsProxyProto[k]
 		} else {
-			h[v] = c.options.ProxyProtoHttps[0]
+			h[v] = c.options.HttpsProxyProto[0]
 		}
 	}
 
