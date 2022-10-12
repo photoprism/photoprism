@@ -35,6 +35,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Config.
 		{"config-path", c.ConfigPath()},
+		{"certs-path", c.CertsPath()},
 		{"options-yaml", c.OptionsYaml()},
 		{"defaults-yaml", c.DefaultsYaml()},
 		{"settings-yaml", c.SettingsYaml()},
@@ -50,7 +51,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"albums-path", c.AlbumsPath()},
 		{"backup-path", c.BackupPath()},
 		{"cache-path", c.CachePath()},
-		{"cert-cache-path", c.CertsConfigPath()},
 		{"cmd-cache-path", c.CmdCachePath()},
 		{"thumb-cache-path", c.ThumbCachePath()},
 		{"import-path", c.ImportPath()},

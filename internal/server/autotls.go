@@ -20,8 +20,8 @@ func AutoTLS(conf *config.Config) (*autocert.Manager, error) {
 		return nil, fmt.Errorf("no fully qualified site domain")
 	} else if tlsEmail = conf.AutoTLS(); tlsEmail == "" {
 		return nil, fmt.Errorf("automatic tls disabled")
-	} else if certDir = conf.CertsConfigPath(); certDir == "" {
-		return nil, fmt.Errorf("https certificate cache directory is missing")
+	} else if certDir = conf.CertsPath(); certDir == "" {
+		return nil, fmt.Errorf("certs path not found")
 	}
 
 	// Create Let's Encrypt cert manager.

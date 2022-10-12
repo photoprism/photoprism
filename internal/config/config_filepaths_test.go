@@ -88,15 +88,6 @@ func TestConfig_TempPath(t *testing.T) {
 	}
 }
 
-func TestConfig_CertsConfigPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	if dir := c.CertsConfigPath(); dir == "" {
-		t.Fatal("cert config path is empty")
-	} else if !strings.HasPrefix(dir, c.ConfigPath()) {
-		t.Fatalf("unexpected cert config path: %s", dir)
-	}
-}
-
 func TestConfig_CmdCachePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	if dir := c.CmdCachePath(); dir == "" {

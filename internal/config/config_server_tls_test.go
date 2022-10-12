@@ -1,10 +1,20 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestConfig_CertsPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	if dir := c.CertsPath(); dir == "" {
+		t.Fatal("certs path is empty")
+	} else if !strings.HasPrefix(dir, c.ConfigPath()) {
+		t.Fatalf("unexpected certs path: %s", dir)
+	}
+}
 
 func TestConfig_AutoTLS(t *testing.T) {
 	c := NewConfig(CliTestContext())

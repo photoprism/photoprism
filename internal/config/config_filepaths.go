@@ -125,10 +125,10 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ConfigPath(), err)
 	}
 
-	if c.CertsConfigPath() == "" {
-		return notFoundError("certs config")
-	} else if err := os.MkdirAll(c.CertsConfigPath(), os.ModePerm); err != nil {
-		return createError(c.CertsConfigPath(), err)
+	if c.CertsPath() == "" {
+		return notFoundError("certs")
+	} else if err := os.MkdirAll(c.CertsPath(), os.ModePerm); err != nil {
+		return createError(c.CertsPath(), err)
 	}
 
 	if c.TempPath() == "" {
@@ -191,11 +191,6 @@ func (c *Config) ConfigPath() string {
 	}
 
 	return fs.Abs(c.options.ConfigPath)
-}
-
-// CertsConfigPath returns the certificate config path
-func (c *Config) CertsConfigPath() string {
-	return filepath.Join(c.ConfigPath(), "certs")
 }
 
 // OptionsYaml returns the config options YAML filename.

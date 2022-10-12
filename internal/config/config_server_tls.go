@@ -7,6 +7,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// CertsPath returns the path to the TLS certificates and keys.
+func (c *Config) CertsPath() string {
+	return filepath.Join(c.ConfigPath(), "certs")
+}
+
 // AutoTLS returns the email address for enabling automatic HTTPS via Let's Encrypt.
 func (c *Config) AutoTLS() string {
 	return clean.Email(c.options.AutoTLS)
@@ -18,7 +23,7 @@ func (c *Config) TLSKey() string {
 		return ""
 	} else if fs.FileExistsNotEmpty(c.options.TLSKey) {
 		return c.options.TLSKey
-	} else if fileName := filepath.Join(c.CertsConfigPath(), c.options.TLSKey); fs.FileExistsNotEmpty(fileName) {
+	} else if fileName := filepath.Join(c.CertsPath(), c.options.TLSKey); fs.FileExistsNotEmpty(fileName) {
 		return fileName
 	}
 
@@ -31,7 +36,7 @@ func (c *Config) TLSCert() string {
 		return ""
 	} else if fs.FileExistsNotEmpty(c.options.TLSCert) {
 		return c.options.TLSCert
-	} else if fileName := filepath.Join(c.CertsConfigPath(), c.options.TLSCert); fs.FileExistsNotEmpty(fileName) {
+	} else if fileName := filepath.Join(c.CertsPath(), c.options.TLSCert); fs.FileExistsNotEmpty(fileName) {
 		return fileName
 	}
 
