@@ -57,6 +57,7 @@ type ClientConfig struct {
 	ReadOnly        bool                `json:"readonly"`
 	UploadNSFW      bool                `json:"uploadNSFW"`
 	Public          bool                `json:"public"`
+	AuthMode        string              `json:"authMode"`
 	Experimental    bool                `json:"experimental"`
 	AlbumCategories []string            `json:"albumCategories"`
 	Albums          entity.Albums       `json:"albums"`
@@ -256,6 +257,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		Sponsor:         c.Sponsor(),
 		ReadOnly:        c.ReadOnly(),
 		Public:          c.Public(),
+		AuthMode:        c.AuthMode(),
 		Experimental:    c.Experimental(),
 		Albums:          entity.Albums{},
 		Cameras:         entity.Cameras{},
@@ -332,6 +334,7 @@ func (c *Config) ClientShare() ClientConfig {
 		ReadOnly:        c.ReadOnly(),
 		UploadNSFW:      c.UploadNSFW(),
 		Public:          c.Public(),
+		AuthMode:        c.AuthMode(),
 		Experimental:    c.Experimental(),
 		Albums:          entity.Albums{},
 		Cameras:         entity.Cameras{},
@@ -413,6 +416,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		ReadOnly:        c.ReadOnly(),
 		UploadNSFW:      c.UploadNSFW(),
 		Public:          c.Public(),
+		AuthMode:        c.AuthMode(),
 		Experimental:    c.Experimental(),
 		Albums:          entity.Albums{},
 		Cameras:         entity.Cameras{},

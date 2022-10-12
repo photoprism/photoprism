@@ -65,10 +65,19 @@ func (c *Config) Public() bool {
 	return c.AuthMode() == AuthModePublic
 }
 
-// SetPublic changes authentication while instance is running, for testing purposes only.
-func (c *Config) SetPublic(enabled bool) {
-	if c.Debug() {
-		c.options.Public = enabled
+// SetAuthMode changes the authentication mode (for use in tests only).
+func (c *Config) SetAuthMode(mode string) {
+	if !c.Debug() {
+		return
+	}
+
+	switch mode {
+	case AuthModePublic:
+		c.options.AuthMode = AuthModePublic
+		c.options.Public = true
+	default:
+		c.options.AuthMode = AuthModePasswd
+		c.options.Public = false
 	}
 }
 

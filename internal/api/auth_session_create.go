@@ -19,6 +19,14 @@ import (
 // POST /api/v1/session
 func CreateSession(router *gin.RouterGroup) {
 	router.POST("/session", func(c *gin.Context) {
+		var f form.Login
+
+		if err := c.BindJSON(&f); err != nil {
+			event.AuditWarn([]string{ClientIP(c), "create session", "invalid request", "%s"}, err)
+			AbortBadRequest(c)
+			return
+		}
+
 		conf := service.Config()
 
 		// Skip authentication if app is running in public mode.
@@ -31,14 +39,6 @@ func CreateSession(router *gin.RouterGroup) {
 		// Check limit for failed auth requests (max. 10 per minute).
 		if limiter.Auth.Reject(ClientIP(c)) {
 			limiter.AbortJSON(c)
-			return
-		}
-
-		var f form.Login
-
-		if err := c.BindJSON(&f); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "create session", "invalid request", "%s"}, err)
-			AbortBadRequest(c)
 			return
 		}
 

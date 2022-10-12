@@ -16,12 +16,14 @@ func TestConfig_ClientConfig(t *testing.T) {
 		c := TestConfig()
 		result := c.ClientPublic()
 		assert.IsType(t, ClientConfig{}, result)
+		assert.Equal(t, AuthModePublic, result.AuthMode)
 		assert.Equal(t, true, result.Public)
 	})
 	t.Run("TestErrorConfig", func(t *testing.T) {
 		c := NewTestErrorConfig()
 		result2 := c.ClientPublic()
 		assert.IsType(t, ClientConfig{}, result2)
+		assert.Equal(t, AuthModePasswd, result2.AuthMode)
 		assert.Equal(t, false, result2.Public)
 	})
 	t.Run("Values", func(t *testing.T) {
@@ -45,6 +47,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.NotEmpty(t, cfg.Thumbs)
 		assert.NotEmpty(t, cfg.ManifestUri)
 		assert.Equal(t, true, cfg.Debug)
+		assert.Equal(t, AuthModePublic, cfg.AuthMode)
 		assert.Equal(t, false, cfg.Demo)
 		assert.Equal(t, true, cfg.Sponsor)
 		assert.Equal(t, false, cfg.ReadOnly)
@@ -69,6 +72,7 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 	result := config.ClientShare()
 	assert.IsType(t, ClientConfig{}, result)
 	assert.Equal(t, true, result.Public)
+	assert.Equal(t, AuthModePublic, result.AuthMode)
 	assert.Equal(t, true, result.Experimental)
 	assert.Equal(t, false, result.ReadOnly)
 }
@@ -76,8 +80,7 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 func TestConfig_ClientRoleConfig(t *testing.T) {
 	c := NewTestConfig("config")
 
-	c.Options().AuthMode = AuthModePasswd
-	c.Options().Public = false
+	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
 
@@ -86,6 +89,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 	t.Run("RoleAdmin", func(t *testing.T) {
 		cfg := c.ClientRole(acl.RoleAdmin)
 		assert.IsType(t, ClientConfig{}, cfg)
+		assert.Equal(t, AuthModePasswd, cfg.AuthMode)
 		assert.Equal(t, false, cfg.Public)
 
 		f := cfg.Settings.Features

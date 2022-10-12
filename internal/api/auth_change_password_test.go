@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/form"
-
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestChangePassword(t *testing.T) {
@@ -20,8 +21,8 @@ func TestChangePassword(t *testing.T) {
 
 	t.Run("AliceProvidesWrongPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.SetPublic(false)
-		defer conf.SetPublic(true)
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		ChangePassword(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
@@ -40,8 +41,8 @@ func TestChangePassword(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.SetPublic(false)
-		defer conf.SetPublic(true)
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		ChangePassword(router)
 
 		oldPassword := "PleaseChange$42"
@@ -78,8 +79,8 @@ func TestChangePassword(t *testing.T) {
 
 	t.Run("AliceChangesOtherUsersPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.SetPublic(false)
-		defer conf.SetPublic(true)
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		ChangePassword(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
@@ -98,8 +99,8 @@ func TestChangePassword(t *testing.T) {
 
 	t.Run("BobProvidesWrongPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.SetPublic(false)
-		defer conf.SetPublic(true)
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		ChangePassword(router)
 		sessId := AuthenticateUser(app, router, "bob", "Bobbob123!")
 
@@ -118,8 +119,8 @@ func TestChangePassword(t *testing.T) {
 
 	t.Run("SameNewPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.SetPublic(false)
-		defer conf.SetPublic(true)
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		ChangePassword(router)
 		sessId := AuthenticateUser(app, router, "friend", "!Friend321")
 
@@ -138,8 +139,8 @@ func TestChangePassword(t *testing.T) {
 
 	t.Run("BobChangesOtherUsersPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.SetPublic(false)
-		defer conf.SetPublic(true)
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		ChangePassword(router)
 		sessId := AuthenticateUser(app, router, "bob", "Bobbob123!")
 
