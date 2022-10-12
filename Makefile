@@ -494,8 +494,8 @@ docker-demo-ubuntu:
 	scripts/docker/push.sh demo ubuntu
 docker-demo-unstable:
 	docker pull photoprism/photoprism:unstable
-	scripts/docker/build.sh demo unstable /unstable
-	scripts/docker/push.sh demo unstable
+	scripts/docker/build.sh demo $(BUILD_DATE) /unstable
+	scripts/docker/push.sh demo $(BUILD_DATE)
 docker-demo-local:
 	scripts/docker/build.sh photoprism
 	scripts/docker/build.sh demo $(BUILD_DATE) /debian
