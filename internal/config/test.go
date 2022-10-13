@@ -158,6 +158,7 @@ func NewTestConfig(pkg string) *Config {
 	defer testConfigMutex.Unlock()
 
 	c := &Config{
+		cliCtx:  CliTestContext(),
 		options: NewTestOptions(pkg),
 		token:   rnd.GenerateToken(8),
 	}
