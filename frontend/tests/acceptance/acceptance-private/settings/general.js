@@ -11,7 +11,9 @@ import Album from "../../page-model/album";
 import Settings from "../../page-model/settings";
 import Library from "../../page-model/library";
 
-fixture`Test settings`.page`${testcafeconfig.url}`;
+fixture`Test settings`.page`${testcafeconfig.url}`.beforeEach(async (t) => {
+  await page.login("admin", "photoprism");
+});
 
 const menu = new Menu();
 const toolbar = new Toolbar();
@@ -24,7 +26,7 @@ const album = new Album();
 const settings = new Settings();
 const library = new Library();
 
-test.meta("testID", "settings-general-001").meta({ type: "short", mode: "public" })(
+test.meta("testID", "settings-general-001").meta({ type: "short", mode: "auth" })(
   "Common: Disable delete",
   async (t) => {
     await menu.openPage("archive");
@@ -56,7 +58,7 @@ test.meta("testID", "settings-general-001").meta({ type: "short", mode: "public"
   }
 );
 
-test.meta("testID", "settings-general-002").meta({ type: "short", mode: "public" })(
+test.meta("testID", "settings-general-002").meta({ type: "short", mode: "auth" })(
   "Common: Change language",
   async (t) => {
     await t.expect(Selector(".nav-browse").innerText).contains("Search");
@@ -79,7 +81,7 @@ test.meta("testID", "settings-general-002").meta({ type: "short", mode: "public"
   }
 );
 
-test.meta("testID", "settings-general-003").meta({ type: "short", mode: "public" })(
+test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" })(
   "Common: Disable pages: import, originals, logs, moments, places, library",
   async (t) => {
     await toolbar.setFilter("view", "Cards");
@@ -220,7 +222,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "public"
   }
 );
 
-test.meta("testID", "settings-general-004").meta({ type: "short", mode: "public" })(
+test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" })(
   "Common: Disable people and labels",
   async (t) => {
     await toolbar.setFilter("view", "Cards");
@@ -263,7 +265,7 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "public"
   }
 );
 
-test.meta("testID", "settings-general-005").meta({ type: "short", mode: "public" })(
+test.meta("testID", "settings-general-005").meta({ type: "short", mode: "auth" })(
   "Common: Disable private, archive and quality filter",
   async (t) => {
     await menu.checkMenuItemAvailability("archive", true);
@@ -349,7 +351,7 @@ test.meta("testID", "settings-general-005").meta({ type: "short", mode: "public"
   }
 );
 
-test.meta("testID", "settings-general-006").meta({ type: "short", mode: "public" })(
+test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" })(
   "Common: Disable upload, download, edit and share",
   async (t) => {
     await toolbar.checkToolbarActionAvailability("upload", true);
