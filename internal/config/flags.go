@@ -439,8 +439,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "https-redirect",
-			Value:  301,
-			Usage:  "status `CODE` when redirecting from HTTP to HTTPS (300-399 or 0 to disable)",
+			Value:  0,
+			Usage:  "status `CODE` when redirecting from HTTP to HTTPS (300-399)",
 			EnvVar: "PHOTOPRISM_HTTPS_REDIRECT",
 		}}, {
 		Flag: cli.StringFlag{

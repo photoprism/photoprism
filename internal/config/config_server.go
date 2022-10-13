@@ -9,6 +9,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+const (
+	HttpModeProd  = "release"
+	HttpModeDebug = "debug"
+)
+
 // DetachServer checks if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
 	return c.options.DetachServer
@@ -59,12 +64,14 @@ func (c *Config) HttpsProxyHeaders() map[string]string {
 
 // HttpMode returns the server mode.
 func (c *Config) HttpMode() string {
-	if c.options.HttpMode == "" {
+	if c.Prod() {
+		return HttpModeProd
+	} else if c.options.HttpMode == "" {
 		if c.Debug() {
-			return "debug"
+			return HttpModeDebug
 		}
 
-		return "release"
+		return HttpModeProd
 	}
 
 	return c.options.HttpMode

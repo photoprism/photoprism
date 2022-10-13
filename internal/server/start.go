@@ -13,11 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/event"
 )
-
-var log = event.Log
-var httpsRedirect = http.StatusMovedPermanently
 
 // Start the REST API server using the configuration provided
 func Start(ctx context.Context, conf *config.Config) {
