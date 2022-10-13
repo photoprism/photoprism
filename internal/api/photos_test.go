@@ -4,13 +4,14 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 )
 
 func TestGetPhoto(t *testing.T) {
-	t.Run("search for existing photo", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7")
@@ -19,7 +20,7 @@ func TestGetPhoto(t *testing.T) {
 		assert.Equal(t, "200", val.String())
 	})
 
-	t.Run("search for not existing photo", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/xxx")
@@ -28,7 +29,7 @@ func TestGetPhoto(t *testing.T) {
 }
 
 func TestUpdatePhoto(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhoto(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y13", `{"Title": "Updated01", "Country": "de"}`)
@@ -39,14 +40,14 @@ func TestUpdatePhoto(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("BadRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhoto(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y13", `{"Name": "Updated01", "Country": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 
-	t.Run("not found", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhoto(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/xxx", `{"Name": "Updated01", "Country": "de"}`)
@@ -57,22 +58,24 @@ func TestUpdatePhoto(t *testing.T) {
 }
 
 func TestGetPhotoDownload(t *testing.T) {
-	t.Run("could not find original", func(t *testing.T) {
+	t.Run("OriginalMissing", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetPhotoDownload(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7/dl?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 
-	t.Run("not existing photo", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetPhotoDownload(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/xxx/dl?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 
-	t.Run("invalid token", func(t *testing.T) {
-		app, router, _ := NewApiTest()
+	t.Run("InvalidToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		GetPhotoDownload(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7/dl?t=xxx")
 		assert.Equal(t, http.StatusForbidden, r.Code)
@@ -80,7 +83,7 @@ func TestGetPhotoDownload(t *testing.T) {
 }
 
 func TestLikePhoto(t *testing.T) {
-	t.Run("existing photo", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		LikePhoto(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh9/like")
@@ -91,7 +94,7 @@ func TestLikePhoto(t *testing.T) {
 		assert.Equal(t, "true", val.String())
 	})
 
-	t.Run("not existing photo", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		LikePhoto(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/like")
@@ -100,7 +103,7 @@ func TestLikePhoto(t *testing.T) {
 }
 
 func TestDislikePhoto(t *testing.T) {
-	t.Run("existing photo", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikePhoto(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/photos/pt9jtdre2lvl0yh8/like")
@@ -111,7 +114,7 @@ func TestDislikePhoto(t *testing.T) {
 		assert.Equal(t, "false", val.String())
 	})
 
-	t.Run("not existing photo", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikePhoto(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/photos/xxx/like")
@@ -120,7 +123,7 @@ func TestDislikePhoto(t *testing.T) {
 }
 
 func TestPhotoPrimary(t *testing.T) {
-	t.Run("existing photo", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoPrimary(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh8/files/ft1es39w45bnlqdw/primary")
@@ -134,7 +137,7 @@ func TestPhotoPrimary(t *testing.T) {
 		assert.Equal(t, "false", val2.String())
 	})
 
-	t.Run("incorrect photo uid", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoPrimary(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/files/ft1es39w45bnlqdw/primary")
@@ -145,14 +148,14 @@ func TestPhotoPrimary(t *testing.T) {
 }
 
 func TestGetPhotoYaml(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhotoYaml(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7/yaml")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 
-	t.Run("not existing photo", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhotoYaml(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/xxx/yaml")
@@ -161,7 +164,7 @@ func TestGetPhotoYaml(t *testing.T) {
 }
 
 func TestApprovePhoto(t *testing.T) {
-	t.Run("existing photo", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
 		r3 := PerformRequest(app, "GET", "/api/v1/photos/pt9jtxrexxvl0y20")
@@ -175,7 +178,7 @@ func TestApprovePhoto(t *testing.T) {
 		assert.Equal(t, "3", val.String())
 	})
 
-	t.Run("not existing photo", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		ApprovePhoto(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/approve")

@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetFace(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetFace(router)
 		// Example:
@@ -46,7 +46,7 @@ func TestGetFace(t *testing.T) {
 }
 
 func TestUpdateFace(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateFace(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/faces/PN6QO5INYTUSAATOFL43LL2ABAV5ACzk", `{"SubjUID": "jqu0xs11qekk9jx8"}`)

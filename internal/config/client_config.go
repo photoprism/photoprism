@@ -68,8 +68,8 @@ type ClientConfig struct {
 	Thumbs          ThumbSizes          `json:"thumbs"`
 	Status          string              `json:"status"`
 	MapKey          string              `json:"mapKey"`
-	DownloadToken   string              `json:"downloadToken"`
-	PreviewToken    string              `json:"previewToken"`
+	DownloadToken   string              `json:"downloadToken,omitempty"`
+	PreviewToken    string              `json:"previewToken,omitempty"`
 	Disable         ClientDisable       `json:"disable"`
 	Count           ClientCounts        `json:"count"`
 	Pos             ClientPosition      `json:"pos"`
@@ -208,7 +208,7 @@ func (c *Config) ClientPublic() ClientConfig {
 
 	cfg := ClientConfig{
 		Settings: c.PublicSettings(),
-		ACL:      acl.Resources.Grants(acl.RoleUnauthorized),
+		ACL:      acl.Resources.Grants(acl.RoleUnknown),
 		Disable: ClientDisable{
 			Backups:        true,
 			WebDAV:         true,
@@ -270,8 +270,8 @@ func (c *Config) ClientPublic() ClientConfig {
 		Colors:          colors.All.List(),
 		ManifestUri:     c.ClientManifestUri(),
 		Clip:            txt.ClipDefault,
-		PreviewToken:    "public",
-		DownloadToken:   "public",
+		PreviewToken:    entity.TokenPublic,
+		DownloadToken:   entity.TokenPublic,
 		Ext:             ClientExt(c, ClientPublic),
 	}
 
@@ -582,9 +582,23 @@ func (c *Config) ClientRole(role acl.Role) ClientConfig {
 }
 
 // ClientSession provides the client config values for the specified session.
-func (c *Config) ClientSession(sess *entity.Session) ClientConfig {
-	result := c.ClientUser(false).ApplyACL(acl.Resources, sess.User().AclRole())
-	result.Settings = c.SessionSettings(sess)
+func (c *Config) ClientSession(sess *entity.Session) (cfg ClientConfig) {
+	if sess.User().IsVisitor() {
+		cfg = c.ClientShare()
+	} else if sess.User().IsRegistered() {
+		cfg = c.ClientUser(false).ApplyACL(acl.Resources, sess.User().AclRole())
+		cfg.Settings = c.SessionSettings(sess)
+	} else {
+		cfg = c.ClientPublic()
+	}
 
-	return result
+	if c.Public() {
+		cfg.PreviewToken = entity.TokenPublic
+		cfg.DownloadToken = entity.TokenPublic
+	} else if sess.PreviewToken != "" || sess.DownloadToken != "" {
+		cfg.PreviewToken = sess.PreviewToken
+		cfg.DownloadToken = sess.DownloadToken
+	}
+
+	return cfg
 }

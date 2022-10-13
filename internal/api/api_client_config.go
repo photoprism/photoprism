@@ -24,12 +24,8 @@ func GetClientConfig(router *gin.RouterGroup) {
 
 		if s == nil {
 			c.JSON(http.StatusOK, conf.ClientPublic())
-		} else if s.User().IsVisitor() {
-			c.JSON(http.StatusOK, conf.ClientShare())
-		} else if s.User().IsRegistered() {
-			c.JSON(http.StatusOK, conf.ClientSession(s))
 		} else {
-			c.JSON(http.StatusOK, conf.ClientPublic())
+			c.JSON(http.StatusOK, conf.ClientSession(s))
 		}
 	})
 }

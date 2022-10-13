@@ -235,7 +235,7 @@ export class Thumb extends Model {
       return `${config.contentUri}/svg/photo`;
     }
 
-    return `${config.contentUri}/t/${file.Hash}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${file.Hash}/${config.previewToken}/${size}`;
   }
 
   static downloadUrl(file) {
@@ -243,7 +243,7 @@ export class Thumb extends Model {
       return "";
     }
 
-    return `${config.apiUri}/dl/${file.Hash}?t=${config.downloadToken()}`;
+    return `${config.apiUri}/dl/${file.Hash}?t=${config.downloadToken}`;
   }
 }
 

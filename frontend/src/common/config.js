@@ -42,6 +42,8 @@ export default class Config {
     this.disconnected = false;
     this.storage = storage;
     this.storage_key = "config";
+    this.previewToken = "";
+    this.downloadToken = "";
 
     this.$vuetify = null;
     this.translations = translations;
@@ -101,6 +103,8 @@ export default class Config {
     this.test = !!values.test;
     this.demo = !!values.demo;
 
+    this.updateTokens();
+
     Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
     Event.subscribe("count", (ev, data) => this.onCount(ev, data));
     Event.subscribe("people", (ev, data) => this.onPeople(ev, data));
@@ -149,6 +153,8 @@ export default class Config {
         this.set(key, values[key]);
       }
     }
+
+    this.updateTokens();
 
     if (values.settings) {
       this.setBatchSize(values.settings);
@@ -519,12 +525,13 @@ export default class Config {
     return Languages().some((lang) => lang.value === this.values.settings.ui.language && lang.rtl);
   }
 
-  downloadToken() {
-    return this.values["downloadToken"];
-  }
-
-  previewToken() {
-    return this.values["previewToken"];
+  updateTokens() {
+    if (this.values["previewToken"]) {
+      this.previewToken = this.values.previewToken;
+    }
+    if (this.values["downloadToken"]) {
+      this.downloadToken = this.values.downloadToken;
+    }
   }
 
   albumCategories() {

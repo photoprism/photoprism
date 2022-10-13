@@ -42,7 +42,7 @@ func SearchLabels(router *gin.RouterGroup) {
 		// TODO c.Header("X-Count", strconv.Itoa(count))
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
+		AddTokenHeaders(c, s)
 
 		c.JSON(http.StatusOK, result)
 	})

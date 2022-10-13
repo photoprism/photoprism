@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
@@ -42,16 +41,15 @@ func ChangePassword(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := clean.UID(c.Param("uid"))
-		m := entity.FindUserByUID(uid)
-
 		// Users may only change their own password.
-		if s.User().UserUID != m.UserUID {
+		if s.User().UserUID != clean.UID(c.Param("uid")) {
 			AbortForbidden(c)
 			return
 		}
 
-		if m == nil {
+		u := s.User()
+
+		if u == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrUserNotFound)
 			return
 		}
@@ -64,14 +62,14 @@ func ChangePassword(router *gin.RouterGroup) {
 		}
 
 		// Verify that the old password is correct.
-		if m.WrongPassword(f.OldPassword) {
+		if u.WrongPassword(f.OldPassword) {
 			limiter.Auth.Reserve(ClientIP(c))
 			Abort(c, http.StatusBadRequest, i18n.ErrInvalidPassword)
 			return
 		}
 
 		// Change password.
-		if err := m.SetPassword(f.NewPassword); err != nil {
+		if err := s.ChangePassword(f.NewPassword); err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 			return
 		}
@@ -79,8 +77,9 @@ func ChangePassword(router *gin.RouterGroup) {
 		// Invalidate all other user sessions to protect the account:
 		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
 		event.AuditInfo([]string{ClientIP(c), "session %s", "password changed", "invalidated %s"}, s.RefID,
-			english.Plural(m.DeleteSessions([]string{s.ID}), "session", "sessions"))
+			english.Plural(u.DeleteSessions([]string{s.ID}), "session", "sessions"))
 
+		AddTokenHeaders(c, s)
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPasswordChanged))
 	})
 }

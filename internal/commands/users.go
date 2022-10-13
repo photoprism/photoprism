@@ -15,7 +15,7 @@ const (
 	UserAttrUsage     = "custom user account `ATTRIBUTES`"
 	UserAdminUsage    = "make user super admin with full access"
 	UserNoLoginUsage  = "disable login on the web interface"
-	UserCanSyncUsage  = "allow to sync files via WebDAV"
+	UserWebDAVUsage   = "allow to sync files via WebDAV"
 )
 
 // UsersCommand registers the user management subcommands.
@@ -25,6 +25,7 @@ var UsersCommand = cli.Command{
 	Usage:   "User management subcommands",
 	Subcommands: []cli.Command{
 		UsersListCommand,
+		UsersLegacyCommand,
 		UsersAddCommand,
 		UsersShowCommand,
 		UsersModCommand,
@@ -65,7 +66,7 @@ var UserFlags = []cli.Flag{
 		Usage: UserNoLoginUsage,
 	},
 	cli.BoolFlag{
-		Name:  "can-sync, w",
-		Usage: UserCanSyncUsage,
+		Name:  "webdav, w",
+		Usage: UserWebDAVUsage,
 	},
 }

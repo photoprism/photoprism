@@ -426,15 +426,29 @@ docker-release-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
 start-local:
-	docker-compose -f docker-compose.local.yml up -d
+	docker-compose -f docker-compose.local.yml up -d --wait
 stop-local:
 	docker-compose -f docker-compose.local.yml stop
+mysql:
+	docker-compose -f docker-compose.mysql.yml pull mysql
+	docker-compose -f docker-compose.mysql.yml stop mysql
+	docker-compose -f docker-compose.mysql.yml up -d --wait mysql
 start-mysql:
-	docker-compose -f docker-compose.mysql.yml up -d mysql
+	docker-compose -f docker-compose.mysql.yml up -d --wait mysql
 stop-mysql:
 	docker-compose -f docker-compose.mysql.yml stop mysql
 logs-mysql:
 	docker-compose -f docker-compose.mysql.yml logs -f mysql
+latest:
+	docker-compose -f docker-compose.latest.yml pull photoprism-latest
+	docker-compose -f docker-compose.latest.yml stop photoprism-latest
+	docker-compose -f docker-compose.latest.yml up -d --wait photoprism-latest
+start-latest:
+	docker-compose -f docker-compose.latest.yml up -d --wait photoprism-latest
+stop-latest:
+	docker-compose -f docker-compose.latest.yml stop photoprism-latest
+logs-latest:
+	docker-compose -f docker-compose.latest.yml logs -f photoprism-latest
 docker-local: docker-local-bookworm
 docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:

@@ -104,11 +104,6 @@ var DialectMySQL = Migrations{
 		Statements: []string{"ALTER TABLE files MODIFY time_index VARBINARY(64);"},
 	},
 	{
-		ID:         "20220927-000200",
-		Dialect:    "mysql",
-		Statements: []string{"REPLACE INTO auth_users (id, user_uid, super_admin, can_login, can_sync, user_role, display_name, user_name, user_email, login_at, created_at, updated_at) SELECT id, user_uid, role_admin, 1, 1, 'admin', full_name, user_name, primary_email, login_at, created_at, updated_at FROM users WHERE role_admin = 1 AND user_name NOT IN (SELECT user_name FROM auth_users) AND user_name <> '' AND user_name IS NOT NULL;"},
-	},
-	{
 		ID:         "20221002-000100",
 		Dialect:    "mysql",
 		Statements: []string{"ALTER TABLE links DROP COLUMN IF EXISTS can_edit;", "ALTER TABLE links DROP COLUMN IF EXISTS can_comment;"},

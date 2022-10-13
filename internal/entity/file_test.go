@@ -660,7 +660,7 @@ func TestFile_ReplaceHash(t *testing.T) {
 }
 
 func TestFile_SetHDR(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 
 		assert.Equal(t, false, m.IsHDR())

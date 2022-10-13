@@ -2,18 +2,17 @@ package acl
 
 // Roles that can be assigned to users.
 const (
-	RoleAdmin        Role = "admin"
-	RoleVisitor      Role = "visitor"
-	RoleUnauthorized Role = "unauthorized"
-	RoleDefault      Role = "default"
-	RoleUnknown      Role = ""
+	RoleDefault Role = "default"
+	RoleAdmin   Role = "admin"
+	RoleVisitor Role = "visitor"
+	RoleUnknown Role = ""
 )
 
 // ValidRoles specifies the valid user roles.
 var ValidRoles = map[string]Role{
-	string(RoleAdmin):        RoleAdmin,
-	string(RoleVisitor):      RoleVisitor,
-	string(RoleUnauthorized): RoleUnauthorized,
+	string(RoleAdmin):   RoleAdmin,
+	string(RoleVisitor): RoleVisitor,
+	string(RoleUnknown): RoleUnknown,
 }
 
 // Roles grants permissions to roles.

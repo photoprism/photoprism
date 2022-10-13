@@ -157,6 +157,11 @@ func (c *Config) Propagate() {
 	places.UserAgent = c.UserAgent()
 	entity.GeoApi = c.GeoApi()
 
+	// Set API preview and download default tokens.
+	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
+	entity.DownloadToken.Set(c.DownloadToken(), entity.TokenConfig)
+	entity.CheckTokens = !c.Public()
+
 	// Set face recognition parameters.
 	face.ScoreThreshold = c.FaceScore()
 	face.OverlapThreshold = c.FaceOverlap()

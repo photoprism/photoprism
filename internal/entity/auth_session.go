@@ -2,6 +2,7 @@ package entity
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"net/http"
 	"time"
@@ -83,6 +84,16 @@ func NewSession(maxAge, timeout int64) (m *Session) {
 	return m
 }
 
+// Expires sets an explicit expiration time.
+func (m *Session) Expires(t time.Time) *Session {
+	if t.IsZero() {
+		return m
+	}
+
+	m.SessExpires = t.Unix()
+	return m
+}
+
 // DeleteExpiredSessions deletes expired sessions.
 func DeleteExpiredSessions() (deleted int) {
 	expired := Sessions{}
@@ -139,7 +150,7 @@ func (m *Session) CacheDuration(d time.Duration) {
 		return
 	}
 
-	sessionCache.Set(m.ID, m, d)
+	CacheSession(m, d)
 }
 
 // Cache caches the session with the default expiration duration.
@@ -167,10 +178,9 @@ func (m *Session) Save() error {
 	return nil
 }
 
-// Delete removes a session.
+// Delete permanently deletes a session.
 func (m *Session) Delete() error {
-	DeleteFromSessionCache(m.ID)
-	return UnscopedDb().Delete(m).Error
+	return DeleteSession(m)
 }
 
 // Updates multiple properties in the database.
@@ -237,12 +247,58 @@ func (m *Session) SetUser(u *User) *Session {
 		m.UserName = u.UserName
 	}
 
-	if u.DownloadToken != "" {
-		m.DownloadToken = u.DownloadToken
+	m.SetPreviewToken(u.PreviewToken)
+	m.SetDownloadToken(u.DownloadToken)
+
+	return m
+}
+
+// ChangePassword changes the password of the current user.
+func (m *Session) ChangePassword(newPw string) (err error) {
+	u := m.User()
+
+	if u == nil {
+		return fmt.Errorf("unknown user")
 	}
 
-	if u.PreviewToken != "" {
-		m.PreviewToken = u.PreviewToken
+	// Change password.
+	err = u.SetPassword(newPw)
+
+	m.SetPreviewToken(u.PreviewToken)
+	m.SetDownloadToken(u.DownloadToken)
+
+	return nil
+}
+
+// SetPreviewToken updates the preview token if not empty.
+func (m *Session) SetPreviewToken(token string) *Session {
+	if m.ID == "" {
+		return m
+	}
+
+	if token != "" {
+		m.PreviewToken = token
+		PreviewToken.Set(token, m.ID)
+	} else if m.PreviewToken == "" {
+		m.PreviewToken = GenerateToken()
+		PreviewToken.Set(token, m.ID)
+	}
+
+	return m
+}
+
+// SetDownloadToken updates the download token if not empty.
+func (m *Session) SetDownloadToken(token string) *Session {
+	if m.ID == "" {
+		return m
+	}
+
+	if token != "" {
+		m.DownloadToken = token
+		DownloadToken.Set(token, m.ID)
+	} else if m.DownloadToken == "" {
+		m.DownloadToken = GenerateToken()
+		DownloadToken.Set(token, m.ID)
 	}
 
 	return m

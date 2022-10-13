@@ -7,7 +7,7 @@ import (
 )
 
 func TestFlushAlbumCache(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		FlushAlbumCache()
 	})
 }

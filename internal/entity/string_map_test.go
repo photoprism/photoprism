@@ -87,7 +87,7 @@ func TestStringMap_Key(t *testing.T) {
 
 		m.Unset("Dog")
 
-		assert.Equal(t, "", m.Key("WINDOWS"))
+		assert.Equal(t, "dog", m.Key("WINDOWS"))
 		assert.Equal(t, "foo", m.Key("bar"))
 		assert.Equal(t, "", m.Key("Dog"))
 	})
@@ -109,7 +109,40 @@ func TestStringMap_Key(t *testing.T) {
 		m.Set("My", "")
 
 		assert.Equal(t, "", m.Get("My"))
-		assert.Equal(t, "", m.Key("bar"))
+		assert.Equal(t, "Foo", m.Key("bar"))
+	})
+}
+
+func TestStringMap_KeyExists(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		assert.True(t, NewStringMap(Strings{"foo": "bar"}).Has("foo"))
+		assert.True(t, NewStringMap(Strings{"foo": "bar", "zzz": "bar"}).Has("zzz"))
+	})
+	t.Run("False", func(t *testing.T) {
+		assert.False(t, NewStringMap(Strings{"foo": "bar"}).Has(""))
+		assert.False(t, NewStringMap(Strings{"foo": "bar"}).Has("zzz"))
+	})
+}
+
+func TestStringMap_Missing(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
+		assert.False(t, NewStringMap(Strings{"foo": "bar"}).Missing("foo"))
+		assert.False(t, NewStringMap(Strings{"foo": "bar", "zzz": "bar"}).Missing("zzz"))
+	})
+	t.Run("True", func(t *testing.T) {
+		assert.True(t, NewStringMap(Strings{"foo": "bar"}).Missing(""))
+		assert.True(t, NewStringMap(Strings{"foo": "bar"}).Missing("zzz"))
+	})
+}
+
+func TestStringMap_ValueExists(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		assert.True(t, NewStringMap(Strings{"foo": "bar"}).HasValue("bar"))
+		assert.True(t, NewStringMap(Strings{"foo": "bar", "zzz": "bar"}).HasValue("bar"))
+	})
+	t.Run("False", func(t *testing.T) {
+		assert.False(t, NewStringMap(Strings{"foo": "bar"}).HasValue(""))
+		assert.False(t, NewStringMap(Strings{"foo": "bar"}).HasValue("zzz"))
 	})
 }
 

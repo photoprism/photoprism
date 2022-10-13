@@ -40,7 +40,7 @@ func FindSession(id string) (*Session, error) {
 		return found, fmt.Errorf("has invalid id %s", clean.LogQuote(found.ID))
 	} else if !found.Expired() {
 		found.UpdateLastActive()
-		sessionCache.SetDefault(found.ID, found)
+		CacheSession(found, sessionCacheExpiration)
 		return found, nil
 	} else if err := found.Delete(); err != nil {
 		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", "%s"}, found.RefID, err)
@@ -52,6 +52,50 @@ func FindSession(id string) (*Session, error) {
 // FlushSessionCache resets the session cache.
 func FlushSessionCache() {
 	sessionCache.Flush()
+}
+
+// CacheSession adds a session to the cache if its ID is valid.
+func CacheSession(s *Session, d time.Duration) {
+	if s == nil {
+		return
+	} else if !rnd.IsSessionID(s.ID) {
+		return
+	}
+
+	if d == 0 {
+		d = sessionCacheExpiration
+	}
+
+	if s.PreviewToken != "" {
+		PreviewToken.Set(s.PreviewToken, s.ID)
+	}
+
+	if s.DownloadToken != "" {
+		DownloadToken.Set(s.DownloadToken, s.ID)
+	}
+
+	sessionCache.Set(s.ID, s, d)
+}
+
+// DeleteSession permanently deletes a session.
+func DeleteSession(s *Session) error {
+	if s == nil {
+		return nil
+	} else if !rnd.IsSessionID(s.ID) {
+		return fmt.Errorf("invalid session id")
+	}
+
+	DeleteFromSessionCache(s.ID)
+
+	if s.PreviewToken != "" {
+		PreviewToken.Set(s.PreviewToken, s.ID)
+	}
+
+	if s.DownloadToken != "" {
+		DownloadToken.Set(s.DownloadToken, s.ID)
+	}
+
+	return UnscopedDb().Delete(s).Error
 }
 
 // DeleteFromSessionCache deletes a session from the cache.

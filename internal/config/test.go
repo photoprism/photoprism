@@ -43,8 +43,18 @@ var PkgNameRegexp = regexp.MustCompile("[^a-zA-Z\\-_]+")
 
 // NewTestOptions returns valid config options for tests.
 func NewTestOptions(pkg string) *Options {
-	assetsPath := fs.Abs("../../assets")
-	storagePath := fs.Abs("../../storage")
+	// Find assets path.
+	assetsPath := os.Getenv("PHOTOPRISM_ASSETS_PATH")
+	if assetsPath == "" {
+		fs.Abs("../../assets")
+	}
+
+	// Find storage path.
+	storagePath := os.Getenv("PHOTOPRISM_STORAGE_PATH")
+	if storagePath == "" {
+		storagePath = fs.Abs("../../storage")
+	}
+
 	dataPath := filepath.Join(storagePath, "testdata")
 
 	pkg = PkgNameRegexp.ReplaceAllString(pkg, "")

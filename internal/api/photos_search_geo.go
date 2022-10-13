@@ -67,14 +67,14 @@ func SearchGeo(router *gin.RouterGroup) {
 		AddCountHeader(c, len(photos))
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
+		AddTokenHeaders(c, s)
 
 		var resp []byte
 
 		// Render JSON response.
 		switch clean.Token(c.Param("format")) {
 		case "view":
-			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
+			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), s.PreviewToken, s.DownloadToken)
 		default:
 			resp, err = photos.GeoJSON()
 		}

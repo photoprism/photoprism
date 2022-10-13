@@ -11,7 +11,7 @@ import (
 )
 
 func TestSavePhotoForm(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		f := form.Photo{
 			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
 			TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
@@ -143,7 +143,7 @@ func TestPhoto_ClassifyLabels(t *testing.T) {
 }
 
 func TestPhoto_PreloadFiles(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Files)
 		m.PreloadFiles()
@@ -152,7 +152,7 @@ func TestPhoto_PreloadFiles(t *testing.T) {
 }
 
 func TestPhoto_PreloadKeywords(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Keywords)
 		m.PreloadKeywords()
@@ -161,7 +161,7 @@ func TestPhoto_PreloadKeywords(t *testing.T) {
 }
 
 func TestPhoto_PreloadAlbums(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Albums)
 		m.PreloadAlbums()
@@ -170,7 +170,7 @@ func TestPhoto_PreloadAlbums(t *testing.T) {
 }
 
 func TestPhoto_PreloadMany(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Albums)
 		assert.Empty(t, m.Files)
@@ -266,7 +266,7 @@ func TestPhoto_SetDescription(t *testing.T) {
 		m.SetDescription("new photo description", SrcName)
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 	})
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 		m.SetDescription("new photo description", SrcMeta)
@@ -294,7 +294,7 @@ func TestPhoto_Delete(t *testing.T) {
 }
 
 func TestPhotos_UIDs(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		photo1 := Photo{PhotoUID: "abc123"}
 		photo2 := Photo{PhotoUID: "abc456"}
 		photos := Photos{photo1, photo2}
@@ -314,7 +314,7 @@ func TestPhoto_String(t *testing.T) {
 }
 
 func TestPhoto_Create(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		photo := Photo{PhotoUID: "567", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Create()
 		if err != nil {
@@ -324,7 +324,7 @@ func TestPhoto_Create(t *testing.T) {
 }
 
 func TestPhoto_Save(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		photo := Photo{PhotoUID: "567", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Save()
 		if err != nil {
@@ -370,7 +370,7 @@ func TestFindPhoto(t *testing.T) {
 }
 
 func TestPhoto_RemoveKeyword(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		keyword := Keyword{Keyword: "snake"}
 		keyword2 := Keyword{Keyword: "otter"}
 		keywords := []Keyword{keyword, keyword2}
@@ -389,7 +389,7 @@ func TestPhoto_RemoveKeyword(t *testing.T) {
 }
 
 func TestPhoto_SyncKeywordLabels(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		keyword := Keyword{Keyword: "snake"}
 		keyword2 := Keyword{Keyword: "otter"}
 		keywords := []Keyword{keyword, keyword2}
@@ -430,7 +430,7 @@ func TestPhoto_LocationLoaded(t *testing.T) {
 }
 
 func TestPhoto_LoadLocation(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo03")
 		if err := photo.LoadLocation(); err != nil {
 			t.Fatal(err)
@@ -456,7 +456,7 @@ func TestPhoto_PlaceLoaded(t *testing.T) {
 }
 
 func TestPhoto_LoadPlace(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo03")
 		err := photo.LoadPlace()
 		if err != nil {
@@ -500,7 +500,7 @@ func TestPhoto_AllFilesMissing(t *testing.T) {
 }
 
 func TestPhoto_Updates(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		photo := Photo{PhotoDescription: "bcss", PhotoName: "InitialName"}
 
 		if err := photo.Save(); err != nil {
@@ -604,7 +604,7 @@ func TestPhoto_Links(t *testing.T) {
 }
 
 func TestPhoto_SetPrimary(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 
 		if err := m.SetPrimary(""); err != nil {

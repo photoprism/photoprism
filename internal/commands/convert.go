@@ -67,7 +67,7 @@ func convertAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("converting completed in %s", elapsed)
+	log.Infof("completed in %s", elapsed)
 
 	return nil
 }

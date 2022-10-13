@@ -10,7 +10,7 @@ import (
 func TestClientAssets_Load(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		a := NewClientAssets(c.StaticUri())
 
 		err := a.Load("testdata/static/build/assets.json")

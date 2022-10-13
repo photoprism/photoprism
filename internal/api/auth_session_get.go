@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -45,21 +44,15 @@ func GetSession(router *gin.RouterGroup) {
 		// Add session id to response headers.
 		AddSessionHeader(c, sess.ID)
 
-		var clientConfig config.ClientConfig
-
-		if conf := service.Config(); conf == nil {
-			log.Errorf("session: config is not set - possible bug")
-			AbortUnexpected(c)
-			return
-		} else if sess.User().IsVisitor() {
-			clientConfig = conf.ClientShare()
-		} else if sess.User().IsRegistered() {
-			clientConfig = conf.ClientSession(sess)
-		} else {
-			clientConfig = conf.ClientPublic()
+		// Send JSON response with user information, session data, and client config values.
+		data := gin.H{
+			"status": "ok",
+			"id":     sess.ID,
+			"user":   sess.User(),
+			"data":   sess.Data(),
+			"config": service.Config().ClientSession(sess),
 		}
 
-		// Send JSON response with user information, session data, and client config values.
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "id": sess.ID, "user": sess.User(), "data": sess.Data(), "config": clientConfig})
+		c.JSON(http.StatusOK, data)
 	})
 }

@@ -3,6 +3,8 @@ package commands
 import (
 	"fmt"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
+
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -23,22 +25,28 @@ var UsersShowCommand = cli.Command{
 // usersShowAction Shows user account details.
 func usersShowAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		username := clean.Username(ctx.Args().First())
+		id := clean.Username(ctx.Args().First())
 
-		// Username provided?
-		if username == "" {
+		// Name or UID provided?
+		if id == "" {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
-		// Find user by name.
-		user := entity.FindUserByName(username)
+		// Find user record.
+		var m *entity.User
 
-		if user == nil {
-			return fmt.Errorf("user %s not found", clean.LogQuote(username))
+		if rnd.IsUID(id, entity.UserUID) {
+			m = entity.FindUserByUID(id)
+		} else {
+			m = entity.FindUserByName(id)
+		}
+
+		if m == nil {
+			return fmt.Errorf("user %s not found", clean.LogQuote(id))
 		}
 
 		// Get user information.
-		rows, cols := user.Report(true)
+		rows, cols := m.Report(true)
 
 		// Sort values by name.
 		report.Sort(rows)

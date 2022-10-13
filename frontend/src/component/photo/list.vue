@@ -264,7 +264,7 @@ export default {
       Notify.success(this.$gettext("Downloading…"));
 
       const photo = this.photos[index];
-      download(`${this.$config.apiUri}/dl/${photo.Hash}?t=${this.$config.downloadToken()}`, photo.FileName);
+      download(`${this.$config.apiUri}/dl/${photo.Hash}?t=${this.$config.downloadToken}`, photo.FileName);
     },
     onSelect(ev, index) {
       if (ev.shiftKey) {

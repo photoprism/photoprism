@@ -79,7 +79,6 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 
 func TestConfig_ClientRoleConfig(t *testing.T) {
 	c := NewTestConfig("config")
-
 	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
@@ -167,8 +166,8 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 
 		assert.Equal(t, expected, f)
 	})
-	t.Run("RoleUnauthorized", func(t *testing.T) {
-		cfg := c.ClientRole(acl.RoleUnauthorized)
+	t.Run("RoleUnknown", func(t *testing.T) {
+		cfg := c.ClientRole(acl.RoleUnknown)
 		f := cfg.Settings.Features
 
 		assert.NotEqual(t, adminFeatures, f)
@@ -195,38 +194,11 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.Reactions)
 		assert.False(t, f.Ratings)
 	})
-	t.Run("RoleUnknown", func(t *testing.T) {
-		cfg := c.ClientRole(acl.RoleUnknown)
-		f := cfg.Settings.Features
-
-		assert.NotEqual(t, adminFeatures, f)
-		assert.False(t, f.Search)
-		assert.False(t, f.Videos)
-		assert.False(t, f.Albums)
-		assert.False(t, f.Settings)
-		assert.False(t, f.Edit)
-		assert.False(t, f.Private)
-		assert.False(t, f.Advanced)
-		assert.False(t, f.Upload)
-		assert.False(t, f.Download)
-		assert.False(t, f.Sync)
-		assert.False(t, f.Delete)
-		assert.False(t, f.Import)
-		assert.False(t, f.Library)
-		assert.False(t, f.Logs)
-		assert.True(t, f.Review)
-		assert.False(t, f.Share)
-		assert.False(t, f.Favorites)
-		assert.False(t, f.Reactions)
-		assert.False(t, f.Ratings)
-	})
 }
 
 func TestConfig_ClientSessionConfig(t *testing.T) {
 	c := NewTestConfig("config")
-
-	c.Options().AuthMode = AuthModePasswd
-	c.Options().Public = false
+	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
 
@@ -236,6 +208,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("alice"))
 		assert.IsType(t, ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
+		assert.NotEmpty(t, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.Equal(t, adminFeatures, f)
@@ -265,6 +239,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 
 		assert.IsType(t, ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
+		assert.NotEmpty(t, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
@@ -290,13 +266,15 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 	})
-	t.Run("RoleUnauthorized", func(t *testing.T) {
+	t.Run("RoleUnknown", func(t *testing.T) {
 		sess := entity.SessionFixtures.Pointer("unauthorized")
 
 		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
+		assert.NotEmpty(t, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
@@ -326,7 +304,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 
 		assert.IsType(t, ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-
+		assert.NotEmpty(t, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 		f := cfg.Settings.Features
 
 		assert.True(t, f.Search)

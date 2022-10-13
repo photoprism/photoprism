@@ -124,11 +124,11 @@ export class File extends RestModel {
       return `${config.contentUri}/svg/file`;
     }
 
-    return `${config.contentUri}/t/${this.Hash}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${this.Hash}/${config.previewToken}/${size}`;
   }
 
   getDownloadUrl() {
-    return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken()}`;
+    return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken}`;
   }
 
   download() {

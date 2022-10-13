@@ -322,7 +322,7 @@ func TestMoment_Title(t *testing.T) {
 }
 
 func TestRemoveDuplicateMoments(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		if removed, err := RemoveDuplicateMoments(); err != nil {
 			t.Fatal(err)
 		} else {

@@ -92,7 +92,7 @@ func BasicAuth() gin.HandlerFunc {
 			limiter.Auth.Reserve(clientIp)
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
 			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
-		} else if !user.SyncAllowed() {
+		} else if !user.CanUseWebDAV() {
 			// Sync disabled for this account.
 			message := "sync disabled"
 

@@ -3,6 +3,8 @@ package config
 import (
 	"regexp"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -75,9 +77,11 @@ func (c *Config) SetAuthMode(mode string) {
 	case AuthModePublic:
 		c.options.AuthMode = AuthModePublic
 		c.options.Public = true
+		entity.CheckTokens = false
 	default:
 		c.options.AuthMode = AuthModePasswd
 		c.options.Public = false
+		entity.CheckTokens = true
 	}
 }
 
@@ -112,31 +116,28 @@ func (c *Config) CheckPassword(p string) bool {
 	return ap == p
 }
 
-// InvalidDownloadToken checks if the token is invalid.
-func (c *Config) InvalidDownloadToken(t string) bool {
-	return c.DownloadToken() != t
-}
-
 // DownloadToken returns the DOWNLOAD api token (you can optionally use a static value for permanent caching).
 func (c *Config) DownloadToken() string {
-	if c.options.DownloadToken == "" {
+	if c.Public() {
+		return entity.TokenPublic
+	} else if c.options.DownloadToken == "" {
 		c.options.DownloadToken = rnd.GenerateToken(8)
 	}
 
 	return c.options.DownloadToken
 }
 
-// InvalidPreviewToken checks if the preview token is invalid.
-func (c *Config) InvalidPreviewToken(t string) bool {
-	return c.PreviewToken() != t && c.DownloadToken() != t
+// InvalidDownloadToken checks if the token is invalid.
+func (c *Config) InvalidDownloadToken(t string) bool {
+	return entity.InvalidDownloadToken(t)
 }
 
 // PreviewToken returns the preview image api token (based on the unique storage serial by default).
 func (c *Config) PreviewToken() string {
-	if c.options.PreviewToken == "" {
-		if c.Public() {
-			c.options.PreviewToken = "public"
-		} else if c.Serial() == "" {
+	if c.Public() {
+		return entity.TokenPublic
+	} else if c.options.PreviewToken == "" {
+		if c.Serial() == "" {
 			return "********"
 		} else {
 			c.options.PreviewToken = c.SerialChecksum()
@@ -144,4 +145,9 @@ func (c *Config) PreviewToken() string {
 	}
 
 	return c.options.PreviewToken
+}
+
+// InvalidPreviewToken checks if the preview token is invalid.
+func (c *Config) InvalidPreviewToken(t string) bool {
+	return entity.InvalidPreviewToken(t)
 }

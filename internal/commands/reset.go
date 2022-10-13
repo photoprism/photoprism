@@ -184,7 +184,7 @@ func resetIndexDb(c *config.Config) {
 		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
-	log.Infof("database reset completed in %s", time.Since(start))
+	log.Infof("completed in %s", time.Since(start))
 }
 
 // resetCache removes all cache files and folders.

@@ -39,7 +39,7 @@ func TestChangePassword(t *testing.T) {
 		}
 	})
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)

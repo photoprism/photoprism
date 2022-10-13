@@ -25,7 +25,7 @@ func Users(limit, offset int, sortOrder, search string) (result entity.Users, er
 	search = strings.TrimSpace(search)
 
 	if search == "all" {
-		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", entity.UnixTime())
+		// Don't filter.
 	} else if id := txt.Int(search); id != 0 {
 		stmt = stmt.Where("id = ?", id)
 	} else if rnd.IsUID(search, entity.UserUID) {

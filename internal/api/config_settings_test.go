@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetSettings(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetSettings(router)
 		r := PerformRequest(app, "GET", "/api/v1/settings")
@@ -22,7 +22,7 @@ func TestGetSettings(t *testing.T) {
 }
 
 func TestSaveSettings(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetSettings(router)
 		r := PerformRequest(app, "GET", "/api/v1/settings")

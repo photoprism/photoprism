@@ -107,7 +107,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		AddCountHeader(c, len(resp.Files)+len(resp.Folders))
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
+		AddTokenHeaders(c, s)
 
 		c.JSON(http.StatusOK, resp)
 	}

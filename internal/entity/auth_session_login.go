@@ -2,6 +2,9 @@ package entity
 
 import (
 	"net/http"
+	"time"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
 
@@ -38,7 +41,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 		}
 
 		// Login allowed?
-		if !user.LoginAllowed() {
+		if !user.CanLogIn() {
 			message := "account disabled"
 			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
 			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
@@ -94,6 +97,9 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 		if user.IsUnknown() {
 			user = &Visitor
 			event.AuditDebug([]string{m.IP(), "session %s", "role upgraded to %s"}, m.RefID, user.AclRole().String())
+			expires := UTC().Add(time.Hour * 24)
+			m.Expires(expires)
+			event.AuditDebug([]string{m.IP(), "session %s", "expires at %s"}, m.RefID, txt.TimeStamp(&expires))
 		}
 
 		m.SetUser(user)

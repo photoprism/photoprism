@@ -1,8 +1,9 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
@@ -25,28 +26,39 @@ func usersRemoveAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		conf.MigrateDb(false, nil)
 
-		username := clean.Username(ctx.Args().First())
+		id := clean.Username(ctx.Args().First())
 
-		// Username provided?
-		if username == "" {
+		// Name or UID provided?
+		if id == "" {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
+		// Find user record.
+		var m *entity.User
+
+		if rnd.IsUID(id, entity.UserUID) {
+			m = entity.FindUserByUID(id)
+		} else {
+			m = entity.FindUserByName(id)
+		}
+
+		if m == nil {
+			return fmt.Errorf("user %s not found", clean.LogQuote(id))
+		}
+
 		actionPrompt := promptui.Prompt{
-			Label:     fmt.Sprintf("Remove user %s?", clean.LogQuote(username)),
+			Label:     fmt.Sprintf("Remove user %s?", m.String()),
 			IsConfirm: true,
 		}
 
 		if _, err := actionPrompt.Run(); err == nil {
-			if m := entity.FindUserByName(username); m == nil {
-				return errors.New("user not found")
-			} else if err := m.Delete(); err != nil {
+			if err = m.Delete(); err != nil {
 				return err
 			} else {
-				log.Infof("user %s has been removed", clean.LogQuote(username))
+				log.Infof("user %s has been removed", m.String())
 			}
 		} else {
-			log.Infof("user %s was not removed", clean.LogQuote(username))
+			log.Infof("user %s was not removed", m.String())
 		}
 
 		return nil

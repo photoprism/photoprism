@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -32,7 +31,14 @@ func CreateSession(router *gin.RouterGroup) {
 		// Skip authentication if app is running in public mode.
 		if conf.Public() {
 			sess := service.Session().Public()
-			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": sess.ID, "user": sess.User(), "data": sess.Data(), "config": conf.ClientPublic()})
+			data := gin.H{
+				"status": "ok",
+				"id":     sess.ID,
+				"user":   sess.User(),
+				"data":   sess.Data(),
+				"config": conf.ClientPublic(),
+			}
+			c.JSON(http.StatusOK, data)
 			return
 		}
 
@@ -75,17 +81,19 @@ func CreateSession(router *gin.RouterGroup) {
 		// Add session id to response headers.
 		AddSessionHeader(c, sess.ID)
 
-		// Get config values for use by the JavaScript UI and other clients.
-		var clientConfig config.ClientConfig
-		if sess.User().IsVisitor() {
-			clientConfig = conf.ClientShare()
-		} else if sess.User().IsRegistered() {
-			clientConfig = conf.ClientSession(sess)
-		} else {
-			clientConfig = conf.ClientPublic()
+		// Get config values for the UI.
+		clientConfig := conf.ClientSession(sess)
+
+		// User information, session data, and client config values.
+		data := gin.H{
+			"status": "ok",
+			"id":     sess.ID,
+			"user":   sess.User(),
+			"data":   sess.Data(),
+			"config": clientConfig,
 		}
 
-		// Send JSON response with user information, session data, and client config values.
-		c.JSON(sess.HttpStatus(), gin.H{"status": "ok", "id": sess.ID, "user": sess.User(), "data": sess.Data(), "config": clientConfig})
+		// Send JSON response.
+		c.JSON(sess.HttpStatus(), data)
 	})
 }

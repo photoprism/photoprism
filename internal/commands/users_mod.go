@@ -3,6 +3,8 @@ package commands
 import (
 	"fmt"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
+
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -24,28 +26,34 @@ func usersModAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		conf.MigrateDb(false, nil)
 
-		username := clean.Username(ctx.Args().First())
+		id := clean.Username(ctx.Args().First())
 
-		// Username provided?
-		if username == "" {
+		// Name or UID provided?
+		if id == "" {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
-		// Find user by name.
-		user := entity.FindUserByName(username)
+		// Find user record.
+		var m *entity.User
 
-		if user == nil {
-			return fmt.Errorf("user %s not found", clean.LogQuote(username))
+		if rnd.IsUID(id, entity.UserUID) {
+			m = entity.FindUserByUID(id)
+		} else {
+			m = entity.FindUserByName(id)
+		}
+
+		if m == nil {
+			return fmt.Errorf("user %s not found", clean.LogQuote(id))
 		}
 
 		// Set values.
-		if err := user.SetValuesFromCli(ctx); err != nil {
+		if err := m.SetValuesFromCli(ctx); err != nil {
 			return err
 		}
 
 		// Change password?
 		if val := clean.Password(ctx.String("password")); ctx.IsSet("password") && val != "" {
-			err := user.SetPassword(val)
+			err := m.SetPassword(val)
 
 			if err != nil {
 				return err
@@ -55,11 +63,11 @@ func usersModAction(ctx *cli.Context) error {
 		}
 
 		// Save values.
-		if err := user.Save(); err != nil {
+		if err := m.Save(); err != nil {
 			return err
 		}
 
-		log.Infof("user %s has been updated", clean.LogQuote(user.Name()))
+		log.Infof("user %s has been updated", m.String())
 
 		return nil
 	})

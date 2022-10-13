@@ -40,8 +40,8 @@ func usersListAction(ctx *cli.Context) error {
 				user.Email(),
 				user.AclRole().String(),
 				report.Bool(user.SuperAdmin, report.Yes, report.No),
-				report.Bool(user.LoginAllowed(), report.Enabled, report.Disabled),
-				report.Bool(user.SyncAllowed(), report.Enabled, report.Disabled),
+				report.Bool(user.CanLogIn(), report.Enabled, report.Disabled),
+				report.Bool(user.CanUseWebDAV(), report.Enabled, report.Disabled),
 				user.Attr(),
 			}
 		}

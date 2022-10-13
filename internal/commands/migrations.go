@@ -169,7 +169,7 @@ func migrationsRunAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("migration completed in %s", elapsed)
+	log.Infof("completed in %s", elapsed)
 
 	return nil
 }

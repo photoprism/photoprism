@@ -147,7 +147,7 @@ export default {
         return;
       }
 
-      this.onDownload(`${this.$config.apiUri}/labels/${this.selection[0]}/dl?t=${this.$config.downloadToken()}`);
+      this.onDownload(`${this.$config.apiUri}/labels/${this.selection[0]}/dl?t=${this.$config.downloadToken}`);
 
       this.expanded = false;
     },

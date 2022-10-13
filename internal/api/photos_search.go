@@ -76,7 +76,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		AddCountHeader(c, count)
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
+		AddTokenHeaders(c, s)
 
 		// Return as JSON.
 		c.JSON(http.StatusOK, result)
@@ -93,7 +93,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		conf := service.Config()
 
-		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
+		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), s.PreviewToken, s.DownloadToken)
 
 		if err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "view", "%s"}, s.RefID, err)
@@ -105,7 +105,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		AddCountHeader(c, count)
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
+		AddTokenHeaders(c, s)
 
 		// Return as JSON.
 		c.JSON(http.StatusOK, result)
