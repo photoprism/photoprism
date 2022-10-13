@@ -42,7 +42,7 @@ endif
 
 # Declare "make" targets.
 all: dep build-js
-dep: dep-tensorflow dep-npm dep-js dep-go
+dep: dep-tensorflow dep-npm dep-js
 build: build-go
 pull: docker-pull
 test: test-js test-go
