@@ -200,6 +200,42 @@ export default {
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+
+    /**
+     * the following is a dirty hack to make restoring the scroll-pos on the
+     * iOS-PWA work after an image has been downloaded from the files-tab of the
+     * edit-dialog.
+     * In that case, mobile PWA-Safari does the following:
+     * 1. cache the whole page state
+     * 2. navigate to a fullscreen download-window (god knows why it's not just
+     *    a small download-modal like in regular non-PWA-safari)
+     * 3. after closing that download-window (which usually triggers a popstate,
+     *    but for some reason not in this case), the page is restored from cache
+     * 4. Nothing gets re-mounted, but the `pageshow`-event is triggered with
+     *    `event.persistet = true`
+     * 5. After a couple of milliseconds the scrollBehavior-method in app.js
+     *    (which is supposed to restore scroll positions after navigation)
+     *    wrongfully sets the scroll-position to 0,0 (i guess the page thinks
+     *    that no real navigation happened, because the page is reloaded from
+     *    cache?)
+     *
+     * To make scroll-pos-reset work in these circumstances we need to:
+     * 1. Listen for the `pageShow`-event with `event.persisted = true`
+     * 2. Wait some milliseconds so that the scrollPosReset from app.js has time
+     *    to break the scroll-position
+     * 3. Finally fix the scroll-position by scrolling the last selected image
+     *    into view.
+     *
+     * This all happens with the fullscreen edit-dialog open, so the user doesn't
+     * event see that scrolling-shenanigans are happening
+     */
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        setTimeout(() => {
+          this.restoreScrollPosition();
+        }, 50);
+      }
+    });
   },
   destroyed() {
     for (let i = 0; i < this.subscriptions.length; i++) {
