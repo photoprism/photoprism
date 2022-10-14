@@ -519,6 +519,7 @@ export default {
             this.$notify.info(this.$gettext("One picture found"));
           } else {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
+            this.restoreScrollPosition();
           }
         } else {
           this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 50}));
@@ -544,8 +545,20 @@ export default {
       }
 
       window.localStorage.removeItem("last_opened_photo");
+      this.tryScrollingToPhoto(lastOpenedPhotoId);
+    },
+    tryScrollingToPhoto(photoId, tryCount = 1) {
+      if (tryCount > 10) {
+        return;
+      }
+
       this.$nextTick(() => {
-        document.querySelector(`[data-uid="${lastOpenedPhotoId}"]`)?.scrollIntoView({
+        const photoToScrollTo = document.querySelector(`[data-uid="${photoId}"]`);
+        if (photoToScrollTo === undefined || photoToScrollTo === null) {
+          return this.tryScrollingToPhoto(photoId, tryCount++);
+        }
+
+        photoToScrollTo?.scrollIntoView({
           behavior: 'auto',
           block: 'center',
           inline: 'center'
