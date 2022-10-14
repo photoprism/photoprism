@@ -51,7 +51,7 @@ func Upload(router *gin.RouterGroup) {
 
 		var uploads []string
 
-		uploadDir := path.Join(conf.ImportPath(), "upload", s.RefID+token)
+		uploadDir := path.Join(conf.ImportPath(), UploadPath, s.RefID+token)
 
 		if err = os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			log.Errorf("upload: failed creating folder %s", clean.Log(filepath.Base(uploadDir)))

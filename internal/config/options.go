@@ -56,7 +56,7 @@ type Options struct {
 	WakeupInterval        time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
 	AutoIndex             int           `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
 	AutoImport            int           `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
-	DisableWebDAV         bool          `yaml:"WebDAV" json:"WebDAV" flag:"disable-webdav"`
+	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
 	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
 	DisableSettings       bool          `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
 	DisablePlaces         bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
