@@ -183,9 +183,10 @@ export default {
       const filterChanged = JSON.stringify(this.lastFilter) !== JSON.stringify(this.filter);
       if (filterChanged) {
         this.lastFilter = {};
-        this.routeName = this.$route.name;
-        this.search();
       }
+
+      this.routeName = this.$route.name;
+      this.search();
     }
   },
   created() {

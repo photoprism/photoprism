@@ -122,7 +122,11 @@ export default {
       this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
       this.filter.country = query['country'] ? query['country'] : '';
       this.settings.view = this.viewType();
-      this.lastFilter = {};
+
+      if (JSON.stringify(this.lastFilter) !== JSON.stringify(this.filter)) {
+        this.lastFilter = {};
+      }
+
       this.routeName = this.$route.name;
 
       if (this.uid !== this.$route.params.uid) {
