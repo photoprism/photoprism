@@ -91,7 +91,7 @@ export class Face extends RestModel {
     }
 
     if (this.Thumb) {
-      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
     } else {
       return `${config.contentUri}/svg/portrait`;
     }

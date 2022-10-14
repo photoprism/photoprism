@@ -21,13 +21,6 @@ const photoviewer = new PhotoViewer();
 const sharedialog = new ShareDialog();
 const photo = new Photo();
 
-test.skip.meta("testID", "authentication-000")(
-  "Time to start instance (will be marked as unstable)",
-  async (t) => {
-    await t.wait(5000);
-  }
-);
-
 test.meta("testID", "sharing-001").meta({ mode: "auth" })(
   "Common: Create, view, delete shared albums",
   async (t) => {
@@ -70,35 +63,50 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
 
     await t.expect(toolbar.toolbarSecondTitle.withText("Christmas").visible).ok();
 
-    await t.click(Selector("button").withText("@photoprism_app"));
-
-    await t.expect(toolbar.toolbarSecondTitle.withText("Albums").visible).ok();
-
+    await t.click(Selector("div.v-toolbar__title a").withText("Albums"));
     const AlbumCount = await album.getAlbumCount("all");
 
-    await t.expect(AlbumCount).gte(40);
+    await t.expect(AlbumCount).eql(2);
+
+    await menu.openPage("folders");
+    const FolderCount = await album.getAlbumCount("all");
+
+    await t.expect(FolderCount).gte(1);
 
     await t.useRole(Role.anonymous());
     await t.navigateTo(url);
 
     await t.expect(toolbar.toolbarSecondTitle.withText("Christmas").visible).ok();
+
     const photoCountShared = await photo.getPhotoCount("all");
     //don't show private photo
     await t.expect(photoCountShared).eql(1);
 
-    await t.click(Selector("button").withText("@photoprism_app"));
-
-    await t.expect(toolbar.toolbarSecondTitle.withText("Albums").visible).ok();
-
+    await t.click(Selector("div.v-toolbar__title a").withText("Albums"));
     const AlbumCountAnonymous = await Selector("a.is-album").count;
 
-    await t.expect(AlbumCountAnonymous).eql(2);
+    await t.expect(AlbumCountAnonymous).eql(1);
+
+    await menu.openPage("calendar");
+    const CalendarCountAnonymous = await Selector("a.is-album").count;
+
+    await t.expect(CalendarCountAnonymous).eql(0);
+
+    await menu.openPage("folders");
+    const FolderCountAnonymous = await Selector("a.is-album").count;
+
+    await t.expect(FolderCountAnonymous).eql(1);
 
     await t.navigateTo("http://localhost:2343/browse");
+    await album.checkAlbumVisibility("aqmxlts2b2rx38wl", true);
+    await album.checkAlbumVisibility("aqmxlt22ilujuxux", false);
+
+    await t.click(Selector("div.nav-logout a"));
     await page.login("admin", "photoprism");
     await menu.openPage("albums");
     await album.openAlbumWithUid(FirstAlbumUid);
     await toolbar.triggerToolbarAction("share");
+
     await t
       .click(sharedialog.expandLink.nth(0))
       .click(sharedialog.deleteLink)
@@ -108,13 +116,16 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
 
     await t.navigateTo("http://localhost:2343/s/secretfortesting");
 
-    await t.expect(toolbar.toolbarSecondTitle.withText("Albums").visible).ok();
-
     const AlbumCountAnonymousAfterDelete = await album.getAlbumCount("all");
 
-    await t.expect(AlbumCountAnonymousAfterDelete).eql(1);
+    await t.expect(AlbumCountAnonymousAfterDelete).eql(0);
 
-    await t.navigateTo("http://localhost:2343/browse");
+    await menu.openPage("folders");
+    const FolderCountAnonymousAfterDelete = await album.getAlbumCount("all");
+
+    await t.expect(FolderCountAnonymousAfterDelete).eql(1);
+
+    await t.click(Selector("div.nav-logout a"));
     await page.login("admin", "photoprism");
     await menu.openPage("folders");
     await album.openAlbumWithUid(FirstFolderUid);
@@ -182,9 +193,8 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })(
       .notOk()
       .expect(Selector(`td button.input-favorite`).visible)
       .notOk()
-      .click(Selector("button").withText("@photoprism_app"))
-      .expect(toolbar.toolbarSecondTitle.withText("Albums").visible)
-      .ok();
+      .click(Selector("div.v-toolbar__title a").withText("Albums"))
+      .navigateTo("/states");
 
     const AlbumUid = await album.getNthAlbumUid("all", 0);
     await album.triggerHoverAction("uid", AlbumUid, "select");

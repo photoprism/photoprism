@@ -356,7 +356,7 @@ export default {
         default: 
           Api.post("zip", {"photos": this.selection})
             .then(r => {
-              this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken()}`);
+              this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken}`);
             })
             .finally(() => {
               this.busy = false;

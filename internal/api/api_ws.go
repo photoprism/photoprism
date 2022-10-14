@@ -129,17 +129,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 				wsAuth.user[connId] = *s.User()
 				wsAuth.mutex.Unlock()
 
-				var clientConfig config.ClientConfig
-
-				if s.User().IsVisitor() {
-					clientConfig = conf.ClientShare()
-				} else if s.User().IsRegistered() {
-					clientConfig = conf.ClientSession(s)
-				} else {
-					clientConfig = conf.ClientPublic()
-				}
-
-				wsSendMessage("config.updated", event.Data{"config": clientConfig}, ws, writeMutex)
+				wsSendMessage("config.updated", event.Data{"config": conf.ClientSession(s)}, ws, writeMutex)
 			}
 		}
 	}

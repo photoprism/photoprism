@@ -26,7 +26,7 @@ func (s *Settings) ApplyACL(list acl.ACL, role acl.Role) *Settings {
 	m.Features.Archive = s.Features.Archive && list.AllowAny(acl.ResourcePhotos, role, acl.Permissions{acl.ActionDelete})
 	m.Features.Delete = s.Features.Delete && list.AllowAny(acl.ResourcePhotos, role, acl.Permissions{acl.ActionDelete})
 	m.Features.Edit = s.Features.Edit && list.AllowAny(acl.ResourcePhotos, role, acl.Permissions{acl.ActionUpdate})
-	m.Features.Review = s.Features.Review && list.Allow(acl.ResourcePhotos, role, acl.ActionManage)
+	m.Features.Review = s.Features.Review
 	m.Features.Share = s.Features.Share && list.AllowAny(acl.ResourceShares, role, acl.Permissions{acl.ActionManage})
 
 	// Browse, upload and download files.

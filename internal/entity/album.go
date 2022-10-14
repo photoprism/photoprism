@@ -347,10 +347,17 @@ func FindAlbum(find Album) *Album {
 
 	// Create search condition.
 	stmt := UnscopedDb().Where("album_type = ?", find.AlbumType)
+
+	// Search by slug and filter or title.
 	if find.AlbumType != AlbumDefault && find.AlbumFilter != "" {
 		stmt = stmt.Where("album_slug = ? OR album_filter = ?", find.AlbumSlug, find.AlbumFilter)
 	} else {
 		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
+	}
+
+	// Filter by creator if the album has not been published yet.
+	if find.CreatedBy != "" {
+		stmt = stmt.Where("published_at > ? OR created_by = ?", TimeStamp(), find.CreatedBy)
 	}
 
 	// Find first matching record.

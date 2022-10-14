@@ -81,6 +81,7 @@ export default {
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
       hasPlaces: this.$config.allow("places", "view") && this.$config.feature("places"),
       canSearchPlaces: this.$config.allow("places", "search") && this.$config.feature("places"),
+      canAccessLibrary: this.$config.allow("photos", "access_library"),
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -172,14 +173,14 @@ export default {
 
       const photo = this.results[index];
 
-      if (photo && photo.CellID && photo.CellID !== "zz") {
-        if (this.canSearchPlaces) {
-          this.$router.push({name: "places_query", params: {q: photo.CellID}});
-        } else {
-          this.$router.push({name: "places_scope", params: {s: this.uid, q: photo.CellID}});
-        }
-      } else {
-        this.$router.push({name: "places_scope", params: {s: this.uid, q: ""}});
+      if (!photo) {
+        return;
+      }
+
+      if (this.canAccessLibrary && photo.CellID && photo.CellID !== "zz") {
+        this.$router.push({name: "places_query", params: {q: photo.CellID}});
+      } else if (this.uid) {
+        this.$router.push({name: "places_scope", params: {s: this.uid, q: photo.CellID}});
       }
     },
     editPhoto(index) {

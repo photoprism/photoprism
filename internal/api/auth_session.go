@@ -36,5 +36,5 @@ func Session(id string) *entity.Session {
 		return nil
 	}
 
-	return &s
+	return s
 }

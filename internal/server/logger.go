@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -22,7 +23,7 @@ func Logger() gin.HandlerFunc {
 		end := time.Now()
 		latency := end.Sub(start)
 
-		// clientIP := c.ClientIP()
+		// clientIp := c.ClientIP()
 		method := c.Request.Method
 		statusCode := c.Writer.Status()
 

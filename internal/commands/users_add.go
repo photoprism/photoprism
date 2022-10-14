@@ -25,6 +25,8 @@ var UsersAddCommand = cli.Command{
 // usersAddAction adds a new user account.
 func usersAddAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		conf.MigrateDb(false, nil)
+
 		frm := form.NewUserFromCli(ctx)
 
 		interactive := true

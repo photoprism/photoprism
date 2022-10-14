@@ -150,7 +150,7 @@ export default {
       return DateTime.fromISO(time).toLocaleString(DateTime.DATE_FULL);
     },
     load() {
-      Account.search({count: 1000}).then(r => this.results = r.models);
+      Account.search({count: 2000}).then(r => this.results = r.models);
     },
     remove(model) {
       this.model = model.clone();

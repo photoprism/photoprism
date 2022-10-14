@@ -46,13 +46,18 @@ func (m *Password) SetPassword(password string) error {
 	}
 }
 
-// InvalidPassword returns true if the given password does not match the hash.
-func (m *Password) InvalidPassword(password string) bool {
-	if m.Hash == "" && password == "" {
+// Is checks if the password is correct.
+func (m *Password) Is(s string) bool {
+	return !m.IsWrong(s)
+}
+
+// IsWrong checks if the specified password is incorrect.
+func (m *Password) IsWrong(s string) bool {
+	if m.Hash == "" && s == "" {
 		return false
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(m.Hash), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(m.Hash), []byte(s))
 	return err != nil
 }
 

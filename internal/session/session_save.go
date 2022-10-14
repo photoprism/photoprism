@@ -15,7 +15,7 @@ func (s *Session) Save(m *entity.Session) (*entity.Session, error) {
 	}
 
 	// Save session.
-	return m, m.Save()
+	return m.UpdateLastActive(), m.Save()
 }
 
 // Create initializes a new client session and returns it.
@@ -24,7 +24,9 @@ func (s *Session) Create(u *entity.User, c *gin.Context, data *entity.SessionDat
 	m = s.New(c).SetUser(u).SetData(data)
 
 	// Create session.
-	err = m.Create()
+	if err = m.Create(); err != nil {
+		m.UpdateLastActive()
+	}
 
 	return m, err
 }

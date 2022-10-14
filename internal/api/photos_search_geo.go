@@ -39,10 +39,18 @@ func SearchGeo(router *gin.RouterGroup) {
 		}
 
 		conf := service.Config()
+		settings := conf.Settings()
 
 		// Ignore private flag if feature is disabled.
-		if !conf.Settings().Features.Private {
+		if !settings.Features.Private {
 			f.Public = false
+		}
+
+		// Ignore private flag if feature is disabled.
+		if f.Scope == "" &&
+			settings.Features.Review &&
+			acl.Resources.Deny(acl.ResourcePhotos, s.User().AclRole(), acl.ActionManage) {
+			f.Quality = 3
 		}
 
 		// Find matching pictures.
@@ -59,14 +67,14 @@ func SearchGeo(router *gin.RouterGroup) {
 		AddCountHeader(c, len(photos))
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
+		AddTokenHeaders(c, s)
 
 		var resp []byte
 
 		// Render JSON response.
 		switch clean.Token(c.Param("format")) {
 		case "view":
-			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
+			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), s.PreviewToken, s.DownloadToken)
 		default:
 			resp, err = photos.GeoJSON()
 		}

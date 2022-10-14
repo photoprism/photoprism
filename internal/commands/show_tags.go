@@ -37,7 +37,7 @@ func showTagsAction(ctx *cli.Context) error {
 
 	// Output overview of supported metadata tags.
 	format := report.CliFormat(ctx)
-	result, err := report.Render(rows, cols, format)
+	result, err := report.RenderFormat(rows, cols, format)
 
 	fmt.Println(result)
 
@@ -46,7 +46,7 @@ func showTagsAction(ctx *cli.Context) error {
 	}
 
 	// Documentation links for those who want to delve deeper.
-	result, err = report.Render(meta.Docs, []string{"Namespace", "Documentation"}, format)
+	result, err = report.RenderFormat(meta.Docs, []string{"Namespace", "Documentation"}, format)
 
 	fmt.Printf("## Metadata Tags by Namespace ##\n\n")
 	fmt.Println(result)

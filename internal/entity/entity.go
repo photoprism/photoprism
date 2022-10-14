@@ -1,5 +1,5 @@
 /*
-Package entity provides models for data storage and business logic based on the GORM library.
+Package entity provides entity models based on the GORM library.
 
 Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 

@@ -9,12 +9,12 @@ import (
 )
 
 func TestFlushSessionCache(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		FlushSessionCache()
 	})
 }
 
-func TestCachedSession(t *testing.T) {
+func TestFindSession(t *testing.T) {
 	t.Run("EmptyID", func(t *testing.T) {
 		if _, err := FindSession(""); err == nil {
 			t.Fatal("error expected")

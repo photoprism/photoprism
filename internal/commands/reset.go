@@ -39,12 +39,12 @@ var ResetCommand = cli.Command{
 
 // resetAction resets the index and removes sidecar files after confirmation.
 func resetAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
@@ -64,24 +64,24 @@ func resetAction(ctx *cli.Context) error {
 		log.Infoln("reset: enabled trace mode")
 	}
 
-	resetIndex := ctx.Bool("yes")
+	confirmed := ctx.Bool("yes")
 
 	// Show prompt?
-	if !resetIndex {
+	if !confirmed {
 		removeIndexPrompt := promptui.Prompt{
 			Label:     "Delete and recreate index database?",
 			IsConfirm: true,
 		}
 
 		if _, err := removeIndexPrompt.Run(); err == nil {
-			resetIndex = true
+			confirmed = true
 		} else {
 			log.Infof("keeping index database")
 		}
 	}
 
 	// Reset index?
-	if resetIndex {
+	if confirmed {
 		resetIndexDb(conf)
 	}
 
@@ -184,7 +184,7 @@ func resetIndexDb(c *config.Config) {
 		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
-	log.Infof("database reset completed in %s", time.Since(start))
+	log.Infof("completed in %s", time.Since(start))
 }
 
 // resetCache removes all cache files and folders.

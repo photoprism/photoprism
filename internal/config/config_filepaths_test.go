@@ -4,12 +4,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestConfig_FindExecutable(t *testing.T) {
-	assert.Equal(t, "", findExecutable("yyy", "xxx"))
+	assert.Equal(t, "", findBin("yyy", "xxx"))
 }
 
 func TestConfig_SidecarPath(t *testing.T) {

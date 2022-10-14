@@ -5,12 +5,81 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/pkg/fs"
+)
+
+const (
+	HttpModeProd  = "release"
+	HttpModeDebug = "debug"
 )
 
 // DetachServer checks if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
 	return c.options.DetachServer
+}
+
+// TrustedProxy returns the list of trusted proxy servers as comma-separated list.
+func (c *Config) TrustedProxy() string {
+	return strings.Join(c.options.TrustedProxies, ", ")
+}
+
+// TrustedProxies returns proxy server ranges from which client and protocol headers can be trusted.
+func (c *Config) TrustedProxies() []string {
+	return c.options.TrustedProxies
+}
+
+// HttpsProxyHeader returns the proxy protocol header names.
+func (c *Config) HttpsProxyHeader() []string {
+	return c.options.HttpsProxyHeaders
+}
+
+// HttpsProxyProto returns the proxy protocol header HTTPS values.
+func (c *Config) HttpsProxyProto() []string {
+	return c.options.HttpsProxyProto
+}
+
+// HttpsProxyHeaders returns a map with the proxy https protocol headers.
+func (c *Config) HttpsProxyHeaders() map[string]string {
+	p := len(c.options.HttpsProxyHeaders)
+	h := make(map[string]string, p+1)
+
+	if p == 0 {
+		h[header.ForwardedProto] = header.ProtoHttps
+		return h
+	}
+
+	for k, v := range c.options.HttpsProxyHeaders {
+		if l := len(c.options.HttpsProxyProto); l == 0 {
+			h[v] = header.ProtoHttps
+		} else if l > k {
+			h[v] = c.options.HttpsProxyProto[k]
+		} else {
+			h[v] = c.options.HttpsProxyProto[0]
+		}
+	}
+
+	return h
+}
+
+// HttpMode returns the server mode.
+func (c *Config) HttpMode() string {
+	if c.Prod() {
+		return HttpModeProd
+	} else if c.options.HttpMode == "" {
+		if c.Debug() {
+			return HttpModeDebug
+		}
+
+		return HttpModeProd
+	}
+
+	return c.options.HttpMode
+}
+
+// HttpCompression returns the http compression method (none or gzip).
+func (c *Config) HttpCompression() string {
+	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
 
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
@@ -22,31 +91,13 @@ func (c *Config) HttpHost() string {
 	return c.options.HttpHost
 }
 
-// HttpPort returns the built-in HTTP server port.
+// HttpPort returns the HTTP server port number.
 func (c *Config) HttpPort() int {
 	if c.options.HttpPort == 0 {
 		return 2342
 	}
 
 	return c.options.HttpPort
-}
-
-// HttpMode returns the server mode.
-func (c *Config) HttpMode() string {
-	if c.options.HttpMode == "" {
-		if c.Debug() {
-			return "debug"
-		}
-
-		return "release"
-	}
-
-	return c.options.HttpMode
-}
-
-// HttpCompression returns the http compression method (none or gzip).
-func (c *Config) HttpCompression() string {
-	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
 
 // TemplatesPath returns the server templates path.

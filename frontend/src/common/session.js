@@ -34,6 +34,7 @@ export default class Session {
   /**
    * @param {Storage} storage
    * @param {Config} config
+   * @param {object} shared
    */
   constructor(storage, config, shared) {
     this.storage_key = "session_storage";
@@ -146,6 +147,25 @@ export default class Session {
     this.deleteAll();
   }
 
+  setResp(resp) {
+    if (!resp || !resp.data) {
+      return;
+    }
+
+    if (resp.data.id) {
+      this.setId(resp.data.id);
+    }
+    if (resp.data.config) {
+      this.setConfig(resp.data.config);
+    }
+    if (resp.data.user) {
+      this.setUser(resp.data.user);
+    }
+    if (resp.data.data) {
+      this.setData(resp.data.data);
+    }
+  }
+
   setData(data) {
     if (!data) {
       return;
@@ -189,12 +209,16 @@ export default class Session {
     return this.user;
   }
 
+  loginRequired() {
+    return !this.config.isPublic() && !this.isUser();
+  }
+
   isUser() {
     return this.user && this.user.hasId();
   }
 
   getHome() {
-    if (!this.isUser()) {
+    if (this.loginRequired()) {
       return "login";
     } else if (this.user.Role === "guest") {
       return "albums";
@@ -258,26 +282,17 @@ export default class Session {
 
     return Api.post("session", { name, password, token }).then((resp) => {
       const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
-
-      this.setConfig(resp.data.config);
-      this.setId(resp.data.id);
-      this.setUser(resp.data.user);
-      this.setData(resp.data.data);
+      this.setResp(resp);
       this.sendClientInfo();
-
       return Promise.resolve(reload);
     });
   }
 
   refresh() {
-    if (this.hasId()) {
+    if (this.hasId() && !this.config.isPublic()) {
       return Api.get("session/" + this.getId())
         .then((resp) => {
-          if (resp.data && resp.data.config) {
-            this.setConfig(resp.data.config);
-            this.setUser(resp.data.user);
-            this.setData(resp.data.data);
-          }
+          this.setResp(resp);
           return Promise.resolve();
         })
         .catch(() => {
@@ -291,11 +306,12 @@ export default class Session {
   }
 
   redeemToken(token) {
+    if (!token) {
+      return Promise.reject();
+    }
+
     return Api.post("session", { token }).then((resp) => {
-      this.setConfig(resp.data.config);
-      this.setId(resp.data.id);
-      this.setUser(resp.data.user);
-      this.setData(resp.data.data);
+      this.setResp(resp);
       this.sendClientInfo();
     });
   }

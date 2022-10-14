@@ -77,7 +77,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Private:   false,
 			Ratings:   false,
 			Reactions: false,
-			Review:    false,
+			Review:    true,
 			Search:    false,
 			Settings:  false,
 			Share:     false,

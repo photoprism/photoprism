@@ -44,10 +44,10 @@ export class User extends RestModel {
       Attr: "",
       SuperAdmin: false,
       CanLogin: false,
+      CanInvite: false,
       BasePath: "",
       UploadPath: "",
-      CanSync: false,
-      CanInvite: false,
+      WebDAV: false,
       Thumb: "",
       ThumbSrc: "",
       Settings: {

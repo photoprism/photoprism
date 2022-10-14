@@ -20,7 +20,7 @@ func CancelAll() {
 	FacesWorker.Cancel()
 }
 
-// WorkersRunning checks if a worker is currently running.
-func WorkersRunning() bool {
+// IndexWorkersRunning checks if a worker is currently running.
+func IndexWorkersRunning() bool {
 	return MainWorker.Running() || SyncWorker.Running() || ShareWorker.Running() || MetaWorker.Running() || FacesWorker.Running()
 }

@@ -1,48 +1,48 @@
 package fs
 
 import (
-	"os"
 	"path/filepath"
+	"strings"
 
-	"github.com/h2non/filetype"
+	"github.com/gabriel-vasile/mimetype"
 )
 
 const (
-	MimeTypeJpeg   = "image/jpeg"
-	MimeTypePng    = "image/png"
-	MimeTypeGif    = "image/gif"
-	MimeTypeBitmap = "image/bmp"
-	MimeTypeWebP   = "image/webp"
-	MimeTypeTiff   = "image/tiff"
-	MimeTypeAVIF   = "image/avif"
-	MimeTypeHEIF   = "image/heif"
+	MimeTypeUnknown = ""
+	MimeTypeJpeg    = "image/jpeg"
+	MimeTypePng     = "image/png"
+	MimeTypeGif     = "image/gif"
+	MimeTypeBitmap  = "image/bmp"
+	MimeTypeTiff    = "image/tiff"
+	MimeTypeDNG     = "image/dng"
+	MimeTypeAVIF    = "image/avif"
+	MimeTypeHEIC    = "image/heic"
+	MimeTypeWebP    = "image/webp"
+	MimeTypeXML     = "text/xml"
+	MimeTypeJSON    = "application/json"
 )
 
-// MimeType returns the mime type of a file, an empty string if it is unknown.
-func MimeType(filename string) string {
-	// Workaround, since "image/avif " cannot be recognized yet.
-	if Extensions[filepath.Ext(filename)] == ImageAVIF {
+// Set mime detection read limit.
+func init() {
+	mimetype.SetLimit(1024)
+}
+
+// MimeType returns the mime type of a file, or an empty string if it could not be detected.
+func MimeType(filename string) (mimeType string) {
+	// Workaround, since "image/dng" cannot be recognized yet.
+	if ext := strings.ToLower(filepath.Ext(filename)); ext == "" {
+		// Continue.
+	} else if Extensions[ext] == ImageDNG {
+		return MimeTypeDNG
+	} else if Extensions[ext] == ImageAVIF {
 		return MimeTypeAVIF
 	}
 
-	handle, err := os.Open(filename)
-
-	if err != nil {
-		return ""
-	}
-
-	defer handle.Close()
-
-	// Only the first 261 bytes are used to sniff the content type.
-	buffer := make([]byte, 261)
-
-	if _, err := handle.Read(buffer); err != nil {
-		return ""
-	} else if t, err := filetype.Get(buffer); err == nil && t != filetype.Unknown {
-		return t.MIME.Value
-	} else if t := filetype.GetType(NormalizedExt(filename)); t != filetype.Unknown {
-		return t.MIME.Value
+	if t, err := mimetype.DetectFile(filename); err != nil {
+		return MimeTypeUnknown
 	} else {
-		return ""
+		mimeType, _, _ = strings.Cut(t.String(), ";")
 	}
+
+	return mimeType
 }

@@ -18,7 +18,7 @@ var MigrationsStatusCommand = cli.Command{
 	Name:      "ls",
 	Aliases:   []string{"status", "show"},
 	Usage:     "Lists the status of schema migrations",
-	ArgsUsage: "[MIGRATIONS...]",
+	ArgsUsage: "[migrations...]",
 	Flags:     report.CliFlags,
 	Action:    migrationsStatusAction,
 }
@@ -27,7 +27,7 @@ var MigrationsRunCommand = cli.Command{
 	Name:      "run",
 	Aliases:   []string{"execute", "migrate"},
 	Usage:     "Executes database schema migrations",
-	ArgsUsage: "[MIGRATIONS...]",
+	ArgsUsage: "[migrations...]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "failed, f",
@@ -53,12 +53,12 @@ var MigrationsCommand = cli.Command{
 
 // migrationsStatusAction lists the status of schema migration.
 func migrationsStatusAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
@@ -117,7 +117,7 @@ func migrationsStatusAction(ctx *cli.Context) error {
 	}
 
 	// Display report.
-	info, err := report.Render(rows, cols, report.CliFormat(ctx))
+	info, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 
 	if err != nil {
 		return err
@@ -169,7 +169,7 @@ func migrationsRunAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("migration completed in %s", elapsed)
+	log.Infof("completed in %s", elapsed)
 
 	return nil
 }

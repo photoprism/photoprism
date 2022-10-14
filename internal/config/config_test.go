@@ -161,7 +161,7 @@ func TestConfig_HttpServerMode(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	mode := c.HttpMode()
-	assert.Equal(t, "release", mode)
+	assert.Equal(t, HttpModeProd, mode)
 }
 
 func TestConfig_OriginalsPath(t *testing.T) {

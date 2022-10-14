@@ -9,10 +9,6 @@ type Role string
 
 // String returns the type as string.
 func (r Role) String() string {
-	if r == "" {
-		return "unauthorized"
-	}
-
 	return string(r)
 }
 

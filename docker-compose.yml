@@ -13,8 +13,9 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342"   # default HTTP port (host:container)
-      - "2343:2343"   # acceptance Test HTTP port (host:container)
+      - "2342:2342"   # Default HTTP port (host:container)
+      - "2443:2443"   # Default TLS port (host:container)
+      - "2343:2343"   # Acceptance Test HTTP port (host:container)
       - "40000:40000" # Go Debugger (host:container)
     shm_size: "2gb"
     links:
@@ -106,8 +107,9 @@ services:
 
   ## MariaDB Database Server
   ## Docs: https://mariadb.com/docs/reference/
+  ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-109/
   mariadb:
-    image: mariadb:10.8
+    image: mariadb:10.9
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
@@ -143,7 +145,7 @@ services:
   ## Login: user / photoprism
   ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:18.0
+    image: quay.io/keycloak/keycloak:19.0
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:app.localssl.dev"

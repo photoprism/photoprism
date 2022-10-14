@@ -31,17 +31,17 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 		m.SuperAdmin = frm.SuperAdmin
 	}
 
-	// Disable Web UI?
+	// Disable login (Web UI)?
 	if ctx.IsSet("no-login") {
 		m.CanLogin = frm.CanLogin
 	}
 
-	// Can use WebDAV.
-	if ctx.IsSet("can-sync") {
-		m.CanSync = frm.CanSync
+	// Allow the use of WebDAV?
+	if ctx.IsSet("webdav") {
+		m.WebDAV = frm.WebDAV
 	}
 
-	// Custom attributes.
+	// Set custom attributes?
 	if ctx.IsSet("attr") {
 		m.UserAttr = frm.Attr()
 	}

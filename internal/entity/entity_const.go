@@ -56,6 +56,7 @@ const (
 const (
 	SortOrderDefault   = ""
 	SortOrderRelevance = "relevance"
+	SortOrderDuration  = "duration"
 	SortOrderCount     = "count"
 	SortOrderAdded     = "added"
 	SortOrderImported  = "imported"

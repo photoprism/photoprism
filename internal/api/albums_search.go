@@ -56,7 +56,7 @@ func SearchAlbums(router *gin.RouterGroup) {
 		AddCountHeader(c, len(result))
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
+		AddTokenHeaders(c, s)
 
 		// Return as JSON.
 		c.JSON(http.StatusOK, result)

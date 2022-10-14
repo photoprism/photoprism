@@ -27,21 +27,21 @@ func NewSync(conf *config.Config) *Sync {
 }
 
 // logError logs an error message if err is not nil.
-func (worker *Sync) logError(err error) {
+func (w *Sync) logError(err error) {
 	if err != nil {
 		log.Errorf("sync: %s", err.Error())
 	}
 }
 
 // logWarn logs a warning message if err is not nil.
-func (worker *Sync) logWarn(err error) {
+func (w *Sync) logWarn(err error) {
 	if err != nil {
 		log.Warnf("sync: %s", err.Error())
 	}
 }
 
 // Start starts the sync worker.
-func (worker *Sync) Start() (err error) {
+func (w *Sync) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("sync: %s (panic)\nstack: %s", r, debug.Stack())
@@ -71,7 +71,7 @@ func (worker *Sync) Start() (err error) {
 			a.AccSync = false
 
 			if err := entity.Db().Save(&a).Error; err != nil {
-				worker.logError(err)
+				w.logError(err)
 			} else {
 				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
 			}
@@ -88,7 +88,7 @@ func (worker *Sync) Start() (err error) {
 
 		switch a.SyncStatus {
 		case entity.AccountSyncStatusRefresh:
-			if complete, err := worker.refresh(a); err != nil {
+			if complete, err := w.refresh(a); err != nil {
 				accErrors++
 				accError = err.Error()
 			} else if complete {
@@ -106,7 +106,7 @@ func (worker *Sync) Start() (err error) {
 				}
 			}
 		case entity.AccountSyncStatusDownload:
-			if complete, err := worker.download(a); err != nil {
+			if complete, err := w.download(a); err != nil {
 				accErrors++
 				accError = err.Error()
 				syncStatus = entity.AccountSyncStatusRefresh
@@ -121,7 +121,7 @@ func (worker *Sync) Start() (err error) {
 				}
 			}
 		case entity.AccountSyncStatusUpload:
-			if complete, err := worker.upload(a); err != nil {
+			if complete, err := w.upload(a); err != nil {
 				accErrors++
 				accError = err.Error()
 				syncStatus = entity.AccountSyncStatusRefresh
@@ -149,7 +149,7 @@ func (worker *Sync) Start() (err error) {
 			"AccErrors":  accErrors,
 			"SyncStatus": syncStatus,
 			"SyncDate":   syncDate}); err != nil {
-			worker.logError(err)
+			w.logError(err)
 		} else if synced {
 			event.Publish("sync.synced", event.Data{"account": a})
 		}

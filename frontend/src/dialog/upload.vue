@@ -134,7 +134,7 @@ export default {
 
       const params = {
         q: q,
-        count: 1000,
+        count: 2000,
         offset: 0,
         type: "album"
       };

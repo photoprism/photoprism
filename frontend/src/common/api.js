@@ -78,9 +78,13 @@ Api.interceptors.response.use(
     // Update preview token.
     if (resp.headers && resp.headers["x-preview-token"]) {
       const previewToken = resp.headers["x-preview-token"];
+      const downloadToken = resp.headers["x-download-token"]
+        ? resp.headers["x-download-token"]
+        : "";
       if (config.previewToken !== previewToken) {
         config.previewToken = previewToken;
-        Event.publish("config.updated", { config: { previewToken } });
+        config.downloadToken = downloadToken;
+        Event.publish("config.updated", { config: { previewToken, downloadToken } });
       }
     }
 

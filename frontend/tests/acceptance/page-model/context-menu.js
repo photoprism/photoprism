@@ -17,9 +17,19 @@ export default class Page {
   async checkContextMenuActionAvailability(action, visible) {
     await this.openContextMenu();
     if (visible) {
-      await t.expect(Selector("#t-clipboard button.action-" + action).visible).ok();
+      await t
+        .expect(Selector("#t-clipboard button.action-" + action).visible)
+        .ok()
+        .expect(Selector("#t-clipboard button.action-" + action).hasAttribute("disabled"))
+        .notOk();
     } else {
-      await t.expect(Selector("#t-clipboard button.action-" + action).visible).notOk();
+      if (await Selector("#t-clipboard button.action-" + action).visible) {
+        await t
+          .expect(Selector("#t-clipboard button.action-" + action).hasAttribute("disabled"))
+          .ok();
+      } else {
+        await t.expect(Selector("#t-clipboard button.action-" + action).visible).notOk();
+      }
     }
   }
 

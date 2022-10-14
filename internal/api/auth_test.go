@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -23,18 +22,11 @@ func AuthenticateAdmin(app *gin.Engine, router *gin.RouterGroup) (sessId string)
 func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, password string) (sessId string) {
 	CreateSession(router)
 
-	f := form.Login{
+	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{
 		UserName: name,
 		Password: password,
-	}
+	}))
 
-	loginStr, err := json.Marshal(f)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", string(loginStr))
 	sessId = r.Header().Get(session.Header)
 
 	return

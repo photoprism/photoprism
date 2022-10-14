@@ -11,12 +11,14 @@ func ClientIP(c *gin.Context) (ip string) {
 	if c == nil {
 		// Should never happen.
 		return UnknownIP
-	} else if ip = c.ClientIP(); ip == "" {
-		// Unit tests often do not set a client IP.
-		return UnknownIP
+	} else if ip = c.ClientIP(); ip != "" {
+		return ip
+	} else if ip = c.RemoteIP(); ip != "" {
+		return ip
 	}
 
-	return ip
+	// Tests may not specify an IP address.
+	return UnknownIP
 }
 
 // UserAgent returns the user agent from the request context or an empty string if it is unknown.

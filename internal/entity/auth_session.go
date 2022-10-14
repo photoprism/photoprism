@@ -2,6 +2,7 @@ package entity
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"net/http"
 	"time"
@@ -28,61 +29,89 @@ type Sessions []Session
 // Session represents a User session.
 type Session struct {
 	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	Status        int             `json:"Status,omitempty" yaml:"-"`
-	AuthDomain    string          `gorm:"type:VARBINARY(253);default:'';" json:"-" yaml:"AuthDomain,omitempty"`
-	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthMethod,omitempty"`
-	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthProvider,omitempty"`
-	AuthScope     string          `gorm:"size:1024;default:'';" json:"-" yaml:"AuthScope,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"-" yaml:"AuthID,omitempty"`
+	ClientIP      string          `gorm:"size:64;column:client_ip;index" json:"-" yaml:"ClientIP,omitempty"`
 	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
 	UserName      string          `gorm:"size:64;index;" json:"UserName,omitempty" yaml:"UserName,omitempty"`
 	user          *User           `gorm:"-"`
+	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthProvider,omitempty"`
+	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthMethod,omitempty"`
+	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"-" yaml:"AuthDomain,omitempty"`
+	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"-" yaml:"AuthID,omitempty"`
+	AuthScope     string          `gorm:"size:1024;default:'';" json:"-" yaml:"AuthScope,omitempty"`
+	LastActive    int64           `json:"LastActive,omitempty" yaml:"LastActive,omitempty"`
+	SessExpires   int64           `gorm:"index" json:"Expires,omitempty" yaml:"Expires,omitempty"`
+	SessTimeout   int64           `json:"Timeout,omitempty" yaml:"Timeout,omitempty"`
 	PreviewToken  string          `gorm:"type:VARBINARY(64);column:preview_token;default:'';" json:"-" yaml:"-"`
 	DownloadToken string          `gorm:"type:VARBINARY(64);column:download_token;default:'';" json:"-" yaml:"-"`
 	AccessToken   string          `gorm:"type:VARBINARY(4096);column:access_token;default:'';" json:"-" yaml:"-"`
 	RefreshToken  string          `gorm:"type:VARBINARY(512);column:refresh_token;default:'';" json:"-" yaml:"-"`
 	IdToken       string          `gorm:"type:VARBINARY(1024);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
 	UserAgent     string          `gorm:"size:512;" json:"-" yaml:"UserAgent,omitempty"`
-	ClientIP      string          `gorm:"size:64;column:client_ip;" json:"-" yaml:"ClientIP,omitempty"`
-	LoginIP       string          `gorm:"size:64;column:login_ip" json:"-" yaml:"-"`
-	LoginAt       time.Time       `json:"-" yaml:"-"`
-	MaxAge        time.Duration   `json:"MaxAge,omitempty" yaml:"MaxAge,omitempty"`
-	Timeout       time.Duration   `json:"Timeout,omitempty" yaml:"Timeout,omitempty"`
 	DataJSON      json.RawMessage `gorm:"type:VARBINARY(4096);" json:"Data,omitempty" yaml:"Data,omitempty"`
 	data          *SessionData    `gorm:"-"`
 	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"-" yaml:"-"`
+	LoginIP       string          `gorm:"size:64;column:login_ip" json:"-" yaml:"-"`
+	LoginAt       time.Time       `json:"-" yaml:"-"`
 	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
+	Status        int             `gorm:"-" json:"Status,omitempty" yaml:"-"`
 }
 
 // TableName returns the entity table name.
 func (Session) TableName() string {
-	return "auth_sessions_dev"
+	return "auth_sessions"
 }
 
-// NewSession creates a new session and returns it.
-func NewSession(maxAge, timeout time.Duration) (m *Session) {
+// NewSession creates a new session using the maxAge and timeout in seconds.
+func NewSession(maxAge, timeout int64) (m *Session) {
 	created := TimeStamp()
-
-	// Makes no sense for the timeout to be longer than the max age.
-	if timeout >= maxAge {
-		maxAge = timeout
-		timeout = 0
-	} else if maxAge == 0 {
-		// Set maxAge to default if not specified.
-		maxAge = time.Hour * 24 * 7
-	}
 
 	m = &Session{
 		ID:        rnd.SessionID(),
-		MaxAge:    maxAge,
-		Timeout:   timeout,
 		RefID:     rnd.RefID(SessionPrefix),
 		CreatedAt: created,
 		UpdatedAt: created,
 	}
 
+	if maxAge > 0 {
+		m.SessExpires = created.Unix() + maxAge
+	}
+
+	if timeout > 0 {
+		m.SessTimeout = timeout
+	}
+
 	return m
+}
+
+// Expires sets an explicit expiration time.
+func (m *Session) Expires(t time.Time) *Session {
+	if t.IsZero() {
+		return m
+	}
+
+	m.SessExpires = t.Unix()
+	return m
+}
+
+// DeleteExpiredSessions deletes expired sessions.
+func DeleteExpiredSessions() (deleted int) {
+	expired := Sessions{}
+
+	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", UnixTime()).Find(&expired).Error; err != nil {
+		event.AuditErr([]string{"failed to fetch sessions sessions", "%s"}, err)
+		return deleted
+	}
+
+	for _, s := range expired {
+		if err := s.Delete(); err != nil {
+			event.AuditErr([]string{s.IP(), "session %s", "failed to delete", "%s"}, s.RefID, err)
+		} else {
+			deleted++
+		}
+	}
+
+	return deleted
 }
 
 // SessionStatusUnauthorized returns a session with status unauthorized (401).
@@ -121,7 +150,7 @@ func (m *Session) CacheDuration(d time.Duration) {
 		return
 	}
 
-	sessionCache.Set(m.ID, *m, d)
+	CacheSession(m, d)
 }
 
 // Cache caches the session with the default expiration duration.
@@ -149,10 +178,9 @@ func (m *Session) Save() error {
 	return nil
 }
 
-// Delete removes a session.
+// Delete permanently deletes a session.
 func (m *Session) Delete() error {
-	DeleteFromSessionCache(m.ID)
-	return UnscopedDb().Delete(m).Error
+	return DeleteSession(m)
 }
 
 // Updates multiple properties in the database.
@@ -219,12 +247,58 @@ func (m *Session) SetUser(u *User) *Session {
 		m.UserName = u.UserName
 	}
 
-	if u.DownloadToken != "" {
-		m.DownloadToken = u.DownloadToken
+	m.SetPreviewToken(u.PreviewToken)
+	m.SetDownloadToken(u.DownloadToken)
+
+	return m
+}
+
+// ChangePassword changes the password of the current user.
+func (m *Session) ChangePassword(newPw string) (err error) {
+	u := m.User()
+
+	if u == nil {
+		return fmt.Errorf("unknown user")
 	}
 
-	if u.PreviewToken != "" {
-		m.PreviewToken = u.PreviewToken
+	// Change password.
+	err = u.SetPassword(newPw)
+
+	m.SetPreviewToken(u.PreviewToken)
+	m.SetDownloadToken(u.DownloadToken)
+
+	return nil
+}
+
+// SetPreviewToken updates the preview token if not empty.
+func (m *Session) SetPreviewToken(token string) *Session {
+	if m.ID == "" {
+		return m
+	}
+
+	if token != "" {
+		m.PreviewToken = token
+		PreviewToken.Set(token, m.ID)
+	} else if m.PreviewToken == "" {
+		m.PreviewToken = GenerateToken()
+		PreviewToken.Set(token, m.ID)
+	}
+
+	return m
+}
+
+// SetDownloadToken updates the download token if not empty.
+func (m *Session) SetDownloadToken(token string) *Session {
+	if m.ID == "" {
+		return m
+	}
+
+	if token != "" {
+		m.DownloadToken = token
+		DownloadToken.Set(token, m.ID)
+	} else if m.DownloadToken == "" {
+		m.DownloadToken = GenerateToken()
+		DownloadToken.Set(token, m.ID)
 	}
 
 	return m
@@ -363,16 +437,57 @@ func (m *Session) RedeemToken(token string) (n int) {
 
 // ExpiresAt returns the time when the session expires.
 func (m *Session) ExpiresAt() time.Time {
-	return m.CreatedAt.Add(m.MaxAge)
+	if m.SessExpires <= 0 {
+		return time.Time{}
+	}
+
+	return time.Unix(m.SessExpires, 0)
+}
+
+// TimeoutAt returns the time at which the session will expire due to inactivity.
+func (m *Session) TimeoutAt() time.Time {
+	if m.SessTimeout <= 0 || m.LastActive <= 0 {
+		return m.ExpiresAt()
+	} else if t := m.LastActive + m.SessTimeout; t <= m.SessExpires || m.SessExpires <= 0 {
+		return time.Unix(m.LastActive+m.SessTimeout, 0)
+	} else {
+		return m.ExpiresAt()
+	}
+}
+
+// TimedOut checks if the session has expired due to inactivity..
+func (m *Session) TimedOut() bool {
+	if at := m.TimeoutAt(); at.IsZero() {
+		return false
+	} else {
+		return at.Before(UTC())
+	}
 }
 
 // Expired checks if the session has expired.
 func (m *Session) Expired() bool {
-	if m.MaxAge <= 0 {
+	if m.SessExpires <= 0 {
+		return m.TimedOut()
+	} else if at := m.ExpiresAt(); at.IsZero() {
 		return false
+	} else {
+		return at.Before(UTC())
+	}
+}
+
+// UpdateLastActive sets the last activity of the session to now.
+func (m *Session) UpdateLastActive() *Session {
+	if m.Invalid() {
+		return m
 	}
 
-	return m.ExpiresAt().Before(UTC())
+	m.LastActive = UnixTime()
+
+	if err := Db().Model(m).UpdateColumn("LastActive", m.LastActive).Error; err != nil {
+		event.AuditWarn([]string{m.IP(), "session %s", "failed to update last active time", "%s"}, m.RefID, err)
+	}
+
+	return m
 }
 
 // Invalid checks if the session does not belong to a registered user or a visitor with shares.

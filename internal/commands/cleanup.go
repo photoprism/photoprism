@@ -7,7 +7,6 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
 )
@@ -31,13 +30,12 @@ var cleanUpFlags = []cli.Flag{
 func cleanUpAction(ctx *cli.Context) error {
 	cleanupStart := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 

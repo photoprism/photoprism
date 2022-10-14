@@ -12,7 +12,7 @@ func TestNewReaction(t *testing.T) {
 	t.Run("Rainbow", func(t *testing.T) {
 		m := NewReaction(FileFixtures.Pointer("bridge.jpg").FileUID, UserFixtures.Pointer("bob").UserUID).React("🌈")
 
-		assert.Equal(t, FileFixtures.Pointer("bridge.jpg").FileUID, m.EntityUID)
+		assert.Equal(t, FileFixtures.Pointer("bridge.jpg").FileUID, m.UID)
 		assert.Equal(t, UserFixtures.Pointer("bob").UserUID, m.UserUID)
 		assert.Equal(t, "🌈", m.Reaction)
 		assert.Equal(t, react.Rainbow, m.Emoji())

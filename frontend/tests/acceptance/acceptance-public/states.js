@@ -83,7 +83,7 @@ test.meta("testID", "states-001").meta({ mode: "public" })(
       .eql("Earth");
 
     await t
-      .typeText(albumdialog.title, "British Columbia / Canada", { replace: true })
+      .typeText(albumdialog.title, "British Columbia", { replace: true })
       .click(albumdialog.category)
       .pressKey("ctrl+a delete")
       .pressKey("enter")
@@ -97,7 +97,7 @@ test.meta("testID", "states-001").meta({ mode: "public" })(
 
     await t
       .expect(page.cardTitle.nth(0).innerText)
-      .contains("British Columbia / Canada")
+      .contains("British Columbia")
       .expect(page.cardDescription.innerText)
       .notContains("We love earth")
       .expect(Selector("div.caption").nth(0).innerText)

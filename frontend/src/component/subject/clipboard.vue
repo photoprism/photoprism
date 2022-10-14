@@ -118,7 +118,7 @@ export default {
       Notify.success(this.$gettext("Downloading…"));
 
       Api.post("zip", {"subjects": this.selection}).then(r => {
-        this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken()}`);
+        this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken}`);
       });
 
       this.expanded = false;

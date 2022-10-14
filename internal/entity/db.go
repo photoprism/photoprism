@@ -1,6 +1,17 @@
 package entity
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+
+	"github.com/jinzhu/gorm"
+)
+
+// Set UTC as the default for created and updated timestamps.
+func init() {
+	gorm.NowFunc = func() time.Time {
+		return UTC()
+	}
+}
 
 // Db returns the default *gorm.DB connection.
 func Db() *gorm.DB {

@@ -2,7 +2,6 @@ package entity
 
 import (
 	"github.com/photoprism/photoprism/internal/acl"
-	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 type UserMap map[string]User
@@ -36,9 +35,9 @@ var UserFixtures = UserMap{
 		UserRole:    acl.RoleAdmin.String(),
 		SuperAdmin:  true,
 		CanLogin:    true,
-		CanSync:     true,
+		WebDAV:      true,
 		CanInvite:   true,
-		InviteToken: rnd.GenerateToken(8),
+		InviteToken: GenerateToken(),
 		UserSettings: &UserSettings{
 			UITheme:     "",
 			MapsStyle:   "",
@@ -60,7 +59,7 @@ var UserFixtures = UserMap{
 		UserRole:    acl.RoleAdmin.String(),
 		SuperAdmin:  false,
 		CanLogin:    true,
-		CanSync:     true,
+		WebDAV:      true,
 		CanInvite:   false,
 		UserSettings: &UserSettings{
 			UITheme:     "grayscale",
@@ -86,7 +85,7 @@ var UserFixtures = UserMap{
 		SuperAdmin:  false,
 		DisplayName: "Guy Friend",
 		CanLogin:    true,
-		CanSync:     false,
+		WebDAV:      false,
 		CanInvite:   false,
 		UserSettings: &UserSettings{
 			UITheme:     "gemstone",
@@ -108,7 +107,7 @@ var UserFixtures = UserMap{
 		SuperAdmin:  false,
 		UserRole:    acl.RoleVisitor.String(),
 		CanLogin:    false,
-		CanSync:     true,
+		WebDAV:      true,
 		CanInvite:   false,
 		DeletedAt:   TimePointer(),
 		UserSettings: &UserSettings{
@@ -124,11 +123,11 @@ var UserFixtures = UserMap{
 		UserUID:     "uriku0138hqql4bz",
 		UserName:    "jens.mander",
 		UserEmail:   "jens.mander@microsoft.com",
-		UserRole:    acl.RoleUnauthorized.String(),
+		UserRole:    acl.RoleUnknown.String(),
 		SuperAdmin:  false,
 		DisplayName: "Jens Mander",
 		CanLogin:    true,
-		CanSync:     true,
+		WebDAV:      true,
 		CanInvite:   false,
 		UserSettings: &UserSettings{
 			UITheme:     "",
@@ -150,9 +149,9 @@ var UserFixtures = UserMap{
 		UserRole:    acl.RoleAdmin.String(),
 		SuperAdmin:  false,
 		CanLogin:    true,
-		CanSync:     true,
+		WebDAV:      true,
 		CanInvite:   true,
-		InviteToken: rnd.GenerateToken(8),
+		InviteToken: GenerateToken(),
 		UserSettings: &UserSettings{
 			UITheme:     "custom",
 			MapsStyle:   "invalid",

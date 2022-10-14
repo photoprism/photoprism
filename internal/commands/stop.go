@@ -6,7 +6,6 @@ import (
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -20,7 +19,11 @@ var StopCommand = cli.Command{
 
 // stopAction stops the daemon if it is running.
 func stopAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
+
+	if err != nil {
+		return err
+	}
 
 	log.Infof("looking for pid in %s", clean.Log(conf.PIDFilename()))
 

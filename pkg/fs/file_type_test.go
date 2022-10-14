@@ -78,19 +78,19 @@ func TestType_FindFirst(t *testing.T) {
 	dirs := []string{HiddenPath}
 
 	t.Run("find xmp", func(t *testing.T) {
-		result := XmpFile.FindFirst("testdata/test.jpg", dirs, "", false)
+		result := SidecarXMP.FindFirst("testdata/test.jpg", dirs, "", false)
 		assert.Equal(t, "testdata/.photoprism/test.xmp", result)
 	})
 	t.Run("find xmp upper ext", func(t *testing.T) {
-		result := XmpFile.FindFirst("testdata/test.PNG", dirs, "", false)
+		result := SidecarXMP.FindFirst("testdata/test.PNG", dirs, "", false)
 		assert.Equal(t, "testdata/.photoprism/test.xmp", result)
 	})
 	t.Run("find xmp without sequence", func(t *testing.T) {
-		result := XmpFile.FindFirst("testdata/test (2).jpg", dirs, "", false)
+		result := SidecarXMP.FindFirst("testdata/test (2).jpg", dirs, "", false)
 		assert.Equal(t, "", result)
 	})
 	t.Run("find xmp with sequence", func(t *testing.T) {
-		result := XmpFile.FindFirst("testdata/test (2).jpg", dirs, "", true)
+		result := SidecarXMP.FindFirst("testdata/test (2).jpg", dirs, "", true)
 		assert.Equal(t, "testdata/.photoprism/test.xmp", result)
 	})
 	t.Run("find jpg", func(t *testing.T) {
@@ -159,11 +159,11 @@ func TestType(t *testing.T) {
 	})
 	t.Run("RawCRw", func(t *testing.T) {
 		result := FileType("testdata/test (jpg).crw")
-		assert.Equal(t, RawImage, result)
+		assert.Equal(t, ImageRaw, result)
 	})
 	t.Run("RawCR2", func(t *testing.T) {
 		result := FileType("testdata/test (jpg).CR2")
-		assert.Equal(t, RawImage, result)
+		assert.Equal(t, ImageRaw, result)
 	})
 	t.Run("MP4", func(t *testing.T) {
 		assert.Equal(t, Type("mp4"), FileType("file.mp"))

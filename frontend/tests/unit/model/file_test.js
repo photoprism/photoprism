@@ -214,7 +214,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file = new File(values);
-    assert.equal(file.typeInfo(), "JPG");
+    assert.equal(file.typeInfo(), "JPEG");
     const values2 = {
       InstanceID: 5,
       UID: "ABC123",
@@ -240,7 +240,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file3 = new File(values3);
-    assert.equal(file3.typeInfo(), "Sidecar JPG");
+    assert.equal(file3.typeInfo(), "Sidecar JPEG");
     const values4 = {
       InstanceID: 5,
       UID: "ABC123",

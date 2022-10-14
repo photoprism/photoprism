@@ -100,13 +100,6 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		user := sess.User()
 		aclRole := user.AclRole()
 
-		// Visitors and other restricted users can only access shared content.
-		if !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.NotRegistered()) ||
-			f.Scope == "" && acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.ActionSearch) {
-			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePlaces), aclRole)
-			return GeoResults{}, ErrForbidden
-		}
-
 		// Exclude private content?
 		if acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.AccessPrivate) {
 			f.Public = true
@@ -119,13 +112,24 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			f.Review = false
 		}
 
-		// Limit results by owner and path?
+		// Visitors and other restricted users can only access shared content.
+		if f.Scope != "" && !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.NotRegistered()) ||
+			f.Scope == "" && acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.ActionSearch) {
+			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePlaces), aclRole)
+			return GeoResults{}, ErrForbidden
+		}
+
+		// Limit results for external users.
 		if f.Scope == "" && acl.Resources.DenyAll(acl.ResourcePlaces, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			if user.BasePath == "" {
-				s = s.Where("photos.created_by = ?", user.UserUID)
+			sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND missing = 0 AND album_uid IN (?)) OR "
+
+			if sess.IsVisitor() || sess.NotRegistered() {
+				s = s.Where(sharedAlbums+"photos.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
+			} else if user.BasePath == "" {
+				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
 			} else {
-				s = s.Where("photos.created_by = ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
-					user.UserUID, user.BasePath, user.BasePath+"/%")
+				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
+					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), user.BasePath, user.BasePath+"/%")
 			}
 		}
 	}

@@ -34,7 +34,7 @@ func TestNewSubject(t *testing.T) {
 }
 
 func TestSubject_SetName(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 
 		assert.Equal(t, "Jens Mander", m.SubjName)

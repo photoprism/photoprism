@@ -73,9 +73,9 @@ export class Label extends RestModel {
 
   thumbnailUrl(size) {
     if (this.Thumb) {
-      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
     } else if (this.UID) {
-      return `${config.contentUri}/labels/${this.UID}/t/${config.previewToken()}/${size}`;
+      return `${config.contentUri}/labels/${this.UID}/t/${config.previewToken}/${size}`;
     } else {
       return `${config.contentUri}/svg/label`;
     }

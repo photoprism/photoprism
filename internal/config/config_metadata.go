@@ -7,7 +7,7 @@ func (c *Config) ExifBruteForce() bool {
 
 // ExifToolBin returns the exiftool executable file name.
 func (c *Config) ExifToolBin() string {
-	return findExecutable(c.options.ExifToolBin, "exiftool")
+	return findBin(c.options.ExifToolBin, "exiftool")
 }
 
 // ExifToolJson checks if creating JSON metadata sidecar files with Exiftool is enabled.

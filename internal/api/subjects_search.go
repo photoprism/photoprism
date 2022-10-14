@@ -42,7 +42,7 @@ func SearchSubjects(router *gin.RouterGroup) {
 		AddCountHeader(c, len(result))
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
+		AddTokenHeaders(c, s)
 
 		c.JSON(http.StatusOK, result)
 	})

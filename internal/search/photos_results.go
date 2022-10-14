@@ -42,6 +42,7 @@ type Photo struct {
 	PhotoFaces       int           `json:"Faces,omitempty" select:"photos.photo_faces"`
 	PhotoQuality     int           `json:"Quality" select:"photos.photo_quality"`
 	PhotoResolution  int           `json:"Resolution" select:"photos.photo_resolution"`
+	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"photos.photo_duration"`
 	PhotoColor       int16         `json:"Color" select:"photos.photo_color"`
 	PhotoScan        bool          `json:"Scan" select:"photos.photo_scan"`
 	PhotoPanorama    bool          `json:"Panorama" select:"photos.photo_panorama"`

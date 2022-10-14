@@ -1,13 +1,15 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service"
 )
 
@@ -24,6 +26,28 @@ func CreateSession(router *gin.RouterGroup) {
 			return
 		}
 
+		conf := service.Config()
+
+		// Skip authentication if app is running in public mode.
+		if conf.Public() {
+			sess := service.Session().Public()
+			data := gin.H{
+				"status": "ok",
+				"id":     sess.ID,
+				"user":   sess.User(),
+				"data":   sess.Data(),
+				"config": conf.ClientPublic(),
+			}
+			c.JSON(http.StatusOK, data)
+			return
+		}
+
+		// Check limit for failed auth requests (max. 10 per minute).
+		if limiter.Auth.Reject(ClientIP(c)) {
+			limiter.AbortJSON(c)
+			return
+		}
+
 		var sess *entity.Session
 		var isNew bool
 
@@ -37,8 +61,8 @@ func CreateSession(router *gin.RouterGroup) {
 			isNew = true
 		}
 
-		// Sign in and save session.
-		if err := sess.SignIn(f, c); err != nil {
+		// Try to log in and save session if successful.
+		if err := sess.LogIn(f, c); err != nil {
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if sess, err = service.Session().Save(sess); err != nil {
@@ -57,17 +81,19 @@ func CreateSession(router *gin.RouterGroup) {
 		// Add session id to response headers.
 		AddSessionHeader(c, sess.ID)
 
-		// Get config values for use by the JavaScript UI and other clients.
-		var clientConfig config.ClientConfig
-		if conf := service.Config(); sess.User().IsVisitor() {
-			clientConfig = conf.ClientShare()
-		} else if sess.User().IsRegistered() {
-			clientConfig = conf.ClientSession(sess)
-		} else {
-			clientConfig = conf.ClientPublic()
+		// Get config values for the UI.
+		clientConfig := conf.ClientSession(sess)
+
+		// User information, session data, and client config values.
+		data := gin.H{
+			"status": "ok",
+			"id":     sess.ID,
+			"user":   sess.User(),
+			"data":   sess.Data(),
+			"config": clientConfig,
 		}
 
-		// Send JSON response with user information, session data, and client config values.
-		c.JSON(sess.HttpStatus(), gin.H{"status": "ok", "id": sess.ID, "user": sess.User(), "data": sess.Data(), "config": clientConfig})
+		// Send JSON response.
+		c.JSON(sess.HttpStatus(), data)
 	})
 }

@@ -44,9 +44,10 @@ var TotalMem uint64
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
 	once     sync.Once
-	db       *gorm.DB
+	cliCtx   *cli.Context
 	options  *Options
 	settings *customize.Settings
+	db       *gorm.DB
 	hub      *hub.Config
 	token    string
 	serial   string
@@ -97,6 +98,7 @@ func NewConfig(ctx *cli.Context) *Config {
 
 	// Initialize options from config file and CLI context.
 	c := &Config{
+		cliCtx:  ctx,
 		options: NewOptions(ctx),
 		token:   rnd.GenerateToken(8),
 		env:     os.Getenv("DOCKER_ENV"),
@@ -111,16 +113,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		}
 	}
 
-	// Initialize package extensions.
-	for _, ext := range Extensions() {
-		start := time.Now()
-
-		if err := ext.init(c); err != nil {
-			log.Warnf("config: %s in %s extension[%s]", err, clean.Log(ext.name), time.Since(start))
-		} else {
-			log.Debugf("config: %s extension loaded [%s]", clean.Log(ext.name), time.Since(start))
-		}
-	}
+	Ext().Init(c)
 
 	return c
 }
@@ -128,6 +121,15 @@ func NewConfig(ctx *cli.Context) *Config {
 // Unsafe checks if unsafe settings are allowed.
 func (c *Config) Unsafe() bool {
 	return c.options.Unsafe
+}
+
+// CliContext returns the cli context if set.
+func (c *Config) CliContext() *cli.Context {
+	if c.cliCtx == nil {
+		log.Warnf("config: cli context not set - possible bug")
+	}
+
+	return c.cliCtx
 }
 
 // Options returns the raw config options.
@@ -154,6 +156,11 @@ func (c *Config) Propagate() {
 	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()
 	entity.GeoApi = c.GeoApi()
+
+	// Set API preview and download default tokens.
+	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
+	entity.DownloadToken.Set(c.DownloadToken(), entity.TokenConfig)
+	entity.CheckTokens = !c.Public()
 
 	// Set face recognition parameters.
 	face.ScoreThreshold = c.FaceScore()
@@ -382,6 +389,15 @@ func (c *Config) SiteUrl() string {
 	}
 
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
+}
+
+// SiteHttps checks if the site URL uses HTTPS.
+func (c *Config) SiteHttps() bool {
+	if c.options.SiteUrl == "" {
+		return false
+	}
+
+	return strings.HasPrefix(c.options.SiteUrl, "https://")
 }
 
 // SiteDomain returns the public server domain.

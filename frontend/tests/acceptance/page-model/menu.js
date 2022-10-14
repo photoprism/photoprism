@@ -4,9 +4,9 @@ export default class Page {
   constructor() {}
 
   async openNav() {
-    if (await Selector("div.v-avatar--tile.clickable").exists) {
-      await t.click(Selector("div.v-avatar--tile.clickable"));
-    } else if (await Selector("div.nav-expand").exists) {
+    if (await Selector("div.nav-expand").visible) {
+      await t.click(Selector("div.nav-expand"));
+    } else if (await Selector("div.nav-expand").visible) {
       await t.click(Selector("div.nav-expand i"));
     }
   }

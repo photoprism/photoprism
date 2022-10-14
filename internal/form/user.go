@@ -14,7 +14,7 @@ type User struct {
 	UserRole    string `json:"Role,omitempty" yaml:"Role,omitempty"`
 	SuperAdmin  bool   `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
 	CanLogin    bool   `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
-	CanSync     bool   `json:"CanSync,omitempty" yaml:"CanSync,omitempty"`
+	WebDAV      bool   `json:"WebDAV,omitempty" yaml:"WebDAV,omitempty"`
 	UserAttr    string `json:"Attr,omitempty" yaml:"Attr,omitempty"`
 	BasePath    string `json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
 	UploadPath  string `json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
@@ -30,7 +30,7 @@ func NewUserFromCli(ctx *cli.Context) User {
 		UserRole:    clean.Role(ctx.String("role")),
 		SuperAdmin:  ctx.Bool("superadmin"),
 		CanLogin:    !ctx.Bool("no-login"),
-		CanSync:     ctx.Bool("can-sync"),
+		WebDAV:      ctx.Bool("webdav"),
 		UserAttr:    clean.Attr(ctx.String("attr")),
 		BasePath:    clean.Path(ctx.String("base-path")),
 		UploadPath:  clean.Path(ctx.String("upload-path")),

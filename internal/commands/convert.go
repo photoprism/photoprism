@@ -17,7 +17,7 @@ import (
 var ConvertCommand = cli.Command{
 	Name:      "convert",
 	Usage:     "Converts files in other formats to JPEG and AVC as needed",
-	ArgsUsage: "[SUB-FOLDER]",
+	ArgsUsage: "[sub-folder]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
@@ -31,18 +31,17 @@ var ConvertCommand = cli.Command{
 func convertAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
-
-	if !conf.SidecarWritable() {
-		return config.ErrReadOnly
-	}
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
+	}
+
+	if !conf.SidecarWritable() {
+		return config.ErrReadOnly
 	}
 
 	conf.RegisterDb()
@@ -68,7 +67,7 @@ func convertAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("converting completed in %s", elapsed)
+	log.Infof("completed in %s", elapsed)
 
 	return nil
 }

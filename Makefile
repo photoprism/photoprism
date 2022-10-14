@@ -42,7 +42,7 @@ endif
 
 # Declare "make" targets.
 all: dep build-js
-dep: dep-tensorflow dep-npm dep-js dep-go
+dep: dep-tensorflow dep-npm dep-js
 build: build-go
 pull: docker-pull
 test: test-js test-go
@@ -50,6 +50,7 @@ test-go: reset-sqlite run-test-go
 test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
 test-commands: reset-sqlite run-test-commands
+test-photoprism: reset-sqlite run-test-photoprism
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart acceptance acceptance-sqlite-stop
@@ -101,7 +102,6 @@ install:
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	wget -O $(DESTDIR)/assets/static/img/wallpaper/welcome.jpg https://cdn.photoprism.app/wallpaper/welcome.jpg
 	wget -O $(DESTDIR)/assets/static/img/preview.jpg https://cdn.photoprism.app/img/preview.jpg
-	cp scripts/dist/heif-convert.sh $(DESTDIR)/bin/heif-convert
 	cp internal/config/testdata/*.yml $(DESTDIR)/config/examples
 	chown -R $(INSTALL_USER) $(DESTDIR)
 	chmod -R $(INSTALL_MODE) $(DESTDIR)
@@ -264,6 +264,9 @@ run-test-api:
 run-test-commands:
 	$(info Running all CLI command tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/commands/...
+run-test-photoprism:
+	$(info Running all Go tests in "/internal/photoprism"...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/photoprism/...
 test-parallel:
 	$(info Running all Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/... ./internal/...
@@ -280,6 +283,9 @@ test-coverage:
 docker-pull:
 	docker-compose pull --ignore-pull-failures
 	docker-compose -f docker-compose.latest.yml pull --ignore-pull-failures
+docker-build:
+	docker-compose pull --ignore-pull-failures
+	docker-compose build
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu docker-develop-armv7
@@ -420,9 +426,29 @@ docker-release-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
 start-local:
-	docker-compose -f docker-compose.local.yml up -d
+	docker-compose -f docker-compose.local.yml up -d --wait
 stop-local:
 	docker-compose -f docker-compose.local.yml stop
+mysql:
+	docker-compose -f docker-compose.mysql.yml pull mysql
+	docker-compose -f docker-compose.mysql.yml stop mysql
+	docker-compose -f docker-compose.mysql.yml up -d --wait mysql
+start-mysql:
+	docker-compose -f docker-compose.mysql.yml up -d --wait mysql
+stop-mysql:
+	docker-compose -f docker-compose.mysql.yml stop mysql
+logs-mysql:
+	docker-compose -f docker-compose.mysql.yml logs -f mysql
+latest:
+	docker-compose -f docker-compose.latest.yml pull photoprism-latest
+	docker-compose -f docker-compose.latest.yml stop photoprism-latest
+	docker-compose -f docker-compose.latest.yml up -d --wait photoprism-latest
+start-latest:
+	docker-compose -f docker-compose.latest.yml up -d --wait photoprism-latest
+stop-latest:
+	docker-compose -f docker-compose.latest.yml stop photoprism-latest
+logs-latest:
+	docker-compose -f docker-compose.latest.yml logs -f photoprism-latest
 docker-local: docker-local-bookworm
 docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:
@@ -480,6 +506,10 @@ docker-demo-ubuntu:
 	docker pull photoprism/photoprism:preview-ubuntu
 	scripts/docker/build.sh demo ubuntu /ubuntu
 	scripts/docker/push.sh demo ubuntu
+docker-demo-unstable:
+	docker pull photoprism/photoprism:unstable
+	scripts/docker/build.sh demo $(BUILD_DATE) /unstable
+	scripts/docker/push.sh demo $(BUILD_DATE)
 docker-demo-local:
 	scripts/docker/build.sh photoprism
 	scripts/docker/build.sh demo $(BUILD_DATE) /debian

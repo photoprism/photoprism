@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/session"
 )
 
@@ -66,7 +66,11 @@ func AddFileCountHeaders(c *gin.Context, filesCount, foldersCount int) {
 }
 
 // AddTokenHeaders adds preview token headers to the response.
-func AddTokenHeaders(c *gin.Context) {
-	c.Header("X-Preview-Token", service.Config().PreviewToken())
-	c.Header("X-Download-Token", service.Config().DownloadToken())
+func AddTokenHeaders(c *gin.Context, s *entity.Session) {
+	if s.PreviewToken != "" {
+		c.Header("X-Preview-Token", s.PreviewToken)
+	}
+	if s.DownloadToken != "" {
+		c.Header("X-Download-Token", s.DownloadToken)
+	}
 }

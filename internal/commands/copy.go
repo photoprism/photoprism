@@ -20,7 +20,7 @@ var CopyCommand = cli.Command{
 	Name:      "cp",
 	Aliases:   []string{"copy"},
 	Usage:     "Copies media files to originals",
-	ArgsUsage: "[IMPORT PATH]",
+	ArgsUsage: "[source]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "dest, d",
@@ -34,19 +34,18 @@ var CopyCommand = cli.Command{
 func copyAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
-
-	// very if copy directory exist and is writable
-	if conf.ReadOnly() {
-		return config.ErrReadOnly
-	}
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
+	}
+
+	// very if copy directory exist and is writable
+	if conf.ReadOnly() {
+		return config.ErrReadOnly
 	}
 
 	conf.InitDb()
@@ -87,7 +86,7 @@ func copyAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("import completed in %s", elapsed)
+	log.Infof("completed in %s", elapsed)
 
 	return nil
 }

@@ -65,7 +65,7 @@ func FileNameHidden(name string) bool {
 	prefix := name[0:1]
 
 	switch prefix {
-	case ".", "@":
+	case ".", "@", "_":
 		return true
 	default:
 		return false

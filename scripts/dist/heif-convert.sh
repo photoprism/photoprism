@@ -7,7 +7,14 @@ fi
 
 # Usage: heif-convert [-q quality 0..100] <filename> <output>
 
-/usr/bin/heif-convert -q 92 "$1" "$2"
+if [[ -f "/usr/bin/heif-convert" ]]; then
+    /usr/bin/heif-convert -q 92 "$1" "$2"
+elif [[  -f "/usr/local/bin/heif-convert" ]]; then
+    /usr/local/bin/heif-convert -q 92 "$1" "$2"
+else
+    echo "heif-convert not found" 1>&2
+    exit 1
+fi
 
 # Reset Exif orientation flag if output image was rotated based on "QuickTime:Rotation"
 

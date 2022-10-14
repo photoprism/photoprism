@@ -70,7 +70,7 @@
 }
 
 #photoprism .splash-center #progress {
-    width: 175px;
+    width: 180px;
 }
 
 @media (min-width: 900px) {
@@ -80,7 +80,7 @@
     }
 
     #photoprism .splash-center #progress {
-        width: 225px;
+        width: 230px;
     }
 }
 

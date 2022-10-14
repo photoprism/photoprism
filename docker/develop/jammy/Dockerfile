@@ -52,21 +52,23 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libc6 ca-certificates sudo bash tzdata \
         gpg zip unzip wget curl rsync make nano \
         jq lsof lshw sqlite3 mariadb-client imagemagick \
-        exiftool rawtherapee libheif-examples librsvg2-bin \
+        exiftool rawtherapee librsvg2-bin \
         ffmpeg ffmpegthumbnailer libavcodec-extra \
         libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-        x264 x265 libvpx7 libwebm1 \
+        x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \
         build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
-        libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
+        autoconf automake cmake libtool libjpeg8-dev \
+        libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \
     /scripts/install-darktable.sh && \
+    /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
@@ -75,7 +77,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \
         /photoprism/import \

@@ -11,7 +11,7 @@ import (
 
 // Reaction represents a human response to content such as photos and albums.
 type Reaction struct {
-	EntityUID string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"EntityUID,omitempty" yaml:"EntityUID,omitempty"`
+	UID       string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"UID,omitempty" yaml:"UID,omitempty"`
 	UserUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
 	Reaction  string     `gorm:"type:VARBINARY(64);primary_key;auto_increment:false" json:"Reaction,omitempty" yaml:"Reaction,omitempty"`
 	Reacted   int        `json:"Reacted,omitempty" yaml:"Reacted,omitempty"`
@@ -20,26 +20,26 @@ type Reaction struct {
 
 // TableName returns the entity table name.
 func (Reaction) TableName() string {
-	return "reactions_dev"
+	return "reactions"
 }
 
 // NewReaction creates a new Reaction struct.
-func NewReaction(entityUid, userUid string) *Reaction {
+func NewReaction(uid, userUid string) *Reaction {
 	return &Reaction{
-		EntityUID: entityUid,
-		UserUID:   userUid,
+		UID:     uid,
+		UserUID: userUid,
 	}
 }
 
 // FindReaction returns the matching Reaction record or nil if it was not found.
-func FindReaction(entityUid, userUid string) (m *Reaction) {
-	if entityUid == "" || userUid == "" {
+func FindReaction(uid, userUid string) (m *Reaction) {
+	if uid == "" || userUid == "" {
 		return nil
 	}
 
 	m = &Reaction{}
 
-	if Db().First(m, "entity_uid = ? AND user_uid = ?", entityUid, userUid).RecordNotFound() {
+	if Db().First(m, "uid = ? AND user_uid = ?", uid, userUid).RecordNotFound() {
 		return nil
 	}
 
@@ -65,7 +65,7 @@ func (m *Reaction) String() string {
 
 // InvalidUID checks if the entity or user uid are missing or incorrect.
 func (m *Reaction) InvalidUID() bool {
-	return m.EntityUID == "" || m.UserUID == ""
+	return m.UID == "" || m.UserUID == ""
 }
 
 // Unknown checks if the reaction data is missing or incorrect.
@@ -92,7 +92,7 @@ func (m *Reaction) Save() (err error) {
 	values := Values{"reaction": m.Reaction, "reacted": gorm.Expr("reacted + 1"), "reacted_at": reactedAt}
 
 	if err = Db().Model(Reaction{}).
-		Where("entity_uid = ? AND user_uid = ?", m.EntityUID, m.UserUID).
+		Where("uid = ? AND user_uid = ?", m.UID, m.UserUID).
 		UpdateColumns(values).Error; err == nil {
 		m.Reacted += 1
 		m.ReactedAt = reactedAt
@@ -107,7 +107,7 @@ func (m *Reaction) Create() (err error) {
 		return fmt.Errorf("reaction invalid")
 	}
 
-	r := &Reaction{EntityUID: m.EntityUID, UserUID: m.UserUID, Reaction: m.Reaction, Reacted: m.Reacted, ReactedAt: TimePointer()}
+	r := &Reaction{UID: m.UID, UserUID: m.UserUID, Reaction: m.Reaction, Reacted: m.Reacted, ReactedAt: TimePointer()}
 
 	if err = Db().Create(r).Error; err == nil {
 		m.ReactedAt = r.ReactedAt
@@ -123,7 +123,7 @@ func (m *Reaction) Delete() error {
 	}
 
 	// Delete record.
-	err := Db().Delete(m, "entity_uid = ? AND user_uid = ?", m.EntityUID, m.UserUID).Error
+	err := Db().Delete(m, "uid = ? AND user_uid = ?", m.UID, m.UserUID).Error
 
 	// Ok?
 	if err == nil {

@@ -25,9 +25,9 @@ func TestConfig_HttpServerPort2(t *testing.T) {
 func TestConfig_HttpServerMode2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "release", c.HttpMode())
+	assert.Equal(t, HttpModeProd, c.HttpMode())
 	c.options.Debug = true
-	assert.Equal(t, "debug", c.HttpMode())
+	assert.Equal(t, HttpModeDebug, c.HttpMode())
 	c.options.HttpMode = "test"
 	assert.Equal(t, "test", c.HttpMode())
 }

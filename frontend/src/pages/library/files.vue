@@ -216,7 +216,7 @@ export default {
       Notify.success(this.$gettext("Downloading…"));
 
       const model = this.results[index];
-      download(`${this.$config.apiUri}/dl/${model.Hash}?t=${this.$config.downloadToken()}`, model.Name);
+      download(`${this.$config.apiUri}/dl/${model.Hash}?t=${this.$config.downloadToken}`, model.Name);
     },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {

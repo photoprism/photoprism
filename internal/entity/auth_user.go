@@ -44,15 +44,15 @@ type User struct {
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
 	BackupEmail   string        `gorm:"size:255;" json:"BackupEmail,omitempty" yaml:"BackupEmail,omitempty"`
-	UserRole      string        `gorm:"size:64;default:'restricted';" json:"Role,omitempty" yaml:"Role,omitempty"`
+	UserRole      string        `gorm:"size:64;default:'';" json:"Role,omitempty" yaml:"Role,omitempty"`
 	UserAttr      string        `gorm:"size:1024;" json:"Attr,omitempty" yaml:"Attr,omitempty"`
 	SuperAdmin    bool          `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
 	CanLogin      bool          `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
 	LoginAt       *time.Time    `json:"LoginAt,omitempty" yaml:"LoginAt,omitempty"`
 	ExpiresAt     *time.Time    `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
+	WebDAV        bool          `gorm:"column:webdav;" json:"WebDAV,omitempty" yaml:"WebDAV,omitempty"`
 	BasePath      string        `gorm:"type:VARBINARY(1024);" json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
 	UploadPath    string        `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
-	CanSync       bool          `json:"CanSync,omitempty" yaml:"CanSync,omitempty"`
 	CanInvite     bool          `json:"CanInvite,omitempty" yaml:"CanInvite,omitempty"`
 	InviteToken   string        `gorm:"type:VARBINARY(64);index;" json:"-" yaml:"-"`
 	InvitedBy     string        `gorm:"size:64;" json:"-" yaml:"-"`
@@ -62,6 +62,7 @@ type User struct {
 	BornAt        *time.Time    `sql:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
 	UserDetails   *UserDetails  `gorm:"PRELOAD:true;foreignkey:UserUID;association_foreignkey:UserUID;" json:"Details,omitempty" yaml:"Details,omitempty"`
 	UserSettings  *UserSettings `gorm:"PRELOAD:true;foreignkey:UserUID;association_foreignkey:UserUID;" json:"Settings,omitempty" yaml:"Settings,omitempty"`
+	UserShares    UserShares    `gorm:"-" json:"Shares,omitempty" yaml:"Shares,omitempty"`
 	ResetToken    string        `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
 	PreviewToken  string        `gorm:"type:VARBINARY(64);column:preview_token;" json:"-" yaml:"-"`
 	DownloadToken string        `gorm:"type:VARBINARY(64);column:download_token;" json:"-" yaml:"-"`
@@ -71,12 +72,11 @@ type User struct {
 	CreatedAt     time.Time     `json:"CreatedAt" yaml:"-"`
 	UpdatedAt     time.Time     `json:"UpdatedAt" yaml:"-"`
 	DeletedAt     *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
-	Shares        Shares        `gorm:"-" json:"Shares,omitempty" yaml:"Shares,omitempty"`
 }
 
 // TableName returns the entity table name.
 func (User) TableName() string {
-	return "auth_users_dev"
+	return "auth_users"
 }
 
 // NewUser creates a new user and returns it.
@@ -84,60 +84,75 @@ func NewUser() (m *User) {
 	uid := rnd.GenerateUID(UserUID)
 
 	return &User{
-		UserUID:      uid,
-		UserDetails:  NewUserDetails(uid),
-		UserSettings: NewUserSettings(uid),
-		RefID:        rnd.RefID(UserPrefix),
+		UserUID:       uid,
+		UserDetails:   NewUserDetails(uid),
+		UserSettings:  NewUserSettings(uid),
+		PreviewToken:  GenerateToken(),
+		DownloadToken: GenerateToken(),
+		RefID:         rnd.RefID(UserPrefix),
 	}
+}
+
+// FindUser returns the matching user or nil if it was not found.
+func FindUser(find User) *User {
+	m := &User{}
+
+	// Build query.
+	stmt := UnscopedDb()
+	if find.ID != 0 {
+		stmt = stmt.Where("id = ?", find.ID)
+	} else if rnd.IsUID(find.UserUID, UserUID) {
+		stmt = stmt.Where("user_uid = ?", find.UserUID)
+	} else if find.UserName != "" {
+		stmt = stmt.Where("user_name = ?", find.UserName)
+	} else if find.UserEmail != "" {
+		stmt = stmt.Where("user_email = ?", find.UserEmail)
+	} else {
+		return nil
+	}
+
+	// Find matching record.
+	if err := stmt.First(m).Error; err != nil {
+		return nil
+	}
+
+	// Fetch related records.
+	return m.LoadRelated()
 }
 
 // FirstOrCreateUser returns an existing record, inserts a new record, or returns nil in case of an error.
 func FirstOrCreateUser(m *User) *User {
-	result := User{}
-
-	if err := Db().Where("id = ? OR (user_uid = ? AND user_uid <> '') OR (user_name = ? AND user_name <> '')", m.ID, m.UserUID, m.UserName).First(&result).Error; err == nil {
-		return &result
-	} else if err = m.Create(); err != nil {
-		event.AuditErr([]string{"user", "failed to create", "%s"}, err)
+	if m == nil {
 		return nil
 	}
 
-	return m
+	if found := FindUser(*m); found != nil {
+		return found
+	} else if err := m.Create(); err != nil {
+		event.AuditErr([]string{"user", "failed to create", "%s"}, err)
+		return nil
+	} else {
+		return m
+	}
 }
 
-// FindUserByName finds a user by its username or returns nil if it was not found.
+// FindUserByName returns the matching user or nil if it was not found.
 func FindUserByName(name string) *User {
 	name = clean.Username(name)
 	if name == "" {
 		return nil
 	}
 
-	m := &User{}
-
-	// Find matching record.
-	if Db().First(m, "user_name = ?", name).RecordNotFound() {
-		return nil
-	}
-
-	// Fetch related settings and details.
-	return m.LoadRelated()
+	return FindUser(User{UserName: name})
 }
 
-// FindUserByUID returns an existing user or nil if not found.
+// FindUserByUID returns the matching user or nil if it was not found.
 func FindUserByUID(uid string) *User {
 	if rnd.InvalidUID(uid, UserUID) {
 		return nil
 	}
 
-	m := &User{}
-
-	// Find matching record.
-	if UnscopedDb().First(m, "user_uid = ?", uid).RecordNotFound() {
-		return nil
-	}
-
-	// Fetch related settings and details.
-	return m.LoadRelated()
+	return FindUser(User{UserUID: uid})
 }
 
 // UID returns the unique id as string.
@@ -161,34 +176,36 @@ func (m *User) SameUID(uid string) bool {
 }
 
 // InitAccount sets the name and password of the initial admin account.
-func (m *User) InitAccount(login, password string) (updated bool) {
-	if !m.IsRegistered() {
-		log.Warn("only registered users can change their password")
+func (m *User) InitAccount(initName, initPasswd string) (updated bool) {
+	// User must exist and the password must not be empty.
+	initPasswd = strings.TrimSpace(initPasswd)
+	if rnd.InvalidUID(m.UserUID, UserUID) || initPasswd == "" {
+		return false
+	} else if !m.CanLogIn() {
+		log.Warnf("users: %s account is not allowed to log in", m.String())
+	}
+
+	// Abort if user has a password.
+	existingPasswd := FindPassword(m.UserUID)
+
+	if existingPasswd != nil {
 		return false
 	}
 
-	// Password must not be empty.
-	if password == "" {
-		return false
-	}
-
-	existing := FindPassword(m.UserUID)
-
-	if existing != nil {
-		return false
-	}
-
-	pw := NewPassword(m.UserUID, password)
+	// Set initial password.
+	initialPasswd := NewPassword(m.UserUID, initPasswd)
 
 	// Save password.
-	if err := pw.Save(); err != nil {
+	if err := initialPasswd.Save(); err != nil {
 		event.AuditErr([]string{"user %s", "failed to change password", "%s"}, m.RefID, err)
 		return false
 	}
 
-	// Change username.
-	if err := m.UpdateName(login); err != nil {
-		event.AuditErr([]string{"user %s", "failed to change username to %s", "%s"}, m.RefID, clean.Log(login), err)
+	// Change username if needed.
+	if initName != "" && initName != m.UserName {
+		if err := m.UpdateName(initName); err != nil {
+			event.AuditErr([]string{"user %s", "failed to change username to %s", "%s"}, m.RefID, clean.Log(initName), err)
+		}
 	}
 
 	return true
@@ -207,6 +224,8 @@ func (m *User) Create() (err error) {
 
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *User) Save() (err error) {
+	m.GenerateTokens(false)
+
 	err = Db().Save(m).Error
 
 	if err == nil {
@@ -269,6 +288,8 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 		m.UserDetails.UserUID = m.UserUID
 	}
 
+	m.GenerateTokens(false)
+
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(UserPrefix)
 		Log("user", "set ref id", scope.SetColumn("RefID", m.RefID))
@@ -293,12 +314,14 @@ func (m *User) Expired() bool {
 
 // Disabled checks if the user account has been deleted or has expired.
 func (m *User) Disabled() bool {
-	return m.Deleted() || m.Expired()
+	return m.Deleted() || m.Expired() && !m.SuperAdmin
 }
 
-// LoginAllowed checks if the user is allowed to log in and use the web UI.
-func (m *User) LoginAllowed() bool {
-	if role := m.AclRole(); m.Disabled() || !m.CanLogin || m.UserName == "" || role == acl.RoleUnauthorized {
+// CanLogIn checks if the user is allowed to log in and use the web UI.
+func (m *User) CanLogIn() bool {
+	if !m.CanLogin && !m.SuperAdmin || m.ID <= 0 || m.UserName == "" {
+		return false
+	} else if role := m.AclRole(); m.Disabled() || role == acl.RoleUnknown {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourceConfig, role, acl.AccessOwn)
@@ -306,18 +329,18 @@ func (m *User) LoginAllowed() bool {
 
 }
 
-// SyncAllowed checks whether the user is allowed to use WebDAV to synchronize files.
-func (m *User) SyncAllowed() bool {
-	if role := m.AclRole(); m.Disabled() || !m.CanSync || m.UserName == "" || role == acl.RoleUnauthorized {
+// CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
+func (m *User) CanUseWebDAV() bool {
+	if role := m.AclRole(); m.Disabled() || !m.WebDAV || m.ID <= 0 || m.UserName == "" || role == acl.RoleUnknown {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
 	}
 }
 
-// UploadAllowed checks if the user is allowed to upload files.
-func (m *User) UploadAllowed() bool {
-	if role := m.AclRole(); m.Disabled() || role == acl.RoleUnauthorized {
+// CanUpload checks if the user is allowed to upload files.
+func (m *User) CanUpload() bool {
+	if role := m.AclRole(); m.Disabled() || role == acl.RoleUnknown {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
@@ -414,7 +437,7 @@ func (m *User) AclRole() acl.Role {
 	case m.SuperAdmin:
 		return acl.RoleAdmin
 	case role == "":
-		return acl.RoleUnauthorized
+		return acl.RoleUnknown
 	case m.UserName == "":
 		return acl.RoleVisitor
 	default:
@@ -522,7 +545,7 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 // SetPassword sets a new password stored as hash.
 func (m *User) SetPassword(password string) error {
 	if !m.IsRegistered() {
-		return fmt.Errorf("only registered users may change their password")
+		return fmt.Errorf("only registered users can change their password")
 	}
 
 	if len(password) < LenPasswordMin {
@@ -531,19 +554,28 @@ func (m *User) SetPassword(password string) error {
 
 	pw := NewPassword(m.UserUID, password)
 
-	return pw.Save()
+	if err := pw.Save(); err != nil {
+		return err
+	}
+
+	return m.RegenerateTokens()
 }
 
-// InvalidPassword returns true if the given password does not match the hash.
-func (m *User) InvalidPassword(password string) bool {
+// HasPassword checks if the user has the specified password and the account is registered.
+func (m *User) HasPassword(s string) bool {
+	return !m.WrongPassword(s)
+}
+
+// WrongPassword checks if the given password is incorrect or the account is not registered.
+func (m *User) WrongPassword(s string) bool {
 	// Registered user?
 	if !m.IsRegistered() {
-		log.Warn("only registered users may change their password")
+		log.Warn("only registered users can log in")
 		return true
 	}
 
 	// Empty password?
-	if password == "" {
+	if s == "" {
 		return true
 	}
 
@@ -556,7 +588,7 @@ func (m *User) InvalidPassword(password string) bool {
 	}
 
 	// Invalid?
-	if pw.InvalidPassword(password) {
+	if pw.IsWrong(s) {
 		return true
 	}
 
@@ -567,7 +599,7 @@ func (m *User) InvalidPassword(password string) bool {
 func (m *User) Validate() (err error) {
 	// Empty name?
 	if m.Name() == "" {
-		return errors.New("username cannot be empty")
+		return errors.New("username must not be empty")
 	}
 
 	// Name too short?
@@ -624,7 +656,7 @@ func (m *User) SetFormValues(frm form.User) *User {
 	m.DisplayName = frm.DisplayName
 	m.SuperAdmin = frm.SuperAdmin
 	m.CanLogin = frm.CanLogin
-	m.CanSync = frm.CanSync
+	m.WebDAV = frm.WebDAV
 	m.UserRole = frm.Role()
 	m.UserAttr = frm.Attr()
 	m.SetBasePath(frm.BasePath)
@@ -633,9 +665,37 @@ func (m *User) SetFormValues(frm form.User) *User {
 	return m
 }
 
+// GenerateTokens generates preview and download tokens as needed.
+func (m *User) GenerateTokens(force bool) *User {
+	if m.ID < 0 {
+		return m
+	}
+
+	if m.PreviewToken == "" || force {
+		m.PreviewToken = GenerateToken()
+	}
+
+	if m.DownloadToken == "" || force {
+		m.DownloadToken = GenerateToken()
+	}
+
+	return m
+}
+
+// RegenerateTokens replaces the existing preview and download tokens.
+func (m *User) RegenerateTokens() error {
+	if m.ID < 0 {
+		return nil
+	}
+
+	m.GenerateTokens(true)
+
+	return m.Updates(Values{"PreviewToken": m.PreviewToken, "DownloadToken": m.DownloadToken})
+}
+
 // RefreshShares updates the list of shares.
 func (m *User) RefreshShares() *User {
-	m.Shares = FindShares(m.UID())
+	m.UserShares = FindUserShares(m.UID())
 	return m
 }
 
@@ -645,7 +705,7 @@ func (m *User) NoShares() bool {
 		return true
 	}
 
-	return m.Shares.Empty()
+	return m.UserShares.Empty()
 }
 
 // HasShares checks if the user has any shares.
@@ -659,16 +719,16 @@ func (m *User) HasShare(uid string) bool {
 		return false
 	}
 
-	return m.Shares.Contains(uid)
+	return m.UserShares.Contains(uid)
 }
 
 // SharedUIDs returns shared entity UIDs.
 func (m *User) SharedUIDs() UIDs {
-	if m.IsRegistered() && m.Shares.Empty() {
+	if m.IsRegistered() && m.UserShares.Empty() {
 		m.RefreshShares()
 	}
 
-	return m.Shares.UIDs()
+	return m.UserShares.UIDs()
 }
 
 // RedeemToken updates shared entity UIDs using the specified token.
@@ -687,8 +747,8 @@ func (m *User) RedeemToken(token string) (n int) {
 
 	// Find shares.
 	for _, link := range links {
-		if found := FindShare(Share{UserUID: m.UID(), ShareUID: link.ShareUID}); found == nil {
-			share := NewShare(m.UID(), link.ShareUID, link.Perm, link.ExpiresAt())
+		if found := FindUserShare(UserShare{UserUID: m.UID(), ShareUID: link.ShareUID}); found == nil {
+			share := NewUserShare(m.UID(), link.ShareUID, link.Perm, link.ExpiresAt())
 			share.LinkUID = link.LinkUID
 			share.Comment = link.Comment
 

@@ -34,7 +34,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -94,13 +93,12 @@ func childAlreadyRunning(filePath string) (pid int, running bool) {
 
 // CallWithDependencies calls a command action with initialized dependencies.
 func CallWithDependencies(ctx *cli.Context, action func(conf *config.Config) error) (err error) {
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 

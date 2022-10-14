@@ -187,7 +187,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: always
-    image: mariadb:10.8
+    image: mariadb:10.9
     container_name: mariadb
     security_opt:
       - seccomp:unconfined

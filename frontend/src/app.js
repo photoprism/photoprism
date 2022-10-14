@@ -60,7 +60,7 @@ config.load().finally(() => {
   // Initialize libs and framework.
   config.progress(66);
   const viewer = new Viewer();
-  const isPublic = config.get("public");
+  const isPublic = config.isPublic();
   const isMobile =
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);

@@ -6,7 +6,7 @@
       <v-toolbar-title :title="album.Title">
         <span class="hidden-xs-only">
         <router-link :to="{ name: collRoute }">
-          {{ $gettext(collName) }}
+          {{ T(collName) }}
         </router-link>
         <v-icon>{{ navIcon }}</v-icon>
         </span>
@@ -33,13 +33,13 @@
         <v-icon>get_app</v-icon>
       </v-btn>
 
-      <v-btn v-if="settings.view === 'cards'" icon :title="$gettext('Toggle View')" @click.stop="setView('list')">
+      <v-btn v-if="settings.view === 'cards'" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn v-else-if="settings.view === 'list'" icon :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
+      <v-btn v-else-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
         <v-icon>view_comfy</v-icon>
       </v-btn>
-      <v-btn v-else icon :title="$gettext('Toggle View')" @click.stop="setView('cards')">
+      <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
         <v-icon>view_column</v-icon>
       </v-btn>
 
@@ -77,6 +77,7 @@
 import Event from "pubsub-js";
 import Notify from "common/notify";
 import download from "common/download";
+import { T } from "common/vm";
 
 export default {
   name: 'PAlbumToolbar',
@@ -156,6 +157,9 @@ export default {
     };
   },
   methods: {
+    T() {
+      return T.apply(this, arguments);
+    },
     webdavUpload() {
       this.dialog.share = false;
       this.dialog.upload = true;
@@ -178,7 +182,7 @@ export default {
       }
     },
     download() {
-      this.onDownload(`${this.$config.apiUri}/albums/${this.album.UID}/dl?t=${this.$config.downloadToken()}`);
+      this.onDownload(`${this.$config.apiUri}/albums/${this.album.UID}/dl?t=${this.$config.downloadToken}`);
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));

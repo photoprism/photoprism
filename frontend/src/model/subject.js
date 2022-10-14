@@ -95,7 +95,7 @@ export class Subject extends RestModel {
       size = "tile_160";
     }
 
-    return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
   }
 
   getDateString() {
