@@ -179,9 +179,13 @@ export default {
       this.filter.order = this.sortOrder();
 
       this.settings.view = this.viewType();
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-      this.search();
+
+      const filterChanged = JSON.stringify(this.lastFilter) !== JSON.stringify(this.filter);
+      if (filterChanged) {
+        this.lastFilter = {};
+        this.routeName = this.$route.name;
+        this.search();
+      }
     }
   },
   created() {
@@ -200,42 +204,6 @@ export default {
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
-
-    /**
-     * the following is a dirty hack to make restoring the scroll-pos on the
-     * iOS-PWA work after an image has been downloaded from the files-tab of the
-     * edit-dialog.
-     * In that case, mobile PWA-Safari does the following:
-     * 1. cache the whole page state
-     * 2. navigate to a fullscreen download-window (god knows why it's not just
-     *    a small download-modal like in regular non-PWA-safari)
-     * 3. after closing that download-window (which usually triggers a popstate,
-     *    but for some reason not in this case), the page is restored from cache
-     * 4. Nothing gets re-mounted, but the `pageshow`-event is triggered with
-     *    `event.persistet = true`
-     * 5. After a couple of milliseconds the scrollBehavior-method in app.js
-     *    (which is supposed to restore scroll positions after navigation)
-     *    wrongfully sets the scroll-position to 0,0 (i guess the page thinks
-     *    that no real navigation happened, because the page is reloaded from
-     *    cache?)
-     *
-     * To make scroll-pos-reset work in these circumstances we need to:
-     * 1. Listen for the `pageShow`-event with `event.persisted = true`
-     * 2. Wait some milliseconds so that the scrollPosReset from app.js has time
-     *    to break the scroll-position
-     * 3. Finally fix the scroll-position by scrolling the last selected image
-     *    into view.
-     *
-     * This all happens with the fullscreen edit-dialog open, so the user doesn't
-     * event see that scrolling-shenanigans are happening
-     */
-    window.addEventListener('pageshow', (event) => {
-      if (event.persisted) {
-        setTimeout(() => {
-          this.restoreScrollPosition();
-        }, 50);
-      }
-    });
   },
   destroyed() {
     for (let i = 0; i < this.subscriptions.length; i++) {
@@ -339,7 +307,6 @@ export default {
        *
        * preferVideo is true, when the user explicitly clicks the live-image-icon.
        */
-      window.localStorage.setItem("last_opened_photo", selected.UID);
       if (preferVideo && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
           this.$viewer.play({video: selected});
@@ -519,7 +486,6 @@ export default {
        * in any other scenario
        */
       if (!window.backwardsNavigationDetected) {
-        window.localStorage.removeItem("last_opened_photo");
         this.setOffset(0);
       }
       this.scrollDisabled = true;
@@ -555,7 +521,6 @@ export default {
             this.$notify.info(this.$gettext("One picture found"));
           } else {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
-            this.restoreScrollPosition();
           }
         } else {
           this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 50}));
@@ -564,41 +529,12 @@ export default {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
-
-            this.restoreScrollPosition();
           });
         }
       }).finally(() => {
         this.dirty = false;
         this.loading = false;
         this.listen = true;
-      });
-    },
-    restoreScrollPosition() {
-      const lastOpenedPhotoId = window.localStorage.getItem("last_opened_photo");
-      if (lastOpenedPhotoId === undefined || lastOpenedPhotoId === null || this.viewer.open) {
-        return;
-      }
-
-      window.localStorage.removeItem("last_opened_photo");
-      this.tryScrollingToPhoto(lastOpenedPhotoId);
-    },
-    tryScrollingToPhoto(photoId, tryCount = 1) {
-      if (tryCount > 10) {
-        return;
-      }
-
-      this.$nextTick(() => {
-        const photoToScrollTo = document.querySelector(`[data-uid="${photoId}"]`);
-        if (photoToScrollTo === undefined || photoToScrollTo === null) {
-          return this.tryScrollingToPhoto(photoId, tryCount++);
-        }
-
-        photoToScrollTo?.scrollIntoView({
-          behavior: 'auto',
-          block: 'center',
-          inline: 'center'
-        });
       });
     },
     onImportCompleted() {

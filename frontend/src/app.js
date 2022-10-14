@@ -119,6 +119,43 @@ config.load().finally(() => {
   Vue.use(Dialogs);
   Vue.use(Router);
 
+  // make scroll-pos-restore compatible with bfcache
+  // this is required to make scroll-pos-restore work on iOS in PWA-mode
+  window.addEventListener("pagehide", (event) => {
+    if (event.persisted) {
+      localStorage.setItem(
+        "lastScrollPosBeforePageHide",
+        JSON.stringify({ x: window.scrollX, y: window.scrollY })
+      );
+    }
+  });
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+      const lastSavedScrollPos = localStorage.getItem("lastScrollPosBeforePageHide");
+      if (
+        lastSavedScrollPos !== undefined &&
+        lastSavedScrollPos !== null &&
+        lastSavedScrollPos !== ""
+      ) {
+        window.positionToRestore = JSON.parse(localStorage.getItem("lastScrollPosBeforePageHide"));
+        // wait for other things that set the scroll-pos anywhere in the app to fire
+        setTimeout(() => {
+          if (window.positionToRestore !== undefined) {
+            window.scrollTo(window.positionToRestore.x, window.positionToRestore.y);
+          }
+        }, 50);
+
+        // let's give the scrollBehaviour-function some time to use the restored
+        // position instead of resetting the scroll-pos to 0,0
+        setTimeout(() => {
+          window.positionToRestore = undefined;
+        }, 250);
+      }
+    }
+
+    localStorage.removeItem("lastScrollPosBeforePageHide");
+  });
+
   // Configure client-side routing.
   const router = new Router({
     routes: Routes,
@@ -126,11 +163,18 @@ config.load().finally(() => {
     base: config.baseUri + "/library/",
     saveScrollPosition: true,
     scrollBehavior: (to, from, savedPosition) => {
-      if (savedPosition) {
+      let prevScrollPos = savedPosition;
+
+      if (window.positionToRestore !== undefined) {
+        prevScrollPos = window.positionToRestore;
+      }
+      window.positionToRestore = undefined;
+
+      if (prevScrollPos) {
         return new Promise((resolve) => {
           Notify.ajaxWait().then(() => {
             setTimeout(() => {
-              resolve(savedPosition);
+              resolve(prevScrollPos);
             }, 200);
           });
         });
