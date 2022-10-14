@@ -567,7 +567,7 @@
           </router-link>
           <router-link v-if="auth && !routeName('library') && $config.feature('library') && $config.feature('logs')"
                        :to="{ name: 'library_logs' }" :title="$gettext('Logs')" class="menu-action nav-logs">
-            <v-icon>feed</v-icon>
+            <v-icon>notes</v-icon>
           </router-link>
           <router-link v-if="auth && $config.feature('settings') && !routeName('settings')" to="/settings"
                        :title="$gettext('Settings')" class="menu-action nav-settings">
