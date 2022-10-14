@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // UsersListCommand configures the command name, flags, and action.
@@ -22,7 +23,7 @@ var UsersListCommand = cli.Command{
 // usersListAction displays existing user accounts.
 func usersListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		cols := []string{"UID", "User Name", "Display Name", "Email", "Role", "Super Admin", "Web Login", "WebDAV", "Attributes"}
+		cols := []string{"ID", "UID", "User Name", "Display Name", "Email", "Role", "Super Admin", "Web Login", "WebDAV", "Attributes", "Created At"}
 
 		// Fetch users from database.
 		users := query.RegisteredUsers()
@@ -34,6 +35,7 @@ func usersListAction(ctx *cli.Context) error {
 		// Display report.
 		for i, user := range users {
 			rows[i] = []string{
+				fmt.Sprintf("%d", user.ID),
 				user.UID(),
 				user.Name(),
 				user.FullName(),
@@ -43,6 +45,7 @@ func usersListAction(ctx *cli.Context) error {
 				report.Bool(user.CanLogIn(), report.Enabled, report.Disabled),
 				report.Bool(user.CanUseWebDAV(), report.Enabled, report.Disabled),
 				user.Attr(),
+				txt.TimeStamp(&user.CreatedAt),
 			}
 		}
 

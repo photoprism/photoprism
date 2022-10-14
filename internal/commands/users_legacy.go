@@ -13,10 +13,11 @@ import (
 
 // UsersLegacyCommand configures the command name, flags, and action.
 var UsersLegacyCommand = cli.Command{
-	Name:   "legacy",
-	Usage:  "Displays legacy user accounts",
-	Flags:  report.CliFlags,
-	Action: usersLegacyAction,
+	Name:      "legacy",
+	Usage:     "Displays legacy user accounts",
+	ArgsUsage: "[search]",
+	Flags:     report.CliFlags,
+	Action:    usersLegacyAction,
 }
 
 // usersLegacyAction displays legacy user accounts.
@@ -25,7 +26,7 @@ func usersLegacyAction(ctx *cli.Context) error {
 		cols := []string{"ID", "UID", "User Name", "Display Name", "Email", "Admin", "Created At"}
 
 		// Fetch users from database.
-		users := entity.FindLegacyUsers()
+		users := entity.FindLegacyUsers(ctx.Args().First())
 		rows := make([][]string, len(users))
 
 		// Show log message.
