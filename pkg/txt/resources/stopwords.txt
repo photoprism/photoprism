@@ -35,6 +35,8 @@ picture
 pictures
 upload
 uploads
+uploader
+users
 download
 downloads
 edit

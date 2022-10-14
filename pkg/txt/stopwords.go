@@ -41,6 +41,8 @@ var StopWords = map[string]bool{
 	"pictures":         true,
 	"upload":           true,
 	"uploads":          true,
+	"uploader":         true,
+	"users":            true,
 	"download":         true,
 	"downloads":        true,
 	"edit":             true,
