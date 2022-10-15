@@ -227,7 +227,7 @@
           <v-list-tile :to="{name: 'live'}" class="nav-live" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
-                <translate>Live</translate>
+                <translate>Live Photos</translate>
                 <span v-show="config.count.live > 0"
                       :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.live | abbreviateCount }}</span>
               </v-list-tile-title>
@@ -387,7 +387,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini && $config.feature('library')" to="/library" class="nav-library" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('library')" :to="{ name: 'index' }" class="nav-library" @click.stop="">
           <v-list-tile-action :title="$gettext('Library')">
             <v-icon>camera_roll</v-icon>
           </v-list-tile-action>
@@ -401,7 +401,7 @@
 
         <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="camera_roll" no-action>
           <template #activator>
-            <v-list-tile to="/library" class="nav-library" @click.stop="">
+            <v-list-tile :to="{ name: 'index' }" class="nav-library" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title class="p-flex-menuitem">
                   <translate key="Library">Library</translate>
@@ -410,7 +410,7 @@
             </v-list-tile>
           </template>
 
-          <v-list-tile v-show="$config.feature('files')" to="/library/files" class="nav-originals" @click.stop="">
+          <v-list-tile v-show="$config.feature('files')" to="/index/files" class="nav-originals" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Originals">Originals</translate>
@@ -420,7 +420,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/library/hidden" class="nav-hidden" @click.stop="">
+          <v-list-tile :to="{ name: 'hidden' }" class="nav-hidden" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Hidden">Hidden</translate>
@@ -430,7 +430,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/library/errors" class="nav-errors" @click.stop="">
+          <v-list-tile :to="{ name: 'errors' }" class="nav-errors" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Errors">Errors</translate>
@@ -440,7 +440,7 @@
         </v-list-group>
 
         <template v-if="!config.disable.settings">
-          <v-list-tile v-if="isMini" v-show="$config.feature('settings')" to="/settings" class="nav-settings" @click.stop="">
+          <v-list-tile v-if="isMini" v-show="$config.feature('settings')" :to="{ name: 'settings' }" class="nav-settings" @click.stop="">
             <v-list-tile-action :title="$gettext('Settings')">
               <v-icon>settings</v-icon>
             </v-list-tile-action>
@@ -454,7 +454,7 @@
 
           <v-list-group v-else v-show="$config.feature('settings')" prepend-icon="settings" no-action>
             <template #activator>
-              <v-list-tile to="/settings" class="nav-settings" @click.stop="">
+              <v-list-tile :to="{ name: 'settings' }" class="nav-settings" @click.stop="">
                 <v-list-tile-content>
                   <v-list-tile-title>
                     <translate key="Settings">Settings</translate>
@@ -565,11 +565,11 @@
                        class="menu-action nav-login">
             <v-icon>login</v-icon>
           </router-link>
-          <router-link v-if="auth && !routeName('library') && $config.feature('library') && $config.feature('logs')"
-                       :to="{ name: 'library_logs' }" :title="$gettext('Logs')" class="menu-action nav-logs">
-            <v-icon>notes</v-icon>
+          <router-link v-if="auth && !routeName('index') && $config.feature('library') && $config.feature('logs')"
+                       :to="{ name: 'logs' }" :title="$gettext('Logs')" class="menu-action nav-logs">
+            <v-icon>grading</v-icon>
           </router-link>
-          <router-link v-if="auth && $config.feature('settings') && !routeName('settings')" to="/settings"
+          <router-link v-if="auth && $config.feature('settings') && !routeName('settings')" :to="{ name: 'settings' }"
                        :title="$gettext('Settings')" class="menu-action nav-settings">
             <v-icon>settings</v-icon>
           </router-link>
@@ -605,13 +605,13 @@
           </div>
           <div v-if="auth && !routeName('files') && $config.feature('files') && $config.feature('library')"
                class="menu-action nav-files">
-            <router-link to="/library/files">
+            <router-link to="/index/files">
               <v-icon>folder</v-icon>
               <translate>Files</translate>
             </router-link>
           </div>
-          <div v-if="auth && !routeName('library') && $config.feature('library')" class="menu-action nav-library">
-            <router-link :to="{ name: 'library' }">
+          <div v-if="auth && !routeName('index') && $config.feature('library')" class="menu-action nav-library">
+            <router-link :to="{ name: 'index' }">
               <v-icon>camera_roll</v-icon>
               <translate>Index</translate>
             </router-link>

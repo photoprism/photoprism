@@ -1,54 +1,7 @@
 classDiagram
-class accounts {
-   varchar(160) acc_name
-   varchar(160) acc_owner
-   varchar(255) acc_url
-   varbinary(255) acc_type
-   varbinary(255) acc_key
-   varbinary(255) acc_user
-   varbinary(255) acc_pass
-   varbinary(16) acc_timeout
-   varbinary(512) acc_error
-   int(11) acc_errors
-   tinyint(1) acc_share
-   tinyint(1) acc_sync
-   int(11) retry_limit
-   varbinary(500) share_path
-   varbinary(16) share_size
-   int(11) share_expires
-   varbinary(500) sync_path
-   varbinary(16) sync_status
-   int(11) sync_interval
-   datetime sync_date
-   tinyint(1) sync_upload
-   tinyint(1) sync_download
-   tinyint(1) sync_filenames
-   tinyint(1) sync_raw
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   int(10) unsigned id
-}
-class addresses {
-   varbinary(64) cell_id
-   varbinary(8) address_src
-   float address_lat
-   float address_lng
-   varchar(255) address_line1
-   varchar(255) address_line2
-   varchar(32) address_zip
-   varchar(128) address_city
-   varchar(128) address_state
-   varbinary(2) address_country
-   varchar(1024) address_notes
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   int(11) id
-}
 class albums {
-   varbinary(64) album_uid
-   varbinary(64) parent_uid
+   varbinary(42) album_uid
+   varbinary(42) parent_uid
    varbinary(160) album_slug
    varbinary(500) album_path
    varbinary(8) album_type
@@ -73,7 +26,136 @@ class albums {
    datetime created_at
    datetime updated_at
    datetime deleted_at
+   varbinary(42) created_by
+   datetime published_at
    int(10) unsigned id
+}
+class albums_users {
+   varbinary(42) team_uid
+   int(10) unsigned perm
+   varbinary(42) uid
+   varbinary(42) user_uid
+}
+class auth_sessions {
+   varchar(64) client_ip
+   varbinary(42) user_uid
+   varchar(64) user_name
+   varbinary(128) auth_provider
+   varbinary(128) auth_method
+   varbinary(255) auth_domain
+   varbinary(128) auth_id
+   varchar(1024) auth_scope
+   bigint(20) last_active
+   bigint(20) sess_expires
+   bigint(20) sess_timeout
+   varbinary(64) preview_token
+   varbinary(64) download_token
+   varbinary(4096) access_token
+   varbinary(512) refresh_token
+   varbinary(1024) id_token
+   varchar(512) user_agent
+   varbinary(4096) data_json
+   varbinary(16) ref_id
+   varchar(64) login_ip
+   datetime login_at
+   datetime created_at
+   datetime updated_at
+   varbinary(2048) id
+}
+class auth_users {
+   varbinary(64) user_uuid
+   varbinary(42) user_uid
+   varbinary(128) auth_provider
+   varbinary(128) auth_id
+   varchar(64) user_name
+   varchar(200) display_name
+   varchar(255) user_email
+   varchar(255) backup_email
+   varchar(64) user_role
+   varchar(1024) user_attr
+   tinyint(1) super_admin
+   tinyint(1) can_login
+   datetime login_at
+   datetime expires_at
+   tinyint(1) webdav
+   varbinary(1024) base_path
+   varbinary(1024) upload_path
+   tinyint(1) can_invite
+   varbinary(64) invite_token
+   varchar(64) invited_by
+   varbinary(64) verify_token
+   datetime verified_at
+   datetime consent_at
+   datetime born_at
+   varbinary(64) reset_token
+   varbinary(64) preview_token
+   varbinary(64) download_token
+   varbinary(128) thumb
+   varbinary(8) thumb_src
+   varbinary(16) ref_id
+   datetime created_at
+   datetime updated_at
+   datetime deleted_at
+   int(11) id
+}
+class auth_users_details {
+   varbinary(42) subj_uid
+   varbinary(8) subj_src
+   varbinary(42) place_id
+   varbinary(8) place_src
+   varbinary(42) cell_id
+   varbinary(512) id_url
+   varbinary(512) avatar_url
+   varbinary(512) site_url
+   varbinary(512) feed_url
+   varchar(16) user_gender
+   varchar(32) name_prefix
+   varchar(64) given_name
+   varchar(64) middle_name
+   varchar(64) family_name
+   varchar(32) name_suffix
+   varchar(64) nick_name
+   varchar(32) user_phone
+   varchar(512) user_address
+   varbinary(2) user_country
+   varchar(512) user_bio
+   varchar(64) job_title
+   varchar(128) department
+   varchar(128) company
+   varbinary(512) company_url
+   int(11) birth_year
+   int(11) birth_month
+   int(11) birth_day
+   datetime created_at
+   datetime updated_at
+   varbinary(42) user_uid
+}
+class auth_users_settings {
+   varbinary(32) ui_theme
+   varbinary(32) ui_language
+   varbinary(64) ui_time_zone
+   varbinary(32) maps_style
+   int(11) maps_animate
+   varbinary(1024) index_path
+   int(11) index_rescan
+   varbinary(1024) import_path
+   int(11) import_move
+   varbinary(1024) upload_path
+   varbinary(128) default_page
+   datetime created_at
+   datetime updated_at
+   varbinary(42) user_uid
+}
+class auth_users_shares {
+   varbinary(42) link_uid
+   datetime expires_at
+   varchar(512) comment
+   int(10) unsigned perm
+   varbinary(16) ref_id
+   datetime created_at
+   datetime updated_at
+   varbinary(42) user_uid
+   varbinary(42) share_uid
 }
 class cameras {
    varbinary(160) camera_slug
@@ -97,10 +179,10 @@ class cells {
    varchar(100) cell_street
    varchar(50) cell_postcode
    varchar(50) cell_category
-   varbinary(64) place_id
+   varbinary(42) place_id
    datetime created_at
    datetime updated_at
-   varbinary(64) id
+   varbinary(42) id
 }
 class countries {
    varbinary(160) country_slug
@@ -146,7 +228,7 @@ class faces {
    varbinary(8) face_src
    int(11) face_kind
    tinyint(1) face_hidden
-   varbinary(64) subj_uid
+   varbinary(42) subj_uid
    int(11) samples
    double sample_radius
    int(11) collisions
@@ -155,17 +237,17 @@ class faces {
    datetime matched_at
    datetime created_at
    datetime updated_at
-   varbinary(64) id
+   varbinary(42) id
 }
 class files {
    int(10) unsigned photo_id
-   varbinary(64) photo_uid
+   varbinary(42) photo_uid
    datetime photo_taken_at
-   varbinary(48) time_index
+   varbinary(64) time_index
    varbinary(32) media_id
    bigint(20) media_utc
-   varbinary(64) instance_id
-   varbinary(64) file_uid
+   varbinary(42) instance_id
+   varbinary(42) file_uid
    varbinary(755) file_name
    varbinary(16) file_root
    varbinary(755) original_name
@@ -204,6 +286,7 @@ class files {
    datetime updated_at
    bigint(20) updated_in
    datetime deleted_at
+   datetime published_at
    int(10) unsigned id
 }
 class files_share {
@@ -213,7 +296,7 @@ class files_share {
    datetime created_at
    datetime updated_at
    int(10) unsigned file_id
-   int(10) unsigned account_id
+   int(10) unsigned service_id
    varbinary(255) remote_name
 }
 class files_sync {
@@ -226,7 +309,7 @@ class files_sync {
    datetime created_at
    datetime updated_at
    varbinary(255) remote_name
-   int(10) unsigned account_id
+   int(10) unsigned service_id
 }
 class folders {
    varbinary(500) path
@@ -248,7 +331,8 @@ class folders {
    datetime updated_at
    datetime modified_at
    datetime deleted_at
-   varbinary(64) folder_uid
+   datetime published_at
+   varbinary(42) folder_uid
 }
 class keywords {
    varchar(64) keyword
@@ -256,7 +340,7 @@ class keywords {
    int(10) unsigned id
 }
 class labels {
-   varbinary(64) label_uid
+   varbinary(42) label_uid
    varbinary(160) label_slug
    varbinary(160) custom_slug
    varchar(160) label_name
@@ -270,6 +354,7 @@ class labels {
    datetime created_at
    datetime updated_at
    datetime deleted_at
+   datetime published_at
    int(10) unsigned id
 }
 class lenses {
@@ -286,29 +371,31 @@ class lenses {
    int(10) unsigned id
 }
 class links {
-   varbinary(64) shared_uid
-   varbinary(160) link_slug
+   varbinary(42) share_uid
+   varbinary(160) share_slug
    varbinary(160) link_token
    int(11) link_expires
    int(10) unsigned link_views
    int(10) unsigned max_views
    tinyint(1) has_password
-   tinyint(1) can_comment
-   tinyint(1) can_edit
    datetime created_at
    datetime modified_at
-   varbinary(64) link_uid
+   varchar(512) comment
+   int(10) unsigned perm
+   varbinary(16) ref_id
+   varbinary(42) created_by
+   varbinary(42) link_uid
 }
 class markers {
-   varbinary(64) file_uid
+   varbinary(42) file_uid
    varbinary(8) marker_type
    varbinary(8) marker_src
    varchar(160) marker_name
    tinyint(1) marker_review
    tinyint(1) marker_invalid
-   varbinary(64) subj_uid
+   varbinary(42) subj_uid
    varbinary(8) subj_src
-   varbinary(64) face_id
+   varbinary(42) face_id
    double face_dist
    mediumblob embeddings_json
    mediumblob landmarks_json
@@ -323,7 +410,7 @@ class markers {
    datetime matched_at
    datetime created_at
    datetime updated_at
-   varbinary(64) marker_uid
+   varbinary(42) marker_uid
 }
 class migrations {
    varchar(16) dialect
@@ -331,6 +418,7 @@ class migrations {
    varchar(16) source
    datetime started_at
    datetime finished_at
+   varchar(16) stage
    varchar(16) id
 }
 class passwords {
@@ -340,11 +428,11 @@ class passwords {
    varbinary(255) uid
 }
 class photos {
-   varbinary(64) uuid
+   varbinary(42) uuid
    datetime taken_at
    datetime taken_at_local
    varbinary(8) taken_src
-   varbinary(64) photo_uid
+   varbinary(42) photo_uid
    varbinary(8) photo_type
    varbinary(8) type_src
    varchar(200) photo_title
@@ -360,9 +448,9 @@ class photos {
    tinyint(1) photo_scan
    tinyint(1) photo_panorama
    varbinary(64) time_zone
-   varbinary(64) place_id
+   varbinary(42) place_id
    varbinary(8) place_src
-   varbinary(64) cell_id
+   varbinary(42) cell_id
    int(11) cell_accuracy
    int(11) photo_altitude
    float photo_lat
@@ -389,6 +477,9 @@ class photos {
    datetime checked_at
    datetime estimated_at
    datetime deleted_at
+   bigint(20) photo_duration
+   varbinary(42) created_by
+   datetime published_at
    int(10) unsigned id
 }
 class photos_albums {
@@ -397,8 +488,8 @@ class photos_albums {
    tinyint(1) missing
    datetime created_at
    datetime updated_at
-   varbinary(64) photo_uid
-   varbinary(64) album_uid
+   varbinary(42) photo_uid
+   varbinary(42) album_uid
 }
 class photos_keywords {
    int(10) unsigned photo_id
@@ -409,6 +500,12 @@ class photos_labels {
    smallint(6) uncertainty
    int(10) unsigned photo_id
    int(10) unsigned label_id
+}
+class photos_users {
+   varbinary(42) team_uid
+   int(10) unsigned perm
+   varbinary(42) uid
+   varbinary(42) user_uid
 }
 class places {
    varchar(400) place_label
@@ -421,7 +518,44 @@ class places {
    int(11) photo_count
    datetime created_at
    datetime updated_at
-   varbinary(64) id
+   varbinary(42) id
+}
+class reactions {
+   int(11) reacted
+   datetime reacted_at
+   varbinary(42) uid
+   varbinary(42) user_uid
+   varbinary(64) reaction
+}
+class services {
+   varchar(160) acc_name
+   varchar(160) acc_owner
+   varchar(255) acc_url
+   varbinary(255) acc_type
+   varbinary(255) acc_key
+   varbinary(255) acc_user
+   varbinary(255) acc_pass
+   varbinary(16) acc_timeout
+   varbinary(512) acc_error
+   int(11) acc_errors
+   tinyint(1) acc_share
+   tinyint(1) acc_sync
+   int(11) retry_limit
+   varbinary(500) share_path
+   varbinary(16) share_size
+   int(11) share_expires
+   varbinary(500) sync_path
+   varbinary(16) sync_status
+   int(11) sync_interval
+   datetime sync_date
+   tinyint(1) sync_upload
+   tinyint(1) sync_download
+   tinyint(1) sync_filenames
+   tinyint(1) sync_raw
+   datetime created_at
+   datetime updated_at
+   datetime deleted_at
+   int(10) unsigned id
 }
 class subjects {
    varbinary(8) subj_type
@@ -443,75 +577,24 @@ class subjects {
    datetime created_at
    datetime updated_at
    datetime deleted_at
-   varbinary(64) subj_uid
+   varbinary(42) subj_uid
 }
-class users {
-   int(11) address_id
-   varbinary(64) user_uid
-   varbinary(64) mother_uid
-   varbinary(64) father_uid
-   varbinary(64) global_uid
-   varchar(128) full_name
-   varchar(64) nick_name
-   varchar(64) maiden_name
-   varchar(64) artist_name
-   varchar(64) user_name
-   varchar(32) user_status
-   tinyint(1) user_disabled
-   longtext user_settings
-   varchar(255) primary_email
-   tinyint(1) email_confirmed
-   varchar(255) backup_email
-   varbinary(255) person_url
-   varchar(32) person_phone
-   varchar(32) person_status
-   varbinary(255) person_avatar
-   varchar(128) person_location
-   text person_bio
-   longtext person_accounts
-   varbinary(255) business_url
-   varchar(32) business_phone
-   varchar(255) business_email
-   varchar(128) company_name
-   varchar(128) department_name
-   varchar(64) job_title
-   int(11) birth_year
-   int(11) birth_month
-   int(11) birth_day
-   tinyint(1) terms_accepted
-   tinyint(1) is_artist
-   tinyint(1) is_subject
-   tinyint(1) role_admin
-   tinyint(1) role_guest
-   tinyint(1) role_child
-   tinyint(1) role_family
-   tinyint(1) role_friend
-   tinyint(1) webdav
-   varbinary(500) storage_path
-   tinyint(1) can_invite
-   varbinary(32) invite_token
-   varbinary(32) invited_by
-   varbinary(64) confirm_token
-   varbinary(64) reset_token
-   varbinary(128) api_token
-   varbinary(128) api_secret
-   int(11) login_attempts
-   datetime login_at
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   int(11) id
-}
-addresses  -->  cells : cell_id
+
+auth_sessions  -->  auth_users : user_uid
+auth_users_details --> auth_users : user_uid
+auth_users_settings --> auth_users : user_uid
+auth_users_shares --> auth_users : user_uid
+auth_users_details  -->  cells : cell_id
+auth_users_details  -->  places : place_id
 categories  -->  labels : label_id
 categories  -->  labels : category_id
 cells  -->  places : place_id
 details  -->  photos : photo_id
 files  -->  photos : photo_id
-files_share  -->  accounts : account_id
-files_share  -->  files : file_id
-files_sync  -->  accounts : account_id
+files_share  -->  files : file_id:id
+files_share  -->  services : service_id
 files_sync  -->  files : file_id
+files_sync  -->  services : service_id
 markers  -->  faces : face_id
 markers  -->  subjects : subject_uid
 faces  -->  subjects : subject_uid
@@ -522,6 +605,8 @@ photos  -->  places : place_id
 photos  -->  countries : photo_country
 albums  -->  countries : album_country
 albums  -->  folders : path
+albums  --> users : created_by
+albums_users  -->  auth_users : user_uid
 places  -->  countries : place_country
 photos_keywords  -->  keywords : keyword_id
 photos_keywords  -->  photos : photo_id
@@ -529,7 +614,7 @@ photos_labels  -->  labels : label_id
 photos_labels  -->  photos : photo_id
 photos_albums  -->  albums : album_uid
 photos_albums  -->  photos : photo_uid
-users  -->  addresses : address_id
-users  -->  passwords : uid
+photos_users   -->  auth_users : user_uid
+photos --> users : created_by
 links  -->  albums : uid
 duplicates -- files

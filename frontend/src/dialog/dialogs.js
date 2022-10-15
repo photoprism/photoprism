@@ -23,9 +23,9 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import PAccountAddDialog from "dialog/account/add.vue";
-import PAccountRemoveDialog from "dialog/account/remove.vue";
-import PAccountEditDialog from "dialog/account/edit.vue";
+import PAccountAddDialog from "dialog/service/add.vue";
+import PAccountRemoveDialog from "dialog/service/remove.vue";
+import PAccountEditDialog from "dialog/service/edit.vue";
 import PPhotoArchiveDialog from "dialog/photo/archive.vue";
 import PPhotoAlbumDialog from "dialog/photo/album.vue";
 import PPhotoEditDialog from "dialog/photo/edit.vue";

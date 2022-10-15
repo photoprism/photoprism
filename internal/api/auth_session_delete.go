@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -20,12 +20,12 @@ func DeleteSession(router *gin.RouterGroup) {
 		if id == "" {
 			AbortBadRequest(c)
 			return
-		} else if service.Config().Public() {
+		} else if get.Config().Public() {
 			c.JSON(http.StatusOK, gin.H{"status": "authentication disabled", "id": id})
 			return
 		}
 
-		if err := service.Session().Delete(id); err != nil {
+		if err := get.Session().Delete(id); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s"}, err)
 		} else {
 			event.AuditDebug([]string{ClientIP(c), "session deleted"})

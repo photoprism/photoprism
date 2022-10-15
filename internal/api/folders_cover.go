@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -36,7 +36,7 @@ func FolderCover(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		conf := service.Config()
+		conf := get.Config()
 		uid := c.Param("uid")
 		thumbName := thumb.Name(clean.Token(c.Param("size")))
 		download := c.Query("download") != ""
@@ -59,7 +59,7 @@ func FolderCover(router *gin.RouterGroup) {
 			}
 		}
 
-		cache := service.CoverCache()
+		cache := get.CoverCache()
 		cacheKey := CacheKey(folderCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {

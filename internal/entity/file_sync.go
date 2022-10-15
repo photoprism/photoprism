@@ -15,7 +15,7 @@ const (
 // FileSync represents a one-to-many relation between File and Account for syncing with remote services.
 type FileSync struct {
 	RemoteName string `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)"`
-	AccountID  uint   `gorm:"primary_key;auto_increment:false"`
+	ServiceID  uint   `gorm:"primary_key;auto_increment:false"`
 	FileID     uint   `gorm:"index;"`
 	RemoteDate time.Time
 	RemoteSize int64
@@ -23,7 +23,7 @@ type FileSync struct {
 	Error      string `gorm:"type:VARBINARY(512);"`
 	Errors     int
 	File       *File
-	Account    *Account
+	Account    *Service
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
@@ -36,7 +36,7 @@ func (FileSync) TableName() string {
 // NewFileSync creates a new entity.
 func NewFileSync(accountID uint, remoteName string) *FileSync {
 	result := &FileSync{
-		AccountID:  accountID,
+		ServiceID:  accountID,
 		RemoteName: remoteName,
 		Status:     FileSyncNew,
 	}
@@ -68,7 +68,7 @@ func (m *FileSync) Create() error {
 func FirstOrCreateFileSync(m *FileSync) *FileSync {
 	result := FileSync{}
 
-	if err := Db().Where("account_id = ? AND remote_name = ?", m.AccountID, m.RemoteName).First(&result).Error; err == nil {
+	if err := Db().Where("service_id = ? AND remote_name = ?", m.ServiceID, m.RemoteName).First(&result).Error; err == nil {
 		return &result
 	} else if err := m.Create(); err != nil {
 		log.Errorf("file-sync: %s", err)

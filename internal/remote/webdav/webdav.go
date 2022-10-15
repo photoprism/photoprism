@@ -235,7 +235,7 @@ func (c Client) DownloadDir(from, to string, recursive, force bool) (errs []erro
 		}
 
 		if err = c.Download(file.Abs, dest, force); err != nil {
-			// Failed to download file.
+			// RunFailed to download file.
 			errs = append(errs, err)
 			log.Error(err)
 			continue

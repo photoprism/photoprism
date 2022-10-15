@@ -8,10 +8,10 @@ import (
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -52,7 +52,7 @@ func Import() error {
 		return nil
 	}
 
-	conf := service.Config()
+	conf := get.Config()
 
 	if conf.ReadOnly() || !conf.Settings().Features.Import {
 		return nil
@@ -62,7 +62,7 @@ func Import() error {
 
 	path := filepath.Clean(conf.ImportPath())
 
-	imp := service.Import()
+	imp := get.Import()
 
 	api.RemoveFromFolderCache(entity.RootImport)
 
@@ -82,7 +82,7 @@ func Import() error {
 		return nil
 	}
 
-	moments := service.Moments()
+	moments := get.Moments()
 
 	if err := moments.Start(); err != nil {
 		log.Warnf("moments: %s", err)

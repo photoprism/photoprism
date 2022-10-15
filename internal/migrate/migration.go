@@ -1,7 +1,7 @@
 package migrate
 
 import (
-	"strings"
+	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -11,6 +11,7 @@ import (
 type Migration struct {
 	ID         string     `gorm:"size:16;primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	Dialect    string     `gorm:"size:16;" json:"Dialect" yaml:"Dialect,omitempty"`
+	Stage      string     `gorm:"size:16;" json:"Stage" yaml:"Stage,omitempty"`
 	Error      string     `gorm:"size:255;" json:"Error" yaml:"Error,omitempty"`
 	Source     string     `gorm:"size:16;" json:"Source" yaml:"Source,omitempty"`
 	Statements []string   `gorm:"-" json:"Statements" yaml:"Statements,omitempty"`
@@ -21,6 +22,25 @@ type Migration struct {
 // TableName returns the entity database table name.
 func (Migration) TableName() string {
 	return "migrations"
+}
+
+// StageName returns the stage name.
+func (m *Migration) StageName() string {
+	if m.Stage == "" {
+		return StageMain
+	} else {
+		return m.Stage
+	}
+}
+
+// RunStage checks if the run stage matches.
+func (m *Migration) RunStage(name string) bool {
+	return m.StageName() == name
+}
+
+// Skip checks if the migration should be skipped based on the options.
+func (m *Migration) Skip(opt Options) bool {
+	return !m.RunStage(opt.StageName())
 }
 
 // Finished tests if the migration has been finished yet.
@@ -67,7 +87,7 @@ func (m *Migration) Repeat(runFailed bool) bool {
 
 // Fail marks the migration as failed by adding an error message and removing the FinishedAt timestamp.
 func (m *Migration) Fail(err error, db *gorm.DB) {
-	if err == nil {
+	if err == nil || db == nil {
 		return
 	}
 
@@ -84,6 +104,10 @@ func (m *Migration) Fail(err error, db *gorm.DB) {
 
 // Finish updates the FinishedAt timestamp and removes the error message when the migration was successful.
 func (m *Migration) Finish(db *gorm.DB) error {
+	if db == nil {
+		return fmt.Errorf("db is nil")
+	}
+
 	finished := time.Now().UTC().Truncate(time.Second)
 	m.FinishedAt = &finished
 	m.Error = ""
@@ -92,30 +116,17 @@ func (m *Migration) Finish(db *gorm.DB) error {
 
 // Execute runs the migration.
 func (m *Migration) Execute(db *gorm.DB) error {
+	if db == nil {
+		return fmt.Errorf("db is nil")
+	}
+
 	for _, s := range m.Statements { //  ADD
 		if err := db.Exec(s).Error; err != nil {
-			// Normalize query and error for comparison.
-			q := strings.ToLower(s)
-			e := strings.ToLower(err.Error())
-
 			// Log the errors triggered by ALTER and DROP statements
 			// and otherwise ignore them, since some databases do not
 			// support "IF EXISTS".
-			if strings.HasPrefix(q, "alter table ") &&
-				strings.Contains(s, " add ") &&
-				strings.Contains(e, "duplicate") {
-				log.Tracef("migrate: %s (ignored, column already exists)", err)
-			} else if strings.HasPrefix(q, "drop index ") &&
-				strings.Contains(e, "drop") {
-				log.Tracef("migrate: %s (ignored, probably no longer existed)", err)
-			} else if strings.HasPrefix(q, "drop table ") &&
-				strings.Contains(e, "drop") {
-				log.Tracef("migrate: %s (ignored, probably no longer existed)", err)
-			} else if (strings.Contains(q, " ignore ") || strings.Contains(q, "replace")) &&
-				(strings.Contains(e, "no such table") || strings.Contains(e, "doesn't exist")) {
-				log.Tracef("migrate: %s (ignored, old table no longer exists)", err)
-			} else if strings.Contains(q, "rename column") && strings.Contains(e, "no such column") {
-				log.Tracef("migrate: %s (ignored, column no longer exists)", err)
+			if IgnoreErr.Matches(s, err.Error()) {
+				log.Tracef("migrate: ignored %s", err)
 			} else {
 				return err
 			}

@@ -10,8 +10,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -22,7 +22,7 @@ import (
 func GetConfigOptions(router *gin.RouterGroup) {
 	router.GET("/config/options", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceConfig, acl.AccessAll)
-		conf := service.Config()
+		conf := get.Config()
 
 		// Abort if permission was not granted.
 		if s.Invalid() || conf.Public() || conf.DisableSettings() {
@@ -40,7 +40,7 @@ func GetConfigOptions(router *gin.RouterGroup) {
 func SaveConfigOptions(router *gin.RouterGroup) {
 	router.POST("/config/options", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceConfig, acl.ActionManage)
-		conf := service.Config()
+		conf := get.Config()
 
 		if s.Invalid() || conf.Public() || conf.DisableSettings() {
 			AbortForbidden(c)

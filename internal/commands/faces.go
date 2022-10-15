@@ -11,9 +11,9 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -91,7 +91,7 @@ func facesStatsAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if err := w.Stats(); err != nil {
 		return err
@@ -109,7 +109,7 @@ func facesAuditAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -121,7 +121,7 @@ func facesAuditAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if err := w.Audit(ctx.Bool("fix")); err != nil {
 		return err
@@ -152,7 +152,7 @@ func facesResetAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -164,7 +164,7 @@ func facesResetAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if err := w.Reset(); err != nil {
 		return err
@@ -191,7 +191,7 @@ func facesResetAllAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -219,7 +219,7 @@ func facesIndexAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -248,14 +248,14 @@ func facesIndexAction(ctx *cli.Context) error {
 
 	settings := conf.Settings()
 
-	if w := service.Index(); w != nil {
+	if w := get.Index(); w != nil {
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true)
 
 		indexed = w.Start(opt)
 	}
 
-	if w := service.Purge(); w != nil {
+	if w := get.Purge(); w != nil {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
 			Ignore: indexed,
@@ -280,7 +280,7 @@ func facesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -296,7 +296,7 @@ func facesUpdateAction(ctx *cli.Context) error {
 		Force: ctx.Bool("force"),
 	}
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if err := w.Start(opt); err != nil {
 		return err
@@ -314,7 +314,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -326,7 +326,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if res, err := w.Optimize(); err != nil {
 		return err

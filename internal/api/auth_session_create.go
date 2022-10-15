@@ -8,9 +8,9 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // CreateSession creates a new client session and returns it as JSON if authentication was successful.
@@ -26,11 +26,11 @@ func CreateSession(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		// Skip authentication if app is running in public mode.
 		if conf.Public() {
-			sess := service.Session().Public()
+			sess := get.Session().Public()
 			data := gin.H{
 				"status": "ok",
 				"id":     sess.ID,
@@ -57,7 +57,7 @@ func CreateSession(router *gin.RouterGroup) {
 			sess = s
 		} else {
 			// Create new session.
-			sess = service.Session().New(c)
+			sess = get.Session().New(c)
 			isNew = true
 		}
 
@@ -65,7 +65,7 @@ func CreateSession(router *gin.RouterGroup) {
 		if err := sess.LogIn(f, c); err != nil {
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
-		} else if sess, err = service.Session().Save(sess); err != nil {
+		} else if sess, err = get.Session().Save(sess); err != nil {
 			event.AuditErr([]string{ClientIP(c), "%s"}, err)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return

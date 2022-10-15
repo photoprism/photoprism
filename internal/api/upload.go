@@ -10,8 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -20,7 +20,7 @@ import (
 // POST /api/v1/upload/:path
 func Upload(router *gin.RouterGroup) {
 	router.POST("/upload/:token", func(c *gin.Context) {
-		conf := service.Config()
+		conf := get.Config()
 
 		if conf.ReadOnly() || !conf.Settings().Features.Upload {
 			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
@@ -74,7 +74,7 @@ func Upload(router *gin.RouterGroup) {
 		}
 
 		if !conf.UploadNSFW() {
-			nd := service.NsfwDetector()
+			nd := get.NsfwDetector()
 
 			containsNSFW := false
 

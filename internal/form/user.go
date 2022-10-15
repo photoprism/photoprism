@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// User represents a user account management form.
+// User represents a user account form.
 type User struct {
 	UserName    string `json:"Name" yaml:"Name,omitempty"`
 	UserEmail   string `json:"Email,omitempty" yaml:"Email,omitempty"`

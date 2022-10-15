@@ -220,10 +220,10 @@ export default class Session {
   getHome() {
     if (this.loginRequired()) {
       return "login";
-    } else if (this.user.Role === "guest") {
-      return "albums";
-    } else {
+    } else if (this.config.allow("photos", "access_library")) {
       return "browse";
+    } else {
+      return "albums";
     }
   }
 

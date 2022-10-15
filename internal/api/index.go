@@ -11,9 +11,9 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -29,7 +29,7 @@ func StartIndexing(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 		settings := conf.Settings()
 
 		if !settings.Features.Library {
@@ -60,7 +60,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		// Start indexing.
-		ind := service.Index()
+		ind := get.Index()
 		indexed := ind.Start(indOpt)
 
 		RemoveFromFolderCache(entity.RootOriginals)
@@ -72,7 +72,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		// Start purging.
-		prg := service.Purge()
+		prg := get.Purge()
 
 		if files, photos, err := prg.Start(prgOpt); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
@@ -85,7 +85,7 @@ func StartIndexing(router *gin.RouterGroup) {
 			"step": "moments",
 		})
 
-		moments := service.Moments()
+		moments := get.Moments()
 
 		if err := moments.Start(); err != nil {
 			log.Warnf("moments: %s", err)
@@ -115,14 +115,14 @@ func CancelIndexing(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		if !conf.Settings().Features.Library {
 			AbortFeatureDisabled(c)
 			return
 		}
 
-		ind := service.Index()
+		ind := get.Index()
 
 		ind.Cancel()
 

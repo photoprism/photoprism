@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/migrate"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -281,7 +283,7 @@ func (c *Config) InitDb() {
 // MigrateDb initializes the database and migrates the schema if needed.
 func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	entity.Admin.UserName = c.AdminUser()
-	entity.InitDb(true, runFailed, ids)
+	entity.InitDb(migrate.Opt(runFailed, ids))
 
 	// Init admin account?
 	if c.AdminPassword() == "" {

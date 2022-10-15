@@ -6,7 +6,7 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 )
 
 // MomentsCommand registers the moments command.
@@ -36,7 +36,7 @@ func momentsAction(ctx *cli.Context) error {
 		log.Infof("config: read-only mode enabled")
 	}
 
-	w := service.Moments()
+	w := get.Moments()
 
 	if err := w.Start(); err != nil {
 		return err

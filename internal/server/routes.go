@@ -72,13 +72,13 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteSession(v1)
 
 		// External Account Management.
-		api.SearchAccounts(v1)
-		api.GetAccount(v1)
-		api.GetAccountFolders(v1)
-		api.ShareWithAccount(v1)
-		api.CreateAccount(v1)
-		api.DeleteAccount(v1)
-		api.UpdateAccount(v1)
+		api.SearchServices(v1)
+		api.GetService(v1)
+		api.GetServiceFolders(v1)
+		api.UploadToService(v1)
+		api.AddService(v1)
+		api.DeleteService(v1)
+		api.UpdateService(v1)
 
 		// Thumbs, Downloads, and Videos.
 		api.GetThumb(v1)
@@ -204,10 +204,17 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		}
 	}
 
-	// Default HTML page for client-side rendering and routing via VueJS.
-	router.NoRoute(func(c *gin.Context) {
-		signUp := gin.H{"message": config.MsgSponsor, "url": config.SignUpURL}
-		values := gin.H{"signUp": signUp, "config": conf.ClientPublic()}
+	// User Interface.
+	router.GET(conf.BaseUri("/library/*path"), func(c *gin.Context) {
+		values := gin.H{
+			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
+			"config": conf.ClientPublic(),
+		}
 		c.HTML(http.StatusOK, conf.TemplateName(), values)
+	})
+
+	// Redirect to UI.
+	router.GET(conf.BaseUri("/"), func(c *gin.Context) {
+		c.Redirect(http.StatusTemporaryRedirect, conf.BaseUri("/library/login"))
 	})
 }

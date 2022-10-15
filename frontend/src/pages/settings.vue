@@ -29,9 +29,9 @@
 
 <script>
 import General from "pages/settings/general.vue";
-import Library from "pages/settings/library.vue";
+import Files from "pages/settings/files.vue";
 import Advanced from "pages/settings/advanced.vue";
-import Sync from "pages/settings/sync.vue";
+import Services from "pages/settings/services.vue";
 import Account from "pages/settings/account.vue";
 import {config} from "app/session";
 
@@ -55,8 +55,8 @@ export default {
     },
   },
   data() {
-    const isDemo = this.$config.get("demo");
-    const isPublic = this.$config.get("public");
+    const isDemo = this.$config.isDemo();
+    const isPublic = this.$config.isPublic();
 
     const tabs = [
       {
@@ -72,16 +72,16 @@ export default {
         'show': config.feature('settings'),
       },
       {
-        'name': 'settings-library',
-        'component': Library,
+        'name': 'settings-files',
+        'component': Files,
         'label': this.$gettext('Library'),
         'class': '',
-        'path': '/settings/library',
+        'path': '/settings/files',
         'icon': 'camera_roll',
         'public': true,
         'admin': true,
         'demo': true,
-        'show': config.feature('advanced'),
+        'show': config.allow("config", "manage"),
       },
       {
         'name': 'settings-advanced',
@@ -93,19 +93,19 @@ export default {
         'public': false,
         'admin': true,
         'demo': true,
-        'show': config.feature('advanced'),
+        'show': config.allow("config", "manage"),
       },
       {
-        'name': 'settings-sync',
-        'component': Sync,
-        'label': this.$gettext('Sync'),
+        'name': 'settings-services',
+        'component': Services,
+        'label': this.$gettext('Services'),
         'class': '',
-        'path': '/settings/sync',
+        'path': '/settings/services',
         'icon': 'sync_alt',
         'public': false,
         'admin': true,
         'demo': true,
-        'show': config.feature('sync'),
+        'show': config.feature('services') && config.allow("services", "manage"),
       },
       {
         'name': 'settings-account',
@@ -113,7 +113,7 @@ export default {
         'label': this.$gettext('Account'),
         'class': '',
         'path': '/settings/account',
-        'icon': 'person',
+        'icon': 'admin_panel_settings',
         'public': false,
         'admin': true,
         'demo': true,

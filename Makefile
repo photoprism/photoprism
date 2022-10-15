@@ -444,9 +444,11 @@ latest:
 	docker-compose -f docker-compose.latest.yml stop photoprism-latest
 	docker-compose -f docker-compose.latest.yml up -d --wait photoprism-latest
 start-latest:
-	docker-compose -f docker-compose.latest.yml up -d --wait photoprism-latest
+	docker-compose -f docker-compose.latest.yml up photoprism-latest
 stop-latest:
 	docker-compose -f docker-compose.latest.yml stop photoprism-latest
+terminal-latest:
+	docker-compose -f docker-compose.latest.yml exec photoprism-latest bash
 logs-latest:
 	docker-compose -f docker-compose.latest.yml logs -f photoprism-latest
 docker-local: docker-local-bookworm

@@ -9,9 +9,9 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -20,7 +20,7 @@ import (
 // PUT /api/v1/users/:uid/password
 func ChangePassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
-		conf := service.Config()
+		conf := get.Config()
 
 		// You cannot change any passwords without authentication and settings enabled.
 		if conf.Public() || conf.DisableSettings() {

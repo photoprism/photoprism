@@ -87,7 +87,7 @@
       </p>
 
       <p class="text-xs-center pt-2 ma-0 pb-0">
-        <router-link to="/about/license">
+        <router-link to="/license">
           <img :src="$config.staticUri + '/img/badge-agpl.svg'" alt="License AGPL v3" style="max-width:100%;"/>
         </router-link>
         <a target="_blank" href="https://docs.photoprism.app/"><img :src="$config.staticUri + '/img/badge-docs.svg'"

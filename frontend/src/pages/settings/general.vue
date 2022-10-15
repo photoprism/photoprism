@@ -48,141 +48,6 @@
           <v-layout wrap align-top>
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.features.upload"
-                  :disabled="busy || config.readonly || isDemo"
-                  class="ma-0 pa-0 input-upload"
-                  color="secondary-dark"
-                  :label="$gettext('Upload')"
-                  :hint="$gettext('Add files to your library via Web Upload.')"
-                  prepend-icon="cloud_upload"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.download"
-                  :disabled="busy || isDemo"
-                  class="ma-0 pa-0 input-download"
-                  color="secondary-dark"
-                  :label="$gettext('Download')"
-                  :hint="$gettext('Download single files and zip archives.')"
-                  prepend-icon="get_app"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.edit"
-                  :disabled="busy || isDemo"
-                  class="ma-0 pa-0 input-edit"
-                  color="secondary-dark"
-                  :label="$gettext('Edit')"
-                  :hint="$gettext('Change photo titles, locations, and other metadata.')"
-                  prepend-icon="edit"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.delete"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-delete"
-                  color="secondary-dark"
-                  :label="$gettext('Delete')"
-                  :hint="$gettext('Permanently remove files to free up storage.')"
-                  prepend-icon="delete"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.import"
-                  :disabled="busy || config.readonly || isDemo"
-                  class="ma-0 pa-0 input-import"
-                  color="secondary-dark"
-                  :label="$gettext('Import')"
-                  :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
-                  prepend-icon="create_new_folder"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.share"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-share"
-                  color="secondary-dark"
-                  :label="$gettext('Share')"
-                  :hint="$gettext('Upload to WebDAV and share links with friends.')"
-                  prepend-icon="share"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.private"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-private"
-                  color="secondary-dark"
-                  :label="$gettext('Private')"
-                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels, and places.')"
-                  prepend-icon="lock"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.archive"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-archive"
-                  color="secondary-dark"
-                  :label="$gettext('Archive')"
-                  :hint="$gettext('Hide photos that have been moved to archive.')"
-                  prepend-icon="archive"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.files"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-files"
-                  color="secondary-dark"
-                  :label="$gettext('Originals')"
-                  :hint="$gettext('Browse indexed files and folders in Library.')"
-                  prepend-icon="snippet_folder"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
                   v-model="settings.features.people"
                   :disabled="busy"
                   class="ma-0 pa-0 input-people"
@@ -228,13 +93,163 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
+                  v-model="settings.features.private"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-private"
+                  color="secondary-dark"
+                  :label="$gettext('Private')"
+                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels, and places.')"
+                  prepend-icon="lock"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.upload"
+                  :disabled="busy || config.readonly || isDemo"
+                  class="ma-0 pa-0 input-upload"
+                  color="secondary-dark"
+                  :label="$gettext('Upload')"
+                  :hint="$gettext('Add files to your library via Web Upload.')"
+                  prepend-icon="cloud_upload"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.download"
+                  :disabled="busy || isDemo"
+                  class="ma-0 pa-0 input-download"
+                  color="secondary-dark"
+                  :label="$gettext('Download')"
+                  :hint="$gettext('Download single files and zip archives.')"
+                  prepend-icon="get_app"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.import"
+                  :disabled="busy || config.readonly || isDemo"
+                  class="ma-0 pa-0 input-import"
+                  color="secondary-dark"
+                  :label="$gettext('Import')"
+                  :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
+                  prepend-icon="create_new_folder"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.share"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-share"
+                  color="secondary-dark"
+                  :label="$gettext('Share')"
+                  :hint="$gettext('Upload to WebDAV and share links with friends.')"
+                  prepend-icon="share"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.edit"
+                  :disabled="busy || isDemo"
+                  class="ma-0 pa-0 input-edit"
+                  color="secondary-dark"
+                  :label="$gettext('Edit')"
+                  :hint="$gettext('Change photo titles, locations, and other metadata.')"
+                  prepend-icon="edit"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.archive"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-archive"
+                  color="secondary-dark"
+                  :label="$gettext('Archive')"
+                  :hint="$gettext('Hide photos that have been moved to archive.')"
+                  prepend-icon="archive"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.delete"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-delete"
+                  color="secondary-dark"
+                  :label="$gettext('Delete')"
+                  :hint="$gettext('Permanently remove files to free up storage.')"
+                  prepend-icon="delete"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.services"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-services"
+                  color="secondary-dark"
+                  :label="$gettext('Services')"
+                  :hint="$gettext('Share your pictures with other apps and services.')"
+                  prepend-icon="sync_alt"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
                   v-model="settings.features.library"
                   :disabled="busy || isDemo"
                   class="ma-0 pa-0 input-library"
                   color="secondary-dark"
                   :label="$gettext('Library')"
-                  :hint="$gettext('Show Library in navigation menu.')"
+                  :hint="$gettext('Index and import files through the user interface.')"
                   prepend-icon="camera_roll"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.files"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-files"
+                  color="secondary-dark"
+                  :label="$gettext('Originals')"
+                  :hint="$gettext('Browse indexed files and folders in Library.')"
+                  prepend-icon="snippet_folder"
                   persistent-hint
                   @change="onChange"
               >
@@ -249,7 +264,22 @@
                   color="secondary-dark"
                   :label="$gettext('Logs')"
                   :hint="$gettext('Show server logs in Library.')"
-                  prepend-icon="notes"
+                  prepend-icon="grading"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.account"
+                  :disabled="busy || isDemo"
+                  class="ma-0 pa-0 input-places"
+                  color="secondary-dark"
+                  :label="$gettext('Account')"
+                  :hint="$gettext('Change personal profile and security settings.')"
+                  prepend-icon="admin_panel_settings"
                   persistent-hint
                   @change="onChange"
               >

@@ -11,10 +11,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -22,7 +22,7 @@ var albumMutex = sync.Mutex{}
 
 // SaveAlbumAsYaml saves album data as YAML file.
 func SaveAlbumAsYaml(a entity.Album) {
-	c := service.Config()
+	c := get.Config()
 
 	// Write YAML sidecar file (optional).
 	if !c.BackupYaml() {

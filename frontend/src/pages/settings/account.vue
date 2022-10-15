@@ -57,7 +57,7 @@
 
             <v-flex xs12 class="pa-2">
               <p class="caption pa-0">
-                <translate>Note: Updating the password will not revoke access from already authenticated users.</translate>
+                <translate>Note: Updating your password will invalidate other browser sessions, so you will have to log in again.</translate>
               </p>
             </v-flex>
 

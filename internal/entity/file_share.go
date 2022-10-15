@@ -14,13 +14,13 @@ const (
 // FileShare represents a one-to-many relation between File and Account for pushing files to remote services.
 type FileShare struct {
 	FileID     uint   `gorm:"primary_key;auto_increment:false"`
-	AccountID  uint   `gorm:"primary_key;auto_increment:false"`
+	ServiceID  uint   `gorm:"primary_key;auto_increment:false"`
 	RemoteName string `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)"`
 	Status     string `gorm:"type:VARBINARY(16);"`
 	Error      string `gorm:"type:VARBINARY(512);"`
 	Errors     int
 	File       *File
-	Account    *Account
+	Account    *Service
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
@@ -34,7 +34,7 @@ func (FileShare) TableName() string {
 func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 	result := &FileShare{
 		FileID:     fileID,
-		AccountID:  accountID,
+		ServiceID:  accountID,
 		RemoteName: remoteName,
 		Status:     "new",
 		Error:      "",
@@ -68,7 +68,7 @@ func (m *FileShare) Create() error {
 func FirstOrCreateFileShare(m *FileShare) *FileShare {
 	result := FileShare{}
 
-	if err := Db().Where("file_id = ? AND account_id = ? AND remote_name = ?", m.FileID, m.AccountID, m.RemoteName).First(&result).Error; err == nil {
+	if err := Db().Where("file_id = ? AND service_id = ? AND remote_name = ?", m.FileID, m.ServiceID, m.RemoteName).First(&result).Error; err == nil {
 		return &result
 	} else if err := m.Create(); err != nil {
 		log.Errorf("file-share: %s", err)

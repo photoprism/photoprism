@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // DeleteFile removes a file from storage.
@@ -30,7 +30,7 @@ func DeleteFile(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		if conf.ReadOnly() || !conf.Settings().Features.Edit {
 			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)

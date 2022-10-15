@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -29,7 +29,7 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 	case "original":
 		return customize.DownloadNameOriginal
 	default:
-		return service.Config().Settings().Download.Name
+		return get.Config().Settings().Download.Name
 	}
 }
 

@@ -11,7 +11,7 @@ Maps:
   Style: streets
 Features:
   Account: true
-  Advanced: true
+  Advanced: false
   Albums: true
   Archive: true
   Delete: false
@@ -33,9 +33,9 @@ Features:
   Reactions: true
   Review: true
   Search: true
+  Services: true
   Settings: true
   Share: true
-  Sync: true
   Upload: true
   Videos: true
 Import:

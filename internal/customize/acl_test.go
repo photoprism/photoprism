@@ -16,7 +16,6 @@ func TestSettings_ApplyACL(t *testing.T) {
 
 		expected := FeatureSettings{
 			Account:   true,
-			Advanced:  true,
 			Albums:    true,
 			Archive:   true,
 			Delete:    false,
@@ -40,7 +39,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Search:    true,
 			Settings:  true,
 			Share:     true,
-			Sync:      true,
+			Services:  true,
 			Upload:    true,
 			Videos:    true,
 		}
@@ -57,7 +56,6 @@ func TestSettings_ApplyACL(t *testing.T) {
 
 		expected := FeatureSettings{
 			Account:   false,
-			Advanced:  false,
 			Albums:    true,
 			Archive:   false,
 			Delete:    false,
@@ -81,7 +79,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Search:    false,
 			Settings:  false,
 			Share:     false,
-			Sync:      false,
+			Services:  false,
 			Upload:    false,
 			Videos:    false,
 		}

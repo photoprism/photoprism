@@ -112,28 +112,28 @@ export class User extends RestModel {
       return this.Details.NickName;
     } else if (this.Details && this.Details.GivenName) {
       return this.Details.GivenName;
-    } else if (this.Name) {
-      return Util.capitalize(this.Name);
+    } else if (this.Role) {
+      return T(Util.capitalize(this.Role));
     } else if (this.Details && this.Details.JobTitle) {
       return this.Details.JobTitle;
     } else if (this.Email) {
       return this.Email;
-    } else if (this.Role) {
-      return T(Util.capitalize(this.Role));
+    } else if (this.Name) {
+      return `@${this.Name}`;
     }
 
     return $gettext("Unregistered");
   }
 
   getAccountInfo() {
-    if (this.Email) {
+    if (this.Name) {
+      return `@${this.Name}`;
+    } else if (this.Email) {
       return this.Email;
     } else if (this.Details && this.Details.JobTitle) {
       return this.Details.JobTitle;
     } else if (this.Role) {
       return T(Util.capitalize(this.Role));
-    } else if (this.Name) {
-      return this.Name;
     }
 
     return $gettext("Account");

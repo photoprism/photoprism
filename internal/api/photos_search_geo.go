@@ -9,8 +9,8 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -38,7 +38,7 @@ func SearchGeo(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 		settings := conf.Settings()
 
 		// Ignore private flag if feature is disabled.
