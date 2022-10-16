@@ -180,8 +180,21 @@ export default {
 
       this.settings.view = this.viewType();
 
-      const filterChanged = JSON.stringify(this.lastFilter) !== JSON.stringify(this.filter);
-      if (filterChanged) {
+      /**
+      * Even if the filter is unchanged, if the route is changed (for example
+      * from `/review` to `/browse`), then the lastFilter must be reset, so that
+      * a new search is actually triggered. That is because both routes use
+      * this component, so it is reused by vue. See
+      * https://github.com/photoprism/photoprism/pull/2782#issuecomment-1279821448.
+      *
+      * However, if the route is unchanged, the not resetting lastFilter prevents
+      * unnecessary search-api-calls! These search-calls would otherwise reset
+      * the view, even if we for example just returned from a fullscreen-download
+      * in the ios-pwa. See
+      * https://github.com/photoprism/photoprism/pull/2782#issue-1409954466
+      */
+      const routeChanged = this.routeName !== this.$route.name;
+      if (routeChanged) {
         this.lastFilter = {};
       }
 
