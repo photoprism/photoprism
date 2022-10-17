@@ -14,7 +14,7 @@ import (
 func TestChangePassword(t *testing.T) {
 	t.Run("NonExistentUser", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		ChangePassword(router)
+		UpdateUserPassword(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/users/xxx/password", `{}`)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
@@ -23,7 +23,7 @@ func TestChangePassword(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
-		ChangePassword(router)
+		UpdateUserPassword(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
 		f := form.ChangePassword{
@@ -43,7 +43,7 @@ func TestChangePassword(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
-		ChangePassword(router)
+		UpdateUserPassword(router)
 
 		oldPassword := "PleaseChange$42"
 		newPassword := "SoftwareDevelopmentIsAYoungProfession1234567890!@#$%^&*()_+[]{}|:<>?/.,"
@@ -81,7 +81,7 @@ func TestChangePassword(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
-		ChangePassword(router)
+		UpdateUserPassword(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
 		f := form.ChangePassword{
@@ -101,7 +101,7 @@ func TestChangePassword(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
-		ChangePassword(router)
+		UpdateUserPassword(router)
 		sessId := AuthenticateUser(app, router, "bob", "Bobbob123!")
 
 		f := form.ChangePassword{
@@ -121,7 +121,7 @@ func TestChangePassword(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
-		ChangePassword(router)
+		UpdateUserPassword(router)
 		sessId := AuthenticateUser(app, router, "friend", "!Friend321")
 
 		f := form.ChangePassword{
@@ -141,7 +141,7 @@ func TestChangePassword(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
-		ChangePassword(router)
+		UpdateUserPassword(router)
 		sessId := AuthenticateUser(app, router, "bob", "Bobbob123!")
 
 		f := form.ChangePassword{

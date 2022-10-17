@@ -1,5 +1,5 @@
 <template>
-  <div class="p-tab p-settings-general">
+  <div class="p-tab p-settings-advanced">
     <v-form ref="form" lazy-validation
             dense class="p-form-settings" accept-charset="UTF-8"
             @submit.prevent="onChange">
@@ -332,7 +332,7 @@ import ConfigOptions from "model/config-options";
 import * as options from "options/options";
 
 export default {
-  name: 'PSettingsServer',
+  name: 'PSettingsAdvanced',
   data() {
     return {
       busy: this.$config.get("demo"),

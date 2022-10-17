@@ -16,36 +16,38 @@ const (
 
 // UserDetails represents user profile information.
 type UserDetails struct {
-	UserUID     string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
-	SubjUID     string    `gorm:"type:VARBINARY(42);index;" json:"SubjUID,omitempty" yaml:"SubjUID,omitempty"`
-	SubjSrc     string    `gorm:"type:VARBINARY(8);default:'';" json:"SubjSrc,omitempty" yaml:"SubjSrc,omitempty"`
-	PlaceID     string    `gorm:"type:VARBINARY(42);index;default:'zz'" json:"PlaceID,omitempty" yaml:"-"`
-	PlaceSrc    string    `gorm:"type:VARBINARY(8);" json:"PlaceSrc,omitempty" yaml:"PlaceSrc,omitempty"`
-	CellID      string    `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID,omitempty" yaml:"CellID,omitempty"`
-	IdURL       string    `gorm:"type:VARBINARY(512);column:id_url;" json:"IdURL,omitempty" yaml:"IdURL,omitempty"`
-	AvatarURL   string    `gorm:"type:VARBINARY(512);column:avatar_url" json:"AvatarURL,omitempty" yaml:"AvatarURL,omitempty"`
-	SiteURL     string    `gorm:"type:VARBINARY(512);column:site_url" json:"SiteURL,omitempty" yaml:"SiteURL,omitempty"`
-	FeedURL     string    `gorm:"type:VARBINARY(512);column:feed_url" json:"FeedURL,omitempty" yaml:"FeedURL,omitempty"`
-	UserGender  string    `gorm:"size:16;" json:"Gender,omitempty" yaml:"Gender,omitempty"`
-	NamePrefix  string    `gorm:"size:32;" json:"NamePrefix,omitempty" yaml:"NamePrefix,omitempty"`
-	GivenName   string    `gorm:"size:64;" json:"GivenName,omitempty" yaml:"GivenName,omitempty"`
-	MiddleName  string    `gorm:"size:64;" json:"MiddleName,omitempty" yaml:"MiddleName,omitempty"`
-	FamilyName  string    `gorm:"size:64;" json:"FamilyName,omitempty" yaml:"FamilyName,omitempty"`
-	NameSuffix  string    `gorm:"size:32;" json:"NameSuffix,omitempty" yaml:"NameSuffix,omitempty"`
-	NickName    string    `gorm:"size:64;" json:"NickName,omitempty" yaml:"NickName,omitempty"`
-	UserPhone   string    `gorm:"size:32;" json:"Phone,omitempty" yaml:"Phone,omitempty"`
-	UserAddress string    `gorm:"size:512;" json:"Address,omitempty" yaml:"Address,omitempty"`
-	UserCountry string    `gorm:"type:VARBINARY(2);" json:"Country,omitempty" yaml:"Country,omitempty"`
-	UserBio     string    `gorm:"size:512;" json:"Bio,omitempty" yaml:"Bio,omitempty"`
-	JobTitle    string    `gorm:"size:64;" json:"JobTitle,omitempty" yaml:"JobTitle,omitempty"`
-	Department  string    `gorm:"size:128;" json:"Department,omitempty" yaml:"Department,omitempty"`
-	Company     string    `gorm:"size:128;" json:"Company,omitempty" yaml:"Company,omitempty"`
-	CompanyURL  string    `gorm:"type:VARBINARY(512);column:company_url" json:"CompanyURL,omitempty" yaml:"CompanyURL,omitempty"`
-	BirthYear   int       `gorm:"default:-1;" json:"BirthYear,omitempty" yaml:"BirthYear,omitempty"`
-	BirthMonth  int       `gorm:"default:-1;" json:"BirthMonth,omitempty" yaml:"BirthMonth,omitempty"`
-	BirthDay    int       `gorm:"default:-1;" json:"BirthDay,omitempty" yaml:"BirthDay,omitempty"`
-	CreatedAt   time.Time `json:"CreatedAt" yaml:"-"`
-	UpdatedAt   time.Time `json:"UpdatedAt" yaml:"-"`
+	UserUID      string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"-"`
+	IdURL        string    `gorm:"type:VARBINARY(512);column:id_url;" json:"IdURL,omitempty" yaml:"IdURL,omitempty"`
+	SubjUID      string    `gorm:"type:VARBINARY(42);index;" json:"SubjUID,omitempty" yaml:"SubjUID,omitempty"`
+	SubjSrc      string    `gorm:"type:VARBINARY(8);default:'';" json:"-" yaml:"SubjSrc,omitempty"`
+	PlaceID      string    `gorm:"type:VARBINARY(42);index;default:'zz'" json:"-" yaml:"-"`
+	PlaceSrc     string    `gorm:"type:VARBINARY(8);" json:"-" yaml:"PlaceSrc,omitempty"`
+	CellID       string    `gorm:"type:VARBINARY(42);index;default:'zz'" json:"-" yaml:"CellID,omitempty"`
+	BirthYear    int       `gorm:"default:-1;" json:"BirthYear" yaml:"BirthYear,omitempty"`
+	BirthMonth   int       `gorm:"default:-1;" json:"BirthMonth" yaml:"BirthMonth,omitempty"`
+	BirthDay     int       `gorm:"default:-1;" json:"BirthDay" yaml:"BirthDay,omitempty"`
+	NamePrefix   string    `gorm:"size:32;" json:"NamePrefix" yaml:"NamePrefix,omitempty"`
+	GivenName    string    `gorm:"size:64;" json:"GivenName" yaml:"GivenName,omitempty"`
+	MiddleName   string    `gorm:"size:64;" json:"MiddleName" yaml:"MiddleName,omitempty"`
+	FamilyName   string    `gorm:"size:64;" json:"FamilyName" yaml:"FamilyName,omitempty"`
+	NameSuffix   string    `gorm:"size:32;" json:"NameSuffix" yaml:"NameSuffix,omitempty"`
+	NickName     string    `gorm:"size:64;" json:"NickName" yaml:"NickName,omitempty"`
+	UserGender   string    `gorm:"size:16;" json:"Gender" yaml:"Gender,omitempty"`
+	UserBio      string    `gorm:"size:512;" json:"Bio" yaml:"Bio,omitempty"`
+	UserLocation string    `gorm:"size:512;" json:"Location" yaml:"Location,omitempty"`
+	UserCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
+	UserPhone    string    `gorm:"size:32;" json:"Phone" yaml:"Phone,omitempty"`
+	SiteURL      string    `gorm:"type:VARBINARY(512);column:site_url" json:"SiteURL" yaml:"SiteURL,omitempty"`
+	ProfileURL   string    `gorm:"type:VARBINARY(512);column:profile_url" json:"ProfileURL" yaml:"ProfileURL,omitempty"`
+	FeedURL      string    `gorm:"type:VARBINARY(512);column:feed_url" json:"FeedURL,omitempty" yaml:"FeedURL,omitempty"`
+	AvatarURL    string    `gorm:"type:VARBINARY(512);column:avatar_url" json:"AvatarURL,omitempty" yaml:"AvatarURL,omitempty"`
+	OrgName      string    `gorm:"size:128;" json:"OrgName" yaml:"OrgName,omitempty"`
+	OrgTitle     string    `gorm:"size:64;" json:"OrgTitle" yaml:"OrgTitle,omitempty"`
+	OrgEmail     string    `gorm:"size:255;index;" json:"OrgEmail" yaml:"OrgEmail,omitempty"`
+	OrgPhone     string    `gorm:"size:32;" json:"OrgPhone" yaml:"OrgPhone,omitempty"`
+	OrgURL       string    `gorm:"type:VARBINARY(512);column:org_url" json:"OrgURL" yaml:"OrgURL,omitempty"`
+	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.

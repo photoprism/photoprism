@@ -4,6 +4,7 @@
         v-model="active"
         flat
         grow
+        touchless
         color="secondary"
         slider-color="secondary-dark"
         :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
@@ -33,8 +34,8 @@
 </template>
 
 <script>
-import Recognized from "pages/people/recognized.vue";
-import NewFaces from "pages/people/new.vue";
+import Recognized from "page/people/recognized.vue";
+import NewFaces from "page/people/new.vue";
 
 export default {
   name: 'PPagePeople',

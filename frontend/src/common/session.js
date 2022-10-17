@@ -209,6 +209,14 @@ export default class Session {
     return this.user;
   }
 
+  getUserUID() {
+    if (this.user && this.user.UID) {
+      return this.user.UID;
+    } else {
+      return "u000000000000001"; // Unknown.
+    }
+  }
+
   loginRequired() {
     return !this.config.isPublic() && !this.isUser();
   }

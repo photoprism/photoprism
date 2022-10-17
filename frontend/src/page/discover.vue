@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import tabColors from "pages/discover/colors.vue";
-import tabTodo from "pages/discover/todo.vue";
+import tabColors from "page/discover/colors.vue";
+import tabTodo from "page/discover/todo.vue";
 
 export default {
   name: 'PPageSettings',

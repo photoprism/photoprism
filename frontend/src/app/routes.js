@@ -23,23 +23,23 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Photos from "pages/photos.vue";
-import Albums from "pages/albums.vue";
-import AlbumPhotos from "pages/album/photos.vue";
-import Places from "pages/places.vue";
-import Browse from "pages/files/browse.vue";
-import Errors from "pages/files/errors.vue";
-import Labels from "pages/labels.vue";
-import People from "pages/people.vue";
-import Files from "pages/files.vue";
-import Settings from "pages/settings.vue";
-import Login from "pages/login.vue";
-import Connect from "pages/connect.vue";
-import Discover from "pages/discover.vue";
-import About from "pages/about/about.vue";
-import Feedback from "pages/about/feedback.vue";
-import License from "pages/about/license.vue";
-import Help from "pages/help.vue";
+import Photos from "page/photos.vue";
+import Albums from "page/albums.vue";
+import AlbumPhotos from "page/album/photos.vue";
+import Places from "page/places.vue";
+import Browse from "page/library/browse.vue";
+import Errors from "page/library/errors.vue";
+import Labels from "page/labels.vue";
+import People from "page/people.vue";
+import Library from "page/library.vue";
+import Settings from "page/settings.vue";
+import Login from "page/login.vue";
+import Connect from "page/connect.vue";
+import Discover from "page/discover.vue";
+import About from "page/about/about.vue";
+import Feedback from "page/about/feedback.vue";
+import License from "page/about/license.vue";
+import Help from "page/help.vue";
 import { $gettext } from "common/vm";
 import { config, session } from "./session";
 
@@ -319,25 +319,25 @@ export default [
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
   },
   {
-    name: "index",
+    name: "library_index",
     path: "/index",
-    component: Files,
+    component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
-    props: { tab: "index" },
+    props: { tab: "library_index" },
   },
   {
-    name: "index_import",
+    name: "library_import",
     path: "/import",
-    component: Files,
+    component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
-    props: { tab: "import" },
+    props: { tab: "library_import" },
   },
   {
-    name: "index_logs",
+    name: "library_logs",
     path: "/logs",
-    component: Files,
+    component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
-    props: { tab: "logs" },
+    props: { tab: "library_logs" },
   },
   {
     name: "settings",
@@ -352,8 +352,8 @@ export default [
     props: { tab: "settings-general" },
   },
   {
-    name: "settings_files",
-    path: "/settings/files",
+    name: "settings_media",
+    path: "/settings/media",
     component: Settings,
     meta: {
       title: $gettext("Settings"),
@@ -362,7 +362,7 @@ export default [
       settings: true,
       background: "application-light",
     },
-    props: { tab: "settings-files" },
+    props: { tab: "settings-media" },
   },
   {
     name: "settings_advanced",

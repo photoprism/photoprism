@@ -8,6 +8,8 @@ const (
 	ErrAlreadyExists
 	ErrNotFound
 	ErrFileNotFound
+	ErrFileTooLarge
+	ErrWrongFileType
 	ErrOriginalsEmpty
 	ErrSelectionNotFound
 	ErrEntityNotFound
@@ -23,6 +25,7 @@ const (
 	ErrUnauthorized
 	ErrForbidden
 	ErrOffensiveUpload
+	ErrUploadFailed
 	ErrNoItemsSelected
 	ErrCreateFile
 	ErrCreateFolder
@@ -72,7 +75,10 @@ const (
 	MsgSubjectDeleted
 	MsgPersonSaved
 	MsgPersonDeleted
+	MsgFileUploaded
 	MsgFilesUploadedIn
+	MsgProcessingUpload
+	MsgUploadProcessed
 	MsgSelectionApproved
 	MsgSelectionArchived
 	MsgSelectionRestored
@@ -92,6 +98,8 @@ var Messages = MessageMap{
 	ErrAlreadyExists:      gettext("%s already exists"),
 	ErrNotFound:           gettext("Not found"),
 	ErrFileNotFound:       gettext("File not found"),
+	ErrFileTooLarge:       gettext("File too large"),
+	ErrWrongFileType:      gettext("Wrong file type"),
 	ErrOriginalsEmpty:     gettext("Originals folder is empty"),
 	ErrSelectionNotFound:  gettext("Selection not found"),
 	ErrEntityNotFound:     gettext("Entity not found"),
@@ -107,6 +115,7 @@ var Messages = MessageMap{
 	ErrUnauthorized:       gettext("Please log in to your account"),
 	ErrForbidden:          gettext("Permission denied"),
 	ErrOffensiveUpload:    gettext("Upload might be offensive"),
+	ErrUploadFailed:       gettext("Upload failed"),
 	ErrNoItemsSelected:    gettext("No items selected"),
 	ErrCreateFile:         gettext("RunFailed creating file, please check permissions"),
 	ErrCreateFolder:       gettext("RunFailed creating folder, please check permissions"),
@@ -157,7 +166,10 @@ var Messages = MessageMap{
 	MsgSubjectDeleted:        gettext("Subject deleted"),
 	MsgPersonSaved:           gettext("Person saved"),
 	MsgPersonDeleted:         gettext("Person deleted"),
+	MsgFileUploaded:          gettext("File uploaded"),
 	MsgFilesUploadedIn:       gettext("%d files uploaded in %d s"),
+	MsgProcessingUpload:      gettext("Processing upload..."),
+	MsgUploadProcessed:       gettext("Upload has been processed"),
 	MsgSelectionApproved:     gettext("Selection approved"),
 	MsgSelectionArchived:     gettext("Selection archived"),
 	MsgSelectionRestored:     gettext("Selection restored"),

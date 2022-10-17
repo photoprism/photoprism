@@ -30,7 +30,7 @@
                     :append-icon="model.TitleSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :rules="[textRule]"
-                    hide-details
+                    hide-details box flat
                     :label="$gettext('Title')"
                     placeholder=""
                     color="secondary-dark"
@@ -47,7 +47,7 @@
                     :error="invalidDate"
                     :label="$gettext('Day')"
                     browser-autocomplete="off"
-                    hide-details hide-no-data
+                    hide-details box flat hide-no-data
                     color="secondary-dark"
                     :items="options.Days()"
                     class="input-day"
@@ -62,7 +62,7 @@
                     :error="invalidDate"
                     :label="$gettext('Month')"
                     browser-autocomplete="off"
-                    hide-details hide-no-data
+                    hide-details box flat hide-no-data
                     color="secondary-dark"
                     :items="options.MonthsShort()"
                     class="input-month"
@@ -77,7 +77,7 @@
                     :error="invalidDate"
                     :label="$gettext('Year')"
                     browser-autocomplete="off"
-                    hide-details hide-no-data
+                    hide-details box flat hide-no-data
                     color="secondary-dark"
                     :items="options.Years()"
                     class="input-year"
@@ -94,7 +94,7 @@
                     browser-autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
-                    hide-details
+                    hide-details box flat
                     return-masked-value mask="##:##:##"
                     color="secondary-dark"
                     class="input-local-time"
@@ -107,7 +107,7 @@
                     :disabled="disabled"
                     :label="$gettext('Time Zone')"
                     browser-autocomplete="off"
-                    hide-details hide-no-data
+                    hide-details box flat hide-no-data
                     color="secondary-dark"
                     item-value="ID"
                     item-text="Name"
@@ -123,7 +123,7 @@
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :readonly="!!(model.Lat || model.Lng)"
-                    :label="$gettext('Country')" hide-details
+                    :label="$gettext('Country')" hide-details box flat
                     hide-no-data
                     browser-autocomplete="off"
                     color="secondary-dark"
@@ -138,7 +138,7 @@
                 <v-text-field
                     v-model="model.Altitude"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
@@ -154,7 +154,7 @@
                     v-model="model.Lat"
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
@@ -170,7 +170,7 @@
                     v-model="model.Lng"
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
@@ -188,7 +188,7 @@
                     :disabled="disabled"
                     :label="$gettext('Camera')"
                     browser-autocomplete="off"
-                    hide-details
+                    hide-details box flat
                     color="secondary-dark"
                     item-value="ID"
                     item-text="Name"
@@ -201,7 +201,7 @@
                 <v-text-field
                     v-model="model.Iso"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
@@ -216,7 +216,7 @@
                 <v-text-field
                     v-model="model.Exposure"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
@@ -234,7 +234,7 @@
                     :disabled="disabled"
                     :label="$gettext('Lens')"
                     browser-autocomplete="off"
-                    hide-details
+                    hide-details box flat
                     color="secondary-dark"
                     item-value="ID"
                     item-text="Name"
@@ -247,7 +247,7 @@
                 <v-text-field
                     v-model="model.FNumber"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
@@ -262,7 +262,7 @@
                 <v-text-field
                     v-model="model.FocalLength"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     :label="$gettext('Focal Length')"
                     placeholder=""
@@ -277,7 +277,7 @@
                     :append-icon="model.Details.SubjectSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :rules="[textRule]"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     auto-grow
                     :label="$gettext('Subject')"
@@ -294,7 +294,7 @@
                     :append-icon="model.Details.ArtistSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :rules="[textRule]"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     :label="$gettext('Artist')"
                     placeholder=""
@@ -309,7 +309,7 @@
                     :append-icon="model.Details.CopyrightSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :rules="[textRule]"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     :label="$gettext('Copyright')"
                     placeholder=""
@@ -324,7 +324,7 @@
                     :append-icon="model.Details.LicenseSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :rules="[textRule]"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     auto-grow
                     :label="$gettext('License')"
@@ -340,7 +340,7 @@
                     v-model="model.Description"
                     :append-icon="model.DescriptionSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     auto-grow
                     :label="$gettext('Description')"
@@ -356,7 +356,7 @@
                     v-model="model.Details.Keywords"
                     :append-icon="model.Details.KeywordsSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     auto-grow
                     :label="$gettext('Keywords')"
@@ -372,7 +372,7 @@
                     v-model="model.Details.Notes"
                     :append-icon="model.Details.NotesSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
-                    hide-details
+                    hide-details box flat
                     browser-autocomplete="off"
                     auto-grow
                     :label="$gettext('Notes')"
@@ -411,13 +411,20 @@
 <script>
 import countries from "options/countries.json";
 import Thumb from "model/thumb";
+import Photo from "model/photo";
 import * as options from "options/options";
 
 export default {
   name: 'PTabPhotoDetails',
   props: {
-    model: Object,
-    uid: String,
+    model: {
+      type: Object,
+      default: () => new Photo(false),
+    },
+    uid: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {

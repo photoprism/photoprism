@@ -112,7 +112,7 @@
         </v-layout>
         <div class="text-xs-center mt-3 mb-2">
           <v-btn
-              color="secondary" round
+              color="secondary" round depressed
               :to="{name: 'all', query: { q: 'face:new' }}"
           >
             <translate>Show all new faces</translate>

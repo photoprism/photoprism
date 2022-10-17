@@ -1,5 +1,5 @@
 <template>
-  <div class="p-tab p-settings-general">
+  <div class="p-tab p-settings-library">
     <v-form ref="form" lazy-validation
             dense class="p-form-settings" accept-charset="UTF-8"
             @submit.prevent="onChange">
@@ -160,7 +160,7 @@ export default {
       this.$config.load().then(() => {
         this.settings.setValues(this.$config.settings());
         this.busy = false;
-      })
+      });
     },
     onChange() {
       const reload = this.settings.changed("ui", "language");

@@ -8,7 +8,7 @@
         slider-color="secondary-dark"
         :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
-      <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="manage" :class="item.class" ripple
+      <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple
              @click="changePath(item.path)">
         <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
@@ -17,7 +17,7 @@
       </v-tab>
 
       <v-tabs-items touchless>
-        <v-tab-item v-for="(item, index) in tabs" :key="manage" lazy>
+        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
           <component :is="item.component"></component>
         </v-tab-item>
       </v-tabs-items>
@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import Import from "pages/files/import.vue";
-import Index from "pages/files/index.vue";
-import Logs from "pages/files/logs.vue";
+import Import from "page/library/import.vue";
+import Index from "page/library/index.vue";
+import Logs from "page/library/logs.vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -58,7 +58,7 @@ export default {
 
     const tabs = [
       {
-        'name': 'index',
+        'name': 'library_index',
         'component': Index,
         'label': this.$gettext('Index'),
         'class': '',
@@ -68,7 +68,7 @@ export default {
         'demo': true,
       },
       {
-        'name': 'import',
+        'name': 'library_import',
         'component': Import,
         'label': this.$gettext('Import'),
         'class': '',
@@ -81,12 +81,12 @@ export default {
     
     if(this.$config.feature('logs')) {
       tabs.push({
-        'name': 'logs',
+        'name': 'library_logs',
         'component': Logs,
         'label': this.$gettext('Logs'),
         'class': '',
         'path': '/logs',
-        'icon': 'grading',
+        'icon': 'assignment',
         'readonly': true,
         'demo': true,
       });
@@ -102,7 +102,9 @@ export default {
 
     let active = 0;
 
-    if (typeof this.tab === 'string' && this.tab !== '') {
+    if (typeof this.$route.name === 'string' && this.$route.name !== '') {
+      active = tabs.findIndex((t) => t.name === this.$route.name);
+    } else if (typeof this.tab === 'string' && this.tab !== '') {
       active = tabs.findIndex((t) => t.name === this.tab);
     }
 
@@ -115,6 +117,24 @@ export default {
       active: active,
       rtl: this.$rtl,
     };
+  },
+  watch: {
+    '$route'() {
+      let active = this.active;
+
+      if (typeof this.$route.name === 'string' && this.$route.name !== '') {
+        active = this.tabs.findIndex((t) => t.name === this.$route.name);
+      }
+
+      if (active >= 0) {
+        this.active = active;
+      }
+    }
+  },
+  created() {
+    if (!this.tabs || this.tabs.length === 0) {
+      this.$router.push({ name: "albums" });
+    }
   },
   methods: {
     changePath: function (path) {

@@ -29,9 +29,55 @@ body.dark-theme .theme--light.v-list a:hover {
     background: rgba(255,255,255,0.3) !important;
 }
 
+body.dark-theme .v-input input::placeholder {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+.v-text-field>.v-input__control>.v-input__slot:after,
+.v-text-field>.v-input__control>.v-input__slot:before {
+    display: none !important;
+}
+
+/*
+body.dark-theme .v-text-field.v-text-field--enclosed .v-text-field__details {
+    padding-left: 0;
+}*/
+
 .theme--light.v-list .v-list__tile--highlighted,
 .theme--light.v-list a:hover {
     background: rgba(155,155,155,0.3) !important;
+}
+
+body.dark-theme #photoprism .map-control .theme--light.v-input:not(.v-input--is-disabled) i,
+body.dark-theme #photoprism .map-control .theme--light.v-input:not(.v-input--is-disabled) input {
+    color: #333333;
+}
+
+body.dark-theme #photoprism .theme--light.v-chip,
+body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__control>.v-input__slot,
+body.dark-theme #photoprism .v-card .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: #00000033;
+}
+
+body.dark-theme #photoprism,
+body.dark-theme #photoprism .p-page a,
+body.dark-theme #photoprism .v-datatable a,
+body.dark-theme #photoprism .theme--light.v-expansion-panel .v-expansion-panel__container,
+body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
+body.dark-theme #photoprism .theme--light {
+    color: #ffffff;
+}
+
+body.dark-theme #photoprism .theme--light.v-label {
+    color: #ffffffaa;
+}
+
+body.dark-theme #photoprism .theme--light.v-select .v-select__selections {
+    color: #ffffffee;
+}
+
+#photoprism .v-select.v-text-field--box .v-select__selections {
+    padding-top: 20px;
 }
 
 /* Exceptions */

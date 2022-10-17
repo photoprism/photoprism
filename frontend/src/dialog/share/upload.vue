@@ -21,7 +21,7 @@
             <v-select
                 v-model="service"
                 color="secondary-dark" hide-details hide-no-data
-                flat
+                box flat
                 :label="$gettext('Account')"
                 item-text="AccName"
                 item-value="ID"
@@ -35,7 +35,7 @@
             <v-autocomplete
                 v-model="path"
                 color="secondary-dark" hide-details hide-no-data
-                flat
+                box flat
                 browser-autocomplete="off"
                 hint="Folder"
                 :search-input.sync="search"

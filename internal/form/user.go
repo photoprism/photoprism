@@ -1,6 +1,7 @@
 package form
 
 import (
+	"github.com/ulule/deepcopier"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -8,17 +9,24 @@ import (
 
 // User represents a user account form.
 type User struct {
-	UserName    string `json:"Name" yaml:"Name,omitempty"`
-	UserEmail   string `json:"Email,omitempty" yaml:"Email,omitempty"`
-	DisplayName string `json:"DisplayName,omitempty" yaml:"DisplayName,omitempty"`
-	UserRole    string `json:"Role,omitempty" yaml:"Role,omitempty"`
-	SuperAdmin  bool   `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
-	CanLogin    bool   `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
-	WebDAV      bool   `json:"WebDAV,omitempty" yaml:"WebDAV,omitempty"`
-	UserAttr    string `json:"Attr,omitempty" yaml:"Attr,omitempty"`
-	BasePath    string `json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
-	UploadPath  string `json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
-	Password    string `json:"Password,omitempty" yaml:"Password,omitempty"`
+	UserName    string      `json:"Name" yaml:"Name,omitempty"`
+	UserEmail   string      `json:"Email,omitempty" yaml:"Email,omitempty"`
+	DisplayName string      `json:"DisplayName,omitempty" yaml:"DisplayName,omitempty"`
+	UserRole    string      `json:"Role,omitempty" yaml:"Role,omitempty"`
+	SuperAdmin  bool        `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
+	CanLogin    bool        `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
+	WebDAV      bool        `json:"WebDAV,omitempty" yaml:"WebDAV,omitempty"`
+	UserAttr    string      `json:"Attr,omitempty" yaml:"Attr,omitempty"`
+	BasePath    string      `json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
+	UploadPath  string      `json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
+	Password    string      `json:"Password,omitempty" yaml:"Password,omitempty"`
+	UserDetails UserDetails `json:"Details"`
+}
+
+// NewUser creates a new user account form.
+func NewUser(m interface{}) (f User, err error) {
+	err = deepcopier.Copy(m).To(&f)
+	return f, err
 }
 
 // NewUserFromCli creates a new form with values from a CLI context.

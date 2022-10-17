@@ -387,7 +387,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini && $config.feature('library')" :to="{ name: 'index' }" class="nav-library" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('library')" :to="{ name: 'library_index' }" class="nav-library" @click.stop="">
           <v-list-tile-action :title="$gettext('Library')">
             <v-icon>camera_roll</v-icon>
           </v-list-tile-action>
@@ -401,7 +401,7 @@
 
         <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="camera_roll" no-action>
           <template #activator>
-            <v-list-tile :to="{ name: 'index' }" class="nav-library" @click.stop="">
+            <v-list-tile :to="{ name: 'library_index' }" class="nav-library" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title class="p-flex-menuitem">
                   <translate key="Library">Library</translate>
@@ -519,9 +519,12 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" to="/settings/account" class="p-profile">
-          <v-list-tile-avatar color="grey" size="36">
-            <span class="white--text headline">{{ !!displayName ? displayName[0].toUpperCase() : "E" }}</span>
+        <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" class="p-profile" @click.stop="onAccount">
+          <v-list-tile-avatar size="36">
+            <v-img :src="user.getAvatarURL()"
+                   :alt="displayName"  aspect-ratio="1"
+                   class="grey lighten-1 elevation-0 clickable"
+            ></v-img>
           </v-list-tile-avatar>
 
           <v-list-tile-content>
@@ -532,13 +535,13 @@
           </v-list-tile-content>
 
           <v-list-tile-action :title="$gettext('Logout')">
-            <v-btn icon @click.stop.prevent="logout">
+            <v-btn icon @click.stop.prevent="onLogout">
               <v-icon>power_settings_new</v-icon>
             </v-btn>
           </v-list-tile-action>
         </v-list-tile>
 
-        <v-list-tile v-show="isMini && auth && !isPublic" class="nav-logout" @click.stop.prevent="logout">
+        <v-list-tile v-show="isMini && auth && !isPublic" class="nav-logout" @click.stop.prevent="onLogout">
           <v-list-tile-action :title="$gettext('Logout')">
             <v-icon>power_settings_new</v-icon>
           </v-list-tile-action>
@@ -555,19 +558,15 @@
       <div class="menu-content grow-top-right">
         <div class="menu-icons">
           <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" class="menu-action nav-logout"
-             @click.prevent="logout">
+             @click.prevent="onLogout">
             <v-icon>power_settings_new</v-icon>
           </a>
           <a href="#" :title="$gettext('Reload')" class="menu-action nav-reload" @click.prevent="reloadApp">
             <v-icon>refresh</v-icon>
           </a>
-          <router-link v-if="!auth && !isPublic" :to="{ name: 'login' }" :title="$gettext('Login')"
-                       class="menu-action nav-login">
-            <v-icon>login</v-icon>
-          </router-link>
-          <router-link v-if="auth && !routeName('index') && $config.feature('library') && $config.feature('logs')"
-                       :to="{ name: 'logs' }" :title="$gettext('Logs')" class="menu-action nav-logs">
-            <v-icon>grading</v-icon>
+          <router-link v-if="auth && $config.feature('account')"
+                       :to="{ name: 'settings_account' }" :title="$gettext('Account')" class="menu-action nav-account">
+            <v-icon>admin_panel_settings</v-icon>
           </router-link>
           <router-link v-if="auth && $config.feature('settings') && !routeName('settings')" :to="{ name: 'settings' }"
                        :title="$gettext('Settings')" class="menu-action nav-settings">
@@ -577,6 +576,10 @@
              class="menu-action nav-upload" @click.prevent="openUpload()">
             <v-icon>cloud_upload</v-icon>
           </a>
+          <router-link v-if="!auth && !isPublic" :to="{ name: 'login' }" :title="$gettext('Login')"
+                       class="menu-action nav-login">
+            <v-icon>login</v-icon>
+          </router-link>
         </div>
         <div class="menu-actions">
           <div v-if="auth && !routeName('browse')&& $config.feature('search')" class="menu-action nav-search">
@@ -610,16 +613,16 @@
               <translate>Files</translate>
             </router-link>
           </div>
-          <div v-if="auth && !routeName('index') && $config.feature('library')" class="menu-action nav-library">
-            <router-link :to="{ name: 'index' }">
+          <div v-if="auth && !routeName('library_index') && $config.feature('library')" class="menu-action nav-index">
+            <router-link :to="{ name: 'library_index' }">
               <v-icon>camera_roll</v-icon>
               <translate>Index</translate>
             </router-link>
           </div>
-          <div v-if="auth && $config.feature('sync') && !routeName('settings')" class="menu-action nav-sync">
-            <router-link :to="{ name: 'settings_sync' }">
-              <v-icon>sync</v-icon>
-              <translate>Sync</translate>
+          <div v-if="auth && !routeName('index') && $config.feature('library') && $config.feature('logs')" class="menu-action nav-logs">
+            <router-link :to="{ name: 'library_logs' }">
+              <v-icon>assignment</v-icon>
+              <translate>Logs</translate>
             </router-link>
           </div>
           <!-- div v-if="auth && $config.feature('account') && !routeName('settings')" class="menu-action nav-account">
@@ -660,6 +663,8 @@
 <script>
 import Album from "model/album";
 import Event from "pubsub-js";
+import Notify from "../common/notify";
+import User from "../model/user";
 
 export default {
   name: "PNavigation",
@@ -708,6 +713,7 @@ export default {
       session: this.$session,
       config: this.$config.values,
       page: this.$config.page,
+      user: this.$session.getUser(),
       reload: {
         dialog: false,
       },
@@ -808,7 +814,10 @@ export default {
       this.isMini = !this.isMini;
       localStorage.setItem('last_navigation_mode', `${this.isMini}`);
     },
-    logout() {
+    onAccount: function () {
+      this.$router.push({name: "settings_account"});
+    },
+    onLogout() {
       this.$session.logout();
     },
     onIndex(ev) {

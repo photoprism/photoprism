@@ -15,10 +15,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// ChangePassword changes the password of the currently authenticated user.
+// UpdateUserPassword changes the password of the currently authenticated user.
 //
 // PUT /api/v1/users/:uid/password
-func ChangePassword(router *gin.RouterGroup) {
+func UpdateUserPassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
 		conf := get.Config()
 

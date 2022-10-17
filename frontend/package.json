@@ -9,6 +9,7 @@
     "watch": "webpack --watch",
     "build": "webpack --node-env=production",
     "trace": "webpack --stats-children",
+    "debug": "webpack --stats-error-details",
     "lint": "eslint --cache src/ *.js",
     "fmt": "eslint --cache --fix src/ *.js .eslintrc.js",
     "test": "karma start",

@@ -12,7 +12,7 @@
       </v-toolbar>
       <v-container grid-list-xs ext-xs-left fluid>
         <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
-          <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="upload()">
+          <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()">
 
           <v-container fluid>
             <p class="subheading">
@@ -74,7 +74,7 @@
                 color="primary-button"
                 class="white--text ml-0 mt-2 action-upload"
                 depressed
-                @click.stop="uploadDialog()"
+                @click.stop="onUploadDialog()"
             >
               <translate key="Upload">Upload</translate>
               <v-icon :right="!rtl" :left="rtl"  dark>cloud_upload</v-icon>
@@ -146,7 +146,7 @@ export default {
     },
     cancel() {
       if (this.busy) {
-        Notify.info(this.$gettext("Uploading photos…"));
+        Notify.info(this.$gettext("Uploading…"));
         return;
       }
 
@@ -154,7 +154,7 @@ export default {
     },
     confirm() {
       if (this.busy) {
-        Notify.info(this.$gettext("Uploading photos…"));
+        Notify.info(this.$gettext("Uploading…"));
         return;
       }
 
@@ -162,9 +162,6 @@ export default {
     },
     submit() {
       // DO NOTHING
-    },
-    uploadDialog() {
-      this.$refs.upload.click();
     },
     reset() {
       this.busy = false;
@@ -177,7 +174,10 @@ export default {
       this.completed = 0;
       this.token = "";
     },
-    upload() {
+    onUploadDialog() {
+      this.$refs.upload.click();
+    },
+    onUpload() {
       if (this.busy) {
         return;
       }
@@ -199,7 +199,9 @@ export default {
       this.completed = 0;
       this.uploads = [];
 
-      Notify.info(this.$gettext("Uploading photos…"));
+      let userUid = this.$session.getUserUID();
+
+      Notify.info(this.$gettext("Uploading…"));
 
       let addToAlbums = [];
 
@@ -222,7 +224,7 @@ export default {
 
           formData.append('files', file);
 
-          await Api.post('upload/' + ctx.token,
+          await Api.post(`users/${userUid}/upload/${ctx.token}`,
             formData,
             {
               headers: {
@@ -240,9 +242,7 @@ export default {
       performUpload(this).then(() => {
         this.indexing = true;
         const ctx = this;
-
-        Api.post('import/upload/' + this.token, {
-          move: true,
+        Api.post(`users/${userUid}/upload/${ctx.token}`,{
           albums: addToAlbums,
         }).then(() => {
           ctx.reset();
@@ -250,7 +250,7 @@ export default {
           ctx.$emit('confirm');
         }).catch(() => {
           ctx.reset();
-          Notify.error(ctx.$gettext("Failure while importing uploaded files"));
+          Notify.error(ctx.$gettext("Upload failed"));
         });
       });
     },

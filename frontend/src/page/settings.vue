@@ -1,5 +1,5 @@
 <template>
-  <div :class="$config.aclClasses('settings')" class="p-page p-page-settings">
+  <div class="p-page p-page-settings" :class="$config.aclClasses('settings')">
     <v-tabs
         v-model="active"
         flat
@@ -28,11 +28,11 @@
 </template>
 
 <script>
-import General from "pages/settings/general.vue";
-import Files from "pages/settings/files.vue";
-import Advanced from "pages/settings/advanced.vue";
-import Services from "pages/settings/services.vue";
-import Account from "pages/settings/account.vue";
+import General from "page/settings/general.vue";
+import Library from "page/settings/library.vue";
+import Advanced from "page/settings/advanced.vue";
+import Services from "page/settings/services.vue";
+import Account from "page/settings/account.vue";
 import {config} from "app/session";
 
 function initTabs(flag, tabs) {
@@ -60,7 +60,7 @@ export default {
 
     const tabs = [
       {
-        'name': 'settings-general',
+        'name': 'settings_general',
         'component': General,
         'label': this.$gettext('General'),
         'class': '',
@@ -72,11 +72,11 @@ export default {
         'show': config.feature('settings'),
       },
       {
-        'name': 'settings-files',
-        'component': Files,
+        'name': 'settings_media',
+        'component': Library,
         'label': this.$gettext('Library'),
         'class': '',
-        'path': '/settings/files',
+        'path': '/settings/media',
         'icon': 'camera_roll',
         'public': true,
         'admin': true,
@@ -84,7 +84,7 @@ export default {
         'show': config.allow("config", "manage"),
       },
       {
-        'name': 'settings-advanced',
+        'name': 'settings_advanced',
         'component': Advanced,
         'label': this.$gettext('Advanced'),
         'class': '',
@@ -96,7 +96,7 @@ export default {
         'show': config.allow("config", "manage"),
       },
       {
-        'name': 'settings-services',
+        'name': 'settings_services',
         'component': Services,
         'label': this.$gettext('Services'),
         'class': '',
@@ -108,7 +108,7 @@ export default {
         'show': config.feature('services') && config.allow("services", "manage"),
       },
       {
-        'name': 'settings-account',
+        'name': 'settings_account',
         'component': Account,
         'label': this.$gettext('Account'),
         'class': '',
@@ -131,7 +131,9 @@ export default {
 
     let active = 0;
 
-    if (typeof this.tab === 'string' && this.tab !== '') {
+    if (typeof this.$route.name === 'string' && this.$route.name !== '') {
+      active = tabs.findIndex((t) => t.name === this.$route.name);
+    } else if (typeof this.tab === 'string' && this.tab !== '') {
       active = tabs.findIndex((t) => t.name === this.tab);
     }
 
@@ -143,6 +145,24 @@ export default {
       active: active,
       rtl: this.$rtl,
     };
+  },
+  watch: {
+    '$route'() {
+      let active = this.active;
+
+      if (typeof this.$route.name === 'string' && this.$route.name !== '') {
+        active = this.tabs.findIndex((t) => t.name === this.$route.name);
+      }
+
+      if (active >= 0) {
+        this.active = active;
+      }
+    }
+  },
+  created() {
+    if (!this.tabs || this.tabs.length === 0) {
+      this.$router.push({ name: "albums" });
+    }
   },
   methods: {
     changePath: function (path) {

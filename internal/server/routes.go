@@ -56,7 +56,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// JSON-REST API Version 1
 	v1 := router.Group(conf.BaseUri(config.ApiUri))
 	{
-		// Global App Config.
+		// Authentication.
+		api.CreateSession(v1)
+		api.GetSession(v1)
+		api.DeleteSession(v1)
+
+		// Global Config.
 		api.GetConfigOptions(v1)
 		api.SaveConfigOptions(v1)
 
@@ -65,13 +70,14 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetSettings(v1)
 		api.SaveSettings(v1)
 
-		// User Authentication.
-		api.ChangePassword(v1)
-		api.CreateSession(v1)
-		api.GetSession(v1)
-		api.DeleteSession(v1)
+		// Profile and Uploads.
+		api.UploadUserFiles(v1)
+		api.ProcessUserUpload(v1)
+		api.UploadUserAvatar(v1)
+		api.UpdateUserPassword(v1)
+		api.UpdateUser(v1)
 
-		// External Account Management.
+		// Service Accounts.
 		api.SearchServices(v1)
 		api.GetService(v1)
 		api.GetServiceFolders(v1)
@@ -80,21 +86,24 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteService(v1)
 		api.UpdateService(v1)
 
-		// Thumbs, Downloads, and Videos.
+		// Thumbnail Images.
 		api.GetThumb(v1)
-		api.GetDownload(v1)
+
+		// Video Streaming.
 		api.GetVideo(v1)
+
+		// Downloads.
+		api.GetDownload(v1)
 		api.ZipCreate(v1)
 		api.ZipDownload(v1)
 
-		// Index, Upload, and Import.
-		api.Upload(v1)
+		// Index and Import.
 		api.StartImport(v1)
 		api.CancelImport(v1)
 		api.StartIndexing(v1)
 		api.CancelIndexing(v1)
 
-		// Search & Organization.
+		// Photo Search and Organization.
 		api.SearchPhotos(v1)
 		api.SearchGeo(v1)
 		api.GetPhoto(v1)

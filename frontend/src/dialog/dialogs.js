@@ -23,9 +23,9 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import PAccountAddDialog from "dialog/service/add.vue";
-import PAccountRemoveDialog from "dialog/service/remove.vue";
-import PAccountEditDialog from "dialog/service/edit.vue";
+import PServiceAddDialog from "dialog/service/add.vue";
+import PServiceRemoveDialog from "dialog/service/remove.vue";
+import PServiceEditDialog from "dialog/service/edit.vue";
 import PPhotoArchiveDialog from "dialog/photo/archive.vue";
 import PPhotoAlbumDialog from "dialog/photo/album.vue";
 import PPhotoEditDialog from "dialog/photo/edit.vue";
@@ -47,9 +47,9 @@ import PConfirmDialog from "dialog/confirm.vue";
 const dialogs = {};
 
 dialogs.install = (Vue) => {
-  Vue.component("PAccountAddDialog", PAccountAddDialog);
-  Vue.component("PAccountRemoveDialog", PAccountRemoveDialog);
-  Vue.component("PAccountEditDialog", PAccountEditDialog);
+  Vue.component("PServiceAddDialog", PServiceAddDialog);
+  Vue.component("PServiceRemoveDialog", PServiceRemoveDialog);
+  Vue.component("PServiceEditDialog", PServiceEditDialog);
   Vue.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
   Vue.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
   Vue.component("PPhotoEditDialog", PPhotoEditDialog);

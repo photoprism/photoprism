@@ -28,6 +28,7 @@ import Form from "common/form";
 import Util from "common/util";
 import Api from "common/api";
 import { T, $gettext } from "common/vm";
+import { config } from "app/session";
 
 export class User extends RestModel {
   getDefaults() {
@@ -66,33 +67,35 @@ export class User extends RestModel {
         UpdatedAt: "",
       },
       Details: {
+        IdURL: "",
         SubjUID: "",
         SubjSrc: "",
         PlaceID: "",
         PlaceSrc: "",
         CellID: "",
-        IdURL: "",
-        AvatarURL: "",
-        SiteURL: "",
-        FeedURL: "",
-        UserGender: "",
+        BirthYear: -1,
+        BirthMonth: -1,
+        BirthDay: -1,
         NamePrefix: "",
         GivenName: "",
         MiddleName: "",
         FamilyName: "",
         NameSuffix: "",
         NickName: "",
-        UserPhone: "",
-        UserAddress: "",
-        UserCountry: "",
-        UserBio: "",
-        JobTitle: "",
-        Department: "",
-        Company: "",
-        CompanyURL: "",
-        BirthYear: -1,
-        BirthMonth: -1,
-        BirthDay: -1,
+        Gender: "",
+        Bio: "",
+        Location: "",
+        Country: "",
+        Phone: "",
+        SiteURL: "",
+        ProfileURL: "",
+        FeedURL: "",
+        AvatarURL: "",
+        OrgName: "",
+        OrgTitle: "",
+        OrgEmail: "",
+        OrgPhone: "",
+        OrgURL: "",
         CreatedAt: "",
         UpdatedAt: "",
       },
@@ -149,6 +152,36 @@ export class User extends RestModel {
     );
   }
 
+  getAvatarURL(size) {
+    if (!this.Thumb) {
+      return `${config.contentUri}/svg/user`;
+    }
+
+    if (!size) {
+      size = "tile_500";
+    }
+
+    return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+  }
+
+  uploadAvatar(files) {
+    if (this.busy) {
+      return;
+    } else if (!files || files.length !== 1) {
+      return;
+    }
+
+    let file = files[0];
+    let formData = new FormData();
+    let formConf = { headers: { "Content-Type": "multipart/form-data" } };
+
+    formData.append("files", file);
+
+    return Api.post(this.getEntityResource() + `/avatar`, formData, formConf).then((response) =>
+      Promise.resolve(this.setValues(response.data))
+    );
+  }
+
   getProfileForm() {
     return Api.options(this.getEntityResource() + "/profile").then((response) =>
       Promise.resolve(new Form(response.data))
@@ -162,8 +195,8 @@ export class User extends RestModel {
     }).then((response) => Promise.resolve(response.data));
   }
 
-  saveProfile() {
-    return Api.post(this.getEntityResource() + "/profile", this.getValues()).then((response) =>
+  save() {
+    return Api.post(this.getEntityResource(), this.getValues()).then((response) =>
       Promise.resolve(this.setValues(response.data))
     );
   }

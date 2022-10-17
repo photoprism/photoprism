@@ -188,14 +188,14 @@ func UpdateService(router *gin.RouterGroup) {
 		}
 
 		// 2) Update form with values from request
-		if err := c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(&f); err != nil {
 			log.Error(err)
 			AbortBadRequest(c)
 			return
 		}
 
 		// 3) Save model with values from form
-		if err := m.SaveForm(f); err != nil {
+		if err = m.SaveForm(f); err != nil {
 			log.Error(err)
 			AbortSaveFailed(c)
 			return

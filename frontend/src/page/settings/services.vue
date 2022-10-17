@@ -1,5 +1,5 @@
 <template>
-  <div class="p-tab p-settings-sync">
+  <div class="p-tab p-settings-services">
     <v-data-table
         v-model="selected"
         :headers="listColumns"
@@ -8,7 +8,7 @@
         disable-initial-sort
         class="elevation-0 p-accounts p-accounts-list p-results"
         item-key="ID"
-        :no-data-text="$gettext('No servers configured.')"
+        :no-data-text="$gettext('No services configured.')"
     >
       <template #items="props">
         <td class="p-account">
@@ -64,27 +64,28 @@
               dense class="p-form-settings mt-2" accept-charset="UTF-8"
               @submit.prevent="add">
 
-        <v-btn depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2"
+        <v-btn v-if="user.WebDAV" depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2"
                :disabled="isPublic || isDemo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
+          <v-icon :right="rtl" :left="!rtl" dark>sync_alt</v-icon>
         </v-btn>
 
         <v-btn color="primary-button"
                class="white--text compact ml-0 my-2 mr-2"
                :disabled="isPublic || isDemo"
                depressed @click.stop="add">
-          <translate>Add Server</translate>
+          <translate>Connect</translate>
           <v-icon :right="!rtl" :left="rtl" dark>add</v-icon>
         </v-btn>
       </v-form>
     </v-container>
-    <p-account-add-dialog :show="dialog.add" @cancel="onCancel('add')"
-                          @confirm="onAdded"></p-account-add-dialog>
-    <p-account-remove-dialog :show="dialog.remove" :model="model" @cancel="onCancel('remove')"
-                             @confirm="onRemoved"></p-account-remove-dialog>
-    <p-account-edit-dialog :show="dialog.edit" :model="model" :scope="editScope" @remove="remove(model)"
+    <p-service-add-dialog :show="dialog.add" @cancel="onCancel('add')"
+                          @confirm="onAdded"></p-service-add-dialog>
+    <p-service-remove-dialog :show="dialog.remove" :model="model" @cancel="onCancel('remove')"
+                             @confirm="onRemoved"></p-service-remove-dialog>
+    <p-service-edit-dialog :show="dialog.edit" :model="model" :scope="editScope" @remove="remove(model)"
                            @cancel="onCancel('edit')"
-                           @confirm="onEdited"></p-account-edit-dialog>
+                           @confirm="onEdited"></p-service-edit-dialog>
     <p-webdav-dialog :show="dialog.webdav" @close="dialog.webdav = false"></p-webdav-dialog>
   </div>
 </template>
@@ -95,7 +96,7 @@ import Service from "model/service";
 import {DateTime} from "luxon";
 
 export default {
-  name: 'PSettingsSync',
+  name: 'PSettingsServices',
   data() {
     return {
       isDemo: this.$config.get("demo"),
@@ -107,6 +108,7 @@ export default {
       results: [],
       labels: {},
       selected: [],
+      user: this.$session.getUser(),
       dialog: {
         add: false,
         remove: false,
@@ -114,7 +116,7 @@ export default {
       },
       editScope: "main",
       listColumns: [
-        {text: this.$gettext('Server'), value: 'AccName', sortable: false, align: 'left'},
+        {text: this.$gettext('Name'), value: 'AccName', sortable: false, align: 'left'},
         {text: this.$gettext('Upload'), value: 'AccShare', sortable: false, align: 'center'},
         {text: this.$gettext('Sync'), value: 'AccSync', sortable: false, align: 'center'},
         {
