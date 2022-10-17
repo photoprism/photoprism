@@ -242,7 +242,7 @@ export default {
       performUpload(this).then(() => {
         this.indexing = true;
         const ctx = this;
-        Api.post(`users/${userUid}/upload/${ctx.token}`,{
+        Api.put(`users/${userUid}/upload/${ctx.token}`,{
           albums: addToAlbums,
         }).then(() => {
           ctx.reset();
