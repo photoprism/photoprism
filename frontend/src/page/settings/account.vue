@@ -14,7 +14,7 @@
               <div class="user-avatar" @click.exact="onChangeAvatar()">
                 <v-img :src="user.getAvatarURL()"
                        :alt="displayName"  aspect-ratio="1"
-                       class="grey lighten-1 elevation-0 clickable"
+                       class="primary-button elevation-0 clickable"
                 ></v-img>
               </div>
             </v-flex>
