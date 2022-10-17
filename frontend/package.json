@@ -31,7 +31,7 @@
     "@babel/runtime": "^7.19.0",
     "@lcdp/offline-plugin": "^5.1.1",
     "@vvo/tzdb": "^6.71.0",
-    "axios": "^1.0.0",
+    "axios": "^0.27.2",
     "axios-mock-adapter": "^1.21.2",
     "babel-loader": "^8.2.5",
     "babel-plugin-istanbul": "^6.1.1",
