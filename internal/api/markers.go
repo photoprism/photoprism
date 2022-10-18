@@ -12,15 +12,15 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // Checks if background worker runs less than once per hour.
 func wakeupIntervalTooHigh(c *gin.Context) bool {
-	if conf := service.Config(); conf.Unsafe() {
+	if conf := get.Config(); conf.Unsafe() {
 		return false
 	} else if i := conf.WakeupInterval(); i > time.Hour {
 		Abort(c, http.StatusForbidden, i18n.ErrWakeupInterval, i.String())
@@ -41,7 +41,7 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 	}
 
 	// Check feature flags.
-	conf := service.Config()
+	conf := get.Config()
 	if !conf.Settings().Features.People {
 		AbortFeatureDisabled(c)
 		return nil, nil, fmt.Errorf("feature disabled")
@@ -119,7 +119,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			return
 		} else if changed {
 			if marker.FaceID != "" && marker.SubjUID != "" && marker.SubjSrc == entity.SrcManual {
-				if res, err := service.Faces().Optimize(); err != nil {
+				if res, err := get.Faces().Optimize(); err != nil {
 					log.Errorf("faces: %s (optimize)", err)
 				} else if res.Merged > 0 {
 					log.Infof("faces: merged %s", english.Plural(res.Merged, "cluster", "clusters"))

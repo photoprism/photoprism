@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"github.com/photoprism/photoprism/internal/migrate"
 )
 
 // CreateDefaultFixtures inserts default fixtures for test and production.
@@ -18,7 +20,7 @@ func CreateDefaultFixtures() {
 func ResetTestFixtures() {
 	start := time.Now()
 
-	Entities.Migrate(Db(), false, nil)
+	Entities.Migrate(Db(), migrate.Opt(false, nil))
 	Entities.WaitForMigration(Db())
 	Entities.Truncate(Db())
 

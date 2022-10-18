@@ -12,7 +12,9 @@
 
 ↪ [mariadb.mmd](mariadb.mmd)
 
-## MariaDB SQL
+## MariaDB SQL Dump
+
+The following dump was created by running `mysqldump  --no-data --skip-add-locks --skip-comments --skip-opt --skip-set-charset photoprism > mariadb.sql` in a terminal:
 
 ↪ [mariadb.sql](mariadb.sql)
 

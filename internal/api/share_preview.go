@@ -14,9 +14,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -28,7 +28,7 @@ import (
 // TODO: Proof of concept, needs refactoring.
 func SharePreview(router *gin.RouterGroup) {
 	router.GET("/:token/:shared/preview", func(c *gin.Context) {
-		conf := service.Config()
+		conf := get.Config()
 
 		token := clean.Token(c.Param("token"))
 		shared := clean.Token(c.Param("shared"))

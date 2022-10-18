@@ -6,7 +6,7 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -45,7 +45,7 @@ func thumbsAction(ctx *cli.Context) error {
 
 	log.Infof("creating thumbs in %s", clean.Log(conf.ThumbCachePath()))
 
-	rs := service.Thumbs()
+	rs := get.Thumbs()
 
 	if err := rs.Start(ctx.Bool("force"), ctx.Bool("originals")); err != nil {
 		log.Error(err)

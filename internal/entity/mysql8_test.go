@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/migrate"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -42,14 +44,14 @@ func TestMySQL8(t *testing.T) {
 	Entities.Drop(db)
 
 	// First migration.
-	Entities.Migrate(db, false, nil)
+	Entities.Migrate(db, migrate.Opt(false, nil))
 	Entities.WaitForMigration(db)
 
 	// Second migration.
-	Entities.Migrate(db, false, nil)
+	Entities.Migrate(db, migrate.Opt(false, nil))
 	Entities.WaitForMigration(db)
 
 	// Third migration with force flag.
-	Entities.Migrate(db, true, []string{"20211121-094727"})
+	Entities.Migrate(db, migrate.Opt(false, []string{"20211121-094727"}))
 	Entities.WaitForMigration(db)
 }

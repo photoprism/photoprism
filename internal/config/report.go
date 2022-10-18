@@ -48,6 +48,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Other paths.
 		{"storage-path", c.StoragePath()},
 		{"sidecar-path", c.SidecarPath()},
+		{"files-path", c.FilesPath()},
+		{"users-path", c.UsersPath()},
 		{"albums-path", c.AlbumsPath()},
 		{"backup-path", c.BackupPath()},
 		{"cache-path", c.CachePath()},

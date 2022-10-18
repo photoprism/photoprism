@@ -23,6 +23,53 @@ func TestConfig_SidecarPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/sidecar", c.SidecarPath())
 }
 
+func TestConfig_FilePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	t.Run("Valid", func(t *testing.T) {
+		s := c.FilePath("c476503628b4543c9ef97d69a6daa700b05d19bc")
+		assert.True(t, strings.HasSuffix(s, "/c/4/7/c476503628b4543c9ef97d69a6daa700b05d19bc"))
+	})
+	t.Run("InvalidHash", func(t *testing.T) {
+		assert.Equal(t, "", c.FilePath("YE"))
+	})
+}
+
+func TestConfig_UsersPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.UsersPath(), "testdata/users")
+}
+
+func TestConfig_UserPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "", c.UserPath(""))
+	assert.Equal(t, "", c.UserPath("etaetyget"))
+	assert.Contains(t, c.UserPath("urjult03ceelhw6k"), "testdata/users/urjult03ceelhw6k")
+}
+
+func TestConfig_UserUploadPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	if dir, err := c.UserUploadPath("", ""); err == nil {
+		t.Error("error expected")
+	} else {
+		assert.Equal(t, "", dir)
+	}
+	if dir, err := c.UserUploadPath("etaetyget", ""); err == nil {
+		t.Error("error expected")
+	} else {
+		assert.Equal(t, "", dir)
+	}
+	if dir, err := c.UserUploadPath("urjult03ceelhw6k", ""); err != nil {
+		t.Fatal(err)
+	} else {
+		assert.Contains(t, dir, "testdata/users/urjult03ceelhw6k/upload")
+	}
+	if dir, err := c.UserUploadPath("urjult03ceelhw6k", "foo"); err != nil {
+		t.Fatal(err)
+	} else {
+		assert.Contains(t, dir, "testdata/users/urjult03ceelhw6k/upload/foo")
+	}
+}
+
 func TestConfig_SidecarPathIsAbs(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

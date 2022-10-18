@@ -6,11 +6,11 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -22,7 +22,7 @@ func (w *Sync) downloadPath() string {
 }
 
 // relatedDownloads returns files to be downloaded grouped by prefix.
-func (w *Sync) relatedDownloads(a entity.Account) (result Downloads, err error) {
+func (w *Sync) relatedDownloads(a entity.Service) (result Downloads, err error) {
 	result = make(Downloads)
 	maxResults := 1000
 
@@ -49,7 +49,7 @@ func (w *Sync) relatedDownloads(a entity.Account) (result Downloads, err error) 
 }
 
 // Downloads remote files in batches and imports / indexes them
-func (w *Sync) download(a entity.Account) (complete bool, err error) {
+func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	// Set up index worker
 	indexJobs := make(chan photoprism.IndexJob)
 
@@ -94,7 +94,7 @@ func (w *Sync) download(a entity.Account) (complete bool, err error) {
 				return false, nil
 			}
 
-			// Failed too often?
+			// RunFailed too often?
 			if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 				log.Debugf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
 				continue
@@ -168,7 +168,7 @@ func (w *Sync) download(a entity.Account) (complete bool, err error) {
 					FileName: mf.FileName(),
 					Related:  related,
 					IndexOpt: photoprism.IndexOptionsAll(),
-					Ind:      service.Index(),
+					Ind:      get.Index(),
 				}
 			} else {
 				log.Infof("sync: importing %s and related files", file.RemoteName)
@@ -177,7 +177,7 @@ func (w *Sync) download(a entity.Account) (complete bool, err error) {
 					Related:   related,
 					IndexOpt:  photoprism.IndexOptionsAll(),
 					ImportOpt: photoprism.ImportOptionsMove(baseDir, w.conf.ImportDest()),
-					Imp:       service.Import(),
+					Imp:       get.Import(),
 				}
 			}
 		}

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -50,7 +50,7 @@ func GetSession(router *gin.RouterGroup) {
 			"id":     sess.ID,
 			"user":   sess.User(),
 			"data":   sess.Data(),
-			"config": service.Config().ClientSession(sess),
+			"config": get.Config().ClientSession(sess),
 		}
 
 		c.JSON(http.StatusOK, data)

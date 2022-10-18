@@ -15,7 +15,7 @@ import (
 )
 
 // Uploads local files to a remote account
-func (w *Sync) upload(a entity.Account) (complete bool, err error) {
+func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 	maxResults := 250
 
 	// Get upload file list from database

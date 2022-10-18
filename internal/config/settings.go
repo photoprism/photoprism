@@ -54,11 +54,6 @@ func (c *Config) Settings() *customize.Settings {
 		c.settings.Features.Import = false
 	}
 
-	if c.Public() && !c.Demo() {
-		c.settings.Features.Account = false
-		c.settings.Features.Advanced = false
-	}
-
 	return c.settings
 }
 

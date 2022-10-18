@@ -56,4 +56,5 @@ var DeprecatedTables = Deprecated{
 	"auth_users_logins_dev",
 	"auth_users_settings_dev",
 	"auth_tokens_dev",
+	"addresses",
 }

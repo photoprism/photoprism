@@ -7,8 +7,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // SendFeedback sends a feedback message.
@@ -16,7 +16,7 @@ import (
 // POST /api/v1/feedback
 func SendFeedback(router *gin.RouterGroup) {
 	router.POST("/feedback", func(c *gin.Context) {
-		conf := service.Config()
+		conf := get.Config()
 
 		if conf.Public() {
 			Abort(c, http.StatusForbidden, i18n.ErrPublic)

@@ -10,9 +10,9 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // SearchPhotos searches the pictures index and returns the result as JSON.
@@ -36,7 +36,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 			return f, s, err
 		}
 
-		settings := service.Config().Settings()
+		settings := get.Config().Settings()
 
 		// Ignore private flag if feature is disabled.
 		if !settings.Features.Private {
@@ -91,7 +91,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), s.PreviewToken, s.DownloadToken)
 

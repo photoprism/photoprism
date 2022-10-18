@@ -11,7 +11,7 @@ func CreateTestFixtures() {
 	CreateCountryFixtures()
 	CreatePhotoFixtures()
 	CreateAlbumFixtures()
-	CreateAccountFixtures()
+	CreateServiceFixtures()
 	CreateLinkFixtures()
 	CreatePhotoAlbumFixtures()
 	CreateFolderFixtures()

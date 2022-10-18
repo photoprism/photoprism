@@ -74,12 +74,15 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		return done
 	}
 
-	if err := mutex.MainWorker.Start(); err != nil {
-		event.Error(fmt.Sprintf("import: %s", err.Error()))
-		return done
-	}
+	// Make sure to run import only once, unless otherwise requested.
+	if !opt.NonBlocking {
+		if err := mutex.MainWorker.Start(); err != nil {
+			event.Error(fmt.Sprintf("import: %s", err.Error()))
+			return done
+		}
 
-	defer mutex.MainWorker.Stop()
+		defer mutex.MainWorker.Stop()
+	}
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("import: %s", err.Error())

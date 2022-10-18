@@ -12,7 +12,7 @@ import (
 func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders entity.Folders, err error) {
 	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive, true)
 
-	// Failed?
+	// RunFailed?
 	if err != nil {
 		if len(dirs) == 0 {
 			return folders, err

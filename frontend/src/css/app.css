@@ -345,6 +345,7 @@ ol, ul {
 
 .v-menu__content,
 .v-btn.v-btn--depressed:not(.v-btn--round):not(.v-btn--icon),
+.v-text-field.v-text-field--box > .v-input__control > .v-input__slot,
 .v-text-field.v-text-field--solo > .v-input__control > .v-input__slot,
 #photoprism .v-dialog .v-responsive.v-image,
 #photoprism .cards-view .result,
@@ -355,7 +356,9 @@ ol, ul {
 
 .v-alert,
 #photoprism div.v-dialog > div.v-card,
-#photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panel__container {
+#photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panel__container,
+#photoprism div.v-dialog > form > div.v-card,
+#photoprism div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panel__container {
     border-radius: 6px;
 }
 

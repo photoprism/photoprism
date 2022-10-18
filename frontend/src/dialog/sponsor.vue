@@ -25,7 +25,7 @@
           <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
         </p>
       </v-card-text>
-      <v-card-actions class="pt-0">
+      <v-card-actions class="pt-0 px-3">
         <v-layout row wrap class="px-2">
           <v-flex xs12 sm4 text-xs-right text-sm-left class="py-2">
             <v-btn depressed color="secondary-light"

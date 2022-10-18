@@ -123,7 +123,7 @@ config.load().finally(() => {
   const router = new Router({
     routes: Routes,
     mode: "history",
-    base: config.baseUri + "/",
+    base: config.baseUri + "/library/",
     saveScrollPosition: true,
     scrollBehavior: (to, from, savedPosition) => {
       if (savedPosition) {

@@ -9,7 +9,7 @@ import (
 )
 
 // Updates the local list of remote files so that they can be downloaded in batches
-func (w *Sync) refresh(a entity.Account) (complete bool, err error) {
+func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	if a.AccType != remote.ServiceWebDAV {
 		return false, nil
 	}

@@ -25,7 +25,7 @@ func TestFileShares(t *testing.T) {
 func TestExpiredFileShares(t *testing.T) {
 	t.Run("expired file share exists", func(t *testing.T) {
 		time.Sleep(2 * time.Second)
-		r, err := ExpiredFileShares(entity.AccountFixtureWebdavDummy)
+		r, err := ExpiredFileShares(entity.ServiceFixtureWebdavDummy)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -36,7 +36,7 @@ func TestExpiredFileShares(t *testing.T) {
 		}
 	})
 	t.Run("expired file does not exists", func(t *testing.T) {
-		r, err := ExpiredFileShares(entity.AccountFixtureWebdavDummy2)
+		r, err := ExpiredFileShares(entity.ServiceFixtureWebdavDummy2)
 		if err != nil {
 			t.Fatal(err)
 		}

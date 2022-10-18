@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -58,7 +58,7 @@ func convertAction(ctx *cli.Context) error {
 
 	log.Infof("converting originals in %s", clean.Log(convertPath))
 
-	w := service.Convert()
+	w := get.Convert()
 
 	// Start file conversion.
 	if err := w.Start(convertPath, ctx.Bool("force")); err != nil {

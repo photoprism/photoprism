@@ -55,7 +55,7 @@ func (w *Sync) Start() (err error) {
 
 	defer mutex.SyncWorker.Stop()
 
-	f := form.SearchAccounts{
+	f := form.SearchServices{
 		Sync: true,
 	}
 
@@ -66,7 +66,7 @@ func (w *Sync) Start() (err error) {
 			continue
 		}
 
-		// Failed too often?
+		// RunFailed too often?
 		if a.RetryLimit > 0 && a.AccErrors > a.RetryLimit {
 			a.AccSync = false
 
@@ -87,7 +87,7 @@ func (w *Sync) Start() (err error) {
 		synced := false
 
 		switch a.SyncStatus {
-		case entity.AccountSyncStatusRefresh:
+		case entity.SyncStatusRefresh:
 			if complete, err := w.refresh(a); err != nil {
 				accErrors++
 				accError = err.Error()
@@ -96,47 +96,47 @@ func (w *Sync) Start() (err error) {
 				accError = ""
 
 				if a.SyncDownload {
-					syncStatus = entity.AccountSyncStatusDownload
+					syncStatus = entity.SyncStatusDownload
 				} else if a.SyncUpload {
-					syncStatus = entity.AccountSyncStatusUpload
+					syncStatus = entity.SyncStatusUpload
 				} else {
-					syncStatus = entity.AccountSyncStatusSynced
+					syncStatus = entity.SyncStatusSynced
 					syncDate.Time = time.Now()
 					syncDate.Valid = true
 				}
 			}
-		case entity.AccountSyncStatusDownload:
+		case entity.SyncStatusDownload:
 			if complete, err := w.download(a); err != nil {
 				accErrors++
 				accError = err.Error()
-				syncStatus = entity.AccountSyncStatusRefresh
+				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				if a.SyncUpload {
-					syncStatus = entity.AccountSyncStatusUpload
+					syncStatus = entity.SyncStatusUpload
 				} else {
 					synced = true
-					syncStatus = entity.AccountSyncStatusSynced
+					syncStatus = entity.SyncStatusSynced
 					syncDate.Time = time.Now()
 					syncDate.Valid = true
 				}
 			}
-		case entity.AccountSyncStatusUpload:
+		case entity.SyncStatusUpload:
 			if complete, err := w.upload(a); err != nil {
 				accErrors++
 				accError = err.Error()
-				syncStatus = entity.AccountSyncStatusRefresh
+				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				synced = true
-				syncStatus = entity.AccountSyncStatusSynced
+				syncStatus = entity.SyncStatusSynced
 				syncDate.Time = time.Now()
 				syncDate.Valid = true
 			}
-		case entity.AccountSyncStatusSynced:
+		case entity.SyncStatusSynced:
 			if a.SyncDate.Valid && a.SyncDate.Time.Before(time.Now().Add(time.Duration(-1*a.SyncInterval)*time.Second)) {
-				syncStatus = entity.AccountSyncStatusRefresh
+				syncStatus = entity.SyncStatusRefresh
 			}
 		default:
-			syncStatus = entity.AccountSyncStatusRefresh
+			syncStatus = entity.SyncStatusRefresh
 		}
 
 		if mutex.SyncWorker.Canceled() {

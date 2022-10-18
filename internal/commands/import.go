@@ -10,8 +10,8 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -79,7 +79,7 @@ func importAction(ctx *cli.Context) error {
 
 	log.Infof("moving media files from %s to %s", sourcePath, filepath.Join(conf.OriginalsPath(), destFolder))
 
-	w := service.Import()
+	w := get.Import()
 	opt := photoprism.ImportOptionsMove(sourcePath, destFolder)
 
 	w.Start(opt)

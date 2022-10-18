@@ -158,6 +158,11 @@ func (m *Session) Cache() {
 	m.CacheDuration(sessionCacheExpiration)
 }
 
+// ClearCache deletes the session from the cache.
+func (m *Session) ClearCache() {
+	DeleteFromSessionCache(m.ID)
+}
+
 // Create new entity in the database.
 func (m *Session) Create() (err error) {
 	if err = Db().Create(m).Error; err == nil && rnd.IsSessionID(m.ID) {

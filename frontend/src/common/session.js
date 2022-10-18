@@ -209,6 +209,14 @@ export default class Session {
     return this.user;
   }
 
+  getUserUID() {
+    if (this.user && this.user.UID) {
+      return this.user.UID;
+    } else {
+      return "u000000000000001"; // Unknown.
+    }
+  }
+
   loginRequired() {
     return !this.config.isPublic() && !this.isUser();
   }
@@ -220,10 +228,10 @@ export default class Session {
   getHome() {
     if (this.loginRequired()) {
       return "login";
-    } else if (this.user.Role === "guest") {
-      return "albums";
-    } else {
+    } else if (this.config.allow("photos", "access_library")) {
       return "browse";
+    } else {
+      return "albums";
     }
   }
 

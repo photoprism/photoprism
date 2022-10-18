@@ -43,7 +43,15 @@ func TestDialectMysql(t *testing.T) {
 	db.LogMode(false)
 	db.SetLogger(log)
 
-	if err = Auto(db, true, nil); err != nil {
+	opt := Opt(true, nil)
+
+	// Run pre-migrations.
+	if err = Run(db, opt.Pre()); err != nil {
+		t.Error(err)
+	}
+
+	// Run migrations.
+	if err = Run(db, opt); err != nil {
 		t.Error(err)
 	}
 

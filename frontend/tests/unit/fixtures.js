@@ -140,8 +140,8 @@ Mock.onPost("api/v1/session").reply(200, { id: "123", data: { token: "123token" 
 Mock.onGet("api/v1/settings").reply(200, { download: true, language: "de" }, mockHeaders);
 Mock.onPost("api/v1/settings").reply(200, { download: true, language: "en" }, mockHeaders);
 
-Mock.onGet("api/v1/accounts/123/folders").reply(200, { foo: "folders" }, mockHeaders);
-Mock.onPost("api/v1/accounts/123/share").reply(200, { foo: "share" }, mockHeaders);
+Mock.onGet("api/v1/services/123/folders").reply(200, { foo: "folders" }, mockHeaders);
+Mock.onPost("api/v1/services/123/upload").reply(200, { foo: "upload" }, mockHeaders);
 
 Mock.onGet("api/v1/folders/2011/10-Halloween", {
   params: { recursive: true, uncached: true },

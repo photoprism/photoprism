@@ -732,7 +732,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 	// Create new marker from face.
 	marker := NewFaceMarker(f, *m, subjUid)
 
-	// Failed creating new marker?
+	// RunFailed creating new marker?
 	if marker == nil {
 		return
 	}

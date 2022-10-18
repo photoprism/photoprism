@@ -21,7 +21,7 @@ var Entities = Tables{
 	UserDetails{}.TableName():       &UserDetails{},
 	UserSettings{}.TableName():      &UserSettings{},
 	Session{}.TableName():           &Session{},
-	Account{}.TableName():           &Account{},
+	Service{}.TableName():           &Service{},
 	Folder{}.TableName():            &Folder{},
 	Duplicate{}.TableName():         &Duplicate{},
 	File{}.TableName():              &File{},
@@ -65,14 +65,13 @@ func (list Tables) WaitForMigration(db *gorm.DB) {
 				log.Tracef("migrate: %s migrated", clean.Log(name))
 				break
 			} else {
-				log.Debugf("migrate: waiting for %s migration (%s)", clean.Log(name), err.Error())
+				log.Tracef("migrate: waiting for %s migration (%s)", clean.Log(name), err.Error())
+				time.Sleep(100 * time.Millisecond)
 			}
 
 			if i == attempts {
 				panic("migration failed")
 			}
-
-			time.Sleep(50 * time.Millisecond)
 		}
 	}
 }
@@ -98,7 +97,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 }
 
 // Migrate migrates all database tables of registered entities.
-func (list Tables) Migrate(db *gorm.DB, runFailed bool, ids []string) {
+func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 	var name string
 	var entity interface{}
 
@@ -108,7 +107,13 @@ func (list Tables) Migrate(db *gorm.DB, runFailed bool, ids []string) {
 		}
 	}()
 
-	if len(ids) == 0 {
+	// Run pre-migrations, if any.
+	if err := migrate.Run(db, opt.Pre()); err != nil {
+		log.Error(err)
+	}
+
+	// Run auto migrations.
+	if opt.AutoMigrate {
 		for name, entity = range list {
 			if err := db.AutoMigrate(entity).Error; err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())
@@ -123,7 +128,8 @@ func (list Tables) Migrate(db *gorm.DB, runFailed bool, ids []string) {
 		}
 	}
 
-	if err := migrate.Auto(db, runFailed, ids); err != nil {
+	// Run manual migrations, if any.
+	if err := migrate.Run(db, opt); err != nil {
 		log.Error(err)
 	}
 }

@@ -10,10 +10,10 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -33,7 +33,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 		fileUid := clean.UID(c.Param("file_uid"))
 		file, err := query.FileByUID(fileUid)
 
@@ -170,7 +170,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			}
 		}
 
-		ind := service.Index()
+		ind := get.Index()
 
 		// Index unstacked files.
 		if res := ind.FileName(unstackFile.FileName(), photoprism.IndexOptionsSingle()); res.Failed() {

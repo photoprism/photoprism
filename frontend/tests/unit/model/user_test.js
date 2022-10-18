@@ -70,19 +70,4 @@ describe("model/user", () => {
     const result = await user.changePassword("old", "new");
     assert.equal(result.new_password, "new");
   });
-
-  it("should save profile", async () => {
-    const values = {
-      UID: "urii20d30w2wqzjf",
-      Name: "max",
-      DisplayName: "Max Last",
-      Email: "test@test.com",
-      Role: "admin",
-    };
-
-    const user = new User(values);
-    assert.equal(user.DisplayName, "Max Last");
-    await user.saveProfile();
-    assert.equal(user.DisplayName, "Max New");
-  });
 });

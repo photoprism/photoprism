@@ -15,14 +15,14 @@ func TestNewFileShare(t *testing.T) {
 	r := NewFileShare(123, 123, "test")
 	assert.IsType(t, &FileShare{}, r)
 	assert.Equal(t, uint(0x7b), r.FileID)
-	assert.Equal(t, uint(0x7b), r.AccountID)
+	assert.Equal(t, uint(0x7b), r.ServiceID)
 	assert.Equal(t, "test", r.RemoteName)
 	assert.Equal(t, "new", r.Status)
 }
 
 func TestFirstOrCreateFileShare(t *testing.T) {
 	t.Run("not yet existing", func(t *testing.T) {
-		fileShare := &FileShare{FileID: 123, AccountID: 888, RemoteName: "test888"}
+		fileShare := &FileShare{FileID: 123, ServiceID: 888, RemoteName: "test888"}
 		result := FirstOrCreateFileShare(fileShare)
 
 		if result == nil {
@@ -33,8 +33,8 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 			t.Errorf("FileID should be the same: %d %d", result.FileID, fileShare.FileID)
 		}
 
-		if result.AccountID != fileShare.AccountID {
-			t.Errorf("AccountID should be the same: %d %d", result.AccountID, fileShare.AccountID)
+		if result.ServiceID != fileShare.ServiceID {
+			t.Errorf("ServiceID should be the same: %d %d", result.ServiceID, fileShare.ServiceID)
 		}
 	})
 
@@ -50,8 +50,8 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 			t.Errorf("FileID should be the same: %d %d", result.FileID, fileShare.FileID)
 		}
 
-		if result.AccountID != fileShare.AccountID {
-			t.Errorf("AccountID should be the same: %d %d", result.AccountID, fileShare.AccountID)
+		if result.ServiceID != fileShare.ServiceID {
+			t.Errorf("ServiceID should be the same: %d %d", result.ServiceID, fileShare.ServiceID)
 		}
 	})
 }
@@ -61,15 +61,15 @@ func TestFileShare_Updates(t *testing.T) {
 		fileShare := NewFileShare(123, 123, "NameBeforeUpdate")
 
 		assert.Equal(t, "NameBeforeUpdate", fileShare.RemoteName)
-		assert.Equal(t, uint(0x7b), fileShare.AccountID)
+		assert.Equal(t, uint(0x7b), fileShare.ServiceID)
 
-		err := fileShare.Updates(FileShare{RemoteName: "NameAfterUpdate", AccountID: 999})
+		err := fileShare.Updates(FileShare{RemoteName: "NameAfterUpdate", ServiceID: 999})
 
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "NameAfterUpdate", fileShare.RemoteName)
-		assert.Equal(t, uint(0x3e7), fileShare.AccountID)
+		assert.Equal(t, uint(0x3e7), fileShare.ServiceID)
 	})
 }
 
@@ -77,7 +77,7 @@ func TestFileShare_Update(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		fileShare := NewFileShare(123, 123, "NameBeforeUpdate2")
 		assert.Equal(t, "NameBeforeUpdate2", fileShare.RemoteName)
-		assert.Equal(t, uint(0x7b), fileShare.AccountID)
+		assert.Equal(t, uint(0x7b), fileShare.ServiceID)
 
 		err := fileShare.Update("RemoteName", "new-name")
 
@@ -85,7 +85,7 @@ func TestFileShare_Update(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "new-name", fileShare.RemoteName)
-		assert.Equal(t, uint(0x7b), fileShare.AccountID)
+		assert.Equal(t, uint(0x7b), fileShare.ServiceID)
 	})
 }
 

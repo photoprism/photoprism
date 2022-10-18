@@ -6,6 +6,10 @@ nav .v-list__tile__title.title {
     line-height: normal!important;
 }
 
+.v-navigation-drawer>.theme--dark.v-list .v-list__tile__sub-title {
+    color: #ffffff77;
+}
+
 #p-navigation .nav-title {
     text-align: left;
     /* font-weight: bold; */
