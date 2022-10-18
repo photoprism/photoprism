@@ -313,20 +313,20 @@ test.meta("testID", "photos-archive-private-003").meta({ mode: "public" })(
       await photo.checkPhotoVisibility(PrivatePhoto, false);
       await menu.openPage("video");
       await photo.checkPhotoVisibility(Video, false);
-      await t.navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017");
+      await t.navigateTo("/library/calendar/aqmxlr71p6zo22dk/january-2017");
       await photo.checkPhotoVisibility(CalendarPhoto, false);
       await menu.openPage("moments");
       await album.openNthAlbum(0);
       await photo.checkPhotoVisibility(MomentPhoto, false);
-      await t.navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa");
+      await t.navigateTo("/library/states/aqmxlr71tebcohrw/western-cape-south-africa");
       await photo.checkPhotoVisibility(StatesPhoto, false);
 
-      await t.navigateTo("/all?q=label%3Aseashore");
+      await t.navigateTo("/library/all?q=label%3Aseashore");
       await photo.checkPhotoVisibility(LabelPhoto, false);
       await menu.openPage("people");
       await subject.openNthSubject(0);
       await photo.checkPhotoVisibility(SubjectPhoto, false);
-      await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
+      await t.navigateTo("/library/folders/aqnah1321mgkt1w2/archive");
       await photo.checkPhotoVisibility(FolderPhoto, false);
 
       await menu.openPage("archive");
@@ -449,23 +449,23 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "short", mode: "p
       await photo.checkPhotoVisibility(FavoritesPhoto, false);
       await menu.openPage("video");
       await photo.checkPhotoVisibility(Video, false);
-      await t.navigateTo("/albums?q=Holiday");
+      await t.navigateTo("/library/albums?q=Holiday");
       await album.openNthAlbum(0);
       await photo.checkPhotoVisibility(AlbumPhoto, true);
-      await t.navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017");
+      await t.navigateTo("/library/calendar/aqmxlr71p6zo22dk/january-2017");
       await photo.checkPhotoVisibility(CalendarPhoto, false);
       await menu.openPage("moments");
       await album.openNthAlbum(0);
       await photo.checkPhotoVisibility(MomentPhoto, false);
-      await t.navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa");
+      await t.navigateTo("/library/states/aqmxlr71tebcohrw/western-cape-south-africa");
       await photo.checkPhotoVisibility(StatesPhoto, false);
 
-      await t.navigateTo("/all?q=label%3Aseashore");
+      await t.navigateTo("/library/all?q=label%3Aseashore");
       await photo.checkPhotoVisibility(LabelPhoto, false);
       await menu.openPage("people");
       await subject.openNthSubject(0);
       await photo.checkPhotoVisibility(SubjectPhoto, false);
-      await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
+      await t.navigateTo("/library/folders/aqnah1321mgkt1w2/archive");
       await photo.checkPhotoVisibility(FolderPhoto, false);
 
       await menu.openPage("private");
@@ -512,23 +512,23 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "short", mode: "p
       await photo.checkPhotoVisibility(FavoritesPhoto, true);
       await menu.openPage("video");
       await photo.checkPhotoVisibility(Video, true);
-      await t.navigateTo("/albums?q=Holiday");
+      await t.navigateTo("/library/albums?q=Holiday");
       await album.openNthAlbum(0);
       await photo.checkPhotoVisibility(AlbumPhoto, true);
-      await t.navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017");
+      await t.navigateTo("/library/calendar/aqmxlr71p6zo22dk/january-2017");
       await photo.checkPhotoVisibility(CalendarPhoto, true);
       await menu.openPage("moments");
       await album.openNthAlbum(0);
       await photo.checkPhotoVisibility(MomentPhoto, true);
-      await t.navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa");
+      await t.navigateTo("/library/states/aqmxlr71tebcohrw/western-cape-south-africa");
       await photo.checkPhotoVisibility(StatesPhoto, true);
 
-      await t.navigateTo("/all?q=label%3Aseashore");
+      await t.navigateTo("/library/all?q=label%3Aseashore");
       await photo.checkPhotoVisibility(LabelPhoto, true);
       await menu.openPage("people");
       await subject.openNthSubject(0);
       await photo.checkPhotoVisibility(SubjectPhoto, true);
-      await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
+      await t.navigateTo("/library/folders/aqnah1321mgkt1w2/archive");
       await photo.checkPhotoVisibility(FolderPhoto, true);
     }
   }

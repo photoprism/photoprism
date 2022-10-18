@@ -50,7 +50,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
       await t.expect(PhotoCountAfterUpload).eql(1);
 
       const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
-      await t.navigateTo("/library/files/2020/10");
+      await t.navigateTo("/library/index/files/2020/10");
       const FileCount = await originals.getFileCount();
 
       await t.expect(FileCount).eql(2);
@@ -88,7 +88,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
       await menu.openPage("browse");
       await toolbar.search("digikam");
       await photo.checkPhotoVisibility(UploadedPhoto, false);
-      await t.navigateTo("/library/files/2020/10");
+      await t.navigateTo("/library/index/files/2020/10");
       const FileCountAfterDelete = await originals.getFileCount();
 
       await t.expect(FileCountAfterDelete).eql(0);
@@ -123,7 +123,7 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })(
       await t.expect(PhotoCountAfterUpload).eql(1);
 
       const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
-      await t.navigateTo("/library/files/2020/06");
+      await t.navigateTo("/library/index/files/2020/06");
       const FileCount = await originals.getFileCount();
 
       await t.expect(FileCount).eql(1);
@@ -157,7 +157,7 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })(
       await menu.openPage("browse");
       await toolbar.search("korn");
       await photo.checkPhotoVisibility(UploadedPhoto, false);
-      await t.navigateTo("/library/files/2020/06");
+      await t.navigateTo("/library/index/files/2020/06");
       const FileCountAfterDelete = await originals.getFileCount();
 
       await t.expect(FileCountAfterDelete).eql(0);
