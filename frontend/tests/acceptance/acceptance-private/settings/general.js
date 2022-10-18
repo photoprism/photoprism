@@ -394,7 +394,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
       .click(settings.editCheckbox)
       .click(settings.shareCheckbox);
     await t.eval(() => location.reload());
-    await t.navigateTo("/calendar");
+    await t.navigateTo("/library/calendar");
 
     await toolbar.checkToolbarActionAvailability("upload", false);
     await album.checkHoverActionAvailability("nth", 2, "share", false);
@@ -413,7 +413,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await toolbar.checkToolbarActionAvailability("share", false);
     await toolbar.checkToolbarActionAvailability("edit", true);
 
-    await t.navigateTo("/folders");
+    await t.navigateTo("/library/folders");
 
     await toolbar.checkToolbarActionAvailability("upload", false);
     await album.checkHoverActionAvailability("nth", 0, "share", false);
@@ -432,7 +432,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await toolbar.checkToolbarActionAvailability("share", false);
     await toolbar.checkToolbarActionAvailability("edit", true);
 
-    await t.navigateTo("/albums");
+    await t.navigateTo("/library/albums");
 
     await toolbar.checkToolbarActionAvailability("upload", false);
     await album.checkHoverActionAvailability("nth", 0, "share", false);
@@ -452,7 +452,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await toolbar.checkToolbarActionAvailability("share", false);
     await toolbar.checkToolbarActionAvailability("edit", true);
 
-    await t.navigateTo("/browse");
+    await t.navigateTo("/library/browse");
 
     await toolbar.checkToolbarActionAvailability("upload", false);
 
