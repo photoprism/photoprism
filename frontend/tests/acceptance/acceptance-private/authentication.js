@@ -15,7 +15,7 @@ const settings = new Settings();
 test.meta("testID", "authentication-001").meta({ type: "short", mode: "auth" })(
   "Common: Login and Logout",
   async (t) => {
-    await t.navigateTo("/browse");
+    await t.navigateTo("/library/browse");
 
     await t
       .expect(page.nameInput.visible)
@@ -51,7 +51,7 @@ test.meta("testID", "authentication-001").meta({ type: "short", mode: "auth" })(
       .expect(Selector(".input-search input").visible)
       .notOk();
 
-    await t.navigateTo("/settings");
+    await t.navigateTo("/library/settings");
     await t
       .expect(page.nameInput.visible)
       .ok()
@@ -64,7 +64,7 @@ test.meta("testID", "authentication-002").meta({ type: "short", mode: "auth" })(
   "Common: Login with wrong credentials",
   async (t) => {
     await page.login("wrong", "photoprism");
-    await t.navigateTo("/favorites");
+    await t.navigateTo("/library/favorites");
 
     await t
       .expect(page.nameInput.visible)
@@ -73,7 +73,7 @@ test.meta("testID", "authentication-002").meta({ type: "short", mode: "auth" })(
       .notOk();
 
     await page.login("admin", "abcdefg");
-    await t.navigateTo("/archive");
+    await t.navigateTo("/library/archive");
 
     await t
       .expect(page.nameInput.visible)
@@ -86,13 +86,14 @@ test.meta("testID", "authentication-002").meta({ type: "short", mode: "auth" })(
 test.meta("testID", "authentication-003").meta({ type: "short", mode: "auth" })(
   "Common: Change password",
   async (t) => {
-    await t.navigateTo("/browse");
+    await t.navigateTo("/library/browse");
     await page.login("admin", "photoprism");
     await t.expect(Selector(".input-search input", { timeout: 15000 }).visible).ok();
     await menu.openPage("settings");
 
     await t
       .click(settings.accountTab)
+      .click(settings.changePasswordAction)
       .typeText(account.currentPassword, "wrong", { replace: true })
       .typeText(account.newPassword, "photoprism", { replace: true });
 
@@ -126,7 +127,7 @@ test.meta("testID", "authentication-003").meta({ type: "short", mode: "auth" })(
       await t.wait(7000);
     }
     await page.login("admin", "photoprism");
-    await t.navigateTo("/archive");
+    await t.navigateTo("/library/archive");
 
     await t
       .expect(page.nameInput.visible)
@@ -140,6 +141,7 @@ test.meta("testID", "authentication-003").meta({ type: "short", mode: "auth" })(
 
     await t
       .click(settings.accountTab)
+      .click(settings.changePasswordAction)
       .typeText(account.currentPassword, "photoprism123", { replace: true })
       .typeText(account.newPassword, "photoprism", { replace: true })
       .typeText(account.retypePassword, "photoprism", { replace: true })
