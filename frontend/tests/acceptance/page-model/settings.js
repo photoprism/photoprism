@@ -13,13 +13,13 @@ export default class Page {
     this.labelsCheckbox = Selector(".input-labels input");
     this.logsCheckbox = Selector(".input-logs input");
     this.shareCheckbox = Selector(".input-share input");
-    this.placesCheckbox = Selector(".input-places input");
+    this.placesCheckbox = Selector('input[aria-label="Places"]');
     this.privateCheckbox = Selector('input[aria-label="Private"]');
     this.peopleCheckbox = Selector(".input-people input");
     this.deleteCheckbox = Selector(".input-delete input");
     this.libraryCheckbox = Selector(".input-library input");
 
-    this.libraryTab = Selector("#tab-settings-library");
+    this.libraryTab = Selector("#tab-settings_media");
     this.reviewCheckbox = Selector(".input-review input");
     this.convertCheckbox = Selector(".input-convert input");
     this.estimatesCheckbox = Selector(".input-estimates input");
@@ -27,7 +27,7 @@ export default class Page {
     this.uuidStacksCheckbox = Selector(".input-stack-uuid input");
     this.nameStacksCheckbox = Selector(".input-stack-name input");
 
-    this.advancedTab = Selector("#tab-settings-advanced");
+    this.advancedTab = Selector("#tab-settings_advanced");
     this.debugCheckbox = Selector("label").withText("Debug Logs");
     this.backupCheckbox = Selector("label").withText("Disable Backups");
     this.exiftoolCheckbox = Selector("label").withText("Disable ExifTool");
@@ -35,6 +35,7 @@ export default class Page {
     this.tensorflowCheckbox = Selector("label").withText("Disable TensorFlow");
     this.readOnlyCheckbox = Selector("label").withText("Read-Only Mode");
 
-    this.accountTab = Selector("#tab-settings-account");
+    this.accountTab = Selector("#tab-settings_account");
+    this.changePasswordAction = Selector("button.action-change-password");
   }
 }
