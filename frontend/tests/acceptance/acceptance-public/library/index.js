@@ -28,7 +28,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
     const MomentCount = await album.getAlbumCount("all");
     await menu.openPage("calendar");
     if (t.browser.platform === "mobile") {
-      await t.navigateTo("/calendar?q=December%202013");
+      await t.navigateTo("/library/calendar?q=December%202013");
     } else {
       await toolbar.search("December 2013");
     }
@@ -37,7 +37,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
 
     await menu.openPage("folders");
     if (t.browser.platform === "mobile") {
-      await t.navigateTo("/folders?q=moment");
+      await t.navigateTo("/library/folders?q=moment");
     } else {
       await toolbar.search("Moment");
     }
@@ -46,7 +46,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
 
     await menu.openPage("states");
     if (t.browser.platform === "mobile") {
-      await t.navigateTo("/states?q=KwaZulu");
+      await t.navigateTo("/library/states?q=KwaZulu");
     } else {
       await toolbar.search("KwaZulu");
     }
@@ -98,7 +98,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
       await toolbar.triggerToolbarAction("reload");
     }
     if (t.browser.platform === "mobile") {
-      await t.navigateTo("/calendar?q=December%202013");
+      await t.navigateTo("/library/calendar?q=December%202013");
     } else {
       await toolbar.search("December 2013");
     }
@@ -112,7 +112,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
       await toolbar.triggerToolbarAction("reload");
     }
     if (t.browser.platform === "mobile") {
-      await t.navigateTo("/folders?q=moment");
+      await t.navigateTo("/library/folders?q=moment");
     } else {
       await toolbar.search("Moment");
     }
@@ -121,7 +121,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
 
     await menu.openPage("states");
     if (t.browser.platform === "mobile") {
-      await t.navigateTo("/states?q=KwaZulu");
+      await t.navigateTo("/library/states?q=KwaZulu");
     } else {
       await toolbar.search("KwaZulu");
     }
