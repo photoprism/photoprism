@@ -59,4 +59,4 @@ Download:
   MediaRaw: false
   MediaSidecar: false
 Templates:
-  Default: index.tmpl
+  Default: index.gohtml

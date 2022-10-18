@@ -23,7 +23,7 @@ ENV TF_CPP_MIN_LOG_LEVEL=2 \
     PHOTOPRISM_SITE_DESCRIPTION="AI-Powered Photos App for the Decentralized Web"
 
 # Copy assets
-COPY /docker/demo/index.tmpl /opt/photoprism/assets/templates
+COPY /docker/demo/index.gohtml /opt/photoprism/assets/templates
 
 # Download example photos
 RUN wget -qO- https://dl.photoprism.app/qa/demo.tar.gz | tar xvz -C /photoprism/originals

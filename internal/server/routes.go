@@ -1,57 +1,26 @@
 package server
 
 import (
-	"net/http"
-	"path/filepath"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
 )
 
+// registerRoutes configures the available web server routes.
 func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Enables automatic redirection if the current route cannot be matched but a
 	// handler for the path with (without) the trailing slash exists.
 	router.RedirectTrailingSlash = true
 
-	// Static favicon image.
-	router.StaticFile(conf.BaseUri("/favicon.ico"), filepath.Join(conf.ImgPath(), "favicon.ico"))
+	// Static assets and templates.
+	registerStaticRoutes(router, conf)
 
-	// Static assets like js, css and font files.
-	router.Static(conf.BaseUri(config.StaticUri), conf.StaticPath())
+	// Built-in WebDAV server.
+	registerWebDAVRoutes(router, conf)
 
-	// Serve custom static assets if dir exists.
-	if dir := conf.CustomStaticPath(); dir != "" {
-		router.Static(conf.BaseUri(config.CustomStaticUri), dir)
-	}
-
-	// PWA Manifest.
-	router.GET(conf.BaseUri("/manifest.json"), func(c *gin.Context) {
-		c.Header("Cache-Control", "no-store")
-		c.Header("Content-Type", "application/json")
-
-		clientConfig := conf.ClientPublic()
-		c.HTML(http.StatusOK, "manifest.json", gin.H{"config": clientConfig})
-	})
-
-	// PWA Service Worker.
-	router.GET(conf.BaseUri("/sw.js"), func(c *gin.Context) {
-		c.Header("Cache-Control", "no-store")
-		c.File(filepath.Join(conf.BuildPath(), "sw.js"))
-	})
-
-	// Rainbow Page.
-	router.GET(conf.BaseUri("/_rainbow"), func(c *gin.Context) {
-		clientConfig := conf.ClientPublic()
-		c.HTML(http.StatusOK, "rainbow.tmpl", gin.H{"config": clientConfig})
-	})
-
-	// Splash Screen.
-	router.GET(conf.BaseUri("/_splash"), func(c *gin.Context) {
-		clientConfig := conf.ClientPublic()
-		c.HTML(http.StatusOK, "splash.tmpl", gin.H{"config": clientConfig})
-	})
+	// Sharing routes start with "/s".
+	registerSharingRoutes(router, conf)
 
 	// JSON-REST API Version 1
 	v1 := router.Group(conf.BaseUri(config.ApiUri))
@@ -192,38 +161,4 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.Connect(v1)
 		api.WebSocket(v1)
 	}
-
-	// Configure link sharing.
-	s := router.Group(conf.BaseUri("/s"))
-	{
-		api.Shares(s)
-		api.SharePreview(s)
-	}
-
-	// WebDAV server for file management, sync and sharing.
-	if conf.DisableWebDAV() {
-		log.Info("webdav: server disabled")
-	} else {
-		WebDAV(conf.OriginalsPath(), router.Group(conf.BaseUri(WebDAVOriginals), BasicAuth()), conf)
-		log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVOriginals))
-
-		if conf.ImportPath() != "" {
-			WebDAV(conf.ImportPath(), router.Group(conf.BaseUri(WebDAVImport), BasicAuth()), conf)
-			log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVImport))
-		}
-	}
-
-	// User Interface.
-	router.GET(conf.BaseUri("/library/*path"), func(c *gin.Context) {
-		values := gin.H{
-			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
-			"config": conf.ClientPublic(),
-		}
-		c.HTML(http.StatusOK, conf.TemplateName(), values)
-	})
-
-	// Redirect to UI.
-	router.GET(conf.BaseUri("/"), func(c *gin.Context) {
-		c.Redirect(http.StatusTemporaryRedirect, conf.BaseUri("/library/login"))
-	})
 }

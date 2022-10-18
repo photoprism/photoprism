@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -24,7 +25,15 @@ func GetSession(router *gin.RouterGroup) {
 			return
 		}
 
-		sess := Session(id)
+		conf := get.Config()
+
+		// Skip authentication if app is running in public mode.
+		var sess *entity.Session
+		if conf.Public() {
+			sess = get.Session().Public()
+		} else {
+			sess = Session(id)
+		}
 
 		switch {
 		case sess == nil:

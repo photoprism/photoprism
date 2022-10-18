@@ -69,8 +69,8 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 
 		file := files[0]
 
-		// Uploaded images must be JPEGs with a maximum file size of 10 MB.
-		if file.Size > 10000000 {
+		// Uploaded images must be JPEGs with a maximum file size of 20 MB.
+		if file.Size > 20000000 {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "upload avatar", "file size exceeded"}, s.RefID)
 			Abort(c, http.StatusBadRequest, i18n.ErrFileTooLarge)
 			return

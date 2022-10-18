@@ -343,7 +343,7 @@ const clientConfig = {
       name: "file",
     },
     templates: {
-      default: "index.tmpl",
+      default: "index.gohtml",
     },
   },
   disable: {

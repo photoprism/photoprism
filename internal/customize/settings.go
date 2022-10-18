@@ -98,7 +98,7 @@ func NewSettings(theme, lang string) *Settings {
 		},
 		Download: NewDownloadSettings(),
 		Templates: TemplateSettings{
-			Default: "index.tmpl",
+			Default: "index.gohtml",
 		},
 	}
 }

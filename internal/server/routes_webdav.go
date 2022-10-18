@@ -18,6 +18,21 @@ import (
 const WebDAVOriginals = "/originals"
 const WebDAVImport = "/import"
 
+// registerWebDAVRoutes configures the built-in WebDAV server.
+func registerWebDAVRoutes(router *gin.Engine, conf *config.Config) {
+	if conf.DisableWebDAV() {
+		log.Info("webdav: server disabled")
+	} else {
+		WebDAV(conf.OriginalsPath(), router.Group(conf.BaseUri(WebDAVOriginals), BasicAuth()), conf)
+		log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVOriginals))
+
+		if conf.ImportPath() != "" {
+			WebDAV(conf.ImportPath(), router.Group(conf.BaseUri(WebDAVImport), BasicAuth()), conf)
+			log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVImport))
+		}
+	}
+}
+
 var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Handler) {
 	srv.ServeHTTP(c.Writer, c.Request)
 }

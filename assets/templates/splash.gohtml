@@ -4,22 +4,14 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0{{if not .config.Settings.UI.Zoom }}, maximum-scale=1.0, user-scalable=no{{end}}">
-
-  <title>{{ .config.SiteTitle }}</title>
-
-{{template "favicons.tmpl" .}}
-
+  <title>{{if and .config.SiteCaption .config.Sponsor }}{{ .config.SiteCaption }}{{else}}{{ .config.Name }}{{end}}</title>
+  {{template "favicons.gohtml" .}}
   <link rel="stylesheet" href="{{ .config.CssUri }}">
   <link rel="manifest" href="{{ .config.ManifestUri }}" crossorigin="use-credentials">
-
-  <script>
-    window.__CONFIG__ = {{ .config }};
-  </script>
 </head>
 <body class="{{ .config.Flags }} nojs">
 
-{{template "app.tmpl" .}}
+{{template "app.gohtml" .}}
 
-<script src="{{ .config.JsUri }}"></script>
 </body>
 </html>

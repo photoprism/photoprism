@@ -135,7 +135,7 @@ func (c *Config) TemplateFiles() []string {
 	return results
 }
 
-// TemplateExists checks if a template with the given name exists (e.g. index.tmpl).
+// TemplateExists checks if a template with the given name exists (e.g. index.gohtml).
 func (c *Config) TemplateExists(name string) bool {
 	if found := fs.FileExists(filepath.Join(c.TemplatesPath(), name)); found {
 		return true
@@ -146,7 +146,7 @@ func (c *Config) TemplateExists(name string) bool {
 	}
 }
 
-// TemplateName returns the name of the default template (e.g. index.tmpl).
+// TemplateName returns the name of the default template (e.g. index.gohtml).
 func (c *Config) TemplateName() string {
 	if s := c.Settings(); s != nil {
 		if c.TemplateExists(s.Templates.Default) {
@@ -154,7 +154,7 @@ func (c *Config) TemplateName() string {
 		}
 	}
 
-	return "index.tmpl"
+	return "index.gohtml"
 }
 
 // StaticPath returns the static assets' path.

@@ -245,13 +245,12 @@ func (m *Session) SetUser(u *User) *Session {
 		return m
 	}
 
+	// Update user.
 	m.user = u
+	m.UserUID = u.UserUID
+	m.UserName = u.UserName
 
-	if u.UserUID != "" {
-		m.UserUID = u.UserUID
-		m.UserName = u.UserName
-	}
-
+	// Update tokens.
 	m.SetPreviewToken(u.PreviewToken)
 	m.SetDownloadToken(u.DownloadToken)
 
