@@ -97,7 +97,7 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
 
     await t.expect(FolderCountAnonymous).eql(1);
 
-    await t.navigateTo("http://localhost:2343/browse");
+    await t.navigateTo("http://localhost:2343/library/browse");
     await album.checkAlbumVisibility("aqmxlts2b2rx38wl", true);
     await album.checkAlbumVisibility("aqmxlt22ilujuxux", false);
 
@@ -143,9 +143,10 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
       .expect(toolbar.toolbarSecondTitle.withText("Christmas").visible)
       .notOk()
       .expect(toolbar.toolbarSecondTitle.withText("Albums").visible)
-      .notOk()
-      .expect(Selector(".input-name input").visible)
-      .ok();
+      .notOk();
+    //TODO check for error page once implemented
+    //.expect(Selector(".input-name input").visible)
+    //.ok();
   }
 );
 
@@ -194,7 +195,7 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })(
       .expect(Selector(`td button.input-favorite`).visible)
       .notOk()
       .click(Selector("div.v-toolbar__title a").withText("Albums"))
-      .navigateTo("/states");
+      .navigateTo("/library/states");
 
     const AlbumUid = await album.getNthAlbumUid("all", 0);
     await album.triggerHoverAction("uid", AlbumUid, "select");
