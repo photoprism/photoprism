@@ -9,8 +9,8 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -63,7 +63,7 @@ func purgeAction(ctx *cli.Context) error {
 		log.Infof("config: read-only mode enabled")
 	}
 
-	w := service.Purge()
+	w := get.Purge()
 
 	opt := photoprism.PurgeOptions{
 		Path: subPath,

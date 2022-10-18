@@ -10,17 +10,17 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // SavePhotoAsYaml saves photo data as YAML file.
 func SavePhotoAsYaml(p entity.Photo) {
-	c := service.Config()
+	c := get.Config()
 
 	// Write YAML sidecar file (optional).
 	if !c.BackupYaml() {

@@ -25,9 +25,9 @@ type FeatureSettings struct {
 	Reactions bool `json:"reactions" yaml:"Reactions"`
 	Review    bool `json:"review" yaml:"Review"`
 	Search    bool `json:"search" yaml:"Search"`
+	Services  bool `json:"services" yaml:"Services"`
 	Settings  bool `json:"settings" yaml:"Settings"`
 	Share     bool `json:"share" yaml:"Share"`
-	Sync      bool `json:"sync" yaml:"Sync"`
 	Upload    bool `json:"upload" yaml:"Upload"`
 	Videos    bool `json:"videos" yaml:"Videos"`
 }

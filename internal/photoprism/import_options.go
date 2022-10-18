@@ -5,6 +5,7 @@ type ImportOptions struct {
 	Albums                 []string
 	Path                   string
 	Move                   bool
+	NonBlocking            bool
 	UserUID                string
 	DestFolder             string
 	RemoveDotFiles         bool
@@ -17,6 +18,7 @@ func ImportOptionsCopy(importPath, destFolder string) ImportOptions {
 	result := ImportOptions{
 		Path:                   importPath,
 		Move:                   false,
+		NonBlocking:            false,
 		DestFolder:             destFolder,
 		RemoveDotFiles:         false,
 		RemoveExistingFiles:    false,
@@ -31,6 +33,22 @@ func ImportOptionsMove(importPath, destFolder string) ImportOptions {
 	result := ImportOptions{
 		Path:                   importPath,
 		Move:                   true,
+		NonBlocking:            false,
+		DestFolder:             destFolder,
+		RemoveDotFiles:         true,
+		RemoveExistingFiles:    true,
+		RemoveEmptyDirectories: true,
+	}
+
+	return result
+}
+
+// ImportOptionsUpload returns options for importing user uploads.
+func ImportOptionsUpload(uploadPath, destFolder string) ImportOptions {
+	result := ImportOptions{
+		Path:                   uploadPath,
+		Move:                   true,
+		NonBlocking:            true,
 		DestFolder:             destFolder,
 		RemoveDotFiles:         true,
 		RemoveExistingFiles:    true,

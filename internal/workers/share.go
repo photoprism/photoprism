@@ -50,7 +50,7 @@ func (w *Share) Start() (err error) {
 
 	defer mutex.ShareWorker.Stop()
 
-	f := form.SearchAccounts{
+	f := form.SearchServices{
 		Share: true,
 	}
 
@@ -128,7 +128,7 @@ func (w *Share) Start() (err error) {
 				file.Status = entity.FileShareShared
 			}
 
-			// Failed too often?
+			// RunFailed too often?
 			if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 				file.Status = entity.FileShareError
 			}

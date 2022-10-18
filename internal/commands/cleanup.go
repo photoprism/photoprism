@@ -7,8 +7,8 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // CleanUpCommand registers the cleanup command.
@@ -46,7 +46,7 @@ func cleanUpAction(ctx *cli.Context) error {
 		log.Infof("config: read-only mode enabled")
 	}
 
-	w := service.CleanUp()
+	w := get.CleanUp()
 
 	opt := photoprism.CleanUpOptions{
 		Dry: ctx.Bool("dry"),

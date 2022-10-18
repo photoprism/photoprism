@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -23,14 +23,14 @@ func SessionID(c *gin.Context) (sessId string) {
 // Session finds the client session for the given ID or returns nil otherwise.
 func Session(id string) *entity.Session {
 	// Return default session when public mode is enabled.
-	if service.Config().Public() {
-		return service.Session().Public()
+	if get.Config().Public() {
+		return get.Session().Public()
 	} else if id == "" {
 		return nil
 	}
 
 	// Find session or otherwise return nil.
-	s, err := service.Session().Get(id)
+	s, err := get.Session().Get(id)
 
 	if err != nil {
 		return nil

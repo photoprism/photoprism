@@ -141,6 +141,11 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "users-path",
+			Usage:  "custom users storage `PATH` *optional*",
+			EnvVar: "PHOTOPRISM_USERS_PATH",
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "backup-path, ba",
 			Usage:  "custom backup `PATH` for index backup files *optional*",
 			EnvVar: "PHOTOPRISM_BACKUP_PATH",

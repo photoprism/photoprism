@@ -11,7 +11,7 @@ func FileShares(accountId uint, status string) (result []entity.FileShare, err e
 	s := Db().Where(&entity.FileShare{})
 
 	if accountId > 0 {
-		s = s.Where("account_id = ?", accountId)
+		s = s.Where("service_id = ?", accountId)
 	}
 
 	if status != "" {
@@ -31,7 +31,7 @@ func FileShares(accountId uint, status string) (result []entity.FileShare, err e
 }
 
 // ExpiredFileShares returns up to 100 expired file shares for a given account.
-func ExpiredFileShares(account entity.Account) (result []entity.FileShare, err error) {
+func ExpiredFileShares(account entity.Service) (result []entity.FileShare, err error) {
 	if account.ShareExpires <= 0 {
 		return result, nil
 	}
@@ -40,7 +40,7 @@ func ExpiredFileShares(account entity.Account) (result []entity.FileShare, err e
 
 	exp := time.Now().Add(time.Duration(-1*account.ShareExpires) * time.Second)
 
-	s = s.Where("account_id = ?", account.ID)
+	s = s.Where("service_id = ?", account.ID)
 	s = s.Where("status = ?", entity.FileShareShared)
 	s = s.Where("updated_at < ?", exp)
 

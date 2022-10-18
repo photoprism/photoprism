@@ -3,6 +3,8 @@ package commands
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -17,7 +19,7 @@ import (
 var MigrationsStatusCommand = cli.Command{
 	Name:      "ls",
 	Aliases:   []string{"status", "show"},
-	Usage:     "Lists the status of schema migrations",
+	Usage:     "Displays the status of schema migrations",
 	ArgsUsage: "[migrations...]",
 	Flags:     report.CliFlags,
 	Action:    migrationsStatusAction,
@@ -81,13 +83,19 @@ func migrationsStatusAction(ctx *cli.Context) error {
 	}
 
 	// Report columns.
-	cols := []string{"ID", "Dialect", "Started At", "Finished At", "Status"}
+	cols := []string{"ID", "Dialect", "Stage", "Started At", "Finished At", "Status"}
 
 	// Report rows.
 	rows := make([][]string, 0, len(status))
 
 	for _, m := range status {
-		var started, finished, info string
+		var stage, started, finished, info string
+
+		if m.Stage == "" {
+			stage = "main"
+		} else {
+			stage = m.Stage
+		}
 
 		if m.StartedAt.IsZero() {
 			started = "-"
@@ -113,7 +121,7 @@ func migrationsStatusAction(ctx *cli.Context) error {
 			info = "Running?"
 		}
 
-		rows = append(rows, []string{m.ID, m.Dialect, started, finished, info})
+		rows = append(rows, []string{m.ID, m.Dialect, stage, started, finished, info})
 	}
 
 	// Display report.
@@ -130,6 +138,10 @@ func migrationsStatusAction(ctx *cli.Context) error {
 
 // migrationsRunAction executes database schema migrations.
 func migrationsRunAction(ctx *cli.Context) error {
+	if ctx.Args().First() == "ls" {
+		return fmt.Errorf("run '%s migrations ls' to display the status of schema migrations", filepath.Base(os.Args[0]))
+	}
+
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)

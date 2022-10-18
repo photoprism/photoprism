@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/react"
 )
@@ -31,7 +31,7 @@ func LikePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		if service.Config().Experimental() && acl.Resources.Allow(acl.ResourcePhotos, s.User().AclRole(), acl.ActionReact) {
+		if get.Config().Experimental() && acl.Resources.Allow(acl.ResourcePhotos, s.User().AclRole(), acl.ActionReact) {
 			logWarn("react", m.React(s.User(), react.Find("love")))
 		}
 
@@ -71,7 +71,7 @@ func DislikePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		if service.Config().Experimental() && acl.Resources.Allow(acl.ResourcePhotos, s.User().AclRole(), acl.ActionReact) {
+		if get.Config().Experimental() && acl.Resources.Allow(acl.ResourcePhotos, s.User().AclRole(), acl.ActionReact) {
 			logWarn("react", m.UnReact(s.User()))
 		}
 

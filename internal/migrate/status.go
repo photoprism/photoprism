@@ -13,16 +13,22 @@ func Status(db *gorm.DB, ids []string) (status Migrations, err error) {
 	status = Migrations{}
 
 	if db == nil {
-		return status, fmt.Errorf("migrate: database connection required")
+		return status, fmt.Errorf("migrate: no database connection")
 	}
 
+	// Get SQL dialect name.
 	name := db.Dialect().GetName()
 
 	if name == "" {
-		return status, fmt.Errorf("migrate: database has no dialect name")
+		return status, fmt.Errorf("migrate: failed to determine sql dialect")
 	}
 
-	if err := db.AutoMigrate(&Migration{}).Error; err != nil {
+	// Make sure a "migrations" table exists.
+	once[name].Do(func() {
+		err = db.AutoMigrate(&Migration{}).Error
+	})
+
+	if err != nil {
 		return status, fmt.Errorf("migrate: %s (create migrations table)", err)
 	}
 
@@ -33,7 +39,7 @@ func Status(db *gorm.DB, ids []string) (status Migrations, err error) {
 	}
 
 	// Find previously executed migrations.
-	executed := Existing(db)
+	executed := Existing(db, "")
 
 	if prev := len(executed); prev == 0 {
 		log.Infof("migrate: no previously executed migrations")
@@ -48,8 +54,9 @@ func Status(db *gorm.DB, ids []string) (status Migrations, err error) {
 		}
 
 		// Already executed?
-		if done, ok := executed[migration.ID]; ok {
+		if done, known := executed[migration.ID]; known {
 			migration.Dialect = done.Dialect
+			migration.Stage = done.Stage
 			migration.Error = done.Error
 			migration.Source = done.Source
 			migration.StartedAt = done.StartedAt

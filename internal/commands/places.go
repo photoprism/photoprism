@@ -9,8 +9,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // PlacesCommand registers the places subcommands.
@@ -68,7 +68,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	// Run places worker.
-	if w := service.Places(); w != nil {
+	if w := get.Places(); w != nil {
 		_, err := w.Start()
 
 		if err != nil {
@@ -77,7 +77,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 	}
 
 	// Run moments worker.
-	if w := service.Moments(); w != nil {
+	if w := get.Moments(); w != nil {
 		err := w.Start()
 
 		if err != nil {

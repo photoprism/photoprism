@@ -77,3 +77,19 @@
     padding: 0;
     margin: 0;
 }
+
+/* Account Page */
+
+.user-avatar {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    max-width: 150px;
+    max-height: 150px;
+    overflow: hidden;
+}

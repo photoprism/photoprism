@@ -15,10 +15,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -38,7 +38,7 @@ func StartImport(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		if conf.ReadOnly() || !conf.Settings().Features.Import {
 			AbortFeatureDisabled(c)
@@ -76,7 +76,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		importPath = path.Join(importPath, srcFolder)
 
-		imp := service.Import()
+		imp := get.Import()
 
 		RemoveFromFolderCache(entity.RootImport)
 
@@ -125,7 +125,7 @@ func StartImport(router *gin.RouterGroup) {
 			log.Infof("import: no new files found to import", clean.Log(importPath))
 		} else {
 			log.Infof("import: imported %s", english.Plural(n, "file", "files"))
-			if moments := service.Moments(); moments == nil {
+			if moments := get.Moments(); moments == nil {
 				log.Warnf("import: moments service not set - possible bug")
 			} else if err := moments.Start(); err != nil {
 				log.Warnf("moments: %s", err)
@@ -168,14 +168,14 @@ func CancelImport(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		if conf.ReadOnly() || !conf.Settings().Features.Import {
 			AbortFeatureDisabled(c)
 			return
 		}
 
-		imp := service.Import()
+		imp := get.Import()
 
 		imp.Cancel()
 

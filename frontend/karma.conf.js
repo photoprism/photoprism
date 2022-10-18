@@ -135,7 +135,6 @@ module.exports = (config) => {
 
     webpack: {
       mode: "development",
-
       resolve: {
         fallback: {
           util: require.resolve("util"),

@@ -18,7 +18,7 @@ func TestUTC(t *testing.T) {
 			t.Error("offset should be 0")
 		}
 	})
-	t.Run("Gorm", func(t *testing.T) {
+	t.Run("RunGorm", func(t *testing.T) {
 		utc := UTC()
 		utcGorm := gorm.NowFunc()
 

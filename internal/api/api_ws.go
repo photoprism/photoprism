@@ -14,7 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -57,7 +57,7 @@ func WebSocket(router *gin.RouterGroup) {
 		return
 	}
 
-	conf := service.Config()
+	conf := get.Config()
 
 	if conf == nil {
 		return

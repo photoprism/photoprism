@@ -1,7 +1,6 @@
 package migrate
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/list"
@@ -17,31 +16,47 @@ type Migrations []Migration
 type MigrationMap map[string]Migration
 
 // Existing finds and returns previously executed database schema migrations.
-func Existing(db *gorm.DB) MigrationMap {
-	result := make(MigrationMap)
+func Existing(db *gorm.DB, stage string) MigrationMap {
+	var err error
 
-	stmt := db.Model(Migration{})
-	stmt = stmt.Select("id, dialect, error, source, started_at, finished_at")
-
-	rows, err := stmt.Rows()
-
-	if err != nil {
-		log.Warnf("migrate: %s (find existing)", err)
-		return result
+	if db == nil {
+		return make(MigrationMap)
 	}
 
-	defer func(rows *sql.Rows) {
-		err = rows.Close()
-	}(rows)
+	// Get SQL dialect name.
+	name := db.Dialect().GetName()
 
-	for rows.Next() {
-		m := Migration{}
+	if name == "" {
+		return make(MigrationMap)
+	}
 
-		if err = rows.Scan(&m.ID, &m.Dialect, &m.Error, &m.Source, &m.StartedAt, &m.FinishedAt); err != nil {
-			log.Warnf("migrate: %s (scan existing)", err)
-			return result
-		}
+	// Make sure a "migrations" table exists.
+	once[name].Do(func() {
+		err = db.AutoMigrate(&Migration{}).Error
+	})
 
+	if err != nil {
+		return make(MigrationMap)
+	}
+
+	found := Migrations{}
+
+	stmt := db
+
+	if stage == StageMain {
+		stmt = stmt.Where("stage = ? OR stage = '' OR stage IS NULL", stage)
+	} else if stage != "" {
+		stmt = stmt.Where("stage = ?", stage)
+	}
+
+	if err = stmt.Find(&found).Error; err != nil {
+		log.Warnf("migrate: %s (find existing)", err)
+		return make(MigrationMap)
+	}
+
+	result := make(MigrationMap, len(found))
+
+	for _, m := range found {
 		result[m.ID] = m
 	}
 
@@ -49,30 +64,39 @@ func Existing(db *gorm.DB) MigrationMap {
 }
 
 // Start runs all migrations that haven't been executed yet.
-func (m *Migrations) Start(db *gorm.DB, runFailed bool, ids []string) {
+func (m *Migrations) Start(db *gorm.DB, opt Options) {
+	if db == nil {
+		return
+	}
+
 	// Find previously executed migrations.
-	executed := Existing(db)
+	executed := Existing(db, opt.StageName())
 
 	if prev := len(executed); prev == 0 {
-		log.Infof("migrate: no previously executed migrations")
+		log.Infof("migrate: no previously executed migrations [%s]", opt.StageName())
 	} else {
+		log.Infof("migrate: executing %s migrations", opt.StageName())
 		log.Debugf("migrate: found %s", english.Plural(len(executed), "previous migration", "previous migrations"))
 	}
 
 	for _, migration := range *m {
+		if migration.Skip(opt) {
+			continue
+		}
+
 		start := time.Now()
 		migration.StartedAt = start.UTC().Truncate(time.Second)
 
 		// Excluded?
-		if list.Excludes(ids, migration.ID) {
-			log.Debugf("migrate: %s skipped", migration.ID)
+		if list.Excludes(opt.Migrations, migration.ID) {
+			log.Tracef("migrate: %s skipped", migration.ID)
 			continue
 		}
 
 		// Already executed?
 		if done, ok := executed[migration.ID]; ok {
 			// Repeat?
-			if !done.Repeat(runFailed) && !list.Contains(ids, migration.ID) {
+			if !done.Repeat(opt.RunFailed) && !list.Contains(opt.Migrations, migration.ID) {
 				log.Debugf("migrate: %s skipped", migration.ID)
 				continue
 			}

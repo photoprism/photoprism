@@ -8,8 +8,8 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // GetSettings returns the user app settings as JSON.
@@ -24,7 +24,7 @@ func GetSettings(router *gin.RouterGroup) {
 			return
 		}
 
-		settings := service.Config().SessionSettings(s)
+		settings := get.Config().SessionSettings(s)
 
 		if settings == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrNotFound)
@@ -47,7 +47,7 @@ func SaveSettings(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		if conf.DisableSettings() {
 			AbortForbidden(c)
@@ -101,6 +101,6 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		event.InfoMsg(i18n.MsgSettingsSaved)
 
-		c.JSON(http.StatusOK, service.Config().SessionSettings(s))
+		c.JSON(http.StatusOK, get.Config().SessionSettings(s))
 	})
 }

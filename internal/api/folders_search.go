@@ -12,8 +12,8 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -30,7 +30,7 @@ type FoldersResponse struct {
 //
 // GET /api/v1/folders/originals
 func SearchFoldersOriginals(router *gin.RouterGroup) {
-	conf := service.Config()
+	conf := get.Config()
 	SearchFolders(router, "originals", entity.RootOriginals, conf.OriginalsPath())
 }
 
@@ -38,7 +38,7 @@ func SearchFoldersOriginals(router *gin.RouterGroup) {
 //
 // GET /api/v1/folders/import
 func SearchFoldersImport(router *gin.RouterGroup) {
-	conf := service.Config()
+	conf := get.Config()
 	SearchFolders(router, "import", entity.RootImport, conf.ImportPath())
 }
 
@@ -62,7 +62,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			return
 		}
 
-		cache := service.FolderCache()
+		cache := get.FolderCache()
 		recursive := f.Recursive
 		listFiles := f.Files
 		uncached := listFiles || f.Uncached

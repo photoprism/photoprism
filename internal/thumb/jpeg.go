@@ -21,7 +21,7 @@ func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, er
 	// Open source image.
 	img, err = imaging.Open(srcFilename)
 
-	// Failed?
+	// RunFailed?
 	if err != nil {
 		log.Errorf("jpeg: cannot open source image %s", clean.Log(filepath.Base(srcFilename)))
 		return img, err

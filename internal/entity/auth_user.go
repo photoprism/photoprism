@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ulule/deepcopier"
+
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -66,8 +68,8 @@ type User struct {
 	ResetToken    string        `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
 	PreviewToken  string        `gorm:"type:VARBINARY(64);column:preview_token;" json:"-" yaml:"-"`
 	DownloadToken string        `gorm:"type:VARBINARY(64);column:download_token;" json:"-" yaml:"-"`
-	Thumb         string        `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb,omitempty" yaml:"Thumb,omitempty"`
-	ThumbSrc      string        `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	Thumb         string        `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc      string        `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc" yaml:"ThumbSrc,omitempty"`
 	RefID         string        `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
 	CreatedAt     time.Time     `json:"CreatedAt" yaml:"-"`
 	UpdatedAt     time.Time     `json:"UpdatedAt" yaml:"-"`
@@ -763,4 +765,43 @@ func (m *User) RedeemToken(token string) (n int) {
 	}
 
 	return n
+}
+
+// SaveForm updates the entity using form data and stores it in the database.
+func (m *User) SaveForm(f form.User) error {
+	if m.UserName == "" || m.ID <= 0 {
+		return fmt.Errorf("system users cannot be updated")
+	}
+
+	if err := deepcopier.Copy(m.UserDetails).From(f.UserDetails); err != nil {
+		return err
+	}
+
+	if n := clean.Name(f.DisplayName); n != "" && n != m.DisplayName {
+		m.DisplayName = n
+	}
+
+	if email := clean.Email(f.UserEmail); email != "" && email != m.UserEmail {
+		m.UserEmail = email
+		m.VerifiedAt = nil
+		m.VerifyToken = GenerateToken()
+	}
+
+	return m.Save()
+}
+
+// SetAvatar updates the user avatar image.
+func (m *User) SetAvatar(thumb, thumbSrc string) error {
+	if m.UserName == "" || m.ID <= 0 {
+		return fmt.Errorf("system user avatars cannot be changed")
+	}
+
+	if SrcPriority[thumbSrc] < SrcPriority[m.ThumbSrc] && m.Thumb != "" {
+		return fmt.Errorf("no permission to change avatar")
+	}
+
+	m.Thumb = thumb
+	m.ThumbSrc = thumbSrc
+
+	return m.Updates(Values{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
 }

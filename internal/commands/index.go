@@ -9,8 +9,8 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -70,14 +70,14 @@ func indexAction(ctx *cli.Context) error {
 
 	var indexed fs.Done
 
-	if w := service.Index(); w != nil {
+	if w := get.Index(); w != nil {
 		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"))
 
 		indexed = w.Start(opt)
 	}
 
-	if w := service.Purge(); w != nil {
+	if w := get.Purge(); w != nil {
 		purgeStart := time.Now()
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
@@ -93,7 +93,7 @@ func indexAction(ctx *cli.Context) error {
 
 	if ctx.Bool("cleanup") {
 		cleanupStart := time.Now()
-		w := service.CleanUp()
+		w := get.CleanUp()
 
 		opt := photoprism.CleanUpOptions{
 			Dry: false,

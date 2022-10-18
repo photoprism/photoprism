@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -18,7 +18,7 @@ import (
 // GET /s/:token/...
 func Shares(router *gin.RouterGroup) {
 	router.GET("/:token", func(c *gin.Context) {
-		conf := service.Config()
+		conf := get.Config()
 
 		token := clean.Token(c.Param("token"))
 		links := entity.FindValidLinks(token, "")
@@ -32,12 +32,12 @@ func Shares(router *gin.RouterGroup) {
 		clientConfig := conf.ClientShare()
 		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s", clientConfig.SiteUrl, token)
 
-		uri := conf.BaseUri("/albums")
+		uri := conf.BaseUri("/library/albums")
 		c.HTML(http.StatusOK, "share.tmpl", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})
 
 	router.GET("/:token/:shared", func(c *gin.Context) {
-		conf := service.Config()
+		conf := get.Config()
 
 		token := clean.Token(c.Param("token"))
 		shared := clean.Token(c.Param("shared"))
@@ -63,7 +63,7 @@ func Shares(router *gin.RouterGroup) {
 			}
 		}
 
-		uri := conf.BaseUri(path.Join("/albums", uid, shared))
+		uri := conf.BaseUri(path.Join("/library/albums", uid, shared))
 
 		c.HTML(http.StatusOK, "share.tmpl", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})

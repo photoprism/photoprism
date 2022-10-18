@@ -9,7 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 )
 
 func TestMain(m *testing.M) {
@@ -18,7 +18,7 @@ func TestMain(m *testing.M) {
 	event.AuditLog = log
 
 	c := config.NewTestConfig("commands")
-	service.SetConfig(c)
+	get.SetConfig(c)
 
 	InitConfig = func(ctx *cli.Context) (*config.Config, error) {
 		return c, c.Init()

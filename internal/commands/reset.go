@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/migrate"
+
 	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -175,7 +177,7 @@ func resetIndexDb(c *config.Config) {
 	tables.Drop(c.Db())
 
 	log.Infoln("restoring default schema")
-	entity.InitDb(true, false, nil)
+	entity.InitDb(migrate.Opt(false, nil))
 
 	// Reset admin account?
 	if c.AdminPassword() == "" {

@@ -12,7 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 )
 
 func TestMain(m *testing.M) {
@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 	event.AuditLog = log
 
 	c := config.TestConfig()
-	service.SetConfig(c)
+	get.SetConfig(c)
 
 	code := m.Run()
 
@@ -37,7 +37,7 @@ func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config
 	app = gin.New()
 	router = app.Group("/api/v1")
 
-	return app, router, service.Config()
+	return app, router, get.Config()
 }
 
 // Executes an API request with an empty request body.

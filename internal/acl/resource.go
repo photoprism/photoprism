@@ -18,7 +18,7 @@ const (
 	ResourceSettings  Resource = "settings"
 	ResourcePassword  Resource = "password"
 	ResourceUsers     Resource = "users"
-	ResourceAccounts  Resource = "accounts"
+	ResourceServices  Resource = "services"
 	ResourceFiles     Resource = "files"
 	ResourceFolders   Resource = "folders"
 	ResourceShares    Resource = "shares"

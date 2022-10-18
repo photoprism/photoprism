@@ -95,8 +95,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.Equal(t, adminFeatures, f)
 
 		expected := customize.FeatureSettings{
-			Account:   false,
-			Advanced:  false,
+			Account:   true,
 			Albums:    true,
 			Archive:   true,
 			Delete:    false,
@@ -120,7 +119,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Search:    true,
 			Settings:  true,
 			Share:     true,
-			Sync:      true,
+			Services:  true,
 			Upload:    true,
 			Videos:    true,
 		}
@@ -135,7 +134,6 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 
 		expected := customize.FeatureSettings{
 			Account:   false,
-			Advanced:  false,
 			Albums:    true,
 			Archive:   false,
 			Delete:    false,
@@ -159,7 +157,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Search:    false,
 			Settings:  false,
 			Share:     false,
-			Sync:      false,
+			Services:  false,
 			Upload:    false,
 			Videos:    false,
 		}
@@ -180,10 +178,9 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
 		assert.False(t, f.Private)
-		assert.False(t, f.Advanced)
 		assert.False(t, f.Upload)
 		assert.False(t, f.Download)
-		assert.False(t, f.Sync)
+		assert.False(t, f.Services)
 		assert.False(t, f.Delete)
 		assert.False(t, f.Import)
 		assert.False(t, f.Library)
@@ -223,10 +220,9 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
 		assert.True(t, f.Private)
-		assert.False(t, f.Advanced)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
-		assert.True(t, f.Sync)
+		assert.True(t, f.Services)
 		assert.False(t, f.Delete)
 		assert.True(t, f.Import)
 		assert.True(t, f.Library)
@@ -255,10 +251,9 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
 		assert.False(t, f.Private)
-		assert.False(t, f.Advanced)
 		assert.False(t, f.Upload)
 		assert.True(t, f.Download)
-		assert.False(t, f.Sync)
+		assert.False(t, f.Services)
 		assert.False(t, f.Delete)
 		assert.False(t, f.Import)
 		assert.False(t, f.Library)
@@ -288,10 +283,9 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
 		assert.False(t, f.Private)
-		assert.False(t, f.Advanced)
 		assert.False(t, f.Upload)
 		assert.False(t, f.Download)
-		assert.False(t, f.Sync)
+		assert.False(t, f.Services)
 		assert.False(t, f.Delete)
 		assert.False(t, f.Import)
 		assert.False(t, f.Library)
@@ -317,10 +311,9 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
 		assert.True(t, f.Private)
-		assert.False(t, f.Advanced)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
-		assert.True(t, f.Sync)
+		assert.True(t, f.Services)
 		assert.False(t, f.Delete)
 		assert.True(t, f.Import)
 		assert.True(t, f.Library)

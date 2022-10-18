@@ -8,9 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/crop"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -35,7 +35,7 @@ func GetThumb(router *gin.RouterGroup) {
 		logPrefix := "thumb"
 
 		start := time.Now()
-		conf := service.Config()
+		conf := get.Config()
 		download := c.Query("download") != ""
 		fileHash, cropArea := crop.ParseThumb(clean.Token(c.Param("thumb")))
 
@@ -93,7 +93,7 @@ func GetThumb(router *gin.RouterGroup) {
 			}
 		}
 
-		cache := service.ThumbCache()
+		cache := get.ThumbCache()
 		cacheKey := CacheKey("thumbs", fileHash, string(sizeName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
@@ -196,7 +196,7 @@ func GetThumb(router *gin.RouterGroup) {
 			thumbName, err = size.FromCache(fileName, f.FileHash, conf.ThumbCachePath())
 		}
 
-		// Failed?
+		// RunFailed?
 		if err != nil {
 			log.Errorf("%s: %s", logPrefix, err)
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
