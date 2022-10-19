@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/customize"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
@@ -49,6 +50,7 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
+		// Settings disabled?
 		if conf.DisableSettings() {
 			AbortForbidden(c)
 			return
@@ -71,6 +73,8 @@ func SaveSettings(router *gin.RouterGroup) {
 				return
 			}
 
+			// Flush session cache and update client config.
+			entity.FlushSessionCache()
 			UpdateClientConfig()
 		} else {
 			// Apply to user preferences and keep current values if unspecified.
@@ -99,8 +103,10 @@ func SaveSettings(router *gin.RouterGroup) {
 			}
 		}
 
+		// Show info message.
 		event.InfoMsg(i18n.MsgSettingsSaved)
 
+		// Return updated user settings.
 		c.JSON(http.StatusOK, get.Config().SessionSettings(s))
 	})
 }
