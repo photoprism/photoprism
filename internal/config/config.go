@@ -382,10 +382,10 @@ func (c *Config) StaticUri() string {
 	return c.CdnUrl(c.BaseUri(StaticUri))
 }
 
-// SiteUrl returns the public server URL (default is "http://localhost:2342/").
+// SiteUrl returns the public server URL (default is "https://photoprism.local:2342/").
 func (c *Config) SiteUrl() string {
 	if c.options.SiteUrl == "" {
-		return "http://localhost:2342/"
+		return "https://photoprism.local:2342/"
 	}
 
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"

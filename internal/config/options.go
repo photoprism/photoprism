@@ -192,6 +192,7 @@ func NewOptions(ctx *cli.Context) *Options {
 func (c *Options) expandFilenames() {
 	c.ConfigPath = fs.Abs(c.ConfigPath)
 	c.StoragePath = fs.Abs(c.StoragePath)
+	c.UsersPath = fs.Abs(c.UsersPath)
 	c.BackupPath = fs.Abs(c.BackupPath)
 	c.AssetsPath = fs.Abs(c.AssetsPath)
 	c.CachePath = fs.Abs(c.CachePath)

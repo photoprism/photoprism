@@ -59,19 +59,11 @@ func (c *Config) TLSKey() string {
 
 // TLS returns the HTTPS certificate and private key file name.
 func (c *Config) TLS() (publicCert, privateKey string) {
-	privateKey = c.TLSKey()
-
-	if privateKey == "" {
+	if c.DisableTLS() {
 		return "", ""
 	}
 
-	publicCert = c.TLSCert()
-
-	if publicCert == "" {
-		return "", ""
-	}
-
-	return publicCert, privateKey
+	return c.TLSCert(), c.TLSKey()
 }
 
 // DisableTLS checks if HTTPS should be disabled.

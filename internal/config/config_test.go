@@ -433,7 +433,7 @@ func TestConfig_ContentUri(t *testing.T) {
 func TestConfig_SiteUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
+	assert.Equal(t, "https://photoprism.local:2342/", c.SiteUrl())
 	c.options.SiteUrl = "http://superhost:2342/"
 	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
 	c.options.SiteUrl = "http://superhost"
@@ -443,20 +443,20 @@ func TestConfig_SiteUrl(t *testing.T) {
 func TestConfig_SiteDomain(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "localhost", c.SiteDomain())
+	assert.Equal(t, "photoprism.local", c.SiteDomain())
 	c.options.SiteUrl = "https://foo.bar.com:2342/"
 	assert.Equal(t, "foo.bar.com", c.SiteDomain())
 	c.options.SiteUrl = ""
-	assert.Equal(t, "localhost", c.SiteDomain())
+	assert.Equal(t, "photoprism.local", c.SiteDomain())
 }
 
 func TestConfig_SitePreview(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "http://localhost:2342/static/img/preview.jpg", c.SitePreview())
+	assert.Equal(t, "https://photoprism.local:2342/static/img/preview.jpg", c.SitePreview())
 	c.options.SitePreview = "http://preview.jpg"
 	assert.Equal(t, "http://preview.jpg", c.SitePreview())
 	c.options.SitePreview = "preview123.jpg"
-	assert.Equal(t, "http://localhost:2342/preview123.jpg", c.SitePreview())
+	assert.Equal(t, "https://photoprism.local:2342/preview123.jpg", c.SitePreview())
 }
 
 func TestConfig_SiteTitle(t *testing.T) {

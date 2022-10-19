@@ -117,7 +117,6 @@ func FindUser(find User) *User {
 
 	// Find matching record.
 	if err := stmt.First(m).Error; err != nil {
-		event.AuditErr([]string{"user", "not found", "%s"}, err)
 		return nil
 	}
 

@@ -82,7 +82,7 @@ func Start(ctx context.Context, conf *config.Config) {
 		log.Infof("server: starting in auto tls mode on %s [%s]", server.Addr, time.Since(start))
 		go StartAutoTLS(server, tlsManager, conf)
 	} else if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
-		log.Infof("server: starting in manual tls mode")
+		log.Infof("server: starting in tls mode")
 		server = &http.Server{
 			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 			Handler: router,
