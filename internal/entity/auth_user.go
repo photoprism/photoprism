@@ -8,8 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	"github.com/ulule/deepcopier"
 
 	"github.com/jinzhu/gorm"
@@ -19,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // User identifier prefixes.
