@@ -143,10 +143,9 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
       .expect(toolbar.toolbarSecondTitle.withText("Christmas").visible)
       .notOk()
       .expect(toolbar.toolbarSecondTitle.withText("Albums").visible)
-      .notOk();
-    //TODO check for error page once implemented
-    //.expect(Selector(".input-name input").visible)
-    //.ok();
+      .notOk()
+      .expect(Selector("div.input-name input").visible)
+      .ok();
   }
 );
 
