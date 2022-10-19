@@ -76,7 +76,7 @@ func BasicAuth() gin.HandlerFunc {
 		clientIp := api.ClientIP(c)
 
 		// Check limit for failed auth requests (max. 10 per minute).
-		if limiter.Auth.Reject(clientIp) {
+		if limiter.Login.Reject(clientIp) {
 			limiter.Abort(c)
 			return
 		}
@@ -89,7 +89,7 @@ func BasicAuth() gin.HandlerFunc {
 			// Username not found.
 			message := "account not found"
 
-			limiter.Auth.Reserve(clientIp)
+			limiter.Login.Reserve(clientIp)
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
 			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
 		} else if !user.CanUseWebDAV() {
@@ -102,7 +102,7 @@ func BasicAuth() gin.HandlerFunc {
 			// Wrong password.
 			message := "incorrect password"
 
-			limiter.Auth.Reserve(clientIp)
+			limiter.Login.Reserve(clientIp)
 			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
 			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
 		} else {

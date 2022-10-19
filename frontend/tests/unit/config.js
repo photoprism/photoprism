@@ -17,7 +17,7 @@ const clientConfig = {
   debug: false,
   readonly: false,
   uploadNSFW: false,
-  public: true,
+  public: false,
   experimental: true,
   disableSettings: false,
   test: true,

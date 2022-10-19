@@ -411,15 +411,8 @@ export const ThumbFilters = () => [
   { value: "linear", text: $gettext("Linear: Very Smooth, Best Performance") },
 ];
 
-export const UserRoles = () => [
-  { value: "admin", text: $gettext("Admin") },
-  { value: "user", text: $gettext("User") },
-  { value: "family", text: $gettext("Family") },
-  { value: "friend", text: $gettext("Friend") },
-  { value: "viewer", text: $gettext("Viewer") },
-  { value: "contributor", text: $gettext("Contributor") },
-  { value: "guest", text: $gettext("Guest") },
-  { value: "visitor", text: $gettext("Visitor") },
-  { value: "unauthorized", text: $gettext("Unauthorized") },
-  { value: "", text: $gettext("Unknown") },
+export const Gender = () => [
+  { value: "male", text: $gettext("Male") },
+  { value: "female", text: $gettext("Female") },
+  { value: "other", text: $gettext("Other") },
 ];

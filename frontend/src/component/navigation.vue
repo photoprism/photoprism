@@ -521,10 +521,7 @@
 
         <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" class="p-profile" @click.stop="onAccount">
           <v-list-tile-avatar size="36">
-            <v-img :src="user.getAvatarURL()"
-                   :alt="displayName"  aspect-ratio="1"
-                   class="primary-button elevation-0 clickable"
-            ></v-img>
+            <img :src="userAvatarURL" :alt="displayName">
           </v-list-tile-avatar>
 
           <v-list-tile-content>
@@ -663,8 +660,6 @@
 <script>
 import Album from "model/album";
 import Event from "pubsub-js";
-import Notify from "../common/notify";
-import User from "../model/user";
 
 export default {
   name: "PNavigation",
@@ -745,6 +740,9 @@ export default {
       }
 
       return this.$gettext("Unregistered");
+    },
+    userAvatarURL() {
+      return this.$session.getUser().getAvatarURL('tile_50');
     },
     accountInfo() {
       const user = this.$session.getUser();

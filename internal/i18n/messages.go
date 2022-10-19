@@ -9,7 +9,7 @@ const (
 	ErrNotFound
 	ErrFileNotFound
 	ErrFileTooLarge
-	ErrWrongFileType
+	ErrUnsupportedFormat
 	ErrOriginalsEmpty
 	ErrSelectionNotFound
 	ErrEntityNotFound
@@ -99,7 +99,7 @@ var Messages = MessageMap{
 	ErrNotFound:           gettext("Not found"),
 	ErrFileNotFound:       gettext("File not found"),
 	ErrFileTooLarge:       gettext("File too large"),
-	ErrWrongFileType:      gettext("Wrong file type"),
+	ErrUnsupportedFormat:  gettext("Unsupported format"),
 	ErrOriginalsEmpty:     gettext("Originals folder is empty"),
 	ErrSelectionNotFound:  gettext("Selection not found"),
 	ErrEntityNotFound:     gettext("Entity not found"),

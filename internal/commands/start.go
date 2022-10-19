@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/report"
+
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 
@@ -26,7 +28,7 @@ import (
 var StartCommand = cli.Command{
 	Name:    "start",
 	Aliases: []string{"up"},
-	Usage:   "Starts the web server",
+	Usage:   "Starts the Web server",
 	Flags:   startFlags,
 	Action:  startAction,
 }
@@ -53,13 +55,20 @@ func startAction(ctx *cli.Context) error {
 	}
 
 	if ctx.IsSet("config") {
-		fmt.Printf("Name                  Value\n")
-		fmt.Printf("detach-server         %t\n", conf.DetachServer())
+		// Create config report.
+		cols := []string{"Name", "Value"}
+		rows := [][]string{
+			{"detach-server", fmt.Sprintf("%t", conf.DetachServer())},
+			{"http-mode", conf.HttpMode()},
+			{"http-compression", conf.HttpCompression()},
+			{"http-host", conf.HttpHost()},
+			{"http-port", fmt.Sprintf("%d", conf.HttpPort())},
+		}
 
-		fmt.Printf("http-host             %s\n", conf.HttpHost())
-		fmt.Printf("http-port             %d\n", conf.HttpPort())
-		fmt.Printf("http-mode             %s\n", conf.HttpMode())
-
+		// Render config report.
+		opt := report.Options{Format: report.CliFormat(ctx), NoWrap: true}
+		result, _ := report.Render(rows, cols, opt)
+		fmt.Printf("\n%s\n", result)
 		return nil
 	}
 

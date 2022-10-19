@@ -19,6 +19,7 @@ services:
       - "40000:40000" # Go Debugger (host:container)
     shm_size: "2gb"
     links:
+      - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
       - "traefik:keycloak.localssl.dev"
       - "traefik:dummy-webdav.localssl.dev"
@@ -27,7 +28,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
-      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`, `app.localssl.dev`, `photoprism.localssl.dev`)"
+      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`, `app.localssl.dev`)"
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
@@ -148,6 +149,7 @@ services:
     image: quay.io/keycloak/keycloak:19.0
     command: "start-dev" # development mode, do not use this in production!
     links:
+      - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
     labels:
       - "traefik.enable=true"

@@ -369,7 +369,7 @@ export default {
       this.busy = true;
 
       this.settings.save().then(() => {
-        this.$notify.success(this.$gettext("Settings saved"));
+        this.$notify.success(this.$gettext("Changes successfully saved"));
       }).finally(() => this.busy = false);
     },
   },

@@ -84,7 +84,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			return
 		} else if !mimeType.Is(fs.MimeTypeJpeg) {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "upload avatar", "only jpeg supported"}, s.RefID)
-			Abort(c, http.StatusBadRequest, i18n.ErrWrongFileType)
+			Abort(c, http.StatusBadRequest, i18n.ErrUnsupportedFormat)
 			return
 		}
 
@@ -101,7 +101,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 
 		if mediaFile, mediaErr := photoprism.NewMediaFile(filePath); mediaErr != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
-			Abort(c, http.StatusBadRequest, i18n.ErrWrongFileType)
+			Abort(c, http.StatusBadRequest, i18n.ErrUnsupportedFormat)
 			return
 		} else if err = mediaFile.CreateThumbnails(conf.ThumbCachePath(), false); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)

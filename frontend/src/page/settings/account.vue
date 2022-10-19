@@ -1,56 +1,96 @@
 <template>
   <div class="p-tab p-settings-account">
-    <v-form ref="form" lazy-validation
-            dense class="p-form-account" accept-charset="UTF-8"
+    <v-form ref="form" v-model="valid" lazy-validation dense class="p-form-account pb-4 width-lg" accept-charset="UTF-8"
             @submit.prevent="onChange">
       <input ref="upload" type="file" class="d-none input-upload" @change.stop="onUploadAvatar()">
       <v-card flat tile class="mt-2 px-1 application">
         <v-card-actions>
           <v-layout row wrap align-top>
-            <v-flex
-                class="p-photo pa-3 text-xs-center"
-                xs4 sm3 md2 xl1 fill-height
-            >
-              <div class="user-avatar" @click.exact="onChangeAvatar()">
-                <v-img :src="user.getAvatarURL()"
-                       :alt="displayName"  aspect-ratio="1"
-                       class="primary-button elevation-0 clickable"
-                ></v-img>
-              </div>
-            </v-flex>
-            <v-flex xs8 sm9 md10 xl11 fill-height class="pa-0">
+            <v-flex xs8 sm9 md10 fill-height class="pa-0">
               <v-layout wrap align-top>
-                <v-flex xs12 md3 class="pa-2">
+                <v-flex md2 class="pa-2 hidden-sm-and-down">
+                  <v-select v-model="user.Details.Gender"
+                            :label="$gettext('Gender')"
+                            hide-details box flat
+                            item-text="text"
+                            item-value="value"
+                            color="secondary-dark"
+                            :items="options.Gender()"
+                            class="input-gender"
+                            :rules="[v => validLength(v, 0, 16) || $gettext('Invalid')]"
+                            @change="onChange">
+                  </v-select>
+                </v-flex>
+                <v-flex md2 class="pa-2 hidden-sm-and-down">
                   <v-text-field
-                      v-model="user.Name"
-                      hide-details required box flat readonly
+                      v-model="user.Details.NameTitle"
+                      hide-details required box flat
+                      :disabled="busy"
+                      maxlength="32"
                       browser-autocomplete="off"
                       autocorrect="off"
                       autocapitalize="none"
-                      :label="$gettext('Username')"
-                      class="input-name"
+                      :label="$gettext('Title')"
+                      class="input-name-title"
                       color="secondary-dark"
+                      :rules="[v => validLength(v, 0, 32) || $gettext('Invalid')]"
+                      @change="onChangeName"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 md9 class="pa-2">
+                <v-flex md4 class="pa-2 hidden-sm-and-down">
+                  <v-text-field
+                      v-model="user.Details.GivenName"
+                      hide-details required box flat
+                      :disabled="busy"
+                      maxlength="64"
+                      browser-autocomplete="off"
+                      autocorrect="off"
+                      autocapitalize="none"
+                      :label="$gettext('Given Name')"
+                      class="input-given-name"
+                      color="secondary-dark"
+                      :rules="[v => validLength(v, 0, 64) || $gettext('Invalid')]"
+                      @change="onChangeName"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex md4 class="pa-2 hidden-sm-and-down">
+                  <v-text-field
+                      v-model="user.Details.FamilyName"
+                      hide-details required box flat
+                      :disabled="busy"
+                      maxlength="64"
+                      browser-autocomplete="off"
+                      autocorrect="off"
+                      autocapitalize="none"
+                      :label="$gettext('Family Name')"
+                      class="input-family-name"
+                      color="secondary-dark"
+                      :rules="[v => validLength(v, 0, 64) || $gettext('Invalid')]"
+                      @change="onChangeName"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12 md4 class="pa-2">
                   <v-text-field
                       v-model="user.DisplayName"
                       hide-details required box flat
                       :disabled="busy"
+                      maxlength="200"
                       browser-autocomplete="off"
                       autocorrect="off"
                       autocapitalize="none"
                       :label="$gettext('Display Name')"
                       class="input-display-name"
                       color="secondary-dark"
+                      :rules="[v => validLength(v, 1, 200) || $gettext('Required')]"
                       @change="onChange"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 class="pa-2">
+                <v-flex xs12 md8 class="pa-2">
                   <v-text-field
                       v-model="user.Email"
                       hide-details required box flat
                       type="email"
+                      maxlength="250"
                       :disabled="busy"
                       browser-autocomplete="off"
                       autocorrect="off"
@@ -58,10 +98,29 @@
                       :label="$gettext('Email')"
                       class="input-email"
                       color="secondary-dark"
+                      :rules="[v => !!v && validEmail(v) || $gettext('Invalid')]"
                       @change="onChange"
                   ></v-text-field>
                 </v-flex>
               </v-layout>
+            </v-flex>
+            <v-flex
+                class="pa-2 text-xs-center"
+                xs4 sm3 md2 align-self-center
+            >
+              <v-avatar :size="$vuetify.breakpoint.xsOnly ? 100 : 128" :class="{'clickable': !busy}" @click.stop.prevent="onChangeAvatar()">
+                <img :src="$vuetify.breakpoint.xsOnly ? user.getAvatarURL('tile_100') : user.getAvatarURL('tile_224')" :alt="displayName">
+              </v-avatar>
+            </v-flex>
+            <v-flex xs12 class="pa-2">
+              <v-textarea v-model="user.Details.Bio" auto-grow flat box hide-details
+                          rows="2" class="input-bio" color="secondary-dark"
+                          autocorrect="off" autocapitalize="none" browser-autocomplete="off"
+                          :disabled="busy"
+                          maxlength="500"
+                          :rules="[v => validLength(v, 0, 500) || $gettext('Invalid')]"
+                          :label="$gettext('Bio')"
+                          @change="onChange"></v-textarea>
             </v-flex>
           </v-layout>
         </v-card-actions>
@@ -94,69 +153,49 @@
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-1">
           <h3 class="body-2 mb-0">
-            <translate>Work Details</translate>
+            <translate>Birth Date</translate>
           </h3>
         </v-card-title>
-
         <v-card-actions>
           <v-layout wrap align-top>
-            <v-flex xs12 sm6 class="pa-2">
-              <v-text-field
-                  v-model="user.Details.OrgName"
-                  hide-details required box flat
+            <v-flex xs3 class="pa-2">
+              <v-autocomplete
+                  v-model="user.Details.BirthDay"
                   :disabled="busy"
+                  :label="$gettext('Day')"
                   browser-autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  :label="$gettext('Organization')"
-                  class="input-org-name"
+                  hide-no-data hide-details box flat
                   color="secondary-dark"
-                  @change="onChange"
-              ></v-text-field>
+                  :items="options.Days()"
+                  class="input-birth-day"
+                  @change="onChange">
+              </v-autocomplete>
+            </v-flex>
+            <v-flex xs3 class="pa-2">
+              <v-autocomplete
+                  v-model="user.Details.BirthMonth"
+                  :disabled="busy"
+                  :label="$gettext('Month')"
+                  browser-autocomplete="off"
+                  hide-no-data hide-details box flat
+                  color="secondary-dark"
+                  :items="options.MonthsShort()"
+                  class="input-birth-month"
+                  @change="onChange">
+              </v-autocomplete>
             </v-flex>
             <v-flex xs6 class="pa-2">
-              <v-text-field
-                  v-model="user.Details.OrgURL"
-                  hide-details required box flat
+              <v-autocomplete
+                  v-model="user.Details.BirthYear"
                   :disabled="busy"
-                  type="url"
+                  :label="$gettext('Year')"
                   browser-autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  :label="$gettext('URL')"
-                  class="input-org-url"
+                  hide-no-data hide-details box flat
                   color="secondary-dark"
-                  @change="onChange"
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs6 class="pa-2">
-              <v-text-field
-                  v-model="user.Details.OrgTitle"
-                  hide-details required box flat
-                  :disabled="busy"
-                  browser-autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  :label="$gettext('Title')"
-                  class="input-position"
-                  color="secondary-dark"
-                  @change="onChange"
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
-              <v-text-field
-                  v-model="user.Details.OrgEmail"
-                  hide-details required box flat
-                  :disabled="busy"
-                  type="email"
-                  browser-autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  :label="$gettext('Email')"
-                  class="input-org-email"
-                  color="secondary-dark"
-                  @change="onChange"
-              ></v-text-field>
+                  :items="options.Years()"
+                  class="input-birth-year"
+                  @change="onChange">
+              </v-autocomplete>
             </v-flex>
           </v-layout>
         </v-card-actions>
@@ -174,57 +213,64 @@
                   v-model="user.Details.Location"
                   hide-details required box flat
                   :disabled="busy"
+                  maxlength="500"
                   browser-autocomplete="off"
                   autocorrect="off"
                   autocapitalize="none"
                   :label="$gettext('Location')"
                   class="input-location"
                   color="secondary-dark"
+                  :rules="[v => validLength(v, 0, 500) || $gettext('Invalid')]"
                   @change="onChange"
               ></v-text-field>
             </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
+            <v-flex xs12 sm4 class="pa-2">
               <v-autocomplete
                   v-model="user.Details.Country"
                   :disabled="busy"
-                  :label="$gettext('Country')" hide-details box flat
-                  hide-no-data
+                  :label="$gettext('Country')"
+                  hide-no-data hide-details box flat
                   browser-autocomplete="off"
                   color="secondary-dark"
                   item-value="Code"
                   item-text="Name"
                   :items="countries"
                   class="input-country"
+                  :rules="[v => validLength(v, 0, 2) || $gettext('Invalid')]"
                   @change="onChange"
               >
               </v-autocomplete>
             </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
+            <v-flex xs12 sm8 class="pa-2">
               <v-text-field
                   v-model="user.Details.Phone"
                   hide-details required box flat
                   :disabled="busy"
+                  maxlength="32"
                   browser-autocomplete="off"
                   autocorrect="off"
                   autocapitalize="none"
                   :label="$gettext('Phone')"
                   class="input-phone"
                   color="secondary-dark"
+                  :rules="[v => validLength(v, 0, 32) || $gettext('Invalid')]"
                   @change="onChange"
               ></v-text-field>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
               <v-text-field
-                  v-model="user.Details.ProfileURL"
+                  v-model="user.Details.SiteURL"
                   hide-details required box flat
                   :disabled="busy"
                   type="url"
+                  maxlength="500"
                   browser-autocomplete="off"
                   autocorrect="off"
                   autocapitalize="none"
-                  :label="$gettext('Profile')"
-                  class="input-profile-url"
+                  :label="$gettext('Website')"
+                  class="input-site-url"
                   color="secondary-dark"
+                  :rules="[v => validUrl(v) || $gettext('Invalid')]"
                   @change="onChange"
               ></v-text-field>
             </v-flex>
@@ -234,28 +280,21 @@
                   hide-details required box flat
                   :disabled="busy"
                   type="url"
+                  maxlength="500"
                   browser-autocomplete="off"
                   autocorrect="off"
                   autocapitalize="none"
                   :label="$gettext('Feed')"
                   class="input-feed-url"
                   color="secondary-dark"
+                  :rules="[v => validUrl(v) || $gettext('Invalid')]"
                   @change="onChange"
               ></v-text-field>
-            </v-flex>
-            <v-flex xs12 class="pa-2">
-              <v-textarea v-model="user.Details.Bio"  auto-grow flat box hide-details
-                          rows="3" class="input-bio" color="secondary-dark"
-                          autocorrect="off" autocapitalize="none" browser-autocomplete="off"
-                          :disabled="busy"
-                          :label="$gettext('Bio')"
-                          @change="onChange"></v-textarea>
             </v-flex>
           </v-layout>
         </v-card-actions>
       </v-card>
     </v-form>
-    <p-about-footer></p-about-footer>
     <p-account-password-dialog :show="dialog.password" @cancel="dialog.password = false" @confirm="dialog.password = false"></p-account-password-dialog>
     <p-webdav-dialog :show="dialog.webdav" @close="dialog.webdav = false"></p-webdav-dialog>
   </div>
@@ -265,8 +304,8 @@
 import PAccountPasswordDialog from "dialog/account/password.vue";
 import countries from "options/countries.json";
 import Notify from "common/notify";
-import Api from "common/api";
 import User from "model/user";
+import * as options from "options/options";
 
 export default {
   name: 'PSettingsAccount',
@@ -276,8 +315,10 @@ export default {
     const isPublic = this.$config.isPublic();
     return {
       busy: isDemo || isPublic,
-      isDemo: isDemo,
-      isPublic: isPublic,
+      options,
+      isDemo,
+      isPublic,
+      valid: true,
       rtl: this.$rtl,
       user: new User(this.$session.getUser()),
       countries: countries,
@@ -286,11 +327,6 @@ export default {
         webdav: false,
       },
     };
-  },
-  created() {
-    if(this.isPublic && !this.isDemo) {
-      this.$router.push({ name: "settings" });
-    }
   },
   computed: {
     displayName() {
@@ -302,6 +338,11 @@ export default {
       return this.$gettext("Unregistered");
     },
   },
+  created() {
+    if(this.isPublic && !this.isDemo) {
+      this.$router.push({ name: "settings" });
+    }
+  },
   methods: {
     showDialog(name) {
       if (!name) {
@@ -312,6 +353,38 @@ export default {
     disabled() {
       return (this.isDemo || this.busy);
     },
+    validEmail(v) {
+      if (typeof v !== "string" || v === "") {
+        return true;
+      } else if (!this.validLength(v, 0, 250)) {
+        return false;
+      }
+
+      return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,32})+$/.test(v);
+    },
+    validLength(v, min, max) {
+      if (typeof v !== "string" && min <= 0) {
+        return true;
+      } else if (max > 0 && v.length > max) {
+        return false;
+      }
+
+      return v.length >= min;
+    },
+    validUrl(v) {
+      if (typeof v !== "string" || v === "") {
+        return true;
+      } else if (!this.validLength(v, 0, 500)) {
+        return false;
+      }
+
+      try {
+        new URL(v);
+      } catch (e) {
+        return false;
+      }
+      return true;
+    },
     onChangeAvatar() {
       if (this.busy) {
         return;
@@ -321,15 +394,19 @@ export default {
     onLogout() {
       this.$session.logout();
     },
+    onChangeName() {
+      this.user.Details.NameSrc = "manual";
+      return this.onChange();
+    },
     onChange() {
-      if (this.busy) {
+      if (this.busy || !this.valid) {
         return;
       }
       this.busy = true;
       this.user.update().then((u) => {
         this.user = new User(u);
         this.$session.setUser(u);
-        this.$notify.success(this.$gettext("Settings saved"));
+        this.$notify.success(this.$gettext("Changes successfully saved"));
       }).finally(() => this.busy = false);
     },
     onUploadAvatar() {
@@ -339,12 +416,12 @@ export default {
 
       this.busy = true;
 
-      Notify.info(this.$gettext("Uploading…"));
+      Notify.info(this.$gettext("Updating picture…"));
 
       this.user.uploadAvatar(this.$refs.upload.files).then((u) => {
         this.user = new User(u);
         this.$session.setUser(u);
-        this.$notify.success(this.$gettext("Settings saved"));
+        this.$notify.success(this.$gettext("Changes successfully saved"));
       }).finally(() => this.busy = false);
     }
   },

@@ -41,15 +41,15 @@ const testConfig = {
   manifestUri: "/manifest.json?0e41a7e5",
 };
 
-const config = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
+const c = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
 
 const Api = Axios.create({
-  baseURL: config.apiUri,
+  baseURL: c.apiUri,
   headers: {
     common: {
       "X-Session-ID": window.localStorage.getItem("session_id"),
-      "X-Client-Uri": config.jsUri,
-      "X-Client-Version": config.version,
+      "X-Client-Uri": c.jsUri,
+      "X-Client-Version": c.version,
     },
   },
 });
@@ -75,17 +75,12 @@ Api.interceptors.response.use(
       console.warn("WARNING: Server returned HTML instead of JSON - API not implemented?");
     }
 
-    // Update preview token.
-    if (resp.headers && resp.headers["x-preview-token"]) {
-      const previewToken = resp.headers["x-preview-token"];
-      const downloadToken = resp.headers["x-download-token"]
-        ? resp.headers["x-download-token"]
-        : "";
-      if (config.previewToken !== previewToken) {
-        config.previewToken = previewToken;
-        config.downloadToken = downloadToken;
-        Event.publish("config.updated", { config: { previewToken, downloadToken } });
-      }
+    // Update tokens if provided.
+    if (resp.headers && resp.headers["x-preview-token"] && resp.headers["x-download-token"]) {
+      Event.publish("config.tokens", {
+        previewToken: resp.headers["x-preview-token"],
+        downloadToken: resp.headers["x-download-token"],
+      });
     }
 
     return resp;

@@ -18,10 +18,10 @@ func AutoTLS(conf *config.Config) (*autocert.Manager, error) {
 		return nil, fmt.Errorf("default site url does not use https")
 	} else if siteDomain = conf.SiteDomain(); !strings.Contains(siteDomain, ".") {
 		return nil, fmt.Errorf("no fully qualified site domain")
-	} else if tlsEmail = conf.AutoTLS(); tlsEmail == "" {
+	} else if tlsEmail = conf.TLSEmail(); tlsEmail == "" {
 		return nil, fmt.Errorf("automatic tls disabled")
-	} else if certDir = conf.CertsPath(); certDir == "" {
-		return nil, fmt.Errorf("certs path not found")
+	} else if certDir = conf.CertificatesPath(); certDir == "" {
+		return nil, fmt.Errorf("certificates path not found")
 	}
 
 	// Create Let's Encrypt cert manager.

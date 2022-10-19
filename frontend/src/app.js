@@ -56,7 +56,7 @@ import * as offline from "@lcdp/offline-plugin/runtime";
 
 config.progress(50);
 
-config.load().finally(() => {
+config.update().finally(() => {
   // Initialize libs and framework.
   config.progress(66);
   const viewer = new Viewer();

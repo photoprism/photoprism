@@ -89,12 +89,6 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.StoragePath(), err)
 	}
 
-	if c.FilesPath() == "" {
-		return notFoundError("files")
-	} else if err := os.MkdirAll(c.FilesPath(), os.ModePerm); err != nil {
-		return createError(c.FilesPath(), err)
-	}
-
 	if c.UsersPath() == "" {
 		return notFoundError("users")
 	} else if err := os.MkdirAll(c.UsersPath(), os.ModePerm); err != nil {
@@ -149,10 +143,10 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ConfigPath(), err)
 	}
 
-	if c.CertsPath() == "" {
-		return notFoundError("certs")
-	} else if err := os.MkdirAll(c.CertsPath(), os.ModePerm); err != nil {
-		return createError(c.CertsPath(), err)
+	if c.CertificatesPath() == "" {
+		return notFoundError("certificates")
+	} else if err := os.MkdirAll(c.CertificatesPath(), os.ModePerm); err != nil {
+		return createError(c.CertificatesPath(), err)
 	}
 
 	if c.TempPath() == "" {
@@ -308,31 +302,6 @@ func (c *Config) SidecarPathIsAbs() bool {
 // SidecarWritable checks if sidecar files can be created.
 func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
-}
-
-// FilesPath returns the storage base path for files that should not be indexed.
-func (c *Config) FilesPath() string {
-	// Set default.
-	if c.options.FilesPath == "" {
-		c.options.FilesPath = filepath.Join(c.StoragePath(), "files")
-	}
-
-	return c.options.FilesPath
-}
-
-// FilePath returns the file storage path based on the hash provided.
-func (c *Config) FilePath(fileHash string) string {
-	if !rnd.IsHex(fileHash) || len(fileHash) < 4 {
-		return ""
-	}
-
-	dir := filepath.Join(c.FilesPath(), fileHash[0:1], fileHash[1:2], fileHash[2:3])
-
-	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-		return ""
-	}
-
-	return filepath.Join(dir, fileHash)
 }
 
 // UsersPath returns the storage base path for user assets like

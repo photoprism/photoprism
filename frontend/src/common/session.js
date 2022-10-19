@@ -29,6 +29,7 @@ import User from "model/user";
 import Socket from "websocket.js";
 
 const SessionHeader = "X-Session-ID";
+const PublicID = "234200000000000000000000000000000000000000000000";
 
 export default class Session {
   /**
@@ -297,7 +298,16 @@ export default class Session {
   }
 
   refresh() {
-    if (this.hasId() && !this.config.isPublic()) {
+    // Refresh session information.
+    if (this.config.isPublic()) {
+      // No authentication in public mode.
+      this.setId(PublicID);
+      return Api.get("session/" + this.getId()).then((resp) => {
+        this.setResp(resp);
+        return Promise.resolve();
+      });
+    } else if (this.hasId()) {
+      // Verify authentication.
       return Api.get("session/" + this.getId())
         .then((resp) => {
           this.setResp(resp);
@@ -309,6 +319,7 @@ export default class Session {
           return Promise.reject();
         });
     } else {
+      // No authentication yet.
       return Promise.resolve();
     }
   }

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -48,7 +49,7 @@ func showConfigAction(ctx *cli.Context) error {
 
 		// Show report.
 		if opt.Format == report.Default {
-			fmt.Printf("### %s ###\n\n", rep.Title)
+			fmt.Printf("%s\n\n", strings.ToUpper(rep.Title))
 		}
 
 		fmt.Println(result)

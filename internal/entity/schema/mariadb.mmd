@@ -104,12 +104,19 @@ class auth_users_details {
    varbinary(42) place_id
    varbinary(8) place_src
    varbinary(42) cell_id
+   int(11) birth_year
+   int(11) birth_month
+   int(11) birth_day
    varchar(512) user_bio
-   varchar(32) user_phone
    varchar(512) user_location
    varbinary(2) user_country
+   varchar(32) user_phone
+   varbinary(512) site_url
+   varbinary(512) profile_url
+   varbinary(512) feed_url
+   varbinary(512) avatar_url
    varchar(16) user_gender
-   varchar(32) name_prefix
+   varchar(32) name_title
    varchar(64) given_name
    varchar(64) middle_name
    varchar(64) family_name
@@ -119,12 +126,6 @@ class auth_users_details {
    varchar(128) org_name
    varbinary(512) org_url
    varbinary(512) id_url
-   varbinary(512) site_url
-   varbinary(512) feed_url
-   varbinary(512) avatar_url
-   int(11) birth_year
-   int(11) birth_month
-   int(11) birth_day
    datetime created_at
    datetime updated_at
    varbinary(42) user_uid

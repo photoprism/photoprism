@@ -35,7 +35,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Config.
 		{"config-path", c.ConfigPath()},
-		{"certs-path", c.CertsPath()},
+		{"certificates-path", c.CertificatesPath()},
 		{"options-yaml", c.OptionsYaml()},
 		{"defaults-yaml", c.DefaultsYaml()},
 		{"settings-yaml", c.SettingsYaml()},
@@ -48,7 +48,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Other paths.
 		{"storage-path", c.StoragePath()},
 		{"sidecar-path", c.SidecarPath()},
-		{"files-path", c.FilesPath()},
 		{"users-path", c.UsersPath()},
 		{"albums-path", c.AlbumsPath()},
 		{"backup-path", c.BackupPath()},
@@ -109,6 +108,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Site Infos.
 		{"cdn-url", c.CdnUrl("/")},
 		{"site-url", c.SiteUrl()},
+		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
+		{"site-domain", c.SiteDomain()},
 		{"site-author", c.SiteAuthor()},
 		{"site-title", c.SiteTitle()},
 		{"site-caption", c.SiteCaption()},
@@ -127,17 +128,18 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// HTTP(S) Proxy.
 		{"trusted-proxy", c.TrustedProxy()},
+		{"https-proxy-header", strings.Join(c.HttpsProxyHeader(), ", ")},
+		{"https-proxy-proto", strings.Join(c.HttpsProxyProto(), ", ")},
 
 		// Web Server.
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
 		{"http-host", c.HttpHost()},
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
-		{"auto-tls", c.AutoTLS()},
-		{"https-port", fmt.Sprintf("%d", c.HttpsPort())},
-		{"https-proxy-header", strings.Join(c.HttpsProxyHeader(), ", ")},
-		{"https-proxy-proto", strings.Join(c.HttpsProxyProto(), ", ")},
-		{"https-redirect", fmt.Sprintf("%d", c.HttpsRedirect())},
+		{"tls-email", c.TLSEmail()},
+		{"tls-cert", c.TLSCert()},
+		{"tls-key", c.TLSKey()},
+		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
 
 		// Database.
 		{"database-driver", c.DatabaseDriver()},

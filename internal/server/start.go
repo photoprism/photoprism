@@ -74,22 +74,21 @@ func Start(ctx context.Context, conf *config.Config) {
 
 	// Enable TLS?
 	if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
-		httpsRedirect = conf.HttpsRedirect()
 		server = &http.Server{
-			Addr:      fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpsPort()),
+			Addr:      fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 			TLSConfig: tlsManager.TLSConfig(),
 			Handler:   router,
 		}
 		log.Infof("server: starting in auto tls mode on %s [%s]", server.Addr, time.Since(start))
 		go StartAutoTLS(server, tlsManager, conf)
-	} else if httpsCert, privateKey := conf.TLS(); httpsCert != "" && privateKey != "" {
+	} else if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in manual tls mode")
 		server = &http.Server{
-			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpsPort()),
+			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 			Handler: router,
 		}
 		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
-		go StartTLS(server, httpsCert, privateKey)
+		go StartTLS(server, publicCert, privateKey)
 	} else {
 		log.Infof("server: %s", tlsErr)
 		server = &http.Server{

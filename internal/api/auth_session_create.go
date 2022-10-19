@@ -43,7 +43,7 @@ func CreateSession(router *gin.RouterGroup) {
 		}
 
 		// Check limit for failed auth requests (max. 10 per minute).
-		if limiter.Auth.Reject(ClientIP(c)) {
+		if limiter.Login.Reject(ClientIP(c)) {
 			limiter.AbortJSON(c)
 			return
 		}

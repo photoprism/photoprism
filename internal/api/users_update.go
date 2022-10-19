@@ -3,16 +3,14 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // UpdateUser updates the profile information of the currently authenticated user.
@@ -42,8 +40,8 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
-		// 1) Init form with model values
-		f, err := form.NewUser(m)
+		// Init form with model values.
+		f, err := m.Form()
 
 		if err != nil {
 			log.Error(err)
@@ -51,14 +49,14 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
-		// 2) Update form with values from request
+		// Update form with values from request.
 		if err = c.BindJSON(&f); err != nil {
 			log.Error(err)
 			AbortBadRequest(c)
 			return
 		}
 
-		// 3) Save model with values from form
+		// Save model with values from form.
 		if err = m.SaveForm(f); err != nil {
 			log.Error(err)
 			AbortSaveFailed(c)

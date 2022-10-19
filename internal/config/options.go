@@ -45,7 +45,6 @@ type Options struct {
 	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	FilesPath             string        `yaml:"FilesPath" json:"-" flag:"files-path"`
 	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
@@ -92,17 +91,16 @@ type Options struct {
 	SiteDescription       string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string        `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
 	TrustedProxies        []string      `yaml:"TrustedProxies" json:"-" flag:"trusted-proxy"`
+	HttpsProxyHeaders     []string      `yaml:"HttpsProxyHeaders" json:"-" flag:"https-proxy-header"`
+	HttpsProxyProto       []string      `yaml:"HttpsProxyProto" json:"-" flag:"https-proxy-proto"`
 	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
 	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
-	AutoTLS               string        `yaml:"AutoTLS" json:"AutoTLS" flag:"auto-tls"` // AutoTLS enabled automatic HTTPS via Let's Encrypt if set a valid email address.
-	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
+	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"` // TLSEmail enabled automatic HTTPS via Let's Encrypt if set a valid email address.
 	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
-	HttpsPort             int           `yaml:"HttpsPort" json:"HttpsPort" flag:"https-port"` // HttpsPort is the port number to be used for HTTPS connections.
-	HttpsProxyHeaders     []string      `yaml:"HttpsProxyHeaders" json:"-" flag:"https-proxy-header"`
-	HttpsProxyProto       []string      `yaml:"HttpsProxyProto" json:"-" flag:"https-proxy-proto"`
-	HttpsRedirect         int           `yaml:"HttpsRedirect" json:"HttpsRedirect" flag:"https-redirect"`
+	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
+	DisableTLS            bool          `yaml:"DisableTLS" json:"DisableTLS" flag:"disable-tls"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseName          string        `yaml:"DatabaseName" json:"-" flag:"database-name"`

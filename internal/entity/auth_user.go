@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/ulule/deepcopier"
 
 	"github.com/jinzhu/gorm"
@@ -115,6 +117,7 @@ func FindUser(find User) *User {
 
 	// Find matching record.
 	if err := stmt.First(m).Error; err != nil {
+		event.AuditErr([]string{"user", "not found", "%s"}, err)
 		return nil
 	}
 
@@ -385,18 +388,26 @@ func (m *User) Name() string {
 
 // SetName sets the login username to the specified string.
 func (m *User) SetName(login string) (err error) {
+	if m.ID < 0 {
+		return fmt.Errorf("system users cannot be modified")
+	}
+
 	login = clean.Username(login)
 
 	// Empty?
 	if login == "" {
-		return fmt.Errorf("username cannot be empty")
+		return fmt.Errorf("username is empty")
+	} else if m.UserName == login {
+		return nil
+	} else if m.UserName != "" && m.ID != 1 {
+		return fmt.Errorf("username cannot be changed")
 	}
 
 	// Update username and slug.
 	m.UserName = login
 
 	// Update display name.
-	if m.DisplayName == "" || m.DisplayName == AdminDisplayName {
+	if m.DisplayName == "" || m.DisplayName == AdminDisplayName && m.ID == 1 {
 		m.DisplayName = clean.NameCapitalized(login)
 	}
 
@@ -767,20 +778,43 @@ func (m *User) RedeemToken(token string) (n int) {
 	return n
 }
 
+// Form returns a populated user form to perform changes.
+func (m *User) Form() (form.User, error) {
+	frm := form.User{UserDetails: &form.UserDetails{}}
+
+	if err := deepcopier.Copy(m).To(&frm); err != nil {
+		return frm, err
+	}
+
+	if err := deepcopier.Copy(m.UserDetails).To(frm.UserDetails); err != nil {
+		return frm, err
+	}
+
+	return frm, nil
+}
+
 // SaveForm updates the entity using form data and stores it in the database.
 func (m *User) SaveForm(f form.User) error {
 	if m.UserName == "" || m.ID <= 0 {
 		return fmt.Errorf("system users cannot be updated")
 	}
 
-	if err := deepcopier.Copy(m.UserDetails).From(f.UserDetails); err != nil {
+	// Ignore details if not set.
+	if f.UserDetails == nil {
+		// Ignore.
+	} else if err := deepcopier.Copy(f.UserDetails).To(m.UserDetails); err != nil {
 		return err
+	} else {
+		m.UserDetails.UserAbout = strings.TrimSpace(m.UserDetails.UserAbout)
+		m.UserDetails.UserBio = strings.TrimSpace(m.UserDetails.UserBio)
 	}
 
+	// Sanitize display name.
 	if n := clean.Name(f.DisplayName); n != "" && n != m.DisplayName {
-		m.DisplayName = n
+		m.SetDisplayName(n)
 	}
 
+	// Sanitize email address.
 	if email := clean.Email(f.UserEmail); email != "" && email != m.UserEmail {
 		m.UserEmail = email
 		m.VerifiedAt = nil
@@ -788,6 +822,36 @@ func (m *User) SaveForm(f form.User) error {
 	}
 
 	return m.Save()
+}
+
+// SetDisplayName sets a new display name and, if possible, splits it into its components.
+func (m *User) SetDisplayName(name string) *User {
+	name = clean.Name(name)
+
+	// Empty?
+	if name == "" {
+		return m
+	}
+
+	m.DisplayName = name
+
+	d := m.Details()
+
+	if SrcPriority[SrcAuto] < SrcPriority[d.NameSrc] {
+		return m
+	}
+
+	// Try to parse name into components.
+	n := txt.ParseName(name)
+
+	d.NameTitle = n.Title
+	d.GivenName = n.Given
+	d.MiddleName = n.Middle
+	d.FamilyName = n.Family
+	d.NameSuffix = n.Suffix
+	d.NickName = n.Nick
+
+	return m
 }
 
 // SetAvatar updates the user avatar image.

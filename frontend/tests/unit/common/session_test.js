@@ -21,11 +21,10 @@ describe("common/session", () => {
     const storage = new StorageShim();
     const session = new Session(storage, config);
     assert.equal(session.hasToken("2lbh9x09"), false);
-    assert.equal(session.session_id, null);
-    session.setId(123421);
-    assert.equal(session.session_id, 123421);
+    session.setId("999900000000000000000000000000000000000000000000");
+    assert.equal(session.session_id, "999900000000000000000000000000000000000000000000");
     const result = session.getId();
-    assert.equal(result, 123421);
+    assert.equal(result, "999900000000000000000000000000000000000000000000");
     session.deleteId();
     assert.equal(session.session_id, null);
   });

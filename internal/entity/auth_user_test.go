@@ -117,12 +117,9 @@ func TestUser_Create(t *testing.T) {
 		assert.Equal(t, "example", m.Name())
 		assert.Equal(t, "example", m.UserName)
 
-		if err := m.UpdateName("example-editor"); err != nil {
-			t.Fatal(err)
+		if err := m.UpdateName("example-editor"); err == nil {
+			t.Fatal("error expected")
 		}
-
-		assert.Equal(t, "example-editor", m.Name())
-		assert.Equal(t, "example-editor", m.UserName)
 	})
 	t.Run("NewUser", func(t *testing.T) {
 		if err := NewUser().Create(); err != nil {
@@ -612,9 +609,9 @@ func TestUser_Validate(t *testing.T) {
 	})
 	t.Run("RoleEmpty", func(t *testing.T) {
 		u := &User{
-			UserName:    "jens.mander",
-			UserEmail:   "jens@mander.de",
-			DisplayName: "Jens Mander",
+			UserName:    "test.example",
+			UserEmail:   "test@example.com",
+			DisplayName: "Test Example",
 			UserRole:    "",
 		}
 
@@ -622,9 +619,9 @@ func TestUser_Validate(t *testing.T) {
 	})
 	t.Run("RoleAdmin", func(t *testing.T) {
 		u := &User{
-			UserName:    "jens.mander",
-			UserEmail:   "jens@mander.de",
-			DisplayName: "Jens Mander",
+			UserName:    "test.example",
+			UserEmail:   "test@example.com",
+			DisplayName: "Test Example",
 			UserRole:    acl.RoleAdmin.String(),
 		}
 
@@ -632,9 +629,9 @@ func TestUser_Validate(t *testing.T) {
 	})
 	t.Run("RoleInvalid", func(t *testing.T) {
 		u := &User{
-			UserName:    "jens.mander",
-			UserEmail:   "jens@mander.de",
-			DisplayName: "Jens Mander",
+			UserName:    "test.example",
+			UserEmail:   "test@example.com",
+			DisplayName: "Test Example",
 			UserRole:    "foobar",
 		}
 
@@ -736,28 +733,71 @@ func TestUser_SharedUIDs(t *testing.T) {
 	})
 }
 
+func TestUser_Form(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("User: %#v", m)
+		t.Logf("User.UserDetails: %#v", m.UserDetails)
+		t.Logf("Form: %#v", frm)
+		t.Logf("Form.UserDetails: %#v", frm.UserDetails)
+	})
+}
+
 func TestUser_SaveForm(t *testing.T) {
 	t.Run("UnknownUser", func(t *testing.T) {
-		frm, err := form.NewUser(UnknownUser)
+		frm, err := UnknownUser.Form()
 		assert.NoError(t, err)
 
 		err = UnknownUser.SaveForm(frm)
 		assert.Error(t, err)
 	})
 	t.Run("Admin", func(t *testing.T) {
-		frm, err := form.NewUser(Admin)
-		assert.NoError(t, err)
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
 		err = Admin.SaveForm(frm)
+
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)
 		assert.Equal(t, "GoLand", Admin.Details().UserLocation)
 
-		m := FindUserByUID(Admin.UserUID)
+		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "admin@example.com", m.UserEmail)
 		assert.Equal(t, "GoLand", m.Details().UserLocation)
+	})
+}
+
+func TestUser_SetDisplayName(t *testing.T) {
+	t.Run("BillGates", func(t *testing.T) {
+		user := NewUser()
+		user.SetDisplayName("Sir William Henry Gates III")
+		d := user.Details()
+		assert.Equal(t, "Sir", d.NameTitle)
+		assert.Equal(t, "William", d.GivenName)
+		assert.Equal(t, "Henry Gates", d.FamilyName)
+		assert.Equal(t, "III", d.NameSuffix)
 	})
 }
 

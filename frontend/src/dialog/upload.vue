@@ -146,7 +146,7 @@ export default {
     },
     cancel() {
       if (this.busy) {
-        Notify.info(this.$gettext("Uploading…"));
+        Notify.info(this.$gettext("Uploading photos…"));
         return;
       }
 
@@ -154,7 +154,7 @@ export default {
     },
     confirm() {
       if (this.busy) {
-        Notify.info(this.$gettext("Uploading…"));
+        Notify.info(this.$gettext("Uploading photos…"));
         return;
       }
 
@@ -201,7 +201,7 @@ export default {
 
       let userUid = this.$session.getUserUID();
 
-      Notify.info(this.$gettext("Uploading…"));
+      Notify.info(this.$gettext("Uploading photos…"));
 
       let addToAlbums = [];
 

@@ -97,7 +97,7 @@ install:
 	mkdir --mode=$(INSTALL_MODE) -p $(DESTDIR)
 	env TMPDIR="$(BUILD_PATH)" ./scripts/dist/install-tensorflow.sh $(DESTDIR)
 	rm -rf --preserve-root $(DESTDIR)/include
-	(cd $(DESTDIR) && mkdir -p bin sbin lib assets config config/examples)
+	(cd $(DESTDIR) && mkdir -p bin lib assets config config/examples)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	wget -O $(DESTDIR)/assets/static/img/wallpaper/welcome.jpg https://cdn.photoprism.app/wallpaper/welcome.jpg
@@ -153,6 +153,9 @@ generate:
 		git checkout -- assets/locales/messages.pot;\
 		echo "Reverted unnecessary change in assets/locales/messages.pot.";\
 	fi
+go-generate:
+	go generate ./pkg/... ./internal/...
+	go fmt ./pkg/... ./internal/...
 clean-local-assets:
 	rm -rf $(BUILD_PATH)/assets/*
 clean-local-cache:
