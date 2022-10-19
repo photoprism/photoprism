@@ -257,7 +257,7 @@ msgstr ""
 msgid "Altitude (m)"
 msgstr ""
 
-#: src/common/api.js:102
+#: src/common/api.js:99
 msgid "An error occurred - are you offline?"
 msgstr ""
 
