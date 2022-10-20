@@ -280,7 +280,7 @@
       <v-card-actions class="pt-0 pb-2 px-2">
         <v-layout row wrap class="pa-2">
           <v-flex xs12 text-xs-right class="pt-3 pb-0">
-            <v-btn depressed color="secondary-light" class="action-cancel"
+            <v-btn depressed color="secondary-light" class="action-cancel ml-2"
                    @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>

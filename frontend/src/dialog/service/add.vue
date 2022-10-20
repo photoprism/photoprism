@@ -57,11 +57,11 @@
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-2">
-            <v-btn depressed color="secondary-light" class="action-cancel mr-2"
+            <v-btn depressed color="secondary-light" class="action-cancel ml-2"
                    @click.stop="cancel">
               <span>{{ label.cancel }}</span>
             </v-btn>
-            <v-btn depressed dark color="primary-button" class="action-confirm compact ma-0"
+            <v-btn depressed dark color="primary-button" class="action-confirm compact mr-0"
                    @click.stop="confirm">
               <span>{{ label.confirm }}</span>
             </v-btn>

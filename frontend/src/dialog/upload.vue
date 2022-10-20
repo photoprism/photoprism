@@ -93,7 +93,7 @@ import Album from "model/album";
 import Util from "common/util";
 
 export default {
-  name: 'PTabUpload',
+  name: 'PUploadDialog',
   props: {
     show: Boolean,
   },

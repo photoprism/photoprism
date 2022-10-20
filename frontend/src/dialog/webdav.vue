@@ -73,7 +73,7 @@
 import Util from "common/util";
 
 export default {
-  name: 'PDialogWebdav',
+  name: 'PWebdavDialog',
   props: {
     show: Boolean,
   },
