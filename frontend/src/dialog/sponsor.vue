@@ -27,7 +27,7 @@
       </v-card-text>
       <v-card-actions class="pt-0 px-3">
         <v-layout row wrap class="px-2">
-          <v-flex xs12 sm4 text-xs-right text-sm-left class="py-2">
+          <v-flex xs12 sm4 :text-xs-right="!rtl" :text-sm-left="!rtl" :text-xs-left="rtl" class="py-2">
             <v-btn depressed color="secondary-light"
                    class="action-close compact"
                    @click.stop="close">
