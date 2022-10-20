@@ -30,6 +30,7 @@ import Socket from "websocket.js";
 
 const SessionHeader = "X-Session-ID";
 const PublicID = "234200000000000000000000000000000000000000000000";
+const LoginPage = "login";
 
 export default class Session {
   /**
@@ -228,7 +229,7 @@ export default class Session {
 
   getHome() {
     if (this.loginRequired()) {
-      return "login";
+      return LoginPage;
     } else if (this.config.allow("photos", "access_library")) {
       return "browse";
     } else {
@@ -286,6 +287,13 @@ export default class Session {
     }
   }
 
+  isLogin() {
+    if (!window || !window.location) {
+      return true;
+    }
+    return LoginPage === window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
+  }
+
   login(name, password, token) {
     this.deleteId();
 
@@ -315,7 +323,9 @@ export default class Session {
         })
         .catch(() => {
           this.deleteId();
-          window.location.reload();
+          if (!this.isLogin()) {
+            window.location.reload();
+          }
           return Promise.reject();
         });
     } else {
@@ -337,7 +347,7 @@ export default class Session {
 
   onLogout(noRedirect) {
     this.deleteId();
-    if (noRedirect !== true) {
+    if (noRedirect !== true && !this.isLogin()) {
       window.location = this.config.baseUri + "/";
     }
     return Promise.resolve();
