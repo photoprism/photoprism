@@ -102,7 +102,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
-      libc6 ca-certificates sudo bash tzdata \
+      libc6 ca-certificates sudo bash tzdata avahi-utils \
       gpg zip unzip wget curl rsync make nano \
       jq lsof lshw sqlite3 mariadb-client imagemagick \
       exiftool rawtherapee librsvg2-bin \
