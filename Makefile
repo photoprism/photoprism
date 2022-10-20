@@ -130,9 +130,9 @@ acceptance-sqlite-stop:
 acceptance-auth-sqlite-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
-	./photoprism --auth-mode "passwd" -c "./storage/acceptance/config-sqlite" --test start -d
+	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" --test start -d
 acceptance-auth-sqlite-stop:
-	./photoprism --auth-mode "passwd" -c "./storage/acceptance/config-sqlite" --test stop
+	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" --test stop
 start:
 	./photoprism start -d
 stop:
