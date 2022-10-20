@@ -31,7 +31,7 @@ Additional information can be found in our Developer Guide:
 @import url("scrollbar.css");
 @import url("themes.css");
 @import url("effects.css");
-@import url("splash.css");
+@import url("static.css");
 @import url("navigation.css");
 @import url("logs.css");
 @import url("visibility.css");
@@ -82,14 +82,6 @@ main {
 }
 
 /* General App Styles */
-
-#photoprism div.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
 
 #photoprism .v-badge__badge {
     font-size: 12px;
