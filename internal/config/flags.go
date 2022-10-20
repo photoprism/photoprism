@@ -360,7 +360,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",
-			Value:  "https://photoprism.local:2342/",
+			Value:  "http://photoprism.me:2342/",
 			EnvVar: "PHOTOPRISM_SITE_URL",
 		}}, {
 		Flag: cli.StringFlag{

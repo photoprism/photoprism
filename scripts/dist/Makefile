@@ -18,6 +18,8 @@ clean:
 	/usr/bin/apt-get -y autoremove
 	/usr/bin/apt-get -y autoclean
 	/bin/rm -rf /var/lib/apt/lists/*
+https:
+	/scripts/install-https.sh
 gpu:
 	/scripts/install-gpu.sh
 tensorflow:

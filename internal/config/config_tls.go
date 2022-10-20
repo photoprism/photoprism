@@ -31,8 +31,10 @@ func (c *Config) TLSCert() string {
 		return certName
 	}
 
-	// Find and return public certificate.
+	// Try to find server certificate.
 	if fileName := filepath.Join(c.CertificatesPath(), certName); fs.FileExistsNotEmpty(fileName) {
+		return fileName
+	} else if fileName = filepath.Join("/etc/ssl/certs", certName); fs.FileExistsNotEmpty(fileName) {
 		return fileName
 	}
 
@@ -49,8 +51,10 @@ func (c *Config) TLSKey() string {
 		return keyName
 	}
 
-	// Find and return private key.
+	// Try to find private key.
 	if fileName := filepath.Join(c.CertificatesPath(), keyName); fs.FileExistsNotEmpty(fileName) {
+		return fileName
+	} else if fileName = filepath.Join("/etc/ssl/private", keyName); fs.FileExistsNotEmpty(fileName) {
 		return fileName
 	}
 

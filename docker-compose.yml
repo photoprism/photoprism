@@ -27,6 +27,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
+      - "traefik.http.services.photoprism.loadbalancer.server.scheme=https"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
       - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`, `app.localssl.dev`)"
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
@@ -39,7 +40,7 @@ services:
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
       PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
       ## External development server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"
+      PHOTOPRISM_SITE_URL: "https://photoprism.me:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
@@ -85,7 +86,7 @@ services:
       PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-develop"
       PHOTOPRISM_OIDC_CLIENT_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
       ## Run/install on first startup (options: update gpu tensorflow davfs clitools clean):
-      # PHOTOPRISM_INIT: "gpu tensorflow"
+      PHOTOPRISM_INIT: "https tensorflow"
       ## Hardware Video Transcoding (optional):
       # PHOTOPRISM_FFMPEG_ENCODER: "nvidia"          # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry", "vaapi") Intel: "intel" for Broadwell or later and "vaapi" for Haswell or earlier
       # PHOTOPRISM_FFMPEG_ENCODER: "intel"           # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry", "vaapi") Intel: "intel" for Broadwell or later and "vaapi" for Haswell or earlier`

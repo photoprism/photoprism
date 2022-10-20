@@ -12,4 +12,4 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Copy source to image.
 COPY . .
-COPY --chown=root:root /scripts/dist/* /scripts/
+COPY --chown=root:root /scripts/dist/ /scripts/

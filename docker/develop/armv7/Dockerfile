@@ -38,7 +38,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PROG="photoprism"
 
 # Copy scripts and package sources config.
-COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
 # Update base image and add dependencies.

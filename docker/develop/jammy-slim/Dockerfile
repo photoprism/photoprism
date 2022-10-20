@@ -33,7 +33,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PROG="photoprism"
 
 # Copy scripts and package sources config.
-COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 
 # Update base image and add dependencies.
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
@@ -43,7 +43,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
-        libc6 ca-certificates sudo bash tzdata \
+        libc6 ca-certificates sudo bash tzdata avahi-utils \
         gpg zip unzip wget curl rsync make nano \
         jq lsof lshw sqlite3 mariadb-client imagemagick \
         exiftool rawtherapee librsvg2-bin \
