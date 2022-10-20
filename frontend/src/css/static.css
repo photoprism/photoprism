@@ -19,32 +19,33 @@
     bottom: 0;
 }
 
-/* Server Error */
-
-#photoprism.container.server-error {
-    background: #141417;
-}
-
-/* Splash Screen */
-
-#photoprism.container.splash-screen {
-    background: #141417;
-}
-
 #photoprism a.logo-large,
 #photoprism div.logo-large {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 300px;
-    height: 300px;
 }
+
+#photoprism.container.splash-screen {
+    background: #141417;
+}
+
+/* Error Screen */
 
 #photoprism a.logo-large {
     display: block;
     text-decoration: none;
     color: #c6d2ff;
+    width: 230px;
+    height: 230px;
+}
+
+/* Splash Screen */
+
+#photoprism div.logo-large {
+    width: 300px;
+    height: 300px;
 }
 
 #photoprism div.loading-bar {
