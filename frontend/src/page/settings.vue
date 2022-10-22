@@ -137,6 +137,10 @@ export default {
       active = tabs.findIndex((t) => t.name === this.tab);
     }
 
+    if (active < 0) {
+      active = 0;
+    }
+
     return {
       tabs: tabs,
       demo: isDemo,

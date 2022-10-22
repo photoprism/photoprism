@@ -70,13 +70,23 @@ export default {
       });
     }
 
+    let active = 0;
+
+    if (typeof this.$route.name === 'string' && this.$route.name !== '') {
+      active = tabs.findIndex((t) => t.name === this.$route.name);
+    }
+
+    if (active < 0) {
+      active = 0;
+    }
+
     return {
       tabs: tabs,
       demo: isDemo,
       public: isPublic,
       config: config,
       readonly: isReadOnly,
-      active: 0,
+      active: active,
       rtl: this.$rtl,
     };
   },
