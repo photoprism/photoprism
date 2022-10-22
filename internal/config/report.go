@@ -72,6 +72,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Feature Flags.
 		{"read-only", fmt.Sprintf("%t", c.ReadOnly())},
 		{"experimental", fmt.Sprintf("%t", c.Experimental())},
+		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
 		{"disable-webdav", fmt.Sprintf("%t", c.DisableWebDAV())},
 		{"disable-settings", fmt.Sprintf("%t", c.DisableSettings())},
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
@@ -139,7 +140,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tls-email", c.TLSEmail()},
 		{"tls-cert", c.TLSCert()},
 		{"tls-key", c.TLSKey()},
-		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
 
 		// Database.
 		{"database-driver", c.DatabaseDriver()},

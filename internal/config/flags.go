@@ -210,6 +210,11 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_EXPERIMENTAL",
 		}}, {
 		Flag: cli.BoolFlag{
+			Name:   "disable-tls",
+			Usage:  "disable HTTPS even if a certificate is available",
+			EnvVar: "PHOTOPRISM_DISABLE_TLS",
+		}}, {
+		Flag: cli.BoolFlag{
 			Name:   "disable-webdav",
 			Usage:  "disable built-in WebDAV server",
 			EnvVar: "PHOTOPRISM_DISABLE_WEBDAV",
