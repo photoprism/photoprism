@@ -144,7 +144,7 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
       .notOk()
       .expect(toolbar.toolbarSecondTitle.withText("Albums").visible)
       .notOk()
-      .expect(Selector("div.input-name input").visible)
+      .expect(Selector('svg[id="b14cd102-2241-4742-aeeb-4ebca536e025"]').visible)
       .ok();
   }
 );

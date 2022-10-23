@@ -93,7 +93,7 @@ test.meta("testID", "authentication-003").meta({ type: "short", mode: "auth" })(
 
     await t
       .click(settings.accountTab)
-      .click(settings.changePasswordAction)
+      .click(account.changePasswordAction)
       .typeText(account.currentPassword, "wrong", { replace: true })
       .typeText(account.newPassword, "photoprism", { replace: true });
 
@@ -141,7 +141,7 @@ test.meta("testID", "authentication-003").meta({ type: "short", mode: "auth" })(
 
     await t
       .click(settings.accountTab)
-      .click(settings.changePasswordAction)
+      .click(account.changePasswordAction)
       .typeText(account.currentPassword, "photoprism123", { replace: true })
       .typeText(account.newPassword, "photoprism", { replace: true })
       .typeText(account.retypePassword, "photoprism", { replace: true })
