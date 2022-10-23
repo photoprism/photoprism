@@ -2,6 +2,7 @@ import { Selector, t } from "testcafe";
 
 export default class Page {
   constructor() {
+    this.generalTab = Selector("#tab-settings_general");
     this.languageInput = Selector(".input-language input");
     this.uploadCheckbox = Selector(".input-upload input");
     this.downloadCheckbox = Selector(".input-download input");
@@ -36,6 +37,7 @@ export default class Page {
     this.readOnlyCheckbox = Selector("label").withText("Read-Only Mode");
 
     this.accountTab = Selector("#tab-settings_account");
-    this.changePasswordAction = Selector("button.action-change-password");
+    this.servicesTab = Selector("#tab-settings_services");
+
   }
 }
