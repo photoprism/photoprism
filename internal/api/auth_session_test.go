@@ -34,7 +34,7 @@ func TestCreateSession(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		CreateSession(router)
-		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": "admin", "password": "photoprism"}`)
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
 		log.Debugf("BODY: %s", r.Body.String())
 		val2 := gjson.Get(r.Body.String(), "user.Name")
 		assert.Equal(t, "admin", val2.String())
@@ -46,7 +46,7 @@ func TestCreateSession(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		CreateSession(router)
-		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": 123, "password": "xxx"}`)
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": 123, "password": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("PublicInvalidToken", func(t *testing.T) {
@@ -55,7 +55,7 @@ func TestCreateSession(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		CreateSession(router)
-		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": "admin", "password": "photoprism", "token": "xxx"}`)
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism", "token": "xxx"}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("AdminInvalidToken", func(t *testing.T) {
@@ -89,7 +89,7 @@ func TestCreateSession(t *testing.T) {
 	t.Run("PublicValidToken", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateSession(router)
-		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": "admin", "password": "photoprism", "token": "1jxf3jfn2k"}`)
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism", "token": "1jxf3jfn2k"}`)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("AdminInvalidPassword", func(t *testing.T) {
@@ -115,7 +115,7 @@ func TestCreateSession(t *testing.T) {
 
 		CreateSession(router)
 
-		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": "alice", "password": "Alice123!"}`)
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "alice", "password": "Alice123!"}`)
 		userEmail := gjson.Get(r.Body.String(), "user.Email")
 		userName := gjson.Get(r.Body.String(), "user.Name")
 		assert.Equal(t, "alice@example.com", userEmail.String())
@@ -128,7 +128,7 @@ func TestCreateSession(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		CreateSession(router)
-		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": "bob", "password": "Bobbob123!"}`)
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "bob", "password": "Bobbob123!"}`)
 		userEmail := gjson.Get(r.Body.String(), "user.Email")
 		userName := gjson.Get(r.Body.String(), "user.Name")
 		assert.Equal(t, "bob@example.com", userEmail.String())
@@ -141,7 +141,7 @@ func TestCreateSession(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		CreateSession(router)
-		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"name": "bob", "password": "helloworld"}`)
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "bob", "password": "helloworld"}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)

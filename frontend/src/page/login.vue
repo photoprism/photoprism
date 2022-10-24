@@ -10,16 +10,16 @@
               </div>
               <v-spacer></v-spacer>
               <v-text-field
-                  v-model="name"
+                  v-model="username"
                   required hide-details solo flat light autofocus
                   type="text"
                   :disabled="loading"
-                  name="name"
+                  name="username"
                   autocorrect="off"
                   autocapitalize="none"
                   :label="$gettext('Name')"
                   background-color="grey lighten-5"
-                  class="input-name text-selectable"
+                  class="input-username text-selectable"
                   :color="colors.accent"
                   :placeholder="$gettext('Name')"
                   prepend-icon="person"
@@ -108,7 +108,7 @@ export default {
       },
       loading: false,
       showPassword: false,
-      name: "",
+      username: "",
       password: "",
       sponsor: this.$config.isSponsor(),
       config: this.$config.values,
@@ -120,7 +120,7 @@ export default {
   },
   computed: {
     loginDisabled() {
-      return this.loading || this.name.trim() === "" || this.password.trim() === "";
+      return this.loading || this.username.trim() === "" || this.password.trim() === "";
     }
   },
   created() {
@@ -147,15 +147,15 @@ export default {
       setTimeout(() => { window.location = route.href; }, 100);
     },
     login() {
-      const name = this.name.trim();
+      const username = this.username.trim();
       const password = this.password.trim();
 
-      if (name === "" || password === "") {
+      if (username === "" || password === "") {
         return;
       }
 
       this.loading = true;
-      this.$session.login(name, password).then(
+      this.$session.login(username, password).then(
         () => {
           this.load();
         }

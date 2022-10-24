@@ -6,7 +6,7 @@ import (
 
 // Login represents a login form.
 type Login struct {
-	UserName  string `json:"name,omitempty"`
+	UserName  string `json:"username,omitempty"`
 	UserEmail string `json:"email,omitempty"`
 	Password  string `json:"password,omitempty"`
 	AuthToken string `json:"token,omitempty"`

@@ -37,7 +37,7 @@ test.meta("testID", "components-001").meta({ mode: "auth" })(
 
       await toolbar.triggerMobileMenuAction("logout");
       await t
-        .expect(page.nameInput.visible)
+        .expect(page.usernameInput.visible)
         .ok()
         .expect(Selector(".input-search input").visible)
         .notOk();

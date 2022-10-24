@@ -23,7 +23,7 @@ export default class Page {
     this.cardTitle = Selector("button.action-title-edit", { timeout: 7000 });
     this.cardDescription = Selector('div[title="Description"]', { timeout: 7000 });
     this.cardLocation = Selector("button.action-location", { timeout: 7000 });
-    this.nameInput = Selector(".input-name input", { timeout: 7000 });
+    this.usernameInput = Selector(".input-username input", { timeout: 7000 });
     this.passwordInput = Selector(".input-password input", { timeout: 7000 });
     this.togglePasswordMode = Selector(".v-input__icon--append", { timeout: 7000 });
     this.loginAction = Selector(".action-confirm", { timeout: 7000 });
@@ -31,7 +31,7 @@ export default class Page {
 
   async login(username, password) {
     await t
-      .typeText(Selector(".input-name input"), username, { replace: true, timeout: 5000 })
+      .typeText(Selector(".input-username input"), username, { replace: true, timeout: 5000 })
       .typeText(Selector(".input-password input"), password, { replace: true })
       .click(Selector(".action-confirm"));
   }

@@ -294,10 +294,10 @@ export default class Session {
     return LoginPage === window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
   }
 
-  login(name, password, token) {
+  login(username, password, token) {
     this.deleteId();
 
-    return Api.post("session", { name, password, token }).then((resp) => {
+    return Api.post("session", { username, password, token }).then((resp) => {
       const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
       this.sendClientInfo();
