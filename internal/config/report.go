@@ -118,8 +118,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-preview", c.SitePreview()},
 
 		// Legal info.
-		{"imprint", c.Imprint()},
-		{"imprint-url", c.ImprintUrl()},
+		{"legal-info", c.LegalInfo()},
+		{"legal-url", c.LegalUrl()},
 
 		// URIs.
 		{"content-uri", c.ContentUri()},

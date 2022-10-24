@@ -61,7 +61,7 @@ nav .v-list__tile__title.title {
     color: white;
 }
 
-#imprint {
+#legal-info {
     position: fixed;
     bottom: 0;
     left: 50%;
@@ -74,8 +74,8 @@ nav .v-list__tile__title.title {
     border-radius: 5px 5px 0 0;
 }
 
-#imprint a,
-#imprint span {
+#legal-info a,
+#legal-info span {
     text-decoration: none;
     font-size: 12px;
     color: #000;

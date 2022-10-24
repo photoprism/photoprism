@@ -5,9 +5,9 @@
     </div>
   </noscript>
   <div id="splash-info" class="has-js splash-info">
-    {{if .config.Imprint}}
-    {{if .config.ImprintUrl}}<a href="{{ .config.ImprintUrl }}" target="_blank" class="imprint">{{ .config.Imprint }}</a>
-    {{else}}<span class="imprint">{{ .config.Imprint }}</span>{{end}}
+    {{if .config.LegalInfo}}
+    {{if .config.LegalUrl}}<a href="{{ .config.LegalUrl }}" target="_blank" class="legal-info">{{ .config.LegalInfo }}</a>
+    {{else}}<span class="legal-info">{{ .config.LegalInfo }}</span>{{end}}
     {{else}}
     <div class="edition">
         {{ .config.Edition }}

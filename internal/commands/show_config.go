@@ -37,8 +37,6 @@ func showConfigAction(ctx *cli.Context) error {
 		log.Debug(err)
 	}
 
-	fmt.Println("")
-
 	for _, rep := range ConfigReports {
 		// Get values.
 		rows, cols := rep.Report(conf)
@@ -49,7 +47,7 @@ func showConfigAction(ctx *cli.Context) error {
 
 		// Show report.
 		if opt.Format == report.Default {
-			fmt.Printf("%s\n\n", strings.ToUpper(rep.Title))
+			fmt.Printf("\n%s\n\n", strings.ToUpper(rep.Title))
 		}
 
 		fmt.Println(result)

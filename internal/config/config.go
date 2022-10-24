@@ -132,6 +132,15 @@ func (c *Config) CliContext() *cli.Context {
 	return c.cliCtx
 }
 
+// CliGlobalString returns a global cli string flag value if set.
+func (c *Config) CliGlobalString(name string) string {
+	if c.cliCtx == nil {
+		return ""
+	}
+
+	return c.cliCtx.GlobalString(name)
+}
+
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
@@ -446,22 +455,32 @@ func (c *Config) SitePreview() string {
 	return c.options.SitePreview
 }
 
-// Imprint returns the legal info text for the page footer.
-func (c *Config) Imprint() string {
+// LegalInfo returns the legal info text for the page footer.
+func (c *Config) LegalInfo() string {
 	if c.NoSponsor() {
 		return MsgSponsor
 	}
 
-	return c.options.Imprint
+	if s := c.CliGlobalString("imprint"); s != "" {
+		log.Warnf("config: option 'imprint' is deprecated, please use 'legal-info'")
+		return s
+	}
+
+	return c.options.LegalInfo
 }
 
-// ImprintUrl returns the legal info url.
-func (c *Config) ImprintUrl() string {
+// LegalUrl returns the legal info url.
+func (c *Config) LegalUrl() string {
 	if c.NoSponsor() {
 		return SignUpURL
 	}
 
-	return c.options.ImprintUrl
+	if s := c.CliGlobalString("imprint-url"); s != "" {
+		log.Warnf("config: option 'imprint-url' is deprecated, please use 'legal-url'")
+		return s
+	}
+
+	return c.options.LegalUrl
 }
 
 // Prod checks if production mode is enabled, hides non-essential log messages.

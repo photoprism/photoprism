@@ -44,8 +44,8 @@ type ClientConfig struct {
 	SiteCaption     string              `json:"siteCaption"`
 	SiteDescription string              `json:"siteDescription"`
 	SitePreview     string              `json:"sitePreview"`
-	Imprint         string              `json:"imprint"`
-	ImprintUrl      string              `json:"imprintUrl"`
+	LegalInfo       string              `json:"legalInfo"`
+	LegalUrl        string              `json:"legalUrl"`
 	AppName         string              `json:"appName"`
 	AppMode         string              `json:"appMode"`
 	AppIcon         string              `json:"appIcon"`
@@ -242,8 +242,8 @@ func (c *Config) ClientPublic() ClientConfig {
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
 		SitePreview:     c.SitePreview(),
-		Imprint:         c.Imprint(),
-		ImprintUrl:      c.ImprintUrl(),
+		LegalInfo:       c.LegalInfo(),
+		LegalUrl:        c.LegalUrl(),
 		AppName:         c.AppName(),
 		AppMode:         c.AppMode(),
 		AppIcon:         c.AppIcon(),
@@ -318,8 +318,8 @@ func (c *Config) ClientShare() ClientConfig {
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
 		SitePreview:     c.SitePreview(),
-		Imprint:         c.Imprint(),
-		ImprintUrl:      c.ImprintUrl(),
+		LegalInfo:       c.LegalInfo(),
+		LegalUrl:        c.LegalUrl(),
 		AppName:         c.AppName(),
 		AppMode:         c.AppMode(),
 		AppIcon:         c.AppIcon(),
@@ -400,8 +400,8 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
 		SitePreview:     c.SitePreview(),
-		Imprint:         c.Imprint(),
-		ImprintUrl:      c.ImprintUrl(),
+		LegalInfo:       c.LegalInfo(),
+		LegalUrl:        c.LegalUrl(),
 		AppName:         c.AppName(),
 		AppMode:         c.AppMode(),
 		AppIcon:         c.AppIcon(),

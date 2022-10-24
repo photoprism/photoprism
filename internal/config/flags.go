@@ -337,16 +337,32 @@ var Flags = CliFlags{
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
 			Name:   "imprint",
-			Usage:  "legal `INFORMATION`, displayed in the page footer",
+			Usage:  "legal information `TEXT`, displayed in the page footer",
 			Value:  "",
+			Hidden: true,
 			EnvVar: "PHOTOPRISM_IMPRINT",
+		},
+		Tags: []string{EnvSponsor}}, {
+		Flag: cli.StringFlag{
+			Name:   "legal-info",
+			Usage:  "legal information `TEXT`, displayed in the page footer",
+			Value:  "",
+			EnvVar: "PHOTOPRISM_LEGAL_INFO",
 		},
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
 			Name:   "imprint-url",
 			Usage:  "legal information `URL`",
 			Value:  "",
+			Hidden: true,
 			EnvVar: "PHOTOPRISM_IMPRINT_URL",
+		},
+		Tags: []string{EnvSponsor}}, {
+		Flag: cli.StringFlag{
+			Name:   "legal-url",
+			Usage:  "legal information `URL`",
+			Value:  "",
+			EnvVar: "PHOTOPRISM_LEGAL_URL",
 		},
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{

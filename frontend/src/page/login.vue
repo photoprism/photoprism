@@ -63,10 +63,10 @@
           {{ $config.getEdition() }}
         </v-flex>
 
-        <v-flex v-if="config.imprint" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
-          <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank" class="text-link"
-             :style="`color: ${colors.link}!important`">{{ config.imprint }}</a>
-          <span v-else>{{ config.imprint }}</span>
+        <v-flex v-if="config.legalInfo" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
+          <a v-if="config.legalUrl" :href="config.legalUrl" target="_blank" class="text-link"
+             :style="`color: ${colors.link}!important`">{{ config.legalInfo }}</a>
+          <span v-else>{{ config.legalInfo }}</span>
         </v-flex>
         <v-flex v-else xs12 class="pa-0 body-2 text-selectable text-xs-center white--text text-sm-right sm6">
           <strong>{{ config.siteCaption ? config.siteCaption : config.siteTitle }}</strong>

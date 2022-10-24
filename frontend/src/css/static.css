@@ -237,7 +237,7 @@
     display: none;
 }
 
-#splash-info > .imprint{
+#splash-info > .legal-info{
     display: inline-block;
 }
 
@@ -292,7 +292,7 @@
     text-align: center;
 }
 
-#splash-info .imprint,
+#splash-info .legal-info,
 #noscript-info a {
     color: #bbbbb5;
 }

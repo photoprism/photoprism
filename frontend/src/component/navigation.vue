@@ -637,7 +637,7 @@
             <v-icon>workspace_premium</v-icon>
             <translate>Become a sponsor</translate>
           </a></div>
-          <div v-if="config.imprintUrl && isSponsor" class="menu-action nav-legal"><a :href="config.imprintUrl"
+          <div v-if="config.legalUrl && isSponsor" class="menu-action nav-legal"><a :href="config.legalUrl"
                                                                                       target="_blank">
             <v-icon>info</v-icon>
             <translate>Legal Information</translate>
@@ -645,9 +645,9 @@
         </div>
       </div>
     </div>
-    <div v-if="config.imprint && visible" id="imprint">
-      <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank">{{ config.imprint }}</a>
-      <span v-else>{{ config.imprint }}</span>
+    <div v-if="config.legalInfo && visible" id="legal-info">
+      <a v-if="config.legalUrl" :href="config.legalUrl" target="_blank">{{ config.legalInfo }}</a>
+      <span v-else>{{ config.legalInfo }}</span>
     </div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
     <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
