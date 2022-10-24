@@ -147,6 +147,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	case entity.SortOrderDuration:
 		s = s.Order("photos.photo_duration DESC, files.time_index")
+	case entity.SortOrderSize:
+		s = s.Order("files.file_size DESC, files.time_index")
 	case entity.SortOrderNewest:
 		s = s.Order("files.time_index")
 	case entity.SortOrderOldest:
