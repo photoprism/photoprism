@@ -19,12 +19,11 @@ services:
       - "traefik.http.routers.latest.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.latest.tls=true"
     environment:
-      PHOTOPRISM_UID: ${UID:-1000}                   # user id, should match your host user id
-      PHOTOPRISM_GID: ${GID:-1000}                   # group id
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
-      PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
-      ## Public server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_SITE_URL: "https://latest.localssl.dev/"
+      PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
+      PHOTOPRISM_GID: ${GID:-1000}                         # group id
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial "admin" password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
+      PHOTOPRISM_SITE_URL: "https://latest.localssl.dev/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
@@ -34,7 +33,7 @@ services:
       PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
       PHOTOPRISM_DATABASE_NAME: "local"
