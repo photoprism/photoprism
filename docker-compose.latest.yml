@@ -19,6 +19,7 @@ services:
       - "traefik.http.routers.latest.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.latest.tls=true"
     environment:
+      PHOTOPRISM_INIT: "https"
       PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                         # group id
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial "admin" password (minimum 8 characters)
