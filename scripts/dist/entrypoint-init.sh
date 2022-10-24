@@ -26,8 +26,6 @@ case $DOCKER_ENV in
     INIT_SCRIPTS="/scripts"
     CHOWN_DIRS=("/photoprism" "/opt/photoprism" "/go" "/tmp/photoprism")
     CHMOD_DIRS=("/opt/photoprism" "/tmp/photoprism")
-    # Create test TLS certificates.
-    ./scripts/openssl/create-all.sh
     ;;
 
   *)
