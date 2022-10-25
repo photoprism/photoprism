@@ -26,8 +26,9 @@ services:
     shm_size: "2gb"
     environment:
       PHOTOPRISM_INIT: "https"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
-      PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
+      PHOTOPRISM_ADMIN_USER: "admin"                       # initial admin username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
