@@ -794,7 +794,7 @@ func (m *MediaFile) FileType() fs.Type {
 	case m.IsAVIF():
 		return fs.ImageAVIF
 	case m.IsHEIC():
-		return fs.ImageHEIF
+		return fs.ImageHEIC
 	default:
 		return fs.FileType(m.fileName)
 	}
@@ -871,7 +871,7 @@ func (m *MediaFile) IsLive() bool {
 	}
 
 	if m.IsVideo() {
-		return fs.ImageHEIF.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
+		return fs.ImageHEIC.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
 	}
 
 	return false

@@ -1113,7 +1113,7 @@ func TestMediaFile_HasType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, true, mediaFile.HasFileType("heif"))
+		assert.Equal(t, true, mediaFile.HasFileType("heic"))
 	})
 	t.Run("iphone_7.xmp", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.xmp")
@@ -1124,7 +1124,7 @@ func TestMediaFile_HasType(t *testing.T) {
 	})
 }
 
-func TestMediaFile_IsHEIF(t *testing.T) {
+func TestMediaFile_IsHEIC(t *testing.T) {
 	conf := config.TestConfig()
 
 	t.Run("iphone_7.json", func(t *testing.T) {

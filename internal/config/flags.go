@@ -37,16 +37,16 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 		}}, {
 		Flag: cli.Int64Flag{
-			Name:   "sess-maxage",
-			Value:  DefaultSessMaxAge,
-			Usage:  "time in `SECONDS` until user sessions expire automatically (-1 to disable)",
-			EnvVar: "PHOTOPRISM_SESS_MAXAGE",
+			Name:   "session-maxage",
+			Value:  DefaultSessionMaxAge,
+			Usage:  "time in `SECONDS` until API sessions expire automatically (-1 to disable)",
+			EnvVar: "PHOTOPRISM_SESSION_MAXAGE",
 		}}, {
 		Flag: cli.Int64Flag{
-			Name:   "sess-timeout",
-			Value:  DefaultSessTimeout,
-			Usage:  "time in `SECONDS` until user sessions expire due to inactivity (-1 to disable)",
-			EnvVar: "PHOTOPRISM_SESS_TIMEOUT",
+			Name:   "session-timeout",
+			Value:  DefaultSessionTimeout,
+			Usage:  "time in `SECONDS` until API sessions expire due to inactivity (-1 to disable)",
+			EnvVar: "PHOTOPRISM_SESSION_TIMEOUT",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "log-level, l",
@@ -208,11 +208,6 @@ var Flags = CliFlags{
 			Name:   "experimental, e",
 			Usage:  "enable experimental features",
 			EnvVar: "PHOTOPRISM_EXPERIMENTAL",
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "disable-tls",
-			Usage:  "disable HTTPS even if a certificate is available",
-			EnvVar: "PHOTOPRISM_DISABLE_TLS",
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-webdav",
@@ -451,6 +446,11 @@ var Flags = CliFlags{
 			Usage:  "Web server port `NUMBER`",
 			EnvVar: "PHOTOPRISM_HTTP_PORT",
 		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-tls",
+			Usage:  "disable HTTPS even if a certificate is available",
+			EnvVar: "PHOTOPRISM_DISABLE_TLS",
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "database-driver, db",
 			Usage:  "database `DRIVER` (sqlite, mysql)",
@@ -575,12 +575,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "download-token",
-			Usage:  "`SECRET` download URL token for originals (default: random)",
+			Usage:  "`DEFAULT` download URL token for originals (leave empty for a random value)",
 			EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "preview-token",
-			Usage:  "`SECRET` thumbnail and video streaming URL token (default: random)",
+			Usage:  "`DEFAULT` thumbnail and video streaming URL token (leave empty for a random value)",
 			EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 		}}, {
 		Flag: cli.StringFlag{

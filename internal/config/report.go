@@ -25,8 +25,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"admin-user", c.AdminUser()},
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
 		{"public", fmt.Sprintf("%t", c.Public())},
-		{"sess-maxage", fmt.Sprintf("%d", c.SessMaxAge())},
-		{"sess-timeout", fmt.Sprintf("%d", c.SessTimeout())},
+		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
+		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},
 
 		// Logging.
 		{"log-level", c.LogLevel().String()},
@@ -72,7 +72,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Feature Flags.
 		{"read-only", fmt.Sprintf("%t", c.ReadOnly())},
 		{"experimental", fmt.Sprintf("%t", c.Experimental())},
-		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
 		{"disable-webdav", fmt.Sprintf("%t", c.DisableWebDAV())},
 		{"disable-settings", fmt.Sprintf("%t", c.DisableSettings())},
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
@@ -137,6 +136,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"http-compression", c.HttpCompression()},
 		{"http-host", c.HttpHost()},
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
+		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
 		{"tls-email", c.TLSEmail()},
 		{"tls-cert", c.TLSCert()},
 		{"tls-key", c.TLSKey()},

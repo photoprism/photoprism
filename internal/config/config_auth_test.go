@@ -48,20 +48,20 @@ func TestAuth(t *testing.T) {
 
 func TestSessMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, DefaultSessMaxAge, c.SessMaxAge())
-	c.options.SessMaxAge = -1
-	assert.Equal(t, int64(0), c.SessMaxAge())
-	c.options.SessMaxAge = 0
-	assert.Equal(t, DefaultSessMaxAge, c.SessMaxAge())
+	assert.Equal(t, DefaultSessionMaxAge, c.SessionMaxAge())
+	c.options.SessionMaxAge = -1
+	assert.Equal(t, int64(0), c.SessionMaxAge())
+	c.options.SessionMaxAge = 0
+	assert.Equal(t, DefaultSessionMaxAge, c.SessionMaxAge())
 }
 
 func TestSessTimeout(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, DefaultSessTimeout, c.SessTimeout())
-	c.options.SessTimeout = -1
-	assert.Equal(t, int64(0), c.SessTimeout())
-	c.options.SessTimeout = 0
-	assert.Equal(t, DefaultSessTimeout, c.SessTimeout())
+	assert.Equal(t, DefaultSessionTimeout, c.SessionTimeout())
+	c.options.SessionTimeout = -1
+	assert.Equal(t, int64(0), c.SessionTimeout())
+	c.options.SessionTimeout = 0
+	assert.Equal(t, DefaultSessionTimeout, c.SessionTimeout())
 }
 
 func TestUtils_CheckPassword(t *testing.T) {

@@ -12,6 +12,7 @@ var TypeInfo = map[Type]string{
 	ImageMPO:        "Stereoscopic JPEG (3D)",
 	ImageAVIF:       "AV1 Image File Format",
 	ImageHEIF:       "High Efficiency Image File Format",
+	ImageHEIC:       "High Efficiency Image Container",
 	ImageWebP:       "Google WebP",
 	VideoWebM:       "Google WebM",
 	VideoMP2:        "MPEG 2 (H.262)",

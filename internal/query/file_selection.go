@@ -66,7 +66,7 @@ func ShareSelection(originals bool) FileSelection {
 			fs.ImageWebP.String(),
 			fs.ImageTIFF.String(),
 			fs.ImageAVIF.String(),
-			fs.ImageHEIF.String(),
+			fs.ImageHEIC.String(),
 			fs.ImageBMP.String(),
 			fs.ImageGIF.String(),
 		}
