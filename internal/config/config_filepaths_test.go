@@ -133,6 +133,15 @@ func TestConfig_CmdCachePath(t *testing.T) {
 	}
 }
 
+func TestConfig_CmdLibPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	if dir := c.CmdLibPath(); dir == "" {
+		t.Fatal("cmd lib path is empty")
+	} else if !strings.HasPrefix(dir, "/usr") {
+		t.Fatalf("unexpected cmd lib path: %s", dir)
+	}
+}
+
 func TestConfig_CachePath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/cache", c.CachePath())

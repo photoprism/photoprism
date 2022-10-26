@@ -110,7 +110,10 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 		var stderr bytes.Buffer
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
-		cmd.Env = []string{fmt.Sprintf("HOME=%s", c.conf.CmdCachePath())}
+		cmd.Env = []string{
+			fmt.Sprintf("HOME=%s", c.conf.CmdCachePath()),
+			fmt.Sprintf("LD_LIBRARY_PATH=%s", c.conf.CmdLibPath()),
+		}
 
 		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(jpegName)), filepath.Base(cmd.Path))
 

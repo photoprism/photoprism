@@ -414,9 +414,18 @@ func (c *Config) CachePath() string {
 	return fs.Abs(c.options.CachePath)
 }
 
-// CmdCachePath returns a path that CLI commands can use as cache directory.
+// CmdCachePath returns a path that external CLI tools can use as cache directory.
 func (c *Config) CmdCachePath() string {
 	return filepath.Join(c.CachePath(), "cmd")
+}
+
+// CmdLibPath returns the dynamic loader path that external CLI tools should use.
+func (c *Config) CmdLibPath() string {
+	if dir := os.Getenv("LD_LIBRARY_PATH"); dir != "" {
+		return dir
+	}
+
+	return "/usr/local/lib:/usr/lib"
 }
 
 // ThumbCachePath returns the thumbnail storage directory.
