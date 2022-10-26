@@ -2,8 +2,8 @@
 
 set -e
 
-LIBHEIF_VERSION=${1:-v1.13.0}
-DESTDIR=$(realpath "${2:-/usr/local}")
+DESTDIR=$(realpath "${1:-/usr}")
+LIBHEIF_VERSION=${2:-v1.13.0}
 SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
 DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
 
