@@ -24,7 +24,7 @@ const originals = new Originals();
 const library = new Library();
 
 test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "public" })(
-  "Common: Upload + Delete jpg/json",
+  "Core: Upload + Delete jpg/json",
   async (t) => {
     if (t.browser.platform === "mobile") {
       console.log("Skipped on mobile");
@@ -103,7 +103,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
 );
 
 test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })(
-  "Common: Upload + Delete video",
+  "Core: Upload + Delete video",
   async (t) => {
     if (t.browser.platform === "mobile") {
       console.log("Skipped on mobile");
@@ -176,7 +176,7 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })(
 );
 
 test.meta("testID", "photos-upload-delete-003").meta({ mode: "public" })(
-  "Common: Upload to existing Album + Delete",
+  "Core: Upload to existing Album + Delete",
   async (t) => {
     if (t.browser.platform === "mobile") {
       console.log("Skipped on mobile");
@@ -218,7 +218,7 @@ test.meta("testID", "photos-upload-delete-003").meta({ mode: "public" })(
 );
 
 test.meta("testID", "photos-upload-delete-004").meta({ mode: "public" })(
-  "Common: Upload jpg to new Album + Delete",
+  "Core: Upload jpg to new Album + Delete",
   async (t) => {
     if (t.browser.platform === "mobile") {
       console.log("Skipped on mobile");
@@ -276,7 +276,7 @@ test.meta("testID", "photos-upload-delete-004").meta({ mode: "public" })(
 );
 
 test.meta("testID", "photos-upload-delete-005").meta({ type: "short", mode: "public" })(
-  "Common: Try uploading nsfw file",
+  "Core: Try uploading nsfw file",
   async (t) => {
     if (t.browser.platform === "mobile") {
       console.log("Skipped on mobile");
@@ -294,7 +294,7 @@ test.meta("testID", "photos-upload-delete-005").meta({ type: "short", mode: "pub
 );
 
 test.meta("testID", "photos-upload-delete-006").meta({ type: "short", mode: "public" })(
-  "Common: Try uploading txt file",
+  "Core: Try uploading txt file",
   async (t) => {
     if (t.browser.platform === "mobile") {
       console.log("Skipped on mobile");

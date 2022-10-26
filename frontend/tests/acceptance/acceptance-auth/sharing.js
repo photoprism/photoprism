@@ -112,8 +112,6 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
       .click(sharedialog.deleteLink)
       .useRole(Role.anonymous());
 
-    await t.expect(Selector(".input-name input").visible).ok();
-
     await t.navigateTo("http://localhost:2343/s/secretfortesting");
 
     const AlbumCountAnonymousAfterDelete = await album.getAlbumCount("all");
@@ -134,8 +132,6 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
       .click(sharedialog.expandLink.nth(0))
       .click(sharedialog.deleteLink)
       .useRole(Role.anonymous());
-
-    await t.expect(Selector(".input-name input").visible).ok();
 
     await t.navigateTo("http://localhost:2343/s/secretfortesting");
 

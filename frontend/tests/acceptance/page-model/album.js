@@ -96,10 +96,18 @@ export default class Page {
     }
     if (mode === "nth") {
       await t.hover(Selector("a.is-album").nth(uidOrNth));
-      if (visible) {
-        await t.expect(Selector(`button.input-` + action).visible).ok();
+      if (action != "share") {
+        if (visible) {
+          await t.expect(Selector(`button.input-` + action).visible).ok();
+        } else {
+          await t.expect(Selector(`button.input-` + action).visible).notOk();
+        }
       } else {
-        await t.expect(Selector(`button.input-` + action).visible).notOk();
+        if (visible) {
+          await t.expect(Selector(`button.action-` + action).visible).ok();
+        } else {
+          await t.expect(Selector(`button.action-` + action).visible).notOk();
+        }
       }
     }
   }
