@@ -32,7 +32,7 @@ func Path(s string) string {
 	return s
 }
 
-// UserPath sanitizes and normalizes a user provided path so it can be used
+// UserPath sanitizes and normalizes a user provided path, so it can be used.
 func UserPath(dir string) string {
 	if dir == "" {
 		return dir

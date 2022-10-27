@@ -33,8 +33,8 @@ func NewUserFromCli(ctx *cli.Context) User {
 		CanLogin:    !ctx.Bool("no-login"),
 		WebDAV:      ctx.Bool("webdav"),
 		UserAttr:    clean.Attr(ctx.String("attr")),
-		BasePath:    clean.Path(ctx.String("base-path")),
-		UploadPath:  clean.Path(ctx.String("upload-path")),
+		BasePath:    clean.UserPath(ctx.String("base-path")),
+		UploadPath:  clean.UserPath(ctx.String("upload-path")),
 		Password:    clean.Password(ctx.String("password")),
 	}
 }
