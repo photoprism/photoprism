@@ -16,35 +16,39 @@ export default class Page {
     if (t.browser.platform === "mobile") {
       await t.wait(5000);
     }
-    if (
-      (page === "monochrome") |
-      (page === "panoramas") |
-      (page === "stacks") |
-      (page === "scans") |
-      (page === "review") |
-      (page === "archive")
-    ) {
-      if (!(await Selector("div.v-list__group--active div.nav-browse").visible)) {
-        await t.click(Selector("div.nav-browse + div"));
+    if (await Selector(".nav-" + page).visible) {
+      await t.click(Selector(".nav-" + page));
+    } else {
+      if (
+        (page === "monochrome") |
+        (page === "panoramas") |
+        (page === "stacks") |
+        (page === "scans") |
+        (page === "review") |
+        (page === "archive")
+      ) {
+        if (!(await Selector("div.v-list__group--active div.nav-browse").visible)) {
+          await t.click(Selector("div.nav-browse + div"));
+        }
+      } else if (page === "live") {
+        if (!(await Selector("div.v-list__group--active div.nav-video").visible)) {
+          await t.click(Selector("div.nav-video + div"));
+        }
+      } else if (page === "states") {
+        if (!(await Selector("div.v-list__group--active div.nav-places").visible)) {
+          await t.click(Selector("div.nav-places + div"));
+        }
+      } else if ((page === "originals") | (page === "hidden") | (page === "errors")) {
+        if (!(await Selector("div.v-list__group--active div.nav-library").visible)) {
+          await t.click(Selector("div.nav-library + div"));
+        }
+      } else if ((page === "about") | (page === "feedback") | (page === "license")) {
+        if (!(await Selector("div.v-list__group--active div.nav-settings").visible)) {
+          await t.click(Selector("div.nav-settings + div"));
+        }
       }
-    } else if (page === "live") {
-      if (!(await Selector("div.v-list__group--active div.nav-video").visible)) {
-        await t.click(Selector("div.nav-video + div"));
-      }
-    } else if (page === "states") {
-      if (!(await Selector("div.v-list__group--active div.nav-places").visible)) {
-        await t.click(Selector("div.nav-places + div"));
-      }
-    } else if ((page === "originals") | (page === "hidden") | (page === "errors")) {
-      if (!(await Selector("div.v-list__group--active div.nav-library").visible)) {
-        await t.click(Selector("div.nav-library + div"));
-      }
-    } else if ((page === "about") | (page === "feedback") | (page === "license")) {
-      if (!(await Selector("div.v-list__group--active div.nav-settings").visible)) {
-        await t.click(Selector("div.nav-settings + div"));
-      }
+      await t.click(Selector(".nav-" + page));
     }
-    await t.click(Selector(".nav-" + page));
   }
 
   async checkMenuItemAvailability(page, visible) {
