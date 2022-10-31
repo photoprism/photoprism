@@ -125,7 +125,10 @@ import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 export default {
   name: 'PPageFiles',
   props: {
-    staticFilter: Object
+    staticFilter: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     const query = this.$route.query;
@@ -173,12 +176,16 @@ export default {
     }
   },
   created() {
+    if (this.$config.deny("files", "access_library")) {
+      this.$router.push({ name: "albums" });
+      return;
+    }
+
     this.path = this.$route.params.pathMatch;
 
     this.search();
 
     this.subscriptions.push(Event.subscribe("folders", (ev, data) => this.onUpdate(ev, data)));
-
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
   },
   destroyed() {

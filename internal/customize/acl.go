@@ -30,13 +30,13 @@ func (s *Settings) ApplyACL(list acl.ACL, role acl.Role) *Settings {
 	m.Features.Share = s.Features.Share && list.AllowAny(acl.ResourceShares, role, acl.Permissions{acl.ActionManage})
 
 	// Browse, upload and download files.
-	m.Features.Download = s.Features.Download && !s.Download.Disabled && list.Allow(acl.ResourcePhotos, role, acl.ActionDownload)
-	m.Features.Files = s.Features.Files && list.AllowAny(acl.ResourceFiles, role, acl.Permissions{acl.ActionSearch})
 	m.Features.Upload = s.Features.Upload && list.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
+	m.Features.Download = s.Features.Download && !s.Download.Disabled && list.Allow(acl.ResourcePhotos, role, acl.ActionDownload)
 
 	// Library.
 	m.Features.Import = s.Features.Import && list.AllowAny(acl.ResourceFiles, role, acl.Permissions{acl.ActionManage, acl.ActionUpload})
-	m.Features.Library = s.Features.Library && list.Allow(acl.ResourceFiles, role, acl.ActionManage)
+	m.Features.Library = s.Features.Library && list.AllowAny(acl.ResourceFiles, role, acl.Permissions{acl.ActionManage})
+	m.Features.Files = s.Features.Files && list.AllowAny(acl.ResourceFiles, role, acl.Permissions{acl.AccessLibrary})
 	m.Features.Logs = s.Features.Logs && list.Allow(acl.ResourceLogs, role, acl.ActionView)
 
 	// Settings.
