@@ -19,7 +19,7 @@ func CachePath(basePath, fileHash, namespace string, create bool) (cachePath str
 	cachePath = path.Join(basePath, namespace, fileHash[0:1], fileHash[1:2], fileHash[2:3])
 
 	if create {
-		if err := os.MkdirAll(cachePath, os.ModePerm); err != nil {
+		if err := os.MkdirAll(cachePath, ModeDir); err != nil {
 			return "", err
 		}
 	}

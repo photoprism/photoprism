@@ -23,7 +23,7 @@ func TestResolve(t *testing.T) {
 	}(linkName, targetName)
 
 	// Create empty test target file.
-	if targetFile, err := os.OpenFile(targetName, os.O_RDONLY|os.O_CREATE, os.ModePerm); err != nil {
+	if targetFile, err := os.OpenFile(targetName, os.O_RDONLY|os.O_CREATE, ModeFile); err != nil {
 		t.Fatal(err)
 	} else if err = targetFile.Close(); err != nil {
 		t.Fatal(err)

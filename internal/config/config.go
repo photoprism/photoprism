@@ -284,11 +284,11 @@ func (c *Config) initSerial() (err error) {
 	storageName := filepath.Join(c.StoragePath(), serialName)
 	backupName := filepath.Join(c.BackupPath(), serialName)
 
-	if err = os.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
+	if err = os.WriteFile(storageName, []byte(c.serial), fs.ModeFile); err != nil {
 		return fmt.Errorf("could not create %s: %s", storageName, err)
 	}
 
-	if err = os.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {
+	if err = os.WriteFile(backupName, []byte(c.serial), fs.ModeFile); err != nil {
 		return fmt.Errorf("could not create %s: %s", backupName, err)
 	}
 

@@ -34,7 +34,7 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 	}
 
 	// Make sure directory exists.
-	if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(fileName), fs.ModeDir); err != nil {
 		return err
 	}
 
@@ -42,7 +42,7 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 	defer photoYamlMutex.Unlock()
 
 	// Write YAML data to file.
-	if err := os.WriteFile(fileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(fileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 

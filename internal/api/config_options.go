@@ -91,14 +91,14 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		}
 
 		// Make sure directory exists.
-		if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
+		if err := os.MkdirAll(filepath.Dir(fileName), fs.ModeDir); err != nil {
 			log.Errorf("config: failed creating config path %s (%s)", filepath.Dir(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
 		// Write YAML data to file.
-		if err := os.WriteFile(fileName, yamlData, os.ModePerm); err != nil {
+		if err := os.WriteFile(fileName, yamlData, fs.ModeFile); err != nil {
 			log.Errorf("config: failed writing values to %s (%s)", clean.Log(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return

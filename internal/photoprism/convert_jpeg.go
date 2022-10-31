@@ -133,7 +133,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 			break
 		} else if res := out.Bytes(); len(res) < 512 || !mimetype.Detect(res).Is(fs.MimeTypeJpeg) {
 			continue
-		} else if err = os.WriteFile(jpegName, res, os.ModePerm); err != nil {
+		} else if err = os.WriteFile(jpegName, res, fs.ModeFile); err != nil {
 			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
 			continue
 		} else {

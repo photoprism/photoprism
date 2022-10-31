@@ -52,7 +52,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 	}
 
 	// Write output to file.
-	if err := os.WriteFile(jsonName, []byte(out.String()), os.ModePerm); err != nil {
+	if err := os.WriteFile(jsonName, []byte(out.String()), fs.ModeFile); err != nil {
 		return "", err
 	}
 

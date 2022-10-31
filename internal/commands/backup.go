@@ -110,7 +110,7 @@ func backupAction(ctx *cli.Context) error {
 
 			// Create backup directory if not exists.
 			if dir := filepath.Dir(indexFileName); dir != "." {
-				if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+				if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
 					return err
 				}
 			}
@@ -162,7 +162,7 @@ func backupAction(ctx *cli.Context) error {
 			fmt.Println(out.String())
 		} else {
 			// Write output to file.
-			if err := os.WriteFile(indexFileName, []byte(out.String()), os.ModePerm); err != nil {
+			if err := os.WriteFile(indexFileName, []byte(out.String()), fs.ModeFile); err != nil {
 				return err
 			}
 		}

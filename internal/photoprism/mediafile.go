@@ -641,7 +641,7 @@ func (m *MediaFile) HasSameName(f *MediaFile) bool {
 
 // Move file to a new destination with the filename provided in parameter.
 func (m *MediaFile) Move(dest string) error {
-	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dest), fs.ModeDir); err != nil {
 		return err
 	}
 
@@ -668,7 +668,7 @@ func (m *MediaFile) Move(dest string) error {
 
 // Copy a MediaFile to another file by destinationFilename.
 func (m *MediaFile) Copy(dest string) error {
-	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dest), fs.ModeDir); err != nil {
 		return err
 	}
 
@@ -684,7 +684,7 @@ func (m *MediaFile) Copy(dest string) error {
 
 	defer thisFile.Close()
 
-	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, os.ModePerm)
+	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, fs.ModeFile)
 
 	if err != nil {
 		log.Error(err.Error())

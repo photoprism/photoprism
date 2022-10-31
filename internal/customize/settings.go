@@ -154,7 +154,7 @@ func (s *Settings) Save(fileName string) error {
 
 	s.Propagate()
 
-	if err := os.WriteFile(fileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(fileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 

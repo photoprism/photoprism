@@ -147,7 +147,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 
 	if f.FileInfo().IsDir() {
 		// Make Folder
-		return fileName, os.MkdirAll(fileName, os.ModePerm)
+		return fileName, os.MkdirAll(fileName, ModeDir)
 	}
 
 	// Make File
@@ -157,7 +157,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 		fdir = fileName[:lastIndex]
 	}
 
-	err = os.MkdirAll(fdir, os.ModePerm)
+	err = os.MkdirAll(fdir, ModeDir)
 	if err != nil {
 		return fileName, err
 	}
@@ -179,7 +179,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 
 // Download downloads a file from a URL.
 func Download(filepath string, url string) error {
-	os.MkdirAll("/tmp/photoprism", os.ModePerm)
+	os.MkdirAll("/tmp/photoprism", ModeDir)
 
 	// Create the file
 	out, err := os.Create(filepath)

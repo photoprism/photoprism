@@ -129,13 +129,13 @@ func MarkUploadAsFavorite(fileName string) {
 	}
 
 	// Make sure directory exists.
-	if err := os.MkdirAll(filepath.Dir(yamlName), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(yamlName), fs.ModeDir); err != nil {
 		log.Errorf("webdav: %s", err.Error())
 		return
 	}
 
 	// Write YAML data to file.
-	if err := os.WriteFile(yamlName, []byte("Favorite: true\n"), os.ModePerm); err != nil {
+	if err := os.WriteFile(yamlName, []byte("Favorite: true\n"), fs.ModeFile); err != nil {
 		log.Errorf("webdav: %s", err.Error())
 		return
 	}

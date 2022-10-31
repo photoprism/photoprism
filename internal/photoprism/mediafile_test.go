@@ -970,7 +970,7 @@ func TestMediaFile_Move(t *testing.T) {
 	origName := tmpPath + "/original.jpg"
 	destName := tmpPath + "/destination.jpg"
 
-	if err := os.MkdirAll(tmpPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(tmpPath, fs.ModeDir); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1006,7 +1006,7 @@ func TestMediaFile_Copy(t *testing.T) {
 
 	tmpPath := conf.CachePath() + "/_tmp/TestMediaFile_Copy"
 
-	if err := os.MkdirAll(tmpPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(tmpPath, fs.ModeDir); err != nil {
 		t.Fatal(err)
 	}
 
@@ -2359,7 +2359,7 @@ func TestMediaFile_RenameSidecarFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := os.MkdirAll(filepath.Join(conf.SidecarPath(), "foo"), os.ModePerm); err != nil {
+		if err := os.MkdirAll(filepath.Join(conf.SidecarPath(), "foo"), fs.ModeDir); err != nil {
 			t.Fatal(err)
 		}
 

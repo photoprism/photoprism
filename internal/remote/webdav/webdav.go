@@ -193,7 +193,7 @@ func (c Client) Download(from, to string, force bool) (err error) {
 
 	if err != nil {
 		// Create local storage path.
-		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
 			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.Log(dir), err)
 		}
 	} else if !dirInfo.IsDir() {
@@ -212,7 +212,7 @@ func (c Client) Download(from, to string, force bool) (err error) {
 	}
 
 	// Write data to file and return.
-	return os.WriteFile(to, bytes, os.ModePerm)
+	return os.WriteFile(to, bytes, fs.ModeFile)
 }
 
 // DownloadDir downloads all files from a remote to a local directory.
@@ -261,7 +261,7 @@ func (c Client) CreateDir(dir string) error {
 		return nil
 	}
 
-	return c.client.MkdirAll(dir, os.ModePerm)
+	return c.client.MkdirAll(dir, fs.ModeDir)
 }
 
 // Upload uploads a single file to the remote server.
@@ -282,7 +282,7 @@ func (c Client) Upload(from, to string) (err error) {
 		_ = file.Close()
 	}(file)
 
-	return c.client.WriteStream(to, file, os.ModePerm)
+	return c.client.WriteStream(to, file, fs.ModeFile)
 }
 
 // Delete deletes a single file or directory on a remote server.

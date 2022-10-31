@@ -153,7 +153,7 @@ func (c *Config) Resync(token string) (err error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	if err := os.MkdirAll(filepath.Dir(c.FileName), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
 		return err
 	}
 
@@ -275,11 +275,11 @@ func (c *Config) Save() error {
 
 	c.Propagate()
 
-	if err := os.MkdirAll(filepath.Dir(c.FileName), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(c.FileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(c.FileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 

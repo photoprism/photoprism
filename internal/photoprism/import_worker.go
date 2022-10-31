@@ -70,7 +70,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if fs.PathExists(destDir) {
 					// Do nothing.
-				} else if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
+				} else if err := os.MkdirAll(destDir, fs.ModeDir); err != nil {
 					log.Errorf("import: failed creating folder for %s (%s)", clean.Log(f.BaseName()), err.Error())
 				} else {
 					destDirRel := fs.RelName(destDir, imp.originalsPath())
