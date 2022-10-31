@@ -272,25 +272,21 @@ export const MapsStyle = () => [
     text: $gettext("Streets"),
     value: "streets",
     sponsor: true,
-    disabled: !config.isSponsor(),
   },
   {
     text: $gettext("Satellite"),
     value: "hybrid",
     sponsor: true,
-    disabled: !config.isSponsor(),
   },
   {
     text: $gettext("Outdoor"),
     value: "outdoor",
     sponsor: true,
-    disabled: !config.isSponsor(),
   },
   {
     text: $gettext("Topographic"),
     value: "topographique",
     sponsor: true,
-    disabled: !config.isSponsor(),
   },
 ];
 
