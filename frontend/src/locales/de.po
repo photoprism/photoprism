@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-10-31 14:24+0000\n"
+"PO-Revision-Date: 2022-10-31 18:13+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -2491,7 +2491,7 @@ msgstr "Video"
 
 #: src/component/photo/toolbar.vue:57
 msgid "Video Duration"
-msgstr "Videodauer"
+msgstr "Videolänge"
 
 #: src/app/routes.js:211 src/component/navigation.vue:180
 #: src/component/navigation.vue:190 src/component/navigation.vue:4
