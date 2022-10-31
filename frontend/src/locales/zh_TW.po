@@ -41,15 +41,15 @@ msgstr "找到 %{n} 人"
 msgid "%{n} pictures found"
 msgstr "找到 %{n} 張圖片"
 
-#: src/options/options.js:360
+#: src/options/options.js:368
 msgid "1 hour"
 msgstr "1 小時"
 
-#: src/options/options.js:362
+#: src/options/options.js:370
 msgid "12 hours"
 msgstr "12 小時"
 
-#: src/options/options.js:361
+#: src/options/options.js:369
 msgid "4 hours"
 msgstr "4 小時"
 
@@ -121,35 +121,37 @@ msgstr "已新增"
 msgid "Advanced"
 msgstr "進階"
 
-#: src/options/options.js:370
+#: src/options/options.js:378
 msgid "After 1 day"
 msgstr "1 天過後"
 
-#: src/options/options.js:371
+#: src/options/options.js:379
 msgid "After 3 days"
 msgstr "3 天過後"
 
-#: src/options/options.js:372
+#: src/options/options.js:380
 msgid "After 7 days"
 msgstr "7 天過後"
 
-#: src/options/options.js:374
+#: src/options/options.js:382
 msgid "After one month"
 msgstr "1 個月過後"
 
-#: src/options/options.js:376
+#: src/options/options.js:384
 msgid "After one year"
 msgstr "1 年過後"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
 msgstr "從搜索結果中選擇圖片後，您可以使用上下文菜單將它們添加到相簿。"
 
-#: src/options/options.js:375
+#: src/options/options.js:383
 msgid "After two months"
 msgstr "2 個月過後"
 
-#: src/options/options.js:373
+#: src/options/options.js:381
 msgid "After two weeks"
 msgstr "2 星期過後"
 
@@ -231,11 +233,17 @@ msgid "All Years"
 msgstr "所有年份"
 
 #: src/page/about/about.vue:40
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "另外，如果你喜歡這個項目，請在 GitHub 上留下星星。它提供了繼續前進的額外動力。"
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
+msgstr ""
+"另外，如果你喜歡這個項目，請在 GitHub 上留下星星。它提供了繼續前進的額外動"
+"力。"
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
 msgstr "或者，你也可以直接使用WebDAV（例如 NextCloud）等服務上傳檔案。"
 
 #: src/dialog/photo/edit/info.vue:151
@@ -253,7 +261,7 @@ msgstr "發生錯誤了 - 你是不是離線了？"
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:301
 #: src/component/photo/cards.vue:480 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
-#: src/options/options.js:295
+#: src/options/options.js:303
 msgid "Animated"
 msgstr "動畫"
 
@@ -330,12 +338,18 @@ msgid "Aspect Ratio"
 msgstr "長寬比"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
 msgstr "自動新增 JPEGs 檔案以顯示在瀏覽器中。"
 
 #: src/page/settings/general.vue:163
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "自動創建特殊時刻、旅行和地點的相冊。"
+
+#: src/options/options.js:268
+msgid "Basic"
+msgstr ""
 
 #: src/component/navigation.vue:584 src/dialog/sponsor.vue:7
 #: src/page/about/about.vue:33 src/page/login.vue:48
@@ -343,12 +357,19 @@ msgid "Become a sponsor"
 msgstr "成為贊助商"
 
 #: src/page/about/about.vue:62
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
 msgstr "在提交支持請求之前，請使用我們的故障排除清單來確定問題的原因。"
 
 #: src/page/about/about.vue:27
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "作為 100% 自籌資金和獨立的公司，我們可以向您保證，我們永遠不會出售您的數據，並且我們將始終對我們的軟件和服務保持透明。"
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"作為 100% 自籌資金和獨立的公司，我們可以向您保證，我們永遠不會出售您的數據，"
+"並且我們將始終對我們的軟件和服務保持透明。"
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -360,19 +381,19 @@ msgstr "個人簡歷"
 msgid "Birth Date"
 msgstr "出生日期"
 
-#: src/options/options.js:395
+#: src/options/options.js:403
 msgid "Black"
 msgstr "黑色"
 
-#: src/options/options.js:408
+#: src/options/options.js:416
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "布萊克曼：Lanczos修改，少振鈴文物"
 
-#: src/options/options.js:391
+#: src/options/options.js:399
 msgid "Blue"
 msgstr "藍色"
 
-#: src/options/options.js:392
+#: src/options/options.js:400
 msgid "Brown"
 msgstr "棕色"
 
@@ -385,10 +406,12 @@ msgid "Browse indexed files and folders in Library."
 msgstr "瀏覽收藏庫中索引好的檔案和資料夾。"
 
 #: src/page/about/about.vue:54
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
 msgstr "瀏覽知識庫以獲取有關特定產品功能、服務和相關資源的詳細信息。"
 
-#: src/page/about/feedback.vue:8 src/options/options.js:402
+#: src/page/about/feedback.vue:8 src/options/options.js:410
 msgid "Bug Report"
 msgstr "回報問題"
 
@@ -503,7 +526,9 @@ msgid "Colors"
 msgstr "顏色"
 
 #: src/page/about/about.vue:49
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
 msgstr "使用我們提供的故障排除清單可以快速診斷和解決常見問題。"
 
 #: src/page/library/index.vue:115
@@ -584,7 +609,7 @@ msgstr "已新增"
 msgid "Creating thumbnails for"
 msgstr "新增縮圖"
 
-#: src/options/options.js:410
+#: src/options/options.js:418
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "立方：中等質量，良好性能"
 
@@ -592,11 +617,11 @@ msgstr "立方：中等質量，良好性能"
 msgid "Current Password"
 msgstr "現任密碼"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:399
+#: src/page/about/feedback.vue:5 src/options/options.js:407
 msgid "Customer Support"
 msgstr "客戶支援"
 
-#: src/options/options.js:390
+#: src/options/options.js:398
 msgid "Cyan"
 msgstr "青色"
 
@@ -604,7 +629,7 @@ msgstr "青色"
 msgid "Cyano"
 msgstr "藍諾"
 
-#: src/options/options.js:363
+#: src/options/options.js:371
 msgid "Daily"
 msgstr "每天的"
 
@@ -617,7 +642,8 @@ msgstr "天"
 msgid "Debug Logs"
 msgstr "調試日誌"
 
-#: src/options/options.js:314 src/options/themes.js:402
+#: src/options/options.js:264 src/options/options.js:322
+#: src/options/themes.js:402
 msgid "Default"
 msgstr "預設"
 
@@ -736,7 +762,7 @@ msgstr "不要使用 RawTherapee 來轉換 RAW 文件。"
 msgid "Don't use TensorFlow for image classification."
 msgstr "瀏覽以及編輯分類標籤。"
 
-#: src/options/options.js:403
+#: src/options/options.js:411
 msgid "Donations"
 msgstr "贊助"
 
@@ -779,7 +805,9 @@ msgid "Downscaling Filter"
 msgstr "品質過濾"
 
 #: src/page/about/feedback.vue:16
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
 msgstr "由於我們收到大量電子郵件，我們的團隊可能無法立即回复您。"
 
 #: src/page/library/browse.vue:37
@@ -795,7 +823,9 @@ msgid "Dynamic Previews"
 msgstr "未緩存的預覽"
 
 #: src/page/settings/advanced.vue:303
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
 msgstr "按需渲染需要強大的CPU，不建議用於小型家用服務器或NAS設備。"
 
 #: src/page/settings/advanced.vue:345
@@ -854,12 +884,14 @@ msgstr "估計沒有坐標的圖片的大概位置。"
 msgid "Estimates"
 msgstr "估計"
 
-#: src/options/options.js:364
+#: src/options/options.js:372
 msgid "Every two days"
 msgstr "每兩天"
 
 #: src/page/settings/general.vue:207
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
 msgstr "从搜索结果，共享相册，标签和地点中排除标记为私人的内容。"
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
@@ -928,7 +960,7 @@ msgstr "我的最愛"
 msgid "Favorites"
 msgstr "我的最愛"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:401
+#: src/page/about/feedback.vue:7 src/options/options.js:409
 msgid "Feature Request"
 msgstr "功能要求"
 
@@ -942,10 +974,11 @@ msgid "Feedback"
 msgstr "回饋"
 
 #: src/dialog/sponsor.vue:24
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "如果您有任何問題或需要幫助，請通過 hello@photoprism.app 與我們聯繫。"
 
-#: src/options/options.js:416
+#: src/options/options.js:424
 #, fuzzy
 msgid "Female"
 msgstr "女性"
@@ -978,7 +1011,9 @@ msgid "Files"
 msgstr "檔案"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
 msgstr "例如 IMG_1234 (2)' or 'IMG_1234 copy 2' 會被當作同一張照片。"
 
 #: src/dialog/photo/edit/details.vue:477
@@ -1042,7 +1077,7 @@ msgstr "獲得支持"
 msgid "Given Name"
 msgstr "來源名稱"
 
-#: src/options/options.js:385
+#: src/options/options.js:393
 msgid "Gold"
 msgstr "金色"
 
@@ -1050,11 +1085,11 @@ msgstr "金色"
 msgid "Grayscale"
 msgstr "灰階"
 
-#: src/options/options.js:388
+#: src/options/options.js:396
 msgid "Green"
 msgstr "綠色"
 
-#: src/options/options.js:394
+#: src/options/options.js:402
 msgid "Grey"
 msgstr "灰色"
 
@@ -1090,7 +1125,7 @@ msgstr "隱藏"
 msgid "Hide photos that have been moved to archive."
 msgstr "隱藏的檔案已經移至封存。"
 
-#: src/options/options.js:318
+#: src/options/options.js:326
 msgid "High"
 msgstr "高"
 
@@ -1101,10 +1136,6 @@ msgstr "高動態範圍 (HDR)"
 #: src/page/about/feedback.vue:151
 msgid "How can we help?"
 msgstr "我們可以幫你什麼？"
-
-#: src/options/options.js:273
-msgid "Hybrid"
-msgstr "雜種"
 
 #: src/dialog/sponsor.vue:36
 msgid "I'm a sponsor"
@@ -1118,7 +1149,7 @@ msgstr "如果這沒有幫助，或者您還有其他問題："
 msgid "image"
 msgstr "圖片"
 
-#: src/model/file.js:216 src/options/options.js:291
+#: src/model/file.js:216 src/options/options.js:299
 msgid "Image"
 msgstr "圖片"
 
@@ -1136,7 +1167,9 @@ msgid "Import failed"
 msgstr "引入失敗"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
 msgstr "引入的檔案會依照日期排序，並且給予一個獨特的名字以防止重複。"
 
 #: src/page/settings/general.vue:273
@@ -1165,7 +1198,9 @@ msgstr "此外，贊助商還可以通過電子郵件獲得直接的技術支持
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
 msgstr "如果您期望的圖片丟失，請重新掃描您的庫並等待索引完成。"
 
 #: src/component/navigation.vue:563 src/page/library.vue:35
@@ -1228,7 +1263,9 @@ msgid "Invalid photo selected"
 msgstr "選擇的照片無效"
 
 #: src/page/about/about.vue:16
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
 msgstr "它利用最新技術自動標記和查找圖片，而不會妨礙您。"
 
 #: src/model/rest.js:167
@@ -1271,7 +1308,7 @@ msgstr "標籤"
 msgid "Labels deleted"
 msgstr "已刪除標籤"
 
-#: src/options/options.js:409
+#: src/options/options.js:417
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos：保留細節，減少偽像"
 
@@ -1321,7 +1358,7 @@ msgstr "授權"
 msgid "Like"
 msgstr "喜歡"
 
-#: src/options/options.js:387
+#: src/options/options.js:395
 msgid "Lime"
 msgstr "萊姆色"
 
@@ -1329,7 +1366,7 @@ msgstr "萊姆色"
 msgid "Limit reached, showing first %{n} files"
 msgstr "顯示前 %{n} 個檔案"
 
-#: src/options/options.js:411
+#: src/options/options.js:419
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "線性：非常平滑，最佳性能"
 
@@ -1343,7 +1380,7 @@ msgstr "清單"
 
 #: src/app/routes.js:204 src/component/photo/cards.vue:292
 #: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
-#: src/options/options.js:303
+#: src/options/options.js:311
 msgid "Live"
 msgstr "即時"
 
@@ -1367,7 +1404,9 @@ msgid "Location"
 msgstr "地點"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
 msgstr "日誌訊息會在檔案損毀時，或是其他問題出現時出現。"
 
 #: src/component/navigation.vue:454 src/component/navigation.vue:1686
@@ -1389,11 +1428,11 @@ msgstr "日誌"
 msgid "Longitude"
 msgstr "經度"
 
-#: src/options/options.js:322
+#: src/options/options.js:330
 msgid "Low"
 msgstr "低"
 
-#: src/options/options.js:381
+#: src/options/options.js:389
 msgid "Magenta"
 msgstr "品紅"
 
@@ -1401,7 +1440,7 @@ msgstr "品紅"
 msgid "Main Color"
 msgstr "主要顏色"
 
-#: src/options/options.js:415
+#: src/options/options.js:423
 #, fuzzy
 msgid "Male"
 msgstr "男性"
@@ -1512,7 +1551,7 @@ msgstr "名稱"
 msgid "Name too long"
 msgstr "名稱太長了"
 
-#: src/options/options.js:359 src/options/options.js:369
+#: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "永不"
@@ -1560,7 +1599,7 @@ msgstr "沒有人找到"
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/component/photo/mosaic.vue:6
 #: src/page/album/photos.vue:389 src/page/library/browse.vue:34
-#: src/page/photos.vue:486 src/page/places.vue:217 src/page/places.vue:279
+#: src/page/photos.vue:486 src/page/places.vue:225 src/page/places.vue:287
 msgid "No pictures found"
 msgstr "沒有找到圖片"
 
@@ -1588,7 +1627,9 @@ msgid "No video selected"
 msgstr "未選影片"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
 msgstr "沒有包含此關鍵字的警告或錯誤。請注意，搜索區分大小寫。"
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
@@ -1598,10 +1639,12 @@ msgstr "沒有包含此關鍵字的警告或錯誤。請注意，搜索區分大
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
 msgstr "非照相和低質量圖像需要進行手動確認，才會出現在搜索結果中。"
 
-#: src/options/options.js:245 src/options/options.js:326
+#: src/options/options.js:245 src/options/options.js:334
 msgid "None"
 msgstr "無"
 
@@ -1610,7 +1653,8 @@ msgid "Not Found"
 msgstr "找不到"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
 msgstr "請注意，您可以手動管理原始文件夾，而導入是可選的。"
 
 #: src/page/settings/services.vue:36
@@ -1618,8 +1662,12 @@ msgid "Note:"
 msgstr "注意："
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "注意：只能將WebDAV服務器（如Nextcloud或PhotoPrism）配置為遠程服務，以進行備份和文件上傳。"
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"注意：只能將WebDAV服務器（如Nextcloud或PhotoPrism）配置為遠程服務，以進行備份"
+"和文件上傳。"
 
 #: src/dialog/photo/edit/details.vue:654
 msgid "Notes"
@@ -1631,7 +1679,6 @@ msgid "Nothing to see here yet."
 msgstr "這裡什麼也看不到。耐心一點。"
 
 #: src/component/navigation.vue:470 src/component/navigation.vue:1731
-#: src/options/options.js:264
 msgid "Offline"
 msgstr "離線"
 
@@ -1648,7 +1695,7 @@ msgstr "最舊排前"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "在 Windows 上，在連接對話框中輸入以下資源："
 
-#: src/options/options.js:365
+#: src/options/options.js:373
 msgid "Once a week"
 msgstr "一個星期一次"
 
@@ -1693,7 +1740,7 @@ msgstr "選項"
 msgid "or ask in our Community Chat"
 msgstr "或在我們的社區聊天中提問"
 
-#: src/options/options.js:384
+#: src/options/options.js:392
 msgid "Orange"
 msgstr "橘色"
 
@@ -1721,15 +1768,18 @@ msgstr "來源名稱"
 msgid "Originals"
 msgstr "來源"
 
-#: src/options/options.js:404 src/options/options.js:417
+#: src/options/options.js:412 src/options/options.js:425
 msgid "Other"
 msgstr "其他"
 
 #: src/page/about/about.vue:48
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "我們的用戶指南還涵蓋了許多高級主題，例如從 Google 相冊遷移和縮略圖質量設置。"
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
+msgstr ""
+"我們的用戶指南還涵蓋了許多高級主題，例如從 Google 相冊遷移和縮略圖質量設置。"
 
-#: src/options/options.js:283
+#: src/options/options.js:284
 msgid "Outdoor"
 msgstr "對外"
 
@@ -1790,7 +1840,7 @@ msgstr "PhotoPrism® 是用於去中心化網絡的 AI 驅動的照片應用程�
 msgid "Photos"
 msgstr "照片"
 
-#: src/options/options.js:382
+#: src/options/options.js:390
 msgid "Pink"
 msgstr "粉紅色"
 
@@ -1821,7 +1871,9 @@ msgstr "請不要上傳包含攻擊性內容的照片。"
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr "请注意，更改密码将使您在其他设备和浏览器上登录。"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
@@ -1864,7 +1916,7 @@ msgstr "主要的"
 msgid "Private"
 msgstr "私人的"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:400
+#: src/page/about/feedback.vue:6 src/options/options.js:408
 msgid "Product Feedback"
 msgstr "回饋"
 
@@ -1872,7 +1924,7 @@ msgstr "回饋"
 msgid "Projection"
 msgstr "投影"
 
-#: src/options/options.js:380
+#: src/options/options.js:388
 msgid "Purple"
 msgstr "紫色"
 
@@ -1892,7 +1944,7 @@ msgstr "隨機"
 msgid "Raspberry"
 msgstr "樹梅"
 
-#: src/options/options.js:299
+#: src/options/options.js:307
 msgid "Raw"
 msgstr "原始"
 
@@ -1948,7 +2000,7 @@ msgstr "認可"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "識別面孔，以便可以找到特定的人。"
 
-#: src/options/options.js:383
+#: src/options/options.js:391
 msgid "Red"
 msgstr "紅色"
 
@@ -1982,8 +2034,12 @@ msgid "Remove from album"
 msgstr "從相冊中刪除"
 
 #: src/page/library/import.vue:120
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "刪除導入的文件以節省存儲空間。不支持的文件類型將永遠不會被刪除，它們會保留在當前位置。"
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"刪除導入的文件以節省存儲空間。不支持的文件類型將永遠不會被刪除，它們會保留在"
+"當前位置。"
 
 #: src/common/api.js:74 src/page/connect.vue:38
 msgid "Request failed - invalid response"
@@ -2014,6 +2070,10 @@ msgstr "重新輸入密碼"
 #: src/app/routes.js:218 src/component/navigation.vue:125
 msgid "Review"
 msgstr "回顧"
+
+#: src/options/options.js:278
+msgid "Satellite"
+msgstr ""
 
 #: src/dialog/account/password.vue:39 src/dialog/album/edit.vue:45
 #: src/dialog/service/edit.vue:107 src/dialog/share.vue:61
@@ -2195,8 +2255,12 @@ msgid "Source"
 msgstr "來源"
 
 #: src/page/about/about.vue:25
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "贊助商可以訪問其他功能，通過電子郵件獲得直接的技術支持，並且可以加入我們在 matrix.org 上的私人聊天室。"
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
+msgstr ""
+"贊助商可以訪問其他功能，通過電子郵件獲得直接的技術支持，並且可以加入我們在 "
+"matrix.org 上的私人聊天室。"
 
 #: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 msgid "Stack"
@@ -2207,7 +2271,9 @@ msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "共享相同唯一映像或實例標識符的堆棧文件。"
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
 msgstr "根據元數據，將在相同時間和位置拍攝的照片堆疊在一起。"
 
 #: src/dialog/photo/edit/info.vue:86
@@ -2219,7 +2285,9 @@ msgid "Stacks"
 msgstr "堆放"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
 msgstr "使用相似的參考框架堆疊組文件，但是質量，格式，大小或顏色有所不同。"
 
 #: src/page/library/index.vue:31
@@ -2247,7 +2315,7 @@ msgstr "狀態"
 msgid "Storage"
 msgstr "儲存空間"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Streets"
 msgstr "街"
 
@@ -2264,7 +2332,8 @@ msgid "Successfully Connected"
 msgstr "成功連接"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr "隨著時間的推移，將增加對其他服務的支持，例如Google雲端硬盤。"
 
 #: src/page/settings/services.vue:28
@@ -2280,7 +2349,7 @@ msgstr "同步 RAW 照片"
 msgid "Taken"
 msgstr "已採取"
 
-#: src/options/options.js:389
+#: src/options/options.js:397
 msgid "Teal"
 msgstr "藍綠"
 
@@ -2298,7 +2367,9 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "索引目前包含%{n}個隱藏檔案。"
 
 #: src/page/library/index.vue:37
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
 msgstr "它們的格式可能不受支持，或尚未轉換為JPEG，或存在重複。"
 
 #: src/page/settings/general.vue:70
@@ -2306,19 +2377,29 @@ msgid "Theme"
 msgstr "主題"
 
 #: src/dialog/sponsor.vue:17
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+msgid ""
+"This currently is a sponsor feature to thank everyone who supports the "
+"development of this application."
 msgstr "這是一項搶先體驗功能，感謝我們的讚助商和貢獻者。"
 
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "這會將原始文件夾安裝為網絡驅動器，並允許您從計算機或智能手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
+msgstr ""
+"這會將原始文件夾安裝為網絡驅動器，並允許您從計算機或智能手機中打開，編輯和刪"
+"除文件，就像它們是本地文件一樣。"
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "這會將原始文件夾安裝為網絡驅動器，並允許您從計算機或智能手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"這會將原始文件夾安裝為網絡驅動器，並允許您從計算機或智能手機中打開，編輯和刪"
+"除文件，就像它們是本地文件一樣。"
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2361,7 +2442,7 @@ msgstr "切換檢視"
 msgid "Token"
 msgstr "令牌"
 
-#: src/options/options.js:278
+#: src/options/options.js:290
 msgid "Topographic"
 msgstr "地形圖"
 
@@ -2528,7 +2609,7 @@ msgstr "已驗證"
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
 #: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
-#: src/options/options.js:307
+#: src/options/options.js:315
 msgid "Video"
 msgstr "影片"
 
@@ -2549,7 +2630,9 @@ msgid "View"
 msgstr "檢視"
 
 #: src/page/about/about.vue:47
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
 msgstr "訪問 docs.photoprism.app/user-guide 了解如何同步、組織和共享您的圖片。"
 
 #: src/component/photo/toolbar.vue:54
@@ -2566,11 +2649,17 @@ msgid "We do our best to respond within five business days or less."
 msgstr "我們盡最大努力在五個工作日或更短的時間內做出回應。"
 
 #: src/page/about/about.vue:74
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "我們將盡力回答您的所有問題。作為回報，我們要求您在 Patreon 或 GitHub 贊助商上支持我們。"
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"我們將盡力回答您的所有問題。作為回報，我們要求您在 Patreon 或 GitHub 贊助商上"
+"支持我們。"
 
 #: src/dialog/sponsor.vue:18
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+msgid ""
+"We'll let you know how to enable it when you sign up on Patreon or GitHub "
+"Sponsors."
 msgstr "當您在 Patreon 或 GitHub 贊助商上註冊時，我們會告訴您如何啟用它。"
 
 #: src/dialog/webdav.vue:8
@@ -2580,9 +2669,12 @@ msgstr "WebDAV客戶端可以使用以下URL連接到PhotoPrism："
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV客戶端（例如Microsoft的Windows資源管理器或Apple的Finder）可以直接連接到PhotoPrism。"
+msgstr ""
+"WebDAV客戶端（例如Microsoft的Windows資源管理器或Apple的Finder）可以直接連接到"
+"PhotoPrism。"
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2594,7 +2686,7 @@ msgstr "WebDAV上傳"
 msgid "Website"
 msgstr "网站"
 
-#: src/options/options.js:393
+#: src/options/options.js:401
 msgid "White"
 msgstr "白色"
 
@@ -2608,7 +2700,7 @@ msgstr "細節"
 msgid "Year"
 msgstr "年"
 
-#: src/options/options.js:386
+#: src/options/options.js:394
 msgid "Yellow"
 msgstr "黃色"
 
@@ -2653,20 +2745,31 @@ msgid "You may rescan your library to find additional faces."
 msgstr "您可以重新掃描您的圖書館以查找其他面孔。"
 
 #: src/page/about/about.vue:22
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "您的持續支持有助於我們提供定期更新並保持獨立，因此我們可以完成我們的使命並保護您的隱私。"
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"您的持續支持有助於我們提供定期更新並保持獨立，因此我們可以完成我們的使命並保"
+"護您的隱私。"
 
 #: src/dialog/sponsor.vue:21
-msgid "Your continued support helps us provide regular updates and services like world maps."
+msgid ""
+"Your continued support helps us provide regular updates and services like "
+"world maps."
 msgstr "您的持續支持有助於我們提供衛星地圖等服務並開發新功能。"
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
 msgstr "您的資料庫會持續進行分析，以自動創建有關特殊時刻、旅行和地點的相簿。"
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Hybrid"
+#~ msgstr "雜種"
 
 #~ msgid "Add Server"
 #~ msgstr "新增伺服器"
@@ -2683,7 +2786,9 @@ msgstr "縮放"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "引入照片失敗"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
 #~ msgstr "注意：更新密碼不會撤消已通過身份驗證的用戶的訪問。"
 
 #~ msgid "Server"
@@ -2698,14 +2803,21 @@ msgstr "縮放"
 #~ msgid "to"
 #~ msgstr "到"
 
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "我們的使命是提供對用戶和隱私最友好的解決方案，以使您的照片井井有條且易於訪問。"
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "我們的使命是提供對用戶和隱私最友好的解決方案，以使您的照片井井有條且易於訪"
+#~ "問。"
 
 #~ msgid "Play"
 #~ msgstr "播放"
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "路線圖顯示了正在進行的任務、需要測試的任務以及接下來將實施的功能請求。"
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "路線圖顯示了正在進行的任務、需要測試的任務以及接下來將實施的功能請求。"
 
 #~ msgid "Your message has been sent"
 #~ msgstr "你的訊息已傳送"
@@ -2795,7 +2907,9 @@ msgstr "縮放"
 #~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 #~ msgstr "PhotoPrism®是 Michael Mayer 的註冊商標。"
 
-#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
 #~ msgstr "由銀牌和金牌贊助商認可的請求將獲得金色標籤，並將被優先考慮。"
 
 #~ msgid "Thank you very much!"
@@ -2804,11 +2918,20 @@ msgstr "縮放"
 #~ msgid "Trademarks"
 #~ msgstr "商標"
 
-#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-#~ msgstr "出於教育目的，您可以根據需要使用它來描述我們的軟件，運行您自己的服務器，但未經事先書面許可，不得用於提供商業產品，產品或服務。換句話說，請詢問。"
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "出於教育目的，您可以根據需要使用它來描述我們的軟件，運行您自己的服務器，但"
+#~ "未經事先書面許可，不得用於提供商業產品，產品或服務。換句話說，請詢問。"
 
-#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
-#~ msgstr "如果您喜歡使用 PhotoPrism，請考慮在 Patreon 或 GitHub 贊助商上支持我們。"
+#~ msgid ""
+#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
+#~ "GitHub Sponsors."
+#~ msgstr ""
+#~ "如果您喜歡使用 PhotoPrism，請考慮在 Patreon 或 GitHub 贊助商上支持我們。"
 
 #~ msgid "Let us know when we mistakenly label an idea as unfunded."
 #~ msgstr "當我們錯誤地將一個想法標記為沒有資金時，請告訴我們。"
@@ -2831,7 +2954,8 @@ msgstr "縮放"
 #~ msgid "Couldn't find recently edited"
 #~ msgstr "找不到任最近的實體"
 
-#~ msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
+#~ msgid ""
+#~ "Disables simultaneous conversion of RAW files to apply Darktable presets."
 #~ msgstr "禁用同時轉換RAW文件以應用Darktable預設。"
 
 #~ msgid "Error"
@@ -2852,7 +2976,8 @@ msgstr "縮放"
 #~ msgid "Not implemented yet"
 #~ msgstr "尚未實現此功能"
 
-#~ msgid "Note that you can as well manage and re-index your originals manually."
+#~ msgid ""
+#~ "Note that you can as well manage and re-index your originals manually."
 #~ msgstr "注意，你需要手動重新索引收藏庫。"
 
 #~ msgid "One result"

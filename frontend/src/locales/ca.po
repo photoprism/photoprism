@@ -38,17 +38,17 @@ msgstr "%{n} persones trobades"
 msgid "%{n} pictures found"
 msgstr "S'han trobat %{n} imatges"
 
-#: src/options/options.js:360
+#: src/options/options.js:368
 #, fuzzy
 msgid "1 hour"
 msgstr "1 hora"
 
-#: src/options/options.js:362
+#: src/options/options.js:370
 #, fuzzy
 msgid "12 hours"
 msgstr "12 hores"
 
-#: src/options/options.js:361
+#: src/options/options.js:369
 #, fuzzy
 msgid "4 hours"
 msgstr "4 hores"
@@ -134,42 +134,46 @@ msgstr "Afegit"
 msgid "Advanced"
 msgstr "Avançat"
 
-#: src/options/options.js:370
+#: src/options/options.js:378
 #, fuzzy
 msgid "After 1 day"
 msgstr "Després d'1 dia"
 
-#: src/options/options.js:371
+#: src/options/options.js:379
 #, fuzzy
 msgid "After 3 days"
 msgstr "Després de 3 dies"
 
-#: src/options/options.js:372
+#: src/options/options.js:380
 #, fuzzy
 msgid "After 7 days"
 msgstr "Després de 7 dies"
 
-#: src/options/options.js:374
+#: src/options/options.js:382
 #, fuzzy
 msgid "After one month"
 msgstr "Després d'un mes"
 
-#: src/options/options.js:376
+#: src/options/options.js:384
 #, fuzzy
 msgid "After one year"
 msgstr "Després d'un any"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
 #, fuzzy
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Després de seleccionar imatges dels resultats de la cerca, podeu afegir-les a un àlbum mitjançant el menú contextual."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Després de seleccionar imatges dels resultats de la cerca, podeu afegir-les "
+"a un àlbum mitjançant el menú contextual."
 
-#: src/options/options.js:375
+#: src/options/options.js:383
 #, fuzzy
 msgid "After two months"
 msgstr "Després de dos mesos"
 
-#: src/options/options.js:373
+#: src/options/options.js:381
 #, fuzzy
 msgid "After two weeks"
 msgstr "Després de dues setmanes"
@@ -270,13 +274,21 @@ msgstr "Tots els anys"
 
 #: src/page/about/about.vue:40
 #, fuzzy
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "A més, si us plau, deixeu una estrella a GitHub si us agrada aquest projecte. Proporciona una motivació addicional per continuar."
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
+msgstr ""
+"A més, si us plau, deixeu una estrella a GitHub si us agrada aquest "
+"projecte. Proporciona una motivació addicional per continuar."
 
 #: src/dialog/share.vue:75
 #, fuzzy
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternativament, podeu carregar fitxers directament a servidors WebDAV com Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Alternativament, podeu carregar fitxers directament a servidors WebDAV com "
+"Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 #, fuzzy
@@ -296,7 +308,7 @@ msgstr "S'ha produït un error: estàs fora de línia?"
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:301
 #: src/component/photo/cards.vue:480 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
-#: src/options/options.js:295
+#: src/options/options.js:303
 #, fuzzy
 msgid "Animated"
 msgstr "Animat"
@@ -391,13 +403,21 @@ msgstr "Relació d'aspecte"
 
 #: src/page/settings/library.vue:112
 #, fuzzy
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Creeu automàticament JPEG per a altres tipus de fitxers perquè es puguin mostrar en un navegador."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"Creeu automàticament JPEG per a altres tipus de fitxers perquè es puguin "
+"mostrar en un navegador."
 
 #: src/page/settings/general.vue:163
 #, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Crea automàticament àlbums de moments, viatges i llocs especials."
+
+#: src/options/options.js:268
+msgid "Basic"
+msgstr ""
 
 #: src/component/navigation.vue:584 src/dialog/sponsor.vue:7
 #: src/page/about/about.vue:33 src/page/login.vue:48
@@ -407,12 +427,20 @@ msgstr "Fes-te patrocinador"
 
 #: src/page/about/about.vue:62
 #, fuzzy
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Abans d'enviar una sol·licitud d'assistència, utilitzeu les nostres Llistes de comprovació de resolució de problemes per determinar la causa del vostre problema."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Abans d'enviar una sol·licitud d'assistència, utilitzeu les nostres Llistes "
+"de comprovació de resolució de problemes per determinar la causa del vostre "
+"problema."
 
 #: src/page/about/about.vue:27
 #, fuzzy
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
 msgstr ""
 "En ser 100% autofinançats i independents, us podem prometre que mai vendrem "
 "les vostres dades i que sempre serem transparents sobre el nostre programari "
@@ -429,22 +457,22 @@ msgstr "bio"
 msgid "Birth Date"
 msgstr "Data de naixement"
 
-#: src/options/options.js:395
+#: src/options/options.js:403
 #, fuzzy
 msgid "Black"
 msgstr "Negre"
 
-#: src/options/options.js:408
+#: src/options/options.js:416
 #, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: modificació de Lanczos, artefactes menys sonors"
 
-#: src/options/options.js:391
+#: src/options/options.js:399
 #, fuzzy
 msgid "Blue"
 msgstr "Blau"
 
-#: src/options/options.js:392
+#: src/options/options.js:400
 #, fuzzy
 msgid "Brown"
 msgstr "Marró"
@@ -461,12 +489,14 @@ msgstr "Exploreu fitxers i carpetes indexats a la biblioteca."
 
 #: src/page/about/about.vue:54
 #, fuzzy
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
 msgstr ""
 "Navegueu per la base de coneixement per obtenir informació detallada sobre "
 "característiques específiques del producte, serveis i recursos relacionats."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:402
+#: src/page/about/feedback.vue:8 src/options/options.js:410
 #, fuzzy
 msgid "Bug Report"
 msgstr "Informe d'error"
@@ -601,7 +631,9 @@ msgstr "Colors"
 
 #: src/page/about/about.vue:49
 #, fuzzy
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
 msgstr ""
 "Els problemes habituals es poden diagnosticar i resoldre ràpidament "
 "mitjançant les llistes de verificació de resolució de problemes que oferim."
@@ -701,7 +733,7 @@ msgstr "Creat"
 msgid "Creating thumbnails for"
 msgstr "Creació de miniatures per a"
 
-#: src/options/options.js:410
+#: src/options/options.js:418
 #, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cúbic: qualitat moderada, bon rendiment"
@@ -711,12 +743,12 @@ msgstr "Cúbic: qualitat moderada, bon rendiment"
 msgid "Current Password"
 msgstr "Contrasenya actual"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:399
+#: src/page/about/feedback.vue:5 src/options/options.js:407
 #, fuzzy
 msgid "Customer Support"
 msgstr "Atenció al client"
 
-#: src/options/options.js:390
+#: src/options/options.js:398
 #, fuzzy
 msgid "Cyan"
 msgstr "Cian"
@@ -726,7 +758,7 @@ msgstr "Cian"
 msgid "Cyano"
 msgstr "Ciano"
 
-#: src/options/options.js:363
+#: src/options/options.js:371
 #, fuzzy
 msgid "Daily"
 msgstr "Diàriament"
@@ -742,7 +774,8 @@ msgstr "Dia"
 msgid "Debug Logs"
 msgstr "Registres de depuració"
 
-#: src/options/options.js:314 src/options/themes.js:402
+#: src/options/options.js:264 src/options/options.js:322
+#: src/options/themes.js:402
 #, fuzzy
 msgid "Default"
 msgstr "Per defecte"
@@ -854,7 +887,9 @@ msgstr "Nom de visualització"
 #: src/page/settings/advanced.vue:141
 #, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr "No feu còpies de seguretat de les metadades de fotos i àlbums als fitxers YAML."
+msgstr ""
+"No feu còpies de seguretat de les metadades de fotos i àlbums als fitxers "
+"YAML."
 
 #: src/page/settings/advanced.vue:207
 #, fuzzy
@@ -864,7 +899,9 @@ msgstr "No creeu fitxers JSON ExifTool per millorar l'extracció de metadades."
 #: src/page/settings/advanced.vue:97
 #, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "No modifiqueu la carpeta d'originals. Desactiva la importació, la càrrega i la supressió."
+msgstr ""
+"No modifiqueu la carpeta d'originals. Desactiva la importació, la càrrega i "
+"la supressió."
 
 #: src/page/settings/advanced.vue:524
 #, fuzzy
@@ -886,7 +923,7 @@ msgstr "No utilitzeu RawTherapee per convertir fitxers RAW."
 msgid "Don't use TensorFlow for image classification."
 msgstr "No utilitzeu TensorFlow per a la classificació d'imatges."
 
-#: src/options/options.js:403
+#: src/options/options.js:411
 #, fuzzy
 msgid "Donations"
 msgstr "Donacions"
@@ -938,7 +975,9 @@ msgstr "Filtre de reducció d'escala"
 
 #: src/page/about/feedback.vue:16
 #, fuzzy
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
 msgstr ""
 "A causa de l'elevat volum de correus electrònics que rebem, és possible que "
 "el nostre equip no us pugui respondre immediatament."
@@ -960,8 +999,12 @@ msgstr "Previsualitzacions dinàmiques"
 
 #: src/page/settings/advanced.vue:303
 #, fuzzy
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "La representació dinàmica requereix un servidor potent. No es recomana per a dispositius NAS."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"La representació dinàmica requereix un servidor potent. No es recomana per a "
+"dispositius NAS."
 
 #: src/page/settings/advanced.vue:345
 #, fuzzy
@@ -1014,7 +1057,8 @@ msgstr "Activa les noves funcions actualment en desenvolupament."
 #: src/page/settings/advanced.vue:461
 #, fuzzy
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "Habilita els valors predefinits del convertidor RAW. Pot reduir el rendiment."
+msgstr ""
+"Habilita els valors predefinits del convertidor RAW. Pot reduir el rendiment."
 
 #: src/app/routes.js:283 src/component/navigation.vue:391
 #, fuzzy
@@ -1031,15 +1075,19 @@ msgstr "Estimar la ubicació aproximada de les imatges sense coordenades."
 msgid "Estimates"
 msgstr "Estimacions"
 
-#: src/options/options.js:364
+#: src/options/options.js:372
 #, fuzzy
 msgid "Every two days"
 msgstr "Cada dos dies"
 
 #: src/page/settings/general.vue:207
 #, fuzzy
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Exclou el contingut marcat com a privat dels resultats de la cerca, dels àlbums compartits, de les etiquetes i dels llocs."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Exclou el contingut marcat com a privat dels resultats de la cerca, dels "
+"àlbums compartits, de les etiquetes i dels llocs."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 #, fuzzy
@@ -1122,7 +1170,7 @@ msgstr "Favorit"
 msgid "Favorites"
 msgstr "Preferits"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:401
+#: src/page/about/feedback.vue:7 src/options/options.js:409
 #, fuzzy
 msgid "Feature Request"
 msgstr "Sol·licitud de funció"
@@ -1139,10 +1187,13 @@ msgstr "Feedback"
 
 #: src/dialog/sponsor.vue:24
 #, fuzzy
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "No dubteu a contactar amb nosaltres a hello@photoprism.app si teniu cap pregunta."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+"No dubteu a contactar amb nosaltres a hello@photoprism.app si teniu cap "
+"pregunta."
 
-#: src/options/options.js:416
+#: src/options/options.js:424
 #, fuzzy
 msgid "Female"
 msgstr "Dona"
@@ -1180,8 +1231,12 @@ msgstr "Fitxers"
 
 #: src/page/settings/library.vue:214
 #, fuzzy
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Els fitxers amb noms seqüencials com \"IMG_1234 (2)\" i \"IMG_1234 (3)\" pertanyen a la mateixa imatge."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Els fitxers amb noms seqüencials com \"IMG_1234 (2)\" i \"IMG_1234 (3)\" "
+"pertanyen a la mateixa imatge."
 
 #: src/dialog/photo/edit/details.vue:477
 #, fuzzy
@@ -1256,7 +1311,7 @@ msgstr "Obtenint suport"
 msgid "Given Name"
 msgstr "Nom original"
 
-#: src/options/options.js:385
+#: src/options/options.js:393
 #, fuzzy
 msgid "Gold"
 msgstr "Or"
@@ -1266,12 +1321,12 @@ msgstr "Or"
 msgid "Grayscale"
 msgstr "Escala de grisos"
 
-#: src/options/options.js:388
+#: src/options/options.js:396
 #, fuzzy
 msgid "Green"
 msgstr "Verd"
 
-#: src/options/options.js:394
+#: src/options/options.js:402
 #, fuzzy
 msgid "Grey"
 msgstr "Gris"
@@ -1316,7 +1371,7 @@ msgstr "Amaga"
 msgid "Hide photos that have been moved to archive."
 msgstr "Amaga les fotos que s'han mogut a l'arxiu."
 
-#: src/options/options.js:318
+#: src/options/options.js:326
 #, fuzzy
 msgid "High"
 msgstr "Alt"
@@ -1330,11 +1385,6 @@ msgstr "Alt rang dinàmic (HDR)"
 #, fuzzy
 msgid "How can we help?"
 msgstr "Com podem ajudar?"
-
-#: src/options/options.js:273
-#, fuzzy
-msgid "Hybrid"
-msgstr "Híbrid"
 
 #: src/dialog/sponsor.vue:36
 #, fuzzy
@@ -1351,7 +1401,7 @@ msgstr "Si això no ajuda o tens altres preguntes:"
 msgid "image"
 msgstr "imatge"
 
-#: src/model/file.js:216 src/options/options.js:291
+#: src/model/file.js:216 src/options/options.js:299
 #, fuzzy
 msgid "Image"
 msgstr "Imatge"
@@ -1374,8 +1424,12 @@ msgstr "La importació ha fallat"
 
 #: src/page/library/import.vue:25
 #, fuzzy
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Els fitxers importats s'ordenaran per data i se'ls donarà un nom únic per evitar duplicats."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Els fitxers importats s'ordenaran per data i se'ls donarà un nom únic per "
+"evitar duplicats."
 
 #: src/page/settings/general.vue:273
 #, fuzzy
@@ -1401,7 +1455,8 @@ msgstr "en"
 #: src/page/about/about.vue:72
 #, fuzzy
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr "A més, els patrocinadors reben suport tècnic directe per correu electrònic."
+msgstr ""
+"A més, els patrocinadors reben suport tècnic directe per correu electrònic."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1409,8 +1464,12 @@ msgstr "A més, els patrocinadors reben suport tècnic directe per correu electr
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 #, fuzzy
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "En cas que faltin imatges que espereu, torneu a escanejar la vostra biblioteca i espereu fins que s'hagi completat la indexació."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"En cas que faltin imatges que espereu, torneu a escanejar la vostra "
+"biblioteca i espereu fins que s'hagi completat la indexació."
 
 #: src/component/navigation.vue:563 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1482,7 +1541,9 @@ msgstr "S'ha seleccionat una foto no vàlida"
 
 #: src/page/about/about.vue:16
 #, fuzzy
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
 msgstr ""
 "Fa ús de les últimes tecnologies per etiquetar i trobar imatges "
 "automàticament sense interposar-vos en el vostre camí."
@@ -1505,7 +1566,9 @@ msgstr "Límit de mida JPEG: %{n}px"
 #: src/page/library/import.vue:26
 #, fuzzy
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr "Els JPEG i les miniatures es representen automàticament segons sigui necessari."
+msgstr ""
+"Els JPEG i les miniatures es representen automàticament segons sigui "
+"necessari."
 
 #: src/dialog/photo/edit/details.vue:629
 #, fuzzy
@@ -1535,7 +1598,7 @@ msgstr "Etiquetes"
 msgid "Labels deleted"
 msgstr "S'han suprimit les etiquetes"
 
-#: src/options/options.js:409
+#: src/options/options.js:417
 #, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Preservació de detalls, artefactes mínims"
@@ -1594,7 +1657,7 @@ msgstr "llicència"
 msgid "Like"
 msgstr "M'agrada"
 
-#: src/options/options.js:387
+#: src/options/options.js:395
 #, fuzzy
 msgid "Lime"
 msgstr "Lima"
@@ -1604,7 +1667,7 @@ msgstr "Lima"
 msgid "Limit reached, showing first %{n} files"
 msgstr "S'ha assolit el límit, mostrant els primers %{n} fitxers"
 
-#: src/options/options.js:411
+#: src/options/options.js:419
 #, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineal: molt suau, millor rendiment"
@@ -1621,7 +1684,7 @@ msgstr "Llista"
 
 #: src/app/routes.js:204 src/component/photo/cards.vue:292
 #: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
-#: src/options/options.js:303
+#: src/options/options.js:311
 #, fuzzy
 msgid "Live"
 msgstr "Viu"
@@ -1650,8 +1713,12 @@ msgstr "Ubicació"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 #, fuzzy
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Els missatges de registre apareixen aquí sempre que PhotoPrism troba fitxers trencats o hi ha altres problemes potencials."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Els missatges de registre apareixen aquí sempre que PhotoPrism troba fitxers "
+"trencats o hi ha altres problemes potencials."
 
 #: src/component/navigation.vue:454 src/component/navigation.vue:1686
 #: src/component/navigation.vue:1960
@@ -1676,12 +1743,12 @@ msgstr "Registres"
 msgid "Longitude"
 msgstr "Longitud"
 
-#: src/options/options.js:322
+#: src/options/options.js:330
 #, fuzzy
 msgid "Low"
 msgstr "baix"
 
-#: src/options/options.js:381
+#: src/options/options.js:389
 #, fuzzy
 msgid "Magenta"
 msgstr "Magenta"
@@ -1691,7 +1758,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Color principal"
 
-#: src/options/options.js:415
+#: src/options/options.js:423
 #, fuzzy
 msgid "Male"
 msgstr "Mascle"
@@ -1824,7 +1891,7 @@ msgstr "Nom"
 msgid "Name too long"
 msgstr "Nom massa llarg"
 
-#: src/options/options.js:359 src/options/options.js:369
+#: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
 #, fuzzy
 msgid "Never"
@@ -1880,7 +1947,7 @@ msgstr "No s'han trobat persones"
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/component/photo/mosaic.vue:6
 #: src/page/album/photos.vue:389 src/page/library/browse.vue:34
-#: src/page/photos.vue:486 src/page/places.vue:217 src/page/places.vue:279
+#: src/page/photos.vue:486 src/page/places.vue:225 src/page/places.vue:287
 #, fuzzy
 msgid "No pictures found"
 msgstr "No s'han trobat imatges"
@@ -1914,8 +1981,12 @@ msgstr "No s'ha seleccionat cap vídeo"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 #, fuzzy
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "No hi ha cap advertiment ni error que contingui aquesta paraula clau. Tingueu en compte que la cerca distingeix entre majúscules i minúscules."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"No hi ha cap advertiment ni error que contingui aquesta paraula clau. "
+"Tingueu en compte que la cerca distingeix entre majúscules i minúscules."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1925,10 +1996,14 @@ msgstr "No hi ha cap advertiment ni error que contingui aquesta paraula clau. Ti
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
 #, fuzzy
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Les imatges no fotogràfiques i de baixa qualitat requereixen una revisió abans que apareguin als resultats de la cerca."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Les imatges no fotogràfiques i de baixa qualitat requereixen una revisió "
+"abans que apareguin als resultats de la cerca."
 
-#: src/options/options.js:245 src/options/options.js:326
+#: src/options/options.js:245 src/options/options.js:334
 #, fuzzy
 msgid "None"
 msgstr "Cap"
@@ -1940,8 +2015,11 @@ msgstr "No trobat"
 
 #: src/page/library/import.vue:28
 #, fuzzy
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Tingueu en compte que podeu gestionar manualment la vostra carpeta d'originals i la importació és opcional."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Tingueu en compte que podeu gestionar manualment la vostra carpeta "
+"d'originals i la importació és opcional."
 
 #: src/page/settings/services.vue:36
 #, fuzzy
@@ -1950,8 +2028,13 @@ msgstr "Nota:"
 
 #: src/dialog/service/add.vue:28
 #, fuzzy
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Nota: només els servidors WebDAV, com Nextcloud o PhotoPrism, es poden configurar com a servei remot per a la còpia de seguretat i la càrrega de fitxers."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Nota: només els servidors WebDAV, com Nextcloud o PhotoPrism, es poden "
+"configurar com a servei remot per a la còpia de seguretat i la càrrega de "
+"fitxers."
 
 #: src/dialog/photo/edit/details.vue:654
 #, fuzzy
@@ -1964,7 +2047,6 @@ msgid "Nothing to see here yet."
 msgstr "Encara no hi ha res a veure aquí. Sigues pacient."
 
 #: src/component/navigation.vue:470 src/component/navigation.vue:1731
-#: src/options/options.js:264
 #, fuzzy
 msgid "Offline"
 msgstr "Fora de línia"
@@ -1984,7 +2066,7 @@ msgstr "El més vell primer"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "A Windows, introduïu el recurs següent al diàleg de connexió:"
 
-#: src/options/options.js:365
+#: src/options/options.js:373
 #, fuzzy
 msgid "Once a week"
 msgstr "Una vegada per setmana"
@@ -2040,7 +2122,7 @@ msgstr "Opcions"
 msgid "or ask in our Community Chat"
 msgstr "o preguntar al nostre Xat de la comunitat"
 
-#: src/options/options.js:384
+#: src/options/options.js:392
 #, fuzzy
 msgid "Orange"
 msgstr "taronja"
@@ -2073,20 +2155,22 @@ msgstr "Nom original"
 msgid "Originals"
 msgstr "Originals"
 
-#: src/options/options.js:404 src/options/options.js:417
+#: src/options/options.js:412 src/options/options.js:425
 #, fuzzy
 msgid "Other"
 msgstr "Altres"
 
 #: src/page/about/about.vue:48
 #, fuzzy
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
 msgstr ""
 "La nostra Guia d'usuari també cobreix molts temes avançats, com ara la "
 "migració des de Google Fotos i la configuració de la qualitat de les "
 "miniatures."
 
-#: src/options/options.js:283
+#: src/options/options.js:284
 #, fuzzy
 msgid "Outdoor"
 msgstr "A l'aire lliure"
@@ -2123,7 +2207,8 @@ msgstr "Gent"
 #: src/dialog/share.vue:72
 #, fuzzy
 msgid "People you share a link with will be able to view public contents."
-msgstr "Les persones amb qui comparteixis un enllaç podran veure contingut públic."
+msgstr ""
+"Les persones amb qui comparteixis un enllaç podran veure contingut públic."
 
 #: src/component/photo/clipboard.vue:120
 #, fuzzy
@@ -2162,7 +2247,7 @@ msgstr ""
 msgid "Photos"
 msgstr "Fotografies"
 
-#: src/options/options.js:382
+#: src/options/options.js:390
 #, fuzzy
 msgid "Pink"
 msgstr "Rosa"
@@ -2199,7 +2284,9 @@ msgstr "Si us plau, no carregueu fotos que continguin contingut ofensiu."
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr ""
 "Tingueu en compte que si canvieu la contrasenya, tanqueu la sessió en altres "
 "dispositius i navegadors."
@@ -2253,7 +2340,7 @@ msgstr "primària"
 msgid "Private"
 msgstr "Privat"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:400
+#: src/page/about/feedback.vue:6 src/options/options.js:408
 #, fuzzy
 msgid "Product Feedback"
 msgstr "Comentaris del producte"
@@ -2263,7 +2350,7 @@ msgstr "Comentaris del producte"
 msgid "Projection"
 msgstr "Projecció"
 
-#: src/options/options.js:380
+#: src/options/options.js:388
 #, fuzzy
 msgid "Purple"
 msgstr "Porpra"
@@ -2288,7 +2375,7 @@ msgstr "Aleatori"
 msgid "Raspberry"
 msgstr "Gerds"
 
-#: src/options/options.js:299
+#: src/options/options.js:307
 #, fuzzy
 msgid "Raw"
 msgstr "Crua"
@@ -2306,7 +2393,9 @@ msgstr "Conversió RAW"
 #: src/page/library/index.vue:116
 #, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Torneu a indexar tots els originals, inclosos els fitxers ja indexats i sense canvis."
+msgstr ""
+"Torneu a indexar tots els originals, inclosos els fitxers ja indexats i "
+"sense canvis."
 
 #: src/page/about/about.vue:51
 #, fuzzy
@@ -2354,7 +2443,7 @@ msgstr "Reconegut"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Reconeix cares perquè es puguin trobar persones concretes."
 
-#: src/options/options.js:383
+#: src/options/options.js:391
 #, fuzzy
 msgid "Red"
 msgstr "Vermell"
@@ -2396,8 +2485,13 @@ msgstr "Elimina de l'àlbum"
 
 #: src/page/library/import.vue:120
 #, fuzzy
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Elimina els fitxers importats per estalviar emmagatzematge. Els tipus de fitxers no compatibles no se suprimiran mai, es mantenen a la seva ubicació actual."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Elimina els fitxers importats per estalviar emmagatzematge. Els tipus de "
+"fitxers no compatibles no se suprimiran mai, es mantenen a la seva ubicació "
+"actual."
 
 #: src/common/api.js:74 src/page/connect.vue:38
 #, fuzzy
@@ -2435,6 +2529,10 @@ msgstr "Reescriu la contrasenya"
 #, fuzzy
 msgid "Review"
 msgstr "Revisió"
+
+#: src/options/options.js:278
+msgid "Satellite"
+msgstr ""
 
 #: src/dialog/account/password.vue:39 src/dialog/album/edit.vue:45
 #: src/dialog/service/edit.vue:107 src/dialog/share.vue:61
@@ -2655,8 +2753,13 @@ msgstr "Font"
 
 #: src/page/about/about.vue:25
 #, fuzzy
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "Els patrocinadors tenen accés a funcions addicionals, reben suport tècnic directe per correu electrònic i poden unir-se a la nostra sala de xat privada a matrix.org."
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
+msgstr ""
+"Els patrocinadors tenen accés a funcions addicionals, reben suport tècnic "
+"directe per correu electrònic i poden unir-se a la nostra sala de xat "
+"privada a matrix.org."
 
 #: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 #, fuzzy
@@ -2666,12 +2769,18 @@ msgstr "Pila"
 #: src/page/settings/library.vue:193
 #, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Apila fitxers que comparteixen la mateixa imatge única o identificador d'instància."
+msgstr ""
+"Apila fitxers que comparteixen la mateixa imatge única o identificador "
+"d'instància."
 
 #: src/page/settings/library.vue:172
 #, fuzzy
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Apila imatges fetes exactament a la mateixa hora i ubicació en funció de les seves metadades."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Apila imatges fetes exactament a la mateixa hora i ubicació en funció de les "
+"seves metadades."
 
 #: src/dialog/photo/edit/info.vue:86
 #, fuzzy
@@ -2685,8 +2794,12 @@ msgstr "Piles"
 
 #: src/page/settings/library.vue:138
 #, fuzzy
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Agrupa fitxers amb un marc de referència similar, però amb diferències de qualitat, format, mida o color."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"Agrupa fitxers amb un marc de referència similar, però amb diferències de "
+"qualitat, format, mida o color."
 
 #: src/page/library/index.vue:31
 #, fuzzy
@@ -2719,7 +2832,7 @@ msgstr "Estat"
 msgid "Storage"
 msgstr "Emmagatzematge"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 #, fuzzy
 msgid "Streets"
 msgstr "Carrers"
@@ -2741,8 +2854,11 @@ msgstr "Connectat correctament"
 
 #: src/dialog/service/add.vue:29
 #, fuzzy
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Amb el temps s'afegirà suport per a serveis addicionals, com ara Google Drive."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Amb el temps s'afegirà suport per a serveis addicionals, com ara Google "
+"Drive."
 
 #: src/page/settings/services.vue:28
 #, fuzzy
@@ -2760,7 +2876,7 @@ msgstr "Sincronitza fitxers en brut i de vídeo"
 msgid "Taken"
 msgstr "Presa"
 
-#: src/options/options.js:389
+#: src/options/options.js:397
 #, fuzzy
 msgid "Teal"
 msgstr "Teal"
@@ -2782,8 +2898,12 @@ msgstr "Actualment l'índex conté %{n} fitxers ocults."
 
 #: src/page/library/index.vue:37
 #, fuzzy
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "És possible que el seu format no sigui compatible, que encara no s'han convertit a JPEG o que hi hagi duplicats."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"És possible que el seu format no sigui compatible, que encara no s'han "
+"convertit a JPEG o que hi hagi duplicats."
 
 #: src/page/settings/general.vue:70
 #, fuzzy
@@ -2792,20 +2912,34 @@ msgstr "Tema"
 
 #: src/dialog/sponsor.vue:17
 #, fuzzy
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-msgstr "Actualment, aquesta és una funció de patrocinador per agrair a tots els que donen suport al desenvolupament d'aquesta aplicació."
+msgid ""
+"This currently is a sponsor feature to thank everyone who supports the "
+"development of this application."
+msgstr ""
+"Actualment, aquesta és una funció de patrocinador per agrair a tots els que "
+"donen suport al desenvolupament d'aquesta aplicació."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Això munta la carpeta originals com a unitat de xarxa i us permet obrir, editar i suprimir fitxers del vostre ordinador o telèfon intel·ligent com si fossin locals."
+msgstr ""
+"Això munta la carpeta originals com a unitat de xarxa i us permet obrir, "
+"editar i suprimir fitxers del vostre ordinador o telèfon intel·ligent com si "
+"fossin locals."
 
 #: src/dialog/webdav.vue:26
 #, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Això munta la carpeta originals com a unitat de xarxa i us permet obrir, editar i suprimir fitxers del vostre ordinador o telèfon intel·ligent com si fossin locals."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Això munta la carpeta originals com a unitat de xarxa i us permet obrir, "
+"editar i suprimir fitxers del vostre ordinador o telèfon intel·ligent com si "
+"fossin locals."
 
 #: src/page/settings/advanced.vue:250
 #, fuzzy
@@ -2856,7 +2990,7 @@ msgstr "Canvia la vista"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:278
+#: src/options/options.js:290
 #, fuzzy
 msgid "Topographic"
 msgstr "Topogràfic"
@@ -3007,7 +3141,9 @@ msgstr "S'està tornant a carregar…"
 #: src/dialog/upload.vue:46
 #, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Les càrregues que puguin contenir aquestes imatges seran rebutjades automàticament."
+msgstr ""
+"Les càrregues que puguin contenir aquestes imatges seran rebutjades "
+"automàticament."
 
 #: src/dialog/share.vue:153
 #, fuzzy
@@ -3054,7 +3190,7 @@ msgstr "Verificat"
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
 #: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
-#: src/options/options.js:307
+#: src/options/options.js:315
 #, fuzzy
 msgid "Video"
 msgstr "Vídeo"
@@ -3079,7 +3215,9 @@ msgstr "Veure"
 
 #: src/page/about/about.vue:47
 #, fuzzy
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
 msgstr ""
 "Visiteu docs.photoprism.app/user-guide per saber com sincronitzar, "
 "organitzar i compartir les vostres imatges."
@@ -3103,25 +3241,37 @@ msgstr ""
 
 #: src/page/about/about.vue:74
 #, fuzzy
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Farem tot el possible per respondre totes les vostres preguntes. A canvi, us demanem que ens recolzeu a Patrocinadors de Patreon o GitHub."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Farem tot el possible per respondre totes les vostres preguntes. A canvi, us "
+"demanem que ens recolzeu a Patrocinadors de Patreon o GitHub."
 
 #: src/dialog/sponsor.vue:18
 #, fuzzy
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr "Us indicarem com activar-lo quan us registreu a Patrocinadors de Patreon o GitHub."
+msgid ""
+"We'll let you know how to enable it when you sign up on Patreon or GitHub "
+"Sponsors."
+msgstr ""
+"Us indicarem com activar-lo quan us registreu a Patrocinadors de Patreon o "
+"GitHub."
 
 #: src/dialog/webdav.vue:8
 #, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "Els clients WebDAV es poden connectar a PhotoPrism mitjançant l'URL següent:"
+msgstr ""
+"Els clients WebDAV es poden connectar a PhotoPrism mitjançant l'URL següent:"
 
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "Els clients WebDAV, com l'Explorador de Windows de Microsoft o el Finder d'Apple, es poden connectar directament a PhotoPrism."
+msgstr ""
+"Els clients WebDAV, com l'Explorador de Windows de Microsoft o el Finder "
+"d'Apple, es poden connectar directament a PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 #, fuzzy
@@ -3134,7 +3284,7 @@ msgstr "Càrrega WebDAV"
 msgid "Website"
 msgstr "Lloc web"
 
-#: src/options/options.js:393
+#: src/options/options.js:401
 #, fuzzy
 msgid "White"
 msgstr "Blanc"
@@ -3150,7 +3300,7 @@ msgstr "Detalls"
 msgid "Year"
 msgstr "Curs"
 
-#: src/options/options.js:386
+#: src/options/options.js:394
 #, fuzzy
 msgid "Yellow"
 msgstr "groc"
@@ -3201,27 +3351,44 @@ msgstr "Només podeu seleccionar un element"
 #: src/page/people/recognized.vue:39
 #, fuzzy
 msgid "You may rescan your library to find additional faces."
-msgstr "Podeu tornar a escanejar la vostra biblioteca per trobar cares addicionals."
+msgstr ""
+"Podeu tornar a escanejar la vostra biblioteca per trobar cares addicionals."
 
 #: src/page/about/about.vue:22
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "El vostre suport continuat ens ajuda a oferir actualitzacions i serveis periòdics com ara mapes del món."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"El vostre suport continuat ens ajuda a oferir actualitzacions i serveis "
+"periòdics com ara mapes del món."
 
 #: src/dialog/sponsor.vue:21
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and services like world maps."
-msgstr "El vostre suport continuat ens ajuda a oferir actualitzacions i serveis periòdics com ara mapes del món."
+msgid ""
+"Your continued support helps us provide regular updates and services like "
+"world maps."
+msgstr ""
+"El vostre suport continuat ens ajuda a oferir actualitzacions i serveis "
+"periòdics com ara mapes del món."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
 #, fuzzy
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament àlbums de moments, viatges i llocs especials."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"La vostra biblioteca s'analitza contínuament per crear automàticament àlbums "
+"de moments, viatges i llocs especials."
 
 #: src/component/photo-viewer.vue:176
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Apropar/reduir"
+
+#, fuzzy
+#~ msgid "Hybrid"
+#~ msgstr "Híbrid"
 
 #, fuzzy
 #~ msgid "Add Server"
@@ -3244,8 +3411,12 @@ msgstr "Apropar/reduir"
 #~ msgstr "S'ha produït un error en importar els fitxers penjats"
 
 #, fuzzy
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "Nota: l'actualització de la contrasenya no revocarà l'accés dels usuaris ja autenticats."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Nota: l'actualització de la contrasenya no revocarà l'accés dels usuaris "
+#~ "ja autenticats."
 
 #, fuzzy
 #~ msgid "Server"

@@ -41,15 +41,15 @@ msgstr "%{n} nájdených ľudí"
 msgid "%{n} pictures found"
 msgstr "%{n} nájdených obrázkov"
 
-#: src/options/options.js:360
+#: src/options/options.js:368
 msgid "1 hour"
 msgstr "1 hodina"
 
-#: src/options/options.js:362
+#: src/options/options.js:370
 msgid "12 hours"
 msgstr "12 hodín"
 
-#: src/options/options.js:361
+#: src/options/options.js:369
 msgid "4 hours"
 msgstr "4 hodiny"
 
@@ -121,35 +121,39 @@ msgstr "Pridané"
 msgid "Advanced"
 msgstr "Pokročilé"
 
-#: src/options/options.js:370
+#: src/options/options.js:378
 msgid "After 1 day"
 msgstr "Po 1 dni"
 
-#: src/options/options.js:371
+#: src/options/options.js:379
 msgid "After 3 days"
 msgstr "Po 3 dňoch"
 
-#: src/options/options.js:372
+#: src/options/options.js:380
 msgid "After 7 days"
 msgstr "Po 7 dňoch"
 
-#: src/options/options.js:374
+#: src/options/options.js:382
 msgid "After one month"
 msgstr "Po jednom mesiaci"
 
-#: src/options/options.js:376
+#: src/options/options.js:384
 msgid "After one year"
 msgstr "Po jednom roku"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Po výbere obrázkov z výsledkov vyhľadávania ich môžete pridať do albumu pomocou kontextovej ponuky."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Po výbere obrázkov z výsledkov vyhľadávania ich môžete pridať do albumu "
+"pomocou kontextovej ponuky."
 
-#: src/options/options.js:375
+#: src/options/options.js:383
 msgid "After two months"
 msgstr "Po dvoch mesiacoch"
 
-#: src/options/options.js:373
+#: src/options/options.js:381
 msgid "After two weeks"
 msgstr "Po dvoch týždňoch"
 
@@ -231,12 +235,20 @@ msgid "All Years"
 msgstr "Všetky Roky"
 
 #: src/page/about/about.vue:40
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Ak sa vám tento projekt páči, zanechajte na GitHube hviezdičku. Poskytne vám to ďalšiu motiváciu pokračovať."
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
+msgstr ""
+"Ak sa vám tento projekt páči, zanechajte na GitHube hviezdičku. Poskytne vám "
+"to ďalšiu motiváciu pokračovať."
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Prípadne, môžete odovzdať súbory priamo na WebDAV servery ako napríklad Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Prípadne, môžete odovzdať súbory priamo na WebDAV servery ako napríklad "
+"Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -253,7 +265,7 @@ msgstr "Nastala chyba - ste offline?"
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:301
 #: src/component/photo/cards.vue:480 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
-#: src/options/options.js:295
+#: src/options/options.js:303
 msgid "Animated"
 msgstr "Animované"
 
@@ -330,12 +342,20 @@ msgid "Aspect Ratio"
 msgstr "Pomer Strán"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Automaticky vytvoriť JPEG formát z ostatných formátov čiže môžu byť zobrazené v prehliadači."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"Automaticky vytvoriť JPEG formát z ostatných formátov čiže môžu byť "
+"zobrazené v prehliadači."
 
 #: src/page/settings/general.vue:163
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Automaticky vytvára albumy špeciálnych momentov, výletov a miest."
+
+#: src/options/options.js:268
+msgid "Basic"
+msgstr ""
 
 #: src/component/navigation.vue:584 src/dialog/sponsor.vue:7
 #: src/page/about/about.vue:33 src/page/login.vue:48
@@ -343,12 +363,19 @@ msgid "Become a sponsor"
 msgstr "Staňte sa sponzorom"
 
 #: src/page/about/about.vue:62
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Pred odoslaním žiadosti o podporu použite naše kontrolné zoznamy na riešenie problémov, aby ste zistili príčinu svojho problému."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Pred odoslaním žiadosti o podporu použite naše kontrolné zoznamy na riešenie "
+"problémov, aby ste zistili príčinu svojho problému."
 
 #: src/page/about/about.vue:27
 #, fuzzy
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
 msgstr ""
 "Keďže sme 100 % financovaní z vlastných zdrojov a nezávislí, môžeme vám "
 "sľúbiť, že vaše údaje nikdy nepredáme a že budeme vždy transparentní, pokiaľ "
@@ -364,19 +391,19 @@ msgstr "Bio"
 msgid "Birth Date"
 msgstr "Dátum narodenia"
 
-#: src/options/options.js:395
+#: src/options/options.js:403
 msgid "Black"
 msgstr "Čierna"
 
-#: src/options/options.js:408
+#: src/options/options.js:416
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczosova úprava, menej zvonivých artefaktov"
 
-#: src/options/options.js:391
+#: src/options/options.js:399
 msgid "Blue"
 msgstr "Modrá"
 
-#: src/options/options.js:392
+#: src/options/options.js:400
 msgid "Brown"
 msgstr "Hnedá"
 
@@ -390,12 +417,14 @@ msgstr "Prehliadať indexované súbory a zložky v Knižnici."
 
 #: src/page/about/about.vue:54
 #, fuzzy
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
 msgstr ""
 "Podrobné informácie o konkrétnych funkciách produktu, službách a súvisiacich "
 "zdrojoch nájdete v databáze znalostí."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:402
+#: src/page/about/feedback.vue:8 src/options/options.js:410
 msgid "Bug Report"
 msgstr "Nahlásiť chybu"
 
@@ -511,7 +540,9 @@ msgstr "Farby"
 
 #: src/page/about/about.vue:49
 #, fuzzy
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
 msgstr ""
 "Bežné problémy možno rýchlo diagnostikovať a vyriešiť pomocou kontrolných "
 "zoznamov na riešenie problémov, ktoré poskytujeme."
@@ -595,7 +626,7 @@ msgstr "Vytvorené"
 msgid "Creating thumbnails for"
 msgstr "Vytváranie náhľadov pre"
 
-#: src/options/options.js:410
+#: src/options/options.js:418
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubický: Stredná kvalita, dobrý výkon"
 
@@ -603,11 +634,11 @@ msgstr "Kubický: Stredná kvalita, dobrý výkon"
 msgid "Current Password"
 msgstr "Súčasné heslo"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:399
+#: src/page/about/feedback.vue:5 src/options/options.js:407
 msgid "Customer Support"
 msgstr "Zákaznícka podpora"
 
-#: src/options/options.js:390
+#: src/options/options.js:398
 msgid "Cyan"
 msgstr "Tyrkysová"
 
@@ -615,7 +646,7 @@ msgstr "Tyrkysová"
 msgid "Cyano"
 msgstr "Modravá"
 
-#: src/options/options.js:363
+#: src/options/options.js:371
 msgid "Daily"
 msgstr "Denne"
 
@@ -628,7 +659,8 @@ msgstr "Deň"
 msgid "Debug Logs"
 msgstr "Denníky ladenia"
 
-#: src/options/options.js:314 src/options/themes.js:402
+#: src/options/options.js:264 src/options/options.js:322
+#: src/options/themes.js:402
 msgid "Default"
 msgstr "Predvolená"
 
@@ -729,7 +761,8 @@ msgstr "Nevytvárať súbory ExifTool JSON pre vylepšenú extrakciu metadát."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Neupravovať priečinok s originálmi. Zakáže import, nahrávanie a mazanie."
+msgstr ""
+"Neupravovať priečinok s originálmi. Zakáže import, nahrávanie a mazanie."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
@@ -747,7 +780,7 @@ msgstr "Nepoužívať RawTherapee na konverziu súborov RAW."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Nepoužívať TensorFlow pre triedenie fotografií"
 
-#: src/options/options.js:403
+#: src/options/options.js:411
 msgid "Donations"
 msgstr "Príspevky"
 
@@ -791,7 +824,9 @@ msgstr "Filter znižovania kvality"
 
 #: src/page/about/feedback.vue:16
 #, fuzzy
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
 msgstr ""
 "Vzhľadom na vysoký počet prijatých e-mailov sa môže stať, že vám náš tím "
 "nebude môcť okamžite odpovedať."
@@ -809,8 +844,12 @@ msgid "Dynamic Previews"
 msgstr "Dynamické Ukážky"
 
 #: src/page/settings/advanced.vue:303
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dynamické vykresľovanie vyžaduje výkonný server. Neodporúčame používať na NAS zariadeniach."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"Dynamické vykresľovanie vyžaduje výkonný server. Neodporúčame používať na "
+"NAS zariadeniach."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -868,13 +907,17 @@ msgstr "Odhadnúť približnú polohu fotiek bez súradníc."
 msgid "Estimates"
 msgstr "Odhady"
 
-#: src/options/options.js:364
+#: src/options/options.js:372
 msgid "Every two days"
 msgstr "Každé dva dni"
 
 #: src/page/settings/general.vue:207
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Vylúčiť obsah označený ako súkromný z výsledkov vyhľadávania, zdieľaných albumov, štítkov a miest."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Vylúčiť obsah označený ako súkromný z výsledkov vyhľadávania, zdieľaných "
+"albumov, štítkov a miest."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -942,7 +985,7 @@ msgstr "Obľúbený"
 msgid "Favorites"
 msgstr "Obľúbené"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:401
+#: src/page/about/feedback.vue:7 src/options/options.js:409
 msgid "Feature Request"
 msgstr "Požiadať o funkciu"
 
@@ -956,10 +999,13 @@ msgid "Feedback"
 msgstr "Spätná väzba"
 
 #: src/dialog/sponsor.vue:24
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Ak máte otázky alebo potrebujete pomoc, kontaktujte nás na adrese hello@photoprism.app."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+"Ak máte otázky alebo potrebujete pomoc, kontaktujte nás na adrese "
+"hello@photoprism.app."
 
-#: src/options/options.js:416
+#: src/options/options.js:424
 #, fuzzy
 msgid "Female"
 msgstr "Ženy"
@@ -992,8 +1038,12 @@ msgid "Files"
 msgstr "Súbory"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Súbory s postupnými menami ako napríklad 'IMG_1234 (2)' alebo 'IMG_1234 copy 2' pripadá rovnakej fotke."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Súbory s postupnými menami ako napríklad 'IMG_1234 (2)' alebo 'IMG_1234 copy "
+"2' pripadá rovnakej fotke."
 
 #: src/dialog/photo/edit/details.vue:477
 msgid "Focal Length"
@@ -1056,7 +1106,7 @@ msgstr "Získanie podpory"
 msgid "Given Name"
 msgstr "Pôvodný názov"
 
-#: src/options/options.js:385
+#: src/options/options.js:393
 msgid "Gold"
 msgstr "Zlatá"
 
@@ -1064,11 +1114,11 @@ msgstr "Zlatá"
 msgid "Grayscale"
 msgstr "Stupne sivej"
 
-#: src/options/options.js:388
+#: src/options/options.js:396
 msgid "Green"
 msgstr "Zelená"
 
-#: src/options/options.js:394
+#: src/options/options.js:402
 msgid "Grey"
 msgstr "Sivá"
 
@@ -1104,7 +1154,7 @@ msgstr "Skryť"
 msgid "Hide photos that have been moved to archive."
 msgstr "Skryť fotky, ktoré boli presunuté do archívu."
 
-#: src/options/options.js:318
+#: src/options/options.js:326
 msgid "High"
 msgstr "Vysoké"
 
@@ -1115,10 +1165,6 @@ msgstr "Vysoký dynamický rozsah (HDR)"
 #: src/page/about/feedback.vue:151
 msgid "How can we help?"
 msgstr "Ako môžeme pomôcť?"
-
-#: src/options/options.js:273
-msgid "Hybrid"
-msgstr "Hybrid"
 
 #: src/dialog/sponsor.vue:36
 msgid "I'm a sponsor"
@@ -1132,7 +1178,7 @@ msgstr "Ak vám to nepomôže alebo máte ďalšie otázky:"
 msgid "image"
 msgstr "obrázok"
 
-#: src/model/file.js:216 src/options/options.js:291
+#: src/model/file.js:216 src/options/options.js:299
 msgid "Image"
 msgstr "Obrázok"
 
@@ -1150,12 +1196,17 @@ msgid "Import failed"
 msgstr "Importovanie zlyhalo"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Importované súbory budú zoradené podľa dátumu a dostanú unikátny názov aby sa predišlo duplikátom."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Importované súbory budú zoradené podľa dátumu a dostanú unikátny názov aby "
+"sa predišlo duplikátom."
 
 #: src/page/settings/general.vue:273
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Importované súbory budú zoradené podľa dátumu a dostanú unikátny názov."
+msgstr ""
+"Importované súbory budú zoradené podľa dátumu a dostanú unikátny názov."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1172,15 +1223,21 @@ msgstr "v"
 
 #: src/page/about/about.vue:72
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr "Okrem toho sponzori dostávajú priamu technickú podporu prostredníctvom e-mailu."
+msgstr ""
+"Okrem toho sponzori dostávajú priamu technickú podporu prostredníctvom e-"
+"mailu."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "V prípade, že niektoré fotky chýbajú, znova preskenujte svoju knižnicu a počkajte, kým sa indexovanie neukončí."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"V prípade, že niektoré fotky chýbajú, znova preskenujte svoju knižnicu a "
+"počkajte, kým sa indexovanie neukončí."
 
 #: src/component/navigation.vue:563 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1245,7 +1302,9 @@ msgstr "Vybraná neplatná fotografia"
 
 #: src/page/about/about.vue:16
 #, fuzzy
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
 msgstr ""
 "Využíva najnovšie technológie na automatické označovanie a vyhľadávanie "
 "obrázkov bez toho, aby vám prekážali."
@@ -1290,7 +1349,7 @@ msgstr "Štítky"
 msgid "Labels deleted"
 msgstr "Štítky odstránené"
 
-#: src/options/options.js:409
+#: src/options/options.js:417
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Zachovanie detailov, minimálne artefakty"
 
@@ -1340,7 +1399,7 @@ msgstr "Licencia"
 msgid "Like"
 msgstr "Páči sa mi to"
 
-#: src/options/options.js:387
+#: src/options/options.js:395
 msgid "Lime"
 msgstr "Limetka"
 
@@ -1348,7 +1407,7 @@ msgstr "Limetka"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limit bol dosiahnutý, zobrazovanie prvých %{n} súborov"
 
-#: src/options/options.js:411
+#: src/options/options.js:419
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineárne: Veľmi hladké, Najlepší výkon"
 
@@ -1362,7 +1421,7 @@ msgstr "List"
 
 #: src/app/routes.js:204 src/component/photo/cards.vue:292
 #: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
-#: src/options/options.js:303
+#: src/options/options.js:311
 msgid "Live"
 msgstr "Živé"
 
@@ -1386,8 +1445,12 @@ msgid "Location"
 msgstr "Poloha"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Správy denníka sa tu zobrazia vždy, keď program PhotoPrism narazí na poškodené súbory alebo sa vyskytnú iné potenciálne problémy."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Správy denníka sa tu zobrazia vždy, keď program PhotoPrism narazí na "
+"poškodené súbory alebo sa vyskytnú iné potenciálne problémy."
 
 #: src/component/navigation.vue:454 src/component/navigation.vue:1686
 #: src/component/navigation.vue:1960
@@ -1408,11 +1471,11 @@ msgstr "Záznamy"
 msgid "Longitude"
 msgstr "Dĺžka"
 
-#: src/options/options.js:322
+#: src/options/options.js:330
 msgid "Low"
 msgstr "Nízka"
 
-#: src/options/options.js:381
+#: src/options/options.js:389
 msgid "Magenta"
 msgstr "Purpurová"
 
@@ -1420,7 +1483,7 @@ msgstr "Purpurová"
 msgid "Main Color"
 msgstr "Hlavná Farba"
 
-#: src/options/options.js:415
+#: src/options/options.js:423
 #, fuzzy
 msgid "Male"
 msgstr "Muži"
@@ -1531,7 +1594,7 @@ msgstr "Meno"
 msgid "Name too long"
 msgstr "Meno je príliš dlhé"
 
-#: src/options/options.js:359 src/options/options.js:369
+#: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Nikdy"
@@ -1579,7 +1642,7 @@ msgstr "Neboli nájdení žiadny ľudia"
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/component/photo/mosaic.vue:6
 #: src/page/album/photos.vue:389 src/page/library/browse.vue:34
-#: src/page/photos.vue:486 src/page/places.vue:217 src/page/places.vue:279
+#: src/page/photos.vue:486 src/page/places.vue:225 src/page/places.vue:287
 msgid "No pictures found"
 msgstr "Nenašli sa žiadne fotky"
 
@@ -1607,8 +1670,12 @@ msgid "No video selected"
 msgstr "Nie je vybrané žiadne video"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Nenašli sa žiadne upozornenia ani chyby ktoré by obsahovali toto kľúčové slovo. Majte na vedomí, že vyhľadávanie je citlivé na veľké a malé písmená."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Nenašli sa žiadne upozornenia ani chyby ktoré by obsahovali toto kľúčové "
+"slovo. Majte na vedomí, že vyhľadávanie je citlivé na veľké a malé písmená."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1617,10 +1684,14 @@ msgstr "Nenašli sa žiadne upozornenia ani chyby ktoré by obsahovali toto kľ�
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Nefotografické a fotografie nízkej kvality vyžadujú skontrolovanie pred tým než sa zobrazia vo výsledkoch vyhľadávania."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Nefotografické a fotografie nízkej kvality vyžadujú skontrolovanie pred tým "
+"než sa zobrazia vo výsledkoch vyhľadávania."
 
-#: src/options/options.js:245 src/options/options.js:326
+#: src/options/options.js:245 src/options/options.js:334
 msgid "None"
 msgstr "Žiadne"
 
@@ -1629,16 +1700,23 @@ msgid "Not Found"
 msgstr "Nebolo Nájdené"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Upozorňujeme, že priečinok s originálmi by ste mali spravovať ručne a import je voliteľný."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Upozorňujeme, že priečinok s originálmi by ste mali spravovať ručne a import "
+"je voliteľný."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Poznámka:"
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Poznámka: Iba WebDAV servery, ako napríklad Nextcloud alebo PhotoPrism, môžu byť nakonfigurované ako vzdialené služby pre zálohu a odovzdávanie súborov."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Poznámka: Iba WebDAV servery, ako napríklad Nextcloud alebo PhotoPrism, môžu "
+"byť nakonfigurované ako vzdialené služby pre zálohu a odovzdávanie súborov."
 
 #: src/dialog/photo/edit/details.vue:654
 msgid "Notes"
@@ -1650,7 +1728,6 @@ msgid "Nothing to see here yet."
 msgstr "Zatiaľ tu nič nie je. Buďte trpezlivý."
 
 #: src/component/navigation.vue:470 src/component/navigation.vue:1731
-#: src/options/options.js:264
 msgid "Offline"
 msgstr "Offline"
 
@@ -1665,9 +1742,10 @@ msgstr "Najstaršie navrch"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr "V systéme Windows zadajte do dialógového okna pripojenia nasledujúci zdroj:"
+msgstr ""
+"V systéme Windows zadajte do dialógového okna pripojenia nasledujúci zdroj:"
 
-#: src/options/options.js:365
+#: src/options/options.js:373
 msgid "Once a week"
 msgstr "Raz za týždeň"
 
@@ -1712,7 +1790,7 @@ msgstr "Nastavenia"
 msgid "or ask in our Community Chat"
 msgstr "alebo sa opýtajte v našom komunitnom chate"
 
-#: src/options/options.js:384
+#: src/options/options.js:392
 msgid "Orange"
 msgstr "Oranžová"
 
@@ -1740,18 +1818,20 @@ msgstr "Pôvodný názov"
 msgid "Originals"
 msgstr "Pôvodné"
 
-#: src/options/options.js:404 src/options/options.js:417
+#: src/options/options.js:412 src/options/options.js:425
 msgid "Other"
 msgstr "Ostatné"
 
 #: src/page/about/about.vue:48
 #, fuzzy
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
 msgstr ""
 "Naša používateľská príručka sa zaoberá aj mnohými pokročilými témami, ako je "
 "napríklad migrácia z aplikácie Fotky Google a nastavenia kvality miniatúr."
 
-#: src/options/options.js:283
+#: src/options/options.js:284
 msgid "Outdoor"
 msgstr "Vonkajšie"
 
@@ -1815,7 +1895,7 @@ msgstr ""
 msgid "Photos"
 msgstr "Fotky"
 
-#: src/options/options.js:382
+#: src/options/options.js:390
 msgid "Pink"
 msgstr "Ružová"
 
@@ -1846,7 +1926,9 @@ msgstr "Prosím, neodovzdávajte fotky obsahujúce hanobný obsah."
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr ""
 "Upozorňujeme, že zmena hesla vás odhlási z iných zariadení a prehliadačov."
 
@@ -1890,7 +1972,7 @@ msgstr "Primárne"
 msgid "Private"
 msgstr "Súkromné"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:400
+#: src/page/about/feedback.vue:6 src/options/options.js:408
 msgid "Product Feedback"
 msgstr "Spätná väzba produktu"
 
@@ -1898,7 +1980,7 @@ msgstr "Spätná väzba produktu"
 msgid "Projection"
 msgstr "Projekcia"
 
-#: src/options/options.js:380
+#: src/options/options.js:388
 msgid "Purple"
 msgstr "Fialová"
 
@@ -1918,7 +2000,7 @@ msgstr "Náhodne"
 msgid "Raspberry"
 msgstr "Malina"
 
-#: src/options/options.js:299
+#: src/options/options.js:307
 msgid "Raw"
 msgstr "Raw"
 
@@ -1932,7 +2014,9 @@ msgstr "Konverzia súborov RAW"
 
 #: src/page/library/index.vue:116
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Re-indexujte všetky originály, aj tie ktoré už sú zaindexované a nezmenené súbory."
+msgstr ""
+"Re-indexujte všetky originály, aj tie ktoré už sú zaindexované a nezmenené "
+"súbory."
 
 #: src/page/about/about.vue:51
 #, fuzzy
@@ -1974,7 +2058,7 @@ msgstr "Rozpoznané"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Rozpoznáva tváre, aby bolo možné nájsť konkrétne osoby."
 
-#: src/options/options.js:383
+#: src/options/options.js:391
 msgid "Red"
 msgstr "Červená"
 
@@ -2008,8 +2092,12 @@ msgid "Remove from album"
 msgstr "Odstrániť z albumu"
 
 #: src/page/library/import.vue:120
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Odstráňte importované súbory pre uvoľnenie miesta. Nepodporované typy súborov nebudú nikdy odstránené. Zostanú na ich momentálnom mieste."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Odstráňte importované súbory pre uvoľnenie miesta. Nepodporované typy "
+"súborov nebudú nikdy odstránené. Zostanú na ich momentálnom mieste."
 
 #: src/common/api.js:74 src/page/connect.vue:38
 msgid "Request failed - invalid response"
@@ -2040,6 +2128,10 @@ msgstr "Heslo znovu"
 #: src/app/routes.js:218 src/component/navigation.vue:125
 msgid "Review"
 msgstr "Kontrola"
+
+#: src/options/options.js:278
+msgid "Satellite"
+msgstr ""
 
 #: src/dialog/account/password.vue:39 src/dialog/album/edit.vue:45
 #: src/dialog/service/edit.vue:107 src/dialog/share.vue:61
@@ -2221,8 +2313,13 @@ msgid "Source"
 msgstr "Zdroj"
 
 #: src/page/about/about.vue:25
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "Sponzori získajú prístup k ďalším funkciám, dostanú priamu technickú podporu prostredníctvom e-mailu a môžu sa pripojiť k našej súkromnej chatovacej miestnosti na stránke matrix.org."
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
+msgstr ""
+"Sponzori získajú prístup k ďalším funkciám, dostanú priamu technickú podporu "
+"prostredníctvom e-mailu a môžu sa pripojiť k našej súkromnej chatovacej "
+"miestnosti na stránke matrix.org."
 
 #: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 msgid "Stack"
@@ -2230,11 +2327,17 @@ msgstr "Naskladané fotky"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Naskladané súbory zdieľajúce rovnaký jedinečný obrázok alebo identifikátor inštancie."
+msgstr ""
+"Naskladané súbory zdieľajúce rovnaký jedinečný obrázok alebo identifikátor "
+"inštancie."
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Naskladané fotky nasnímané v rovnakom čase a na rovnakom mieste na základe ich metadát."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Naskladané fotky nasnímané v rovnakom čase a na rovnakom mieste na základe "
+"ich metadát."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2245,8 +2348,12 @@ msgid "Stacks"
 msgstr "Naskladané"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Naskladá skupinové súbory s podobným referenčným rámcom, ale s rozdielmi v kvalite, formáte, veľkosti alebo farbe."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"Naskladá skupinové súbory s podobným referenčným rámcom, ale s rozdielmi v "
+"kvalite, formáte, veľkosti alebo farbe."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2273,7 +2380,7 @@ msgstr "Status"
 msgid "Storage"
 msgstr "Úložisko"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Streets"
 msgstr "Ulice"
 
@@ -2291,8 +2398,11 @@ msgid "Successfully Connected"
 msgstr "Úspešne pripojené"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Podpora pre dodatočné služby, ako napríklad Google Drive, budú pridané neskôr."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Podpora pre dodatočné služby, ako napríklad Google Drive, budú pridané "
+"neskôr."
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2307,7 +2417,7 @@ msgstr "Synchronizovať súbory raw a videá"
 msgid "Taken"
 msgstr "Zachytené"
 
-#: src/options/options.js:389
+#: src/options/options.js:397
 msgid "Teal"
 msgstr "Modrozelený"
 
@@ -2325,27 +2435,45 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "Index momentálne obsahuje %{n} skrytých súborov."
 
 #: src/page/library/index.vue:37
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Ich formát nemusí byť podporovaný, zatiaľ neboli prekonvertované na JPEG alebo sú medzi nimi duplikáty."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Ich formát nemusí byť podporovaný, zatiaľ neboli prekonvertované na JPEG "
+"alebo sú medzi nimi duplikáty."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Téma"
 
 #: src/dialog/sponsor.vue:17
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-msgstr "Ide o funkciu s predčasným prístupom, ktorou sa chceme poďakovať našim sponzorom a prispievateľom."
+msgid ""
+"This currently is a sponsor feature to thank everyone who supports the "
+"development of this application."
+msgstr ""
+"Ide o funkciu s predčasným prístupom, ktorou sa chceme poďakovať našim "
+"sponzorom a prispievateľom."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Toto pripojí zložku originálov ako sieťový disk a umožní vám otvoriť, upraviť a zmazať súbory z vášho počítača alebo smartphonu ako keby boli uložené lokálne."
+msgstr ""
+"Toto pripojí zložku originálov ako sieťový disk a umožní vám otvoriť, "
+"upraviť a zmazať súbory z vášho počítača alebo smartphonu ako keby boli "
+"uložené lokálne."
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Toto pripojí zložku originálov ako sieťový disk a umožní vám otvoriť, upraviť a zmazať súbory z vášho počítača alebo smartphonu ako keby boli uložené lokálne."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Toto pripojí zložku originálov ako sieťový disk a umožní vám otvoriť, "
+"upraviť a zmazať súbory z vášho počítača alebo smartphonu ako keby boli "
+"uložené lokálne."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2388,7 +2516,7 @@ msgstr "Nastaviť Pohľad"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:278
+#: src/options/options.js:290
 msgid "Topographic"
 msgstr "Topografický"
 
@@ -2556,7 +2684,7 @@ msgstr "Overené"
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
 #: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
-#: src/options/options.js:307
+#: src/options/options.js:315
 msgid "Video"
 msgstr "Video"
 
@@ -2578,7 +2706,9 @@ msgstr "Zobraziť"
 
 #: src/page/about/about.vue:47
 #, fuzzy
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
 msgstr ""
 "Navštívte stránku docs.photoprism.app/user-guide, kde sa dozviete, ako "
 "synchronizovať, organizovať a zdieľať svoje fotografie."
@@ -2599,23 +2729,35 @@ msgid "We do our best to respond within five business days or less."
 msgstr "Snažíme sa odpovedať do piatich pracovných dní alebo skôr."
 
 #: src/page/about/about.vue:74
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Budeme sa snažiť odpovedať na všetky vaše otázky. Na oplátku vás prosíme, aby ste nás podporili na Patreon alebo GitHub Sponzori."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Budeme sa snažiť odpovedať na všetky vaše otázky. Na oplátku vás prosíme, "
+"aby ste nás podporili na Patreon alebo GitHub Sponzori."
 
 #: src/dialog/sponsor.vue:18
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr "Dáme vám vedieť, ako ju aktivovať, keď sa zaregistrujete na Patreon alebo GitHub Sponsors."
+msgid ""
+"We'll let you know how to enable it when you sign up on Patreon or GitHub "
+"Sponsors."
+msgstr ""
+"Dáme vám vedieť, ako ju aktivovať, keď sa zaregistrujete na Patreon alebo "
+"GitHub Sponsors."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "WebDAV klienti sa môžu pripojiť ku PhotoPrismu pomocou nasledujúcej URL:"
+msgstr ""
+"WebDAV klienti sa môžu pripojiť ku PhotoPrismu pomocou nasledujúcej URL:"
 
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV klienti, ako napríklad Microsoft Windows Explorer alebo Apple Finder, sa môžu priamo pripojiť ku PhotoPrismu."
+msgstr ""
+"WebDAV klienti, ako napríklad Microsoft Windows Explorer alebo Apple Finder, "
+"sa môžu priamo pripojiť ku PhotoPrismu."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2627,7 +2769,7 @@ msgstr "Odovzdávanie cez WebDAV"
 msgid "Website"
 msgstr "Webová lokalita"
 
-#: src/options/options.js:393
+#: src/options/options.js:401
 msgid "White"
 msgstr "Biela"
 
@@ -2641,7 +2783,7 @@ msgstr "Detaily"
 msgid "Year"
 msgstr "Rok"
 
-#: src/options/options.js:386
+#: src/options/options.js:394
 msgid "Yellow"
 msgstr "Žltá"
 
@@ -2688,20 +2830,35 @@ msgstr "Mali by ste preskenovať knižnicu pre nájdenie viac tvárí."
 
 #: src/page/about/about.vue:22
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Vaša podpora nám pomáha financovať prevádzkové náklady, poskytovať služby, ako sú satelitné mapy, a vyvíjanie nových funkcií."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Vaša podpora nám pomáha financovať prevádzkové náklady, poskytovať služby, "
+"ako sú satelitné mapy, a vyvíjanie nových funkcií."
 
 #: src/dialog/sponsor.vue:21
-msgid "Your continued support helps us provide regular updates and services like world maps."
-msgstr "Vaša podpora nám pomáha financovať prevádzkové náklady, poskytovať služby, ako sú satelitné mapy, a vyvíjanie nových funkcií."
+msgid ""
+"Your continued support helps us provide regular updates and services like "
+"world maps."
+msgstr ""
+"Vaša podpora nám pomáha financovať prevádzkové náklady, poskytovať služby, "
+"ako sú satelitné mapy, a vyvíjanie nových funkcií."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať albumy špeciálnych momentov, výletov a miest."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať albumy "
+"špeciálnych momentov, výletov a miest."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#~ msgid "Hybrid"
+#~ msgstr "Hybrid"
 
 #~ msgid "Add Server"
 #~ msgstr "Pridať Server"
@@ -2718,11 +2875,18 @@ msgstr "Priblíziť/Oddialiť"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Chyba pri importovaní odovzdaných súborov"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "Poznámka: Aktualizácia hesla nezruší prístup už overených používateľov."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Poznámka: Aktualizácia hesla nezruší prístup už overených používateľov."
 
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "Našou víziou je poskytnúť používateľsky najprívetivejšie riešenie na prehliadanie, organizovanie a zdieľanie vašej zbierky fotografií."
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "Našou víziou je poskytnúť používateľsky najprívetivejšie riešenie na "
+#~ "prehliadanie, organizovanie a zdieľanie vašej zbierky fotografií."
 
 #~ msgid "Play"
 #~ msgstr "Prehrať"
@@ -2736,8 +2900,12 @@ msgstr "Priblíziť/Oddialiť"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Zobraziť knižnicu v bočnom menu."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Plán ukazuje, ktoré úlohy sa plnia, čo je potrebné otestovať a ktoré požiadavky na funkcie sa budú implementovať ako ďalšie."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Plán ukazuje, ktoré úlohy sa plnia, čo je potrebné otestovať a ktoré "
+#~ "požiadavky na funkcie sa budú implementovať ako ďalšie."
 
 #~ msgid "to"
 #~ msgstr "do"
@@ -2782,8 +2950,12 @@ msgstr "Priblíziť/Oddialiť"
 #~ msgid "Hindi"
 #~ msgstr "Hindicky"
 
-#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
-#~ msgstr "Ak sa vám PhotoPrism páči, zvážte, či nás podporíte na Patreone alebo na GitHube."
+#~ msgid ""
+#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
+#~ "GitHub Sponsors."
+#~ msgstr ""
+#~ "Ak sa vám PhotoPrism páči, zvážte, či nás podporíte na Patreone alebo na "
+#~ "GitHube."
 
 #~ msgid "Italian"
 #~ msgstr "Taliansky"
@@ -2821,8 +2993,12 @@ msgstr "Priblíziť/Oddialiť"
 #~ msgid "Report Bug"
 #~ msgstr "Nahlásenie chyby"
 
-#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
-#~ msgstr "Žiadosti schválené striebornými a zlatými sponzormi dostanú zlatú nálepku a budú uprednostnené."
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
+#~ msgstr ""
+#~ "Žiadosti schválené striebornými a zlatými sponzormi dostanú zlatú nálepku "
+#~ "a budú uprednostnené."
 
 #~ msgid "Russian"
 #~ msgstr "Rusky"
@@ -2842,8 +3018,16 @@ msgstr "Priblíziť/Oddialiť"
 #~ msgid "Trademarks"
 #~ msgstr "Začkay"
 
-#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-#~ msgstr "Mali by ste to používať ako je požadované pre opísanie nášho softwaru, spustenie svojho vlastného serveru, pre edukačné účely, ale nie pre ponúkanie reklamy, produktov alebo služieb bez povolenia. Inak povedané, prosím, spýtajte sa."
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "Mali by ste to používať ako je požadované pre opísanie nášho softwaru, "
+#~ "spustenie svojho vlastného serveru, pre edukačné účely, ale nie pre "
+#~ "ponúkanie reklamy, produktov alebo služieb bez povolenia. Inak povedané, "
+#~ "prosím, spýtajte sa."
 
 #~ msgid "%{n} results"
 #~ msgstr "%{n} výsledkov"
@@ -2860,8 +3044,10 @@ msgstr "Priblíziť/Oddialiť"
 #~ msgid "Couldn't find recently edited"
 #~ msgstr "Nenájdené nič nedávno upravené"
 
-#~ msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
-#~ msgstr "Zakáže súčasnú konverziu súborov RAW na použitie predvolieb Darktable."
+#~ msgid ""
+#~ "Disables simultaneous conversion of RAW files to apply Darktable presets."
+#~ msgstr ""
+#~ "Zakáže súčasnú konverziu súborov RAW na použitie predvolieb Darktable."
 
 #~ msgid "Error"
 #~ msgstr "Chyba"
@@ -2881,8 +3067,11 @@ msgstr "Priblíziť/Oddialiť"
 #~ msgid "Not implemented yet"
 #~ msgstr "Zatiaľ neimplementované"
 
-#~ msgid "Note that you can as well manage and re-index your originals manually."
-#~ msgstr "Majte na vedomí že tiež môžete upravovať a re-indexovať svoje originály manuálne."
+#~ msgid ""
+#~ "Note that you can as well manage and re-index your originals manually."
+#~ msgstr ""
+#~ "Majte na vedomí že tiež môžete upravovať a re-indexovať svoje originály "
+#~ "manuálne."
 
 #~ msgid "One result"
 #~ msgstr "Jeden výsledok"

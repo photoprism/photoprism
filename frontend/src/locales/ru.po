@@ -41,15 +41,15 @@ msgstr "найдено %{n} человек"
 msgid "%{n} pictures found"
 msgstr "найдено %{n} изображений"
 
-#: src/options/options.js:360
+#: src/options/options.js:368
 msgid "1 hour"
 msgstr "1 час"
 
-#: src/options/options.js:362
+#: src/options/options.js:370
 msgid "12 hours"
 msgstr "12 часов"
 
-#: src/options/options.js:361
+#: src/options/options.js:369
 msgid "4 hours"
 msgstr "4 часа"
 
@@ -121,35 +121,39 @@ msgstr "Добавлено"
 msgid "Advanced"
 msgstr "Дополнительно"
 
-#: src/options/options.js:370
+#: src/options/options.js:378
 msgid "After 1 day"
 msgstr "Спустя день"
 
-#: src/options/options.js:371
+#: src/options/options.js:379
 msgid "After 3 days"
 msgstr "Спустя 3 дня"
 
-#: src/options/options.js:372
+#: src/options/options.js:380
 msgid "After 7 days"
 msgstr "Спустя 7 дней"
 
-#: src/options/options.js:374
+#: src/options/options.js:382
 msgid "After one month"
 msgstr "Спустя месяц"
 
-#: src/options/options.js:376
+#: src/options/options.js:384
 msgid "After one year"
 msgstr "Спустя год"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "После выбора изображений из результатов поиска их можно добавить в альбом с помощью контекстного меню."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"После выбора изображений из результатов поиска их можно добавить в альбом с "
+"помощью контекстного меню."
 
-#: src/options/options.js:375
+#: src/options/options.js:383
 msgid "After two months"
 msgstr "Спустя 2 месяца"
 
-#: src/options/options.js:373
+#: src/options/options.js:381
 msgid "After two weeks"
 msgstr "Спустя 2 недели"
 
@@ -231,12 +235,20 @@ msgid "All Years"
 msgstr "Все года"
 
 #: src/page/about/about.vue:40
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Также, пожалуйста, оставьте звезду на GitHub, если вам нравится этот проект. Это дает дополнительную мотивацию для продолжения работы."
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
+msgstr ""
+"Также, пожалуйста, оставьте звезду на GitHub, если вам нравится этот проект. "
+"Это дает дополнительную мотивацию для продолжения работы."
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Кроме того, вы можете загружать файлы непосредственно на WebDAV-серверы, такие как Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Кроме того, вы можете загружать файлы непосредственно на WebDAV-серверы, "
+"такие как Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -253,7 +265,7 @@ msgstr "Ошибка - вы отключены от сети?"
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:301
 #: src/component/photo/cards.vue:480 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
-#: src/options/options.js:295
+#: src/options/options.js:303
 msgid "Animated"
 msgstr "Анимированный"
 
@@ -263,7 +275,8 @@ msgstr "Анимация"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Любые личные фотографии и видео остаются личными и не будут передаваться."
+msgstr ""
+"Любые личные фотографии и видео остаются личными и не будут передаваться."
 
 #: src/page/about/about.vue:32
 #, fuzzy
@@ -330,12 +343,20 @@ msgid "Aspect Ratio"
 msgstr "Соотношение сторон"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Автоматически создавать JPEG для других типов файлов, чтобы их можно было отобразить в браузере."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"Автоматически создавать JPEG для других типов файлов, чтобы их можно было "
+"отобразить в браузере."
 
 #: src/page/settings/general.vue:163
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Автоматически создает альбомы особых моментов, поездок и мест."
+
+#: src/options/options.js:268
+msgid "Basic"
+msgstr ""
 
 #: src/component/navigation.vue:584 src/dialog/sponsor.vue:7
 #: src/page/about/about.vue:33 src/page/login.vue:48
@@ -343,12 +364,20 @@ msgid "Become a sponsor"
 msgstr "Стать спонсором"
 
 #: src/page/about/about.vue:62
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Прежде чем отправлять запрос в службу поддержки, воспользуйтесь нашими списками поиска и устранения неисправностей, чтобы определить причину проблемы."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Прежде чем отправлять запрос в службу поддержки, воспользуйтесь нашими "
+"списками поиска и устранения неисправностей, чтобы определить причину "
+"проблемы."
 
 #: src/page/about/about.vue:27
 #, fuzzy
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
 msgstr ""
 "Будучи на 100% самофинансируемыми и независимыми, мы можем обещать вам, что "
 "никогда не продадим ваши данные и что мы всегда будем прозрачны в отношении "
@@ -364,19 +393,19 @@ msgstr "Биография"
 msgid "Birth Date"
 msgstr "Дата рождения"
 
-#: src/options/options.js:395
+#: src/options/options.js:403
 msgid "Black"
 msgstr "Черный"
 
-#: src/options/options.js:408
+#: src/options/options.js:416
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: модификация Lanczos, меньше артефактов звона"
 
-#: src/options/options.js:391
+#: src/options/options.js:399
 msgid "Blue"
 msgstr "Синий"
 
-#: src/options/options.js:392
+#: src/options/options.js:400
 msgid "Brown"
 msgstr "Коричневый"
 
@@ -390,12 +419,14 @@ msgstr "Просматривайте проиндексированные фай
 
 #: src/page/about/about.vue:54
 #, fuzzy
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
 msgstr ""
 "Просмотрите базу знаний, чтобы получить подробную информацию о "
 "характеристиках конкретных продуктов, услугах и сопутствующих ресурсах."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:402
+#: src/page/about/feedback.vue:8 src/options/options.js:410
 msgid "Bug Report"
 msgstr "Отчет об ошибке"
 
@@ -511,7 +542,9 @@ msgstr "Цвета"
 
 #: src/page/about/about.vue:49
 #, fuzzy
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
 msgstr ""
 "Общие проблемы можно быстро диагностировать и решить с помощью "
 "предоставленных нами контрольных списков по устранению неисправностей."
@@ -595,7 +628,7 @@ msgstr "Создано"
 msgid "Creating thumbnails for"
 msgstr "Сформировать предпросмотр"
 
-#: src/options/options.js:410
+#: src/options/options.js:418
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Кубический: умеренное качество, хорошая производительность"
 
@@ -603,11 +636,11 @@ msgstr "Кубический: умеренное качество, хороша�
 msgid "Current Password"
 msgstr "Текущий пароль"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:399
+#: src/page/about/feedback.vue:5 src/options/options.js:407
 msgid "Customer Support"
 msgstr "Поддержка клиента"
 
-#: src/options/options.js:390
+#: src/options/options.js:398
 msgid "Cyan"
 msgstr "Сине-зеленый"
 
@@ -615,7 +648,7 @@ msgstr "Сине-зеленый"
 msgid "Cyano"
 msgstr "Сине-зеленый"
 
-#: src/options/options.js:363
+#: src/options/options.js:371
 msgid "Daily"
 msgstr "Ежедневно"
 
@@ -628,7 +661,8 @@ msgstr "День"
 msgid "Debug Logs"
 msgstr "Отладочные Логи"
 
-#: src/options/options.js:314 src/options/themes.js:402
+#: src/options/options.js:264 src/options/options.js:322
+#: src/options/themes.js:402
 msgid "Default"
 msgstr "По умолчанию"
 
@@ -725,11 +759,13 @@ msgstr "Не создавать резервные копии метаданны
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Не создавать JSON-файлы ExifTool для улучшенного извлечения метаданных."
+msgstr ""
+"Не создавать JSON-файлы ExifTool для улучшенного извлечения метаданных."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Не изменять папку с оригиналами. Отключает импорт, загрузку и удаление."
+msgstr ""
+"Не изменять папку с оригиналами. Отключает импорт, загрузку и удаление."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
@@ -747,7 +783,7 @@ msgstr "Не использовать RawTherapee для конвертиров�
 msgid "Don't use TensorFlow for image classification."
 msgstr "Не использовать TensorFlow для классификации изображений."
 
-#: src/options/options.js:403
+#: src/options/options.js:411
 msgid "Donations"
 msgstr "Пожертвования"
 
@@ -791,7 +827,9 @@ msgstr "Алгоритм создания превью"
 
 #: src/page/about/feedback.vue:16
 #, fuzzy
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
 msgstr ""
 "В связи с большим количеством получаемых нами электронных писем наша команда "
 "может не иметь возможности ответить вам немедленно."
@@ -809,8 +847,12 @@ msgid "Dynamic Previews"
 msgstr "Динамические превью"
 
 #: src/page/settings/advanced.vue:303
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Рендеринг по требованию требует мощного процессора и не рекомендуется для небольших домашних серверов или устройств NAS."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"Рендеринг по требованию требует мощного процессора и не рекомендуется для "
+"небольших домашних серверов или устройств NAS."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -854,7 +896,8 @@ msgstr "Включить новые функции, которые в насто
 
 #: src/page/settings/advanced.vue:461
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "Включает предустановки конвертера RAW. Может снизить производительность."
+msgstr ""
+"Включает предустановки конвертера RAW. Может снизить производительность."
 
 #: src/app/routes.js:283 src/component/navigation.vue:391
 msgid "Errors"
@@ -868,13 +911,17 @@ msgstr "Оценить примерное местоположение фото�
 msgid "Estimates"
 msgstr "Примерное местоположение"
 
-#: src/options/options.js:364
+#: src/options/options.js:372
 msgid "Every two days"
 msgstr "Каждые два дня"
 
 #: src/page/settings/general.vue:207
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Исключить содержимое, отмеченное приватным, из результатов поиска, общих альбомов, меток и мест."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Исключить содержимое, отмеченное приватным, из результатов поиска, общих "
+"альбомов, меток и мест."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -942,7 +989,7 @@ msgstr "В избранном"
 msgid "Favorites"
 msgstr "Избранное"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:401
+#: src/page/about/feedback.vue:7 src/options/options.js:409
 msgid "Feature Request"
 msgstr "Запрос функции"
 
@@ -956,10 +1003,13 @@ msgid "Feedback"
 msgstr "Обратная связь"
 
 #: src/dialog/sponsor.vue:24
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Пожалуйста, свяжитесь с нами по адресу hello@photoprism.app, если у вас есть вопросы или вам нужна помощь."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+"Пожалуйста, свяжитесь с нами по адресу hello@photoprism.app, если у вас есть "
+"вопросы или вам нужна помощь."
 
-#: src/options/options.js:416
+#: src/options/options.js:424
 #, fuzzy
 msgid "Female"
 msgstr "Женский"
@@ -992,8 +1042,12 @@ msgid "Files"
 msgstr "Файлы"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Файлы с последовательными именами типа 'IMG_1234 (2)' и 'IMG_1234 (3)' принадлежат одной картинке."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Файлы с последовательными именами типа 'IMG_1234 (2)' и 'IMG_1234 (3)' "
+"принадлежат одной картинке."
 
 #: src/dialog/photo/edit/details.vue:477
 msgid "Focal Length"
@@ -1056,7 +1110,7 @@ msgstr "Получение помощи"
 msgid "Given Name"
 msgstr "Оригинальное Название"
 
-#: src/options/options.js:385
+#: src/options/options.js:393
 msgid "Gold"
 msgstr "Золото"
 
@@ -1064,11 +1118,11 @@ msgstr "Золото"
 msgid "Grayscale"
 msgstr "Оттенки серого"
 
-#: src/options/options.js:388
+#: src/options/options.js:396
 msgid "Green"
 msgstr "Зеленый"
 
-#: src/options/options.js:394
+#: src/options/options.js:402
 msgid "Grey"
 msgstr "Серый"
 
@@ -1104,7 +1158,7 @@ msgstr "Скрыть"
 msgid "Hide photos that have been moved to archive."
 msgstr "Скрыть фотографии, которые были перенесены в архив."
 
-#: src/options/options.js:318
+#: src/options/options.js:326
 msgid "High"
 msgstr "Высокий"
 
@@ -1115,10 +1169,6 @@ msgstr "Высокий динамический диапазон (HDR)"
 #: src/page/about/feedback.vue:151
 msgid "How can we help?"
 msgstr "Как мы можем помочь?"
-
-#: src/options/options.js:273
-msgid "Hybrid"
-msgstr "Гибрид"
 
 #: src/dialog/sponsor.vue:36
 msgid "I'm a sponsor"
@@ -1132,7 +1182,7 @@ msgstr "Если это не помогло или у вас есть други
 msgid "image"
 msgstr "изображение"
 
-#: src/model/file.js:216 src/options/options.js:291
+#: src/model/file.js:216 src/options/options.js:299
 msgid "Image"
 msgstr "Изображение"
 
@@ -1150,12 +1200,18 @@ msgid "Import failed"
 msgstr "Импортирование не удалось"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Импортированные файлы будут отсортированы по датам и получат уникальные имена."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Импортированные файлы будут отсортированы по датам и получат уникальные "
+"имена."
 
 #: src/page/settings/general.vue:273
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Импортированные файлы будут отсортированы по датам и получат уникальные имена."
+msgstr ""
+"Импортированные файлы будут отсортированы по датам и получат уникальные "
+"имена."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1172,15 +1228,21 @@ msgstr "в"
 
 #: src/page/about/about.vue:72
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr "Кроме того, спонсоры получают прямую техническую поддержку по электронной почте."
+msgstr ""
+"Кроме того, спонсоры получают прямую техническую поддержку по электронной "
+"почте."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Если ожидаемые вами фотографии отсутствуют, пожалуйста, повторно просканируйте библиотеку и дождитесь окончания индексации."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"Если ожидаемые вами фотографии отсутствуют, пожалуйста, повторно "
+"просканируйте библиотеку и дождитесь окончания индексации."
 
 #: src/component/navigation.vue:563 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1244,7 +1306,9 @@ msgstr "Выбрана недопустимая фотография"
 
 #: src/page/about/about.vue:16
 #, fuzzy
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
 msgstr ""
 "Она использует новейшие технологии для автоматического поиска фотографий по "
 "меткам, не мешая вам."
@@ -1289,7 +1353,7 @@ msgstr "Метки"
 msgid "Labels deleted"
 msgstr "Метки удалены"
 
-#: src/options/options.js:409
+#: src/options/options.js:417
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: сохранение деталей, минимальные артефакты"
 
@@ -1339,7 +1403,7 @@ msgstr "Лицензия"
 msgid "Like"
 msgstr "Нравится"
 
-#: src/options/options.js:387
+#: src/options/options.js:395
 msgid "Lime"
 msgstr "Лайм"
 
@@ -1347,7 +1411,7 @@ msgstr "Лайм"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Лимит превышен, отображение первых %{n} файлов"
 
-#: src/options/options.js:411
+#: src/options/options.js:419
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Линейный: очень сглаженный, лучшая производительность"
 
@@ -1361,7 +1425,7 @@ msgstr "Список"
 
 #: src/app/routes.js:204 src/component/photo/cards.vue:292
 #: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
-#: src/options/options.js:303
+#: src/options/options.js:311
 msgid "Live"
 msgstr "Прямой эфир"
 
@@ -1385,8 +1449,12 @@ msgid "Location"
 msgstr "Местоположение"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Сообщения журнала появляются здесь всякий раз когда PhotoPrism сталкивается с поврежденными файлами или другими потенциальными проблемами."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Сообщения журнала появляются здесь всякий раз когда PhotoPrism сталкивается "
+"с поврежденными файлами или другими потенциальными проблемами."
 
 #: src/component/navigation.vue:454 src/component/navigation.vue:1686
 #: src/component/navigation.vue:1960
@@ -1407,11 +1475,11 @@ msgstr "Журнал"
 msgid "Longitude"
 msgstr "Долгота"
 
-#: src/options/options.js:322
+#: src/options/options.js:330
 msgid "Low"
 msgstr "Низкий"
 
-#: src/options/options.js:381
+#: src/options/options.js:389
 msgid "Magenta"
 msgstr "Пурпурный"
 
@@ -1419,7 +1487,7 @@ msgstr "Пурпурный"
 msgid "Main Color"
 msgstr "Основной цвет"
 
-#: src/options/options.js:415
+#: src/options/options.js:423
 #, fuzzy
 msgid "Male"
 msgstr "Мужчина"
@@ -1530,7 +1598,7 @@ msgstr "Название"
 msgid "Name too long"
 msgstr "Название слишком длинное"
 
-#: src/options/options.js:359 src/options/options.js:369
+#: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Никогда"
@@ -1578,7 +1646,7 @@ msgstr "Люди не найдены"
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/component/photo/mosaic.vue:6
 #: src/page/album/photos.vue:389 src/page/library/browse.vue:34
-#: src/page/photos.vue:486 src/page/places.vue:217 src/page/places.vue:279
+#: src/page/photos.vue:486 src/page/places.vue:225 src/page/places.vue:287
 msgid "No pictures found"
 msgstr "Фото не найдены"
 
@@ -1606,8 +1674,12 @@ msgid "No video selected"
 msgstr "Wideo saýlanylmady"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Нет предупреждений или ошибок содержащих эти слова. Имейте в виду, что поиск регистрозависимый."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Нет предупреждений или ошибок содержащих эти слова. Имейте в виду, что поиск "
+"регистрозависимый."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1616,10 +1688,14 @@ msgstr "Нет предупреждений или ошибок содержащ
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Файлы, не являющиеся фотографиями, или изображения низкого качества нужно одобрить, чтобы они появились в результатах поиска."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Файлы, не являющиеся фотографиями, или изображения низкого качества нужно "
+"одобрить, чтобы они появились в результатах поиска."
 
-#: src/options/options.js:245 src/options/options.js:326
+#: src/options/options.js:245 src/options/options.js:334
 msgid "None"
 msgstr "Ничего"
 
@@ -1628,16 +1704,24 @@ msgid "Not Found"
 msgstr "Ничего не найдено"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Обратите внимание, что вы можете вручную управлять папкой оригиналов, а импорт необязателен."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Обратите внимание, что вы можете вручную управлять папкой оригиналов, а "
+"импорт необязателен."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Примечание:"
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Примечание: Только серверы WebDAV, такие как Nextcloud или PhotoPrism, могут быть настроены как удаленная служба для резервного копирования и загрузки файлов."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Примечание: Только серверы WebDAV, такие как Nextcloud или PhotoPrism, могут "
+"быть настроены как удаленная служба для резервного копирования и загрузки "
+"файлов."
 
 #: src/dialog/photo/edit/details.vue:654
 msgid "Notes"
@@ -1649,7 +1733,6 @@ msgid "Nothing to see here yet."
 msgstr "Пока что тут нечего смотреть. Будьте терпеливы."
 
 #: src/component/navigation.vue:470 src/component/navigation.vue:1731
-#: src/options/options.js:264
 msgid "Offline"
 msgstr "Не в сети"
 
@@ -1666,7 +1749,7 @@ msgstr "Сначала старые"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "В Windows введите следующий ресурс в диалоговом окне подключения:"
 
-#: src/options/options.js:365
+#: src/options/options.js:373
 msgid "Once a week"
 msgstr "Раз в неделю"
 
@@ -1711,7 +1794,7 @@ msgstr "Настройки"
 msgid "or ask in our Community Chat"
 msgstr "или задайте вопрос в нашем чате сообщества"
 
-#: src/options/options.js:384
+#: src/options/options.js:392
 msgid "Orange"
 msgstr "Оранжевый"
 
@@ -1739,18 +1822,20 @@ msgstr "Оригинальное Название"
 msgid "Originals"
 msgstr "Оригиналы"
 
-#: src/options/options.js:404 src/options/options.js:417
+#: src/options/options.js:412 src/options/options.js:425
 msgid "Other"
 msgstr "Другое"
 
 #: src/page/about/about.vue:48
 #, fuzzy
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
 msgstr ""
 "Наше руководство пользователя также охватывает многие продвинутые темы, "
 "такие как миграция из Google Фото и настройки качества эскизов."
 
-#: src/options/options.js:283
+#: src/options/options.js:284
 msgid "Outdoor"
 msgstr "Активности на открытом воздухе"
 
@@ -1780,7 +1865,9 @@ msgstr "Люди"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr "Люди, с которыми вы поделились ссылкой, будут иметь возможность просматривать публичный контент."
+msgstr ""
+"Люди, с которыми вы поделились ссылкой, будут иметь возможность "
+"просматривать публичный контент."
 
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
@@ -1814,7 +1901,7 @@ msgstr ""
 msgid "Photos"
 msgstr "Фотографии"
 
-#: src/options/options.js:382
+#: src/options/options.js:390
 msgid "Pink"
 msgstr "Розовый"
 
@@ -1845,7 +1932,9 @@ msgstr "Пожалуйста, не загружайте фотографии, с
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr ""
 "Обратите внимание, что изменение пароля приведет к выходу из системы на "
 "других устройствах и в браузерах."
@@ -1890,7 +1979,7 @@ msgstr "Главная"
 msgid "Private"
 msgstr "Приватные"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:400
+#: src/page/about/feedback.vue:6 src/options/options.js:408
 msgid "Product Feedback"
 msgstr "Обратная связь по продукту"
 
@@ -1898,7 +1987,7 @@ msgstr "Обратная связь по продукту"
 msgid "Projection"
 msgstr "Проекция"
 
-#: src/options/options.js:380
+#: src/options/options.js:388
 msgid "Purple"
 msgstr "Фиолетовый"
 
@@ -1918,7 +2007,7 @@ msgstr "Случайно"
 msgid "Raspberry"
 msgstr "Малиновый"
 
-#: src/options/options.js:299
+#: src/options/options.js:307
 msgid "Raw"
 msgstr "Исходный"
 
@@ -1932,7 +2021,9 @@ msgstr "Конвертация RAW"
 
 #: src/page/library/index.vue:116
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Повторное индексирование всех оригиналов, включая уже проиндексированные и неизмененные файлы."
+msgstr ""
+"Повторное индексирование всех оригиналов, включая уже проиндексированные и "
+"неизмененные файлы."
 
 #: src/page/about/about.vue:51
 #, fuzzy
@@ -1974,7 +2065,7 @@ msgstr "Распознано"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Распознает лица, чтобы можно было найти конкретных людей."
 
-#: src/options/options.js:383
+#: src/options/options.js:391
 msgid "Red"
 msgstr "Красный"
 
@@ -2008,8 +2099,12 @@ msgid "Remove from album"
 msgstr "Удалить из альбома"
 
 #: src/page/library/import.vue:120
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Удалять импортированные файлы для освобождения места. Неподдерживаемые типы файлов никогда не будут удалены, они остаются в их текущем местоположении."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Удалять импортированные файлы для освобождения места. Неподдерживаемые типы "
+"файлов никогда не будут удалены, они остаются в их текущем местоположении."
 
 #: src/common/api.js:74 src/page/connect.vue:38
 msgid "Request failed - invalid response"
@@ -2040,6 +2135,10 @@ msgstr "Повторите пароль"
 #: src/app/routes.js:218 src/component/navigation.vue:125
 msgid "Review"
 msgstr "Не одобрены"
+
+#: src/options/options.js:278
+msgid "Satellite"
+msgstr ""
 
 #: src/dialog/account/password.vue:39 src/dialog/album/edit.vue:45
 #: src/dialog/service/edit.vue:107 src/dialog/share.vue:61
@@ -2221,8 +2320,13 @@ msgid "Source"
 msgstr "Источник"
 
 #: src/page/about/about.vue:25
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "Спонсоры получают доступ к дополнительным функциям, получают прямую техническую поддержку по электронной почте и могут присоединиться к нашему закрытому чату на сайте matrix.org."
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
+msgstr ""
+"Спонсоры получают доступ к дополнительным функциям, получают прямую "
+"техническую поддержку по электронной почте и могут присоединиться к нашему "
+"закрытому чату на сайте matrix.org."
 
 #: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 msgid "Stack"
@@ -2230,11 +2334,17 @@ msgstr "Серия"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Объединять в серию файлы с одним и тем же уникальным изображением или идентификатором экземпляра."
+msgstr ""
+"Объединять в серию файлы с одним и тем же уникальным изображением или "
+"идентификатором экземпляра."
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Объединять в серию снимки, сделанные в одно и то же время и в одном и том же месте, на основе их метаданных."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Объединять в серию снимки, сделанные в одно и то же время и в одном и том же "
+"месте, на основе их метаданных."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2245,8 +2355,12 @@ msgid "Stacks"
 msgstr "Серии"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Объединяет в серию файлы со схожими рамками отсчета, но различиями в качестве, формате, размере или цвете."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"Объединяет в серию файлы со схожими рамками отсчета, но различиями в "
+"качестве, формате, размере или цвете."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2273,7 +2387,7 @@ msgstr "Статус"
 msgid "Storage"
 msgstr "Хранилище"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Streets"
 msgstr "Улицы"
 
@@ -2291,8 +2405,11 @@ msgid "Successfully Connected"
 msgstr "Успешно подключен"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Поддержка дополнительных служб, таких как Google Drive, будет добавлена позже."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Поддержка дополнительных служб, таких как Google Drive, будет добавлена "
+"позже."
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2307,7 +2424,7 @@ msgstr "Синхронизация сырых и видео файлов"
 msgid "Taken"
 msgstr "Дата съемки"
 
-#: src/options/options.js:389
+#: src/options/options.js:397
 msgid "Teal"
 msgstr "Бирюзовый"
 
@@ -2325,27 +2442,45 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "Индекс на данный момент содержит %{n} скрытых файлов."
 
 #: src/page/library/index.vue:37
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Их формат может быть не поддерживаемым, они не были конвертированы в JPEG или это дубликаты."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Их формат может быть не поддерживаемым, они не были конвертированы в JPEG "
+"или это дубликаты."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Тема"
 
 #: src/dialog/sponsor.vue:17
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-msgstr "Это функция раннего доступа, чтобы поблагодарить наших спонсоров и жертвователей."
+msgid ""
+"This currently is a sponsor feature to thank everyone who supports the "
+"development of this application."
+msgstr ""
+"Это функция раннего доступа, чтобы поблагодарить наших спонсоров и "
+"жертвователей."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "При этом папка с оригиналами подключается как сетевой диск и позволяет вам открывать, редактировать и удалять файлы с вашего компьютера или смартфона, как если бы они находились на вашем устройстве."
+msgstr ""
+"При этом папка с оригиналами подключается как сетевой диск и позволяет вам "
+"открывать, редактировать и удалять файлы с вашего компьютера или смартфона, "
+"как если бы они находились на вашем устройстве."
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "При этом папка с оригиналами подключается как сетевой диск и позволяет вам открывать, редактировать и удалять файлы с вашего компьютера или смартфона, как если бы они находились на вашем устройстве."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"При этом папка с оригиналами подключается как сетевой диск и позволяет вам "
+"открывать, редактировать и удалять файлы с вашего компьютера или смартфона, "
+"как если бы они находились на вашем устройстве."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2388,7 +2523,7 @@ msgstr "Переключить вид"
 msgid "Token"
 msgstr "Токен"
 
-#: src/options/options.js:278
+#: src/options/options.js:290
 msgid "Topographic"
 msgstr "Топографический"
 
@@ -2515,7 +2650,9 @@ msgstr "Загрузка"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Загрузки, которые могут содержать такие изображение будут автоматически отменены."
+msgstr ""
+"Загрузки, которые могут содержать такие изображение будут автоматически "
+"отменены."
 
 #: src/dialog/share.vue:153
 msgid "URL"
@@ -2556,7 +2693,7 @@ msgstr "Проверено"
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
 #: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
-#: src/options/options.js:307
+#: src/options/options.js:315
 msgid "Video"
 msgstr "Видео"
 
@@ -2578,7 +2715,9 @@ msgstr "Обзор"
 
 #: src/page/about/about.vue:47
 #, fuzzy
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
 msgstr ""
 "Посетите сайт docs.photoprism.app/user-guide, чтобы узнать, как "
 "синхронизировать, упорядочивать и делиться своими фотографиями."
@@ -2601,23 +2740,35 @@ msgstr ""
 "менее."
 
 #: src/page/about/about.vue:74
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Мы сделаем все возможное, чтобы ответить на все ваши вопросы. В свою очередь, мы просим вас поддержать нас на Patreon или GitHub Sponsors."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Мы сделаем все возможное, чтобы ответить на все ваши вопросы. В свою "
+"очередь, мы просим вас поддержать нас на Patreon или GitHub Sponsors."
 
 #: src/dialog/sponsor.vue:18
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr "Мы сообщим вам, как включить его, когда вы зарегистрируетесь на Patreon или GitHub Sponsors."
+msgid ""
+"We'll let you know how to enable it when you sign up on Patreon or GitHub "
+"Sponsors."
+msgstr ""
+"Мы сообщим вам, как включить его, когда вы зарегистрируетесь на Patreon или "
+"GitHub Sponsors."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "WebDAV клиенты могут подключаться к PhotoPrism используя следующий URL:"
+msgstr ""
+"WebDAV клиенты могут подключаться к PhotoPrism используя следующий URL:"
 
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV клиенты, такие как Microsoft Windows Проводник или Apple Finder, могут подключаться к PhotoPrism напрямую."
+msgstr ""
+"WebDAV клиенты, такие как Microsoft Windows Проводник или Apple Finder, "
+"могут подключаться к PhotoPrism напрямую."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2629,7 +2780,7 @@ msgstr "WebDAV загрузка"
 msgid "Website"
 msgstr "Сайт"
 
-#: src/options/options.js:393
+#: src/options/options.js:401
 msgid "White"
 msgstr "Белый"
 
@@ -2643,7 +2794,7 @@ msgstr "Подробно"
 msgid "Year"
 msgstr "Год"
 
-#: src/options/options.js:386
+#: src/options/options.js:394
 msgid "Yellow"
 msgstr "Желтый"
 
@@ -2686,24 +2837,41 @@ msgstr "Вы можете выбрать только один элемент"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr "Вы можете повторно просканировать свою библиотеку, чтобы найти дополнительные лица."
+msgstr ""
+"Вы можете повторно просканировать свою библиотеку, чтобы найти "
+"дополнительные лица."
 
 #: src/page/about/about.vue:22
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Ваша постоянная поддержка помогает нам предоставлять такие услуги, как спутниковые карты, и разрабатывать новые функции."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Ваша постоянная поддержка помогает нам предоставлять такие услуги, как "
+"спутниковые карты, и разрабатывать новые функции."
 
 #: src/dialog/sponsor.vue:21
-msgid "Your continued support helps us provide regular updates and services like world maps."
-msgstr "Ваша постоянная поддержка помогает нам предоставлять такие услуги, как спутниковые карты, и разрабатывать новые функции."
+msgid ""
+"Your continued support helps us provide regular updates and services like "
+"world maps."
+msgstr ""
+"Ваша постоянная поддержка помогает нам предоставлять такие услуги, как "
+"спутниковые карты, и разрабатывать новые функции."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Ваша библиотека постоянно анализируется для автоматического создания альбомов особых моментов, поездок и мест."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Ваша библиотека постоянно анализируется для автоматического создания "
+"альбомов особых моментов, поездок и мест."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#~ msgid "Hybrid"
+#~ msgstr "Гибрид"
 
 #~ msgid "Add Server"
 #~ msgstr "Добавить сервер"
@@ -2720,11 +2888,20 @@ msgstr "Увеличение/уменьшение масштаба"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Импортирование загруженных файлов не удалось"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "Примечание: Изменение пароля не отключит доступ уже авторизованных пользователей."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Примечание: Изменение пароля не отключит доступ уже авторизованных "
+#~ "пользователей."
 
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "Наша задача - предоставить наиболее удобное для пользователя и конфиденциальности решение для хранения ваших фотографий в упорядоченном и доступном виде."
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "Наша задача - предоставить наиболее удобное для пользователя и "
+#~ "конфиденциальности решение для хранения ваших фотографий в упорядоченном "
+#~ "и доступном виде."
 
 #~ msgid "Play"
 #~ msgstr "Воспроизвести"
@@ -2738,8 +2915,13 @@ msgstr "Увеличение/уменьшение масштаба"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Показать библиотеку в навигационном меню."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Дорожная карта показывает, какие задачи находятся в процессе выполнения, что нуждается в тестировании, и какие запросы на функции будут реализованы следующими."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Дорожная карта показывает, какие задачи находятся в процессе выполнения, "
+#~ "что нуждается в тестировании, и какие запросы на функции будут "
+#~ "реализованы следующими."
 
 #~ msgid "to"
 #~ msgstr "в"
@@ -2826,10 +3008,16 @@ msgstr "Увеличение/уменьшение масштаба"
 #~ msgstr "Испанский"
 
 #~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
-#~ msgstr "PhotoPrism® - это зарегистрированный торговый знак принадлежащий Майклу Майеру (Michael Mayer)."
+#~ msgstr ""
+#~ "PhotoPrism® - это зарегистрированный торговый знак принадлежащий Майклу "
+#~ "Майеру (Michael Mayer)."
 
-#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
-#~ msgstr "Заявки, одобренные серебряными и золотыми спонсорами, получают золотой знак и будут приоритетными."
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
+#~ msgstr ""
+#~ "Заявки, одобренные серебряными и золотыми спонсорами, получают золотой "
+#~ "знак и будут приоритетными."
 
 #~ msgid "Thank you very much!"
 #~ msgstr "Большое спасибо!"
@@ -2837,17 +3025,31 @@ msgstr "Увеличение/уменьшение масштаба"
 #~ msgid "Trademarks"
 #~ msgstr "Товарные знаки"
 
-#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-#~ msgstr "Вы можете использовать его по мере необходимости для описания нашего программного обеспечения, запуска собственного сервера, в образовательных целях, но не для предложения коммерческих товаров, продуктов или услуг без предварительного письменного разрешения. Другими словами, спрашивайте."
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "Вы можете использовать его по мере необходимости для описания нашего "
+#~ "программного обеспечения, запуска собственного сервера, в образовательных "
+#~ "целях, но не для предложения коммерческих товаров, продуктов или услуг "
+#~ "без предварительного письменного разрешения. Другими словами, спрашивайте."
 
-#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
-#~ msgstr "Если вам нравится пользоваться PhotoPrism, пожалуйста, поддержите нас на Patreon или GitHub Sponsors."
+#~ msgid ""
+#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
+#~ "GitHub Sponsors."
+#~ msgstr ""
+#~ "Если вам нравится пользоваться PhotoPrism, пожалуйста, поддержите нас на "
+#~ "Patreon или GitHub Sponsors."
 
 #~ msgid "Let us know when we mistakenly label an idea as unfunded."
 #~ msgstr "Сообщите нам, если мы ошибочно назвали идею нефинансируемой."
 
 #~ msgid "This open-source project is made possible thanks to our sponsors."
-#~ msgstr "Этот проект с открытым исходным кодом стал возможен благодаря нашим спонсорам."
+#~ msgstr ""
+#~ "Этот проект с открытым исходным кодом стал возможен благодаря нашим "
+#~ "спонсорам."
 
 #~ msgid "%{n} results"
 #~ msgstr "%{n} результатов"
@@ -2864,8 +3066,11 @@ msgstr "Увеличение/уменьшение масштаба"
 #~ msgid "Couldn't find recently edited"
 #~ msgstr "Не найдено недавно отредактированных"
 
-#~ msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
-#~ msgstr "Отключает одновременное преобразование RAW-файлов для применения пресетов Darktable."
+#~ msgid ""
+#~ "Disables simultaneous conversion of RAW files to apply Darktable presets."
+#~ msgstr ""
+#~ "Отключает одновременное преобразование RAW-файлов для применения пресетов "
+#~ "Darktable."
 
 #~ msgid "Error"
 #~ msgstr "Ошибка"
@@ -2885,8 +3090,11 @@ msgstr "Увеличение/уменьшение масштаба"
 #~ msgid "Not implemented yet"
 #~ msgstr "Еще не реализованно"
 
-#~ msgid "Note that you can as well manage and re-index your originals manually."
-#~ msgstr "Учтите что вы можете просмотреть и переиндексировать ваши оригиналы в ручном режиме."
+#~ msgid ""
+#~ "Note that you can as well manage and re-index your originals manually."
+#~ msgstr ""
+#~ "Учтите что вы можете просмотреть и переиндексировать ваши оригиналы в "
+#~ "ручном режиме."
 
 #~ msgid "One result"
 #~ msgstr "Один результат"
@@ -2981,8 +3189,12 @@ msgstr "Увеличение/уменьшение масштаба"
 #~ msgid "Toggled story flag"
 #~ msgstr "Включен флаг История"
 
-#~ msgid "Try using other terms and search options such as category, country and camera."
-#~ msgstr "Попробуйте другой запрос или опции поиска, такие как категория, страна и камера."
+#~ msgid ""
+#~ "Try using other terms and search options such as category, country and "
+#~ "camera."
+#~ msgstr ""
+#~ "Попробуйте другой запрос или опции поиска, такие как категория, страна и "
+#~ "камера."
 
 #~ msgid "Vibrant"
 #~ msgstr "Вибрант"

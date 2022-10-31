@@ -261,28 +261,36 @@ export const MapsAnimate = () => [
 
 export const MapsStyle = () => [
   {
-    text: $gettext("Offline"),
-    value: "offline",
+    text: $gettext("Default"),
+    value: "",
+  },
+  {
+    text: $gettext("Basic"),
+    value: "basic",
   },
   {
     text: $gettext("Streets"),
     value: "streets",
     sponsor: true,
+    disabled: !config.isSponsor(),
   },
   {
-    text: $gettext("Hybrid"),
+    text: $gettext("Satellite"),
     value: "hybrid",
     sponsor: true,
-  },
-  {
-    text: $gettext("Topographic"),
-    value: "topographique",
-    sponsor: true,
+    disabled: !config.isSponsor(),
   },
   {
     text: $gettext("Outdoor"),
     value: "outdoor",
     sponsor: true,
+    disabled: !config.isSponsor(),
+  },
+  {
+    text: $gettext("Topographic"),
+    value: "topographique",
+    sponsor: true,
+    disabled: !config.isSponsor(),
   },
 ];
 

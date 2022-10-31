@@ -48,7 +48,7 @@ func NewSettings(theme, lang string) *Settings {
 		},
 		Maps: MapsSettings{
 			Animate: 0,
-			Style:   "streets",
+			Style:   "",
 		},
 		Features: FeatureSettings{
 			Favorites: true,

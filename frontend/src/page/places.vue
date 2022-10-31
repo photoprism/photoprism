@@ -97,16 +97,24 @@ export default {
           filter.quality = "3";
         }
 
+        let mapsStyle = s.style;
+
+        if (!mapKey || !this.$config.isSponsor() && !this.$config.isDemo()) {
+          mapsStyle = "basic";
+        } else if (!mapsStyle) {
+          mapsStyle = "streets";
+        }
+
         let mapOptions = {
           container: "map",
-          style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=" + mapKey,
+          style: "https://api.maptiler.com/maps/" + mapsStyle + "/style.json?key=" + mapKey,
           glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=" + mapKey,
           attributionControl: true,
           customAttribution: this.attribution,
           zoom: 0,
         };
 
-        if (!mapKey || s.style === "offline") {
+        if (mapsStyle === "basic") {
           mapOptions = {
             container: "map",
             style: {
@@ -198,7 +206,7 @@ export default {
           };
           this.url = '';
         } else {
-          this.url = 'https://api.maptiler.com/maps/' + s.style + '/{z}/{x}/{y}.png?key=' + mapKey;
+          this.url = 'https://api.maptiler.com/maps/' + mapsStyle + '/{z}/{x}/{y}.png?key=' + mapKey;
         }
 
         this.filter = filter;
