@@ -60,7 +60,7 @@
     <footer v-if="sponsor">
       <v-layout wrap align-top pa-0 ma-0>
         <v-flex xs12 class="pa-0 body-2 text-selectable text-xs-center white--tex text-sm-left sm6">
-          {{ $config.getEdition() }}
+          {{ $config.getAbout() }}
         </v-flex>
 
         <v-flex v-if="config.legalInfo" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">

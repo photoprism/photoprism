@@ -164,7 +164,7 @@ func NewOptions(ctx *cli.Context) *Options {
 	}
 
 	// Set app edition from metadata if possible.
-	if s, ok := ctx.App.Metadata["Edition"]; ok {
+	if s, ok := ctx.App.Metadata["About"]; ok {
 		c.Edition = fmt.Sprintf("%s", s)
 	}
 

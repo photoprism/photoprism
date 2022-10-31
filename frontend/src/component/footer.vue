@@ -3,7 +3,7 @@
     <v-card-actions class="footer-actions">
       <v-layout wrap align-top pt-3>
         <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-selectable text-xs-left">
-          <strong><router-link to="/about" class="text-link">{{ $config.getEdition() }}</router-link></strong>
+          <strong><router-link to="/about" class="text-link">{{ $config.getAbout() }}</router-link></strong>
           <span class="body-link text-selectable">Build <a href="https://docs.photoprism.app/release-notes/" target="_blank" :title="version" class="body-link">{{ build }}</a></span>
         </v-flex>
 

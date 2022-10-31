@@ -25,6 +25,7 @@ const (
 type ClientConfig struct {
 	Mode            string              `json:"mode"`
 	Name            string              `json:"name"`
+	About           string              `json:"about"`
 	Edition         string              `json:"edition"`
 	Version         string              `json:"version"`
 	Copyright       string              `json:"copyright"`
@@ -66,7 +67,6 @@ type ClientConfig struct {
 	Countries       entity.Countries    `json:"countries"`
 	People          entity.People       `json:"people"`
 	Thumbs          ThumbSizes          `json:"thumbs"`
-	Status          string              `json:"status"`
 	MapKey          string              `json:"mapKey"`
 	DownloadToken   string              `json:"downloadToken,omitempty"`
 	PreviewToken    string              `json:"previewToken,omitempty"`
@@ -228,7 +228,8 @@ func (c *Config) ClientPublic() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            string(ClientPublic),
 		Name:            c.Name(),
-		Edition:         c.Edition(),
+		About:           c.Edition(),
+		Edition:         c.Hub().Status,
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
 		CssUri:          a.AppCssUri(),
@@ -264,7 +265,6 @@ func (c *Config) ClientPublic() ClientConfig {
 		Lenses:          entity.Lenses{},
 		Countries:       entity.Countries{},
 		People:          entity.People{},
-		Status:          "",
 		MapKey:          "",
 		Thumbs:          Thumbs,
 		Colors:          colors.All.List(),
@@ -304,7 +304,8 @@ func (c *Config) ClientShare() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            string(ClientShare),
 		Name:            c.Name(),
-		Edition:         c.Edition(),
+		About:           c.Edition(),
+		Edition:         c.Hub().Status,
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
 		CssUri:          a.AppCssUri(),
@@ -343,7 +344,6 @@ func (c *Config) ClientShare() ClientConfig {
 		People:          entity.People{},
 		Colors:          colors.All.List(),
 		Thumbs:          Thumbs,
-		Status:          c.Hub().Status,
 		MapKey:          c.Hub().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
@@ -386,7 +386,8 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            string(ClientUser),
 		Name:            c.Name(),
-		Edition:         c.Edition(),
+		About:           c.Edition(),
+		Edition:         c.Hub().Status,
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
 		CssUri:          a.AppCssUri(),
@@ -425,7 +426,6 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		People:          entity.People{},
 		Colors:          colors.All.List(),
 		Thumbs:          Thumbs,
-		Status:          c.Hub().Status,
 		MapKey:          c.Hub().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),

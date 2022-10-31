@@ -521,7 +521,7 @@
 
         <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" class="p-profile" @click.stop="onAccount">
           <v-list-tile-avatar size="36">
-            <img :src="userAvatarURL" :alt="displayName">
+            <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo">
           </v-list-tile-avatar>
 
           <v-list-tile-content>
@@ -693,7 +693,7 @@ export default {
       canManagePeople: this.$config.allow("people", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
-      appEdition: this.$config.getEdition(),
+      appAbout: this.$config.getAbout(),
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,

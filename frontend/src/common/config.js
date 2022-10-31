@@ -596,11 +596,21 @@ export default class Config {
     return name;
   }
 
+  getAbout() {
+    const about = this.get("about");
+
+    if (!about) {
+      return "PhotoPrism® Dev";
+    }
+
+    return about;
+  }
+
   getEdition() {
     const edition = this.get("edition");
 
     if (!edition) {
-      return "PhotoPrism® Dev";
+      return "ce";
     }
 
     return edition;

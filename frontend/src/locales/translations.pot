@@ -17,7 +17,7 @@ msgstr ""
 msgid "%{n} files uploaded"
 msgstr ""
 
-#: src/page/library/browse.vue:304
+#: src/page/library/browse.vue:311
 msgid "%{n} folders found"
 msgstr ""
 
@@ -68,7 +68,7 @@ msgstr ""
 
 #: src/component/navigation.vue:3
 #: src/component/navigation.vue:93
-#: src/component/navigation.vue:1907
+#: src/component/navigation.vue:1908
 #: src/dialog/share/upload.vue:108
 #: src/model/service.js:98
 #: src/model/user.js:144
@@ -366,7 +366,7 @@ msgid "Being 100% self-funded and independent, we can promise you that we will n
 msgstr ""
 
 #: src/page/people/recognized.vue:434
-#: src/page/settings/account.vue:279
+#: src/page/settings/account.vue:280
 msgid "Bio"
 msgstr ""
 
@@ -439,8 +439,8 @@ msgstr ""
 #: src/page/albums.vue:485
 #: src/page/labels.vue:204
 #: src/page/labels.vue:224
-#: src/page/library/browse.vue:194
-#: src/page/library/browse.vue:210
+#: src/page/library/browse.vue:201
+#: src/page/library/browse.vue:217
 #: src/page/people/new.vue:215
 #: src/page/people/new.vue:231
 #: src/page/people/recognized.vue:294
@@ -479,6 +479,10 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
+#: src/page/settings/account.vue:251
+msgid "Change Avatar"
+msgstr ""
+
 #: src/dialog/account/password.vue:7
 #: src/page/settings/account.vue:51
 msgid "Change Password"
@@ -496,8 +500,8 @@ msgstr ""
 msgid "Change private flag"
 msgstr ""
 
-#: src/page/settings/account.vue:106
-#: src/page/settings/account.vue:121
+#: src/page/settings/account.vue:114
+#: src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42
 #: src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
@@ -609,7 +613,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:178
 #: src/dialog/photo/edit/details.vue:248
-#: src/page/settings/account.vue:578
+#: src/page/settings/account.vue:579
 msgid "Country"
 msgstr ""
 
@@ -650,7 +654,7 @@ msgid "Daily"
 msgstr ""
 
 #: src/dialog/photo/edit/details.vue:116
-#: src/page/settings/account.vue:444
+#: src/page/settings/account.vue:445
 msgid "Day"
 msgstr ""
 
@@ -828,7 +832,7 @@ msgstr ""
 #: src/component/photo/list.vue:124
 #: src/component/subject/clipboard.vue:55
 #: src/dialog/photo/edit/files.vue:69
-#: src/page/library/browse.vue:100
+#: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr ""
 
@@ -995,7 +999,7 @@ msgstr ""
 msgid "Feature Request"
 msgstr ""
 
-#: src/page/settings/account.vue:669
+#: src/page/settings/account.vue:670
 msgid "Feed"
 msgstr ""
 
@@ -1057,11 +1061,11 @@ msgstr ""
 msgid "Folder"
 msgstr ""
 
-#: src/page/library/browse.vue:306
+#: src/page/library/browse.vue:313
 msgid "Folder contains %{n} files"
 msgstr ""
 
-#: src/page/library/browse.vue:298
+#: src/page/library/browse.vue:305
 msgid "Folder is empty"
 msgstr ""
 
@@ -1285,12 +1289,12 @@ msgstr ""
 #: src/page/settings/account.vue:141
 #: src/page/settings/account.vue:167
 #: src/page/settings/account.vue:222
-#: src/page/settings/account.vue:278
-#: src/page/settings/account.vue:562
-#: src/page/settings/account.vue:589
-#: src/page/settings/account.vue:616
-#: src/page/settings/account.vue:644
-#: src/page/settings/account.vue:672
+#: src/page/settings/account.vue:279
+#: src/page/settings/account.vue:563
+#: src/page/settings/account.vue:590
+#: src/page/settings/account.vue:617
+#: src/page/settings/account.vue:645
+#: src/page/settings/account.vue:673
 msgid "Invalid"
 msgstr ""
 
@@ -1414,7 +1418,7 @@ msgstr ""
 msgid "Lime"
 msgstr ""
 
-#: src/page/library/browse.vue:308
+#: src/page/library/browse.vue:315
 msgid "Limit reached, showing first %{n} files"
 msgstr ""
 
@@ -1455,7 +1459,7 @@ msgstr ""
 #: src/component/photo/cards.vue:513
 #: src/component/photo/list.vue:138
 #: src/dialog/album/edit.vue:125
-#: src/page/settings/account.vue:559
+#: src/page/settings/account.vue:560
 msgid "Location"
 msgstr ""
 
@@ -1466,14 +1470,14 @@ msgstr ""
 
 #: src/component/navigation.vue:454
 #: src/component/navigation.vue:1686
-#: src/component/navigation.vue:1959
+#: src/component/navigation.vue:1960
 msgid "Login"
 msgstr ""
 
 #: src/component/navigation.vue:501
-#: src/component/navigation.vue:1796
-#: src/component/navigation.vue:1827
-#: src/component/navigation.vue:1878
+#: src/component/navigation.vue:1797
+#: src/component/navigation.vue:1828
+#: src/component/navigation.vue:1879
 msgid "Logout"
 msgstr ""
 
@@ -1551,7 +1555,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:291
 #: src/dialog/photo/edit/details.vue:142
-#: src/page/settings/account.vue:467
+#: src/page/settings/account.vue:468
 msgid "Month"
 msgstr ""
 
@@ -1624,7 +1628,7 @@ msgstr ""
 #: src/dialog/photo/edit/labels.vue:25
 #: src/dialog/photo/edit/people.vue:24
 #: src/page/labels.vue:45
-#: src/page/library/browse.vue:41
+#: src/page/library/browse.vue:44
 #: src/page/people/new.vue:46
 #: src/page/people/recognized.vue:45
 msgid "Name too long"
@@ -1800,7 +1804,7 @@ msgstr ""
 msgid "One album found"
 msgstr ""
 
-#: src/page/library/browse.vue:300
+#: src/page/library/browse.vue:307
 msgid "One file found"
 msgstr ""
 
@@ -1808,7 +1812,7 @@ msgstr ""
 msgid "One file uploaded"
 msgstr ""
 
-#: src/page/library/browse.vue:302
+#: src/page/library/browse.vue:309
 msgid "One folder found"
 msgstr ""
 
@@ -1923,7 +1927,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/page/settings/account.vue:613
+#: src/page/settings/account.vue:614
 msgid "Phone"
 msgstr ""
 
@@ -2121,7 +2125,7 @@ msgid "Red"
 msgstr ""
 
 #: src/component/album/toolbar.vue:64
-#: src/component/navigation.vue:1892
+#: src/component/navigation.vue:1893
 #: src/component/photo/toolbar.vue:54
 #: src/dialog/reload.vue:12
 #: src/page/albums.vue:126
@@ -2292,7 +2296,7 @@ msgstr ""
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:1520
-#: src/component/navigation.vue:1925
+#: src/component/navigation.vue:1926
 msgid "Settings"
 msgstr ""
 
@@ -2608,8 +2612,8 @@ msgstr ""
 #: src/options/options.js:51
 #: src/options/options.js:65
 #: src/options/options.js:77
-#: src/page/library/errors.vue:168
-#: src/page/library/errors.vue:175
+#: src/page/library/errors.vue:173
+#: src/page/library/errors.vue:180
 #: src/page/library/logs.vue:18
 msgid "Unknown"
 msgstr ""
@@ -2617,6 +2621,7 @@ msgstr ""
 #: src/component/navigation.vue:82
 #: src/model/user.js:130
 #: src/page/settings/account.vue:35
+#: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr ""
 
@@ -2648,7 +2653,7 @@ msgstr ""
 msgid "Updating moments"
 msgstr ""
 
-#: src/page/settings/account.vue:116
+#: src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr ""
 
@@ -2661,7 +2666,7 @@ msgid "Updating stacks"
 msgstr ""
 
 #: src/component/album/toolbar.vue:192
-#: src/component/navigation.vue:1943
+#: src/component/navigation.vue:1944
 #: src/component/photo/toolbar.vue:122
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
@@ -2811,7 +2816,7 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr ""
 
-#: src/page/settings/account.vue:641
+#: src/page/settings/account.vue:642
 msgid "Website"
 msgstr ""
 
@@ -2821,7 +2826,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:268
 #: src/dialog/photo/edit/details.vue:168
-#: src/page/settings/account.vue:490
+#: src/page/settings/account.vue:491
 msgid "Year"
 msgstr ""
 
