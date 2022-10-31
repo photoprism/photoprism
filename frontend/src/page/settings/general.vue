@@ -318,7 +318,7 @@
               <v-select
                   v-model="settings.maps.style"
                   :disabled="busy"
-                  :items="mapsStyle"
+                  :items="options.MapsStyle()"
                   :label="$gettext('Style')"
                   color="secondary-dark"
                   background-color="secondary-light"
