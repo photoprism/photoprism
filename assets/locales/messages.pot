@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-19 18:27+0000\n"
+"POT-Creation-Date: 2022-10-31 12:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -123,11 +123,11 @@ msgid "No items selected"
 msgstr ""
 
 #: messages.go:120
-msgid "RunFailed creating file, please check permissions"
+msgid "Failed creating file, please check permissions"
 msgstr ""
 
 #: messages.go:121
-msgid "RunFailed creating folder, please check permissions"
+msgid "Failed creating folder, please check permissions"
 msgstr ""
 
 #: messages.go:122
@@ -155,7 +155,7 @@ msgid "No files available for download"
 msgstr ""
 
 #: messages.go:128
-msgid "RunFailed to create zip file"
+msgid "Failed to create zip file"
 msgstr ""
 
 #: messages.go:129

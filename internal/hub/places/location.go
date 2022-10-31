@@ -85,7 +85,7 @@ func FindLocation(id string) (result Location, err error) {
 		}
 	}
 
-	// RunFailed?
+	// Failed?
 	if err != nil {
 		log.Errorf("places: %s (http request failed)", err.Error())
 		return result, err

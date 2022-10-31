@@ -64,7 +64,7 @@
               :rules="[nameRule]"
               color="secondary-dark"
               browser-autocomplete="off"
-              :label="$gettext('')"
+              :label="$gettext('Name')"
               single-line
               flat solo hide-details
               autofocus

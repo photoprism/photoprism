@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-09 00:51+0000\n"
+"POT-Creation-Date: 2022-10-31 12:20+0000\n"
 "PO-Revision-Date: 2022-03-08 11:48+0000\n"
 "Last-Translator: Pheggas <petko252@gmail.com>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
@@ -19,239 +19,367 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Weblate 4.11.2\n"
 
+#: messages.go:94
 msgid "Unexpected error, please try again"
 msgstr "Nastala neočakávaná chyba, skúste to neskôr prosím"
 
+#: messages.go:95
 msgid "Invalid request"
 msgstr "Neplatná požiadavka"
 
+#: messages.go:96
 msgid "Changes could not be saved"
 msgstr "Zmeny sa neuložili"
 
+#: messages.go:97
 msgid "Could not be deleted"
 msgstr "Nepodarilo sa odstrániť"
 
+#: messages.go:98
 #, c-format
 msgid "%s already exists"
 msgstr "%s už existuje"
 
+#: messages.go:99
 msgid "Not found"
 msgstr "Nenájdené"
 
+#: messages.go:100
 msgid "File not found"
 msgstr "Súbor nenájdený"
 
+#: messages.go:101
+msgid "File too large"
+msgstr ""
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr ""
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr ""
+
+#: messages.go:104
 msgid "Selection not found"
 msgstr "Výber nenájdený"
 
+#: messages.go:105
 msgid "Entity not found"
 msgstr "Subjekt nenájdený"
 
+#: messages.go:106
 msgid "Account not found"
 msgstr "Účet nenájdený"
 
+#: messages.go:107
 msgid "User not found"
 msgstr "Užívateľ nenájdený"
 
+#: messages.go:108
 msgid "Label not found"
 msgstr "Štítok nenájdený"
 
+#: messages.go:109
 msgid "Album not found"
 msgstr "Album nenájdený"
 
+#: messages.go:110
 msgid "Subject not found"
 msgstr "Predmet nenájdený"
 
+#: messages.go:111
 msgid "Person not found"
 msgstr "Osoba nenájdená"
 
+#: messages.go:112
 msgid "Face not found"
 msgstr "Tvár nenájdená"
 
+#: messages.go:113
 msgid "Not available in public mode"
 msgstr "Nedostupné vo verejnom móde"
 
-msgid "not available in read-only mode"
+#: messages.go:114
+#, fuzzy
+msgid "Not available in read-only mode"
 msgstr "nedostupné v móde len pre čítanie"
 
-msgid "Please log in and try again"
+#: messages.go:115
+#, fuzzy
+msgid "Please log in to your account"
 msgstr "Prosím prihláste sa a skúste znova"
 
+#: messages.go:116
+#, fuzzy
+msgid "Permission denied"
+msgstr "Osoba odstránená"
+
+#: messages.go:117
 msgid "Upload might be offensive"
 msgstr "Nahrané súbory môžu byť urážlivé"
 
+#: messages.go:118
+msgid "Upload failed"
+msgstr ""
+
+#: messages.go:119
 msgid "No items selected"
 msgstr "Neboli vybraté žiadne položky"
 
+#: messages.go:120
+#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Vytváranie súboru zlyhalo, prosím skontrolujte oprávnenia"
 
+#: messages.go:121
+#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Vytváranie zložky zlyhalo, prosím skontrolujte oprávnenia"
 
+#: messages.go:122
 msgid "Could not connect, please try again"
 msgstr "Nebolo možné sa pripojiť, skúste to znova"
 
+#: messages.go:123
 msgid "Invalid password, please try again"
 msgstr "Nesprávne heslo, skúste to znova"
 
+#: messages.go:124
 msgid "Feature disabled"
 msgstr "Funkcia vypnutá"
 
+#: messages.go:125
 msgid "No labels selected"
 msgstr "Neboli vybraté žiadne štítky"
 
+#: messages.go:126
 msgid "No albums selected"
 msgstr "Neboli vybraté žiadne albumy"
 
+#: messages.go:127
 msgid "No files available for download"
 msgstr "Žiadne súbory na stiahnutie k dispozícií"
 
+#: messages.go:128
+#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Nebolo možné vytvoriť súbor ZIP"
 
+#: messages.go:129
 msgid "Invalid credentials"
 msgstr "Neplatné údaje"
 
+#: messages.go:130
 msgid "Invalid link"
 msgstr "Neplatný odkaz"
 
+#: messages.go:131
 msgid "Invalid name"
 msgstr "Neplatné meno"
 
+#: messages.go:132
 msgid "Busy, please try again later"
 msgstr "Systém zaneprázdnený, prosím skúste znovu neskôr"
 
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr ""
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr ""
+
+#: messages.go:137
 msgid "Changes successfully saved"
 msgstr "Zmeny úspešne uložené"
 
+#: messages.go:138
 msgid "Album created"
 msgstr "Album vytvorený"
 
+#: messages.go:139
 msgid "Album saved"
 msgstr "Album uložený"
 
+#: messages.go:140
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s vymazaný"
 
+#: messages.go:141
 msgid "Album contents cloned"
 msgstr "Obsah albumu prekopírovaný"
 
+#: messages.go:142
 msgid "File removed from stack"
 msgstr "Súbor odstránený zo stohu"
 
+#: messages.go:143
 msgid "File deleted"
 msgstr "Súbor odstránený"
 
+#: messages.go:144
 #, c-format
 msgid "Selection added to %s"
 msgstr "Výber pridaný do %s"
 
+#: messages.go:145
 #, c-format
 msgid "One entry added to %s"
 msgstr "Jeden záznam pridaný do %s"
 
+#: messages.go:146
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d záznamov pridaných do %s"
 
+#: messages.go:147
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Jeden záznam odstránený z %s"
 
+#: messages.go:148
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d záznamov odstránených z %s"
 
+#: messages.go:149
 msgid "Account created"
 msgstr "Účet vytvorený"
 
+#: messages.go:150
 msgid "Account saved"
 msgstr "Účet uložený"
 
+#: messages.go:151
 msgid "Account deleted"
 msgstr "Účet ostránený"
 
+#: messages.go:152
 msgid "Settings saved"
 msgstr "Nastavenia uložené"
 
+#: messages.go:153
 msgid "Password changed"
 msgstr "Heslo zmenené"
 
+#: messages.go:154
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Import hotový za %d sekúnd"
 
+#: messages.go:155
 msgid "Import canceled"
 msgstr "Import zrušený"
 
+#: messages.go:156
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indexovanie hotové za %d sekúnd"
 
+#: messages.go:157
 msgid "Indexing originals..."
 msgstr "Indexovanie originálov..."
 
+#: messages.go:158
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Indexovanie súborov v %s"
 
+#: messages.go:159
 msgid "Indexing canceled"
 msgstr "Indexovanie zrušené"
 
+#: messages.go:160
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Bolo odstránených %d súborov a %d fotiek"
 
+#: messages.go:161
 #, c-format
 msgid "Moving files from %s"
 msgstr "Presúvanie súborov z %s"
 
+#: messages.go:162
 #, c-format
 msgid "Copying files from %s"
 msgstr "Kopírovanie súborov z %s"
 
+#: messages.go:163
 msgid "Labels deleted"
 msgstr "Štítky odstránené"
 
+#: messages.go:164
 msgid "Label saved"
 msgstr "Štítok uložený"
 
+#: messages.go:165
 msgid "Subject saved"
 msgstr "Predmet uložený"
 
+#: messages.go:166
 msgid "Subject deleted"
 msgstr "Predmet odstránený"
 
+#: messages.go:167
 msgid "Person saved"
 msgstr "Osoba uložená"
 
+#: messages.go:168
 msgid "Person deleted"
 msgstr "Osoba odstránená"
 
+#: messages.go:169
+#, fuzzy
+msgid "File uploaded"
+msgstr "Súbor odstránený"
+
+#: messages.go:170
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d súborov nahraných za %d sekúnd"
 
+#: messages.go:171
+msgid "Processing upload..."
+msgstr ""
+
+#: messages.go:172
+#, fuzzy
+msgid "Upload has been processed"
+msgstr "Nahrané súbory môžu byť urážlivé"
+
+#: messages.go:173
 msgid "Selection approved"
 msgstr "Označenie schválené"
 
+#: messages.go:174
 msgid "Selection archived"
 msgstr "Označenie archivované"
 
+#: messages.go:175
 msgid "Selection restored"
 msgstr "Označenie obnovené"
 
+#: messages.go:176
 msgid "Selection marked as private"
 msgstr "Označenie označené ako súkromné"
 
+#: messages.go:177
 msgid "Albums deleted"
 msgstr "Albumy odstránené"
 
+#: messages.go:178
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Súbor ZIP vytvorený za %d sekúnd"
 
+#: messages.go:179
 msgid "Permanently deleted"
 msgstr "Trvalo odstránené"
+
+#: messages.go:180
+#, fuzzy, c-format
+msgid "%s has been restored"
+msgstr "Označenie obnovené"

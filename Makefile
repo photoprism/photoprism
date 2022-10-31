@@ -81,6 +81,8 @@ fix-permissions:
 	else\
 		echo "Running as root. Nothing to do."; \
 	fi
+gettext-merge:
+	./scripts/gettext-merge.sh
 clean:
 	rm -f *.log .test*
 	[ ! -f "$(BINARY_NAME)" ] || rm -f $(BINARY_NAME)

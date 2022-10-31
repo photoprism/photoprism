@@ -196,7 +196,7 @@ func GetThumb(router *gin.RouterGroup) {
 			thumbName, err = size.FromCache(fileName, f.FileHash, conf.ThumbCachePath())
 		}
 
-		// RunFailed?
+		// Failed?
 		if err != nil {
 			log.Errorf("%s: %s", logPrefix, err)
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)

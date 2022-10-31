@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"POT-Creation-Date: 2021-12-09 00:51+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-31 12:20+0000\n"
 "PO-Revision-Date: 2022-08-01 13:59+0000\n"
 "Last-Translator: Joaquim Homrighausen <joho@boojam.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
@@ -19,313 +19,367 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.13.1\n"
 
-#: messages.go:83
+#: messages.go:94
 msgid "Unexpected error, please try again"
 msgstr "Oväntat fel, vänligen försök igen"
 
-#: messages.go:84
+#: messages.go:95
 msgid "Invalid request"
 msgstr "Ogiltig begäran"
 
-#: messages.go:85
+#: messages.go:96
 msgid "Changes could not be saved"
 msgstr "Ändringarna kunde inte sparas"
 
-#: messages.go:86
+#: messages.go:97
 msgid "Could not be deleted"
 msgstr "Kunde inte raderas"
 
-#: messages.go:87
+#: messages.go:98
 #, c-format
 msgid "%s already exists"
 msgstr "%s finns redan"
 
-#: messages.go:88
+#: messages.go:99
 msgid "Not found"
 msgstr "Hittades inte"
 
-#: messages.go:89
+#: messages.go:100
 msgid "File not found"
 msgstr "Filen kunde inte hittas"
 
-#: messages.go:90
+#: messages.go:101
+msgid "File too large"
+msgstr ""
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr ""
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr ""
+
+#: messages.go:104
 msgid "Selection not found"
 msgstr "Urvalet kunde inte hittas"
 
-#: messages.go:91
+#: messages.go:105
 msgid "Entity not found"
 msgstr "Entitet kunde inte hittas"
 
-#: messages.go:92
+#: messages.go:106
 msgid "Account not found"
 msgstr "Kontot kunde inte hittas"
 
-#: messages.go:93
+#: messages.go:107
 msgid "User not found"
 msgstr "Användaren kunde inte hittas"
 
-#: messages.go:94
+#: messages.go:108
 msgid "Label not found"
 msgstr "Etikett saknas"
 
-#: messages.go:95
+#: messages.go:109
 msgid "Album not found"
 msgstr "Albumet finns inte"
 
-#: messages.go:96
+#: messages.go:110
 msgid "Subject not found"
 msgstr "Ämnet finns inte"
 
-#: messages.go:97
+#: messages.go:111
 msgid "Person not found"
 msgstr "Personen kunde inte hittas"
 
-#: messages.go:98
+#: messages.go:112
 msgid "Face not found"
 msgstr "Ansiktet kunde inte hittas"
 
-#: messages.go:99
+#: messages.go:113
 msgid "Not available in public mode"
 msgstr "Inte tillgängligt i offentligt läge"
 
-#: messages.go:100
-msgid "not available in read-only mode"
+#: messages.go:114
+#, fuzzy
+msgid "Not available in read-only mode"
 msgstr "inte tillgänglig i skrivskyddat läge"
 
-#: messages.go:101
-msgid "Please log in and try again"
+#: messages.go:115
+#, fuzzy
+msgid "Please log in to your account"
 msgstr "Logga in och försök igen"
 
-#: messages.go:102
+#: messages.go:116
+#, fuzzy
+msgid "Permission denied"
+msgstr "Person raderad"
+
+#: messages.go:117
 msgid "Upload might be offensive"
 msgstr "Uppladdning kan vara stötande"
 
-#: messages.go:103
+#: messages.go:118
+msgid "Upload failed"
+msgstr ""
+
+#: messages.go:119
 msgid "No items selected"
 msgstr "Inga objekt har valts"
 
-#: messages.go:104
+#: messages.go:120
+#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Det gick inte att skapa en fil, kontrollera behörigheter"
 
-#: messages.go:105
+#: messages.go:121
+#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Det gick inte att skapa mappen, kontrollera behörigheter"
 
-#: messages.go:106
+#: messages.go:122
 msgid "Could not connect, please try again"
 msgstr "Kunde inte ansluta, försök igen"
 
-#: messages.go:107
+#: messages.go:123
 msgid "Invalid password, please try again"
 msgstr "Felaktigt lösenord, försök igen"
 
-#: messages.go:108
+#: messages.go:124
 msgid "Feature disabled"
 msgstr "Funktionen är inaktiverad"
 
-#: messages.go:109
+#: messages.go:125
 msgid "No labels selected"
 msgstr "Inga etiketter har valts"
 
-#: messages.go:110
+#: messages.go:126
 msgid "No albums selected"
 msgstr "Inga album har valts"
 
-#: messages.go:111
+#: messages.go:127
 msgid "No files available for download"
 msgstr "Inga filer finns tillgängliga för nedladdning"
 
-#: messages.go:112
+#: messages.go:128
+#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Misslyckades med att skapa en zip-fil"
 
-#: messages.go:113
+#: messages.go:129
 msgid "Invalid credentials"
 msgstr "Ogiltiga autentiseringsuppgifter"
 
-#: messages.go:114
+#: messages.go:130
 msgid "Invalid link"
 msgstr "Ogiltig länk"
 
-#: messages.go:115
+#: messages.go:131
 msgid "Invalid name"
 msgstr "Felaktigt namn"
 
-#: messages.go:116
+#: messages.go:132
 msgid "Busy, please try again later"
 msgstr "Upptagen, försök igen senare"
 
-#: messages.go:119
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr ""
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr ""
+
+#: messages.go:137
 msgid "Changes successfully saved"
 msgstr "Ändringarna har sparats"
 
-#: messages.go:120
+#: messages.go:138
 msgid "Album created"
 msgstr "Album skapat"
 
-#: messages.go:121
+#: messages.go:139
 msgid "Album saved"
 msgstr "Album sparat"
 
-#: messages.go:122
+#: messages.go:140
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s raderat"
 
-#: messages.go:123
+#: messages.go:141
 msgid "Album contents cloned"
 msgstr "Innehållet i albumet kopieras"
 
-#: messages.go:124
+#: messages.go:142
 msgid "File removed from stack"
 msgstr "Filen tas bort från stapeln"
 
-#: messages.go:125
+#: messages.go:143
 msgid "File deleted"
 msgstr "Fil raderad"
 
-#: messages.go:126
+#: messages.go:144
 #, c-format
 msgid "Selection added to %s"
 msgstr "Urval tillagt i %s"
 
-#: messages.go:127
+#: messages.go:145
 #, c-format
 msgid "One entry added to %s"
 msgstr "En post tillagd i %s"
 
-#: messages.go:128
+#: messages.go:146
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d poster tillagda till %s"
 
-#: messages.go:129
+#: messages.go:147
 #, c-format
 msgid "One entry removed from %s"
 msgstr "En post borttagen från %s"
 
-#: messages.go:130
+#: messages.go:148
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d poster raderade från %s"
 
-#: messages.go:131
+#: messages.go:149
 msgid "Account created"
 msgstr "Kontot har skapats"
 
-#: messages.go:132
+#: messages.go:150
 msgid "Account saved"
 msgstr "Kontot sparat"
 
-#: messages.go:133
+#: messages.go:151
 msgid "Account deleted"
 msgstr "Kontot raderat"
 
-#: messages.go:134
+#: messages.go:152
 msgid "Settings saved"
 msgstr "Inställningarna har sparats"
 
-#: messages.go:135
+#: messages.go:153
 msgid "Password changed"
 msgstr "Lösenordet har ändrats"
 
-#: messages.go:136
+#: messages.go:154
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Importen slutfördes på %d s"
 
-#: messages.go:137
+#: messages.go:155
 msgid "Import canceled"
 msgstr "Importen avbruten"
 
-#: messages.go:138
+#: messages.go:156
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indexering slutförd på %d s"
 
-#: messages.go:139
+#: messages.go:157
 msgid "Indexing originals..."
 msgstr "Indexering av original..."
 
-#: messages.go:140
+#: messages.go:158
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Indexering av filer i %s"
 
-#: messages.go:141
+#: messages.go:159
 msgid "Indexing canceled"
 msgstr "Indexering avbruten"
 
-#: messages.go:142
+#: messages.go:160
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Tog bort %d filer och %d bilder"
 
-#: messages.go:143
+#: messages.go:161
 #, c-format
 msgid "Moving files from %s"
 msgstr "Flyttar filer från %s"
 
-#: messages.go:144
+#: messages.go:162
 #, c-format
 msgid "Copying files from %s"
 msgstr "Kopierar filer från %s"
 
-#: messages.go:145
+#: messages.go:163
 msgid "Labels deleted"
 msgstr "Etiketter raderade"
 
-#: messages.go:146
+#: messages.go:164
 msgid "Label saved"
 msgstr "Etikett sparad"
 
-#: messages.go:147
+#: messages.go:165
 msgid "Subject saved"
 msgstr "Ämne sparat"
 
-#: messages.go:148
+#: messages.go:166
 msgid "Subject deleted"
 msgstr "Ämne raderat"
 
-#: messages.go:149
+#: messages.go:167
 msgid "Person saved"
 msgstr "Person sparad"
 
-#: messages.go:150
+#: messages.go:168
 msgid "Person deleted"
 msgstr "Person raderad"
 
-#: messages.go:151
+#: messages.go:169
+#, fuzzy
+msgid "File uploaded"
+msgstr "Fil raderad"
+
+#: messages.go:170
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d filer uppladdade på %d s"
 
-#: messages.go:152
+#: messages.go:171
+msgid "Processing upload..."
+msgstr ""
+
+#: messages.go:172
+#, fuzzy
+msgid "Upload has been processed"
+msgstr "Uppladdning kan vara stötande"
+
+#: messages.go:173
 msgid "Selection approved"
 msgstr "Urvalet är godkänt"
 
-#: messages.go:153
+#: messages.go:174
 msgid "Selection archived"
 msgstr "Urval arkiverat"
 
-#: messages.go:154
+#: messages.go:175
 msgid "Selection restored"
 msgstr "Urvalet har återställts"
 
-#: messages.go:155
+#: messages.go:176
 msgid "Selection marked as private"
 msgstr "Urval markerat som privat"
 
-#: messages.go:156
+#: messages.go:177
 msgid "Albums deleted"
 msgstr "Album raderade"
 
-#: messages.go:157
+#: messages.go:178
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip skapad på %d s"
 
-#: messages.go:158
+#: messages.go:179
 msgid "Permanently deleted"
 msgstr "Permanent borttagen"
+
+#: messages.go:180
+#, fuzzy, c-format
+msgid "%s has been restored"
+msgstr "Urvalet har återställts"

@@ -101,7 +101,7 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 	m := NewMarker(file, f.CropArea(), subjUid, SrcImage, MarkerFace, f.Size(), f.Score)
 
-	// RunFailed creating new marker?
+	// Failed creating new marker?
 	if m == nil {
 		return nil
 	}

@@ -76,14 +76,14 @@ func childAlreadyRunning(filePath string) (pid int, running bool) {
 
 	pid, err := daemon.ReadPidFile(filePath)
 
-	// RunFailed?
+	// Failed?
 	if err != nil {
 		return pid, false
 	}
 
 	process, err := os.FindProcess(pid)
 
-	// RunFailed?
+	// Failed?
 	if err != nil {
 		return pid, false
 	}

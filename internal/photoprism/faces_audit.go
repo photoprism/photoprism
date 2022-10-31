@@ -119,7 +119,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 				// Resolve.
 				success, failed := f1.ResolveCollision(face.Embeddings{f2.Embedding()})
 
-				// RunFailed?
+				// Failed?
 				if failed != nil {
 					log.Errorf("faces: conflict resolution for %s failed, face %s has collisions with other persons (%s)", entity.SubjNames.Log(f1.SubjUID), f1.ID, failed)
 					continue

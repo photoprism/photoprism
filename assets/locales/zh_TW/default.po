@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"POT-Creation-Date: 2022-06-16 16:58+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-31 12:20+0000\n"
 "PO-Revision-Date: 2022-08-23 11:09+0000\n"
 "Last-Translator: Acer Acer Acer <acer.wang@protonmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
@@ -19,323 +19,367 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.14\n"
 
-#: messages.go:85
+#: messages.go:94
 msgid "Unexpected error, please try again"
 msgstr "發生預料外的錯誤, 請重試"
 
-#: messages.go:86
+#: messages.go:95
 msgid "Invalid request"
 msgstr "無效請求"
 
-#: messages.go:87
+#: messages.go:96
 msgid "Changes could not be saved"
 msgstr "無法儲存更改項目"
 
-#: messages.go:88
+#: messages.go:97
 msgid "Could not be deleted"
 msgstr "無法刪除"
 
-#: messages.go:89
+#: messages.go:98
 #, c-format
 msgid "%s already exists"
 msgstr "%s 已存在"
 
-#: messages.go:90
+#: messages.go:99
 msgid "Not found"
 msgstr "未找到"
 
-#: messages.go:91
+#: messages.go:100
 msgid "File not found"
 msgstr "未找到檔案"
 
-#: messages.go:92
+#: messages.go:101
+msgid "File too large"
+msgstr ""
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr ""
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr ""
+
+#: messages.go:104
 msgid "Selection not found"
 msgstr "未找到選取項目"
 
-#: messages.go:93
+#: messages.go:105
 msgid "Entity not found"
 msgstr "未找到實體"
 
-#: messages.go:94
+#: messages.go:106
 msgid "Account not found"
 msgstr "未找到帳號"
 
-#: messages.go:95
+#: messages.go:107
 msgid "User not found"
 msgstr "未找到使用者"
 
-#: messages.go:96
+#: messages.go:108
 msgid "Label not found"
 msgstr "未找到標籤"
 
-#: messages.go:97
+#: messages.go:109
 msgid "Album not found"
 msgstr "未找到相簿"
 
-#: messages.go:98
+#: messages.go:110
 msgid "Subject not found"
 msgstr "未找到主體"
 
-#: messages.go:99
+#: messages.go:111
 msgid "Person not found"
 msgstr "找不到人"
 
-#: messages.go:100
+#: messages.go:112
 msgid "Face not found"
 msgstr "找不到人像"
 
-#: messages.go:101
+#: messages.go:113
 msgid "Not available in public mode"
 msgstr "不適用於公開模式"
 
-#: messages.go:102
-msgid "not available in read-only mode"
+#: messages.go:114
+#, fuzzy
+msgid "Not available in read-only mode"
 msgstr "不適用於讀取模式"
 
-#: messages.go:103
-msgid "Please log in and try again"
+#: messages.go:115
+#, fuzzy
+msgid "Please log in to your account"
 msgstr "請登入後再重試"
 
-#: messages.go:104
+#: messages.go:116
+#, fuzzy
+msgid "Permission denied"
+msgstr "已刪除人"
+
+#: messages.go:117
 msgid "Upload might be offensive"
 msgstr "所上傳檔案可能會冒犯其他人"
 
-#: messages.go:105
+#: messages.go:118
+msgid "Upload failed"
+msgstr ""
+
+#: messages.go:119
 msgid "No items selected"
 msgstr "未選取任何項目"
 
-#: messages.go:106
+#: messages.go:120
+#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "無法建立檔案，請檢查權限"
 
-#: messages.go:107
+#: messages.go:121
+#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "無法建立資料夾，請檢查權限"
 
-#: messages.go:108
+#: messages.go:122
 msgid "Could not connect, please try again"
 msgstr "無法連線，請重試"
 
-#: messages.go:109
+#: messages.go:123
 msgid "Invalid password, please try again"
 msgstr "密碼無效，請重試"
 
-#: messages.go:110
+#: messages.go:124
 msgid "Feature disabled"
 msgstr "功能未開啟"
 
-#: messages.go:111
+#: messages.go:125
 msgid "No labels selected"
 msgstr "未選擇標籤"
 
-#: messages.go:112
+#: messages.go:126
 msgid "No albums selected"
 msgstr "未選取相簿"
 
-#: messages.go:113
+#: messages.go:127
 msgid "No files available for download"
 msgstr "没有可以下載的檔案"
 
-#: messages.go:114
+#: messages.go:128
+#, fuzzy
 msgid "Failed to create zip file"
 msgstr "建立壓縮檔失敗"
 
-#: messages.go:115
+#: messages.go:129
 msgid "Invalid credentials"
 msgstr "認證無效"
 
-#: messages.go:116
+#: messages.go:130
 msgid "Invalid link"
 msgstr "超連結無效"
 
-#: messages.go:117
+#: messages.go:131
 msgid "Invalid name"
 msgstr "無效名稱"
 
-#: messages.go:118
+#: messages.go:132
 msgid "Busy, please try again later"
 msgstr "忙碌中，請稍候再試"
 
-#: messages.go:119
+#: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "喚醒間隔為 %s，但必須小於1 小時"
 
-#: messages.go:122
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr ""
+
+#: messages.go:137
 msgid "Changes successfully saved"
 msgstr "更改成功儲存"
 
-#: messages.go:123
+#: messages.go:138
 msgid "Album created"
 msgstr "以建立相簿"
 
-#: messages.go:124
+#: messages.go:139
 msgid "Album saved"
 msgstr "已儲存相簿"
 
-#: messages.go:125
+#: messages.go:140
 #, c-format
 msgid "Album %s deleted"
 msgstr "相簿 %s 已刪除"
 
-#: messages.go:126
+#: messages.go:141
 msgid "Album contents cloned"
 msgstr "相簿内容已被複製"
 
-#: messages.go:127
+#: messages.go:142
 msgid "File removed from stack"
 msgstr "檔案已從堆疊中移除"
 
-#: messages.go:128
+#: messages.go:143
 msgid "File deleted"
 msgstr "檔案已刪除"
 
-#: messages.go:129
+#: messages.go:144
 #, c-format
 msgid "Selection added to %s"
 msgstr "選取項目已加入 %s"
 
-#: messages.go:130
+#: messages.go:145
 #, c-format
 msgid "One entry added to %s"
 msgstr "已在 %s 增加一个項目"
 
-#: messages.go:131
+#: messages.go:146
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d個項目已加入%s"
 
-#: messages.go:132
+#: messages.go:147
 #, c-format
 msgid "One entry removed from %s"
 msgstr "已從 %s 移除一個項目"
 
-#: messages.go:133
+#: messages.go:148
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d 個項目已從 %s 移除"
 
-#: messages.go:134
+#: messages.go:149
 msgid "Account created"
 msgstr "已建立帳號"
 
-#: messages.go:135
+#: messages.go:150
 msgid "Account saved"
 msgstr "已儲存帳號"
 
-#: messages.go:136
+#: messages.go:151
 msgid "Account deleted"
 msgstr "已刪除帳號"
 
-#: messages.go:137
+#: messages.go:152
 msgid "Settings saved"
 msgstr "已儲存設定"
 
-#: messages.go:138
+#: messages.go:153
 msgid "Password changed"
 msgstr "已更改密碼"
 
-#: messages.go:139
+#: messages.go:154
 #, c-format
 msgid "Import completed in %d s"
 msgstr "匯入成功, 共花費 %d 秒"
 
-#: messages.go:140
+#: messages.go:155
 msgid "Import canceled"
 msgstr "匯入取消"
 
-#: messages.go:141
+#: messages.go:156
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "索引成功, 共花費 %d 秒"
 
-#: messages.go:142
+#: messages.go:157
 msgid "Indexing originals..."
 msgstr "索引原始檔案..."
 
-#: messages.go:143
+#: messages.go:158
 #, c-format
 msgid "Indexing files in %s"
 msgstr "建立 %s 中的檔案索引"
 
-#: messages.go:144
+#: messages.go:159
 msgid "Indexing canceled"
 msgstr "索引取消"
 
-#: messages.go:145
+#: messages.go:160
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "刪除了 %d 個檔案和 %d 張照片"
 
-#: messages.go:146
+#: messages.go:161
 #, c-format
 msgid "Moving files from %s"
 msgstr "正在從 %s 中移動檔案"
 
-#: messages.go:147
+#: messages.go:162
 #, c-format
 msgid "Copying files from %s"
 msgstr "正在從 %s 中複製檔案"
 
-#: messages.go:148
+#: messages.go:163
 msgid "Labels deleted"
 msgstr "已刪除標籤"
 
-#: messages.go:149
+#: messages.go:164
 msgid "Label saved"
 msgstr "已儲存標籤"
 
-#: messages.go:150
+#: messages.go:165
 msgid "Subject saved"
 msgstr "已儲存主題"
 
-#: messages.go:151
+#: messages.go:166
 msgid "Subject deleted"
 msgstr "已刪除主題"
 
-#: messages.go:152
+#: messages.go:167
 msgid "Person saved"
 msgstr "已儲存的人"
 
-#: messages.go:153
+#: messages.go:168
 msgid "Person deleted"
 msgstr "已刪除人"
 
-#: messages.go:154
+#: messages.go:169
+#, fuzzy
+msgid "File uploaded"
+msgstr "檔案已刪除"
+
+#: messages.go:170
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "已上傳 %d 個檔案, 共花費 %d 秒"
 
-#: messages.go:155
+#: messages.go:171
+msgid "Processing upload..."
+msgstr ""
+
+#: messages.go:172
+#, fuzzy
+msgid "Upload has been processed"
+msgstr "%s 已被恢復"
+
+#: messages.go:173
 msgid "Selection approved"
 msgstr "選擇已核准"
 
-#: messages.go:156
+#: messages.go:174
 msgid "Selection archived"
 msgstr "選取項目已封存"
 
-#: messages.go:157
+#: messages.go:175
 msgid "Selection restored"
 msgstr "選取項目已被恢復"
 
-#: messages.go:158
+#: messages.go:176
 msgid "Selection marked as private"
 msgstr "選取項目已被設為私人"
 
-#: messages.go:159
+#: messages.go:177
 msgid "Albums deleted"
 msgstr "已刪除相簿"
 
-#: messages.go:160
+#: messages.go:178
 #, c-format
 msgid "Zip created in %d s"
 msgstr "壓縮黨建立成功, 共花費 %d 秒"
 
-#: messages.go:161
+#: messages.go:179
 msgid "Permanently deleted"
 msgstr "永久刪除"
 
-#: messages.go:162
+#: messages.go:180
 #, c-format
 msgid "%s has been restored"
 msgstr "%s 已被恢復"

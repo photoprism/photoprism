@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-09 00:51+0000\n"
+"POT-Creation-Date: 2022-10-31 12:20+0000\n"
 "PO-Revision-Date: 2022-02-19 14:53+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Indonesian <https://translate.photoprism.app/projects/"
@@ -19,243 +19,370 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.10.1\n"
 
+#: messages.go:94
 msgid "Unexpected error, please try again"
 msgstr "Kesalahan tak terduga, silakan coba lagi"
 
+#: messages.go:95
 msgid "Invalid request"
 msgstr "Permintaan tidak valid"
 
+#: messages.go:96
 msgid "Changes could not be saved"
 msgstr "Perubahan tidak dapat disimpan"
 
+#: messages.go:97
 msgid "Could not be deleted"
 msgstr "Tidak dapat dihapus"
 
+#: messages.go:98
 #, c-format
 msgid "%s already exists"
 msgstr "%s sudah ada"
 
+#: messages.go:99
 msgid "Not found"
 msgstr "Tidak ditemukan"
 
+#: messages.go:100
 msgid "File not found"
 msgstr "Berkas tidak ditemukan"
 
+#: messages.go:101
+msgid "File too large"
+msgstr ""
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr ""
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr ""
+
+#: messages.go:104
 msgid "Selection not found"
 msgstr "Pilihan tidak ditemukan"
 
+#: messages.go:105
 msgid "Entity not found"
 msgstr "Entitas tidak ditemukan"
 
+#: messages.go:106
 msgid "Account not found"
 msgstr "Akun tidak ditemukan"
 
+#: messages.go:107
 msgid "User not found"
 msgstr "Pengguna tidak ditemukan"
 
+#: messages.go:108
 msgid "Label not found"
 msgstr "Label tidak ditemukan"
 
+#: messages.go:109
 msgid "Album not found"
 msgstr "Album tidak ditemukan"
 
+#: messages.go:110
 msgid "Subject not found"
 msgstr "Subjek tidak ditemukan"
 
+#: messages.go:111
 msgid "Person not found"
 msgstr "Orang tidak ditemukan"
 
+#: messages.go:112
 msgid "Face not found"
 msgstr "Wajah tidak ditemukan"
 
+#: messages.go:113
 msgid "Not available in public mode"
 msgstr "Tidak tersedia dalam mode publik"
 
-msgid "not available in read-only mode"
+#: messages.go:114
+#, fuzzy
+msgid "Not available in read-only mode"
 msgstr "tidak tersedia dalam mode read-only"
 
-msgid "Please log in and try again"
+#: messages.go:115
+#, fuzzy
+msgid "Please log in to your account"
 msgstr "Silakan masuk dan coba lagi"
 
+#: messages.go:116
+#, fuzzy
+msgid "Permission denied"
+msgstr "Orang dihapus"
+
+#: messages.go:117
 msgid "Upload might be offensive"
 msgstr "Unggahan mungkin menyinggung"
 
+#: messages.go:118
+msgid "Upload failed"
+msgstr ""
+
+#: messages.go:119
 msgid "No items selected"
 msgstr "Tidak ada item yang dipilih"
 
+#: messages.go:120
+#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Gagal membuat file, silakan periksa izin"
 
+#: messages.go:121
+#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Gagal membuat folder, silakan periksa izin"
 
+#: messages.go:122
 msgid "Could not connect, please try again"
 msgstr "Tidak dapat terhubung, silakan coba lagi"
 
+#: messages.go:123
 msgid "Invalid password, please try again"
 msgstr "Kata sandi salah, silakan coba lagi"
 
+#: messages.go:124
 msgid "Feature disabled"
 msgstr "Fitur dinonaktifkan"
 
+#: messages.go:125
 msgid "No labels selected"
 msgstr "Tidak ada label yang dipilih"
 
+#: messages.go:126
 msgid "No albums selected"
 msgstr "Tidak ada album yang dipilih"
 
+#: messages.go:127
 msgid "No files available for download"
 msgstr "Tidak ada file yang tersedia untuk diunduh"
 
+#: messages.go:128
+#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Gagal membuat file zip"
 
+#: messages.go:129
 msgid "Invalid credentials"
 msgstr "Kredensial tidak valid"
 
+#: messages.go:130
 msgid "Invalid link"
 msgstr "Tautan tidak valid"
 
+#: messages.go:131
 msgid "Invalid name"
 msgstr "Nama tidak valid"
 
+#: messages.go:132
 #, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
 msgstr "Kata sandi salah, silakan coba lagi"
 
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr ""
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr ""
+
+#: messages.go:137
 msgid "Changes successfully saved"
 msgstr "Perubahan berhasil disimpan"
 
+#: messages.go:138
 msgid "Album created"
 msgstr "Album dibuat"
 
+#: messages.go:139
 msgid "Album saved"
 msgstr "Album disimpan"
 
+#: messages.go:140
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s dihapus"
 
+#: messages.go:141
 msgid "Album contents cloned"
 msgstr "Konten album dikloning"
 
+#: messages.go:142
 msgid "File removed from stack"
 msgstr "File dihapus dari tumpukan"
 
+#: messages.go:143
 msgid "File deleted"
 msgstr "Berkas dihapus"
 
+#: messages.go:144
 #, c-format
 msgid "Selection added to %s"
 msgstr "Pilihan ditambahkan ke %s"
 
+#: messages.go:145
 #, c-format
 msgid "One entry added to %s"
 msgstr "Satu entri ditambahkan ke %s"
 
+#: messages.go:146
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d entri ditambahkan ke %s"
 
+#: messages.go:147
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Satu entri dihapus dari %s"
 
+#: messages.go:148
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d entri dihapus dari %s"
 
+#: messages.go:149
 msgid "Account created"
 msgstr "Akun dibuat"
 
+#: messages.go:150
 msgid "Account saved"
 msgstr "Akun disimpan"
 
+#: messages.go:151
 msgid "Account deleted"
 msgstr "Akun dihapus"
 
+#: messages.go:152
 msgid "Settings saved"
 msgstr "Pengaturan disimpan"
 
+#: messages.go:153
 msgid "Password changed"
 msgstr "Kata sandi diubah"
 
+#: messages.go:154
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Impor selesai dalam %d detik"
 
+#: messages.go:155
 msgid "Import canceled"
 msgstr "Impor dibatalkan"
 
+#: messages.go:156
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Pengindeksan selesai dalam %d detik"
 
+#: messages.go:157
 msgid "Indexing originals..."
 msgstr "Mengindeks dokumen asli..."
 
+#: messages.go:158
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Mengindeks file dalam %s"
 
+#: messages.go:159
 msgid "Indexing canceled"
 msgstr "Pengindeksan dibatalkan"
 
+#: messages.go:160
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Menghapus %d file dan %d foto"
 
+#: messages.go:161
 #, c-format
 msgid "Moving files from %s"
 msgstr "Memindahkan file dari %s"
 
+#: messages.go:162
 #, c-format
 msgid "Copying files from %s"
 msgstr "Menyalin file dari %s"
 
+#: messages.go:163
 msgid "Labels deleted"
 msgstr "Label dihapus"
 
+#: messages.go:164
 msgid "Label saved"
 msgstr "Label disimpan"
 
+#: messages.go:165
 msgid "Subject saved"
 msgstr "Subjek disimpan"
 
+#: messages.go:166
 msgid "Subject deleted"
 msgstr "Subjek dihapus"
 
+#: messages.go:167
 msgid "Person saved"
 msgstr "Orang disimpan"
 
+#: messages.go:168
 msgid "Person deleted"
 msgstr "Orang dihapus"
 
+#: messages.go:169
+#, fuzzy
+msgid "File uploaded"
+msgstr "Berkas dihapus"
+
+#: messages.go:170
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d file diupload di %d detik"
 
+#: messages.go:171
+msgid "Processing upload..."
+msgstr ""
+
+#: messages.go:172
+#, fuzzy
+msgid "Upload has been processed"
+msgstr "Unggahan mungkin menyinggung"
+
+#: messages.go:173
 msgid "Selection approved"
 msgstr "Pilihan disetujui"
 
+#: messages.go:174
 msgid "Selection archived"
 msgstr "Pilihan diarsipkan"
 
+#: messages.go:175
 msgid "Selection restored"
 msgstr "Pilihan dipulihkan"
 
+#: messages.go:176
 msgid "Selection marked as private"
 msgstr "Pilihan ditandai sebagai pribadi"
 
+#: messages.go:177
 #, fuzzy
 msgid "Albums deleted"
 msgstr "Album dihapus"
 
+#: messages.go:178
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip dibuat dalam %d detik"
 
+#: messages.go:179
 #, fuzzy
 msgid "Permanently deleted"
 msgstr "Dihapus secara permanen"
+
+#: messages.go:180
+#, fuzzy, c-format
+msgid "%s has been restored"
+msgstr "Pilihan dipulihkan"

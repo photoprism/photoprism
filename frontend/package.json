@@ -16,7 +16,7 @@
     "upgrade": "npm --depth 10 update && npm audit fix",
     "testcafe": "testcafe",
     "acceptance-local": "testcafe chromium --selector-timeout 5000 -S -s tests/acceptance/screenshots tests/acceptance",
-    "gettext-extract": "gettext-extract --output src/locales/translations.pot $(find src -type f \\( -iname \\*.vue -o -iname \\*.js \\) -not -path src/common/vm.js)",
+    "gettext-extract": "gettext-extract --output src/locales/translations.pot $(find ${SRC:-src} -type f \\( -iname \\*.vue -o -iname \\*.js \\) -not -path src/common/vm.js)",
     "gettext-compile": "gettext-compile --output src/locales/translations.json src/locales/*.po"
   },
   "dependencies": {

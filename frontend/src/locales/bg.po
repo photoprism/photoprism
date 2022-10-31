@@ -9,49 +9,48 @@ msgstr ""
 "photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Poedit 3.0.1\n"
 "Generated-By: easygettext\n"
 
-#: src/pages/albums.vue:386 src/share/albums.vue:305
+#: src/page/albums.vue:421
 msgid "%{n} albums found"
 msgstr "%{n} намерени албума"
 
-#: src/dialog/share/upload.vue:76
+#: src/dialog/share/upload.vue:81
 msgid "%{n} files uploaded"
 msgstr "%{n} качени файла"
 
-#: src/pages/library/files.vue:303
+#: src/page/library/browse.vue:311
 msgid "%{n} folders found"
 msgstr "%{n} намерени папки"
 
-#: src/pages/labels.vue:381
+#: src/page/labels.vue:422
 #, fuzzy
 msgid "%{n} labels found"
 msgstr "%{n} намерени етикети"
 
-#: src/pages/people/faces.vue:286 src/pages/people/faces.vue:372
-#: src/pages/people/subjects.vue:470
+#: src/page/people/new.vue:286 src/page/people/new.vue:372
+#: src/page/people/recognized.vue:508
 msgid "%{n} people found"
 msgstr "%{n} намерени човека"
 
-#: src/pages/album/photos.vue:194 src/pages/album/photos.vue:346
-#: src/pages/photos.vue:241 src/pages/photos.vue:386 src/share/photos.vue:209
-#: src/share/photos.vue:354
+#: src/page/album/photos.vue:240 src/page/album/photos.vue:393
+#: src/page/photos.vue:325 src/page/photos.vue:490
 msgid "%{n} pictures found"
 msgstr "%{n} намерени снимки"
 
-#: src/options/options.js:396
+#: src/options/options.js:360
 msgid "1 hour"
 msgstr "1 час"
 
-#: src/options/options.js:398
+#: src/options/options.js:362
 msgid "12 hours"
 msgstr "12 часа"
 
-#: src/options/options.js:397
+#: src/options/options.js:361
 msgid "4 hours"
 msgstr "4 часа"
 
@@ -60,93 +59,96 @@ msgstr "4 часа"
 msgid "A click will copy it to your clipboard."
 msgstr "Едно кликване ще го копира в клипборда ви."
 
-#: src/component/navigation.vue:426 src/component/navigation.vue:27
-#: src/pages/about/about.vue:4 src/pages/about/about.vue:179
-#: src/pages/help.vue:45
+#: src/page/about/about.vue:4 src/page/about/about.vue:254
+#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/page/about/about.vue:166 src/page/help.vue:43
 #, fuzzy
 msgid "About"
 msgstr "За"
 
-#: src/options/options.js:229
+#: src/options/themes.js:417
 #, fuzzy
 msgid "Abyss"
 msgstr "Abyss"
 
-#: src/component/navigation.vue:73 src/dialog/share/upload.vue:112
-#: src/model/account.js:98 src/pages/settings.vue:74
+#: src/component/navigation.vue:3 src/component/navigation.vue:93
+#: src/component/navigation.vue:1908 src/dialog/share/upload.vue:108
+#: src/model/service.js:98 src/model/user.js:144 src/page/settings.vue:83
+#: src/page/settings/general.vue:470
 #, fuzzy
 msgid "Account"
 msgstr "Сметка"
 
-#: src/dialog/photo/info.vue:159
+#: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
 msgstr "Точност"
 
-#: src/dialog/photo/labels.vue:23
+#: src/dialog/photo/edit/labels.vue:23
 msgid "Action"
 msgstr "Действие"
 
-#: src/dialog/photo/files.vue:28 src/dialog/photo/files.vue:25
+#: src/dialog/photo/edit/files.vue:28 src/dialog/photo/edit/files.vue:25
 msgid "Actions"
 msgstr "Действия"
 
-#: src/pages/albums.vue:122 src/pages/albums.vue:178
+#: src/dialog/service/add.vue:7
+#, fuzzy
+msgid "Add Account"
+msgstr "Редактиране на акаунт"
+
+#: src/page/albums.vue:122 src/page/albums.vue:163
 msgid "Add Album"
 msgstr "Създай албум"
 
-#: src/pages/settings/general.vue:141
+#: src/page/settings/general.vue:229
 msgid "Add files to your library via Web Upload."
 msgstr "Добавете файлове към своята библиотека през Web Upload."
 
-#: src/dialog/share.vue:91
+#: src/dialog/share.vue:79
 msgid "Add Link"
 msgstr "Добавете линк"
 
-#: src/pages/albums.vue:96
+#: src/page/albums.vue:96
 #, fuzzy
 msgid "Add pictures from search results by selecting them."
 msgstr "Добавяйте снимки от резултатите от търсенето, като ги избирате."
 
-#: src/dialog/account/add.vue:6 src/pages/settings/sync.vue:47
-msgid "Add Server"
-msgstr "Добавете сървър"
-
-#: src/component/album/clipboard.vue:136 src/component/file/clipboard.vue:89
-#: src/component/label/clipboard.vue:67 src/component/photo/clipboard.vue:192
-#: src/component/subject/clipboard.vue:89 src/dialog/photo/album.vue:20
+#: src/component/album/clipboard.vue:129 src/component/file/clipboard.vue:85
+#: src/component/label/clipboard.vue:61 src/component/photo/clipboard.vue:180
+#: src/component/subject/clipboard.vue:82 src/dialog/photo/album.vue:20
 msgid "Add to album"
 msgstr "Добавете към албум"
 
-#: src/dialog/photo/files.vue:189 src/dialog/photo/files.vue:186
+#: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
 msgid "Added"
 msgstr "Добавено"
 
-#: src/pages/settings.vue:52
+#: src/page/settings.vue:59
 #, fuzzy
 msgid "Advanced"
 msgstr "Разширен"
 
-#: src/options/options.js:406
+#: src/options/options.js:370
 msgid "After 1 day"
 msgstr "След 1 ден"
 
-#: src/options/options.js:407
+#: src/options/options.js:371
 msgid "After 3 days"
 msgstr "След 3 дни"
 
-#: src/options/options.js:408
+#: src/options/options.js:372
 msgid "After 7 days"
 msgstr "След 7 дни"
 
-#: src/options/options.js:410
+#: src/options/options.js:374
 msgid "After one month"
 msgstr "След 1 месец"
 
-#: src/options/options.js:412
+#: src/options/options.js:376
 msgid "After one year"
 msgstr "След една година"
 
-#: src/pages/albums.vue:40 src/pages/albums.vue:1
+#: src/page/albums.vue:40 src/page/albums.vue:1
 #, fuzzy
 msgid ""
 "After selecting pictures from search results, you can add them to an album "
@@ -155,53 +157,58 @@ msgstr ""
 "След като изберете снимки от резултатите от търсенето, можете да ги добавите "
 "в албум чрез контекстното меню."
 
-#: src/options/options.js:411
+#: src/options/options.js:375
 msgid "After two months"
 msgstr "След два месеца"
 
-#: src/options/options.js:409
+#: src/options/options.js:373
 msgid "After two weeks"
 msgstr "След две седмици"
+
+#: src/page/about/about.vue:15
+msgid "AI-Powered Digital Asset Management"
+msgstr ""
 
 #: src/model/album.js:229
 msgid "Album"
 msgstr "Албум"
 
-#: src/dialog/photo/album.vue:71 src/dialog/photo/album.vue:79
+#: src/dialog/photo/album.vue:67 src/dialog/photo/album.vue:77
 msgid "Album Name"
 msgstr "Име на албум"
 
-#: src/app/routes.js:128 src/app/routes.js:135 src/component/navigation.vue:164
-#: src/component/navigation.vue:174 src/component/navigation.vue:4
-#: src/component/navigation.vue:737 src/share/albums.vue:4
+#: src/app/routes.js:151 src/component/album/toolbar.vue:52
+#: src/component/navigation.vue:147 src/component/navigation.vue:157
+#: src/component/navigation.vue:539 src/component/navigation.vue:4
+#: src/component/navigation.vue:621
 msgid "Albums"
 msgstr "Албуми"
 
-#: src/component/album/clipboard.vue:77
+#: src/component/album/clipboard.vue:101
 msgid "Albums deleted"
 msgstr "Изтрити албуми"
 
-#: src/pages/albums.vue:263 src/share/albums.vue:220
+#: src/page/albums.vue:287
 #, fuzzy
 msgid "All %{n} albums loaded"
 msgstr "Всички %{n} албуми са заредени"
 
-#: src/pages/labels.vue:246
+#: src/page/labels.vue:276
 #, fuzzy
 msgid "All %{n} labels loaded"
 msgstr "Всички етикети %{n} са заредени"
 
-#: src/pages/people/subjects.vue:333
+#: src/page/people/recognized.vue:360
 #, fuzzy
 msgid "All %{n} people loaded"
 msgstr "Всички %{n} хора са заредени"
 
-#: src/component/album/toolbar.vue:36 src/component/photo/toolbar.vue:36
+#: src/component/album/toolbar.vue:37 src/component/photo/toolbar.vue:36
 msgid "All Cameras"
 msgstr "Всички камери"
 
-#: src/component/photo/toolbar.vue:39 src/pages/albums.vue:29
-#: src/pages/albums.vue:494 src/share/albums.vue:27 src/share/albums.vue:410
+#: src/component/photo/toolbar.vue:39 src/page/albums.vue:30
+#: src/page/albums.vue:531
 msgid "All Categories"
 msgstr "Всички категории"
 
@@ -209,15 +216,15 @@ msgstr "Всички категории"
 msgid "All Colors"
 msgstr "Всички цветове"
 
-#: src/component/album/toolbar.vue:40 src/component/photo/toolbar.vue:35
+#: src/component/album/toolbar.vue:41 src/component/photo/toolbar.vue:35
 msgid "All Countries"
 msgstr "Всички страни"
 
-#: src/pages/about/feedback.vue:31
+#: src/page/about/feedback.vue:38 src/page/about/feedback.vue:31
 msgid "All fields are required"
 msgstr "Всички полета са задължителни"
 
-#: src/pages/library/import.vue:12
+#: src/page/library/import.vue:12
 #, fuzzy
 msgid "All files from import folder"
 msgstr "Всички файлове от папката за внос"
@@ -231,7 +238,7 @@ msgstr "Всички обективи"
 msgid "All Months"
 msgstr "Всички месеци"
 
-#: src/pages/library/index.vue:12
+#: src/page/library/index.vue:12
 #, fuzzy
 msgid "All originals"
 msgstr "Всички оригинали"
@@ -240,7 +247,7 @@ msgstr "Всички оригинали"
 msgid "All Years"
 msgstr "Всички години"
 
-#: src/pages/about/about.vue:34
+#: src/page/about/about.vue:40
 #, fuzzy
 msgid ""
 "Also, please leave a star on GitHub if you like this project. It provides "
@@ -258,31 +265,28 @@ msgstr ""
 "Освен това можете да качвате файлове директно на WebDAV сървъри като "
 "Nextcloud."
 
-#: src/dialog/photo/info.vue:151
+#: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
 msgstr "Надморска височина"
 
-#: src/dialog/photo/details.vue:267
+#: src/dialog/photo/edit/details.vue:279
 msgid "Altitude (m)"
 msgstr "Надморска височина (м)"
 
-#: src/common/api.js:100
+#: src/common/api.js:99
 #, fuzzy
 msgid "An error occurred - are you offline?"
 msgstr "Възникна грешка - офлайн ли сте?"
 
-#: src/component/navigation.vue:118 src/component/photo/cards.vue:228
-#: src/component/photo/cards.vue:544 src/component/photo/list.vue:197
-#: src/component/photo/mosaic.vue:201 src/model/file.js:210
-#: src/options/options.js:331 src/share/photo/cards.vue:201
-#: src/share/photo/cards.vue:376 src/share/photo/list.vue:176
-#: src/share/photo/mosaic.vue:182
+#: src/component/navigation.vue:101 src/component/photo/cards.vue:301
+#: src/component/photo/cards.vue:480 src/component/photo/list.vue:191
+#: src/component/photo/mosaic.vue:224 src/model/file.js:210
+#: src/options/options.js:295
 #, fuzzy
-#| msgid "Animation"
 msgid "Animated"
 msgstr "Анимация"
 
-#: src/pages/settings/general.vue:533
+#: src/page/settings/general.vue:578
 msgid "Animation"
 msgstr "Анимация"
 
@@ -292,29 +296,34 @@ msgid "Any private photos and videos remain private and won't be shared."
 msgstr ""
 "Всички лични снимки и видеоклипове остават лични и няма да бъдат споделяни."
 
-#: src/dialog/account/edit.vue:477
+#: src/page/about/about.vue:32
+#, fuzzy
+msgid "API Documentation"
+msgstr "Дарения"
+
+#: src/dialog/service/edit.vue:510
 #, fuzzy
 msgid "API Key"
 msgstr "Ключ за API"
 
-#: src/dialog/photo/details.vue:117
+#: src/dialog/photo/edit/details.vue:117
 #, fuzzy
 msgid "Apply"
 msgstr "Направете заявка на"
 
-#: src/component/photo/cards.vue:458 src/component/photo/clipboard.vue:100
-#: src/dialog/photo/details.vue:116
+#: src/component/photo/cards.vue:410 src/component/photo/clipboard.vue:88
+#: src/dialog/photo/edit/details.vue:116
 #, fuzzy
 msgid "Approve"
 msgstr "Одобряване на"
 
-#: src/app/routes.js:209 src/component/navigation.vue:151
-#: src/component/photo/cards.vue:429 src/component/photo/clipboard.vue:216
-#: src/pages/settings/general.vue:294
+#: src/app/routes.js:232 src/component/navigation.vue:134
+#: src/component/photo/cards.vue:381 src/component/photo/clipboard.vue:204
+#: src/page/settings/general.vue:338
 msgid "Archive"
 msgstr "Архив"
 
-#: src/dialog/photo/info.vue:199
+#: src/dialog/photo/edit/info.vue:199
 msgid "Archived"
 msgstr "Архивирано"
 
@@ -333,7 +342,7 @@ msgstr "Сигурни ли сте, че искате да изтриете те
 msgid "Are you sure you want to delete these labels?"
 msgstr "Сигурни ли сте, че искате да изтриете тези етикети?"
 
-#: src/dialog/account/remove.vue:10
+#: src/dialog/service/remove.vue:10
 #, fuzzy
 msgid "Are you sure you want to delete this account?"
 msgstr "Сигурни ли сте, че искате да изтриете този акаунт?"
@@ -352,17 +361,17 @@ msgstr "Сигурни ли сте, че искате да изтриете ок
 msgid "Are you sure?"
 msgstr "Сигурен ли сте?"
 
-#: src/dialog/photo/details.vue:497
+#: src/dialog/photo/edit/details.vue:529
 #, fuzzy
 msgid "Artist"
 msgstr "Художник"
 
-#: src/dialog/photo/files.vue:149 src/dialog/photo/files.vue:146
+#: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 #, fuzzy
 msgid "Aspect Ratio"
 msgstr "Съотношение на страните"
 
-#: src/pages/settings/library.vue:114
+#: src/page/settings/library.vue:112
 #, fuzzy
 msgid ""
 "Automatically create JPEGs for other file types so that they can be "
@@ -371,18 +380,18 @@ msgstr ""
 "Автоматично създаване на JPEG за други типове файлове, така че да могат да "
 "се показват в браузър."
 
-#: src/pages/settings/general.vue:361
+#: src/page/settings/general.vue:163
 #, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Автоматично създава албуми на специални моменти, пътувания и места."
 
-#: src/dialog/sponsor.vue:7 src/pages/about/about.vue:23
-#: src/pages/auth/login.vue:44
+#: src/component/navigation.vue:584 src/dialog/sponsor.vue:7
+#: src/page/about/about.vue:33 src/page/login.vue:48
 #, fuzzy
 msgid "Become a sponsor"
 msgstr "Станете спонсор"
 
-#: src/pages/about/about.vue:42
+#: src/page/about/about.vue:62
 #, fuzzy
 msgid ""
 "Before submitting a support request, please use our Troubleshooting "
@@ -391,212 +400,261 @@ msgstr ""
 "Преди да изпратите заявка за поддръжка, използвайте нашите контролни списъци "
 "за отстраняване на проблеми, за да определите причината за проблема."
 
-#: src/pages/people/subjects.vue:433
+#: src/page/about/about.vue:27
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+
+#: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
+#: src/page/settings/account.vue:280
 msgid "Bio"
 msgstr "Биография"
 
-#: src/options/options.js:431
+#: src/page/settings/account.vue:67
+msgid "Birth Date"
+msgstr ""
+
+#: src/options/options.js:395
 msgid "Black"
 msgstr "Черен"
 
-#: src/options/options.js:444
+#: src/options/options.js:408
 #, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Модификация на Lanczos, по-малко звънящи артефакти"
 
-#: src/options/options.js:427
+#: src/options/options.js:391
 msgid "Blue"
 msgstr "Син"
 
-#: src/options/options.js:428
+#: src/options/options.js:392
 msgid "Brown"
 msgstr "Кафяв"
 
-#: src/pages/settings/general.vue:383
+#: src/page/settings/general.vue:185
 #, fuzzy
 msgid "Browse and edit image classification labels."
 msgstr "Преглеждайте и редактирайте етикети за класификация на изображения."
 
-#: src/pages/settings/general.vue:317
+#: src/page/settings/general.vue:427
 #, fuzzy
 msgid "Browse indexed files and folders in Library."
 msgstr "Преглеждайте индексираните файлове и папки в Библиотеката."
 
-#: src/options/options.js:438
+#: src/page/about/about.vue:54
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
+msgstr ""
+
+#: src/page/about/feedback.vue:8 src/options/options.js:402
 #, fuzzy
 msgid "Bug Report"
 msgstr "Доклад за грешка"
 
-#: src/common/notify.js:94
+#: src/common/notify.js:94 src/page/connect.vue:6
 #, fuzzy
 msgid "Busy, please wait…"
 msgstr "Заето, моля, изчакайте…"
 
-#: src/app/routes.js:141 src/app/routes.js:148 src/component/navigation.vue:270
-#: src/component/navigation.vue:1099
+#: src/app/routes.js:164 src/component/navigation.vue:253
+#: src/component/navigation.vue:989
 msgid "Calendar"
 msgstr "Календар"
 
-#: src/component/photo/cards.vue:557 src/component/photo/list.vue:57
-#: src/component/photo/toolbar.vue:208 src/dialog/photo/details.vue:335
-#: src/share/photo/cards.vue:388 src/share/photo/list.vue:53
+#: src/component/photo/cards.vue:488 src/component/photo/list.vue:137
+#: src/component/photo/toolbar.vue:202 src/dialog/photo/edit/details.vue:351
 msgid "Camera"
 msgstr "Камера"
 
-#: src/dialog/photo/info.vue:79
+#: src/dialog/photo/edit/info.vue:79
 #, fuzzy
 msgid "Camera Serial"
 msgstr "Серийна камера"
 
-#: src/pages/album/photos.vue:200 src/pages/photos.vue:247
-#: src/share/photos.vue:215
+#: src/page/album/photos.vue:246 src/page/photos.vue:331
 #, fuzzy
 msgid "Can't load more, limit reached"
 msgstr "Не мога да заредя повече, лимитът е достигнат"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/pages/albums.vue:434 src/pages/albums.vue:450 src/pages/labels.vue:178
-#: src/pages/labels.vue:194 src/pages/library/files.vue:193
-#: src/pages/library/files.vue:209 src/pages/people/faces.vue:215
-#: src/pages/people/faces.vue:231 src/pages/people/subjects.vue:267
-#: src/pages/people/subjects.vue:283 src/share/albums.vue:350
-#: src/share/albums.vue:366
+#: src/page/albums.vue:469 src/page/albums.vue:485 src/page/labels.vue:204
+#: src/page/labels.vue:224 src/page/library/browse.vue:201
+#: src/page/library/browse.vue:217 src/page/people/new.vue:215
+#: src/page/people/new.vue:231 src/page/people/recognized.vue:294
+#: src/page/people/recognized.vue:310
 #, fuzzy
 msgid "Can't select more items"
 msgstr "Не мога да избера повече елементи"
 
-#: src/dialog/account/add.vue:17 src/dialog/account/edit.vue:102
-#: src/dialog/account/remove.vue:15 src/dialog/album/delete.vue:15
+#: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:42 src/dialog/confirm.vue:15
 #: src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15
-#: src/dialog/photo/album.vue:14 src/dialog/photo/delete.vue:15
-#: src/dialog/reload.vue:11 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/pages/library/import.vue:34
-#: src/pages/library/index.vue:27
+#: src/dialog/photo/album.vue:18 src/dialog/photo/delete.vue:15
+#: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
+#: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
+#: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 #, fuzzy
 msgid "Cancel"
 msgstr "Отмяна на"
 
-#: src/component/album/toolbar.vue:51 src/component/photo/toolbar.vue:46
+#: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 #, fuzzy
 msgid "Cards"
 msgstr "Карти"
 
-#: src/component/photo/toolbar.vue:344 src/dialog/album/edit.vue:162
-#: src/pages/about/feedback.vue:108 src/pages/albums.vue:129
+#: src/page/about/feedback.vue:121 src/component/photo/toolbar.vue:337
+#: src/dialog/album/edit.vue:171 src/page/albums.vue:113
 msgid "Category"
 msgstr "Категория"
 
-#: src/pages/settings/account.vue:26
+#: src/page/settings/account.vue:252 src/page/settings/account.vue:251
 #, fuzzy
-msgid "Change"
-msgstr "Промяна"
+msgid "Change Avatar"
+msgstr "Промяна на частния флаг"
 
-#: src/pages/settings/general.vue:185
+#: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
+#, fuzzy
+msgid "Change Password"
+msgstr "Нова парола"
+
+#: src/page/settings/general.vue:471
+msgid "Change personal profile and security settings."
+msgstr ""
+
+#: src/page/settings/general.vue:317
 #, fuzzy
 msgid "Change photo titles, locations, and other metadata."
 msgstr "Променете заглавията на снимките, местоположенията и други метаданни."
 
-#: src/component/photo/clipboard.vue:146
+#: src/component/photo/clipboard.vue:134
 #, fuzzy
 msgid "Change private flag"
 msgstr "Промяна на частния флаг"
 
-#: src/dialog/photo/info.vue:191
+#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
+#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/library.vue:50
+msgid "Changes successfully saved"
+msgstr ""
+
+#: src/dialog/photo/edit/info.vue:191
 #, fuzzy
 msgid "Checked"
 msgstr "Проверено"
 
-#: src/dialog/photo/files.vue:175 src/dialog/photo/files.vue:172
+#: src/dialog/photo/edit/files.vue:175 src/dialog/photo/edit/files.vue:172
 #, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
-#: src/component/photo-viewer.vue:79 src/dialog/photo/details.vue:113
-#: src/dialog/share.vue:87 src/pages/library/errors.vue:60
+#: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
+#: src/dialog/share.vue:87 src/page/library/errors.vue:60
 #, fuzzy
 msgid "Close"
 msgstr "Затвори"
 
-#: src/dialog/photo/files.vue:95 src/dialog/photo/files.vue:92
+#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 #, fuzzy
 msgid "Codec"
 msgstr "Кодек"
 
-#: src/component/photo/toolbar.vue:321
+#: src/component/photo/toolbar.vue:314
 msgid "Color"
 msgstr "Цвят"
 
-#: src/dialog/photo/files.vue:163 src/dialog/photo/files.vue:160
+#: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 #, fuzzy
 msgid "Color Profile"
 msgstr "Цветен профил"
 
-#: src/pages/discover.vue:4
+#: src/page/discover.vue:4
 msgid "Colors"
 msgstr "Цветове"
 
-#: src/pages/library/index.vue:123
+#: src/page/about/about.vue:49
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
+msgstr ""
+
+#: src/page/library/index.vue:115
 #, fuzzy
 msgid "Complete Rescan"
 msgstr "Пълно повторно сканиране"
 
-#: src/dialog/photo/labels.vue:22
+#: src/dialog/photo/edit/labels.vue:22
 #, fuzzy
 msgid "Confidence"
 msgstr "Доверие"
 
-#: src/dialog/account/add.vue:18
+#: src/dialog/service/add.vue:18 src/page/connect.vue:12
+#: src/page/settings/services.vue:53
 #, fuzzy
 msgid "Connect"
 msgstr "Свържете"
 
-#: src/dialog/webdav.vue:4 src/pages/settings/sync.vue:43
+#: src/page/settings/account.vue:57 src/dialog/webdav.vue:4
+#: src/page/settings/services.vue:48
 #, fuzzy
 msgid "Connect via WebDAV"
 msgstr "Свързване чрез WebDAV"
 
-#: src/pages/about/feedback.vue:7
+#: src/page/connect.vue:30
+#, fuzzy
+msgid "Connected"
+msgstr "Свържете"
+
+#: src/page/settings/account.vue:113 src/page/settings/account.vue:90
+#, fuzzy
+msgid "Contact Details"
+msgstr "Свържете се с нас"
+
+#: src/page/about/feedback.vue:4
 msgid "Contact Us"
 msgstr "Свържете се с нас"
 
-#: src/pages/albums.vue:93 src/pages/labels.vue:74
-#: src/pages/people/subjects.vue:85
+#: src/page/albums.vue:93 src/page/labels.vue:77
+#: src/page/people/recognized.vue:90
 #, fuzzy
 msgid "Contains %{n} pictures."
 msgstr "Съдържа %{n} картинки."
 
-#: src/pages/albums.vue:90 src/pages/labels.vue:71
-#: src/pages/people/subjects.vue:82
+#: src/page/albums.vue:90 src/page/labels.vue:74
+#: src/page/people/recognized.vue:87
 #, fuzzy
 msgid "Contains one picture."
 msgstr "Съдържа една снимка."
 
-#: src/pages/settings/library.vue:113
+#: src/page/settings/library.vue:111
 #, fuzzy
 msgid "Convert to JPEG"
 msgstr "Конвертиране в JPEG"
 
-#: src/pages/library/index.vue:163
+#: src/page/library/index.vue:163
 #, fuzzy
 msgid "Converting"
 msgstr "Конвертиране на"
 
-#: src/dialog/share.vue:58 src/dialog/webdav.vue:36
+#: src/dialog/share.vue:58 src/dialog/webdav.vue:37
 #, fuzzy
 msgid "Copied to clipboard"
 msgstr "Копиране в клипборда"
 
-#: src/dialog/photo/details.vue:520
+#: src/dialog/photo/edit/details.vue:554
 msgid "Copyright"
 msgstr "Авторски права"
 
-#: src/component/photo/list.vue:38 src/share/photo/list.vue:38
+#: src/component/photo/list.vue:47
 #, fuzzy
 msgid "Couldn't find anything."
 msgstr "Не можах да намеря нищо."
 
-#: src/component/photo/toolbar.vue:184 src/dialog/photo/details.vue:240
+#: src/page/settings/account.vue:726 src/component/photo/toolbar.vue:178
+#: src/dialog/photo/edit/details.vue:248 src/page/settings/account.vue:579
 msgid "Country"
 msgstr "Страна"
 
@@ -604,78 +662,78 @@ msgstr "Страна"
 msgid "Create album"
 msgstr "Създаване на албум"
 
-#: src/dialog/photo/info.vue:167
+#: src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "Създаден"
 
-#: src/pages/library/index.vue:169
+#: src/page/library/index.vue:169
 #, fuzzy
 msgid "Creating thumbnails for"
 msgstr "Създаване на миниатюри за"
 
-#: src/options/options.js:446
+#: src/options/options.js:410
 #, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Кубичен: Умерено качество, добра производителност"
 
-#: src/pages/settings/account.vue:57
+#: src/dialog/account/password.vue:128
 #, fuzzy
 msgid "Current Password"
 msgstr "Текуща парола"
 
-#: src/options/options.js:435
+#: src/page/about/feedback.vue:5 src/options/options.js:399
 #, fuzzy
 msgid "Customer Support"
 msgstr "Поддръжка на клиенти"
 
-#: src/options/options.js:426
+#: src/options/options.js:390
 #, fuzzy
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/options.js:244
+#: src/options/themes.js:432
 #, fuzzy
 msgid "Cyano"
 msgstr "Cyano"
 
-#: src/options/options.js:399
+#: src/options/options.js:363
 #, fuzzy
 msgid "Daily"
 msgstr "Daily"
 
-#: src/dialog/photo/details.vue:118
+#: src/page/settings/account.vue:446 src/dialog/photo/edit/details.vue:116
+#: src/page/settings/account.vue:445
 msgid "Day"
 msgstr "Ден"
 
-#: src/pages/settings/advanced.vue:77
+#: src/page/settings/advanced.vue:74
 #, fuzzy
 msgid "Debug Logs"
 msgstr "Протоколи за отработване"
 
-#: src/options/options.js:214 src/options/options.js:350
+#: src/options/options.js:314 src/options/themes.js:402
 #, fuzzy
 msgid "Default"
 msgstr "По подразбиране"
 
-#: src/dialog/account/edit.vue:203
+#: src/dialog/service/edit.vue:210
 #, fuzzy
 msgid "Default Folder"
 msgstr "Папка по подразбиране"
 
-#: src/component/album/clipboard.vue:160 src/component/label/clipboard.vue:89
-#: src/component/photo/clipboard.vue:284 src/dialog/account/remove.vue:18
-#: src/dialog/album/delete.vue:18 src/dialog/file/delete.vue:18
-#: src/dialog/label/delete.vue:18 src/dialog/photo/delete.vue:18
-#: src/dialog/photo/files.vue:41 src/dialog/photo/files.vue:38
-#: src/dialog/share.vue:235 src/pages/library/errors.vue:94
-#: src/pages/settings/general.vue:206
+#: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
+#: src/component/photo/clipboard.vue:272 src/dialog/album/delete.vue:18
+#: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
+#: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
+#: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
+#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/page/settings/general.vue:360
 #, fuzzy
 msgid "Delete"
 msgstr "Изтриване на"
 
-#: src/component/photo/cards.vue:502 src/dialog/album/edit.vue:142
-#: src/dialog/photo/details.vue:566 src/pages/albums.vue:443
-#: src/share/albums.vue:243 src/share/photo/cards.vue:340
+#: src/component/photo/cards.vue:449 src/dialog/album/edit.vue:147
+#: src/dialog/photo/edit/details.vue:604 src/page/albums.vue:428
 msgid "Description"
 msgstr "Описание"
 
@@ -686,185 +744,191 @@ msgstr ""
 "Подробни инструкции можете да намерите в нашето ръководство за потребителя."
 
 #: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1
-#: src/dialog/photo/edit.vue:177
+#: src/dialog/photo/edit.vue:157
 #, fuzzy
 msgid "Details"
 msgstr "Подробности"
 
-#: src/dialog/photo/files.vue:35
+#: src/page/about/about.vue:29
+msgid "Developer Guide"
+msgstr ""
+
+#: src/dialog/photo/edit/files.vue:35
 #, fuzzy
 msgid "Dimensions"
 msgstr "Размери"
 
-#: src/pages/settings/advanced.vue:143
+#: src/page/settings/advanced.vue:140
 #, fuzzy
 msgid "Disable Backups"
 msgstr "Деактивиране на резервните копия"
 
-#: src/pages/settings/advanced.vue:166
+#: src/page/settings/advanced.vue:163
 #, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Деактивиране на вградения WebDAV сървър. Изисква рестартиране."
 
-#: src/pages/settings/advanced.vue:484
+#: src/page/settings/advanced.vue:481
 #, fuzzy
 msgid "Disable Darktable"
 msgstr "Деактивиране на Darktable"
 
-#: src/pages/settings/advanced.vue:209
+#: src/page/settings/advanced.vue:206
 #, fuzzy
 msgid "Disable ExifTool"
 msgstr "Деактивиране на ExifTool"
 
-#: src/pages/settings/advanced.vue:526
+#: src/page/settings/advanced.vue:523
 #, fuzzy
 msgid "Disable FFmpeg"
 msgstr "Деактивиране на FFmpeg"
 
-#: src/pages/settings/advanced.vue:187
+#: src/page/settings/advanced.vue:184
 #, fuzzy
 msgid "Disable Places"
 msgstr "Деактивиране на местата"
 
-#: src/pages/settings/advanced.vue:505
+#: src/page/settings/advanced.vue:502
 #, fuzzy
 msgid "Disable RawTherapee"
 msgstr "Деактивиране на RawTherapee"
 
-#: src/pages/settings/advanced.vue:231
+#: src/page/settings/advanced.vue:228
 #, fuzzy
 msgid "Disable TensorFlow"
 msgstr "Деактивиране на TensorFlow"
 
-#: src/pages/settings/advanced.vue:165
+#: src/page/settings/advanced.vue:162
 #, fuzzy
 msgid "Disable WebDAV"
 msgstr "Деактивиране на WebDAV"
 
-#: src/dialog/account/edit.vue:66 src/dialog/account/edit.vue:111
-#, fuzzy
-msgid "Disabled"
-msgstr "Инвалиди"
-
-#: src/pages/settings/advanced.vue:188
+#: src/page/settings/advanced.vue:185
 #, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "Деактивира обратното геокодиране и картите."
 
-#: src/app/routes.js:374 src/app/routes.js:381 src/app/routes.js:388
-#: src/app/routes.js:395
+#: src/app/routes.js:408 src/app/routes.js:415 src/app/routes.js:422
+#: src/app/routes.js:429
 #, fuzzy
 msgid "Discover"
 msgstr "Открийте"
 
-#: src/pages/settings/advanced.vue:144
+#: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+msgid "Display Name"
+msgstr ""
+
+#: src/page/settings/advanced.vue:141
 #, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr ""
 "Не правете резервно копие на метаданните на снимки и албуми във файлове YAML."
 
-#: src/pages/settings/advanced.vue:210
+#: src/page/settings/advanced.vue:207
 #, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 "Не създавайте JSON файлове на ExifTool за подобрено извличане на метаданни."
 
-#: src/pages/settings/advanced.vue:100
+#: src/page/settings/advanced.vue:97
 #, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Не променяйте папката с оригинали. Деактивира импортирането, качването и "
 "изтриването."
 
-#: src/pages/settings/advanced.vue:527
+#: src/page/settings/advanced.vue:524
 #, fuzzy
 msgid "Don't transcode videos with FFmpeg."
 msgstr "Не прекодирайте видеоклипове с FFmpeg."
 
-#: src/pages/settings/advanced.vue:485
+#: src/page/settings/advanced.vue:482
 #, fuzzy
 msgid "Don't use Darktable to convert RAW files."
 msgstr "Не използвайте Darktable за конвертиране на RAW файлове."
 
-#: src/pages/settings/advanced.vue:506
+#: src/page/settings/advanced.vue:503
 #, fuzzy
 msgid "Don't use RawTherapee to convert RAW files."
 msgstr "Не използвайте RawTherapee, за да конвертирате RAW файлове."
 
-#: src/pages/settings/advanced.vue:232
+#: src/page/settings/advanced.vue:229
 #, fuzzy
 msgid "Don't use TensorFlow for image classification."
 msgstr "Не използвайте TensorFlow за класификация на изображения."
 
-#: src/options/options.js:439
+#: src/options/options.js:403
 #, fuzzy
 msgid "Donations"
 msgstr "Дарения"
 
-#: src/dialog/photo/details.vue:120 src/dialog/share.vue:26
+#: src/dialog/photo/edit/details.vue:120 src/dialog/share.vue:26
 #, fuzzy
 msgid "Done"
 msgstr "Готово"
 
-#: src/dialog/upload.vue:39 src/pages/library/import.vue:7
-#: src/pages/library/index.vue:8
+#: src/dialog/upload.vue:39 src/page/library/import.vue:7
+#: src/page/library/index.vue:8
 #, fuzzy
 msgid "Done."
 msgstr "Изпълнено."
 
-#: src/component/album/clipboard.vue:113 src/component/album/toolbar.vue:107
-#: src/component/file/clipboard.vue:66 src/component/photo-viewer.vue:86
-#: src/component/photo/clipboard.vue:169 src/component/subject/clipboard.vue:66
-#: src/dialog/photo/files.vue:32 src/dialog/photo/files.vue:29
-#: src/pages/settings/general.vue:162 src/share/album/clipboard.vue:61
-#: src/share/photo/clipboard.vue:63 src/share/photos.vue:78
+#: src/component/album/clipboard.vue:107 src/component/album/toolbar.vue:120
+#: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
+#: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
+#: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
+#: src/page/settings/general.vue:250
 #, fuzzy
 msgid "Download"
 msgstr "Изтегляне"
 
-#: src/dialog/account/edit.vue:322
+#: src/dialog/service/edit.vue:338
 #, fuzzy
 msgid "Download remote files"
 msgstr "Изтегляне на отдалечени файлове"
 
-#: src/pages/settings/general.vue:163
+#: src/page/settings/general.vue:251
 #, fuzzy
 msgid "Download single files and zip archives."
 msgstr "Изтеглете единични файлове и архиви zip."
 
-#: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:101
-#: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:59
-#: src/component/photo-viewer.vue:158 src/component/photo/cards.vue:74
-#: src/component/photo/clipboard.vue:189 src/component/photo/list.vue:79
-#: src/component/subject/clipboard.vue:46 src/dialog/photo/files.vue:69
-#: src/pages/library/files.vue:99 src/share/album/clipboard.vue:40
-#: src/share/photo/cards.vue:72 src/share/photo/clipboard.vue:45
-#: src/share/photo/list.vue:74 src/share/photos.vue:485
+#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:112
+#: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
+#: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
+#: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
+#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:69
+#: src/page/library/browse.vue:107
 #, fuzzy
 msgid "Downloading…"
 msgstr "Изтегляне…"
 
-#: src/pages/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:279
 #, fuzzy
 msgid "Downscaling Filter"
 msgstr "Филтър за намаляване на мащаба"
 
-#: src/pages/library/files.vue:37
+#: src/page/about/feedback.vue:16
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+
+#: src/page/library/browse.vue:37
 #, fuzzy
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Дубликатите ще бъдат пропуснати и ще се появят само веднъж."
 
-#: src/dialog/photo/files.vue:101 src/dialog/photo/files.vue:98
+#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #, fuzzy
 msgid "Duration"
 msgstr "Дарения"
 
-#: src/pages/settings/advanced.vue:305
+#: src/page/settings/advanced.vue:302
 #, fuzzy
 msgid "Dynamic Previews"
 msgstr "Динамични прегледи"
 
-#: src/pages/settings/advanced.vue:306
+#: src/page/settings/advanced.vue:303
 #, fuzzy
 msgid ""
 "Dynamic rendering requires a powerful server. It is not recommended for NAS "
@@ -873,19 +937,19 @@ msgstr ""
 "Динамичното рендиране изисква мощен сървър. Не се препоръчва за NAS "
 "устройства."
 
-#: src/pages/settings/advanced.vue:348
+#: src/page/settings/advanced.vue:345
 #, fuzzy
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Ограничение на динамичния размер: %{n}px"
 
-#: src/pages/about/feedback.vue:181
+#: src/page/about/feedback.vue:194
 #, fuzzy
 msgid "E-Mail"
 msgstr "Електронна поща"
 
-#: src/component/album/clipboard.vue:91 src/component/album/toolbar.vue:70
-#: src/component/photo-viewer.vue:103 src/component/photo/clipboard.vue:123
-#: src/pages/settings/general.vue:184
+#: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:82
+#: src/component/photo-viewer.vue:97 src/component/photo/clipboard.vue:111
+#: src/page/settings/general.vue:316
 #, fuzzy
 msgid "Edit"
 msgstr "Редактиране на"
@@ -895,59 +959,59 @@ msgstr "Редактиране на"
 msgid "Edit %{name}"
 msgstr "Редактиране на %{име}"
 
-#: src/dialog/account/edit.vue:140
+#: src/dialog/service/edit.vue:146
 #, fuzzy
 msgid "Edit Account"
 msgstr "Редактиране на акаунт"
 
-#: src/dialog/photo/edit.vue:51
+#: src/dialog/photo/edit.vue:54
 #, fuzzy
 msgid "Edit Photo"
 msgstr "Редактиране на снимка"
 
-#: src/dialog/photo/info.vue:183
+#: src/dialog/photo/edit/info.vue:183
 #, fuzzy
 msgid "Edited"
 msgstr "Редактиран"
 
-#: src/pages/settings/advanced.vue:122
+#: src/page/settings/account.vue:220 src/page/settings/account.vue:615
+#: src/page/settings/account.vue:219
+msgid "Email"
+msgstr ""
+
+#: src/page/settings/advanced.vue:119
 #, fuzzy
 msgid "Enable new features currently under development."
 msgstr "Разрешаване на нови функции, които са в процес на разработка."
 
-#: src/dialog/account/edit.vue:66 src/dialog/account/edit.vue:111
-#, fuzzy
-msgid "Enabled"
-msgstr "Разрешено"
-
-#: src/pages/settings/advanced.vue:464
+#: src/page/settings/advanced.vue:461
 #, fuzzy
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr ""
 "Активира предварителните настройки на конвертора RAW. Може да намали "
 "производителността."
 
-#: src/app/routes.js:254 src/component/navigation.vue:393
+#: src/app/routes.js:283 src/component/navigation.vue:391
 #, fuzzy
 msgid "Errors"
 msgstr "Грешки"
 
-#: src/pages/settings/library.vue:72
+#: src/page/settings/library.vue:70
 #, fuzzy
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "Оценка на приблизителното местоположение на снимки без координати."
 
-#: src/pages/settings/library.vue:71
+#: src/page/settings/library.vue:69
 #, fuzzy
 msgid "Estimates"
 msgstr "Оценки"
 
-#: src/options/options.js:400
+#: src/options/options.js:364
 #, fuzzy
 msgid "Every two days"
 msgstr "На всеки два дни"
 
-#: src/pages/settings/general.vue:273
+#: src/page/settings/general.vue:207
 #, fuzzy
 msgid ""
 "Exclude content marked as private from search results, shared albums, "
@@ -956,37 +1020,37 @@ msgstr ""
 "Изключване на съдържание, маркирано като лично, от резултатите от търсенето, "
 "споделените албуми, етикетите и местата."
 
-#: src/pages/people/faces.vue:100 src/pages/people/subjects.vue:141
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 #, fuzzy
 msgid "Exclude hidden"
 msgstr "Изключване на скрити"
 
-#: src/component/navigation.vue:416
+#: src/component/navigation.vue:298
 #, fuzzy
 msgid "Expand"
 msgstr "Разширете"
 
-#: src/component/photo/toolbar.vue:145
+#: src/component/photo/toolbar.vue:139
 #, fuzzy
 msgid "Expand Search"
 msgstr "Разширяване на търсенето"
 
-#: src/pages/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:118
 #, fuzzy
 msgid "Experimental Features"
 msgstr "Експериментални функции"
 
-#: src/dialog/account/edit.vue:240 src/dialog/share.vue:64
+#: src/dialog/service/edit.vue:249 src/dialog/share.vue:64
 #, fuzzy
 msgid "Expires"
 msgstr "Срокът на валидност изтича на"
 
-#: src/dialog/photo/details.vue:383
+#: src/dialog/photo/edit/details.vue:405
 #, fuzzy
 msgid "Exposure"
 msgstr "Експозиция"
 
-#: src/dialog/photo/details.vue:429
+#: src/dialog/photo/edit/details.vue:455
 #, fuzzy
 msgid "F Number"
 msgstr "Номер F"
@@ -996,12 +1060,12 @@ msgstr "Номер F"
 msgid "Face"
 msgstr "Лице"
 
-#: src/dialog/photo/info.vue:73
+#: src/dialog/photo/edit/info.vue:73
 #, fuzzy
 msgid "Faces"
 msgstr "Лица"
 
-#: src/dialog/share.vue:60 src/dialog/webdav.vue:38
+#: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 #, fuzzy
 msgid "Failed copying to clipboard"
 msgstr "Неуспешно копиране в клипборда"
@@ -1016,33 +1080,37 @@ msgstr "Неуспешно премахване на връзката"
 msgid "Failed updating link"
 msgstr "Неуспешно актуализиране на връзката"
 
-#: src/dialog/upload.vue:163
-#, fuzzy
-msgid "Failure while importing uploaded files"
-msgstr "Неуспех при импортиране на качени файлове"
+#: src/page/settings/account.vue:165 src/page/settings/account.vue:164
+msgid "Family Name"
+msgstr ""
 
-#: src/options/options.js:285
+#: src/options/options.js:249
 #, fuzzy
 msgid "Fast"
 msgstr "Бърз"
 
-#: src/dialog/photo/info.vue:94
+#: src/dialog/photo/edit/info.vue:94
 #, fuzzy
 msgid "Favorite"
 msgstr "Любими"
 
-#: src/app/routes.js:174 src/component/navigation.vue:244
-#: src/component/navigation.vue:1011
+#: src/app/routes.js:197 src/component/navigation.vue:227
+#: src/component/navigation.vue:899
 #, fuzzy
 msgid "Favorites"
 msgstr "Любими"
 
-#: src/options/options.js:437
+#: src/page/about/feedback.vue:7 src/options/options.js:401
 #, fuzzy
 msgid "Feature Request"
 msgstr "Заявка за функция"
 
-#: src/component/navigation.vue:434 src/component/navigation.vue:35
+#: src/page/settings/account.vue:817 src/page/settings/account.vue:670
+#, fuzzy
+msgid "Feed"
+msgstr "Обратна връзка"
+
+#: src/component/navigation.vue:432 src/component/navigation.vue:35
 #, fuzzy
 msgid "Feedback"
 msgstr "Обратна връзка"
@@ -1055,28 +1123,42 @@ msgstr ""
 "Не се колебайте да се свържете с нас на hello@photoprism.app, ако имате "
 "някакви въпроси."
 
+#: src/options/options.js:416
+msgid "Female"
+msgstr ""
+
 #: src/model/file.js:291
 #, fuzzy
 msgid "File"
 msgstr "Файл"
 
-#: src/app/routes.js:241
+#: src/app/routes.js:270
 #, fuzzy
 msgid "File Browser"
 msgstr "Файлов браузър"
 
-#: src/dialog/photo/files.vue:65 src/dialog/photo/files.vue:62
+#: src/component/photo/toolbar.vue:55
+#, fuzzy
+msgid "File Name"
+msgstr "Файл"
+
+#: src/component/photo/toolbar.vue:56
+#, fuzzy
+msgid "File Size"
+msgstr "Файл"
+
+#: src/dialog/photo/edit/files.vue:65 src/dialog/photo/edit/files.vue:62
 #, fuzzy
 msgid "Filename"
 msgstr "Файл"
 
-#: src/dialog/photo/edit.vue:65 src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:316
+#: src/component/navigation.vue:557 src/dialog/photo/edit.vue:65
+#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 #, fuzzy
 msgid "Files"
 msgstr "Файлове"
 
-#: src/pages/settings/library.vue:216
+#: src/page/settings/library.vue:214
 #, fuzzy
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
@@ -1085,144 +1167,153 @@ msgstr ""
 "Файлове с последователни имена като 'IMG_1234 (2)' и 'IMG_1234 (3)' "
 "принадлежат на една и съща снимка."
 
-#: src/dialog/photo/details.vue:449
+#: src/dialog/photo/edit/details.vue:477
 #, fuzzy
 msgid "Focal Length"
 msgstr "Фокусно разстояние"
 
-#: src/dialog/account/edit.vue:275 src/dialog/account/edit.vue:281
-#: src/dialog/photo/info.vue:25 src/dialog/share/upload.vue:144
-#: src/model/folder.js:193 src/pages/library/files.vue:72
+#: src/dialog/photo/edit/info.vue:25 src/dialog/service/edit.vue:287
+#: src/dialog/service/edit.vue:293 src/dialog/share/upload.vue:141
+#: src/model/folder.js:193 src/page/library/browse.vue:72
 #, fuzzy
 msgid "Folder"
 msgstr "Папка"
 
-#: src/pages/library/files.vue:305
+#: src/page/library/browse.vue:313
 #, fuzzy
 msgid "Folder contains %{n} files"
 msgstr "Папката съдържа %{n} файлове"
 
-#: src/pages/library/files.vue:297
+#: src/page/library/browse.vue:305
 #, fuzzy
 msgid "Folder is empty"
 msgstr "Папката е празна"
 
-#: src/app/routes.js:154 src/app/routes.js:161 src/component/navigation.vue:330
-#: src/component/navigation.vue:1307
+#: src/app/routes.js:177 src/component/navigation.vue:328
+#: src/component/navigation.vue:1254
 #, fuzzy
 msgid "Folders"
 msgstr "Папки"
 
-#: src/pages/auth/login.vue:1
+#: src/page/login.vue:1
 #, fuzzy
 msgid "Forgot password?"
 msgstr "Забравена парола?"
 
-#: src/dialog/photo/files.vue:113 src/dialog/photo/files.vue:110
+#: src/dialog/photo/edit/files.vue:113 src/dialog/photo/edit/files.vue:110
 msgid "FPS"
 msgstr "Кадър в секунда"
 
-#: src/dialog/photo/files.vue:107 src/dialog/photo/files.vue:104
+#: src/dialog/photo/edit/files.vue:107 src/dialog/photo/edit/files.vue:104
 #, fuzzy
 msgid "Frames"
 msgstr "Рамки"
 
-#: src/component/photo-viewer.vue:174
+#: src/component/photo-viewer.vue:172
 #, fuzzy
 msgid "Fullscreen"
 msgstr "Пълен екран"
 
-#: src/options/options.js:254
+#: src/options/themes.js:442
 #, fuzzy
 msgid "Gemstone"
 msgstr "Скъпоценни камъни"
 
-#: src/pages/settings.vue:30
+#: src/page/settings/account.vue:81 src/page/settings/account.vue:80
+#, fuzzy
+msgid "Gender"
+msgstr "Лавандула"
+
+#: src/page/settings.vue:35
 #, fuzzy
 msgid "General"
 msgstr "Обща информация"
 
-#: src/pages/about/about.vue:38
+#: src/page/about/about.vue:58
 #, fuzzy
 msgid "Getting Support"
 msgstr "Получаване на подкрепа"
 
-#: src/options/options.js:421
+#: src/page/settings/account.vue:139 src/page/settings/account.vue:138
+#, fuzzy
+msgid "Given Name"
+msgstr "Оригинално име"
+
+#: src/options/options.js:385
 #, fuzzy
 msgid "Gold"
 msgstr "Злато"
 
-#: src/options/options.js:219
+#: src/options/themes.js:407
 #, fuzzy
 msgid "Grayscale"
 msgstr "Сива скала"
 
-#: src/options/options.js:424
+#: src/options/options.js:388
 #, fuzzy
 msgid "Green"
 msgstr "Зелен"
 
-#: src/options/options.js:430
+#: src/options/options.js:394
 #, fuzzy
 msgid "Grey"
 msgstr "Сив"
 
-#: src/component/album/toolbar.vue:62 src/component/photo/toolbar.vue:55
-#: src/dialog/album/edit.vue:23
+#: src/component/album/toolbar.vue:70 src/dialog/album/edit.vue:24
 #, fuzzy
 msgid "Group by similarity"
 msgstr "Групиране по сходство"
 
-#: src/dialog/photo/files.vue:59 src/dialog/photo/files.vue:56
+#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 #, fuzzy
 msgid "Hash"
 msgstr "Hash"
 
-#: src/pages/help.vue:4
+#: src/page/help.vue:4
 #, fuzzy
 msgid "Help"
 msgstr "Помощ"
 
-#: src/app/routes.js:76
+#: src/app/routes.js:77
 #, fuzzy
 msgid "Help & Support"
 msgstr "Получаване на подкрепа"
 
-#: src/component/navigation.vue:384
+#: src/component/navigation.vue:382
 #, fuzzy
 msgid "Hidden"
 msgstr "Скрит"
 
-#: src/app/routes.js:247
+#: src/app/routes.js:276
 #, fuzzy
 msgid "Hidden Files"
 msgstr "Скрити файлове"
 
-#: src/pages/people/faces.vue:237 src/pages/people/subjects.vue:298
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
 #, fuzzy
 msgid "Hide"
 msgstr "Скрий"
 
-#: src/pages/settings/general.vue:295
+#: src/page/settings/general.vue:339
 #, fuzzy
 msgid "Hide photos that have been moved to archive."
 msgstr "Скриване на снимки, които са преместени в архива."
 
-#: src/options/options.js:354
+#: src/options/options.js:318
 msgid "High"
 msgstr "Висок"
 
-#: src/dialog/photo/files.vue:127 src/dialog/photo/files.vue:124
+#: src/dialog/photo/edit/files.vue:127 src/dialog/photo/edit/files.vue:124
 #, fuzzy
 msgid "High Dynamic Range (HDR)"
 msgstr "Висок динамичен обхват (HDR)"
 
-#: src/pages/about/feedback.vue:138
+#: src/page/about/feedback.vue:151
 #, fuzzy
 msgid "How can we help?"
 msgstr "Как можем да помогнем?"
 
-#: src/options/options.js:309
+#: src/options/options.js:273
 #, fuzzy
 msgid "Hybrid"
 msgstr "Хибрид"
@@ -1232,38 +1323,38 @@ msgstr "Хибрид"
 msgid "I'm a sponsor"
 msgstr "Аз'съм спонсор"
 
-#: src/pages/about/about.vue:43
+#: src/page/about/about.vue:63
 #, fuzzy
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Ако това не ви помогне или имате други въпроси:"
 
-#: src/dialog/photo/labels.vue:37
+#: src/dialog/photo/edit/labels.vue:37
 #, fuzzy
 msgid "image"
 msgstr "изображение"
 
-#: src/model/file.js:216 src/options/options.js:327
+#: src/model/file.js:216 src/options/options.js:291
 #, fuzzy
 msgid "Image"
 msgstr "Изображение"
 
-#: src/pages/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:56
 #, fuzzy
 msgid "Images"
 msgstr "Изображения"
 
-#: src/pages/library.vue:42 src/pages/library/import.vue:43
-#: src/pages/settings/general.vue:228
+#: src/page/library.vue:45 src/page/library/import.vue:43
+#: src/page/settings/general.vue:272
 #, fuzzy
 msgid "Import"
 msgstr "Внос"
 
-#: src/pages/library/import.vue:116
+#: src/page/library/import.vue:116
 #, fuzzy
 msgid "Import failed"
 msgstr "Импортирането е неуспешно"
 
-#: src/pages/library/import.vue:25
+#: src/page/library/import.vue:25
 #, fuzzy
 msgid ""
 "Imported files will be sorted by date and given a unique name to avoid "
@@ -1272,38 +1363,40 @@ msgstr ""
 "Внесените файлове ще бъдат сортирани по дата и ще получат уникално име, за "
 "да се избегнат дублирания."
 
-#: src/pages/settings/general.vue:229
+#: src/page/settings/general.vue:273
 #, fuzzy
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr ""
 "Внесените файлове ще бъдат сортирани по дата и ще им бъде дадено уникално "
 "име."
 
-#: src/pages/library/import.vue:5
+#: src/page/library/import.vue:5
 #, fuzzy
 msgid "Importing %{name}…"
 msgstr "Импортиране на %{име}…"
 
-#: src/pages/library/import.vue:6
+#: src/page/library/import.vue:6
 #, fuzzy
 msgid "Importing files to originals…"
 msgstr "Импортиране на файлове в оригинали…"
 
-#: src/dialog/photo/files.vue:192 src/dialog/photo/files.vue:201
-#: src/dialog/photo/files.vue:189 src/dialog/photo/files.vue:198
+#: src/dialog/photo/edit/files.vue:192 src/dialog/photo/edit/files.vue:201
+#: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:198
 #, fuzzy
 msgid "in"
 msgstr "в"
 
-#: src/pages/about/about.vue:52
+#: src/page/about/about.vue:72
 #, fuzzy
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr ""
 "Освен това спонсорите получават директна техническа поддръжка по имейл."
 
-#: src/component/photo/cards.vue:11 src/component/photo/list.vue:12
-#: src/component/photo/mosaic.vue:11 src/pages/labels.vue:35
-#: src/pages/library/files.vue:38
+#: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
+#: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
+#: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
+#: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
+#: src/page/labels.vue:35 src/page/library/browse.vue:38
 #, fuzzy
 msgid ""
 "In case pictures you expect are missing, please rescan your library and wait "
@@ -1312,148 +1405,193 @@ msgstr ""
 "В случай че очакваните от вас снимки липсват, моля сканирайте отново "
 "библиотеката си и изчакайте, докато индексирането приключи."
 
-#: src/pages/library.vue:32 src/pages/settings/library.vue:6
+#: src/component/navigation.vue:563 src/page/library.vue:35
+#: src/page/settings/library.vue:6
 #, fuzzy
 msgid "Index"
 msgstr "Индекс"
 
-#: src/pages/library/index.vue:134 src/pages/library/index.vue:140
+#: src/page/settings/general.vue:405
+msgid "Index and import files through the user interface."
+msgstr ""
+
+#: src/page/library/index.vue:134 src/page/library/index.vue:140
 #, fuzzy
 msgid "Indexing"
 msgstr "Индексиране"
 
-#: src/pages/library/index.vue:116
+#: src/page/library/index.vue:116
 #, fuzzy
 msgid "Indexing failed"
 msgstr "Индексирането е неуспешно"
 
-#: src/pages/library/index.vue:7
+#: src/page/library/index.vue:7
 #, fuzzy
 msgid "Indexing media and sidecar files…"
 msgstr "Индексиране на мултимедийни и странични файлове…"
 
-#: src/dialog/photo/files.vue:53 src/dialog/photo/files.vue:50
+#: src/dialog/photo/edit/files.vue:53 src/dialog/photo/edit/files.vue:50
 #, fuzzy
 msgid "Instance ID"
 msgstr "Идентификатор на инстанцията"
 
-#: src/dialog/account/edit.vue:297
+#: src/dialog/service/edit.vue:309
 #, fuzzy
 msgid "Interval"
 msgstr "Интервал"
 
-#: src/dialog/photo/details.vue:105
+#: src/page/settings/account.vue:90 src/page/settings/account.vue:116
+#: src/page/settings/account.vue:142 src/page/settings/account.vue:168
+#: src/page/settings/account.vue:223 src/page/settings/account.vue:280
+#: src/page/settings/account.vue:564 src/page/settings/account.vue:590
+#: src/page/settings/account.vue:618 src/page/settings/account.vue:646
+#: src/page/settings/account.vue:710 src/page/settings/account.vue:737
+#: src/page/settings/account.vue:764 src/page/settings/account.vue:792
+#: src/page/settings/account.vue:820 src/page/settings/account.vue:89
+#: src/page/settings/account.vue:115 src/page/settings/account.vue:141
+#: src/page/settings/account.vue:167 src/page/settings/account.vue:222
+#: src/page/settings/account.vue:279 src/page/settings/account.vue:563
+#: src/page/settings/account.vue:617 src/page/settings/account.vue:645
+#: src/page/settings/account.vue:673
+#, fuzzy
+msgid "Invalid"
+msgstr "Невалидна дата"
+
+#: src/dialog/photo/edit/details.vue:112
 #, fuzzy
 msgid "Invalid date"
 msgstr "Невалидна дата"
 
-#: src/dialog/photo/edit.vue:116
+#: src/page/connect.vue:42 src/page/connect.vue:48
+#, fuzzy
+msgid "Invalid parameters"
+msgstr "Невалидна дата"
+
+#: src/dialog/photo/edit.vue:119
 #, fuzzy
 msgid "Invalid photo selected"
 msgstr "Избрана е невалидна снимка"
+
+#: src/page/about/about.vue:16
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
+msgstr ""
 
 #: src/model/rest.js:167
 #, fuzzy
 msgid "Item"
 msgstr "Артикул"
 
-#: src/pages/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:320
 #, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "Качество на JPEG: %{n}"
 
-#: src/pages/settings/advanced.vue:429
+#: src/page/settings/advanced.vue:426
 #, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Ограничение на размера на JPEG: %{n}px"
 
-#: src/pages/library/import.vue:26
+#: src/page/library/import.vue:26
 #, fuzzy
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG и миниатюрите се визуализират автоматично, когато е необходимо."
 
-#: src/dialog/photo/details.vue:589
+#: src/dialog/photo/edit/details.vue:629
 #, fuzzy
 msgid "Keywords"
 msgstr "Ключови думи"
 
-#: src/dialog/photo/labels.vue:20 src/model/label.js:124
+#: src/page/about/about.vue:53
+msgid "Knowledge Base"
+msgstr ""
+
+#: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 #, fuzzy
 msgid "Label"
 msgstr "Етикет"
 
-#: src/app/routes.js:260 src/component/navigation.vue:317
-#: src/component/navigation.vue:1262 src/dialog/photo/edit.vue:39
-#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:215
-#: src/pages/settings/general.vue:382
+#: src/app/routes.js:289 src/component/navigation.vue:315
+#: src/component/navigation.vue:1209 src/dialog/photo/edit.vue:39
+#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
+#: src/page/settings/general.vue:184
 #, fuzzy
 msgid "Labels"
 msgstr "Етикети"
 
-#: src/component/label/clipboard.vue:45
+#: src/component/label/clipboard.vue:62
 msgid "Labels deleted"
 msgstr "Изтрити етикети"
 
-#: src/options/options.js:445
+#: src/options/options.js:409
 #, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Запазване на детайлите, минимални артефакти"
 
-#: src/pages/settings/general.vue:94
+#: src/page/settings/general.vue:92
 #, fuzzy
 msgid "Language"
 msgstr "Език"
 
-#: src/pages/settings/sync.vue:30
+#: src/page/settings/services.vue:30
 #, fuzzy
 msgid "Last Sync"
 msgstr "Синхронизиране"
 
-#: src/dialog/photo/details.vue:291 src/dialog/photo/info.vue:135
+#: src/dialog/photo/edit/details.vue:305 src/dialog/photo/edit/info.vue:135
 #, fuzzy
 msgid "Latitude"
 msgstr "Географска ширина"
 
-#: src/options/options.js:249
+#: src/options/themes.js:437
 #, fuzzy
 msgid "Lavender"
 msgstr "Лавандула"
 
-#: src/dialog/photo/details.vue:403
+#: src/page/about/about.vue:55
+msgid "Learn more"
+msgstr ""
+
+#: src/component/navigation.vue:588
+msgid "Legal Information"
+msgstr ""
+
+#: src/dialog/photo/edit/details.vue:425
 #, fuzzy
 msgid "Lens"
 msgstr "Обектив"
 
-#: src/app/routes.js:292 src/app/routes.js:299 src/app/routes.js:306
-#: src/component/navigation.vue:356 src/component/navigation.vue:366
-#: src/component/navigation.vue:4 src/component/navigation.vue:1399
-#: src/pages/settings.vue:41 src/pages/settings/general.vue:404
+#: src/app/routes.js:325 src/app/routes.js:332 src/app/routes.js:339
+#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:4 src/component/navigation.vue:1346
+#: src/page/settings.vue:47 src/page/settings/general.vue:404
 #, fuzzy
 msgid "Library"
 msgstr "Библиотека"
 
-#: src/component/navigation.vue:442 src/component/navigation.vue:43
-#: src/dialog/photo/details.vue:544 src/pages/about/license.vue:4
+#: src/component/navigation.vue:440 src/component/navigation.vue:43
+#: src/dialog/photo/edit/details.vue:580 src/page/about/license.vue:4
 #, fuzzy
 msgid "License"
 msgstr "Лиценз"
 
-#: src/component/photo-viewer.vue:147
+#: src/component/photo-viewer.vue:144
 #, fuzzy
 msgid "Like"
 msgstr "Като"
 
-#: src/options/options.js:423
+#: src/options/options.js:387
 #, fuzzy
 msgid "Lime"
 msgstr "Lime"
 
-#: src/pages/library/files.vue:307
+#: src/page/library/browse.vue:315
 #, fuzzy
 msgid "Limit reached, showing first %{n} files"
 msgstr "Лимитът е достигнат, показваме първите %{n} файлове"
 
-#: src/options/options.js:447
+#: src/options/options.js:411
 #, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Линейни: Много гладка, най-добра производителност"
@@ -1463,38 +1601,41 @@ msgstr "Линейни: Много гладка, най-добра произв�
 msgid "Link"
 msgstr "Връзка"
 
-#: src/component/album/toolbar.vue:52 src/component/photo/toolbar.vue:47
+#: src/component/album/toolbar.vue:60 src/component/photo/toolbar.vue:47
 #, fuzzy
 msgid "List"
 msgstr "Списък"
 
-#: src/app/routes.js:181 src/component/navigation.vue:217
-#: src/component/photo/cards.vue:218 src/component/photo/list.vue:187
-#: src/component/photo/mosaic.vue:191 src/options/options.js:339
-#: src/share/photo/cards.vue:191 src/share/photo/list.vue:166
-#: src/share/photo/mosaic.vue:172
+#: src/app/routes.js:204 src/component/photo/cards.vue:292
+#: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
+#: src/options/options.js:303
 #, fuzzy
 msgid "Live"
 msgstr "На живо"
 
-#: src/dialog/photo/details.vue:189 src/options/options.js:10
+#: src/component/navigation.vue:200
+#, fuzzy
+msgid "Live Photos"
+msgstr "Снимки"
+
+#: src/dialog/photo/edit/details.vue:193 src/options/options.js:10
 #, fuzzy
 msgid "Local Time"
 msgstr "Местно време"
 
-#: src/dialog/photo/labels.vue:39
+#: src/dialog/photo/edit/labels.vue:39
 #, fuzzy
 msgid "location"
 msgstr "местоположение"
 
-#: src/component/photo/cards.vue:591 src/component/photo/list.vue:59
-#: src/dialog/album/edit.vue:123 src/share/photo/cards.vue:417
-#: src/share/photo/list.vue:55
+#: src/page/settings/account.vue:707 src/component/photo/cards.vue:512
+#: src/component/photo/list.vue:138 src/dialog/album/edit.vue:125
+#: src/page/settings/account.vue:560
 #, fuzzy
 msgid "Location"
 msgstr "Местоположение"
 
-#: src/pages/library/errors.vue:37 src/pages/library/errors.vue:1
+#: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 #, fuzzy
 msgid ""
 "Log messages appear here whenever PhotoPrism comes across broken files, or "
@@ -1503,47 +1644,53 @@ msgstr ""
 "Съобщенията в дневника се появяват тук, когато PhotoPrism се натъкне на "
 "повредени файлове или има други потенциални проблеми."
 
-#: src/component/navigation.vue:456 src/component/navigation.vue:1735
+#: src/component/navigation.vue:454 src/component/navigation.vue:1686
+#: src/component/navigation.vue:1960
 #, fuzzy
 msgid "Login"
 msgstr "Вход"
 
-#: src/component/navigation.vue:503 src/component/navigation.vue:1845
-#: src/component/navigation.vue:1876
+#: src/component/navigation.vue:501 src/component/navigation.vue:1797
+#: src/component/navigation.vue:1828 src/component/navigation.vue:1879
 #, fuzzy
 msgid "Logout"
 msgstr "Излизане от системата"
 
-#: src/pages/library.vue:55 src/pages/settings/general.vue:426
+#: src/component/navigation.vue:569 src/page/library.vue:58
+#: src/page/settings/general.vue:448
 #, fuzzy
 msgid "Logs"
 msgstr "Дневници"
 
-#: src/dialog/photo/details.vue:315 src/dialog/photo/info.vue:143
+#: src/dialog/photo/edit/details.vue:331 src/dialog/photo/edit/info.vue:143
 #, fuzzy
 msgid "Longitude"
 msgstr "Дължина"
 
-#: src/options/options.js:358
+#: src/options/options.js:322
 msgid "Low"
 msgstr "Нисък"
 
-#: src/options/options.js:417
+#: src/options/options.js:381
 #, fuzzy
 msgid "Magenta"
 msgstr "Магента"
 
-#: src/dialog/photo/files.vue:169 src/dialog/photo/files.vue:166
+#: src/dialog/photo/edit/files.vue:169 src/dialog/photo/edit/files.vue:166
 #, fuzzy
 msgid "Main Color"
 msgstr "Основен цвят"
 
-#: src/dialog/photo/labels.vue:35
+#: src/options/options.js:415
+msgid "Male"
+msgstr ""
+
+#: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
 msgid "manual"
 msgstr "Ръководство"
 
-#: src/dialog/account/edit.vue:51
+#: src/dialog/service/edit.vue:53
 #, fuzzy
 msgid "Manual Upload"
 msgstr "Ръчно качване"
@@ -1553,7 +1700,7 @@ msgstr "Ръчно качване"
 msgid "Marker"
 msgstr "Маркер"
 
-#: src/options/options.js:289
+#: src/options/options.js:253
 #, fuzzy
 msgid "Medium"
 msgstr "Среден"
@@ -1563,175 +1710,185 @@ msgstr "Среден"
 msgid "Merge %{a} with %{b}?"
 msgstr "Сливане на %{a} с %{b}?"
 
-#: src/pages/about/feedback.vue:27
+#: src/page/about/feedback.vue:34 src/page/about/feedback.vue:27
 #, fuzzy
 msgid "Message sent"
 msgstr "Изпратено съобщение"
 
-#: src/component/navigation.vue:369
+#: src/component/navigation.vue:251
 #, fuzzy
 msgid "Minimize"
 msgstr "Минимизиране на"
 
-#: src/dialog/photo/files.vue:181 src/dialog/photo/files.vue:178
+#: src/dialog/photo/edit/files.vue:181 src/dialog/photo/edit/files.vue:178
 #, fuzzy
 msgid "Missing"
 msgstr "Липсващ"
 
-#: src/app/routes.js:115 src/app/routes.js:122 src/component/navigation.vue:257
-#: src/component/navigation.vue:1054 src/pages/settings/general.vue:360
+#: src/app/routes.js:138 src/component/navigation.vue:240
+#: src/component/navigation.vue:944 src/page/settings/general.vue:162
 #, fuzzy
 msgid "Moments"
 msgstr "Моменти"
 
-#: src/component/navigation.vue:102
+#: src/component/navigation.vue:85
 #, fuzzy
 msgid "Monochrome"
 msgstr "Монохромен"
 
-#: src/component/photo/toolbar.vue:297 src/dialog/photo/details.vue:142
+#: src/page/settings/account.vue:469 src/component/photo/toolbar.vue:291
+#: src/dialog/photo/edit/details.vue:142 src/page/settings/account.vue:468
 #, fuzzy
 msgid "Month"
 msgstr "Месец"
 
-#: src/options/options.js:234
+#: src/options/themes.js:422
 #, fuzzy
 msgid "Moonlight"
 msgstr "Лунна светлина"
 
-#: src/pages/album/photos.vue:349 src/pages/photos.vue:389
-#: src/share/photos.vue:357
+#: src/page/album/photos.vue:396 src/page/photos.vue:493
 #, fuzzy
 msgid "More than %{n} pictures found"
 msgstr "Намерени са повече от %{n} снимки"
 
-#: src/pages/albums.vue:389 src/share/albums.vue:308
+#: src/page/albums.vue:424
 #, fuzzy
 msgid "More than 20 albums found"
 msgstr "Намерени са повече от 20 албума"
 
-#: src/pages/labels.vue:384
+#: src/page/labels.vue:425
 #, fuzzy
 msgid "More than 20 labels found"
 msgstr "Намерени са повече от 20 етикета"
 
-#: src/pages/people/subjects.vue:473
+#: src/page/people/recognized.vue:511
 #, fuzzy
 msgid "More than 20 people found"
 msgstr "Повече от 20 души са открити"
 
-#: src/component/album/toolbar.vue:50 src/component/photo/toolbar.vue:45
+#: src/component/album/toolbar.vue:58 src/component/photo/toolbar.vue:45
 #, fuzzy
 msgid "Mosaic"
 msgstr "Мозайка"
 
-#: src/component/album/toolbar.vue:63 src/component/photo/toolbar.vue:56
-#: src/dialog/album/edit.vue:24
+#: src/component/album/toolbar.vue:71 src/dialog/album/edit.vue:25
 #, fuzzy
 msgid "Most relevant"
 msgstr "Най-подходящи"
 
-#: src/pages/library/import.vue:132
+#: src/component/photo/toolbar.vue:53
+#, fuzzy
+msgid "Most Relevant"
+msgstr "Най-подходящи"
+
+#: src/page/library/import.vue:119
 #, fuzzy
 msgid "Move Files"
 msgstr "Преместване на файлове"
 
-#: src/pages/settings/account.vue:85
+#: src/dialog/account/password.vue:156
 #, fuzzy
 msgid "Must have at least 8 characters."
 msgstr "Най-малко 6 символа."
 
-#: src/component/photo/cards.vue:574 src/component/photo/list.vue:59
-#: src/component/photo/list.vue:246 src/dialog/account/edit.vue:402
-#: src/dialog/album/edit.vue:105 src/dialog/photo/files.vue:34
-#: src/dialog/photo/info.vue:31 src/dialog/photo/labels.vue:48
-#: src/dialog/photo/people.vue:21 src/dialog/photo/people.vue:230
-#: src/pages/about/feedback.vue:158 src/pages/auth/login.vue:81
-#: src/pages/auth/login.vue:85 src/pages/labels.vue:340
-#: src/pages/people/faces.vue:52 src/pages/people/faces.vue:307
-#: src/pages/people/subjects.vue:396 src/share/photo/cards.vue:403
-#: src/share/photo/list.vue:55 src/share/photo/list.vue:225
+#: src/page/about/feedback.vue:171 src/component/photo/cards.vue:500
+#: src/component/photo/list.vue:138 src/component/photo/list.vue:227
+#: src/dialog/album/edit.vue:104 src/dialog/photo/edit/files.vue:34
+#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
+#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
+#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
+#: src/page/labels.vue:339 src/page/login.vue:77 src/page/login.vue:81
+#: src/page/people/new.vue:52 src/page/people/new.vue:299
+#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 #, fuzzy
 msgid "Name"
 msgstr "Име"
 
-#: src/component/album/toolbar.vue:71 src/dialog/album/edit.vue:27
-#: src/dialog/photo/labels.vue:25 src/dialog/photo/people.vue:24
-#: src/pages/labels.vue:37 src/pages/library/files.vue:40
-#: src/pages/people/faces.vue:46 src/pages/people/subjects.vue:42
+#: src/component/album/toolbar.vue:79 src/dialog/album/edit.vue:28
+#: src/dialog/photo/edit/labels.vue:25 src/dialog/photo/edit/people.vue:24
+#: src/page/labels.vue:45 src/page/library/browse.vue:44
+#: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 #, fuzzy
 msgid "Name too long"
 msgstr "Прекалено дълго име"
 
-#: src/options/options.js:395 src/options/options.js:405
-#: src/pages/settings/sync.vue:50
+#: src/options/options.js:359 src/options/options.js:369
+#: src/page/settings/services.vue:54
 #, fuzzy
 msgid "Never"
 msgstr "Никога"
 
-#: src/pages/people.vue:26
+#: src/page/people.vue:29
 #, fuzzy
 msgid "New"
 msgstr "Нов"
 
-#: src/pages/settings/account.vue:81
+#: src/dialog/account/password.vue:153
 #, fuzzy
 msgid "New Password"
 msgstr "Нова парола"
 
-#: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:52
-#: src/dialog/album/edit.vue:20
+#: src/component/album/toolbar.vue:67 src/dialog/album/edit.vue:21
 #, fuzzy
 msgid "Newest first"
 msgstr "Най-новият първи"
 
+#: src/component/photo/toolbar.vue:51
+#, fuzzy
+msgid "Newest First"
+msgstr "Най-новият първи"
+
 #: src/dialog/people/merge.vue:15 src/dialog/photo/archive.vue:15
-#: src/dialog/photo/info.vue:287 src/dialog/photo/info.vue:308
-#: src/dialog/photo/info.vue:328 src/dialog/photo/info.vue:348
-#: src/dialog/photo/info.vue:368
+#: src/dialog/photo/edit/info.vue:259 src/dialog/photo/edit/info.vue:280
+#: src/dialog/photo/edit/info.vue:301 src/dialog/photo/edit/info.vue:322
+#: src/dialog/photo/edit/info.vue:342
 #, fuzzy
 msgid "No"
 msgstr "Не"
 
-#: src/pages/albums.vue:35 src/pages/albums.vue:382 src/share/albums.vue:18
-#: src/share/albums.vue:301
+#: src/page/albums.vue:35 src/page/albums.vue:417
 #, fuzzy
 msgid "No albums found"
 msgstr "Не са намерени албуми"
 
-#: src/dialog/photo/labels.vue:33 src/pages/labels.vue:31
-#: src/pages/labels.vue:377
+#: src/dialog/photo/edit/labels.vue:28 src/page/labels.vue:31
+#: src/page/labels.vue:418
 #, fuzzy
 msgid "No labels found"
 msgstr "Не са намерени етикети"
 
-#: src/dialog/photo/people.vue:5 src/pages/people/faces.vue:30
-#: src/pages/people/faces.vue:282 src/pages/people/faces.vue:368
-#: src/pages/people/subjects.vue:33 src/pages/people/subjects.vue:466
+#: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
+#: src/page/people/new.vue:282 src/page/people/new.vue:368
+#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
 #, fuzzy
 msgid "No people found"
 msgstr "Не са намерени хора"
 
-#: src/common/viewer.js:263 src/component/photo/cards.vue:7
-#: src/component/photo/list.vue:8 src/component/photo/mosaic.vue:7
-#: src/pages/album/photos.vue:342 src/pages/library/files.vue:34
-#: src/pages/photos.vue:382 src/pages/places.vue:207 src/pages/places.vue:267
-#: src/share/photo/cards.vue:7 src/share/photo/list.vue:8
-#: src/share/photo/mosaic.vue:7 src/share/photos.vue:350
+#: src/common/viewer.js:263 src/component/photo/cards.vue:8
+#: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
+#: src/component/photo/mosaic.vue:8 src/component/photo/mosaic.vue:6
+#: src/page/album/photos.vue:389 src/page/library/browse.vue:34
+#: src/page/photos.vue:486 src/page/places.vue:217 src/page/places.vue:279
 #, fuzzy
 msgid "No pictures found"
 msgstr "Не са намерени снимки"
 
-#: src/component/photo/cards.vue:4 src/component/photo/list.vue:5
-#: src/component/photo/mosaic.vue:4 src/share/photo/cards.vue:4
-#: src/share/photo/list.vue:5 src/share/photo/mosaic.vue:4
+#: src/component/photo/cards.vue:5 src/component/photo/cards.vue:3
+#: src/component/photo/list.vue:5 src/component/photo/mosaic.vue:5
+#: src/component/photo/mosaic.vue:3
 #, fuzzy
 msgid "No recently edited pictures"
 msgstr "Няма наскоро редактирани снимки"
 
-#: src/pages/settings/sync.vue:49
+#: src/dialog/share/upload.vue:66
 #, fuzzy
 msgid "No servers configured."
+msgstr "Няма конфигурирани сървъри."
+
+#: src/page/settings/services.vue:36
+#, fuzzy
+msgid "No services configured."
 msgstr "Няма конфигурирани сървъри."
 
 #: src/dialog/sponsor.vue:31
@@ -1739,12 +1896,12 @@ msgstr "Няма конфигурирани сървъри."
 msgid "No thanks"
 msgstr "Не, благодаря"
 
-#: src/component/photo-viewer.vue:94 src/dialog/video/viewer.vue:55
+#: src/component/photo-viewer.vue:97 src/dialog/video/viewer.vue:55
 #, fuzzy
 msgid "No video selected"
 msgstr "Не е избрано видео"
 
-#: src/pages/library/errors.vue:34 src/pages/library/errors.vue:1
+#: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 #, fuzzy
 msgid ""
 "No warnings or error containing this keyword. Note that search is case-"
@@ -1753,11 +1910,13 @@ msgstr ""
 "Няма предупреждения или грешки, съдържащи тази ключова дума. Обърнете "
 "внимание, че при търсенето се отчитат малки и големи букви."
 
-#: src/component/photo/cards.vue:13 src/component/photo/cards.vue:1
-#: src/component/photo/list.vue:14 src/component/photo/list.vue:1
-#: src/component/photo/list.vue:43 src/component/photo/mosaic.vue:13
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50
-#: src/pages/settings/library.vue:93
+#: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
+#: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
+#: src/component/photo/list.vue:15 src/component/photo/list.vue:3
+#: src/component/photo/list.vue:1 src/component/photo/list.vue:52
+#: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
+#: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
+#: src/dialog/upload.vue:50 src/page/settings/library.vue:91
 #, fuzzy
 msgid ""
 "Non-photographic and low-quality images require a review before they appear "
@@ -1766,7 +1925,7 @@ msgstr ""
 "Нефотографските изображения и изображенията с ниско качество изискват "
 "преглед, преди да се появят в резултатите от търсенето."
 
-#: src/options/options.js:281 src/options/options.js:362
+#: src/options/options.js:245 src/options/options.js:326
 #, fuzzy
 msgid "None"
 msgstr "Няма"
@@ -1776,7 +1935,7 @@ msgstr "Няма"
 msgid "Not Found"
 msgstr "Не е намерен"
 
-#: src/pages/library/import.vue:28
+#: src/page/library/import.vue:28
 #, fuzzy
 msgid ""
 "Note you may manually manage your originals folder and importing is optional."
@@ -1784,12 +1943,12 @@ msgstr ""
 "Имайте предвид, че можете да управлявате ръчно папката с оригинали, а "
 "импортирането не е задължително."
 
-#: src/pages/settings/sync.vue:35
+#: src/page/settings/services.vue:36
 #, fuzzy
 msgid "Note:"
 msgstr "Забележка:"
 
-#: src/dialog/account/add.vue:22
+#: src/dialog/service/add.vue:28
 #, fuzzy
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
@@ -1799,35 +1958,30 @@ msgstr ""
 "бъдат конфигурирани като отдалечена услуга за архивиране и качване на "
 "файлове."
 
-#: src/pages/settings/account.vue:20
-#, fuzzy
-msgid ""
-"Note: Updating the password will not revoke access from already "
-"authenticated users."
-msgstr ""
-"Забележка: Актуализирането на паролата не води до отнемане на достъпа на "
-"вече удостоверени потребители."
-
-#: src/dialog/photo/details.vue:612
+#: src/dialog/photo/edit/details.vue:654
 #, fuzzy
 msgid "Notes"
 msgstr "Бележки"
 
-#: src/pages/library/logs.vue:5
+#: src/page/library/logs.vue:5
 #, fuzzy
-msgid "Nothing to see here yet. Be patient."
+msgid "Nothing to see here yet."
 msgstr "Все още няма нищо за гледане тук. Бъдете търпеливи."
 
-#: src/component/navigation.vue:472 src/component/navigation.vue:1780
-#: src/options/options.js:300
+#: src/component/navigation.vue:470 src/component/navigation.vue:1731
+#: src/options/options.js:264
 #, fuzzy
 msgid "Offline"
 msgstr "Офлайн"
 
-#: src/component/album/toolbar.vue:60 src/component/photo/toolbar.vue:53
-#: src/dialog/album/edit.vue:21
+#: src/component/album/toolbar.vue:68 src/dialog/album/edit.vue:22
 #, fuzzy
 msgid "Oldest first"
+msgstr "Най-старият първи"
+
+#: src/component/photo/toolbar.vue:52
+#, fuzzy
+msgid "Oldest First"
 msgstr "Най-старият първи"
 
 #: src/dialog/webdav.vue:17
@@ -1835,135 +1989,135 @@ msgstr "Най-старият първи"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "В Windows въведете следния ресурс в диалоговия прозорец за връзка:"
 
-#: src/options/options.js:401
+#: src/options/options.js:365
 #, fuzzy
 msgid "Once a week"
 msgstr "Веднъж седмично"
 
-#: src/pages/albums.vue:384 src/share/albums.vue:303
+#: src/page/albums.vue:419
 #, fuzzy
 msgid "One album found"
 msgstr "Намерен е един албум"
 
-#: src/pages/library/files.vue:299
+#: src/page/library/browse.vue:307
 #, fuzzy
 msgid "One file found"
 msgstr "Намерен е един файл"
 
-#: src/dialog/share/upload.vue:74
+#: src/dialog/share/upload.vue:79
 #, fuzzy
 msgid "One file uploaded"
 msgstr "Качен е един файл"
 
-#: src/pages/library/files.vue:301
+#: src/page/library/browse.vue:309
 #, fuzzy
 msgid "One folder found"
 msgstr "Намерена е една папка"
 
-#: src/pages/labels.vue:379
+#: src/page/labels.vue:420
 #, fuzzy
 msgid "One label found"
 msgstr "Намерен е един етикет"
 
-#: src/pages/people/faces.vue:284 src/pages/people/faces.vue:370
-#: src/pages/people/subjects.vue:468
+#: src/page/people/new.vue:284 src/page/people/new.vue:370
+#: src/page/people/recognized.vue:506
 #, fuzzy
 msgid "One person found"
 msgstr "Един човек намери"
 
-#: src/pages/album/photos.vue:344 src/pages/photos.vue:384
-#: src/share/photos.vue:352
+#: src/page/album/photos.vue:391 src/page/photos.vue:488
 #, fuzzy
 msgid "One picture found"
 msgstr "Една намерена снимка"
 
-#: src/options/options.js:239
+#: src/options/themes.js:427
 #, fuzzy
 msgid "Onyx"
 msgstr "Оникс"
 
-#: src/pages/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:6
 #, fuzzy
 msgid "Options"
 msgstr "Опции"
 
-#: src/pages/about/about.vue:49
+#: src/page/about/about.vue:69
 #, fuzzy
 msgid "or ask in our Community Chat"
 msgstr "или попитайте в нашия чат в общността"
 
-#: src/options/options.js:420
+#: src/options/options.js:384
 #, fuzzy
 msgid "Orange"
 msgstr "Orange"
 
-#: src/dialog/photo/files.vue:155 src/dialog/photo/files.vue:152
+#: src/page/settings/account.vue:587
+#, fuzzy
+msgid "Organization"
+msgstr "Ориентация"
+
+#: src/dialog/photo/edit/files.vue:155 src/dialog/photo/edit/files.vue:152
 #, fuzzy
 msgid "Orientation"
 msgstr "Ориентация"
 
-#: src/pages/library/import.vue:27
+#: src/page/library/import.vue:27
 #, fuzzy
 msgid "Original file names will be stored and indexed."
 msgstr "Оригиналните имена на файловете ще бъдат съхранени и индексирани."
 
-#: src/dialog/photo/files.vue:77 src/dialog/photo/files.vue:74
-#: src/dialog/photo/info.vue:37
+#: src/dialog/photo/edit/files.vue:77 src/dialog/photo/edit/files.vue:74
+#: src/dialog/photo/edit/info.vue:37
 #, fuzzy
 msgid "Original Name"
 msgstr "Оригинално име"
 
-#: src/component/navigation.vue:375 src/dialog/account/edit.vue:104
-#: src/model/file.js:194 src/pages/library/files.vue:6
-#: src/pages/settings/general.vue:316
+#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/model/file.js:194 src/page/library/browse.vue:6
+#: src/page/settings/general.vue:426
 #, fuzzy
 msgid "Originals"
 msgstr "Оригинали"
 
-#: src/options/options.js:440
+#: src/options/options.js:404 src/options/options.js:417
 #, fuzzy
 msgid "Other"
 msgstr "Други"
 
-#: src/pages/about/about.vue:15
-#, fuzzy
+#: src/page/about/about.vue:48
 msgid ""
-"Our mission is to provide the most user- and privacy-friendly solution to "
-"keep your pictures organized and accessible."
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
 msgstr ""
-"Нашата мисия е да предоставим най-удобното за потребителя и поверителността "
-"решение за организиране и достъп до вашите снимки."
 
-#: src/options/options.js:319
+#: src/options/options.js:283
 #, fuzzy
 msgid "Outdoor"
 msgstr "На открито"
 
-#: src/dialog/photo/info.vue:118
+#: src/dialog/photo/edit/info.vue:118
 #, fuzzy
 msgid "Panorama"
 msgstr "Панорама"
 
-#: src/component/navigation.vue:110
+#: src/component/navigation.vue:93
 #, fuzzy
 msgid "Panoramas"
 msgstr "Панорами"
 
-#: src/dialog/account/add.vue:105 src/dialog/account/edit.vue:456
-#: src/dialog/share.vue:24 src/pages/auth/login.vue:101
-#: src/pages/auth/login.vue:103
+#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
+#: src/dialog/share.vue:24 src/page/login.vue:98 src/page/login.vue:100
 #, fuzzy
 msgid "Password"
 msgstr "Парола"
 
-#: src/pages/settings/account.vue:22
+#: src/dialog/account/password.vue:30
 msgid "Password changed"
 msgstr "Паролата е променена"
 
-#: src/app/routes.js:266 src/app/routes.js:286 src/component/navigation.vue:231
-#: src/component/navigation.vue:966 src/dialog/photo/edit.vue:52
-#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:266
-#: src/pages/settings/general.vue:338
+#: src/app/routes.js:295 src/app/routes.js:319 src/component/navigation.vue:214
+#: src/component/navigation.vue:545 src/component/navigation.vue:854
+#: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
+#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:140
 #, fuzzy
 msgid "People"
 msgstr "Хора"
@@ -1974,16 +2128,20 @@ msgid "People you share a link with will be able to view public contents."
 msgstr ""
 "Хората, с които споделяте връзката, ще могат да виждат публичното съдържание."
 
-#: src/component/photo/clipboard.vue:99
+#: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
 msgstr "Постоянно изтрити"
 
-#: src/pages/settings/general.vue:207
+#: src/page/settings/general.vue:361
 #, fuzzy
 msgid "Permanently remove files to free up storage."
 msgstr "Постоянно премахване на файлове, за да освободите място за съхранение."
 
-#: src/model/photo.js:967
+#: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+msgid "Phone"
+msgstr ""
+
+#: src/model/photo.js:1057
 #, fuzzy
 msgid "Photo"
 msgstr "Снимка"
@@ -1993,42 +2151,41 @@ msgstr "Снимка"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism е актуализиран…"
 
-#: src/app/routes.js:108
+#: src/page/about/about.vue:15
+msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
+msgstr ""
+
+#: src/app/routes.js:131
 #, fuzzy
 msgid "Photos"
 msgstr "Снимки"
 
-#: src/options/options.js:418
+#: src/options/options.js:382
 #, fuzzy
 msgid "Pink"
 msgstr "Розов"
 
-#: src/dialog/photo/info.vue:126
+#: src/dialog/photo/edit/info.vue:126
 #, fuzzy
 msgid "Place"
 msgstr "Място"
 
-#: src/pages/settings/library.vue:173
+#: src/page/settings/library.vue:171
 #, fuzzy
 msgid "Place & Time"
 msgstr "Място & Време"
 
-#: src/app/routes.js:216 src/app/routes.js:222 src/app/routes.js:228
-#: src/app/routes.js:235 src/component/navigation.vue:283
-#: src/component/navigation.vue:293 src/component/navigation.vue:4
-#: src/component/navigation.vue:1144 src/pages/settings/general.vue:108
-#: src/pages/settings/general.vue:450
+#: src/app/routes.js:239 src/app/routes.js:245 src/app/routes.js:251
+#: src/app/routes.js:257 src/component/navigation.vue:280
+#: src/component/navigation.vue:290 src/component/navigation.vue:551
+#: src/component/navigation.vue:8 src/component/navigation.vue:18
+#: src/component/navigation.vue:4 src/component/navigation.vue:1089
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:494
 #, fuzzy
 msgid "Places"
 msgstr "Места"
 
-#: src/component/photo/cards.vue:293 src/component/photo/mosaic.vue:267
-#: src/share/photo/cards.vue:266 src/share/photo/mosaic.vue:248
-#, fuzzy
-msgid "Play"
-msgstr "Играйте"
-
-#: src/pages/settings/account.vue:110
+#: src/dialog/account/password.vue:182
 #, fuzzy
 msgid "Please confirm your new password."
 msgstr "Моля, потвърдете новата си парола."
@@ -2038,27 +2195,33 @@ msgstr "Моля, потвърдете новата си парола."
 msgid "Please don't upload photos containing offensive content."
 msgstr "Моля, не качвайте снимки с обидно съдържание."
 
-#: src/dialog/photo/files.vue:135 src/dialog/photo/files.vue:132
+#: src/dialog/account/password.vue:17
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+
+#: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 #, fuzzy
 msgid "Portrait"
 msgstr "Портрет"
 
-#: src/pages/about/about.vue:48
+#: src/page/about/about.vue:68
 #, fuzzy
 msgid "post your question in GitHub Discussions"
 msgstr "публикувайте въпроса си в GitHub Discussions"
 
-#: src/dialog/account/edit.vue:340
+#: src/dialog/service/edit.vue:358
 #, fuzzy
 msgid "Preserve filenames"
 msgstr "Запазване на имената на файловете"
 
-#: src/pages/library/import.vue:8
+#: src/page/library/import.vue:8
 #, fuzzy
 msgid "Press button to start importing…"
 msgstr "Натиснете бутона, за да започнете да внасяте…"
 
-#: src/pages/library/index.vue:9
+#: src/page/library/index.vue:9
 #, fuzzy
 msgid "Press button to start indexing…"
 msgstr "Натиснете бутона, за да започнете индексирането…"
@@ -2068,156 +2231,168 @@ msgstr "Натиснете бутона, за да започнете индек
 msgid "Press enter to create a new album."
 msgstr "Натиснете Enter, за да създадете нов албум."
 
-#: src/dialog/photo/files.vue:19 src/dialog/photo/files.vue:16
+#: src/dialog/photo/edit/files.vue:19 src/dialog/photo/edit/files.vue:16
 #, fuzzy
 msgid "Preview"
 msgstr "Преглед"
 
-#: src/dialog/photo/files.vue:35 src/dialog/photo/files.vue:119
-#: src/dialog/photo/files.vue:32 src/dialog/photo/files.vue:116
-#: src/dialog/photo/files.vue:28
+#: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:119
+#: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:116
+#: src/dialog/photo/edit/files.vue:28
 #, fuzzy
 msgid "Primary"
 msgstr "Първичен"
 
-#: src/app/routes.js:202 src/component/navigation.vue:343
-#: src/component/navigation.vue:1352 src/dialog/photo/info.vue:102
-#: src/pages/settings/general.vue:272
+#: src/app/routes.js:225 src/component/navigation.vue:341
+#: src/component/navigation.vue:1299 src/dialog/photo/edit/info.vue:102
+#: src/page/settings/general.vue:206
 #, fuzzy
 msgid "Private"
 msgstr "Частна"
 
-#: src/options/options.js:436
+#: src/page/about/feedback.vue:6 src/options/options.js:400
 #, fuzzy
 msgid "Product Feedback"
 msgstr "Отзиви за продукта"
 
-#: src/dialog/photo/files.vue:143 src/dialog/photo/files.vue:140
+#: src/dialog/photo/edit/files.vue:143 src/dialog/photo/edit/files.vue:140
 #, fuzzy
 msgid "Projection"
 msgstr "Прожектиране"
 
-#: src/options/options.js:416
+#: src/options/options.js:380
 #, fuzzy
 msgid "Purple"
 msgstr "Лилаво"
 
-#: src/pages/settings/library.vue:92
+#: src/page/settings/library.vue:90
 #, fuzzy
 msgid "Quality Filter"
 msgstr "Филтър за качество"
 
-#: src/dialog/photo/info.vue:59
+#: src/dialog/photo/edit/info.vue:59
 #, fuzzy
 msgid "Quality Score"
 msgstr "Оценка на качеството"
 
-#: src/pages/discover.vue:16
+#: src/page/discover.vue:16
 #, fuzzy
 msgid "Random"
 msgstr "Случаен"
 
-#: src/options/options.js:259
+#: src/options/themes.js:447
 #, fuzzy
 msgid "Raspberry"
 msgstr "Малина"
 
-#: src/options/options.js:335
+#: src/options/options.js:299
 #, fuzzy
 msgid "Raw"
 msgstr "Суров"
 
-#: src/component/photo/cards.vue:208 src/component/photo/mosaic.vue:181
-#: src/share/photo/cards.vue:181 src/share/photo/mosaic.vue:162
+#: src/component/photo/cards.vue:285 src/component/photo/mosaic.vue:206
 #, fuzzy
 msgid "RAW"
 msgstr "RAW"
 
-#: src/pages/settings/advanced.vue:96
+#: src/page/settings/advanced.vue:96
 #, fuzzy
 msgid "RAW Conversion"
 msgstr "Конвертиране на RAW"
 
-#: src/pages/library/index.vue:124
+#: src/page/library/index.vue:116
 #, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 "Индексирайте отново всички оригинали, включително вече индексираните и "
 "непроменените файлове."
 
-#: src/pages/settings/advanced.vue:99
+#: src/page/about/about.vue:51
+msgid "Read the Docs"
+msgstr ""
+
+#: src/page/settings/advanced.vue:96
 #, fuzzy
 msgid "Read-Only Mode"
 msgstr "Режим само за четене"
 
-#: src/component/album/toolbar.vue:57 src/component/photo/toolbar.vue:50
-#: src/dialog/album/edit.vue:18
+#: src/component/album/toolbar.vue:65 src/dialog/album/edit.vue:19
 #, fuzzy
 msgid "Recently added"
 msgstr "Наскоро добавени"
 
-#: src/component/album/toolbar.vue:58 src/component/photo/toolbar.vue:51
-#: src/dialog/album/edit.vue:19
+#: src/component/photo/toolbar.vue:50
+#, fuzzy
+msgid "Recently Added"
+msgstr "Наскоро добавени"
+
+#: src/component/album/toolbar.vue:66 src/dialog/album/edit.vue:20
 #, fuzzy
 msgid "Recently edited"
 msgstr "Наскоро редактирани"
 
-#: src/dialog/photo/people.vue:9 src/pages/people/faces.vue:34
-#: src/pages/people/subjects.vue:38
+#: src/component/photo/toolbar.vue:58
+#, fuzzy
+msgid "Recently Edited"
+msgstr "Наскоро редактирани"
+
+#: src/dialog/photo/edit/people.vue:9 src/page/people/new.vue:33
+#: src/page/people/recognized.vue:40
 #, fuzzy
 msgid "Recognition starts after indexing has been completed."
 msgstr "Разпознаването започва след приключване на индексирането."
 
-#: src/pages/people.vue:17
+#: src/page/people.vue:17
 #, fuzzy
 msgid "Recognized"
 msgstr "Признат"
 
-#: src/pages/settings/general.vue:339
+#: src/page/settings/general.vue:141
 #, fuzzy
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Разпознава лица, за да може да се открият конкретни хора."
 
-#: src/options/options.js:419
+#: src/options/options.js:383
 #, fuzzy
 msgid "Red"
 msgstr "Червено"
 
-#: src/component/album/toolbar.vue:54 src/component/photo/toolbar.vue:60
-#: src/dialog/reload.vue:15 src/pages/albums.vue:141 src/pages/labels.vue:94
-#: src/pages/library/errors.vue:76 src/pages/library/files.vue:100
-#: src/pages/people/faces.vue:65 src/pages/people/subjects.vue:106
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1893
+#: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
+#: src/page/albums.vue:126 src/page/labels.vue:85
+#: src/page/library/browse.vue:91 src/page/library/errors.vue:70
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
 #, fuzzy
 msgid "Reload"
 msgstr "Презареждане"
 
-#: src/component/navigation.vue:100 src/dialog/reload.vue:26
-#: src/pages/settings/general.vue:99 src/pages/settings/library.vue:46
+#: src/component/navigation.vue:124 src/dialog/reload.vue:26
+#: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 #, fuzzy
 msgid "Reloading…"
 msgstr "Презареждане…"
 
-#: src/dialog/account/edit.vue:96
+#: src/dialog/service/edit.vue:98
 #, fuzzy
 msgid "Remote Sync"
 msgstr "Дистанционна синхронизация"
 
-#: src/dialog/photo/people.vue:108
+#: src/dialog/photo/edit/people.vue:103
 #, fuzzy
 msgid "Remove"
 msgstr "Премахване на"
 
-#: src/component/photo/clipboard.vue:138
+#: src/component/photo/clipboard.vue:159
 #, fuzzy
 msgid "remove failed: unknown album"
 msgstr "Премахването е неуспешно: непознат албум"
 
-#: src/component/photo/clipboard.vue:261
+#: src/component/photo/clipboard.vue:249
 #, fuzzy
 msgid "Remove from album"
 msgstr "Премахване от албума"
 
-#: src/pages/library/import.vue:133
+#: src/page/library/import.vue:120
 #, fuzzy
 msgid ""
 "Remove imported files to save storage. Unsupported file types will never be "
@@ -2227,141 +2402,145 @@ msgstr ""
 "Неподдържаните типове файлове никога не се изтриват, те остават в текущото "
 "си местоположение."
 
-#: src/common/api.js:74
+#: src/common/api.js:74 src/page/connect.vue:38
 #, fuzzy
 msgid "Request failed - invalid response"
 msgstr "Заявката е неуспешна - невалиден отговор"
 
-#: src/pages/about/feedback.vue:117 src/pages/about/feedback.vue:137
-#: src/pages/about/feedback.vue:179
+#: src/page/about/feedback.vue:130 src/page/about/feedback.vue:150
+#: src/page/about/feedback.vue:192 src/page/settings/account.vue:195
+#: src/page/settings/account.vue:194
 #, fuzzy
 msgid "Required"
 msgstr "Изисква се"
 
-#: src/dialog/photo/info.vue:67
+#: src/dialog/photo/edit/info.vue:67
 #, fuzzy
 msgid "Resolution"
 msgstr "Резолюция"
 
-#: src/component/photo/clipboard.vue:239
+#: src/component/photo/clipboard.vue:227
 #, fuzzy
 msgid "Restore"
 msgstr "Възстановяване на"
 
-#: src/dialog/account/edit.vue:535
+#: src/dialog/service/edit.vue:572
 #, fuzzy
 msgid "Retry Limit"
 msgstr "Лимит на повторенията"
 
-#: src/pages/settings/account.vue:106
+#: src/dialog/account/password.vue:179
 #, fuzzy
 msgid "Retype Password"
 msgstr "Повторно въвеждане на паролата"
 
-#: src/app/routes.js:195 src/component/navigation.vue:142
+#: src/app/routes.js:218 src/component/navigation.vue:125
 #, fuzzy
 msgid "Review"
 msgstr "Преглед на"
 
-#: src/dialog/account/edit.vue:105 src/dialog/album/edit.vue:45
-#: src/dialog/share.vue:61
+#: src/dialog/account/password.vue:39 src/dialog/album/edit.vue:45
+#: src/dialog/service/edit.vue:107 src/dialog/share.vue:61
 #, fuzzy
 msgid "Save"
 msgstr "Запазете"
 
-#: src/dialog/photo/info.vue:110
+#: src/dialog/photo/edit/info.vue:110
 #, fuzzy
 msgid "Scan"
 msgstr "Сканиране"
 
-#: src/component/navigation.vue:134
+#: src/component/navigation.vue:117
 #, fuzzy
 msgid "Scans"
 msgstr "Сканиране"
 
-#: src/component/navigation.vue:82 src/component/navigation.vue:92
-#: src/component/navigation.vue:4 src/component/navigation.vue:448
-#: src/component/photo/toolbar.vue:50 src/pages/albums.vue:114
-#: src/pages/labels.vue:81 src/pages/library/errors.vue:65
-#: src/pages/people/subjects.vue:88 src/pages/places.vue:34
+#: src/component/navigation.vue:65 src/component/navigation.vue:75
+#: src/component/navigation.vue:533 src/component/navigation.vue:4
+#: src/component/navigation.vue:330 src/component/photo/toolbar.vue:44
+#: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
+#: src/page/people/recognized.vue:78 src/page/places.vue:38
 #, fuzzy
 msgid "Search"
 msgstr "Търсене"
 
-#: src/pages/settings/general.vue:451
+#: src/page/settings/general.vue:495
 #, fuzzy
 msgid "Search and display photos on a map."
 msgstr "Търсене и показване на снимки на карта."
 
-#: src/pages/discover.vue:12
+#: src/page/discover.vue:12
 #, fuzzy
 msgid "Season"
 msgstr "Сезон"
 
-#: src/options/options.js:264
+#: src/options/themes.js:452
 #, fuzzy
 msgid "Seaweed"
 msgstr "Морски водорасли"
 
-#: src/dialog/share.vue:213
+#: src/dialog/share.vue:205
 #, fuzzy
 msgid "Secret"
 msgstr "Тайната"
 
-#: src/component/photo-viewer.vue:119
+#: src/page/settings/account.vue:44
+msgid "Security and Access"
+msgstr ""
+
+#: src/component/photo-viewer.vue:114
 #, fuzzy
 msgid "Select"
 msgstr "Изберете"
 
-#: src/dialog/upload.vue:138
+#: src/dialog/upload.vue:124
 #, fuzzy
 msgid "Select albums or create a new one"
 msgstr "Изберете албуми или създайте нов албум"
 
-#: src/component/photo/clipboard.vue:62
+#: src/component/photo/clipboard.vue:71
 msgid "Selection approved"
 msgstr "Одобрена селекция"
 
-#: src/component/photo/clipboard.vue:87
+#: src/component/photo/clipboard.vue:100
 msgid "Selection archived"
 msgstr "Архивирана селекция"
 
-#: src/component/photo/clipboard.vue:112
+#: src/component/photo/clipboard.vue:133
 msgid "Selection restored"
 msgstr "Възстановена селекция"
 
-#: src/pages/about/feedback.vue:39
+#: src/page/about/feedback.vue:45
 #, fuzzy
 msgid "Send"
 msgstr "Изпрати"
 
-#: src/pages/settings/library.vue:215
+#: src/page/settings/library.vue:213
 #, fuzzy
 msgid "Sequential Name"
 msgstr "Последователно име"
 
-#: src/pages/settings/sync.vue:26
-#, fuzzy
-msgid "Server"
-msgstr "Сървър"
-
-#: src/dialog/account/add.vue:65 src/dialog/account/edit.vue:420
+#: src/dialog/service/add.vue:82 src/dialog/service/edit.vue:447
 #: src/dialog/share.vue:22
 #, fuzzy
 msgid "Service URL"
 msgstr "URL адрес на услугата"
 
-#: src/app/routes.js:314 src/app/routes.js:326 src/app/routes.js:338
-#: src/app/routes.js:350 src/app/routes.js:362 src/component/navigation.vue:407
-#: src/component/navigation.vue:417 src/component/navigation.vue:8
+#: src/page/settings.vue:71 src/page/settings/general.vue:382
+#, fuzzy
+msgid "Services"
+msgstr "URL адрес на услугата"
+
+#: src/app/routes.js:347 src/app/routes.js:359 src/app/routes.js:372
+#: src/app/routes.js:385 src/app/routes.js:397 src/component/navigation.vue:405
+#: src/component/navigation.vue:415 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1573
+#: src/component/navigation.vue:1520 src/component/navigation.vue:1926
 #, fuzzy
 msgid "Settings"
 msgstr "Настройки"
 
-#: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:103
-#: src/pages/settings/library.vue:50
+#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 msgid "Settings saved"
 msgstr "Запазени настройки"
 
@@ -2370,13 +2549,13 @@ msgstr "Запазени настройки"
 msgid "Setup"
 msgstr "Настройка"
 
-#: src/options/options.js:269
+#: src/options/themes.js:457
 #, fuzzy
 msgid "Shadow"
 msgstr "Сянка"
 
-#: src/component/album/clipboard.vue:70 src/component/album/toolbar.vue:88
-#: src/component/photo/clipboard.vue:77 src/pages/settings/general.vue:250
+#: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
+#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:294
 #, fuzzy
 msgid "Share"
 msgstr "Споделете"
@@ -2386,47 +2565,41 @@ msgstr "Споделете"
 msgid "Share %{name}"
 msgstr "Споделяне на %{име}"
 
-#: src/share/albums.vue:51
-#, fuzzy
-msgid "Shared with you."
-msgstr "Споделено с вас."
+#: src/page/settings/general.vue:383
+msgid "Share your pictures with other apps and services."
+msgstr ""
 
-#: src/pages/people/faces.vue:227 src/pages/people/subjects.vue:288
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 #, fuzzy
 msgid "Show"
 msgstr "Покажи"
 
-#: src/pages/people/faces.vue:66
+#: src/page/people/new.vue:65
 #, fuzzy
 msgid "Show all new faces"
 msgstr "Покажи всички нови лица"
 
-#: src/pages/people/faces.vue:83 src/pages/people/subjects.vue:124
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
 #, fuzzy
 msgid "Show hidden"
 msgstr "Покажи скритите"
 
-#: src/pages/labels.vue:129
+#: src/page/labels.vue:120
 #, fuzzy
 msgid "Show less"
 msgstr "Покажи по-малко"
 
-#: src/pages/settings/general.vue:405
-#, fuzzy
-msgid "Show Library in navigation menu."
-msgstr "Показване на библиотека в навигационното меню."
-
-#: src/pages/labels.vue:112
+#: src/page/labels.vue:103
 #, fuzzy
 msgid "Show more"
 msgstr "Покажи повече"
 
-#: src/pages/settings/general.vue:427
+#: src/page/settings/general.vue:449
 #, fuzzy
 msgid "Show server logs in Library."
 msgstr "Показване на дневниците на сървъра в Библиотеката."
 
-#: src/pages/settings/advanced.vue:78
+#: src/page/settings/advanced.vue:75
 #, fuzzy
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Показва по-подробни съобщения в дневника. Изисква рестартиране."
@@ -2436,7 +2609,7 @@ msgstr "Показва по-подробни съобщения в дневни�
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/pages/auth/login.vue:17
+#: src/page/login.vue:17
 #, fuzzy
 msgid "Sign in"
 msgstr "Влезте"
@@ -2446,39 +2619,38 @@ msgstr "Влезте"
 msgid "Sign Up"
 msgstr "Регистрирайте се"
 
-#: src/pages/discover.vue:8
+#: src/page/discover.vue:8
 #, fuzzy
 msgid "Similar"
 msgstr "Подобни"
 
-#: src/dialog/account/edit.vue:219 src/dialog/photo/files.vue:83
-#: src/dialog/photo/files.vue:80 src/dialog/photo/files.vue:36
+#: src/dialog/photo/edit/files.vue:83 src/dialog/photo/edit/files.vue:80
+#: src/dialog/photo/edit/files.vue:36 src/dialog/service/edit.vue:226
 #, fuzzy
 msgid "Size"
 msgstr "Размер"
 
-#: src/options/options.js:293
+#: src/options/options.js:257
 #, fuzzy
 msgid "Slow"
 msgstr "Бавен"
 
-#: src/component/album/toolbar.vue:61 src/component/photo/toolbar.vue:54
-#: src/dialog/album/edit.vue:22
+#: src/component/album/toolbar.vue:69 src/dialog/album/edit.vue:23
 #, fuzzy
 msgid "Sort by file name"
 msgstr "Сортиране по име на файл"
 
-#: src/component/photo/toolbar.vue:253 src/dialog/album/edit.vue:180
+#: src/component/photo/toolbar.vue:247 src/dialog/album/edit.vue:189
 #, fuzzy
 msgid "Sort Order"
 msgstr "Ред на сортиране"
 
-#: src/dialog/photo/labels.vue:21
+#: src/dialog/photo/edit/labels.vue:21
 #, fuzzy
 msgid "Source"
 msgstr "Източник:"
 
-#: src/pages/about/about.vue:30
+#: src/page/about/about.vue:25
 #, fuzzy
 msgid ""
 "Sponsors get access to additional features, receive direct technical support "
@@ -2488,20 +2660,19 @@ msgstr ""
 "техническа поддръжка по имейл и могат да се присъединят към нашата частна "
 "чат стая в matrix.org."
 
-#: src/component/photo/cards.vue:248 src/component/photo/mosaic.vue:221
-#: src/share/photo/cards.vue:221 src/share/photo/mosaic.vue:202
+#: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 #, fuzzy
 msgid "Stack"
 msgstr "Стек"
 
-#: src/pages/settings/library.vue:195
+#: src/page/settings/library.vue:193
 #, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr ""
 "Стекиране на файлове с един и същ уникален идентификатор на изображение или "
 "инстанция."
 
-#: src/pages/settings/library.vue:174
+#: src/page/settings/library.vue:172
 #, fuzzy
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
@@ -2510,17 +2681,17 @@ msgstr ""
 "Подреждайте снимки, направени по едно и също време и на едно и също място, "
 "въз основа на техните метаданни."
 
-#: src/dialog/photo/info.vue:86
+#: src/dialog/photo/edit/info.vue:86
 #, fuzzy
 msgid "Stackable"
 msgstr "Подвижен за стифиране"
 
-#: src/component/navigation.vue:126 src/pages/settings/library.vue:34
+#: src/component/navigation.vue:109 src/page/settings/library.vue:34
 #, fuzzy
 msgid "Stacks"
 msgstr "Stacks"
 
-#: src/pages/settings/library.vue:140
+#: src/page/settings/library.vue:138
 #, fuzzy
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
@@ -2529,52 +2700,57 @@ msgstr ""
 "В стекове се групират файлове със сходна референтна рамка, но с различно "
 "качество, формат, размер или цвят."
 
-#: src/pages/library/index.vue:31
+#: src/page/library/index.vue:31
 #, fuzzy
 msgid "Start"
 msgstr "Начало"
 
-#: src/component/photo-viewer.vue:183
+#: src/component/photo-viewer.vue:181
 #, fuzzy
 msgid "Start/Stop Slideshow"
 msgstr "Стартиране/спиране на слайдшоу"
 
-#: src/component/navigation.vue:303
+#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:28 src/component/navigation.vue:1036
 #, fuzzy
 msgid "States"
 msgstr "Държави"
 
-#: src/pages/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:371
 #, fuzzy
 msgid "Static Size Limit: %{n}px"
 msgstr "Ограничение на статичния размер: %{n}px"
 
-#: src/dialog/photo/files.vue:38
+#: src/dialog/photo/edit/files.vue:38
 #, fuzzy
 msgid "Status"
 msgstr "Статус"
 
-#: src/dialog/photo/files.vue:71 src/dialog/photo/files.vue:68
+#: src/dialog/photo/edit/files.vue:71 src/dialog/photo/edit/files.vue:68
 #, fuzzy
 msgid "Storage"
 msgstr "Папка за съхранение"
 
-#: src/options/options.js:304
+#: src/options/options.js:268
 #, fuzzy
 msgid "Streets"
 msgstr "Улици"
 
-#: src/pages/settings/general.vue:511
+#: src/page/settings/general.vue:556
 #, fuzzy
 msgid "Style"
 msgstr "Стил"
 
-#: src/dialog/photo/details.vue:473 src/model/subject.js:158
+#: src/dialog/photo/edit/details.vue:503 src/model/subject.js:157
 #, fuzzy
 msgid "Subject"
 msgstr "Тема"
 
-#: src/dialog/account/add.vue:23
+#: src/page/connect.vue:33
+msgid "Successfully Connected"
+msgstr ""
+
+#: src/dialog/service/add.vue:29
 #, fuzzy
 msgid ""
 "Support for additional services, like Google Drive, will be added over time."
@@ -2582,48 +2758,42 @@ msgstr ""
 "Поддръжката на допълнителни услуги, като например Google Drive, ще бъде "
 "добавена с течение на времето."
 
-#: src/pages/settings.vue:63 src/pages/settings/sync.vue:28
+#: src/page/settings/services.vue:28
 #, fuzzy
 msgid "Sync"
 msgstr "Синхронизиране"
 
-#: src/dialog/account/edit.vue:377
+#: src/dialog/service/edit.vue:399
 #, fuzzy
 msgid "Sync raw and video files"
 msgstr "Синхронизиране на необработени и видеофайлове"
 
-#: src/component/photo/cards.vue:517 src/component/photo/list.vue:56
-#: src/dialog/photo/info.vue:52 src/share/photo/cards.vue:349
-#: src/share/photo/list.vue:52
+#: src/component/photo/cards.vue:463 src/component/photo/list.vue:136
+#: src/dialog/photo/edit/info.vue:52
 #, fuzzy
 msgid "Taken"
 msgstr "Взето"
 
-#: src/options/options.js:425
+#: src/options/options.js:389
 #, fuzzy
 msgid "Teal"
 msgstr "Teal"
 
-#: src/dialog/photo/details.vue:25 src/pages/people/faces.vue:55
+#: src/page/about/about.vue:37
+msgid "Terms &amp; Privacy"
+msgstr ""
+
+#: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 #, fuzzy
 msgid "Text too long"
 msgstr "Твърде дълъг текст"
 
-#: src/pages/library/index.vue:36
+#: src/page/library/index.vue:36
 #, fuzzy
 msgid "The index currently contains %{n} hidden files."
 msgstr "Индексът в момента съдържа %{n} скрити файлове."
 
-#: src/pages/about/about.vue:17
-#, fuzzy
-msgid ""
-"The roadmap shows what tasks are in progress, what needs testing, and which "
-"feature requests are going to be implemented next."
-msgstr ""
-"Пътната карта показва кои задачи са в процес на изпълнение, какво трябва да "
-"се тества и кои заявки за функции ще бъдат изпълнени след това."
-
-#: src/pages/library/index.vue:37
+#: src/page/library/index.vue:37
 #, fuzzy
 msgid ""
 "Their format may not be supported, they haven't been converted to JPEG yet "
@@ -2632,7 +2802,7 @@ msgstr ""
 "Възможно е техният формат да не се поддържа, да не са били конвертирани в "
 "JPEG или да има дубликати."
 
-#: src/pages/settings/general.vue:72
+#: src/page/settings/general.vue:70
 #, fuzzy
 msgid "Theme"
 msgstr "Тема"
@@ -2646,7 +2816,18 @@ msgstr ""
 "В момента това е функция на спонсор, за да благодарим на всички, които "
 "подкрепят разработването на това приложение."
 
-#: src/dialog/webdav.vue:26 src/pages/settings/sync.vue:37
+#: src/page/settings/services.vue:40
+#, fuzzy
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
+"          from your computer or smartphone as if they were local."
+msgstr ""
+"Това монтира папката с оригинали като мрежово устройство и ви позволява да "
+"отваряте, редактирате и изтривате файлове от компютъра или смартфона си, "
+"сякаш са локални."
+
+#: src/dialog/webdav.vue:26
 #, fuzzy
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
@@ -2657,153 +2838,163 @@ msgstr ""
 "отваряте, редактирате и изтривате файлове от компютъра или смартфона си, "
 "сякаш са локални."
 
-#: src/pages/settings/advanced.vue:253
+#: src/page/settings/advanced.vue:250
 #, fuzzy
 msgid "Thumbnail Generation"
 msgstr "Създаване на миниатюри"
 
-#: src/dialog/photo/details.vue:189
+#: src/dialog/photo/edit/details.vue:193
 #, fuzzy
 msgid "Time UTC"
 msgstr "Време UTC"
 
-#: src/dialog/photo/details.vue:213
+#: src/dialog/photo/edit/details.vue:219
 #, fuzzy
 msgid "Time Zone"
 msgstr "Часова зона"
 
-#: src/dialog/account/edit.vue:515
+#: src/dialog/service/edit.vue:550
 #, fuzzy
 msgid "Timeout"
 msgstr "Часова зона"
 
-#: src/component/photo/list.vue:55 src/dialog/photo/details.vue:97
-#: src/dialog/photo/info.vue:45 src/share/photo/list.vue:51
+#: src/page/settings/account.vue:113 src/component/photo/list.vue:135
+#: src/dialog/photo/edit/details.vue:95 src/dialog/photo/edit/info.vue:45
+#: src/page/settings/account.vue:112
 #, fuzzy
 msgid "Title"
 msgstr "Заглавие"
 
-#: src/pages/albums.vue:57 src/share/albums.vue:53
+#: src/page/settings/account.vue:561
+#, fuzzy
+msgid "Title / Position"
+msgstr "Твърде дълго заглавие"
+
+#: src/page/albums.vue:62
 #, fuzzy
 msgid "Title too long"
 msgstr "Твърде дълго заглавие"
 
-#: src/share.js:159
-#, fuzzy
-msgid "to"
-msgstr "към"
-
-#: src/component/album/toolbar.vue:125 src/component/album/toolbar.vue:142
-#: src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:77
-#: src/component/photo/toolbar.vue:94 src/component/photo/toolbar.vue:110
+#: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
+#: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
+#: src/component/photo/toolbar.vue:88 src/component/photo/toolbar.vue:104
 #, fuzzy
 msgid "Toggle View"
 msgstr "Превключване на изгледа"
 
-#: src/dialog/share.vue:214
+#: src/dialog/share.vue:206
 #, fuzzy
 msgid "Token"
 msgstr "Токен"
 
-#: src/options/options.js:314
+#: src/options/options.js:278
 #, fuzzy
 msgid "Topographic"
 msgstr "Топографски"
 
-#: src/pages/library/errors.vue:113
+#: src/page/library/errors.vue:107
 #, fuzzy
 msgid "Troubleshooting Checklists"
 msgstr "Контролни списъци за отстраняване на неизправности"
 
-#: src/component/photo/cards.vue:10 src/component/photo/list.vue:11
-#: src/component/photo/list.vue:40 src/component/photo/mosaic.vue:10
-#: src/pages/albums.vue:38 src/pages/labels.vue:34
-#: src/pages/people/subjects.vue:36 src/share/albums.vue:21
-#: src/share/photo/cards.vue:10 src/share/photo/list.vue:11
-#: src/share/photo/list.vue:40 src/share/photo/mosaic.vue:10
+#: src/component/photo/cards.vue:11 src/component/photo/cards.vue:9
+#: src/component/photo/list.vue:11 src/component/photo/list.vue:49
+#: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:9
+#: src/page/albums.vue:38 src/page/labels.vue:34
+#: src/page/people/recognized.vue:38
 #, fuzzy
 msgid "Try again using other filters or keywords."
 msgstr "Опитайте отново, като използвате други филтри или ключови думи."
 
-#: src/dialog/account/edit.vue:495 src/dialog/photo/files.vue:89
-#: src/dialog/photo/files.vue:86 src/dialog/photo/files.vue:37
-#: src/dialog/photo/info.vue:15
+#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
+#: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
+#: src/dialog/service/edit.vue:528
 #, fuzzy
 msgid "Type"
 msgstr "Тип"
 
-#: src/dialog/photo/people.vue:151
+#: src/dialog/photo/edit/people.vue:146
 #, fuzzy
 msgid "Undo"
 msgstr "Отмяна на"
 
-#: src/pages/settings/library.vue:194
+#: src/page/settings/library.vue:192
 #, fuzzy
 msgid "Unique ID"
 msgstr "Уникален идентификатор"
 
-#: src/dialog/photo/details.vue:16 src/dialog/photo/info.vue:24
-#: src/model/album.js:179 src/model/photo.js:620 src/model/photo.js:637
-#: src/model/photo.js:660 src/model/photo.js:674 src/model/photo.js:759
-#: src/model/photo.js:772 src/options/options.js:20 src/options/options.js:34
+#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
+#: src/model/album.js:179 src/model/photo.js:697 src/model/photo.js:718
+#: src/model/photo.js:741 src/model/photo.js:759 src/model/photo.js:849
+#: src/model/photo.js:862 src/options/options.js:20 src/options/options.js:34
 #: src/options/options.js:51 src/options/options.js:65
-#: src/options/options.js:77 src/pages/library/errors.vue:168
-#: src/pages/library/errors.vue:175 src/pages/library/logs.vue:16
+#: src/options/options.js:77 src/page/library/errors.vue:173
+#: src/page/library/errors.vue:180 src/page/library/logs.vue:18
 #, fuzzy
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: src/app/routes.js:167 src/component/navigation.vue:184
+#: src/page/settings/account.vue:35 src/page/settings/account.vue:43
+#: src/component/navigation.vue:82 src/model/user.js:130
+msgid "Unregistered"
+msgstr ""
+
+#: src/app/routes.js:190 src/component/navigation.vue:167
 #, fuzzy
 msgid "Unsorted"
 msgstr "Несортиран"
 
-#: src/dialog/photo/files.vue:38 src/dialog/photo/files.vue:35
+#: src/dialog/photo/edit/files.vue:38 src/dialog/photo/edit/files.vue:35
 #, fuzzy
 msgid "Unstack"
 msgstr "Разглобяване на стека"
 
-#: src/dialog/photo/files.vue:198 src/dialog/photo/files.vue:195
-#: src/dialog/photo/info.vue:175
+#: src/dialog/photo/edit/files.vue:198 src/dialog/photo/edit/files.vue:195
+#: src/dialog/photo/edit/info.vue:175
 #, fuzzy
 msgid "Updated"
 msgstr "Актуализиран"
 
-#: src/pages/library/index.vue:151
+#: src/page/library/index.vue:151
 #, fuzzy
 msgid "Updating faces"
 msgstr "Актуализиране на лица"
 
-#: src/pages/library/index.vue:155
+#: src/page/library/index.vue:155
 #, fuzzy
 msgid "Updating index"
 msgstr "Актуализиране на индекса"
 
-#: src/pages/library/index.vue:149
+#: src/page/library/index.vue:149
 #, fuzzy
 msgid "Updating moments"
 msgstr "Актуализиране на моменти"
 
-#: src/pages/library/index.vue:153
+#: src/page/settings/account.vue:124
+#, fuzzy
+msgid "Updating picture…"
+msgstr "Актуализиране на визуализациите"
+
+#: src/page/library/index.vue:153
 #, fuzzy
 msgid "Updating previews"
 msgstr "Актуализиране на визуализациите"
 
-#: src/pages/library/index.vue:147
+#: src/page/library/index.vue:147
 #, fuzzy
 msgid "Updating stacks"
 msgstr "Актуализиране на стекове"
 
-#: src/component/album/toolbar.vue:176 src/component/photo/toolbar.vue:128
-#: src/dialog/share/upload.vue:35 src/dialog/upload.vue:8
-#: src/dialog/upload.vue:54 src/pages/albums.vue:159
-#: src/pages/library/import.vue:38 src/pages/settings/general.vue:140
-#: src/pages/settings/sync.vue:27
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1944
+#: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:54 src/page/albums.vue:144
+#: src/page/library/import.vue:38 src/page/settings/general.vue:228
+#: src/page/settings/services.vue:27
 #, fuzzy
 msgid "Upload"
 msgstr "Качване на"
 
-#: src/dialog/upload.vue:159
+#: src/dialog/upload.vue:160
 #, fuzzy
 msgid "Upload complete"
 msgstr "Качване на данни"
@@ -2813,17 +3004,17 @@ msgstr "Качване на данни"
 msgid "Upload complete. Indexing…"
 msgstr "Качването е завършено. Индексиране…"
 
-#: src/dialog/upload.vue:34
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:164
 #, fuzzy
 msgid "Upload failed"
 msgstr "Качването е неуспешно"
 
-#: src/dialog/account/edit.vue:359
+#: src/dialog/service/edit.vue:379
 #, fuzzy
 msgid "Upload local files"
 msgstr "Качване на локални файлове"
 
-#: src/pages/settings/general.vue:251
+#: src/page/settings/general.vue:295
 #, fuzzy
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Качвайте в WebDAV и споделяйте връзки с приятели."
@@ -2833,10 +3024,15 @@ msgstr "Качвайте в WebDAV и споделяйте връзки с пр�
 msgid "Uploading %{n} of %{t}…"
 msgstr "Качване на %{n} от %{t}…"
 
-#: src/dialog/upload.vue:59 src/dialog/upload.vue:67 src/dialog/upload.vue:112
+#: src/dialog/upload.vue:60 src/dialog/upload.vue:68 src/dialog/upload.vue:115
 #, fuzzy
 msgid "Uploading photos…"
 msgstr "Качване на снимки…"
+
+#: src/page/settings/account.vue:124
+#, fuzzy
+msgid "Uploading…"
+msgstr "Презареждане…"
 
 #: src/dialog/upload.vue:46
 #, fuzzy
@@ -2845,62 +3041,92 @@ msgstr ""
 "Качванията, които могат да съдържат такива изображения, ще бъдат отхвърлени "
 "автоматично."
 
-#: src/dialog/share.vue:165
+#: src/dialog/share.vue:153
 #, fuzzy
 msgid "URL"
 msgstr "URL"
 
-#: src/pages/settings/advanced.vue:463
+#: src/page/settings/advanced.vue:460
 #, fuzzy
 msgid "Use Presets"
 msgstr "Използване на предварителни настройки"
 
-#: src/model/user.js:117
+#: src/model/user.js:211
 #, fuzzy
 msgid "User"
 msgstr "Потребител"
 
-#: src/pages/settings/general.vue:6
+#: src/page/about/about.vue:23 src/component/navigation.vue:580
+#: src/page/about/about.vue:45
+msgid "User Guide"
+msgstr ""
+
+#: src/page/settings/general.vue:6
 #, fuzzy
 msgid "User Interface"
 msgstr "Потребителски интерфейс"
 
-#: src/dialog/account/add.vue:84 src/dialog/account/edit.vue:438
+#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
 #: src/dialog/share.vue:23
 #, fuzzy
 msgid "Username"
 msgstr "Потребителско име"
 
-#: src/options/options.js:224
+#: src/options/themes.js:412
 #, fuzzy
 msgid "Vanta"
 msgstr "Vanta"
 
-#: src/component/photo/cards.vue:238 src/component/photo/cards.vue:530
-#: src/component/photo/list.vue:207 src/component/photo/mosaic.vue:211
-#: src/model/file.js:219 src/model/photo.js:711 src/model/photo.js:725
-#: src/options/options.js:343 src/share/photo/cards.vue:211
-#: src/share/photo/cards.vue:363 src/share/photo/list.vue:186
-#: src/share/photo/mosaic.vue:192
+#: src/page/connect.vue:9
+msgid "Verified"
+msgstr ""
+
+#: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
+#: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
+#: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
+#: src/options/options.js:307
 #, fuzzy
 msgid "Video"
 msgstr "Видео"
 
-#: src/app/routes.js:188 src/component/navigation.vue:197
-#: src/component/navigation.vue:207 src/component/navigation.vue:4
-#: src/component/navigation.vue:850
+#: src/component/photo/toolbar.vue:57
+#, fuzzy
+msgid "Video Duration"
+msgstr "Дарения"
+
+#: src/app/routes.js:211 src/component/navigation.vue:180
+#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/component/navigation.vue:738
 #, fuzzy
 msgid "Videos"
 msgstr "Видеоклипове"
 
-#: src/component/photo/cards.vue:265 src/component/photo/mosaic.vue:239
-#: src/component/photo/toolbar.vue:232 src/share/photo/cards.vue:238
-#: src/share/photo/mosaic.vue:220
+#: src/component/photo/cards.vue:324 src/component/photo/mosaic.vue:249
+#: src/component/photo/toolbar.vue:226
 #, fuzzy
 msgid "View"
 msgstr "Вижте"
 
-#: src/pages/about/about.vue:56
+#: src/page/about/about.vue:47
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
+msgstr ""
+
+#: src/component/photo/toolbar.vue:54
+#, fuzzy
+msgid "Visual Similarity"
+msgstr "Групиране по сходство"
+
+#: src/page/about/feedback.vue:13
+msgid "We appreciate your feedback!"
+msgstr ""
+
+#: src/page/about/feedback.vue:17
+msgid "We do our best to respond within five business days or less."
+msgstr ""
+
+#: src/page/about/about.vue:74
 #, fuzzy
 msgid ""
 "We'll do our best to answer all your questions. In return, we ask you to "
@@ -2925,11 +3151,12 @@ msgstr ""
 "Клиентите на WebDAV могат да се свържат с PhotoPrism, като използват следния "
 "URL адрес:"
 
-#: src/pages/settings/sync.vue:36
+#: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
-"connect directly to PhotoPrism."
+"connect directly to\n"
+"          PhotoPrism."
 msgstr ""
 "Клиентите WebDAV, като Windows Explorer на Microsoft или Apple's Finder, "
 "могат да се свързват директно с PhotoPrism."
@@ -2939,67 +3166,90 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr "Качване на WebDAV"
 
-#: src/options/options.js:429
+#: src/page/settings/account.vue:643 src/page/settings/account.vue:789
+#: src/page/settings/account.vue:642
+msgid "Website"
+msgstr ""
+
+#: src/options/options.js:393
 #, fuzzy
 msgid "White"
 msgstr "Бял"
 
-#: src/component/photo/toolbar.vue:274 src/dialog/photo/details.vue:166
+#: src/page/settings/account.vue:90
+#, fuzzy
+msgid "Work Details"
+msgstr "Подробности"
+
+#: src/page/settings/account.vue:492 src/component/photo/toolbar.vue:268
+#: src/dialog/photo/edit/details.vue:168 src/page/settings/account.vue:491
 #, fuzzy
 msgid "Year"
 msgstr "Година"
 
-#: src/options/options.js:422
+#: src/options/options.js:386
 #, fuzzy
 msgid "Yellow"
 msgstr "Жълт"
 
-#: src/options/options.js:274
+#: src/options/themes.js:462
 #, fuzzy
 msgid "Yellowstone"
 msgstr "Йелоустоун"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18 src/dialog/photo/files.vue:122
-#: src/dialog/photo/files.vue:130 src/dialog/photo/files.vue:138
-#: src/dialog/photo/files.vue:184 src/dialog/photo/files.vue:119
-#: src/dialog/photo/files.vue:127 src/dialog/photo/files.vue:135
-#: src/dialog/photo/files.vue:181 src/dialog/photo/info.vue:287
-#: src/dialog/photo/info.vue:308 src/dialog/photo/info.vue:328
-#: src/dialog/photo/info.vue:348 src/dialog/photo/info.vue:368
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:122
+#: src/dialog/photo/edit/files.vue:130 src/dialog/photo/edit/files.vue:138
+#: src/dialog/photo/edit/files.vue:184 src/dialog/photo/edit/files.vue:119
+#: src/dialog/photo/edit/files.vue:127 src/dialog/photo/edit/files.vue:135
+#: src/dialog/photo/edit/files.vue:181 src/dialog/photo/edit/info.vue:259
+#: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301
+#: src/dialog/photo/edit/info.vue:322 src/dialog/photo/edit/info.vue:342
 #, fuzzy
 msgid "Yes"
 msgstr "Да"
 
-#: src/pages/about/about.vue:47
+#: src/page/about/about.vue:67
 #, fuzzy
 msgid "you are welcome to join us on Reddit"
 msgstr "можете да се присъедините към нас в Reddit"
 
-#: src/component/album/clipboard.vue:82 src/component/subject/clipboard.vue:42
-#: src/share/album/clipboard.vue:36
+#: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 #, fuzzy
 msgid "You can only download one album"
 msgstr "Можете да изтеглите само един албум"
 
-#: src/component/label/clipboard.vue:50
+#: src/component/label/clipboard.vue:71
 #, fuzzy
 msgid "You can only download one label"
 msgstr "Можете да изтеглите само един етикет"
 
-#: src/component/album/clipboard.vue:35 src/component/album/clipboard.vue:48
+#: src/page/about/about.vue:17
+msgid "You can run it at home, on a private server, or in the cloud."
+msgstr ""
+
+#: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 #, fuzzy
 msgid "You may only select one item"
 msgstr "Можете да изберете само един елемент."
 
-#: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:33
-#: src/pages/people/subjects.vue:37
+#: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
+#: src/page/people/recognized.vue:39
 #, fuzzy
 msgid "You may rescan your library to find additional faces."
 msgstr ""
 "Можете да сканирате отново библиотеката си, за да намерите допълнителни лица."
 
-#: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
+#: src/page/about/about.vue:22
+#, fuzzy
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации и "
+"услуги като световни карти."
+
+#: src/dialog/sponsor.vue:21
 #, fuzzy
 msgid ""
 "Your continued support helps us provide regular updates and services like "
@@ -3008,7 +3258,7 @@ msgstr ""
 "Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации и "
 "услуги като световни карти."
 
-#: src/pages/albums.vue:43 src/pages/albums.vue:1
+#: src/page/albums.vue:43 src/page/albums.vue:1
 #, fuzzy
 msgid ""
 "Your library is continuously analyzed to automatically create albums of "
@@ -3017,15 +3267,77 @@ msgstr ""
 "Библиотеката ви се анализира непрекъснато, за да се създават автоматично "
 "албуми със специални моменти, пътувания и места."
 
-#: src/pages/about/feedback.vue:4
-#, fuzzy
-msgid "Your message has been sent"
-msgstr "Вашето съобщение е изпратено"
-
-#: src/component/photo-viewer.vue:178
+#: src/component/photo-viewer.vue:176
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Add Server"
+#~ msgstr "Добавете сървър"
+
+#, fuzzy
+#~ msgid "Change"
+#~ msgstr "Промяна"
+
+#, fuzzy
+#~ msgid "Disabled"
+#~ msgstr "Инвалиди"
+
+#, fuzzy
+#~ msgid "Enabled"
+#~ msgstr "Разрешено"
+
+#, fuzzy
+#~ msgid "Failure while importing uploaded files"
+#~ msgstr "Неуспех при импортиране на качени файлове"
+
+#, fuzzy
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Забележка: Актуализирането на паролата не води до отнемане на достъпа на "
+#~ "вече удостоверени потребители."
+
+#, fuzzy
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "Нашата мисия е да предоставим най-удобното за потребителя и "
+#~ "поверителността решение за организиране и достъп до вашите снимки."
+
+#, fuzzy
+#~ msgid "Play"
+#~ msgstr "Играйте"
+
+#, fuzzy
+#~ msgid "Server"
+#~ msgstr "Сървър"
+
+#, fuzzy
+#~ msgid "Shared with you."
+#~ msgstr "Споделено с вас."
+
+#, fuzzy
+#~ msgid "Show Library in navigation menu."
+#~ msgstr "Показване на библиотека в навигационното меню."
+
+#, fuzzy
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Пътната карта показва кои задачи са в процес на изпълнение, какво трябва "
+#~ "да се тества и кои заявки за функции ще бъдат изпълнени след това."
+
+#, fuzzy
+#~ msgid "to"
+#~ msgstr "към"
+
+#, fuzzy
+#~ msgid "Your message has been sent"
+#~ msgstr "Вашето съобщение е изпратено"
 
 #, fuzzy
 #~ msgid "Last Backup"

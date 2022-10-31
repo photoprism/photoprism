@@ -94,7 +94,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				return false, nil
 			}
 
-			// RunFailed too often?
+			// Failed too often?
 			if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 				log.Debugf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
 				continue

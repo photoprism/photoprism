@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-09 00:51+0000\n"
+"POT-Creation-Date: 2022-10-31 12:20+0000\n"
 "PO-Revision-Date: 2022-02-19 14:34+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/"
@@ -19,244 +19,371 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.10.1\n"
 
+#: messages.go:94
 msgid "Unexpected error, please try again"
 msgstr "Erro inesperado, por favor tente novamente"
 
+#: messages.go:95
 msgid "Invalid request"
 msgstr "Solicitação inválida"
 
+#: messages.go:96
 msgid "Changes could not be saved"
 msgstr "As mudanças não foram salvas"
 
+#: messages.go:97
 msgid "Could not be deleted"
 msgstr "Não foi possível excluir"
 
+#: messages.go:98
 #, c-format
 msgid "%s already exists"
 msgstr "%s já existe"
 
+#: messages.go:99
 msgid "Not found"
 msgstr "Não encontrado"
 
+#: messages.go:100
 msgid "File not found"
 msgstr "Arquivo não encontrado"
 
+#: messages.go:101
+msgid "File too large"
+msgstr ""
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr ""
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr ""
+
+#: messages.go:104
 msgid "Selection not found"
 msgstr "Seleção não encontrada"
 
+#: messages.go:105
 msgid "Entity not found"
 msgstr "Entidade não encontrada"
 
+#: messages.go:106
 msgid "Account not found"
 msgstr "Conta não encontrada"
 
+#: messages.go:107
 msgid "User not found"
 msgstr "Usuário não encontrado"
 
+#: messages.go:108
 msgid "Label not found"
 msgstr "Etiqueta não encontrada"
 
+#: messages.go:109
 msgid "Album not found"
 msgstr "Álbum não encontrado"
 
+#: messages.go:110
 msgid "Subject not found"
 msgstr "Assunto não encontrado"
 
+#: messages.go:111
 msgid "Person not found"
 msgstr "Pessoa não encontrada"
 
+#: messages.go:112
 msgid "Face not found"
 msgstr "Rosto não encontrado"
 
+#: messages.go:113
 msgid "Not available in public mode"
 msgstr "Indisponível em modo público"
 
-msgid "not available in read-only mode"
+#: messages.go:114
+#, fuzzy
+msgid "Not available in read-only mode"
 msgstr "indisponível em modo somente leitura"
 
-msgid "Please log in and try again"
+#: messages.go:115
+#, fuzzy
+msgid "Please log in to your account"
 msgstr "Por favor entre em sua conta e tente novamente"
 
+#: messages.go:116
+#, fuzzy
+msgid "Permission denied"
+msgstr "Pessoa apagada"
+
+#: messages.go:117
 msgid "Upload might be offensive"
 msgstr "Envio pode ser ofensivo"
 
+#: messages.go:118
+msgid "Upload failed"
+msgstr ""
+
+#: messages.go:119
 msgid "No items selected"
 msgstr "Sem itens selecionados"
 
+#: messages.go:120
+#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Falha ao criar arquivo, por favor cheque as permissões"
 
+#: messages.go:121
+#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Falha ao criar pasta, por favor cheque as permissões"
 
+#: messages.go:122
 msgid "Could not connect, please try again"
 msgstr "Não foi possível conectar, por favor tente novamente"
 
+#: messages.go:123
 msgid "Invalid password, please try again"
 msgstr "Senha inválida, por favor tente novamente"
 
+#: messages.go:124
 msgid "Feature disabled"
 msgstr "Recurso Desativado"
 
+#: messages.go:125
 msgid "No labels selected"
 msgstr "Sem etiquetas selecionadas"
 
+#: messages.go:126
 msgid "No albums selected"
 msgstr "Sem álbuns selecionados"
 
+#: messages.go:127
 msgid "No files available for download"
 msgstr "Sem arquivos disponíveis para baixar"
 
+#: messages.go:128
+#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Falha ao criar arquivo zip"
 
+#: messages.go:129
 msgid "Invalid credentials"
 msgstr "Credenciais inválidas"
 
+#: messages.go:130
 msgid "Invalid link"
 msgstr "Link inválido"
 
+#: messages.go:131
 msgid "Invalid name"
 msgstr "Nome inválido"
 
+#: messages.go:132
 #, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
 msgstr "Senha inválida, por favor tente novamente"
 
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr ""
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr ""
+
+#: messages.go:137
 msgid "Changes successfully saved"
 msgstr "As mudanças foram salvas com sucesso"
 
+#: messages.go:138
 msgid "Album created"
 msgstr "Álbum criado"
 
+#: messages.go:139
 msgid "Album saved"
 msgstr "Álbum salvo"
 
+#: messages.go:140
 #, c-format
 msgid "Album %s deleted"
 msgstr "Álbum %s excluído"
 
+#: messages.go:141
 msgid "Album contents cloned"
 msgstr "Conteúdo do álbum copiado"
 
+#: messages.go:142
 msgid "File removed from stack"
 msgstr "Arquivo removido da pilha"
 
+#: messages.go:143
 msgid "File deleted"
 msgstr "Arquivo excluído"
 
+#: messages.go:144
 #, c-format
 msgid "Selection added to %s"
 msgstr "Seleção adicionada a %s"
 
+#: messages.go:145
 #, c-format
 msgid "One entry added to %s"
 msgstr "Uma entrada adicionada a %s"
 
+#: messages.go:146
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d entradas adicionadas a %s"
 
+#: messages.go:147
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Uma entrada removida de %s"
 
+#: messages.go:148
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d entradas removidas de %s"
 
+#: messages.go:149
 msgid "Account created"
 msgstr "Conta criada"
 
+#: messages.go:150
 msgid "Account saved"
 msgstr "Conta salva"
 
+#: messages.go:151
 msgid "Account deleted"
 msgstr "Conta excluída"
 
+#: messages.go:152
 msgid "Settings saved"
 msgstr "Configurações salvas"
 
+#: messages.go:153
 msgid "Password changed"
 msgstr "Senha alterada"
 
+#: messages.go:154
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Importação completa em %d"
 
+#: messages.go:155
 msgid "Import canceled"
 msgstr "Importação cancelada"
 
+#: messages.go:156
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indexação completa em %d"
 
+#: messages.go:157
 msgid "Indexing originals..."
 msgstr "Indexando originais..."
 
+#: messages.go:158
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Indexando arquivos em %s"
 
+#: messages.go:159
 msgid "Indexing canceled"
 msgstr "Indexação cancelada"
 
+#: messages.go:160
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Removidos %d arquivos e %d fotos"
 
+#: messages.go:161
 #, c-format
 msgid "Moving files from %s"
 msgstr "Movendo arquivos de %s"
 
+#: messages.go:162
 #, c-format
 msgid "Copying files from %s"
 msgstr "Copiando arquivos de %s"
 
+#: messages.go:163
 msgid "Labels deleted"
 msgstr "Etiquetas excluídas"
 
+#: messages.go:164
 msgid "Label saved"
 msgstr "Etiqueta salva"
 
+#: messages.go:165
 msgid "Subject saved"
 msgstr "Assunto salvo"
 
+#: messages.go:166
 msgid "Subject deleted"
 msgstr "Assunto eliminado"
 
+#: messages.go:167
 msgid "Person saved"
 msgstr "Pessoa salva"
 
+#: messages.go:168
 msgid "Person deleted"
 msgstr "Pessoa apagada"
 
+#: messages.go:169
+#, fuzzy
+msgid "File uploaded"
+msgstr "Arquivo excluído"
+
+#: messages.go:170
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d arquivos enviados em %d"
 
+#: messages.go:171
+msgid "Processing upload..."
+msgstr ""
+
+#: messages.go:172
+#, fuzzy
+msgid "Upload has been processed"
+msgstr "Envio pode ser ofensivo"
+
+#: messages.go:173
 msgid "Selection approved"
 msgstr "Seleção aprovada"
 
+#: messages.go:174
 msgid "Selection archived"
 msgstr "Seleção arquivada"
 
+#: messages.go:175
 msgid "Selection restored"
 msgstr "Seleção restaurada"
 
+#: messages.go:176
 msgid "Selection marked as private"
 msgstr "Seleção marcada como privada"
 
+#: messages.go:177
 msgid "Albums deleted"
 msgstr "Álbuns excluídos"
 
+#: messages.go:178
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip criado em %d"
 
+#: messages.go:179
 msgid "Permanently deleted"
 msgstr "Permanentemente excluídas"
+
+#: messages.go:180
+#, fuzzy, c-format
+msgid "%s has been restored"
+msgstr "Seleção restaurada"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "Não foi encontrado no servidor, foi excluído?"

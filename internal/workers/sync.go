@@ -66,7 +66,7 @@ func (w *Sync) Start() (err error) {
 			continue
 		}
 
-		// RunFailed too often?
+		// Failed too often?
 		if a.RetryLimit > 0 && a.AccErrors > a.RetryLimit {
 			a.AccSync = false
 
