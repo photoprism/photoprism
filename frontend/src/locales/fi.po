@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-10-31 13:34+0000\n"
+"PO-Revision-Date: 2022-10-31 14:24+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -138,12 +138,8 @@ msgid "After one year"
 msgstr "Vuoden kuluttua"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
-msgid ""
-"After selecting pictures from search results, you can add them to an album "
-"using the context menu."
-msgstr ""
-"Kun olet valinnut kuvia hakutuloksista, voit lisätä ne albumiin "
-"kontekstivalikon avulla."
+msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgstr "Kun olet valinnut kuvia hakutuloksista, voit lisätä ne albumiin kontekstivalikon avulla."
 
 #: src/options/options.js:379
 msgid "After two months"
@@ -231,20 +227,12 @@ msgid "All Years"
 msgstr "Kaikki vuodet"
 
 #: src/page/about/about.vue:40
-msgid ""
-"Also, please leave a star on GitHub if you like this project. It provides "
-"additional motivation to keep going."
-msgstr ""
-"Jätä myös tähti GitHubissa, jos pidät tästä projektista. Se antaa lisää "
-"motivaatiota jatkaa."
+msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+msgstr "Jätä myös tähti GitHubissa, jos pidät tästä projektista. Se antaa lisää motivaatiota jatkaa."
 
 #: src/dialog/share.vue:75
-msgid ""
-"Alternatively, you can upload files directly to WebDAV servers like "
-"Nextcloud."
-msgstr ""
-"Vaihtoehtoisesti voit ladata tiedostoja suoraan WebDAV-palvelimille, kuten "
-"Nextcloudiin."
+msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgstr "Vaihtoehtoisesti voit ladata tiedostoja suoraan WebDAV-palvelimille, kuten Nextcloudiin."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -271,8 +259,7 @@ msgstr "Animaatio"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr ""
-"Kaikki yksityiset kuvat ja videot pysyvät yksityisinä, eikä niitä jaeta."
+msgstr "Kaikki yksityiset kuvat ja videot pysyvät yksityisinä, eikä niitä jaeta."
 
 #: src/page/about/about.vue:32
 #, fuzzy
@@ -339,17 +326,12 @@ msgid "Aspect Ratio"
 msgstr "Kuvasuhde"
 
 #: src/page/settings/library.vue:112
-msgid ""
-"Automatically create JPEGs for other file types so that they can be "
-"displayed in a browser."
-msgstr ""
-"Luo automaattisesti JPEG-tiedostoja muille tiedostotyypeille, jotta ne "
-"voidaan näyttää selaimessa."
+msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgstr "Luo automaattisesti JPEG-tiedostoja muille tiedostotyypeille, jotta ne voidaan näyttää selaimessa."
 
 #: src/page/settings/general.vue:163
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr ""
-"Luo automaattisesti albumeja erityisistä hetkistä, matkoista ja paikoista."
+msgstr "Luo automaattisesti albumeja erityisistä hetkistä, matkoista ja paikoista."
 
 #: src/options/options.js:268
 #, fuzzy
@@ -362,23 +344,13 @@ msgid "Become a sponsor"
 msgstr "Ryhdy sponsoriksi"
 
 #: src/page/about/about.vue:62
-msgid ""
-"Before submitting a support request, please use our Troubleshooting "
-"Checklists to determine the cause of your problem."
-msgstr ""
-"Ennen kuin lähetät tukipyynnön, käytä vianmäärityksen tarkistuslistojamme "
-"selvittääksesi ongelmasi syyn."
+msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+msgstr "Ennen kuin lähetät tukipyynnön, käytä vianmäärityksen tarkistuslistojamme selvittääksesi ongelmasi syyn."
 
 #: src/page/about/about.vue:27
 #, fuzzy
-msgid ""
-"Being 100% self-funded and independent, we can promise you that we will "
-"never sell your data and that we will always be transparent about our "
-"software and services."
-msgstr ""
-"Koska olemme 100-prosenttisesti omarahoitteisia ja riippumattomia, voimme "
-"luvata, ettemme koskaan myy tietojasi ja että ohjelmistomme ja palvelumme "
-"ovat aina avoimia."
+msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgstr "Koska olemme 100-prosenttisesti omarahoitteisia ja riippumattomia, voimme luvata, ettemme koskaan myy tietojasi ja että ohjelmistomme ja palvelumme ovat aina avoimia."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -416,12 +388,8 @@ msgstr "Selaa kirjaston indeksoituja tiedostoja ja kansioita."
 
 #: src/page/about/about.vue:54
 #, fuzzy
-msgid ""
-"Browse the Knowledge Base for detailed information on specific product "
-"features, services, and related resources."
-msgstr ""
-"Tutustu tietopohjaan, josta löydät yksityiskohtaista tietoa tuotteiden "
-"ominaisuuksista, palveluista ja niihin liittyvistä resursseista."
+msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgstr "Tutustu tietopohjaan, josta löydät yksityiskohtaista tietoa tuotteiden ominaisuuksista, palveluista ja niihin liittyvistä resursseista."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:406
 msgid "Bug Report"
@@ -539,12 +507,8 @@ msgstr "Värit"
 
 #: src/page/about/about.vue:49
 #, fuzzy
-msgid ""
-"Common issues can be quickly diagnosed and solved using the troubleshooting "
-"checklists we provide."
-msgstr ""
-"Yleiset ongelmat voidaan diagnosoida ja ratkaista nopeasti toimittamiemme "
-"vianmäärityksen tarkistuslistojen avulla."
+msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgstr "Yleiset ongelmat voidaan diagnosoida ja ratkaista nopeasti toimittamiemme vianmäärityksen tarkistuslistojen avulla."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -706,9 +670,7 @@ msgstr "Poista varmuuskopiot käytöstä"
 
 #: src/page/settings/advanced.vue:163
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr ""
-"Poista sisäänrakennettu WebDAV-palvelin käytöstä. Vaatii "
-"uudelleenkäynnistyksen."
+msgstr "Poista sisäänrakennettu WebDAV-palvelin käytöstä. Vaatii uudelleenkäynnistyksen."
 
 #: src/page/settings/advanced.vue:481
 msgid "Disable Darktable"
@@ -754,19 +716,15 @@ msgstr "Näytön nimi"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr ""
-"Älä varmuuskopioi valokuvien ja albumien metatietoja YAML-tiedostoihin."
+msgstr "Älä varmuuskopioi valokuvien ja albumien metatietoja YAML-tiedostoihin."
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Älä luo ExifTool JSON -tiedostoja parantaaksesi metatietojen purkamista."
+msgstr "Älä luo ExifTool JSON -tiedostoja parantaaksesi metatietojen purkamista."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Älä muuta alkuperäiskansiota. Poistaa tuonnin, lataamisen ja poistamisen "
-"käytöstä."
+msgstr "Älä muuta alkuperäiskansiota. Poistaa tuonnin, lataamisen ja poistamisen käytöstä."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
@@ -828,12 +786,8 @@ msgstr "Skaalaussuodatin"
 
 #: src/page/about/feedback.vue:16
 #, fuzzy
-msgid ""
-"Due to the high volume of emails we receive, our team may be unable to get "
-"back to you immediately."
-msgstr ""
-"Koska saamiemme sähköpostiviestien määrä on suuri, tiimimme ei välttämättä "
-"pysty vastaamaan sinulle välittömästi."
+msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgstr "Koska saamiemme sähköpostiviestien määrä on suuri, tiimimme ei välttämättä pysty vastaamaan sinulle välittömästi."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -848,12 +802,8 @@ msgid "Dynamic Previews"
 msgstr "Dynaamiset esikatselut"
 
 #: src/page/settings/advanced.vue:303
-msgid ""
-"Dynamic rendering requires a powerful server. It is not recommended for NAS "
-"devices."
-msgstr ""
-"Dynaaminen renderöinti vaatii tehokkaan palvelimen. Sitä ei suositella NAS-"
-"laitteille."
+msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgstr "Dynaaminen renderöinti vaatii tehokkaan palvelimen. Sitä ei suositella NAS-laitteille."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -897,8 +847,7 @@ msgstr "Ota käyttöön uudet ominaisuudet, joita kehitetään parhaillaan."
 
 #: src/page/settings/advanced.vue:461
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr ""
-"Ottaa käyttöön RAW-muuntimen esiasetukset. Saattaa heikentää suorituskykyä."
+msgstr "Ottaa käyttöön RAW-muuntimen esiasetukset. Saattaa heikentää suorituskykyä."
 
 #: src/app/routes.js:283 src/component/navigation.vue:391
 msgid "Errors"
@@ -917,12 +866,8 @@ msgid "Every two days"
 msgstr "Joka toinen päivä"
 
 #: src/page/settings/general.vue:207
-msgid ""
-"Exclude content marked as private from search results, shared albums, "
-"labels, and places."
-msgstr ""
-"Sulje yksityiseksi merkitty sisältö pois hakutuloksista, jaetuista "
-"albumeista, tunnisteista ja paikoista."
+msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgstr "Sulje yksityiseksi merkitty sisältö pois hakutuloksista, jaetuista albumeista, tunnisteista ja paikoista."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -1004,11 +949,8 @@ msgid "Feedback"
 msgstr "Palaute"
 
 #: src/dialog/sponsor.vue:24
-msgid ""
-"Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Ota rohkeasti yhteyttä osoitteeseen hello@photoprism.app, jos sinulla on "
-"kysyttävää."
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr "Ota rohkeasti yhteyttä osoitteeseen hello@photoprism.app, jos sinulla on kysyttävää."
 
 #: src/options/options.js:420
 #, fuzzy
@@ -1043,12 +985,8 @@ msgid "Files"
 msgstr "Tiedostot"
 
 #: src/page/settings/library.vue:214
-msgid ""
-"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
-"the same picture."
-msgstr ""
-"Tiedostot, joilla on peräkkäiset nimet, kuten 'IMG_1234 (2)' ja 'IMG_1234 "
-"(3)', kuuluvat samaan kuvaan."
+msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgstr "Tiedostot, joilla on peräkkäiset nimet, kuten 'IMG_1234 (2)' ja 'IMG_1234 (3)', kuuluvat samaan kuvaan."
 
 #: src/dialog/photo/edit/details.vue:477
 msgid "Focal Length"
@@ -1201,18 +1139,12 @@ msgid "Import failed"
 msgstr "Tuonti epäonnistui"
 
 #: src/page/library/import.vue:25
-msgid ""
-"Imported files will be sorted by date and given a unique name to avoid "
-"duplicates."
-msgstr ""
-"Tuodut tiedostot lajitellaan päivämäärän mukaan ja niille annetaan "
-"yksilöllinen nimi päällekkäisyyksien välttämiseksi."
+msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgstr "Tuodut tiedostot lajitellaan päivämäärän mukaan ja niille annetaan yksilöllinen nimi päällekkäisyyksien välttämiseksi."
 
 #: src/page/settings/general.vue:273
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"Tuodut tiedostot lajitellaan päivämäärän mukaan ja niille annetaan "
-"yksilöllinen nimi."
+msgstr "Tuodut tiedostot lajitellaan päivämäärän mukaan ja niille annetaan yksilöllinen nimi."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1236,12 +1168,8 @@ msgstr "Lisäksi sponsorit saavat suoraa teknistä tukea sähköpostitse."
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid ""
-"In case pictures you expect are missing, please rescan your library and wait "
-"until indexing has been completed."
-msgstr ""
-"Jos odottamasi kuvat puuttuvat, skannaa kirjastosi uudelleen ja odota, "
-"kunnes indeksointi on valmis."
+msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr "Jos odottamasi kuvat puuttuvat, skannaa kirjastosi uudelleen ja odota, kunnes indeksointi on valmis."
 
 #: src/component/navigation.vue:563 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1305,12 +1233,8 @@ msgstr "Virheellinen kuva valittu"
 
 #: src/page/about/about.vue:16
 #, fuzzy
-msgid ""
-"It makes use of the latest technologies to tag and find pictures "
-"automatically without getting in your way."
-msgstr ""
-"Se hyödyntää uusinta teknologiaa merkitäkseen ja löytääkseen kuvia "
-"automaattisesti ilman, että se on tielläsi."
+msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgstr "Se hyödyntää uusinta teknologiaa merkitäkseen ja löytääkseen kuvia automaattisesti ilman, että se on tielläsi."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1326,8 +1250,7 @@ msgstr "JPEG-kokorajoitus: %{n}px"
 
 #: src/page/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr ""
-"JPEG-tiedostot ja pikkukuvat renderöidään automaattisesti tarpeen mukaan."
+msgstr "JPEG-tiedostot ja pikkukuvat renderöidään automaattisesti tarpeen mukaan."
 
 #: src/dialog/photo/edit/details.vue:629
 msgid "Keywords"
@@ -1449,12 +1372,8 @@ msgid "Location"
 msgstr "Sijainti"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid ""
-"Log messages appear here whenever PhotoPrism comes across broken files, or "
-"there are other potential issues."
-msgstr ""
-"Lokiviestit näkyvät täällä aina, kun PhotoPrism löytää rikkinäisiä "
-"tiedostoja tai muita mahdollisia ongelmia."
+msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgstr "Lokiviestit näkyvät täällä aina, kun PhotoPrism löytää rikkinäisiä tiedostoja tai muita mahdollisia ongelmia."
 
 #: src/component/navigation.vue:454 src/component/navigation.vue:1686
 #: src/component/navigation.vue:1960
@@ -1501,8 +1420,9 @@ msgid "Manual Upload"
 msgstr "Manuaalinen lataus"
 
 #: src/page/settings/general.vue:556
+#, fuzzy
 msgid "Maps"
-msgstr ""
+msgstr "Kartat"
 
 #: src/model/marker.js:146
 msgid "Marker"
@@ -1678,12 +1598,8 @@ msgid "No video selected"
 msgstr "Videota ei ole valittu"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid ""
-"No warnings or error containing this keyword. Note that search is case-"
-"sensitive."
-msgstr ""
-"Ei varoituksia tai virheitä, jotka sisältävät tämän avainsanan. Huomaa, että "
-"haussa kirjainkoolla on merkitystä."
+msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgstr "Ei varoituksia tai virheitä, jotka sisältävät tämän avainsanan. Huomaa, että haussa kirjainkoolla on merkitystä."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1692,12 +1608,8 @@ msgstr ""
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
-msgid ""
-"Non-photographic and low-quality images require a review before they appear "
-"in search results."
-msgstr ""
-"Muut kuin valokuvat ja heikkolaatuiset kuvat edellyttävät tarkistusta, ennen "
-"kuin ne näkyvät hakutuloksissa."
+msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgstr "Muut kuin valokuvat ja heikkolaatuiset kuvat edellyttävät tarkistusta, ennen kuin ne näkyvät hakutuloksissa."
 
 #: src/options/options.js:245 src/options/options.js:330
 msgid "None"
@@ -1708,23 +1620,16 @@ msgid "Not Found"
 msgstr "Ei löydetty"
 
 #: src/page/library/import.vue:28
-msgid ""
-"Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Huomaa, että voit hallita alkuperäisiä kansioita manuaalisesti, ja tuonti on "
-"valinnaista."
+msgid "Note you may manually manage your originals folder and importing is optional."
+msgstr "Huomaa, että voit hallita alkuperäisiä kansioita manuaalisesti, ja tuonti on valinnaista."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Huomautus:"
 
 #: src/dialog/service/add.vue:28
-msgid ""
-"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
-"as remote service for backup and file upload."
-msgstr ""
-"Huomautus: Vain WebDAV-palvelimet, kuten Nextcloud tai PhotoPrism, voidaan "
-"määrittää etäpalveluiksi varmuuskopiointia ja tiedostojen lataamista varten."
+msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
+msgstr "Huomautus: Vain WebDAV-palvelimet, kuten Nextcloud tai PhotoPrism, voidaan määrittää etäpalveluiksi varmuuskopiointia ja tiedostojen lataamista varten."
 
 #: src/dialog/photo/edit/details.vue:654
 msgid "Notes"
@@ -1831,12 +1736,8 @@ msgstr "Muut"
 
 #: src/page/about/about.vue:48
 #, fuzzy
-msgid ""
-"Our User Guide also covers many advanced topics, such as migrating from "
-"Google Photos and thumbnail quality settings."
-msgstr ""
-"Käyttöoppaassa käsitellään myös monia edistyneempiä aiheita, kuten "
-"siirtämistä Google-kuvista ja pikkukuvien laatuasetuksia."
+msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgstr "Käyttöoppaassa käsitellään myös monia edistyneempiä aiheita, kuten siirtämistä Google-kuvista ja pikkukuvien laatuasetuksia."
 
 #: src/options/options.js:282
 msgid "Outdoor"
@@ -1894,8 +1795,7 @@ msgstr "PhotoPrism on päivitetty…"
 #: src/page/about/about.vue:15
 #, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
-"PhotoPrism® on tekoälyavusteinen valokuvasovellus hajautetussa verkossa."
+msgstr "PhotoPrism® on tekoälyavusteinen valokuvasovellus hajautetussa verkossa."
 
 #: src/app/routes.js:131
 msgid "Photos"
@@ -1932,12 +1832,8 @@ msgstr "Älä lataa kuvia, jotka sisältävät loukkaavaa sisältöä."
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid ""
-"Please note that changing your password will log you out on other devices "
-"and browsers."
-msgstr ""
-"Huomaa, että salasanan vaihtaminen kirjautuu ulos muilla laitteilla ja "
-"selaimilla."
+msgid "Please note that changing your password will log you out on other devices and browsers."
+msgstr "Huomaa, että salasanan vaihtaminen kirjautuu ulos muilla laitteilla ja selaimilla."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -2021,9 +1917,7 @@ msgstr "RAW-muunnos"
 
 #: src/page/library/index.vue:116
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Indeksoi uudelleen kaikki alkuperäiset tiedostot, mukaan lukien jo "
-"indeksoidut ja muuttumattomat tiedostot."
+msgstr "Indeksoi uudelleen kaikki alkuperäiset tiedostot, mukaan lukien jo indeksoidut ja muuttumattomat tiedostot."
 
 #: src/page/about/about.vue:51
 #, fuzzy
@@ -2099,13 +1993,8 @@ msgid "Remove from album"
 msgstr "Poista albumista"
 
 #: src/page/library/import.vue:120
-msgid ""
-"Remove imported files to save storage. Unsupported file types will never be "
-"deleted, they remain in their current location."
-msgstr ""
-"Poista tuodut tiedostot tallennustilan säästämiseksi. Ei-tuettuja "
-"tiedostotyyppejä ei koskaan poisteta, vaan ne säilyvät nykyisessä "
-"sijainnissaan."
+msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgstr "Poista tuodut tiedostot tallennustilan säästämiseksi. Ei-tuettuja tiedostotyyppejä ei koskaan poisteta, vaan ne säilyvät nykyisessä sijainnissaan."
 
 #: src/common/api.js:74 src/page/connect.vue:38
 msgid "Request failed - invalid response"
@@ -2282,8 +2171,7 @@ msgstr "Näytä palvelimen lokit kirjastossa."
 
 #: src/page/settings/advanced.vue:75
 msgid "Shows more detailed log messages. Requires a restart."
-msgstr ""
-"Näyttää yksityiskohtaisemmat lokiviestit. Vaatii uudelleenkäynnistyksen."
+msgstr "Näyttää yksityiskohtaisemmat lokiviestit. Vaatii uudelleenkäynnistyksen."
 
 #: src/model/file.js:212
 msgid "Sidecar"
@@ -2323,13 +2211,8 @@ msgid "Source"
 msgstr "Lähde"
 
 #: src/page/about/about.vue:25
-msgid ""
-"Sponsors get access to additional features, receive direct technical support "
-"via email, and can join our private chat room on matrix.org."
-msgstr ""
-"Sponsorit saavat pääsyn lisäominaisuuksiin, suoraa teknistä tukea "
-"sähköpostitse ja voivat liittyä yksityiseen chat-huoneeseemme osoitteessa "
-"matrix.org."
+msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
+msgstr "Sponsorit saavat pääsyn lisäominaisuuksiin, suoraa teknistä tukea sähköpostitse ja voivat liittyä yksityiseen chat-huoneeseemme osoitteessa matrix.org."
 
 #: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 msgid "Stack"
@@ -2337,16 +2220,11 @@ msgstr "Pino"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Pinoa tiedostoja, joilla on sama yksilöllinen kuva tai ilmentymätunniste."
+msgstr "Pinoa tiedostoja, joilla on sama yksilöllinen kuva tai ilmentymätunniste."
 
 #: src/page/settings/library.vue:172
-msgid ""
-"Stack pictures taken at the exact same time and location based on their "
-"metadata."
-msgstr ""
-"Pinoaa täsmälleen samaan aikaan ja samassa paikassa otettuja kuvia niiden "
-"metatietojen perusteella."
+msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgstr "Pinoaa täsmälleen samaan aikaan ja samassa paikassa otettuja kuvia niiden metatietojen perusteella."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2357,12 +2235,8 @@ msgid "Stacks"
 msgstr "Pinot"
 
 #: src/page/settings/library.vue:138
-msgid ""
-"Stacks group files with a similar frame of reference, but differences of "
-"quality, format, size or color."
-msgstr ""
-"Pinoaa tiedostoja, joilla on samanlainen viitekehys, mutta laadussa, "
-"muodossa, koossa tai värissä on eroja."
+msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+msgstr "Pinoaa tiedostoja, joilla on samanlainen viitekehys, mutta laadussa, muodossa, koossa tai värissä on eroja."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2403,8 +2277,7 @@ msgid "Successfully Connected"
 msgstr "Onnistuneesti yhdistetty"
 
 #: src/dialog/service/add.vue:29
-msgid ""
-"Support for additional services, like Google Drive, will be added over time."
+msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Tuki lisäpalveluille, kuten Google Drivelle lisätään myöhemmin."
 
 #: src/page/settings/services.vue:28
@@ -2438,45 +2311,27 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "Hakemisto sisältää tällä hetkellä %{n} piilotettua tiedostoa."
 
 #: src/page/library/index.vue:37
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet "
-"or there are duplicates."
-msgstr ""
-"Niiden muotoa ei ehkä tueta, niitä ei ole vielä muunnettu JPEG-muotoon tai "
-"niissä on kaksoiskappaleita."
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Niiden muotoa ei ehkä tueta, niitä ei ole vielä muunnettu JPEG-muotoon tai niissä on kaksoiskappaleita."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Teema"
 
 #: src/dialog/sponsor.vue:17
-msgid ""
-"This currently is a sponsor feature to thank everyone who supports the "
-"development of this application."
-msgstr ""
-"Tämä on tällä hetkellä sponsoritoiminto, jolla kiitetään kaikkia sovelluksen "
-"kehittämistä tukevia."
+msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+msgstr "Tämä on tällä hetkellä sponsoritoiminto, jolla kiitetään kaikkia sovelluksen kehittämistä tukevia."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr ""
-"Tämä liittää alkuperäiskansion verkkoasemaksi ja antaa sinun avata, muokata "
-"ja poistaa tiedostoja tietokoneeltasi tai älypuhelimelta ikään kuin ne "
-"olisivat paikallisia."
+msgstr "Tämä liittää alkuperäiskansion verkkoasemaksi ja antaa sinun avata, muokata ja poistaa tiedostoja tietokoneeltasi tai älypuhelimelta ikään kuin ne olisivat paikallisia."
 
 #: src/dialog/webdav.vue:26
-msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files from your computer or smartphone as if they were "
-"local."
-msgstr ""
-"Tämä liittää alkuperäiskansion verkkoasemaksi ja antaa sinun avata, muokata "
-"ja poistaa tiedostoja tietokoneeltasi tai älypuhelimelta ikään kuin ne "
-"olisivat paikallisia."
+msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgstr "Tämä liittää alkuperäiskansion verkkoasemaksi ja antaa sinun avata, muokata ja poistaa tiedostoja tietokoneeltasi tai älypuhelimelta ikään kuin ne olisivat paikallisia."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2646,8 +2501,7 @@ msgstr "Ladataan uudelleen…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Tällaisia kuvia mahdollisesti sisältävät lataukset hylätään automaattisesti."
+msgstr "Tällaisia kuvia mahdollisesti sisältävät lataukset hylätään automaattisesti."
 
 #: src/dialog/share.vue:153
 msgid "URL"
@@ -2710,12 +2564,8 @@ msgstr "Näytä"
 
 #: src/page/about/about.vue:47
 #, fuzzy
-msgid ""
-"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
-"share your pictures."
-msgstr ""
-"Käy osoitteessa docs.photoprism.app/user-guide ja opi, miten voit "
-"synkronoida, järjestää ja jakaa kuvia."
+msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgstr "Käy osoitteessa docs.photoprism.app/user-guide ja opi, miten voit synkronoida, järjestää ja jakaa kuvia."
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2730,41 +2580,26 @@ msgstr "Arvostamme palautettasi!"
 #: src/page/about/feedback.vue:17
 #, fuzzy
 msgid "We do our best to respond within five business days or less."
-msgstr ""
-"Pyrimme parhaamme mukaan vastaamaan viiden arkipäivän tai lyhyemmän ajan "
-"kuluessa."
+msgstr "Pyrimme parhaamme mukaan vastaamaan viiden arkipäivän tai lyhyemmän ajan kuluessa."
 
 #: src/page/about/about.vue:74
-msgid ""
-"We'll do our best to answer all your questions. In return, we ask you to "
-"back us on Patreon or GitHub Sponsors."
-msgstr ""
-"Teemme parhaamme vastataksemme kaikkiin kysymyksiisi. Vastineeksi pyydämme "
-"sinua tukemaan meitä Patreon- tai GitHub-sponsoreina."
+msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+msgstr "Teemme parhaamme vastataksemme kaikkiin kysymyksiisi. Vastineeksi pyydämme sinua tukemaan meitä Patreon- tai GitHub-sponsoreina."
 
 #: src/dialog/sponsor.vue:18
-msgid ""
-"We'll let you know how to enable it when you sign up on Patreon or GitHub "
-"Sponsors."
-msgstr ""
-"Kerromme sinulle miten voit ottaa sen käyttöön kun rekisteröidyt Patreon- "
-"tai GitHub-sponsoriksi."
+msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+msgstr "Kerromme sinulle miten voit ottaa sen käyttöön kun rekisteröidyt Patreon- tai GitHub-sponsoriksi."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr ""
-"WebDAV-ohjelmat voivat muodostaa yhteyden PhotoPrismiin käyttämällä "
-"seuraavaa URL-osoitetta:"
+msgstr "WebDAV-ohjelmat voivat muodostaa yhteyden PhotoPrismiin käyttämällä seuraavaa URL-osoitetta:"
 
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
-"connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr ""
-"WebDAV-ohjelmat, kuten Microsoftin Windows Explorer tai Applen Finder, "
-"voivat muodostaa yhteyden suoraan PhotoPrismiin."
+msgstr "WebDAV-ohjelmat, kuten Microsoftin Windows Explorer tai Applen Finder, voivat muodostaa yhteyden suoraan PhotoPrismiin."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2824,8 +2659,7 @@ msgstr "Voit ladata vain yhden tunnisteen"
 #: src/page/about/about.vue:17
 #, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr ""
-"Voit käyttää sitä kotona, yksityisellä palvelimella tai pilvipalvelimessa."
+msgstr "Voit käyttää sitä kotona, yksityisellä palvelimella tai pilvipalvelimessa."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2838,28 +2672,16 @@ msgstr "Voit skannata kirjastosi uudelleen löytääksesi lisää kasvoja."
 
 #: src/page/about/about.vue:22
 #, fuzzy
-msgid ""
-"Your continued support helps us provide regular updates and remain "
-"independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä ja "
-"palveluja, kuten maailmankarttoja."
+msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgstr "Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä ja palveluja, kuten maailmankarttoja."
 
 #: src/dialog/sponsor.vue:21
-msgid ""
-"Your continued support helps us provide regular updates and services like "
-"world maps."
-msgstr ""
-"Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä ja "
-"palveluja, kuten maailmankarttoja."
+msgid "Your continued support helps us provide regular updates and services like world maps."
+msgstr "Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä ja palveluja, kuten maailmankarttoja."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
-msgid ""
-"Your library is continuously analyzed to automatically create albums of "
-"special moments, trips, and places."
-msgstr ""
-"Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita "
-"erityisistä hetkistä, matkoista ja paikoista."
+msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita erityisistä hetkistä, matkoista ja paikoista."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
@@ -2886,19 +2708,11 @@ msgstr "Lähennä/loitonna"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Tiedostojen tuonti epäonnistui"
 
-#~ msgid ""
-#~ "Note: Updating the password will not revoke access from already "
-#~ "authenticated users."
-#~ msgstr ""
-#~ "Huomautus: Salasanan päivittäminen ei peruuta pääsyä jo todennetuilta "
-#~ "käyttäjiltä."
+#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgstr "Huomautus: Salasanan päivittäminen ei peruuta pääsyä jo todennetuilta käyttäjiltä."
 
-#~ msgid ""
-#~ "Our mission is to provide the most user- and privacy-friendly solution to "
-#~ "keep your pictures organized and accessible."
-#~ msgstr ""
-#~ "Tehtävämme on tarjota käyttäjä- ja yksityisyydensuojaystävällisin "
-#~ "ratkaisu, jonka avulla kuvasi pysyvät järjestyksessä ja saatavilla."
+#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+#~ msgstr "Tehtävämme on tarjota käyttäjä- ja yksityisyydensuojaystävällisin ratkaisu, jonka avulla kuvasi pysyvät järjestyksessä ja saatavilla."
 
 #~ msgid "Server"
 #~ msgstr "Palvelin"
@@ -2909,12 +2723,8 @@ msgstr "Lähennä/loitonna"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Näytä kirjasto navigointivalikossa."
 
-#~ msgid ""
-#~ "The roadmap shows what tasks are in progress, what needs testing, and "
-#~ "which feature requests are going to be implemented next."
-#~ msgstr ""
-#~ "Etenemissuunnitelmasta käy ilmi, mitkä tehtävät ovat käynnissä, mitä on "
-#~ "testattava ja mitkä ominaisuustarpeet toteutetaan seuraavaksi."
+#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
+#~ msgstr "Etenemissuunnitelmasta käy ilmi, mitkä tehtävät ovat käynnissä, mitä on testattava ja mitkä ominaisuustarpeet toteutetaan seuraavaksi."
 
 #~ msgid "to"
 #~ msgstr "kohde"
