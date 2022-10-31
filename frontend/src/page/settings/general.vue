@@ -319,7 +319,7 @@
                   v-model="settings.maps.style"
                   :disabled="busy"
                   :items="options.MapsStyle()"
-                  :label="$gettext('Style')"
+                  :label="$gettext('Maps')"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details

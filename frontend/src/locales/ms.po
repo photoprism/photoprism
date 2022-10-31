@@ -40,15 +40,15 @@ msgstr "%{n} orang ditemui"
 msgid "%{n} pictures found"
 msgstr "%{n} gambar ditemui"
 
-#: src/options/options.js:368
+#: src/options/options.js:364
 msgid "1 hour"
 msgstr "1 jam"
 
-#: src/options/options.js:370
+#: src/options/options.js:366
 msgid "12 hours"
 msgstr "12 jam"
 
-#: src/options/options.js:369
+#: src/options/options.js:365
 msgid "4 hours"
 msgstr "4 jam"
 
@@ -120,35 +120,39 @@ msgstr "Ditambah"
 msgid "Advanced"
 msgstr "Lanjutan"
 
-#: src/options/options.js:378
+#: src/options/options.js:374
 msgid "After 1 day"
 msgstr "Selepas 1 hari"
 
-#: src/options/options.js:379
+#: src/options/options.js:375
 msgid "After 3 days"
 msgstr "Selepas 3 hari"
 
-#: src/options/options.js:380
+#: src/options/options.js:376
 msgid "After 7 days"
 msgstr "Selepas 7 hari"
 
-#: src/options/options.js:382
+#: src/options/options.js:378
 msgid "After one month"
 msgstr "Selepas sebulan"
 
-#: src/options/options.js:384
+#: src/options/options.js:380
 msgid "After one year"
 msgstr "Selepas satu tahun"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Selepas memilih gambar daripada hasil carian, anda boleh menambahkannya kepada album menggunakan menu konteks."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Selepas memilih gambar daripada hasil carian, anda boleh menambahkannya "
+"kepada album menggunakan menu konteks."
 
-#: src/options/options.js:383
+#: src/options/options.js:379
 msgid "After two months"
 msgstr "Selepas dua bulan"
 
-#: src/options/options.js:381
+#: src/options/options.js:377
 msgid "After two weeks"
 msgstr "Selepas dua minggu"
 
@@ -231,12 +235,20 @@ msgstr "Semua Tahun"
 
 #: src/page/about/about.vue:40
 #, fuzzy
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Selanjutnya, sila tinggalkan bintang di GitHub jika anda menyukai projek ini. Ia akan memberi motivasi tambahan untuk meneruskan."
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
+msgstr ""
+"Selanjutnya, sila tinggalkan bintang di GitHub jika anda menyukai projek "
+"ini. Ia akan memberi motivasi tambahan untuk meneruskan."
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Sebagai alternatif, anda boleh memuat naik fail terus ke pelayan WebDAV seperti Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Sebagai alternatif, anda boleh memuat naik fail terus ke pelayan WebDAV "
+"seperti Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -253,7 +265,7 @@ msgstr "Ralat berlaku - adakah capaian anda tergendala?"
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:301
 #: src/component/photo/cards.vue:480 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
-#: src/options/options.js:303
+#: src/options/options.js:299
 msgid "Animated"
 msgstr "Beranimasi"
 
@@ -263,7 +275,8 @@ msgstr "Animasi"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Sebarang foto dan video peribadi kekal peribadi dan tidak akan dikongsi."
+msgstr ""
+"Sebarang foto dan video peribadi kekal peribadi dan tidak akan dikongsi."
 
 #: src/page/about/about.vue:32
 #, fuzzy
@@ -331,13 +344,19 @@ msgstr "Nisbah aspek"
 
 #: src/page/settings/library.vue:112
 #, fuzzy
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Hasilkan JPEG secara automatik untuk fail jenis lain supaya ia boleh dipaparkan dalam pelayar."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"Hasilkan JPEG secara automatik untuk fail jenis lain supaya ia boleh "
+"dipaparkan dalam pelayar."
 
 #: src/page/settings/general.vue:163
 #, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara automatik."
+msgstr ""
+"Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara "
+"automatik."
 
 #: src/options/options.js:268
 #, fuzzy
@@ -350,13 +369,24 @@ msgid "Become a sponsor"
 msgstr "Jadi penaja"
 
 #: src/page/about/about.vue:62
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Sebelum menghantar permintaan sokongan, sila gunakan Senarai Semak Penyelesaian Masalah (Troubleshooting Checklists) kami untuk cuba mengenal pasti punca masalah anda."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Sebelum menghantar permintaan sokongan, sila gunakan Senarai Semak "
+"Penyelesaian Masalah (Troubleshooting Checklists) kami untuk cuba mengenal "
+"pasti punca masalah anda."
 
 #: src/page/about/about.vue:27
 #, fuzzy
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Sebagai 100% dibiayai sendiri dan bebas, kami boleh berjanji kepada anda bahawa kami tidak akan menjual data anda dan kami akan sentiasa telus tentang perisian dan perkhidmatan kami."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"Sebagai 100% dibiayai sendiri dan bebas, kami boleh berjanji kepada anda "
+"bahawa kami tidak akan menjual data anda dan kami akan sentiasa telus "
+"tentang perisian dan perkhidmatan kami."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -368,20 +398,20 @@ msgstr "Bio"
 msgid "Birth Date"
 msgstr "Tarikh lahir"
 
-#: src/options/options.js:403
+#: src/options/options.js:399
 msgid "Black"
 msgstr "Hitam"
 
-#: src/options/options.js:416
+#: src/options/options.js:412
 #, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Modifikasi Lanczos, Kurang Artifak Deringan"
 
-#: src/options/options.js:399
+#: src/options/options.js:395
 msgid "Blue"
 msgstr "Biru"
 
-#: src/options/options.js:400
+#: src/options/options.js:396
 msgid "Brown"
 msgstr "Coklat"
 
@@ -395,10 +425,14 @@ msgstr "Semak imbas fail dan folder yang telah diindeks dalam Perpustakaan."
 
 #: src/page/about/about.vue:54
 #, fuzzy
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Semak imbas Pangkalan Pengetahuan untuk mendapatkan maklumat terperinci tentang ciri produk tertentu, perkhidmatan dan sumber berkaitan."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
+msgstr ""
+"Semak imbas Pangkalan Pengetahuan untuk mendapatkan maklumat terperinci "
+"tentang ciri produk tertentu, perkhidmatan dan sumber berkaitan."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:410
+#: src/page/about/feedback.vue:8 src/options/options.js:406
 msgid "Bug Report"
 msgstr "Laporan Pepijat"
 
@@ -515,8 +549,12 @@ msgstr "Warna"
 
 #: src/page/about/about.vue:49
 #, fuzzy
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Isu biasa boleh didiagnosis dan diselesaikan dengan cepat menggunakan senarai semak penyelesaian masalah yang kami sediakan."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
+msgstr ""
+"Isu biasa boleh didiagnosis dan diselesaikan dengan cepat menggunakan "
+"senarai semak penyelesaian masalah yang kami sediakan."
 
 #: src/page/library/index.vue:115
 #, fuzzy
@@ -600,7 +638,7 @@ msgstr "Dicipta"
 msgid "Creating thumbnails for"
 msgstr "Mencipta lakaran kenit untuk"
 
-#: src/options/options.js:418
+#: src/options/options.js:414
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Kualiti Sederhana, Prestasi Baik"
 
@@ -608,11 +646,11 @@ msgstr "Cubic: Kualiti Sederhana, Prestasi Baik"
 msgid "Current Password"
 msgstr "Kata Laluan Semasa"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:407
+#: src/page/about/feedback.vue:5 src/options/options.js:403
 msgid "Customer Support"
 msgstr "Sokongan Pengguna"
 
-#: src/options/options.js:398
+#: src/options/options.js:394
 msgid "Cyan"
 msgstr "Cyan"
 
@@ -620,7 +658,7 @@ msgstr "Cyan"
 msgid "Cyano"
 msgstr "Cyano"
 
-#: src/options/options.js:371
+#: src/options/options.js:367
 msgid "Daily"
 msgstr "Setiap hari"
 
@@ -633,7 +671,7 @@ msgstr "Hari"
 msgid "Debug Logs"
 msgstr "Log Nyahpepijat"
 
-#: src/options/options.js:264 src/options/options.js:322
+#: src/options/options.js:264 src/options/options.js:318
 #: src/options/themes.js:402
 msgid "Default"
 msgstr "Lalai"
@@ -747,7 +785,8 @@ msgstr "Jangan sandarkan metadata foto dan album ke fail YAML."
 #: src/page/settings/advanced.vue:207
 #, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Jangan buat fail JSON ExifTool untuk pengekstrakan metadata yang lebih baik."
+msgstr ""
+"Jangan buat fail JSON ExifTool untuk pengekstrakan metadata yang lebih baik."
 
 #: src/page/settings/advanced.vue:97
 #, fuzzy
@@ -774,7 +813,7 @@ msgstr "Jangan gunakan RawTherapee untuk menukar fail RAW."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Jangan gunakan TensorFlow untuk klasifikasi imej."
 
-#: src/options/options.js:411
+#: src/options/options.js:407
 #, fuzzy
 msgid "Donations"
 msgstr "Derma"
@@ -824,8 +863,12 @@ msgstr "Penapis Penskalaan Rendah"
 
 #: src/page/about/feedback.vue:16
 #, fuzzy
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Oleh kerana jumlah e-mel yang tinggi yang kami terima, pasukan kami mungkin tidak dapat menghubungi anda dengan segera."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Oleh kerana jumlah e-mel yang tinggi yang kami terima, pasukan kami mungkin "
+"tidak dapat menghubungi anda dengan segera."
 
 #: src/page/library/browse.vue:37
 #, fuzzy
@@ -843,8 +886,12 @@ msgstr "Pratonton Dinamik"
 
 #: src/page/settings/advanced.vue:303
 #, fuzzy
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Penyampaian dinamik memerlukan pelayan yang berkuasa. Ia tidak disyorkan untuk peranti NAS."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"Penyampaian dinamik memerlukan pelayan yang berkuasa. Ia tidak disyorkan "
+"untuk peranti NAS."
 
 #: src/page/settings/advanced.vue:345
 #, fuzzy
@@ -912,15 +959,19 @@ msgstr "Anggarkan anggaran lokasi gambar tanpa koordinat."
 msgid "Estimates"
 msgstr "Anggaran"
 
-#: src/options/options.js:372
+#: src/options/options.js:368
 #, fuzzy
 msgid "Every two days"
 msgstr "Setiap dua hari"
 
 #: src/page/settings/general.vue:207
 #, fuzzy
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Kecualikan kandungan yang ditandai sebagai peribadi daripada hasil carian, album kongsi, label dan tempat."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Kecualikan kandungan yang ditandai sebagai peribadi daripada hasil carian, "
+"album kongsi, label dan tempat."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 #, fuzzy
@@ -997,7 +1048,7 @@ msgstr "Kegemaran"
 msgid "Favorites"
 msgstr "Kegemaran"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:409
+#: src/page/about/feedback.vue:7 src/options/options.js:405
 #, fuzzy
 msgid "Feature Request"
 msgstr "Permintaan Ciri"
@@ -1013,10 +1064,13 @@ msgstr "Maklumbalas"
 
 #: src/dialog/sponsor.vue:24
 #, fuzzy
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Sila hubungi kami di hello@photoprism.app jika anda mempunyai sebarang pertanyaan."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+"Sila hubungi kami di hello@photoprism.app jika anda mempunyai sebarang "
+"pertanyaan."
 
-#: src/options/options.js:424
+#: src/options/options.js:420
 #, fuzzy
 msgid "Female"
 msgstr "perempuan"
@@ -1051,8 +1105,12 @@ msgstr "Fail"
 
 #: src/page/settings/library.vue:214
 #, fuzzy
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Fail dengan nama berjujukan seperti 'IMG_1234 (2)' dan 'IMG_1234 (3)' tergolong dalam gambar yang sama."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Fail dengan nama berjujukan seperti 'IMG_1234 (2)' dan 'IMG_1234 (3)' "
+"tergolong dalam gambar yang sama."
 
 #: src/dialog/photo/edit/details.vue:477
 msgid "Focal Length"
@@ -1121,7 +1179,7 @@ msgstr "Mendapat Sokongan"
 msgid "Given Name"
 msgstr "Nama Asal"
 
-#: src/options/options.js:393
+#: src/options/options.js:389
 #, fuzzy
 msgid "Gold"
 msgstr "emas"
@@ -1131,11 +1189,11 @@ msgstr "emas"
 msgid "Grayscale"
 msgstr "Skala kelabu"
 
-#: src/options/options.js:396
+#: src/options/options.js:392
 msgid "Green"
 msgstr "Hijau"
 
-#: src/options/options.js:402
+#: src/options/options.js:398
 msgid "Grey"
 msgstr "Kelabu"
 
@@ -1176,7 +1234,7 @@ msgstr "Sembunyi"
 msgid "Hide photos that have been moved to archive."
 msgstr "Sembunyikan foto yang telah dialihkan ke arkib."
 
-#: src/options/options.js:326
+#: src/options/options.js:322
 #, fuzzy
 msgid "High"
 msgstr "tinggi"
@@ -1206,7 +1264,7 @@ msgstr "Jika ini tidak membantu, atau anda mempunyai soalan lain:"
 msgid "image"
 msgstr "gambar"
 
-#: src/model/file.js:216 src/options/options.js:299
+#: src/model/file.js:216 src/options/options.js:295
 msgid "Image"
 msgstr "Imej"
 
@@ -1225,13 +1283,18 @@ msgstr "Pengimportan gagal"
 
 #: src/page/library/import.vue:25
 #, fuzzy
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Fail yang diimport akan diisih mengikut tarikh dan diberi nama unik untuk mengelakkan pendua."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Fail yang diimport akan diisih mengikut tarikh dan diberi nama unik untuk "
+"mengelakkan pendua."
 
 #: src/page/settings/general.vue:273
 #, fuzzy
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Fail yang diimport akan diisih mengikut tarikh dan diberi nama yang unik."
+msgstr ""
+"Fail yang diimport akan diisih mengikut tarikh dan diberi nama yang unik."
 
 #: src/page/library/import.vue:5
 #, fuzzy
@@ -1259,8 +1322,12 @@ msgstr "Selain itu, penaja menerima sokongan teknikal langsung melalui e-mel."
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 #, fuzzy
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Sekiranya gambar yang anda jangkakan tiada, sila imbas semula pustaka anda dan tunggu sehingga pengindeksan telah selesai."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"Sekiranya gambar yang anda jangkakan tiada, sila imbas semula pustaka anda "
+"dan tunggu sehingga pengindeksan telah selesai."
 
 #: src/component/navigation.vue:563 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1331,8 +1398,12 @@ msgstr "Foto tidak sah dipilih"
 
 #: src/page/about/about.vue:16
 #, fuzzy
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Ia menggunakan teknologi terkini untuk menandakan dan mencari gambar secara automatik tanpa menghalang anda."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
+msgstr ""
+"Ia menggunakan teknologi terkini untuk menandakan dan mencari gambar secara "
+"automatik tanpa menghalang anda."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1379,7 +1450,7 @@ msgstr "Label"
 msgid "Labels deleted"
 msgstr "Label dipadamkan"
 
-#: src/options/options.js:417
+#: src/options/options.js:413
 #, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Pemeliharaan Perincian, Artifak Minimum"
@@ -1435,7 +1506,7 @@ msgstr "Lesen"
 msgid "Like"
 msgstr "Suka"
 
-#: src/options/options.js:395
+#: src/options/options.js:391
 #, fuzzy
 msgid "Lime"
 msgstr "kapur"
@@ -1445,7 +1516,7 @@ msgstr "kapur"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Had dicapai, menunjukkan %{n} fail pertama"
 
-#: src/options/options.js:419
+#: src/options/options.js:415
 #, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: Sangat Lancar, Prestasi Terbaik"
@@ -1460,7 +1531,7 @@ msgstr "Senarai"
 
 #: src/app/routes.js:204 src/component/photo/cards.vue:292
 #: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
-#: src/options/options.js:311
+#: src/options/options.js:307
 msgid "Live"
 msgstr "Langsung"
 
@@ -1487,8 +1558,12 @@ msgstr "Lokasi"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 #, fuzzy
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Mesej log dipaparkan di sini setiap kali PhotoPrism menjumpai fail yang rosak, atau terdapat isu lain yang berpotensi."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Mesej log dipaparkan di sini setiap kali PhotoPrism menjumpai fail yang "
+"rosak, atau terdapat isu lain yang berpotensi."
 
 #: src/component/navigation.vue:454 src/component/navigation.vue:1686
 #: src/component/navigation.vue:1960
@@ -1509,12 +1584,12 @@ msgstr "Log"
 msgid "Longitude"
 msgstr "Longitud"
 
-#: src/options/options.js:330
+#: src/options/options.js:326
 #, fuzzy
 msgid "Low"
 msgstr "rendah"
 
-#: src/options/options.js:389
+#: src/options/options.js:385
 #, fuzzy
 msgid "Magenta"
 msgstr "Magenta"
@@ -1523,7 +1598,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Warna Utama"
 
-#: src/options/options.js:423
+#: src/options/options.js:419
 #, fuzzy
 msgid "Male"
 msgstr "jantan"
@@ -1537,6 +1612,10 @@ msgstr "manual"
 #, fuzzy
 msgid "Manual Upload"
 msgstr "Muat Naik Manual"
+
+#: src/page/settings/general.vue:556
+msgid "Maps"
+msgstr ""
 
 #: src/model/marker.js:146
 msgid "Marker"
@@ -1650,7 +1729,7 @@ msgstr "Nama"
 msgid "Name too long"
 msgstr "Nama terlalu panjang"
 
-#: src/options/options.js:367 src/options/options.js:377
+#: src/options/options.js:363 src/options/options.js:373
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Tidak sesekali"
@@ -1736,8 +1815,12 @@ msgstr "Tiada video dipilih"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 #, fuzzy
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Tiada amaran atau ralat yang mengandungi kata kunci ini. Ambil perhatian bahawa carian adalah sensitif huruf besar-besaran."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Tiada amaran atau ralat yang mengandungi kata kunci ini. Ambil perhatian "
+"bahawa carian adalah sensitif huruf besar-besaran."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1747,10 +1830,14 @@ msgstr "Tiada amaran atau ralat yang mengandungi kata kunci ini. Ambil perhatian
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
 #, fuzzy
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Imej bukan fotografi dan berkualiti rendah memerlukan semakan sebelum ia muncul dalam hasil carian."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Imej bukan fotografi dan berkualiti rendah memerlukan semakan sebelum ia "
+"muncul dalam hasil carian."
 
-#: src/options/options.js:245 src/options/options.js:334
+#: src/options/options.js:245 src/options/options.js:330
 msgid "None"
 msgstr "Tiada"
 
@@ -1760,8 +1847,11 @@ msgstr "Halaman Tak Dijumpai"
 
 #: src/page/library/import.vue:28
 #, fuzzy
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Harap maklum bahawa anda boleh mengurus folder asal anda secara manual dan mengimport adalah pilihan."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Harap maklum bahawa anda boleh mengurus folder asal anda secara manual dan "
+"mengimport adalah pilihan."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
@@ -1769,8 +1859,12 @@ msgstr "Nota:"
 
 #: src/dialog/service/add.vue:28
 #, fuzzy
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Nota: Hanya pelayan WebDAV, seperti Nextcloud atau PhotoPrism, boleh dikonfigurasikan sebagai perkhidmatan jauh untuk sandaran dan muat naik fail."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Nota: Hanya pelayan WebDAV, seperti Nextcloud atau PhotoPrism, boleh "
+"dikonfigurasikan sebagai perkhidmatan jauh untuk sandaran dan muat naik fail."
 
 #: src/dialog/photo/edit/details.vue:654
 msgid "Notes"
@@ -1800,7 +1894,7 @@ msgstr "Tertua dahulu"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Pada Windows, masukkan sumber berikut dalam dialog sambungan:"
 
-#: src/options/options.js:373
+#: src/options/options.js:369
 #, fuzzy
 msgid "Once a week"
 msgstr "Sekali seminggu"
@@ -1855,7 +1949,7 @@ msgstr "Pilihan"
 msgid "or ask in our Community Chat"
 msgstr "atau tanya dalam Sembang Komuniti kami"
 
-#: src/options/options.js:392
+#: src/options/options.js:388
 msgid "Orange"
 msgstr "Jingga"
 
@@ -1887,16 +1981,20 @@ msgstr "Nama Asal"
 msgid "Originals"
 msgstr "Asal"
 
-#: src/options/options.js:412 src/options/options.js:425
+#: src/options/options.js:408 src/options/options.js:421
 msgid "Other"
 msgstr "Lain-lain"
 
 #: src/page/about/about.vue:48
 #, fuzzy
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Panduan Pengguna kami juga merangkumi banyak topik lanjutan, seperti berhijrah daripada Google Photos dan tetapan kualiti lakaran kecil."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
+msgstr ""
+"Panduan Pengguna kami juga merangkumi banyak topik lanjutan, seperti "
+"berhijrah daripada Google Photos dan tetapan kualiti lakaran kecil."
 
-#: src/options/options.js:284
+#: src/options/options.js:282
 #, fuzzy
 msgid "Outdoor"
 msgstr "Luar"
@@ -1968,7 +2066,7 @@ msgstr "PhotoPrism® ialah Apl Foto Dikuasakan AI untuk Web Terdesentralisasi."
 msgid "Photos"
 msgstr "Foto"
 
-#: src/options/options.js:390
+#: src/options/options.js:386
 #, fuzzy
 msgid "Pink"
 msgstr "merah jambu"
@@ -2000,12 +2098,18 @@ msgstr "Sila sahkan kata laluan baharu anda."
 #: src/dialog/upload.vue:45
 #, fuzzy
 msgid "Please don't upload photos containing offensive content."
-msgstr "Tolong jangan muat naik foto yang mengandungi kandungan yang menyinggung perasaan."
+msgstr ""
+"Tolong jangan muat naik foto yang mengandungi kandungan yang menyinggung "
+"perasaan."
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Sila ambil perhatian bahawa menukar kata laluan anda akan log keluar anda pada peranti dan penyemak imbas lain."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Sila ambil perhatian bahawa menukar kata laluan anda akan log keluar anda "
+"pada peranti dan penyemak imbas lain."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 #, fuzzy
@@ -2053,7 +2157,7 @@ msgstr "Utama"
 msgid "Private"
 msgstr "Sulit"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:408
+#: src/page/about/feedback.vue:6 src/options/options.js:404
 #, fuzzy
 msgid "Product Feedback"
 msgstr "Maklum Balas Produk"
@@ -2063,7 +2167,7 @@ msgstr "Maklum Balas Produk"
 msgid "Projection"
 msgstr "Unjuran"
 
-#: src/options/options.js:388
+#: src/options/options.js:384
 #, fuzzy
 msgid "Purple"
 msgstr "Ungu"
@@ -2087,7 +2191,7 @@ msgstr "Rawak"
 msgid "Raspberry"
 msgstr "Raspberi"
 
-#: src/options/options.js:307
+#: src/options/options.js:303
 #, fuzzy
 msgid "Raw"
 msgstr "mentah"
@@ -2105,7 +2209,9 @@ msgstr "Penukaran RAW"
 #: src/page/library/index.vue:116
 #, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Indeks semula semua yang asal, termasuk fail yang telah diindeks dan tidak berubah."
+msgstr ""
+"Indeks semula semua yang asal, termasuk fail yang telah diindeks dan tidak "
+"berubah."
 
 #: src/page/about/about.vue:51
 #, fuzzy
@@ -2153,7 +2259,7 @@ msgstr "Dikenali"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Mengenali wajah supaya orang tertentu boleh ditemui."
 
-#: src/options/options.js:391
+#: src/options/options.js:387
 msgid "Red"
 msgstr "Merah"
 
@@ -2192,8 +2298,12 @@ msgstr "Alih keluar daripada album"
 
 #: src/page/library/import.vue:120
 #, fuzzy
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Alih keluar fail yang diimport untuk menjimatkan storan. Jenis fail yang tidak disokong tidak akan dipadamkan, ia kekal di lokasi semasanya."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Alih keluar fail yang diimport untuk menjimatkan storan. Jenis fail yang "
+"tidak disokong tidak akan dipadamkan, ia kekal di lokasi semasanya."
 
 #: src/common/api.js:74 src/page/connect.vue:38
 #, fuzzy
@@ -2229,7 +2339,7 @@ msgstr "Tulis semula kata laluan"
 msgid "Review"
 msgstr "Tinjauan"
 
-#: src/options/options.js:278
+#: src/options/options.js:277
 #, fuzzy
 msgid "Satellite"
 msgstr "Satelit"
@@ -2393,7 +2503,8 @@ msgstr "Tunjukkan log pelayan dalam Perpustakaan."
 #: src/page/settings/advanced.vue:75
 #, fuzzy
 msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Menunjukkan mesej log yang lebih terperinci. Memerlukan mulakan semula."
+msgstr ""
+"Menunjukkan mesej log yang lebih terperinci. Memerlukan mulakan semula."
 
 #: src/model/file.js:212
 #, fuzzy
@@ -2439,8 +2550,12 @@ msgstr "Sumber"
 
 #: src/page/about/about.vue:25
 #, fuzzy
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "Penaja mendapat akses kepada ciri tambahan, menerima sokongan teknikal terus melalui e-mel, dan boleh menyertai bilik sembang peribadi kami di matrix.org."
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
+msgstr ""
+"Penaja mendapat akses kepada ciri tambahan, menerima sokongan teknikal terus "
+"melalui e-mel, dan boleh menyertai bilik sembang peribadi kami di matrix.org."
 
 #: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 #, fuzzy
@@ -2454,8 +2569,12 @@ msgstr "Tumpukan fail yang berkongsi imej unik atau pengecam contoh yang sama."
 
 #: src/page/settings/library.vue:172
 #, fuzzy
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Tumpukan gambar yang diambil pada masa dan lokasi yang sama berdasarkan metadatanya."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Tumpukan gambar yang diambil pada masa dan lokasi yang sama berdasarkan "
+"metadatanya."
 
 #: src/dialog/photo/edit/info.vue:86
 #, fuzzy
@@ -2469,8 +2588,12 @@ msgstr "tindanan"
 
 #: src/page/settings/library.vue:138
 #, fuzzy
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Susun fail kumpulan dengan bingkai rujukan yang serupa, tetapi perbezaan kualiti, format, saiz atau warna."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"Susun fail kumpulan dengan bingkai rujukan yang serupa, tetapi perbezaan "
+"kualiti, format, saiz atau warna."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2506,10 +2629,6 @@ msgstr "Penyimpanan"
 msgid "Streets"
 msgstr "Jalan-jalan"
 
-#: src/page/settings/general.vue:556
-msgid "Style"
-msgstr "Gaya"
-
 #: src/dialog/photo/edit/details.vue:503 src/model/subject.js:157
 msgid "Subject"
 msgstr "Subjek"
@@ -2521,8 +2640,11 @@ msgstr "Berjaya Disambungkan"
 
 #: src/dialog/service/add.vue:29
 #, fuzzy
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Sokongan untuk perkhidmatan tambahan, seperti Google Drive, akan ditambahkan dari semasa ke semasa."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Sokongan untuk perkhidmatan tambahan, seperti Google Drive, akan ditambahkan "
+"dari semasa ke semasa."
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2539,7 +2661,7 @@ msgstr "Segerakkan fail mentah dan video"
 msgid "Taken"
 msgstr "diambil"
 
-#: src/options/options.js:397
+#: src/options/options.js:393
 #, fuzzy
 msgid "Teal"
 msgstr "Teal"
@@ -2561,8 +2683,12 @@ msgstr "Indeks pada masa ini mengandungi %{n} fail tersembunyi."
 
 #: src/page/library/index.vue:37
 #, fuzzy
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Format mereka mungkin tidak disokong, mereka belum ditukar kepada JPEG lagi atau terdapat pendua."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Format mereka mungkin tidak disokong, mereka belum ditukar kepada JPEG lagi "
+"atau terdapat pendua."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2570,20 +2696,34 @@ msgstr "Tema"
 
 #: src/dialog/sponsor.vue:17
 #, fuzzy
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-msgstr "Ini pada masa ini merupakan ciri penaja untuk mengucapkan terima kasih kepada semua orang yang menyokong pembangunan aplikasi ini."
+msgid ""
+"This currently is a sponsor feature to thank everyone who supports the "
+"development of this application."
+msgstr ""
+"Ini pada masa ini merupakan ciri penaja untuk mengucapkan terima kasih "
+"kepada semua orang yang menyokong pembangunan aplikasi ini."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Ini melekapkan folder asal sebagai pemacu rangkaian dan membolehkan anda membuka, mengedit dan memadam fail daripada komputer atau telefon pintar anda seolah-olah ia adalah tempatan."
+msgstr ""
+"Ini melekapkan folder asal sebagai pemacu rangkaian dan membolehkan anda "
+"membuka, mengedit dan memadam fail daripada komputer atau telefon pintar "
+"anda seolah-olah ia adalah tempatan."
 
 #: src/dialog/webdav.vue:26
 #, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Ini melekapkan folder asal sebagai pemacu rangkaian dan membolehkan anda membuka, mengedit dan memadam fail daripada komputer atau telefon pintar anda seolah-olah ia adalah tempatan."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Ini melekapkan folder asal sebagai pemacu rangkaian dan membolehkan anda "
+"membuka, mengedit dan memadam fail daripada komputer atau telefon pintar "
+"anda seolah-olah ia adalah tempatan."
 
 #: src/page/settings/advanced.vue:250
 #, fuzzy
@@ -2633,7 +2773,7 @@ msgstr "Togol Paparan"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:290
+#: src/options/options.js:287
 #, fuzzy
 msgid "Topographic"
 msgstr "Topografi"
@@ -2779,7 +2919,9 @@ msgstr "Memuatkan semula…"
 #: src/dialog/upload.vue:46
 #, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Muat naik yang mungkin mengandungi imej sedemikian akan ditolak secara automatik."
+msgstr ""
+"Muat naik yang mungkin mengandungi imej sedemikian akan ditolak secara "
+"automatik."
 
 #: src/dialog/share.vue:153
 msgid "URL"
@@ -2822,7 +2964,7 @@ msgstr "Disahkan"
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
 #: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
-#: src/options/options.js:315
+#: src/options/options.js:311
 msgid "Video"
 msgstr "Video"
 
@@ -2844,8 +2986,12 @@ msgstr "Lihat"
 
 #: src/page/about/about.vue:47
 #, fuzzy
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Lawati docs.photoprism.app/user-guide untuk mengetahui cara menyegerak, mengatur dan berkongsi gambar anda."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
+msgstr ""
+"Lawati docs.photoprism.app/user-guide untuk mengetahui cara menyegerak, "
+"mengatur dan berkongsi gambar anda."
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2860,29 +3006,43 @@ msgstr "Kami menghargai maklumbalas anda!"
 #: src/page/about/feedback.vue:17
 #, fuzzy
 msgid "We do our best to respond within five business days or less."
-msgstr "Kami melakukan yang terbaik untuk membalas dalam tempoh lima hari perniagaan atau kurang."
+msgstr ""
+"Kami melakukan yang terbaik untuk membalas dalam tempoh lima hari perniagaan "
+"atau kurang."
 
 #: src/page/about/about.vue:74
 #, fuzzy
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Kami akan melakukan yang terbaik untuk menjawab semua soalan anda. Sebagai balasan, kami meminta anda menyokong kami di Patreon atau Penaja GitHub."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Kami akan melakukan yang terbaik untuk menjawab semua soalan anda. Sebagai "
+"balasan, kami meminta anda menyokong kami di Patreon atau Penaja GitHub."
 
 #: src/dialog/sponsor.vue:18
 #, fuzzy
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr "Kami akan memberitahu anda cara mendayakannya apabila anda mendaftar di Patreon atau Penaja GitHub."
+msgid ""
+"We'll let you know how to enable it when you sign up on Patreon or GitHub "
+"Sponsors."
+msgstr ""
+"Kami akan memberitahu anda cara mendayakannya apabila anda mendaftar di "
+"Patreon atau Penaja GitHub."
 
 #: src/dialog/webdav.vue:8
 #, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "Pelanggan WebDAV boleh menyambung ke PhotoPrism menggunakan URL berikut:"
+msgstr ""
+"Pelanggan WebDAV boleh menyambung ke PhotoPrism menggunakan URL berikut:"
 
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "Pelanggan WebDAV, seperti Microsoft Windows Explorer atau Apple's Finder, boleh menyambung terus ke PhotoPrism."
+msgstr ""
+"Pelanggan WebDAV, seperti Microsoft Windows Explorer atau Apple's Finder, "
+"boleh menyambung terus ke PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 #, fuzzy
@@ -2895,7 +3055,7 @@ msgstr "Muat Naik WebDAV"
 msgid "Website"
 msgstr "laman web"
 
-#: src/options/options.js:401
+#: src/options/options.js:397
 msgid "White"
 msgstr "Putih"
 
@@ -2909,7 +3069,7 @@ msgstr "Perincian:"
 msgid "Year"
 msgstr "Viti"
 
-#: src/options/options.js:394
+#: src/options/options.js:390
 msgid "Yellow"
 msgstr "Kuning"
 
@@ -2947,7 +3107,8 @@ msgstr "Anda hanya boleh memuat turun satu label"
 #: src/page/about/about.vue:17
 #, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "Anda boleh menjalankannya di rumah, pada pelayan peribadi atau dalam awan."
+msgstr ""
+"Anda boleh menjalankannya di rumah, pada pelayan peribadi atau dalam awan."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 #, fuzzy
@@ -2962,23 +3123,38 @@ msgstr "Anda boleh mengimbas semula pustaka anda untuk mencari wajah tambahan."
 
 #: src/page/about/about.vue:22
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Sokongan berterusan anda membantu kami menyediakan kemas kini dan perkhidmatan tetap seperti peta dunia."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Sokongan berterusan anda membantu kami menyediakan kemas kini dan "
+"perkhidmatan tetap seperti peta dunia."
 
 #: src/dialog/sponsor.vue:21
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and services like world maps."
-msgstr "Sokongan berterusan anda membantu kami menyediakan kemas kini dan perkhidmatan tetap seperti peta dunia."
+msgid ""
+"Your continued support helps us provide regular updates and services like "
+"world maps."
+msgstr ""
+"Sokongan berterusan anda membantu kami menyediakan kemas kini dan "
+"perkhidmatan tetap seperti peta dunia."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
 #, fuzzy
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, perjalanan dan tempat istimewa secara automatik."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Pustaka anda dianalisis secara berterusan untuk mencipta album detik, "
+"perjalanan dan tempat istimewa secara automatik."
 
 #: src/component/photo-viewer.vue:176
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Style"
+#~ msgstr "Gaya"
 
 #~ msgid "Hybrid"
 #~ msgstr "Hibrid"
@@ -3000,12 +3176,21 @@ msgstr "Zum masuk/keluar"
 #~ msgstr "Kegagalan semasa mengimport fail yang dimuat naik"
 
 #, fuzzy
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "Nota: Mengemas kini kata laluan tidak akan membatalkan akses daripada pengguna yang telah disahkan."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Nota: Mengemas kini kata laluan tidak akan membatalkan akses daripada "
+#~ "pengguna yang telah disahkan."
 
 #, fuzzy
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "Misi kami adalah untuk menyediakan penyelesaian yang paling mesra pengguna dan privasi untuk memastikan gambar anda teratur dan boleh diakses."
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "Misi kami adalah untuk menyediakan penyelesaian yang paling mesra "
+#~ "pengguna dan privasi untuk memastikan gambar anda teratur dan boleh "
+#~ "diakses."
 
 #~ msgid "Play"
 #~ msgstr "Main"
@@ -3022,8 +3207,12 @@ msgstr "Zum masuk/keluar"
 #~ msgstr "Tunjukkan Pustaka dalam menu navigasi."
 
 #, fuzzy
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Peta jalan menunjukkan tugasan yang sedang dijalankan, perkara yang memerlukan ujian dan permintaan ciri yang akan dilaksanakan seterusnya."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Peta jalan menunjukkan tugasan yang sedang dijalankan, perkara yang "
+#~ "memerlukan ujian dan permintaan ciri yang akan dilaksanakan seterusnya."
 
 #~ msgid "to"
 #~ msgstr "kepada"

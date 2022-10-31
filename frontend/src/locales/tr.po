@@ -41,15 +41,15 @@ msgstr "%{n} kişi bulundu"
 msgid "%{n} pictures found"
 msgstr "%{n} resim bulundu"
 
-#: src/options/options.js:368
+#: src/options/options.js:364
 msgid "1 hour"
 msgstr "1 saat"
 
-#: src/options/options.js:370
+#: src/options/options.js:366
 msgid "12 hours"
 msgstr "12 saat"
 
-#: src/options/options.js:369
+#: src/options/options.js:365
 msgid "4 hours"
 msgstr "4 saat"
 
@@ -121,35 +121,39 @@ msgstr "Eklendi"
 msgid "Advanced"
 msgstr "Gelişmiş"
 
-#: src/options/options.js:378
+#: src/options/options.js:374
 msgid "After 1 day"
 msgstr "1 gün sonra"
 
-#: src/options/options.js:379
+#: src/options/options.js:375
 msgid "After 3 days"
 msgstr "3 gün sonra"
 
-#: src/options/options.js:380
+#: src/options/options.js:376
 msgid "After 7 days"
 msgstr "7 gün sonra"
 
-#: src/options/options.js:382
+#: src/options/options.js:378
 msgid "After one month"
 msgstr "Bir ay sonra"
 
-#: src/options/options.js:384
+#: src/options/options.js:380
 msgid "After one year"
 msgstr "Bir yıl sonra"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak bunları bir albüme ekleyebilirsiniz."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak "
+"bunları bir albüme ekleyebilirsiniz."
 
-#: src/options/options.js:383
+#: src/options/options.js:379
 msgid "After two months"
 msgstr "İki ay sonra"
 
-#: src/options/options.js:381
+#: src/options/options.js:377
 msgid "After two weeks"
 msgstr "İki hafta sonra"
 
@@ -231,12 +235,20 @@ msgid "All Years"
 msgstr "Bütün yıllar"
 
 #: src/page/about/about.vue:40
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Ayrıca, bu projeyi beğendiyseniz lütfen GitHub'da bir yıldız bırakın. Devam etmek için ek motivasyon sağlar."
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
+msgstr ""
+"Ayrıca, bu projeyi beğendiyseniz lütfen GitHub'da bir yıldız bırakın. Devam "
+"etmek için ek motivasyon sağlar."
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternatif olarak, dosyaları doğrudan Nextcloud gibi WebDAV sunucularına yükleyebilirsiniz."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Alternatif olarak, dosyaları doğrudan Nextcloud gibi WebDAV sunucularına "
+"yükleyebilirsiniz."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -253,7 +265,7 @@ msgstr "Bir hata oluştu - çevrimdışı mısınız?"
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:301
 #: src/component/photo/cards.vue:480 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
-#: src/options/options.js:303
+#: src/options/options.js:299
 #, fuzzy
 msgid "Animated"
 msgstr "Animasyon"
@@ -331,12 +343,17 @@ msgid "Aspect Ratio"
 msgstr "En Boy Oranı"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Bir tarayıcıda görüntülenebilmeleri için diğer dosya türleri için otomatik olarak JPEG'ler oluşturun."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"Bir tarayıcıda görüntülenebilmeleri için diğer dosya türleri için otomatik "
+"olarak JPEG'ler oluşturun."
 
 #: src/page/settings/general.vue:163
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturur."
+msgstr ""
+"Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturur."
 
 #: src/options/options.js:268
 #, fuzzy
@@ -349,13 +366,23 @@ msgid "Become a sponsor"
 msgstr "Sponsor olun"
 
 #: src/page/about/about.vue:62
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için "
+"lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
 
 #: src/page/about/about.vue:27
 #, fuzzy
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "100 kendi kendini finanse eden ve bağımsız olarak, verilerinizi asla satmayacağımıza ve yazılım ve hizmetlerimiz hakkında her zaman şeffaf olacağımıza dair size söz verebiliriz."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"100 kendi kendini finanse eden ve bağımsız olarak, verilerinizi asla "
+"satmayacağımıza ve yazılım ve hizmetlerimiz hakkında her zaman şeffaf "
+"olacağımıza dair size söz verebiliriz."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -367,20 +394,20 @@ msgstr "Özgeçmiş"
 msgid "Birth Date"
 msgstr "Doğum Tarihi"
 
-#: src/options/options.js:403
+#: src/options/options.js:399
 msgid "Black"
 msgstr "Siyah"
 
-#: src/options/options.js:416
+#: src/options/options.js:412
 #, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modifikasyonu, Az yan etki"
 
-#: src/options/options.js:399
+#: src/options/options.js:395
 msgid "Blue"
 msgstr "Mavi"
 
-#: src/options/options.js:400
+#: src/options/options.js:396
 msgid "Brown"
 msgstr "Kahverengi"
 
@@ -394,10 +421,14 @@ msgstr "Kitaplık'ta dizine alınmış dosya ve klasörlere göz atın."
 
 #: src/page/about/about.vue:54
 #, fuzzy
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Belirli ürün özellikleri, hizmetler ve ilgili kaynaklar hakkında ayrıntılı bilgi için Bilgi Tabanına göz atın."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
+msgstr ""
+"Belirli ürün özellikleri, hizmetler ve ilgili kaynaklar hakkında ayrıntılı "
+"bilgi için Bilgi Tabanına göz atın."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:410
+#: src/page/about/feedback.vue:8 src/options/options.js:406
 msgid "Bug Report"
 msgstr "Hata raporu"
 
@@ -513,8 +544,12 @@ msgstr "Renkler"
 
 #: src/page/about/about.vue:49
 #, fuzzy
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Yaygın sorunlar, sağladığımız sorun giderme kontrol listeleri kullanılarak hızlı bir şekilde teşhis edilebilir ve çözülebilir."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
+msgstr ""
+"Yaygın sorunlar, sağladığımız sorun giderme kontrol listeleri kullanılarak "
+"hızlı bir şekilde teşhis edilebilir ve çözülebilir."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -595,7 +630,7 @@ msgstr "Oluşturuldu"
 msgid "Creating thumbnails for"
 msgstr "Önizlemeler üretiliyor"
 
-#: src/options/options.js:418
+#: src/options/options.js:414
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Ortalama Kalite, İyi Performans"
 
@@ -603,11 +638,11 @@ msgstr "Cubic: Ortalama Kalite, İyi Performans"
 msgid "Current Password"
 msgstr "Mevcut Şifre"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:407
+#: src/page/about/feedback.vue:5 src/options/options.js:403
 msgid "Customer Support"
 msgstr "Müşteri Hizmetleri"
 
-#: src/options/options.js:398
+#: src/options/options.js:394
 #, fuzzy
 msgid "Cyan"
 msgstr "Siyan"
@@ -617,7 +652,7 @@ msgstr "Siyan"
 msgid "Cyano"
 msgstr "Siyano"
 
-#: src/options/options.js:371
+#: src/options/options.js:367
 msgid "Daily"
 msgstr "Günlük"
 
@@ -630,7 +665,7 @@ msgstr "Gün"
 msgid "Debug Logs"
 msgstr "Hata Kayıtları"
 
-#: src/options/options.js:264 src/options/options.js:322
+#: src/options/options.js:264 src/options/options.js:318
 #: src/options/themes.js:402
 msgid "Default"
 msgstr "Varsayılan"
@@ -678,7 +713,8 @@ msgstr "Yedekleri Devredışı Bırak"
 
 #: src/page/settings/advanced.vue:163
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
+msgstr ""
+"Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
 
 #: src/page/settings/advanced.vue:481
 msgid "Disable Darktable"
@@ -728,11 +764,14 @@ msgstr "Fotoğraf ve albüm meta verilerini YAML dosyalarına yedeklemeyin."
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
+msgstr ""
+"Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi devre dışı bırakır."
+msgstr ""
+"Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi "
+"devre dışı bırakır."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
@@ -750,7 +789,7 @@ msgstr "RAW dosyalarını dönüştürmek için RawTherapee kullanmayın."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Görüntü sınıflandırması için TensorFlow kullanmayın."
 
-#: src/options/options.js:411
+#: src/options/options.js:407
 msgid "Donations"
 msgstr "Bağışlar"
 
@@ -794,8 +833,12 @@ msgstr "Ölçek küçültme filtresi"
 
 #: src/page/about/feedback.vue:16
 #, fuzzy
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Aldığımız e-postaların yoğunluğu nedeniyle ekibimiz size hemen geri dönüş yapamayabilir."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Aldığımız e-postaların yoğunluğu nedeniyle ekibimiz size hemen geri dönüş "
+"yapamayabilir."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -811,8 +854,11 @@ msgid "Dynamic Previews"
 msgstr "Dinamik Önizlemeler"
 
 #: src/page/settings/advanced.vue:303
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -871,13 +917,17 @@ msgstr "Koordinatları olmayan resimlerin yaklaşık konumunu tahmin edin."
 msgid "Estimates"
 msgstr "Tahmini"
 
-#: src/options/options.js:372
+#: src/options/options.js:368
 msgid "Every two days"
 msgstr "iki günde bir"
 
 #: src/page/settings/general.vue:207
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Özel olarak işaretlenen içeriği arama sonuçlarından, paylaşılan albümlerden, etiketlerden ve yerlerden hariç tutun."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Özel olarak işaretlenen içeriği arama sonuçlarından, paylaşılan albümlerden, "
+"etiketlerden ve yerlerden hariç tutun."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -946,7 +996,7 @@ msgstr "Favori"
 msgid "Favorites"
 msgstr "Favoriler"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:409
+#: src/page/about/feedback.vue:7 src/options/options.js:405
 msgid "Feature Request"
 msgstr "Özellik isteği"
 
@@ -960,10 +1010,13 @@ msgid "Feedback"
 msgstr "Geri bildirim"
 
 #: src/dialog/sponsor.vue:24
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime geçmekten çekinmeyin."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+"Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime "
+"geçmekten çekinmeyin."
 
-#: src/options/options.js:424
+#: src/options/options.js:420
 #, fuzzy
 msgid "Female"
 msgstr "Kadın"
@@ -997,8 +1050,12 @@ msgid "Files"
 msgstr "Dosyalar"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "'IMG_1234 (2)' ve 'IMG_1234 (3)' gibi sıralı adlara sahip dosyalar aynı resme aittir."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"'IMG_1234 (2)' ve 'IMG_1234 (3)' gibi sıralı adlara sahip dosyalar aynı "
+"resme aittir."
 
 #: src/dialog/photo/edit/details.vue:477
 msgid "Focal Length"
@@ -1061,7 +1118,7 @@ msgstr "Destek Alma"
 msgid "Given Name"
 msgstr "Orijinal İsim"
 
-#: src/options/options.js:393
+#: src/options/options.js:389
 msgid "Gold"
 msgstr "Altın"
 
@@ -1069,11 +1126,11 @@ msgstr "Altın"
 msgid "Grayscale"
 msgstr "Gri tonlamalı"
 
-#: src/options/options.js:396
+#: src/options/options.js:392
 msgid "Green"
 msgstr "Yeşil"
 
-#: src/options/options.js:402
+#: src/options/options.js:398
 msgid "Grey"
 msgstr "Gri"
 
@@ -1111,7 +1168,7 @@ msgstr "Gizle"
 msgid "Hide photos that have been moved to archive."
 msgstr "Arşive taşınan fotoğrafları gizleyin."
 
-#: src/options/options.js:326
+#: src/options/options.js:322
 msgid "High"
 msgstr "Yüksek"
 
@@ -1135,7 +1192,7 @@ msgstr "Bu yardımcı olmazsa veya başka sorularınız varsa:"
 msgid "image"
 msgstr "resim"
 
-#: src/model/file.js:216 src/options/options.js:299
+#: src/model/file.js:216 src/options/options.js:295
 msgid "Image"
 msgstr "Resim"
 
@@ -1153,12 +1210,18 @@ msgid "Import failed"
 msgstr "İçe aktarılamadı"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "İçe aktarılan dosyalar tarihe göre sıralanacak ve yinelemeleri önlemek için benzersiz bir ad verilecektir."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"İçe aktarılan dosyalar tarihe göre sıralanacak ve yinelemeleri önlemek için "
+"benzersiz bir ad verilecektir."
 
 #: src/page/settings/general.vue:273
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "İçe aktarılan dosyalar tarihe göre sıralanacak ve benzersiz bir ad verilecektir."
+msgstr ""
+"İçe aktarılan dosyalar tarihe göre sıralanacak ve benzersiz bir ad "
+"verilecektir."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1182,8 +1245,12 @@ msgstr "Ayrıca, sponsorlar e-posta yoluyla doğrudan teknik destek alırlar."
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Beklediğiniz resimlerin eksik olması durumunda lütfen kitaplığınızı yeniden tarayın ve indeksleme tamamlanana kadar bekleyin."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"Beklediğiniz resimlerin eksik olması durumunda lütfen kitaplığınızı yeniden "
+"tarayın ve indeksleme tamamlanana kadar bekleyin."
 
 #: src/component/navigation.vue:563 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1248,8 +1315,12 @@ msgstr "Geçersiz fotoğraf seçildi"
 
 #: src/page/about/about.vue:16
 #, fuzzy
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Yolunuza çıkmadan resimleri otomatik olarak etiketlemek ve bulmak için en son teknolojilerden yararlanır."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
+msgstr ""
+"Yolunuza çıkmadan resimleri otomatik olarak etiketlemek ve bulmak için en "
+"son teknolojilerden yararlanır."
 
 #: src/model/rest.js:167
 #, fuzzy
@@ -1292,7 +1363,7 @@ msgstr "Etiketler"
 msgid "Labels deleted"
 msgstr "Etiketler silindi"
 
-#: src/options/options.js:417
+#: src/options/options.js:413
 #, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Detayların Korunması, Minimal Eserler"
@@ -1344,7 +1415,7 @@ msgstr "Lisans"
 msgid "Like"
 msgstr "Sevmek"
 
-#: src/options/options.js:395
+#: src/options/options.js:391
 msgid "Lime"
 msgstr "Sarı"
 
@@ -1353,7 +1424,7 @@ msgstr "Sarı"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Sınıra ulaşıldı, ilk %{n} dosyaları gösteriliyor"
 
-#: src/options/options.js:419
+#: src/options/options.js:415
 #, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Doğrusal: Çok Pürüzsüz, En İyi Performans"
@@ -1370,7 +1441,7 @@ msgstr "Liste"
 
 #: src/app/routes.js:204 src/component/photo/cards.vue:292
 #: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
-#: src/options/options.js:311
+#: src/options/options.js:307
 #, fuzzy
 msgid "Live"
 msgstr "Canlı"
@@ -1399,8 +1470,12 @@ msgstr "Konum"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 #, fuzzy
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "PhotoPrism bozuk dosyalarla karşılaştığında veya başka olası sorunlar olduğunda günlük mesajları burada görünür."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"PhotoPrism bozuk dosyalarla karşılaştığında veya başka olası sorunlar "
+"olduğunda günlük mesajları burada görünür."
 
 #: src/component/navigation.vue:454 src/component/navigation.vue:1686
 #: src/component/navigation.vue:1960
@@ -1425,11 +1500,11 @@ msgstr "Günlükler"
 msgid "Longitude"
 msgstr "Boylam"
 
-#: src/options/options.js:330
+#: src/options/options.js:326
 msgid "Low"
 msgstr "Düşük"
 
-#: src/options/options.js:389
+#: src/options/options.js:385
 #, fuzzy
 msgid "Magenta"
 msgstr "Magenta"
@@ -1439,7 +1514,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Ana Renk"
 
-#: src/options/options.js:423
+#: src/options/options.js:419
 #, fuzzy
 msgid "Male"
 msgstr "Erkek"
@@ -1453,6 +1528,10 @@ msgstr "manuel"
 #, fuzzy
 msgid "Manual Upload"
 msgstr "Manuel Yükleme"
+
+#: src/page/settings/general.vue:556
+msgid "Maps"
+msgstr ""
 
 #: src/model/marker.js:146
 #, fuzzy
@@ -1572,7 +1651,7 @@ msgstr "İsim"
 msgid "Name too long"
 msgstr "İsim çok uzun"
 
-#: src/options/options.js:367 src/options/options.js:377
+#: src/options/options.js:363 src/options/options.js:373
 #: src/page/settings/services.vue:54
 #, fuzzy
 msgid "Never"
@@ -1662,8 +1741,12 @@ msgstr "Seçili video yok"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 #, fuzzy
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Bu anahtar sözcüğü içeren uyarı veya hata yok. Aramanın büyük/küçük harfe duyarlı olduğunu unutmayın."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Bu anahtar sözcüğü içeren uyarı veya hata yok. Aramanın büyük/küçük harfe "
+"duyarlı olduğunu unutmayın."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1673,10 +1756,14 @@ msgstr "Bu anahtar sözcüğü içeren uyarı veya hata yok. Aramanın büyük/k
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
 #, fuzzy
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Fotoğrafik olmayan ve düşük kaliteli görseller, arama sonuçlarında görünmeden önce bir inceleme gerektirir."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Fotoğrafik olmayan ve düşük kaliteli görseller, arama sonuçlarında "
+"görünmeden önce bir inceleme gerektirir."
 
-#: src/options/options.js:245 src/options/options.js:334
+#: src/options/options.js:245 src/options/options.js:330
 #, fuzzy
 msgid "None"
 msgstr "Hiçbiri"
@@ -1688,8 +1775,11 @@ msgstr "Bulunamadı"
 
 #: src/page/library/import.vue:28
 #, fuzzy
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Orijinaller klasörünüzü manuel olarak yönetebileceğinizi ve içe aktarmanın isteğe bağlı olduğunu unutmayın."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Orijinaller klasörünüzü manuel olarak yönetebileceğinizi ve içe aktarmanın "
+"isteğe bağlı olduğunu unutmayın."
 
 #: src/page/settings/services.vue:36
 #, fuzzy
@@ -1698,8 +1788,12 @@ msgstr "Not:"
 
 #: src/dialog/service/add.vue:28
 #, fuzzy
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Not: Yalnızca Nextcloud veya PhotoPrism gibi WebDAV sunucuları yedekleme ve dosya yükleme için uzak hizmet olarak yapılandırılabilir."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Not: Yalnızca Nextcloud veya PhotoPrism gibi WebDAV sunucuları yedekleme ve "
+"dosya yükleme için uzak hizmet olarak yapılandırılabilir."
 
 #: src/dialog/photo/edit/details.vue:654
 #, fuzzy
@@ -1731,7 +1825,7 @@ msgstr "Önce en yaşlı"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windows'ta, bağlantı iletişim kutusuna aşağıdaki kaynağı girin:"
 
-#: src/options/options.js:373
+#: src/options/options.js:369
 #, fuzzy
 msgid "Once a week"
 msgstr "Haftada bir kez"
@@ -1787,7 +1881,7 @@ msgstr "Seçenekler"
 msgid "or ask in our Community Chat"
 msgstr "veya Topluluk Sohbetimizde sorun"
 
-#: src/options/options.js:392
+#: src/options/options.js:388
 #, fuzzy
 msgid "Orange"
 msgstr "Turuncu"
@@ -1820,17 +1914,21 @@ msgstr "Orijinal İsim"
 msgid "Originals"
 msgstr "Orijinaller"
 
-#: src/options/options.js:412 src/options/options.js:425
+#: src/options/options.js:408 src/options/options.js:421
 #, fuzzy
 msgid "Other"
 msgstr "Diğer"
 
 #: src/page/about/about.vue:48
 #, fuzzy
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Kullanıcı Kılavuzumuz ayrıca Google Fotoğraflar'dan geçiş ve küçük resim kalitesi ayarları gibi birçok gelişmiş konuyu da kapsamaktadır."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
+msgstr ""
+"Kullanıcı Kılavuzumuz ayrıca Google Fotoğraflar'dan geçiş ve küçük resim "
+"kalitesi ayarları gibi birçok gelişmiş konuyu da kapsamaktadır."
 
-#: src/options/options.js:284
+#: src/options/options.js:282
 #, fuzzy
 msgid "Outdoor"
 msgstr "Dış mekan"
@@ -1867,7 +1965,8 @@ msgstr "İnsanlar"
 #: src/dialog/share.vue:72
 #, fuzzy
 msgid "People you share a link with will be able to view public contents."
-msgstr "Bağlantı paylaştığınız kişiler herkese açık içerikleri görüntüleyebilecektir."
+msgstr ""
+"Bağlantı paylaştığınız kişiler herkese açık içerikleri görüntüleyebilecektir."
 
 #: src/component/photo/clipboard.vue:120
 #, fuzzy
@@ -1897,14 +1996,16 @@ msgstr "PhotoPrism güncellendi…"
 #: src/page/about/about.vue:15
 #, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism®, Merkezi Olmayan Web için Yapay Zeka Destekli bir Fotoğraf Uygulamasıdır."
+msgstr ""
+"PhotoPrism®, Merkezi Olmayan Web için Yapay Zeka Destekli bir Fotoğraf "
+"Uygulamasıdır."
 
 #: src/app/routes.js:131
 #, fuzzy
 msgid "Photos"
 msgstr "Fotoğraflar"
 
-#: src/options/options.js:390
+#: src/options/options.js:386
 #, fuzzy
 msgid "Pink"
 msgstr "Pembe"
@@ -1941,8 +2042,12 @@ msgstr "Lütfen saldırgan içerikli fotoğraflar yüklemeyin."
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Lütfen şifrenizi değiştirdiğinizde diğer cihazlarda ve tarayıcılarda oturumunuzu kapatacağınızı unutmayın."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Lütfen şifrenizi değiştirdiğinizde diğer cihazlarda ve tarayıcılarda "
+"oturumunuzu kapatacağınızı unutmayın."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 #, fuzzy
@@ -1993,7 +2098,7 @@ msgstr "Birincil"
 msgid "Private"
 msgstr "Özel"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:408
+#: src/page/about/feedback.vue:6 src/options/options.js:404
 #, fuzzy
 msgid "Product Feedback"
 msgstr "Ürün Geri Bildirimi"
@@ -2003,7 +2108,7 @@ msgstr "Ürün Geri Bildirimi"
 msgid "Projection"
 msgstr "Projeksiyon"
 
-#: src/options/options.js:388
+#: src/options/options.js:384
 #, fuzzy
 msgid "Purple"
 msgstr "Mor"
@@ -2028,7 +2133,7 @@ msgstr "Rastgele"
 msgid "Raspberry"
 msgstr "Ahududu"
 
-#: src/options/options.js:307
+#: src/options/options.js:303
 #, fuzzy
 msgid "Raw"
 msgstr "Çiğ"
@@ -2046,7 +2151,9 @@ msgstr "RAW Dönüştürme"
 #: src/page/library/index.vue:116
 #, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Önceden indekslenmiş ve değiştirilmemiş dosyalar da dahil olmak üzere tüm orijinalleri yeniden indeksleyin."
+msgstr ""
+"Önceden indekslenmiş ve değiştirilmemiş dosyalar da dahil olmak üzere tüm "
+"orijinalleri yeniden indeksleyin."
 
 #: src/page/about/about.vue:51
 #, fuzzy
@@ -2094,7 +2201,7 @@ msgstr "Tanınmış"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Belirli kişilerin bulunabilmesi için yüzleri tanır."
 
-#: src/options/options.js:391
+#: src/options/options.js:387
 #, fuzzy
 msgid "Red"
 msgstr "Kırmızı"
@@ -2136,8 +2243,12 @@ msgstr "Albümden çıkar"
 
 #: src/page/library/import.vue:120
 #, fuzzy
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Depolama alanından tasarruf etmek için içe aktarılan dosyaları kaldırın. Desteklenmeyen dosya türleri asla silinmez, mevcut konumlarında kalırlar."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Depolama alanından tasarruf etmek için içe aktarılan dosyaları kaldırın. "
+"Desteklenmeyen dosya türleri asla silinmez, mevcut konumlarında kalırlar."
 
 #: src/common/api.js:74 src/page/connect.vue:38
 #, fuzzy
@@ -2176,7 +2287,7 @@ msgstr "Şifreyi Yeniden Yaz"
 msgid "Review"
 msgstr "İnceleme"
 
-#: src/options/options.js:278
+#: src/options/options.js:277
 #, fuzzy
 msgid "Satellite"
 msgstr "Uydu"
@@ -2350,7 +2461,8 @@ msgstr "Kütüphane'de sunucu günlüklerini gösterin."
 #: src/page/settings/advanced.vue:75
 #, fuzzy
 msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Daha ayrıntılı günlük mesajlarını gösterir. Yeniden başlatma gerektirir."
+msgstr ""
+"Daha ayrıntılı günlük mesajlarını gösterir. Yeniden başlatma gerektirir."
 
 #: src/model/file.js:212
 #, fuzzy
@@ -2400,8 +2512,12 @@ msgstr "Kaynak"
 
 #: src/page/about/about.vue:25
 #, fuzzy
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "Sponsorlar ek özelliklere erişebilir, e-posta yoluyla doğrudan teknik destek alabilir ve matrix.org'daki özel sohbet odamıza katılabilir."
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
+msgstr ""
+"Sponsorlar ek özelliklere erişebilir, e-posta yoluyla doğrudan teknik destek "
+"alabilir ve matrix.org'daki özel sohbet odamıza katılabilir."
 
 #: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 #, fuzzy
@@ -2411,12 +2527,16 @@ msgstr "Yığın"
 #: src/page/settings/library.vue:193
 #, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Aynı benzersiz görüntü veya örnek tanımlayıcısını paylaşan yığın dosyaları."
+msgstr ""
+"Aynı benzersiz görüntü veya örnek tanımlayıcısını paylaşan yığın dosyaları."
 
 #: src/page/settings/library.vue:172
 #, fuzzy
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Aynı zamanda ve konumda çekilen fotoğrafları meta verilerine göre yığınlayın."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Aynı zamanda ve konumda çekilen fotoğrafları meta verilerine göre yığınlayın."
 
 #: src/dialog/photo/edit/info.vue:86
 #, fuzzy
@@ -2430,8 +2550,12 @@ msgstr "Yığınlar"
 
 #: src/page/settings/library.vue:138
 #, fuzzy
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Yığınlar, benzer referans çerçevesine sahip, ancak kalite, format, boyut veya renk farklılıkları olan dosyaları gruplandırır."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"Yığınlar, benzer referans çerçevesine sahip, ancak kalite, format, boyut "
+"veya renk farklılıkları olan dosyaları gruplandırır."
 
 #: src/page/library/index.vue:31
 #, fuzzy
@@ -2469,11 +2593,6 @@ msgstr "Saklama Klasörü"
 msgid "Streets"
 msgstr "Sokaklar"
 
-#: src/page/settings/general.vue:556
-#, fuzzy
-msgid "Style"
-msgstr "Stil"
-
 #: src/dialog/photo/edit/details.vue:503 src/model/subject.js:157
 #, fuzzy
 msgid "Subject"
@@ -2486,7 +2605,8 @@ msgstr "Başarıyla Bağlandı"
 
 #: src/dialog/service/add.vue:29
 #, fuzzy
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr "Google Drive gibi ek hizmetler için destek zaman içinde eklenecektir."
 
 #: src/page/settings/services.vue:28
@@ -2505,7 +2625,7 @@ msgstr "Ham ve video dosyalarını senkronize edin"
 msgid "Taken"
 msgstr "Alınmış"
 
-#: src/options/options.js:397
+#: src/options/options.js:393
 #, fuzzy
 msgid "Teal"
 msgstr "Deniz mavisi"
@@ -2527,8 +2647,12 @@ msgstr "Dizin şu anda %{n} gizli dosya içeriyor."
 
 #: src/page/library/index.vue:37
 #, fuzzy
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir veya kopyaları olabilir."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir "
+"veya kopyaları olabilir."
 
 #: src/page/settings/general.vue:70
 #, fuzzy
@@ -2537,20 +2661,34 @@ msgstr "Tema"
 
 #: src/dialog/sponsor.vue:17
 #, fuzzy
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-msgstr "Bu, şu anda bu uygulamanın geliştirilmesini destekleyen herkese teşekkür etmek için bir sponsor özelliğidir."
+msgid ""
+"This currently is a sponsor feature to thank everyone who supports the "
+"development of this application."
+msgstr ""
+"Bu, şu anda bu uygulamanın geliştirilmesini destekleyen herkese teşekkür "
+"etmek için bir sponsor özelliğidir."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi açmanıza, düzenlemenize ve silmenize olanak tanır."
+msgstr ""
+"Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları "
+"bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi açmanıza, "
+"düzenlemenize ve silmenize olanak tanır."
 
 #: src/dialog/webdav.vue:26
 #, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi açmanıza, düzenlemenize ve silmenize olanak tanır."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları "
+"bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi açmanıza, "
+"düzenlemenize ve silmenize olanak tanır."
 
 #: src/page/settings/advanced.vue:250
 #, fuzzy
@@ -2601,7 +2739,7 @@ msgstr "Görünümü Değiştir"
 msgid "Token"
 msgstr "Jeton"
 
-#: src/options/options.js:290
+#: src/options/options.js:287
 #, fuzzy
 msgid "Topographic"
 msgstr "Topografik"
@@ -2752,7 +2890,8 @@ msgstr "Yeniden doldurma…"
 #: src/dialog/upload.vue:46
 #, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedilecektir."
+msgstr ""
+"Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedilecektir."
 
 #: src/dialog/share.vue:153
 #, fuzzy
@@ -2799,7 +2938,7 @@ msgstr "Doğrulandı"
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
 #: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
-#: src/options/options.js:315
+#: src/options/options.js:311
 #, fuzzy
 msgid "Video"
 msgstr "Video"
@@ -2824,8 +2963,13 @@ msgstr "Görünüm"
 
 #: src/page/about/about.vue:47
 #, fuzzy
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Fotoğraflarınızı nasıl senkronize edeceğinizi, düzenleyeceğinizi ve paylaşacağınızı öğrenmek için docs.photoprism.app/user-guide adresini ziyaret edin."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
+msgstr ""
+"Fotoğraflarınızı nasıl senkronize edeceğinizi, düzenleyeceğinizi ve "
+"paylaşacağınızı öğrenmek için docs.photoprism.app/user-guide adresini "
+"ziyaret edin."
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2840,29 +2984,44 @@ msgstr "Görüşleriniz için teşekkür ederiz!"
 #: src/page/about/feedback.vue:17
 #, fuzzy
 msgid "We do our best to respond within five business days or less."
-msgstr "Beş iş günü veya daha kısa bir süre içinde yanıt vermek için elimizden geleni yapıyoruz."
+msgstr ""
+"Beş iş günü veya daha kısa bir süre içinde yanıt vermek için elimizden "
+"geleni yapıyoruz."
 
 #: src/page/about/about.vue:74
 #, fuzzy
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Tüm sorularınızı yanıtlamak için elimizden geleni yapacağız. Karşılığında sizden bizi Patreon veya GitHub Sponsorları üzerinden desteklemenizi rica ediyoruz."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Tüm sorularınızı yanıtlamak için elimizden geleni yapacağız. Karşılığında "
+"sizden bizi Patreon veya GitHub Sponsorları üzerinden desteklemenizi rica "
+"ediyoruz."
 
 #: src/dialog/sponsor.vue:18
 #, fuzzy
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr "Patreon veya GitHub Sponsorlarına kaydolduğunuzda bunu nasıl etkinleştireceğinizi size bildireceğiz."
+msgid ""
+"We'll let you know how to enable it when you sign up on Patreon or GitHub "
+"Sponsors."
+msgstr ""
+"Patreon veya GitHub Sponsorlarına kaydolduğunuzda bunu nasıl "
+"etkinleştireceğinizi size bildireceğiz."
 
 #: src/dialog/webdav.vue:8
 #, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "WebDAV istemcileri aşağıdaki URL'yi kullanarak PhotoPrism'e bağlanabilir:"
+msgstr ""
+"WebDAV istemcileri aşağıdaki URL'yi kullanarak PhotoPrism'e bağlanabilir:"
 
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "Microsoft'un Windows Explorer'ı veya Apple'ın Finder'ı gibi WebDAV istemcileri doğrudan PhotoPrism'e bağlanabilir."
+msgstr ""
+"Microsoft'un Windows Explorer'ı veya Apple'ın Finder'ı gibi WebDAV "
+"istemcileri doğrudan PhotoPrism'e bağlanabilir."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 #, fuzzy
@@ -2875,7 +3034,7 @@ msgstr "WebDAV Yükleme"
 msgid "Website"
 msgstr "Web sitesi"
 
-#: src/options/options.js:401
+#: src/options/options.js:397
 #, fuzzy
 msgid "White"
 msgstr "Beyaz"
@@ -2891,7 +3050,7 @@ msgstr "Detaylar"
 msgid "Year"
 msgstr "Yıl"
 
-#: src/options/options.js:394
+#: src/options/options.js:390
 #, fuzzy
 msgid "Yellow"
 msgstr "Sarı"
@@ -2946,23 +3105,39 @@ msgstr "Başka yüzler bulmak için kütüphanenizi yeniden tarayabilirsiniz."
 
 #: src/page/about/about.vue:22
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Devam eden desteğiniz, düzenli güncellemeler ve dünya haritaları gibi hizmetler sunmamıza yardımcı oluyor."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Devam eden desteğiniz, düzenli güncellemeler ve dünya haritaları gibi "
+"hizmetler sunmamıza yardımcı oluyor."
 
 #: src/dialog/sponsor.vue:21
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and services like world maps."
-msgstr "Devam eden desteğiniz, düzenli güncellemeler ve dünya haritaları gibi hizmetler sunmamıza yardımcı oluyor."
+msgid ""
+"Your continued support helps us provide regular updates and services like "
+"world maps."
+msgstr ""
+"Devam eden desteğiniz, düzenli güncellemeler ve dünya haritaları gibi "
+"hizmetler sunmamıza yardımcı oluyor."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
 #, fuzzy
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturmak için kitaplığınız sürekli olarak analiz edilir."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturmak "
+"için kitaplığınız sürekli olarak analiz edilir."
 
 #: src/component/photo-viewer.vue:176
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Yakınlaştırma/uzaklaştırma"
+
+#, fuzzy
+#~ msgid "Style"
+#~ msgstr "Stil"
 
 #~ msgid "Hybrid"
 #~ msgstr "Hibrit"
@@ -2983,12 +3158,20 @@ msgstr "Yakınlaştırma/uzaklaştırma"
 #~ msgstr "Yüklenen dosyalar içe aktarılırken hata oluştu"
 
 #, fuzzy
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "Not: Parolanın güncellenmesi, zaten kimliği doğrulanmış kullanıcıların erişimini iptal etmeyecektir."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Not: Parolanın güncellenmesi, zaten kimliği doğrulanmış kullanıcıların "
+#~ "erişimini iptal etmeyecektir."
 
 #, fuzzy
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "Misyonumuz, resimlerinizi düzenli ve erişilebilir tutmak için en kullanıcı ve gizlilik dostu çözümü sunmaktır."
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "Misyonumuz, resimlerinizi düzenli ve erişilebilir tutmak için en "
+#~ "kullanıcı ve gizlilik dostu çözümü sunmaktır."
 
 #, fuzzy
 #~ msgid "Play"
@@ -3007,8 +3190,13 @@ msgstr "Yakınlaştırma/uzaklaştırma"
 #~ msgstr "Gezinti menüsünde Kitaplığı göster."
 
 #, fuzzy
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Yol haritası, hangi görevlerin devam ettiğini, nelerin test edilmesi gerektiğini ve hangi özellik taleplerinin daha sonra uygulanacağını gösterir."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Yol haritası, hangi görevlerin devam ettiğini, nelerin test edilmesi "
+#~ "gerektiğini ve hangi özellik taleplerinin daha sonra uygulanacağını "
+#~ "gösterir."
 
 #, fuzzy
 #~ msgid "to"
