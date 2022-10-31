@@ -66,7 +66,7 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
     await t.click(Selector("div.v-toolbar__title a").withText("Albums"));
     const AlbumCount = await album.getAlbumCount("all");
 
-    await t.expect(AlbumCount).eql(2);
+    await t.expect(AlbumCount).eql(3);
 
     await menu.openPage("folders");
     const FolderCount = await album.getAlbumCount("all");
