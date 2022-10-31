@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-23 11:07+0000\n"
-"Last-Translator: Acer Acer Acer <acer.wang@protonmail.com>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
+"PO-Revision-Date: 2022-10-31 12:56+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -153,8 +154,9 @@ msgid "After two weeks"
 msgstr "2 星期過後"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "AI驱动的数字资产管理"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -354,8 +356,9 @@ msgid "Bio"
 msgstr "個人簡歷"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "出生日期"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -451,8 +454,9 @@ msgid "Change Password"
 msgstr "新密碼"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "更改个人档案和安全设置。"
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -465,8 +469,9 @@ msgstr "更改私人選項"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "更改成功儲存"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -645,8 +650,9 @@ msgid "Details"
 msgstr "細節"
 
 #: src/page/about/about.vue:29
+#, fuzzy
 msgid "Developer Guide"
-msgstr ""
+msgstr "开发者指南"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -698,8 +704,9 @@ msgid "Discover"
 msgstr "發現"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "显示名称"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -823,8 +830,9 @@ msgstr "已編輯"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "电子邮件"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -938,8 +946,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "如果您有任何問題或需要幫助，請通過 hello@photoprism.app 與我們聯繫。"
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "女性"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1165,8 +1174,9 @@ msgid "Index"
 msgstr "索引"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "通过用户界面索引和导入文件。"
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1242,8 +1252,9 @@ msgid "Keywords"
 msgstr "關鍵字"
 
 #: src/page/about/about.vue:53
+#, fuzzy
 msgid "Knowledge Base"
-msgstr ""
+msgstr "知识库"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1281,12 +1292,14 @@ msgid "Lavender"
 msgstr "薰衣草"
 
 #: src/page/about/about.vue:55
+#, fuzzy
 msgid "Learn more"
-msgstr ""
+msgstr "了解更多"
 
 #: src/component/navigation.vue:588
+#, fuzzy
 msgid "Legal Information"
-msgstr ""
+msgstr "法律信息"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1389,8 +1402,9 @@ msgid "Main Color"
 msgstr "主要顏色"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "男性"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1756,8 +1770,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "永久刪除文件以釋放存儲空間。"
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "电话"
 
 #: src/model/photo.js:1057
 msgid "Photo"
@@ -1805,8 +1820,9 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "請不要上傳包含攻擊性內容的照片。"
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr ""
+msgstr "请注意，更改密码将使您在其他设备和浏览器上登录。"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1893,8 +1909,9 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "重新索引，包含已經索引過的檔案。"
 
 #: src/page/about/about.vue:51
+#, fuzzy
 msgid "Read the Docs"
-msgstr ""
+msgstr "阅读文件"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -2036,8 +2053,9 @@ msgid "Secret"
 msgstr "秘密"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "安全和访问"
 
 #: src/component/photo-viewer.vue:114
 msgid "Select"
@@ -2107,8 +2125,9 @@ msgid "Share %{name}"
 msgstr "分享 %{name}"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "与其他应用程序和服务分享你的图片。"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2266,8 +2285,9 @@ msgid "Teal"
 msgstr "藍綠"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "条款和隐私"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2383,8 +2403,9 @@ msgstr "未知"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
+#, fuzzy
 msgid "Unregistered"
-msgstr ""
+msgstr "未注册的"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 msgid "Unsorted"
@@ -2483,8 +2504,9 @@ msgstr "使用者"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
+#, fuzzy
 msgid "User Guide"
-msgstr ""
+msgstr "用户指南"
 
 #: src/page/settings/general.vue:6
 msgid "User Interface"
@@ -2568,8 +2590,9 @@ msgstr "WebDAV上傳"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "网站"
 
 #: src/options/options.js:393
 msgid "White"

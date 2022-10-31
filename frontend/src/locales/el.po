@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-07-18 11:31+0000\n"
-"Last-Translator: Chris Psarros <cpsarros@hotmail.com>\n"
+"PO-Revision-Date: 2022-10-31 12:41+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13.1\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -150,8 +150,9 @@ msgid "After two weeks"
 msgstr "Μετά από δύο εβδομάδες"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "Διαχείριση ψηφιακών περιουσιακών στοιχείων με τεχνητή νοημοσύνη"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -342,8 +343,12 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Πριν υποβάλετε αίτημα υποστήριξης, χρησιμοποιήστε τις Λίστες Αντιμετώπισης Προβλημάτων για να προσδιορίσετε την αιτία του προβλήματός σας."
 
 #: src/page/about/about.vue:27
+#, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr ""
+"Όντας 100% αυτοχρηματοδοτούμενοι και ανεξάρτητοι, μπορούμε να σας "
+"υποσχεθούμε ότι δεν θα πουλήσουμε ποτέ τα δεδομένα σας και ότι θα είμαστε "
+"πάντα διαφανείς σχετικά με το λογισμικό και τις υπηρεσίες μας."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -351,8 +356,9 @@ msgid "Bio"
 msgstr "Βιογραφικό"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "Ημερομηνία γέννησης"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -379,8 +385,11 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Περιήγηση σε αρχεία και φακέλους στη Βιβλιοθήκη."
 
 #: src/page/about/about.vue:54
+#, fuzzy
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr ""
+"Περιηγηθείτε στη Βάση Γνώσεων για λεπτομερείς πληροφορίες σχετικά με "
+"συγκεκριμένα χαρακτηριστικά του προϊόντος, υπηρεσίες και σχετικούς πόρους."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:402
 msgid "Bug Report"
@@ -448,8 +457,9 @@ msgid "Change Password"
 msgstr "Νέος κωδικός πρόσβασης"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "Αλλαγή του προσωπικού προφίλ και των ρυθμίσεων ασφαλείας."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -462,8 +472,9 @@ msgstr "Αλλαγή ιδιωτικής κατάστασης"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Οι αλλαγές αποθηκεύτηκαν επιτυχώς"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -495,8 +506,11 @@ msgid "Colors"
 msgstr "Χρώματα"
 
 #: src/page/about/about.vue:49
+#, fuzzy
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
+"Τα συνήθη προβλήματα μπορούν να διαγνωστούν και να επιλυθούν γρήγορα "
+"χρησιμοποιώντας τις λίστες ελέγχου αντιμετώπισης προβλημάτων που παρέχουμε."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -643,8 +657,9 @@ msgid "Details"
 msgstr "Λεπτομέρειες"
 
 #: src/page/about/about.vue:29
+#, fuzzy
 msgid "Developer Guide"
-msgstr ""
+msgstr "Οδηγός για προγραμματιστές"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -696,8 +711,9 @@ msgid "Discover"
 msgstr "Ανακαλύψτε το"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "Όνομα οθόνης"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -770,8 +786,11 @@ msgid "Downscaling Filter"
 msgstr "Φίλτρο υποβιβασμού κλίμακας"
 
 #: src/page/about/feedback.vue:16
+#, fuzzy
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
 msgstr ""
+"Λόγω του μεγάλου όγκου μηνυμάτων ηλεκτρονικού ταχυδρομείου που λαμβάνουμε, η "
+"ομάδα μας ενδέχεται να μην είναι σε θέση να σας απαντήσει αμέσως."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -821,8 +840,9 @@ msgstr "Επεξεργάστηκε"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "Ηλεκτρονικό ταχυδρομείο"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -901,8 +921,9 @@ msgid "Failed updating link"
 msgstr "Αποτυχία ενημέρωσης συνδέσμου"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
+#, fuzzy
 msgid "Family Name"
-msgstr ""
+msgstr "Όνομα οικογένειας"
 
 #: src/options/options.js:249
 msgid "Fast"
@@ -935,8 +956,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μας στο hello@photoprism.app αν έχετε οποιεσδήποτε ερωτήσεις."
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "Γυναίκα"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1164,8 +1186,9 @@ msgid "Index"
 msgstr "Ευρετήριο"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "Ευρετήριο και εισαγωγή αρχείων μέσω της διεπαφής χρήστη."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1219,8 +1242,11 @@ msgid "Invalid photo selected"
 msgstr "Επιλογή μη έγκυρης φωτογραφίας"
 
 #: src/page/about/about.vue:16
+#, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr ""
+"Χρησιμοποιεί τις τελευταίες τεχνολογίες για την αυτόματη επισήμανση και "
+"εύρεση φωτογραφιών χωρίς να σας εμποδίζει."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1243,8 +1269,9 @@ msgid "Keywords"
 msgstr "Λέξεις κλειδιά"
 
 #: src/page/about/about.vue:53
+#, fuzzy
 msgid "Knowledge Base"
-msgstr ""
+msgstr "Βάση γνώσεων"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1284,12 +1311,14 @@ msgid "Lavender"
 msgstr "Λεβάντα"
 
 #: src/page/about/about.vue:55
+#, fuzzy
 msgid "Learn more"
-msgstr ""
+msgstr "Μάθετε περισσότερα"
 
 #: src/component/navigation.vue:588
+#, fuzzy
 msgid "Legal Information"
-msgstr ""
+msgstr "Νομικές πληροφορίες"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1395,8 +1424,9 @@ msgid "Main Color"
 msgstr "Κύριο χρώμα"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "Αρσενικό"
 
 #: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
@@ -1726,8 +1756,12 @@ msgid "Other"
 msgstr "Άλλα"
 
 #: src/page/about/about.vue:48
+#, fuzzy
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr ""
+"Ο Οδηγός χρήστη καλύπτει επίσης πολλά θέματα για προχωρημένους, όπως η "
+"μετανάστευση από τις Φωτογραφίες Google και οι ρυθμίσεις ποιότητας "
+"μικρογραφιών."
 
 #: src/options/options.js:283
 msgid "Outdoor"
@@ -1770,8 +1804,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερώσετε χώρο αποθήκευσης."
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "Τηλέφωνο"
 
 #: src/model/photo.js:1057
 msgid "Photo"
@@ -1782,8 +1817,11 @@ msgid "PhotoPrism has been updated…"
 msgstr "Το PhotoPrism έχει ενημερωθεί…"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr ""
+"Το PhotoPrism® είναι μια εφαρμογή φωτογραφιών με τεχνητή νοημοσύνη για τον "
+"αποκεντρωμένο ιστό."
 
 #: src/app/routes.js:131
 msgid "Photos"
@@ -1819,8 +1857,11 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Παρακαλούμε μην ανεβάζετε φωτογραφίες που περιέχουν προσβλητικό περιεχόμενο."
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr ""
+"Λάβετε υπόψη ότι η αλλαγή του κωδικού πρόσβασής σας θα σας αποσυνδέσει από "
+"άλλες συσκευές και προγράμματα περιήγησης."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1909,8 +1950,9 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Δημιουργία ευρετηρίου όλων των πρωτοτύπων, συμπεριλαμβανομένων των ήδη καταχωρημένων και αμετάβλητων αρχείων."
 
 #: src/page/about/about.vue:51
+#, fuzzy
 msgid "Read the Docs"
-msgstr ""
+msgstr "Διαβάστε τα έγγραφα"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -2060,8 +2102,9 @@ msgid "Secret"
 msgstr "Μυστικό"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "Ασφάλεια και πρόσβαση"
 
 #: src/component/photo-viewer.vue:114
 msgid "Select"
@@ -2135,8 +2178,9 @@ msgid "Share %{name}"
 msgstr "Μοιραστείτε το %{name}"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "Μοιραστείτε τις φωτογραφίες σας με άλλες εφαρμογές και υπηρεσίες."
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2285,8 +2329,9 @@ msgid "Subject"
 msgstr "Θέμα"
 
 #: src/page/connect.vue:33
+#, fuzzy
 msgid "Successfully Connected"
-msgstr ""
+msgstr "Επιτυχής σύνδεση"
 
 #: src/dialog/service/add.vue:29
 #, fuzzy
@@ -2314,8 +2359,9 @@ msgid "Teal"
 msgstr "Teal"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "Όροι & απόρρητο"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 #, fuzzy
@@ -2445,8 +2491,9 @@ msgstr "Άγνωστος"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
+#, fuzzy
 msgid "Unregistered"
-msgstr ""
+msgstr "Μη εγγεγραμμένο"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 #, fuzzy
@@ -2563,8 +2610,9 @@ msgstr "Χρήστης"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
+#, fuzzy
 msgid "User Guide"
-msgstr ""
+msgstr "Οδηγός χρήσης"
 
 #: src/page/settings/general.vue:6
 #, fuzzy
@@ -2582,8 +2630,9 @@ msgid "Vanta"
 msgstr "Vanta"
 
 #: src/page/connect.vue:9
+#, fuzzy
 msgid "Verified"
-msgstr ""
+msgstr "Επαληθευμένο"
 
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
@@ -2609,8 +2658,11 @@ msgid "View"
 msgstr "Προβολή"
 
 #: src/page/about/about.vue:47
+#, fuzzy
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr ""
+"Επισκεφθείτε το docs.photoprism.app/user-guide για να μάθετε πώς να "
+"συγχρονίζετε, να οργανώνετε και να μοιράζεστε τις φωτογραφίες σας."
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2618,12 +2670,16 @@ msgid "Visual Similarity"
 msgstr "Ομαδοποίηση με βάση την ομοιότητα"
 
 #: src/page/about/feedback.vue:13
+#, fuzzy
 msgid "We appreciate your feedback!"
-msgstr ""
+msgstr "Εκτιμούμε τα σχόλιά σας!"
 
 #: src/page/about/feedback.vue:17
+#, fuzzy
 msgid "We do our best to respond within five business days or less."
 msgstr ""
+"Κάνουμε ό,τι μπορούμε για να απαντήσουμε εντός πέντε εργάσιμων ημερών ή "
+"λιγότερο."
 
 #: src/page/about/about.vue:74
 #, fuzzy
@@ -2654,8 +2710,9 @@ msgstr "Ανέβασμα WebDAV"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "Ιστοσελίδα"
 
 #: src/options/options.js:393
 msgid "White"
@@ -2706,8 +2763,10 @@ msgid "You can only download one label"
 msgstr "Μπορείτε να κατεβάσετε μόνο μία ετικέτα"
 
 #: src/page/about/about.vue:17
+#, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
 msgstr ""
+"Μπορείτε να το εκτελέσετε στο σπίτι, σε ιδιωτικό διακομιστή ή στο cloud."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 #, fuzzy

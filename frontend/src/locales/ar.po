@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-22 15:41+0000\n"
-"Last-Translator: moutasem1989 <moutasem19891@hotmail.com>\n"
+"PO-Revision-Date: 2022-10-31 12:41+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.13\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -153,8 +154,9 @@ msgid "After two weeks"
 msgstr "بعد أسبوعين"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "إدارة الأصول الرقمية المدعومة بالذكاء الاصطناعي"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -345,8 +347,11 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "قبل تقديم طلب دعم ، يرجى استخدام قوائم التحقق الخاصة باستكشاف الأخطاء وإصلاحها لتحديد سبب مشكلتك."
 
 #: src/page/about/about.vue:27
+#, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr ""
+"نظرًا لكوننا 100٪ ممولًا ذاتيًا ومستقلًا ، يمكننا أن نعدك بأننا لن نبيع "
+"بياناتك أبدًا وأننا سنكون دائمًا شفافين بشأن برامجنا وخدماتنا."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -354,8 +359,9 @@ msgid "Bio"
 msgstr "السيرة الذاتية"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "تاريخ الميلاد"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -382,8 +388,11 @@ msgid "Browse indexed files and folders in Library."
 msgstr "تصفح الملفات والمجلدات المفهرسة في المكتبة."
 
 #: src/page/about/about.vue:54
+#, fuzzy
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr ""
+"تصفح \"قاعدة المعارف\" للحصول على معلومات تفصيلية حول ميزات المنتج المحددة "
+"والخدمات والموارد ذات الصلة."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:402
 msgid "Bug Report"
@@ -451,8 +460,9 @@ msgid "Change Password"
 msgstr "كلمة السر الجديدة"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "تغيير ملف التعريف الشخصي وإعدادات الأمان."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -465,8 +475,9 @@ msgstr "تغيير العلم الخاص"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "تم حفظ التغييرات بنجاح"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -498,8 +509,11 @@ msgid "Colors"
 msgstr "الألوان"
 
 #: src/page/about/about.vue:49
+#, fuzzy
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
+"يمكن تشخيص المشكلات الشائعة وحلها بسرعة باستخدام قوائم التحقق الخاصة "
+"باستكشاف الأخطاء وإصلاحها التي نقدمها."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -646,8 +660,9 @@ msgid "Details"
 msgstr "تفاصيل"
 
 #: src/page/about/about.vue:29
+#, fuzzy
 msgid "Developer Guide"
-msgstr ""
+msgstr "دليل المطور"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -699,8 +714,9 @@ msgid "Discover"
 msgstr "يكتشف"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "اسم العرض"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -773,8 +789,11 @@ msgid "Downscaling Filter"
 msgstr "مرشح تصغير الحجم"
 
 #: src/page/about/feedback.vue:16
+#, fuzzy
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
 msgstr ""
+"نظرًا للكم الهائل من رسائل البريد الإلكتروني التي نتلقاها ، فقد يتعذر على "
+"فريقنا الرد عليك على الفور."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -824,8 +843,9 @@ msgstr "تم تحريره"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "البريد الإلكتروني"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -904,8 +924,9 @@ msgid "Failed updating link"
 msgstr "فشل تحديث الارتباط"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
+#, fuzzy
 msgid "Family Name"
-msgstr ""
+msgstr "اسم العائلة"
 
 #: src/options/options.js:249
 msgid "Fast"
@@ -938,8 +959,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "لا تتردد في الاتصال بنا على hello@photoprism.app إذا كان لديك أي أسئلة."
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "أنثى"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1165,8 +1187,9 @@ msgid "Index"
 msgstr "فِهرِس"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "قم بفهرسة واستيراد الملفات من خلال واجهة المستخدم."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1219,8 +1242,11 @@ msgid "Invalid photo selected"
 msgstr "تم تحديد صورة غير صالحة"
 
 #: src/page/about/about.vue:16
+#, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr ""
+"فهو يستخدم أحدث التقنيات لوضع علامة على الصور والعثور عليها تلقائيًا دون أن "
+"يعيقك ذلك."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1243,8 +1269,9 @@ msgid "Keywords"
 msgstr "الكلمات الدالة"
 
 #: src/page/about/about.vue:53
+#, fuzzy
 msgid "Knowledge Base"
-msgstr ""
+msgstr "قاعدة المعرفة"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1282,12 +1309,14 @@ msgid "Lavender"
 msgstr "لافندر"
 
 #: src/page/about/about.vue:55
+#, fuzzy
 msgid "Learn more"
-msgstr ""
+msgstr "يتعلم أكثر"
 
 #: src/component/navigation.vue:588
+#, fuzzy
 msgid "Legal Information"
-msgstr ""
+msgstr "المعلومات القانونية"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1390,8 +1419,9 @@ msgid "Main Color"
 msgstr "اللون الأساسي"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "ذكر"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1713,8 +1743,11 @@ msgid "Other"
 msgstr "آخر"
 
 #: src/page/about/about.vue:48
+#, fuzzy
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr ""
+"يغطي دليل المستخدم الخاص بنا أيضًا العديد من الموضوعات المتقدمة ، مثل "
+"الترحيل من صور Google وإعدادات جودة الصورة المصغرة."
 
 #: src/options/options.js:283
 msgid "Outdoor"
@@ -1757,8 +1790,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "قم بإزالة الملفات بشكل دائم لتحرير مساحة التخزين."
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "هاتف"
 
 #: src/model/photo.js:1057
 msgid "Photo"
@@ -1769,8 +1803,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "تم تحديث PhotoPrism …"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
+msgstr "PhotoPrism® هو تطبيق صور يعمل بالذكاء الاصطناعي للويب اللامركزي."
 
 #: src/app/routes.js:131
 msgid "Photos"
@@ -1806,8 +1841,11 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "الرجاء عدم تحميل الصور التي تحتوي على محتوى مسيء."
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr ""
+"يرجى ملاحظة أن تغيير كلمة المرور الخاصة بك سيؤدي إلى تسجيل خروجك على الأجهزة "
+"والمتصفحات الأخرى."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1894,8 +1932,9 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "أعد فهرسة جميع الأصول ، بما في ذلك الملفات المفهرسة بالفعل والتي لم يتم تغييرها."
 
 #: src/page/about/about.vue:51
+#, fuzzy
 msgid "Read the Docs"
-msgstr ""
+msgstr "اقرأ المستندات"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -2037,8 +2076,9 @@ msgid "Secret"
 msgstr "سر"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "الأمن والوصول"
 
 #: src/component/photo-viewer.vue:114
 msgid "Select"
@@ -2108,8 +2148,9 @@ msgid "Share %{name}"
 msgstr "شارك الاسم}"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "شارك صورك مع التطبيقات والخدمات الأخرى."
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2242,8 +2283,9 @@ msgid "Subject"
 msgstr "موضوعات"
 
 #: src/page/connect.vue:33
+#, fuzzy
 msgid "Successfully Connected"
-msgstr ""
+msgstr "تم الاتصال بنجاح"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2267,8 +2309,9 @@ msgid "Teal"
 msgstr "بط نهري صغير"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "شروط وأمبير. خصوصية"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2384,8 +2427,9 @@ msgstr "مجهول"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
+#, fuzzy
 msgid "Unregistered"
-msgstr ""
+msgstr "غير مسجل"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 msgid "Unsorted"
@@ -2484,8 +2528,9 @@ msgstr "المستعمل"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
+#, fuzzy
 msgid "User Guide"
-msgstr ""
+msgstr "دليل المستخدم"
 
 #: src/page/settings/general.vue:6
 msgid "User Interface"
@@ -2501,8 +2546,9 @@ msgid "Vanta"
 msgstr "فانتا"
 
 #: src/page/connect.vue:9
+#, fuzzy
 msgid "Verified"
-msgstr ""
+msgstr "تم التحقق"
 
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
@@ -2528,8 +2574,11 @@ msgid "View"
 msgstr "رأي"
 
 #: src/page/about/about.vue:47
+#, fuzzy
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr ""
+"تفضل بزيارة docs.photoprism.app/user-guide للتعرف على كيفية مزامنة صورك "
+"وتنظيمها ومشاركتها."
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2537,12 +2586,14 @@ msgid "Visual Similarity"
 msgstr "تجميع حسب التشابه"
 
 #: src/page/about/feedback.vue:13
+#, fuzzy
 msgid "We appreciate your feedback!"
-msgstr ""
+msgstr "نحن نقدر ملاحظاتك!"
 
 #: src/page/about/feedback.vue:17
+#, fuzzy
 msgid "We do our best to respond within five business days or less."
-msgstr ""
+msgstr "نحن نبذل قصارى جهدنا للرد في غضون خمسة أيام عمل أو أقل."
 
 #: src/page/about/about.vue:74
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
@@ -2569,8 +2620,9 @@ msgstr "تحميل WebDAV"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "موقع الكتروني"
 
 #: src/options/options.js:393
 msgid "White"
@@ -2618,8 +2670,9 @@ msgid "You can only download one label"
 msgstr "يمكنك فقط تحميل تسمية واحدة"
 
 #: src/page/about/about.vue:17
+#, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr ""
+msgstr "يمكنك تشغيله في المنزل أو على خادم خاص أو في السحابة."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

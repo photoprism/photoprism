@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-23 11:07+0000\n"
-"Last-Translator: Jirapong Pansak <tangpansak@gmail.com>\n"
+"PO-Revision-Date: 2022-10-31 12:56+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -163,8 +163,9 @@ msgid "After two weeks"
 msgstr "หลังจากสองสัปดาห์"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "การจัดการสินทรัพย์ดิจิทัลที่ขับเคลื่อนด้วย AI"
 
 #: src/model/album.js:229
 #, fuzzy
@@ -394,8 +395,11 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "ก่อนส่งคำขอรับการสนับสนุน โปรดใช้รายการตรวจสอบการแก้ไขปัญหาของเราเพื่อระบุสาเหตุของปัญหา"
 
 #: src/page/about/about.vue:27
+#, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr ""
+"ด้วยการจัดหาเงินทุนด้วยตนเองและเป็นอิสระ 100% เราสามารถสัญญากับคุณได้ว่าเราจะ"
+"ไม่ขายข้อมูลของคุณและเราจะมีความโปร่งใสเกี่ยวกับซอฟต์แวร์และบริการของเราเสมอ"
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -404,8 +408,9 @@ msgid "Bio"
 msgstr "ไปโอ"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "วันที่เกิด"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -435,8 +440,11 @@ msgid "Browse indexed files and folders in Library."
 msgstr "เรียกดูไฟล์และโฟลเดอร์ที่จัดทำดัชนีในไลบรารี"
 
 #: src/page/about/about.vue:54
+#, fuzzy
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr ""
+"เรียกดูฐานข้อมูลสำหรับข้อมูลโดยละเอียดเกี่ยวกับคุณลักษณะเฉพาะของผลิตภัณฑ์ บริ"
+"การ และทรัพยากรที่เกี่ยวข้อง"
 
 #: src/page/about/feedback.vue:8 src/options/options.js:402
 #, fuzzy
@@ -510,8 +518,9 @@ msgid "Change Password"
 msgstr "รหัสผ่านใหม่"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "เปลี่ยนโปรไฟล์ส่วนบุคคลและการตั้งค่าความปลอดภัย"
 
 #: src/page/settings/general.vue:317
 #, fuzzy
@@ -526,8 +535,9 @@ msgstr "เปลี่ยนแฟล็กส่วนตัว"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว"
 
 #: src/dialog/photo/edit/info.vue:191
 #, fuzzy
@@ -562,8 +572,11 @@ msgid "Colors"
 msgstr "สี"
 
 #: src/page/about/about.vue:49
+#, fuzzy
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
+"ปัญหาทั่วไปสามารถวินิจฉัยและแก้ไขได้อย่างรวดเร็วโดยใช้รายการตรวจสอบการแก้ไขปั"
+"ญหาที่เรามีให้"
 
 #: src/page/library/index.vue:115
 #, fuzzy
@@ -735,8 +748,9 @@ msgid "Details"
 msgstr "รายละเอียด"
 
 #: src/page/about/about.vue:29
+#, fuzzy
 msgid "Developer Guide"
-msgstr ""
+msgstr "คู่มือนักพัฒนา"
 
 #: src/dialog/photo/edit/files.vue:35
 #, fuzzy
@@ -800,8 +814,9 @@ msgid "Discover"
 msgstr "ค้นพบ"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "ชื่อที่แสดง"
 
 #: src/page/settings/advanced.vue:141
 #, fuzzy
@@ -889,8 +904,11 @@ msgid "Downscaling Filter"
 msgstr "ตัวกรองการลดขนาด"
 
 #: src/page/about/feedback.vue:16
+#, fuzzy
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
 msgstr ""
+"เนื่องจากเราได้รับอีเมลเป็นจำนวนมาก "
+"ทีมงานของเราจึงอาจไม่สามารถติดต่อกลับได้ทันที"
 
 #: src/page/library/browse.vue:37
 #, fuzzy
@@ -951,8 +969,9 @@ msgstr "แก้ไขแล้ว"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "อีเมล"
 
 #: src/page/settings/advanced.vue:119
 #, fuzzy
@@ -1050,8 +1069,9 @@ msgid "Failed updating link"
 msgstr "ไม่สามารถอัปเดตลิงก์"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
+#, fuzzy
 msgid "Family Name"
-msgstr ""
+msgstr "นามสกุล"
 
 #: src/options/options.js:249
 #, fuzzy
@@ -1090,8 +1110,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "โปรดติดต่อเราที่ hello@photoprism.app หากคุณมีคำถามใด ๆ"
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "หญิง"
 
 #: src/model/file.js:291
 #, fuzzy
@@ -1358,8 +1379,9 @@ msgid "Index"
 msgstr "ดัชนี"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "จัดทำดัชนีและนำเข้าไฟล์ผ่านอินเทอร์เฟซผู้ใช้"
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 #, fuzzy
@@ -1419,8 +1441,9 @@ msgid "Invalid photo selected"
 msgstr "เลือกรูปภาพไม่ถูกต้อง"
 
 #: src/page/about/about.vue:16
+#, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr ""
+msgstr "ใช้เทคโนโลยีล่าสุดในการแท็กและค้นหารูปภาพโดยอัตโนมัติโดยไม่รบกวนคุณ"
 
 #: src/model/rest.js:167
 #, fuzzy
@@ -1448,8 +1471,9 @@ msgid "Keywords"
 msgstr "คีย์เวิร์ด"
 
 #: src/page/about/about.vue:53
+#, fuzzy
 msgid "Knowledge Base"
-msgstr ""
+msgstr "ฐานความรู้"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 #, fuzzy
@@ -1495,12 +1519,14 @@ msgid "Lavender"
 msgstr "ลาเวนเดอร์"
 
 #: src/page/about/about.vue:55
+#, fuzzy
 msgid "Learn more"
-msgstr ""
+msgstr "เรียนรู้เพิ่มเติม"
 
 #: src/component/navigation.vue:588
+#, fuzzy
 msgid "Legal Information"
-msgstr ""
+msgstr "ข้อมูลทางกฎหมาย"
 
 #: src/dialog/photo/edit/details.vue:425
 #, fuzzy
@@ -1624,8 +1650,9 @@ msgid "Main Color"
 msgstr "สีหลัก"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "ชาย"
 
 #: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
@@ -2010,8 +2037,11 @@ msgid "Other"
 msgstr "อื่น"
 
 #: src/page/about/about.vue:48
+#, fuzzy
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr ""
+"คู่มือผู้ใช้ของเรายังครอบคลุมหัวข้อขั้นสูงมากมาย เช่น การย้ายข้อมูลจาก "
+"Google Photos และการตั้งค่าคุณภาพของภาพขนาดย่อ"
 
 #: src/options/options.js:283
 #, fuzzy
@@ -2063,8 +2093,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "ลบไฟล์อย่างถาวรเพื่อเพิ่มพื้นที่จัดเก็บ"
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "โทรศัพท์"
 
 #: src/model/photo.js:1057
 #, fuzzy
@@ -2077,8 +2108,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism ได้รับการอัพเดต…"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
+msgstr "PhotoPrism® คือแอปรูปภาพที่ขับเคลื่อนโดย AI สำหรับเว็บแบบกระจายอำนาจ"
 
 #: src/app/routes.js:131
 #, fuzzy
@@ -2120,8 +2152,10 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "กรุณาอย่าอัปโหลดรูปภาพที่มีเนื้อหาที่ไม่เหมาะสม"
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr ""
+"โปรดทราบว่าการเปลี่ยนรหัสผ่านจะทำให้คุณออกจากระบบบนอุปกรณ์และเบราว์เซอร์อื่นๆ"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 #, fuzzy
@@ -2228,8 +2262,9 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "จัดทำดัชนีต้นฉบับทั้งหมดใหม่ รวมทั้งไฟล์ที่จัดทำดัชนีแล้วและไม่เปลี่ยนแปลง"
 
 #: src/page/about/about.vue:51
+#, fuzzy
 msgid "Read the Docs"
-msgstr ""
+msgstr "อ่านเอกสาร"
 
 #: src/page/settings/advanced.vue:96
 #, fuzzy
@@ -2400,8 +2435,9 @@ msgid "Secret"
 msgstr "ความลับ"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "ความปลอดภัยและการเข้าถึง"
 
 #: src/component/photo-viewer.vue:114
 #, fuzzy
@@ -2485,8 +2521,9 @@ msgid "Share %{name}"
 msgstr "แบ่งปัน %{name}"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "แบ่งปันรูปภาพของคุณกับแอพและบริการอื่นๆ"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 #, fuzzy
@@ -2651,8 +2688,9 @@ msgid "Subject"
 msgstr "เรื่อง"
 
 #: src/page/connect.vue:33
+#, fuzzy
 msgid "Successfully Connected"
-msgstr ""
+msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 
 #: src/dialog/service/add.vue:29
 #, fuzzy
@@ -2681,8 +2719,9 @@ msgid "Teal"
 msgstr "นกเป็ดน้ำ"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "ข้อกำหนด &amp; ความเป็นส่วนตัว"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 #, fuzzy
@@ -2819,8 +2858,9 @@ msgstr "ไม่รู้จัก"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
+#, fuzzy
 msgid "Unregistered"
-msgstr ""
+msgstr "ไม่ได้ลงทะเบียน"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 #, fuzzy
@@ -2939,8 +2979,9 @@ msgstr "ผู้ใช้"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
+#, fuzzy
 msgid "User Guide"
-msgstr ""
+msgstr "คู่มือผู้ใช้"
 
 #: src/page/settings/general.vue:6
 #, fuzzy
@@ -2959,8 +3000,9 @@ msgid "Vanta"
 msgstr "วันทา"
 
 #: src/page/connect.vue:9
+#, fuzzy
 msgid "Verified"
-msgstr ""
+msgstr "ตรวจสอบแล้ว"
 
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
@@ -2989,8 +3031,11 @@ msgid "View"
 msgstr "ดู"
 
 #: src/page/about/about.vue:47
+#, fuzzy
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr ""
+"ไปที่ docs.photoprism.app/user-guide เพื่อเรียนรู้วิธีซิงค์ จัดระเบียบ "
+"และแบ่งปันรูปภาพของคุณ"
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2998,12 +3043,14 @@ msgid "Visual Similarity"
 msgstr "จัดกลุ่มตามความเหมือน"
 
 #: src/page/about/feedback.vue:13
+#, fuzzy
 msgid "We appreciate your feedback!"
-msgstr ""
+msgstr "ขอขอบคุณสำหรับความคิดเห็นของคุณ!"
 
 #: src/page/about/feedback.vue:17
+#, fuzzy
 msgid "We do our best to respond within five business days or less."
-msgstr ""
+msgstr "เราพยายามอย่างเต็มที่ที่จะตอบกลับภายในห้าวันทำการหรือน้อยกว่านั้น"
 
 #: src/page/about/about.vue:74
 #, fuzzy
@@ -3034,8 +3081,9 @@ msgstr "อัพโหลด WebDAV"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "เว็บไซต์"
 
 #: src/options/options.js:393
 msgid "White"
@@ -3089,8 +3137,9 @@ msgid "You can only download one label"
 msgstr "คุณสามารถดาวน์โหลดป้ายกำกับได้เพียงป้ายเดียว"
 
 #: src/page/about/about.vue:17
+#, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr ""
+msgstr "คุณสามารถเรียกใช้ที่บ้าน บนเซิร์ฟเวอร์ส่วนตัว หรือในระบบคลาวด์"
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 #, fuzzy

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-10-11 00:13+0000\n"
+"PO-Revision-Date: 2022-10-31 12:41+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -153,8 +153,9 @@ msgid "After two weeks"
 msgstr "بعد از دو هفته"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "مدیریت دارایی دیجیتال مبتنی بر هوش مصنوعی"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -354,8 +355,9 @@ msgid "Bio"
 msgstr "بود"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "تاریخ تولد"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -452,8 +454,9 @@ msgid "Change Password"
 msgstr "رمزعبور جدید"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "پروفایل شخصی و تنظیمات امنیتی را تغییر دهید."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -466,8 +469,9 @@ msgstr "تغییر پرچم خصوصی"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "تغییرات با موفقیت ذخیره شد"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -701,8 +705,9 @@ msgid "Discover"
 msgstr "کشف"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "نام نمایشی"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -776,8 +781,11 @@ msgid "Downscaling Filter"
 msgstr "فیلتر کاهش مقیاس"
 
 #: src/page/about/feedback.vue:16
+#, fuzzy
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
 msgstr ""
+"به دلیل حجم بالای ایمیل‌هایی که دریافت می‌کنیم، تیم ما ممکن است نتواند فوراً "
+"با شما تماس بگیرد."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -827,8 +835,9 @@ msgstr "ویرایش شده"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "پست الکترونیک"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -946,8 +955,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "در صورت داشتن هرگونه سوال می توانید از طریق ایمیل hello@photoprism.app با تماس بگیرید."
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "زن"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1175,8 +1185,9 @@ msgid "Index"
 msgstr "نمایه"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "فهرست و وارد کردن فایل ها از طریق رابط کاربری."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1403,8 +1414,9 @@ msgid "Main Color"
 msgstr "رنگ اصلی"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "نر"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1770,8 +1782,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "برای آزاد کردن فضای ذخیره سازی، فایل ها را برای همیشه حذف کنید."
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "تلفن"
 
 #: src/model/photo.js:1057
 msgid "Photo"
@@ -1819,8 +1832,11 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "لطفا عکس های حاوی محتوای توهین آمیز آپلود نکنید."
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr ""
+"لطفاً توجه داشته باشید که تغییر رمز عبور شما را از سایر دستگاه ها و مرورگرها "
+"خارج می کند."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -2051,8 +2067,9 @@ msgid "Secret"
 msgstr "محرمانه"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "امنیت و دسترسی"
 
 #: src/component/photo-viewer.vue:114
 msgid "Select"
@@ -2122,8 +2139,9 @@ msgid "Share %{name}"
 msgstr "اشتراک گذاری %{name}"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "تصاویر خود را با سایر برنامه ها و سرویس ها به اشتراک بگذارید."
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2281,8 +2299,9 @@ msgid "Teal"
 msgstr "آبی رنگ"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "شرایط &amp; حریم خصوصی"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2587,8 +2606,9 @@ msgstr "آپلود WebDAV"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "سایت اینترنتی"
 
 #: src/options/options.js:393
 msgid "White"
