@@ -109,7 +109,7 @@
                 xs4 sm3 md2 align-self-center
             >
               <v-avatar :size="$vuetify.breakpoint.xsOnly ? 100 : 128" :class="{'clickable': !busy}" @click.stop.prevent="onChangeAvatar()">
-                <img :src="$vuetify.breakpoint.xsOnly ? user.getAvatarURL('tile_100') : user.getAvatarURL('tile_224')" :alt="displayName">
+                <img :src="$vuetify.breakpoint.xsOnly ? user.getAvatarURL('tile_100') : user.getAvatarURL('tile_224')"  :alt="accountInfo" :title="$gettext('Change Avatar')">
               </v-avatar>
             </v-flex>
             <v-flex xs12 class="pa-2">
@@ -329,6 +329,14 @@ export default {
     };
   },
   computed: {
+    accountInfo() {
+      const user = this.$session.getUser();
+      if (user) {
+        return user.getAccountInfo();
+      }
+
+      return this.$gettext("Unregistered");
+    },
     displayName() {
       const user = this.$session.getUser();
       if (user) {
