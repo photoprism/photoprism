@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-08-02 08:33+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-10-31 18:14+0000\n"
+"Last-Translator: svanhoutte <sebastien.vanhoutte@gmail.com>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -111,9 +111,8 @@ msgid "Please log in to your account"
 msgstr "Veuillez vous identifier et recommencer"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "Personne supprimée"
+msgstr "Permission refusée"
 
 #: messages.go:117
 msgid "Upload might be offensive"
