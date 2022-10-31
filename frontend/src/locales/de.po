@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-10-31 14:12+0000\n"
+"PO-Revision-Date: 2022-10-31 14:19+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -1457,7 +1457,7 @@ msgstr "Relevanz"
 
 #: src/component/photo/toolbar.vue:53
 msgid "Most Relevant"
-msgstr "Relevanteste"
+msgstr "Relevanz"
 
 #: src/page/library/import.vue:119
 msgid "Move Files"
