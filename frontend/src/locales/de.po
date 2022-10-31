@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-24 15:56+0000\n"
-"Last-Translator: gagnonraphael <gagnon.raphael@gmail.com>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
+"PO-Revision-Date: 2022-10-31 12:56+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
+"frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -153,7 +154,7 @@ msgstr "Nach zwei Wochen"
 
 #: src/page/about/about.vue:15
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "KI-gestütztes Digital Asset Management"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -263,9 +264,8 @@ msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Als privat markierte Bilder und Videos bleiben privat und werden nicht geteilt."
 
 #: src/page/about/about.vue:32
-#, fuzzy
 msgid "API Documentation"
-msgstr "Spenden"
+msgstr "API Dokumentation"
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -354,7 +354,7 @@ msgstr "Biographie"
 
 #: src/page/settings/account.vue:67
 msgid "Birth Date"
-msgstr ""
+msgstr "Geburtsdatum"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -440,9 +440,8 @@ msgid "Category"
 msgstr "Kategorie"
 
 #: src/page/settings/account.vue:252 src/page/settings/account.vue:251
-#, fuzzy
 msgid "Change Avatar"
-msgstr "Status ändern"
+msgstr "Avatar ändern"
 
 #: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
 msgid "Change Password"
@@ -450,7 +449,7 @@ msgstr "Passwort ändern"
 
 #: src/page/settings/general.vue:471
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "Persönliche Profil- und Sicherheitseinstellungen ändern."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -464,7 +463,7 @@ msgstr "Als privat markieren"
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Änderungen erfolgreich gespeichert"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -522,9 +521,8 @@ msgid "Connected"
 msgstr "Verbunden"
 
 #: src/page/settings/account.vue:113 src/page/settings/account.vue:90
-#, fuzzy
 msgid "Contact Details"
-msgstr "Kontakt"
+msgstr "Kontaktangaben"
 
 #: src/page/about/feedback.vue:4
 msgid "Contact Us"
@@ -644,7 +642,7 @@ msgstr "Details"
 
 #: src/page/about/about.vue:29
 msgid "Developer Guide"
-msgstr ""
+msgstr "Entwickler-Dokumentation"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -697,7 +695,7 @@ msgstr "Entdecken"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
 msgid "Display Name"
-msgstr ""
+msgstr "Anzeigename"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -822,7 +820,7 @@ msgstr "Bearbeitet"
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
 msgid "Email"
-msgstr ""
+msgstr "E-Mail"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -901,9 +899,8 @@ msgid "Failed updating link"
 msgstr "Der Link konnte nicht gespeichert werden"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
-#, fuzzy
 msgid "Family Name"
-msgstr "Name"
+msgstr "Nachnamen"
 
 #: src/options/options.js:249
 msgid "Fast"
@@ -923,9 +920,8 @@ msgid "Feature Request"
 msgstr "Feature Request"
 
 #: src/page/settings/account.vue:817 src/page/settings/account.vue:670
-#, fuzzy
 msgid "Feed"
-msgstr "Feedback"
+msgstr "Feed"
 
 #: src/component/navigation.vue:432 src/component/navigation.vue:35
 msgid "Feedback"
@@ -937,7 +933,7 @@ msgstr "Bei Fragen, Wünschen oder Problemen helfen wir gerne per E-Mail an hell
 
 #: src/options/options.js:416
 msgid "Female"
-msgstr ""
+msgstr "Weiblich"
 
 #: src/model/file.js:291
 msgid "File"
@@ -948,14 +944,12 @@ msgid "File Browser"
 msgstr "Datei-Browser"
 
 #: src/component/photo/toolbar.vue:55
-#, fuzzy
 msgid "File Name"
 msgstr "Dateiname"
 
 #: src/component/photo/toolbar.vue:56
-#, fuzzy
 msgid "File Size"
-msgstr "Datei"
+msgstr "Dateigröße"
 
 #: src/dialog/photo/edit/files.vue:65 src/dialog/photo/edit/files.vue:62
 msgid "Filename"
@@ -1014,9 +1008,8 @@ msgid "Gemstone"
 msgstr "Edelstein"
 
 #: src/page/settings/account.vue:81 src/page/settings/account.vue:80
-#, fuzzy
 msgid "Gender"
-msgstr "Lavendel"
+msgstr "Geschlecht"
 
 #: src/page/settings.vue:35
 msgid "General"
@@ -1027,9 +1020,8 @@ msgid "Getting Support"
 msgstr "Unterstützung erhalten"
 
 #: src/page/settings/account.vue:139 src/page/settings/account.vue:138
-#, fuzzy
 msgid "Given Name"
-msgstr "Originalname"
+msgstr "Vornamen"
 
 #: src/options/options.js:385
 msgid "Gold"
@@ -1164,7 +1156,7 @@ msgstr "Index"
 
 #: src/page/settings/general.vue:405
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "Indexiere und importiere Dateien über die Benutzeroberfläche."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1199,9 +1191,8 @@ msgstr "Intervall"
 #: src/page/settings/account.vue:279 src/page/settings/account.vue:563
 #: src/page/settings/account.vue:617 src/page/settings/account.vue:645
 #: src/page/settings/account.vue:673
-#, fuzzy
 msgid "Invalid"
-msgstr "Ungültiges Datum"
+msgstr "Ungültig"
 
 #: src/dialog/photo/edit/details.vue:112
 msgid "Invalid date"
@@ -1241,7 +1232,7 @@ msgstr "Suchbegriffe"
 
 #: src/page/about/about.vue:53
 msgid "Knowledge Base"
-msgstr ""
+msgstr "Knowledge Base"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1280,11 +1271,11 @@ msgstr "Lavendel"
 
 #: src/page/about/about.vue:55
 msgid "Learn more"
-msgstr ""
+msgstr "Mehr erfahren"
 
 #: src/component/navigation.vue:588
 msgid "Legal Information"
-msgstr ""
+msgstr "Rechtliche Informationen"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1333,9 +1324,8 @@ msgid "Live"
 msgstr "Live"
 
 #: src/component/navigation.vue:200
-#, fuzzy
 msgid "Live Photos"
-msgstr "Bilder"
+msgstr "Live Photos"
 
 #: src/dialog/photo/edit/details.vue:193 src/options/options.js:10
 msgid "Local Time"
@@ -1388,7 +1378,7 @@ msgstr "Hauptfarbe"
 
 #: src/options/options.js:415
 msgid "Male"
-msgstr ""
+msgstr "Männlich"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1465,9 +1455,8 @@ msgid "Most relevant"
 msgstr "Relevanz"
 
 #: src/component/photo/toolbar.vue:53
-#, fuzzy
 msgid "Most Relevant"
-msgstr "Relevanz"
+msgstr "Relevanteste"
 
 #: src/page/library/import.vue:119
 msgid "Move Files"
@@ -1514,7 +1503,6 @@ msgid "Newest first"
 msgstr "Neueste zuerst"
 
 #: src/component/photo/toolbar.vue:51
-#, fuzzy
 msgid "Newest First"
 msgstr "Neueste zuerst"
 
@@ -1559,9 +1547,8 @@ msgid "No servers configured."
 msgstr "Keine Backup-Server eingerichtet."
 
 #: src/page/settings/services.vue:36
-#, fuzzy
 msgid "No services configured."
-msgstr "Keine Backup-Server eingerichtet."
+msgstr "Keine Dienste eingerichtet."
 
 #: src/dialog/sponsor.vue:31
 msgid "No thanks"
@@ -1610,9 +1597,8 @@ msgid "Notes"
 msgstr "Notizen"
 
 #: src/page/library/logs.vue:5
-#, fuzzy
 msgid "Nothing to see here yet."
-msgstr "Noch nichts zu sehen. Gedulde dich noch ein bisschen."
+msgstr "Hier gibt es noch nichts zu sehen."
 
 #: src/component/navigation.vue:470 src/component/navigation.vue:1731
 #: src/options/options.js:264
@@ -1624,7 +1610,6 @@ msgid "Oldest first"
 msgstr "Älteste zuerst"
 
 #: src/component/photo/toolbar.vue:52
-#, fuzzy
 msgid "Oldest First"
 msgstr "Älteste zuerst"
 
@@ -1682,9 +1667,8 @@ msgid "Orange"
 msgstr "Orange"
 
 #: src/page/settings/account.vue:587
-#, fuzzy
 msgid "Organization"
-msgstr "Ausrichtung"
+msgstr "Organisation"
 
 #: src/dialog/photo/edit/files.vue:155 src/dialog/photo/edit/files.vue:152
 msgid "Orientation"
@@ -1755,7 +1739,7 @@ msgstr "Dauerhaftes Entfernen von Dateien, um Speicherplatz freizugeben."
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: src/model/photo.js:1057
 msgid "Photo"
@@ -1892,7 +1876,7 @@ msgstr "Bereits bekannte und unveränderte Dateien neu indexieren."
 
 #: src/page/about/about.vue:51
 msgid "Read the Docs"
-msgstr ""
+msgstr "Dokumentation lesen"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -1903,7 +1887,6 @@ msgid "Recently added"
 msgstr "Zuletzt hinzugefügt"
 
 #: src/component/photo/toolbar.vue:50
-#, fuzzy
 msgid "Recently Added"
 msgstr "Zuletzt hinzugefügt"
 
@@ -1912,7 +1895,6 @@ msgid "Recently edited"
 msgstr "Zuletzt bearbeitet"
 
 #: src/component/photo/toolbar.vue:58
-#, fuzzy
 msgid "Recently Edited"
 msgstr "Zuletzt bearbeitet"
 
@@ -2035,7 +2017,7 @@ msgstr "Code"
 
 #: src/page/settings/account.vue:44
 msgid "Security and Access"
-msgstr ""
+msgstr "Sicherheit und Zugang"
 
 #: src/component/photo-viewer.vue:114
 msgid "Select"
@@ -2105,7 +2087,7 @@ msgstr "%{name} teilen"
 
 #: src/page/settings/general.vue:383
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "Teile Bilder mit anderen Anwendungen und Diensten."
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2264,7 +2246,7 @@ msgstr "Blaugrün"
 
 #: src/page/about/about.vue:37
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "Nutzungsbedingungen &amp; Datenschutz"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2287,11 +2269,13 @@ msgid "This currently is a sponsor feature to thank everyone who supports the de
 msgstr "Mit diesem Feature wollen wir uns bei unseren Sponsoren und allen Mitwirkenden bedanken."
 
 #: src/page/settings/services.vue:40
-#, fuzzy
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Dabei werden die Dateien als Netzwerk-Ordner auf deinem Computer oder Smartphone eingebunden, so dass sie lokal geöffnet, bearbeitet und gelöscht werden können."
+msgstr ""
+"Dabei werden die Dateien als Netzwerk-Ordner auf deinem Computer oder "
+"Smartphone eingebunden, so dass sie lokal geöffnet, bearbeitet und gelöscht "
+"werden können."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2320,9 +2304,8 @@ msgid "Title"
 msgstr "Titel"
 
 #: src/page/settings/account.vue:561
-#, fuzzy
 msgid "Title / Position"
-msgstr "Titel zu lang"
+msgstr "Titel / Position"
 
 #: src/page/albums.vue:62
 msgid "Title too long"
@@ -2381,7 +2364,7 @@ msgstr "Unbekannt"
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
 msgid "Unregistered"
-msgstr ""
+msgstr "Unregistriert"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 msgid "Unsorted"
@@ -2409,9 +2392,8 @@ msgid "Updating moments"
 msgstr "Aktualisiere Erlebnisse"
 
 #: src/page/settings/account.vue:124
-#, fuzzy
 msgid "Updating picture…"
-msgstr "Aktualisiere Vorschaubilder"
+msgstr "Aktualisiere Vorschaubilder…"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2458,9 +2440,8 @@ msgid "Uploading photos…"
 msgstr "Bilder werden hochgeladen…"
 
 #: src/page/settings/account.vue:124
-#, fuzzy
 msgid "Uploading…"
-msgstr "Lade hoch"
+msgstr "Wird hochgeladen…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
@@ -2481,7 +2462,7 @@ msgstr "Benutzer"
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
 msgid "User Guide"
-msgstr ""
+msgstr "Benutzerhandbuch"
 
 #: src/page/settings/general.vue:6
 msgid "User Interface"
@@ -2508,9 +2489,8 @@ msgid "Video"
 msgstr "Video"
 
 #: src/component/photo/toolbar.vue:57
-#, fuzzy
 msgid "Video Duration"
-msgstr "Laufzeit"
+msgstr "Video-Dauer"
 
 #: src/app/routes.js:211 src/component/navigation.vue:180
 #: src/component/navigation.vue:190 src/component/navigation.vue:4
@@ -2528,7 +2508,6 @@ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and 
 msgstr "Unter docs.photoprism.app/user-guide erfährst du, wie du deine Bilder synchronisieren, organisieren und teilen kannst."
 
 #: src/component/photo/toolbar.vue:54
-#, fuzzy
 msgid "Visual Similarity"
 msgstr "Ähnlichkeit"
 
@@ -2553,11 +2532,12 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV-Clients können sich über die folgende URL mit PhotoPrism verbinden:"
 
 #: src/page/settings/services.vue:37
-#, fuzzy
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV-Clients, wie der Windows Explorer oder der Finder unter macOS, können sich direkt mit PhotoPrism verbinden."
+msgstr ""
+"WebDAV-Clients, wie der Windows Explorer oder der Finder unter macOS, können "
+"sich direkt mit PhotoPrism verbinden."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2566,16 +2546,15 @@ msgstr "WebDAV Upload"
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
 msgid "Website"
-msgstr ""
+msgstr "Website"
 
 #: src/options/options.js:393
 msgid "White"
 msgstr "Weiß"
 
 #: src/page/settings/account.vue:90
-#, fuzzy
 msgid "Work Details"
-msgstr "Details"
+msgstr "Berufliche Details"
 
 #: src/page/settings/account.vue:492 src/component/photo/toolbar.vue:268
 #: src/dialog/photo/edit/details.vue:168 src/page/settings/account.vue:491

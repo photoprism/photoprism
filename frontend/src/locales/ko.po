@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-14 11:25+0000\n"
-"Last-Translator: 김상구 <spair0039@gmail.com>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
+"PO-Revision-Date: 2022-10-31 12:41+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -153,8 +154,9 @@ msgid "After two weeks"
 msgstr "2주 후"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "AI 기반 디지털 자산 관리"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -345,8 +347,11 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "지원 요청을 제출하기 전에 문제 해결 체크리스트를 사용하여 문제의 원인을 확인하십시오."
 
 #: src/page/about/about.vue:27
+#, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr ""
+"100% 자체 자금으로 운영되고 독립적이므로 귀하의 데이터를 절대 판매하지 "
+"않으며 소프트웨어 및 서비스에 대해 항상 투명할 것임을 약속할 수 있습니다."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -354,8 +359,9 @@ msgid "Bio"
 msgstr "바이오"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "생일"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -382,8 +388,10 @@ msgid "Browse indexed files and folders in Library."
 msgstr "라이브러리에서 인덱싱된 파일 및 폴더를 검색합니다."
 
 #: src/page/about/about.vue:54
+#, fuzzy
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr ""
+msgstr "특정 제품 기능, 서비스 및 관련 리소스에 대한 자세한 정보는 기술 자료를 "
+"검색하십시오."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:402
 msgid "Bug Report"
@@ -451,8 +459,9 @@ msgid "Change Password"
 msgstr "새로운 비밀번호"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "개인 프로필 및 보안 설정을 변경합니다."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -465,8 +474,9 @@ msgstr "비공개 플래그 변경하기"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "변경사항이 성공적으로 저장되었습니다"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -498,8 +508,10 @@ msgid "Colors"
 msgstr "색깔"
 
 #: src/page/about/about.vue:49
+#, fuzzy
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr ""
+msgstr "일반적인 문제는 당사가 제공하는 문제 해결 체크리스트를 사용하여 신속하게 "
+"진단하고 해결할 수 있습니다."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -646,8 +658,9 @@ msgid "Details"
 msgstr "세부 사항"
 
 #: src/page/about/about.vue:29
+#, fuzzy
 msgid "Developer Guide"
-msgstr ""
+msgstr "개발자 가이드"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -699,8 +712,9 @@ msgid "Discover"
 msgstr "디스커버"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "이름 표시하기"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -773,8 +787,10 @@ msgid "Downscaling Filter"
 msgstr "축소 필터"
 
 #: src/page/about/feedback.vue:16
+#, fuzzy
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr ""
+msgstr "저희가 받는 이메일의 양이 많기 때문에 저희 팀에서 즉시 연락을 드리지 못할 "
+"수도 있습니다."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -824,8 +840,9 @@ msgstr "편집됨"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "이메일"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -939,8 +956,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "질문이 있거나 도움이 필요하면 hello@photoprism.app으로 문의하십시오."
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "여성"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1166,8 +1184,9 @@ msgid "Index"
 msgstr "색인"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "사용자 인터페이스를 통해 파일을 인덱싱하고 가져옵니다."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1220,8 +1239,9 @@ msgid "Invalid photo selected"
 msgstr "잘못된 사진을 선택했습니다."
 
 #: src/page/about/about.vue:16
+#, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr ""
+msgstr "최신 기술을 사용하여 방해 없이 자동으로 사진에 태그를 지정하고 찾습니다."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1244,8 +1264,9 @@ msgid "Keywords"
 msgstr "키워드"
 
 #: src/page/about/about.vue:53
+#, fuzzy
 msgid "Knowledge Base"
-msgstr ""
+msgstr "기술 자료"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1283,12 +1304,14 @@ msgid "Lavender"
 msgstr "라벤더색"
 
 #: src/page/about/about.vue:55
+#, fuzzy
 msgid "Learn more"
-msgstr ""
+msgstr "더 알아보기"
 
 #: src/component/navigation.vue:588
+#, fuzzy
 msgid "Legal Information"
-msgstr ""
+msgstr "법률 정보"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1391,8 +1414,9 @@ msgid "Main Color"
 msgstr "주요 색깔"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "남성"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1714,8 +1738,10 @@ msgid "Other"
 msgstr "다른"
 
 #: src/page/about/about.vue:48
+#, fuzzy
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr ""
+msgstr "또한 사용자 가이드에서는 Google 포토에서 이전 및 미리보기 이미지 품질 설정과 "
+"같은 많은 고급 주제를 다룹니다."
 
 #: src/options/options.js:283
 msgid "Outdoor"
@@ -1758,8 +1784,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "파일을 영구적으로 제거하여 저장 공간을 확보하십시오."
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "핸드폰"
 
 #: src/model/photo.js:1057
 msgid "Photo"
@@ -1770,8 +1797,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism 업데이트되었습니다…"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
+msgstr "PhotoPrism®은 분산 웹을 위한 AI 기반 사진 앱입니다."
 
 #: src/app/routes.js:131
 msgid "Photos"
@@ -1807,8 +1835,9 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "불쾌감한 콘텐츠 포함된 사진을 업로드하지 마십시오."
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr ""
+msgstr "비밀번호를 변경하면 다른 장치 및 브라우저에서 로그아웃됩니다."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1895,8 +1924,9 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "이미 인덱싱되고 변경되지 않은 파일을 포함하여 모든 원본을 다시 인덱싱합니다."
 
 #: src/page/about/about.vue:51
+#, fuzzy
 msgid "Read the Docs"
-msgstr ""
+msgstr "문서 읽기"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -2038,8 +2068,9 @@ msgid "Secret"
 msgstr "비밀"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "보안 및 액세스"
 
 #: src/component/photo-viewer.vue:114
 msgid "Select"
@@ -2109,8 +2140,9 @@ msgid "Share %{name}"
 msgstr "%{name} 공유하기"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "다른 앱 및 서비스와 사진을 공유하십시오."
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2243,8 +2275,9 @@ msgid "Subject"
 msgstr "주제"
 
 #: src/page/connect.vue:33
+#, fuzzy
 msgid "Successfully Connected"
-msgstr ""
+msgstr "성공적으로 연결됨"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2268,8 +2301,9 @@ msgid "Teal"
 msgstr "암녹색"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "약관 및 은둔"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2385,8 +2419,9 @@ msgstr "알 수 없는"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
+#, fuzzy
 msgid "Unregistered"
-msgstr ""
+msgstr "미등록"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 msgid "Unsorted"
@@ -2485,8 +2520,9 @@ msgstr "사용자"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
+#, fuzzy
 msgid "User Guide"
-msgstr ""
+msgstr "사용자 설명서"
 
 #: src/page/settings/general.vue:6
 msgid "User Interface"
@@ -2502,8 +2538,9 @@ msgid "Vanta"
 msgstr "반타"
 
 #: src/page/connect.vue:9
+#, fuzzy
 msgid "Verified"
-msgstr ""
+msgstr "확인됨"
 
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
@@ -2529,8 +2566,10 @@ msgid "View"
 msgstr "보기"
 
 #: src/page/about/about.vue:47
+#, fuzzy
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr ""
+msgstr "사진을 동기화, 구성 및 공유하는 방법을 알아보려면 docs.photoprism.app/user-"
+"guide를 방문하세요."
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2538,12 +2577,14 @@ msgid "Visual Similarity"
 msgstr "유사성으로 그룹화"
 
 #: src/page/about/feedback.vue:13
+#, fuzzy
 msgid "We appreciate your feedback!"
-msgstr ""
+msgstr "귀하의 피드백에 감사드립니다!"
 
 #: src/page/about/feedback.vue:17
+#, fuzzy
 msgid "We do our best to respond within five business days or less."
-msgstr ""
+msgstr "영업일 기준 5일 이내로 답변을 드리기 위해 최선을 다합니다."
 
 #: src/page/about/about.vue:74
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
@@ -2570,8 +2611,9 @@ msgstr "WebDAV 업로드"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "웹사이트"
 
 #: src/options/options.js:393
 msgid "White"
@@ -2619,8 +2661,9 @@ msgid "You can only download one label"
 msgstr "하나의 라벨 만 다운로드할 수 있습니다"
 
 #: src/page/about/about.vue:17
+#, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr ""
+msgstr "집, 개인 서버 또는 클라우드에서 실행할 수 있습니다."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

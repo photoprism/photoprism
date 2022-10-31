@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-19 07:58+0000\n"
-"Last-Translator: Krisztián Vanyolai <vanyolai@gmail.com>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
+"PO-Revision-Date: 2022-10-31 12:41+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -152,8 +153,9 @@ msgid "After two weeks"
 msgstr "Két hét után"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "AI-alapú digitális eszközkezelés"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -344,8 +346,12 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Mielőtt támogatási kérelmet nyújt be, kérjük, használja hibaelhárítási ellenőrző listáinkat a probléma okának meghatározásához."
 
 #: src/page/about/about.vue:27
+#, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr ""
+"Mivel 100%-ban önfinanszírozók és függetlenek vagyunk, megígérhetjük, hogy "
+"soha nem adjuk el az adatait, és mindig átláthatóak leszünk a szoftverünkkel "
+"és szolgáltatásainkkal kapcsolatban."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -353,8 +359,9 @@ msgid "Bio"
 msgstr "Bio"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "Születési dátum"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -381,8 +388,11 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Böngésszen az indexelt fájlok és mappák között a Könyvtárban."
 
 #: src/page/about/about.vue:54
+#, fuzzy
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr ""
+"A Tudásbázisban részletes információkat talál a termék egyes jellemzőiről, "
+"szolgáltatásairól és a kapcsolódó erőforrásokról."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:402
 msgid "Bug Report"
@@ -450,8 +460,9 @@ msgid "Change Password"
 msgstr "Új jelszó"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "Személyes profil és biztonsági beállítások módosítása."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -464,8 +475,9 @@ msgstr "Privát fotóként jelölés"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Módosítások sikeresen mentve"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -497,8 +509,11 @@ msgid "Colors"
 msgstr "Színek"
 
 #: src/page/about/about.vue:49
+#, fuzzy
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
+"A gyakori problémák gyorsan diagnosztizálhatók és megoldhatók az általunk "
+"biztosított hibaelhárítási ellenőrző listák segítségével."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -645,8 +660,9 @@ msgid "Details"
 msgstr "Részletek"
 
 #: src/page/about/about.vue:29
+#, fuzzy
 msgid "Developer Guide"
-msgstr ""
+msgstr "Fejlesztői útmutató"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -698,8 +714,9 @@ msgid "Discover"
 msgstr "Felfedez"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "Megjelenített név"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -772,8 +789,11 @@ msgid "Downscaling Filter"
 msgstr "Lekicsinyítési szűrő"
 
 #: src/page/about/feedback.vue:16
+#, fuzzy
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
 msgstr ""
+"A beérkező e-mailek nagy száma miatt előfordulhat, hogy csapatunk nem tud "
+"azonnal válaszolni Önnek."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -823,8 +843,9 @@ msgstr "Szerkesztette"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -903,8 +924,9 @@ msgid "Failed updating link"
 msgstr "Nem sikerült frissíteni a linket"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
+#, fuzzy
 msgid "Family Name"
-msgstr ""
+msgstr "Családnév"
 
 #: src/options/options.js:249
 msgid "Fast"
@@ -937,8 +959,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "Kérjük, lépjen kapcsolatba velünk a hello@photoprism.app címen, ha kérdése van, vagy segítségre van szüksége."
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "Női"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1164,8 +1187,9 @@ msgid "Index"
 msgstr "Index"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "Fájlok indexelése és importálása a felhasználói felületen keresztül."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1218,8 +1242,11 @@ msgid "Invalid photo selected"
 msgstr "Érvénytelen fénykép kiválasztva"
 
 #: src/page/about/about.vue:16
+#, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr ""
+"A legújabb technológiákat használja a képek automatikus megjelölésére és "
+"megtalálására anélkül, hogy útban lenne."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1242,8 +1269,9 @@ msgid "Keywords"
 msgstr "Kulcsszavak"
 
 #: src/page/about/about.vue:53
+#, fuzzy
 msgid "Knowledge Base"
-msgstr ""
+msgstr "Tudásbázis"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1281,12 +1309,14 @@ msgid "Lavender"
 msgstr "Levendula"
 
 #: src/page/about/about.vue:55
+#, fuzzy
 msgid "Learn more"
-msgstr ""
+msgstr "Tudjon meg többet"
 
 #: src/component/navigation.vue:588
+#, fuzzy
 msgid "Legal Information"
-msgstr ""
+msgstr "Jogi információk"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1389,8 +1419,9 @@ msgid "Main Color"
 msgstr "Fő szín"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "Férfi"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1712,8 +1743,11 @@ msgid "Other"
 msgstr "Egyéb"
 
 #: src/page/about/about.vue:48
+#, fuzzy
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr ""
+"A Felhasználói útmutató számos haladó témával is foglalkozik, például a "
+"Google Fotókról való áttelepítéssel és a miniatűrök minőségi beállításaival."
 
 #: src/options/options.js:283
 msgid "Outdoor"
@@ -1756,8 +1790,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "A tárhely felszabadításához távolítsa el véglegesen a fájlokat."
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: src/model/photo.js:1057
 msgid "Photo"
@@ -1768,8 +1803,11 @@ msgid "PhotoPrism has been updated…"
 msgstr "A PhotoPrism frissítve lett…"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr ""
+"A PhotoPrism® egy mesterséges intelligenciával működő fényképalkalmazás a "
+"decentralizált webre."
 
 #: src/app/routes.js:131
 msgid "Photos"
@@ -1805,8 +1843,11 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Kérjük, ne töltsön fel sértő tartalmat tartalmazó fotókat."
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr ""
+"Felhívjuk figyelmét, hogy a jelszó megváltoztatása más eszközökön és "
+"böngészőkben is kijelentkezik."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1893,8 +1934,9 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indexelje újra az összes eredetit, beleértve a már indexelt és változatlan fájlokat is."
 
 #: src/page/about/about.vue:51
+#, fuzzy
 msgid "Read the Docs"
-msgstr ""
+msgstr "Olvassa el a dokumentumokat"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -2036,8 +2078,9 @@ msgid "Secret"
 msgstr "Titok"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "Biztonság és hozzáférés"
 
 #: src/component/photo-viewer.vue:114
 msgid "Select"
@@ -2107,8 +2150,9 @@ msgid "Share %{name}"
 msgstr "%{name} megosztása"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "Ossza meg képeit más alkalmazásokkal és szolgáltatásokkal."
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2241,8 +2285,9 @@ msgid "Subject"
 msgstr "Tantárgy"
 
 #: src/page/connect.vue:33
+#, fuzzy
 msgid "Successfully Connected"
-msgstr ""
+msgstr "Sikeresen csatlakoztatva"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2266,8 +2311,9 @@ msgid "Teal"
 msgstr "A zöldeskék"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "Feltételek &; Adatvédelem"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2383,8 +2429,9 @@ msgstr "Ismeretlen"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
+#, fuzzy
 msgid "Unregistered"
-msgstr ""
+msgstr "Nem regisztrált"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 msgid "Unsorted"
@@ -2483,8 +2530,9 @@ msgstr "Felhasználó"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
+#, fuzzy
 msgid "User Guide"
-msgstr ""
+msgstr "Felhasználói útmutató"
 
 #: src/page/settings/general.vue:6
 msgid "User Interface"
@@ -2500,8 +2548,9 @@ msgid "Vanta"
 msgstr "Vanta"
 
 #: src/page/connect.vue:9
+#, fuzzy
 msgid "Verified"
-msgstr ""
+msgstr "Ellenőrzött"
 
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
@@ -2527,8 +2576,11 @@ msgid "View"
 msgstr "Kilátás"
 
 #: src/page/about/about.vue:47
+#, fuzzy
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr ""
+"Látogasson el a docs.photoprism.app/user-guide webhelyre, ahol megtudhatja, "
+"hogyan szinkronizálhatja, rendszerezheti és oszthatja meg képeit."
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2536,12 +2588,15 @@ msgid "Visual Similarity"
 msgstr "Csoportosítás hasonlóság szerint"
 
 #: src/page/about/feedback.vue:13
+#, fuzzy
 msgid "We appreciate your feedback!"
-msgstr ""
+msgstr "Nagyra értékeljük visszajelzéseit!"
 
 #: src/page/about/feedback.vue:17
+#, fuzzy
 msgid "We do our best to respond within five business days or less."
 msgstr ""
+"Igyekszünk öt munkanapon belül vagy annál rövidebb időn belül válaszolni."
 
 #: src/page/about/about.vue:74
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
@@ -2568,8 +2623,9 @@ msgstr "WebDAV feltöltés"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "Weboldal"
 
 #: src/options/options.js:393
 msgid "White"
@@ -2617,8 +2673,9 @@ msgid "You can only download one label"
 msgstr "Csak egy címkét tölthet le"
 
 #: src/page/about/about.vue:17
+#, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr ""
+msgstr "Futtathatja otthon, egy privát szerveren vagy a felhőben."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

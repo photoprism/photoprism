@@ -2,13 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-08-23 11:07+0000\n"
-"Last-Translator: mikimuster <apikeys.logout@aleeas.com>\n"
+"PO-Revision-Date: 2022-10-31 12:41+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 4.14\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
+"%100==4 ? 2 : 3;\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -150,8 +151,9 @@ msgid "After two weeks"
 msgstr "Po dveh tednih"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "Upravljanje digitalnih sredstev z umetno inteligenco"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -351,8 +353,9 @@ msgid "Bio"
 msgstr "Bio"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "Datum rojstva"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -448,8 +451,9 @@ msgid "Change Password"
 msgstr "Novo geslo"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "Spreminjanje osebnega profila in varnostnih nastavitev."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -462,8 +466,9 @@ msgstr "Sprememba zasebne zastave"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Spremembe so bile uspešno shranjene"
 
 #: src/dialog/photo/edit/info.vue:191
 #, fuzzy
@@ -644,8 +649,9 @@ msgid "Details"
 msgstr "Podrobnosti"
 
 #: src/page/about/about.vue:29
+#, fuzzy
 msgid "Developer Guide"
-msgstr ""
+msgstr "Vodnik za razvijalce"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -697,8 +703,9 @@ msgid "Discover"
 msgstr "Odkrijte"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "Prikazno ime"
 
 #: src/page/settings/advanced.vue:141
 #, fuzzy
@@ -824,8 +831,9 @@ msgstr "Urejeno"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "E-pošta"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -904,8 +912,9 @@ msgid "Failed updating link"
 msgstr "Neuspešno posodabljanje povezave"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
+#, fuzzy
 msgid "Family Name"
-msgstr ""
+msgstr "Družinsko ime"
 
 #: src/options/options.js:249
 msgid "Fast"
@@ -938,8 +947,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "Če imate kakršna koli vprašanja, se obrnite na nas na naslov hello@photoprism.app."
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "Ženske"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1165,8 +1175,9 @@ msgid "Index"
 msgstr "Indeks"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "Indeksiranje in uvoz datotek prek uporabniškega vmesnika."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1242,8 +1253,9 @@ msgid "Keywords"
 msgstr "Ključne besede"
 
 #: src/page/about/about.vue:53
+#, fuzzy
 msgid "Knowledge Base"
-msgstr ""
+msgstr "Baza znanja"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1281,12 +1293,14 @@ msgid "Lavender"
 msgstr "Sivka"
 
 #: src/page/about/about.vue:55
+#, fuzzy
 msgid "Learn more"
-msgstr ""
+msgstr "Preberite več"
 
 #: src/component/navigation.vue:588
+#, fuzzy
 msgid "Legal Information"
-msgstr ""
+msgstr "Pravne informacije"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1390,8 +1404,9 @@ msgid "Main Color"
 msgstr "Glavna barva"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "Moški"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1781,8 +1796,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "Trajno odstranite datoteke in sprostite prostor za shranjevanje."
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: src/model/photo.js:1057
 #, fuzzy
@@ -1840,8 +1856,11 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Ne nalagajte fotografij z žaljivo vsebino."
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr ""
+"Upoštevajte, da se boste s spremembo gesla odjavili tudi v drugih napravah "
+"in brskalnikih."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 #, fuzzy
@@ -1948,8 +1967,9 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Ponovno indeksiranje vseh izvirnikov, vključno z že indeksiranimi in nespremenjenimi datotekami."
 
 #: src/page/about/about.vue:51
+#, fuzzy
 msgid "Read the Docs"
-msgstr ""
+msgstr "Preberite dokumente"
 
 #: src/page/settings/advanced.vue:96
 #, fuzzy
@@ -2120,8 +2140,9 @@ msgid "Secret"
 msgstr "Skrivnost"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "Varnost in dostop"
 
 #: src/component/photo-viewer.vue:114
 #, fuzzy
@@ -2205,8 +2226,9 @@ msgid "Share %{name}"
 msgstr "Skupna raba %{imena}"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "Slike lahko delite z drugimi aplikacijami in storitvami."
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 #, fuzzy
@@ -2402,8 +2424,9 @@ msgid "Teal"
 msgstr "Teal"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "Pogoji & amp; Zasebnost"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 #, fuzzy
@@ -2540,8 +2563,9 @@ msgstr "Neznano"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
+#, fuzzy
 msgid "Unregistered"
-msgstr ""
+msgstr "Neregistrirani"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 #, fuzzy
@@ -2660,8 +2684,9 @@ msgstr "Uporabnik"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
+#, fuzzy
 msgid "User Guide"
-msgstr ""
+msgstr "Uporabniški priročnik"
 
 #: src/page/settings/general.vue:6
 #, fuzzy
@@ -2759,8 +2784,9 @@ msgstr "Nalaganje prek protokola WebDAV"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "Spletna stran"
 
 #: src/options/options.js:393
 #, fuzzy

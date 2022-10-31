@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 21:31+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
+"PO-Revision-Date: 2022-10-31 12:56+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -153,8 +154,9 @@ msgid "After two weeks"
 msgstr "İki hafta sonra"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "AI-Powered Digital Asset Management"
-msgstr ""
+msgstr "Yapay Zeka Destekli Dijital Varlık Yönetimi"
 
 #: src/model/album.js:229
 msgid "Album"
@@ -346,8 +348,12 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
 
 #: src/page/about/about.vue:27
+#, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr ""
+"100 kendi kendini finanse eden ve bağımsız olarak, verilerinizi asla "
+"satmayacağımıza ve yazılım ve hizmetlerimiz hakkında her zaman şeffaf "
+"olacağımıza dair size söz verebiliriz."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
@@ -355,8 +361,9 @@ msgid "Bio"
 msgstr "Özgeçmiş"
 
 #: src/page/settings/account.vue:67
+#, fuzzy
 msgid "Birth Date"
-msgstr ""
+msgstr "Doğum Tarihi"
 
 #: src/options/options.js:395
 msgid "Black"
@@ -384,8 +391,11 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Kitaplık'ta dizine alınmış dosya ve klasörlere göz atın."
 
 #: src/page/about/about.vue:54
+#, fuzzy
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr ""
+"Belirli ürün özellikleri, hizmetler ve ilgili kaynaklar hakkında ayrıntılı "
+"bilgi için Bilgi Tabanına göz atın."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:402
 msgid "Bug Report"
@@ -453,8 +463,9 @@ msgid "Change Password"
 msgstr "Yeni Şifre"
 
 #: src/page/settings/general.vue:471
+#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr ""
+msgstr "Kişisel profil ve güvenlik ayarlarını değiştirin."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -467,8 +478,9 @@ msgstr "Özel bayrağı değiştir"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
+#, fuzzy
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Değişiklikler başarıyla kaydedildi"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -500,8 +512,11 @@ msgid "Colors"
 msgstr "Renkler"
 
 #: src/page/about/about.vue:49
+#, fuzzy
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
+"Yaygın sorunlar, sağladığımız sorun giderme kontrol listeleri kullanılarak "
+"hızlı bir şekilde teşhis edilebilir ve çözülebilir."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -650,8 +665,9 @@ msgid "Details"
 msgstr "Detaylar"
 
 #: src/page/about/about.vue:29
+#, fuzzy
 msgid "Developer Guide"
-msgstr ""
+msgstr "Geliştirici Kılavuzu"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -703,8 +719,9 @@ msgid "Discover"
 msgstr "Keşfetmek"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "Ekran Adı"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -777,8 +794,11 @@ msgid "Downscaling Filter"
 msgstr "Ölçek küçültme filtresi"
 
 #: src/page/about/feedback.vue:16
+#, fuzzy
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
 msgstr ""
+"Aldığımız e-postaların yoğunluğu nedeniyle ekibimiz size hemen geri dönüş "
+"yapamayabilir."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -829,8 +849,9 @@ msgstr "Düzenlendi"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "E-posta"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -911,8 +932,9 @@ msgid "Failed updating link"
 msgstr "Bağlantı güncellenemedi"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
+#, fuzzy
 msgid "Family Name"
-msgstr ""
+msgstr "Aile Adı"
 
 #: src/options/options.js:249
 msgid "Fast"
@@ -945,8 +967,9 @@ msgid "Feel free to contact us at hello@photoprism.app if you have any questions
 msgstr "Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime geçmekten çekinmeyin."
 
 #: src/options/options.js:416
+#, fuzzy
 msgid "Female"
-msgstr ""
+msgstr "Kadın"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1175,8 +1198,9 @@ msgid "Index"
 msgstr "Dizin"
 
 #: src/page/settings/general.vue:405
+#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr ""
+msgstr "Kullanıcı arayüzü üzerinden dosyaları indeksleyin ve içe aktarın."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1230,8 +1254,11 @@ msgid "Invalid photo selected"
 msgstr "Geçersiz fotoğraf seçildi"
 
 #: src/page/about/about.vue:16
+#, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr ""
+"Yolunuza çıkmadan resimleri otomatik olarak etiketlemek ve bulmak için en "
+"son teknolojilerden yararlanır."
 
 #: src/model/rest.js:167
 #, fuzzy
@@ -1255,8 +1282,9 @@ msgid "Keywords"
 msgstr "Anahtar Kelimeler"
 
 #: src/page/about/about.vue:53
+#, fuzzy
 msgid "Knowledge Base"
-msgstr ""
+msgstr "Bilgi Bankası"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1296,12 +1324,14 @@ msgid "Lavender"
 msgstr "Lavanta"
 
 #: src/page/about/about.vue:55
+#, fuzzy
 msgid "Learn more"
-msgstr ""
+msgstr "Daha fazla bilgi edinin"
 
 #: src/component/navigation.vue:588
+#, fuzzy
 msgid "Legal Information"
-msgstr ""
+msgstr "Yasal Bilgiler"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1419,8 +1449,9 @@ msgid "Main Color"
 msgstr "Ana Renk"
 
 #: src/options/options.js:415
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "Erkek"
 
 #: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
@@ -1805,8 +1836,11 @@ msgid "Other"
 msgstr "Diğer"
 
 #: src/page/about/about.vue:48
+#, fuzzy
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr ""
+"Kullanıcı Kılavuzumuz ayrıca Google Fotoğraflar'dan geçiş ve küçük resim "
+"kalitesi ayarları gibi birçok gelişmiş konuyu da kapsamaktadır."
 
 #: src/options/options.js:283
 #, fuzzy
@@ -1858,8 +1892,9 @@ msgid "Permanently remove files to free up storage."
 msgstr "Depolama alanını boşaltmak için dosyaları kalıcı olarak kaldırın."
 
 #: src/page/settings/account.vue:761 src/page/settings/account.vue:614
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: src/model/photo.js:1057
 #, fuzzy
@@ -1872,8 +1907,11 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism güncellendi…"
 
 #: src/page/about/about.vue:15
+#, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr ""
+"PhotoPrism®, Merkezi Olmayan Web için Yapay Zeka Destekli bir Fotoğraf "
+"Uygulamasıdır."
 
 #: src/app/routes.js:131
 #, fuzzy
@@ -1916,8 +1954,11 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Lütfen saldırgan içerikli fotoğraflar yüklemeyin."
 
 #: src/dialog/account/password.vue:17
+#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr ""
+"Lütfen şifrenizi değiştirdiğinizde diğer cihazlarda ve tarayıcılarda "
+"oturumunuzu kapatacağınızı unutmayın."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 #, fuzzy
@@ -2024,8 +2065,9 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Önceden indekslenmiş ve değiştirilmemiş dosyalar da dahil olmak üzere tüm orijinalleri yeniden indeksleyin."
 
 #: src/page/about/about.vue:51
+#, fuzzy
 msgid "Read the Docs"
-msgstr ""
+msgstr "Belgeleri Okuyun"
 
 #: src/page/settings/advanced.vue:96
 #, fuzzy
@@ -2196,8 +2238,9 @@ msgid "Secret"
 msgstr "Gizli"
 
 #: src/page/settings/account.vue:44
+#, fuzzy
 msgid "Security and Access"
-msgstr ""
+msgstr "Güvenlik ve Erişim"
 
 #: src/component/photo-viewer.vue:114
 #, fuzzy
@@ -2281,8 +2324,9 @@ msgid "Share %{name}"
 msgstr "Paylaş %{name}"
 
 #: src/page/settings/general.vue:383
+#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr ""
+msgstr "Fotoğraflarınızı diğer uygulamalar ve hizmetlerle paylaşın."
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 #, fuzzy
@@ -2447,8 +2491,9 @@ msgid "Subject"
 msgstr "Konu"
 
 #: src/page/connect.vue:33
+#, fuzzy
 msgid "Successfully Connected"
-msgstr ""
+msgstr "Başarıyla Bağlandı"
 
 #: src/dialog/service/add.vue:29
 #, fuzzy
@@ -2477,8 +2522,9 @@ msgid "Teal"
 msgstr "Deniz mavisi"
 
 #: src/page/about/about.vue:37
+#, fuzzy
 msgid "Terms &amp; Privacy"
-msgstr ""
+msgstr "Şartlar &amp; Gizlilik"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 #, fuzzy
@@ -2615,8 +2661,9 @@ msgstr "Bilinmiyor"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
 #: src/component/navigation.vue:82 src/model/user.js:130
+#, fuzzy
 msgid "Unregistered"
-msgstr ""
+msgstr "Kayıtsız"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 #, fuzzy
@@ -2735,8 +2782,9 @@ msgstr "Kullanıcı"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
+#, fuzzy
 msgid "User Guide"
-msgstr ""
+msgstr "Kullanıcı Kılavuzu"
 
 #: src/page/settings/general.vue:6
 #, fuzzy
@@ -2755,8 +2803,9 @@ msgid "Vanta"
 msgstr "Vanta"
 
 #: src/page/connect.vue:9
+#, fuzzy
 msgid "Verified"
-msgstr ""
+msgstr "Doğrulandı"
 
 #: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
@@ -2785,8 +2834,12 @@ msgid "View"
 msgstr "Görünüm"
 
 #: src/page/about/about.vue:47
+#, fuzzy
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr ""
+"Fotoğraflarınızı nasıl senkronize edeceğinizi, düzenleyeceğinizi ve "
+"paylaşacağınızı öğrenmek için docs.photoprism.app/user-guide adresini "
+"ziyaret edin."
 
 #: src/component/photo/toolbar.vue:54
 #, fuzzy
@@ -2794,12 +2847,16 @@ msgid "Visual Similarity"
 msgstr "Benzerliğe göre gruplandır"
 
 #: src/page/about/feedback.vue:13
+#, fuzzy
 msgid "We appreciate your feedback!"
-msgstr ""
+msgstr "Görüşleriniz için teşekkür ederiz!"
 
 #: src/page/about/feedback.vue:17
+#, fuzzy
 msgid "We do our best to respond within five business days or less."
 msgstr ""
+"Beş iş günü veya daha kısa bir süre içinde yanıt vermek için elimizden "
+"geleni yapıyoruz."
 
 #: src/page/about/about.vue:74
 #, fuzzy
@@ -2830,8 +2887,9 @@ msgstr "WebDAV Yükleme"
 
 #: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
+#, fuzzy
 msgid "Website"
-msgstr ""
+msgstr "Web sitesi"
 
 #: src/options/options.js:393
 #, fuzzy
@@ -2887,8 +2945,9 @@ msgid "You can only download one label"
 msgstr "Yalnızca bir etiket indirebilirsiniz"
 
 #: src/page/about/about.vue:17
+#, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr ""
+msgstr "Evde, özel bir sunucuda veya bulutta çalıştırabilirsiniz."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 #, fuzzy
