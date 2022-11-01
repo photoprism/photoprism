@@ -8,13 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-<<<<<<< HEAD
-"PO-Revision-Date: 2022-11-01 12:37+0000\n"
-"Last-Translator: Martin Labat <martin.labat92@gmail.com>\n"
-=======
 "PO-Revision-Date: 2022-11-01 13:23+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
->>>>>>> 5758943aab4f1fdcebaefe8be3868c68869c24c1
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
 "Language: fr\n"
@@ -59,11 +54,7 @@ msgstr "Fichier trop volumineux"
 
 #: messages.go:102
 msgid "Unsupported format"
-<<<<<<< HEAD
-msgstr "Format non pris en charge"
-=======
 msgstr "Format non supporté"
->>>>>>> 5758943aab4f1fdcebaefe8be3868c68869c24c1
 
 #: messages.go:103
 msgid "Originals folder is empty"
@@ -115,11 +106,7 @@ msgstr "Non disponible en mode lecture seule"
 
 #: messages.go:115
 msgid "Please log in to your account"
-<<<<<<< HEAD
 msgstr "Veuillez vous identifier"
-=======
-msgstr "Veuillez vous connecter à votre compte"
->>>>>>> 5758943aab4f1fdcebaefe8be3868c68869c24c1
 
 #: messages.go:116
 msgid "Permission denied"
