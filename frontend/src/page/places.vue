@@ -99,8 +99,8 @@ export default {
 
         let mapsStyle = s.style;
 
-        if (!mapKey || !this.$config.isSponsor() && !this.$config.isDemo()) {
-          mapsStyle = "basic";
+        if (!mapKey || !this.$config.isSponsor() && !this.$config.isDemo() || mapsStyle === "basic") {
+          mapsStyle = "offline";
         } else if (!mapsStyle) {
           mapsStyle = "streets";
         }
@@ -114,7 +114,7 @@ export default {
           zoom: 0,
         };
 
-        if (mapsStyle === "basic") {
+        if (mapsStyle === "offline") {
           mapOptions = {
             container: "map",
             style: {

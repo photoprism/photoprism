@@ -266,7 +266,7 @@ export const MapsStyle = () => [
   },
   {
     text: $gettext("Basic"),
-    value: "basic",
+    value: "offline",
   },
   {
     text: $gettext("Streets"),
