@@ -345,7 +345,7 @@
                     auto-grow
                     :label="$gettext('Description')"
                     placeholder=""
-                    :rows="1"
+                    :rows="2"
                     color="secondary-dark"
                     class="input-description"
                 ></v-textarea>
@@ -361,7 +361,7 @@
                     auto-grow
                     :label="$gettext('Keywords')"
                     placeholder=""
-                    :rows="1"
+                    :rows="2"
                     color="secondary-dark"
                     class="input-keywords"
                 ></v-textarea>
@@ -377,7 +377,7 @@
                     auto-grow
                     :label="$gettext('Notes')"
                     placeholder=""
-                    :rows="1"
+                    :rows="2"
                     color="secondary-dark"
                     class="input-notes"
                 ></v-textarea>
