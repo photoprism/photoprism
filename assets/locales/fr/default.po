@@ -106,7 +106,7 @@ msgstr "Non disponible en mode lecture seule"
 
 #: messages.go:115
 msgid "Please log in to your account"
-msgstr "Veuillez vous connecter à votre compte"
+msgstr "Veuillez vous identifier"
 
 #: messages.go:116
 msgid "Permission denied"
