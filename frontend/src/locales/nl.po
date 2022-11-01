@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-01 13:41+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
+"PO-Revision-Date: 2022-11-01 17:51+0000\n"
+"Last-Translator: wimmme <wimmme@gmail.com>\n"
+"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
+"frontend/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -60,7 +61,7 @@ msgstr "Over"
 
 #: src/options/themes.js:417
 msgid "Abyss"
-msgstr "Abyss"
+msgstr "Kloof"
 
 #: src/component/navigation.vue:3 src/component/navigation.vue:93 src/component/navigation.vue:1908 src/dialog/share/upload.vue:108 src/model/service.js:98 src/model/user.js:144 src/page/settings.vue:83 src/page/settings/general.vue:470
 msgid "Account"
@@ -80,7 +81,7 @@ msgstr "Acties"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
-msgstr "Bedrijf Toevoegen"
+msgstr "Account toevoegen"
 
 #: src/page/albums.vue:122 src/page/albums.vue:163
 msgid "Add Album"
@@ -328,7 +329,10 @@ msgstr "Voordat u een ondersteuningsverzoek indient, kunt u onze controlelijsten
 
 #: src/page/about/about.vue:27
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Omdat we 100% self gefinancierd en onafhankelijk zijn, kunnen we je beloven dat we je gegevens nooit zullen verkopen en dat we altijd transparant zullen zijn over onze software en diensten."
+msgstr ""
+"Omdat we 100% zelf gefinancierd en onafhankelijk zijn, kunnen we u beloven "
+"dat we uw gegevens nooit zullen verkopen en dat we altijd transparant zullen "
+"zijn over onze software en diensten."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434 src/page/settings/account.vue:280
 msgid "Bio"
@@ -410,7 +414,7 @@ msgstr "Categorie"
 
 #: src/page/settings/account.vue:252 src/page/settings/account.vue:251
 msgid "Change Avatar"
-msgstr "Wijzig avatar"
+msgstr "Avatar veranderen"
 
 #: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
 msgid "Change Password"
@@ -462,7 +466,9 @@ msgstr "Kleuren"
 
 #: src/page/about/about.vue:49
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Veel voorkomende problemen kunnen snel worden gediagnosticeerd en opgelost met behulp van de controlelijsten voor probleemoplossing die we verstrekken."
+msgstr ""
+"Veel voorkomende problemen kunnen snel worden gediagnosticeerd en opgelost "
+"met behulp van de controlelijsten voor probleemoplossing die wij verstrekken."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -554,7 +560,7 @@ msgstr "Cyaan"
 
 #: src/options/themes.js:432
 msgid "Cyano"
-msgstr "Cyano"
+msgstr "Cyaan"
 
 #: src/options/options.js:367
 msgid "Daily"
@@ -595,7 +601,7 @@ msgstr "Details"
 
 #: src/page/about/about.vue:29
 msgid "Developer Guide"
-msgstr "Ontwikkelaarsgids"
+msgstr "Gids voor ontwikkelaars"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -647,7 +653,7 @@ msgstr "Ontdek"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
 msgid "Display Name"
-msgstr "Weergavenaam"
+msgstr "Naam op scherm"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -713,7 +719,9 @@ msgstr "Downscaling filter"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Door het grote aantal e-mails dat we ontvangen, kan het zijn dat ons team je niet onmiddellijk kan antwoorden."
+msgstr ""
+"Vanwege het grote aantal e-mails dat wij ontvangen, kan het voorkomen dat "
+"ons team u niet onmiddellijk antwoord kan geven."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -861,7 +869,7 @@ msgstr "Verzoek voor nieuwe functionaliteit"
 
 #: src/page/settings/account.vue:817 src/page/settings/account.vue:670
 msgid "Feed"
-msgstr "Feed"
+msgstr "Tijdlijn"
 
 #: src/component/navigation.vue:432 src/component/navigation.vue:35
 msgid "Feedback"
@@ -1125,7 +1133,9 @@ msgstr "Ongeldige foto geselecteerd"
 
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Het maakt gebruik van de nieuwste technologieën om foto's automatisch te taggen en te vinden zonder je in de weg te zitten."
+msgstr ""
+"Het maakt gebruik van de nieuwste technologieën om foto's automatisch te "
+"taggen en te vinden zonder je lastig te vallen."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1185,11 +1195,11 @@ msgstr "Lavendel"
 
 #: src/page/about/about.vue:55
 msgid "Learn more"
-msgstr "Leer meer"
+msgstr "Meer informatie"
 
 #: src/component/navigation.vue:588
 msgid "Legal Information"
-msgstr "Wettelijke informatie"
+msgstr "Juridische informatie"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1293,7 +1303,7 @@ msgstr "Uploaden"
 
 #: src/page/settings/general.vue:556
 msgid "Maps"
-msgstr "Plattegronden"
+msgstr "Kaarten"
 
 #: src/model/marker.js:146
 msgid "Marker"
@@ -1477,7 +1487,7 @@ msgstr "Notities"
 
 #: src/page/library/logs.vue:5
 msgid "Nothing to see here yet."
-msgstr "Nog niets te zien hier. Wees geduldig."
+msgstr "Hier is nog niets te zien."
 
 #: src/component/navigation.vue:470 src/component/navigation.vue:1731
 msgid "Offline"
@@ -1621,7 +1631,8 @@ msgstr "PhotoPrism is geüpdatet…"
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® is een AI-aangedreven foto-app voor het gedecentraliseerde web."
+msgstr ""
+"PhotoPrism® is een AI-gestuurde foto-app voor het gedecentraliseerde web."
 
 #: src/app/routes.js:131
 msgid "Photos"
@@ -1654,7 +1665,9 @@ msgstr "Upload geen foto's met aanstootgevende inhoud."
 
 #: src/dialog/account/password.vue:17
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Houd er rekening mee dat het veranderen van je wachtwoord je op andere apparaten en browsers uitlogt."
+msgstr ""
+"Houd er rekening mee dat het wijzigen van uw wachtwoord u zal afmelden op "
+"andere apparaten en browsers."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1750,7 +1763,7 @@ msgstr "Recent toegevoegd"
 
 #: src/component/photo/toolbar.vue:50
 msgid "Recently Added"
-msgstr "Recent toegevoegd"
+msgstr "Onlangs toegevoegd"
 
 #: src/component/album/toolbar.vue:66 src/dialog/album/edit.vue:20
 msgid "Recently edited"
@@ -1758,7 +1771,7 @@ msgstr "Recent geïmporteerd"
 
 #: src/component/photo/toolbar.vue:58
 msgid "Recently Edited"
-msgstr "Recent geïmporteerd"
+msgstr "Recent bewerkt"
 
 #: src/dialog/photo/edit/people.vue:9 src/page/people/new.vue:33 src/page/people/recognized.vue:40
 msgid "Recognition starts after indexing has been completed."
@@ -2115,7 +2128,10 @@ msgstr "Dit is een vroegtijdige toegang om dank te zeggen aan onze sponsors en m
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Hierdoor wordt de map met de originelen als een netwerkstation gemonteerd en kunt u bestanden openen, bewerken en verwijderen van uw computer of smartphone alsof ze lokaal zijn."
+msgstr ""
+"Dit koppelt de originelenmap als een netwerkstation en stelt u in staat "
+"bestanden te openen, te bewerken en te verwijderen\n"
+"          van uw computer of smartphone alsof ze lokaal zijn."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2188,7 +2204,7 @@ msgstr "Onbekend"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43 src/component/navigation.vue:82 src/model/user.js:130
 msgid "Unregistered"
-msgstr "Niet geregistreerde"
+msgstr "Ongeregistreerd"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 msgid "Unsorted"
@@ -2216,7 +2232,7 @@ msgstr "Momenten van actualisering"
 
 #: src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "Foto bijwerken.."
+msgstr "Foto bijwerken…"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2317,7 +2333,9 @@ msgstr "Weergave"
 
 #: src/page/about/about.vue:47
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Bezoek docs.photoprism.app/user-guide om te leren hoe je je foto's kunt synchroniseren, organiseren en delen."
+msgstr ""
+"Bezoek docs.photoprism.app/user-guide voor meer informatie over het "
+"synchroniseren, organiseren en delen van uw foto's."
 
 #: src/component/photo/toolbar.vue:54
 msgid "Visual Similarity"
@@ -2325,7 +2343,7 @@ msgstr "Visuele gelijkenis"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
-msgstr "We stellen je feedback op prijs!"
+msgstr "Wij waarderen uw feedback!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
@@ -2337,7 +2355,9 @@ msgstr "We zullen ons best doen om al je vragen te beantwoorden. In ruil daarvoo
 
 #: src/dialog/sponsor.vue:18
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr "We zullen je laten weten hoe je het kunt inschakelen als je je aanmeldt op Patreon of GitHub Sponsors."
+msgstr ""
+"We zullen je laten weten hoe je het kan inschakelen als je je aanmeldt op "
+"Patreon of GitHub Sponsors."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
@@ -2347,7 +2367,10 @@ msgstr "WebDAV-cliënten kunnen verbinding maken met PhotoPrism via de volgende 
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV-cliënten, zoals Microsoft's Windows Explorer of Apple's Finder, kunnen rechtstreeks verbinding maken met PhotoPrism."
+msgstr ""
+"WebDAV clients, zoals Microsoft's Windows Verkenner of Apple's Finder, "
+"kunnen direct verbinding maken met\n"
+"          PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2396,7 +2419,7 @@ msgstr "Je kunt slechts een album downloaden"
 
 #: src/page/about/about.vue:17
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "Je kunt het thuis draaien, op een eigen server, of in de cloud."
+msgstr "U kan het thuis draaien, op een eigen server of in de cloud."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2408,7 +2431,10 @@ msgstr "U kunt uw bibliotheek opnieuw scannen om meer gezichten te vinden."
 
 #: src/page/about/about.vue:22
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Je voortdurende steun helpt ons om regelmatig updates te geven en onafhankelijk te blijven, zodat we onze missie kunnen vervullen en je privacy kunnen beschermen."
+msgstr ""
+"Uw blijvende steun helpt ons om regelmatig updates te geven en onafhankelijk "
+"te blijven, zodat we onze missie kunnen vervullen en uw privacy kunnen "
+"beschermen."
 
 #: src/dialog/sponsor.vue:21
 msgid "Your continued support helps us provide regular updates and services like world maps."
