@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-09-21 18:49+0000\n"
-"Last-Translator: jpgaroto <jpgorgati@gmail.com>\n"
+"PO-Revision-Date: 2022-11-01 07:14+0000\n"
+"Last-Translator: cabe1214 <cabe.1214@gmail.com>\n"
 "Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
 "backend/es/>\n"
 "Language: es\n"
@@ -50,11 +50,11 @@ msgstr "No se encuentra el archivo"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Archivo demasiado grande"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Formato no admitido"
 
 #: messages.go:103
 msgid "Originals folder is empty"
@@ -101,19 +101,16 @@ msgid "Not available in public mode"
 msgstr "No disponible en modo público"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
-msgstr "No disponible en modo de solo lectura"
+msgstr "No está disponible en modo de sólo lectura"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "Por favor inicie sesión e inténtelo de nuevo"
+msgstr "Por favor inicie sesión"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "Persona eliminada"
+msgstr "Permiso denegado"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -121,21 +118,19 @@ msgstr "El archivo subido puede ser ofensivo"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Carga fallida"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "Ningún elemento seleccionado"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
-msgstr "Error creando el archivo, por favor revise los premisos"
+msgstr "Fallo al crear el archivo, por favor, compruebe los permisos"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
-msgstr "Error creando la carpeta, por favor revise los premisos"
+msgstr "Fallo al crear la carpeta, por favor, compruebe los permisos"
 
 #: messages.go:122
 msgid "Could not connect, please try again"
@@ -162,9 +157,8 @@ msgid "No files available for download"
 msgstr "Ningún archivo disponible para descargar"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
-msgstr "La creación del archivo zip falló"
+msgstr "Fallo al crear el archivo zip"
 
 #: messages.go:129
 msgid "Invalid credentials"
@@ -332,9 +326,8 @@ msgid "Person deleted"
 msgstr "Persona eliminada"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "Archivo eliminado"
+msgstr "Archivo cargado"
 
 #: messages.go:170
 #, c-format
@@ -343,12 +336,11 @@ msgstr "%d archivos subidos en %d"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Procesando la carga..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "%s ha sido restaurado"
+msgstr "La carga ha sido procesada"
 
 #: messages.go:173
 msgid "Selection approved"
