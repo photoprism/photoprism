@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-06-16 19:29+0200\n"
+"PO-Revision-Date: 2022-11-01 13:31+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
 "backend/ko/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -50,15 +50,15 @@ msgstr "파일을 찾을 수 없음"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "파일이 너무 큽니다"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "지원되지 않는 형식"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "원본 폴더가 비어 있습니다."
 
 #: messages.go:104
 msgid "Selection not found"
@@ -101,19 +101,16 @@ msgid "Not available in public mode"
 msgstr "공개 모드에서는 사용할 수 없음"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
 msgstr "읽기 전용 모드에서는 사용할 수 없음"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "로그인하고 다시 시도하십시오"
+msgstr "귀하의 계정에 로그인하십시오"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "삭제된 사람"
+msgstr "사용 권한이 거부되었습니다."
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -121,19 +118,17 @@ msgstr "업로드가 불쾌할 수 있습니다."
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "업로드 실패"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "선택된 항목이 없습니다"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "파일 생성에 실패했습니다. 권한을 확인하세요"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "폴더를 만들지 못했습니다. 권한을 확인하세요"
 
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "다운로드할 수 있는 파일이 없습니다"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "zip 파일 생성 실패"
 
@@ -189,7 +183,7 @@ msgstr "깨우기 간격은 %s이지만 1시간 이하여야 합니다."
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "계정을 연결할 수 없습니다."
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -332,9 +326,8 @@ msgid "Person deleted"
 msgstr "삭제된 사람"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "%u 개의 파일이 삭제되었습니다."
+msgstr "업로드된 파일 1개"
 
 #: messages.go:170
 #, c-format
@@ -343,12 +336,11 @@ msgstr "%d개의 파일이 %d초에 업로드됨"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "업로드 처리 중..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "%s이(가) 복원되었습니다."
+msgstr "업로드가 처리되었습니다"
 
 #: messages.go:173
 msgid "Selection approved"

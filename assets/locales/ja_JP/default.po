@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-06-16 19:31+0200\n"
+"PO-Revision-Date: 2022-11-01 13:29+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/"
 "photoprism/backend/ja/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -50,15 +50,15 @@ msgstr "ファイルが見つかりませんでした"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "ファイルサイズが大きすぎる"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "非対応のフォーマット"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Originalsフォルダーが空です"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -101,39 +101,35 @@ msgid "Not available in public mode"
 msgstr "公開モードでは利用できません"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
 msgstr "読み込み専用モードでは利用できません"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "ログインして再度試してみてください"
+msgstr "アカウントにログインしてください"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "削除された人"
+msgstr "アクセス拒否"
 
 #: messages.go:117
 msgid "Upload might be offensive"
-msgstr "アップロードされた項目に過激なものが含まれている可能性があります"
+msgstr ""
+"アップロードされた項目に過激なものが含まれている可能性があります"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "アップロード失敗"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "項目が選択されていません"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "ファイルの作成に失敗しました、権限を確認してください"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "フォルダの作成に失敗しました、権限を確認してください"
 
@@ -162,7 +158,6 @@ msgid "No files available for download"
 msgstr "ダウンロードできるファイルはありません"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "zip ファイルの作成に失敗しました"
 
@@ -189,7 +184,7 @@ msgstr "ウェイクアップ間隔は%sであるが、1h以下でなければ�
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "お客様のアカウントに接続できませんでした"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -332,9 +327,8 @@ msgid "Person deleted"
 msgstr "削除された人"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "ファイルが削除されました"
+msgstr "アップロードされたファイル"
 
 #: messages.go:170
 #, c-format
@@ -343,12 +337,11 @@ msgstr "%d 件のファイルを %d 秒でアップロードしました"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "アップロードの処理..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "%s が復元されました"
+msgstr "アップロードが処理されました"
 
 #: messages.go:173
 msgid "Selection approved"

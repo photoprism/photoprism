@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-05-21 22:01+0000\n"
-"Last-Translator: LyssaK <a.y.kurasova@gmail.com>\n"
+"PO-Revision-Date: 2022-11-01 13:27+0100\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
 "Language: nl\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -50,15 +50,15 @@ msgstr "Bestand niet gevonden"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Bestand te groot"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Niet ondersteund formaat"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "De map Originelen is leeg"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -101,19 +101,16 @@ msgid "Not available in public mode"
 msgstr "Niet beschikbaar in publieke modus"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
-msgstr "niet beschikbaar in alleen-lezen modus"
+msgstr "Niet beschikbaar in alleen-lezen modus"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "Log in en probeer opnieuw"
+msgstr "Log in op je account"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "Persoon verwijderd"
+msgstr "Toegang geweigerd"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -121,19 +118,17 @@ msgstr "Upload kan aanstootgevend zijn"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Uploaden mislukt"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "Geen items geselecteerd"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Bestand aanmaken mislukt, controleer alstublieft de rechten"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Folder aanmaken mislukt, controleer alstublieft de rechten"
 
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "Geen bestanden beschikbaar om te downloaden"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Maken van zip-bestand is mislukt"
 
@@ -185,11 +179,11 @@ msgstr "Bezet, probeer het later nog eens"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Het wekinterval is %s, maar moet 1 uur of minder zijn"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Uw account kon niet worden aangesloten"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -332,9 +326,8 @@ msgid "Person deleted"
 msgstr "Persoon verwijderd"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "Bestand verwijderd"
+msgstr "Bestand geüpload"
 
 #: messages.go:170
 #, c-format
@@ -343,12 +336,11 @@ msgstr "%d bestanden geüpload in %d s"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Verwerking upload..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "Upload kan aanstootgevend zijn"
+msgstr "Upload is verwerkt"
 
 #: messages.go:173
 msgid "Selection approved"
@@ -380,9 +372,9 @@ msgid "Permanently deleted"
 msgstr "Permanent verwijderd"
 
 #: messages.go:180
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been restored"
-msgstr "Selectie hersteld"
+msgstr "%s is hersteld"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "Niet gevonden op de server, verwijderd?"

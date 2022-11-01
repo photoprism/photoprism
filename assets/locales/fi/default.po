@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-09-17 12:49+0000\n"
-"Last-Translator: latteetanne <late91@gmail.com>\n"
+"PO-Revision-Date: 2022-11-01 13:30+0100\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: none\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -49,11 +49,11 @@ msgstr "Tiedostoa ei löydy"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Tiedosto liian suuri"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Ei tuettu muoto"
 
 #: messages.go:103
 msgid "Originals folder is empty"
@@ -100,19 +100,16 @@ msgid "Not available in public mode"
 msgstr "Ei käytettävissä julkisessa tilassa"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
-msgstr "ei käytettävissä vain luku-tilassa"
+msgstr "Ei käytettävissä vain luku-tilassa"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "Kirjaudu sisään ja yritä uudelleen"
+msgstr "Kirjaudu sisään tilillesi"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "Henkilö poistettu"
+msgstr "Lupa evätty"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -120,19 +117,17 @@ msgstr "Upload saattaa olla loukkaava"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Lataus epäonnistui"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "Kohdetta ei ole valittu"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Tiedoston luominen epäonnistui, tarkista käyttöoikeudet"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Kansion luominen epäonnistui, tarkista käyttöoikeudet"
 
@@ -161,7 +156,6 @@ msgid "No files available for download"
 msgstr "Tiedostoja ei ole ladattavissa"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Zip-tiedoston luominen epäonnistui"
 
@@ -331,9 +325,8 @@ msgid "Person deleted"
 msgstr "Henkilö poistettu"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "Tiedosto poistettu"
+msgstr "Ladattu tiedosto"
 
 #: messages.go:170
 #, c-format
@@ -342,12 +335,11 @@ msgstr "%d tiedostoa ladattu %d s aikana"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Käsittelen latausta..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "%s on palautettu"
+msgstr "Lataus on käsitelty"
 
 #: messages.go:173
 msgid "Selection approved"

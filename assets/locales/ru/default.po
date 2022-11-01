@@ -8,17 +8,17 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-04-27 10:16+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-11-01 13:34+0100\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
 "backend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.12\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -51,15 +51,15 @@ msgstr "Файл не найден"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Слишком большой файл"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Не используемый формат"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Папка оригиналов пуста"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -102,19 +102,16 @@ msgid "Not available in public mode"
 msgstr "Не доступно в публичном режиме"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
 msgstr "не доступно в режиме только для чтения"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "Пожалуйста войдите и попробуйте еще раз"
+msgstr "Пожалуйста, войдите в свой аккаунт"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "Лицо удалено"
+msgstr "Доступ запрещен"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -122,19 +119,17 @@ msgstr "Загрузка может быть оскорбительной"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Загрузка не удалась"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "Нет выделенных элементов"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Не удалось создать файл, пожалуйста проверьте права доступа"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Не удалось создать папку, пожалуйста проверьте права доступа"
 
@@ -163,7 +158,6 @@ msgid "No files available for download"
 msgstr "Нет файлов, доступных для скачивания"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Не удалось создать zip файл"
 
@@ -186,11 +180,11 @@ msgstr "Занят, повторите попытку позже"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Интервал пробуждения может быть %s, но должен быть 1ч или меньше"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Ваш аккаунт не удалось подключить"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -333,9 +327,8 @@ msgid "Person deleted"
 msgstr "Лицо удалено"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "Файл удалён"
+msgstr "Файл загружен"
 
 #: messages.go:170
 #, c-format
@@ -344,12 +337,11 @@ msgstr "%d файлов загружено за %d с"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Обработка загрузки..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "Загрузка может быть оскорбительной"
+msgstr "Загрузка была обработана"
 
 #: messages.go:173
 msgid "Selection approved"
@@ -381,9 +373,9 @@ msgid "Permanently deleted"
 msgstr "Постоянно удаляется"
 
 #: messages.go:180
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been restored"
-msgstr "Выбранное восстановлено"
+msgstr "%s был восстановлен"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "Не найдено на сервере, удалено?"

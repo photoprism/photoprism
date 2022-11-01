@@ -5,18 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-05-17 19:49+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-11-01 13:34+0100\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: none\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -49,15 +49,15 @@ msgstr "Файлът не е намерен"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Твърде голям файл"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Неподдържан формат"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Папката с оригинали е празна"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -100,19 +100,16 @@ msgid "Not available in public mode"
 msgstr "Не е наличен в публичен режим"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
-msgstr "не е наличен в режим само за четене"
+msgstr "Не е наличен в режим само за четене"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "Моля, влезте в системата и опитайте отново"
+msgstr "Моля, влезте в профила си"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "Изтрито лице"
+msgstr "Достъп отказан"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -120,19 +117,17 @@ msgstr "Качването може да е обидно"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Файловете не успяха да се качат"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "Няма избрани елементи"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Неуспешно създаване на файл, моля, проверете разрешенията"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Неуспешно създаване на папка, моля, проверете разрешенията"
 
@@ -161,7 +156,6 @@ msgid "No files available for download"
 msgstr "Няма налични файлове за изтегляне"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Неуспешно създаване на zip файл"
 
@@ -184,11 +178,11 @@ msgstr "Заето, моля, опитайте отново по-късно"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Интервалът на събуждане е %s, но трябва да е 1 час или по-малко"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Вашият акаунт не може да бъде свързан"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -331,9 +325,8 @@ msgid "Person deleted"
 msgstr "Изтрито лице"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "Изтрит файл"
+msgstr "Качен файл"
 
 #: messages.go:170
 #, c-format
@@ -342,12 +335,11 @@ msgstr "%d файлове, качени за %d сек"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Обработка на качването..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "Качването може да е обидно"
+msgstr "Качването е обработено"
 
 #: messages.go:173
 msgid "Selection approved"
@@ -379,6 +371,6 @@ msgid "Permanently deleted"
 msgstr "Постоянно изтрити"
 
 #: messages.go:180
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been restored"
-msgstr "Възстановена селекция"
+msgstr "%s е възстановена"
