@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-10-31 18:14+0000\n"
-"Last-Translator: svanhoutte <sebastien.vanhoutte@gmail.com>\n"
+"PO-Revision-Date: 2022-11-01 12:37+0000\n"
+"Last-Translator: Martin Labat <martin.labat92@gmail.com>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
 "Language: fr\n"
@@ -50,11 +50,11 @@ msgstr "Fichier non trouvé"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Fichier trop volumineux"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Format non pris en charge"
 
 #: messages.go:103
 msgid "Originals folder is empty"
@@ -101,14 +101,12 @@ msgid "Not available in public mode"
 msgstr "Non disponible en mode public"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
-msgstr "non disponible en mode lecture seule"
+msgstr "Non disponible en mode lecture seule"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "Veuillez vous identifier et recommencer"
+msgstr "Veuillez vous identifier"
 
 #: messages.go:116
 msgid "Permission denied"
