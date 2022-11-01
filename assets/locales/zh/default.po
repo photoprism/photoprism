@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-08-02 08:37+0200\n"
+"PO-Revision-Date: 2022-11-01 13:19+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -50,11 +50,11 @@ msgstr "文件未找到"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "文件太大"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "不支持的格式"
 
 #: messages.go:103
 msgid "Originals folder is empty"
@@ -101,19 +101,16 @@ msgid "Not available in public mode"
 msgstr "公开模式中不可用"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
 msgstr "只读模式中不可用"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "请在登录后重试"
+msgstr "请登录您的账户"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "人物已删除"
+msgstr "没有权限"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -121,19 +118,17 @@ msgstr "上传的文件可能会引起反感"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "上傳失敗"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "未选择任何项目"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "创建文件失败，请检查权限"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "创建目录失败，请检查权限"
 
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "没有可供下载的文件"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "创建 zip 文件失败"
 
@@ -332,9 +326,8 @@ msgid "Person deleted"
 msgstr "人物已删除"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "文件已删除"
+msgstr "已上传文件"
 
 #: messages.go:170
 #, c-format
@@ -343,12 +336,11 @@ msgstr "已上传 %d 个文件，耗时 %d 秒"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "处理上传..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "%s 已恢复"
+msgstr "上传已被处理"
 
 #: messages.go:173
 msgid "Selection approved"

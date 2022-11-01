@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-06-23 12:51+0000\n"
-"Last-Translator: moutasem1989 <moutasem19891@hotmail.com>\n"
+"PO-Revision-Date: 2022-11-01 13:18+0100\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: none\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.13\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -50,15 +50,15 @@ msgstr "لم يتم العثور على الملف"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "الملف كبير جدًا"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "صيغة غير مدعومة"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "مجلد النسخ الأصلية فارغ"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -101,19 +101,16 @@ msgid "Not available in public mode"
 msgstr "غير متاح في الوضع العام"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
 msgstr "غير متوفر في وضع القراءة فقط"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "يرجى تسجيل الدخول وإعادة المحاولة"
+msgstr "يرجى تسجيل الدخول إلى حسابك"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "تم حذف الشخص"
+msgstr "طلب الاذن مرفوض"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -121,19 +118,17 @@ msgstr "تحميل قد يكون مسيئا"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "التحميل فشل"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "لم يتم تحديد الاختيار"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "فشل إنشاء الملف ، يرجى التحقق من الأذونات"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "فشل إنشاء المجلد ، يرجى التحقق من الأذونات"
 
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "لا توجد ملفات متاحة للتنزيل"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "فشل إنشاء ملف مضغوط"
 
@@ -189,7 +183,7 @@ msgstr "فترة التنبيه هي %s ، لكن يجب أن تكون ساعة 
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "لا يمكن ربط حسابك"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -332,9 +326,8 @@ msgid "Person deleted"
 msgstr "تم حذف الشخص"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "تم حذف الملف"
+msgstr "تم تحميل الملف"
 
 #: messages.go:170
 #, c-format
@@ -343,12 +336,11 @@ msgstr "تم تحميل %d ملف في %d ثانية"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "جارٍ معالجة التحميل ..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "تمت استعادة %s"
+msgstr "تمت معالجة التحميل"
 
 #: messages.go:173
 msgid "Selection approved"

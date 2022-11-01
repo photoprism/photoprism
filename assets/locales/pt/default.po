@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-06-16 19:30+0200\n"
+"PO-Revision-Date: 2022-11-01 13:22+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/"
 "photoprism/backend/pt/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -50,15 +50,15 @@ msgstr "Arquivo não encontrado"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Arquivo muito grande"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Formato sem suporte"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "A pasta dos originais está vazia"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -101,19 +101,16 @@ msgid "Not available in public mode"
 msgstr "Indisponível em modo público"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
-msgstr "indisponível em modo somente leitura"
+msgstr "Não disponível no modo somente leitura"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "Por favor entre em sua conta e tente novamente"
+msgstr "Faça o login em sua conta"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "Pessoa apagada"
+msgstr "Permissão negada"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -121,19 +118,17 @@ msgstr "Envio pode ser ofensivo"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Envio falhou"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "Sem itens selecionados"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Falha ao criar arquivo, por favor cheque as permissões"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Falha ao criar pasta, por favor cheque as permissões"
 
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "Sem arquivos disponíveis para baixar"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Falha ao criar arquivo zip"
 
@@ -189,7 +183,7 @@ msgstr "O intervalo de despertar é %s, mas deve ser de 1h ou menos"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Sua conta não pôde ser conectada"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -332,9 +326,8 @@ msgid "Person deleted"
 msgstr "Pessoa apagada"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "Arquivo excluído"
+msgstr "Arquivo carregado"
 
 #: messages.go:170
 #, c-format
@@ -343,12 +336,11 @@ msgstr "%d arquivos enviados em %d"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Processamento de upload..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "%s foi restaurado"
+msgstr "O Upload foi processado"
 
 #: messages.go:173
 msgid "Selection approved"
