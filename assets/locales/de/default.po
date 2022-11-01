@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 07:14+0000\n"
-"Last-Translator: cabe1214 <cabe.1214@gmail.com>\n"
+"PO-Revision-Date: 2022-11-01 07:52+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "backend/de/>\n"
 "Language: de\n"
@@ -102,7 +102,7 @@ msgstr "Im Nur-Lese-Modus nicht verfügbar"
 
 #: messages.go:115
 msgid "Please log in to your account"
-msgstr "Bitte melden Sie sich bei Ihrem Konto an"
+msgstr "Bitte melde dich an"
 
 #: messages.go:116
 msgid "Permission denied"
@@ -122,13 +122,11 @@ msgstr "Nichts ausgewählt"
 
 #: messages.go:120
 msgid "Failed creating file, please check permissions"
-msgstr ""
-"Datei konnte nicht erstellt werden, bitte überprüfen Sie die Berechtigungen"
+msgstr "Datei konnte nicht erstellt werden"
 
 #: messages.go:121
 msgid "Failed creating folder, please check permissions"
-msgstr ""
-"Ordner konnte nicht erstellt werden, bitte überprüfen Sie die Berechtigungen"
+msgstr "Ordner konnte nicht erstellt werden"
 
 #: messages.go:122
 msgid "Could not connect, please try again"
@@ -317,7 +315,7 @@ msgstr "Motiv gelöscht"
 
 #: messages.go:167
 msgid "Person saved"
-msgstr "Person aktualisiert"
+msgstr "Person gespeichert"
 
 #: messages.go:168
 msgid "Person deleted"
