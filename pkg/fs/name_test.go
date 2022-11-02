@@ -72,17 +72,24 @@ func TestFileNameHidden(t *testing.T) {
 	t.Run("AtPrefix", func(t *testing.T) {
 		assert.True(t, FileNameHidden("/some/path/@eaDir"))
 	})
-	t.Run("DotPrefix", func(t *testing.T) {
+	t.Run("Dot", func(t *testing.T) {
 		assert.True(t, FileNameHidden("/some/.folder"))
 	})
-	t.Run("HasAts", func(t *testing.T) {
+
+	t.Run("Dots", func(t *testing.T) {
+		assert.False(t, FileNameHidden("/some/image.jpg."))
+		assert.False(t, FileNameHidden("./.some/foo"))
+	})
+	t.Run("Underscore", func(t *testing.T) {
+		assert.False(t, FileNameHidden("/some/_folder"))
+		assert.False(t, FileNameHidden("_folder"))
+		assert.True(t, FileNameHidden("/some/_.folder"))
+		assert.True(t, FileNameHidden("_.folder"))
+	})
+	t.Run("At", func(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/path/ea@Dir"))
 		assert.False(t, FileNameHidden("/some/@path/ea@Dir"))
 		assert.False(t, FileNameHidden("@/eaDir"))
-	})
-	t.Run("HasDots", func(t *testing.T) {
-		assert.False(t, FileNameHidden("/some/image.jpg."))
-		assert.False(t, FileNameHidden("./.some/foo"))
 	})
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/path/folder"))
