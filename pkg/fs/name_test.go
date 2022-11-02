@@ -85,6 +85,8 @@ func TestFileNameHidden(t *testing.T) {
 		assert.False(t, FileNameHidden("_folder"))
 		assert.True(t, FileNameHidden("/some/_.folder"))
 		assert.True(t, FileNameHidden("_.folder"))
+		assert.True(t, FileNameHidden("/some/__MACOSX"))
+		assert.True(t, FileNameHidden("__MACOSX"))
 	})
 	t.Run("At", func(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/path/ea@Dir"))
