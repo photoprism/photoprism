@@ -390,7 +390,7 @@ docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
 docker-release-ubuntu: docker-release-jammy
-docker-release-other: docker-preview-debian docker-release-bullseye
+docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
