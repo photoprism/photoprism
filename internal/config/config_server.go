@@ -29,19 +29,19 @@ func (c *Config) TrustedProxies() []string {
 	return c.options.TrustedProxies
 }
 
-// HttpsProxyHeader returns the proxy protocol header names.
-func (c *Config) HttpsProxyHeader() []string {
-	return c.options.HttpsProxyHeaders
+// ProxyProtoHeader returns the proxy protocol header names.
+func (c *Config) ProxyProtoHeader() []string {
+	return c.options.ProxyProtoHeaders
 }
 
-// HttpsProxyProto returns the proxy protocol header HTTPS values.
-func (c *Config) HttpsProxyProto() []string {
-	return c.options.HttpsProxyProto
+// ProxyProtoHttps returns the proxy protocol header HTTPS values.
+func (c *Config) ProxyProtoHttps() []string {
+	return c.options.ProxyProtoHttps
 }
 
-// HttpsProxyHeaders returns a map with the proxy https protocol headers.
-func (c *Config) HttpsProxyHeaders() map[string]string {
-	p := len(c.options.HttpsProxyHeaders)
+// ProxyProtoHeaders returns a map with the proxy https protocol headers.
+func (c *Config) ProxyProtoHeaders() map[string]string {
+	p := len(c.options.ProxyProtoHeaders)
 	h := make(map[string]string, p+1)
 
 	if p == 0 {
@@ -49,13 +49,13 @@ func (c *Config) HttpsProxyHeaders() map[string]string {
 		return h
 	}
 
-	for k, v := range c.options.HttpsProxyHeaders {
-		if l := len(c.options.HttpsProxyProto); l == 0 {
+	for k, v := range c.options.ProxyProtoHeaders {
+		if l := len(c.options.ProxyProtoHttps); l == 0 {
 			h[v] = header.ProtoHttps
 		} else if l > k {
-			h[v] = c.options.HttpsProxyProto[k]
+			h[v] = c.options.ProxyProtoHttps[k]
 		} else {
-			h[v] = c.options.HttpsProxyProto[0]
+			h[v] = c.options.ProxyProtoHttps[0]
 		}
 	}
 

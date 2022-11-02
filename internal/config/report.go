@@ -128,8 +128,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// HTTP(S) Proxy.
 		{"trusted-proxy", c.TrustedProxy()},
-		{"https-proxy-header", strings.Join(c.HttpsProxyHeader(), ", ")},
-		{"https-proxy-proto", strings.Join(c.HttpsProxyProto(), ", ")},
+		{"proxy-proto-header", strings.Join(c.ProxyProtoHeader(), ", ")},
+		{"proxy-proto-https", strings.Join(c.ProxyProtoHttps(), ", ")},
 
 		// Web Server.
 		{"http-mode", c.HttpMode()},

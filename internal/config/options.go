@@ -91,8 +91,8 @@ type Options struct {
 	SiteDescription       string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string        `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
 	TrustedProxies        []string      `yaml:"TrustedProxies" json:"-" flag:"trusted-proxy"`
-	HttpsProxyHeaders     []string      `yaml:"HttpsProxyHeaders" json:"-" flag:"https-proxy-header"`
-	HttpsProxyProto       []string      `yaml:"HttpsProxyProto" json:"-" flag:"https-proxy-proto"`
+	ProxyProtoHeaders     []string      `yaml:"ProxyProtoHeaders" json:"-" flag:"proxy-proto-header"`
+	ProxyProtoHttps       []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
 	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
 	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
