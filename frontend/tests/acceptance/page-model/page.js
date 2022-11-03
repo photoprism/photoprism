@@ -31,7 +31,7 @@ export default class Page {
 
   async login(username, password) {
     await t
-      .typeText(Selector(".input-username input"), username, { replace: true, timeout: 5000 })
+      .typeText(Selector(".input-username input"), username, { replace: true })
       .typeText(Selector(".input-password input"), password, { replace: true })
       .click(Selector(".action-confirm"));
   }

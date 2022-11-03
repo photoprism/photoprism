@@ -9,6 +9,7 @@ import Album from "../page-model/album";
 import PhotoViewer from "../page-model/photoviewer";
 import ShareDialog from "../page-model/dialog-share";
 import Photo from "../page-model/photo";
+import Places from "../page-model/places";
 
 fixture`Test link sharing`.page`${testcafeconfig.url}`;
 
@@ -20,6 +21,7 @@ const album = new Album();
 const photoviewer = new PhotoViewer();
 const sharedialog = new ShareDialog();
 const photo = new Photo();
+const places = new Places();
 
 test.meta("testID", "sharing-001").meta({ mode: "auth" })(
   "Common: Create, view, delete shared albums",
@@ -188,9 +190,14 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })(
       .expect(Selector(`td button.input-private`).visible)
       .notOk()
       .expect(Selector(`td button.input-favorite`).visible)
-      .notOk()
-      .click(Selector("div.v-toolbar__title a").withText("Albums"))
-      .navigateTo("/library/states");
+      .notOk();
+    await toolbar.triggerToolbarAction("view-mosaic");
+    await toolbar.triggerToolbarAction("view-cards");
+    await page.cardLocation.nth(0);
+    await t.expect(places.placesSearch.visible).notOk();
+    await t.expect(Selector('div[title="Cape / Bowen Island / 2019"]').visible).ok();
+
+    await t.navigateTo("/library/states");
 
     const AlbumUid = await album.getNthAlbumUid("all", 0);
     await album.triggerHoverAction("uid", AlbumUid, "select");

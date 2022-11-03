@@ -104,7 +104,7 @@ test.meta("testID", "stacks-004").meta({ mode: "public" })(
     await menu.openPage("library");
     await t
       .click(library.importTab)
-      .click(library.openImportFolderSelect, { timeout: 5000 })
+      .click(library.openImportFolderSelect)
       .click(page.selectOption.withText("/pizza"))
       .click(library.import)
       .wait(10000);
