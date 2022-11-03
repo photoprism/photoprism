@@ -365,10 +365,11 @@ func (c *Config) connectDb() error {
 		} else if v := strings.Split(res.Value, "."); len(v) < 3 {
 			log.Warnf("config: unknown database server version")
 		} else if major := txt.UInt(v[0]); major < 10 {
-			err = fmt.Errorf("config: MySQL %s is not supported, please upgrade to MariaDB 10.5.12 or later (https://docs.photoprism.app/getting-started/#databases)", res.Value)
+			err = fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
 			return err
-		} else if txt.UInt(v[1]) <= 5 && txt.UInt(v[2]) <= 12 {
-			log.Errorf("config: MariaDB %s is not supported, please upgrade to MariaDB 10.5.12 or later (https://docs.photoprism.app/getting-started/#databases)", res.Value)
+		} else if sub := txt.UInt(v[1]); sub < 5 || sub == 5 && txt.UInt(v[2]) < 12 {
+			err = fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+			return err
 		}
 	}
 
