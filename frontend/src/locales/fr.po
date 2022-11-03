@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-01 13:11+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
+"PO-Revision-Date: 2022-11-03 10:02+0000\n"
+"Last-Translator: Benjamin Jonard <jonard.benjamin@protonmail.com>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
+"frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -957,7 +958,7 @@ msgstr "Obtenir de l’aide"
 
 #: src/page/settings/account.vue:139 src/page/settings/account.vue:138
 msgid "Given Name"
-msgstr "Nom de famille"
+msgstr "Prénom"
 
 #: src/options/options.js:389
 msgid "Gold"
