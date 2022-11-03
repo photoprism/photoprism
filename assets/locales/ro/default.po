@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-04-27 10:16+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-11-03 10:03+0000\n"
+"Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/backend/ro/>\n"
 "Language: ro\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2;\n"
-"X-Generator: Weblate 4.12\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -51,11 +51,12 @@ msgstr "Fișier nedescoperit"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Fișierul este prea mare"
 
 #: messages.go:102
+#, fuzzy
 msgid "Unsupported format"
-msgstr ""
+msgstr "Fisier incompatibil"
 
 #: messages.go:103
 msgid "Originals folder is empty"
