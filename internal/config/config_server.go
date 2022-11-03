@@ -19,12 +19,12 @@ func (c *Config) DetachServer() bool {
 	return c.options.DetachServer
 }
 
-// TrustedProxy returns the list of trusted proxy servers as comma-separated list.
+// TrustedProxy returns the ranges from which reverse proxy headers can be trusted as comma-separated list.
 func (c *Config) TrustedProxy() string {
 	return strings.Join(c.options.TrustedProxies, ", ")
 }
 
-// TrustedProxies returns proxy server ranges from which client and protocol headers can be trusted.
+// TrustedProxies returns proxy server ranges from which reverse proxy headers can be trusted.
 func (c *Config) TrustedProxies() []string {
 	return c.options.TrustedProxies
 }

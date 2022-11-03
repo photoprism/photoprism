@@ -409,7 +409,7 @@ var Flags = CliFlags{
 		}, Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringSliceFlag{
 			Name:   "trusted-proxy",
-			Usage:  "`CIDR` range from which IP and HTTPS proxy headers can be trusted",
+			Usage:  "`CIDR` range from which reverse proxy headers can be trusted",
 			Value:  &cli.StringSlice{header.CidrDockerInternal},
 			EnvVar: "PHOTOPRISM_TRUSTED_PROXY",
 		}}, {
