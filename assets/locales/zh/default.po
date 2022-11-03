@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:19+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-11-03 10:03+0000\n"
+"Last-Translator: coldWater <254244460@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -118,7 +118,7 @@ msgstr "上传的文件可能会引起反感"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr "上傳失敗"
+msgstr "上传失败"
 
 #: messages.go:119
 msgid "No items selected"
