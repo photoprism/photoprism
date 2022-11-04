@@ -1,8 +1,9 @@
 version: '3.5'
 
-# Example Docker Compose config file for PhotoPrism (macOS)
+# Example Docker Compose config file for PhotoPrism (Apple macOS)
 #
 # Note:
+# - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
@@ -10,28 +11,16 @@ version: '3.5'
 #   in clear text and can be intercepted by anyone, including your provider, hackers, and governments:
 #   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
-# Documentation : https://docs.photoprism.app/getting-started/docker-compose/
-# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
+# Setup Guide:
+# - https://docs.photoprism.app/getting-started/docker-compose/
 #
-# DOCKER COMPOSE COMMAND REFERENCE
-# see https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
-# --------------------------------------------------------------------------
-# Start    | docker-compose up -d
-# Stop     | docker-compose stop
-# Update   | docker-compose pull
-# Logs     | docker-compose logs --tail=25 -f
-# Terminal | docker-compose exec photoprism bash
-# Help     | docker-compose exec photoprism photoprism help
-# Config   | docker-compose exec photoprism photoprism config
-# Reset    | docker-compose exec photoprism photoprism reset
-# Backup   | docker-compose exec photoprism photoprism backup -a -i
-# Restore  | docker-compose exec photoprism photoprism restore -a -i
-# Index    | docker-compose exec photoprism photoprism index
-# Reindex  | docker-compose exec photoprism photoprism index -f
-# Import   | docker-compose exec photoprism photoprism import
+# Troubleshooting Checklists:
+# - https://docs.photoprism.app/getting-started/troubleshooting/
+# - https://docs.photoprism.app/getting-started/troubleshooting/docker/
+# - https://docs.photoprism.app/getting-started/troubleshooting/mariadb/
 #
-# To search originals for faces without a complete rescan:
-# docker-compose exec photoprism photoprism faces index
+# CLI Commands:
+# - https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 
 services:
   photoprism:

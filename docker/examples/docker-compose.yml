@@ -3,6 +3,7 @@ version: '3.5'
 # Example Docker Compose config file for PhotoPrism (Linux / AMD64)
 #
 # Note:
+# - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
@@ -10,28 +11,17 @@ version: '3.5'
 #   in clear text and can be intercepted by anyone, including your provider, hackers, and governments:
 #   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
-# Documentation : https://docs.photoprism.app/getting-started/docker-compose/
-# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
+# Setup Guides:
+# - https://docs.photoprism.app/getting-started/docker-compose/
+# - https://docs.photoprism.app/getting-started/raspberry-pi/
 #
-# DOCKER COMPOSE COMMAND REFERENCE
-# see https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
-# --------------------------------------------------------------------------
-# Start    | docker-compose up -d
-# Stop     | docker-compose stop
-# Update   | docker-compose pull
-# Logs     | docker-compose logs --tail=25 -f
-# Terminal | docker-compose exec photoprism bash
-# Help     | docker-compose exec photoprism photoprism help
-# Config   | docker-compose exec photoprism photoprism config
-# Reset    | docker-compose exec photoprism photoprism reset
-# Backup   | docker-compose exec photoprism photoprism backup -a -i
-# Restore  | docker-compose exec photoprism photoprism restore -a -i
-# Index    | docker-compose exec photoprism photoprism index
-# Reindex  | docker-compose exec photoprism photoprism index -f
-# Import   | docker-compose exec photoprism photoprism import
+# Troubleshooting Checklists:
+# - https://docs.photoprism.app/getting-started/troubleshooting/
+# - https://docs.photoprism.app/getting-started/troubleshooting/docker/
+# - https://docs.photoprism.app/getting-started/troubleshooting/mariadb/
 #
-# To search originals for faces without a complete rescan:
-# docker-compose exec photoprism photoprism faces index
+# CLI Commands:
+# - https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 #
 # All commands may have to be prefixed with "sudo" when not running as root.
 # This will point the home directory shortcut ~ to /root in volume mounts.
@@ -83,7 +73,7 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
       ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
       # PHOTOPRISM_INIT: "https gpu tensorflow"
-      ## Hardware Video Transcoding (for sponsors only due to high maintenance and support costs):
+      ## Hardware Video Transcoding:
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry")
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
