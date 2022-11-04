@@ -17,8 +17,12 @@ version: '3.5'
 #
 # Setup Guides:
 # - https://docs.photoprism.app/getting-started/docker-compose/
-# - https://docs.photoprism.app/getting-started/troubleshooting/docker/
 # - https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit
+#
+# Troubleshooting Checklists:
+# - https://docs.photoprism.app/getting-started/troubleshooting/
+# - https://docs.photoprism.app/getting-started/troubleshooting/docker/
+# - https://docs.photoprism.app/getting-started/troubleshooting/mariadb/
 #
 # CLI Commands:
 # - https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
