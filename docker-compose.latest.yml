@@ -1,8 +1,10 @@
 version: '3.5'
 
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
+
 services:
   ## Stable Release
-  ## Docs: https://docs.photoprism.org/
   photoprism-latest:
     image: photoprism/photoprism:latest
     security_opt:

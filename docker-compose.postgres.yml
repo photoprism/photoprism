@@ -1,12 +1,13 @@
 version: '3.5'
 
-# ATTENTION: PostgreSQL is NOT supported yet as Gorm (our ORM library) needs to be upgraded first.
-# The current Gorm version does NOT support compatible general data types:
-# https://github.com/photoprism/photoprism/issues/47
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
   ## PhotoPrism Development Environment (PostgresSQL)
-  ## Docs: https://docs.photoprism.app/developer-guide/
+  # ATTENTION: PostgreSQL is NOT supported yet as Gorm (our ORM library) needs to be upgraded first.
+  # The current Gorm version does NOT support compatible general data types:
+  # https://github.com/photoprism/photoprism/issues/47
   photoprism:
     build: .
     image: photoprism/photoprism:develop

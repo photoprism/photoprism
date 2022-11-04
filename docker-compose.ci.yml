@@ -1,8 +1,10 @@
 version: '3.5'
 
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
+
 services:
   ## Continuous Integration (CI) Environment
-  ## Docs: https://docs.photoprism.app/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop
