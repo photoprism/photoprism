@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-03 10:02+0000\n"
-"Last-Translator: coldWater <254244460@qq.com>\n"
+"PO-Revision-Date: 2022-11-04 00:48+0000\n"
+"Last-Translator: Will Chen <studycwq@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -413,7 +413,7 @@ msgstr "分类"
 
 #: src/page/settings/account.vue:252 src/page/settings/account.vue:251
 msgid "Change Avatar"
-msgstr "更改头像"
+msgstr "更换头像"
 
 #: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
 msgid "Change Password"
@@ -421,7 +421,7 @@ msgstr "更改密码"
 
 #: src/page/settings/general.vue:471
 msgid "Change personal profile and security settings."
-msgstr "更改个人档案和安全设置。"
+msgstr "修改个人资料及安全设置。"
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -598,7 +598,7 @@ msgstr "细节"
 
 #: src/page/about/about.vue:29
 msgid "Developer Guide"
-msgstr "开发人员指南"
+msgstr "开发者指引"
 
 #: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
@@ -650,7 +650,7 @@ msgstr "探索"
 
 #: src/page/settings/account.vue:192 src/page/settings/account.vue:191
 msgid "Display Name"
-msgstr "显示名称"
+msgstr "昵称"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -844,7 +844,7 @@ msgstr "更新链接失败"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
 msgid "Family Name"
-msgstr "名"
+msgstr "姓"
 
 #: src/options/options.js:249
 msgid "Fast"
@@ -864,7 +864,7 @@ msgstr "特性请求"
 
 #: src/page/settings/account.vue:817 src/page/settings/account.vue:670
 msgid "Feed"
-msgstr "Feed"
+msgstr "订阅源"
 
 #: src/component/navigation.vue:432 src/component/navigation.vue:35
 msgid "Feedback"
@@ -960,7 +960,7 @@ msgstr "获得支持"
 
 #: src/page/settings/account.vue:139 src/page/settings/account.vue:138
 msgid "Given Name"
-msgstr "英"
+msgstr "名"
 
 #: src/options/options.js:389
 msgid "Gold"
@@ -1189,7 +1189,7 @@ msgstr "薰衣草"
 
 #: src/page/about/about.vue:55
 msgid "Learn more"
-msgstr "了解更多"
+msgstr "进一步了解"
 
 #: src/component/navigation.vue:588
 msgid "Legal Information"
@@ -1366,7 +1366,7 @@ msgstr "最相关的"
 
 #: src/component/photo/toolbar.vue:53
 msgid "Most Relevant"
-msgstr "最相關"
+msgstr "按最相关"
 
 #: src/page/library/import.vue:119
 msgid "Move Files"
@@ -1484,7 +1484,7 @@ msgstr "备注"
 
 #: src/page/library/logs.vue:5
 msgid "Nothing to see here yet."
-msgstr "這裡什麼也看不到。耐心一點。"
+msgstr "暂无数据。"
 
 #: src/component/navigation.vue:470 src/component/navigation.vue:1731
 msgid "Offline"
@@ -1663,7 +1663,7 @@ msgstr "请不要上传包含令人反感的内容的照片。"
 
 #: src/dialog/account/password.vue:17
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "请注意，更改密码将使您在其他设备和浏览器上登录。"
+msgstr "请注意，修改密码将退出你已登录在其他设备和浏览器上的账号。"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1748,7 +1748,7 @@ msgstr "重新索引所有源文件，包括已索引和未更改的文件。"
 
 #: src/page/about/about.vue:51
 msgid "Read the Docs"
-msgstr "阅读文档"
+msgstr "查阅文档"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -2125,8 +2125,8 @@ msgstr "前这是一个赞助者特性，以感谢支持这个应用程序开发
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "这会将源文件夹安装为网络驱动器，并允许您从计算机或智能手机中打开，编辑和删除"
-"文件，就像它们是本地文件一样。"
+msgstr "此操作将文件夹挂载为网络硬盘，以便你使用其他设备从远程对这些文件进行查看、编"
+"辑以及删除操作。"
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2360,8 +2360,8 @@ msgstr "WebDAV 客户端可以使用以下 URL 连接到 PhotoPrism："
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV客户端（例如Microsoft的Windows资源管理器或Apple的Finder）可以直接连接到"
-"PhotoPrism。"
+msgstr "WebDAV客户端（例如Windows的资源管理器或MacOS的Finder）可以直接连接到PhotoPris"
+"m。"
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
