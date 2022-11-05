@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-01 13:40+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
+"PO-Revision-Date: 2022-11-05 10:48+0000\n"
+"Last-Translator: Alexey Vaganov <poofeg@gmail.com>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.1\n"
 "Generated-By: usercopypaste\n"
 
 #: src/page/albums.vue:421
@@ -80,7 +81,7 @@ msgstr "Действия"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
-msgstr "Добавить Учетную Запись"
+msgstr "Добавить учетную запись"
 
 #: src/page/albums.vue:122 src/page/albums.vue:163
 msgid "Add Album"
@@ -316,7 +317,7 @@ msgstr "Автоматически создает альбомы особых м
 
 #: src/options/options.js:268
 msgid "Basic"
-msgstr "Базовый"
+msgstr "Простой"
 
 #: src/component/navigation.vue:584 src/dialog/sponsor.vue:7 src/page/about/about.vue:33 src/page/login.vue:48
 msgid "Become a sponsor"
@@ -328,7 +329,10 @@ msgstr "Прежде чем отправлять запрос в службу п
 
 #: src/page/about/about.vue:27
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Будучи 100% self-финансируемыми и независимыми, мы можем обещать тебе, что никогда не будем продавать твои данные и что мы всегда будем прозрачны в отношении нашего программного обеспечения и услуг."
+msgstr ""
+"Будучи на 100% самофинансируемыми и независимыми, мы можем пообещать вам, "
+"что никогда не будем продавать ваши данные и что мы всегда будем прозрачны в "
+"отношении нашего программного обеспечения и услуг."
 
 #: src/page/settings/account.vue:281 src/page/people/recognized.vue:434 src/page/settings/account.vue:280
 msgid "Bio"
@@ -364,7 +368,9 @@ msgstr "Просматривайте проиндексированные фай
 
 #: src/page/about/about.vue:54
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Просмотри базу знаний, чтобы получить подробную информацию о конкретных характеристиках продукта, услугах и сопутствующих ресурсах."
+msgstr ""
+"Просмотрите базу знаний для получения подробной информации о конкретных "
+"функциях продукта, услугах и связанных с ними ресурсах."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:406
 msgid "Bug Report"
@@ -410,7 +416,7 @@ msgstr "Категория"
 
 #: src/page/settings/account.vue:252 src/page/settings/account.vue:251
 msgid "Change Avatar"
-msgstr "Сменить аватар"
+msgstr "Изменить аватар"
 
 #: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
 msgid "Change Password"
@@ -418,7 +424,7 @@ msgstr "Изменить пароль"
 
 #: src/page/settings/general.vue:471
 msgid "Change personal profile and security settings."
-msgstr "Измени настройки личного профиля и безопасности."
+msgstr "Изменение личного профиля и настроек безопасности."
 
 #: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
@@ -430,7 +436,7 @@ msgstr "Изменить флаг приватности"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129 src/page/settings/advanced.vue:42 src/page/settings/general.vue:105 src/page/settings/library.vue:50
 msgid "Changes successfully saved"
-msgstr "Изменения сохранены"
+msgstr "Изменения успешно сохранены"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -462,7 +468,9 @@ msgstr "Цвета"
 
 #: src/page/about/about.vue:49
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Общие проблемы можно быстро диагностировать и решить с помощью контрольных списков по устранению неисправностей, которые мы предоставляем."
+msgstr ""
+"Распространенные проблемы могут быть быстро диагностированы и решены с "
+"помощью предоставляемых нами контрольных списков устранения неполадок."
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -713,7 +721,9 @@ msgstr "Алгоритм создания превью"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Из-за большого количества писем, которые мы получаем, наша команда может быть не в состоянии ответить тебе немедленно."
+msgstr ""
+"Из-за большого количества электронных писем, которые мы получаем, наша "
+"команда, возможно, не сможет немедленно связаться с вами."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -761,7 +771,7 @@ msgstr "Отредактировано"
 
 #: src/page/settings/account.vue:220 src/page/settings/account.vue:615 src/page/settings/account.vue:219
 msgid "Email"
-msgstr "Email"
+msgstr "Электронная почта"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -841,7 +851,7 @@ msgstr "Не удалось загрузить ссылку"
 
 #: src/page/settings/account.vue:165 src/page/settings/account.vue:164
 msgid "Family Name"
-msgstr "Имя Категории"
+msgstr "Фамилия"
 
 #: src/options/options.js:249
 msgid "Fast"
@@ -957,7 +967,7 @@ msgstr "Получение помощи"
 
 #: src/page/settings/account.vue:139 src/page/settings/account.vue:138
 msgid "Given Name"
-msgstr "Данное имя"
+msgstr "Имя"
 
 #: src/options/options.js:389
 msgid "Gold"
@@ -1082,7 +1092,8 @@ msgstr "Индексировать"
 
 #: src/page/settings/general.vue:405
 msgid "Index and import files through the user interface."
-msgstr "Индексируй и импортируй файлы через пользовательский интерфейс."
+msgstr ""
+"Индексирование и импортирование файлов через пользовательский интерфейс."
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1109,7 +1120,7 @@ msgstr "Интервал"
 #: src/page/settings/account.vue:115 src/page/settings/account.vue:141 src/page/settings/account.vue:167 src/page/settings/account.vue:222 src/page/settings/account.vue:279 src/page/settings/account.vue:563 src/page/settings/account.vue:617 src/page/settings/account.vue:645
 #: src/page/settings/account.vue:673
 msgid "Invalid"
-msgstr "Недействительный"
+msgstr "Недопустимое значение"
 
 #: src/dialog/photo/edit/details.vue:112
 msgid "Invalid date"
@@ -1117,7 +1128,7 @@ msgstr "Неверная дата"
 
 #: src/page/connect.vue:42 src/page/connect.vue:48
 msgid "Invalid parameters"
-msgstr "Неверные параметры"
+msgstr "Недопустимые параметры"
 
 #: src/dialog/photo/edit.vue:119
 msgid "Invalid photo selected"
@@ -1125,7 +1136,9 @@ msgstr "Выбрана недопустимая фотография"
 
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Он использует новейшие технологии, чтобы автоматически помечать и находить фотографии, не вставая у тебя на пути."
+msgstr ""
+"Оно использует новейшие технологии для автоматической разметки и поиска "
+"изображений, не вставая у вас на пути."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1189,7 +1202,7 @@ msgstr "Узнать больше"
 
 #: src/component/navigation.vue:588
 msgid "Legal Information"
-msgstr "Легальная информация"
+msgstr "Юридическая информация"
 
 #: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
@@ -1432,7 +1445,7 @@ msgstr "Серверы не настроены."
 
 #: src/page/settings/services.vue:36
 msgid "No services configured."
-msgstr "Нет настроенных сервисов."
+msgstr "Службы не настроены."
 
 #: src/dialog/sponsor.vue:31
 msgid "No thanks"
@@ -1477,7 +1490,7 @@ msgstr "Заметки"
 
 #: src/page/library/logs.vue:5
 msgid "Nothing to see here yet."
-msgstr "Пока что тут нечего смотреть. Будьте терпеливы."
+msgstr "Здесь пока не на что смотреть."
 
 #: src/component/navigation.vue:470 src/component/navigation.vue:1731
 msgid "Offline"
@@ -1565,11 +1578,13 @@ msgstr "Оригиналы"
 
 #: src/options/options.js:408 src/options/options.js:421
 msgid "Other"
-msgstr "Другое"
+msgstr "Другой"
 
 #: src/page/about/about.vue:48
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Наше руководство пользователя также охватывает множество продвинутых тем, таких как миграция из Google Photos и настройки качества эскизов."
+msgstr ""
+"В нашем руководстве пользователя также рассматриваются многие дополнительные "
+"темы, такие как миграция из Google Фото и настройки качества миниатюр."
 
 #: src/options/options.js:282
 msgid "Outdoor"
@@ -1621,7 +1636,9 @@ msgstr "PhotoPrism был обновлен…"
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® - это приложение для фотографий с искусственным интеллектом для децентрализованного веба."
+msgstr ""
+"PhotoPrism® - это фотоприложение на базе искусственного интеллекта для "
+"децентрализованной сети."
 
 #: src/app/routes.js:131
 msgid "Photos"
@@ -1654,7 +1671,9 @@ msgstr "Пожалуйста, не загружайте фотографии, с
 
 #: src/dialog/account/password.vue:17
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Обрати внимание, что изменение пароля приведет к выходу из системы на других устройствах и в браузерах."
+msgstr ""
+"Обратите внимание, что изменение пароля приведет к выходу из системы на "
+"других устройствах и в браузерах."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1738,7 +1757,7 @@ msgstr "Повторное индексирование всех оригина�
 
 #: src/page/about/about.vue:51
 msgid "Read the Docs"
-msgstr "Читать документы"
+msgstr "Документация"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -1908,7 +1927,7 @@ msgstr "URL сервиса"
 
 #: src/page/settings.vue:71 src/page/settings/general.vue:382
 msgid "Services"
-msgstr "Услуги"
+msgstr "Сервисы"
 
 #: src/app/routes.js:347 src/app/routes.js:359 src/app/routes.js:372 src/app/routes.js:385 src/app/routes.js:397 src/component/navigation.vue:405 src/component/navigation.vue:415 src/component/navigation.vue:8 src/component/navigation.vue:18 src/component/navigation.vue:4
 #: src/component/navigation.vue:1520 src/component/navigation.vue:1926
@@ -2115,7 +2134,11 @@ msgstr "Это функция раннего доступа, чтобы побл
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Подключает папку с Оригиналами как сетевой диск и позволяет Вам открывать, редактировать и удалять файлы с вашего компьютера или смартфона, так как если бы они находились на вашем устройстве."
+msgstr ""
+"Папка с оригиналами монтируется как сетевой диск и можно открывать, "
+"редактировать и удалять файлы\n"
+"          с вашего компьютера или смартфона, как если бы они находились на "
+"вашем устройстве."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2143,7 +2166,7 @@ msgstr "Название"
 
 #: src/page/settings/account.vue:561
 msgid "Title / Position"
-msgstr "Заголовок / Позиция"
+msgstr "Название / должность"
 
 #: src/page/albums.vue:62
 msgid "Title too long"
@@ -2188,7 +2211,7 @@ msgstr "Неизвестно"
 
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43 src/component/navigation.vue:82 src/model/user.js:130
 msgid "Unregistered"
-msgstr "Незарегистрирован"
+msgstr "Незарегистрированный"
 
 #: src/app/routes.js:190 src/component/navigation.vue:167
 msgid "Unsorted"
@@ -2216,7 +2239,7 @@ msgstr "Обновление моментов"
 
 #: src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "Обновление картинки.."
+msgstr "Обновление изображения…"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2261,7 +2284,7 @@ msgstr "Загрузка фотографий…"
 
 #: src/page/settings/account.vue:124
 msgid "Uploading…"
-msgstr "Загрузка.."
+msgstr "Загрузка…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
@@ -2281,7 +2304,7 @@ msgstr "Пользователь"
 
 #: src/page/about/about.vue:23 src/component/navigation.vue:580 src/page/about/about.vue:45
 msgid "User Guide"
-msgstr "Гид пользователя"
+msgstr "Руководство пользователя"
 
 #: src/page/settings/general.vue:6
 msgid "User Interface"
@@ -2317,7 +2340,9 @@ msgstr "Обзор"
 
 #: src/page/about/about.vue:47
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Посети сайт docs.photoprism.app/user-guide, чтобы узнать, как синхронизировать, организовывать и делиться своими фотографиями."
+msgstr ""
+"Посетите docs.photoprism.app/user-guide, чтобы узнать, как синхронизировать, "
+"упорядочивать свои фотографии и делиться ими."
 
 #: src/component/photo/toolbar.vue:54
 msgid "Visual Similarity"
@@ -2325,7 +2350,7 @@ msgstr "Визуальное сходство"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
-msgstr "Благодарим вас за отзыв!"
+msgstr "Мы признательны за ваш отзыв!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
@@ -2347,7 +2372,10 @@ msgstr "WebDAV клиенты могут подключаться к PhotoPrism 
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV клиенты, такие как Microsoft Windows Проводник или Apple Finder, могут подключаться к PhotoPrism напрямую."
+msgstr ""
+"Клиенты WebDAV, такие как Проводник Microsoft Windows или Apple Finder, "
+"могут подключаться непосредственно к\n"
+"          PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2363,7 +2391,7 @@ msgstr "Белый"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
-msgstr "Рабочие детали"
+msgstr "Детали работы"
 
 #: src/page/settings/account.vue:492 src/component/photo/toolbar.vue:268 src/dialog/photo/edit/details.vue:168 src/page/settings/account.vue:491
 msgid "Year"
@@ -2396,7 +2424,7 @@ msgstr "Вы можете загрузить только одну метку"
 
 #: src/page/about/about.vue:17
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "Ты можешь запускать его дома, на частном сервере или в облаке."
+msgstr "Вы можете запустить его дома, на частном сервере или в облаке."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2408,7 +2436,10 @@ msgstr "Вы можете повторно просканировать свою
 
 #: src/page/about/about.vue:22
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Твоя постоянная поддержка помогает нам предоставлять регулярные обновления и оставаться независимыми, чтобы мы могли выполнять свою миссию и защищать твою конфиденциальность."
+msgstr ""
+"Ваша постоянная поддержка помогает нам предоставлять регулярные обновления и "
+"оставаться независимыми, чтобы мы могли выполнять нашу миссию и защищать "
+"вашу частную жизнь."
 
 #: src/dialog/sponsor.vue:21
 msgid "Your continued support helps us provide regular updates and services like world maps."
