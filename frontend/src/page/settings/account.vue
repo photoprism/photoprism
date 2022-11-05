@@ -12,6 +12,7 @@
                   <v-select v-model="user.Details.Gender"
                             :label="$gettext('Gender')"
                             hide-details box flat
+                            :disabled="busy"
                             item-text="text"
                             item-value="value"
                             color="secondary-dark"
