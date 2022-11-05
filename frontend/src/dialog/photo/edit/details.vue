@@ -10,7 +10,7 @@
               xs12 sm4 md2
           >
             <v-card tile
-                    class="ma-1 elevation-0"
+                    class="ma-0 elevation-0"
                     :title="model.Title">
               <v-img v-touch="{left, right}"
                      :src="model.thumbnailUrl('tile_500')"
@@ -24,7 +24,7 @@
           </v-flex>
           <v-flex xs12 sm8 md10 fill-height>
             <v-layout row wrap>
-              <v-flex xs12 class="pa-2">
+              <v-flex xs12 lg6 class="pa-2">
                 <v-text-field
                     v-model="model.Title"
                     :append-icon="model.TitleSrc === 'manual' ? 'check' : ''"
@@ -101,7 +101,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs6 sm6 md6 class="pa-2">
+              <v-flex xs6 sm6 md6 lg3 class="pa-2">
                 <v-autocomplete
                     v-model="model.TimeZone"
                     :disabled="disabled"
@@ -117,7 +117,7 @@
                 </v-autocomplete>
               </v-flex>
 
-              <v-flex xs12 sm8 md4 class="pa-2">
+              <v-flex xs12 sm8 md4 lg3 class="pa-2">
                 <v-autocomplete
                     v-model="model.Country"
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
@@ -134,7 +134,7 @@
                 </v-autocomplete>
               </v-flex>
 
-              <v-flex xs4 md2 class="pa-2">
+              <v-flex xs4 md2 lg2 class="pa-2">
                 <v-text-field
                     v-model="model.Altitude"
                     :disabled="disabled"
@@ -149,7 +149,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs4 sm6 md3 class="pa-2">
+              <v-flex xs4 sm6 md3 lg2 class="pa-2">
                 <v-text-field
                     v-model="model.Lat"
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
@@ -165,7 +165,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs4 sm6 md3 class="pa-2">
+              <v-flex xs4 sm6 md3 lg2 class="pa-2">
                 <v-text-field
                     v-model="model.Lng"
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
@@ -245,7 +245,7 @@
 
               <v-flex xs6 md3 class="pa-2">
                 <v-text-field
-                    v-model="model.FNumber"
+                    v-model="model.FNumber"f
                     :disabled="disabled"
                     hide-details box flat
                     browser-autocomplete="off"
@@ -271,24 +271,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
-                <v-textarea
-                    v-model="model.Details.Subject"
-                    :append-icon="model.Details.SubjectSrc === 'manual' ? 'check' : ''"
-                    :disabled="disabled"
-                    :rules="[textRule]"
-                    hide-details box flat
-                    browser-autocomplete="off"
-                    auto-grow
-                    :label="$gettext('Subject')"
-                    placeholder=""
-                    :rows="1"
-                    color="secondary-dark"
-                    class="input-subject"
-                ></v-textarea>
-              </v-flex>
-
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs12 md6 class="pa-2">
                 <v-text-field
                     v-model="model.Details.Artist"
                     :append-icon="model.Details.ArtistSrc === 'manual' ? 'check' : ''"
@@ -303,7 +286,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs6 md3 class="pa-2">
                 <v-text-field
                     v-model="model.Details.Copyright"
                     :append-icon="model.Details.CopyrightSrc === 'manual' ? 'check' : ''"
@@ -318,7 +301,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs6 md3 class="pa-2">
                 <v-textarea
                     v-model="model.Details.License"
                     :append-icon="model.Details.LicenseSrc === 'manual' ? 'check' : ''"
@@ -337,6 +320,23 @@
 
               <v-flex xs12 class="pa-2">
                 <v-textarea
+                    v-model="model.Details.Subject"
+                    :append-icon="model.Details.SubjectSrc === 'manual' ? 'check' : ''"
+                    :disabled="disabled"
+                    :rules="[textRule]"
+                    hide-details box flat
+                    browser-autocomplete="off"
+                    auto-grow
+                    :label="$gettext('Subject')"
+                    placeholder=""
+                    :rows="1"
+                    color="secondary-dark"
+                    class="input-subject"
+                ></v-textarea>
+              </v-flex>
+
+              <v-flex xs12 class="pa-2">
+                <v-textarea
                     v-model="model.Description"
                     :append-icon="model.DescriptionSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
@@ -345,13 +345,13 @@
                     auto-grow
                     :label="$gettext('Description')"
                     placeholder=""
-                    :rows="2"
+                    :rows="1"
                     color="secondary-dark"
                     class="input-description"
                 ></v-textarea>
               </v-flex>
 
-              <v-flex xs12 md6 class="pa-2">
+              <v-flex xs12 md8 class="pa-2">
                 <v-textarea
                     v-model="model.Details.Keywords"
                     :append-icon="model.Details.KeywordsSrc === 'manual' ? 'check' : ''"
@@ -361,13 +361,13 @@
                     auto-grow
                     :label="$gettext('Keywords')"
                     placeholder=""
-                    :rows="2"
+                    :rows="1"
                     color="secondary-dark"
                     class="input-keywords"
                 ></v-textarea>
               </v-flex>
 
-              <v-flex xs12 md6 class="pa-2">
+              <v-flex xs12 md4 class="pa-2">
                 <v-textarea
                     v-model="model.Details.Notes"
                     :append-icon="model.Details.NotesSrc === 'manual' ? 'check' : ''"
@@ -377,7 +377,7 @@
                     auto-grow
                     :label="$gettext('Notes')"
                     placeholder=""
-                    :rows="2"
+                    :rows="1"
                     color="secondary-dark"
                     class="input-notes"
                 ></v-textarea>
