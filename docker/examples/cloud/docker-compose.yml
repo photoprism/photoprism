@@ -27,7 +27,7 @@ version: '3.5'
 #
 #    /opt/photoprism
 #
-#  The main docker-compose config file for changing config options is
+#  The main docker compose config file for changing config options is
 #
 #    /opt/photoprism/docker-compose.yml
 #
@@ -58,22 +58,22 @@ version: '3.5'
 #
 #  DOCKER COMPOSE COMMAND REFERENCE
 #  --------------------------------------------------------------------------
-#  Start    | docker-compose up -d
-#  Stop     | docker-compose stop
-#  Update   | docker-compose pull
-#  Logs     | docker-compose logs --tail=25 -f
-#  Terminal | docker-compose exec photoprism bash
-#  Help     | docker-compose exec photoprism photoprism help
-#  Config   | docker-compose exec photoprism photoprism config
-#  Reset    | docker-compose exec photoprism photoprism reset
-#  Backup   | docker-compose exec photoprism photoprism backup -a -i
-#  Restore  | docker-compose exec photoprism photoprism restore -a -i
-#  Index    | docker-compose exec photoprism photoprism index
-#  Reindex  | docker-compose exec photoprism photoprism index -f
-#  Import   | docker-compose exec photoprism photoprism import
+#  Start    | docker compose up -d
+#  Stop     | docker compose stop
+#  Update   | docker compose pull
+#  Logs     | docker compose logs --tail=25 -f
+#  Terminal | docker compose exec photoprism bash
+#  Help     | docker compose exec photoprism photoprism help
+#  Config   | docker compose exec photoprism photoprism config
+#  Reset    | docker compose exec photoprism photoprism reset
+#  Backup   | docker compose exec photoprism photoprism backup -a -i
+#  Restore  | docker compose exec photoprism photoprism restore -a -i
+#  Index    | docker compose exec photoprism photoprism index
+#  Reindex  | docker compose exec photoprism photoprism index -f
+#  Import   | docker compose exec photoprism photoprism import
 #
 #  To search originals for faces without a complete rescan:
-#  docker-compose exec photoprism photoprism faces index
+#  docker compose exec photoprism photoprism faces index
 #
 #  More examples: https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 #
@@ -88,8 +88,8 @@ version: '3.5'
 #    cd /opt/photoprism
 #    nano docker-compose.yml
 #    nano traefik.yaml
-#    docker-compose stop
-#    docker-compose up -d
+#    docker compose stop
+#    docker compose up -d
 #
 #  You should now be able to access your instance without security warnings.
 

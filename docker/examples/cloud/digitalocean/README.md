@@ -50,8 +50,8 @@ nano docker-compose.yml
 Remember to restart services for changes to take effect:
 
 ```
-docker-compose stop
-docker-compose up -d
+docker compose stop
+docker compose up -d
 ```
 
 ## Using Let's Encrypt HTTPS ##
@@ -74,8 +74,8 @@ nano traefik.yaml
 Then restart services for the changes to take effect:
 
 ```
-docker-compose stop
-docker-compose up -d
+docker compose stop
+docker compose up -d
 ```
 
 You should now be able to access your instance without security warnings:

@@ -108,7 +108,7 @@ apt-get autoclean
 apt-get autoremove
 
 # start services using docker-compose
-(cd /opt/photoprism && docker-compose pull && docker-compose stop && docker-compose up --remove-orphans -d)
+(cd /opt/photoprism && docker compose pull && docker compose stop && docker compose up --remove-orphans -d)
 
 # show public server URL and initial admin password
 printf "\nServer URL:\n\n  https://%s/\n\nInitial admin password:\n\n  %s\n\n" "${PUBLIC_IP}" "${ADMIN_PASSWORD}"
