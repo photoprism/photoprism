@@ -196,7 +196,95 @@ body.chrome #photoprism .search-results .result {
     transition-duration: 15ms !important;
     margin: 4px !important;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12) !important;
+    border-radius: 4px;
 }
+
+#photoprism .search-results .image-container {
+  aspect-ratio: 1;
+  contain: layout paint style size;
+}
+
+#photoprism .cards-view .result .image,
+#photoprism .list-view .result .image,
+#photoprism .mosaic-view .result.image
+{
+  position: relative;
+  user-select: none;
+  aspect-ratio: 1;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+#photoprism .cards-view .result .image button,
+#photoprism .list-view .result .image button,
+#photoprism .mosaic-view .result.image button {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+}
+
+#photoprism .cards-view .result .image button {
+  width: 36px;
+  height: 36px;
+}
+
+#photoprism .list-view .result .image button {
+  width: 44px;
+  height: 44px;
+}
+#photoprism .cards-view .result .image button:hover,
+#photoprism .list-view .result .image button:hover,
+#photoprism .mosaic-view .result.image button:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+#photoprism .mosaic-view .result.image i,
+#photoprism .list-view .result .image i,
+#photoprism .cards-view .result .image i {
+  color: white;
+  font-size: 24px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-family: Material Icons;
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#photoprism .cards-view .result .caption {
+  hyphens: auto;
+  word-break: break-word;
+}
+
+#photoprism .cards-view .result .card-details i {
+  font-size: 14px;
+  display: inline-block;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-family: Material Icons;
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: text-bottom;
+  white-space: nowrap;
+}
+
+
+#photoprism .cards-view .result.placeholder .card-details i {
+  width: 14px;
+}
+
 
 #photoprism .cards-view .result.is-selected,
 #photoprism .mosaic-view .result.is-selected {
@@ -255,6 +343,14 @@ body.chrome #photoprism .search-results .result {
     display: none;
 }
 
+#photoprism .disable-manage .search-results .result:not(.is-favorite) .input-favorite {
+    visibility: hidden;
+}
+
+#photoprism .disable-manage .search-results .result .input-favorite.v-btn:before {
+    visibility: hidden;
+}
+
 #photoprism .cards-view .input-reject,
 #photoprism .mosaic-view .input-reject {
     opacity: 0.75;
@@ -300,6 +396,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .search-results.select-results .type-image .input-view,
 #photoprism .search-results .type-raw .input-open,
 #photoprism .search-results .type-video.is-playable .input-open,
+#photoprism .search-results .type-animated.is-playable .input-open,
 #photoprism .search-results .type-live.is-playable .input-open,
 #photoprism .search-results .type-image.is-stack .input-open {
     display: inline-flex;
@@ -312,6 +409,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .search-results .type-raw .input-open .action-raw,
 #photoprism .search-results .type-video.is-playable .input-open .action-play,
 #photoprism .search-results .type-live.is-playable .input-open .action-live,
+#photoprism .search-results .type-animated.is-playable .input-open .action-animated,
 #photoprism .search-results .type-image.is-stack .input-open .action-stack {
     display: inline-flex;
 }
@@ -320,6 +418,7 @@ body.chrome #photoprism .search-results .result {
     display: none;
 }
 
+#photoprism .search-results .type-animated.is-playable:hover .live-player,
 #photoprism .search-results .type-live.is-playable:hover .live-player {
     display: flex;
     overflow: hidden !important;
@@ -330,6 +429,7 @@ body.chrome #photoprism .search-results .result {
 }
 
 #photoprism .search-results.list-view .type-video.is-playable .input-play,
+#photoprism .search-results.list-view .type-animated.is-playable .input-play,
 #photoprism .search-results.list-view .type-live.is-playable .input-play {
     display: inline-flex;
     opacity: 0.75;
@@ -388,4 +488,32 @@ body.chrome #photoprism .search-results .result {
 #photoprism .face-results .is-face.is-hidden,
 #photoprism .face-results .is-marker.is-invalid {
     opacity: 0.5;
+}
+
+/* old browser support */
+@supports not (aspect-ratio: 1) {
+  /* elements with aspect-ratio 1 and without margin */
+  #photoprism .search-results .image-container,
+  #photoprism .cards-view .result .image,
+  #photoprism .list-view .result .image,
+  #photoprism .list-view .result.image,
+  #photoprism .mosaic-view .result.is-selected {
+    height: 0;
+    padding-bottom: 100%
+  }
+
+  /* elements with aspect-ratio 1 and with margin */
+  #photoprism .mosaic-view .result
+  {
+    height: 0;
+    /*
+       8px is required because this aspect-ratio-fallback doesn't take
+       margins into consideration
+    */
+    padding-bottom: calc(100% - 8px)
+  }
+
+  #photoprism .live-player video {
+    margin-top: 100%;
+  }
 }

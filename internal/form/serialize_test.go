@@ -25,7 +25,7 @@ type TestForm struct {
 	Dist     uint      `form:"dist"`
 	Fmin     float32   `form:"fmin"`
 	Fmax     float32   `form:"fmax"`
-	Chroma   uint8     `form:"chroma"`
+	Chroma   int16     `form:"chroma"`
 	Diff     uint32    `form:"diff"`
 	Mono     bool      `form:"mono"`
 	Portrait bool      `form:"portrait"`
@@ -50,6 +50,14 @@ type TestForm struct {
 	Offset   int       `form:"offset" serialize:"-"`
 	Order    string    `form:"order" serialize:"-"`
 	Merged   bool      `form:"merged" serialize:"-"`
+}
+
+func (f *TestForm) GetQuery() string {
+	return f.Query
+}
+
+func (f *TestForm) SetQuery(q string) {
+	f.Query = q
 }
 
 func TestSerialize(t *testing.T) {
@@ -99,4 +107,16 @@ func TestSerialize(t *testing.T) {
 		result := Serialize("string", true)
 		assert.Equal(t, "", result)
 	})
+}
+
+func TestUnserialize(t *testing.T) {
+	form := &TestForm{}
+
+	serialized := "q:\"foo BAR\" name:\"yo/ba:z.JPG\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true"
+
+	if err := Unserialize(form, serialized); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, 0, form.Count)
 }

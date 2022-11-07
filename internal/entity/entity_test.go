@@ -4,20 +4,21 @@ import (
 	"os"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sirupsen/logrus"
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
-	log.SetLevel(logrus.DebugLevel)
+	log.SetLevel(logrus.TraceLevel)
+	event.AuditLog = log
 
-	if err := os.Remove(".test.db"); err == nil {
-		log.Debugln("removed .test.db")
-	}
+	db := InitTestDb(
+		os.Getenv("PHOTOPRISM_TEST_DRIVER"),
+		os.Getenv("PHOTOPRISM_TEST_DSN"))
 
-	db := InitTestDb(os.Getenv("PHOTOPRISM_TEST_DRIVER"), os.Getenv("PHOTOPRISM_TEST_DSN"))
 	defer db.Close()
 
 	code := m.Run()

@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
-	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -17,10 +16,12 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // Index represents an indexer that indexes files in the originals directory.
@@ -40,7 +41,7 @@ type Index struct {
 // NewIndex returns a new indexer and expects its dependencies as arguments.
 func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, clip *clip.Clip, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
 	if conf == nil {
-		log.Errorf("index: config is nil")
+		log.Errorf("index: config is not set")
 		return nil
 	}
 
@@ -65,7 +66,7 @@ func (ind *Index) originalsPath() string {
 }
 
 func (ind *Index) thumbPath() string {
-	return ind.conf.ThumbPath()
+	return ind.conf.ThumbCachePath()
 }
 
 // Cancel stops the current indexing operation.
@@ -74,7 +75,7 @@ func (ind *Index) Cancel() {
 }
 
 // Start indexes media files in the "originals" folder.
-func (ind *Index) Start(opt IndexOptions) fs.Done {
+func (ind *Index) Start(o IndexOptions) fs.Done {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
@@ -84,15 +85,18 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	done := make(fs.Done)
 
 	if ind.conf == nil {
-		log.Errorf("index: config is nil")
+		log.Errorf("index: config is not set")
 		return done
 	}
 
 	originalsPath := ind.originalsPath()
-	optionsPath := filepath.Join(originalsPath, opt.Path)
+	optionsPath := filepath.Join(originalsPath, o.Path)
 
 	if !fs.PathExists(optionsPath) {
-		event.Error(fmt.Sprintf("index: %s does not exist", sanitize.Log(optionsPath)))
+		event.Error(fmt.Sprintf("%s does not exist", clean.Log(optionsPath)))
+		return done
+	} else if fs.DirIsEmpty(originalsPath) {
+		event.InfoMsg(i18n.ErrOriginalsEmpty)
 		return done
 	}
 
@@ -129,6 +133,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	defer ind.files.Done()
 
 	filesIndexed := 0
+	skipRaw := ind.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
@@ -141,20 +146,30 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
-			log.Errorf("index: %s", strings.Replace(err.Error(), originalsPath, "", 1))
 			return godirwalk.SkipNode
 		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
+			defer func() {
+				if r := recover(); r != nil {
+					log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
+				}
+			}()
+
 			if mutex.MainWorker.Canceled() {
-				return errors.New("indexing canceled")
+				return errors.New("canceled")
 			}
 
-			isDir := info.IsDir()
+			isDir, _ := info.IsDirOrSymlinkToDir()
 			isSymlink := info.IsSymlink()
 			relName := fs.RelName(fileName, originalsPath)
 
+			// Skip directories and known files.
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
-				if (isSymlink || isDir) && result != filepath.SkipDir {
+				if !isDir {
+					return result
+				}
+
+				if result != filepath.SkipDir {
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.BirthTime(fileName))
 
 					if err := folder.Create(); err == nil {
@@ -162,42 +177,53 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 					}
 				}
 
-				if isDir {
-					event.Publish("index.folder", event.Data{
-						"filePath": relName,
-					})
-				}
+				event.Publish("index.folder", event.Data{
+					"filePath": relName,
+				})
 
 				return result
 			}
 
 			done[fileName] = fs.Found
 
-			if !fs.IsMedia(fileName) {
+			if !media.MainFile(fileName) {
 				return nil
 			}
 
-			mf, err := NewMediaFile(fileName)
+			var mf *MediaFile
+			var err error
+			if isSymlink {
+				mf, err = NewMediaFile(fileName)
+			} else {
+				// If the file found while scanning is not a symlink we can
+				// skip resolving the fileName, which is resource intensive.
+				mf, err = NewMediaFileSkipResolve(fileName, fileName)
+			}
 
+			// Check if file exists and is not empty.
 			if err != nil {
-				log.Error(err)
+				log.Warnf("index: %s", err)
+				return nil
+			} else if mf.Empty() {
 				return nil
 			}
 
-			if mf.FileSize() == 0 {
-				log.Infof("index: skipped empty file %s", sanitize.Log(mf.BaseName()))
+			// Skip already indexed?
+			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) {
 				return nil
 			}
 
-			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, opt.Rescan) {
+			// Skip RAW image?
+			if mf.IsRaw() && skipRaw {
+				log.Infof("index: skipped raw %s", clean.Log(mf.RootRelName()))
 				return nil
 			}
 
+			// Find related files to index.
 			related, err := mf.RelatedFiles(ind.conf.Settings().StackSequences())
 
 			if err != nil {
 				log.Warnf("index: %s", err.Error())
-
 				return nil
 			}
 
@@ -208,7 +234,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 					continue
 				}
 
-				if f.FileSize() == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), opt.Rescan) {
+				if f.FileSize() == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
 					done[f.FileName()] = fs.Found
 					continue
 				}
@@ -230,7 +256,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			jobs <- IndexJob{
 				FileName: mf.FileName(),
 				Related:  related,
-				IndexOpt: opt,
+				IndexOpt: o,
 				Ind:      ind,
 			}
 
@@ -252,9 +278,9 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			"step": "faces",
 		})
 
-		// Run facial recognition if enabled.
+		// Run face recognition if enabled.
 		if w := NewFaces(ind.conf); w.Disabled() {
-			log.Debugf("index: skipping facial recognition")
+			log.Debugf("index: skipping face recognition")
 		} else if err := w.Start(FacesOptionsDefault()); err != nil {
 			log.Errorf("index: %s", err)
 		}
@@ -283,6 +309,10 @@ func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult)
 	if err != nil {
 		result.Err = err
 		result.Status = IndexFailed
+
+		return result
+	} else if file.Empty() {
+		result.Status = IndexSkipped
 
 		return result
 	}

@@ -10,21 +10,27 @@ func (m *File) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		UID          string
 		PhotoUID     string
-		InstanceID   string `json:",omitempty"`
 		Name         string
 		Root         string
-		OriginalName string `json:",omitempty"`
 		Hash         string
 		Size         int64
-		Codec        string `json:",omitempty"`
-		Type         string
-		Mime         string `json:",omitempty"`
 		Primary      bool
+		TimeIndex    *string       `json:",omitempty"`
+		MediaID      *string       `json:",omitempty"`
+		MediaUTC     int64         `json:",omitempty"`
+		InstanceID   string        `json:",omitempty"`
+		OriginalName string        `json:",omitempty"`
+		Codec        string        `json:",omitempty"`
+		FileType     string        `json:",omitempty"`
+		MediaType    string        `json:",omitempty"`
+		Mime         string        `json:",omitempty"`
 		Sidecar      bool          `json:",omitempty"`
 		Missing      bool          `json:",omitempty"`
 		Portrait     bool          `json:",omitempty"`
 		Video        bool          `json:",omitempty"`
 		Duration     time.Duration `json:",omitempty"`
+		FPS          float64       `json:",omitempty"`
+		Frames       int           `json:",omitempty"`
 		Width        int           `json:",omitempty"`
 		Height       int           `json:",omitempty"`
 		Orientation  int           `json:",omitempty"`
@@ -34,9 +40,11 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		MainColor    string        `json:",omitempty"`
 		Colors       string        `json:",omitempty"`
 		Luminance    string        `json:",omitempty"`
-		Diff         uint32        `json:",omitempty"`
-		Chroma       uint8         `json:",omitempty"`
+		Diff         int           `json:",omitempty"`
+		Chroma       int16         `json:",omitempty"`
 		HDR          bool          `json:",omitempty"`
+		Watermark    bool          `json:",omitempty"`
+		Software     string        `json:",omitempty"`
 		Error        string        `json:",omitempty"`
 		ModTime      int64         `json:",omitempty"`
 		CreatedAt    time.Time     `json:",omitempty"`
@@ -48,21 +56,27 @@ func (m *File) MarshalJSON() ([]byte, error) {
 	}{
 		UID:          m.FileUID,
 		PhotoUID:     m.PhotoUID,
-		InstanceID:   m.InstanceID,
 		Name:         m.FileName,
 		Root:         m.FileRoot,
-		OriginalName: m.OriginalName,
 		Hash:         m.FileHash,
 		Size:         m.FileSize,
-		Codec:        m.FileCodec,
-		Type:         m.FileType,
-		Mime:         m.FileMime,
 		Primary:      m.FilePrimary,
+		MediaUTC:     m.MediaUTC,
+		TimeIndex:    m.TimeIndex,
+		MediaID:      m.MediaID,
+		InstanceID:   m.InstanceID,
+		OriginalName: m.OriginalName,
+		Codec:        m.FileCodec,
+		FileType:     m.FileType,
+		MediaType:    m.MediaType,
+		Mime:         m.FileMime,
 		Sidecar:      m.FileSidecar,
 		Missing:      m.FileMissing,
 		Portrait:     m.FilePortrait,
 		Video:        m.FileVideo,
 		Duration:     m.FileDuration,
+		FPS:          m.FileFPS,
+		Frames:       m.FileFrames,
 		Width:        m.FileWidth,
 		Height:       m.FileHeight,
 		Orientation:  m.FileOrientation,
@@ -75,6 +89,8 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Diff:         m.FileDiff,
 		Chroma:       m.FileChroma,
 		HDR:          m.FileHDR,
+		Watermark:    m.FileWatermark,
+		Software:     m.FileSoftware,
 		Error:        m.FileError,
 		ModTime:      m.ModTime,
 		CreatedAt:    m.CreatedAt,

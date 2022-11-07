@@ -36,6 +36,19 @@ var LensFixtures = LensMap{
 		UpdatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		DeletedAt:       nil,
 	},
+	"4.15mm-f/2.2": {
+		ID:              1000001,
+		LensSlug:        "4.15mm-f/2.2",
+		LensName:        "Apple iPhone SE back camera 4.15mm f/2.2",
+		LensMake:        "Apple",
+		LensModel:       "iPhone SE back camera 4.15mm f/2.2",
+		LensType:        "",
+		LensDescription: "",
+		LensNotes:       "Notes",
+		CreatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
+		DeletedAt:       nil,
+	},
 }
 
 // CreateLensFixtures inserts known entities into the database for testing.

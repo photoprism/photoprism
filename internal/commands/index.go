@@ -7,21 +7,19 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // IndexCommand registers the index cli command.
 var IndexCommand = cli.Command{
 	Name:      "index",
 	Usage:     "Indexes original media files",
-	ArgsUsage: "[ORIGINALS SUB-FOLDER]",
+	ArgsUsage: "[sub-folder]",
 	Flags:     indexFlags,
 	Action:    indexAction,
 }
@@ -29,7 +27,11 @@ var IndexCommand = cli.Command{
 var indexFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "re-index all originals, including unchanged files",
+		Usage: "rescan all originals, including unchanged files",
+	},
+	cli.BoolFlag{
+		Name:  "archived, a",
+		Usage: "do not skip files belonging to archived photos",
 	},
 	cli.BoolFlag{
 		Name:  "cleanup, c",
@@ -41,25 +43,25 @@ var indexFlags = []cli.Flag{
 func indexAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	// Use first argument to limit scope if set.
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("indexing originals in %s", sanitize.Log(conf.OriginalsPath()))
+		log.Infof("indexing originals in %s", clean.Log(conf.OriginalsPath()))
 	} else {
-		log.Infof("indexing originals in %s", sanitize.Log(filepath.Join(conf.OriginalsPath(), subPath)))
+		log.Infof("indexing originals in %s", clean.Log(filepath.Join(conf.OriginalsPath(), subPath)))
 	}
 
 	if conf.ReadOnly() {
@@ -68,18 +70,14 @@ func indexAction(ctx *cli.Context) error {
 
 	var indexed fs.Done
 
-	if w := service.Index(); w != nil {
-		opt := photoprism.IndexOptions{
-			Path:    subPath,
-			Rescan:  ctx.Bool("force"),
-			Convert: conf.Settings().Index.Convert && conf.SidecarWritable(),
-			Stack:   true,
-		}
+	if w := get.Index(); w != nil {
+		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
+		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"))
 
 		indexed = w.Start(opt)
 	}
 
-	if w := service.Purge(); w != nil {
+	if w := get.Purge(); w != nil {
 		purgeStart := time.Now()
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
@@ -95,24 +93,23 @@ func indexAction(ctx *cli.Context) error {
 
 	if ctx.Bool("cleanup") {
 		cleanupStart := time.Now()
-		w := service.CleanUp()
+		w := get.CleanUp()
 
 		opt := photoprism.CleanUpOptions{
 			Dry: false,
 		}
 
-		if thumbs, orphans, err := w.Start(opt); err != nil {
+		// Start cleanup worker.
+		if thumbnails, _, sidecars, err := w.Start(opt); err != nil {
 			return err
-		} else {
-			log.Infof("cleanup: removed %s and %s [%s]", english.Plural(orphans, "index entry", "index entries"), english.Plural(thumbs, "thumbnail", "thumbnails"), time.Since(cleanupStart))
+		} else if total := thumbnails + sidecars; total > 0 {
+			log.Infof("cleanup: removed %s in total [%s]", english.Plural(total, "file", "files"), time.Since(cleanupStart))
 		}
 	}
 
 	elapsed := time.Since(start)
 
 	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
-
-	conf.Shutdown()
 
 	return nil
 }

@@ -9,24 +9,24 @@ let assert = chai.assert;
 describe("model/thumb", () => {
   it("should get thumb defaults", () => {
     const values = {
-      uid: "55",
-      title: "",
-      taken: "",
-      description: "",
-      favorite: false,
-      playable: false,
-      original_w: 0,
-      original_h: 0,
-      download_url: "",
+      UID: "55",
+      Title: "",
+      TakenAtLocal: "",
+      Description: "",
+      Favorite: false,
+      Playable: false,
+      Width: 0,
+      Height: 0,
+      DownloadUrl: "",
     };
     const thumb = new Thumb(values);
     const result = thumb.getDefaults();
-    assert.equal(result.uid, "");
+    assert.equal(result.UID, "");
   });
 
   it("should get id", () => {
     const values = {
-      uid: "55",
+      UID: "55",
     };
     const thumb = new Thumb(values);
     assert.equal(thumb.getId(), "55");
@@ -34,13 +34,13 @@ describe("model/thumb", () => {
 
   it("should return hasId", () => {
     const values = {
-      uid: "55",
+      UID: "55",
     };
     const thumb = new Thumb(values);
     assert.equal(thumb.hasId(), true);
 
     const values2 = {
-      title: "",
+      Title: "",
     };
     const thumb2 = new Thumb(values2);
     assert.equal(thumb2.hasId(), false);
@@ -48,28 +48,28 @@ describe("model/thumb", () => {
 
   it("should toggle like", () => {
     const values = {
-      uid: "55",
-      title: "",
-      taken: "",
-      description: "",
-      favorite: true,
-      playable: false,
-      original_w: 0,
-      original_h: 0,
-      download_url: "",
+      UID: "55",
+      Title: "",
+      TakenAtLocal: "",
+      Description: "",
+      Favorite: true,
+      Playable: false,
+      Width: 0,
+      Height: 0,
+      DownloadUrl: "",
     };
     const thumb = new Thumb(values);
-    assert.equal(thumb.favorite, true);
+    assert.equal(thumb.Favorite, true);
     thumb.toggleLike();
-    assert.equal(thumb.favorite, false);
+    assert.equal(thumb.Favorite, false);
     thumb.toggleLike();
-    assert.equal(thumb.favorite, true);
+    assert.equal(thumb.Favorite, true);
   });
 
   it("should return thumb not found", () => {
     const result = Thumb.thumbNotFound();
-    assert.equal(result.uid, "");
-    assert.equal(result.favorite, false);
+    assert.equal(result.UID, "");
+    assert.equal(result.Favorite, false);
   });
 
   it("should test from file", () => {
@@ -93,11 +93,11 @@ describe("model/thumb", () => {
     };
     const photo = new Photo(values2);
     const result = Thumb.fromFile(photo, file);
-    assert.equal(result.uid, "5");
-    assert.equal(result.description, "Nice description");
-    assert.equal(result.original_w, 500);
+    assert.equal(result.UID, "5");
+    assert.equal(result.Description, "Nice description");
+    assert.equal(result.Width, 500);
     const result2 = Thumb.fromFile();
-    assert.equal(result2.uid, "");
+    assert.equal(result2.UID, "");
   });
 
   it("should test from files", () => {
@@ -133,7 +133,7 @@ describe("model/thumb", () => {
           UID: "123fgb",
           Name: "1980/01/superCuteKitten.jpg",
           Primary: true,
-          Type: "jpg",
+          FileType: "jpg",
           Width: 500,
           Height: 600,
           Hash: "1xxbgdt53",
@@ -143,9 +143,9 @@ describe("model/thumb", () => {
     const photo3 = new Photo(values4);
     const Photos2 = [photo, photo2, photo3];
     const result2 = Thumb.fromFiles(Photos2);
-    assert.equal(result2[0].uid, "ABC123");
-    assert.equal(result2[0].description, "Nice description 2");
-    assert.equal(result2[0].original_w, 500);
+    assert.equal(result2[0].UID, "ABC123");
+    assert.equal(result2[0].Description, "Nice description 2");
+    assert.equal(result2[0].Width, 500);
     assert.equal(result2.length, 1);
     const values5 = {
       ID: 8,
@@ -157,7 +157,7 @@ describe("model/thumb", () => {
           UID: "123fgb",
           Name: "1980/01/superCuteKitten.jpg",
           Primary: true,
-          Type: "mov",
+          FileType: "mov",
           Width: 500,
           Height: 600,
           Hash: "1xxbgdt53",
@@ -168,9 +168,9 @@ describe("model/thumb", () => {
     const Photos3 = [photo3, photo2, photo4];
     const result3 = Thumb.fromFiles(Photos3);
     assert.equal(result3.length, 1);
-    assert.equal(result3[0].uid, "ABC123");
-    assert.equal(result3[0].description, "Nice description 2");
-    assert.equal(result3[0].original_w, 500);
+    assert.equal(result3[0].UID, "ABC123");
+    assert.equal(result3[0].Description, "Nice description 2");
+    assert.equal(result3[0].Width, 500);
   });
 
   it("should test from files", () => {
@@ -190,7 +190,7 @@ describe("model/thumb", () => {
           UID: "123fgb",
           Name: "1980/01/superCuteKitten.jpg",
           Primary: true,
-          Type: "jpg",
+          FileType: "jpg",
           Width: 500,
           Height: 600,
           Hash: "1xxbgdt53",
@@ -199,9 +199,9 @@ describe("model/thumb", () => {
     };
     const photo = new Photo(values);
     const result = Thumb.fromPhoto(photo);
-    assert.equal(result.uid, "ABC123");
-    assert.equal(result.description, "Nice description 3");
-    assert.equal(result.original_w, 500);
+    assert.equal(result.UID, "ABC123");
+    assert.equal(result.Description, "Nice description 3");
+    assert.equal(result.Width, 500);
     const values3 = {
       ID: 8,
       UID: "ABC124",
@@ -209,7 +209,7 @@ describe("model/thumb", () => {
     };
     const photo3 = new Photo(values3);
     const result2 = Thumb.fromPhoto(photo3);
-    assert.equal(result2.uid, "");
+    assert.equal(result2.UID, "");
     const values2 = {
       ID: 8,
       UID: "ABC123",
@@ -222,9 +222,9 @@ describe("model/thumb", () => {
     };
     const photo2 = new Photo(values2);
     const result3 = Thumb.fromPhoto(photo2);
-    assert.equal(result3.uid, "ABC123");
-    assert.equal(result3.title, "Crazy Cat");
-    assert.equal(result3.description, "Nice description");
+    assert.equal(result3.UID, "ABC123");
+    assert.equal(result3.Title, "Crazy Cat");
+    assert.equal(result3.Description, "Nice description");
   });
 
   it("should test from photos", () => {
@@ -238,7 +238,7 @@ describe("model/thumb", () => {
           UID: "123fgb",
           Name: "1980/01/superCuteKitten.jpg",
           Primary: true,
-          Type: "jpg",
+          FileType: "jpg",
           Width: 500,
           Height: 600,
           Hash: "1xxbgdt53",
@@ -248,9 +248,9 @@ describe("model/thumb", () => {
     const photo = new Photo(values);
     const Photos = [photo];
     const result = Thumb.fromPhotos(Photos);
-    assert.equal(result[0].uid, "ABC123");
-    assert.equal(result[0].description, "Nice description 3");
-    assert.equal(result[0].original_w, 500);
+    assert.equal(result[0].UID, "ABC123");
+    assert.equal(result[0].Description, "Nice description 3");
+    assert.equal(result[0].Width, 500);
   });
 
   it("should return download url", () => {
@@ -258,7 +258,7 @@ describe("model/thumb", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file = new File(values);
@@ -266,7 +266,7 @@ describe("model/thumb", () => {
     const values2 = {
       InstanceID: 5,
       UID: "ABC123",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file2 = new File(values2);
@@ -278,7 +278,7 @@ describe("model/thumb", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Name: "1/2/IMG123.jpg",
     };
     const file = new File(values);
@@ -297,7 +297,7 @@ describe("model/thumb", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Width: 900,
       Height: 850,
       Name: "1/2/IMG123.jpg",
@@ -310,7 +310,7 @@ describe("model/thumb", () => {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      Type: "jpg",
+      FileType: "jpg",
       Width: 750,
       Height: 850,
       Name: "1/2/IMG123.jpg",

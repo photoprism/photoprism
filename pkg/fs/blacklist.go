@@ -46,8 +46,8 @@ func (b Blacklist) Contains(ext string) bool {
 	return false
 }
 
-// Ok tests if a file extension is NOT blacklisted.
-func (b Blacklist) Ok(ext string) bool {
+// Allow tests if a file extension is NOT blacklisted.
+func (b Blacklist) Allow(ext string) bool {
 	return !b.Contains(ext)
 }
 

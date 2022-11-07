@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"runtime/debug"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // JSON parses a json sidecar file (as used by Exiftool) and returns a Data struct.
@@ -22,17 +22,16 @@ func JSON(jsonName, originalName string) (data Data, err error) {
 func (data *Data) JSON(jsonName, originalName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (json panic)\nstack: %s", e, sanitize.Log(filepath.Base(jsonName)), debug.Stack())
+			err = fmt.Errorf("metadata: %s in %s (json panic)\nstack: %s", e, clean.Log(filepath.Base(jsonName)), debug.Stack())
 		}
 	}()
 
-	if data.All == nil {
-		data.All = make(map[string]string)
-	}
+	quotedName := clean.Log(filepath.Base(jsonName))
 
-	quotedName := sanitize.Log(filepath.Base(jsonName))
-
-	if !fs.FileExists(jsonName) {
+	// Resolve JSON file name e.g. in case it's a symlink.
+	if jsonName, err = fs.Resolve(jsonName); err != nil {
+		return fmt.Errorf("metadata: %s not found (%s)", quotedName, err)
+	} else if !fs.FileExists(jsonName) {
 		return fmt.Errorf("metadata: %s not found", quotedName)
 	}
 

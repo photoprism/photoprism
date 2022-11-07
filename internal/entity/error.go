@@ -15,10 +15,16 @@ type Error struct {
 	ErrorMessage string    `gorm:"type:VARBINARY(2048)" json:"Message" yaml:"Message"`
 }
 
+// Errors represents a list of error log messages.
 type Errors []Error
 
-// SaveErrorMessages subscribes to error logs and stored them in the errors table.
-func SaveErrorMessages() {
+// TableName returns the entity table name.
+func (Error) TableName() string {
+	return "errors"
+}
+
+// LogEvents logs published error events.
+func (Error) LogEvents() {
 	s := event.Subscribe("log.*")
 
 	defer func() {

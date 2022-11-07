@@ -7,7 +7,7 @@ type Name string
 
 // Jpeg returns the crop name with a jpeg file extension suffix as string.
 func (n Name) Jpeg() string {
-	return string(n) + fs.JpegExt
+	return string(n) + fs.ExtJPEG
 }
 
 // Names of standard crop sizes.

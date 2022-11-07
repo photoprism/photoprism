@@ -158,8 +158,8 @@ describe("model/abstract", () => {
     const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = Rest.limit();
-    assert.equal(result, 3333);
-    assert.equal(album.constructor.limit(), 3333);
+    assert.equal(result, 10000);
+    assert.equal(album.constructor.limit(), 10000);
   });
 
   it("should create link", async () => {

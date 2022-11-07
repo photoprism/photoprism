@@ -16,10 +16,10 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 const restoreDescription = "A user-defined SQL dump FILENAME can be passed as the first argument. " +
@@ -31,7 +31,7 @@ var RestoreCommand = cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,
 	Usage:       "Restores the index from an SQL dump and optionally albums from YAML files",
-	ArgsUsage:   "[FILENAME]",
+	ArgsUsage:   "filename.sql",
 	Flags:       restoreFlags,
 	Action:      restoreAction,
 }
@@ -75,14 +75,17 @@ func restoreAction(ctx *cli.Context) error {
 
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
+
+	conf.RegisterDb()
+	defer conf.Shutdown()
 
 	if restoreIndex {
 		// If empty, use default backup file name.
@@ -124,7 +127,7 @@ func restoreAction(ctx *cli.Context) error {
 			log.Warnf("replacing existing index with %d photos", counts.Photos)
 		}
 
-		log.Infof("restoring index from %s", sanitize.Log(indexFileName))
+		log.Infof("restoring index from %s", clean.Log(indexFileName))
 
 		sqlBackup, err := os.ReadFile(indexFileName)
 
@@ -132,7 +135,6 @@ func restoreAction(ctx *cli.Context) error {
 			return err
 		}
 
-		entity.SetDbProvider(conf)
 		tables := entity.Entities
 
 		var cmd *exec.Cmd
@@ -179,6 +181,9 @@ func restoreAction(ctx *cli.Context) error {
 			}
 		}()
 
+		// Log exact command for debugging in trace mode.
+		log.Trace(cmd.String())
+
 		// Run backup command.
 		if err := cmd.Run(); err != nil {
 			if stderr.String() != "" {
@@ -193,16 +198,16 @@ func restoreAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	if restoreAlbums {
-		service.SetConfig(conf)
+		get.SetConfig(conf)
 
 		if albumsPath == "" {
 			albumsPath = conf.AlbumsPath()
 		}
 
 		if !fs.PathExists(albumsPath) {
-			log.Warnf("album files path %s not found", sanitize.Log(albumsPath))
+			log.Warnf("album files path %s not found", clean.Log(albumsPath))
 		} else {
-			log.Infof("restoring albums from %s", sanitize.Log(albumsPath))
+			log.Infof("restoring albums from %s", clean.Log(albumsPath))
 
 			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
 				return err
@@ -215,8 +220,6 @@ func restoreAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("restored in %s", elapsed)
-
-	conf.Shutdown()
 
 	return nil
 }

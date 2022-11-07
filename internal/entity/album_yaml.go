@@ -30,7 +30,7 @@ func (m *Album) SaveAsYaml(fileName string) error {
 	}
 
 	// Make sure directory exists.
-	if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(fileName), fs.ModeDir); err != nil {
 		return err
 	}
 
@@ -38,7 +38,7 @@ func (m *Album) SaveAsYaml(fileName string) error {
 	defer albumYamlMutex.Unlock()
 
 	// Write YAML data to file.
-	if err := os.WriteFile(fileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(fileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 
@@ -62,5 +62,5 @@ func (m *Album) LoadFromYaml(fileName string) error {
 
 // YamlFileName returns the YAML file name.
 func (m *Album) YamlFileName(albumsPath string) string {
-	return filepath.Join(albumsPath, m.AlbumType, m.AlbumUID+fs.YamlExt)
+	return filepath.Join(albumsPath, m.AlbumType, m.AlbumUID+fs.ExtYAML)
 }

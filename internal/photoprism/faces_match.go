@@ -27,7 +27,7 @@ func (r *FacesMatchResult) Add(result FacesMatchResult) {
 // Match matches markers with faces and subjects.
 func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	if w.Disabled() {
-		return result, fmt.Errorf("facial recognition is disabled")
+		return result, fmt.Errorf("face recognition is disabled")
 	}
 
 	var unmatchedMarkers int
@@ -122,7 +122,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			// Pointer to the matching face.
 			var f *entity.Face
 
-			// Distance to the matching face.
+			// Dist to the matching face.
 			var d float64
 
 			// Find the closest face match for marker.

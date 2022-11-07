@@ -13,14 +13,15 @@ about 15 years, first released publicly in 2004. The chroot system call was intr
 [development of Version 7 Unix in 1979](https://en.wikipedia.org/wiki/Chroot). It is used ever since for hosting
 applications exposed to the public Internet.
 
-Modern Linux containers are an incremental improvement. A main advantage of Docker is that application images
+Modern Linux containers are an incremental enhancement. A main advantage of Docker is that application images
 can be easily made available to users via Internet. It provides a common standard across most operating
 systems and devices, which saves our team a lot of time that we can then spend [more effectively](https://docs.photoprism.app/developer-guide/issues/#effectiveness-efficiency), for example,
 providing support and developing one of the many features that users are waiting for.
 
 Human-readable and versioned Dockerfiles as part of our public source code also help avoid "works for me" moments and
-other unwelcome surprises by enabling us to have the exact same environment everywhere in [development](develop/Dockerfile)
-and [production](photoprism/Dockerfile).
+other unwelcome surprises by enabling teams to have the exact same environment everywhere in
+[development](https://github.com/photoprism/photoprism/blob/develop/docker/develop/bookworm/Dockerfile), staging,
+and [production](https://github.com/photoprism/photoprism/blob/develop/docker/photoprism/bookworm/Dockerfile).
 
 Last but not least, virtually all file format parsers have vulnerabilities that just haven't been discovered yet.
 This is a known risk that can affect you even if your computer is not directly connected to the Internet.
@@ -43,7 +44,7 @@ You can build and install PhotoPrism from the publicly available [source code](h
 ```bash
 git clone https://github.com/photoprism/photoprism.git
 cd photoprism
-make all install
+make all install DESTDIR=/opt/photoprism
 ```
 
 Missing build dependencies must be installed manually as shown in our human-readable and versioned
@@ -60,4 +61,4 @@ applications like PhotoPrism. It also effectively helps avoid "works for me" mom
 An [unofficial port](https://docs.photoprism.app/getting-started/freebsd/) is available for FreeBSD / FreeNAS users.
 You are invited to contribute by [building and testing standalone packages](https://docs.photoprism.app/developer-guide/) for Linux distributions and other operating systems.
 
-Updates are [released several times a month](https://docs.photoprism.app/release-notes/), so maintaining the long list of dependencies for additional environments would currently consume too many of [our resources](https://docs.photoprism.app/funding/).
+Updates are [released several times a month](https://docs.photoprism.app/release-notes/), so maintaining the long list of dependencies for additional environments would currently consume too many of [our resources](https://photoprism.app/membership).

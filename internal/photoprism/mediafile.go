@@ -3,85 +3,123 @@ package photoprism
 import (
 	"fmt"
 	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"io"
 	"math"
 	"os"
 	"path"
 	"path/filepath"
 	"regexp"
+	"runtime/debug"
 	"sort"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/disintegration/imaging"
+	_ "golang.org/x/image/bmp"
+	_ "golang.org/x/image/tiff"
+	_ "golang.org/x/image/webp"
+
 	"github.com/djherbis/times"
-	"github.com/dustin/go-humanize/english"
 	"github.com/mandykoh/prism/meta/autometa"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/meta"
-	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// MediaFile represents a single photo, video or sidecar file.
+// MediaFile represents a single photo, video, sidecar, or other supported media file.
 type MediaFile struct {
-	fileName       string
-	fileRoot       string
-	statErr        error
-	modTime        time.Time
-	fileSize       int64
-	fileType       fs.FileFormat
-	mimeType       string
-	takenAt        time.Time
-	takenAtSrc     string
-	hash           string
-	checksum       string
-	hasJpeg        bool
-	noColorProfile bool
-	colorProfile   string
-	width          int
-	height         int
-	metaData       meta.Data
-	metaDataOnce   sync.Once
-	location       *entity.Cell
+	fileName         string
+	fileNameResolved string
+	fileRoot         string
+	statErr          error
+	modTime          time.Time
+	fileSize         int64
+	fileType         fs.Type
+	mimeType         string
+	takenAt          time.Time
+	takenAtSrc       string
+	hash             string
+	checksum         string
+	hasJpeg          bool
+	noColorProfile   bool
+	colorProfile     string
+	width            int
+	height           int
+	metaData         meta.Data
+	metaOnce         sync.Once
+	fileMutex        sync.Mutex
+	location         *entity.Cell
+	imageConfig      *image.Config
 }
 
-// NewMediaFile returns a new media file.
+// NewMediaFile returns a new media file and automatically resolves any symlinks.
 func NewMediaFile(fileName string) (*MediaFile, error) {
+	if fileNameResolved, err := fs.Resolve(fileName); err != nil {
+		// Don't return nil on error, as this would change the previous behavior.
+		return &MediaFile{}, err
+	} else {
+		return NewMediaFileSkipResolve(fileName, fileNameResolved)
+	}
+}
+
+// NewMediaFileSkipResolve returns a new media file without resolving symlinks.
+// This is useful because if it is known that the filename is fully resolved, it is much faster.
+func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (*MediaFile, error) {
+	// Create and initialize the new media file.
 	m := &MediaFile{
-		fileName: fileName,
-		fileRoot: entity.RootUnknown,
-		fileType: fs.FormatOther,
-		metaData: meta.NewData(),
-		width:    -1,
-		height:   -1,
+		fileName:         fileName,
+		fileNameResolved: fileNameResolved,
+		fileRoot:         entity.RootUnknown,
+		fileType:         fs.UnknownType,
+		metaData:         meta.New(),
+		width:            -1,
+		height:           -1,
 	}
 
-	if _, _, err := m.Stat(); err != nil {
-		return m, fmt.Errorf("media: %s not found", sanitize.Log(m.BaseName()))
+	// Check if the file exists and is not empty.
+	if size, _, err := m.Stat(); err != nil {
+		// Return error if os.Stat() failed.
+		return m, fmt.Errorf("%s not found", clean.Log(m.RootRelName()))
+	} else if size == 0 {
+		// Notify the user that the file is empty.
+		log.Infof("media: %s is empty", clean.Log(m.RootRelName()))
 	}
 
 	return m, nil
 }
 
-// Stat returns the media file size and modification time rounded to seconds
+// Ok checks if the file has a name, exists and is not empty.
+func (m *MediaFile) Ok() bool {
+	return m.FileName() != "" && m.statErr == nil && !m.Empty()
+}
+
+// Empty checks if the file is empty.
+func (m *MediaFile) Empty() bool {
+	return m.FileSize() <= 0
+}
+
+// Stat calls os.Stat() to return the file size and modification time,
+// or an error if this failed.
 func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 	if m.fileSize > 0 {
 		return m.fileSize, m.modTime, m.statErr
 	}
 
-	if s, err := os.Stat(m.FileName()); err != nil {
+	if s, err := os.Stat(m.fileNameResolved); err != nil {
 		m.statErr = err
 		m.modTime = time.Time{}
 		m.fileSize = -1
 	} else {
+		s.Mode()
 		m.statErr = nil
-		m.modTime = s.ModTime().Round(time.Second)
+		m.modTime = s.ModTime().UTC().Truncate(time.Second)
 		m.fileSize = s.Size()
 	}
 
@@ -123,16 +161,16 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 		m.takenAt = data.TakenAt.UTC()
 		m.takenAtSrc = entity.SrcMeta
 
-		log.Infof("media: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
+		log.Infof("media: %s was taken at %s (%s)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String(), m.takenAtSrc)
 
 		return m.takenAt, m.takenAtSrc
 	}
 
-	if nameTime := txt.Time(m.fileName); !nameTime.IsZero() {
+	if nameTime := txt.DateFromFilePath(m.fileName); !nameTime.IsZero() {
 		m.takenAt = nameTime
 		m.takenAtSrc = entity.SrcName
 
-		log.Infof("media: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
+		log.Infof("media: %s was taken at %s (%s)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String(), m.takenAtSrc)
 
 		return m.takenAt, m.takenAtSrc
 	}
@@ -143,17 +181,17 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 
 	if err != nil {
 		log.Warnf("media: %s (file stat)", err.Error())
-		log.Infof("media: %s was taken at %s (now)", filepath.Base(m.fileName), m.takenAt.String())
+		log.Infof("media: %s was taken at %s (now)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String())
 
 		return m.takenAt, m.takenAtSrc
 	}
 
 	if fileInfo.HasBirthTime() {
 		m.takenAt = fileInfo.BirthTime().UTC()
-		log.Infof("media: %s was taken at %s (file birth time)", filepath.Base(m.fileName), m.takenAt.String())
+		log.Infof("media: %s was taken at %s (file birth time)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String())
 	} else {
 		m.takenAt = fileInfo.ModTime().UTC()
-		log.Infof("media: %s was taken at %s (file mod time)", filepath.Base(m.fileName), m.takenAt.String())
+		log.Infof("media: %s was taken at %s (file mod time)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String())
 	}
 
 	return m.takenAt, m.takenAtSrc
@@ -285,6 +323,9 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	sidecarPrefix := Config().SidecarPath() + "/"
 	originalsPrefix := Config().OriginalsPath() + "/"
 
+	// Ignore RAW images?
+	skipRaw := Config().DisableRaw()
+
 	// Replace sidecar with originals path in search prefix.
 	if len(sidecarPrefix) > 1 && sidecarPrefix != originalsPrefix && strings.HasPrefix(prefix, sidecarPrefix) {
 		prefix = strings.Replace(prefix, sidecarPrefix, originalsPrefix, 1)
@@ -311,18 +352,18 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		matches = append(matches, name)
 	}
 
-	isHEIF := false
+	isHEIC := false
 
 	for _, fileName := range matches {
-		f, err := NewMediaFile(fileName)
+		f, fileErr := NewMediaFile(fileName)
 
-		if err != nil {
-			log.Warnf("media: %s in %s", err, sanitize.Log(filepath.Base(fileName)))
+		if fileErr != nil || f.Empty() {
 			continue
 		}
 
-		if f.FileSize() == 0 {
-			log.Warnf("media: %s is empty", sanitize.Log(filepath.Base(fileName)))
+		// Ignore RAW images?
+		if f.IsRaw() && skipRaw {
+			log.Debugf("media: skipped related raw file %s", clean.Log(f.RootRelName()))
 			continue
 		}
 
@@ -330,12 +371,16 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			result.Main = f
 		} else if f.IsRaw() {
 			result.Main = f
-		} else if f.IsHEIF() {
-			isHEIF = true
+		} else if f.IsDNG() {
+			result.Main = f
+		} else if f.IsAVIF() {
+			result.Main = f
+		} else if f.IsHEIC() {
+			isHEIC = true
 			result.Main = f
 		} else if f.IsImageOther() {
 			result.Main = f
-		} else if f.IsVideo() && !isHEIF {
+		} else if f.IsVideo() && !isHEIC {
 			result.Main = f
 		} else if result.Main != nil && f.IsJpeg() {
 			if result.Main.IsJpeg() && len(result.Main.FileName()) > len(f.FileName()) {
@@ -353,13 +398,13 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			t = "unknown type"
 		}
 
-		return result, fmt.Errorf("no supported files found for %s (%s)", sanitize.Log(m.BaseName()), t)
+		return result, fmt.Errorf("no supported files found for %s (%s)", clean.Log(m.BaseName()), t)
 	}
 
 	// Add hidden JPEG if exists.
 	if !result.ContainsJpeg() {
-		if jpegName := fs.FormatJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
-			if resultFile, err := NewMediaFile(jpegName); err == nil {
+		if jpegName := fs.ImageJPEG.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
+			if resultFile, _ := NewMediaFile(jpegName); resultFile.Ok() {
 				result.Files = append(result.Files, resultFile)
 			}
 		}
@@ -542,17 +587,35 @@ func (m *MediaFile) MimeType() string {
 		return m.mimeType
 	}
 
-	m.mimeType = fs.MimeType(m.FileName())
+	var err error
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return m.mimeType
+	}
+
+	m.mimeType = fs.MimeType(fileName)
 
 	return m.mimeType
 }
 
-func (m *MediaFile) openFile() (*os.File, error) {
-	handle, err := os.Open(m.fileName)
+// openFile opens the file and returns the descriptor.
+func (m *MediaFile) openFile() (handle *os.File, err error) {
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return nil, fmt.Errorf("%s %s", err, clean.Log(m.RootRelName()))
+	}
+
+	handle, err = os.Open(fileName)
+
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
 	}
+
 	return handle, nil
 }
 
@@ -578,7 +641,7 @@ func (m *MediaFile) HasSameName(f *MediaFile) bool {
 
 // Move file to a new destination with the filename provided in parameter.
 func (m *MediaFile) Move(dest string) error {
-	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dest), fs.ModeDir); err != nil {
 		return err
 	}
 
@@ -605,9 +668,12 @@ func (m *MediaFile) Move(dest string) error {
 
 // Copy a MediaFile to another file by destinationFilename.
 func (m *MediaFile) Copy(dest string) error {
-	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dest), fs.ModeDir); err != nil {
 		return err
 	}
+
+	m.fileMutex.Lock()
+	defer m.fileMutex.Unlock()
 
 	thisFile, err := m.openFile()
 
@@ -618,7 +684,7 @@ func (m *MediaFile) Copy(dest string) error {
 
 	defer thisFile.Close()
 
-	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, os.ModePerm)
+	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, fs.ModeFile)
 
 	if err != nil {
 		log.Error(err.Error())
@@ -645,74 +711,103 @@ func (m *MediaFile) Extension() string {
 // IsJpeg return true if this media file is a JPEG image.
 func (m *MediaFile) IsJpeg() bool {
 	// Don't import/use existing thumbnail files (we create our own)
-	if m.Extension() == ".thm" {
+	if m.Extension() == fs.ExtTHM {
 		return false
 	}
 
 	return m.MimeType() == fs.MimeTypeJpeg
 }
 
-// IsPng returns true if this is a PNG file.
+// IsPng returns true if this is a PNG image.
 func (m *MediaFile) IsPng() bool {
 	return m.MimeType() == fs.MimeTypePng
 }
 
-// IsGif returns true if this is a GIF file.
+// IsGif returns true if this is a GIF image.
 func (m *MediaFile) IsGif() bool {
 	return m.MimeType() == fs.MimeTypeGif
 }
 
-// IsTiff returns true if this is a TIFF file.
+// IsTiff returns true if this is a TIFF image.
 func (m *MediaFile) IsTiff() bool {
-	return m.HasFileType(fs.FormatTiff) && m.MimeType() == fs.MimeTypeTiff
+	return m.HasFileType(fs.ImageTIFF) && m.MimeType() == fs.MimeTypeTiff
 }
 
-// IsHEIF returns true if this is a High Efficiency Image File Format file.
-func (m *MediaFile) IsHEIF() bool {
-	return m.MimeType() == fs.MimeTypeHEIF
+// IsDNG returns true if this is a Adobe Digital Negative image.
+func (m *MediaFile) IsDNG() bool {
+	return m.MimeType() == fs.MimeTypeDNG
 }
 
-// IsBitmap returns true if this is a bitmap file.
+// IsHEIC returns true if this is a High Efficiency Image File Format image.
+func (m *MediaFile) IsHEIC() bool {
+	return m.MimeType() == fs.MimeTypeHEIC
+}
+
+// IsAVIF returns true if this is an AV1 Image File Format image.
+func (m *MediaFile) IsAVIF() bool {
+	return m.MimeType() == fs.MimeTypeAVIF
+}
+
+// IsBitmap returns true if this is a bitmap image.
 func (m *MediaFile) IsBitmap() bool {
 	return m.MimeType() == fs.MimeTypeBitmap
 }
 
+// IsWebP returns true if this is a WebP image file.
+func (m *MediaFile) IsWebP() bool {
+	return m.MimeType() == fs.MimeTypeWebP
+}
+
 // IsVideo returns true if this is a video file.
 func (m *MediaFile) IsVideo() bool {
-	return strings.HasPrefix(m.MimeType(), "video/") || m.MediaType() == fs.MediaVideo
+	return strings.HasPrefix(m.MimeType(), "video/") || m.Media() == media.Video
+}
+
+// IsAnimatedGif returns true if it is an animated GIF.
+func (m *MediaFile) IsAnimatedGif() bool {
+	return m.IsGif() && m.MetaData().Frames > 1
+}
+
+// IsAnimated returns true if it is a video or animated image.
+func (m *MediaFile) IsAnimated() bool {
+	return m.IsVideo() || m.IsAnimatedGif()
 }
 
 // IsJson return true if this media file is a json sidecar file.
 func (m *MediaFile) IsJson() bool {
-	return m.HasFileType(fs.FormatJson)
+	return m.HasFileType(fs.SidecarJSON)
 }
 
 // FileType returns the file type (jpg, gif, tiff,...).
-func (m *MediaFile) FileType() fs.FileFormat {
+func (m *MediaFile) FileType() fs.Type {
 	switch {
 	case m.IsJpeg():
-		return fs.FormatJpeg
+		return fs.ImageJPEG
 	case m.IsPng():
-		return fs.FormatPng
+		return fs.ImagePNG
 	case m.IsGif():
-		return fs.FormatGif
-	case m.IsHEIF():
-		return fs.FormatHEIF
+		return fs.ImageGIF
 	case m.IsBitmap():
-		return fs.FormatBitmap
+		return fs.ImageBMP
+	case m.IsDNG():
+		return fs.ImageDNG
+	case m.IsAVIF():
+		return fs.ImageAVIF
+	case m.IsHEIC():
+		return fs.ImageHEIC
 	default:
-		return fs.GetFileFormat(m.fileName)
+		return fs.FileType(m.fileName)
 	}
 }
 
-// MediaType returns the media type (video, image, raw, sidecar,...).
-func (m *MediaFile) MediaType() fs.MediaType {
-	return fs.GetMediaType(m.fileName)
+// Media returns the media content type (video, image, raw, sidecar,...).
+func (m *MediaFile) Media() media.Type {
+	return media.FromName(m.fileName)
 }
 
 // HasFileType returns true if this is the given type.
-func (m *MediaFile) HasFileType(fileType fs.FileFormat) bool {
-	if fileType == fs.FormatJpeg {
+func (m *MediaFile) HasFileType(fileType fs.Type) bool {
+	if fileType == fs.ImageJPEG {
 		return m.IsJpeg()
 	}
 
@@ -721,47 +816,62 @@ func (m *MediaFile) HasFileType(fileType fs.FileFormat) bool {
 
 // IsRaw returns true if this is a RAW file.
 func (m *MediaFile) IsRaw() bool {
-	return m.HasFileType(fs.FormatRaw)
+	return m.HasFileType(fs.ImageRaw) || m.IsDNG()
 }
 
-// IsImageOther returns true if this is a PNG, GIF, BMP or TIFF file.
+// IsXMP returns true if this is a XMP sidecar file.
+func (m *MediaFile) IsXMP() bool {
+	return m.FileType() == fs.SidecarXMP
+}
+
+// InOriginals checks if the file is stored in the 'originals' folder.
+func (m *MediaFile) InOriginals() bool {
+	return m.Root() == entity.RootOriginals
+}
+
+// InSidecar checks if the file is stored in the 'sidecar' folder.
+func (m *MediaFile) InSidecar() bool {
+	return m.Root() == entity.RootSidecar
+}
+
+// IsSidecar checks if the file is a metadata sidecar file, independent of the storage location.
+func (m *MediaFile) IsSidecar() bool {
+	return m.Media() == media.Sidecar
+}
+
+// IsPlayableVideo checks if the file is a video in playable format.
+func (m *MediaFile) IsPlayableVideo() bool {
+	return m.IsVideo() && (m.HasFileType(fs.VideoMP4) || m.HasFileType(fs.VideoAVC))
+}
+
+// IsImageOther returns true if this is a PNG, GIF, BMP, TIFF, or WebP file.
 func (m *MediaFile) IsImageOther() bool {
 	switch {
-	case m.IsPng(), m.IsGif(), m.IsTiff(), m.IsBitmap():
+	case m.IsPng(), m.IsGif(), m.IsTiff(), m.IsBitmap(), m.IsWebP():
 		return true
 	default:
 		return false
 	}
 }
 
-// IsXMP returns true if this is a XMP sidecar file.
-func (m *MediaFile) IsXMP() bool {
-	return m.FileType() == fs.FormatXMP
+// IsImageNative returns true if it is a natively supported image file.
+func (m *MediaFile) IsImageNative() bool {
+	return m.IsJpeg() || m.IsImageOther()
 }
 
-// IsSidecar returns true if this is a sidecar file (containing metadata).
-func (m *MediaFile) IsSidecar() bool {
-	return m.MediaType() == fs.MediaSidecar
+// IsImage checks if the file is an image
+func (m *MediaFile) IsImage() bool {
+	return m.IsImageNative() || m.IsRaw() || m.IsDNG() || m.IsAVIF() || m.IsHEIC()
 }
 
-// IsPlayableVideo returns true if this is a supported video file format.
-func (m *MediaFile) IsPlayableVideo() bool {
-	return m.IsVideo() && (m.HasFileType(fs.FormatMp4) || m.HasFileType(fs.FormatAvc))
-}
-
-// IsPhoto returns true if this file is a photo / image.
-func (m *MediaFile) IsPhoto() bool {
-	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
-}
-
-// IsLive returns true if this is a live photo.
+// IsLive checks if the file is a live photo.
 func (m *MediaFile) IsLive() bool {
-	if m.IsHEIF() {
-		return fs.FormatMov.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
+	if m.IsHEIC() {
+		return fs.VideoMOV.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
 	}
 
 	if m.IsVideo() {
-		return fs.FormatHEIF.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
+		return fs.ImageHEIC.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
 	}
 
 	return false
@@ -769,28 +879,30 @@ func (m *MediaFile) IsLive() bool {
 
 // ExifSupported returns true if parsing exif metadata is supported for the media file type.
 func (m *MediaFile) ExifSupported() bool {
-	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsPng() || m.IsTiff()
+	return m.IsJpeg() || m.IsRaw() || m.IsHEIC() || m.IsPng() || m.IsTiff()
 }
 
 // IsMedia returns true if this is a media file (photo or video, not sidecar or other).
 func (m *MediaFile) IsMedia() bool {
-	return m.IsJpeg() || m.IsVideo() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
+	return m.IsImageNative() || m.IsVideo() || m.IsRaw() || m.IsDNG() || m.IsAVIF() || m.IsHEIC()
 }
 
 // Jpeg returns the JPEG version of the media file (if exists).
 func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	if m.IsJpeg() {
 		if !fs.FileExists(m.FileName()) {
-			return nil, fmt.Errorf("jpeg file should exist, but does not: %s", m.FileName())
+			return nil, fmt.Errorf("jpeg should exist, but does not: %s", m.RootRelName())
 		}
 
 		return m, nil
+	} else if m.Empty() {
+		return nil, fmt.Errorf("%s is empty", m.RootRelName())
 	}
 
-	jpegFilename := fs.FormatJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegFilename := fs.ImageJPEG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegFilename == "" {
-		return nil, fmt.Errorf("no jpeg found for %s", m.FileName())
+		return nil, fmt.Errorf("no jpeg found for %s", m.RootRelName())
 	}
 
 	return NewMediaFile(jpegFilename)
@@ -807,7 +919,7 @@ func (m *MediaFile) HasJpeg() bool {
 		return true
 	}
 
-	jpegName := fs.FormatJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegName := fs.ImageJPEG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegName == "" {
 		m.hasJpeg = false
@@ -819,20 +931,19 @@ func (m *MediaFile) HasJpeg() bool {
 }
 
 func (m *MediaFile) decodeDimensions() error {
-	if !m.IsMedia() {
-		return fmt.Errorf("failed decoding dimensions for %s", sanitize.Log(m.BaseName()))
+	// Media dimensions already known?
+	if m.width > 0 && m.height > 0 {
+		return nil
 	}
 
-	if m.IsJpeg() || m.IsPng() || m.IsGif() {
-		file, err := os.Open(m.FileName())
+	// Valid media file?
+	if !m.Ok() || !m.IsMedia() {
+		return fmt.Errorf("%s is not a valid media file", clean.Log(m.Extension()))
+	}
 
-		if err != nil || file == nil {
-			return err
-		}
-
-		defer file.Close()
-
-		size, _, err := image.DecodeConfig(file)
+	// Extract the actual width and height from natively supported formats.
+	if m.IsImageNative() {
+		cfg, err := m.DecodeConfig()
 
 		if err != nil {
 			return err
@@ -841,25 +952,85 @@ func (m *MediaFile) decodeDimensions() error {
 		orientation := m.Orientation()
 
 		if orientation > 4 && orientation <= 8 {
-			m.width = size.Height
-			m.height = size.Width
+			m.width = cfg.Height
+			m.height = cfg.Width
 		} else {
-			m.width = size.Width
-			m.height = size.Height
+			m.width = cfg.Width
+			m.height = cfg.Height
 		}
-	} else if data := m.MetaData(); data.Error == nil {
-		m.width = data.ActualWidth()
-		m.height = data.ActualHeight()
-	} else {
-		return data.Error
+
+		return nil
 	}
 
-	return nil
+	// Extract the width and height from metadata for other formats.
+	if data := m.MetaData(); data.Error != nil {
+		return data.Error
+	} else {
+		m.width = data.ActualWidth()
+		m.height = data.ActualHeight()
+
+		return nil
+	}
+}
+
+// DecodeConfig extracts the raw dimensions from the header of natively supported image file formats.
+func (m *MediaFile) DecodeConfig() (_ *image.Config, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("panic %s while decoding %s dimensions\nstack: %s", r, clean.Log(m.Extension()), debug.Stack())
+		}
+	}()
+
+	if m.imageConfig != nil {
+		return m.imageConfig, nil
+	}
+
+	if !m.IsImageNative() {
+		return nil, fmt.Errorf("%s not supported natively", clean.Log(m.Extension()))
+	}
+
+	m.fileMutex.Lock()
+	defer m.fileMutex.Unlock()
+
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return nil, fmt.Errorf("%s %s", err, clean.Log(m.RootRelName()))
+	}
+
+	file, err := os.Open(fileName)
+
+	if err != nil || file == nil {
+		return nil, err
+	}
+
+	defer file.Close()
+
+	// Reset file offset.
+	// see https://github.com/golang/go/issues/45902#issuecomment-1007953723
+	_, err = file.Seek(0, 0)
+
+	if err != nil {
+		return nil, fmt.Errorf("%s on seek", err)
+	}
+
+	// Decode image config (dimensions).
+	cfg, _, err := image.DecodeConfig(file)
+
+	if err != nil {
+		return nil, fmt.Errorf("%s while decoding", err)
+	}
+
+	m.imageConfig = &cfg
+
+	return m.imageConfig, nil
 }
 
 // Width return the width dimension of a MediaFile.
 func (m *MediaFile) Width() int {
-	if !m.IsMedia() {
+	// Valid media file?
+	if !m.Ok() || !m.IsMedia() {
 		return 0
 	}
 
@@ -874,7 +1045,8 @@ func (m *MediaFile) Width() int {
 
 // Height returns the height dimension of a MediaFile.
 func (m *MediaFile) Height() int {
-	if !m.IsMedia() {
+	// Valid media file?
+	if !m.Ok() || !m.IsMedia() {
 		return 0
 	}
 
@@ -885,6 +1057,51 @@ func (m *MediaFile) Height() int {
 	}
 
 	return m.height
+}
+
+// Megapixels returns the resolution in megapixels if possible.
+func (m *MediaFile) Megapixels() (resolution int) {
+	// Valid media file?
+	if !m.Ok() || !m.IsMedia() {
+		return 0
+	}
+
+	if cfg, err := m.DecodeConfig(); err == nil {
+		resolution = int(math.Round(float64(cfg.Width*cfg.Height) / 1000000))
+	}
+
+	if resolution <= 0 {
+		resolution = m.metaData.Megapixels()
+	}
+
+	return resolution
+}
+
+// ExceedsFileSize checks if the file exceeds the configured file size limit in MB.
+func (m *MediaFile) ExceedsFileSize(limit int) (exceeds bool, actual int) {
+	const mega = 1048576
+
+	if limit <= 0 {
+		return false, actual
+	} else if size := m.FileSize(); size <= 0 {
+		return false, actual
+	} else {
+		actual = int(size / mega)
+		return size > int64(limit)*mega, actual
+	}
+}
+
+// ExceedsResolution checks if an image in a natively supported format exceeds the configured resolution limit in megapixels.
+func (m *MediaFile) ExceedsResolution(limit int) (exceeds bool, actual int) {
+	if limit <= 0 {
+		return false, actual
+	} else if !m.IsImage() {
+		return false, actual
+	} else if actual = m.Megapixels(); actual <= 0 {
+		return false, actual
+	} else {
+		return actual > limit, actual
+	}
 }
 
 // AspectRatio returns the aspect ratio of a MediaFile.
@@ -906,11 +1123,6 @@ func (m *MediaFile) Portrait() bool {
 	return m.Width() < m.Height()
 }
 
-// Megapixels returns the resolution in megapixels.
-func (m *MediaFile) Megapixels() int {
-	return int(math.Round(float64(m.Width()*m.Height()) / 1000000))
-}
-
 // Orientation returns the Exif orientation of the media file.
 func (m *MediaFile) Orientation() int {
 	if data := m.MetaData(); data.Error == nil {
@@ -920,110 +1132,8 @@ func (m *MediaFile) Orientation() int {
 	return 1
 }
 
-// Thumbnail returns a thumbnail filename.
-func (m *MediaFile) Thumbnail(path string, sizeName thumb.Name) (filename string, err error) {
-	size, ok := thumb.Sizes[sizeName]
-
-	if !ok {
-		log.Errorf("media: invalid type %s", sizeName)
-		return "", fmt.Errorf("media: invalid type %s", sizeName)
-	}
-
-	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, size.Width, size.Height, m.Orientation(), size.Options...)
-
-	if err != nil {
-		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", sanitize.Log(m.BaseName()), err)
-		log.Debug(err)
-		return "", err
-	}
-
-	return thumbnail, nil
-}
-
-// Resample returns a resampled image of the file.
-func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image, err error) {
-	filename, err := m.Thumbnail(path, sizeName)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return imaging.Open(filename)
-}
-
-// ResampleDefault pre-caches default thumbnails.
-func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
-	count := 0
-	start := time.Now()
-
-	defer func() {
-		switch count {
-		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("media: created no new thumbnails for %s", m.BasePrefix(false))))
-		default:
-			log.Info(capture.Time(start, fmt.Sprintf("media: created %s for %s", english.Plural(count, "thumbnail", "thumbnails"), m.BasePrefix(false))))
-		}
-	}()
-
-	hash := m.Hash()
-
-	var originalImg image.Image
-	var sourceImg image.Image
-	var sourceName thumb.Name
-
-	for _, name := range thumb.DefaultSizes {
-		size := thumb.Sizes[name]
-
-		if size.Uncached() {
-			// Skip, exceeds pre-cached size limit.
-			continue
-		}
-
-		if fileName, err := thumb.FileName(hash, thumbPath, size.Width, size.Height, size.Options...); err != nil {
-			log.Errorf("media: failed creating %s (%s)", sanitize.Log(string(name)), err)
-
-			return err
-		} else {
-			if !force && fs.FileExists(fileName) {
-				continue
-			}
-
-			if originalImg == nil {
-				img, err := thumb.Open(m.FileName(), m.Orientation())
-
-				if err != nil {
-					log.Debugf("media: %s in %s", err.Error(), sanitize.Log(m.BaseName()))
-					return err
-				}
-
-				originalImg = img
-			}
-
-			if size.Source != "" {
-				if size.Source == sourceName && sourceImg != nil {
-					_, err = thumb.Create(sourceImg, fileName, size.Width, size.Height, size.Options...)
-				} else {
-					_, err = thumb.Create(originalImg, fileName, size.Width, size.Height, size.Options...)
-				}
-			} else {
-				sourceImg, err = thumb.Create(originalImg, fileName, size.Width, size.Height, size.Options...)
-				sourceName = name
-			}
-
-			if err != nil {
-				log.Errorf("media: failed creating %s (%s)", sanitize.Log(string(name)), err)
-				return err
-			}
-
-			count++
-		}
-	}
-
-	return nil
-}
-
-// RenameSidecars moves related sidecar files.
-func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]string, err error) {
+// RenameSidecarFiles moves related sidecar files.
+func (m *MediaFile) RenameSidecarFiles(oldFileName string) (renamed map[string]string, err error) {
 	renamed = make(map[string]string)
 
 	sidecarPath := Config().SidecarPath()
@@ -1046,9 +1156,9 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 
 			if err := os.Remove(srcName); err != nil {
-				log.Errorf("media: failed removing sidecar %s", sanitize.Log(fs.RelName(srcName, sidecarPath)))
+				log.Errorf("files: failed removing sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
 			} else {
-				log.Infof("media: removed sidecar %s", sanitize.Log(fs.RelName(srcName, sidecarPath)))
+				log.Infof("files: removed sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
 			}
 
 			continue
@@ -1057,7 +1167,7 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 		if err := fs.Move(srcName, destName); err != nil {
 			return renamed, err
 		} else {
-			log.Infof("media: moved existing sidecar to %s", sanitize.Log(newName+filepath.Ext(srcName)))
+			log.Infof("files: moved existing sidecar to %s", clean.Log(newName+filepath.Ext(srcName)))
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 		}
 	}
@@ -1065,9 +1175,14 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 	return renamed, nil
 }
 
-// RemoveSidecars permanently removes related sidecar files.
-func (m *MediaFile) RemoveSidecars() (err error) {
+// RemoveSidecarFiles permanently removes related sidecar files.
+func (m *MediaFile) RemoveSidecarFiles() (numFiles int, err error) {
 	fileName := m.FileName()
+
+	if fileName == "" {
+		return numFiles, fmt.Errorf("empty filename")
+	}
+
 	sidecarPath := Config().SidecarPath()
 	originalsPath := Config().OriginalsPath()
 
@@ -1077,18 +1192,19 @@ func (m *MediaFile) RemoveSidecars() (err error) {
 	matches, err := filepath.Glob(regexp.QuoteMeta(globPrefix) + "*")
 
 	if err != nil {
-		return err
+		return numFiles, err
 	}
 
 	for _, sidecarName := range matches {
 		if err = os.Remove(sidecarName); err != nil {
-			log.Errorf("media: failed removing sidecar %s", sanitize.Log(fs.RelName(sidecarName, sidecarPath)))
+			log.Errorf("files: failed deleting sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))
 		} else {
-			log.Infof("media: removed sidecar %s", sanitize.Log(fs.RelName(sidecarName, sidecarPath)))
+			numFiles++
+			log.Infof("files: deleted sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))
 		}
 	}
 
-	return nil
+	return numFiles, nil
 }
 
 // ColorProfile returns the ICC color profile name.
@@ -1098,10 +1214,21 @@ func (m *MediaFile) ColorProfile() string {
 	}
 
 	start := time.Now()
-	logName := sanitize.Log(m.BaseName())
+	logName := clean.Log(m.BaseName())
+
+	m.fileMutex.Lock()
+	defer m.fileMutex.Unlock()
+
+	var err error
+	fileName := m.FileName()
+
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return m.colorProfile
+	}
 
 	// Open file.
-	fileReader, err := os.Open(m.FileName())
+	fileReader, err := os.Open(fileName)
 
 	if err != nil {
 		m.noColorProfile = true
@@ -1109,6 +1236,15 @@ func (m *MediaFile) ColorProfile() string {
 	}
 
 	defer fileReader.Close()
+
+	// Reset file offset.
+	// see https://github.com/golang/go/issues/45902#issuecomment-1007953723
+	_, err = fileReader.Seek(0, 0)
+
+	if err != nil {
+		log.Warnf("media: %s in %s on seek [%s]", err, logName, time.Since(start))
+		return ""
+	}
 
 	// Read color metadata.
 	md, _, err := autometa.Load(fileReader)
@@ -1122,7 +1258,7 @@ func (m *MediaFile) ColorProfile() string {
 	if iccProfile, err := md.ICCProfile(); err != nil || iccProfile == nil {
 		// Do nothing.
 	} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
-		log.Debugf("media: %s has color profile %s [%s]", logName, sanitize.Log(profile), time.Since(start))
+		log.Debugf("media: %s has color profile %s [%s]", logName, clean.Log(profile), time.Since(start))
 		m.colorProfile = profile
 		return m.colorProfile
 	}

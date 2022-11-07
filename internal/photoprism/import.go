@@ -8,7 +8,6 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sort"
-	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -17,8 +16,9 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // Import represents an importer that can copy/move MediaFiles to the originals directory.
@@ -46,7 +46,7 @@ func (imp *Import) originalsPath() string {
 
 // thumbPath returns the thumbnails cache path as string.
 func (imp *Import) thumbPath() string {
-	return imp.conf.ThumbPath()
+	return imp.conf.ThumbCachePath()
 }
 
 // Start imports media files from a directory and converts/indexes them as needed.
@@ -61,24 +61,28 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	done := make(fs.Done)
 
 	if imp.conf == nil {
-		log.Errorf("import: config is nil")
+		log.Errorf("import: config is not set")
 		return done
 	}
 
 	ind := imp.index
 	importPath := opt.Path
 
+	// Check if the import folder exists.
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: %s does not exist", importPath))
 		return done
 	}
 
-	if err := mutex.MainWorker.Start(); err != nil {
-		event.Error(fmt.Sprintf("import: %s", err.Error()))
-		return done
-	}
+	// Make sure to run import only once, unless otherwise requested.
+	if !opt.NonBlocking {
+		if err := mutex.MainWorker.Start(); err != nil {
+			event.Error(fmt.Sprintf("import: %s", err.Error()))
+			return done
+		}
 
-	defer mutex.MainWorker.Stop()
+		defer mutex.MainWorker.Stop()
+	}
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("import: %s", err.Error())
@@ -100,13 +104,10 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	filesImported := 0
 
-	indexOpt := IndexOptions{
-		Path:    "/",
-		Rescan:  true,
-		Stack:   true,
-		Convert: imp.conf.Settings().Index.Convert && imp.conf.SidecarWritable(),
-	}
-
+	settings := imp.conf.Settings()
+	convert := settings.Index.Convert && imp.conf.SidecarWritable()
+	indexOpt := NewIndexOptions("/", true, convert, true, false, false)
+	skipRaw := imp.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(importPath); err != nil {
@@ -119,7 +120,6 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
-			log.Errorf("import: %s", strings.Replace(err.Error(), importPath, "", 1))
 			return godirwalk.SkipNode
 		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
@@ -130,23 +130,25 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			}()
 
 			if mutex.MainWorker.Canceled() {
-				return errors.New("import canceled")
+				return errors.New("canceled")
 			}
 
-			isDir := info.IsDir()
+			isDir, _ := info.IsDirOrSymlinkToDir()
 			isSymlink := info.IsSymlink()
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
-				if isDir && result != filepath.SkipDir {
-					if fileName != importPath {
-						directories = append(directories, fileName)
-					}
+				if !isDir || result == filepath.SkipDir {
+					return result
+				}
 
-					folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.BirthTime(fileName))
+				if fileName != importPath {
+					directories = append(directories, fileName)
+				}
 
-					if err := folder.Create(); err == nil {
-						log.Infof("import: added folder /%s", folder.Path)
-					}
+				folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.BirthTime(fileName))
+
+				if err := folder.Create(); err == nil {
+					log.Infof("import: added folder /%s", folder.Path)
 				}
 
 				return result
@@ -154,26 +156,31 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 			done[fileName] = fs.Found
 
-			if !fs.IsMedia(fileName) {
+			if !media.MainFile(fileName) {
 				return nil
 			}
 
 			mf, err := NewMediaFile(fileName)
 
+			// Check if file exists and is not empty.
 			if err != nil {
+				log.Warnf("import: %s", err)
+				return nil
+			} else if mf.Empty() {
 				return nil
 			}
 
-			if mf.FileSize() == 0 {
-				log.Infof("import: skipped empty file %s", sanitize.Log(mf.BaseName()))
+			// Ignore RAW images?
+			if mf.IsRaw() && skipRaw {
+				log.Infof("import: skipped raw %s", clean.Log(mf.RootRelName()))
 				return nil
 			}
 
+			// Find related files to import.
 			related, err := mf.RelatedFiles(imp.conf.Settings().StackSequences())
 
 			if err != nil {
 				event.Error(fmt.Sprintf("import: %s", err.Error()))
-
 				return nil
 			}
 
@@ -217,11 +224,11 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	if opt.RemoveEmptyDirectories {
 		// Remove empty directories from import path.
 		for _, directory := range directories {
-			if fs.IsEmpty(directory) {
+			if fs.DirIsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
-					log.Errorf("import: failed deleting empty folder %s (%s)", sanitize.Log(fs.RelName(directory, importPath)), err)
+					log.Errorf("import: failed deleting empty folder %s (%s)", clean.Log(fs.RelName(directory, importPath)), err)
 				} else {
-					log.Infof("import: deleted empty folder %s", sanitize.Log(fs.RelName(directory, importPath)))
+					log.Infof("import: deleted empty folder %s", clean.Log(fs.RelName(directory, importPath)))
 				}
 			}
 		}
@@ -235,7 +242,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			}
 
 			if err := os.Remove(file); err != nil {
-				log.Errorf("import: failed removing %s (%s)", sanitize.Log(fs.RelName(file, importPath)), err.Error())
+				log.Errorf("import: failed removing %s (%s)", clean.Log(fs.RelName(file, importPath)), err.Error())
 			}
 		}
 	}
@@ -245,9 +252,9 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	}
 
 	if filesImported > 0 {
-		// Run facial recognition if enabled.
+		// Run face recognition if enabled.
 		if w := NewFaces(imp.conf); w.Disabled() {
-			log.Debugf("import: skipping facial recognition")
+			log.Debugf("import: skipping face recognition")
 		} else if err := w.Start(FacesOptionsDefault()); err != nil {
 			log.Errorf("import: %s", err)
 		}
@@ -269,7 +276,7 @@ func (imp *Import) Cancel() {
 }
 
 // DestinationFilename returns the destination filename of a MediaFile to be imported.
-func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
+func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile, folder string) (string, error) {
 	fileName := mainFile.CanonicalName()
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
@@ -278,23 +285,21 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
 			existingFilename := FileName(f.FileRoot, f.FileName)
 			if fs.FileExists(existingFilename) {
-				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", sanitize.Log(filepath.Base(mediaFile.FileName())), sanitize.Log(f.FileName), mediaFile.Hash())
+				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
 			} else {
 				return existingFilename, nil
 			}
 		}
 	}
 
-	//	Mon Jan 2 15:04:05 -0700 MST 2006
-	pathName := filepath.Join(imp.originalsPath(), dateCreated.Format("2006/01"))
-
+	// Find and return available filename.
 	iteration := 0
-
+	pathName := filepath.Join(imp.originalsPath(), folder, dateCreated.Format("2006/01"))
 	result := filepath.Join(pathName, fileName+fileExtension)
 
 	for fs.FileExists(result) {
 		if mediaFile.Hash() == fs.Hash(result) {
-			return result, fmt.Errorf("%s already exists", sanitize.Log(fs.RelName(result, imp.originalsPath())))
+			return result, fmt.Errorf("%s already exists", clean.Log(fs.RelName(result, imp.originalsPath())))
 		}
 
 		iteration++

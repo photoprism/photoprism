@@ -7,36 +7,31 @@ import (
 )
 
 func TestRandomToken(t *testing.T) {
-	t.Run("size 4", func(t *testing.T) {
-		token := Token(4)
+	t.Run("Size4", func(t *testing.T) {
+		token := GenerateToken(4)
 		assert.NotEmpty(t, token)
 	})
-	t.Run("size 8", func(t *testing.T) {
-		token := Token(9)
+	t.Run("Size8", func(t *testing.T) {
+		token := GenerateToken(9)
 		assert.NotEmpty(t, token)
+	})
+	t.Run("Log", func(t *testing.T) {
+		for n := 0; n < 10; n++ {
+			token := GenerateToken(8)
+			t.Logf("%d: %s", n, token)
+			assert.NotEmpty(t, token)
+		}
 	})
 }
 
-func TestRandomPassword(t *testing.T) {
-	pw := Password()
-	t.Logf("password: %s", pw)
-	assert.Equal(t, 8, len(pw))
-}
-
-func BenchmarkRandomPassword(b *testing.B) {
+func BenchmarkGenerateToken4(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		Password()
+		GenerateToken(4)
 	}
 }
 
-func BenchmarkRandomToken4(b *testing.B) {
+func BenchmarkGenerateToken3(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		Token(4)
-	}
-}
-
-func BenchmarkRandomToken3(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		Token(3)
+		GenerateToken(3)
 	}
 }

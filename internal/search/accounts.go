@@ -6,8 +6,8 @@ import (
 )
 
 // Accounts returns a list of accounts.
-func Accounts(f form.SearchAccounts) (result entity.Accounts, err error) {
-	s := Db().Where(&entity.Account{})
+func Accounts(f form.SearchServices) (result entity.Services, err error) {
+	s := Db().Where(&entity.Service{})
 
 	if f.Share {
 		s = s.Where("acc_share = 1")

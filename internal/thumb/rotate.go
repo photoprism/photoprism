@@ -40,7 +40,7 @@ func Rotate(img image.Image, o int) image.Image {
 	case OrientationTransverse:
 		img = imaging.Transverse(img)
 	default:
-		log.Debugf("rotate: invalid orientation %d", o)
+		log.Debugf("thumb: invalid orientation %d (rotate)", o)
 	}
 
 	return img

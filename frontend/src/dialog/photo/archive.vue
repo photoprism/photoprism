@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="350" class="p-photo-archive-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" lazy persistent max-width="350" class="p-photo-archive-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>

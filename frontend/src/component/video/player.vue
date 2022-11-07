@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "PPhotoPlayer",
+  name: "PVideoPlayer",
   props: {
     show: {
       type: Boolean,
@@ -54,15 +54,11 @@ export default {
     },
     success: {
       type: Function,
-      default() {
-        return false;
-      }
+      default: () => {},
     },
     error: {
       type: Function,
-      default() {
-        return false;
-      }
+      default: () => {},
     }
   },
   data: () => ({

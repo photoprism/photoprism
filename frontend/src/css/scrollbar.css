@@ -1,0 +1,85 @@
+/* Scrollbar Styles */
+
+/*
+see https://css-tricks.com/custom-scrollbars-in-webkit/#aa-the-different-pieces
+*/
+
+/* Hide scrollbar in navigation to save space */
+#p-navigation ::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+[data-color-mode=light][data-light-theme*=dark],
+[data-color-mode=dark][data-dark-theme*=dark] {
+    color-scheme: dark;
+}
+
+:root,
+[data-color-mode=light][data-light-theme*=light],
+[data-color-mode=dark][data-dark-theme*=light] {
+    color-scheme: light;
+}
+
+body.nojs::-webkit-scrollbar,
+body.viewer::-webkit-scrollbar,
+body.player::-webkit-scrollbar,
+body.hide-scrollbar::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+body.nojs,
+body.viewer,
+body.player,
+body.hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+body.dark-theme {
+    color-scheme: dark !important;
+}
+
+body.firefox.dark-theme {
+    scrollbar-color: dark !important;
+}
+
+/* Chrome specific styles */
+
+::-webkit-scrollbar {
+    height: 7px;
+    width: 7px;
+    overflow: visible;
+}
+
+::-webkit-scrollbar-button {
+    height: 0;
+    width: 0;
+}
+
+@media only screen and (min-width: 600px) {
+    ::-webkit-scrollbar {
+        height: 11px;
+        width: 11px;
+        overflow: visible;
+    }
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(242, 242, 242, .32);
+    border: solid transparent;
+    border-width: 0 0 0 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .64);
+    border: solid transparent;
+    border-width: 1px 1px 1px 6px;
+    min-height: 28px;
+    padding: 100px 0 0;
+}

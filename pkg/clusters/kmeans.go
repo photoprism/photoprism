@@ -23,7 +23,7 @@ type kmeansClusterer struct {
 	alpha     float64
 	dimension int
 
-	distance DistanceFunc
+	distance DistFunc
 
 	// slices holding the cluster mapping and sizes. Access is synchronized to avoid read during computation.
 	mu   sync.RWMutex
@@ -37,7 +37,7 @@ type kmeansClusterer struct {
 }
 
 // Implementation of k-means++ algorithm with online learning
-func KMeans(iterations, clusters int, distance DistanceFunc) (HardClusterer, error) {
+func KMeans(iterations, clusters int, distance DistFunc) (HardClusterer, error) {
 	if iterations < 1 {
 		return nil, errZeroIterations
 	}
@@ -46,12 +46,12 @@ func KMeans(iterations, clusters int, distance DistanceFunc) (HardClusterer, err
 		return nil, errOneCluster
 	}
 
-	var d DistanceFunc
+	var d DistFunc
 	{
 		if distance != nil {
 			d = distance
 		} else {
-			d = EuclideanDistance
+			d = EuclideanDist
 		}
 	}
 

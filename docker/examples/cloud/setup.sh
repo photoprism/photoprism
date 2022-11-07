@@ -28,7 +28,7 @@ if [[ -z $(swapon --show) ]]; then
 fi
 
 # set apt defaults
-echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
 echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
 echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
 echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
@@ -44,7 +44,7 @@ apt-get -qq install --no-install-recommends apt-transport-https ca-certificates 
 
 # install docker if needed
 if ! command -v docker &> /dev/null; then
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/download.docker.com.gpg
   add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
   apt-get update
   apt-get -qq install docker-ce
@@ -108,7 +108,7 @@ apt-get autoclean
 apt-get autoremove
 
 # start services using docker-compose
-(cd /opt/photoprism && docker-compose pull && docker-compose stop && docker-compose up --remove-orphans -d)
+(cd /opt/photoprism && docker compose pull && docker compose stop && docker compose up --remove-orphans -d)
 
 # show public server URL and initial admin password
 printf "\nServer URL:\n\n  https://%s/\n\nInitial admin password:\n\n  %s\n\n" "${PUBLIC_IP}" "${ADMIN_PASSWORD}"

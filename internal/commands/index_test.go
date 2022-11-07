@@ -5,11 +5,10 @@ import (
 	"time"
 
 	"github.com/leandro-lugaresi/hub"
-	"github.com/photoprism/photoprism/internal/event"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/capture"
 )
 
@@ -20,13 +19,14 @@ func TestIndexCommand(t *testing.T) {
 
 	s := event.Subscribe("log.info")
 	defer event.Unsubscribe(s)
-	logs := ""
+
+	var l string
 
 	assert.IsType(t, hub.Subscription{}, s)
 
 	go func() {
 		for msg := range s.Receiver {
-			logs += msg.Fields["message"].(string) + "\n"
+			l += msg.Fields["message"].(string) + "\n"
 		}
 	}()
 
@@ -39,16 +39,16 @@ func TestIndexCommand(t *testing.T) {
 	}
 
 	if stdout != "" {
-		t.Errorf("unexpected stdout output: %s", stdout)
+		t.Logf("stdout: %s", stdout)
 	}
 
 	time.Sleep(time.Second)
 
-	if output := logs; output != "" {
-		// Expected index command output.
-		assert.Contains(t, output, "indexing originals")
-		assert.Contains(t, output, "classify: loading labels")
-		assert.Contains(t, output, "index: found no .ppignore file")
+	// Check command output.
+	if l != "" {
+		assert.NotContains(t, l, "error")
+		assert.NotContains(t, l, "warning")
+		assert.Contains(t, l, "closed database connection")
 	} else {
 		t.Fatal("log output missing")
 	}

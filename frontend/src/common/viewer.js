@@ -1,37 +1,34 @@
 /*
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+    <https://docs.photoprism.app/license/agpl>
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    The AGPL is supplemented by our Trademark and Brand Guidelines,
+    which describe how our Brand Assets may be used:
+    <https://photoprism.app/trademark>
 
-    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
-    to describe our software, run your own server, for educational purposes, but not for
-    offering commercial goods, products, or services without prior written permission.
-    In other words, please ask.
-
-Feel free to send an e-mail to hello@photoprism.app if you have questions,
+Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.app/developer-guide/
+<https://docs.photoprism.app/developer-guide/>
 
 */
 
 import PhotoSwipe from "photoswipe";
 import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
 import Event from "pubsub-js";
-import Util from "./util";
+import Util from "util.js";
+import Api from "./api";
+import Thumb from "model/thumb";
 
 const thumbs = window.__CONFIG__.thumbs;
 
@@ -124,24 +121,26 @@ class Viewer {
         // isFake    - true when content is added to fake caption container
         //             (used to get size of next or previous caption)
 
-        if (!item.title) {
+        item.title = item.Title;
+
+        if (!item.Title) {
           captionEl.children[0].innerHTML = "";
           return false;
         }
 
-        captionEl.children[0].innerHTML = Util.encodeHTML(item.title);
+        captionEl.children[0].innerHTML = Util.encodeHTML(item.Title);
 
-        if (item.playable) {
+        if (item.Playable) {
           captionEl.children[0].innerHTML +=
             ' <i aria-hidden="true" class="v-icon material-icons theme--dark" title="Play">play_circle_fill</i>';
         }
 
-        if (item.description) {
+        if (item.Description) {
           captionEl.children[0].innerHTML +=
-            '<br><span class="description">' + Util.encodeHTML(item.description) + "</span>";
+            '<br><span class="description">' + Util.encodeHTML(item.Description) + "</span>";
         }
 
-        if (item.playable) {
+        if (item.Playable) {
           captionEl.children[0].innerHTML =
             "<button>" + captionEl.children[0].innerHTML + "</button>";
         }
@@ -200,9 +199,9 @@ class Viewer {
     });
 
     gallery.listen("gettingData", function (index, item) {
-      item.src = item[nextSize].src;
-      item.w = item[nextSize].w;
-      item.h = item[nextSize].h;
+      item.src = item.Thumbs[nextSize].src;
+      item.w = item.Thumbs[nextSize].w;
+      item.h = item.Thumbs[nextSize].h;
       previousSize = nextSize;
     });
 
@@ -219,6 +218,85 @@ class Viewer {
     }
 
     return "fit_7680";
+  }
+
+  static show(ctx, index) {
+    if (ctx.loading || !ctx.listen || ctx.viewer.loading || !ctx.results[index]) {
+      return false;
+    }
+
+    const selected = ctx.results[index];
+
+    if (!ctx.viewer.dirty && ctx.viewer.results && ctx.viewer.results.length > index) {
+      // Reuse existing viewer result if possible.
+      let i = -1;
+
+      if (ctx.viewer.results[index] && ctx.viewer.results[index].UID === selected.UID) {
+        i = index;
+      } else {
+        i = ctx.viewer.results.findIndex((p) => p.UID === selected.UID);
+      }
+
+      if (
+        i > -1 &&
+        (((ctx.viewer.complete || ctx.complete) &&
+          ctx.viewer.results.length >= ctx.results.length) ||
+          i + ctx.viewer.batchSize <= ctx.viewer.results.length)
+      ) {
+        ctx.$viewer.show(ctx.viewer.results, i);
+        return;
+      }
+    }
+
+    // Fetch photos from server API.
+    ctx.viewer.loading = true;
+
+    const params = ctx.searchParams();
+    params.count = params.offset + ctx.viewer.batchSize;
+    params.offset = 0;
+
+    // Fetch viewer results from API.
+    return Api.get("photos/view", { params })
+      .then((response) => {
+        const count = response && response.data ? response.data.length : 0;
+        if (count === 0) {
+          ctx.$notify.warn(ctx.$gettext("No pictures found"));
+          ctx.viewer.dirty = true;
+          ctx.viewer.complete = false;
+          return;
+        }
+
+        // Process response.
+        if (response.headers && response.headers["x-count"]) {
+          const c = parseInt(response.headers["x-count"]);
+          const l = parseInt(response.headers["x-limit"]);
+          ctx.viewer.complete = c < l;
+        } else {
+          ctx.viewer.complete = ctx.complete;
+        }
+
+        let i;
+
+        if (response.data[index] && response.data[index].UID === selected.UID) {
+          i = index;
+        } else {
+          i = response.data.findIndex((p) => p.UID === selected.UID);
+        }
+
+        ctx.viewer.results = Thumb.wrap(response.data);
+
+        // Show photos.
+        ctx.$viewer.show(ctx.viewer.results, i);
+        ctx.viewer.dirty = false;
+      })
+      .catch(() => {
+        ctx.viewer.dirty = true;
+        ctx.viewer.complete = false;
+      })
+      .finally(() => {
+        // Unblock.
+        ctx.viewer.loading = false;
+      });
   }
 }
 

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -23,11 +23,16 @@ type Camera struct {
 	CameraMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
 	CameraModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
 	CameraType        string     `gorm:"type:VARCHAR(100);" json:"Type,omitempty" yaml:"Type,omitempty"`
-	CameraDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CameraNotes       string     `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CameraDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CameraNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"-"`
+}
+
+// TableName returns the entity table name.
+func (Camera) TableName() string {
+	return "cameras"
 }
 
 var UnknownCamera = Camera{
@@ -124,7 +129,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 		cameraCache.SetDefault(m.CameraSlug, &result)
 		return &result
 	} else {
-		log.Errorf("camera: %s (create %s)", err.Error(), sanitize.Log(m.String()))
+		log.Errorf("camera: %s (create %s)", err.Error(), clean.Log(m.String()))
 	}
 
 	return &UnknownCamera
@@ -132,7 +137,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 
 // String returns an identifier that can be used in logs.
 func (m *Camera) String() string {
-	return sanitize.Log(m.CameraName)
+	return clean.Log(m.CameraName)
 }
 
 // Unknown returns true if the camera is not a known make or model.

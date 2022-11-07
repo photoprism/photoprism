@@ -5,6 +5,8 @@ import (
 	"path"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -17,8 +19,8 @@ func FilesByPath(limit, offset int, rootName, pathName string) (files entity.Fil
 	err = Db().
 		Table("files").Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
-		Where("files.file_missing = 0").
-		Where("files.file_root = ? AND photos.photo_path = ?", rootName, pathName).
+		Where("files.file_missing = 0 AND files.file_root = ?", rootName).
+		Where("photos.photo_path = ?", pathName).
 		Order("files.file_name").
 		Limit(limit).Offset(offset).
 		Find(&files).Error
@@ -57,39 +59,54 @@ func FilesByUID(u []string, limit int, offset int) (files entity.Files, err erro
 }
 
 // FileByPhotoUID finds a file for the given photo UID.
-func FileByPhotoUID(u string) (file entity.File, err error) {
-	if err := Db().Where("photo_uid = ? AND file_primary = 1", u).Preload("Photo").First(&file).Error; err != nil {
-		return file, err
+func FileByPhotoUID(photoUID string) (*entity.File, error) {
+	f := entity.File{}
+
+	if photoUID == "" {
+		return &f, fmt.Errorf("photo uid required")
 	}
 
-	return file, nil
+	err := Db().Where("photo_uid = ? AND file_primary = 1", photoUID).Preload("Photo").First(&f).Error
+	return &f, err
 }
 
 // VideoByPhotoUID finds a video for the given photo UID.
-func VideoByPhotoUID(u string) (file entity.File, err error) {
-	if err := Db().Where("photo_uid = ? AND file_video = 1", u).Preload("Photo").First(&file).Error; err != nil {
-		return file, err
+func VideoByPhotoUID(photoUID string) (*entity.File, error) {
+	f := entity.File{}
+
+	if photoUID == "" {
+		return &f, fmt.Errorf("photo uid required")
 	}
 
-	return file, nil
+	err := Db().Where("photo_uid = ? AND (file_video = 1 OR file_type = ?)", photoUID, fs.ImageGIF).
+		Order("file_video DESC, file_duration DESC, file_frames DESC").
+		Preload("Photo").First(&f).Error
+	return &f, err
 }
 
 // FileByUID finds a file entity for the given UID.
-func FileByUID(uid string) (file entity.File, err error) {
-	if err := Db().Where("file_uid = ?", uid).Preload("Photo").First(&file).Error; err != nil {
-		return file, err
+func FileByUID(fileUID string) (*entity.File, error) {
+	f := entity.File{}
+
+	if fileUID == "" {
+		return &f, fmt.Errorf("file uid required")
 	}
 
-	return file, nil
+	err := Db().Where("file_uid = ?", fileUID).Preload("Photo").First(&f).Error
+	return &f, err
 }
 
 // FileByHash finds a file with a given hash string.
-func FileByHash(fileHash string) (file entity.File, err error) {
-	if err := Db().Where("file_hash = ?", fileHash).Preload("Photo").First(&file).Error; err != nil {
-		return file, err
+func FileByHash(fileHash string) (*entity.File, error) {
+	f := entity.File{}
+
+	if fileHash == "" {
+		return &f, fmt.Errorf("file hash required")
 	}
 
-	return file, nil
+	err := Db().Where("file_hash = ?", fileHash).Preload("Photo").First(&f).Error
+
+	return &f, err
 }
 
 // RenameFile renames an indexed file.
@@ -102,7 +119,7 @@ func RenameFile(srcRoot, srcName, destRoot, destName string) error {
 }
 
 // SetPhotoPrimary sets a new primary image file for a photo.
-func SetPhotoPrimary(photoUID, fileUID string) error {
+func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 	if photoUID == "" {
 		return fmt.Errorf("photo uid is missing")
 	}
@@ -123,14 +140,25 @@ func SetPhotoPrimary(photoUID, fileUID string) error {
 		return fmt.Errorf("file uid is missing")
 	}
 
-	Db().Model(entity.File{}).Where("photo_uid = ? AND file_uid <> ?", photoUID, fileUID).UpdateColumn("file_primary", 0)
-	return Db().Model(entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).UpdateColumn("file_primary", 1).Error
+	if err = Db().Model(entity.File{}).
+		Where("photo_uid = ? AND file_uid <> ?", photoUID, fileUID).
+		UpdateColumn("file_primary", 0).Error; err != nil {
+		return err
+	} else if err = Db().
+		Model(entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).
+		UpdateColumn("file_primary", 1).Error; err != nil {
+		return err
+	} else {
+		entity.File{PhotoUID: photoUID}.RegenerateIndex()
+	}
+
+	return nil
 }
 
 // SetFileError updates the file error column.
 func SetFileError(fileUID, errorString string) {
 	if err := Db().Model(entity.File{}).Where("file_uid = ?", fileUID).UpdateColumn("file_error", errorString).Error; err != nil {
-		log.Errorf("query: %s", err.Error())
+		log.Errorf("files: %s (set error)", err.Error())
 	}
 }
 

@@ -6,14 +6,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -22,16 +23,16 @@ import (
 // POST /api/v1/index
 func StartIndexing(router *gin.RouterGroup) {
 	router.POST("/index", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
+		settings := conf.Settings()
 
-		if !conf.Settings().Features.Library {
+		if !settings.Features.Library {
 			AbortFeatureDisabled(c)
 			return
 		}
@@ -45,36 +46,36 @@ func StartIndexing(router *gin.RouterGroup) {
 			return
 		}
 
+		// Configure index options.
 		path := conf.OriginalsPath()
+		convert := settings.Index.Convert && conf.SidecarWritable()
+		skipArchived := settings.Index.SkipArchived
 
-		ind := service.Index()
-
-		indOpt := photoprism.IndexOptions{
-			Rescan:  f.Rescan,
-			Convert: conf.Settings().Index.Convert && conf.SidecarWritable(),
-			Path:    filepath.Clean(f.Path),
-			Stack:   true,
-		}
+		indOpt := photoprism.NewIndexOptions(filepath.Clean(f.Path), f.Rescan, convert, true, false, skipArchived)
 
 		if len(indOpt.Path) > 1 {
-			event.InfoMsg(i18n.MsgIndexingFiles, sanitize.Log(indOpt.Path))
+			event.InfoMsg(i18n.MsgIndexingFiles, clean.Log(indOpt.Path))
 		} else {
 			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}
 
+		// Start indexing.
+		ind := get.Index()
 		indexed := ind.Start(indOpt)
 
 		RemoveFromFolderCache(entity.RootOriginals)
 
-		prg := service.Purge()
-
+		// Configure purge options.
 		prgOpt := photoprism.PurgeOptions{
 			Path:   filepath.Clean(f.Path),
 			Ignore: indexed,
 		}
 
+		// Start purging.
+		prg := get.Purge()
+
 		if files, photos, err := prg.Start(prgOpt); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		} else if len(files) > 0 || len(photos) > 0 {
 			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
@@ -84,7 +85,7 @@ func StartIndexing(router *gin.RouterGroup) {
 			"step": "moments",
 		})
 
-		moments := service.Moments()
+		moments := get.Moments()
 
 		if err := moments.Start(); err != nil {
 			log.Warnf("moments: %s", err)
@@ -108,21 +109,20 @@ func StartIndexing(router *gin.RouterGroup) {
 // DELETE /api/v1/index
 func CancelIndexing(router *gin.RouterGroup) {
 	router.DELETE("/index", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		if !conf.Settings().Features.Library {
 			AbortFeatureDisabled(c)
 			return
 		}
 
-		ind := service.Index()
+		ind := get.Index()
 
 		ind.Cancel()
 

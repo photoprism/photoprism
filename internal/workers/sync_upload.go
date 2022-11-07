@@ -11,11 +11,11 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Uploads local files to a remote account
-func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
+func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 	maxResults := 250
 
 	// Get upload file list from database
@@ -31,7 +31,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 		return true, nil
 	}
 
-	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
+	client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
 	existingDirs := make(map[string]string)
 
 	for _, file := range files {
@@ -51,11 +51,11 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 		}
 
 		if err := client.Upload(fileName, remoteName); err != nil {
-			worker.logError(err)
+			w.logError(err)
 			continue // try again next time
 		}
 
-		log.Infof("sync: uploaded %s to %s (%s)", sanitize.Log(file.FileName), sanitize.Log(remoteName), a.AccName)
+		log.Infof("sync: uploaded %s to %s (%s)", clean.Log(file.FileName), clean.Log(remoteName), a.AccName)
 
 		fileSync := entity.NewFileSync(a.ID, remoteName)
 		fileSync.Status = entity.FileSyncUploaded
@@ -69,7 +69,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 			return false, nil
 		}
 
-		worker.logError(entity.Db().Save(&fileSync).Error)
+		w.logError(entity.Db().Save(&fileSync).Error)
 	}
 
 	return false, nil

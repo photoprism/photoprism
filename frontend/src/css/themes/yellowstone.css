@@ -1,5 +1,9 @@
 /* Yellowstone Theme */
 
+body.dark-theme.theme-yellowstone {
+    background: #444 !important;
+}
+
 #photoprism.container.theme-yellowstone {
     background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
 }
@@ -103,4 +107,18 @@
 #photoprism.theme-yellowstone .theme--light.v-list .v-list__tile__mask {
     color: #cccccc;
     background: transparent;
+}
+
+#photoprism.theme-yellowstone .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #b38000;
+}
+
+#photoprism.theme-yellowstone .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #cc9200;
+}
+
+#photoprism.theme-yellowstone .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-yellowstone .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #e6a400;
 }

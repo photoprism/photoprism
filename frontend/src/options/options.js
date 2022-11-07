@@ -1,8 +1,8 @@
 import { timeZonesNames } from "@vvo/tzdb";
 import { $gettext } from "common/vm";
 import { Info } from "luxon";
-import { config } from "../session";
-import { TypeVideo, TypeImage, TypeLive, TypeRaw } from "../model/photo";
+import { config } from "app/session";
+import { MediaAnimated, MediaImage, MediaLive, MediaRaw, MediaVideo } from "model/photo";
 
 export const TimeZones = () =>
   [
@@ -79,193 +79,167 @@ export const MonthsShort = () => {
   return result;
 };
 
+// Available locales sorted by region and alphabet.
 export const Languages = () => [
   {
-    text: "English",
-    translated: $gettext("English"),
+    text: "English", // English
+    translated: "English",
     value: "en",
   },
   {
-    text: "Čeština",
-    translated: $gettext("Czech"),
+    text: "Bahasa Indonesia", // Bahasa Indonesia
+    value: "id",
+  },
+  {
+    text: "Català", // Catalan
+    value: "ca",
+  },
+  {
+    text: "Čeština", // Czech
     value: "cs",
   },
   {
-    text: "Dansk",
-    translated: $gettext("Danish"),
+    text: "Dansk", // Danish
     value: "da",
   },
   {
-    text: "Deutsch",
-    translated: $gettext("German"),
+    text: "Deutsch", // German
     value: "de",
   },
   {
-    text: "Español",
-    translated: $gettext("Spanish"),
+    text: "Español", // Spanish
     value: "es",
   },
   {
-    text: "Français",
-    translated: $gettext("French"),
+    text: "Français", // French
     value: "fr",
   },
   {
-    text: "עברית",
-    translated: $gettext("Hebrew"),
+    text: "Ελληνικά", // Greek
+    value: "el",
+  },
+  {
+    text: "עברית", // Hebrew
     value: "he",
     rtl: true,
   },
   {
-    text: "हिन्दी",
-    translated: $gettext("Hindi"),
-    value: "hi",
+    text: "Hrvatski", // Croatian
+    value: "hr",
   },
   {
-    text: "Magyar",
-    translated: $gettext("Hungarian"),
+    text: "Lietuvis", // Lithuanian
+    value: "lt",
+  },
+  {
+    text: "Magyar", // Hungarian
     value: "hu",
   },
   {
-    text: "Bahasa Indonesia",
-    translated: $gettext("Bahasa Indonesia"),
-    value: "id",
+    text: "Melayu", // Malay
+    value: "ms",
   },
   {
-    text: "Italian",
-    translated: $gettext("Italian"),
-    value: "it",
-  },
-  {
-    text: "한국어",
-    translated: $gettext("Korean"),
-    value: "ko",
-  },
-  {
-    text: "Norsk (Bokmål)",
-    translated: $gettext("Norwegian"),
+    text: "Norsk (Bokmål)", // Norwegian
     value: "nb",
   },
   {
-    text: "Nederlands",
-    translated: $gettext("Dutch"),
+    text: "Italiano", // Italian
+    value: "it",
+  },
+  {
+    text: "Nederlands", // Dutch
     value: "nl",
   },
   {
-    text: "Polski",
-    translated: $gettext("Polish"),
+    text: "Polski", // Polish
     value: "pl",
   },
   {
-    text: "Português de Portugal",
-    translated: $gettext("Português de Portugal"),
+    text: "Português", // Portuguese (Portugal)
     value: "pt",
   },
   {
-    text: "Português do Brasil",
-    translated: $gettext("Brazilian Portuguese"),
+    text: "Português do Brasil", // Portuguese (Brazil)
     value: "pt_BR",
   },
   {
-    text: "Русский",
-    translated: $gettext("Russian"),
-    value: "ru",
-  },
-  {
-    text: "Slovenčina",
-    translated: $gettext("Slovak"),
+    text: "Slovenčina", // Slovak
     value: "sk",
   },
   {
-    text: "简体中文",
-    translated: $gettext("Chinese Simplified"),
+    text: "Slovenščina", // Slovene
+    value: "sl",
+  },
+  {
+    text: "Suomi", // Finnish
+    value: "fi",
+  },
+  {
+    text: "Svenska", // Swedish
+    value: "sv",
+  },
+  {
+    text: "Română", // Romanian
+    value: "ro",
+  },
+  {
+    text: "Türk", // Turkish
+    value: "tr",
+  },
+  {
+    text: "عربى", // Arabic
+    value: "ar",
+    rtl: true,
+  },
+  {
+    text: "کوردی", // Kurdish
+    value: "ku",
+    rtl: true,
+  },
+  {
+    text: "български", // Bulgarian
+    value: "bg",
+  },
+  {
+    text: "Українська", // Ukrainian
+    value: "uk",
+  },
+  {
+    text: "Русский", // Russian
+    value: "ru",
+  },
+  {
+    text: "简体中文", // Chinese (Simplified)
     value: "zh",
   },
   {
-    text: "繁体中文",
-    translated: $gettext("Chinese Traditional"),
+    text: "繁体中文", // Chinese (Traditional)
     value: "zh_TW",
   },
   {
-    text: "日本語",
-    translated: $gettext("Japanese"),
+    text: "日本語", // Japanese
     value: "ja_JP",
   },
   {
-    text: "کوردی",
-    translated: $gettext("Kurdish"),
-    value: "ku",
+    text: "한국어", // Korean
+    value: "ko",
+  },
+  {
+    text: "हिन्दी", // Hindi
+    value: "hi",
+  },
+  {
+    text: "ภาษาไทย", // Thai
+    value: "th",
+  },
+  {
+    text: "فارسی", // Persian
+    value: "fa",
     rtl: true,
   },
 ];
 
-export const Themes = () => [
-  {
-    text: $gettext("Default"),
-    value: "default",
-    disabled: false,
-  },
-  {
-    text: $gettext("Grayscale"),
-    value: "grayscale",
-    disabled: false,
-  },
-  {
-    text: $gettext("Vanta"),
-    value: "vanta",
-    disabled: false,
-  },
-  {
-    text: $gettext("Abyss"),
-    value: "abyss",
-    disabled: false,
-  },
-  {
-    text: $gettext("Moonlight"),
-    value: "moonlight",
-    disabled: false,
-  },
-  {
-    text: $gettext("Onyx"),
-    value: "onyx",
-    disabled: false,
-  },
-  {
-    text: $gettext("Cyano"),
-    value: "cyano",
-    disabled: false,
-  },
-  {
-    text: $gettext("Lavender"),
-    value: "lavender",
-    disabled: false,
-  },
-  {
-    text: $gettext("Gemstone"),
-    value: "gemstone",
-    disabled: false,
-  },
-  {
-    text: $gettext("Raspberry"),
-    value: "raspberry",
-    disabled: false,
-  },
-  {
-    text: $gettext("Seaweed"),
-    value: "seaweed",
-    disabled: false,
-  },
-  {
-    text: $gettext("Shadow"),
-    value: "shadow",
-    disabled: false,
-  },
-  {
-    text: $gettext("Yellowstone"),
-    value: "yellowstone",
-    disabled: false,
-  },
-];
 export const MapsAnimate = () => [
   {
     text: $gettext("None"),
@@ -287,21 +261,21 @@ export const MapsAnimate = () => [
 
 export const MapsStyle = () => [
   {
-    text: $gettext("Offline"),
+    text: $gettext("Default"),
+    value: "",
+  },
+  {
+    text: $gettext("Basic"),
     value: "offline",
   },
   {
     text: $gettext("Streets"),
     value: "streets",
-  },
-  {
-    text: $gettext("Hybrid"),
-    value: "hybrid",
     sponsor: true,
   },
   {
-    text: $gettext("Topographic"),
-    value: "topographique",
+    text: $gettext("Satellite"),
+    value: "hybrid",
     sponsor: true,
   },
   {
@@ -309,24 +283,79 @@ export const MapsStyle = () => [
     value: "outdoor",
     sponsor: true,
   },
+  {
+    text: $gettext("Topographic"),
+    value: "topographique",
+    sponsor: true,
+  },
 ];
 
 export const PhotoTypes = () => [
   {
     text: $gettext("Image"),
-    value: TypeImage,
+    value: MediaImage,
+  },
+  {
+    text: $gettext("Animated"),
+    value: MediaAnimated,
   },
   {
     text: $gettext("Raw"),
-    value: TypeRaw,
+    value: MediaRaw,
   },
   {
     text: $gettext("Live"),
-    value: TypeLive,
+    value: MediaLive,
   },
   {
     text: $gettext("Video"),
-    value: TypeVideo,
+    value: MediaVideo,
+  },
+];
+
+export const Timeouts = () => [
+  {
+    text: $gettext("Default"),
+    value: "",
+  },
+  {
+    text: $gettext("High"),
+    value: "high",
+  },
+  {
+    text: $gettext("Low"),
+    value: "low",
+  },
+  {
+    text: $gettext("None"),
+    value: "none",
+  },
+];
+
+export const RetryLimits = () => [
+  {
+    text: "None",
+    value: -1,
+  },
+  {
+    text: "1",
+    value: 1,
+  },
+  {
+    text: "2",
+    value: 2,
+  },
+  {
+    text: "3",
+    value: 3,
+  },
+  {
+    text: "4",
+    value: 4,
+  },
+  {
+    text: "5",
+    value: 5,
   },
 ];
 
@@ -384,4 +413,10 @@ export const ThumbFilters = () => [
   { value: "lanczos", text: $gettext("Lanczos: Detail Preservation, Minimal Artifacts") },
   { value: "cubic", text: $gettext("Cubic: Moderate Quality, Good Performance") },
   { value: "linear", text: $gettext("Linear: Very Smooth, Best Performance") },
+];
+
+export const Gender = () => [
+  { value: "male", text: $gettext("Male") },
+  { value: "female", text: $gettext("Female") },
+  { value: "other", text: $gettext("Other") },
 ];

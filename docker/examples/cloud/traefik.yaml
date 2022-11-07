@@ -9,8 +9,8 @@
 #    cd /opt/photoprism
 #    nano docker-compose.yml
 #    nano traefik.yaml
-#    docker-compose stop
-#    docker-compose up -d
+#    docker compose stop
+#    docker compose up -d
 #
 #  You should now be able to access your instance without security warnings.
 #  -------------------------------------------------------------------------

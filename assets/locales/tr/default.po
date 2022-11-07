@@ -1,0 +1,376 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"PO-Revision-Date: 2022-11-01 13:26+0100\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"Language-Team: none\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.2\n"
+
+#: messages.go:94
+msgid "Unexpected error, please try again"
+msgstr "Beklenmeyen hata, lütfen tekrar deneyin"
+
+#: messages.go:95
+msgid "Invalid request"
+msgstr "Geçersiz istek"
+
+#: messages.go:96
+msgid "Changes could not be saved"
+msgstr "Değişiklikler kaydedilemedi"
+
+#: messages.go:97
+msgid "Could not be deleted"
+msgstr "Silinemedi"
+
+#: messages.go:98
+#, c-format
+msgid "%s already exists"
+msgstr "%s Zaten var"
+
+#: messages.go:99
+msgid "Not found"
+msgstr "Bulunamadı"
+
+#: messages.go:100
+msgid "File not found"
+msgstr "Dosya bulunamadı"
+
+#: messages.go:101
+msgid "File too large"
+msgstr "Dosya çok büyük"
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr "Desteklenmeyen format"
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr "Orijinaller klasörü boş"
+
+#: messages.go:104
+msgid "Selection not found"
+msgstr "Seçim bulunamadı"
+
+#: messages.go:105
+msgid "Entity not found"
+msgstr "Varlık bulunamadı"
+
+#: messages.go:106
+msgid "Account not found"
+msgstr "Hesap bulunamadı"
+
+#: messages.go:107
+msgid "User not found"
+msgstr "Kullanıcı bulunamadı"
+
+#: messages.go:108
+msgid "Label not found"
+msgstr "Etiket bulunamadı"
+
+#: messages.go:109
+msgid "Album not found"
+msgstr "Albüm bulunamadı"
+
+#: messages.go:110
+msgid "Subject not found"
+msgstr "Konu bulunamadı"
+
+#: messages.go:111
+msgid "Person not found"
+msgstr "Kişi bulunamadı"
+
+#: messages.go:112
+msgid "Face not found"
+msgstr "Yüz bulunamadı"
+
+#: messages.go:113
+msgid "Not available in public mode"
+msgstr "Genel modda mevcut değil"
+
+#: messages.go:114
+msgid "Not available in read-only mode"
+msgstr "Salt okunur modda kullanılamaz"
+
+#: messages.go:115
+msgid "Please log in to your account"
+msgstr "Lütfen hesabınıza giriş yapın"
+
+#: messages.go:116
+msgid "Permission denied"
+msgstr "İzin reddedildi"
+
+#: messages.go:117
+msgid "Upload might be offensive"
+msgstr "Yükleme rahatsız edici olabilir"
+
+#: messages.go:118
+msgid "Upload failed"
+msgstr "Yükleme başarısız"
+
+#: messages.go:119
+msgid "No items selected"
+msgstr "Seçili öğe yok"
+
+#: messages.go:120
+msgid "Failed creating file, please check permissions"
+msgstr "Dosya oluşturulamadı, lütfen izinleri kontrol edin"
+
+#: messages.go:121
+msgid "Failed creating folder, please check permissions"
+msgstr "Klasör oluşturulamadı, lütfen izinleri kontrol edin"
+
+#: messages.go:122
+msgid "Could not connect, please try again"
+msgstr "Bağlanılamadı, lütfen tekrar deneyin"
+
+#: messages.go:123
+msgid "Invalid password, please try again"
+msgstr "Geçersiz şifre, lütfen tekrar deneyin"
+
+#: messages.go:124
+msgid "Feature disabled"
+msgstr "Özellik devre dışı"
+
+#: messages.go:125
+msgid "No labels selected"
+msgstr "Seçili etiket yok"
+
+#: messages.go:126
+msgid "No albums selected"
+msgstr "Seçili albüm yok"
+
+#: messages.go:127
+msgid "No files available for download"
+msgstr "İndirilebilecek dosya yok"
+
+#: messages.go:128
+msgid "Failed to create zip file"
+msgstr "Zip dosyası oluşturulamadı"
+
+#: messages.go:129
+msgid "Invalid credentials"
+msgstr "Geçersiz kimlik bilgileri"
+
+#: messages.go:130
+msgid "Invalid link"
+msgstr "Geçersiz link"
+
+#: messages.go:131
+msgid "Invalid name"
+msgstr "Geçersiz isim"
+
+#: messages.go:132
+msgid "Busy, please try again later"
+msgstr "Meşgul, lütfen daha sonra tekrar deneyin"
+
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "Uyandırma aralığı %s'dır, ancak 1 saat veya daha az olmalıdır"
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr "Hesabınız bağlanamadı"
+
+#: messages.go:137
+msgid "Changes successfully saved"
+msgstr "Değişiklikler başarıyla kaydedildi"
+
+#: messages.go:138
+msgid "Album created"
+msgstr "Albüm oluşturuldu"
+
+#: messages.go:139
+msgid "Album saved"
+msgstr "Albüm kaydedildi"
+
+#: messages.go:140
+#, c-format
+msgid "Album %s deleted"
+msgstr "Albüm %s silindi"
+
+#: messages.go:141
+msgid "Album contents cloned"
+msgstr "Albüm içeriği klonlandı"
+
+#: messages.go:142
+msgid "File removed from stack"
+msgstr "Dosya yığından kaldırıldı"
+
+#: messages.go:143
+msgid "File deleted"
+msgstr "Silinmiş dosya"
+
+#: messages.go:144
+#, c-format
+msgid "Selection added to %s"
+msgstr "Seçim %s'a eklendi"
+
+#: messages.go:145
+#, c-format
+msgid "One entry added to %s"
+msgstr "Bir giriş %s'a eklendi"
+
+#: messages.go:146
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d girişleri %s'e eklendi"
+
+#: messages.go:147
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Bir giriş %s'dan kaldırıldı"
+
+#: messages.go:148
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d girişleri %s'den kaldırıldı"
+
+#: messages.go:149
+msgid "Account created"
+msgstr "Hesap eklendi"
+
+#: messages.go:150
+msgid "Account saved"
+msgstr "Hesap kaydedildi"
+
+#: messages.go:151
+msgid "Account deleted"
+msgstr "Hesap silindi"
+
+#: messages.go:152
+msgid "Settings saved"
+msgstr "Ayarlar kaydedildi"
+
+#: messages.go:153
+msgid "Password changed"
+msgstr "Şifre Değiştirildi"
+
+#: messages.go:154
+#, c-format
+msgid "Import completed in %d s"
+msgstr "İçe aktarma %d s içinde tamamlandı"
+
+#: messages.go:155
+msgid "Import canceled"
+msgstr "İthalat iptal edildi"
+
+#: messages.go:156
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "İndeksleme %d s içinde tamamlandı"
+
+#: messages.go:157
+msgid "Indexing originals..."
+msgstr "Orijinalleri indeksleme..."
+
+#: messages.go:158
+#, c-format
+msgid "Indexing files in %s"
+msgstr "%s dosya yüklendi"
+
+#: messages.go:159
+msgid "Indexing canceled"
+msgstr "İndeksleme iptal edildi"
+
+#: messages.go:160
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "%d dosya ve %d fotoğraf kaldırıldı"
+
+#: messages.go:161
+#, c-format
+msgid "Moving files from %s"
+msgstr "Dosyaları %s'dan taşıma"
+
+#: messages.go:162
+#, c-format
+msgid "Copying files from %s"
+msgstr "Dosyaları %s'dan kopyalama"
+
+#: messages.go:163
+msgid "Labels deleted"
+msgstr "Etiketler silindi"
+
+#: messages.go:164
+msgid "Label saved"
+msgstr "Etiket kaydedildi"
+
+#: messages.go:165
+msgid "Subject saved"
+msgstr "Konu kaydedildi"
+
+#: messages.go:166
+msgid "Subject deleted"
+msgstr "Konu silindi"
+
+#: messages.go:167
+msgid "Person saved"
+msgstr "Kurtarılan kişi"
+
+#: messages.go:168
+msgid "Person deleted"
+msgstr "Kişi silindi"
+
+#: messages.go:169
+msgid "File uploaded"
+msgstr "Dosya yüklendi"
+
+#: messages.go:170
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d dosyalar %d s içinde yüklendi"
+
+#: messages.go:171
+msgid "Processing upload..."
+msgstr "Yükleme işlemi..."
+
+#: messages.go:172
+msgid "Upload has been processed"
+msgstr "Yükleme işlemi tamamlandı"
+
+#: messages.go:173
+msgid "Selection approved"
+msgstr "Seçim onaylandı"
+
+#: messages.go:174
+msgid "Selection archived"
+msgstr "Seçim arşivlendi"
+
+#: messages.go:175
+msgid "Selection restored"
+msgstr "Seçim geri yüklendi"
+
+#: messages.go:176
+msgid "Selection marked as private"
+msgstr "Özel olarak işaretlenmiş seçim"
+
+#: messages.go:177
+msgid "Albums deleted"
+msgstr "Albümler silindi"
+
+#: messages.go:178
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip %d s içinde oluşturuldu"
+
+#: messages.go:179
+msgid "Permanently deleted"
+msgstr "Kalıcı olarak silindi"
+
+#: messages.go:180
+#, c-format
+msgid "%s has been restored"
+msgstr "%s geri yüklendi"

@@ -2,20 +2,29 @@
     z-index: 10;
 }
 
-/* hide scrollbar to save space */
-#p-navigation ::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
+nav .v-list__tile__title.title {
+    line-height: normal!important;
+}
+
+.v-navigation-drawer>.theme--dark.v-list .v-list__tile__sub-title {
+    color: #ffffff77;
 }
 
 #p-navigation .nav-title {
-    text-align: center;
+    text-align: left;
+    /* font-weight: bold; */
+    font-size: 18px;
     -webkit-box-flex: 1!important;
     -ms-flex-positive: 1!important;
     flex-grow: 1!important;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 14px;
+    margin-right: 14px;
     max-height: 100%;
+    line-height: normal!important;
+}
+
+.is-rtl #p-navigation .nav-title {
+    text-align: right;
 }
 
 #p-navigation .nav-count {
@@ -42,7 +51,6 @@
 }
 
 #photoprism .p-page a,
-#photoprism .v-toolbar a,
 #photoprism .text-link {
     text-decoration: none;
     color: #333333;
@@ -53,21 +61,28 @@
     color: white;
 }
 
-#photoprism-info {
+#legal-info {
     position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
+    min-width: 200px;
     padding: 0 5px;
     background-color: rgba(255, 255, 255, 0.6);
     margin: 0;
+    text-align: center;
     border-radius: 5px 5px 0 0;
 }
 
-#photoprism-info a {
+#legal-info a,
+#legal-info span {
     text-decoration: none;
     font-size: 12px;
     color: #000;
+}
+
+#app.small-screen.show-nav main div.v-content__wrap {
+    padding-top: 48px;
 }
 
 #photoprism .v-tabs .v-toolbar__content {
@@ -131,4 +146,160 @@
 }
 .v-list__group__header .p-flex-menuitem .nav-count {
     margin-right: 0;
+}
+
+#photoprism .nav-logo .v-list__tile__action {
+    min-width: 35px;
+}
+
+#photoprism nav.nav-small .v-menu__content {
+    padding: 0;
+}
+
+/* SPEED DIAL */
+
+#photoprism .v-speed-dial__list .v-btn .v-icon {
+    font-size: 19px;
+}
+
+/* Mobile Menu */
+
+#photoprism #p-navigation .mobile-menu-trigger {
+    width: 24px;
+    padding: 0;
+    margin: 0;
+}
+
+#photoprism .v-btn.mobile-menu-trigger:after,
+#photoprism .v-btn.mobile-menu-trigger:before {
+    display: none!important;
+}
+
+#mobile-menu {
+    display: none;
+    position: fixed;
+    overflow: hidden;
+    z-index: 3;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    width: 0;
+    height: 0;
+}
+
+#photoprism #mobile-menu .v-icon {
+    fill: rgba(255,255,255,.93);
+    color: rgba(255,255,255,.93);
+}
+
+#mobile-menu.active {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+#mobile-menu .menu-content {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: auto;
+    width: auto;
+    height: auto;
+    margin: 10px;
+    overflow: hidden;
+    background: #393a3c;
+    border-radius: 8px;
+}
+
+#mobile-menu .menu-icons {
+    -ms-flex-pack: distribute;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-box-align: stretch;
+    -ms-flex-align: stretch;
+    -ms-flex-flow: row nowrap;
+    align-items: stretch;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    background: rgba(250, 250, 255,.1);
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+#photoprism #mobile-menu .menu-icons a {
+    fill: rgba(255,255,255,.83);
+    color: rgba(255,255,255,.83);
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    cursor: pointer;
+    display: inline-block;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 12px 11px 10px 11px;
+    margin: 0;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    z-index: 1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#mobile-menu .menu-icons a:hover {
+    background: rgba(250, 250, 255,.08);
+}
+
+#mobile-menu .menu-icons a i {
+    font-size: 22px;
+}
+
+#mobile-menu .menu-actions {
+    display: block;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+}
+
+#mobile-menu .menu-action {
+    display: block;
+    padding: 0;
+    margin: 0;
+}
+
+#mobile-menu .menu-action:hover {
+    background: #3f4042;
+}
+
+#photoprism #mobile-menu .menu-action a {
+    fill: rgba(255,255,255,.85);
+    color: rgba(255,255,255,.85);
+    display: inline-block;
+    min-width: 210px;
+    font-size: 15px;
+    line-height: 50px;
+    text-decoration: none;
+    padding: 0 20px;
+    margin: 0;
+}
+
+#mobile-menu .menu-action a i {
+    padding: 0 16px 0 0;
+    font-size: 20px;
+}
+
+#photoprism #mobile-menu .menu-icons a:hover i,
+#photoprism #mobile-menu .menu-icons a:hover .v-icon,
+#photoprism #mobile-menu .menu-action:hover a,
+#photoprism #mobile-menu .menu-action:hover .v-icon,
+#photoprism #mobile-menu .menu-action:hover a i{
+    fill: #ffffff;
+    color: #ffffff;
 }

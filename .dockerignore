@@ -6,9 +6,12 @@
 /assets/nasnet
 /assets/nsfw
 /storage
+/build
 /photoprism
+/photoprism-*
 /coverage.*
 /frontend/tests/acceptance/screenshots
+/tmp/
 .dockerignore
 .idea
 .DS_Store

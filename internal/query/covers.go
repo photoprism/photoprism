@@ -260,6 +260,7 @@ func UpdateSubjectCovers() (err error) {
 		entity.SubjPerson, entity.SrcAuto)
 
 	// TODO: Avoid using private photos as subject covers.
+	// See https://github.com/photoprism/photoprism/issues/2570#issuecomment-1231690056
 	switch DbDialect() {
 	case MySQL:
 		res = Db().Exec(`UPDATE ? LEFT JOIN (
@@ -294,7 +295,7 @@ func UpdateSubjectCovers() (err error) {
 
 // UpdateCovers updates album, subject, and label cover thumbs.
 func UpdateCovers() (err error) {
-	log.Info("index: updating covers")
+	log.Debugf("index: updating covers")
 
 	// Update Albums.
 	if err = UpdateAlbumCovers(); err != nil {

@@ -17,7 +17,7 @@ type PhotoLabel struct {
 	Label       *Label `gorm:"PRELOAD:true"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (PhotoLabel) TableName() string {
 	return "photos_labels"
 }
@@ -44,7 +44,7 @@ func (m *PhotoLabel) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// Save saves the entity in the database.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *PhotoLabel) Save() error {
 	if m.Photo != nil {
 		m.Photo = nil
@@ -87,7 +87,7 @@ func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 // ClassifyLabel returns the label as classify.Label
 func (m *PhotoLabel) ClassifyLabel() classify.Label {
 	if m.Label == nil {
-		log.Errorf("photo-label: classify label is nil (photo id %d, label id %d) - bug?", m.PhotoID, m.LabelID)
+		log.Errorf("photo-label: classify label is nil (photo id %d, label id %d) - possible bug", m.PhotoID, m.LabelID)
 		return classify.Label{}
 	}
 

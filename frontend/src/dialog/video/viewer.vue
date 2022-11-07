@@ -59,7 +59,7 @@ export default {
     },
     play(fullscreen) {
       if (!this.video) {
-        this.$notify.error("no video selected");
+        this.$notify.error(this.$gettext("No video selected"));
         return;
       }
 

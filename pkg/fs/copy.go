@@ -15,7 +15,7 @@ func Copy(src, dest string) (err error) {
 		}
 	}()
 
-	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dest), ModeDir); err != nil {
 		return err
 	}
 
@@ -27,7 +27,7 @@ func Copy(src, dest string) (err error) {
 
 	defer thisFile.Close()
 
-	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, os.ModePerm)
+	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, ModeFile)
 
 	if err != nil {
 		return err

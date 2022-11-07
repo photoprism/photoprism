@@ -8,7 +8,7 @@ type dbscanClusterer struct {
 	minpts, workers int
 	eps             float64
 
-	distance DistanceFunc
+	distance DistFunc
 
 	// slices holding the cluster mapping and sizes. Access is synchronized to avoid read during computation.
 	mu sync.RWMutex
@@ -40,7 +40,7 @@ type dbscanClusterer struct {
 
 // Implementation of DBSCAN algorithm with concurrent nearest neighbour computation. The number of goroutines acting concurrently
 // is controlled via workers argument. Passing 0 will result in this number being chosen arbitrarily.
-func DBSCAN(minpts int, eps float64, workers int, distance DistanceFunc) (HardClusterer, error) {
+func DBSCAN(minpts int, eps float64, workers int, distance DistFunc) (HardClusterer, error) {
 	if minpts < 1 {
 		return nil, errZeroMinpts
 	}
@@ -53,12 +53,12 @@ func DBSCAN(minpts int, eps float64, workers int, distance DistanceFunc) (HardCl
 		return nil, errZeroEpsilon
 	}
 
-	var d DistanceFunc
+	var d DistFunc
 	{
 		if distance != nil {
 			d = distance
 		} else {
-			d = EuclideanDistance
+			d = EuclideanDist
 		}
 	}
 

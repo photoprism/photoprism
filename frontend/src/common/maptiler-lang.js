@@ -2,8 +2,8 @@
  * https://github.com/klokantech/openmaptiles-language
  * (c) 2018 Klokan Technologies GmbH
  */
-import mapboxgl from "mapbox-gl";
-import { config } from "../session";
+import maplibregl from "maplibre-gl";
+import { config } from "app/session";
 
 const langFallbackDecorate = function (style, cfg) {
   let layers = style.layers;
@@ -56,8 +56,8 @@ const langFallbackDecorate = function (style, cfg) {
 let langEnabled = true;
 
 let setStyleMutex = false;
-let origSetStyle = mapboxgl.Map.prototype.setStyle;
-mapboxgl.Map.prototype.setStyle = function () {
+let origSetStyle = maplibregl.Map.prototype.setStyle;
+maplibregl.Map.prototype.setStyle = function () {
   origSetStyle.apply(this, arguments);
 
   if (langEnabled && !setStyleMutex) {
@@ -75,11 +75,11 @@ mapboxgl.Map.prototype.setStyle = function () {
   }
 };
 
-mapboxgl.Map.prototype.setLanguageEnabled = function (enable) {
+maplibregl.Map.prototype.setLanguageEnabled = function (enable) {
   langEnabled = enable;
 };
 
-mapboxgl.Map.prototype.setLanguage = function (language, noAlt) {
+maplibregl.Map.prototype.setLanguage = function (language, noAlt) {
   this.languageOptions = {
     language: language,
     noAlt: noAlt,
@@ -162,13 +162,13 @@ mapboxgl.Map.prototype.setLanguage = function (language, noAlt) {
   setStyleMutex = false;
 };
 
-mapboxgl.Map.prototype.autodetectLanguage = function (opt_fallback) {
+maplibregl.Map.prototype.autodetectLanguage = function (opt_fallback) {
   this.setLanguage(config.values.settings.ui.language.split("-")[0] || opt_fallback || "native");
 };
 
-// See https://docs.mapbox.com/mapbox-gl-js/example/mapbox-gl-rtl-text/
-mapboxgl.setRTLTextPlugin(
-  `${config.staticUri}/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js`,
+// Add plugin to support right-to-left languages such as Arabic and Hebrew.
+maplibregl.setRTLTextPlugin(
+  `${config.staticUri}/plugins/maplibre-gl-rtl-text/v0.2.3/maplibre-gl-rtl-text.js`,
   null,
   true // Lazy load the plugin
 );

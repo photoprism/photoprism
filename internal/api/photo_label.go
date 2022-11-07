@@ -4,32 +4,32 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
-
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // POST /api/v1/photos/:uid/label
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
-		m, err := query.PhotoByUID(sanitize.IdString(c.Param("uid")))
+		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -70,7 +70,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			}
 		}
 
-		p, err := query.PhotoPreloadByUID(sanitize.IdString(c.Param("uid")))
+		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -78,7 +78,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if err := p.SaveLabels(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
@@ -93,35 +93,35 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 // DELETE /api/v1/photos/:uid/label/:id
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
-//   id: int LabelId as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
+//	id: int LabelId as returned by the API
 func RemovePhotoLabel(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
-		m, err := query.PhotoByUID(sanitize.IdString(c.Param("uid")))
+		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
 
-		labelId, err := strconv.Atoi(sanitize.Token(c.Param("id")))
+		labelId, err := strconv.Atoi(clean.Token(c.Param("id")))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
 		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
@@ -132,7 +132,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			logError("label", entity.Db().Save(&label).Error)
 		}
 
-		p, err := query.PhotoPreloadByUID(sanitize.IdString(c.Param("uid")))
+		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -142,11 +142,11 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		logError("label", p.RemoveKeyword(label.Label.LabelName))
 
 		if err := p.SaveLabels(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, sanitize.IdString(c.Param("uid")), c)
+		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label removed")
 
@@ -157,37 +157,37 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 // PUT /api/v1/photos/:uid/label/:id
 //
 // Parameters:
-//   uid: string PhotoUID as returned by the API
-//   id: int LabelId as returned by the API
+//
+//	uid: string PhotoUID as returned by the API
+//	id: int LabelId as returned by the API
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
 		// TODO: Code clean-up, simplify
 
-		m, err := query.PhotoByUID(sanitize.IdString(c.Param("uid")))
+		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
 
-		labelId, err := strconv.Atoi(sanitize.Token(c.Param("id")))
+		labelId, err := strconv.Atoi(clean.Token(c.Param("id")))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
 		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
@@ -197,11 +197,11 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if err := label.Save(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(sanitize.IdString(c.Param("uid")))
+		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -209,11 +209,11 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if err := p.SaveLabels(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, sanitize.IdString(c.Param("uid")), c)
+		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label saved")
 

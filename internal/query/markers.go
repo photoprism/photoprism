@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 )
@@ -102,7 +104,11 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 	}
 
 	for _, embeddingsJson := range col {
-		if embeddings := face.UnmarshalEmbeddings(embeddingsJson); !embeddings.Empty() {
+		if embeddingsJson == "" {
+			continue
+		} else if embeddings, err := face.UnmarshalEmbeddings(embeddingsJson); err != nil {
+			log.Warnf("faces: %s", err)
+		} else if !embeddings.Empty() {
 			if single {
 				// Single embedding per face detected.
 				result = append(result, embeddings[0])
@@ -193,8 +199,12 @@ func MarkersWithNonExistentReferences() (faces entity.Markers, subjects entity.M
 
 // MarkersWithSubjectConflict finds markers with conflicting subjects.
 func MarkersWithSubjectConflict() (results entity.Markers, err error) {
+	faces := gorm.Expr(entity.Face{}.TableName())
+	markers := gorm.Expr(entity.Marker{}.TableName())
+	hasSubj := gorm.Expr("(?.subj_uid <> '' OR ?.subj_src <> '')", markers, markers)
+
 	err = Db().
-		Joins(fmt.Sprintf("JOIN %s f ON f.id = face_id AND f.subj_uid <> %s.subj_uid", entity.Face{}.TableName(), entity.Marker{}.TableName())).
+		Joins("JOIN ? f ON f.id = face_id AND f.subj_uid <> ?.subj_uid AND ?", faces, markers, hasSubj).
 		Order("face_id").
 		Find(&results).Error
 

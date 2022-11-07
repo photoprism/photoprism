@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/migrate"
+
 	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -39,17 +41,17 @@ var ResetCommand = cli.Command{
 
 // resetAction resets the index and removes sidecar files after confirmation.
 func resetAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
+
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
+	conf.RegisterDb()
 	defer conf.Shutdown()
-
-	entity.SetDbProvider(conf)
 
 	if !ctx.Bool("yes") {
 		log.Warnf("This will delete and recreate your index database after confirmation")
@@ -64,24 +66,24 @@ func resetAction(ctx *cli.Context) error {
 		log.Infoln("reset: enabled trace mode")
 	}
 
-	resetIndex := ctx.Bool("yes")
+	confirmed := ctx.Bool("yes")
 
 	// Show prompt?
-	if !resetIndex {
+	if !confirmed {
 		removeIndexPrompt := promptui.Prompt{
 			Label:     "Delete and recreate index database?",
 			IsConfirm: true,
 		}
 
 		if _, err := removeIndexPrompt.Run(); err == nil {
-			resetIndex = true
+			confirmed = true
 		} else {
 			log.Infof("keeping index database")
 		}
 	}
 
 	// Reset index?
-	if resetIndex {
+	if confirmed {
 		resetIndexDb(conf)
 	}
 
@@ -166,30 +168,32 @@ func resetAction(ctx *cli.Context) error {
 }
 
 // resetIndexDb resets the index database schema.
-func resetIndexDb(conf *config.Config) {
+func resetIndexDb(c *config.Config) {
 	start := time.Now()
 
 	tables := entity.Entities
 
 	log.Infoln("dropping existing tables")
-	tables.Drop(conf.Db())
+	tables.Drop(c.Db())
 
 	log.Infoln("restoring default schema")
-	entity.MigrateDb(true, false)
+	entity.InitDb(migrate.Opt(false, nil))
 
-	if conf.AdminPassword() != "" {
-		log.Infoln("restoring initial admin password")
-		entity.Admin.InitPassword(conf.AdminPassword())
+	// Reset admin account?
+	if c.AdminPassword() == "" {
+		log.Warnf("password required to reset admin account")
+	} else {
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
-	log.Infof("database reset completed in %s", time.Since(start))
+	log.Infof("completed in %s", time.Since(start))
 }
 
 // resetCache removes all cache files and folders.
-func resetCache(conf *config.Config) {
+func resetCache(c *config.Config) {
 	start := time.Now()
 
-	matches, err := filepath.Glob(regexp.QuoteMeta(conf.CachePath()) + "/**")
+	matches, err := filepath.Glob(regexp.QuoteMeta(c.CachePath()) + "/**")
 
 	if err != nil {
 		log.Errorf("reset: %s (find cache files)", err)
@@ -216,10 +220,10 @@ func resetCache(conf *config.Config) {
 }
 
 // resetSidecarJson removes generated *.json sidecar files.
-func resetSidecarJson(conf *config.Config) {
+func resetSidecarJson(c *config.Config) {
 	start := time.Now()
 
-	matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.json")
+	matches, err := filepath.Glob(regexp.QuoteMeta(c.SidecarPath()) + "/**/*.json")
 
 	if err != nil {
 		log.Errorf("reset: %s (find *.json sidecar files)", err)
@@ -230,7 +234,7 @@ func resetSidecarJson(conf *config.Config) {
 		log.Infof("removing %d *.json sidecar files", len(matches))
 
 		for _, name := range matches {
-			if err := os.Remove(name); err != nil {
+			if err = os.Remove(name); err != nil {
 				fmt.Print("E")
 			} else {
 				fmt.Print(".")
@@ -246,10 +250,10 @@ func resetSidecarJson(conf *config.Config) {
 }
 
 // resetSidecarYaml removes generated *.yml files.
-func resetSidecarYaml(conf *config.Config) {
+func resetSidecarYaml(c *config.Config) {
 	start := time.Now()
 
-	matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.yml")
+	matches, err := filepath.Glob(regexp.QuoteMeta(c.SidecarPath()) + "/**/*.yml")
 
 	if err != nil {
 		log.Errorf("reset: %s (find *.yml metadata files)", err)

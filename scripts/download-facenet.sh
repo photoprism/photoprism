@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TODAY=`date -u +%Y%m%d`
+TODAY=$(date -u +%Y%m%d)
 
 MODEL_NAME="Facenet"
 MODEL_URL="https://dl.photoprism.app/tensorflow/facenet.zip?$TODAY"
@@ -17,7 +17,7 @@ mkdir -p /tmp/photoprism
 mkdir -p storage/backup
 
 # Check for update
-if [[ -f ${MODEL_ZIP} ]] && [[ `sha1sum ${MODEL_ZIP}` == ${MODEL_HASH} ]]; then
+if [[ -f ${MODEL_ZIP} ]] && [[ $(sha1sum ${MODEL_ZIP}) == ${MODEL_HASH} ]]; then
   if [[ -f ${MODEL_VERSION} ]]; then
     echo "Already up to date."
     exit
@@ -25,18 +25,18 @@ if [[ -f ${MODEL_ZIP} ]] && [[ `sha1sum ${MODEL_ZIP}` == ${MODEL_HASH} ]]; then
 else
   # Download model
   echo "Downloading latest model from $MODEL_URL..."
-  wget ${MODEL_URL} -O ${MODEL_ZIP}
+  wget --inet4-only -c "${MODEL_URL}" -O ${MODEL_ZIP}
 
-  TMP_HASH=`sha1sum ${MODEL_ZIP}`
+  TMP_HASH=$(sha1sum ${MODEL_ZIP})
 
-  echo ${TMP_HASH}
+  echo "${TMP_HASH}"
 fi
 
 # Create backup
 if [[ -e ${MODEL_PATH} ]]; then
   echo "Creating backup of existing directory: $MODEL_BACKUP"
-  rm -rf ${MODEL_BACKUP}
-  mv ${MODEL_PATH} ${MODEL_BACKUP}
+  rm -rf "${MODEL_BACKUP}"
+  mv ${MODEL_PATH} "${MODEL_BACKUP}"
 fi
 
 # Unzip model

@@ -8,9 +8,9 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
-
 	"github.com/araddon/dateparse"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -35,7 +35,7 @@ func Serialize(f interface{}, all bool) string {
 		fieldInfo := v.Type().Field(i).Tag.Get("serialize")
 
 		// Serialize field values as string.
-		if fieldName != "" && (fieldInfo != "-" || all) {
+		if fieldName != "" && fieldName != "-" && (fieldInfo != "-" || all) {
 			switch t := fieldValue.Interface().(type) {
 			case time.Time:
 				if val := fieldValue.Interface().(time.Time); !val.IsZero() {
@@ -70,7 +70,7 @@ func Serialize(f interface{}, all bool) string {
 					q = append(q, fmt.Sprintf("%s:%t", fieldName, fieldValue.Bool()))
 				}
 			default:
-				log.Warnf("form: failed serializing %T %s", t, sanitize.Token(fieldName))
+				log.Warnf("form: failed serializing %T %s", t, clean.Token(fieldName))
 			}
 		}
 	}
@@ -82,9 +82,30 @@ func Unserialize(f SearchForm, q string) (result error) {
 	var key, value []rune
 	var escaped, isKeyValue bool
 
-	f.SetQuery("")
+	v := reflect.ValueOf(f)
 
-	formValues := reflect.ValueOf(f).Elem()
+	formValues := v.Elem()
+
+	n := formValues.NumField()
+
+	fieldNames := make(map[string]string, n)
+
+	// Iterate through all form fields.
+	for i := 0; i < formValues.NumField(); i++ {
+		fieldName := formValues.Type().Field(i).Name
+		formName := strings.ToLower(formValues.Type().Field(i).Tag.Get("form"))
+		formSerialize := strings.ToLower(formValues.Type().Field(i).Tag.Get("serialize"))
+
+		if fieldName == "" || formSerialize == "-" {
+			continue
+		} else if formName == "" {
+			formName = strings.ToLower(fieldName)
+		}
+
+		fieldNames[formName] = fieldName
+	}
+
+	f.SetQuery("")
 
 	q = strings.TrimSpace(q) + "\n"
 
@@ -93,13 +114,16 @@ func Unserialize(f SearchForm, q string) (result error) {
 	for _, char := range q {
 		if unicode.IsSpace(char) && !escaped {
 			if isKeyValue {
-				fieldName := strings.Title(string(key))
+				formName := strings.ToLower(string(key))
+				fieldName := fieldNames[formName]
+
 				field := formValues.FieldByNameFunc(func(name string) bool {
 					return strings.EqualFold(name, fieldName)
 				})
+
 				stringValue := string(value)
 
-				if field.CanSet() {
+				if fieldName != "" && fieldName != "-" && field.CanSet() {
 					switch field.Interface().(type) {
 					case time.Time:
 						if timeValue, err := dateparse.ParseAny(stringValue); err != nil {
@@ -126,14 +150,14 @@ func Unserialize(f SearchForm, q string) (result error) {
 							field.SetUint(uint64(intValue))
 						}
 					case string:
-						field.SetString(sanitize.SearchString(stringValue))
+						field.SetString(clean.SearchString(stringValue))
 					case bool:
 						field.SetBool(txt.Bool(stringValue))
 					default:
-						result = fmt.Errorf("unsupported type: %s", fieldName)
+						result = fmt.Errorf("unsupported type: %s", formName)
 					}
 				} else {
-					result = fmt.Errorf("unknown filter: %s", fieldName)
+					result = fmt.Errorf("unknown filter: %s", formName)
 				}
 			} else if len(strings.TrimSpace(string(key))) > 0 {
 				queryStrings = append(queryStrings, strings.TrimSpace(string(key)))
@@ -155,7 +179,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 	}
 
 	if len(queryStrings) > 0 {
-		f.SetQuery(sanitize.SearchQuery(strings.Join(queryStrings, " ")))
+		f.SetQuery(clean.SearchQuery(strings.Join(queryStrings, " ")))
 	}
 
 	if result != nil {

@@ -11,8 +11,8 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Filenames of usable thumb sizes.
@@ -43,8 +43,13 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	// Extract hash from file name.
 	hash := thumbHash(thumbName)
 
+	// Resolve symlinks.
+	if thumbName, err = fs.Resolve(thumbName); err != nil {
+		return nil, err
+	}
+
 	// Compose cached crop image file name.
-	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area.String(), fs.JpegExt)
+	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area.String(), fs.ExtJPEG)
 	cropName := filepath.Join(filePath, cropBase)
 
 	// Cached?
@@ -91,7 +96,7 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 // ThumbFileName returns the ideal thumb file name.
 func ThumbFileName(hash string, area Area, size Size, thumbPath string) (string, error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("invalid file hash %s", sanitize.Log(hash))
+		return "", fmt.Errorf("invalid file hash %s", clean.Log(hash))
 	}
 
 	if len(thumbPath) < 1 {
@@ -113,7 +118,8 @@ func ThumbFileName(hash string, area Area, size Size, thumbPath string) (string,
 		return "", fmt.Errorf("not found")
 	}
 
-	return fileName, nil
+	// Resolve symlinks.
+	return fs.Resolve(fileName)
 }
 
 // FileWidth returns the minimal thumbnail width based on crop area and size.
@@ -142,9 +148,10 @@ func findIdealThumbFileName(hash string, width int, filePath string) (fileName s
 	}
 
 	for i, s := range thumbFileSizes {
-		name := filepath.Join(filePath, fmt.Sprintf(thumbFileNames[i], hash))
+		// Resolve symlinks.
+		name, err := fs.Resolve(filepath.Join(filePath, fmt.Sprintf(thumbFileNames[i], hash)))
 
-		if !fs.FileExists(name) {
+		if err != nil || !fs.FileExists(name) {
 			continue
 		} else if s.Width < width {
 			fileName = name
@@ -158,7 +165,12 @@ func findIdealThumbFileName(hash string, width int, filePath string) (fileName s
 }
 
 // openIdealThumbFile opens the thumbnail file and returns an image.
-func openIdealThumbFile(fileName, hash string, area Area, size Size) (image.Image, error) {
+func openIdealThumbFile(fileName, hash string, area Area, size Size) (result image.Image, err error) {
+	// Resolve symlinks.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return nil, err
+	}
+
 	if len(hash) != 40 || area.W <= 0 || size.Width <= 0 {
 		// Not a standard thumb name with sha1 hash prefix.
 		if imageBuffer, err := os.ReadFile(fileName); err != nil {

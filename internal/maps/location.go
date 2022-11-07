@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/hub/places"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/s2"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -123,7 +123,7 @@ func (l Location) CountryCode() string {
 }
 
 func (l Location) State() string {
-	return txt.Clip(sanitize.State(l.LocState, l.CountryCode()), 100)
+	return txt.Clip(clean.State(l.LocState, l.CountryCode()), 100)
 }
 
 func (l Location) CountryName() string {

@@ -11,16 +11,19 @@ import (
 )
 
 var OriginalPaths = []string{
-	"/photoprism/library/originals",
-	"/photoprism/storage/originals",
+	"/photoprism/storage/media/originals",
+	"/photoprism/media/originals",
 	"/photoprism/originals",
-	"/opt/photoprism/library/originals",
-	"/opt/photoprism/storage/originals",
+	"/srv/photoprism/storage/media/originals",
+	"/srv/photoprism/media/originals",
+	"/srv/photoprism/originals",
+	"/opt/photoprism/storage/media/originals",
+	"/opt/photoprism/media/originals",
 	"/opt/photoprism/originals",
-	"/library/originals",
+	"/media/originals",
 	"/storage/originals",
 	"/originals",
-	"library/originals",
+	"media/originals",
 	"storage/originals",
 	"photoprism/originals",
 	"PhotoPrism/Originals",
@@ -74,16 +77,19 @@ var OriginalPaths = []string{
 }
 
 var ImportPaths = []string{
-	"/photoprism/library/import",
-	"/photoprism/storage/import",
+	"/photoprism/storage/media/import",
+	"/photoprism/media/import",
 	"/photoprism/import",
-	"/opt/photoprism/library/import",
-	"/opt/photoprism/storage/import",
+	"/srv/photoprism/storage/media/import",
+	"/srv/photoprism/media/import",
+	"/srv/photoprism/import",
+	"/opt/photoprism/storage/media/import",
+	"/opt/photoprism/media/import",
 	"/opt/photoprism/import",
-	"/library/import",
+	"/media/import",
 	"/storage/import",
 	"/import",
-	"library/import",
+	"media/import",
 	"storage/import",
 	"photoprism/import",
 	"PhotoPrism/Import",
@@ -105,8 +111,8 @@ var ImportPaths = []string{
 }
 
 var AssetPaths = []string{
-	"/photoprism/assets",
 	"/opt/photoprism/assets",
+	"/photoprism/assets",
 	"~/.photoprism/assets",
 	"~/photoprism/assets",
 	"photoprism/assets",
@@ -141,6 +147,13 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 				return filepath.SkipDir
 			}
 
+			// Skip if symlink does not point to existing directory.
+			if typ == os.ModeSymlink {
+				if info, err := os.Stat(fileName); err != nil || !info.IsDir() {
+					return filepath.SkipDir
+				}
+			}
+
 			if fileName != root {
 				if !recursive {
 					appendResult(fileName)
@@ -150,7 +163,7 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 					appendResult(fileName)
 
 					return nil
-				} else if resolved, err := filepath.EvalSymlinks(fileName); err == nil {
+				} else if resolved, err := Resolve(fileName); err == nil {
 					symlinksMutex.Lock()
 					defer symlinksMutex.Unlock()
 

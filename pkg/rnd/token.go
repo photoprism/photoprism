@@ -7,8 +7,8 @@ import (
 	"strconv"
 )
 
-// Token returns a random token with length of up to 10 characters.
-func Token(size uint) string {
+// GenerateToken returns a random token with length of up to 10 characters.
+func GenerateToken(size uint) string {
 	if size > 10 || size < 1 {
 		panic(fmt.Sprintf("size out of range: %d", size))
 	}

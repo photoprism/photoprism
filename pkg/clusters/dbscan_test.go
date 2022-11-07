@@ -56,7 +56,7 @@ func TestDBSCANCluster(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		c, e := DBSCAN(test.MinPts, test.Eps, 0, EuclideanDistance)
+		c, e := DBSCAN(test.MinPts, test.Eps, 0, EuclideanDist)
 		if e != nil {
 			t.Errorf("Error initializing kmeans clusterer: %s\n", e.Error())
 		}

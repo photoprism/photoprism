@@ -6,7 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/query"
 
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
@@ -40,7 +40,7 @@ func CacheKey(ns, uid, name string) string {
 
 // RemoveFromFolderCache removes an item from the folder cache e.g. after indexing.
 func RemoveFromFolderCache(rootName string) {
-	cache := service.FolderCache()
+	cache := get.FolderCache()
 
 	cacheKey := fmt.Sprintf("folder:%s:%t:%t", rootName, true, false)
 
@@ -55,7 +55,7 @@ func RemoveFromFolderCache(rootName string) {
 
 // RemoveFromAlbumCoverCache removes covers by album UID e.g. after adding or removing photos.
 func RemoveFromAlbumCoverCache(uid string) {
-	cache := service.CoverCache()
+	cache := get.CoverCache()
 
 	for thumbName := range thumb.Sizes {
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
@@ -72,7 +72,7 @@ func RemoveFromAlbumCoverCache(uid string) {
 
 // FlushCoverCache clears the complete cover cache.
 func FlushCoverCache() {
-	service.CoverCache().Flush()
+	get.CoverCache().Flush()
 
 	if err := query.UpdateCovers(); err != nil {
 		log.Error(err)

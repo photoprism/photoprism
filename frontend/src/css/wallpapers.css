@@ -1,0 +1,11 @@
+/* Background Wallpapers */
+
+.wallpaper {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+}
+
+.background-welcome {
+    background-image: url(https://cdn.photoprism.app/wallpaper/welcome.jpg);
+}

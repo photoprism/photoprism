@@ -5,20 +5,28 @@ import (
 )
 
 const (
-	Ellipsis        = "…"
-	ClipCountryCode = 2
-	ClipKeyword     = 40
-	ClipUsername    = 64
-	ClipSlug        = 80
-	ClipCategory    = 100
-	ClipPlace       = 128
-	ClipDefault     = 160
-	ClipName        = 160
-	ClipTitle       = 200
-	ClipVarchar     = 255
-	ClipLabel       = 500
-	ClipQuery       = 1000
-	ClipDescription = 16000
+	Ellipsis      = "…"
+	ClipRole      = 32
+	ClipKeyword   = 40
+	ClipIP        = 48
+	ClipRealm     = 64
+	ClipUserName  = 64
+	ClipSlug      = 80
+	ClipCategory  = 100
+	ClipTokenName = 128
+	ClipDefault   = 160
+	ClipName      = 160
+	ClipLongName  = 200
+	ClipEmail     = 255
+	ClipPath      = 500
+	ClipComment   = 512
+	ClipURL       = 512
+	ClipLog       = 512
+	ClipFlags     = 767
+	ClipShortText = 1024
+	ClipText      = 2048
+	ClipLongText  = 4096
+	ClipPassword  = 4096
 )
 
 // Clip shortens a string to the given number of runes, and removes all leading and trailing white space.
@@ -32,7 +40,7 @@ func Clip(s string, size int) string {
 	runes := []rune(s)
 
 	if len(runes) > size {
-		s = string(runes[0 : size-1])
+		s = string(runes[0:size])
 	}
 
 	return strings.TrimSpace(s)

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="350" class="p-file-delete-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" lazy persistent max-width="350" class="p-file-delete-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -12,10 +12,10 @@
             </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
-            <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
+            <v-btn depressed  color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed dark class="action-confirm"
+            <v-btn color="primary-button" depressed dark compact class="action-confirm"
                    @click.stop="confirm">
               <translate key="Delete">Delete</translate>
             </v-btn>

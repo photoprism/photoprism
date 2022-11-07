@@ -6,23 +6,23 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 type Downloads map[string][]entity.FileSync
 
 // downloadPath returns a temporary download path.
-func (worker *Sync) downloadPath() string {
-	return worker.conf.TempPath() + "/sync"
+func (w *Sync) downloadPath() string {
+	return w.conf.TempPath() + "/sync"
 }
 
 // relatedDownloads returns files to be downloaded grouped by prefix.
-func (worker *Sync) relatedDownloads(a entity.Account) (result Downloads, err error) {
+func (w *Sync) relatedDownloads(a entity.Service) (result Downloads, err error) {
 	result = make(Downloads)
 	maxResults := 1000
 
@@ -35,7 +35,7 @@ func (worker *Sync) relatedDownloads(a entity.Account) (result Downloads, err er
 
 	// Group results by directory and base name
 	for i, file := range files {
-		k := fs.AbsPrefix(file.RemoteName, worker.conf.Settings().StackSequences())
+		k := fs.AbsPrefix(file.RemoteName, w.conf.Settings().StackSequences())
 
 		result[k] = append(result[k], file)
 
@@ -49,7 +49,7 @@ func (worker *Sync) relatedDownloads(a entity.Account) (result Downloads, err er
 }
 
 // Downloads remote files in batches and imports / indexes them
-func (worker *Sync) download(a entity.Account) (complete bool, err error) {
+func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	// Set up index worker
 	indexJobs := make(chan photoprism.IndexJob)
 
@@ -61,10 +61,10 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 	go photoprism.ImportWorker(importJobs)
 	defer close(importJobs)
 
-	relatedFiles, err := worker.relatedDownloads(a)
+	relatedFiles, err := w.relatedDownloads(a)
 
 	if err != nil {
-		worker.logError(err)
+		w.logError(err)
 		return false, err
 	}
 
@@ -76,14 +76,14 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 
 	log.Infof("sync: downloading from %s", a.AccName)
 
-	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
+	client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
 
 	var baseDir string
 
 	if a.SyncFilenames {
-		baseDir = worker.conf.OriginalsPath()
+		baseDir = w.conf.OriginalsPath()
 	} else {
-		baseDir = fmt.Sprintf("%s/%d", worker.downloadPath(), a.ID)
+		baseDir = fmt.Sprintf("%s/%d", w.downloadPath(), a.ID)
 	}
 
 	done := make(map[string]bool)
@@ -94,7 +94,8 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 				return false, nil
 			}
 
-			if file.Errors > a.RetryLimit {
+			// Failed too often?
+			if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 				log.Debugf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
 				continue
 			}
@@ -104,14 +105,17 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 			if _, err := os.Stat(localName); err == nil {
 				log.Warnf("sync: download skipped, %s already exists", localName)
 				file.Status = entity.FileSyncExists
+				file.Error = ""
+				file.Errors = 0
 			} else {
 				if err := client.Download(file.RemoteName, localName, false); err != nil {
-					worker.logError(err)
 					file.Errors++
 					file.Error = err.Error()
 				} else {
 					log.Infof("sync: downloaded %s from %s", file.RemoteName, a.AccName)
 					file.Status = entity.FileSyncDownloaded
+					file.Error = ""
+					file.Errors = 0
 				}
 
 				if mutex.SyncWorker.Canceled() {
@@ -120,7 +124,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 			}
 
 			if err := entity.Db().Save(&file).Error; err != nil {
-				worker.logError(err)
+				w.logError(err)
 			} else {
 				files[i] = file
 			}
@@ -133,14 +137,14 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 
 			mf, err := photoprism.NewMediaFile(baseDir + file.RemoteName)
 
-			if err != nil || !mf.IsMedia() {
+			if err != nil || !mf.IsMedia() || mf.Empty() {
 				continue
 			}
 
-			related, err := mf.RelatedFiles(worker.conf.Settings().StackSequences())
+			related, err := mf.RelatedFiles(w.conf.Settings().StackSequences())
 
 			if err != nil {
-				worker.logWarn(err)
+				w.logWarn(err)
 				continue
 			}
 
@@ -164,7 +168,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 					FileName: mf.FileName(),
 					Related:  related,
 					IndexOpt: photoprism.IndexOptionsAll(),
-					Ind:      service.Index(),
+					Ind:      get.Index(),
 				}
 			} else {
 				log.Infof("sync: importing %s and related files", file.RemoteName)
@@ -172,8 +176,8 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 					FileName:  mf.FileName(),
 					Related:   related,
 					IndexOpt:  photoprism.IndexOptionsAll(),
-					ImportOpt: photoprism.ImportOptionsMove(baseDir),
-					Imp:       service.Import(),
+					ImportOpt: photoprism.ImportOptionsMove(baseDir, w.conf.ImportDest()),
+					Imp:       get.Import(),
 				}
 			}
 		}
@@ -182,10 +186,10 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 	// Any files downloaded?
 	if len(done) > 0 {
 		// Update precalculated photo and file counts.
-		worker.logWarn(entity.UpdateCounts())
+		w.logWarn(entity.UpdateCounts())
 
 		// Update album, subject, and label cover thumbs.
-		worker.logWarn(query.UpdateCovers())
+		w.logWarn(query.UpdateCovers())
 	}
 
 	return false, nil

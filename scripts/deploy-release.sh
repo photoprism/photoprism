@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-set -e
+# Exit on error.
+set -ex
 
-# Run tests
+# Use QEMU for multi-arch builds.
+scripts/install-qemu.sh
+
+# Run test suite.
 scripts/test.sh
 
-# Build images
-make docker-release
+# Build release images.
+make docker-release-all

@@ -36,13 +36,13 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 	}
 
 	// Round times to avoid jitter.
-	taken = taken.Round(time.Second).UTC()
+	taken = taken.UTC().Truncate(time.Second)
 
 	// Default local time to taken if zero or invalid.
 	if local.IsZero() || local.Year() < 1000 {
 		local = taken
 	} else {
-		local = local.Round(time.Second)
+		local = local.Truncate(time.Second)
 	}
 
 	// Don't update older date.
@@ -118,4 +118,11 @@ func (m *Photo) UpdateDateFields() {
 		m.PhotoMonth = int(m.TakenAtLocal.Month())
 		m.PhotoDay = m.TakenAtLocal.Day()
 	}
+
+	// Update photo_taken_at column in related files.
+	Log("photo", "update date fields",
+		UnscopedDb().Model(File{}).
+			Where("photo_id = ? AND photo_taken_at <> ?", m.ID, m.TakenAtLocal).
+			Updates(File{PhotoTakenAt: m.TakenAtLocal}).Error,
+	)
 }

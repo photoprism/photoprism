@@ -22,16 +22,18 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/hub"
 	"github.com/photoprism/photoprism/internal/hub/places"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 var log = event.Log
@@ -39,55 +41,31 @@ var once sync.Once
 var LowMem = false
 var TotalMem uint64
 
-const MsgSponsor = "PhotoPrism® needs your support!"
-const SignUpURL = "https://docs.photoprism.app/funding/"
-const MsgSignUp = "Visit " + SignUpURL + " to learn more."
-const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
-	" we unfortunately can only offer it to sponsors."
-
-const ApiUri = "/api/v1"    // REST API
-const StaticUri = "/static" // Static Content
-
-const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
-const DefaultAutoImportDelay = int(3 * 60) // 3 Minutes
-
-const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
-
-// Megabyte in bytes.
-const Megabyte = 1000 * 1000
-
-// Gigabyte in bytes.
-const Gigabyte = Megabyte * 1000
-
-// MinMem is the minimum amount of system memory required.
-const MinMem = Gigabyte
-
-// RecommendedMem is the recommended amount of system memory.
-const RecommendedMem = 3 * Gigabyte
-
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
 	once     sync.Once
-	db       *gorm.DB
+	cliCtx   *cli.Context
 	options  *Options
-	settings *Settings
+	settings *customize.Settings
+	db       *gorm.DB
 	hub      *hub.Config
 	token    string
 	serial   string
+	env      string
 }
 
 func init() {
 	TotalMem = memory.TotalMemory()
 
 	// Check available memory if not running in unsafe mode.
-	if os.Getenv("PHOTOPRISM_UNSAFE") == "" {
+	if Env(EnvUnsafe) {
 		// Disable features with high memory requirements?
 		LowMem = TotalMem < MinMem
 	}
 
 	// Init public thumb sizes for use in client apps.
-	for i := len(thumb.DefaultSizes) - 1; i >= 0; i-- {
-		name := thumb.DefaultSizes[i]
+	for i := len(thumb.Names) - 1; i >= 0; i-- {
+		name := thumb.Names[i]
 		t := thumb.Sizes[name]
 
 		if t.Public {
@@ -96,14 +74,16 @@ func init() {
 	}
 }
 
-func initLogger(debug bool) {
+func initLogger() {
 	once.Do(func() {
 		log.SetFormatter(&logrus.TextFormatter{
 			DisableColors: false,
 			FullTimestamp: true,
 		})
 
-		if debug {
+		if Env(EnvTrace) {
+			log.SetLevel(logrus.TraceLevel)
+		} else if Env(EnvDebug) {
 			log.SetLevel(logrus.DebugLevel)
 		} else {
 			log.SetLevel(logrus.InfoLevel)
@@ -113,28 +93,58 @@ func initLogger(debug bool) {
 
 // NewConfig initialises a new configuration file
 func NewConfig(ctx *cli.Context) *Config {
-	initLogger(ctx.GlobalBool("debug"))
+	// Initialize logger.
+	initLogger()
 
+	// Initialize options from config file and CLI context.
 	c := &Config{
+		cliCtx:  ctx,
 		options: NewOptions(ctx),
-		token:   rnd.Token(8),
+		token:   rnd.GenerateToken(8),
+		env:     os.Getenv("DOCKER_ENV"),
 	}
 
-	if configFile := c.ConfigFile(); c.options.ConfigFile == "" && fs.FileExists(configFile) {
-		if err := c.options.Load(configFile); err != nil {
-			log.Warnf("config: %s", err)
+	// Overwrite values with options.yml from config path.
+	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
+		if err := c.options.Load(optionsYaml); err != nil {
+			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
 		} else {
-			log.Debugf("config: options loaded from %s", sanitize.Log(configFile))
+			log.Debugf("config: overriding config with values from %s", clean.Log(optionsYaml))
 		}
 	}
 
+	Ext().Init(c)
+
 	return c
+}
+
+// Unsafe checks if unsafe settings are allowed.
+func (c *Config) Unsafe() bool {
+	return c.options.Unsafe
+}
+
+// CliContext returns the cli context if set.
+func (c *Config) CliContext() *cli.Context {
+	if c.cliCtx == nil {
+		log.Warnf("config: cli context not set - possible bug")
+	}
+
+	return c.cliCtx
+}
+
+// CliGlobalString returns a global cli string flag value if set.
+func (c *Config) CliGlobalString(name string) string {
+	if c.cliCtx == nil {
+		return ""
+	}
+
+	return c.cliCtx.GlobalString(name)
 }
 
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
-		log.Warnf("config: options should not be nil - bug?")
+		log.Warnf("config: options should not be nil - possible bug")
 		c.options = NewOptions(nil)
 	}
 
@@ -146,6 +156,7 @@ func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
 	// Set thumbnail generation parameters.
+	thumb.StandardRGB = c.ThumbSRGB()
 	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
@@ -155,7 +166,12 @@ func (c *Config) Propagate() {
 	places.UserAgent = c.UserAgent()
 	entity.GeoApi = c.GeoApi()
 
-	// Set facial recognition parameters.
+	// Set API preview and download default tokens.
+	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
+	entity.DownloadToken.Set(c.DownloadToken(), entity.TokenConfig)
+	entity.CheckTokens = !c.Public()
+
+	// Set face recognition parameters.
 	face.ScoreThreshold = c.FaceScore()
 	face.OverlapThreshold = c.FaceOverlap()
 	face.ClusterScoreThreshold = c.FaceClusterScore()
@@ -176,14 +192,8 @@ func (c *Config) Init() error {
 		return err
 	}
 
-	if err := c.initStorage(); err != nil {
+	if err := c.initSerial(); err != nil {
 		return err
-	}
-
-	// Show funding info?
-	if !c.Sponsor() {
-		log.Info(MsgSponsor)
-		log.Info(MsgSignUp)
 	}
 
 	if insensitive, err := c.CaseInsensitive(); err != nil {
@@ -194,14 +204,18 @@ func (c *Config) Init() error {
 	}
 
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
-		log.Debugf("config: running on %s, %s memory detected", sanitize.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
+		log.Debugf("config: running on %s, %s memory detected", clean.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
 	}
 
-	// Check memory requirements.
+	// Exit if less than 128 MB RAM was detected.
 	if TotalMem < 128*Megabyte {
 		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/Gigabyte)
-	} else if LowMem {
+	}
+
+	// Show warning if less than 1 GB RAM was detected.
+	if LowMem {
 		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/Gigabyte)
+		log.Warnf("config: tensorflow as well as indexing and conversion of RAW files have been disabled automatically")
 	}
 
 	// Show swap info.
@@ -209,44 +223,73 @@ func (c *Config) Init() error {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
 
-	// Set User Agent for HTTP requests.
-	places.UserAgent = fmt.Sprintf("%s/%s", c.Name(), c.Version())
+	// Show wakeup interval warning if face recognition is enabled
+	// and the worker runs less than once per hour.
+	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
+		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
+	}
+
+	// Set HTTP user agent.
+	places.UserAgent = c.UserAgent()
 
 	c.initSettings()
 	c.initHub()
 
 	c.Propagate()
 
-	err := c.connectDb()
-
-	if err == nil {
-		log.Debugf("config: successfully initialized [%s]", time.Since(start))
+	if err := c.connectDb(); err != nil {
+		return err
+	} else if !c.Sponsor() {
+		log.Info(MsgSponsor)
+		log.Info(MsgSignUp)
 	}
 
-	return err
+	log.Debugf("config: successfully initialized [%s]", time.Since(start))
+
+	return nil
 }
 
-// initStorage initializes storage directories with a random serial.
-func (c *Config) initStorage() error {
-	if c.serial != "" {
+// readSerial reads and returns the current storage serial.
+func (c *Config) readSerial() string {
+	storageName := filepath.Join(c.StoragePath(), serialName)
+	backupName := filepath.Join(c.BackupPath(), serialName)
+
+	if fs.FileExists(storageName) {
+		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 {
+			return string(data)
+		} else {
+			log.Tracef("config: could not read %s (%s)", clean.Log(storageName), err)
+		}
+	}
+
+	if fs.FileExists(backupName) {
+		if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 {
+			return string(data)
+		} else {
+			log.Tracef("config: could not read %s (%s)", clean.Log(backupName), err)
+		}
+	}
+
+	return ""
+}
+
+// initSerial initializes storage directories with a random serial.
+func (c *Config) initSerial() (err error) {
+	if c.Serial() != "" {
 		return nil
 	}
 
-	const serialName = "serial"
-
-	c.serial = rnd.PPID('z')
+	c.serial = rnd.GenerateUID('z')
 
 	storageName := filepath.Join(c.StoragePath(), serialName)
 	backupName := filepath.Join(c.BackupPath(), serialName)
 
-	if data, err := os.ReadFile(storageName); err == nil {
-		c.serial = string(data)
-	} else if data, err := os.ReadFile(backupName); err == nil {
-		c.serial = string(data)
-	} else if err := os.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
-		return fmt.Errorf("failed creating %s: %s", storageName, err)
-	} else if err := os.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {
-		return fmt.Errorf("failed creating %s: %s", backupName, err)
+	if err = os.WriteFile(storageName, []byte(c.serial), fs.ModeFile); err != nil {
+		return fmt.Errorf("could not create %s: %s", storageName, err)
+	}
+
+	if err = os.WriteFile(backupName, []byte(c.serial), fs.ModeFile); err != nil {
+		return fmt.Errorf("could not create %s: %s", backupName, err)
 	}
 
 	return nil
@@ -254,8 +297,8 @@ func (c *Config) initStorage() error {
 
 // Serial returns the random storage serial.
 func (c *Config) Serial() string {
-	if err := c.initStorage(); err != nil {
-		log.Errorf("config: %s", err)
+	if c.serial == "" {
+		c.serial = c.readSerial()
 	}
 
 	return c.serial
@@ -274,9 +317,24 @@ func (c *Config) SerialChecksum() string {
 	return hex.EncodeToString(hash.Sum(result))
 }
 
-// Name returns the application name ("PhotoPrism").
+// Name returns the app name.
 func (c *Config) Name() string {
+	if c.options.Name == "" {
+		return "PhotoPrism"
+	}
+
 	return c.options.Name
+}
+
+// Edition returns the app edition.
+func (c *Config) Edition() string {
+	if c.options.Edition == "" {
+		return "PhotoPrism® Dev"
+	} else if strings.HasSuffix(c.options.Edition, "CE") && c.Sponsor() {
+		return strings.Replace(c.options.Edition, "CE", "Plus", 1)
+	}
+
+	return c.options.Edition
 }
 
 // Version returns the application version.
@@ -284,9 +342,9 @@ func (c *Config) Version() string {
 	return c.options.Version
 }
 
-// UserAgent returns a HTTP user agent string based on app name & version.
+// UserAgent returns an HTTP user agent string based on the app config and version.
 func (c *Config) UserAgent() string {
-	return fmt.Sprintf("%s/%s", c.Name(), c.Version())
+	return fmt.Sprintf("%s/%s (%s)", c.Name(), c.Version(), strings.Join(append(c.Flags(), c.Serial()), "; "))
 }
 
 // Copyright returns the application copyright.
@@ -316,6 +374,10 @@ func (c *Config) ApiUri() string {
 
 // CdnUrl returns the optional content delivery network URI without trailing slash.
 func (c *Config) CdnUrl(res string) string {
+	if c.NoSponsor() {
+		return res
+	}
+
 	return strings.TrimRight(c.options.CdnUrl, "/") + res
 }
 
@@ -329,13 +391,22 @@ func (c *Config) StaticUri() string {
 	return c.CdnUrl(c.BaseUri(StaticUri))
 }
 
-// SiteUrl returns the public server URL (default is "http://localhost:2342/").
+// SiteUrl returns the public server URL (default is "http://photoprism.me:2342/").
 func (c *Config) SiteUrl() string {
 	if c.options.SiteUrl == "" {
-		return "http://localhost:2342/"
+		return "http://photoprism.me:2342/"
 	}
 
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
+}
+
+// SiteHttps checks if the site URL uses HTTPS.
+func (c *Config) SiteHttps() bool {
+	if c.options.SiteUrl == "" {
+		return false
+	}
+
+	return strings.HasPrefix(c.options.SiteUrl, "https://")
 }
 
 // SiteDomain returns the public server domain.
@@ -354,7 +425,7 @@ func (c *Config) SiteAuthor() string {
 
 // SiteTitle returns the main site title (default is application name).
 func (c *Config) SiteTitle() string {
-	if c.options.SiteTitle == "" {
+	if c.options.SiteTitle == "" || c.NoSponsor() {
 		return c.Name()
 	}
 
@@ -373,7 +444,7 @@ func (c *Config) SiteDescription() string {
 
 // SitePreview returns the site preview image URL for sharing.
 func (c *Config) SitePreview() string {
-	if c.options.SitePreview == "" {
+	if c.options.SitePreview == "" || c.NoSponsor() {
 		return c.SiteUrl() + "static/img/preview.jpg"
 	}
 
@@ -384,65 +455,103 @@ func (c *Config) SitePreview() string {
 	return c.options.SitePreview
 }
 
-// Debug tests if debug mode is enabled.
+// LegalInfo returns the legal info text for the page footer.
+func (c *Config) LegalInfo() string {
+	if c.NoSponsor() {
+		return MsgSponsor
+	}
+
+	if s := c.CliGlobalString("imprint"); s != "" {
+		log.Warnf("config: option 'imprint' is deprecated, please use 'legal-info'")
+		return s
+	}
+
+	return c.options.LegalInfo
+}
+
+// LegalUrl returns the legal info url.
+func (c *Config) LegalUrl() string {
+	if c.NoSponsor() {
+		return SignUpURL
+	}
+
+	if s := c.CliGlobalString("imprint-url"); s != "" {
+		log.Warnf("config: option 'imprint-url' is deprecated, please use 'legal-url'")
+		return s
+	}
+
+	return c.options.LegalUrl
+}
+
+// Prod checks if production mode is enabled, hides non-essential log messages.
+func (c *Config) Prod() bool {
+	return c.options.Prod
+}
+
+// Debug checks if debug mode is enabled, shows non-essential log messages.
 func (c *Config) Debug() bool {
+	if c.Prod() {
+		return false
+	} else if c.Trace() {
+		return true
+	}
+
 	return c.options.Debug
 }
 
-// Test tests if test mode is enabled.
+// Trace checks if trace mode is enabled, shows all log messages.
+func (c *Config) Trace() bool {
+	if c.Prod() {
+		return false
+	}
+
+	return c.options.Trace || c.options.LogLevel == logrus.TraceLevel.String()
+}
+
+// Test checks if test mode is enabled.
 func (c *Config) Test() bool {
 	return c.options.Test
 }
 
-// Demo tests if demo mode is enabled.
+// Demo checks if demo mode is enabled.
 func (c *Config) Demo() bool {
 	return c.options.Demo
 }
 
-// Sponsor reports if your continuous support helps to pay for development and operating expenses.
+// Sponsor reports if you have chosen to support our mission.
 func (c *Config) Sponsor() bool {
-	return c.options.Sponsor || c.Test()
-}
-
-// Public tests if app runs in public mode and requires no authentication.
-func (c *Config) Public() bool {
-	if c.Demo() {
+	if Sponsor || c.options.Sponsor {
 		return true
+	} else if c.hub != nil {
+		Sponsor = c.Hub().Plus()
 	}
 
-	return c.options.Public
+	return Sponsor
 }
 
-// SetPublic changes authentication while instance is running, for testing purposes only.
-func (c *Config) SetPublic(p bool) {
-	if c.Debug() {
-		c.options.Public = p
-	}
+// NoSponsor reports if you prefer not to support our mission.
+func (c *Config) NoSponsor() bool {
+	return !c.Sponsor() && !c.Demo()
 }
 
-// Experimental tests if experimental features should be enabled.
+// Experimental checks if experimental features should be enabled.
 func (c *Config) Experimental() bool {
 	return c.options.Experimental
 }
 
-// ReadOnly tests if photo directories are write protected.
+// ReadOnly checks if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
 	return c.options.ReadOnly
 }
 
-// DetectNSFW tests if NSFW photos should be detected and flagged.
+// DetectNSFW checks if NSFW photos should be detected and flagged.
 func (c *Config) DetectNSFW() bool {
 	return c.options.DetectNSFW
 }
 
-// UploadNSFW tests if NSFW photos can be uploaded.
+// UploadNSFW checks if NSFW photos can be uploaded.
 func (c *Config) UploadNSFW() bool {
 	return c.options.UploadNSFW
-}
-
-// AdminPassword returns the initial admin password.
-func (c *Config) AdminPassword() string {
-	return c.options.AdminPassword
 }
 
 // LogLevel returns the Logrus log level.
@@ -450,7 +559,9 @@ func (c *Config) LogLevel() logrus.Level {
 	// Normalize string.
 	c.options.LogLevel = strings.ToLower(strings.TrimSpace(c.options.LogLevel))
 
-	if c.Debug() && c.options.LogLevel != logrus.TraceLevel.String() {
+	if c.Trace() {
+		c.options.LogLevel = logrus.TraceLevel.String()
+	} else if c.Debug() && c.options.LogLevel != logrus.TraceLevel.String() {
 		c.options.LogLevel = logrus.DebugLevel.String()
 	}
 
@@ -461,14 +572,14 @@ func (c *Config) LogLevel() logrus.Level {
 	}
 }
 
+// SetLogLevel sets the Logrus log level.
+func (c *Config) SetLogLevel(level logrus.Level) {
+	log.SetLevel(level)
+}
+
 // Shutdown services and workers.
 func (c *Config) Shutdown() {
-	mutex.People.Cancel()
-	mutex.MainWorker.Cancel()
-	mutex.ShareWorker.Cancel()
-	mutex.SyncWorker.Cancel()
-	mutex.MetaWorker.Cancel()
-	mutex.FacesWorker.Cancel()
+	mutex.CancelAll()
 
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
@@ -512,17 +623,32 @@ func (c *Config) Workers() int {
 	return 1
 }
 
-// WakeupInterval returns the metadata, share & sync background worker wakeup interval duration (1 - 604800 seconds).
+// WakeupInterval returns the duration between background worker runs
+// required for face recognition and index maintenance(1-86400s).
 func (c *Config) WakeupInterval() time.Duration {
-	if c.options.Unsafe && c.options.WakeupInterval < 0 {
-		// Background worker can be disabled in unsafe mode.
-		return time.Duration(0)
-	} else if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 604800 {
-		// Default if out of range.
-		return time.Duration(DefaultWakeupIntervalSeconds) * time.Second
+	if c.options.WakeupInterval <= 0 {
+		if c.options.Unsafe {
+			// Worker can be disabled only in unsafe mode.
+			return time.Duration(0)
+		} else {
+			// Default to 15 minutes if no interval is set.
+			return DefaultWakeupInterval
+		}
 	}
 
-	return time.Duration(c.options.WakeupInterval) * time.Second
+	// Do not run more than once per minute.
+	if c.options.WakeupInterval < MinWakeupInterval/time.Second {
+		return MinWakeupInterval
+	} else if c.options.WakeupInterval < MinWakeupInterval {
+		c.options.WakeupInterval = c.options.WakeupInterval * time.Second
+	}
+
+	// Do not run less than once per day.
+	if c.options.WakeupInterval > MaxWakeupInterval {
+		return MaxWakeupInterval
+	}
+
+	return c.options.WakeupInterval
 }
 
 // AutoIndex returns the auto index delay duration.
@@ -556,37 +682,76 @@ func (c *Config) GeoApi() string {
 	return "places"
 }
 
-// OriginalsLimit returns the file size limit for originals.
-func (c *Config) OriginalsLimit() int64 {
+// OriginalsLimit returns the maximum size of originals in MB.
+func (c *Config) OriginalsLimit() int {
 	if c.options.OriginalsLimit <= 0 || c.options.OriginalsLimit > 100000 {
 		return -1
 	}
 
-	// Megabyte.
-	return c.options.OriginalsLimit * 1024 * 1024
+	return c.options.OriginalsLimit
 }
 
-// UpdateHub updates backend api credentials for maps & places.
+// OriginalsLimitBytes returns the maximum size of originals in bytes.
+func (c *Config) OriginalsLimitBytes() int64 {
+	if result := c.OriginalsLimit(); result <= 0 {
+		return -1
+	} else {
+		return int64(result) * 1024 * 1024
+	}
+}
+
+// ResolutionLimit returns the maximum resolution of originals in megapixels (width x height).
+func (c *Config) ResolutionLimit() int {
+	if c.NoSponsor() {
+		return DefaultResolutionLimit
+	}
+
+	result := c.options.ResolutionLimit
+
+	if result <= 0 {
+		return -1
+	} else if result > 900 {
+		result = 900
+	}
+
+	return result
+}
+
+// UpdateHub renews backend api credentials for maps & places without a token.
 func (c *Config) UpdateHub() {
-	if err := c.hub.Refresh(); err != nil {
-		log.Debugf("config: %s", err)
-	} else if err := c.hub.Save(); err != nil {
-		log.Debugf("config: %s", err)
+	_ = c.ResyncHub("")
+}
+
+// ResyncHub renews backend api credentials for maps & places with an optional token.
+func (c *Config) ResyncHub(token string) error {
+	if err := c.hub.Resync(token); err != nil {
+		log.Debugf("config: %s (refresh backend api tokens)", err)
+		if token != "" {
+			return i18n.Error(i18n.ErrAccountConnect)
+		}
+	} else if err = c.hub.Save(); err != nil {
+		log.Debugf("config: %s (save backend api tokens)", err)
 	} else {
 		c.hub.Propagate()
 	}
+
+	return nil
 }
 
 // initHub initializes PhotoPrism hub config.
 func (c *Config) initHub() {
-	c.hub = hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial, c.options.PartnerID)
+	if c.hub != nil {
+		return
+	} else if h := hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial, c.env, c.UserAgent(), c.options.PartnerID); h != nil {
+		c.hub = h
+	}
 
 	if err := c.hub.Load(); err == nil {
 		// Do nothing.
-	} else if err := c.hub.Refresh(); err != nil {
-		log.Debugf("config: %s", err)
+	} else if err := c.hub.Update(); err != nil {
+		log.Debugf("config: %s (init backend api tokens)", err)
 	} else if err := c.hub.Save(); err != nil {
-		log.Debugf("config: %s", err)
+		log.Debugf("config: %s (save backend api tokens)", err)
 	}
 
 	c.hub.Propagate()
@@ -605,9 +770,7 @@ func (c *Config) initHub() {
 
 // Hub returns the PhotoPrism hub config.
 func (c *Config) Hub() *hub.Config {
-	if c.hub == nil {
-		c.initHub()
-	}
+	c.initHub()
 
 	return c.hub
 }

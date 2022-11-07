@@ -1,5 +1,9 @@
 /* Abyss Theme */
 
+body.dark-theme.theme-abyss {
+    background: #212121 !important;
+}
+
 .theme-abyss .v-content__wrap,
 .theme-abyss .p-page,
 .theme-abyss .form,
@@ -31,11 +35,11 @@
 }
 
 #photoprism.theme-abyss .theme--light.v-chip,
-#photoprism.theme-abyss .v-card__actions .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+#photoprism.theme-abyss .v-card__actions .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
     background: #333;
 }
 
-#photoprism.theme-abyss .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+#photoprism.theme-abyss .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
     background: #262626;
 }
 
@@ -90,4 +94,18 @@
 #photoprism.theme-abyss .theme--light.v-list .v-list__tile__mask {
     color: #cccccc;
     background: transparent;
+}
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #432970;
+}
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #643da9;
+}
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #7e57c2;
 }

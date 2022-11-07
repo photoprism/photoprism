@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime/debug"
+	"time"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/fs"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // XMP parses an XMP file and returns a Data struct.
@@ -19,14 +22,19 @@ func XMP(fileName string) (data Data, err error) {
 func (data *Data) XMP(fileName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (xmp panic)\nstack: %s", e, sanitize.Log(filepath.Base(fileName)), debug.Stack())
+			err = fmt.Errorf("metadata: %s in %s (xmp panic)\nstack: %s", e, clean.Log(filepath.Base(fileName)), debug.Stack())
 		}
 	}()
 
+	// Resolve file name e.g. in case it's a symlink.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return fmt.Errorf("metadata: %s %s (xmp)", err, clean.Log(filepath.Base(fileName)))
+	}
+
 	doc := XmpDocument{}
 
-	if err := doc.Load(fileName); err != nil {
-		return fmt.Errorf("metadata: cannot read %s (xmp)", sanitize.Log(filepath.Base(fileName)))
+	if err = doc.Load(fileName); err != nil {
+		return fmt.Errorf("metadata: cannot read %s (xmp)", clean.Log(filepath.Base(fileName)))
 	}
 
 	if doc.Title() != "" {
@@ -57,8 +65,11 @@ func (data *Data) XMP(fileName string) (err error) {
 		data.LensModel = doc.LensModel()
 	}
 
-	if takenAt := doc.TakenAt(); !takenAt.IsZero() {
-		data.TakenAt = takenAt
+	if takenAt := doc.TakenAt(data.TimeZone); !takenAt.IsZero() {
+		data.TakenAt = takenAt.UTC()
+		if data.TimeZone == "" {
+			data.TimeZone = time.UTC.String()
+		}
 	}
 
 	if len(doc.Keywords()) != 0 {

@@ -7,14 +7,12 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // PurgeCommand registers the index cli command.
@@ -40,32 +38,32 @@ var purgeFlags = []cli.Flag{
 func purgeAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	// get cli first argument
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("purge: removing missing files in %s", sanitize.Log(filepath.Base(conf.OriginalsPath())))
+		log.Infof("purge: removing missing files in %s", clean.Log(filepath.Base(conf.OriginalsPath())))
 	} else {
-		log.Infof("purge: removing missing files in %s", sanitize.Log(fs.RelName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
+		log.Infof("purge: removing missing files in %s", clean.Log(fs.RelName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
 	}
 
 	if conf.ReadOnly() {
 		log.Infof("config: read-only mode enabled")
 	}
 
-	w := service.Purge()
+	w := get.Purge()
 
 	opt := photoprism.PurgeOptions{
 		Path: subPath,
@@ -78,8 +76,6 @@ func purgeAction(ctx *cli.Context) error {
 	} else {
 		log.Infof("purged %s and %s in %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(start))
 	}
-
-	conf.Shutdown()
 
 	return nil
 }

@@ -20,7 +20,7 @@ func TestIndex_Start(t *testing.T) {
 
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	clip := clip.New("clip-testing", 512, conf.DisableClip())
@@ -30,7 +30,7 @@ func TestIndex_Start(t *testing.T) {
 
 	ind := NewIndex(conf, tf, clip, nd, fn, convert, NewFiles(), NewPhotos())
 	imp := NewImport(conf, ind, convert)
-	opt := ImportOptionsMove(conf.ImportPath())
+	opt := ImportOptionsMove(conf.ImportPath(), "")
 
 	imp.Start(opt)
 
@@ -47,7 +47,7 @@ func TestIndex_File(t *testing.T) {
 
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	clip := clip.New("clip-testing", 512, conf.DisableClip())

@@ -22,7 +22,7 @@
         </template>
 
         <v-btn
-            v-if="features.share"
+            v-if="canShare"
             fab dark small
             :title="$gettext('Share')"
             color="share"
@@ -33,6 +33,7 @@
           <v-icon>share</v-icon>
         </v-btn>
         <v-btn
+            v-if="canManage"
             fab dark small
             :title="$gettext('Edit')"
             color="edit"
@@ -43,18 +44,17 @@
           <v-icon>edit</v-icon>
         </v-btn>
         <v-btn
-            v-if="features.download"
             fab dark small
             :title="$gettext('Download')"
             color="download"
             class="action-download"
-            :disabled="selection.length !== 1"
+            :disabled="!canDownload || selection.length !== 1"
             @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
-            v-if="features.albums"
+            v-if="canManage"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"
@@ -65,7 +65,7 @@
           <v-icon>bookmark</v-icon>
         </v-btn>
         <v-btn
-            v-if="deletable.includes(context)"
+            v-if="canDelete && deletable.includes(context)"
             fab dark small
             color="remove"
             :title="$gettext('Delete')"
@@ -100,17 +100,44 @@ import download from "common/download";
 export default {
   name: 'PAlbumClipboard',
   props: {
-    selection: Array,
-    refresh: Function,
-    clearSelection: Function,
-    share: Function,
-    edit: Function,
-    context: String,
+    selection: {
+      type: Array,
+      default: () => [],
+    },
+    refresh: {
+      type: Function,
+      default: () => {
+      },
+    },
+    clearSelection: {
+      type: Function,
+      default: () => {
+      },
+    },
+    share: {
+      type: Function,
+      default: () => {
+      },
+    },
+    edit: {
+      type: Function,
+      default: () => {
+      },
+    },
+    context: {
+      type: String,
+      default: "",
+    },
   },
   data() {
+    const features = this.$config.settings().features;
+
     return {
+      canDelete: this.$config.allow("albums", "delete"),
+      canDownload: this.$config.allow("albums", "download") && features.download,
+      canShare: this.$config.allow("albums", "share") && features.share,
+      canManage: this.$config.allow("albums", "manage"),
       deletable: ["album", "moment", "state"],
-      features: this.$config.settings().features,
       expanded: false,
       dialog: {
         delete: false,
@@ -176,7 +203,7 @@ export default {
 
       Notify.success(this.$gettext("Downloading…"));
 
-      this.onDownload(`${this.$config.apiUri}/albums/${this.selection[0]}/dl?t=${this.$config.downloadToken()}`);
+      this.onDownload(`${this.$config.apiUri}/albums/${this.selection[0]}/dl?t=${this.$config.downloadToken}`);
 
       this.expanded = false;
     },

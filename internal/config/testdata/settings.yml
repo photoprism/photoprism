@@ -3,8 +3,8 @@ UI:
   Zoom: false
   Theme: onyx
   Language: de
-Templates:
-  Default: index.tmpl
+Search:
+  BatchSize: 0
 Maps:
   Animate: 0
   Style: streets
@@ -36,6 +36,7 @@ Index:
   Path: /
   Convert: true
   Rescan: false
+  SkipArchived: false
 Stack:
   UUID: true
   Meta: true
@@ -44,3 +45,9 @@ Share:
   Title: ""
 Download:
   Name: file
+  Disabled: false
+  Originals: true
+  MediaRaw: false
+  MediaSidecar: false
+Templates:
+  Default: index.gohtml

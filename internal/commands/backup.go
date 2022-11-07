@@ -15,9 +15,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 const backupDescription = "A user-defined SQL dump FILENAME or - for stdout can be passed as the first argument. " +
@@ -30,7 +29,7 @@ var BackupCommand = cli.Command{
 	Name:        "backup",
 	Description: backupDescription,
 	Usage:       "Creates an index SQL dump and optionally album YAML files organized by type",
-	ArgsUsage:   "[FILENAME | -]",
+	ArgsUsage:   "[filename.sql | -]",
 	Flags:       backupFlags,
 	Action:      backupAction,
 }
@@ -75,14 +74,17 @@ func backupAction(ctx *cli.Context) error {
 
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
+
+	conf.RegisterDb()
+	defer conf.Shutdown()
 
 	if backupIndex {
 		// If empty, use default backup file name.
@@ -108,12 +110,12 @@ func backupAction(ctx *cli.Context) error {
 
 			// Create backup directory if not exists.
 			if dir := filepath.Dir(indexFileName); dir != "." {
-				if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+				if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
 					return err
 				}
 			}
 
-			log.Infof("writing SQL dump to %s", sanitize.Log(indexFileName))
+			log.Infof("writing SQL dump to %s", clean.Log(indexFileName))
 		}
 
 		var cmd *exec.Cmd
@@ -145,6 +147,9 @@ func backupAction(ctx *cli.Context) error {
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
 
+		// Log exact command for debugging in trace mode.
+		log.Trace(cmd.String())
+
 		// Run backup command.
 		if err := cmd.Run(); err != nil {
 			if stderr.String() != "" {
@@ -157,16 +162,13 @@ func backupAction(ctx *cli.Context) error {
 			fmt.Println(out.String())
 		} else {
 			// Write output to file.
-			if err := os.WriteFile(indexFileName, []byte(out.String()), os.ModePerm); err != nil {
+			if err := os.WriteFile(indexFileName, []byte(out.String()), fs.ModeFile); err != nil {
 				return err
 			}
 		}
 	}
 
 	if backupAlbums {
-		service.SetConfig(conf)
-		conf.InitDb()
-
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
 				log.Warnf("album files path not writable, using default")
@@ -175,7 +177,7 @@ func backupAction(ctx *cli.Context) error {
 			albumsPath = conf.AlbumsPath()
 		}
 
-		log.Infof("saving albums in %s", sanitize.Log(albumsPath))
+		log.Infof("saving albums in %s", clean.Log(albumsPath))
 
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err
@@ -186,9 +188,7 @@ func backupAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("backup completed in %s", elapsed)
-
-	conf.Shutdown()
+	log.Infof("completed in %s", elapsed)
 
 	return nil
 }

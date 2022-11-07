@@ -12,34 +12,34 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // PasswdCommand updates a password.
 var PasswdCommand = cli.Command{
 	Name:   "passwd",
-	Usage:  "Changes the admin password",
+	Usage:  "Changes the admin account password",
 	Action: passwdAction,
 }
 
 // passwdAction updates a password.
 func passwdAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	user := entity.Admin
 
-	log.Infof("please enter a new password for %s (at least 6 characters)\n", sanitize.Log(user.Username()))
+	log.Infof("please enter a new password for %s (mininum 8 characters)\n", clean.Log(user.Name()))
 
 	newPassword := getPassword("New Password: ")
 
@@ -57,9 +57,7 @@ func passwdAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("changed password for %s\n", sanitize.Log(user.Username()))
-
-	conf.Shutdown()
+	log.Infof("changed password for %s\n", clean.Log(user.Name()))
 
 	return nil
 }

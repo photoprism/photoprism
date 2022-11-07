@@ -1,0 +1,1 @@
+ALTER TABLE files MODIFY time_index VARBINARY(64);

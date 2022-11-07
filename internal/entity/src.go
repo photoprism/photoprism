@@ -18,6 +18,7 @@ const (
 	SrcMeta     = "meta"               // Prio 16
 	SrcXmp      = "xmp"                // Prio 32
 	SrcManual   = "manual"             // Prio 64
+	SrcAdmin    = "admin"              // Prio 128
 )
 
 // SrcString returns a source string for logging.
@@ -43,4 +44,5 @@ var SrcPriority = Priorities{
 	SrcMeta:     16,
 	SrcXmp:      32,
 	SrcManual:   64,
+	SrcAdmin:    128,
 }

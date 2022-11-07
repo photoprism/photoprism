@@ -14,7 +14,7 @@ func Move(src, dest string) (err error) {
 		}
 	}()
 
-	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dest), ModeDir); err != nil {
 		return err
 	}
 

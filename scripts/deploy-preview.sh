@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 
-set -e
+# Exit on error.
+set -ex
 
-# Run tests
+# Use QEMU for multi-arch builds.
+scripts/install-qemu.sh
+
+# Run test suite.
 scripts/test.sh
 
-# Build images
+# Build preview image.
 make docker-preview
 
+# Wait 2s.
 sleep 2
-docker pull photoprism/photoprism:preview
 
+# Build demo image.
 make docker-demo

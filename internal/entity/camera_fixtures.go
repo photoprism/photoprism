@@ -65,6 +65,7 @@ var CameraFixtures = CameraMap{
 	"canon-eos-6d": {
 		ID:                1000003,
 		CameraSlug:        "canon-eos-6d",
+		CameraName:        "Canon EOS 6D",
 		CameraModel:       "EOS 6D",
 		CameraMake:        "Canon",
 		CameraType:        "",

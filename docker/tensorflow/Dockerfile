@@ -6,8 +6,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TMP /tmp
 ENV EXTRA_BAZEL_ARGS "--host_javabase=@local_jdk//:jdk"
 
-# Configure apt
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+# apt default settings
+RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
@@ -58,6 +58,5 @@ RUN mv bazel-0.24.1-linux-x86_64 /usr/local/bin/bazel && chmod 755 /usr/local/bi
 # Configure TensorFlow
 WORKDIR "/home/tensorflow/tensorflow-1.15.2"
 COPY ./*.sh ./
-COPY ./*.diff ./
 COPY ./.tf_configure.bazelrc .tf_configure.bazelrc
 COPY ./Makefile Makefile

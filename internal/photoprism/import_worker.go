@@ -7,9 +7,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/query"
-
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 type ImportJob struct {
@@ -23,44 +22,56 @@ type ImportJob struct {
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
 		var destMainFileName string
-		related := job.Related
+
+		o := job.IndexOpt
+
 		imp := job.Imp
 		opt := job.ImportOpt
-		indexOpt := job.IndexOpt
-		importPath := job.ImportOpt.Path
+		src := job.ImportOpt.Path
+
+		related := job.Related
+
+		// relatedOriginalNames contains the original filenames of related files.
+		relatedOriginalNames := make(map[string]string, len(related.Files))
 
 		if related.Main == nil {
-			log.Warnf("import: %s belongs to no supported media file", sanitize.Log(fs.RelName(job.FileName, importPath)))
+			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, src)))
 			continue
 		}
 
+		// Extract metadata to a JSON file with Exiftool.
 		if related.Main.NeedsExifToolJson() {
 			if jsonName, err := imp.convert.ToJson(related.Main); err != nil {
-				log.Debugf("import: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(related.Main.BaseName()))
+				log.Tracef("exiftool: %s", clean.Log(err.Error()))
+				log.Debugf("exiftool: failed parsing %s", clean.Log(related.Main.RootRelName()))
 			} else if err := related.Main.ReadExifToolJson(); err != nil {
-				log.Errorf("import: %s in %s (read metadata)", sanitize.Log(err.Error()), sanitize.Log(related.Main.BaseName()))
+				log.Errorf("import: %s in %s (read metadata)", clean.Log(err.Error()), clean.Log(related.Main.BaseName()))
 			} else {
 				log.Debugf("import: created %s", filepath.Base(jsonName))
 			}
 		}
 
-		originalName := related.Main.RelName(importPath)
+		originalName := related.Main.RelName(src)
 
 		event.Publish("import.file", event.Data{
-			"fileName": originalName,
-			"baseName": filepath.Base(related.Main.FileName()),
+			"fileName":  originalName,
+			"baseName":  filepath.Base(related.Main.FileName()),
+			"subFolder": opt.DestFolder,
 		})
 
 		for _, f := range related.Files {
-			relFileName := f.RelName(importPath)
+			relFileName := f.RelName(src)
 
-			if destFileName, err := imp.DestinationFilename(related.Main, f); err == nil {
+			if destFileName, err := imp.DestinationFilename(related.Main, f, opt.DestFolder); err == nil {
 				destDir := filepath.Dir(destFileName)
+
+				// Remember the original filenames of related files, so they can later be indexed and searched.
+				relatedOriginalNames[destFileName] = relFileName
 
 				if fs.PathExists(destDir) {
 					// Do nothing.
-				} else if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
-					log.Errorf("import: failed creating folder for %s (%s)", sanitize.Log(f.BaseName()), err.Error())
+				} else if err := os.MkdirAll(destDir, fs.ModeDir); err != nil {
+					log.Errorf("import: failed creating folder for %s (%s)", clean.Log(f.BaseName()), err.Error())
 				} else {
 					destDirRel := fs.RelName(destDir, imp.originalsPath())
 
@@ -73,20 +84,20 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if related.Main.HasSameName(f) {
 					destMainFileName = destFileName
-					log.Infof("import: moving main %s file %s to %s", f.FileType(), sanitize.Log(relFileName), sanitize.Log(fs.RelName(destFileName, imp.originalsPath())))
+					log.Infof("import: moving main %s file %s to %s", f.FileType(), clean.Log(relFileName), clean.Log(fs.RelName(destFileName, imp.originalsPath())))
 				} else {
-					log.Infof("import: moving related %s file %s to %s", f.FileType(), sanitize.Log(relFileName), sanitize.Log(fs.RelName(destFileName, imp.originalsPath())))
+					log.Infof("import: moving related %s file %s to %s", f.FileType(), clean.Log(relFileName), clean.Log(fs.RelName(destFileName, imp.originalsPath())))
 				}
 
 				if opt.Move {
 					if err := f.Move(destFileName); err != nil {
-						logRelName := sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath()))
+						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
 						log.Debugf("import: %s", err.Error())
 						log.Warnf("import: failed moving file to %s, is another import running at the same time?", logRelName)
 					}
 				} else {
 					if err := f.Copy(destFileName); err != nil {
-						logRelName := sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath()))
+						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
 						log.Debugf("import: %s", err.Error())
 						log.Warnf("import: failed copying file to %s, is another import running at the same time?", logRelName)
 					}
@@ -99,16 +110,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 					// Do nothing.
 				} else if file, err := entity.FirstFileByHash(fileHash); err != nil {
 					// Do nothing.
-				} else if err := entity.AddPhotoToAlbums(file.PhotoUID, opt.Albums); err != nil {
+				} else if err := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, opt.UserUID); err != nil {
 					log.Warn(err)
 				}
 
 				// Remove duplicates to save storage.
 				if opt.RemoveExistingFiles {
 					if err := f.Remove(); err != nil {
-						log.Errorf("import: failed deleting %s (%s)", sanitize.Log(f.BaseName()), err.Error())
+						log.Errorf("import: failed deleting %s (%s)", clean.Log(f.BaseName()), err.Error())
 					} else {
-						log.Infof("import: deleted %s (already exists)", sanitize.Log(relFileName))
+						log.Infof("import: deleted %s (already exists)", clean.Log(relFileName))
 					}
 				}
 			}
@@ -118,74 +129,86 @@ func ImportWorker(jobs <-chan ImportJob) {
 			f, err := NewMediaFile(destMainFileName)
 
 			if err != nil {
-				log.Errorf("import: %s in %s", err.Error(), sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath())))
+				log.Errorf("import: %s in %s", err.Error(), clean.Log(fs.RelName(destMainFileName, imp.originalsPath())))
 				continue
 			}
 
+			// Extract metadata to a JSON file with Exiftool.
 			if f.NeedsExifToolJson() {
 				if jsonName, err := imp.convert.ToJson(f); err != nil {
-					log.Debugf("import: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(f.BaseName()))
+					log.Tracef("exiftool: %s", clean.Log(err.Error()))
+					log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 				} else {
 					log.Debugf("import: created %s", filepath.Base(jsonName))
 				}
 			}
 
-			if indexOpt.Convert && f.IsMedia() && !f.HasJpeg() {
-				if jpegFile, err := imp.convert.ToJpeg(f); err != nil {
-					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath())))
+			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
+			if o.Convert && f.IsMedia() && !f.HasJpeg() {
+				if jpegFile, err := imp.convert.ToJpeg(f, false); err != nil {
+					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), clean.Log(f.RootRelName()))
 					continue
 				} else {
-					log.Debugf("import: created %s", sanitize.Log(jpegFile.BaseName()))
+					log.Debugf("import: created %s", clean.Log(jpegFile.BaseName()))
 				}
 			}
 
+			// Ensure that a JPEG and the configured default thumbnail sizes exist.
 			if jpg, err := f.Jpeg(); err != nil {
 				log.Error(err)
-			} else {
-				if err := jpg.ResampleDefault(imp.thumbPath(), false); err != nil {
-					log.Errorf("import: %s in %s (resample)", err.Error(), sanitize.Log(jpg.BaseName()))
-					continue
-				}
+			} else if exceeds, actual := jpg.ExceedsResolution(o.ResolutionLimit); exceeds {
+				log.Errorf("index: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+				continue
+			} else if err := jpg.CreateThumbnails(imp.thumbPath(), false); err != nil {
+				log.Errorf("import: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+				continue
 			}
 
+			// Find related files.
 			related, err := f.RelatedFiles(imp.conf.Settings().StackSequences())
 
+			// Skip import if the finding related files results in an error.
 			if err != nil {
-				log.Errorf("import: %s in %s (find related files)", err.Error(), sanitize.Log(fs.RelName(destMainFileName, imp.originalsPath())))
-
+				log.Errorf("import: %s in %s (find related files)", err.Error(), clean.Log(fs.RelName(destMainFileName, imp.originalsPath())))
 				continue
 			}
 
 			done := make(map[string]bool)
 			ind := imp.index
-			sizeLimit := ind.conf.OriginalsLimit()
 			photoUID := ""
 
 			if related.Main != nil {
 				f := related.Main
 
-				// Enforce file size limit for originals.
-				if sizeLimit > 0 && f.FileSize() > sizeLimit {
-					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
+				// Enforce file size and resolution limits.
+				if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
+					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
+					continue
+				} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
+					log.Warnf("import: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
 					continue
 				}
 
-				res := ind.MediaFile(f, indexOpt, originalName, "")
+				// Index main MediaFile.
+				res := ind.UserMediaFile(f, o, originalName, "", opt.UserUID)
 
-				log.Infof("import: %s main %s file %s", res, f.FileType(), sanitize.Log(f.RelName(ind.originalsPath())))
+				// Log result.
+				log.Infof("import: %s main %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
 				done[f.FileName()] = true
 
 				if !res.Success() {
+					// Skip importing related files if the main file was not indexed successfully.
 					continue
 				} else if res.PhotoUID != "" {
 					photoUID = res.PhotoUID
 
-					if err := entity.AddPhotoToAlbums(photoUID, opt.Albums); err != nil {
+					// Add photo to album if a list of albums was provided when importing.
+					if err := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, opt.UserUID); err != nil {
 						log.Warn(err)
 					}
 				}
 			} else {
-				log.Warnf("import: found no main file for %s, conversion to jpeg may have failed", fs.RelName(destMainFileName, imp.originalsPath()))
+				log.Warnf("import: found no main file for %s, conversion to jpeg may have failed", clean.Log(f.RootRelName()))
 			}
 
 			for _, f := range related.Files {
@@ -199,30 +222,33 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				done[f.FileName()] = true
 
-				// Enforce file size limit for originals.
-				if sizeLimit > 0 && f.FileSize() > sizeLimit {
-					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", sanitize.Log(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
-					continue
+				// Show warning if sidecar file exceeds size or resolution limit.
+				if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
+					log.Warnf("import: sidecar file %s exceeds size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
+				} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
+					log.Warnf("import: sidecar file %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
 				}
 
+				// Extract metadata to a JSON file with Exiftool.
 				if f.NeedsExifToolJson() {
 					if jsonName, err := imp.convert.ToJson(f); err != nil {
-						log.Debugf("import: %s in %s (extract metadata)", sanitize.Log(err.Error()), sanitize.Log(f.BaseName()))
+						log.Tracef("exiftool: %s", clean.Log(err.Error()))
+						log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 					} else {
 						log.Debugf("import: created %s", filepath.Base(jsonName))
 					}
 				}
 
-				res := ind.MediaFile(f, indexOpt, "", photoUID)
+				// Index related media file including its original filename.
+				res := ind.UserMediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID, opt.UserUID)
 
-				if res.Indexed() && f.IsJpeg() {
-					if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-						log.Errorf("import: failed creating thumbnails for %s (%s)", sanitize.Log(f.BaseName()), err.Error())
-						query.SetFileError(res.FileUID, err.Error())
-					}
+				// Save file error.
+				if fileUid, err := res.FileError(); err != nil {
+					query.SetFileError(fileUid, err.Error())
 				}
 
-				log.Infof("import: %s related %s file %s", res, f.FileType(), sanitize.Log(f.RelName(ind.originalsPath())))
+				// Log result.
+				log.Infof("import: %s related %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
 			}
 
 		}

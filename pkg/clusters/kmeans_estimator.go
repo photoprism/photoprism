@@ -14,7 +14,7 @@ type kmeansEstimator struct {
 	// variables keeping count of changes of points' membership every iteration. User as a stopping condition.
 	changes, oldchanges, counter, threshold int
 
-	distance DistanceFunc
+	distance DistFunc
 
 	a, b []int
 
@@ -28,7 +28,7 @@ type kmeansEstimator struct {
 // Implementation of cluster number estimator using gap statistic
 // ("Estimating the number of clusters in a data set via the gap statistic", Tibshirani et al.) with k-means++ as
 // clustering algorithm
-func KMeansEstimator(iterations, clusters int, distance DistanceFunc) (Estimator, error) {
+func KMeansEstimator(iterations, clusters int, distance DistFunc) (Estimator, error) {
 	if iterations < 1 {
 		return nil, errZeroIterations
 	}
@@ -37,12 +37,12 @@ func KMeansEstimator(iterations, clusters int, distance DistanceFunc) (Estimator
 		return nil, errOneCluster
 	}
 
-	var d DistanceFunc
+	var d DistFunc
 	{
 		if distance != nil {
 			d = distance
 		} else {
-			d = EuclideanDistance
+			d = EuclideanDist
 		}
 	}
 
@@ -226,7 +226,7 @@ func (c *kmeansEstimator) wk(data [][]float64, centroids [][]float64, mapping []
 	)
 
 	for i := 0; i < len(mapping); i++ {
-		wk[mapping[i]-1] += EuclideanDistanceSquared(centroids[mapping[i]-1], data[i]) / l
+		wk[mapping[i]-1] += EuclideanDistSquared(centroids[mapping[i]-1], data[i]) / l
 	}
 
 	return floats.Sum(wk)

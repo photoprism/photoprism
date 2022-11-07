@@ -19,7 +19,7 @@ func TestKmeansClusterNumberMatches(t *testing.T) {
 		t.Errorf("Error importing data: %s\n", e.Error())
 	}
 
-	c, e := KMeans(1000, C, EuclideanDistance)
+	c, e := KMeans(1000, C, EuclideanDist)
 	if e != nil {
 		t.Errorf("Error initializing kmeans clusterer: %s\n", e.Error())
 	}

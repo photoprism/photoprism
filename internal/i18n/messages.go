@@ -8,6 +8,9 @@ const (
 	ErrAlreadyExists
 	ErrNotFound
 	ErrFileNotFound
+	ErrFileTooLarge
+	ErrUnsupportedFormat
+	ErrOriginalsEmpty
 	ErrSelectionNotFound
 	ErrEntityNotFound
 	ErrAccountNotFound
@@ -20,7 +23,9 @@ const (
 	ErrPublic
 	ErrReadOnly
 	ErrUnauthorized
+	ErrForbidden
 	ErrOffensiveUpload
+	ErrUploadFailed
 	ErrNoItemsSelected
 	ErrCreateFile
 	ErrCreateFolder
@@ -35,6 +40,8 @@ const (
 	ErrInvalidLink
 	ErrInvalidName
 	ErrBusy
+	ErrWakeupInterval
+	ErrAccountConnect
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -68,7 +75,10 @@ const (
 	MsgSubjectDeleted
 	MsgPersonSaved
 	MsgPersonDeleted
+	MsgFileUploaded
 	MsgFilesUploadedIn
+	MsgProcessingUpload
+	MsgUploadProcessed
 	MsgSelectionApproved
 	MsgSelectionArchived
 	MsgSelectionRestored
@@ -76,6 +86,7 @@ const (
 	MsgAlbumsDeleted
 	MsgZipCreatedIn
 	MsgPermanentlyDeleted
+	MsgRestored
 )
 
 var Messages = MessageMap{
@@ -87,6 +98,9 @@ var Messages = MessageMap{
 	ErrAlreadyExists:      gettext("%s already exists"),
 	ErrNotFound:           gettext("Not found"),
 	ErrFileNotFound:       gettext("File not found"),
+	ErrFileTooLarge:       gettext("File too large"),
+	ErrUnsupportedFormat:  gettext("Unsupported format"),
+	ErrOriginalsEmpty:     gettext("Originals folder is empty"),
 	ErrSelectionNotFound:  gettext("Selection not found"),
 	ErrEntityNotFound:     gettext("Entity not found"),
 	ErrAccountNotFound:    gettext("Account not found"),
@@ -97,9 +111,11 @@ var Messages = MessageMap{
 	ErrPersonNotFound:     gettext("Person not found"),
 	ErrFaceNotFound:       gettext("Face not found"),
 	ErrPublic:             gettext("Not available in public mode"),
-	ErrReadOnly:           gettext("not available in read-only mode"),
-	ErrUnauthorized:       gettext("Please log in and try again"),
+	ErrReadOnly:           gettext("Not available in read-only mode"),
+	ErrUnauthorized:       gettext("Please log in to your account"),
+	ErrForbidden:          gettext("Permission denied"),
 	ErrOffensiveUpload:    gettext("Upload might be offensive"),
+	ErrUploadFailed:       gettext("Upload failed"),
 	ErrNoItemsSelected:    gettext("No items selected"),
 	ErrCreateFile:         gettext("Failed creating file, please check permissions"),
 	ErrCreateFolder:       gettext("Failed creating folder, please check permissions"),
@@ -114,6 +130,8 @@ var Messages = MessageMap{
 	ErrInvalidLink:        gettext("Invalid link"),
 	ErrInvalidName:        gettext("Invalid name"),
 	ErrBusy:               gettext("Busy, please try again later"),
+	ErrWakeupInterval:     gettext("The wakeup interval is %s, but must be 1h or less"),
+	ErrAccountConnect:     gettext("Your account could not be connected"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),
@@ -148,7 +166,10 @@ var Messages = MessageMap{
 	MsgSubjectDeleted:        gettext("Subject deleted"),
 	MsgPersonSaved:           gettext("Person saved"),
 	MsgPersonDeleted:         gettext("Person deleted"),
+	MsgFileUploaded:          gettext("File uploaded"),
 	MsgFilesUploadedIn:       gettext("%d files uploaded in %d s"),
+	MsgProcessingUpload:      gettext("Processing upload..."),
+	MsgUploadProcessed:       gettext("Upload has been processed"),
 	MsgSelectionApproved:     gettext("Selection approved"),
 	MsgSelectionArchived:     gettext("Selection archived"),
 	MsgSelectionRestored:     gettext("Selection restored"),
@@ -156,4 +177,5 @@ var Messages = MessageMap{
 	MsgAlbumsDeleted:         gettext("Albums deleted"),
 	MsgZipCreatedIn:          gettext("Zip created in %d s"),
 	MsgPermanentlyDeleted:    gettext("Permanently deleted"),
+	MsgRestored:              gettext("%s has been restored"),
 }

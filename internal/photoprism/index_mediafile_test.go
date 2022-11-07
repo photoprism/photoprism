@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/clip"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
@@ -19,20 +20,19 @@ func TestIndex_MediaFile(t *testing.T) {
 	}
 
 	t.Run("flash.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		conf.InitializeTestData(t)
+		cfg.InitializeTestData()
 
-		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
-		clip := clip.New("clip-testing", 512, conf.DisableClip())
-		nd := nsfw.New(conf.NSFWModelPath())
-		fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-		convert := NewConvert(conf)
+		tf := classify.New(cfg.AssetsPath(), cfg.DisableTensorFlow())
+		clip := clip.New("clip-testing", 512, cfg.DisableClip())
+		nd := nsfw.New(cfg.NSFWModelPath())
+		fn := face.NewNet(cfg.FaceNetModelPath(), "", cfg.DisableTensorFlow())
+		convert := NewConvert(cfg)
 
 		clip.Db.DeleteCollection()
 		clip.Db.CreateCollectionIfNotExisting()
-
-		ind := NewIndex(conf, tf, clip, nd, fn, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(cfg, tf, clip, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 		mediaFile, err := NewMediaFile("testdata/flash.jpg")
 
@@ -45,6 +45,11 @@ func TestIndex_MediaFile(t *testing.T) {
 		result := ind.MediaFile(mediaFile, indexOpt, "flash.jpg", "")
 
 		words := mediaFile.metaData.Keywords.String()
+
+		t.Logf("size in megapixel: %d", mediaFile.Megapixels())
+
+		exceeds, actual := mediaFile.ExceedsResolution(cfg.ResolutionLimit())
+		t.Logf("megapixel limit exceeded: %t, %d / %d MP", exceeds, actual, cfg.ResolutionLimit())
 
 		assert.Contains(t, words, "marienkäfer")
 		assert.Contains(t, words, "burst")
@@ -62,40 +67,41 @@ func TestIndex_MediaFile(t *testing.T) {
 	})
 
 	t.Run("blue-go-video.mp4", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		conf.InitializeTestData(t)
+		cfg.InitializeTestData()
 
-		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
-		clip := clip.New("clip-testing", 512, conf.DisableClip())
-		nd := nsfw.New(conf.NSFWModelPath())
-		fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-		convert := NewConvert(conf)
+		tf := classify.New(cfg.AssetsPath(), cfg.DisableTensorFlow())
+		clip := clip.New("clip-testing", 512, cfg.DisableClip())
+		nd := nsfw.New(cfg.NSFWModelPath())
+		fn := face.NewNet(cfg.FaceNetModelPath(), "", cfg.DisableTensorFlow())
+		convert := NewConvert(cfg)
 
-		ind := NewIndex(conf, tf, clip, nd, fn, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(cfg, tf, clip, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "", mediaFile.metaData.Title)
 
-		result := ind.MediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "")
+		result := ind.UserMediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "", entity.Admin.UID())
+
 		assert.Equal(t, "Blue Gopher", mediaFile.metaData.Title)
 		assert.Equal(t, IndexStatus("added"), result.Status)
 	})
 	t.Run("error", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		conf.InitializeTestData(t)
+		cfg.InitializeTestData()
 
-		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
-		clip := clip.New("clip-testing", 512, conf.DisableClip())
-		nd := nsfw.New(conf.NSFWModelPath())
-		fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-		convert := NewConvert(conf)
+		tf := classify.New(cfg.AssetsPath(), cfg.DisableTensorFlow())
+		clip := clip.New("clip-testing", 512, cfg.DisableClip())
+		nd := nsfw.New(cfg.NSFWModelPath())
+		fn := face.NewNet(cfg.FaceNetModelPath(), "", cfg.DisableTensorFlow())
+		convert := NewConvert(cfg)
 
-		ind := NewIndex(conf, tf, clip, nd, fn, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(cfg, tf, clip, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 
 		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4", "")

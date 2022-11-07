@@ -1,25 +1,23 @@
 <template>
-  <v-dialog v-model="visible" max-width="300">
+  <v-dialog :value="show" max-width="300">
     <v-card>
       <v-card-title class="subheading pa-3">
         <translate>PhotoPrism has been updated…</translate>
       </v-card-title>
-
       <v-card-actions class="pa-3">
         <v-spacer></v-spacer>
-
         <v-btn
             color="secondary-light"
-            depressed small
+            class="compact mx-2"
+            depressed
             @click="close"
         >
           <translate>Cancel</translate>
         </v-btn>
-
         <v-btn
             color="primary-button"
-            dark depressed small
-            class="action-update-reload"
+            class="action-update-reload compact"
+            dark small depressed
             @click="reload"
         >
           <translate>Reload</translate>
@@ -31,7 +29,7 @@
 
 <script>
 export default {
-  name: 'PDialogWebdav',
+  name: 'PReloadDialog',
   props: {
     show: Boolean,
   },

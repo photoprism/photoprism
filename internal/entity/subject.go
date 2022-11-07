@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"sync"
@@ -11,9 +10,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -21,40 +19,51 @@ var subjectMutex = sync.Mutex{}
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	SubjType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
-	SubjSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
-	SubjSlug     string          `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
-	SubjName     string          `gorm:"type:VARCHAR(160);unique_index;default:'';" json:"Name" yaml:"Name"`
-	SubjAlias    string          `gorm:"type:VARCHAR(160);default:'';" json:"Alias" yaml:"Alias"`
-	SubjBio      string          `gorm:"type:TEXT;" json:"Bio" yaml:"Bio,omitempty"`
-	SubjNotes    string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	SubjFavorite bool            `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
-	SubjHidden   bool            `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
-	SubjPrivate  bool            `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
-	SubjExcluded bool            `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
-	FileCount    int             `gorm:"default:0;" json:"FileCount" yaml:"-"`
-	PhotoCount   int             `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
-	Thumb        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
-	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
-	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
-	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
-	DeletedAt    *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	SubjUID      string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	SubjType     string     `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjSrc      string     `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjSlug     string     `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
+	SubjName     string     `gorm:"type:VARCHAR(160);unique_index;default:'';" json:"Name" yaml:"Name"`
+	SubjAlias    string     `gorm:"type:VARCHAR(160);default:'';" json:"Alias" yaml:"Alias"`
+	SubjBio      string     `gorm:"type:VARCHAR(2048);" json:"Bio" yaml:"Bio,omitempty"`
+	SubjNotes    string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	SubjFavorite bool       `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
+	SubjHidden   bool       `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
+	SubjPrivate  bool       `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
+	SubjExcluded bool       `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
+	FileCount    int        `gorm:"default:0;" json:"FileCount" yaml:"-"`
+	PhotoCount   int        `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
+	Thumb        string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc     string     `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time  `json:"UpdatedAt" yaml:"-"`
+	DeletedAt    *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Subject) TableName() string {
 	return "subjects"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUID(m.SubjUID, 'j') {
+	if rnd.IsUnique(m.SubjUID, 'j') {
 		return nil
 	}
 
-	return scope.SetColumn("SubjUID", rnd.PPID('j'))
+	return scope.SetColumn("SubjUID", rnd.GenerateUID('j'))
+}
+
+// AfterSave is a hook that updates the name cache after saving.
+func (m *Subject) AfterSave() (err error) {
+	SubjNames.Set(m.SubjUID, m.SubjName)
+	return
+}
+
+// AfterFind is a hook that updates the name cache after querying.
+func (m *Subject) AfterFind() (err error) {
+	SubjNames.Set(m.SubjUID, m.SubjName)
+	return
 }
 
 // NewSubject returns a new entity.
@@ -81,7 +90,7 @@ func NewSubject(name, subjType, subjSrc string) *Subject {
 	return result
 }
 
-// Save updates the existing or inserts a new entity.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Subject) Save() error {
 	subjectMutex.Lock()
 	defer subjectMutex.Unlock()
@@ -106,8 +115,6 @@ func (m *Subject) Delete() error {
 	subjectMutex.Lock()
 	defer subjectMutex.Unlock()
 
-	log.Infof("subject: deleting %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
-
 	event.EntitiesDeleted("subjects", []string{m.SubjUID})
 
 	if m.IsPerson() {
@@ -120,6 +127,8 @@ func (m *Subject) Delete() error {
 	if err := Db().Model(&Face{}).Where("subj_uid = ?", m.SubjUID).Update("subj_uid", "").Error; err != nil {
 		return err
 	}
+
+	log.Infof("subject: marked %s %s as missing", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 	return Db().Delete(m).Error
 }
@@ -135,7 +144,11 @@ func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
 
 // Deleted returns true if the entity is deleted.
 func (m *Subject) Deleted() bool {
-	return m.DeletedAt != nil
+	if m.DeletedAt == nil {
+		return false
+	}
+
+	return !m.DeletedAt.IsZero()
 }
 
 // Restore restores the entity in the database.
@@ -143,7 +156,7 @@ func (m *Subject) Restore() error {
 	if m.Deleted() {
 		m.DeletedAt = nil
 
-		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
+		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -180,8 +193,8 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 
 	if found := FindSubjectByName(m.SubjName); found != nil {
 		return found
-	} else if createErr := m.Create(); createErr == nil {
-		log.Infof("subject: added %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
+	} else if err := m.Create(); err == nil {
+		log.Infof("subject: added %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -196,21 +209,21 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	} else if found = FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else {
-		log.Errorf("subject: %s while creating %s", createErr, sanitize.Log(m.SubjName))
+		log.Errorf("subject: failed adding %s (%s)", clean.Log(m.SubjName), err)
 	}
 
 	return nil
 }
 
 // FindSubject returns an existing entity if exists.
-func FindSubject(s string) *Subject {
-	if s == "" {
+func FindSubject(uid string) *Subject {
+	if uid == "" {
 		return nil
 	}
 
 	result := Subject{}
 
-	if err := UnscopedDb().Where("subj_uid = ?", s).First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("subj_uid = ?", uid).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -219,27 +232,41 @@ func FindSubject(s string) *Subject {
 
 // FindSubjectByName find an existing subject by name.
 func FindSubjectByName(name string) *Subject {
-	name = sanitize.Name(name)
+	name = clean.Name(name)
 
 	if name == "" {
 		return nil
 	}
 
 	result := Subject{}
+	uid := SubjNames.Key(name)
 
-	// Search database.
-	if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
-		return nil
+	switch uid {
+	case "":
+		if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+			log.Debugf("subject: %s not found by name", clean.Log(name))
+			return nil
+		}
+	default:
+		if found := FindSubject(uid); found == nil {
+			log.Debugf("subject: %s not found by uid", clean.Log(name))
+			return nil
+		} else {
+			result = *found
+		}
 	}
 
-	// Restore if currently deleted.
-	if err := result.Restore(); err != nil {
-		log.Errorf("subject: %s could not be restored", result.SubjUID)
+	// Restore if flagged as deleted.
+	if !result.Deleted() {
+		return &result
+	} else if err := result.Restore(); err == nil {
+		log.Debugf("subject: restored %s", clean.Log(result.SubjName))
+		return &result
 	} else {
-		log.Debugf("subject: %s restored", result.SubjUID)
+		log.Errorf("subject: failed restoring %s (%s)", clean.Log(result.SubjName), err)
 	}
 
-	return &result
+	return nil
 }
 
 // IsPerson tests if the subject is a person.
@@ -254,7 +281,7 @@ func (m *Subject) Person() *Person {
 
 // SetName changes the subject's name.
 func (m *Subject) SetName(name string) error {
-	name = sanitize.Name(name)
+	name = clean.Name(name)
 
 	if name == m.SubjName {
 		// Nothing to do.
@@ -281,7 +308,7 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 	}
 
 	// Change name?
-	if name := sanitize.Name(f.SubjName); name != "" && name != m.SubjName {
+	if name := clean.Name(f.SubjName); name != "" && name != m.SubjName {
 		existing, err := m.UpdateName(name)
 
 		if existing.SubjUID != m.SubjUID || err != nil {
@@ -349,7 +376,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	if err := m.SetName(name); err != nil {
 		return m, err
 	} else if err := m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err == nil {
-		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
+		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 		event.EntitiesUpdated("subjects", []*Subject{m})
 

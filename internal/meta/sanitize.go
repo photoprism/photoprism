@@ -10,14 +10,22 @@ import (
 )
 
 var UnwantedDescriptions = map[string]bool{
+	"Created by Imlib":         true, // Apps
+	"iClarified":               true,
 	"OLYMPUS DIGITAL CAMERA":   true, // Olympus
 	"SAMSUNG":                  true, // Samsung
 	"SAMSUNG CAMERA PICTURES":  true,
+	"<Digimax i5, Samsung #1>": true,
+	"SONY DSC":                 true, // Sony
 	"rhdr":                     true, // Huawei
 	"hdrpl":                    true,
 	"oznorWO":                  true,
 	"frontbhdp":                true,
 	"fbt":                      true,
+	"rbt":                      true,
+	"ptr":                      true,
+	"fbthdr":                   true,
+	"btr":                      true,
 	"mon":                      true,
 	"nor":                      true,
 	"dav":                      true,
@@ -35,15 +43,14 @@ var UnwantedDescriptions = map[string]bool{
 	"cof":                      true,
 	"qrf":                      true,
 	"fshbty":                   true,
-	"binary comment":           true,
+	"binary comment":           true, // Other
 	"default":                  true,
 	"Exif_JPEG_PICTURE":        true,
-	"<Digimax i5, Samsung #1>": true,
 	"DVC 10.1 HDMI":            true,
 	"charset=Ascii":            true,
 }
 
-var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
+var LowerCaseRegexp = regexp.MustCompile("[a-z\\d_\\-]+")
 
 // SanitizeString removes unwanted character from an exif value string.
 func SanitizeString(s string) string {

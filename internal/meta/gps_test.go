@@ -70,17 +70,17 @@ func TestGpsToDecimal(t *testing.T) {
 
 func TestGpsCoord(t *testing.T) {
 	t.Run("valid string", func(t *testing.T) {
-		r := GpsCoord("51")
+		r := ParseFloat("51")
 		assert.Equal(t, float64(51), r)
 	})
 
 	t.Run("empty string", func(t *testing.T) {
-		r := GpsCoord("")
+		r := ParseFloat("")
 		assert.Equal(t, float64(0), r)
 	})
 
 	t.Run("invalid string", func(t *testing.T) {
-		r := GpsCoord("abc")
+		r := ParseFloat("abc")
 		assert.Equal(t, float64(0), r)
 	})
 }

@@ -1,29 +1,28 @@
 ---
 name: Feature Request
-about: Suggest a new feature or improvement
-title: 'Category: Short Description'
+about: Suggest a new feature or enhancement
+title: 'Category: Short Description (PLEASE CHANGE)'
 labels: idea
 assignees: ''
 
 ---
 
-ONLY CREATE A NEW FEATURE REQUEST AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA ALREADY EXISTS:
+PLEASE ONLY PROCEED IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPPORT INCIDENT AND/OR A PROBLEM WITH OTHER SOFTWARE YOU ARE USING. PLEASE ALSO CHECK OUR PUBLIC ROADMAP AND TRY TO FIND EXISTING FEATURE REQUESTS FIRST:
 
-- Roadmap: https://github.com/photoprism/photoprism/projects/5
-- Open Issues: https://github.com/photoprism/photoprism/issues
+- <https://link.photoprism.app/roadmap>
+- <https://github.com/photoprism/photoprism/issues>
+ 
+VISIT <https://photoprism.app/kb/getting-support> TO LEARN MORE ABOUT OUR SUPPORT OPTIONS. THANK YOU FOR YOUR CAREFUL CONSIDERATION!
 
-Never use GitHub Issues if you have a general question, need help, or an issue has not (yet) been clearly identified. Thank you! 🙃
+===============================================================================
 
-You are welcome to use GitHub Discussions instead:
-https://github.com/photoprism/photoprism/discussions
+**Describe what problem this solves and why this would be valuable to many users**
 
-**Is your feature request related to a problem? Please describe.**
-
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+A clear and concise description of what the problem is and why it is important to solve it.
 
 **Describe the solution you'd like**
 
-A clear and concise description of what you want to happen.
+A clear and concise description of what you suggest to happen.
 
 **Describe alternatives you've considered**
 

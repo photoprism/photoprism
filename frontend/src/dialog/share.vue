@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
+  <v-dialog :value="show" lazy persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -36,7 +36,10 @@
                       <v-text-field
                           :value="link.url()"
                           :label="$gettext('URL')"
-                          browser-autocomplete="off" hide-details
+                          autocorrect="off"
+                          autocapitalize="none"
+                          browser-autocomplete="off"
+                          hide-details box flat
                           readonly
                           color="secondary-dark"
                           class="input-url"
@@ -48,7 +51,7 @@
                           v-model="link.Expires"
                           :label="expires(link)"
                           browser-autocomplete="off"
-                          hide-details
+                          hide-details box flat
                           color="secondary-dark"
                           item-text="text"
                           item-value="value"
@@ -61,6 +64,8 @@
                       <v-text-field
                           v-model="link.Token" hide-details
                           required
+                          autocorrect="off"
+                          autocapitalize="none"
                           browser-autocomplete="off"
                           :label="$gettext('Secret')"
                           :placeholder="$gettext('Token')"
@@ -88,7 +93,7 @@
                       </v-btn>
                     </v-flex>
                     <v-flex xs6 :text-xs-right="!rtl" :text-xs-left="rtl" class="pa-2">
-                      <v-btn small depressed dark color="primary-button" class="ma-0 action-save"
+                      <v-btn depressed dark color="primary-button" class="ma-0 compact action-save"
                              @click.stop.exact="update(link)">
                         <translate>Save</translate>
                       </v-btn>
@@ -107,7 +112,7 @@
           <translate>Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
         </v-container>
       </v-card-text>
-      <v-card-actions class="pt-0">
+      <v-card-actions class="pt-0 px-3">
         <v-layout row wrap class="pa-2">
           <v-flex xs6>
             <v-btn depressed color="secondary-light" class="action-webdav"
@@ -128,13 +133,16 @@
 </template>
 <script>
 import * as options from "options/options";
-import Util from "../common/util";
+import Util from "common/util";
 
 export default {
   name: 'PShareDialog',
   props: {
     show: Boolean,
-    model: Object,
+    model: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -181,9 +189,9 @@ export default {
       try {
         const url = link.url();
         await Util.copyToMachineClipboard(url);
-        this.$notify.success(this.$gettext("Copied to clipboard"))
+        this.$notify.success(this.$gettext("Copied to clipboard"));
       } catch (error) {
-        this.$notify.error(this.$gettext("Failed copying to clipboard"))
+        this.$notify.error(this.$gettext("Failed copying to clipboard"));
       }
     },
     expires(link) {

@@ -2,6 +2,7 @@ package face
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/montanaflynn/stats"
@@ -21,7 +22,7 @@ func NewEmbeddings(inference [][]float32) Embeddings {
 	for i, v = range inference {
 		e := NewEmbedding(v)
 
-		if e.NotBlacklisted() {
+		if e.CanMatch() {
 			result[i] = e
 		}
 	}
@@ -75,7 +76,7 @@ func (embeddings Embeddings) Float64() [][]float64 {
 // Contains tests if another embeddings is contained within a radius.
 func (embeddings Embeddings) Contains(other Embedding, radius float64) bool {
 	for _, e := range embeddings {
-		if d := e.Distance(other); d < radius {
+		if d := e.Dist(other); d < radius {
 			return true
 		}
 	}
@@ -83,12 +84,12 @@ func (embeddings Embeddings) Contains(other Embedding, radius float64) bool {
 	return false
 }
 
-// Distance returns the minimum distance to an embedding.
-func (embeddings Embeddings) Distance(other Embedding) (dist float64) {
+// Dist returns the minimum distance to an embedding.
+func (embeddings Embeddings) Dist(other Embedding) (dist float64) {
 	dist = -1
 
 	for _, e := range embeddings {
-		if d := e.Distance(other); d < dist || dist < 0 {
+		if d := e.Dist(other); d < dist || dist < 0 {
 			dist = d
 		}
 	}
@@ -153,7 +154,7 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	// Radius is the max embedding distance + 0.01 from result.
 	for _, emb := range embeddings {
-		if d := clusters.EuclideanDistance(result, emb); d > radius {
+		if d := clusters.EuclideanDist(result, emb); d > radius {
 			radius = d + 0.01
 		}
 	}
@@ -162,14 +163,14 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 }
 
 // UnmarshalEmbeddings parses face embedding JSON.
-func UnmarshalEmbeddings(s string) (result Embeddings) {
-	if !strings.HasPrefix(s, "[[") {
-		return nil
+func UnmarshalEmbeddings(s string) (result Embeddings, err error) {
+	if s == "" {
+		return result, fmt.Errorf("cannot unmarshal empeddings, empty string provided")
+	} else if !strings.HasPrefix(s, "[[") {
+		return result, fmt.Errorf("cannot unmarshal empeddings, invalid json provided")
 	}
 
-	if err := json.Unmarshal([]byte(s), &result); err != nil {
-		log.Errorf("faces: %s", err)
-	}
+	err = json.Unmarshal([]byte(s), &result)
 
-	return result
+	return result, err
 }

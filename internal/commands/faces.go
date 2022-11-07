@@ -11,17 +11,17 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
-// FacesCommand registers the facial recognition subcommands.
+// FacesCommand registers the face recognition subcommands.
 var FacesCommand = cli.Command{
 	Name:  "faces",
-	Usage: "Facial recognition subcommands",
+	Usage: "Face recognition subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "stats",
@@ -53,7 +53,7 @@ var FacesCommand = cli.Command{
 		{
 			Name:      "index",
 			Usage:     "Searches originals for faces",
-			ArgsUsage: "[ORIGINALS SUB-FOLDER]",
+			ArgsUsage: "[sub-folder]",
 			Action:    facesIndexAction,
 		},
 		{
@@ -79,19 +79,19 @@ var FacesCommand = cli.Command{
 func facesStatsAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if err := w.Stats(); err != nil {
 		return err
@@ -101,8 +101,6 @@ func facesStatsAction(ctx *cli.Context) error {
 		log.Infof("completed in %s", elapsed)
 	}
 
-	conf.Shutdown()
-
 	return nil
 }
 
@@ -111,7 +109,7 @@ func facesAuditAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -121,8 +119,9 @@ func facesAuditAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if err := w.Audit(ctx.Bool("fix")); err != nil {
 		return err
@@ -131,8 +130,6 @@ func facesAuditAction(ctx *cli.Context) error {
 
 		log.Infof("completed in %s", elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }
@@ -155,7 +152,7 @@ func facesResetAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -165,8 +162,9 @@ func facesResetAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if err := w.Reset(); err != nil {
 		return err
@@ -175,8 +173,6 @@ func facesResetAction(ctx *cli.Context) error {
 
 		log.Infof("completed in %s", elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }
@@ -195,7 +191,7 @@ func facesResetAllAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -205,6 +201,7 @@ func facesResetAllAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	if err := query.RemovePeopleAndFaces(); err != nil {
 		return err
@@ -214,8 +211,6 @@ func facesResetAllAction(ctx *cli.Context) error {
 		log.Infof("completed in %s", elapsed)
 	}
 
-	conf.Shutdown()
-
 	return nil
 }
 
@@ -224,7 +219,7 @@ func facesIndexAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -234,14 +229,15 @@ func facesIndexAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	// Use first argument to limit scope if set.
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("finding faces in %s", sanitize.Log(conf.OriginalsPath()))
+		log.Infof("finding faces in %s", clean.Log(conf.OriginalsPath()))
 	} else {
-		log.Infof("finding faces in %s", sanitize.Log(filepath.Join(conf.OriginalsPath(), subPath)))
+		log.Infof("finding faces in %s", clean.Log(filepath.Join(conf.OriginalsPath(), subPath)))
 	}
 
 	if conf.ReadOnly() {
@@ -250,19 +246,16 @@ func facesIndexAction(ctx *cli.Context) error {
 
 	var indexed fs.Done
 
-	if w := service.Index(); w != nil {
-		opt := photoprism.IndexOptions{
-			Path:      subPath,
-			Rescan:    true,
-			Convert:   conf.Settings().Index.Convert && conf.SidecarWritable(),
-			Stack:     true,
-			FacesOnly: true,
-		}
+	settings := conf.Settings()
+
+	if w := get.Index(); w != nil {
+		convert := settings.Index.Convert && conf.SidecarWritable()
+		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true)
 
 		indexed = w.Start(opt)
 	}
 
-	if w := service.Purge(); w != nil {
+	if w := get.Purge(); w != nil {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
 			Ignore: indexed,
@@ -279,8 +272,6 @@ func facesIndexAction(ctx *cli.Context) error {
 
 	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
 
-	conf.Shutdown()
-
 	return nil
 }
 
@@ -289,7 +280,7 @@ func facesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -299,12 +290,13 @@ func facesUpdateAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	opt := photoprism.FacesOptions{
 		Force: ctx.Bool("force"),
 	}
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if err := w.Start(opt); err != nil {
 		return err
@@ -314,8 +306,6 @@ func facesUpdateAction(ctx *cli.Context) error {
 		log.Infof("completed in %s", elapsed)
 	}
 
-	conf.Shutdown()
-
 	return nil
 }
 
@@ -324,7 +314,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	get.SetConfig(conf)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -334,8 +324,9 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
-	w := service.Faces()
+	w := get.Faces()
 
 	if res, err := w.Optimize(); err != nil {
 		return err
@@ -344,8 +335,6 @@ func facesOptimizeAction(ctx *cli.Context) error {
 
 		log.Infof("merged %s in %s", english.Plural(res.Merged, "face cluster", "face clusters"), elapsed)
 	}
-
-	conf.Shutdown()
 
 	return nil
 }

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -23,11 +23,16 @@ type Lens struct {
 	LensMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
 	LensModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
 	LensType        string     `gorm:"type:VARCHAR(100);" json:"Type" yaml:"Type,omitempty"`
-	LensDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
-	LensNotes       string     `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	LensDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
+	LensNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt       time.Time  `json:"-" yaml:"-"`
 	UpdatedAt       time.Time  `json:"-" yaml:"-"`
 	DeletedAt       *time.Time `sql:"index" json:"-" yaml:"-"`
+}
+
+// TableName returns the entity table name.
+func (Lens) TableName() string {
+	return "lenses"
 }
 
 var UnknownLens = Lens{
@@ -40,11 +45,6 @@ var UnknownLens = Lens{
 // CreateUnknownLens initializes the database with an unknown lens if not exists
 func CreateUnknownLens() {
 	UnknownLens = *FirstOrCreateLens(&UnknownLens)
-}
-
-// TableName returns the entity database table name.
-func (Lens) TableName() string {
-	return "lenses"
 }
 
 // NewLens creates a new lens in database
@@ -125,7 +125,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 		lensCache.SetDefault(m.LensSlug, &result)
 		return &result
 	} else {
-		log.Errorf("lens: %s (create %s)", err.Error(), sanitize.Log(m.String()))
+		log.Errorf("lens: %s (create %s)", err.Error(), clean.Log(m.String()))
 	}
 
 	return &UnknownLens
@@ -133,7 +133,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 
 // String returns an identifier that can be used in logs.
 func (m *Lens) String() string {
-	return sanitize.Log(m.LensName)
+	return clean.Log(m.LensName)
 }
 
 // Unknown returns true if the lens is not a known make or model.

@@ -1,10 +1,15 @@
-FROM photoprism/develop:20220202
+# Ubuntu 22.04 LTS (Jammy Jellyfish)
+FROM photoprism/develop:221102-jammy
 
-# Copy latest entrypoint script
-COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
-COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
+## Alternative Environments:
+# FROM photoprism/develop:bookworm # Debian 12 (Bookworm)
+# FROM photoprism/develop:bullseye # Debian 11 (Bullseye)
+# FROM photoprism/develop:buster   # Debian 10 (Buster)
+# FROM photoprism/develop:impish   # Ubuntu 21.10 (Impish Indri)
 
-# Set up project directory
+# Set default working directory.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
+# Copy source to image.
 COPY . .
+COPY --chown=root:root /scripts/dist/ /scripts/

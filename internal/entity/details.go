@@ -10,26 +10,30 @@ import (
 
 var photoDetailsMutex = sync.Mutex{}
 
-// ClipDetail is the size of a Details database column in runes.
-const ClipDetail = 250
-
 // Details stores additional metadata fields for each photo to improve search performance.
 type Details struct {
 	PhotoID      uint      `gorm:"primary_key;auto_increment:false" yaml:"-"`
-	Keywords     string    `gorm:"type:TEXT;" json:"Keywords" yaml:"Keywords"`
+	Keywords     string    `gorm:"type:VARCHAR(2048);" json:"Keywords" yaml:"Keywords"`
 	KeywordsSrc  string    `gorm:"type:VARBINARY(8);" json:"KeywordsSrc" yaml:"KeywordsSrc,omitempty"`
-	Notes        string    `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
+	Notes        string    `gorm:"type:VARCHAR(2048);" json:"Notes" yaml:"Notes,omitempty"`
 	NotesSrc     string    `gorm:"type:VARBINARY(8);" json:"NotesSrc" yaml:"NotesSrc,omitempty"`
-	Subject      string    `gorm:"type:VARCHAR(250);" json:"Subject" yaml:"Subject,omitempty"`
+	Subject      string    `gorm:"type:VARCHAR(1024);" json:"Subject" yaml:"Subject,omitempty"`
 	SubjectSrc   string    `gorm:"type:VARBINARY(8);" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
-	Artist       string    `gorm:"type:VARCHAR(250);" json:"Artist" yaml:"Artist,omitempty"`
+	Artist       string    `gorm:"type:VARCHAR(1024);" json:"Artist" yaml:"Artist,omitempty"`
 	ArtistSrc    string    `gorm:"type:VARBINARY(8);" json:"ArtistSrc" yaml:"ArtistSrc,omitempty"`
-	Copyright    string    `gorm:"type:VARCHAR(250);" json:"Copyright" yaml:"Copyright,omitempty"`
+	Copyright    string    `gorm:"type:VARCHAR(1024);" json:"Copyright" yaml:"Copyright,omitempty"`
 	CopyrightSrc string    `gorm:"type:VARBINARY(8);" json:"CopyrightSrc" yaml:"CopyrightSrc,omitempty"`
-	License      string    `gorm:"type:VARCHAR(250);" json:"License" yaml:"License,omitempty"`
+	License      string    `gorm:"type:VARCHAR(1024);" json:"License" yaml:"License,omitempty"`
 	LicenseSrc   string    `gorm:"type:VARBINARY(8);" json:"LicenseSrc" yaml:"LicenseSrc,omitempty"`
+	Software     string    `gorm:"type:VARCHAR(1024);" json:"Software" yaml:"Software,omitempty"`
+	SoftwareSrc  string    `gorm:"type:VARBINARY(8);" json:"SoftwareSrc" yaml:"SoftwareSrc,omitempty"`
 	CreatedAt    time.Time `yaml:"-"`
 	UpdatedAt    time.Time `yaml:"-"`
+}
+
+// TableName returns the entity table name.
+func (Details) TableName() string {
+	return "details"
 }
 
 // NewDetails creates new photo details.
@@ -49,7 +53,7 @@ func (m *Details) Create() error {
 	return UnscopedDb().Create(m).Error
 }
 
-// Save updates existing photo details or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Details) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("details: photo id must not be empty (save)")
@@ -107,6 +111,11 @@ func (m *Details) NoLicense() bool {
 	return m.License == ""
 }
 
+// NoSoftware tests if the photo has no Software.
+func (m *Details) NoSoftware() bool {
+	return m.Software == ""
+}
+
 // HasKeywords tests if the photo has a Keywords.
 func (m *Details) HasKeywords() bool {
 	return !m.NoKeywords()
@@ -137,9 +146,14 @@ func (m *Details) HasLicense() bool {
 	return !m.NoLicense()
 }
 
+// HasSoftware tests if the photo has a Software.
+func (m *Details) HasSoftware() bool {
+	return !m.NoSoftware()
+}
+
 // SetKeywords updates the photo details field.
 func (m *Details) SetKeywords(data, src string) {
-	val := txt.Clip(data, txt.ClipDescription)
+	val := txt.Clip(data, txt.ClipText)
 
 	if val == "" {
 		return
@@ -161,25 +175,9 @@ func (m *Details) SetKeywords(data, src string) {
 	m.KeywordsSrc = src
 }
 
-// SetSubject updates the photo details field.
-func (m *Details) SetSubject(data, src string) {
-	val := txt.Clip(data, ClipDetail)
-
-	if val == "" {
-		return
-	}
-
-	if (SrcPriority[src] < SrcPriority[m.SubjectSrc]) && m.HasSubject() {
-		return
-	}
-
-	m.Subject = val
-	m.SubjectSrc = src
-}
-
 // SetNotes updates the photo details field.
 func (m *Details) SetNotes(data, src string) {
-	val := txt.Clip(data, txt.ClipDescription)
+	val := txt.Clip(data, txt.ClipText)
 
 	if val == "" {
 		return
@@ -193,9 +191,25 @@ func (m *Details) SetNotes(data, src string) {
 	m.NotesSrc = src
 }
 
+// SetSubject updates the photo details field.
+func (m *Details) SetSubject(data, src string) {
+	val := txt.Clip(data, txt.ClipShortText)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.SubjectSrc]) && m.HasSubject() {
+		return
+	}
+
+	m.Subject = val
+	m.SubjectSrc = src
+}
+
 // SetArtist updates the photo details field.
 func (m *Details) SetArtist(data, src string) {
-	val := txt.Clip(data, ClipDetail)
+	val := txt.Clip(data, txt.ClipShortText)
 
 	if val == "" {
 		return
@@ -211,7 +225,7 @@ func (m *Details) SetArtist(data, src string) {
 
 // SetCopyright updates the photo details field.
 func (m *Details) SetCopyright(data, src string) {
-	val := txt.Clip(data, ClipDetail)
+	val := txt.Clip(data, txt.ClipShortText)
 
 	if val == "" {
 		return
@@ -227,7 +241,7 @@ func (m *Details) SetCopyright(data, src string) {
 
 // SetLicense updates the photo details field.
 func (m *Details) SetLicense(data, src string) {
-	val := txt.Clip(data, ClipDetail)
+	val := txt.Clip(data, txt.ClipShortText)
 
 	if val == "" {
 		return
@@ -239,4 +253,20 @@ func (m *Details) SetLicense(data, src string) {
 
 	m.License = val
 	m.LicenseSrc = src
+}
+
+// SetSoftware updates the photo details field.
+func (m *Details) SetSoftware(data, src string) {
+	val := txt.Clip(data, txt.ClipShortText)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.SoftwareSrc]) && m.HasSoftware() {
+		return
+	}
+
+	m.Software = val
+	m.SoftwareSrc = src
 }

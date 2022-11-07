@@ -1,25 +1,10 @@
 version: '3.5'
 
-## Development Environment with
-## - HTTPS Reverse Proxy
-## - App Dev Container
-## - MariaDB Database Server
-## - Keycloak OpenID Connect Provider
-## - and Dummy Services
-services:
-  ## Traefik v2.5.5 HTTPS Reverse Proxy
-  ## Includes test certificates for https://*.traefik.net/
-  ## Docs: https://doc.traefik.io/traefik/
-  traefik:
-    image: photoprism/traefik:20211218
-    ports:
-      # - "80:80" # HTTP (redirects to HTTPS)
-      - "443:443" # HTTPS (required)
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock" # Host names are configured with Docker labels
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
-  ## App Build Environment
-  ## Docs: https://docs.photoprism.org/developer-guide/
+services:
+  ## PhotoPrism Development Environment (MariaDB)
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -31,141 +16,180 @@ services:
       - apparmor:unconfined
     ports:
       - "2342:2342"   # Default HTTP port (host:container)
+      - "2443:2443"   # Default TLS port (host:container)
       - "2343:2343"   # Acceptance Test HTTP port (host:container)
       - "40000:40000" # Go Debugger (host:container)
     shm_size: "2gb"
     links:
-      - "traefik:keycloak.traefik.net"
-      - "traefik:photoprism.traefik.net"
-      - "traefik:dummy-webdav.traefik.net"
-      - "traefik:dummy-oidc.traefik.net"
+      - "traefik:localssl.dev"
+      - "traefik:app.localssl.dev"
+      - "traefik:keycloak.localssl.dev"
+      - "traefik:dummy-webdav.localssl.dev"
+      - "traefik:dummy-oidc.localssl.dev"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
+      - "traefik.http.services.photoprism.loadbalancer.server.scheme=https"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
-      - "traefik.http.routers.photoprism.rule=Host(`photoprism.traefik.net`)"
-      - "traefik.http.routers.photoprism.tls.domains[0].main=traefik.net"
-      - "traefik.http.routers.photoprism.tls.domains[0].sans=*.traefik.net"
+      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`, `app.localssl.dev`)"
+      - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
     environment:
-      GOPROXY: "https://proxy.golang.org,direct"
-      PHOTOPRISM_UID: ${UID:-1000}                   # User ID
-      PHOTOPRISM_GID: ${GID:-1000}                   # Group ID
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Admin password (min 4 characters)
-      ## External development server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_SITE_URL: "https://photoprism.traefik.net/"
-      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
-      PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "AI-Powered Photos App. Tags and finds pictures without getting in your way!"
+      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
+      PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
+      PHOTOPRISM_GID: ${GID:-1000}                         # group id
+      PHOTOPRISM_ADMIN_USER: "admin"                       # admin username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
+      PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
+      PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
-      PHOTOPRISM_PUBLIC: "true"
       PHOTOPRISM_EXPERIMENTAL: "true"
-      PHOTOPRISM_SERVER_MODE: "debug"
+      PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
-      PHOTOPRISM_TEST_DSN: ".test.db"
       # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
-      PHOTOPRISM_DISABLE_CHOWN: "false"              # Disables storage permission updates on startup
-      PHOTOPRISM_DISABLE_BACKUPS: "false"            # Don't backup photo and album metadata to YAML files
-      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
-      PHOTOPRISM_DISABLE_PLACES: "false"             # Disables reverse geocoding and maps
-      PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # Don't create ExifTool JSON files for improved metadata extraction
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Don't use TensorFlow for image classification
-      PHOTOPRISM_DISABLE_CLIP: "true"         # Don't use Clip for image content search
-      PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "false"                # Allows uploads that may be offensive
-      PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Enables Darktable presets and disables concurrent RAW conversion
-      PHOTOPRISM_THUMB_FILTER: "lanczos"             # Resample filter, best to worst: blackman, lanczos, cubic, linear
-      PHOTOPRISM_THUMB_UNCACHED: "true"              # Enables on-demand thumbnail rendering (high memory and cpu usage)
-      PHOTOPRISM_THUMB_SIZE: 2048                    # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
+      PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
+      PHOTOPRISM_DISABLE_PLACES: "false"             # disables reverse geocoding and maps
+      PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_CLIP: "true"                # don't use Clip for image content search
+      PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW files
+      PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW files (reduces performance)
+      PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
+      PHOTOPRISM_THUMB_FILTER: "lanczos"             # resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048                    # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
       # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
-      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
-      PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
-      PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
-      TF_CPP_MIN_LOG_LEVEL: 0                        # Show TensorFlow log messages for development
+      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680           # on-demand rendering size limit (default 7680, min 720, max 7680)
+      PHOTOPRISM_JPEG_SIZE: 7680                     # size limit for converted image files in pixels (720-30000)
+      PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
+      TF_CPP_MIN_LOG_LEVEL: 0                        # show TensorFlow log messages for development
       ## OpenID Connect Provider (pre-configured for local Keycloak test server):
-      PHOTOPRISM_OIDC_ISSUER_URL: "https://keycloak.traefik.net/auth/realms/master"
+      PHOTOPRISM_OIDC_ISSUER_URL: "https://keycloak.localssl.dev/auth/realms/master"
       PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-develop"
       PHOTOPRISM_OIDC_CLIENT_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
-      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
-      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
-      ## Hardware video transcoding config (optional):
-      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
+      ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
+      PHOTOPRISM_INIT: "https tensorflow"
+      ## Hardware Video Transcoding (optional):
+      # PHOTOPRISM_FFMPEG_ENCODER: "nvidia"          # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry", "vaapi") Intel: "intel" for Broadwell or later and "vaapi" for Haswell or earlier
+      # PHOTOPRISM_FFMPEG_ENCODER: "intel"           # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry", "vaapi") Intel: "intel" for Broadwell or later and "vaapi" for Haswell or earlier`
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # Use Video4Linux for AVC transcoding (default: libx264)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # Use Intel Quick Sync Video for AVC transcoding (default: libx264)
-      # PHOTOPRISM_INIT: "intel-graphics tensorflow-amd64-avx2" # Enable TensorFlow AVX2 & Intel Graphics support
-      # PHOTOPRISM_INIT: "install-updates"           # Installs general operating system updates
-    ## Hardware devices for video transcoding and machine learning (optional):
+      # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
+    ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
-    #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
-    #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
-    #  - "/dev/dri/card0:/dev/dri/card0"
+    #  - "/dev/dri:/dev/dri"                         # Intel QSV (Broadwell and later) or VAAPI (Haswell and earlier)
+    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia CUDA
+    #  - "/dev/nvidiactl:/dev/nvidiactl"
+    #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
+    #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
+    #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
+    #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+    #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"
 
   ## MariaDB Database Server
-  ## Docs: https://mariadb.com/docs/reference/cs10.6/
+  ## Docs: https://mariadb.com/docs/reference/
+  ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-109/
   mariadb:
-    image: mariadb:10.6
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    image: mariadb:10.9
+    security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: mysqld --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
     ports:
-      - "4001:4001" # Database port (host:container)
+      - "4001:4001" # database port (host:container)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
-      MYSQL_ROOT_PASSWORD: photoprism
-      MYSQL_USER: photoprism
-      MYSQL_PASSWORD: photoprism
-      MYSQL_DATABASE: photoprism
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "photoprism"
+      MARIADB_ROOT_PASSWORD: "photoprism"
+
+  ## HTTPS Reverse Proxy (recommended) ##
+  ## includes "*.localssl.dev" SSL certificate for test environments
+  ## Docs: https://doc.traefik.io/traefik/
+  traefik:
+    image: photoprism/traefik:latest
+    ports:
+      - "80:80" # HTTP (redirects to HTTPS)
+      - "443:443" # HTTPS (required)
+    labels:
+      - "traefik.enable=true"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
   ## Keycloak OpenID Connect Provider
-  ## Test User: user / photoprism
-  ## Test Admin: admin / photoprism
-  ## Docs: https://www.keycloak.org/getting-started/getting-started-docker
+  ## Login: user / photoprism
+  ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:16.0.0
+    image: quay.io/keycloak/keycloak:19.0
+    command: "start-dev" # development mode, do not use this in production!
     links:
-      - "traefik:photoprism.traefik.net"
+      - "traefik:localssl.dev"
+      - "traefik:app.localssl.dev"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
       - "traefik.http.routers.keycloak.entrypoints=websecure"
-      - "traefik.http.routers.keycloak.rule=Host(`keycloak.traefik.net`)"
-      - "traefik.http.routers.keycloak.tls.domains[0].main=traefik.net"
-      - "traefik.http.routers.keycloak.tls.domains[0].sans=*.traefik.net"
+      - "traefik.http.routers.keycloak.rule=Host(`keycloak.localssl.dev`)"
+      - "traefik.http.routers.keycloak.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.keycloak.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.keycloak.tls=true"
-    environment:
-      KEYCLOAK_USER: "admin"
-      KEYCLOAK_PASSWORD: "photoprism"
-      KEYCLOAK_FRONTEND_URL: "https://keycloak.traefik.net/auth"
-      DB_VENDOR: "mariadb"
-      DB_PORT: 4001
-      DB_DATABASE: "keycloak"
-      DB_USER: "keycloak"
-      DB_PASSWORD: "keycloak"
+    environment: # see https://www.keycloak.org/server/all-config
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "photoprism"
+      KC_METRICS_ENABLED: "false"
+      KC_HOSTNAME: "keycloak.localssl.dev"
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY: "edge"
+      KC_DB: "mariadb"
+      KC_DB_URL: "jdbc:mariadb://mariadb:4001/keycloak"
+      KC_DB_USERNAME: "keycloak"
+      KC_DB_PASSWORD: "keycloak"
+
+  ## Dummy OpenID Connect Provider
+  dummy-oidc:
+    image: photoprism/dummy-oidc:220405
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
+      - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
+      - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.localssl.dev`)"
+      - "traefik.http.routers.dummy-oidc.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.dummy-oidc.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.dummy-oidc.tls=true"
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:20211218
+    image: photoprism/dummy-webdav:220405
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
@@ -173,22 +197,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.dummy-webdav.loadbalancer.server.port=80"
       - "traefik.http.routers.dummy-webdav.entrypoints=websecure"
-      - "traefik.http.routers.dummy-webdav.rule=Host(`dummy-webdav.traefik.net`)"
-      - "traefik.http.routers.dummy-webdav.tls.domains[0].main=traefik.net"
-      - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.traefik.net"
+      - "traefik.http.routers.dummy-webdav.rule=Host(`dummy-webdav.localssl.dev`)"
+      - "traefik.http.routers.dummy-webdav.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.dummy-webdav.tls=true"
-
-  ## Dummy OpenID Connect Server
-  dummy-oidc:
-    image: photoprism/dummy-oidc:20211218
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
-      - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
-      - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.traefik.net`)"
-      - "traefik.http.routers.dummy-oidc.tls.domains[0].main=traefik.net"
-      - "traefik.http.routers.dummy-oidc.tls.domains[0].sans=*.traefik.net"
-      - "traefik.http.routers.dummy-oidc.tls=true"
 
   clip-api:
     image: photoprism/clip_api
@@ -200,7 +212,6 @@ services:
       - "./embedding-db:/qdrant/storage"
     ports:
       - 6333:6333
-
 ## Create named volume for Go module cache
 volumes:
   go-mod:

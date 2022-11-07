@@ -1,0 +1,96 @@
+/* Auth Form Styles */
+
+#photoprism main .auth-login {
+    min-height: 500px;
+    position: relative;
+    color-scheme: light;
+}
+
+#photoprism .auth-login .logo {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 190px;
+    height: 30vh;
+    max-height: 190px;
+    margin: 20px auto 40px auto;
+    position: relative;
+    left: unset;
+}
+
+#photoprism .auth-login .action-buttons {
+    margin: 30px auto 20px auto;
+}
+
+#photoprism main .auth-login .logo img {
+    height: 100%;
+}
+
+#photoprism main .auth-login .auth-login-form .v-card
+{
+    background: #ccc1 !important;
+    border-radius: 16px;
+    z-index: 1;
+}
+
+#photoprism main .auth-login .auth-login-form .v-text-field input {
+    color: #000000de !important;
+}
+
+#photoprism main .auth-login a {
+    text-decoration: none!important;
+}
+
+#photoprism main .auth-login,
+#photoprism main .auth-login form,
+#photoprism main .auth-login footer,
+#photoprism main .auth-login .v-input__prepend-outer .v-icon,
+#photoprism main .auth-login .body-1,
+#photoprism main .auth-login .body-2 {
+    caret-color: #fff;
+    color: #fff;
+}
+
+#photoprism main .auth-login .v-input__append-inner .v-icon {
+    color: rgba(0,0,0,.54);
+}
+
+#photoprism #app main .auth-login .v-btn.v-btn--disabled,
+#photoprism #app main .auth-login .v-btn.v-btn--disabled .v-icon {
+    color: rgba(255,255,255,.36)!important;
+}
+
+#photoprism #app main .auth-login .v-btn.v-btn--disabled {
+    background-color: rgba(255,255,255,.16)!important;
+}
+
+#photoprism main .auth-login footer {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    padding: 0;
+    margin: 0;
+}
+
+#photoprism main .auth-login footer p {
+    padding: 0;
+    margin: 0;
+}
+
+/* Account Page */
+
+.user-avatar {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    max-width: 100%;
+    max-height: 100%;
+    width: 128px;
+    height: 128px;
+    overflow: hidden;
+}

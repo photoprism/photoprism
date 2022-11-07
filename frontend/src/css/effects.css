@@ -1,0 +1,287 @@
+/* Transitions */
+
+.no-transition {
+    transition: none;
+}
+
+/* Animations */
+
+@-webkit-keyframes rainbow {
+    0% {
+        background-position: 0 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0 50%
+    }
+}
+
+@-moz-keyframes rainbow {
+    0% {
+        background-position: 0 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0 50%
+    }
+}
+
+@keyframes rainbow {
+    0% {
+        background-position: 0 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0 50%
+    }
+}
+
+#photoprism .animate-rainbow {
+    background: repeating-linear-gradient(127deg,#5a2a97, #564dad, #006caa, #34bbc1, #5cba50, #ebdd08, #f49d08, #f03933, #ed1b36);
+    background-size: 110% 110%;
+    -webkit-animation: rainbow 10s ease infinite;
+    -moz-animation: rainbow 10s ease infinite;
+    animation: rainbow 10s ease infinite;
+}
+
+#photoprism .static-rainbow {
+    background-size: 200% 200%;
+    background: repeating-linear-gradient(127deg, #5a2a97, #564dad, #006caa, #34bbc1, #5cba50, #ebdd08, #f49d08, #f03933, #ed1b36) 100% 100%;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+#photoprism .animate-rotate {
+    animation: rotation 8s infinite linear;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.5;
+    }
+}
+
+#photoprism .animate-pulse {
+    animation: pulse 5s infinite;
+}
+
+@keyframes stretch {
+    0% {
+        transform: scale(.3);
+    }
+    50% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(.3);
+    }
+}
+
+#photoprism .animate-stretch {
+    animation: stretch 1.5s ease-out 0s alternate infinite none running;
+}
+
+@keyframes slide-left {
+    0% {
+        transform:  translateX(105%);;
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+#photoprism .animate-slide-left {
+    animation: slide-left 300ms ease-in-out forwards;
+}
+
+@keyframes grow {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#photoprism .grow-top-right {
+    transform-origin: top right;
+    animation: grow 200ms ease-in-out forwards;
+}
+
+#photoprism .select-transition {
+    -webkit-transition-duration: 15ms !important;
+    -moz-transition-duration: 15ms !important;
+    -o-transition-duration: 15ms !important;
+    transition-duration: 15ms !important;
+}
+
+@-webkit-keyframes circle-animation {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes circle-animation {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+/* Backdrop Blur Filters */
+
+#photoprism .blur-1 {
+    backdrop-filter: blur(2px);
+}
+#photoprism .blur-2 {
+    backdrop-filter: blur(3px);
+}
+#photoprism .blur-3 {
+    backdrop-filter: blur(4px);
+}
+#photoprism .blur-4 {
+    backdrop-filter: blur(6px);
+}
+#photoprism .blur-5 {
+    backdrop-filter: blur(8px);
+}
+#photoprism .blur-6 {
+    backdrop-filter: blur(10px);
+}
+#photoprism .blur-7 {
+    backdrop-filter: blur(12px);
+}
+#photoprism .blur-8 {
+    backdrop-filter: blur(14px);
+}
+
+/* Rotation Animation */
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+.animate-rotation {
+    -webkit-animation: rotation 1s infinite linear;
+    -moz-animation: rotation 1s infinite linear;
+    animation: rotation 1s infinite linear;
+}
+
+/* Saturation Animation */
+
+@keyframes saturation {
+    from {
+        filter: saturate(100%);
+    }
+    to {
+        filter: saturate(400%);
+    }
+}
+
+.animate-saturation {
+    -webkit-animation: saturation 1s ease-out 0s alternate infinite none running;
+    -moz-animation: saturation 1s ease-out 0s alternate infinite none running;
+    animation: saturation 1s ease-out 0s alternate infinite none running;
+}
+
+/* Hue Animation */
+
+@keyframes hue {
+    0% {
+        filter: hue-rotate(0);
+    }
+    25% {
+        filter: hue-rotate(-90deg);
+    }
+    50% {
+        filter: hue-rotate(0);
+    }
+    75% {
+        filter: hue-rotate(30deg);
+    }
+    100% {
+        filter: hue-rotate(0);
+    }
+}
+
+.animate-hue {
+    -webkit-animation: hue 4s infinite linear;
+    -moz-animation: hue 4s infinite linear;
+    animation: hue 4s infinite linear;
+}
+
+.animate-hue-fast {
+    -webkit-animation: hue 2.5s infinite linear;
+    -moz-animation: hue 2.5s infinite linear;
+    animation: hue 2.5s infinite linear;
+}
+
+/* Beating Heart Animation */
+
+@keyframes heart {
+     0%, 40%, 80%, 100% {
+         transform: scale(1);
+     }
+     20%, 60% {
+         transform: scale(1.15);
+     }
+ }
+
+.animate-heart {
+    animation: heart 1000ms infinite;
+}
+
+/* Loading Dots Animation */
+
+@keyframes dots {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    60% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.dots-animation {
+    animation: dots 2.5s ease-in-out infinite;
+}
+
+.dots-animation.one { animation-delay: 0.2s; }
+.dots-animation.two { animation-delay: 0.4s; }
+.dots-animation.three { animation-delay: 0.6s; }
+

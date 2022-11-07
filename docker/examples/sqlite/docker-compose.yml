@@ -3,6 +3,7 @@ version: '3.5'
 # Example Docker Compose config file for PhotoPrism (Linux / AMD64)
 #
 # Note:
+# - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
 # - Use SQLite only for small libraries and testing. SQLite locks the index on updates, so other operations have to
 #   wait. In the worst case, this can lead to timeout errors. MariaDB is optimized for high concurrency.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
@@ -12,28 +13,13 @@ version: '3.5'
 #   in clear text and can be intercepted by anyone, including your provider, hackers, and governments:
 #   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
-# Documentation : https://docs.photoprism.app/getting-started/docker-compose/
-# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
+# Setup Guides:
+# - https://docs.photoprism.app/getting-started/docker-compose/
+# - https://docs.photoprism.app/getting-started/raspberry-pi/
+# - https://docs.photoprism.app/getting-started/troubleshooting/docker/
 #
-# DOCKER COMPOSE COMMAND REFERENCE
-# see https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
-# --------------------------------------------------------------------------
-# Start    | docker-compose up -d
-# Stop     | docker-compose stop
-# Update   | docker-compose pull
-# Logs     | docker-compose logs --tail=25 -f
-# Terminal | docker-compose exec photoprism bash
-# Help     | docker-compose exec photoprism photoprism help
-# Config   | docker-compose exec photoprism photoprism config
-# Reset    | docker-compose exec photoprism photoprism reset
-# Backup   | docker-compose exec photoprism photoprism backup -a -i
-# Restore  | docker-compose exec photoprism photoprism restore -a -i
-# Index    | docker-compose exec photoprism photoprism index
-# Reindex  | docker-compose exec photoprism photoprism index -f
-# Import   | docker-compose exec photoprism photoprism import
-#
-# To search originals for faces without a complete rescan:
-# docker-compose exec photoprism photoprism faces index
+# CLI Commands:
+# - https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 #
 # All commands may have to be prefixed with "sudo" when not running as root.
 # This will point the home directory shortcut ~ to /root in volume mounts.
@@ -52,45 +38,44 @@ services:
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
-      PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
-      PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
-      PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
-      PHOTOPRISM_EXPERIMENTAL: "false"               # Enables experimental features
-      PHOTOPRISM_DISABLE_CHOWN: "false"              # Disables storage permission updates on startup
-      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables all features depending on TensorFlow
-      PHOTOPRISM_DISABLE_FACES: "false"              # Disables facial recognition
-      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # Disables image classification
-      PHOTOPRISM_DARKTABLE_PRESETS: "true"           # Enables Darktable presets and disables concurrent RAW conversion
-      PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
+      PHOTOPRISM_ADMIN_USER: "admin"                 # admin username
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial admin password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
+      PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_LOG_LEVEL: "info"                   # log level: trace, debug, info, warning, error, fatal, or panic
+      PHOTOPRISM_READONLY: "false"                   # do not modify originals directory (reduced functionality)
+      PHOTOPRISM_EXPERIMENTAL: "false"               # enables experimental features
+      PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_FACES: "false"              # disables face detection and recognition (requires TensorFlow)
+      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
+      PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW files
+      PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW files (reduces performance)
+      PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
+      PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive (no effect without TensorFlow)
       PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # SQLite is an embedded database that doesn't require a server
-      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
-      PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: ""
-      PHOTOPRISM_SITE_AUTHOR: ""
-      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root)
-      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
-      ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
+      PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
+      PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
+      ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
+      # PHOTOPRISM_INIT: "https gpu tensorflow"
+      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
-      HOME: "/photoprism"
-    ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
-    # user: "1000:1000"
-    working_dir: "/photoprism"
+    working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
-      # "/host/folder:/photoprism/folder"                # example
-      - "~/Pictures:/photoprism/originals"               # original media files (photos and videos)
-      # - "/example/family:/photoprism/originals/family" # *additional* media folders can be mounted like this
-      # - "~/Import:/photoprism/import"                  # *optional* base folder from which files can be imported to originals
-      - "./storage:/photoprism/storage"                  # *writable* storage folder for cache, database, and sidecar files (never remove)
+      # "/host/folder:/photoprism/folder"                # Example
+      - "~/Pictures:/photoprism/originals"               # Original media files (DO NOT REMOVE)
+      # - "/example/family:/photoprism/originals/family" # *Additional* media folders can be mounted like this
+      # - "~/Import:/photoprism/import"                  # *Optional* base folder from which files can be imported to originals
+      - "./storage:/photoprism/storage"                  # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
 
   ## Watchtower upgrades services automatically (optional)
   ## see https://docs.photoprism.app/getting-started/updates/#watchtower
@@ -103,4 +88,4 @@ services:
   #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
   #   volumes:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
-  #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
+  #     - "~/.docker/config.json:/config.json" # optional, for authentication if you have a Docker Hub account

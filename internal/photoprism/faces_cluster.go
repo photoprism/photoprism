@@ -14,7 +14,7 @@ import (
 // Cluster clusters indexed face embeddings.
 func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	if w.Disabled() {
-		return added, fmt.Errorf("facial recognition is disabled")
+		return added, fmt.Errorf("face recognition is disabled")
 	}
 
 	// Skip clustering if index contains no new face markers, and force option isn't set.
@@ -40,7 +40,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		var c clusters.HardClusterer
 
 		// See https://dl.photoprism.app/research/ for research on face clustering algorithms.
-		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterDist, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
+		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterDist, w.conf.Workers(), clusters.EuclideanDist); err != nil {
 			return added, err
 		} else if err = c.Learn(embeddings.Float64()); err != nil {
 			return added, err
@@ -72,9 +72,9 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 
 		for _, cluster := range results {
 			if f := entity.NewFace("", entity.SrcAuto, cluster); f == nil {
-				log.Errorf("faces: face should not be nil - bug?")
-			} else if f.Unsuitable() {
-				log.Infof("faces: ignoring %s, cluster unsuitable for matching", f.ID)
+				log.Errorf("faces: face should not be nil - possible bug")
+			} else if f.SkipMatching() {
+				log.Infof("faces: skipped cluster %s, embedding not distinct enough", f.ID)
 			} else if err := f.Create(); err == nil {
 				added = append(added, *f)
 				log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)

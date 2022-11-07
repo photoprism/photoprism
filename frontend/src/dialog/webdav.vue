@@ -15,12 +15,33 @@
 
       <v-card-text class="pa-2 body-1">
         <v-text-field
+            autocorrect="off"
+            autocapitalize="none"
             browser-autocomplete="off"
             hide-details readonly
             single-line
             outline
             color="secondary-dark"
             :value="webdavUrl()"
+            class="input-url"
+            @click.stop="selectText($event)">
+        </v-text-field>
+      </v-card-text>
+
+      <v-card-text class="pa-2 body-1 clickable" @click="windowsHelp($event)">
+        <translate>On Windows, enter the following resource in the connection dialog:</translate>
+      </v-card-text>
+
+      <v-card-text class="pa-2 body-1">
+        <v-text-field
+            autocorrect="off"
+            autocapitalize="none"
+            browser-autocomplete="off"
+            hide-details readonly
+            single-line
+            outline
+            color="secondary-dark"
+            :value="windowsUrl()"
             class="input-url"
             @click.stop="selectText($event)">
         </v-text-field>
@@ -49,16 +70,17 @@
 </template>
 
 <script>
-import Util from "../common/util";
+import Util from "common/util";
 
 export default {
-  name: 'PDialogWebdav',
+  name: 'PWebdavDialog',
   props: {
     show: Boolean,
   },
   data() {
     return {
       visible: false,
+      user: this.$session.getUser(),
     };
   },
   watch: {
@@ -90,7 +112,34 @@ export default {
       }
     },
     webdavUrl() {
-      return `${window.location.protocol}//admin@${window.location.host}/originals/`;
+      let baseUrl = `${window.location.protocol}//${this.user.Name}@${window.location.host}/originals/`;
+
+      if (this.user.BasePath) {
+        baseUrl = `${baseUrl}${this.user.BasePath}/`;
+      }
+
+      return baseUrl;
+    },
+    windowsUrl() {
+      let baseUrl = "";
+
+      if (window.location.protocol === "https") {
+        baseUrl = `\\\\${window.location.host}@SSL\\originals\\`;
+      } else {
+        baseUrl = `\\\\${window.location.host}\\originals\\`;
+      }
+
+      if (this.user.BasePath) {
+        const basePath = this.user.BasePath.replace(/\//g, '\\');
+        baseUrl = `${baseUrl}${basePath}\\`;
+      }
+
+      return baseUrl;
+    },
+    windowsHelp(ev) {
+      window.open('https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server', '_blank');
+      ev.preventDefault();
+      ev.stopPropagation();
     },
     close() {
       this.$emit('close');

@@ -1,14 +1,18 @@
 # Application files and directories
 /photoprism
+/photoprism-*
 /photos/originals/*
 /photos/import/*
 /storage/*
+/build/*
 /node_modules
+/pro
 /frontend/.eslintcache
 /frontend/node_modules/*
 /frontend/tests/*.html
 /frontend/tests/*.log
 /frontend/tests/screenshots
+/frontend/src/locales/*.mo
 /assets/facenet
 /assets/nasnet
 /assets/nsfw
@@ -16,11 +20,12 @@
 /package-lock.json
 /frontend/tests_output
 /embedding-db
+/tmp/
 *.log
+*.pid
 *.db
 *.db-journal
 docker-compose.override.yml
-docker-compose.local.yml
 docker-compose.tmp.yml
 
 # Binaries for programs and plugins

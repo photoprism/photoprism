@@ -34,7 +34,7 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 	}
 
 	// Make sure directory exists.
-	if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(fileName), fs.ModeDir); err != nil {
 		return err
 	}
 
@@ -42,7 +42,7 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 	defer photoYamlMutex.Unlock()
 
 	// Write YAML data to file.
-	if err := os.WriteFile(fileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(fileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 
@@ -66,5 +66,5 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 
 // YamlFileName returns the YAML file name.
 func (m *Photo) YamlFileName(originalsPath, sidecarPath string) string {
-	return fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.YamlExt)
+	return fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.ExtYAML)
 }

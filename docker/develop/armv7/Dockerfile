@@ -1,126 +1,104 @@
-##################################################### BUILD STAGE ######################################################
-FROM ubuntu:21.10 as build
+#### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
+FROM ubuntu:jammy
 
-LABEL maintainer="Michael Mayer <hello@photoprism.org>"
+# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
 
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism® Dev (ARMv7)"
+LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
+LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
+
+# Declare build parameters.
 ARG TARGETARCH
-ARG TARGETPLATFORM
 ARG BUILD_TAG
 
-# Set environment variables
-ENV DEBIAN_FRONTEND="noninteractive" \
-    TMPDIR="/tmp" \
-    LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
-    TF_CPP_MIN_LOG_LEVEL="0" \
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
+ENV PHOTOPRISM_ARCH=$TARGETARCH \
+    DOCKER_TAG=$BUILD_TAG \
+    DOCKER_ENV="develop" \
+    PS1="\u@$DOCKER_TAG:\w\$ " \
+    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
+    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     NODE_ENV="production" \
+    DEBIAN_FRONTEND="noninteractive" \
+    TMPDIR="/tmp" \
+    TF_CPP_MIN_LOG_LEVEL="0" \
     GOPATH="/go" \
-    GOBIN="/go/bin" \
-    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    GOBIN="/usr/local/bin" \
     GO111MODULE="on" \
-    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
+    PROG="photoprism"
 
-# Configure apt
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+# Copy scripts and package sources config.
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
+COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
+
+# Update base image and add dependencies.
+RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
+    apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
+        apt-utils gpg pkg-config software-properties-common ca-certificates avahi-utils \
+        build-essential gcc g++ sudo bash make nano lsof lshw git jq \
+        autoconf automake cmake libtool libjpeg8 libjpeg8-dev \
+        zip unzip wget curl rsync sqlite3 chrpath gettext libc6-dev \
+        libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 \
+        libfontconfig1-dev libhdf5-serial-dev libpng-dev libzmq3-dev \
+        libx264-dev libx265-dev libde265-dev libaom-dev libnss3 libxtst6 librsvg2-bin tzdata \
+        exiftool ffmpeg ffmpegthumbnailer libavcodec-extra \
+    && \
+    /scripts/install-nodejs.sh && \
+    /scripts/install-tensorflow.sh && \
+    /scripts/install-libheif.sh && \
+    /scripts/install-go.sh && \
+    /scripts/install-go-tools.sh && \
+    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
+    cp /etc/skel/.bashrc /root/.bashrc && \
+    /scripts/create-users.sh && \
+    install -d -m 0777 -o 1000 -g 1000 \
+        /photoprism/originals \
+        /photoprism/import \
+        /photoprism/storage \
+        /photoprism/storage/sidecar \
+        /photoprism/storage/albums \
+        /photoprism/storage/backups \
+        /photoprism/storage/config \
+        /photoprism/storage/cache && \
+    /scripts/cleanup.sh
 
-# Copy scripts to /root/.local/bin
-COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
-
-# 1. Install distribution packages
-# 2. Install TensorFlow for C
-# 3. Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
-# 4. Install Go
-RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
-    build-essential \
-    ca-certificates \
-    wget \
-    curl \
-    davfs2 \
-    chrpath \
-    libssl-dev \
-    libxft-dev \
-    libfreetype6 \
-    libfreetype6-dev \
-    libfontconfig1 \
-    libfontconfig1-dev \
-    libhdf5-serial-dev \
-    libpng-dev \
-    libzmq3-dev \
-    libx264-dev \
-    libx265-dev \
-    libnss3 \
-    libxtst6 \
-    librsvg2-bin \
-    pkg-config \
-    software-properties-common \
-    rsync \
-    unzip \
-    zip \
-    g++ \
-    gcc \
-    libc6-dev \
-    gpg-agent \
-    apt-utils \
-    make \
-    nano \
-    git \
-    gettext \
-    sqlite3 \
-    tzdata \
-    gconf-service \
-    libheif-examples \
-    exiftool \
-    ffmpeg \
-    ffmpegthumbnailer \
-    libavcodec-extra \
-    sudo && \
-    /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
-    /root/.local/bin/install-devtools.sh ${TARGETARCH} && \
-    /root/.local/bin/install-go.sh ${TARGETARCH} && \
-    mkdir -p "/go/src" "/go/bin" && \
-    chmod -R 777 "/go"
-
-# Download TensorFlow models & example files for testing
-RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
+# download models and testdata
+RUN mkdir /tmp/photoprism && \
     wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Copy additional scripts to image
-COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
-COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
-COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
-
-# Install Go tools
-RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
-    /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
-    /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
-    echo "alias go=richgo" > /root/.bash_aliases && \
-    cp /go/bin/gosu /bin/gosu
-
-# Create photoprism user and directory for deployment
-RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism && \
-    mkdir -m 777 -p /var/lib/photoprism /tmp/photoprism && \
-    echo "alias go=richgo" > /photoprism/.bash_aliases && \
-    echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism /go && \
-    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
-    find /go -type d -print0 | xargs -0 chmod 777
-
-# Set up project directory
+# set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port 2342, 2343 plus 9515 for chromedriver
-EXPOSE 2342 2343 9515
-VOLUME /var/lib/photoprism
+# Expose the following container ports:
+# - 2342 (HTTP)
+# - 2343 (Acceptance Tests)
+# - 2442 (HTTP)
+# - 2443 (HTTPS)
+# - 9515 (Chromedriver)
+# - 40000 (Go Debugger)
+EXPOSE 2342 2343 2442 2443 9515 40000
 
-# Configure entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+# Declare container entrypoint script.
+ENTRYPOINT ["/scripts/entrypoint.sh"]
 
-# Run server
+# Keep container running.
 CMD ["tail", "-f", "/dev/null"]

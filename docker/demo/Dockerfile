@@ -15,22 +15,22 @@ ENV TF_CPP_MIN_LOG_LEVEL=2 \
     PHOTOPRISM_THUMB_SIZE=4096 \
     PHOTOPRISM_THUMB_SIZE_UNCACHED=4096 \
     PHOTOPRISM_JPEG_SIZE=4096 \
-    PHOTOPRISM_JPEG_QUALITY=95 \
+    PHOTOPRISM_JPEG_QUALITY=85 \
     PHOTOPRISM_APP_NAME="Demo" \
     PHOTOPRISM_APP_ICON="favicon" \
     PHOTOPRISM_SITE_TITLE="PhotoPrism" \
     PHOTOPRISM_SITE_CAPTION="Demo" \
-    PHOTOPRISM_SITE_DESCRIPTION="AI-Powered Photos App. Tags and finds pictures without getting in your way!"
+    PHOTOPRISM_SITE_DESCRIPTION="AI-Powered Photos App for the Decentralized Web"
 
 # Copy assets
-COPY /docker/demo/index.tmpl /photoprism/assets/templates
+COPY /docker/demo/index.gohtml /opt/photoprism/assets/templates
 
 # Download example photos
 RUN wget -qO- https://dl.photoprism.app/qa/demo.tar.gz | tar xvz -C /photoprism/originals
 
 # Import example photos
 RUN photoprism restore -a
-RUN photoprism index
+RUN photoprism index -a
 RUN photoprism moments
 
 # Start PhotoPrism server

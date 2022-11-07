@@ -36,7 +36,7 @@ func TestAlbums(t *testing.T) {
 	})
 
 	t.Run("search with slug", func(t *testing.T) {
-		query := form.NewAlbumSearch("slug:holiday count:10")
+		query := form.NewAlbumSearch("slug:holiday")
 		result, err := Albums(query)
 
 		if err != nil {
@@ -58,7 +58,8 @@ func TestAlbums(t *testing.T) {
 	})
 
 	t.Run("favorites true", func(t *testing.T) {
-		query := form.NewAlbumSearch("favorite:true count:10000")
+		query := form.NewAlbumSearch("favorite:true")
+		query.Count = 100000
 
 		result, err := Albums(query)
 
@@ -69,7 +70,7 @@ func TestAlbums(t *testing.T) {
 		assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
 	})
 	t.Run("empty query", func(t *testing.T) {
-		query := form.NewAlbumSearch("order:slug")
+		query := form.NewAlbumSearch("")
 
 		results, err := Albums(query)
 

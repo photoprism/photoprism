@@ -1,39 +1,37 @@
 /*
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+    <https://docs.photoprism.app/license/agpl>
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    The AGPL is supplemented by our Trademark and Brand Guidelines,
+    which describe how our Brand Assets may be used:
+    <https://photoprism.app/trademark>
 
-    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
-    to describe our software, run your own server, for educational purposes, but not for
-    offering commercial goods, products, or services without prior written permission.
-    In other words, please ask.
-
-Feel free to send an e-mail to hello@photoprism.app if you have questions,
+Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.app/developer-guide/
+<https://docs.photoprism.app/developer-guide/>
 
 */
 
-@import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
+@import url("vendor/icons/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
-@import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
+@import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
+@import url("font.css");
+@import url("wallpapers.css");
+@import url("scrollbar.css");
 @import url("themes.css");
-@import url("animate.css");
-@import url("splash.css");
+@import url("effects.css");
+@import url("static.css");
 @import url("navigation.css");
 @import url("logs.css");
 @import url("visibility.css");
@@ -45,30 +43,11 @@ https://docs.photoprism.app/developer-guide/
 @import url("files.css");
 @import url("pages.css");
 @import url("help.css");
+@import url("auth.css");
+@import url("layout.css");
+@import url("rtl.css");
 
-@media (min-width: 1750px) {
-    .flex.xlg2 {
-        flex-basis: 16.666666666666664%;
-        flex-grow: 0;
-        max-width: 16.666666666666664%;
-    }
-}
-
-@media (min-width: 2400px) {
-    .flex.xxl1 {
-        flex-basis: 8.333333333333332%;
-        flex-grow: 0;
-        max-width: 8.333333333333332%;
-    }
-}
-
-@media (min-width: 2550px) {
-    .flex.xxxl1 {
-        flex-basis: 8.333333333333332%;
-        flex-grow: 0;
-        max-width: 8.333333333333332%;
-    }
-}
+/* Core Element Styles */
 
 html,
 body {
@@ -77,13 +56,10 @@ body {
 
 body {
     background-color: #fafafa;
-    color: #333333;
-    font-family: Roboto, sans-serif;
-}
-
-footer {
-    clear: both;
-    padding: 1rem 2rem;
+    min-width: 320px;
+    min-height: 500px;
+    margin: 0;
+    padding: 0;
 }
 
 main {
@@ -91,6 +67,8 @@ main {
     margin: 0;
     z-index: 1;
 }
+
+/* Page Overlay */
 
 #busy-overlay {
     display: none;
@@ -103,13 +81,7 @@ main {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-#photoprism div.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
+/* General App Styles */
 
 #photoprism .v-badge__badge {
     font-size: 12px;
@@ -140,6 +112,11 @@ main {
     float: right;
 }
 
+#photoprism a.float-left,
+#photoprism a.float-right {
+    display: inline-block;
+}
+
 #photoprism .p-page {
     user-select: none !important;
 }
@@ -155,25 +132,21 @@ main {
 
 #photoprism .body-1,
 #photoprism .body-2,
+#photoprism .break-word,
+#photoprism .v-datatable td,
 #photoprism .v-card button,
 #photoprism .v-card .caption {
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: break-word;
+    hyphens: auto;
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
-    hyphens: auto;
 }
 
-#photoprism .break-word {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
+#photoprism.is-rtl .v-card .caption {
+    text-align: right;
 }
 
 #photoprism .v-tabs .v-badge__badge {
@@ -185,23 +158,49 @@ main {
     height: 1.1rem;
 }
 
-/* Line Height */
+ol, ul {
+    padding-left: 24px;
+    padding-right: 24px;
+}
 
-.lh-15 {
-    line-height: 1.5rem !important;
+#photoprism .search-results.list-view .result {
+    padding: 1px 0 1px 8px !important;
 }
-.lh-16 {
-    line-height: 1.6rem !important;
+
+/* Image Orientation */
+
+.orientation-0 {
+    transform: rotate(0deg);
 }
-.lh-17 {
-    line-height: 1.7rem !important;
+
+.orientation-1 {
+    transform: rotate(0deg);
 }
-.lh-18 {
-    line-height: 1.8rem !important;
+
+.orientation-2 {
+    transform: rotate(0deg);
 }
-.lh-19 {
-    line-height: 1.9rem !important;
+
+.orientation-3 {
+    transform: rotate(180deg);
 }
-.lh-20 {
-    line-height: 2.0rem !important;
+
+.orientation-4 {
+    transform: rotate(180deg);
+}
+
+.orientation-5 {
+    transform: rotate(90deg);
+}
+
+.orientation-6 {
+    transform: rotate(90deg);
+}
+
+.orientation-7 {
+    transform: rotate(270deg);
+}
+
+.orientation-8 {
+    transform: rotate(270deg);
 }

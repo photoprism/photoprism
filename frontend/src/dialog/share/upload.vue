@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -19,15 +19,15 @@
         <v-layout row wrap>
           <v-flex xs12 text-xs-left class="pt-2">
             <v-select
-                v-model="account"
+                v-model="service"
                 color="secondary-dark" hide-details hide-no-data
-                flat
+                box flat
                 :label="$gettext('Account')"
                 item-text="AccName"
                 item-value="ID"
                 return-object
-                :disabled="loading || noAccounts"
-                :items="accounts"
+                :disabled="loading || noServices"
+                :items="services"
                 @change="onChange">
             </v-select>
           </v-flex>
@@ -35,13 +35,13 @@
             <v-autocomplete
                 v-model="path"
                 color="secondary-dark" hide-details hide-no-data
-                flat
+                box flat
                 browser-autocomplete="off"
                 hint="Folder"
                 :search-input.sync="search"
                 :items="pathItems"
                 :loading="loading"
-                :disabled="loading || noAccounts"
+                :disabled="loading || noServices"
                 item-text="abs"
                 item-value="abs"
                 :label="$gettext('Folder')"
@@ -52,11 +52,11 @@
             <v-btn depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn v-if="noAccounts" color="primary-button" depressed dark
+            <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" depressed dark
                    class="action-setup ma-0" @click.stop="setup">
               <translate>Setup</translate>
             </v-btn>
-            <v-btn v-else color="primary-button" depressed dark
+            <v-btn v-else :disabled="noServices" color="primary-button" depressed dark
                    class="action-upload ma-0" @click.stop="confirm">
               <translate>Upload</translate>
             </v-btn>
@@ -67,21 +67,32 @@
   </v-dialog>
 </template>
 <script>
-import Account from "model/account";
+import Service from "model/service";
+import Selection from "common/selection";
 
 export default {
   name: 'PShareUploadDialog',
   props: {
     show: Boolean,
-    selection: Array,
+    items: {
+      type: Object,
+      default: null,
+    },
+    model: {
+      type: Object,
+      default: null,
+    }
   },
   data() {
     return {
-      noAccounts: false,
+      isDemo: this.$config.get("demo"),
+      isPublic: this.$config.get("public"),
+      noServices: false,
       loading: true,
       search: null,
-      account: {},
-      accounts: [],
+      service: {},
+      services: [],
+      selection: new Selection({}),
       path: "/",
       paths: [
         {"abs": "/"}
@@ -107,6 +118,8 @@ export default {
     show: function (show) {
       if (show) {
         this.load();
+      } else if (this.selection) {
+        this.selection.clear();
       }
     }
   },
@@ -118,23 +131,26 @@ export default {
       this.$router.push({name: "settings_sync"});
     },
     confirm() {
-      if (this.loading) {
+      if (this.noServices) {
+        this.$notify.warn(this.$gettext('No servers configured.'));
+        return;
+      } else if (this.loading) {
         this.$notify.wait();
         return;
       }
 
       this.loading = true;
-      this.account.Share(this.selection, this.path).then(
+      this.service.Upload(this.selection, this.path).then(
         (files) => {
           this.loading = false;
 
           if (files.length === 1) {
-            this.$notify.success("One file uploaded");
+            this.$notify.success(this.$gettext("One file uploaded"));
           } else {
             this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} files uploaded"), {n: files.length}));
           }
 
-          this.$emit('confirm', this.account);
+          this.$emit('confirm', this.service);
         }
       ).catch(() => this.loading = false);
     },
@@ -142,31 +158,43 @@ export default {
       this.paths = [{"abs": "/"}];
 
       this.loading = true;
-      this.account.Folders().then(p => {
+      this.service.Folders().then(p => {
         for (let i = 0; i < p.length; i++) {
           this.paths.push(p[i]);
         }
 
         this.pathItems = [...this.paths];
-        this.path = this.account.SharePath;
+        this.path = this.service.SharePath;
       }).finally(() => this.loading = false);
     },
     load() {
       this.loading = true;
 
+      this.selection.clear().addItems(this.items);
+
+      if (this.selection.isEmpty()) {
+        this.selection.addModel(this.model);
+      }
+
+      if (this.selection.isEmpty()) {
+        this.loading = false;
+        this.$emit('cancel');
+        return;
+      }
+
       const params = {
         share: true,
-        count: 1000,
+        count: 2000,
         offset: 0,
       };
 
-      Account.search(params).then(response => {
+      Service.search(params).then(response => {
         if (!response.models.length) {
-          this.noAccounts = true;
+          this.noServices = true;
           this.loading = false;
         } else {
-          this.account = response.models[0];
-          this.accounts = response.models;
+          this.service = response.models[0];
+          this.services = response.models;
           this.onChange();
         }
       }).catch(() => this.loading = false);

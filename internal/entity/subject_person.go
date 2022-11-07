@@ -22,6 +22,12 @@ type Person struct {
 	SubjHidden   bool   `json:"Hidden"`
 }
 
+// AfterFind is a hook that updates the name cache after querying.
+func (m *Person) AfterFind() (err error) {
+	SubjNames.Set(m.SubjUID, m.SubjName)
+	return
+}
+
 // NewPerson returns a new entity.
 func NewPerson(subj Subject) *Person {
 	result := &Person{

@@ -69,7 +69,10 @@ import download from "common/download";
 export default {
   name: 'PFileClipboard',
   props: {
-    selection: Array,
+    selection: {
+      type: Array,
+      default: () => [],
+    },
     refresh: Function,
     clearSelection: Function,
   },
@@ -98,7 +101,7 @@ export default {
     },
     download() {
       Api.post("zip", {"files": this.selection}).then(r => {
-        this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken()}`);
+        this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken}`);
       });
 
       this.expanded = false;

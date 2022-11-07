@@ -1,30 +1,25 @@
 /*
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+    <https://docs.photoprism.app/license/agpl>
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    The AGPL is supplemented by our Trademark and Brand Guidelines,
+    which describe how our Brand Assets may be used:
+    <https://photoprism.app/trademark>
 
-    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
-    to describe our software, run your own server, for educational purposes, but not for
-    offering commercial goods, products, or services without prior written permission.
-    In other words, please ask.
-
-Feel free to send an e-mail to hello@photoprism.app if you have questions,
+Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.app/developer-guide/
+<https://docs.photoprism.app/developer-guide/>
 
 */
 
@@ -32,9 +27,10 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import { DateTime } from "luxon";
 import Util from "common/util";
-import { config } from "../session";
+import { config } from "app/session";
 import { $gettext } from "common/vm";
 import download from "common/download";
+import { MediaImage } from "./photo";
 
 export class File extends RestModel {
   getDefaults() {
@@ -42,6 +38,9 @@ export class File extends RestModel {
       UID: "",
       PhotoUID: "",
       InstanceID: "",
+      MediaID: "",
+      MediaUTC: 0,
+      TakenAt: "",
       Root: "/",
       Name: "",
       OriginalName: "",
@@ -49,7 +48,8 @@ export class File extends RestModel {
       Size: 0,
       ModTime: 0,
       Codec: "",
-      Type: "",
+      FileType: "",
+      MediaType: "",
       Mime: "",
       Primary: false,
       Sidecar: false,
@@ -57,19 +57,22 @@ export class File extends RestModel {
       Portrait: false,
       Video: false,
       Duration: 0,
+      FPS: 0.0,
+      Frames: 0,
       Width: 0,
       Height: 0,
       Orientation: 0,
       Projection: "",
       AspectRatio: 1.0,
       HDR: false,
+      Watermark: false,
       ColorProfile: "",
       MainColor: "",
       Colors: "",
       Luminance: "",
       Diff: 0,
       Chroma: 0,
-      Notes: "",
+      Software: "",
       Error: "",
       Markers: [],
       CreatedAt: "",
@@ -117,17 +120,15 @@ export class File extends RestModel {
   thumbnailUrl(size) {
     if (this.Error || this.Missing) {
       return `${config.contentUri}/svg/broken`;
-    } else if (this.Type === "raw") {
-      return `${config.contentUri}/svg/raw`;
     } else if (this.Sidecar) {
       return `${config.contentUri}/svg/file`;
     }
 
-    return `${config.contentUri}/t/${this.Hash}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${this.Hash}/${config.previewToken}/${size}`;
   }
 
   getDownloadUrl() {
-    return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken()}`;
+    return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken}`;
   }
 
   download() {
@@ -167,12 +168,16 @@ export class File extends RestModel {
   getInfo() {
     let info = [];
 
-    if (this.Type) {
-      info.push(this.Type.toUpperCase());
+    if (this.FileType) {
+      info.push(this.FileType.toUpperCase());
     }
 
     if (this.Duration > 0) {
       info.push(Util.duration(this.Duration));
+    }
+
+    if (this.FPS > 0) {
+      info.push(Util.fps(this.FPS));
     }
 
     this.addSizeInfo(info);
@@ -180,14 +185,54 @@ export class File extends RestModel {
     return info.join(", ");
   }
 
-  typeInfo() {
-    if (this.Video) {
-      return $gettext("Video");
-    } else if (this.Sidecar) {
-      return $gettext("Sidecar");
+  storageInfo() {
+    if (!this.Root || this.Root === "") {
+      return "";
     }
 
-    return this.Type.toUpperCase();
+    if (this.Root.length === 1) {
+      return $gettext("Originals");
+    } else {
+      return Util.capitalize(this.Root);
+    }
+  }
+
+  typeInfo() {
+    let info = [];
+
+    if (
+      this.MediaType &&
+      this.Frames &&
+      this.MediaType === MediaImage &&
+      this.Frames &&
+      this.Frames > 0
+    ) {
+      info.push($gettext("Animated"));
+    } else if (this.Sidecar) {
+      info.push($gettext("Sidecar"));
+    }
+
+    if (this.Primary && !this.MediaType) {
+      info.push($gettext("Image"));
+      return info.join(" ");
+    } else if (this.Video && !this.MediaType) {
+      info.push($gettext("Video"));
+      return info.join(" ");
+    } else {
+      const format = Util.fileType(this.FileType);
+      if (format) {
+        info.push(format);
+      }
+
+      if (this.MediaType && this.MediaType !== this.FileType) {
+        const media = Util.capitalize(this.MediaType);
+        if (media) {
+          info.push(media);
+        }
+      }
+
+      return info.join(" ");
+    }
   }
 
   sizeInfo() {

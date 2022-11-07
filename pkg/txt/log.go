@@ -8,7 +8,7 @@ import (
 
 // LogParam sanitizes strings created from user input in response to the log4j debacle.
 func LogParam(s string) string {
-	if len(s) > ClipTitle || strings.Contains(s, "ldap:/") {
+	if len(s) > ClipLongName || strings.Contains(s, "ldap:/") {
 		return "?"
 	}
 

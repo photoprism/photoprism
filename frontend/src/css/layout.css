@@ -1,0 +1,168 @@
+/* Layout Breakpoints */
+
+@media (min-width: 1750px) {
+    .flex.xlg2 {
+        flex-basis: 16.666666666666664%;
+        flex-grow: 0;
+        max-width: 16.666666666666664%;
+    }
+}
+
+@media (min-width: 2400px) {
+    .flex.xxl1 {
+        flex-basis: 8.333333333333332%;
+        flex-grow: 0;
+        max-width: 8.333333333333332%;
+    }
+}
+
+@media (min-width: 2550px) {
+    .flex.xxxl1 {
+        flex-basis: 8.333333333333332%;
+        flex-grow: 0;
+        max-width: 8.333333333333332%;
+    }
+}
+
+/* Layout Widths */
+
+
+.width-sm, .width-md, .width-lg {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.width-sm {
+    max-width: 600px;
+}
+
+.width-md {
+    max-width: 960px;
+}
+
+.width-lg {
+    max-width: 1264px;
+}
+
+/* Rounded Elements */
+
+.v-progress-linear,
+.v-progress-linear .v-progress-linear__bar__determinate,
+.v-progress-linear .v-progress-linear__bar__indeterminate--active {
+    border-radius: 3px;
+}
+
+.v-menu__content,
+.v-btn.v-btn--depressed:not(.v-btn--round):not(.v-btn--icon),
+.v-text-field.v-text-field--box > .v-input__control > .v-input__slot,
+.v-text-field.v-text-field--solo > .v-input__control > .v-input__slot,
+#photoprism .v-dialog .v-responsive.v-image,
+#photoprism .cards-view .result,
+#photoprism .mosaic-view .result.image,
+#photoprism .list-view .result .image {
+    border-radius: 4px;
+}
+
+.v-alert,
+#photoprism div.v-dialog > div.v-card,
+#photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panel__container,
+#photoprism div.v-dialog > form > div.v-card,
+#photoprism div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panel__container {
+    border-radius: 6px;
+}
+
+.ra-3,
+.ra-3 > a,
+.rounded-3,
+.rounded-3 > a {
+    border-radius: 3px !important;
+}
+
+.ra-4,
+.ra-4 > a,
+.rounded-4,
+.rounded-4 > a {
+    border-radius: 4px !important;
+}
+
+.ra-5,
+.ra-5 > a,
+.rounded-5,
+.rounded-5 > a {
+    border-radius: 5px !important;
+}
+
+.ra-6,
+.ra-6 > a,
+.rounded-6,
+.rounded-6 > a {
+    border-radius: 6px !important;
+}
+
+.ra-8,
+.ra-8 > a,
+.rounded-8,
+.rounded-8 > a {
+    border-radius: 8px !important;
+}
+
+.ra-10,
+.ra-10 > a,
+.rounded-10,
+.rounded-10 > a {
+    border-radius: 10px !important;
+}
+
+#photoprism div.v-dialog.v-dialog--fullscreen > div.v-card {
+    border-radius: 0;
+}
+
+.v-autocomplete__content.v-menu__content,
+.v-autocomplete__content.v-menu__content .v-card {
+    border-radius: 0 0 4px 4px;
+}
+
+.v-snack.v-snack--bottom .v-snack__wrapper {
+    border-radius: 5px 5px 0 0;
+}
+
+/* Page Footer */
+
+footer {
+    clear: both;
+    padding: 1rem 2rem;
+}
+
+#photoprism .footer {
+    margin: 0;
+    padding: 6px 24px 12px;
+}
+
+#photoprism .footer div > span,
+#photoprism .footer div > a {
+    display: block;
+}
+
+@media only screen and (max-width: 599px) {
+    #photoprism .footer div > span,
+    #photoprism .footer div > a {
+        display: inline-block;
+    }
+
+    #photoprism .footer .text-link {
+        float: left;
+    }
+
+    #photoprism .footer .body-link {
+        float: right;
+    }
+}
+
+#photoprism .footer .footer-actions {
+    padding: 0;
+    margin: 0;
+}
+
+#photoprism .p-about-footer .body-1 {
+    line-height: 1.8em;
+}

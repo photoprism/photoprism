@@ -1,19 +1,18 @@
 ---
 name: Question
 about: You have a general question or need assistance
-title: 'STOP! NEVER USE GITHUB ISSUES, USE GITHUB DISCUSSIONS INSTEAD! 🙏'
+title: 'STOP! DO NOT PROCEED, USE GITHUB DISCUSSIONS INSTEAD - THANK YOU'
 labels: technical-support
 assignees: ''
 
 ---
 
-Never use GitHub Issues if you have a general question or need assistance. Thank you! 💐
+FOR GENERAL QUESTIONS, TECHNICAL SUPPORT, AND TO GET TO KNOW OTHER COMMUNITY MEMBERS:
 
-You are welcome to use GitHub Discussions instead:
-https://github.com/photoprism/photoprism/discussions
+  <https://github.com/photoprism/photoprism/discussions>
 
-Our troubleshooting checklists help you quickly find and fix common problems:
-https://docs.photoprism.app/getting-started/troubleshooting/
+OUR TROUBLESHOOTING CHECKLISTS HELP YOU QUICKLY DIAGNOSE AND FIX COMMON PROBLEMS:
 
-Sponsors receive direct technical support via email:
-https://photoprism.app/contact 📬
+  <https://docs.photoprism.app/getting-started/troubleshooting/>
+
+DO NOT PROCEED, THANK YOU!

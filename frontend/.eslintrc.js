@@ -2,7 +2,7 @@ module.exports = {
   env: {
     browser: true,
     commonjs: true,
-    es6: true,
+    es2021: true,
     node: true,
     mocha: true,
   },
@@ -39,6 +39,7 @@ module.exports = {
   },
 
   parserOptions: {
+    ecmaVersion: "latest",
     sourceType: "module",
   },
   rules: {
@@ -51,6 +52,8 @@ module.exports = {
     "no-console": 0,
     "no-case-declarations": 0,
     "no-prototype-builtins": 0,
+    "vue/valid-model-definition": 0,
+    "vue/valid-attribute-name": 0,
     "vue/first-attribute-linebreak": [
       "error",
       {

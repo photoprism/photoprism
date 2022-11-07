@@ -1,33 +1,29 @@
 /*
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+    <https://docs.photoprism.app/license/agpl>
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    The AGPL is supplemented by our Trademark and Brand Guidelines,
+    which describe how our Brand Assets may be used:
+    <https://photoprism.app/trademark>
 
-    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
-    to describe our software, run your own server, for educational purposes, but not for
-    offering commercial goods, products, or services without prior written permission.
-    In other words, please ask.
-
-Feel free to send an e-mail to hello@photoprism.app if you have questions,
+Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.app/developer-guide/
+<https://docs.photoprism.app/developer-guide/>
 
 */
 
+// import log from "common/log";
 export const InputInvalid = 0;
 export const ClickShort = 1;
 export const ClickLong = 2;
@@ -35,9 +31,11 @@ export const ClickLong = 2;
 export class Input {
   constructor() {
     this.reset();
+    this.preferTouch = false;
   }
 
   reset() {
+    // log.debug("input.reset");
     this.index = -1;
     this.scrollY = window.scrollY;
     this.touches = [];
@@ -45,6 +43,8 @@ export class Input {
   }
 
   touchStart(ev, index) {
+    // log.debug("input.touchStart", [ev, ev.type, ev.touches, index]);
+    this.preferTouch = true;
     this.index = index;
     this.scrollY = window.scrollY;
     if (ev.touches) {
@@ -54,6 +54,10 @@ export class Input {
   }
 
   mouseDown(ev, index) {
+    if (this.preferTouch) {
+      return; // Ignore "mousedown" event on touch devices.
+    }
+    // log.debug("input.mouseDown", [ev, ev.type, ev.touches, index]);
     this.index = index;
     this.scrollY = window.scrollY;
     this.touches = [];
@@ -61,6 +65,7 @@ export class Input {
   }
 
   clickType(ev, index) {
+    // log.debug("input.clickType", [ev, ev.type, index]);
     if (this.timeStamp < 0) {
       return InputInvalid;
     }
@@ -94,6 +99,7 @@ export class Input {
   }
 
   eval(ev, index) {
+    // log.debug("input.eval", [ev, ev.type, index]);
     const result = this.clickType(ev, index);
     this.reset();
     return result;
