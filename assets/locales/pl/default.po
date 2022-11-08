@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:20+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-11-07 23:52+0000\n"
+"Last-Translator: lacrimal <jareeq@gmail.com>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
 "backend/pl/>\n"
 "Language: pl\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -26,7 +26,7 @@ msgstr "Nieoczekiwany błąd, spróbuj ponownie"
 
 #: messages.go:95
 msgid "Invalid request"
-msgstr "Nieprawidłowe żądanie"
+msgstr "Niepoprawne żądanie"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -47,11 +47,11 @@ msgstr "Nie znaleziono"
 
 #: messages.go:100
 msgid "File not found"
-msgstr "Nie znaleziono pliku"
+msgstr "Plik nie został znaleziony"
 
 #: messages.go:101
 msgid "File too large"
-msgstr "Zbyt duży plik"
+msgstr "Plik jest zbyt duży"
 
 #: messages.go:102
 msgid "Unsupported format"
@@ -79,7 +79,7 @@ msgstr "Użytkownik nie znaleziony"
 
 #: messages.go:108
 msgid "Label not found"
-msgstr "Nie znaleziono etykiety"
+msgstr "Etykieta nie została odnaleziona"
 
 #: messages.go:109
 msgid "Album not found"
@@ -87,15 +87,15 @@ msgstr "Album nie został znaleziony"
 
 #: messages.go:110
 msgid "Subject not found"
-msgstr "Nie znaleziono tematu"
+msgstr "Temat nie został znaleziony"
 
 #: messages.go:111
 msgid "Person not found"
-msgstr "Nie znaleziono osoby"
+msgstr "Osoba nie została znaleziona"
 
 #: messages.go:112
 msgid "Face not found"
-msgstr "Nie znaleziono twarzy"
+msgstr "Twarz nie została znaleziona"
 
 #: messages.go:113
 msgid "Not available in public mode"
@@ -111,15 +111,15 @@ msgstr "Proszę zalogować się na swoje konto"
 
 #: messages.go:116
 msgid "Permission denied"
-msgstr "Brak upoważnienia"
+msgstr "Brak uprawnień"
 
 #: messages.go:117
 msgid "Upload might be offensive"
-msgstr "Przesyłanie może być obraźliwe"
+msgstr "Przesyłane dane mogą być obraźliwe"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr "Wgrywanie nie powiodło się"
+msgstr "Przesyłanie nie powiodło się"
 
 #: messages.go:119
 msgid "No items selected"
@@ -127,11 +127,11 @@ msgstr "Nie wybrano żadnych elementów"
 
 #: messages.go:120
 msgid "Failed creating file, please check permissions"
-msgstr "Nie udało się utworzyć pliku, sprawdź uprawnienia"
+msgstr "Nie można utworzyć pliku, sprawdź uprawnienia"
 
 #: messages.go:121
 msgid "Failed creating folder, please check permissions"
-msgstr "Nie udało się utworzyć folderu, sprawdź uprawnienia"
+msgstr "Nie można utworzyć folderu, sprawdź uprawnienia"
 
 #: messages.go:122
 msgid "Could not connect, please try again"
@@ -139,7 +139,7 @@ msgstr "Nie można się połączyć, spróbuj ponownie"
 
 #: messages.go:123
 msgid "Invalid password, please try again"
-msgstr "Hasło nieprawidłowe, spróbuj ponownie"
+msgstr "Nieprawidłowe hasło, spróbuj ponownie"
 
 #: messages.go:124
 msgid "Feature disabled"
@@ -147,7 +147,7 @@ msgstr "Funkcja wyłączona"
 
 #: messages.go:125
 msgid "No labels selected"
-msgstr "Nie wybrano żadnych etykiet"
+msgstr "Nie wybrano etykiet"
 
 #: messages.go:126
 msgid "No albums selected"
@@ -180,7 +180,9 @@ msgstr "Zajęty, spróbuj ponownie później"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr "Interwał budzenia jest %s, ale musi być 1h lub mniej"
+msgstr ""
+"Interwał wybudzenia %s jest nieprawidłowy, powinien być równy lub mniejszy "
+"niż 1 godzina"
 
 #: messages.go:134
 msgid "Your account could not be connected"
@@ -201,11 +203,11 @@ msgstr "Album został zapisany"
 #: messages.go:140
 #, c-format
 msgid "Album %s deleted"
-msgstr "Album %s usunięto"
+msgstr "Album %s został usunięty"
 
 #: messages.go:141
 msgid "Album contents cloned"
-msgstr "Sklonowano zawartość albumu"
+msgstr "Album został sklonowany"
 
 #: messages.go:142
 msgid "File removed from stack"
@@ -213,7 +215,7 @@ msgstr "Plik został rozgrupowany"
 
 #: messages.go:143
 msgid "File deleted"
-msgstr "Plik usunięty"
+msgstr "Plik został usunięty"
 
 #: messages.go:144
 #, c-format
@@ -328,7 +330,7 @@ msgstr "Osoba usunięta"
 
 #: messages.go:169
 msgid "File uploaded"
-msgstr "Plik przesłany"
+msgstr "Przesłany plik"
 
 #: messages.go:170
 #, c-format
