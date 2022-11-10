@@ -362,7 +362,7 @@ func (c *Config) connectDb() error {
 		}
 
 		if err != nil || db == nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 
@@ -384,9 +384,10 @@ func (c *Config) connectDb() error {
 		}
 	}
 
+	// Ok.
 	c.db = db
 
-	return err
+	return nil
 }
 
 // ImportSQL imports a file to the currently configured database.
