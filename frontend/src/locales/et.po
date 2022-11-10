@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-10 07:14+0000\n"
+"PO-Revision-Date: 2022-11-10 07:16+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -167,27 +167,24 @@ msgstr "Kõik aastad"
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
 msgstr "Samuti palun jätke tärn GitHubis, kui teile meeldib see projekt. See annab lisamotivatsiooni, et jätkata."
 
-#, fuzzy
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternatiivina saate faile üles laadida otse WebDAV-serveritesse, näiteks Nextcloudi."
+msgstr ""
+"Alternatiivina saad faile üles laadida otse WebDAV serveritesse nagu "
+"Nextcloud."
 
-#, fuzzy
 msgid "Altitude"
 msgstr "Kõrgus"
 
-#, fuzzy
 msgid "Altitude (m)"
-msgstr "Kõrgus merepinnast (m)"
+msgstr "Kõrgus (m)"
 
 #, fuzzy
 msgid "An error occurred - are you offline?"
 msgstr "Tekkis viga - kas olete võrguühenduseta?"
 
-#, fuzzy
 msgid "Animated"
 msgstr "Animeeritud"
 
-#, fuzzy
 msgid "Animation"
 msgstr "Animatsioon"
 
@@ -195,17 +192,14 @@ msgstr "Animatsioon"
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Kõik privaatsed fotod ja videod jäävad privaatseks ja neid ei jagata."
 
-#, fuzzy
 msgid "API Key"
 msgstr "API võti"
 
-#, fuzzy
 msgid "Apply"
 msgstr "Rakenda"
 
-#, fuzzy
 msgid "Approve"
-msgstr "Kinnitada"
+msgstr "Kinnita"
 
 #, fuzzy
 msgid "Archive"
