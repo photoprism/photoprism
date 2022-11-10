@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-10 06:46+0000\n"
+"PO-Revision-Date: 2022-11-10 07:14+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,11 +32,9 @@ msgstr "%{n} pilti leitud"
 msgid "1 hour"
 msgstr "1 tund"
 
-#, fuzzy
 msgid "12 hours"
 msgstr "12 tundi"
 
-#, fuzzy
 msgid "4 hours"
 msgstr "4 tundi"
 
@@ -69,23 +67,18 @@ msgstr "Lisa konto"
 msgid "Add Album"
 msgstr "Lisa album"
 
-#, fuzzy
 msgid "Add files to your library via Web Upload."
-msgstr "Lisage faile oma raamatukogusse veebiülekande kaudu."
+msgstr "Lisa faile oma kogusse üleslaadimise teel."
 
-#, fuzzy
 msgid "Add Link"
 msgstr "Lisa link"
 
-#, fuzzy
 msgid "Add pictures from search results by selecting them."
-msgstr "Lisage pilte otsingutulemustest, valides need."
+msgstr "Lisa pilte otsingutulemustest neid valides."
 
-#, fuzzy
 msgid "Add to album"
 msgstr "Lisa albumisse"
 
-#, fuzzy
 msgid "Added"
 msgstr "Lisatud"
 
@@ -93,103 +86,80 @@ msgstr "Lisatud"
 msgid "Advanced"
 msgstr "Täiustatud"
 
-#, fuzzy
 msgid "After 1 day"
-msgstr "Pärast 1 päeva möödumist"
+msgstr "1 päeva pärast"
 
-#, fuzzy
 msgid "After 3 days"
 msgstr "3 päeva pärast"
 
-#, fuzzy
 msgid "After 7 days"
 msgstr "7 päeva pärast"
 
-#, fuzzy
 msgid "After one month"
 msgstr "Ühe kuu pärast"
 
-#, fuzzy
 msgid "After one year"
 msgstr "Ühe aasta pärast"
 
-#, fuzzy
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Pärast piltide valimist otsingutulemustest saate need kontekstimenüü abil albumisse lisada."
+msgstr ""
+"Pärast piltide valimist otsingutulemustest saad need kontekstimenüü abil "
+"albumisse lisada."
 
-#, fuzzy
 msgid "After two months"
 msgstr "Kahe kuu pärast"
 
-#, fuzzy
 msgid "After two weeks"
 msgstr "Kahe nädala pärast"
 
-#, fuzzy
 msgid "Album"
 msgstr "Album"
 
-#, fuzzy
 msgid "Album Name"
 msgstr "Albumi nimi"
 
-#, fuzzy
 msgid "Albums"
 msgstr "Albumid"
 
-#, fuzzy
 msgid "Albums deleted"
 msgstr "Albumid kustutatud"
 
-#, fuzzy
 msgid "All %{n} albums loaded"
-msgstr "Kõik %{n} laetud albumid"
+msgstr "Kõik %{n} albumit laaditud"
 
-#, fuzzy
 msgid "All %{n} labels loaded"
-msgstr "Kõik %{n} sildid laaditud"
+msgstr "Kõik %{n} silti laaditud"
 
-#, fuzzy
 msgid "All %{n} people loaded"
-msgstr "Kõik %{n} inimestest laaditud"
+msgstr "Kõik %{n} inimest laaditud"
 
-#, fuzzy
 msgid "All Cameras"
 msgstr "Kõik kaamerad"
 
-#, fuzzy
 msgid "All Categories"
 msgstr "Kõik kategooriad"
 
-#, fuzzy
 msgid "All Colors"
 msgstr "Kõik värvid"
 
-#, fuzzy
 msgid "All Countries"
 msgstr "Kõik riigid"
 
-#, fuzzy
 msgid "All fields are required"
 msgstr "Kõik väljad on kohustuslikud"
 
-#, fuzzy
 msgid "All files from import folder"
 msgstr "Kõik failid impordikaustast"
 
-#, fuzzy
 msgid "All Lenses"
 msgstr "Kõik läätsed"
 
-#, fuzzy
 msgid "All Months"
 msgstr "Kõik kuud"
 
-#, fuzzy
 msgid "All originals"
 msgstr "Kõik originaalid"
 
-#, fuzzy
 msgid "All Years"
 msgstr "Kõik aastad"
 
@@ -305,9 +275,8 @@ msgstr "Enne tugitaotluse esitamist kasutage palun meie tõrkeotsingu kontrollni
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Kuna me oleme 100% omafinantseeringuline ja sõltumatu, võime teile lubada, et me ei müü kunagi teie andmeid ja et meie tarkvara ja teenused on alati läbipaistvad."
 
-#, fuzzy
 msgid "Bio"
-msgstr "Bio"
+msgstr "Elulugu"
 
 #, fuzzy
 msgid "Birth Date"
@@ -789,9 +758,8 @@ msgstr "F number"
 msgid "Face"
 msgstr "Nägu"
 
-#, fuzzy
 msgid "Faces"
-msgstr "Faces"
+msgstr "Näod"
 
 #, fuzzy
 msgid "Failed copying to clipboard"
@@ -1117,9 +1085,8 @@ msgstr "Silt"
 msgid "Labels"
 msgstr "Märgised"
 
-#, fuzzy
 msgid "Labels deleted"
-msgstr "Märgised välja jäetud"
+msgstr "Sildid kustutatud"
 
 #, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1517,9 +1484,8 @@ msgstr "Meie kasutusjuhend hõlmab ka paljusid edasijõudnute teemasid, näiteks
 msgid "Outdoor"
 msgstr "Välitingimustes"
 
-#, fuzzy
 msgid "Panorama"
-msgstr "Panorama"
+msgstr "Panoraam"
 
 #, fuzzy
 msgid "Panoramas"
@@ -1529,9 +1495,8 @@ msgstr "Panoraamid"
 msgid "Password"
 msgstr "Parool"
 
-#, fuzzy
 msgid "Password changed"
-msgstr "Salasõna muudetud"
+msgstr "Parool muudetud"
 
 #, fuzzy
 msgid "People"
@@ -1821,9 +1786,8 @@ msgstr "Valik heaks kiidetud"
 msgid "Selection archived"
 msgstr "Valik arhiveeritud"
 
-#, fuzzy
 msgid "Selection restored"
-msgstr "Valik taastatakse"
+msgstr "Valik taastatud"
 
 #, fuzzy
 msgid "Send"
@@ -1845,9 +1809,8 @@ msgstr "Teenused"
 msgid "Settings"
 msgstr "Seaded"
 
-#, fuzzy
 msgid "Settings saved"
-msgstr "Salvestatud seaded"
+msgstr "Seaded salvestatud"
 
 #, fuzzy
 msgid "Setup"
