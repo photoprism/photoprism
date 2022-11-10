@@ -308,6 +308,28 @@ func (c *Config) InitTestDb() {
 	go entity.Error{}.LogEvents()
 }
 
+// connectDb checks the database server version.
+func (c *Config) checkDb(db *gorm.DB) error {
+	switch c.DatabaseDriver() {
+	case MySQL:
+		type Res struct {
+			Value string `gorm:"column:Value;"`
+		}
+		var res Res
+		if err := db.Raw("SHOW VARIABLES LIKE 'innodb_version'").Scan(&res).Error; err != nil {
+			return err
+		} else if v := strings.Split(res.Value, "."); len(v) < 3 {
+			log.Warnf("config: unknown database server version")
+		} else if major := txt.UInt(v[0]); major < 10 {
+			return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+		} else if sub := txt.UInt(v[1]); sub < 5 || sub == 5 && txt.UInt(v[2]) < 12 {
+			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+		}
+	}
+
+	return nil
+}
+
 // connectDb establishes a database connection.
 func (c *Config) connectDb() error {
 	// Make sure this is not running twice.
@@ -354,21 +376,10 @@ func (c *Config) connectDb() error {
 	db.DB().SetConnMaxLifetime(time.Hour)
 
 	// Check database server version.
-	switch dbDriver {
-	case MySQL:
-		type Res struct {
-			Value string `gorm:"column:Value;"`
-		}
-		var res Res
-		if err = db.Raw("SHOW VARIABLES LIKE 'innodb_version'").Scan(&res).Error; err != nil {
-			return err
-		} else if v := strings.Split(res.Value, "."); len(v) < 3 {
-			log.Warnf("config: unknown database server version")
-		} else if major := txt.UInt(v[0]); major < 10 {
-			err = fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
-			return err
-		} else if sub := txt.UInt(v[1]); sub < 5 || sub == 5 && txt.UInt(v[2]) < 12 {
-			err = fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+	if err = c.checkDb(db); err != nil {
+		if c.Unsafe() {
+			log.Error(err)
+		} else {
 			return err
 		}
 	}

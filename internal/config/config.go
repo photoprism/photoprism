@@ -627,7 +627,7 @@ func (c *Config) Workers() int {
 // required for face recognition and index maintenance(1-86400s).
 func (c *Config) WakeupInterval() time.Duration {
 	if c.options.WakeupInterval <= 0 {
-		if c.options.Unsafe {
+		if c.Unsafe() {
 			// Worker can be disabled only in unsafe mode.
 			return time.Duration(0)
 		} else {
