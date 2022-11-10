@@ -9,5 +9,5 @@ scripts/install-qemu.sh
 # Run test suite.
 scripts/test.sh
 
-# Build release images.
-make docker-release-all
+# Build release image.
+make docker-release
