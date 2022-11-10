@@ -107,7 +107,7 @@ export const Languages = () => [
     value: "de",
   },
   {
-    text: "Eesti Keel", // Estonian
+    text: "Eesti", // Estonian
     value: "et",
   },
   {
