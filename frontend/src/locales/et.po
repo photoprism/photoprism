@@ -2,52 +2,42 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-05 12:07+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-11-10 06:45+0000\n"
+"Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.14.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
-#, fuzzy
 msgid "%{n} albums found"
-msgstr "%{n} albumid leitud"
+msgstr "%{n} albumit leitud"
 
 #: src/dialog/share/upload.vue:81
-#, fuzzy
 msgid "%{n} files uploaded"
-msgstr "%{n} üleslaetud failid"
+msgstr "%{n} faili üles laaditud"
 
 #: src/page/library/browse.vue:311
-#, fuzzy
 msgid "%{n} folders found"
-msgstr "%{n} kaustu leitud"
+msgstr "%{n} kausta leitud"
 
 #: src/page/labels.vue:422
-#, fuzzy
 msgid "%{n} labels found"
-msgstr "%{n} sildid leitud"
+msgstr "%{n} silti leitud"
 
-#: src/page/people/new.vue:286
-#: src/page/people/new.vue:372
+#: src/page/people/new.vue:286 src/page/people/new.vue:372
 #: src/page/people/recognized.vue:508
-#, fuzzy
 msgid "%{n} people found"
 msgstr "%{n} inimest leitud"
 
-#: src/page/album/photos.vue:240
-#: src/page/album/photos.vue:393
-#: src/page/photos.vue:325
-#: src/page/photos.vue:490
-#, fuzzy
+#: src/page/album/photos.vue:240 src/page/album/photos.vue:393
+#: src/page/photos.vue:325 src/page/photos.vue:490
 msgid "%{n} pictures found"
-msgstr "%{n} leitud pilte"
+msgstr "%{n} pilti leitud"
 
 #: src/options/options.js:364
-#, fuzzy
 msgid "1 hour"
 msgstr "1 tund"
 
@@ -62,17 +52,12 @@ msgid "4 hours"
 msgstr "4 tundi"
 
 #: src/dialog/share.vue:73
-#, fuzzy
 msgid "A click will copy it to your clipboard."
 msgstr "Klõpsamine kopeerib selle lõikelauale."
 
-#: src/page/about/about.vue:4
-#: src/page/about/about.vue:254
-#: src/component/navigation.vue:424
-#: src/component/navigation.vue:27
-#: src/page/about/about.vue:4
-#: src/page/about/about.vue:166
-#: src/page/help.vue:43
+#: src/page/about/about.vue:4 src/page/about/about.vue:254
+#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/page/about/about.vue:166 src/page/help.vue:43
 #, fuzzy
 msgid "About"
 msgstr "kohta"
@@ -82,41 +67,30 @@ msgstr "kohta"
 msgid "Abyss"
 msgstr "Abyss"
 
-#: src/component/navigation.vue:3
-#: src/component/navigation.vue:93
-#: src/component/navigation.vue:1908
-#: src/dialog/share/upload.vue:108
-#: src/model/service.js:98
-#: src/model/user.js:144
-#: src/page/settings.vue:83
+#: src/component/navigation.vue:3 src/component/navigation.vue:93
+#: src/component/navigation.vue:1908 src/dialog/share/upload.vue:108
+#: src/model/service.js:98 src/model/user.js:144 src/page/settings.vue:83
 #: src/page/settings/general.vue:470
-#, fuzzy
 msgid "Account"
 msgstr "Konto"
 
 #: src/dialog/photo/edit/info.vue:159
-#, fuzzy
 msgid "Accuracy"
 msgstr "Täpsus"
 
 #: src/dialog/photo/edit/labels.vue:23
-#, fuzzy
 msgid "Action"
 msgstr "Tegevus"
 
-#: src/dialog/photo/edit/files.vue:28
-#: src/dialog/photo/edit/files.vue:25
-#, fuzzy
+#: src/dialog/photo/edit/files.vue:28 src/dialog/photo/edit/files.vue:25
 msgid "Actions"
-msgstr "Meetmed"
+msgstr "Tegevused"
 
 #: src/dialog/service/add.vue:7
-#, fuzzy
 msgid "Add Account"
 msgstr "Lisa konto"
 
-#: src/page/albums.vue:122
-#: src/page/albums.vue:163
+#: src/page/albums.vue:122 src/page/albums.vue:163
 #, fuzzy
 msgid "Add Album"
 msgstr "Albumi lisamine"
@@ -136,18 +110,14 @@ msgstr "Lisa link"
 msgid "Add pictures from search results by selecting them."
 msgstr "Lisage pilte otsingutulemustest, valides need."
 
-#: src/component/album/clipboard.vue:129
-#: src/component/file/clipboard.vue:85
-#: src/component/label/clipboard.vue:61
-#: src/component/photo/clipboard.vue:180
-#: src/component/subject/clipboard.vue:82
-#: src/dialog/photo/album.vue:20
+#: src/component/album/clipboard.vue:129 src/component/file/clipboard.vue:85
+#: src/component/label/clipboard.vue:61 src/component/photo/clipboard.vue:180
+#: src/component/subject/clipboard.vue:82 src/dialog/photo/album.vue:20
 #, fuzzy
 msgid "Add to album"
 msgstr "Lisa albumisse"
 
-#: src/dialog/photo/edit/files.vue:189
-#: src/dialog/photo/edit/files.vue:186
+#: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
 #, fuzzy
 msgid "Added"
 msgstr "Lisatud"
@@ -182,10 +152,11 @@ msgstr "Ühe kuu pärast"
 msgid "After one year"
 msgstr "Ühe aasta pärast"
 
-#: src/page/albums.vue:40
-#: src/page/albums.vue:1
+#: src/page/albums.vue:40 src/page/albums.vue:1
 #, fuzzy
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
 msgstr ""
 "Pärast piltide valimist otsingutulemustest saate need kontekstimenüü abil "
 "albumisse lisada."
@@ -210,18 +181,14 @@ msgstr "Tehisintellektipõhine digitaalsete varade haldamine"
 msgid "Album"
 msgstr "Album"
 
-#: src/dialog/photo/album.vue:67
-#: src/dialog/photo/album.vue:77
+#: src/dialog/photo/album.vue:67 src/dialog/photo/album.vue:77
 #, fuzzy
 msgid "Album Name"
 msgstr "Albumi nimi"
 
-#: src/app/routes.js:151
-#: src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147
-#: src/component/navigation.vue:157
-#: src/component/navigation.vue:539
-#: src/component/navigation.vue:4
+#: src/app/routes.js:151 src/component/album/toolbar.vue:52
+#: src/component/navigation.vue:147 src/component/navigation.vue:157
+#: src/component/navigation.vue:539 src/component/navigation.vue:4
 #: src/component/navigation.vue:621
 #, fuzzy
 msgid "Albums"
@@ -247,14 +214,12 @@ msgstr "Kõik %{n} sildid laaditud"
 msgid "All %{n} people loaded"
 msgstr "Kõik %{n} inimestest laaditud"
 
-#: src/component/album/toolbar.vue:37
-#: src/component/photo/toolbar.vue:36
+#: src/component/album/toolbar.vue:37 src/component/photo/toolbar.vue:36
 #, fuzzy
 msgid "All Cameras"
 msgstr "Kõik kaamerad"
 
-#: src/component/photo/toolbar.vue:39
-#: src/page/albums.vue:30
+#: src/component/photo/toolbar.vue:39 src/page/albums.vue:30
 #: src/page/albums.vue:531
 #, fuzzy
 msgid "All Categories"
@@ -265,14 +230,12 @@ msgstr "Kõik kategooriad"
 msgid "All Colors"
 msgstr "Kõik värvid"
 
-#: src/component/album/toolbar.vue:41
-#: src/component/photo/toolbar.vue:35
+#: src/component/album/toolbar.vue:41 src/component/photo/toolbar.vue:35
 #, fuzzy
 msgid "All Countries"
 msgstr "Kõik riigid"
 
-#: src/page/about/feedback.vue:38
-#: src/page/about/feedback.vue:31
+#: src/page/about/feedback.vue:38 src/page/about/feedback.vue:31
 #, fuzzy
 msgid "All fields are required"
 msgstr "Kõik väljad on kohustuslikud"
@@ -304,14 +267,18 @@ msgstr "Kõik aastad"
 
 #: src/page/about/about.vue:40
 #, fuzzy
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
 msgstr ""
 "Samuti palun jätke tärn GitHubis, kui teile meeldib see projekt. See annab "
 "lisamotivatsiooni, et jätkata."
 
 #: src/dialog/share.vue:75
 #, fuzzy
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
 msgstr ""
 "Alternatiivina saate faile üles laadida otse WebDAV-serveritesse, näiteks "
 "Nextcloudi."
@@ -331,12 +298,9 @@ msgstr "Kõrgus merepinnast (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Tekkis viga - kas olete võrguühenduseta?"
 
-#: src/component/navigation.vue:101
-#: src/component/photo/cards.vue:301
-#: src/component/photo/cards.vue:480
-#: src/component/photo/list.vue:191
-#: src/component/photo/mosaic.vue:224
-#: src/model/file.js:210
+#: src/component/navigation.vue:101 src/component/photo/cards.vue:301
+#: src/component/photo/cards.vue:480 src/component/photo/list.vue:191
+#: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:299
 #, fuzzy
 msgid "Animated"
@@ -367,17 +331,14 @@ msgstr "API võti"
 msgid "Apply"
 msgstr "Rakenda"
 
-#: src/component/photo/cards.vue:410
-#: src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:410 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:116
 #, fuzzy
 msgid "Approve"
 msgstr "Kinnitada"
 
-#: src/app/routes.js:232
-#: src/component/navigation.vue:134
-#: src/component/photo/cards.vue:381
-#: src/component/photo/clipboard.vue:204
+#: src/app/routes.js:232 src/component/navigation.vue:134
+#: src/component/photo/cards.vue:381 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:338
 #, fuzzy
 msgid "Archive"
@@ -428,15 +389,16 @@ msgstr "Oled sa kindel?"
 msgid "Artist"
 msgstr "Kunstnik"
 
-#: src/dialog/photo/edit/files.vue:149
-#: src/dialog/photo/edit/files.vue:146
+#: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 #, fuzzy
 msgid "Aspect Ratio"
 msgstr "Kujundisuhe"
 
 #: src/page/settings/library.vue:112
 #, fuzzy
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
 msgstr ""
 "Looge automaatselt JPEG-dokumendid teiste failitüüpide jaoks, et neid saaks "
 "kuvada brauseris."
@@ -444,44 +406,46 @@ msgstr ""
 #: src/page/settings/general.vue:163
 #, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "Loob automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
+msgstr ""
+"Loob automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
 
 #: src/options/options.js:268
 #, fuzzy
 msgid "Basic"
 msgstr "Basic"
 
-#: src/component/navigation.vue:584
-#: src/dialog/sponsor.vue:7
-#: src/page/about/about.vue:33
-#: src/page/login.vue:48
+#: src/component/navigation.vue:584 src/dialog/sponsor.vue:7
+#: src/page/about/about.vue:33 src/page/login.vue:48
 #, fuzzy
 msgid "Become a sponsor"
 msgstr "Hakka sponsoriks"
 
 #: src/page/about/about.vue:62
 #, fuzzy
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
 msgstr ""
 "Enne tugitaotluse esitamist kasutage palun meie tõrkeotsingu "
 "kontrollnimekirju, et teha kindlaks teie probleemi põhjus."
 
 #: src/page/about/about.vue:27
 #, fuzzy
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
 msgstr ""
 "Kuna me oleme 100% omafinantseeringuline ja sõltumatu, võime teile lubada, "
 "et me ei müü kunagi teie andmeid ja et meie tarkvara ja teenused on alati "
 "läbipaistvad."
 
-#: src/page/settings/account.vue:281
-#: src/page/people/recognized.vue:434
+#: src/page/settings/account.vue:281 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:280
 #, fuzzy
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:67
 #: src/page/settings/account.vue:67
 #, fuzzy
 msgid "Birth Date"
@@ -519,34 +483,31 @@ msgstr "Sirvi indekseeritud faile ja kaustu raamatukogus."
 
 #: src/page/about/about.vue:54
 #, fuzzy
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
 msgstr ""
 "Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud "
 "ressursside kohta leiate teadmistebaasist."
 
-#: src/page/about/feedback.vue:8
-#: src/options/options.js:406
+#: src/page/about/feedback.vue:8 src/options/options.js:406
 #, fuzzy
 msgid "Bug Report"
 msgstr "Veateade"
 
-#: src/common/notify.js:94
-#: src/page/connect.vue:6
+#: src/common/notify.js:94 src/page/connect.vue:6
 #, fuzzy
 msgid "Busy, please wait…"
 msgstr "Palju tööd, palun oodake…"
 
-#: src/app/routes.js:164
-#: src/component/navigation.vue:253
+#: src/app/routes.js:164 src/component/navigation.vue:253
 #: src/component/navigation.vue:989
 #, fuzzy
 msgid "Calendar"
 msgstr "Kalender"
 
-#: src/component/photo/cards.vue:488
-#: src/component/photo/list.vue:137
-#: src/component/photo/toolbar.vue:202
-#: src/dialog/photo/edit/details.vue:351
+#: src/component/photo/cards.vue:488 src/component/photo/list.vue:137
+#: src/component/photo/toolbar.vue:202 src/dialog/photo/edit/details.vue:351
 #, fuzzy
 msgid "Camera"
 msgstr "Kaamera"
@@ -556,72 +517,50 @@ msgstr "Kaamera"
 msgid "Camera Serial"
 msgstr "Kaamera seeriaviisiline"
 
-#: src/page/album/photos.vue:246
-#: src/page/photos.vue:331
+#: src/page/album/photos.vue:246 src/page/photos.vue:331
 #, fuzzy
 msgid "Can't load more, limit reached"
 msgstr "Rohkem ei saa laadida, piirang on saavutatud"
 
-#: src/common/clipboard.js:100
-#: src/common/clipboard.js:137
-#: src/page/albums.vue:469
-#: src/page/albums.vue:485
-#: src/page/labels.vue:204
-#: src/page/labels.vue:224
-#: src/page/library/browse.vue:201
-#: src/page/library/browse.vue:217
-#: src/page/people/new.vue:215
-#: src/page/people/new.vue:231
-#: src/page/people/recognized.vue:294
+#: src/common/clipboard.js:100 src/common/clipboard.js:137
+#: src/page/albums.vue:469 src/page/albums.vue:485 src/page/labels.vue:204
+#: src/page/labels.vue:224 src/page/library/browse.vue:201
+#: src/page/library/browse.vue:217 src/page/people/new.vue:215
+#: src/page/people/new.vue:231 src/page/people/recognized.vue:294
 #: src/page/people/recognized.vue:310
 #, fuzzy
 msgid "Can't select more items"
 msgstr "Ei saa valida rohkem objekte"
 
-#: src/dialog/account/password.vue:36
-#: src/dialog/album/delete.vue:15
-#: src/dialog/album/edit.vue:42
-#: src/dialog/confirm.vue:15
-#: src/dialog/file/delete.vue:15
-#: src/dialog/label/delete.vue:15
-#: src/dialog/photo/album.vue:18
-#: src/dialog/photo/delete.vue:15
-#: src/dialog/reload.vue:9
-#: src/dialog/service/add.vue:17
-#: src/dialog/service/edit.vue:104
-#: src/dialog/service/remove.vue:15
-#: src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29
-#: src/page/library/import.vue:34
-#: src/page/library/index.vue:27
+#: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
+#: src/dialog/album/edit.vue:42 src/dialog/confirm.vue:15
+#: src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15
+#: src/dialog/photo/album.vue:18 src/dialog/photo/delete.vue:15
+#: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
+#: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
+#: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 #, fuzzy
 msgid "Cancel"
 msgstr "Tühista"
 
-#: src/component/album/toolbar.vue:59
-#: src/component/photo/toolbar.vue:46
+#: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 #, fuzzy
 msgid "Cards"
 msgstr "Kaardid"
 
-#: src/page/about/feedback.vue:121
-#: src/component/photo/toolbar.vue:337
-#: src/dialog/album/edit.vue:171
-#: src/page/about/feedback.vue:121
-#: src/page/albums.vue:113
+#: src/page/about/feedback.vue:121 src/component/photo/toolbar.vue:337
+#: src/dialog/album/edit.vue:171 src/page/albums.vue:113
 #, fuzzy
 msgid "Category"
 msgstr "Kategooria"
 
-#: src/page/settings/account.vue:252
-#: src/page/settings/account.vue:251
+#: src/page/settings/account.vue:252 src/page/settings/account.vue:251
 #, fuzzy
 msgid "Change Avatar"
 msgstr "Avatari muutmine"
 
-#: src/page/settings/account.vue:51
-#: src/dialog/account/password.vue:7
-#: src/page/settings/account.vue:51
+#: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
 #, fuzzy
 msgid "Change Password"
 msgstr "Muuda salasõna"
@@ -641,10 +580,8 @@ msgstr "Muuda fotode pealkirju, asukohti ja muid metaandmeid."
 msgid "Change private flag"
 msgstr "Muuda eraviisilist lippu"
 
-#: src/page/settings/account.vue:114
-#: src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42
-#: src/page/settings/general.vue:105
+#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
+#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 #, fuzzy
 msgid "Changes successfully saved"
@@ -655,22 +592,18 @@ msgstr "Muudatused edukalt salvestatud"
 msgid "Checked"
 msgstr "Kontrollitud"
 
-#: src/dialog/photo/edit/files.vue:175
-#: src/dialog/photo/edit/files.vue:172
+#: src/dialog/photo/edit/files.vue:175 src/dialog/photo/edit/files.vue:172
 #, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
-#: src/component/photo-viewer.vue:71
-#: src/dialog/photo/edit/details.vue:113
-#: src/dialog/share.vue:87
-#: src/page/library/errors.vue:60
+#: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
+#: src/dialog/share.vue:87 src/page/library/errors.vue:60
 #, fuzzy
 msgid "Close"
 msgstr "Sulge"
 
-#: src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:92
+#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 #, fuzzy
 msgid "Codec"
 msgstr "Codec"
@@ -680,8 +613,7 @@ msgstr "Codec"
 msgid "Color"
 msgstr "Värv"
 
-#: src/dialog/photo/edit/files.vue:163
-#: src/dialog/photo/edit/files.vue:160
+#: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 #, fuzzy
 msgid "Color Profile"
 msgstr "Värviprofiil"
@@ -693,7 +625,9 @@ msgstr "Värvid"
 
 #: src/page/about/about.vue:49
 #, fuzzy
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
 msgstr ""
 "Tavalised probleemid saab kiiresti diagnoosida ja lahendada, kasutades meie "
 "poolt pakutavaid tõrkeotsingu kontrollnimekirju."
@@ -708,16 +642,13 @@ msgstr "Täielik rescan"
 msgid "Confidence"
 msgstr "Usaldus"
 
-#: src/dialog/service/add.vue:18
-#: src/page/connect.vue:12
+#: src/dialog/service/add.vue:18 src/page/connect.vue:12
 #: src/page/settings/services.vue:53
 #, fuzzy
 msgid "Connect"
 msgstr "Ühendage"
 
-#: src/page/settings/account.vue:57
-#: src/dialog/webdav.vue:4
-#: src/page/settings/account.vue:57
+#: src/page/settings/account.vue:57 src/dialog/webdav.vue:4
 #: src/page/settings/services.vue:48
 #, fuzzy
 msgid "Connect via WebDAV"
@@ -728,27 +659,23 @@ msgstr "Ühendamine WebDAVi kaudu"
 msgid "Connected"
 msgstr "Ühendatud"
 
-#: src/page/settings/account.vue:113
-#: src/page/settings/account.vue:90
+#: src/page/settings/account.vue:113 src/page/settings/account.vue:90
 #, fuzzy
 msgid "Contact Details"
 msgstr "Kontaktandmed"
 
 #: src/page/about/feedback.vue:4
-#: src/page/about/feedback.vue:4
 #, fuzzy
 msgid "Contact Us"
 msgstr "Võtke meiega ühendust"
 
-#: src/page/albums.vue:93
-#: src/page/labels.vue:77
+#: src/page/albums.vue:93 src/page/labels.vue:77
 #: src/page/people/recognized.vue:90
 #, fuzzy
 msgid "Contains %{n} pictures."
 msgstr "Sisaldab %{n} pilti."
 
-#: src/page/albums.vue:90
-#: src/page/labels.vue:74
+#: src/page/albums.vue:90 src/page/labels.vue:74
 #: src/page/people/recognized.vue:87
 #, fuzzy
 msgid "Contains one picture."
@@ -764,8 +691,7 @@ msgstr "Teisenda JPEG-ks"
 msgid "Converting"
 msgstr "Konverteerimine"
 
-#: src/dialog/share.vue:58
-#: src/dialog/webdav.vue:37
+#: src/dialog/share.vue:58 src/dialog/webdav.vue:37
 #, fuzzy
 msgid "Copied to clipboard"
 msgstr "Kopeeritud lõikelauale"
@@ -780,10 +706,8 @@ msgstr "Autoriõigus"
 msgid "Couldn't find anything."
 msgstr "Ei leidnud midagi."
 
-#: src/page/settings/account.vue:726
-#: src/component/photo/toolbar.vue:178
-#: src/dialog/photo/edit/details.vue:248
-#: src/page/settings/account.vue:579
+#: src/page/settings/account.vue:726 src/component/photo/toolbar.vue:178
+#: src/dialog/photo/edit/details.vue:248 src/page/settings/account.vue:579
 #, fuzzy
 msgid "Country"
 msgstr "Riik"
@@ -813,8 +737,7 @@ msgstr "Kuubiline: Mõõdukas kvaliteet, hea jõudlus"
 msgid "Current Password"
 msgstr "Praegune parool"
 
-#: src/page/about/feedback.vue:5
-#: src/options/options.js:403
+#: src/page/about/feedback.vue:5 src/options/options.js:403
 #, fuzzy
 msgid "Customer Support"
 msgstr "Klienditugi"
@@ -834,8 +757,7 @@ msgstr "Cyano"
 msgid "Daily"
 msgstr "Igapäevane"
 
-#: src/page/settings/account.vue:446
-#: src/dialog/photo/edit/details.vue:116
+#: src/page/settings/account.vue:446 src/dialog/photo/edit/details.vue:116
 #: src/page/settings/account.vue:445
 #, fuzzy
 msgid "Day"
@@ -846,8 +768,7 @@ msgstr "Päev"
 msgid "Debug Logs"
 msgstr "Vigade kõrvaldamise logid"
 
-#: src/options/options.js:264
-#: src/options/options.js:318
+#: src/options/options.js:264 src/options/options.js:318
 #: src/options/themes.js:402
 #, fuzzy
 msgid "Default"
@@ -858,27 +779,19 @@ msgstr "Vaikimisi"
 msgid "Default Folder"
 msgstr "Vaikimisi kaust"
 
-#: src/component/album/clipboard.vue:153
-#: src/component/label/clipboard.vue:82
-#: src/component/photo/clipboard.vue:272
-#: src/dialog/album/delete.vue:18
-#: src/dialog/file/delete.vue:18
-#: src/dialog/label/delete.vue:18
-#: src/dialog/photo/delete.vue:18
-#: src/dialog/photo/edit/files.vue:41
-#: src/dialog/photo/edit/files.vue:38
-#: src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226
-#: src/page/library/errors.vue:88
+#: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
+#: src/component/photo/clipboard.vue:272 src/dialog/album/delete.vue:18
+#: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
+#: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
+#: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
+#: src/dialog/share.vue:226 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 #, fuzzy
 msgid "Delete"
 msgstr "Kustuta"
 
-#: src/component/photo/cards.vue:449
-#: src/dialog/album/edit.vue:147
-#: src/dialog/photo/edit/details.vue:604
-#: src/page/albums.vue:428
+#: src/component/photo/cards.vue:449 src/dialog/album/edit.vue:147
+#: src/dialog/photo/edit/details.vue:604 src/page/albums.vue:428
 #, fuzzy
 msgid "Description"
 msgstr "Kirjeldus"
@@ -888,8 +801,7 @@ msgstr "Kirjeldus"
 msgid "Detailed instructions can be found in our User Guide."
 msgstr "Üksikasjalikud juhised leiate meie kasutusjuhendist."
 
-#: src/dialog/photo/edit.vue:27
-#: src/dialog/photo/edit.vue:1
+#: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1
 #: src/dialog/photo/edit.vue:157
 #, fuzzy
 msgid "Details"
@@ -955,16 +867,13 @@ msgstr "WebDAV-i keelamine"
 msgid "Disables reverse geocoding and maps."
 msgstr "Lülitab välja tagasipööratud geokodeerimise ja kaardid."
 
-#: src/app/routes.js:408
-#: src/app/routes.js:415
-#: src/app/routes.js:422
+#: src/app/routes.js:408 src/app/routes.js:415 src/app/routes.js:422
 #: src/app/routes.js:429
 #, fuzzy
 msgid "Discover"
 msgstr "Avasta"
 
-#: src/page/settings/account.vue:192
-#: src/page/settings/account.vue:191
+#: src/page/settings/account.vue:192 src/page/settings/account.vue:191
 #, fuzzy
 msgid "Display Name"
 msgstr "Kuva nimi"
@@ -1011,27 +920,21 @@ msgstr "Ärge kasutage TensorFlow'd pildi klassifitseerimiseks."
 msgid "Donations"
 msgstr "Annetused"
 
-#: src/dialog/photo/edit/details.vue:120
-#: src/dialog/share.vue:26
+#: src/dialog/photo/edit/details.vue:120 src/dialog/share.vue:26
 #, fuzzy
 msgid "Done"
 msgstr "Valmis"
 
-#: src/dialog/upload.vue:39
-#: src/page/library/import.vue:7
+#: src/dialog/upload.vue:39 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 #, fuzzy
 msgid "Done."
 msgstr "Tehtud."
 
-#: src/component/album/clipboard.vue:107
-#: src/component/album/toolbar.vue:120
-#: src/component/file/clipboard.vue:62
-#: src/component/photo-viewer.vue:78
-#: src/component/photo/clipboard.vue:157
-#: src/component/subject/clipboard.vue:60
-#: src/dialog/photo/edit/files.vue:32
-#: src/dialog/photo/edit/files.vue:29
+#: src/component/album/clipboard.vue:107 src/component/album/toolbar.vue:120
+#: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
+#: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
+#: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
 #: src/page/settings/general.vue:250
 #, fuzzy
 msgid "Download"
@@ -1047,16 +950,11 @@ msgstr "Kaugfailide allalaadimine"
 msgid "Download single files and zip archives."
 msgstr "Laadige alla üksikuid faile ja zip-arhiive."
 
-#: src/component/album/clipboard.vue:110
-#: src/component/album/toolbar.vue:112
-#: src/component/file/clipboard.vue:46
-#: src/component/label/clipboard.vue:80
-#: src/component/photo-viewer.vue:161
-#: src/component/photo/cards.vue:133
-#: src/component/photo/clipboard.vue:210
-#: src/component/photo/list.vue:124
-#: src/component/subject/clipboard.vue:55
-#: src/dialog/photo/edit/files.vue:69
+#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:112
+#: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
+#: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
+#: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
+#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:69
 #: src/page/library/browse.vue:107
 #, fuzzy
 msgid "Downloading…"
@@ -1068,9 +966,10 @@ msgid "Downscaling Filter"
 msgstr "Alamklassifitseerimise filter"
 
 #: src/page/about/feedback.vue:16
-#: src/page/about/feedback.vue:16
 #, fuzzy
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
 msgstr ""
 "Meile saabuvate e-kirjade suure hulga tõttu ei pruugi meie meeskond olla "
 "võimeline teile kohe vastama."
@@ -1080,8 +979,7 @@ msgstr ""
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Duplikaadid jäetakse vahele ja need ilmuvad ainult üks kord."
 
-#: src/dialog/photo/edit/files.vue:101
-#: src/dialog/photo/edit/files.vue:98
+#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #, fuzzy
 msgid "Duration"
 msgstr "Kestus"
@@ -1093,7 +991,9 @@ msgstr "Dünaamilised eelvaated"
 
 #: src/page/settings/advanced.vue:303
 #, fuzzy
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
 msgstr ""
 "Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-"
 "seadmete jaoks."
@@ -1104,15 +1004,12 @@ msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dünaamilise suuruse piirang: %{n}px"
 
 #: src/page/about/feedback.vue:194
-#: src/page/about/feedback.vue:194
 #, fuzzy
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: src/component/album/clipboard.vue:86
-#: src/component/album/toolbar.vue:82
-#: src/component/photo-viewer.vue:97
-#: src/component/photo/clipboard.vue:111
+#: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:82
+#: src/component/photo-viewer.vue:97 src/component/photo/clipboard.vue:111
 #: src/page/settings/general.vue:316
 #, fuzzy
 msgid "Edit"
@@ -1138,8 +1035,7 @@ msgstr "Fotode redigeerimine"
 msgid "Edited"
 msgstr "Redigeeritud"
 
-#: src/page/settings/account.vue:220
-#: src/page/settings/account.vue:615
+#: src/page/settings/account.vue:220 src/page/settings/account.vue:615
 #: src/page/settings/account.vue:219
 #, fuzzy
 msgid "Email"
@@ -1155,8 +1051,7 @@ msgstr "Võimaldab uusi funktsioone, mis on praegu väljatöötamisel."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Võimaldab RAW-konverteri eelseadistused. Võib vähendada jõudlust."
 
-#: src/app/routes.js:283
-#: src/component/navigation.vue:391
+#: src/app/routes.js:283 src/component/navigation.vue:391
 #, fuzzy
 msgid "Errors"
 msgstr "Vead"
@@ -1178,13 +1073,14 @@ msgstr "Iga kahe päeva tagant"
 
 #: src/page/settings/general.vue:207
 #, fuzzy
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
 msgstr ""
 "Eraldage otsingutulemustest, jagatud albumitest, siltidest ja kohtadest "
 "privaatseks märgitud sisu."
 
-#: src/page/people/new.vue:92
-#: src/page/people/recognized.vue:134
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 #, fuzzy
 msgid "Exclude hidden"
 msgstr "Välja arvatud varjatud"
@@ -1204,8 +1100,7 @@ msgstr "Laienda otsingut"
 msgid "Experimental Features"
 msgstr "Eksperimentaalsed omadused"
 
-#: src/dialog/service/edit.vue:249
-#: src/dialog/share.vue:64
+#: src/dialog/service/edit.vue:249 src/dialog/share.vue:64
 #, fuzzy
 msgid "Expires"
 msgstr "Aegub"
@@ -1230,8 +1125,7 @@ msgstr "Nägu"
 msgid "Faces"
 msgstr "Faces"
 
-#: src/dialog/share.vue:60
-#: src/dialog/webdav.vue:39
+#: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 #, fuzzy
 msgid "Failed copying to clipboard"
 msgstr "Ebaõnnestunud kopeerimine lõikelauale"
@@ -1246,8 +1140,7 @@ msgstr "Linki eemaldamine ebaõnnestus"
 msgid "Failed updating link"
 msgstr "Linki uuendamine ebaõnnestus"
 
-#: src/page/settings/account.vue:165
-#: src/page/settings/account.vue:164
+#: src/page/settings/account.vue:165 src/page/settings/account.vue:164
 #, fuzzy
 msgid "Family Name"
 msgstr "Perekonna nimi"
@@ -1262,34 +1155,31 @@ msgstr "Kiire"
 msgid "Favorite"
 msgstr "Lemmik"
 
-#: src/app/routes.js:197
-#: src/component/navigation.vue:227
+#: src/app/routes.js:197 src/component/navigation.vue:227
 #: src/component/navigation.vue:899
 #, fuzzy
 msgid "Favorites"
 msgstr "Lemmikud"
 
-#: src/page/about/feedback.vue:7
-#: src/options/options.js:405
+#: src/page/about/feedback.vue:7 src/options/options.js:405
 #, fuzzy
 msgid "Feature Request"
 msgstr "Funktsiooni taotlus"
 
-#: src/page/settings/account.vue:817
-#: src/page/settings/account.vue:670
+#: src/page/settings/account.vue:817 src/page/settings/account.vue:670
 #, fuzzy
 msgid "Feed"
 msgstr "Sööt"
 
-#: src/component/navigation.vue:432
-#: src/component/navigation.vue:35
+#: src/component/navigation.vue:432 src/component/navigation.vue:35
 #, fuzzy
 msgid "Feedback"
 msgstr "Tagasiside"
 
 #: src/dialog/sponsor.vue:24
 #, fuzzy
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 "Kui teil on küsimusi, võtke meiega ühendust aadressil hello@photoprism.app."
 
@@ -1318,23 +1208,22 @@ msgstr "Faili nimi"
 msgid "File Size"
 msgstr "Faili suurus"
 
-#: src/dialog/photo/edit/files.vue:65
-#: src/dialog/photo/edit/files.vue:62
+#: src/dialog/photo/edit/files.vue:65 src/dialog/photo/edit/files.vue:62
 #, fuzzy
 msgid "Filename"
 msgstr "Failinimi"
 
-#: src/component/navigation.vue:557
-#: src/dialog/photo/edit.vue:65
-#: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:296
+#: src/component/navigation.vue:557 src/dialog/photo/edit.vue:65
+#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 #, fuzzy
 msgid "Files"
 msgstr "Failid"
 
 #: src/page/settings/library.vue:214
 #, fuzzy
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
 msgstr ""
 "Järjekordsete nimedega failid nagu 'IMG_1234 (2)' ja 'IMG_1234 (3)' kuuluvad "
 "samale pildile."
@@ -1344,12 +1233,9 @@ msgstr ""
 msgid "Focal Length"
 msgstr "Fookuskaugus"
 
-#: src/dialog/photo/edit/info.vue:25
-#: src/dialog/service/edit.vue:287
-#: src/dialog/service/edit.vue:293
-#: src/dialog/share/upload.vue:141
-#: src/model/folder.js:193
-#: src/page/library/browse.vue:72
+#: src/dialog/photo/edit/info.vue:25 src/dialog/service/edit.vue:287
+#: src/dialog/service/edit.vue:293 src/dialog/share/upload.vue:141
+#: src/model/folder.js:193 src/page/library/browse.vue:72
 #, fuzzy
 msgid "Folder"
 msgstr "Kaustik"
@@ -1364,8 +1250,7 @@ msgstr "Kaust sisaldab %{n} faile"
 msgid "Folder is empty"
 msgstr "Kaust on tühi"
 
-#: src/app/routes.js:177
-#: src/component/navigation.vue:328
+#: src/app/routes.js:177 src/component/navigation.vue:328
 #: src/component/navigation.vue:1254
 #, fuzzy
 msgid "Folders"
@@ -1376,14 +1261,12 @@ msgstr "Kaustad"
 msgid "Forgot password?"
 msgstr "Unustasid salasõna?"
 
-#: src/dialog/photo/edit/files.vue:113
-#: src/dialog/photo/edit/files.vue:110
+#: src/dialog/photo/edit/files.vue:113 src/dialog/photo/edit/files.vue:110
 #, fuzzy
 msgid "FPS"
 msgstr "FPS"
 
-#: src/dialog/photo/edit/files.vue:107
-#: src/dialog/photo/edit/files.vue:104
+#: src/dialog/photo/edit/files.vue:107 src/dialog/photo/edit/files.vue:104
 #, fuzzy
 msgid "Frames"
 msgstr "Raamid"
@@ -1398,8 +1281,7 @@ msgstr "Täisekraan"
 msgid "Gemstone"
 msgstr "Kalliskivi"
 
-#: src/page/settings/account.vue:81
-#: src/page/settings/account.vue:80
+#: src/page/settings/account.vue:81 src/page/settings/account.vue:80
 #, fuzzy
 msgid "Gender"
 msgstr "Sugu"
@@ -1414,8 +1296,7 @@ msgstr "Üldine"
 msgid "Getting Support"
 msgstr "Toetuse saamine"
 
-#: src/page/settings/account.vue:139
-#: src/page/settings/account.vue:138
+#: src/page/settings/account.vue:139 src/page/settings/account.vue:138
 #, fuzzy
 msgid "Given Name"
 msgstr "Antud nimi"
@@ -1440,14 +1321,12 @@ msgstr "Roheline"
 msgid "Grey"
 msgstr "Hall"
 
-#: src/component/album/toolbar.vue:70
-#: src/dialog/album/edit.vue:24
+#: src/component/album/toolbar.vue:70 src/dialog/album/edit.vue:24
 #, fuzzy
 msgid "Group by similarity"
 msgstr "Grupeeri sarnasuse järgi"
 
-#: src/dialog/photo/edit/files.vue:59
-#: src/dialog/photo/edit/files.vue:56
+#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 #, fuzzy
 msgid "Hash"
 msgstr "Hash"
@@ -1472,8 +1351,7 @@ msgstr "Peidetud"
 msgid "Hidden Files"
 msgstr "Peidetud failid"
 
-#: src/page/people/new.vue:229
-#: src/page/people/recognized.vue:295
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
 #, fuzzy
 msgid "Hide"
 msgstr "Peida"
@@ -1488,13 +1366,11 @@ msgstr "Peida fotod, mis on viidud arhiivi."
 msgid "High"
 msgstr "Kõrge"
 
-#: src/dialog/photo/edit/files.vue:127
-#: src/dialog/photo/edit/files.vue:124
+#: src/dialog/photo/edit/files.vue:127 src/dialog/photo/edit/files.vue:124
 #, fuzzy
 msgid "High Dynamic Range (HDR)"
 msgstr "Kõrge dünaamiline ulatus (HDR)"
 
-#: src/page/about/feedback.vue:151
 #: src/page/about/feedback.vue:151
 #, fuzzy
 msgid "How can we help?"
@@ -1515,8 +1391,7 @@ msgstr "Kui see ei aita või teil on muid küsimusi:"
 msgid "image"
 msgstr "pilt"
 
-#: src/model/file.js:216
-#: src/options/options.js:295
+#: src/model/file.js:216 src/options/options.js:295
 #, fuzzy
 msgid "Image"
 msgstr "Pilt"
@@ -1526,8 +1401,7 @@ msgstr "Pilt"
 msgid "Images"
 msgstr "Pildid"
 
-#: src/page/library.vue:45
-#: src/page/library/import.vue:43
+#: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:272
 #, fuzzy
 msgid "Import"
@@ -1540,7 +1414,9 @@ msgstr "Import ebaõnnestus"
 
 #: src/page/library/import.vue:25
 #, fuzzy
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
 msgstr ""
 "Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse unikaalne "
 "nimi, et vältida duplikaate."
@@ -1562,10 +1438,8 @@ msgstr "Impordi %{nimi}…"
 msgid "Importing files to originals…"
 msgstr "Failide importimine originaalidele…"
 
-#: src/dialog/photo/edit/files.vue:192
-#: src/dialog/photo/edit/files.vue:201
-#: src/dialog/photo/edit/files.vue:189
-#: src/dialog/photo/edit/files.vue:198
+#: src/dialog/photo/edit/files.vue:192 src/dialog/photo/edit/files.vue:201
+#: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:198
 #, fuzzy
 msgid "in"
 msgstr "aadressil"
@@ -1575,24 +1449,20 @@ msgstr "aadressil"
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
 
-#: src/component/photo/cards.vue:13
-#: src/component/photo/cards.vue:11
-#: src/component/photo/cards.vue:1
-#: src/component/photo/list.vue:13
-#: src/component/photo/list.vue:1
-#: src/component/photo/mosaic.vue:13
-#: src/component/photo/mosaic.vue:11
-#: src/component/photo/mosaic.vue:1
-#: src/page/labels.vue:35
-#: src/page/library/browse.vue:38
+#: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
+#: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
+#: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
+#: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
+#: src/page/labels.vue:35 src/page/library/browse.vue:38
 #, fuzzy
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
 msgstr ""
 "Kui teie poolt oodatud pildid on puudu, skannige oma raamatukogu uuesti ja "
 "oodake, kuni indekseerimine on lõpetatud."
 
-#: src/component/navigation.vue:563
-#: src/page/library.vue:35
+#: src/component/navigation.vue:563 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 #, fuzzy
 msgid "Index"
@@ -1603,8 +1473,7 @@ msgstr "Indeks"
 msgid "Index and import files through the user interface."
 msgstr "Failide indekseerimine ja importimine kasutajaliidese kaudu."
 
-#: src/page/library/index.vue:134
-#: src/page/library/index.vue:140
+#: src/page/library/index.vue:134 src/page/library/index.vue:140
 #, fuzzy
 msgid "Indexing"
 msgstr "Indekseerimine"
@@ -1619,8 +1488,7 @@ msgstr "Indekseerimine ebaõnnestus"
 msgid "Indexing media and sidecar files…"
 msgstr "Meedia ja külgkorvi failide indekseerimine…"
 
-#: src/dialog/photo/edit/files.vue:53
-#: src/dialog/photo/edit/files.vue:50
+#: src/dialog/photo/edit/files.vue:53 src/dialog/photo/edit/files.vue:50
 #, fuzzy
 msgid "Instance ID"
 msgstr "Instantsi ID"
@@ -1630,31 +1498,18 @@ msgstr "Instantsi ID"
 msgid "Interval"
 msgstr "Intervall"
 
-#: src/page/settings/account.vue:90
-#: src/page/settings/account.vue:116
-#: src/page/settings/account.vue:142
-#: src/page/settings/account.vue:168
-#: src/page/settings/account.vue:223
-#: src/page/settings/account.vue:280
-#: src/page/settings/account.vue:564
-#: src/page/settings/account.vue:590
-#: src/page/settings/account.vue:618
-#: src/page/settings/account.vue:646
-#: src/page/settings/account.vue:710
-#: src/page/settings/account.vue:737
-#: src/page/settings/account.vue:764
-#: src/page/settings/account.vue:792
-#: src/page/settings/account.vue:820
-#: src/page/settings/account.vue:89
-#: src/page/settings/account.vue:115
-#: src/page/settings/account.vue:141
-#: src/page/settings/account.vue:167
-#: src/page/settings/account.vue:222
-#: src/page/settings/account.vue:279
-#: src/page/settings/account.vue:563
-#: src/page/settings/account.vue:590
-#: src/page/settings/account.vue:617
-#: src/page/settings/account.vue:645
+#: src/page/settings/account.vue:90 src/page/settings/account.vue:116
+#: src/page/settings/account.vue:142 src/page/settings/account.vue:168
+#: src/page/settings/account.vue:223 src/page/settings/account.vue:280
+#: src/page/settings/account.vue:564 src/page/settings/account.vue:590
+#: src/page/settings/account.vue:618 src/page/settings/account.vue:646
+#: src/page/settings/account.vue:710 src/page/settings/account.vue:737
+#: src/page/settings/account.vue:764 src/page/settings/account.vue:792
+#: src/page/settings/account.vue:820 src/page/settings/account.vue:89
+#: src/page/settings/account.vue:115 src/page/settings/account.vue:141
+#: src/page/settings/account.vue:167 src/page/settings/account.vue:222
+#: src/page/settings/account.vue:279 src/page/settings/account.vue:563
+#: src/page/settings/account.vue:617 src/page/settings/account.vue:645
 #: src/page/settings/account.vue:673
 #, fuzzy
 msgid "Invalid"
@@ -1665,8 +1520,7 @@ msgstr "Invaliidne"
 msgid "Invalid date"
 msgstr "Vale kuupäev"
 
-#: src/page/connect.vue:42
-#: src/page/connect.vue:48
+#: src/page/connect.vue:42 src/page/connect.vue:48
 #, fuzzy
 msgid "Invalid parameters"
 msgstr "Valed parameetrid"
@@ -1678,7 +1532,9 @@ msgstr "Valitud vale foto"
 
 #: src/page/about/about.vue:16
 #, fuzzy
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
 msgstr ""
 "See kasutab uusimaid tehnoloogiaid, et märgistada ja leida pilte "
 "automaatselt, ilma et see teid segaks."
@@ -1713,18 +1569,14 @@ msgstr "Märksõnad"
 msgid "Knowledge Base"
 msgstr "Teadmiste baas"
 
-#: src/dialog/photo/edit/labels.vue:20
-#: src/model/label.js:124
+#: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 #, fuzzy
 msgid "Label"
 msgstr "Silt"
 
-#: src/app/routes.js:289
-#: src/component/navigation.vue:315
-#: src/component/navigation.vue:1209
-#: src/dialog/photo/edit.vue:39
-#: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:195
+#: src/app/routes.js:289 src/component/navigation.vue:315
+#: src/component/navigation.vue:1209 src/dialog/photo/edit.vue:39
+#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:184
 #, fuzzy
 msgid "Labels"
@@ -1750,8 +1602,7 @@ msgstr "Keel"
 msgid "Last Sync"
 msgstr "Viimane sünkroonimine"
 
-#: src/dialog/photo/edit/details.vue:305
-#: src/dialog/photo/edit/info.vue:135
+#: src/dialog/photo/edit/details.vue:305 src/dialog/photo/edit/info.vue:135
 #, fuzzy
 msgid "Latitude"
 msgstr "Laiuskraad"
@@ -1776,23 +1627,16 @@ msgstr "Õiguslik teave"
 msgid "Lens"
 msgstr "Objektiiv"
 
-#: src/app/routes.js:325
-#: src/app/routes.js:332
-#: src/app/routes.js:339
-#: src/component/navigation.vue:354
-#: src/component/navigation.vue:364
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:1346
-#: src/page/settings.vue:47
-#: src/page/settings/general.vue:404
+#: src/app/routes.js:325 src/app/routes.js:332 src/app/routes.js:339
+#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:4 src/component/navigation.vue:1346
+#: src/page/settings.vue:47 src/page/settings/general.vue:404
 #, fuzzy
 msgid "Library"
 msgstr "Raamatukogu"
 
-#: src/component/navigation.vue:440
-#: src/component/navigation.vue:43
-#: src/dialog/photo/edit/details.vue:580
-#: src/page/about/license.vue:4
+#: src/component/navigation.vue:440 src/component/navigation.vue:43
+#: src/dialog/photo/edit/details.vue:580 src/page/about/license.vue:4
 #, fuzzy
 msgid "License"
 msgstr "Litsents"
@@ -1822,16 +1666,13 @@ msgstr "Lineaarne: Väga sujuv, parim jõudlus"
 msgid "Link"
 msgstr "Link"
 
-#: src/component/album/toolbar.vue:60
-#: src/component/photo/toolbar.vue:47
+#: src/component/album/toolbar.vue:60 src/component/photo/toolbar.vue:47
 #, fuzzy
 msgid "List"
 msgstr "Loetelu"
 
-#: src/app/routes.js:204
-#: src/component/photo/cards.vue:292
-#: src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:214
+#: src/app/routes.js:204 src/component/photo/cards.vue:292
+#: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
 #: src/options/options.js:307
 #, fuzzy
 msgid "Live"
@@ -1842,8 +1683,7 @@ msgstr "Live"
 msgid "Live Photos"
 msgstr "Elusad fotod"
 
-#: src/dialog/photo/edit/details.vue:193
-#: src/options/options.js:10
+#: src/dialog/photo/edit/details.vue:193 src/options/options.js:10
 #, fuzzy
 msgid "Local Time"
 msgstr "Kohalik aeg"
@@ -1853,47 +1693,41 @@ msgstr "Kohalik aeg"
 msgid "location"
 msgstr "asukoht"
 
-#: src/page/settings/account.vue:707
-#: src/component/photo/cards.vue:512
-#: src/component/photo/list.vue:138
-#: src/dialog/album/edit.vue:125
+#: src/page/settings/account.vue:707 src/component/photo/cards.vue:512
+#: src/component/photo/list.vue:138 src/dialog/album/edit.vue:125
 #: src/page/settings/account.vue:560
 #, fuzzy
 msgid "Location"
 msgstr "Asukoht"
 
-#: src/page/library/errors.vue:37
-#: src/page/library/errors.vue:1
+#: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 #, fuzzy
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
 msgstr ""
 "Logiteated ilmuvad siia alati, kui PhotoPrism leiab katkiseid faile või kui "
 "esineb muid võimalikke probleeme."
 
-#: src/component/navigation.vue:454
-#: src/component/navigation.vue:1686
+#: src/component/navigation.vue:454 src/component/navigation.vue:1686
 #: src/component/navigation.vue:1960
 #, fuzzy
 msgid "Login"
 msgstr "Logi sisse"
 
-#: src/component/navigation.vue:501
-#: src/component/navigation.vue:1797
-#: src/component/navigation.vue:1828
-#: src/component/navigation.vue:1879
+#: src/component/navigation.vue:501 src/component/navigation.vue:1797
+#: src/component/navigation.vue:1828 src/component/navigation.vue:1879
 #, fuzzy
 msgid "Logout"
 msgstr "Väljalogimine"
 
-#: src/component/navigation.vue:569
-#: src/page/library.vue:58
+#: src/component/navigation.vue:569 src/page/library.vue:58
 #: src/page/settings/general.vue:448
 #, fuzzy
 msgid "Logs"
 msgstr "Logid"
 
-#: src/dialog/photo/edit/details.vue:331
-#: src/dialog/photo/edit/info.vue:143
+#: src/dialog/photo/edit/details.vue:331 src/dialog/photo/edit/info.vue:143
 #, fuzzy
 msgid "Longitude"
 msgstr "Pikkuskraad"
@@ -1908,8 +1742,7 @@ msgstr "Madal"
 msgid "Magenta"
 msgstr "Magenta"
 
-#: src/dialog/photo/edit/files.vue:169
-#: src/dialog/photo/edit/files.vue:166
+#: src/dialog/photo/edit/files.vue:169 src/dialog/photo/edit/files.vue:166
 #, fuzzy
 msgid "Main Color"
 msgstr "Põhivärv"
@@ -1949,8 +1782,7 @@ msgstr "Keskmine"
 msgid "Merge %{a} with %{b}?"
 msgstr "Ühendada %{a} ja %{b}?"
 
-#: src/page/about/feedback.vue:34
-#: src/page/about/feedback.vue:27
+#: src/page/about/feedback.vue:34 src/page/about/feedback.vue:27
 #, fuzzy
 msgid "Message sent"
 msgstr "Saadetud sõnum"
@@ -1960,16 +1792,13 @@ msgstr "Saadetud sõnum"
 msgid "Minimize"
 msgstr "Minimeeri"
 
-#: src/dialog/photo/edit/files.vue:181
-#: src/dialog/photo/edit/files.vue:178
+#: src/dialog/photo/edit/files.vue:181 src/dialog/photo/edit/files.vue:178
 #, fuzzy
 msgid "Missing"
 msgstr "Puuduv"
 
-#: src/app/routes.js:138
-#: src/component/navigation.vue:240
-#: src/component/navigation.vue:944
-#: src/page/settings/general.vue:162
+#: src/app/routes.js:138 src/component/navigation.vue:240
+#: src/component/navigation.vue:944 src/page/settings/general.vue:162
 #, fuzzy
 msgid "Moments"
 msgstr "Hetked"
@@ -1979,10 +1808,8 @@ msgstr "Hetked"
 msgid "Monochrome"
 msgstr "Ühevärviline"
 
-#: src/page/settings/account.vue:469
-#: src/component/photo/toolbar.vue:291
-#: src/dialog/photo/edit/details.vue:142
-#: src/page/settings/account.vue:468
+#: src/page/settings/account.vue:469 src/component/photo/toolbar.vue:291
+#: src/dialog/photo/edit/details.vue:142 src/page/settings/account.vue:468
 #, fuzzy
 msgid "Month"
 msgstr "Kuu"
@@ -1992,8 +1819,7 @@ msgstr "Kuu"
 msgid "Moonlight"
 msgstr "Moonlight"
 
-#: src/page/album/photos.vue:396
-#: src/page/photos.vue:493
+#: src/page/album/photos.vue:396 src/page/photos.vue:493
 #, fuzzy
 msgid "More than %{n} pictures found"
 msgstr "Rohkem kui %{n} leitud pilte"
@@ -2013,14 +1839,12 @@ msgstr "Leitakse üle 20 etiketi"
 msgid "More than 20 people found"
 msgstr "Rohkem kui 20 inimest leidis"
 
-#: src/component/album/toolbar.vue:58
-#: src/component/photo/toolbar.vue:45
+#: src/component/album/toolbar.vue:58 src/component/photo/toolbar.vue:45
 #, fuzzy
 msgid "Mosaic"
 msgstr "Mosaiik"
 
-#: src/component/album/toolbar.vue:71
-#: src/dialog/album/edit.vue:25
+#: src/component/album/toolbar.vue:71 src/dialog/album/edit.vue:25
 #, fuzzy
 msgid "Most relevant"
 msgstr "Kõige asjakohasemad"
@@ -2040,44 +1864,28 @@ msgstr "Failide teisaldamine"
 msgid "Must have at least 8 characters."
 msgstr "Peab olema vähemalt 8 tähemärki."
 
-#: src/page/about/feedback.vue:171
-#: src/component/photo/cards.vue:500
-#: src/component/photo/list.vue:138
-#: src/component/photo/list.vue:227
-#: src/dialog/album/edit.vue:104
-#: src/dialog/photo/edit/files.vue:34
-#: src/dialog/photo/edit/info.vue:31
-#: src/dialog/photo/edit/labels.vue:43
-#: src/dialog/photo/edit/labels.vue:159
-#: src/dialog/photo/edit/people.vue:21
-#: src/dialog/photo/edit/people.vue:225
-#: src/dialog/service/edit.vue:427
-#: src/page/about/feedback.vue:171
-#: src/page/labels.vue:339
-#: src/page/login.vue:77
-#: src/page/login.vue:81
-#: src/page/people/new.vue:52
-#: src/page/people/new.vue:299
-#: src/page/people/recognized.vue:396
-#: src/page/settings/services.vue:26
+#: src/page/about/feedback.vue:171 src/component/photo/cards.vue:500
+#: src/component/photo/list.vue:138 src/component/photo/list.vue:227
+#: src/dialog/album/edit.vue:104 src/dialog/photo/edit/files.vue:34
+#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
+#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
+#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
+#: src/page/labels.vue:339 src/page/login.vue:77 src/page/login.vue:81
+#: src/page/people/new.vue:52 src/page/people/new.vue:299
+#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 #, fuzzy
 msgid "Name"
 msgstr "Nimi"
 
-#: src/component/album/toolbar.vue:79
-#: src/dialog/album/edit.vue:28
-#: src/dialog/photo/edit/labels.vue:25
-#: src/dialog/photo/edit/people.vue:24
-#: src/page/labels.vue:45
-#: src/page/library/browse.vue:44
-#: src/page/people/new.vue:46
-#: src/page/people/recognized.vue:45
+#: src/component/album/toolbar.vue:79 src/dialog/album/edit.vue:28
+#: src/dialog/photo/edit/labels.vue:25 src/dialog/photo/edit/people.vue:24
+#: src/page/labels.vue:45 src/page/library/browse.vue:44
+#: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 #, fuzzy
 msgid "Name too long"
 msgstr "Nimi liiga pikk"
 
-#: src/options/options.js:363
-#: src/options/options.js:373
+#: src/options/options.js:363 src/options/options.js:373
 #: src/page/settings/services.vue:54
 #, fuzzy
 msgid "Never"
@@ -2093,8 +1901,7 @@ msgstr "Uus"
 msgid "New Password"
 msgstr "Uus salasõna"
 
-#: src/component/album/toolbar.vue:67
-#: src/dialog/album/edit.vue:21
+#: src/component/album/toolbar.vue:67 src/dialog/album/edit.vue:21
 #, fuzzy
 msgid "Newest first"
 msgstr "Kõige uuem esimesena"
@@ -2104,59 +1911,43 @@ msgstr "Kõige uuem esimesena"
 msgid "Newest First"
 msgstr "Kõige uuem esimene"
 
-#: src/dialog/people/merge.vue:15
-#: src/dialog/photo/archive.vue:15
-#: src/dialog/photo/edit/info.vue:259
-#: src/dialog/photo/edit/info.vue:280
-#: src/dialog/photo/edit/info.vue:301
-#: src/dialog/photo/edit/info.vue:322
+#: src/dialog/people/merge.vue:15 src/dialog/photo/archive.vue:15
+#: src/dialog/photo/edit/info.vue:259 src/dialog/photo/edit/info.vue:280
+#: src/dialog/photo/edit/info.vue:301 src/dialog/photo/edit/info.vue:322
 #: src/dialog/photo/edit/info.vue:342
 #, fuzzy
 msgid "No"
 msgstr "Ei"
 
-#: src/page/albums.vue:35
-#: src/page/albums.vue:417
+#: src/page/albums.vue:35 src/page/albums.vue:417
 #, fuzzy
 msgid "No albums found"
 msgstr "Ei leitud albumeid"
 
-#: src/dialog/photo/edit/labels.vue:28
-#: src/page/labels.vue:31
+#: src/dialog/photo/edit/labels.vue:28 src/page/labels.vue:31
 #: src/page/labels.vue:418
 #, fuzzy
 msgid "No labels found"
 msgstr "Märgiseid ei leitud"
 
-#: src/dialog/photo/edit/people.vue:5
-#: src/page/people/new.vue:29
-#: src/page/people/new.vue:282
-#: src/page/people/new.vue:368
-#: src/page/people/recognized.vue:35
-#: src/page/people/recognized.vue:504
+#: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
+#: src/page/people/new.vue:282 src/page/people/new.vue:368
+#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
 #, fuzzy
 msgid "No people found"
 msgstr "Ei leitud inimesi"
 
-#: src/common/viewer.js:263
-#: src/component/photo/cards.vue:8
-#: src/component/photo/cards.vue:6
-#: src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8
-#: src/component/photo/mosaic.vue:6
-#: src/page/album/photos.vue:389
-#: src/page/library/browse.vue:34
-#: src/page/photos.vue:486
-#: src/page/places.vue:225
-#: src/page/places.vue:287
+#: src/common/viewer.js:263 src/component/photo/cards.vue:8
+#: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
+#: src/component/photo/mosaic.vue:8 src/component/photo/mosaic.vue:6
+#: src/page/album/photos.vue:389 src/page/library/browse.vue:34
+#: src/page/photos.vue:486 src/page/places.vue:225 src/page/places.vue:287
 #, fuzzy
 msgid "No pictures found"
 msgstr "Pilte ei leitud"
 
-#: src/component/photo/cards.vue:5
-#: src/component/photo/cards.vue:3
-#: src/component/photo/list.vue:5
-#: src/component/photo/mosaic.vue:5
+#: src/component/photo/cards.vue:5 src/component/photo/cards.vue:3
+#: src/component/photo/list.vue:5 src/component/photo/mosaic.vue:5
 #: src/component/photo/mosaic.vue:3
 #, fuzzy
 msgid "No recently edited pictures"
@@ -2177,42 +1968,36 @@ msgstr "Teenuseid ei ole konfigureeritud."
 msgid "No thanks"
 msgstr "Ei aitäh"
 
-#: src/component/photo-viewer.vue:97
-#: src/dialog/video/viewer.vue:55
+#: src/component/photo-viewer.vue:97 src/dialog/video/viewer.vue:55
 #, fuzzy
 msgid "No video selected"
 msgstr "Ei ole valitud videot"
 
-#: src/page/library/errors.vue:34
-#: src/page/library/errors.vue:1
+#: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 #, fuzzy
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
 msgstr ""
 "Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pange tähele, et otsing "
 "on suur- ja väiketähtede suhtes tundlik."
 
-#: src/component/photo/cards.vue:15
-#: src/component/photo/cards.vue:13
-#: src/component/photo/cards.vue:3
-#: src/component/photo/cards.vue:1
-#: src/component/photo/list.vue:15
-#: src/component/photo/list.vue:3
-#: src/component/photo/list.vue:1
-#: src/component/photo/list.vue:52
-#: src/component/photo/mosaic.vue:15
-#: src/component/photo/mosaic.vue:13
-#: src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:50
-#: src/page/settings/library.vue:91
+#: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
+#: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
+#: src/component/photo/list.vue:15 src/component/photo/list.vue:3
+#: src/component/photo/list.vue:1 src/component/photo/list.vue:52
+#: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
+#: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
+#: src/dialog/upload.vue:50 src/page/settings/library.vue:91
 #, fuzzy
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
 msgstr ""
 "Mittefotograafilised ja madala kvaliteediga pildid tuleb enne nende ilmumist "
 "otsingutulemustesse üle vaadata."
 
-#: src/options/options.js:245
-#: src/options/options.js:330
+#: src/options/options.js:245 src/options/options.js:330
 #, fuzzy
 msgid "None"
 msgstr "Puudub"
@@ -2224,7 +2009,8 @@ msgstr "Ei leitud"
 
 #: src/page/library/import.vue:28
 #, fuzzy
-msgid "Note you may manually manage your originals folder and importing is optional."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
 msgstr ""
 "Pange tähele, et võite käsitsi hallata oma originaalide kausta ja "
 "importimine on vabatahtlik."
@@ -2236,7 +2022,9 @@ msgstr "Märkus:"
 
 #: src/dialog/service/add.vue:28
 #, fuzzy
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
 msgstr ""
 "Märkus: Ainult WebDAV-servereid, nagu Nextcloud või PhotoPrism, saab "
 "konfigureerida kaugteenusena varundamiseks ja failide üleslaadimiseks."
@@ -2251,14 +2039,12 @@ msgstr "Märkused"
 msgid "Nothing to see here yet."
 msgstr "Siin pole veel midagi näha."
 
-#: src/component/navigation.vue:470
-#: src/component/navigation.vue:1731
+#: src/component/navigation.vue:470 src/component/navigation.vue:1731
 #, fuzzy
 msgid "Offline"
 msgstr "Offline"
 
-#: src/component/album/toolbar.vue:68
-#: src/dialog/album/edit.vue:22
+#: src/component/album/toolbar.vue:68 src/dialog/album/edit.vue:22
 #, fuzzy
 msgid "Oldest first"
 msgstr "Vanim esimene"
@@ -2303,15 +2089,13 @@ msgstr "Üks leitud kaust"
 msgid "One label found"
 msgstr "Üks etikett leitud"
 
-#: src/page/people/new.vue:284
-#: src/page/people/new.vue:370
+#: src/page/people/new.vue:284 src/page/people/new.vue:370
 #: src/page/people/recognized.vue:506
 #, fuzzy
 msgid "One person found"
 msgstr "Üks inimene leidis"
 
-#: src/page/album/photos.vue:391
-#: src/page/photos.vue:488
+#: src/page/album/photos.vue:391 src/page/photos.vue:488
 #, fuzzy
 msgid "One picture found"
 msgstr "Üks leitud pilt"
@@ -2341,8 +2125,7 @@ msgstr "Oranž"
 msgid "Organization"
 msgstr "Organisatsioon"
 
-#: src/dialog/photo/edit/files.vue:155
-#: src/dialog/photo/edit/files.vue:152
+#: src/dialog/photo/edit/files.vue:155 src/dialog/photo/edit/files.vue:152
 #, fuzzy
 msgid "Orientation"
 msgstr "Orienteerumine"
@@ -2352,31 +2135,29 @@ msgstr "Orienteerumine"
 msgid "Original file names will be stored and indexed."
 msgstr "Originaalfailide nimed salvestatakse ja indekseeritakse."
 
-#: src/dialog/photo/edit/files.vue:77
-#: src/dialog/photo/edit/files.vue:74
+#: src/dialog/photo/edit/files.vue:77 src/dialog/photo/edit/files.vue:74
 #: src/dialog/photo/edit/info.vue:37
 #, fuzzy
 msgid "Original Name"
 msgstr "Esialgne nimi"
 
-#: src/component/navigation.vue:373
-#: src/dialog/service/edit.vue:107
-#: src/model/file.js:194
-#: src/page/library/browse.vue:6
+#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:426
 #, fuzzy
 msgid "Originals"
 msgstr "Originaalid"
 
-#: src/options/options.js:408
-#: src/options/options.js:421
+#: src/options/options.js:408 src/options/options.js:421
 #, fuzzy
 msgid "Other"
 msgstr "Muud"
 
 #: src/page/about/about.vue:48
 #, fuzzy
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
 msgstr ""
 "Meie kasutusjuhend hõlmab ka paljusid edasijõudnute teemasid, näiteks Google "
 "Photos'ist migreerimine ja pisipiltide kvaliteedi seaded."
@@ -2396,11 +2177,8 @@ msgstr "Panorama"
 msgid "Panoramas"
 msgstr "Panoraamid"
 
-#: src/dialog/service/add.vue:126
-#: src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24
-#: src/page/login.vue:98
-#: src/page/login.vue:100
+#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
+#: src/dialog/share.vue:24 src/page/login.vue:98 src/page/login.vue:100
 #, fuzzy
 msgid "Password"
 msgstr "Parool"
@@ -2410,15 +2188,10 @@ msgstr "Parool"
 msgid "Password changed"
 msgstr "Salasõna muudetud"
 
-#: src/app/routes.js:295
-#: src/app/routes.js:319
-#: src/component/navigation.vue:214
-#: src/component/navigation.vue:545
-#: src/component/navigation.vue:854
-#: src/dialog/photo/edit.vue:52
-#: src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:246
-#: src/page/settings/general.vue:140
+#: src/app/routes.js:295 src/app/routes.js:319 src/component/navigation.vue:214
+#: src/component/navigation.vue:545 src/component/navigation.vue:854
+#: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
+#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:140
 #, fuzzy
 msgid "People"
 msgstr "Inimesed"
@@ -2438,8 +2211,7 @@ msgstr "Lõplikult kustutatud"
 msgid "Permanently remove files to free up storage."
 msgstr "Eemaldage failid lõplikult, et vabastada salvestusruumi."
 
-#: src/page/settings/account.vue:761
-#: src/page/settings/account.vue:614
+#: src/page/settings/account.vue:761 src/page/settings/account.vue:614
 #, fuzzy
 msgid "Phone"
 msgstr "Telefon"
@@ -2481,19 +2253,12 @@ msgstr "Koht"
 msgid "Place & Time"
 msgstr "Koht ja aeg"
 
-#: src/app/routes.js:239
-#: src/app/routes.js:245
-#: src/app/routes.js:251
-#: src/app/routes.js:257
-#: src/component/navigation.vue:280
-#: src/component/navigation.vue:290
-#: src/component/navigation.vue:551
-#: src/component/navigation.vue:8
-#: src/component/navigation.vue:18
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:1089
-#: src/page/settings/general.vue:118
-#: src/page/settings/general.vue:494
+#: src/app/routes.js:239 src/app/routes.js:245 src/app/routes.js:251
+#: src/app/routes.js:257 src/component/navigation.vue:280
+#: src/component/navigation.vue:290 src/component/navigation.vue:551
+#: src/component/navigation.vue:8 src/component/navigation.vue:18
+#: src/component/navigation.vue:4 src/component/navigation.vue:1089
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:494
 #, fuzzy
 msgid "Places"
 msgstr "Kohad"
@@ -2510,13 +2275,14 @@ msgstr "Palun ärge laadige üles solvava sisuga fotosid."
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr ""
 "Pange tähele, et parooli muutmine logib teid välja teistes seadmetes ja "
 "brauserites."
 
-#: src/dialog/photo/edit/files.vue:135
-#: src/dialog/photo/edit/files.vue:132
+#: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 #, fuzzy
 msgid "Portrait"
 msgstr "Portree"
@@ -2541,44 +2307,36 @@ msgstr "Vajutage nuppu, et alustada importimist…"
 msgid "Press button to start indexing…"
 msgstr "Indekseerimise alustamiseks vajutage nuppu…"
 
-#: src/dialog/upload.vue:22
-#: src/dialog/upload.vue:4
+#: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 #, fuzzy
 msgid "Press enter to create a new album."
 msgstr "Uue albumi loomiseks vajutage enter."
 
-#: src/dialog/photo/edit/files.vue:19
-#: src/dialog/photo/edit/files.vue:16
+#: src/dialog/photo/edit/files.vue:19 src/dialog/photo/edit/files.vue:16
 #, fuzzy
 msgid "Preview"
 msgstr "Eelvaade"
 
-#: src/dialog/photo/edit/files.vue:35
-#: src/dialog/photo/edit/files.vue:119
-#: src/dialog/photo/edit/files.vue:32
-#: src/dialog/photo/edit/files.vue:116
+#: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:119
+#: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:116
 #: src/dialog/photo/edit/files.vue:28
 #, fuzzy
 msgid "Primary"
 msgstr "Esmane"
 
-#: src/app/routes.js:225
-#: src/component/navigation.vue:341
-#: src/component/navigation.vue:1299
-#: src/dialog/photo/edit/info.vue:102
+#: src/app/routes.js:225 src/component/navigation.vue:341
+#: src/component/navigation.vue:1299 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:206
 #, fuzzy
 msgid "Private"
 msgstr "Eraldi"
 
-#: src/page/about/feedback.vue:6
-#: src/options/options.js:404
+#: src/page/about/feedback.vue:6 src/options/options.js:404
 #, fuzzy
 msgid "Product Feedback"
 msgstr "Toote tagasiside"
 
-#: src/dialog/photo/edit/files.vue:143
-#: src/dialog/photo/edit/files.vue:140
+#: src/dialog/photo/edit/files.vue:143 src/dialog/photo/edit/files.vue:140
 #, fuzzy
 msgid "Projection"
 msgstr "Projektsioon"
@@ -2613,8 +2371,7 @@ msgstr "Vaarikas"
 msgid "Raw"
 msgstr "Toores"
 
-#: src/component/photo/cards.vue:285
-#: src/component/photo/mosaic.vue:206
+#: src/component/photo/cards.vue:285 src/component/photo/mosaic.vue:206
 #, fuzzy
 msgid "RAW"
 msgstr "RAW"
@@ -2641,8 +2398,7 @@ msgstr "Lugege dokumente"
 msgid "Read-Only Mode"
 msgstr "Ainult lugemisrežiim"
 
-#: src/component/album/toolbar.vue:65
-#: src/dialog/album/edit.vue:19
+#: src/component/album/toolbar.vue:65 src/dialog/album/edit.vue:19
 #, fuzzy
 msgid "Recently added"
 msgstr "Hiljuti lisatud"
@@ -2652,8 +2408,7 @@ msgstr "Hiljuti lisatud"
 msgid "Recently Added"
 msgstr "Hiljuti lisatud"
 
-#: src/component/album/toolbar.vue:66
-#: src/dialog/album/edit.vue:20
+#: src/component/album/toolbar.vue:66 src/dialog/album/edit.vue:20
 #, fuzzy
 msgid "Recently edited"
 msgstr "Hiljuti toimetatud"
@@ -2663,8 +2418,7 @@ msgstr "Hiljuti toimetatud"
 msgid "Recently Edited"
 msgstr "Hiljuti redigeeritud"
 
-#: src/dialog/photo/edit/people.vue:9
-#: src/page/people/new.vue:33
+#: src/dialog/photo/edit/people.vue:9 src/page/people/new.vue:33
 #: src/page/people/recognized.vue:40
 #, fuzzy
 msgid "Recognition starts after indexing has been completed."
@@ -2685,24 +2439,17 @@ msgstr "Tunnistab nägusid, et konkreetseid inimesi oleks võimalik leida."
 msgid "Red"
 msgstr "Punane"
 
-#: src/component/album/toolbar.vue:64
-#: src/component/navigation.vue:1893
-#: src/component/photo/toolbar.vue:54
-#: src/dialog/reload.vue:12
-#: src/page/albums.vue:126
-#: src/page/labels.vue:85
-#: src/page/library/browse.vue:91
-#: src/page/library/errors.vue:70
-#: src/page/people/new.vue:57
-#: src/page/people/recognized.vue:97
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1893
+#: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
+#: src/page/albums.vue:126 src/page/labels.vue:85
+#: src/page/library/browse.vue:91 src/page/library/errors.vue:70
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
 #, fuzzy
 msgid "Reload"
 msgstr "Laadige uuesti"
 
-#: src/component/navigation.vue:124
-#: src/dialog/reload.vue:26
-#: src/page/settings/general.vue:101
-#: src/page/settings/library.vue:46
+#: src/component/navigation.vue:124 src/dialog/reload.vue:26
+#: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 #, fuzzy
 msgid "Reloading…"
 msgstr "Ümberlaadimine…"
@@ -2729,24 +2476,20 @@ msgstr "Eemalda albumist"
 
 #: src/page/library/import.vue:120
 #, fuzzy
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
 msgstr ""
 "Eemaldage imporditud failid, et säästa salvestusruumi. Toetamata failitüüpe "
 "ei kustutata kunagi, need jäävad oma praegusesse asukohta."
 
-#: src/common/api.js:74
-#: src/page/connect.vue:38
+#: src/common/api.js:74 src/page/connect.vue:38
 #, fuzzy
 msgid "Request failed - invalid response"
 msgstr "Taotlus ebaõnnestus - kehtetu vastus"
 
-#: src/page/about/feedback.vue:130
-#: src/page/about/feedback.vue:150
-#: src/page/about/feedback.vue:192
-#: src/page/settings/account.vue:195
-#: src/page/about/feedback.vue:130
-#: src/page/about/feedback.vue:150
-#: src/page/about/feedback.vue:192
+#: src/page/about/feedback.vue:130 src/page/about/feedback.vue:150
+#: src/page/about/feedback.vue:192 src/page/settings/account.vue:195
 #: src/page/settings/account.vue:194
 #, fuzzy
 msgid "Required"
@@ -2772,8 +2515,7 @@ msgstr "Korduvkatsete piirarv"
 msgid "Retype Password"
 msgstr "Korrigeeri parool"
 
-#: src/app/routes.js:218
-#: src/component/navigation.vue:125
+#: src/app/routes.js:218 src/component/navigation.vue:125
 #, fuzzy
 msgid "Review"
 msgstr "Ülevaade"
@@ -2783,10 +2525,8 @@ msgstr "Ülevaade"
 msgid "Satellite"
 msgstr "Satelliit"
 
-#: src/dialog/account/password.vue:39
-#: src/dialog/album/edit.vue:45
-#: src/dialog/service/edit.vue:107
-#: src/dialog/share.vue:61
+#: src/dialog/account/password.vue:39 src/dialog/album/edit.vue:45
+#: src/dialog/service/edit.vue:107 src/dialog/share.vue:61
 #, fuzzy
 msgid "Save"
 msgstr "Salvesta"
@@ -2801,17 +2541,11 @@ msgstr "Skaneeri"
 msgid "Scans"
 msgstr "Skaneerib"
 
-#: src/component/navigation.vue:65
-#: src/component/navigation.vue:75
-#: src/component/navigation.vue:533
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:330
-#: src/component/photo/toolbar.vue:44
-#: src/page/albums.vue:96
-#: src/page/labels.vue:72
-#: src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:78
-#: src/page/places.vue:38
+#: src/component/navigation.vue:65 src/component/navigation.vue:75
+#: src/component/navigation.vue:533 src/component/navigation.vue:4
+#: src/component/navigation.vue:330 src/component/photo/toolbar.vue:44
+#: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
+#: src/page/people/recognized.vue:78 src/page/places.vue:38
 #, fuzzy
 msgid "Search"
 msgstr "Otsi"
@@ -2836,7 +2570,6 @@ msgstr "Merivetikad"
 msgid "Secret"
 msgstr "Salajane"
 
-#: src/page/settings/account.vue:44
 #: src/page/settings/account.vue:44
 #, fuzzy
 msgid "Security and Access"
@@ -2868,7 +2601,6 @@ msgid "Selection restored"
 msgstr "Valik taastatakse"
 
 #: src/page/about/feedback.vue:45
-#: src/page/about/feedback.vue:45
 #, fuzzy
 msgid "Send"
 msgstr "Saada"
@@ -2878,37 +2610,27 @@ msgstr "Saada"
 msgid "Sequential Name"
 msgstr "Järjekordne nimi"
 
-#: src/dialog/service/add.vue:82
-#: src/dialog/service/edit.vue:447
+#: src/dialog/service/add.vue:82 src/dialog/service/edit.vue:447
 #: src/dialog/share.vue:22
 #, fuzzy
 msgid "Service URL"
 msgstr "Teenuse URL"
 
-#: src/page/settings.vue:71
-#: src/page/settings/general.vue:382
+#: src/page/settings.vue:71 src/page/settings/general.vue:382
 #, fuzzy
 msgid "Services"
 msgstr "Teenused"
 
-#: src/app/routes.js:347
-#: src/app/routes.js:359
-#: src/app/routes.js:372
-#: src/app/routes.js:385
-#: src/app/routes.js:397
-#: src/component/navigation.vue:405
-#: src/component/navigation.vue:415
-#: src/component/navigation.vue:8
-#: src/component/navigation.vue:18
-#: src/component/navigation.vue:4
-#: src/component/navigation.vue:1520
-#: src/component/navigation.vue:1926
+#: src/app/routes.js:347 src/app/routes.js:359 src/app/routes.js:372
+#: src/app/routes.js:385 src/app/routes.js:397 src/component/navigation.vue:405
+#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/component/navigation.vue:18 src/component/navigation.vue:4
+#: src/component/navigation.vue:1520 src/component/navigation.vue:1926
 #, fuzzy
 msgid "Settings"
 msgstr "Seaded"
 
-#: src/page/settings/account.vue:114
-#: src/page/settings/account.vue:129
+#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #, fuzzy
 msgid "Settings saved"
 msgstr "Salvestatud seaded"
@@ -2923,10 +2645,8 @@ msgstr "Seadistamine"
 msgid "Shadow"
 msgstr "Shadow"
 
-#: src/component/album/clipboard.vue:63
-#: src/component/album/toolbar.vue:101
-#: src/component/photo/clipboard.vue:65
-#: src/page/settings/general.vue:294
+#: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
+#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:294
 #, fuzzy
 msgid "Share"
 msgstr "Jaga"
@@ -2941,8 +2661,7 @@ msgstr "Jaga %{nimi}"
 msgid "Share your pictures with other apps and services."
 msgstr "Jagage oma pilte teiste rakenduste ja teenustega."
 
-#: src/page/people/new.vue:219
-#: src/page/people/recognized.vue:285
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 #, fuzzy
 msgid "Show"
 msgstr "Näita"
@@ -2952,8 +2671,7 @@ msgstr "Näita"
 msgid "Show all new faces"
 msgstr "Näita kõiki uusi nägusid"
 
-#: src/page/people/new.vue:75
-#: src/page/people/recognized.vue:117
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
 #, fuzzy
 msgid "Show hidden"
 msgstr "Näita peidetud"
@@ -2998,10 +2716,8 @@ msgstr "Registreeru"
 msgid "Similar"
 msgstr "Sarnane"
 
-#: src/dialog/photo/edit/files.vue:83
-#: src/dialog/photo/edit/files.vue:80
-#: src/dialog/photo/edit/files.vue:36
-#: src/dialog/service/edit.vue:226
+#: src/dialog/photo/edit/files.vue:83 src/dialog/photo/edit/files.vue:80
+#: src/dialog/photo/edit/files.vue:36 src/dialog/service/edit.vue:226
 #, fuzzy
 msgid "Size"
 msgstr "Suurus"
@@ -3011,14 +2727,12 @@ msgstr "Suurus"
 msgid "Slow"
 msgstr "Aeglane"
 
-#: src/component/album/toolbar.vue:69
-#: src/dialog/album/edit.vue:23
+#: src/component/album/toolbar.vue:69 src/dialog/album/edit.vue:23
 #, fuzzy
 msgid "Sort by file name"
 msgstr "Sorteeri faili nime järgi"
 
-#: src/component/photo/toolbar.vue:247
-#: src/dialog/album/edit.vue:189
+#: src/component/photo/toolbar.vue:247 src/dialog/album/edit.vue:189
 #, fuzzy
 msgid "Sort Order"
 msgstr "Sorteerimisjärjekord"
@@ -3030,14 +2744,15 @@ msgstr "Allikas"
 
 #: src/page/about/about.vue:25
 #, fuzzy
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
 msgstr ""
 "Sponsorid saavad juurdepääsu lisafunktsioonidele, saavad otsest tehnilist "
-"tuge e-posti teel ja saavad liituda meie privaatse jututuppa aadressil matrix"
-".org."
+"tuge e-posti teel ja saavad liituda meie privaatse jututuppa aadressil "
+"matrix.org."
 
-#: src/component/photo/cards.vue:315
-#: src/component/photo/mosaic.vue:240
+#: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 #, fuzzy
 msgid "Stack"
 msgstr "Stack"
@@ -3051,7 +2766,9 @@ msgstr ""
 
 #: src/page/settings/library.vue:172
 #, fuzzy
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
 msgstr ""
 "Paneeri täpselt samal ajal ja samas kohas tehtud pilte nende metaandmete "
 "põhjal."
@@ -3061,15 +2778,16 @@ msgstr ""
 msgid "Stackable"
 msgstr "Stackable"
 
-#: src/component/navigation.vue:109
-#: src/page/settings/library.vue:34
+#: src/component/navigation.vue:109 src/page/settings/library.vue:34
 #, fuzzy
 msgid "Stacks"
 msgstr "Stacks"
 
 #: src/page/settings/library.vue:138
 #, fuzzy
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
 msgstr ""
 "Failide virnad rühmitavad faile, millel on sarnane võrdlusraamistik, kuid "
 "erinevused kvaliteedis, formaadis, suuruses või värvitoonis."
@@ -3084,10 +2802,8 @@ msgstr "Start"
 msgid "Start/Stop Slideshow"
 msgstr "Slaidiesitluse käivitamine/peatamine"
 
-#: src/component/navigation.vue:266
-#: src/component/navigation.vue:300
-#: src/component/navigation.vue:28
-#: src/component/navigation.vue:1036
+#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:28 src/component/navigation.vue:1036
 #, fuzzy
 msgid "States"
 msgstr "Ühendriigid"
@@ -3102,8 +2818,7 @@ msgstr "Staatilise suuruse piirang: %{n}px"
 msgid "Status"
 msgstr "Staatus"
 
-#: src/dialog/photo/edit/files.vue:71
-#: src/dialog/photo/edit/files.vue:68
+#: src/dialog/photo/edit/files.vue:71 src/dialog/photo/edit/files.vue:68
 #, fuzzy
 msgid "Storage"
 msgstr "Ladustamine"
@@ -3113,8 +2828,7 @@ msgstr "Ladustamine"
 msgid "Streets"
 msgstr "Tänavad"
 
-#: src/dialog/photo/edit/details.vue:503
-#: src/model/subject.js:157
+#: src/dialog/photo/edit/details.vue:503 src/model/subject.js:157
 #, fuzzy
 msgid "Subject"
 msgstr "Teema"
@@ -3126,7 +2840,8 @@ msgstr "Edukalt ühendatud"
 
 #: src/dialog/service/add.vue:29
 #, fuzzy
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr ""
 "Aja jooksul lisatakse toetus täiendavatele teenustele, näiteks Google "
 "Drive'ile."
@@ -3141,8 +2856,7 @@ msgstr "Sünkroonimine"
 msgid "Sync raw and video files"
 msgstr "Toor- ja videofailide sünkroonimine"
 
-#: src/component/photo/cards.vue:463
-#: src/component/photo/list.vue:136
+#: src/component/photo/cards.vue:463 src/component/photo/list.vue:136
 #: src/dialog/photo/edit/info.vue:52
 #, fuzzy
 msgid "Taken"
@@ -3158,8 +2872,7 @@ msgstr "Teal"
 msgid "Terms &amp; Privacy"
 msgstr "Tingimused &; Privaatsus"
 
-#: src/dialog/photo/edit/details.vue:32
-#: src/page/people/new.vue:55
+#: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 #, fuzzy
 msgid "Text too long"
 msgstr "Liiga pikk tekst"
@@ -3171,7 +2884,9 @@ msgstr "Indeks sisaldab praegu %{n} peidetud faile."
 
 #: src/page/library/index.vue:37
 #, fuzzy
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
 msgstr ""
 "Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse "
 "konverteeritud või on olemas duplikaadid."
@@ -3183,7 +2898,9 @@ msgstr "Teema"
 
 #: src/dialog/sponsor.vue:17
 #, fuzzy
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+msgid ""
+"This currently is a sponsor feature to thank everyone who supports the "
+"development of this application."
 msgstr ""
 "See on praegu sponsori funktsioon, et tänada kõiki, kes toetavad selle "
 "rakenduse arendamist."
@@ -3191,7 +2908,8 @@ msgstr ""
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
 "See ühendab originaalide kausta võrgukettana ja võimaldab teil avada, muuta "
@@ -3200,7 +2918,10 @@ msgstr ""
 
 #: src/dialog/webdav.vue:26
 #, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
 msgstr ""
 "See ühendab originaalide kausta võrgukettana ja võimaldab teil avada, "
 "redigeerida ja kustutada faile arvutist või nutitelefonist, nagu oleksid "
@@ -3226,10 +2947,8 @@ msgstr "Ajavöönd"
 msgid "Timeout"
 msgstr "Timeout"
 
-#: src/page/settings/account.vue:113
-#: src/component/photo/list.vue:135
-#: src/dialog/photo/edit/details.vue:95
-#: src/dialog/photo/edit/info.vue:45
+#: src/page/settings/account.vue:113 src/component/photo/list.vue:135
+#: src/dialog/photo/edit/details.vue:95 src/dialog/photo/edit/info.vue:45
 #: src/page/settings/account.vue:112
 #, fuzzy
 msgid "Title"
@@ -3245,12 +2964,9 @@ msgstr "Pealkiri / ametikoht"
 msgid "Title too long"
 msgstr "Liiga pikk pealkiri"
 
-#: src/component/album/toolbar.vue:139
-#: src/component/album/toolbar.vue:157
-#: src/component/album/toolbar.vue:174
-#: src/component/photo/toolbar.vue:71
-#: src/component/photo/toolbar.vue:88
-#: src/component/photo/toolbar.vue:104
+#: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
+#: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
+#: src/component/photo/toolbar.vue:88 src/component/photo/toolbar.vue:104
 #, fuzzy
 msgid "Toggle View"
 msgstr "Vaate muutmine"
@@ -3270,23 +2986,17 @@ msgstr "Topograafiline"
 msgid "Troubleshooting Checklists"
 msgstr "Vigade kõrvaldamise kontrollnimekirjad"
 
-#: src/component/photo/cards.vue:11
-#: src/component/photo/cards.vue:9
-#: src/component/photo/list.vue:11
-#: src/component/photo/list.vue:49
-#: src/component/photo/mosaic.vue:11
-#: src/component/photo/mosaic.vue:9
-#: src/page/albums.vue:38
-#: src/page/labels.vue:34
+#: src/component/photo/cards.vue:11 src/component/photo/cards.vue:9
+#: src/component/photo/list.vue:11 src/component/photo/list.vue:49
+#: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:9
+#: src/page/albums.vue:38 src/page/labels.vue:34
 #: src/page/people/recognized.vue:38
 #, fuzzy
 msgid "Try again using other filters or keywords."
 msgstr "Proovige uuesti, kasutades teisi filtreid või märksõnu."
 
-#: src/dialog/photo/edit/files.vue:89
-#: src/dialog/photo/edit/files.vue:86
-#: src/dialog/photo/edit/files.vue:37
-#: src/dialog/photo/edit/info.vue:15
+#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
+#: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
 #: src/dialog/service/edit.vue:528
 #, fuzzy
 msgid "Type"
@@ -3302,51 +3012,34 @@ msgstr "Undo"
 msgid "Unique ID"
 msgstr "Unikaalne ID"
 
-#: src/dialog/photo/edit/details.vue:23
-#: src/dialog/photo/edit/info.vue:24
-#: src/model/album.js:179
-#: src/model/photo.js:697
-#: src/model/photo.js:718
-#: src/model/photo.js:741
-#: src/model/photo.js:759
-#: src/model/photo.js:849
-#: src/model/photo.js:862
-#: src/options/options.js:20
-#: src/options/options.js:34
-#: src/options/options.js:51
-#: src/options/options.js:65
-#: src/options/options.js:77
-#: src/page/library/errors.vue:173
-#: src/page/library/errors.vue:180
-#: src/page/library/logs.vue:18
+#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
+#: src/model/album.js:179 src/model/photo.js:697 src/model/photo.js:718
+#: src/model/photo.js:741 src/model/photo.js:759 src/model/photo.js:849
+#: src/model/photo.js:862 src/options/options.js:20 src/options/options.js:34
+#: src/options/options.js:51 src/options/options.js:65
+#: src/options/options.js:77 src/page/library/errors.vue:173
+#: src/page/library/errors.vue:180 src/page/library/logs.vue:18
 #, fuzzy
 msgid "Unknown"
 msgstr "Teadmata"
 
-#: src/page/settings/account.vue:35
-#: src/page/settings/account.vue:43
-#: src/component/navigation.vue:82
-#: src/model/user.js:130
-#: src/page/settings/account.vue:35
-#: src/page/settings/account.vue:43
+#: src/page/settings/account.vue:35 src/page/settings/account.vue:43
+#: src/component/navigation.vue:82 src/model/user.js:130
 #, fuzzy
 msgid "Unregistered"
 msgstr "Registreerimata"
 
-#: src/app/routes.js:190
-#: src/component/navigation.vue:167
+#: src/app/routes.js:190 src/component/navigation.vue:167
 #, fuzzy
 msgid "Unsorted"
 msgstr "Sorteerimata"
 
-#: src/dialog/photo/edit/files.vue:38
-#: src/dialog/photo/edit/files.vue:35
+#: src/dialog/photo/edit/files.vue:38 src/dialog/photo/edit/files.vue:35
 #, fuzzy
 msgid "Unstack"
 msgstr "Unstack"
 
-#: src/dialog/photo/edit/files.vue:198
-#: src/dialog/photo/edit/files.vue:195
+#: src/dialog/photo/edit/files.vue:198 src/dialog/photo/edit/files.vue:195
 #: src/dialog/photo/edit/info.vue:175
 #, fuzzy
 msgid "Updated"
@@ -3382,15 +3075,10 @@ msgstr "Eelvaadete uuendamine"
 msgid "Updating stacks"
 msgstr "Korstnate uuendamine"
 
-#: src/component/album/toolbar.vue:192
-#: src/component/navigation.vue:1944
-#: src/component/photo/toolbar.vue:122
-#: src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8
-#: src/dialog/upload.vue:54
-#: src/page/albums.vue:144
-#: src/page/library/import.vue:38
-#: src/page/settings/general.vue:228
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1944
+#: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:54 src/page/albums.vue:144
+#: src/page/library/import.vue:38 src/page/settings/general.vue:228
 #: src/page/settings/services.vue:27
 #, fuzzy
 msgid "Upload"
@@ -3406,8 +3094,7 @@ msgstr "Üleslaadimine lõpetatud"
 msgid "Upload complete. Indexing…"
 msgstr "Üleslaadimine lõpetatud. Indekseerimine…"
 
-#: src/dialog/upload.vue:34
-#: src/dialog/upload.vue:164
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:164
 #, fuzzy
 msgid "Upload failed"
 msgstr "Üleslaadimine ebaõnnestus"
@@ -3427,9 +3114,7 @@ msgstr "Laadige üles WebDAV-i ja jagage linke sõpradega."
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{n} %{t} üleslaadimine…"
 
-#: src/dialog/upload.vue:60
-#: src/dialog/upload.vue:68
-#: src/dialog/upload.vue:115
+#: src/dialog/upload.vue:60 src/dialog/upload.vue:68 src/dialog/upload.vue:115
 #, fuzzy
 msgid "Uploading photos…"
 msgstr "Fotode üleslaadimine…"
@@ -3460,8 +3145,7 @@ msgstr "Kasutage eelseadistusi"
 msgid "User"
 msgstr "Kasutaja"
 
-#: src/page/about/about.vue:23
-#: src/component/navigation.vue:580
+#: src/page/about/about.vue:23 src/component/navigation.vue:580
 #: src/page/about/about.vue:45
 #, fuzzy
 msgid "User Guide"
@@ -3472,8 +3156,7 @@ msgstr "Kasutusjuhend"
 msgid "User Interface"
 msgstr "Kasutajaliides"
 
-#: src/dialog/service/add.vue:103
-#: src/dialog/service/edit.vue:467
+#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
 #: src/dialog/share.vue:23
 #, fuzzy
 msgid "Username"
@@ -3489,13 +3172,9 @@ msgstr "Vanta"
 msgid "Verified"
 msgstr "Kinnitatud"
 
-#: src/component/photo/cards.vue:308
-#: src/component/photo/cards.vue:471
-#: src/component/photo/list.vue:198
-#: src/component/photo/mosaic.vue:232
-#: src/model/file.js:219
-#: src/model/photo.js:794
-#: src/model/photo.js:810
+#: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471
+#: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
+#: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
 #: src/options/options.js:311
 #, fuzzy
 msgid "Video"
@@ -3506,17 +3185,14 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Video kestus"
 
-#: src/app/routes.js:211
-#: src/component/navigation.vue:180
-#: src/component/navigation.vue:190
-#: src/component/navigation.vue:4
+#: src/app/routes.js:211 src/component/navigation.vue:180
+#: src/component/navigation.vue:190 src/component/navigation.vue:4
 #: src/component/navigation.vue:738
 #, fuzzy
 msgid "Videos"
 msgstr "Videod"
 
-#: src/component/photo/cards.vue:324
-#: src/component/photo/mosaic.vue:249
+#: src/component/photo/cards.vue:324 src/component/photo/mosaic.vue:249
 #: src/component/photo/toolbar.vue:226
 #, fuzzy
 msgid "View"
@@ -3524,7 +3200,9 @@ msgstr "Vaata"
 
 #: src/page/about/about.vue:47
 #, fuzzy
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
 msgstr ""
 "Külasta docs.photoprism.app/user-guide, et teada saada, kuidas oma pilte "
 "sünkroonida, organiseerida ja jagada."
@@ -3535,12 +3213,10 @@ msgid "Visual Similarity"
 msgstr "Visuaalne sarnasus"
 
 #: src/page/about/feedback.vue:13
-#: src/page/about/feedback.vue:13
 #, fuzzy
 msgid "We appreciate your feedback!"
 msgstr "Me hindame teie tagasisidet!"
 
-#: src/page/about/feedback.vue:17
 #: src/page/about/feedback.vue:17
 #, fuzzy
 msgid "We do our best to respond within five business days or less."
@@ -3548,14 +3224,18 @@ msgstr "Anname endast parima, et vastata viie tööpäeva jooksul või vähem."
 
 #: src/page/about/about.vue:74
 #, fuzzy
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
 msgstr ""
 "Anname endast parima, et vastata kõigile teie küsimustele. Vastutasuks "
 "palume teid toetada meid Patreonis või GitHubi sponsoritega."
 
 #: src/dialog/sponsor.vue:18
 #, fuzzy
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+msgid ""
+"We'll let you know how to enable it when you sign up on Patreon or GitHub "
+"Sponsors."
 msgstr ""
 "Me anname teile teada, kuidas seda lubada, kui registreerute Patreoni või "
 "GitHubi sponsoritele."
@@ -3568,21 +3248,20 @@ msgstr "WebDAV-kliendid saavad PhotoPrismiga ühenduda järgmise URL-i kaudu:"
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
 msgstr ""
 "WebDAV-kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad "
 "otse ühendada\n"
 "          PhotoPrismiga."
 
-#: src/dialog/share.vue:82
-#: src/dialog/share/upload.vue:7
+#: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 #, fuzzy
 msgid "WebDAV Upload"
 msgstr "WebDAV üleslaadimine"
 
-#: src/page/settings/account.vue:643
-#: src/page/settings/account.vue:789
+#: src/page/settings/account.vue:643 src/page/settings/account.vue:789
 #: src/page/settings/account.vue:642
 #, fuzzy
 msgid "Website"
@@ -3598,10 +3277,8 @@ msgstr "Valge"
 msgid "Work Details"
 msgstr "Töö üksikasjad"
 
-#: src/page/settings/account.vue:492
-#: src/component/photo/toolbar.vue:268
-#: src/dialog/photo/edit/details.vue:168
-#: src/page/settings/account.vue:491
+#: src/page/settings/account.vue:492 src/component/photo/toolbar.vue:268
+#: src/dialog/photo/edit/details.vue:168 src/page/settings/account.vue:491
 #, fuzzy
 msgid "Year"
 msgstr "Aasta"
@@ -3616,22 +3293,14 @@ msgstr "Kollane"
 msgid "Yellowstone"
 msgstr "Yellowstone"
 
-#: src/dialog/confirm.vue:18
-#: src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18
-#: src/dialog/photo/edit/files.vue:122
-#: src/dialog/photo/edit/files.vue:130
-#: src/dialog/photo/edit/files.vue:138
-#: src/dialog/photo/edit/files.vue:184
-#: src/dialog/photo/edit/files.vue:119
-#: src/dialog/photo/edit/files.vue:127
-#: src/dialog/photo/edit/files.vue:135
-#: src/dialog/photo/edit/files.vue:181
-#: src/dialog/photo/edit/info.vue:259
-#: src/dialog/photo/edit/info.vue:280
-#: src/dialog/photo/edit/info.vue:301
-#: src/dialog/photo/edit/info.vue:322
-#: src/dialog/photo/edit/info.vue:342
+#: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:122
+#: src/dialog/photo/edit/files.vue:130 src/dialog/photo/edit/files.vue:138
+#: src/dialog/photo/edit/files.vue:184 src/dialog/photo/edit/files.vue:119
+#: src/dialog/photo/edit/files.vue:127 src/dialog/photo/edit/files.vue:135
+#: src/dialog/photo/edit/files.vue:181 src/dialog/photo/edit/info.vue:259
+#: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301
+#: src/dialog/photo/edit/info.vue:322 src/dialog/photo/edit/info.vue:342
 #, fuzzy
 msgid "Yes"
 msgstr "Jah"
@@ -3641,8 +3310,7 @@ msgstr "Jah"
 msgid "you are welcome to join us on Reddit"
 msgstr "olete oodatud meiega liituma Redditil"
 
-#: src/component/album/clipboard.vue:106
-#: src/component/subject/clipboard.vue:51
+#: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 #, fuzzy
 msgid "You can only download one album"
 msgstr "Saate alla laadida ainult ühe albumi"
@@ -3657,14 +3325,12 @@ msgstr "Saate alla laadida ainult ühe etiketi"
 msgid "You can run it at home, on a private server, or in the cloud."
 msgstr "Saate seda kasutada kodus, eraserveris või pilves."
 
-#: src/component/album/clipboard.vue:59
-#: src/component/album/clipboard.vue:72
+#: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 #, fuzzy
 msgid "You may only select one item"
 msgstr "Saate valida ainult ühe eseme"
 
-#: src/dialog/photo/edit/people.vue:8
-#: src/page/people/new.vue:32
+#: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 #, fuzzy
 msgid "You may rescan your library to find additional faces."
@@ -3673,22 +3339,27 @@ msgstr ""
 
 #: src/page/about/about.vue:22
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
 msgstr ""
 "Teie jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda "
 "sõltumatuks, et me saaksime täita oma missiooni ja kaitsta teie privaatsust."
 
 #: src/dialog/sponsor.vue:21
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and services like world maps."
+msgid ""
+"Your continued support helps us provide regular updates and services like "
+"world maps."
 msgstr ""
 "Teie jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja teenuseid, "
 "nagu maailmakaardid."
 
-#: src/page/albums.vue:43
-#: src/page/albums.vue:1
+#: src/page/albums.vue:43 src/page/albums.vue:1
 #, fuzzy
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
 msgstr ""
 "Teie raamatukogu analüüsitakse pidevalt, et luua automaatselt albumid "
 "erilistest hetkedest, reisidest ja kohtadest."
