@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-03 10:03+0000\n"
-"Last-Translator: coldWater <254244460@qq.com>\n"
+"PO-Revision-Date: 2022-11-10 04:52+0000\n"
+"Last-Translator: SettingDust <settingdust@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
-msgstr "未知错误，请重试"
+msgstr "意外错误，请重试"
 
 #: messages.go:95
 msgid "Invalid request"
@@ -29,7 +29,7 @@ msgstr "无效请求"
 
 #: messages.go:96
 msgid "Changes could not be saved"
-msgstr "变更无法保存"
+msgstr "无法保存变更"
 
 #: messages.go:97
 msgid "Could not be deleted"
@@ -46,11 +46,11 @@ msgstr "未找到"
 
 #: messages.go:100
 msgid "File not found"
-msgstr "文件未找到"
+msgstr "未找到文件"
 
 #: messages.go:101
 msgid "File too large"
-msgstr "文件太大"
+msgstr "文件过大"
 
 #: messages.go:102
 msgid "Unsupported format"
@@ -58,55 +58,55 @@ msgstr "不支持的格式"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr "原稿文件夹是空的"
+msgstr "原件文件夹是空的"
 
 #: messages.go:104
 msgid "Selection not found"
-msgstr "所选未找到"
+msgstr "未找到所选内容"
 
 #: messages.go:105
 msgid "Entity not found"
-msgstr "实体未找到"
+msgstr "未找到实体"
 
 #: messages.go:106
 msgid "Account not found"
-msgstr "账户未找到"
+msgstr "未找到账户"
 
 #: messages.go:107
 msgid "User not found"
-msgstr "用户未找到"
+msgstr "未找到用户"
 
 #: messages.go:108
 msgid "Label not found"
-msgstr "标签未找到"
+msgstr "未找到标签"
 
 #: messages.go:109
 msgid "Album not found"
-msgstr "相册未找到"
+msgstr "未找到相册"
 
 #: messages.go:110
 msgid "Subject not found"
-msgstr "主题未找到"
+msgstr "未找到主题"
 
 #: messages.go:111
 msgid "Person not found"
-msgstr "人物未找到"
+msgstr "未找到人物"
 
 #: messages.go:112
 msgid "Face not found"
-msgstr "面孔未找到"
+msgstr "未找到面孔"
 
 #: messages.go:113
 msgid "Not available in public mode"
-msgstr "公开模式中不可用"
+msgstr "在公开模式下不可用"
 
 #: messages.go:114
 msgid "Not available in read-only mode"
-msgstr "只读模式中不可用"
+msgstr "在只读模式下不可用"
 
 #: messages.go:115
 msgid "Please log in to your account"
-msgstr "请登录您的账户"
+msgstr "请登录你的账户"
 
 #: messages.go:116
 msgid "Permission denied"
@@ -114,7 +114,7 @@ msgstr "没有权限"
 
 #: messages.go:117
 msgid "Upload might be offensive"
-msgstr "上传的文件可能会引起反感"
+msgstr "上传内容可能具有冒犯性"
 
 #: messages.go:118
 msgid "Upload failed"
@@ -142,7 +142,7 @@ msgstr "无效密码，请重试"
 
 #: messages.go:124
 msgid "Feature disabled"
-msgstr "特性已禁用"
+msgstr "功能已禁用"
 
 #: messages.go:125
 msgid "No labels selected"
@@ -158,36 +158,36 @@ msgstr "没有可供下载的文件"
 
 #: messages.go:128
 msgid "Failed to create zip file"
-msgstr "创建 zip 文件失败"
+msgstr "创建压缩文件失败"
 
 #: messages.go:129
 msgid "Invalid credentials"
-msgstr "无效的凭证"
+msgstr "无效凭证"
 
 #: messages.go:130
 msgid "Invalid link"
-msgstr "无效的链接"
+msgstr "无效链接"
 
 #: messages.go:131
 msgid "Invalid name"
-msgstr "无效的名称"
+msgstr "无效名称"
 
 #: messages.go:132
 msgid "Busy, please try again later"
-msgstr "正在忙碌，请稍后重试"
+msgstr "忙碌中，请稍后重试"
 
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr "唤醒时间间隔为 %s，但必须小于等于 1 小时"
+msgstr "唤醒间隔为 %s，但必须小于等于 1 小时"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr "您的账户无法连接"
+msgstr "你的账户无法连接"
 
 #: messages.go:137
 msgid "Changes successfully saved"
-msgstr "变更保存成功"
+msgstr "变更成功保存"
 
 #: messages.go:138
 msgid "Album created"
@@ -200,7 +200,7 @@ msgstr "相册已保存"
 #: messages.go:140
 #, c-format
 msgid "Album %s deleted"
-msgstr "相册 %s 已被删除"
+msgstr "相册 %s 已删除"
 
 #: messages.go:141
 msgid "Album contents cloned"
