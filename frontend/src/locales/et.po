@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-10 06:45+0000\n"
+"PO-Revision-Date: 2022-11-10 06:46+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -91,9 +91,8 @@ msgid "Add Account"
 msgstr "Lisa konto"
 
 #: src/page/albums.vue:122 src/page/albums.vue:163
-#, fuzzy
 msgid "Add Album"
-msgstr "Albumi lisamine"
+msgstr "Lisa album"
 
 #: src/page/settings/general.vue:229
 #, fuzzy
