@@ -14,2419 +14,1797 @@ msgstr ""
 "X-Generator: Poedit 3.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:421
 msgid "%{n} albums found"
 msgstr "%{n} nájdených albumov"
 
-#: src/dialog/share/upload.vue:81
 msgid "%{n} files uploaded"
 msgstr "%{n} odovzdaných súborov"
 
-#: src/page/library/browse.vue:311
 msgid "%{n} folders found"
 msgstr "%{n} nájdených zložiek"
 
-#: src/page/labels.vue:422
 msgid "%{n} labels found"
 msgstr "%{n} nájdených štítkov"
 
-#: src/page/people/new.vue:286 src/page/people/new.vue:372 src/page/people/recognized.vue:508
 msgid "%{n} people found"
 msgstr "%{n} nájdených ľudí"
 
-#: src/page/album/photos.vue:240 src/page/album/photos.vue:393 src/page/photos.vue:325 src/page/photos.vue:490
 msgid "%{n} pictures found"
 msgstr "%{n} nájdených obrázkov"
 
-#: src/options/options.js:364
 msgid "1 hour"
 msgstr "1 hodina"
 
-#: src/options/options.js:366
 msgid "12 hours"
 msgstr "12 hodín"
 
-#: src/options/options.js:365
 msgid "4 hours"
 msgstr "4 hodiny"
 
-#: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
 msgstr "Kliknutím skopírujete obsah."
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:254 src/component/navigation.vue:424 src/component/navigation.vue:27 src/page/about/about.vue:166 src/page/help.vue:43
 msgid "About"
 msgstr "O nás"
 
-#: src/options/themes.js:417
 msgid "Abyss"
 msgstr "Priepasť"
 
-#: src/component/navigation.vue:3 src/component/navigation.vue:93 src/component/navigation.vue:1908 src/dialog/share/upload.vue:108 src/model/service.js:98 src/model/user.js:144 src/page/settings.vue:83 src/page/settings/general.vue:470
 msgid "Account"
 msgstr "Účet"
 
-#: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
 msgstr "Presnosť"
 
-#: src/dialog/photo/edit/labels.vue:23
 msgid "Action"
 msgstr "Akcia"
 
-#: src/dialog/photo/edit/files.vue:28 src/dialog/photo/edit/files.vue:25
 msgid "Actions"
 msgstr "Akcie"
 
-#: src/dialog/service/add.vue:7
 msgid "Add Account"
 msgstr "Pridať účet"
 
-#: src/page/albums.vue:122 src/page/albums.vue:163
 msgid "Add Album"
 msgstr "Pridať Album"
 
-#: src/page/settings/general.vue:229
 msgid "Add files to your library via Web Upload."
 msgstr "Pridať súbory do vašej knižnice pomocou Web Upload."
 
-#: src/dialog/share.vue:79
 msgid "Add Link"
 msgstr "Pridať odkaz"
 
-#: src/page/albums.vue:96
 msgid "Add pictures from search results by selecting them."
 msgstr "Pridanie fotiek z výsledkov vyhľadávania ich výberom."
 
-#: src/component/album/clipboard.vue:129 src/component/file/clipboard.vue:85 src/component/label/clipboard.vue:61 src/component/photo/clipboard.vue:180 src/component/subject/clipboard.vue:82 src/dialog/photo/album.vue:20
 msgid "Add to album"
 msgstr "Pridať do albumu"
 
-#: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
 msgid "Added"
 msgstr "Pridané"
 
-#: src/page/settings.vue:59
 msgid "Advanced"
 msgstr "Pokročilé"
 
-#: src/options/options.js:374
 msgid "After 1 day"
 msgstr "Po 1 dni"
 
-#: src/options/options.js:375
 msgid "After 3 days"
 msgstr "Po 3 dňoch"
 
-#: src/options/options.js:376
 msgid "After 7 days"
 msgstr "Po 7 dňoch"
 
-#: src/options/options.js:378
 msgid "After one month"
 msgstr "Po jednom mesiaci"
 
-#: src/options/options.js:380
 msgid "After one year"
 msgstr "Po jednom roku"
 
-#: src/page/albums.vue:40 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Po výbere obrázkov z výsledkov vyhľadávania ich môžete pridať do albumu pomocou kontextovej ponuky."
 
-#: src/options/options.js:379
 msgid "After two months"
 msgstr "Po dvoch mesiacoch"
 
-#: src/options/options.js:377
 msgid "After two weeks"
 msgstr "Po dvoch týždňoch"
 
-#: src/page/about/about.vue:15
-msgid "AI-Powered Digital Asset Management"
-msgstr "Správa digitálnych aktív na báze umelej inteligencie"
-
-#: src/model/album.js:229
 msgid "Album"
 msgstr "Album"
 
-#: src/dialog/photo/album.vue:67 src/dialog/photo/album.vue:77
 msgid "Album Name"
 msgstr "Meno Albumu"
 
-#: src/app/routes.js:151 src/component/album/toolbar.vue:52 src/component/navigation.vue:147 src/component/navigation.vue:157 src/component/navigation.vue:539 src/component/navigation.vue:4 src/component/navigation.vue:621
 msgid "Albums"
 msgstr "Albumy"
 
-#: src/component/album/clipboard.vue:101
 msgid "Albums deleted"
 msgstr "Albumy odstránené"
 
-#: src/page/albums.vue:287
 msgid "All %{n} albums loaded"
 msgstr "Všetkých %{n} albumov bolo načítaných"
 
-#: src/page/labels.vue:276
 msgid "All %{n} labels loaded"
 msgstr "Všetkých %{n} štítkov načítaných"
 
-#: src/page/people/recognized.vue:360
 msgid "All %{n} people loaded"
 msgstr "Všetkých %{n} ľudí načítaných"
 
-#: src/component/album/toolbar.vue:37 src/component/photo/toolbar.vue:36
 msgid "All Cameras"
 msgstr "Všetky kamery"
 
-#: src/component/photo/toolbar.vue:39 src/page/albums.vue:30 src/page/albums.vue:531
 msgid "All Categories"
 msgstr "Všetky kategórie"
 
-#: src/component/photo/toolbar.vue:38
 msgid "All Colors"
 msgstr "Všetky farby"
 
-#: src/component/album/toolbar.vue:41 src/component/photo/toolbar.vue:35
 msgid "All Countries"
 msgstr "Všetky štáty"
 
-#: src/page/about/feedback.vue:38 src/page/about/feedback.vue:31
 msgid "All fields are required"
 msgstr "Všetky políčka sú vyžadované"
 
-#: src/page/library/import.vue:12
 msgid "All files from import folder"
 msgstr "Všetky súbory zo zložky importu"
 
-#: src/component/photo/toolbar.vue:37
 msgid "All Lenses"
 msgstr "Všetky Objektívy"
 
-#: src/component/photo/toolbar.vue:40
 msgid "All Months"
 msgstr "Všetky Mesiace"
 
-#: src/page/library/index.vue:12
 msgid "All originals"
 msgstr "Všetky originály"
 
-#: src/component/photo/toolbar.vue:41
 msgid "All Years"
 msgstr "Všetky Roky"
 
-#: src/page/about/about.vue:40
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
 msgstr "Ak sa vám tento projekt páči, zanechajte na GitHube hviezdičku. Poskytne vám to ďalšiu motiváciu pokračovať."
 
-#: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Prípadne, môžete odovzdať súbory priamo na WebDAV servery ako napríklad Nextcloud."
 
-#: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
 msgstr "Nadmorská výška"
 
-#: src/dialog/photo/edit/details.vue:279
 msgid "Altitude (m)"
 msgstr "Nadmorská výška (m)"
 
-#: src/common/api.js:99
 msgid "An error occurred - are you offline?"
 msgstr "Nastala chyba - ste offline?"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:301 src/component/photo/cards.vue:480 src/component/photo/list.vue:191 src/component/photo/mosaic.vue:224 src/model/file.js:210 src/options/options.js:299
 msgid "Animated"
 msgstr "Animované"
 
-#: src/page/settings/general.vue:578
 msgid "Animation"
 msgstr "Animácie"
 
-#: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Všetky súkromné fotky a videá zostanú súkromné a nemôžu byť zdieľané."
 
-#: src/page/about/about.vue:32
-msgid "API Documentation"
-msgstr "Dokumentácia API"
-
-#: src/dialog/service/edit.vue:510
 msgid "API Key"
 msgstr "API Kľúč"
 
-#: src/dialog/photo/edit/details.vue:117
 msgid "Apply"
 msgstr "Použiť"
 
-#: src/component/photo/cards.vue:410 src/component/photo/clipboard.vue:88 src/dialog/photo/edit/details.vue:116
 msgid "Approve"
 msgstr "Schváliť"
 
-#: src/app/routes.js:232 src/component/navigation.vue:134 src/component/photo/cards.vue:381 src/component/photo/clipboard.vue:204 src/page/settings/general.vue:338
 msgid "Archive"
 msgstr "Archivovať"
 
-#: src/dialog/photo/edit/info.vue:199
 msgid "Archived"
 msgstr "Archivované"
 
-#: src/dialog/photo/archive.vue:10
 msgid "Are you sure you want to archive the selection?"
 msgstr "Ste si istý, že chcete archivovať výber?"
 
-#: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
 msgstr "Ste si istý, že chcete vymazať tieto albumy?"
 
-#: src/dialog/label/delete.vue:10
 msgid "Are you sure you want to delete these labels?"
 msgstr "Ste si istý, že chcete vymazať tieto štítky?"
 
-#: src/dialog/service/remove.vue:10
 msgid "Are you sure you want to delete this account?"
 msgstr "Ste si istý, že chcete vymazať tento účet?"
 
-#: src/dialog/photo/delete.vue:10
 msgid "Are you sure you want to permanently delete these pictures?"
 msgstr "Ste si istý, že chcete tieto obrázky natrvalo odstrániť?"
 
-#: src/dialog/file/delete.vue:10
 msgid "Are you sure you want to permanently delete this file?"
 msgstr "Ste si istý že chcete permanentne vymazať tento súbor?"
 
-#: src/dialog/confirm.vue:10
 msgid "Are you sure?"
 msgstr "Ste si istý?"
 
-#: src/dialog/photo/edit/details.vue:529
 msgid "Artist"
 msgstr "Umelec"
 
-#: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Pomer Strán"
 
-#: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr "Automaticky vytvoriť JPEG formát z ostatných formátov čiže môžu byť zobrazené v prehliadači."
 
-#: src/page/settings/general.vue:163
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Automaticky vytvára albumy špeciálnych momentov, výletov a miest."
 
-#: src/options/options.js:268
 msgid "Basic"
 msgstr "Základný"
 
-#: src/component/navigation.vue:584 src/dialog/sponsor.vue:7 src/page/about/about.vue:33 src/page/login.vue:48
 msgid "Become a sponsor"
 msgstr "Staňte sa sponzorom"
 
-#: src/page/about/about.vue:62
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Pred odoslaním žiadosti o podporu použite naše kontrolné zoznamy na riešenie problémov, aby ste zistili príčinu svojho problému."
 
-#: src/page/about/about.vue:27
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Keďže sme financovaní 100% selfmi a sme nezávislí, môžeme vám sľúbiť, že vaše údaje nikdy nepredáme a že náš softvér a služby budú vždy transparentné."
 
-#: src/page/settings/account.vue:281 src/page/people/recognized.vue:434 src/page/settings/account.vue:280
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:67
 msgid "Birth Date"
 msgstr "Datum narodenia"
 
-#: src/options/options.js:399
 msgid "Black"
 msgstr "Čierna"
 
-#: src/options/options.js:412
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczosova úprava, menej zvonivých artefaktov"
 
-#: src/options/options.js:395
 msgid "Blue"
 msgstr "Modrá"
 
-#: src/options/options.js:396
 msgid "Brown"
 msgstr "Hnedá"
 
-#: src/page/settings/general.vue:185
 msgid "Browse and edit image classification labels."
 msgstr "Prehliadať a upravovať triediace štítky fotiek."
 
-#: src/page/settings/general.vue:427
 msgid "Browse indexed files and folders in Library."
 msgstr "Prehliadať indexované súbory a zložky v Knižnici."
 
-#: src/page/about/about.vue:54
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Podrobné informácie o konkrétnych funkciách produktu, službách a súvisiacich zdrojoch nájdete v databáze znalostí."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:406
 msgid "Bug Report"
 msgstr "Nahlásiť chybu"
 
-#: src/common/notify.js:94 src/page/connect.vue:6
 msgid "Busy, please wait…"
 msgstr "Som zaneprázdnený, prosím čakajte…"
 
-#: src/app/routes.js:164 src/component/navigation.vue:253 src/component/navigation.vue:989
 msgid "Calendar"
 msgstr "Kalendár"
 
-#: src/component/photo/cards.vue:488 src/component/photo/list.vue:137 src/component/photo/toolbar.vue:202 src/dialog/photo/edit/details.vue:351
 msgid "Camera"
 msgstr "Kamera"
 
-#: src/dialog/photo/edit/info.vue:79
 msgid "Camera Serial"
 msgstr "Séria Kamery"
 
-#: src/page/album/photos.vue:246 src/page/photos.vue:331
 msgid "Can't load more, limit reached"
 msgstr "Nemožno načítať viac, limit dosiahnutý"
 
-#: src/common/clipboard.js:100 src/common/clipboard.js:137 src/page/albums.vue:469 src/page/albums.vue:485 src/page/labels.vue:204 src/page/labels.vue:224 src/page/library/browse.vue:201 src/page/library/browse.vue:217
-#: src/page/people/new.vue:215 src/page/people/new.vue:231 src/page/people/recognized.vue:294 src/page/people/recognized.vue:310
 msgid "Can't select more items"
 msgstr "Nemožno označiť viac položiek"
 
-#: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:42 src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
-#: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9 src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15 src/dialog/share.vue:25 src/dialog/share/upload.vue:29 src/page/library/import.vue:34
-#: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "Karty"
 
-#: src/page/about/feedback.vue:121 src/component/photo/toolbar.vue:337 src/dialog/album/edit.vue:171 src/page/albums.vue:113
 msgid "Category"
 msgstr "Kategória"
 
-#: src/page/settings/account.vue:252 src/page/settings/account.vue:251
 msgid "Change Avatar"
 msgstr "Zmeniť profilovú fotku"
 
-#: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
 msgid "Change Password"
 msgstr "Zmeniť heslo"
 
-#: src/page/settings/general.vue:471
 msgid "Change personal profile and security settings."
 msgstr "Zmena osobného profilu a nastavení zabezpečenia."
 
-#: src/page/settings/general.vue:317
 msgid "Change photo titles, locations, and other metadata."
 msgstr "Zmeniť názvy fotiek, polohy a ostatné metadata."
 
-#: src/component/photo/clipboard.vue:134
 msgid "Change private flag"
 msgstr "Zmeniť privátne označenie"
 
-#: src/page/settings/account.vue:114 src/page/settings/account.vue:129 src/page/settings/advanced.vue:42 src/page/settings/general.vue:105 src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Zmeny boli úspešne uložené"
 
-#: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
 msgstr "Označené"
 
-#: src/dialog/photo/edit/files.vue:175 src/dialog/photo/edit/files.vue:172
 msgid "Chroma"
 msgstr "Sýtosť"
 
-#: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87 src/page/library/errors.vue:60
 msgid "Close"
 msgstr "Zatvoriť"
 
-#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 msgid "Codec"
 msgstr "Kodek"
 
-#: src/component/photo/toolbar.vue:314
 msgid "Color"
 msgstr "Farba"
 
-#: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Color Profile"
 msgstr "Farebný profil"
 
-#: src/page/discover.vue:4
 msgid "Colors"
 msgstr "Farby"
 
-#: src/page/about/about.vue:49
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Bežné problémy možno rýchlo diagnostikovať a vyriešiť pomocou kontrolných zoznamov na riešenie problémov, ktoré poskytujeme."
 
-#: src/page/library/index.vue:115
 msgid "Complete Rescan"
 msgstr "Kompletné preskenovanie"
 
-#: src/dialog/photo/edit/labels.vue:22
 msgid "Confidence"
 msgstr "Zhoda"
 
-#: src/dialog/service/add.vue:18 src/page/connect.vue:12 src/page/settings/services.vue:53
 msgid "Connect"
 msgstr "Pripojiť"
 
-#: src/page/settings/account.vue:57 src/dialog/webdav.vue:4 src/page/settings/services.vue:48
 msgid "Connect via WebDAV"
 msgstr "Pripojiť pomocou WebDav"
 
-#: src/page/connect.vue:30
 msgid "Connected"
 msgstr "Pripojené"
 
-#: src/page/settings/account.vue:113 src/page/settings/account.vue:90
 msgid "Contact Details"
 msgstr "Kontaktné údaje"
 
-#: src/page/about/feedback.vue:4
 msgid "Contact Us"
 msgstr "Kontaktujte nás"
 
-#: src/page/albums.vue:93 src/page/labels.vue:77 src/page/people/recognized.vue:90
 msgid "Contains %{n} pictures."
 msgstr "Obsahuje %{n} obrázkov."
 
-#: src/page/albums.vue:90 src/page/labels.vue:74 src/page/people/recognized.vue:87
 msgid "Contains one picture."
 msgstr "Obsahuje jeden obrázok."
 
-#: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
 msgstr "Prekonvertovať do JPEG"
 
-#: src/page/library/index.vue:163
 msgid "Converting"
 msgstr "Konvertuje sa"
 
-#: src/dialog/share.vue:58 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
 msgstr "Skopírované do schránky"
 
-#: src/dialog/photo/edit/details.vue:554
 msgid "Copyright"
 msgstr "Autorské práva"
 
-#: src/component/photo/list.vue:47
 msgid "Couldn't find anything."
 msgstr "Nič nenájdené."
 
-#: src/page/settings/account.vue:726 src/component/photo/toolbar.vue:178 src/dialog/photo/edit/details.vue:248 src/page/settings/account.vue:579
 msgid "Country"
 msgstr "Štát"
 
-#: src/dialog/photo/album.vue:21
 msgid "Create album"
 msgstr "Vytvoriť album"
 
-#: src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "Vytvorené"
 
-#: src/page/library/index.vue:169
 msgid "Creating thumbnails for"
 msgstr "Vytváranie náhľadov pre"
 
-#: src/options/options.js:414
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubický: Stredná kvalita, dobrý výkon"
 
-#: src/dialog/account/password.vue:128
 msgid "Current Password"
 msgstr "Súčasné heslo"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:403
 msgid "Customer Support"
 msgstr "Zákaznícka podpora"
 
-#: src/options/options.js:394
 msgid "Cyan"
 msgstr "Tyrkysová"
 
-#: src/options/themes.js:432
 msgid "Cyano"
 msgstr "Modravá"
 
-#: src/options/options.js:367
 msgid "Daily"
 msgstr "Denne"
 
-#: src/page/settings/account.vue:446 src/dialog/photo/edit/details.vue:116 src/page/settings/account.vue:445
 msgid "Day"
 msgstr "Deň"
 
-#: src/page/settings/advanced.vue:74
 msgid "Debug Logs"
 msgstr "Denníky ladenia"
 
-#: src/options/options.js:264 src/options/options.js:318 src/options/themes.js:402
 msgid "Default"
 msgstr "Predvolená"
 
-#: src/dialog/service/edit.vue:210
 msgid "Default Folder"
 msgstr "Pôvodná zložka"
 
-#: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82 src/component/photo/clipboard.vue:272 src/dialog/album/delete.vue:18 src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18 src/dialog/photo/delete.vue:18
-#: src/dialog/photo/edit/files.vue:41 src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18 src/dialog/share.vue:226 src/page/library/errors.vue:88 src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Vymazať"
 
-#: src/component/photo/cards.vue:449 src/dialog/album/edit.vue:147 src/dialog/photo/edit/details.vue:604 src/page/albums.vue:428
 msgid "Description"
 msgstr "Popis"
 
-#: src/dialog/webdav.vue:32
 msgid "Detailed instructions can be found in our User Guide."
 msgstr "Detailný postup môžete nájsť v našej Užívateľskej Príručke."
 
-#: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1 src/dialog/photo/edit.vue:157
 msgid "Details"
 msgstr "Detaily"
 
-#: src/page/about/about.vue:29
-msgid "Developer Guide"
-msgstr "Príručka pre vývojárov"
-
-#: src/dialog/photo/edit/files.vue:35
 msgid "Dimensions"
 msgstr "Rozmery"
 
-#: src/page/settings/advanced.vue:140
 msgid "Disable Backups"
 msgstr "Posledná Záloha"
 
-#: src/page/settings/advanced.vue:163
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Zakázať vstavaný server WebDAV. Vyžaduje reštart."
 
-#: src/page/settings/advanced.vue:481
 msgid "Disable Darktable"
 msgstr "Zakázať Darktable"
 
-#: src/page/settings/advanced.vue:206
 msgid "Disable ExifTool"
 msgstr "Zakázať ExifTool"
 
-#: src/page/settings/advanced.vue:523
 msgid "Disable FFmpeg"
 msgstr "Zakázanie aplikácie FFmpeg"
 
-#: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "Zakázať miesta"
 
-#: src/page/settings/advanced.vue:502
 msgid "Disable RawTherapee"
 msgstr "Zakázať RawTherapee"
 
-#: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "Zakázať TensorFlow"
 
-#: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
 msgstr "Zakázať WebDAV"
 
-#: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "Zakáže reverzné geokódovanie a mapy."
 
-#: src/app/routes.js:408 src/app/routes.js:415 src/app/routes.js:422 src/app/routes.js:429
 msgid "Discover"
 msgstr "Objaviť"
 
-#: src/page/settings/account.vue:192 src/page/settings/account.vue:191
 msgid "Display Name"
 msgstr "Zobraziť meno"
 
-#: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "Nezálohovať metadáta fotografií a albumov do súborov YAML."
 
-#: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "Nevytvárať súbory ExifTool JSON pre vylepšenú extrakciu metadát."
 
-#: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Neupravovať priečinok s originálmi. Zakáže import, nahrávanie a mazanie."
 
-#: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
 msgstr "Netranskódvať videá pomocou programu FFmpeg."
 
-#: src/page/settings/advanced.vue:482
 msgid "Don't use Darktable to convert RAW files."
 msgstr "Nepoužívať Darktable pre konvertovanie RAW súborov."
 
-#: src/page/settings/advanced.vue:503
 msgid "Don't use RawTherapee to convert RAW files."
 msgstr "Nepoužívať RawTherapee na konverziu súborov RAW."
 
-#: src/page/settings/advanced.vue:229
 msgid "Don't use TensorFlow for image classification."
 msgstr "Nepoužívať TensorFlow pre triedenie fotografií"
 
-#: src/options/options.js:407
 msgid "Donations"
 msgstr "Príspevky"
 
-#: src/dialog/photo/edit/details.vue:120 src/dialog/share.vue:26
 msgid "Done"
 msgstr "Hotovo"
 
-#: src/dialog/upload.vue:39 src/page/library/import.vue:7 src/page/library/index.vue:8
 msgid "Done."
 msgstr "Hotovo."
 
-#: src/component/album/clipboard.vue:107 src/component/album/toolbar.vue:120 src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78 src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
-#: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29 src/page/settings/general.vue:250
 msgid "Download"
 msgstr "Stiahnuť"
 
-#: src/dialog/service/edit.vue:338
 msgid "Download remote files"
 msgstr "Stiahnuť vzdialené súbory"
 
-#: src/page/settings/general.vue:251
 msgid "Download single files and zip archives."
 msgstr "Stiahnuť samostatné súbory a zip archívy."
 
-#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:112 src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80 src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
-#: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124 src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:69 src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "Sťahovanie…"
 
-#: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
 msgstr "Filter znižovania kvality"
 
-#: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
 msgstr "Vzhľadom na vysoký počet prijatých e-mailov sa môže stať, že vám náš tím nebude môcť okamžite odpovedať."
 
-#: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Duplikáty budú preskočené a zobrazia sa len raz."
 
-#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 msgid "Duration"
 msgstr "Trvanie"
 
-#: src/page/settings/advanced.vue:302
 msgid "Dynamic Previews"
 msgstr "Dynamické Ukážky"
 
-#: src/page/settings/advanced.vue:303
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "Dynamické vykresľovanie vyžaduje výkonný server. Neodporúčame používať na NAS zariadeniach."
 
-#: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Limit dynamickej pamäte: %{n} px"
 
-#: src/page/about/feedback.vue:194
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:82 src/component/photo-viewer.vue:97 src/component/photo/clipboard.vue:111 src/page/settings/general.vue:316
 msgid "Edit"
 msgstr "Upraviť"
 
-#: src/dialog/album/edit.vue:8
 msgid "Edit %{name}"
 msgstr "Upraviť %{name}"
 
-#: src/dialog/service/edit.vue:146
 msgid "Edit Account"
 msgstr "Upraviť učet"
 
-#: src/dialog/photo/edit.vue:54
 msgid "Edit Photo"
 msgstr "Upraviť Fotku"
 
-#: src/dialog/photo/edit/info.vue:183
 msgid "Edited"
 msgstr "Upravené"
 
-#: src/page/settings/account.vue:220 src/page/settings/account.vue:615 src/page/settings/account.vue:219
 msgid "Email"
 msgstr "E-mail"
 
-#: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
 msgstr "Povoliť nové funkcie, ktoré sú momentálne vo vývoji."
 
-#: src/page/settings/advanced.vue:461
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Povolí predvoľby konvertora RAW. Môže znížiť výkon."
 
-#: src/app/routes.js:283 src/component/navigation.vue:391
 msgid "Errors"
 msgstr "Chyby"
 
-#: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "Odhadnúť približnú polohu fotiek bez súradníc."
 
-#: src/page/settings/library.vue:69
 msgid "Estimates"
 msgstr "Odhady"
 
-#: src/options/options.js:368
 msgid "Every two days"
 msgstr "Každé dva dni"
 
-#: src/page/settings/general.vue:207
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Vylúčiť obsah označený ako súkromný z výsledkov vyhľadávania, zdieľaných albumov, štítkov a miest."
 
-#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
 msgstr "Vylúčiť skryté"
 
-#: src/component/navigation.vue:298
 msgid "Expand"
 msgstr "Rozbaliť"
 
-#: src/component/photo/toolbar.vue:139
 msgid "Expand Search"
 msgstr "Rozšírené Hľadanie"
 
-#: src/page/settings/advanced.vue:118
 msgid "Experimental Features"
 msgstr "Experimentálne funkcie"
 
-#: src/dialog/service/edit.vue:249 src/dialog/share.vue:64
 msgid "Expires"
 msgstr "Vyprší"
 
-#: src/dialog/photo/edit/details.vue:405
 msgid "Exposure"
 msgstr "Expozícia"
 
-#: src/dialog/photo/edit/details.vue:455
 msgid "F Number"
 msgstr "F Číslo"
 
-#: src/model/face.js:163
 msgid "Face"
 msgstr "Tvár"
 
-#: src/dialog/photo/edit/info.vue:73
 msgid "Faces"
 msgstr "Tváre"
 
-#: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
 msgstr "Zlyhalo kopírovanie do schránky"
 
-#: src/dialog/share.vue:93
 msgid "Failed removing link"
 msgstr "Zlyhalo odstraňovanie odkazu"
 
-#: src/dialog/share.vue:81
 msgid "Failed updating link"
 msgstr "Zlyhalo aktualizovanie odkazu"
 
-#: src/page/settings/account.vue:165 src/page/settings/account.vue:164
 msgid "Family Name"
 msgstr "Rodinné meno"
 
-#: src/options/options.js:249
 msgid "Fast"
 msgstr "Rýchle"
 
-#: src/dialog/photo/edit/info.vue:94
 msgid "Favorite"
 msgstr "Obľúbený"
 
-#: src/app/routes.js:197 src/component/navigation.vue:227 src/component/navigation.vue:899
 msgid "Favorites"
 msgstr "Obľúbené"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:405
 msgid "Feature Request"
 msgstr "Požiadať o funkciu"
 
-#: src/page/settings/account.vue:817 src/page/settings/account.vue:670
 msgid "Feed"
 msgstr "Kanál"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Spätná väzba"
 
-#: src/dialog/sponsor.vue:24
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Ak máte otázky alebo potrebujete pomoc, kontaktujte nás na adrese hello@photoprism.app."
 
-#: src/options/options.js:420
 msgid "Female"
 msgstr "Žena"
 
-#: src/model/file.js:291
 msgid "File"
 msgstr "Súbor"
 
-#: src/app/routes.js:270
 msgid "File Browser"
 msgstr "Prehliadač Súborov"
 
-#: src/component/photo/toolbar.vue:55
 msgid "File Name"
 msgstr "Názov súboru"
 
-#: src/component/photo/toolbar.vue:56
 msgid "File Size"
 msgstr "Veľkosť súboru"
 
-#: src/dialog/photo/edit/files.vue:65 src/dialog/photo/edit/files.vue:62
 msgid "Filename"
 msgstr "Názov súboru"
 
-#: src/component/navigation.vue:557 src/dialog/photo/edit.vue:65 src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Súbory"
 
-#: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "Súbory s postupnými menami ako napríklad 'IMG_1234 (2)' alebo 'IMG_1234 copy 2' pripadá rovnakej fotke."
 
-#: src/dialog/photo/edit/details.vue:477
 msgid "Focal Length"
 msgstr "Ohnisková Vzdialenosť"
 
-#: src/dialog/photo/edit/info.vue:25 src/dialog/service/edit.vue:287 src/dialog/service/edit.vue:293 src/dialog/share/upload.vue:141 src/model/folder.js:193 src/page/library/browse.vue:72
 msgid "Folder"
 msgstr "Zložka"
 
-#: src/page/library/browse.vue:313
 msgid "Folder contains %{n} files"
 msgstr "Zložka obsahuje %{n} súborov"
 
-#: src/page/library/browse.vue:305
 msgid "Folder is empty"
 msgstr "Zložka je prázdna"
 
-#: src/app/routes.js:177 src/component/navigation.vue:328 src/component/navigation.vue:1254
 msgid "Folders"
 msgstr "Zložky"
 
-#: src/page/login.vue:1
 msgid "Forgot password?"
 msgstr "Zabudnuté heslo?"
 
-#: src/dialog/photo/edit/files.vue:113 src/dialog/photo/edit/files.vue:110
 msgid "FPS"
 msgstr ":abbr:`FPS (Frame Per Second - snímok za sekundu)`"
 
-#: src/dialog/photo/edit/files.vue:107 src/dialog/photo/edit/files.vue:104
 msgid "Frames"
 msgstr "Frames"
 
-#: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr "Plná obrazovka"
 
-#: src/options/themes.js:442
 msgid "Gemstone"
 msgstr "Drahokam"
 
-#: src/page/settings/account.vue:81 src/page/settings/account.vue:80
 msgid "Gender"
 msgstr "Pohlavie"
 
-#: src/page/settings.vue:35
 msgid "General"
 msgstr "Hlavné"
 
-#: src/page/about/about.vue:58
 msgid "Getting Support"
 msgstr "Získanie podpory"
 
-#: src/page/settings/account.vue:139 src/page/settings/account.vue:138
 msgid "Given Name"
 msgstr "Dané meno"
 
-#: src/options/options.js:389
 msgid "Gold"
 msgstr "Zlatá"
 
-#: src/options/themes.js:407
 msgid "Grayscale"
 msgstr "Stupne sivej"
 
-#: src/options/options.js:392
 msgid "Green"
 msgstr "Zelená"
 
-#: src/options/options.js:398
 msgid "Grey"
 msgstr "Sivá"
 
-#: src/component/album/toolbar.vue:70 src/dialog/album/edit.vue:24
-msgid "Group by similarity"
-msgstr "Skupina podľa podobnosti"
-
-#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Hash"
 msgstr "Hash"
 
-#: src/page/help.vue:4
 msgid "Help"
 msgstr "Pomoc"
 
-#: src/app/routes.js:77
 msgid "Help & Support"
 msgstr "Pomoc a podpora"
 
-#: src/component/navigation.vue:382
 msgid "Hidden"
 msgstr "Skryté"
 
-#: src/app/routes.js:276
 msgid "Hidden Files"
 msgstr "Skryté súbory"
 
-#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
 msgid "Hide"
 msgstr "Skryť"
 
-#: src/page/settings/general.vue:339
 msgid "Hide photos that have been moved to archive."
 msgstr "Skryť fotky, ktoré boli presunuté do archívu."
 
-#: src/options/options.js:322
 msgid "High"
 msgstr "Vysoké"
 
-#: src/dialog/photo/edit/files.vue:127 src/dialog/photo/edit/files.vue:124
 msgid "High Dynamic Range (HDR)"
 msgstr "Vysoký dynamický rozsah (HDR)"
 
-#: src/page/about/feedback.vue:151
 msgid "How can we help?"
 msgstr "Ako môžeme pomôcť?"
 
-#: src/dialog/sponsor.vue:36
 msgid "I'm a sponsor"
 msgstr "Som sponzor"
 
-#: src/page/about/about.vue:63
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Ak vám to nepomôže alebo máte ďalšie otázky:"
 
-#: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "obrázok"
 
-#: src/model/file.js:216 src/options/options.js:295
 msgid "Image"
 msgstr "Obrázok"
 
-#: src/page/settings/advanced.vue:56
 msgid "Images"
 msgstr "Obrázky"
 
-#: src/page/library.vue:45 src/page/library/import.vue:43 src/page/settings/general.vue:272
 msgid "Import"
 msgstr "Importovať"
 
-#: src/page/library/import.vue:116
 msgid "Import failed"
 msgstr "Importovanie zlyhalo"
 
-#: src/page/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "Importované súbory budú zoradené podľa dátumu a dostanú unikátny názov aby sa predišlo duplikátom."
 
-#: src/page/settings/general.vue:273
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr "Importované súbory budú zoradené podľa dátumu a dostanú unikátny názov."
 
-#: src/page/library/import.vue:5
 msgid "Importing %{name}…"
 msgstr "Importuje sa %{name}…"
 
-#: src/page/library/import.vue:6
 msgid "Importing files to originals…"
 msgstr "Importujú sa súbory do originálov…"
 
-#: src/dialog/photo/edit/files.vue:192 src/dialog/photo/edit/files.vue:201 src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:198
 msgid "in"
 msgstr "v"
 
-#: src/page/about/about.vue:72
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Okrem toho sponzori dostávajú priamu technickú podporu prostredníctvom e-mailu."
 
-#: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11 src/component/photo/cards.vue:1 src/component/photo/list.vue:13 src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13 src/component/photo/mosaic.vue:11
-#: src/component/photo/mosaic.vue:1 src/page/labels.vue:35 src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "V prípade, že niektoré fotky chýbajú, znova preskenujte svoju knižnicu a počkajte, kým sa indexovanie neukončí."
 
-#: src/component/navigation.vue:563 src/page/library.vue:35 src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Index"
 
-#: src/page/settings/general.vue:405
 msgid "Index and import files through the user interface."
 msgstr "Indexujte a importujte súbory prostredníctvom používateľského rozhrania."
 
-#: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
 msgstr "Indexovanie"
 
-#: src/page/library/index.vue:116
 msgid "Indexing failed"
 msgstr "Indexovanie zlyhalo"
 
-#: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
 msgstr "Indexovanie médií a pripojených súborov…"
 
-#: src/dialog/photo/edit/files.vue:53 src/dialog/photo/edit/files.vue:50
 msgid "Instance ID"
 msgstr "ID Inštancie"
 
-#: src/dialog/service/edit.vue:309
 msgid "Interval"
 msgstr "Interval"
 
-#: src/page/settings/account.vue:90 src/page/settings/account.vue:116 src/page/settings/account.vue:142 src/page/settings/account.vue:168 src/page/settings/account.vue:223 src/page/settings/account.vue:280 src/page/settings/account.vue:564
-#: src/page/settings/account.vue:590 src/page/settings/account.vue:618 src/page/settings/account.vue:646 src/page/settings/account.vue:710 src/page/settings/account.vue:737 src/page/settings/account.vue:764 src/page/settings/account.vue:792
-#: src/page/settings/account.vue:820 src/page/settings/account.vue:89 src/page/settings/account.vue:115 src/page/settings/account.vue:141 src/page/settings/account.vue:167 src/page/settings/account.vue:222 src/page/settings/account.vue:279
-#: src/page/settings/account.vue:563 src/page/settings/account.vue:617 src/page/settings/account.vue:645 src/page/settings/account.vue:673
 msgid "Invalid"
 msgstr "Neplatné"
 
-#: src/dialog/photo/edit/details.vue:112
 msgid "Invalid date"
 msgstr "Neplatný dátum"
 
-#: src/page/connect.vue:42 src/page/connect.vue:48
 msgid "Invalid parameters"
 msgstr "Neplatné parametre"
 
-#: src/dialog/photo/edit.vue:119
 msgid "Invalid photo selected"
 msgstr "Vybraná neplatná fotografia"
 
-#: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr "Využíva najnovšie technológie na automatické označovanie a vyhľadávanie obrázkov bez toho, aby vám prekážali."
 
-#: src/model/rest.js:167
 msgid "Item"
 msgstr "Položka"
 
-#: src/page/settings/advanced.vue:320
 msgid "JPEG Quality: %{n}"
 msgstr "Kvalita JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:426
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limit veľkosti JPEG: %{n} px"
 
-#: src/page/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG a náhľady sú automaticky vykreslené podľa potreby."
 
-#: src/dialog/photo/edit/details.vue:629
 msgid "Keywords"
 msgstr "Kľúčové slová"
 
-#: src/page/about/about.vue:53
 msgid "Knowledge Base"
 msgstr "Báza znalostí"
 
-#: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "Štítok"
 
-#: src/app/routes.js:289 src/component/navigation.vue:315 src/component/navigation.vue:1209 src/dialog/photo/edit.vue:39 src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195 src/page/settings/general.vue:184
 msgid "Labels"
 msgstr "Štítky"
 
-#: src/component/label/clipboard.vue:62
 msgid "Labels deleted"
 msgstr "Štítky odstránené"
 
-#: src/options/options.js:413
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Zachovanie detailov, minimálne artefakty"
 
-#: src/page/settings/general.vue:92
 msgid "Language"
 msgstr "Jazyk"
 
-#: src/page/settings/services.vue:30
 msgid "Last Sync"
 msgstr "Posledná synchronizácia"
 
-#: src/dialog/photo/edit/details.vue:305 src/dialog/photo/edit/info.vue:135
 msgid "Latitude"
 msgstr "Šírka"
 
-#: src/options/themes.js:437
 msgid "Lavender"
 msgstr "Levanduľa"
 
-#: src/page/about/about.vue:55
 msgid "Learn more"
 msgstr "Viac"
 
-#: src/component/navigation.vue:588
 msgid "Legal Information"
 msgstr "Právne informácie"
 
-#: src/dialog/photo/edit/details.vue:425
 msgid "Lens"
 msgstr "Objektív"
 
-#: src/app/routes.js:325 src/app/routes.js:332 src/app/routes.js:339 src/component/navigation.vue:354 src/component/navigation.vue:364 src/component/navigation.vue:4 src/component/navigation.vue:1346 src/page/settings.vue:47
-#: src/page/settings/general.vue:404
 msgid "Library"
 msgstr "Knižnica"
 
-#: src/component/navigation.vue:440 src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:580 src/page/about/license.vue:4
 msgid "License"
 msgstr "Licencia"
 
-#: src/component/photo-viewer.vue:144
 msgid "Like"
 msgstr "Páči sa mi to"
 
-#: src/options/options.js:391
 msgid "Lime"
 msgstr "Limetka"
 
-#: src/page/library/browse.vue:315
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limit bol dosiahnutý, zobrazovanie prvých %{n} súborov"
 
-#: src/options/options.js:415
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineárne: Veľmi hladké, Najlepší výkon"
 
-#: src/model/link.js:115
 msgid "Link"
 msgstr "Odkaz"
 
-#: src/component/album/toolbar.vue:60 src/component/photo/toolbar.vue:47
 msgid "List"
 msgstr "List"
 
-#: src/app/routes.js:204 src/component/photo/cards.vue:292 src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214 src/options/options.js:307
 msgid "Live"
 msgstr "Živé"
 
-#: src/component/navigation.vue:200
 msgid "Live Photos"
 msgstr "Živé fotografie"
 
-#: src/dialog/photo/edit/details.vue:193 src/options/options.js:10
 msgid "Local Time"
 msgstr "Lokálny čas"
 
-#: src/dialog/photo/edit/labels.vue:39
 msgid "location"
 msgstr "poloha"
 
-#: src/page/settings/account.vue:707 src/component/photo/cards.vue:512 src/component/photo/list.vue:138 src/dialog/album/edit.vue:125 src/page/settings/account.vue:560
 msgid "Location"
 msgstr "Poloha"
 
-#: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Správy denníka sa tu zobrazia vždy, keď program PhotoPrism narazí na poškodené súbory alebo sa vyskytnú iné potenciálne problémy."
 
-#: src/component/navigation.vue:454 src/component/navigation.vue:1686 src/component/navigation.vue:1960
 msgid "Login"
 msgstr "Prihlásiť sa"
 
-#: src/component/navigation.vue:501 src/component/navigation.vue:1797 src/component/navigation.vue:1828 src/component/navigation.vue:1879
 msgid "Logout"
 msgstr "Odhlásiť sa"
 
-#: src/component/navigation.vue:569 src/page/library.vue:58 src/page/settings/general.vue:448
 msgid "Logs"
 msgstr "Záznamy"
 
-#: src/dialog/photo/edit/details.vue:331 src/dialog/photo/edit/info.vue:143
 msgid "Longitude"
 msgstr "Dĺžka"
 
-#: src/options/options.js:326
 msgid "Low"
 msgstr "Nízka"
 
-#: src/options/options.js:385
 msgid "Magenta"
 msgstr "Purpurová"
 
-#: src/dialog/photo/edit/files.vue:169 src/dialog/photo/edit/files.vue:166
 msgid "Main Color"
 msgstr "Hlavná Farba"
 
-#: src/options/options.js:419
 msgid "Male"
 msgstr "Muž"
 
-#: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "manuálne"
 
-#: src/dialog/service/edit.vue:53
 msgid "Manual Upload"
 msgstr "Manuálne odovzdanie"
 
-#: src/page/settings/general.vue:556
 msgid "Maps"
 msgstr "Mapy"
 
-#: src/model/marker.js:146
 msgid "Marker"
 msgstr "Značka"
 
-#: src/options/options.js:253
 msgid "Medium"
 msgstr "Normálne"
 
-#: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
 msgstr "Zlúčiť %{a} s %{b}?"
 
-#: src/page/about/feedback.vue:34 src/page/about/feedback.vue:27
 msgid "Message sent"
 msgstr "Správa odoslaná"
 
-#: src/component/navigation.vue:251
 msgid "Minimize"
 msgstr "Minimalizovať"
 
-#: src/dialog/photo/edit/files.vue:181 src/dialog/photo/edit/files.vue:178
 msgid "Missing"
 msgstr "Chýba"
 
-#: src/app/routes.js:138 src/component/navigation.vue:240 src/component/navigation.vue:944 src/page/settings/general.vue:162
 msgid "Moments"
 msgstr "Momenty"
 
-#: src/component/navigation.vue:85
 msgid "Monochrome"
 msgstr "Monochromatický"
 
-#: src/page/settings/account.vue:469 src/component/photo/toolbar.vue:291 src/dialog/photo/edit/details.vue:142 src/page/settings/account.vue:468
 msgid "Month"
 msgstr "Mesiac"
 
-#: src/options/themes.js:422
 msgid "Moonlight"
 msgstr "Mesačný svit"
 
-#: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Našlo sa viac ako %{n} obrázkov"
 
-#: src/page/albums.vue:424
 msgid "More than 20 albums found"
 msgstr "Našlo sa viac ako 20 albumov"
 
-#: src/page/labels.vue:425
 msgid "More than 20 labels found"
 msgstr "Našlo sa viac ako 20 štítkov"
 
-#: src/page/people/recognized.vue:511
 msgid "More than 20 people found"
 msgstr "Našlo sa viac ako 20 ľudí"
 
-#: src/component/album/toolbar.vue:58 src/component/photo/toolbar.vue:45
 msgid "Mosaic"
 msgstr "Mozaika"
 
-#: src/component/album/toolbar.vue:71 src/dialog/album/edit.vue:25
-msgid "Most relevant"
-msgstr "Najrelevantnejšie"
-
-#: src/component/photo/toolbar.vue:53
 msgid "Most Relevant"
 msgstr "Najrelevantnejšie"
 
-#: src/page/library/import.vue:119
 msgid "Move Files"
 msgstr "Presunúť Súbory"
 
-#: src/dialog/account/password.vue:156
 msgid "Must have at least 8 characters."
 msgstr "Musí obsahovať aspoň 8 znakov."
 
-#: src/page/about/feedback.vue:171 src/component/photo/cards.vue:500 src/component/photo/list.vue:138 src/component/photo/list.vue:227 src/dialog/album/edit.vue:104 src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
-#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427 src/page/labels.vue:339 src/page/login.vue:77
-#: src/page/login.vue:81 src/page/people/new.vue:52 src/page/people/new.vue:299 src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Meno"
 
-#: src/component/album/toolbar.vue:79 src/dialog/album/edit.vue:28 src/dialog/photo/edit/labels.vue:25 src/dialog/photo/edit/people.vue:24 src/page/labels.vue:45 src/page/library/browse.vue:44 src/page/people/new.vue:46
-#: src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Meno je príliš dlhé"
 
-#: src/options/options.js:363 src/options/options.js:373 src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Nikdy"
 
-#: src/page/people.vue:29
 msgid "New"
 msgstr "Nový"
 
-#: src/dialog/account/password.vue:153
 msgid "New Password"
 msgstr "Nové heslo"
 
-#: src/component/album/toolbar.vue:67 src/dialog/album/edit.vue:21
-msgid "Newest first"
-msgstr "Nové navrch"
-
-#: src/component/photo/toolbar.vue:51
 msgid "Newest First"
 msgstr "Najnovšie prvé"
 
-#: src/dialog/people/merge.vue:15 src/dialog/photo/archive.vue:15 src/dialog/photo/edit/info.vue:259 src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301 src/dialog/photo/edit/info.vue:322 src/dialog/photo/edit/info.vue:342
 msgid "No"
 msgstr "Nie"
 
-#: src/page/albums.vue:35 src/page/albums.vue:417
 msgid "No albums found"
 msgstr "Nenašli sa žiadne albumy"
 
-#: src/dialog/photo/edit/labels.vue:28 src/page/labels.vue:31 src/page/labels.vue:418
 msgid "No labels found"
 msgstr "Nenašli sa žiadne štítky"
 
-#: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29 src/page/people/new.vue:282 src/page/people/new.vue:368 src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
 msgid "No people found"
 msgstr "Neboli nájdení žiadny ľudia"
 
-#: src/common/viewer.js:263 src/component/photo/cards.vue:8 src/component/photo/cards.vue:6 src/component/photo/list.vue:8 src/component/photo/mosaic.vue:8 src/component/photo/mosaic.vue:6 src/page/album/photos.vue:389
-#: src/page/library/browse.vue:34 src/page/photos.vue:486 src/page/places.vue:225 src/page/places.vue:287
 msgid "No pictures found"
 msgstr "Nenašli sa žiadne fotky"
 
-#: src/component/photo/cards.vue:5 src/component/photo/cards.vue:3 src/component/photo/list.vue:5 src/component/photo/mosaic.vue:5 src/component/photo/mosaic.vue:3
 msgid "No recently edited pictures"
 msgstr "Žiadne nedávno upravené fotky"
 
-#: src/dialog/share/upload.vue:66
 msgid "No servers configured."
 msgstr "Žiadne nakonfigurované servery."
 
-#: src/page/settings/services.vue:36
 msgid "No services configured."
 msgstr "Nie sú nakonfigurované žiadne služby."
 
-#: src/dialog/sponsor.vue:31
 msgid "No thanks"
 msgstr "Nie, ďakujem"
 
-#: src/component/photo-viewer.vue:97 src/dialog/video/viewer.vue:55
 msgid "No video selected"
 msgstr "Nie je vybrané žiadne video"
 
-#: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr "Nenašli sa žiadne upozornenia ani chyby ktoré by obsahovali toto kľúčové slovo. Majte na vedomí, že vyhľadávanie je citlivé na veľké a malé písmená."
 
-#: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13 src/component/photo/cards.vue:3 src/component/photo/cards.vue:1 src/component/photo/list.vue:15 src/component/photo/list.vue:3 src/component/photo/list.vue:1
-#: src/component/photo/list.vue:52 src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13 src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50 src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Nefotografické a fotografie nízkej kvality vyžadujú skontrolovanie pred tým než sa zobrazia vo výsledkoch vyhľadávania."
 
-#: src/options/options.js:245 src/options/options.js:330
 msgid "None"
 msgstr "Žiadne"
 
-#: src/model/thumb.js:70
 msgid "Not Found"
 msgstr "Nebolo Nájdené"
 
-#: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr "Upozorňujeme, že priečinok s originálmi by ste mali spravovať ručne a import je voliteľný."
 
-#: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Poznámka:"
 
-#: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "Poznámka: Iba WebDAV servery, ako napríklad Nextcloud alebo PhotoPrism, môžu byť nakonfigurované ako vzdialené služby pre zálohu a odovzdávanie súborov."
 
-#: src/dialog/photo/edit/details.vue:654
 msgid "Notes"
 msgstr "Poznámky"
 
-#: src/page/library/logs.vue:5
 msgid "Nothing to see here yet."
 msgstr "Zatiaľ tu nič nie je. Buďte trpezlivý."
 
-#: src/component/navigation.vue:470 src/component/navigation.vue:1731
 msgid "Offline"
 msgstr "Offline"
 
-#: src/component/album/toolbar.vue:68 src/dialog/album/edit.vue:22
-msgid "Oldest first"
-msgstr "Najstaršie navrch"
-
-#: src/component/photo/toolbar.vue:52
 msgid "Oldest First"
 msgstr "Najstaršie prvé"
 
-#: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "V systéme Windows zadajte do dialógového okna pripojenia nasledujúci zdroj:"
 
-#: src/options/options.js:369
 msgid "Once a week"
 msgstr "Raz za týždeň"
 
-#: src/page/albums.vue:419
 msgid "One album found"
 msgstr "Našiel sa jeden album"
 
-#: src/page/library/browse.vue:307
 msgid "One file found"
 msgstr "Našiel sa jeden súbor"
 
-#: src/dialog/share/upload.vue:79
 msgid "One file uploaded"
 msgstr "Jeden nahraný súbor"
 
-#: src/page/library/browse.vue:309
 msgid "One folder found"
 msgstr "Našla sa jedna zložka"
 
-#: src/page/labels.vue:420
 msgid "One label found"
 msgstr "Našiel sa jeden štítok"
 
-#: src/page/people/new.vue:284 src/page/people/new.vue:370 src/page/people/recognized.vue:506
 msgid "One person found"
 msgstr "Našla sa jedna osoba"
 
-#: src/page/album/photos.vue:391 src/page/photos.vue:488
 msgid "One picture found"
 msgstr "Našla sa jedna fotka"
 
-#: src/options/themes.js:427
 msgid "Onyx"
 msgstr "Onyx"
 
-#: src/page/settings/advanced.vue:6
 msgid "Options"
 msgstr "Nastavenia"
 
-#: src/page/about/about.vue:69
 msgid "or ask in our Community Chat"
 msgstr "alebo sa opýtajte v našom komunitnom chate"
 
-#: src/options/options.js:388
 msgid "Orange"
 msgstr "Oranžová"
 
-#: src/page/settings/account.vue:587
 msgid "Organization"
 msgstr "Názov organizácie"
 
-#: src/dialog/photo/edit/files.vue:155 src/dialog/photo/edit/files.vue:152
 msgid "Orientation"
 msgstr "Orientácie"
 
-#: src/page/library/import.vue:27
 msgid "Original file names will be stored and indexed."
 msgstr "Pôvodné názvy súborov budú uložené a zaindexované."
 
-#: src/dialog/photo/edit/files.vue:77 src/dialog/photo/edit/files.vue:74 src/dialog/photo/edit/info.vue:37
 msgid "Original Name"
 msgstr "Pôvodný názov"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107 src/model/file.js:194 src/page/library/browse.vue:6 src/page/settings/general.vue:426
 msgid "Originals"
 msgstr "Pôvodné"
 
-#: src/options/options.js:408 src/options/options.js:421
 msgid "Other"
 msgstr "Ostatné"
 
-#: src/page/about/about.vue:48
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Naša používateľská príručka sa zaoberá aj mnohými pokročilými témami, ako je napríklad migrácia z aplikácie Fotky Google a nastavenia kvality miniatúr."
 
-#: src/options/options.js:282
 msgid "Outdoor"
 msgstr "Vonkajšie"
 
-#: src/dialog/photo/edit/info.vue:118
 msgid "Panorama"
 msgstr "Panoráma"
 
-#: src/component/navigation.vue:93
 msgid "Panoramas"
 msgstr "Panorámy"
 
-#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487 src/dialog/share.vue:24 src/page/login.vue:98 src/page/login.vue:100
 msgid "Password"
 msgstr "Heslo"
 
-#: src/dialog/account/password.vue:30
 msgid "Password changed"
 msgstr "Heslo bolo zmenené"
 
-#: src/app/routes.js:295 src/app/routes.js:319 src/component/navigation.vue:214 src/component/navigation.vue:545 src/component/navigation.vue:854 src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:246
-#: src/page/settings/general.vue:140
 msgid "People"
 msgstr "Ľudia"
 
-#: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
 msgstr "Ľudia s ktorými zdieľate odkaz, budú vidieť verejný obsah."
 
-#: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
 msgstr "Trvalo odstránené"
 
-#: src/page/settings/general.vue:361
 msgid "Permanently remove files to free up storage."
 msgstr "Trvalo odstráňte súbory aby ste uvoľnili miesto."
 
-#: src/page/settings/account.vue:761 src/page/settings/account.vue:614
 msgid "Phone"
 msgstr "Telefón"
 
-#: src/model/photo.js:1057
 msgid "Photo"
 msgstr "Fotka"
 
-#: src/dialog/reload.vue:4
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism bol aktualizovaný…"
 
-#: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism® je aplikácia pre decentralizovaný web, ktorá využíva umelú inteligenciu."
 
-#: src/app/routes.js:131
 msgid "Photos"
 msgstr "Fotky"
 
-#: src/options/options.js:386
 msgid "Pink"
 msgstr "Ružová"
 
-#: src/dialog/photo/edit/info.vue:126
 msgid "Place"
 msgstr "Miesto"
 
-#: src/page/settings/library.vue:171
 msgid "Place & Time"
 msgstr "Miesto a čas"
 
-#: src/app/routes.js:239 src/app/routes.js:245 src/app/routes.js:251 src/app/routes.js:257 src/component/navigation.vue:280 src/component/navigation.vue:290 src/component/navigation.vue:551 src/component/navigation.vue:8
-#: src/component/navigation.vue:18 src/component/navigation.vue:4 src/component/navigation.vue:1089 src/page/settings/general.vue:118 src/page/settings/general.vue:494
 msgid "Places"
 msgstr "Miesta"
 
-#: src/dialog/account/password.vue:182
 msgid "Please confirm your new password."
 msgstr "Prosím, potvrďte vaše nové heslo."
 
-#: src/dialog/upload.vue:45
 msgid "Please don't upload photos containing offensive content."
 msgstr "Prosím, neodovzdávajte fotky obsahujúce hanobný obsah."
 
-#: src/dialog/account/password.vue:17
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Upozorňujeme, že zmena hesla vás odhlási z iných zariadení a prehliadačov."
 
-#: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "Portrét"
 
-#: src/page/about/about.vue:68
 msgid "post your question in GitHub Discussions"
 msgstr "napíšte svoju otázku do Diskusie na GitHube"
 
-#: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr "Ponechať názvy súborov"
 
-#: src/page/library/import.vue:8
 msgid "Press button to start importing…"
 msgstr "Kliknite pre začatie importovania…"
 
-#: src/page/library/index.vue:9
 msgid "Press button to start indexing…"
 msgstr "Kliknite pre začatie indexovania…"
 
-#: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
 msgstr "Stlačte enter pre vytvorenie nového albumu."
 
-#: src/dialog/photo/edit/files.vue:19 src/dialog/photo/edit/files.vue:16
 msgid "Preview"
 msgstr "Ukážka"
 
-#: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:119 src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:116 src/dialog/photo/edit/files.vue:28
 msgid "Primary"
 msgstr "Primárne"
 
-#: src/app/routes.js:225 src/component/navigation.vue:341 src/component/navigation.vue:1299 src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:206
 msgid "Private"
 msgstr "Súkromné"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:404
 msgid "Product Feedback"
 msgstr "Spätná väzba produktu"
 
-#: src/dialog/photo/edit/files.vue:143 src/dialog/photo/edit/files.vue:140
 msgid "Projection"
 msgstr "Projekcia"
 
-#: src/options/options.js:384
 msgid "Purple"
 msgstr "Fialová"
 
-#: src/page/settings/library.vue:90
 msgid "Quality Filter"
 msgstr "Filter kvality"
 
-#: src/dialog/photo/edit/info.vue:59
 msgid "Quality Score"
 msgstr "Skóre Kvality"
 
-#: src/page/discover.vue:16
 msgid "Random"
 msgstr "Náhodne"
 
-#: src/options/themes.js:447
 msgid "Raspberry"
 msgstr "Malina"
 
-#: src/options/options.js:303
 msgid "Raw"
 msgstr "Raw"
 
-#: src/component/photo/cards.vue:285 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "RAW"
 
-#: src/page/settings/advanced.vue:96
 msgid "RAW Conversion"
 msgstr "Konverzia súborov RAW"
 
-#: src/page/library/index.vue:116
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Re-indexujte všetky originály, aj tie ktoré už sú zaindexované a nezmenené súbory."
 
-#: src/page/about/about.vue:51
 msgid "Read the Docs"
 msgstr "Prečítajte si dokumenty"
 
-#: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
 msgstr "Režim iba na čítanie"
 
-#: src/component/album/toolbar.vue:65 src/dialog/album/edit.vue:19
-msgid "Recently added"
-msgstr "Nedávno pridané"
-
-#: src/component/photo/toolbar.vue:50
 msgid "Recently Added"
 msgstr "Novinky"
 
-#: src/component/album/toolbar.vue:66 src/dialog/album/edit.vue:20
-msgid "Recently edited"
-msgstr "Nedávno upravené"
-
-#: src/component/photo/toolbar.vue:58
 msgid "Recently Edited"
 msgstr "Nedávno upravené"
 
-#: src/dialog/photo/edit/people.vue:9 src/page/people/new.vue:33 src/page/people/recognized.vue:40
 msgid "Recognition starts after indexing has been completed."
 msgstr "Rozpoznávanie sa začne po dokončení indexovania."
 
-#: src/page/people.vue:17
 msgid "Recognized"
 msgstr "Rozpoznané"
 
-#: src/page/settings/general.vue:141
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Rozpoznáva tváre, aby bolo možné nájsť konkrétne osoby."
 
-#: src/options/options.js:387
 msgid "Red"
 msgstr "Červená"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1893 src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12 src/page/albums.vue:126 src/page/labels.vue:85 src/page/library/browse.vue:91 src/page/library/errors.vue:70
-#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
 msgid "Reload"
 msgstr "Znovu načítať"
 
-#: src/component/navigation.vue:124 src/dialog/reload.vue:26 src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Znovu načítavanie…"
 
-#: src/dialog/service/edit.vue:98
 msgid "Remote Sync"
 msgstr "Vzdialená Synchronizácia"
 
-#: src/dialog/photo/edit/people.vue:103
 msgid "Remove"
 msgstr "Odstrániť"
 
-#: src/component/photo/clipboard.vue:159
 msgid "remove failed: unknown album"
 msgstr "odstránenie zlyhalo: neznámy album"
 
-#: src/component/photo/clipboard.vue:249
 msgid "Remove from album"
 msgstr "Odstrániť z albumu"
 
-#: src/page/library/import.vue:120
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "Odstráňte importované súbory pre uvoľnenie miesta. Nepodporované typy súborov nebudú nikdy odstránené. Zostanú na ich momentálnom mieste."
 
-#: src/common/api.js:74 src/page/connect.vue:38
 msgid "Request failed - invalid response"
 msgstr "Požiadavka zlyhala - neplatná odozva"
 
-#: src/page/about/feedback.vue:130 src/page/about/feedback.vue:150 src/page/about/feedback.vue:192 src/page/settings/account.vue:195 src/page/settings/account.vue:194
 msgid "Required"
 msgstr "Požadované"
 
-#: src/dialog/photo/edit/info.vue:67
 msgid "Resolution"
 msgstr "Rozlíšenie"
 
-#: src/component/photo/clipboard.vue:227
 msgid "Restore"
 msgstr "Obnoviť"
 
-#: src/dialog/service/edit.vue:572
 msgid "Retry Limit"
 msgstr "Limit opakovania"
 
-#: src/dialog/account/password.vue:179
 msgid "Retype Password"
 msgstr "Heslo znovu"
 
-#: src/app/routes.js:218 src/component/navigation.vue:125
 msgid "Review"
 msgstr "Kontrola"
 
-#: src/options/options.js:277
 msgid "Satellite"
 msgstr "Satelitná"
 
-#: src/dialog/account/password.vue:39 src/dialog/album/edit.vue:45 src/dialog/service/edit.vue:107 src/dialog/share.vue:61
 msgid "Save"
 msgstr "Uložiť"
 
-#: src/dialog/photo/edit/info.vue:110
 msgid "Scan"
 msgstr "Sken"
 
-#: src/component/navigation.vue:117
 msgid "Scans"
 msgstr "Skeny"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75 src/component/navigation.vue:533 src/component/navigation.vue:4 src/component/navigation.vue:330 src/component/photo/toolbar.vue:44 src/page/albums.vue:96 src/page/labels.vue:72
-#: src/page/library/errors.vue:59 src/page/people/recognized.vue:78 src/page/places.vue:38
 msgid "Search"
 msgstr "Vyhľadávanie"
 
-#: src/page/settings/general.vue:495
 msgid "Search and display photos on a map."
 msgstr "Nájsť a zobraziť fotky na mape."
 
-#: src/page/discover.vue:12
 msgid "Season"
 msgstr "Sezóna"
 
-#: src/options/themes.js:452
 msgid "Seaweed"
 msgstr "Morské riasy"
 
-#: src/dialog/share.vue:205
 msgid "Secret"
 msgstr "Tajomstvo"
 
-#: src/page/settings/account.vue:44
 msgid "Security and Access"
 msgstr "Bezpečnosť a prístup"
 
-#: src/component/photo-viewer.vue:114
 msgid "Select"
 msgstr "Vybrať"
 
-#: src/dialog/upload.vue:124
 msgid "Select albums or create a new one"
 msgstr "Označte albumy alebo vytvorte nové"
 
-#: src/component/photo/clipboard.vue:71
 msgid "Selection approved"
 msgstr "Označenie schválené"
 
-#: src/component/photo/clipboard.vue:100
 msgid "Selection archived"
 msgstr "Označenie archivované"
 
-#: src/component/photo/clipboard.vue:133
 msgid "Selection restored"
 msgstr "Označenie obnovené"
 
-#: src/page/about/feedback.vue:45
 msgid "Send"
 msgstr "Odoslať"
 
-#: src/page/settings/library.vue:213
 msgid "Sequential Name"
 msgstr "Poradové meno"
 
-#: src/dialog/service/add.vue:82 src/dialog/service/edit.vue:447 src/dialog/share.vue:22
 msgid "Service URL"
 msgstr "URL Služby"
 
-#: src/page/settings.vue:71 src/page/settings/general.vue:382
 msgid "Services"
 msgstr "Služby"
 
-#: src/app/routes.js:347 src/app/routes.js:359 src/app/routes.js:372 src/app/routes.js:385 src/app/routes.js:397 src/component/navigation.vue:405 src/component/navigation.vue:415 src/component/navigation.vue:8 src/component/navigation.vue:18
-#: src/component/navigation.vue:4 src/component/navigation.vue:1520 src/component/navigation.vue:1926
 msgid "Settings"
 msgstr "Nastavenia"
 
-#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 msgid "Settings saved"
 msgstr "Nastavenia uložené"
 
-#: src/dialog/share/upload.vue:32
 msgid "Setup"
 msgstr "Prvotné nastavenie"
 
-#: src/options/themes.js:457
 msgid "Shadow"
 msgstr "Tieň"
 
-#: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101 src/component/photo/clipboard.vue:65 src/page/settings/general.vue:294
 msgid "Share"
 msgstr "Zdieľať"
 
-#: src/dialog/share.vue:7
 msgid "Share %{name}"
 msgstr "Zdieľať %{name}"
 
-#: src/page/settings/general.vue:383
 msgid "Share your pictures with other apps and services."
 msgstr "Zdieľajte svoje obrázky s inými aplikáciami a službami."
 
-#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
 msgstr "Zobraziť"
 
-#: src/page/people/new.vue:65
 msgid "Show all new faces"
 msgstr "Zobraziť všetky nové tváre"
 
-#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
 msgid "Show hidden"
 msgstr "Zobraziť skryté"
 
-#: src/page/labels.vue:120
 msgid "Show less"
 msgstr "Zobraziť menej"
 
-#: src/page/labels.vue:103
 msgid "Show more"
 msgstr "Zobraziť viac"
 
-#: src/page/settings/general.vue:449
 msgid "Show server logs in Library."
 msgstr "Zobraziť serverové záznamy v knižnici."
 
-#: src/page/settings/advanced.vue:75
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Zobrazí podrobnejšie správy denníka. Vyžaduje reštart."
 
-#: src/model/file.js:212
 msgid "Sidecar"
 msgstr "Pripojený súbor (sidecar)"
 
-#: src/page/login.vue:17
 msgid "Sign in"
 msgstr "Prihlásiť sa"
 
-#: src/dialog/sponsor.vue:39
 msgid "Sign Up"
 msgstr "Registrovať sa"
 
-#: src/page/discover.vue:8
 msgid "Similar"
 msgstr "Podobné"
 
-#: src/dialog/photo/edit/files.vue:83 src/dialog/photo/edit/files.vue:80 src/dialog/photo/edit/files.vue:36 src/dialog/service/edit.vue:226
 msgid "Size"
 msgstr "Veľkosť"
 
-#: src/options/options.js:257
 msgid "Slow"
 msgstr "Pomalé"
 
-#: src/component/album/toolbar.vue:69 src/dialog/album/edit.vue:23
-msgid "Sort by file name"
-msgstr "Zoradiť podľa názvu súboru"
-
-#: src/component/photo/toolbar.vue:247 src/dialog/album/edit.vue:189
 msgid "Sort Order"
 msgstr "Zoradiť Poradie"
 
-#: src/dialog/photo/edit/labels.vue:21
 msgid "Source"
 msgstr "Zdroj"
 
-#: src/page/about/about.vue:25
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
 msgstr "Sponzori získajú prístup k ďalším funkciám, dostanú priamu technickú podporu prostredníctvom e-mailu a môžu sa pripojiť k našej súkromnej chatovacej miestnosti na stránke matrix.org."
 
-#: src/component/photo/cards.vue:315 src/component/photo/mosaic.vue:240
 msgid "Stack"
 msgstr "Naskladané fotky"
 
-#: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "Naskladané súbory zdieľajúce rovnaký jedinečný obrázok alebo identifikátor inštancie."
 
-#: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Naskladané fotky nasnímané v rovnakom čase a na rovnakom mieste na základe ich metadát."
 
-#: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
 msgstr "Naskladateľné"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
 msgid "Stacks"
 msgstr "Naskladané"
 
-#: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr "Naskladá skupinové súbory s podobným referenčným rámcom, ale s rozdielmi v kvalite, formáte, veľkosti alebo farbe."
 
-#: src/page/library/index.vue:31
 msgid "Start"
 msgstr "Štart"
 
-#: src/component/photo-viewer.vue:181
 msgid "Start/Stop Slideshow"
 msgstr "Spustiť/Zastaviť Prezentáciu"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300 src/component/navigation.vue:28 src/component/navigation.vue:1036
 msgid "States"
 msgstr "Štáty"
 
-#: src/page/settings/advanced.vue:371
 msgid "Static Size Limit: %{n}px"
 msgstr "Statický limit veľkosti: %{n} px"
 
-#: src/dialog/photo/edit/files.vue:38
 msgid "Status"
 msgstr "Status"
 
-#: src/dialog/photo/edit/files.vue:71 src/dialog/photo/edit/files.vue:68
 msgid "Storage"
 msgstr "Úložisko"
 
-#: src/options/options.js:272
 msgid "Streets"
 msgstr "Ulice"
 
-#: src/dialog/photo/edit/details.vue:503 src/model/subject.js:157
 msgid "Subject"
 msgstr "Predmet"
 
-#: src/page/connect.vue:33
 msgid "Successfully Connected"
 msgstr "Úspešne pripojené"
 
-#: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Podpora pre dodatočné služby, ako napríklad Google Drive, budú pridané neskôr."
 
-#: src/page/settings/services.vue:28
 msgid "Sync"
 msgstr "Synchronizácia"
 
-#: src/dialog/service/edit.vue:399
 msgid "Sync raw and video files"
 msgstr "Synchronizovať súbory raw a videá"
 
-#: src/component/photo/cards.vue:463 src/component/photo/list.vue:136 src/dialog/photo/edit/info.vue:52
 msgid "Taken"
 msgstr "Zachytené"
 
-#: src/options/options.js:393
 msgid "Teal"
 msgstr "Modrozelený"
 
-#: src/page/about/about.vue:37
-msgid "Terms &amp; Privacy"
-msgstr "Podmienky &amp; Ochrana osobných údajov"
-
-#: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Text je moc dlhý"
 
-#: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Index momentálne obsahuje %{n} skrytých súborov."
 
-#: src/page/library/index.vue:37
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "Ich formát nemusí byť podporovaný, zatiaľ neboli prekonvertované na JPEG alebo sú medzi nimi duplikáty."
 
-#: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Téma"
 
-#: src/dialog/sponsor.vue:17
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr "Ide o funkciu s predčasným prístupom, ktorou sa chceme poďakovať našim sponzorom a prispievateľom."
 
-#: src/page/settings/services.vue:40
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr "Toto pripojí zložku originálov ako sieťový disk a umožní vám otvoriť, upraviť a zmazať súbory z vášho počítača alebo smartphonu ako keby boli uložené lokálne."
 
-#: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Toto pripojí zložku originálov ako sieťový disk a umožní vám otvoriť, upraviť a zmazať súbory z vášho počítača alebo smartphonu ako keby boli uložené lokálne."
 
-#: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
 msgstr "Generovanie miniatúr"
 
-#: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
 msgstr "Čas UTC"
 
-#: src/dialog/photo/edit/details.vue:219
 msgid "Time Zone"
 msgstr "Časová Zóna"
 
-#: src/dialog/service/edit.vue:550
 msgid "Timeout"
 msgstr "Časový limit"
 
-#: src/page/settings/account.vue:113 src/component/photo/list.vue:135 src/dialog/photo/edit/details.vue:95 src/dialog/photo/edit/info.vue:45 src/page/settings/account.vue:112
 msgid "Title"
 msgstr "Titulok"
 
-#: src/page/settings/account.vue:561
 msgid "Title / Position"
 msgstr "Titul / pozícia"
 
-#: src/page/albums.vue:62
 msgid "Title too long"
 msgstr "Titulok je moc dlhý"
 
-#: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157 src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71 src/component/photo/toolbar.vue:88 src/component/photo/toolbar.vue:104
 msgid "Toggle View"
 msgstr "Nastaviť Pohľad"
 
-#: src/dialog/share.vue:206
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:287
 msgid "Topographic"
 msgstr "Topografický"
 
-#: src/page/library/errors.vue:107
 msgid "Troubleshooting Checklists"
 msgstr "Kontrolné zoznamy na riešenie problémov"
 
-#: src/component/photo/cards.vue:11 src/component/photo/cards.vue:9 src/component/photo/list.vue:11 src/component/photo/list.vue:49 src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:9 src/page/albums.vue:38 src/page/labels.vue:34
-#: src/page/people/recognized.vue:38
 msgid "Try again using other filters or keywords."
 msgstr "Skúste znova použitím iných filtrov a kľúčových slov."
 
-#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86 src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15 src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "Typ"
 
-#: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
 msgstr "Späť"
 
-#: src/page/settings/library.vue:192
 msgid "Unique ID"
 msgstr "Unikátne ID"
 
-#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24 src/model/album.js:179 src/model/photo.js:697 src/model/photo.js:718 src/model/photo.js:741 src/model/photo.js:759 src/model/photo.js:849 src/model/photo.js:862
-#: src/options/options.js:20 src/options/options.js:34 src/options/options.js:51 src/options/options.js:65 src/options/options.js:77 src/page/library/errors.vue:173 src/page/library/errors.vue:180 src/page/library/logs.vue:18
 msgid "Unknown"
 msgstr "Neznámy"
 
-#: src/page/settings/account.vue:35 src/page/settings/account.vue:43 src/component/navigation.vue:82 src/model/user.js:130
 msgid "Unregistered"
 msgstr "Neregistrovaný"
 
-#: src/app/routes.js:190 src/component/navigation.vue:167
 msgid "Unsorted"
 msgstr "Nezoradené"
 
-#: src/dialog/photo/edit/files.vue:38 src/dialog/photo/edit/files.vue:35
 msgid "Unstack"
 msgstr "Rozdeliť naskladané"
 
-#: src/dialog/photo/edit/files.vue:198 src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/info.vue:175
 msgid "Updated"
 msgstr "Aktualizované"
 
-#: src/page/library/index.vue:151
 msgid "Updating faces"
 msgstr "Aktualizujú sa tváre"
 
-#: src/page/library/index.vue:155
 msgid "Updating index"
 msgstr "Aktualizuje sa index"
 
-#: src/page/library/index.vue:149
 msgid "Updating moments"
 msgstr "Aktualizujú sa momenty"
 
-#: src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Aktualizácia obrázku.."
 
-#: src/page/library/index.vue:153
 msgid "Updating previews"
 msgstr "Aktualizujú sa náhľady"
 
-#: src/page/library/index.vue:147
 msgid "Updating stacks"
 msgstr "Aktualizujú sa naskladané fotky"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1944 src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35 src/dialog/upload.vue:8 src/dialog/upload.vue:54 src/page/albums.vue:144 src/page/library/import.vue:38
-#: src/page/settings/general.vue:228 src/page/settings/services.vue:27
 msgid "Upload"
 msgstr "Odovzdať"
 
-#: src/dialog/upload.vue:160
 msgid "Upload complete"
 msgstr "Odovzdávanie hotové"
 
-#: src/dialog/upload.vue:38
 msgid "Upload complete. Indexing…"
 msgstr "Odovzdávanie hotové. Indexuje sa…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:164
 msgid "Upload failed"
 msgstr "Odovzdávanie zlyhalo"
 
-#: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Odovzdať lokálne súbory"
 
-#: src/page/settings/general.vue:295
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Odovzdať do WebDAV a zdieľať odkazy s priateľmi."
 
-#: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
 msgstr "Odovzdáva sa %{n} z %{t}…"
 
-#: src/dialog/upload.vue:60 src/dialog/upload.vue:68 src/dialog/upload.vue:115
 msgid "Uploading photos…"
 msgstr "Odovzdávanie fotiek…"
 
-#: src/page/settings/account.vue:124
 msgid "Uploading…"
 msgstr "Nahrávanie.."
 
-#: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Odovzdávanie takéhoto typu fotiek bude automaticky odmietnuté."
 
-#: src/dialog/share.vue:153
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:460
 msgid "Use Presets"
 msgstr "Použiť predvoľbu"
 
-#: src/model/user.js:211
 msgid "User"
 msgstr "Používateľ"
 
-#: src/page/about/about.vue:23 src/component/navigation.vue:580 src/page/about/about.vue:45
 msgid "User Guide"
 msgstr "Používateľská príručka"
 
-#: src/page/settings/general.vue:6
 msgid "User Interface"
 msgstr "Používateľské rozhranie"
 
-#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467 src/dialog/share.vue:23
 msgid "Username"
 msgstr "Meno používateľa"
 
-#: src/options/themes.js:412
 msgid "Vanta"
 msgstr "Vanta"
 
-#: src/page/connect.vue:9
 msgid "Verified"
 msgstr "Overený"
 
-#: src/component/photo/cards.vue:308 src/component/photo/cards.vue:471 src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232 src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810 src/options/options.js:311
 msgid "Video"
 msgstr "Video"
 
-#: src/component/photo/toolbar.vue:57
 msgid "Video Duration"
 msgstr "Trvanie videa"
 
-#: src/app/routes.js:211 src/component/navigation.vue:180 src/component/navigation.vue:190 src/component/navigation.vue:4 src/component/navigation.vue:738
 msgid "Videos"
 msgstr "Videá"
 
-#: src/component/photo/cards.vue:324 src/component/photo/mosaic.vue:249 src/component/photo/toolbar.vue:226
 msgid "View"
 msgstr "Zobraziť"
 
-#: src/page/about/about.vue:47
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Navštívte stránku docs.photoprism.app/user-guide, kde sa dozviete, ako synchronizovať, organizovať a zdieľať svoje fotografie."
 
-#: src/component/photo/toolbar.vue:54
 msgid "Visual Similarity"
 msgstr "Vizuálna podobnosť"
 
-#: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
 msgstr "Vážime si vašu spätnú väzbu!"
 
-#: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Snažíme sa odpovedať do piatich pracovných dní alebo skôr."
 
-#: src/page/about/about.vue:74
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Budeme sa snažiť odpovedať na všetky vaše otázky. Na oplátku vás prosíme, aby ste nás podporili na Patreon alebo GitHub Sponzori."
 
-#: src/dialog/sponsor.vue:18
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
 msgstr "Dáme vám vedieť, ako ju aktivovať, keď sa zaregistrujete na Patreon alebo GitHub Sponsors."
 
-#: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV klienti sa môžu pripojiť ku PhotoPrismu pomocou nasledujúcej URL:"
 
-#: src/page/settings/services.vue:37
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr "WebDAV klienti, ako napríklad Microsoft Windows Explorer alebo Apple Finder, sa môžu priamo pripojiť ku PhotoPrismu."
 
-#: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
 msgstr "Odovzdávanie cez WebDAV"
 
-#: src/page/settings/account.vue:643 src/page/settings/account.vue:789 src/page/settings/account.vue:642
 msgid "Website"
 msgstr "Webová stránka"
 
-#: src/options/options.js:397
 msgid "White"
 msgstr "Biela"
 
-#: src/page/settings/account.vue:90
 msgid "Work Details"
 msgstr "Podrobnosti o práci"
 
-#: src/page/settings/account.vue:492 src/component/photo/toolbar.vue:268 src/dialog/photo/edit/details.vue:168 src/page/settings/account.vue:491
 msgid "Year"
 msgstr "Rok"
 
-#: src/options/options.js:390
 msgid "Yellow"
 msgstr "Žltá"
 
-#: src/options/themes.js:462
 msgid "Yellowstone"
 msgstr "Yellowstone"
 
-#: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18 src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:122 src/dialog/photo/edit/files.vue:130 src/dialog/photo/edit/files.vue:138 src/dialog/photo/edit/files.vue:184
-#: src/dialog/photo/edit/files.vue:119 src/dialog/photo/edit/files.vue:127 src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:181 src/dialog/photo/edit/info.vue:259 src/dialog/photo/edit/info.vue:280
-#: src/dialog/photo/edit/info.vue:301 src/dialog/photo/edit/info.vue:322 src/dialog/photo/edit/info.vue:342
 msgid "Yes"
 msgstr "Áno"
 
-#: src/page/about/about.vue:67
 msgid "you are welcome to join us on Reddit"
 msgstr "môžete sa k nám pridať na Reddite"
 
-#: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Môžete stiahnuť iba jeden album"
 
-#: src/component/label/clipboard.vue:71
 msgid "You can only download one label"
 msgstr "Môžete stiahnuť iba jeden štítok"
 
-#: src/page/about/about.vue:17
 msgid "You can run it at home, on a private server, or in the cloud."
 msgstr "Môžete ho spustiť doma, na súkromnom serveri alebo v cloude."
 
-#: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
 msgstr "Mali by ste označiť iba jednu položku"
 
-#: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32 src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
 msgstr "Mali by ste preskenovať knižnicu pre nájdenie viac tvárí."
 
-#: src/page/about/about.vue:22
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Vaša podpora nám pomáha poskytovať pravidelné aktualizácie a zostať nezávislými, aby sme mohli plniť naše poslanie a chrániť vaše súkromie."
 
-#: src/dialog/sponsor.vue:21
 msgid "Your continued support helps us provide regular updates and services like world maps."
 msgstr "Vaša podpora nám pomáha financovať prevádzkové náklady, poskytovať služby, ako sú satelitné mapy, a vyvíjanie nových funkcií."
 
-#: src/page/albums.vue:43 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať albumy špeciálnych momentov, výletov a miest."
 
-#: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#~ msgid "AI-Powered Digital Asset Management"
+#~ msgstr "Správa digitálnych aktív na báze umelej inteligencie"
+
+#~ msgid "API Documentation"
+#~ msgstr "Dokumentácia API"
+
+#~ msgid "Developer Guide"
+#~ msgstr "Príručka pre vývojárov"
+
+#~ msgid "Group by similarity"
+#~ msgstr "Skupina podľa podobnosti"
+
+#~ msgid "Most relevant"
+#~ msgstr "Najrelevantnejšie"
+
+#~ msgid "Newest first"
+#~ msgstr "Nové navrch"
+
+#~ msgid "Oldest first"
+#~ msgstr "Najstaršie navrch"
+
+#~ msgid "Recently added"
+#~ msgstr "Nedávno pridané"
+
+#~ msgid "Recently edited"
+#~ msgstr "Nedávno upravené"
+
+#~ msgid "Sort by file name"
+#~ msgstr "Zoradiť podľa názvu súboru"
+
+#~ msgid "Terms &amp; Privacy"
+#~ msgstr "Podmienky &amp; Ochrana osobných údajov"
 
 #~ msgid "Style"
 #~ msgstr "Štýl"
