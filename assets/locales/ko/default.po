@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:31+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-11-12 10:52+0000\n"
+"Last-Translator: jsonmona <jsonmona@outlook.com>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
 "backend/ko/>\n"
 "Language: ko\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
-msgstr "예기치 못한 에러가 발생했습니다. 다시 시도해주세요"
+msgstr "예기치 않은 오류가 발생했습니다. 다시 시도해 주세요"
 
 #: messages.go:95
 msgid "Invalid request"
@@ -29,11 +29,11 @@ msgstr "잘못된 요청"
 
 #: messages.go:96
 msgid "Changes could not be saved"
-msgstr "저장에 실패함"
+msgstr "변경 사항을 저장할 수 없음"
 
 #: messages.go:97
 msgid "Could not be deleted"
-msgstr "삭제에 실패함"
+msgstr "삭제할 수 없음"
 
 #: messages.go:98
 #, c-format
@@ -58,11 +58,11 @@ msgstr "지원되지 않는 형식"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr "원본 폴더가 비어 있습니다."
+msgstr "원본 폴더가 비어 있습니다"
 
 #: messages.go:104
 msgid "Selection not found"
-msgstr "섹션을 찾을 수 없음"
+msgstr "선택 항목을 찾을 수 없음"
 
 #: messages.go:105
 msgid "Entity not found"
@@ -70,7 +70,7 @@ msgstr "항목을 찾을 수 없음"
 
 #: messages.go:106
 msgid "Account not found"
-msgstr "계정을 찾지 못했습니다"
+msgstr "계정을 찾을 수 없음"
 
 #: messages.go:107
 msgid "User not found"
@@ -110,11 +110,11 @@ msgstr "귀하의 계정에 로그인하십시오"
 
 #: messages.go:116
 msgid "Permission denied"
-msgstr "사용 권한이 거부되었습니다."
+msgstr "권한이 없음"
 
 #: messages.go:117
 msgid "Upload might be offensive"
-msgstr "업로드가 불쾌할 수 있습니다."
+msgstr "업로드가 불쾌할 수 있습니다"
 
 #: messages.go:118
 msgid "Upload failed"
@@ -150,7 +150,7 @@ msgstr "선택한 라벨이 없습니다"
 
 #: messages.go:126
 msgid "No albums selected"
-msgstr "선택한 앨범이 없습니다."
+msgstr "앨범이 선택되지 않았습니다"
 
 #: messages.go:127
 msgid "No files available for download"
@@ -174,16 +174,16 @@ msgstr "잘못된 이름"
 
 #: messages.go:132
 msgid "Busy, please try again later"
-msgstr "바쁘니 나중에 다시 시도해 주세요."
+msgstr "바쁘니 나중에 다시 시도해 주세요"
 
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr "깨우기 간격은 %s이지만 1시간 이하여야 합니다."
+msgstr "깨우기 간격은 %s이지만 1시간 이하여야 합니다"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr "계정을 연결할 수 없습니다."
+msgstr "계정을 연결할 수 없습니다"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -212,7 +212,7 @@ msgstr "스택에서 제거된 파일"
 
 #: messages.go:143
 msgid "File deleted"
-msgstr "%u 개의 파일이 삭제되었습니다."
+msgstr "파일이 삭제됨"
 
 #: messages.go:144
 #, c-format
@@ -289,7 +289,7 @@ msgstr "인덱싱 취소됨"
 #: messages.go:160
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr "파일 %d개와 사진 %d개를 삭제했습니다."
+msgstr "파일 %d개와 사진 %d개를 삭제했습니다"
 
 #: messages.go:161
 #, c-format
@@ -307,7 +307,7 @@ msgstr "라벨 삭제됨"
 
 #: messages.go:164
 msgid "Label saved"
-msgstr "라벨이 저장되었습니다."
+msgstr "라벨이 저장되었습니다"
 
 #: messages.go:165
 msgid "Subject saved"
@@ -374,4 +374,4 @@ msgstr "영구 삭제됨"
 #: messages.go:180
 #, c-format
 msgid "%s has been restored"
-msgstr "%s이(가) 복원되었습니다."
+msgstr "%s이(가) 복원되었습니다"
