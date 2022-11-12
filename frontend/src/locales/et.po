@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-10 07:16+0000\n"
+"PO-Revision-Date: 2022-11-12 01:52+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,11 +41,9 @@ msgstr "4 tundi"
 msgid "A click will copy it to your clipboard."
 msgstr "Klõpsamine kopeerib selle lõikelauale."
 
-#, fuzzy
 msgid "About"
-msgstr "kohta"
+msgstr "Teave"
 
-#, fuzzy
 msgid "Abyss"
 msgstr "Abyss"
 
@@ -163,9 +161,10 @@ msgstr "Kõik originaalid"
 msgid "All Years"
 msgstr "Kõik aastad"
 
-#, fuzzy
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "Samuti palun jätke tärn GitHubis, kui teile meeldib see projekt. See annab lisamotivatsiooni, et jätkata."
+msgstr ""
+"Samuti jäta palun tärn GitHub'is, kui sulle see projekt meeldib. See annab "
+"jätkamiseks lisamotivatsiooni."
 
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
@@ -188,7 +187,6 @@ msgstr "Animeeritud"
 msgid "Animation"
 msgstr "Animatsioon"
 
-#, fuzzy
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Kõik privaatsed fotod ja videod jäävad privaatseks ja neid ei jagata."
 
@@ -201,55 +199,44 @@ msgstr "Rakenda"
 msgid "Approve"
 msgstr "Kinnita"
 
-#, fuzzy
 msgid "Archive"
 msgstr "Arhiiv"
 
-#, fuzzy
 msgid "Archived"
 msgstr "Arhiveeritud"
 
-#, fuzzy
 msgid "Are you sure you want to archive the selection?"
-msgstr "Kas olete kindel, et soovite valikut arhiveerida?"
+msgstr "Kas oled kindel, et soovid valiku arhiveerida?"
 
-#, fuzzy
 msgid "Are you sure you want to delete these albums?"
-msgstr "Kas olete kindel, et soovite need albumid kustutada?"
+msgstr "Kas oled kindel, et soovid need albumid kustutada?"
 
-#, fuzzy
 msgid "Are you sure you want to delete these labels?"
-msgstr "Kas olete kindel, et soovite need sildid kustutada?"
+msgstr "Kas oled kindel, et soovid need sildid kustutada?"
 
-#, fuzzy
 msgid "Are you sure you want to delete this account?"
-msgstr "Kas olete kindel, et soovite selle konto kustutada?"
+msgstr "Kas oled kindel, et soovid selle konto kustutada?"
 
-#, fuzzy
 msgid "Are you sure you want to permanently delete these pictures?"
-msgstr "Kas olete kindel, et soovite need pildid lõplikult kustutada?"
+msgstr "Kas oled kindel, et soovid need pildid lõplikult kustutada?"
 
-#, fuzzy
 msgid "Are you sure you want to permanently delete this file?"
-msgstr "Kas olete kindel, et soovite selle faili lõplikult kustutada?"
+msgstr "Kas oled kindel, et soovid selle faili lõplikult kustutada?"
 
-#, fuzzy
 msgid "Are you sure?"
-msgstr "Oled sa kindel?"
+msgstr "Kas sa oled kindel?"
 
-#, fuzzy
 msgid "Artist"
 msgstr "Kunstnik"
 
-#, fuzzy
 msgid "Aspect Ratio"
-msgstr "Kujundisuhe"
+msgstr "Küljesuhe"
 
-#, fuzzy
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Looge automaatselt JPEG-dokumendid teiste failitüüpide jaoks, et neid saaks kuvada brauseris."
+msgstr ""
+"Loo automaatselt teistest failitüüpidest JPEG-failid, et neid saaks "
+"brauseris kuvada."
 
-#, fuzzy
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Loob automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
 
@@ -257,26 +244,26 @@ msgstr "Loob automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
 msgid "Basic"
 msgstr "Basic"
 
-#, fuzzy
 msgid "Become a sponsor"
 msgstr "Hakka sponsoriks"
 
-#, fuzzy
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Enne tugitaotluse esitamist kasutage palun meie tõrkeotsingu kontrollnimekirju, et teha kindlaks teie probleemi põhjus."
+msgstr ""
+"Enne tugitaotluse esitamist kasuta palun meie tõrkeotsingu meelespead, et "
+"probleemi põhjus kindlaks teha."
 
-#, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Kuna me oleme 100% omafinantseeringuline ja sõltumatu, võime teile lubada, et me ei müü kunagi teie andmeid ja et meie tarkvara ja teenused on alati läbipaistvad."
+msgstr ""
+"Kuna me oleme 100% isefinantseeritud ja sõltumatud, võime lubada, et me ei "
+"müü kunagi su andmeid ja et oleme oma tarkvara ja teenuste osas alati "
+"läbipaistvad."
 
 msgid "Bio"
 msgstr "Elulugu"
 
-#, fuzzy
 msgid "Birth Date"
 msgstr "Sünnikuupäev"
 
-#, fuzzy
 msgid "Black"
 msgstr "Must"
 
@@ -284,39 +271,32 @@ msgstr "Must"
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos modifikatsioon, vähem helisevaid artefakte"
 
-#, fuzzy
 msgid "Blue"
 msgstr "Sinine"
 
-#, fuzzy
 msgid "Brown"
 msgstr "Pruun"
 
-#, fuzzy
 msgid "Browse and edit image classification labels."
-msgstr "Sirvige ja redigeerige pildi klassifikatsiooni sildid."
+msgstr "Sirvi ja muuda piltide klassifitseerimise silte."
 
-#, fuzzy
 msgid "Browse indexed files and folders in Library."
-msgstr "Sirvi indekseeritud faile ja kaustu raamatukogus."
+msgstr "Sirvi kogus olevaid indekseeritud faile ja kaustu."
 
-#, fuzzy
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud ressursside kohta leiate teadmistebaasist."
+msgstr ""
+"Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud "
+"ressursside kohta leiad teadmistebaasist."
 
-#, fuzzy
 msgid "Bug Report"
-msgstr "Veateade"
+msgstr "Vearaport"
 
-#, fuzzy
 msgid "Busy, please wait…"
-msgstr "Palju tööd, palun oodake…"
+msgstr "Hõivatud, palun oota…"
 
-#, fuzzy
 msgid "Calendar"
 msgstr "Kalender"
 
-#, fuzzy
 msgid "Camera"
 msgstr "Kaamera"
 
@@ -324,39 +304,31 @@ msgstr "Kaamera"
 msgid "Camera Serial"
 msgstr "Kaamera seeriaviisiline"
 
-#, fuzzy
 msgid "Can't load more, limit reached"
-msgstr "Rohkem ei saa laadida, piirang on saavutatud"
+msgstr "Rohkem ei saa laadida, limiit on saavutatud"
 
-#, fuzzy
 msgid "Can't select more items"
-msgstr "Ei saa valida rohkem objekte"
+msgstr "Rohkem objekte ei saa valida"
 
-#, fuzzy
 msgid "Cancel"
-msgstr "Tühista"
+msgstr "Katkesta"
 
 #, fuzzy
 msgid "Cards"
 msgstr "Kaardid"
 
-#, fuzzy
 msgid "Category"
 msgstr "Kategooria"
 
-#, fuzzy
 msgid "Change Avatar"
-msgstr "Avatari muutmine"
+msgstr "Muuda profiilipilti"
 
-#, fuzzy
 msgid "Change Password"
-msgstr "Muuda salasõna"
+msgstr "Muuda parool"
 
-#, fuzzy
 msgid "Change personal profile and security settings."
-msgstr "Muuta isikliku profiili ja turvasätteid."
+msgstr "Muuta isikliku profiili ja turvaseadeid."
 
-#, fuzzy
 msgid "Change photo titles, locations, and other metadata."
 msgstr "Muuda fotode pealkirju, asukohti ja muid metaandmeid."
 
@@ -364,7 +336,6 @@ msgstr "Muuda fotode pealkirju, asukohti ja muid metaandmeid."
 msgid "Change private flag"
 msgstr "Muuda eraviisilist lippu"
 
-#, fuzzy
 msgid "Changes successfully saved"
 msgstr "Muudatused edukalt salvestatud"
 
@@ -376,7 +347,6 @@ msgstr "Kontrollitud"
 msgid "Chroma"
 msgstr "Chroma"
 
-#, fuzzy
 msgid "Close"
 msgstr "Sulge"
 
@@ -384,15 +354,12 @@ msgstr "Sulge"
 msgid "Codec"
 msgstr "Codec"
 
-#, fuzzy
 msgid "Color"
 msgstr "Värv"
 
-#, fuzzy
 msgid "Color Profile"
 msgstr "Värviprofiil"
 
-#, fuzzy
 msgid "Colors"
 msgstr "Värvid"
 
@@ -420,7 +387,6 @@ msgstr "Ühendamine WebDAVi kaudu"
 msgid "Connected"
 msgstr "Ühendatud"
 
-#, fuzzy
 msgid "Contact Details"
 msgstr "Kontaktandmed"
 
@@ -428,7 +394,6 @@ msgstr "Kontaktandmed"
 msgid "Contact Us"
 msgstr "Võtke meiega ühendust"
 
-#, fuzzy
 msgid "Contains %{n} pictures."
 msgstr "Sisaldab %{n} pilti."
 
@@ -436,7 +401,6 @@ msgstr "Sisaldab %{n} pilti."
 msgid "Contains one picture."
 msgstr "Sisaldab ühte pilti."
 
-#, fuzzy
 msgid "Convert to JPEG"
 msgstr "Teisenda JPEG-ks"
 
@@ -444,7 +408,6 @@ msgstr "Teisenda JPEG-ks"
 msgid "Converting"
 msgstr "Konverteerimine"
 
-#, fuzzy
 msgid "Copied to clipboard"
 msgstr "Kopeeritud lõikelauale"
 
@@ -456,7 +419,6 @@ msgstr "Autoriõigus"
 msgid "Couldn't find anything."
 msgstr "Ei leidnud midagi."
 
-#, fuzzy
 msgid "Country"
 msgstr "Riik"
 
@@ -472,11 +434,9 @@ msgstr "Loodud"
 msgid "Creating thumbnails for"
 msgstr "Väikepiltide loomine"
 
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Kuubiline: Mõõdukas kvaliteet, hea jõudlus"
+msgstr "Cubic: mõõdukas kvaliteet, hea jõudlus"
 
-#, fuzzy
 msgid "Current Password"
 msgstr "Praegune parool"
 
@@ -488,7 +448,6 @@ msgstr "Klienditugi"
 msgid "Cyan"
 msgstr "Cyan"
 
-#, fuzzy
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -496,7 +455,6 @@ msgstr "Cyano"
 msgid "Daily"
 msgstr "Igapäevane"
 
-#, fuzzy
 msgid "Day"
 msgstr "Päev"
 
@@ -508,121 +466,97 @@ msgstr "Vigade kõrvaldamise logid"
 msgid "Default"
 msgstr "Vaikimisi"
 
-#, fuzzy
 msgid "Default Folder"
 msgstr "Vaikimisi kaust"
 
-#, fuzzy
 msgid "Delete"
 msgstr "Kustuta"
 
-#, fuzzy
 msgid "Description"
 msgstr "Kirjeldus"
 
-#, fuzzy
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Üksikasjalikud juhised leiate meie kasutusjuhendist."
+msgstr "Üksikasjalikud juhised leiad meie kasutajajuhendist."
 
-#, fuzzy
 msgid "Details"
 msgstr "Üksikasjad"
 
-#, fuzzy
 msgid "Dimensions"
 msgstr "Mõõtmed"
 
-#, fuzzy
 msgid "Disable Backups"
-msgstr "Lülita varukoopiad välja"
+msgstr "Keela varukoopiad"
 
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Lülita sisseehitatud WebDAV-server välja. Nõuab taaskäivitamist."
+msgstr "Keela sisseehitatud WebDAV server. Nõuab taaskäivitamist."
 
-#, fuzzy
 msgid "Disable Darktable"
-msgstr "Lülita Darktable välja"
+msgstr "Keela Darktable"
 
-#, fuzzy
 msgid "Disable ExifTool"
-msgstr "ExifTool välja lülitada"
+msgstr "Keela ExifTool"
 
-#, fuzzy
 msgid "Disable FFmpeg"
-msgstr "FFmpeg välja lülitada"
+msgstr "Keela FFmpeg"
 
 #, fuzzy
 msgid "Disable Places"
 msgstr "Deaktiveeritud kohad"
 
-#, fuzzy
 msgid "Disable RawTherapee"
-msgstr "Lülita RawTherapee välja"
+msgstr "Keela RawTherapee"
 
-#, fuzzy
 msgid "Disable TensorFlow"
-msgstr "TensorFlow välja lülitada"
+msgstr "Keela TensorFlow"
 
-#, fuzzy
 msgid "Disable WebDAV"
-msgstr "WebDAV-i keelamine"
+msgstr "Keela WebDAV"
 
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
-msgstr "Lülitab välja tagasipööratud geokodeerimise ja kaardid."
+msgstr "Keelab asukohatuvastuse ja kaardid."
 
 #, fuzzy
 msgid "Discover"
 msgstr "Avasta"
 
-#, fuzzy
 msgid "Display Name"
-msgstr "Kuva nimi"
+msgstr "Esitusnimi"
 
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Ärge varundage fotode ja albumite metaandmeid YAML-failidesse."
+msgstr "Ära varunda fotode ja albumite metaandmeid YAML-failidesse."
 
 #, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "Ärge looge ExifTool JSON-faile parema metaandmete väljavõtte jaoks."
 
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Ärge muutke originaalide kausta. Keelab importimise, üleslaadimise ja kustutamise."
+msgstr ""
+"Ära muuda originaalide kausta. Keelab importimise, üleslaadimise ja "
+"kustutamise."
 
-#, fuzzy
 msgid "Don't transcode videos with FFmpeg."
-msgstr "Ärge transkodeerige videoid FFmpegiga."
+msgstr "Ära transkodeeri videoid FFmpeg abil."
 
-#, fuzzy
 msgid "Don't use Darktable to convert RAW files."
-msgstr "Ärge kasutage Darktable'i RAW-failide teisendamiseks."
+msgstr "Ära teisenda RAW faile Darktable abil."
 
-#, fuzzy
 msgid "Don't use RawTherapee to convert RAW files."
-msgstr "Ärge kasutage RawTherapee't RAW-failide teisendamiseks."
+msgstr "Ära teisenda RAW faile RawTherapee abil."
 
-#, fuzzy
 msgid "Don't use TensorFlow for image classification."
-msgstr "Ärge kasutage TensorFlow'd pildi klassifitseerimiseks."
+msgstr "Ära kasuta TensorFlow'd piltide klassifitseerimiseks."
 
-#, fuzzy
 msgid "Donations"
 msgstr "Annetused"
 
-#, fuzzy
 msgid "Done"
-msgstr "Valmis"
+msgstr "Tehtud"
 
-#, fuzzy
 msgid "Done."
 msgstr "Tehtud."
 
-#, fuzzy
 msgid "Download"
-msgstr "Lae alla"
+msgstr "Laadi alla"
 
 #, fuzzy
 msgid "Download remote files"
@@ -648,27 +582,23 @@ msgstr "Meile saabuvate e-kirjade suure hulga tõttu ei pruugi meie meeskond oll
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Duplikaadid jäetakse vahele ja need ilmuvad ainult üks kord."
 
-#, fuzzy
 msgid "Duration"
 msgstr "Kestus"
 
-#, fuzzy
 msgid "Dynamic Previews"
 msgstr "Dünaamilised eelvaated"
 
-#, fuzzy
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-seadmete jaoks."
+msgstr ""
+"Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-"
+"seadmete jaoks."
 
-#, fuzzy
 msgid "Dynamic Size Limit: %{n}px"
-msgstr "Dünaamilise suuruse piirang: %{n}px"
+msgstr "Dünaamiline suuruse limiit: %{n}px"
 
-#, fuzzy
 msgid "E-Mail"
-msgstr "E-Mail"
+msgstr "E-post"
 
-#, fuzzy
 msgid "Edit"
 msgstr "Muuda"
 
@@ -688,37 +618,32 @@ msgstr "Fotode redigeerimine"
 msgid "Edited"
 msgstr "Redigeeritud"
 
-#, fuzzy
 msgid "Email"
 msgstr "E-post"
 
-#, fuzzy
 msgid "Enable new features currently under development."
-msgstr "Võimaldab uusi funktsioone, mis on praegu väljatöötamisel."
+msgstr "Luba uued, veel arenduses olevad funktsioonid."
 
-#, fuzzy
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "Võimaldab RAW-konverteri eelseadistused. Võib vähendada jõudlust."
+msgstr "Lubab RAW-konverteri eelseadistused. Võib vähendada jõudlust."
 
 #, fuzzy
 msgid "Errors"
 msgstr "Vead"
 
-#, fuzzy
 msgid "Estimate the approximate location of pictures without coordinates."
-msgstr "Hinnake piltide ligikaudset asukohta ilma koordinaatideta."
+msgstr "Hinda piltide ligikaudset asukohta ilma koordinaatideta."
 
-#, fuzzy
 msgid "Estimates"
 msgstr "Hinnangud"
 
-#, fuzzy
 msgid "Every two days"
 msgstr "Iga kahe päeva tagant"
 
-#, fuzzy
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Eraldage otsingutulemustest, jagatud albumitest, siltidest ja kohtadest privaatseks märgitud sisu."
+msgstr ""
+"Välista otsingutulemustest, jagatud albumitest, siltidest ja kohtadest "
+"privaatseks märgitud sisu."
 
 #, fuzzy
 msgid "Exclude hidden"
@@ -732,46 +657,37 @@ msgstr "Laiendage"
 msgid "Expand Search"
 msgstr "Laienda otsingut"
 
-#, fuzzy
 msgid "Experimental Features"
-msgstr "Eksperimentaalsed omadused"
+msgstr "Eksperimentaalsed funktsioonid"
 
 #, fuzzy
 msgid "Expires"
 msgstr "Aegub"
 
-#, fuzzy
 msgid "Exposure"
-msgstr "Ekspositsioon"
+msgstr "Säriaeg"
 
-#, fuzzy
 msgid "F Number"
-msgstr "F number"
+msgstr "F-number"
 
-#, fuzzy
 msgid "Face"
 msgstr "Nägu"
 
 msgid "Faces"
 msgstr "Näod"
 
-#, fuzzy
 msgid "Failed copying to clipboard"
-msgstr "Ebaõnnestunud kopeerimine lõikelauale"
+msgstr "Lõikelauale kopeerimine ebaõnnestus"
 
-#, fuzzy
 msgid "Failed removing link"
-msgstr "Linki eemaldamine ebaõnnestus"
+msgstr "Lingi eemaldamine ebaõnnestus"
 
-#, fuzzy
 msgid "Failed updating link"
-msgstr "Linki uuendamine ebaõnnestus"
+msgstr "Lingi uuendamine ebaõnnestus"
 
-#, fuzzy
 msgid "Family Name"
-msgstr "Perekonna nimi"
+msgstr "Perekonnanimi"
 
-#, fuzzy
 msgid "Fast"
 msgstr "Kiire"
 
@@ -779,7 +695,6 @@ msgstr "Kiire"
 msgid "Favorite"
 msgstr "Lemmik"
 
-#, fuzzy
 msgid "Favorites"
 msgstr "Lemmikud"
 
@@ -791,17 +706,15 @@ msgstr "Funktsiooni taotlus"
 msgid "Feed"
 msgstr "Sööt"
 
-#, fuzzy
 msgid "Feedback"
 msgstr "Tagasiside"
 
-#, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Kui teil on küsimusi, võtke meiega ühendust aadressil hello@photoprism.app."
+msgstr ""
+"Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
 
-#, fuzzy
 msgid "Female"
-msgstr "Naised"
+msgstr "Naine"
 
 #, fuzzy
 msgid "File"
@@ -811,53 +724,43 @@ msgstr "Faili"
 msgid "File Browser"
 msgstr "Faili brauser"
 
-#, fuzzy
 msgid "File Name"
 msgstr "Faili nimi"
 
-#, fuzzy
 msgid "File Size"
 msgstr "Faili suurus"
 
-#, fuzzy
 msgid "Filename"
 msgstr "Failinimi"
 
-#, fuzzy
 msgid "Files"
 msgstr "Failid"
 
-#, fuzzy
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Järjekordsete nimedega failid nagu 'IMG_1234 (2)' ja 'IMG_1234 (3)' kuuluvad samale pildile."
+msgstr ""
+"Järjestikuste nimedega failid nagu 'IMG_1234 (2)' ja 'IMG_1234 (3)' kuuluvad "
+"samale pildile."
 
-#, fuzzy
 msgid "Focal Length"
 msgstr "Fookuskaugus"
 
-#, fuzzy
 msgid "Folder"
-msgstr "Kaustik"
+msgstr "Kaust"
 
-#, fuzzy
 msgid "Folder contains %{n} files"
-msgstr "Kaust sisaldab %{n} faile"
+msgstr "Kaust sisaldab %{n} faili"
 
-#, fuzzy
 msgid "Folder is empty"
 msgstr "Kaust on tühi"
 
-#, fuzzy
 msgid "Folders"
 msgstr "Kaustad"
 
-#, fuzzy
 msgid "Forgot password?"
-msgstr "Unustasid salasõna?"
+msgstr "Unustasid parooli?"
 
-#, fuzzy
 msgid "FPS"
-msgstr "FPS"
+msgstr "Kaadrisagedus"
 
 #, fuzzy
 msgid "Frames"
@@ -867,15 +770,12 @@ msgstr "Raamid"
 msgid "Fullscreen"
 msgstr "Täisekraan"
 
-#, fuzzy
 msgid "Gemstone"
-msgstr "Kalliskivi"
+msgstr "Gemstone"
 
-#, fuzzy
 msgid "Gender"
 msgstr "Sugu"
 
-#, fuzzy
 msgid "General"
 msgstr "Üldine"
 
@@ -883,29 +783,23 @@ msgstr "Üldine"
 msgid "Getting Support"
 msgstr "Toetuse saamine"
 
-#, fuzzy
 msgid "Given Name"
-msgstr "Antud nimi"
+msgstr "Eesnimi"
 
-#, fuzzy
 msgid "Gold"
 msgstr "Kuld"
 
-#, fuzzy
 msgid "Grayscale"
-msgstr "Hallikaala"
+msgstr "Grayscale"
 
-#, fuzzy
 msgid "Green"
 msgstr "Roheline"
 
-#, fuzzy
 msgid "Grey"
 msgstr "Hall"
 
-#, fuzzy
 msgid "Hash"
-msgstr "Hash"
+msgstr "Räsi"
 
 #, fuzzy
 msgid "Help"
@@ -947,9 +841,8 @@ msgstr "Kuidas me saame aidata?"
 msgid "I'm a sponsor"
 msgstr "Ma olen sponsor"
 
-#, fuzzy
 msgid "If this doesn't help, or you have other questions:"
-msgstr "Kui see ei aita või teil on muid küsimusi:"
+msgstr "Kui see ei aita või sul on muid küsimusi:"
 
 #, fuzzy
 msgid "image"
@@ -963,25 +856,24 @@ msgstr "Pilt"
 msgid "Images"
 msgstr "Pildid"
 
-#, fuzzy
 msgid "Import"
 msgstr "Import"
 
-#, fuzzy
 msgid "Import failed"
 msgstr "Import ebaõnnestus"
 
-#, fuzzy
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse unikaalne nimi, et vältida duplikaate."
+msgstr ""
+"Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse duplikaatide "
+"vältimiseks unikaalne nimi."
 
-#, fuzzy
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse unikaalne nimi."
+msgstr ""
+"Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse unikaalne "
+"nimi."
 
-#, fuzzy
 msgid "Importing %{name}…"
-msgstr "Impordi %{nimi}…"
+msgstr "%{nimi} importimine…"
 
 #, fuzzy
 msgid "Importing files to originals…"
@@ -991,7 +883,6 @@ msgstr "Failide importimine originaalidele…"
 msgid "in"
 msgstr "aadressil"
 
-#, fuzzy
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
 
@@ -1003,9 +894,8 @@ msgstr "Kui teie poolt oodatud pildid on puudu, skannige oma raamatukogu uuesti 
 msgid "Index"
 msgstr "Indeks"
 
-#, fuzzy
 msgid "Index and import files through the user interface."
-msgstr "Failide indekseerimine ja importimine kasutajaliidese kaudu."
+msgstr "Indekseeri ja impordi faile kasutajaliidese kaudu."
 
 #, fuzzy
 msgid "Indexing"
@@ -1023,41 +913,36 @@ msgstr "Meedia ja külgkorvi failide indekseerimine…"
 msgid "Instance ID"
 msgstr "Instantsi ID"
 
-#, fuzzy
 msgid "Interval"
 msgstr "Intervall"
 
-#, fuzzy
 msgid "Invalid"
-msgstr "Invaliidne"
+msgstr "Vigane"
 
-#, fuzzy
 msgid "Invalid date"
-msgstr "Vale kuupäev"
+msgstr "Vigane kuupäev"
 
-#, fuzzy
 msgid "Invalid parameters"
-msgstr "Valed parameetrid"
+msgstr "Vigased parameetrid"
 
 #, fuzzy
 msgid "Invalid photo selected"
 msgstr "Valitud vale foto"
 
-#, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "See kasutab uusimaid tehnoloogiaid, et märgistada ja leida pilte automaatselt, ilma et see teid segaks."
+msgstr ""
+"See kasutab uusimaid tehnoloogiaid, et märgistada ja leida pilte "
+"automaatselt, ilma sulle jalgu jäämata."
 
 #, fuzzy
 msgid "Item"
 msgstr "Punkti"
 
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG kvaliteet: %{n}"
 
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
-msgstr "JPEG suuruse piirang: %{n}px"
+msgstr "JPEG suuruse limiit: %{n}px"
 
 #, fuzzy
 msgid "JPEGs and thumbnails are automatically rendered as needed."
@@ -1071,7 +956,6 @@ msgstr "Märksõnad"
 msgid "Knowledge Base"
 msgstr "Teadmiste baas"
 
-#, fuzzy
 msgid "Label"
 msgstr "Silt"
 
@@ -1086,7 +970,6 @@ msgstr "Sildid kustutatud"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: detailide säilitamine, minimaalsed artefaktid"
 
-#, fuzzy
 msgid "Language"
 msgstr "Keel"
 
@@ -1094,13 +977,11 @@ msgstr "Keel"
 msgid "Last Sync"
 msgstr "Viimane sünkroonimine"
 
-#, fuzzy
 msgid "Latitude"
 msgstr "Laiuskraad"
 
-#, fuzzy
 msgid "Lavender"
-msgstr "Lavendel"
+msgstr "Lavender"
 
 #, fuzzy
 msgid "Learn more"
@@ -1110,7 +991,6 @@ msgstr "Lisateave"
 msgid "Legal Information"
 msgstr "Õiguslik teave"
 
-#, fuzzy
 msgid "Lens"
 msgstr "Objektiiv"
 
@@ -1118,33 +998,27 @@ msgstr "Objektiiv"
 msgid "Library"
 msgstr "Raamatukogu"
 
-#, fuzzy
 msgid "License"
 msgstr "Litsents"
 
-#, fuzzy
 msgid "Like"
-msgstr "Nagu"
+msgstr "Meeldib"
 
-#, fuzzy
 msgid "Lime"
-msgstr "Lime"
+msgstr "Laimiroheline"
 
-#, fuzzy
 msgid "Limit reached, showing first %{n} files"
-msgstr "Piirang on saavutatud, näitab esimesi %{n} faile"
+msgstr "Limiit saavutatud, näidatakse esimest %{n} faili"
 
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineaarne: Väga sujuv, parim jõudlus"
+msgstr "Lineaarne: väga sujuv, parim jõudlus"
 
 #, fuzzy
 msgid "Link"
 msgstr "Link"
 
-#, fuzzy
 msgid "List"
-msgstr "Loetelu"
+msgstr "Loend"
 
 #, fuzzy
 msgid "Live"
@@ -1154,35 +1028,31 @@ msgstr "Live"
 msgid "Live Photos"
 msgstr "Elusad fotod"
 
-#, fuzzy
 msgid "Local Time"
 msgstr "Kohalik aeg"
 
-#, fuzzy
 msgid "location"
 msgstr "asukoht"
 
-#, fuzzy
 msgid "Location"
 msgstr "Asukoht"
 
-#, fuzzy
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Logiteated ilmuvad siia alati, kui PhotoPrism leiab katkiseid faile või kui esineb muid võimalikke probleeme."
+msgstr ""
+"Siia ilmuvad logiteated, kui PhotoPrism leiab katkiseid faile või kui esineb "
+"muid probleeme."
 
 #, fuzzy
 msgid "Login"
 msgstr "Logi sisse"
 
-#, fuzzy
 msgid "Logout"
-msgstr "Väljalogimine"
+msgstr "Logi välja"
 
 #, fuzzy
 msgid "Logs"
 msgstr "Logid"
 
-#, fuzzy
 msgid "Longitude"
 msgstr "Pikkuskraad"
 
@@ -1190,15 +1060,12 @@ msgstr "Pikkuskraad"
 msgid "Low"
 msgstr "Madal"
 
-#, fuzzy
 msgid "Magenta"
 msgstr "Magenta"
 
-#, fuzzy
 msgid "Main Color"
 msgstr "Põhivärv"
 
-#, fuzzy
 msgid "Male"
 msgstr "Mees"
 
@@ -1210,7 +1077,6 @@ msgstr "käsitsi"
 msgid "Manual Upload"
 msgstr "Käsitsi üleslaadimine"
 
-#, fuzzy
 msgid "Maps"
 msgstr "Kaardid"
 
@@ -1226,9 +1092,8 @@ msgstr "Keskmine"
 msgid "Merge %{a} with %{b}?"
 msgstr "Ühendada %{a} ja %{b}?"
 
-#, fuzzy
 msgid "Message sent"
-msgstr "Saadetud sõnum"
+msgstr "Sõnum saadetud"
 
 #, fuzzy
 msgid "Minimize"
@@ -1238,7 +1103,6 @@ msgstr "Minimeeri"
 msgid "Missing"
 msgstr "Puuduv"
 
-#, fuzzy
 msgid "Moments"
 msgstr "Hetked"
 
@@ -1246,31 +1110,24 @@ msgstr "Hetked"
 msgid "Monochrome"
 msgstr "Ühevärviline"
 
-#, fuzzy
 msgid "Month"
 msgstr "Kuu"
 
-#, fuzzy
 msgid "Moonlight"
 msgstr "Moonlight"
 
-#, fuzzy
 msgid "More than %{n} pictures found"
-msgstr "Rohkem kui %{n} leitud pilte"
+msgstr "Rohkem kui %{n} pilti leitud"
 
-#, fuzzy
 msgid "More than 20 albums found"
-msgstr "Rohkem kui 20 leitud albumit"
+msgstr "Rohkem kui 20 albumit leitud"
 
-#, fuzzy
 msgid "More than 20 labels found"
-msgstr "Leitakse üle 20 etiketi"
+msgstr "Rohkem kui 20 silti leitud"
 
-#, fuzzy
 msgid "More than 20 people found"
-msgstr "Rohkem kui 20 inimest leidis"
+msgstr "Rohkem kui 20 inimest leitud"
 
-#, fuzzy
 msgid "Mosaic"
 msgstr "Mosaiik"
 
@@ -1278,55 +1135,43 @@ msgstr "Mosaiik"
 msgid "Most Relevant"
 msgstr "Kõige asjakohasemad"
 
-#, fuzzy
 msgid "Move Files"
-msgstr "Failide teisaldamine"
+msgstr "Liiguta failid"
 
-#, fuzzy
 msgid "Must have at least 8 characters."
-msgstr "Peab olema vähemalt 8 tähemärki."
+msgstr "Peab sisaldama vähemalt 8 tähemärki."
 
-#, fuzzy
 msgid "Name"
 msgstr "Nimi"
 
-#, fuzzy
 msgid "Name too long"
-msgstr "Nimi liiga pikk"
+msgstr "Nimi on liiga pikk"
 
 #, fuzzy
 msgid "Never"
 msgstr "Mitte kunagi"
 
-#, fuzzy
 msgid "New"
 msgstr "Uus"
 
-#, fuzzy
 msgid "New Password"
-msgstr "Uus salasõna"
+msgstr "Uus parool"
 
-#, fuzzy
 msgid "Newest First"
-msgstr "Kõige uuem esimene"
+msgstr "Uuemad eespool"
 
-#, fuzzy
 msgid "No"
 msgstr "Ei"
 
-#, fuzzy
 msgid "No albums found"
-msgstr "Ei leitud albumeid"
+msgstr "Albumeid ei leitud"
 
-#, fuzzy
 msgid "No labels found"
-msgstr "Märgiseid ei leitud"
+msgstr "Silte ei leitud"
 
-#, fuzzy
 msgid "No people found"
-msgstr "Ei leitud inimesi"
+msgstr "Inimesi ei leitud"
 
-#, fuzzy
 msgid "No pictures found"
 msgstr "Pilte ei leitud"
 
@@ -1350,13 +1195,15 @@ msgstr "Ei aitäh"
 msgid "No video selected"
 msgstr "Ei ole valitud videot"
 
-#, fuzzy
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pange tähele, et otsing on suur- ja väiketähtede suhtes tundlik."
+msgstr ""
+"Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et otsing "
+"on tõusutundlik."
 
-#, fuzzy
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb enne nende ilmumist otsingutulemustesse üle vaadata."
+msgstr ""
+"Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne "
+"kui nad otsingutulemustes ilmuvad."
 
 #, fuzzy
 msgid "None"
@@ -1366,23 +1213,24 @@ msgstr "Puudub"
 msgid "Not Found"
 msgstr "Ei leitud"
 
-#, fuzzy
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Pange tähele, et võite käsitsi hallata oma originaalide kausta ja importimine on vabatahtlik."
+msgstr ""
+"Pane tähele, et võid originaalide kausta käsitsi hallata, importimine on "
+"vabatahtlik."
 
 #, fuzzy
 msgid "Note:"
 msgstr "Märkus:"
 
-#, fuzzy
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Märkus: Ainult WebDAV-servereid, nagu Nextcloud või PhotoPrism, saab konfigureerida kaugteenusena varundamiseks ja failide üleslaadimiseks."
+msgstr ""
+"Märkus: Ainult WebDAV servereid, nagu Nextcloud või PhotoPrism, saab "
+"seadistada kaugteenusena varundamiseks ja failide üleslaadimiseks."
 
 #, fuzzy
 msgid "Notes"
 msgstr "Märkused"
 
-#, fuzzy
 msgid "Nothing to see here yet."
 msgstr "Siin pole veel midagi näha."
 
@@ -1390,47 +1238,36 @@ msgstr "Siin pole veel midagi näha."
 msgid "Offline"
 msgstr "Offline"
 
-#, fuzzy
 msgid "Oldest First"
-msgstr "Vanim esimene"
+msgstr "Vanemad eespool"
 
-#, fuzzy
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windowsis sisestage ühendusdialoogi järgmine ressurss:"
 
-#, fuzzy
 msgid "Once a week"
 msgstr "Üks kord nädalas"
 
-#, fuzzy
 msgid "One album found"
-msgstr "Üks leitud album"
+msgstr "Üks album leitud"
 
-#, fuzzy
 msgid "One file found"
 msgstr "Üks fail leitud"
 
-#, fuzzy
 msgid "One file uploaded"
-msgstr "Üks üleslaetud fail"
+msgstr "Üks fail üles laaditud"
 
-#, fuzzy
 msgid "One folder found"
-msgstr "Üks leitud kaust"
+msgstr "Üks kaust leitud"
 
-#, fuzzy
 msgid "One label found"
-msgstr "Üks etikett leitud"
+msgstr "Üks silt leitud"
 
-#, fuzzy
 msgid "One person found"
-msgstr "Üks inimene leidis"
+msgstr "Üks inimene leitud"
 
-#, fuzzy
 msgid "One picture found"
-msgstr "Üks leitud pilt"
+msgstr "Üks pilt leitud"
 
-#, fuzzy
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1442,27 +1279,21 @@ msgstr "Valikud"
 msgid "or ask in our Community Chat"
 msgstr "või küsi meie ühenduse vestlusringis"
 
-#, fuzzy
 msgid "Orange"
-msgstr "Oranž"
+msgstr "Oranžikas"
 
-#, fuzzy
 msgid "Organization"
 msgstr "Organisatsioon"
 
-#, fuzzy
 msgid "Orientation"
-msgstr "Orienteerumine"
+msgstr "Orientatsioon"
 
-#, fuzzy
 msgid "Original file names will be stored and indexed."
-msgstr "Originaalfailide nimed salvestatakse ja indekseeritakse."
+msgstr "Failide algsed nimed salvestatakse ja indekseeritakse."
 
-#, fuzzy
 msgid "Original Name"
 msgstr "Esialgne nimi"
 
-#, fuzzy
 msgid "Originals"
 msgstr "Originaalid"
 
@@ -1481,96 +1312,79 @@ msgstr "Välitingimustes"
 msgid "Panorama"
 msgstr "Panoraam"
 
-#, fuzzy
 msgid "Panoramas"
 msgstr "Panoraamid"
 
-#, fuzzy
 msgid "Password"
 msgstr "Parool"
 
 msgid "Password changed"
 msgstr "Parool muudetud"
 
-#, fuzzy
 msgid "People"
 msgstr "Inimesed"
 
-#, fuzzy
 msgid "People you share a link with will be able to view public contents."
-msgstr "Inimesed, kellega jagate linki, saavad vaadata avalikku sisu."
+msgstr "Inimesed, kellega linki jagad, saavad avalikku sisu vaadata."
 
-#, fuzzy
 msgid "Permanently deleted"
 msgstr "Lõplikult kustutatud"
 
-#, fuzzy
 msgid "Permanently remove files to free up storage."
-msgstr "Eemaldage failid lõplikult, et vabastada salvestusruumi."
+msgstr "Kustuta failid lõplikult, et vabastada salvestusruumi."
 
-#, fuzzy
 msgid "Phone"
 msgstr "Telefon"
 
-#, fuzzy
 msgid "Photo"
 msgstr "Foto"
 
-#, fuzzy
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on uuendatud…"
 
-#, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® on tehisintellektipõhine fotorakendus detsentraliseeritud veebi jaoks."
+msgstr ""
+"PhotoPrism® on tehisintellektipõhine fotorakendus detsentraliseeritud veebi "
+"jaoks."
 
-#, fuzzy
 msgid "Photos"
 msgstr "Fotod"
 
-#, fuzzy
 msgid "Pink"
 msgstr "Roosa"
 
-#, fuzzy
 msgid "Place"
 msgstr "Koht"
 
-#, fuzzy
 msgid "Place & Time"
 msgstr "Koht ja aeg"
 
-#, fuzzy
 msgid "Places"
 msgstr "Kohad"
 
-#, fuzzy
 msgid "Please confirm your new password."
-msgstr "Palun kinnitage oma uus salasõna."
+msgstr "Palun kinnita oma uus parool."
 
-#, fuzzy
 msgid "Please don't upload photos containing offensive content."
-msgstr "Palun ärge laadige üles solvava sisuga fotosid."
+msgstr "Palun ära laadi üles solvava sisuga fotosid."
 
-#, fuzzy
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Pange tähele, et parooli muutmine logib teid välja teistes seadmetes ja brauserites."
+msgstr ""
+"Pane tähele, et parooli muutmine logib sind teistes seadmetes ja brauserites "
+"välja."
 
 #, fuzzy
 msgid "Portrait"
 msgstr "Portree"
 
-#, fuzzy
 msgid "post your question in GitHub Discussions"
-msgstr "postitage oma küsimus GitHubi aruteludesse"
+msgstr "postita oma küsimus GitHub'i aruteludesse"
 
-#, fuzzy
 msgid "Preserve filenames"
-msgstr "Säilitada failinimed"
+msgstr "Säilita failinimed"
 
-#, fuzzy
 msgid "Press button to start importing…"
-msgstr "Vajutage nuppu, et alustada importimist…"
+msgstr "Importimise alustamiseks vajuta nuppu…"
 
 #, fuzzy
 msgid "Press button to start indexing…"
@@ -1580,7 +1394,6 @@ msgstr "Indekseerimise alustamiseks vajutage nuppu…"
 msgid "Press enter to create a new album."
 msgstr "Uue albumi loomiseks vajutage enter."
 
-#, fuzzy
 msgid "Preview"
 msgstr "Eelvaade"
 
@@ -1600,57 +1413,48 @@ msgstr "Toote tagasiside"
 msgid "Projection"
 msgstr "Projektsioon"
 
-#, fuzzy
 msgid "Purple"
 msgstr "Lilla"
 
-#, fuzzy
 msgid "Quality Filter"
 msgstr "Kvaliteedifilter"
 
-#, fuzzy
 msgid "Quality Score"
-msgstr "Kvaliteedi tulemus"
+msgstr "Kvaliteediskoor"
 
-#, fuzzy
 msgid "Random"
 msgstr "Juhuslik"
 
-#, fuzzy
 msgid "Raspberry"
-msgstr "Vaarikas"
+msgstr "Raspberry"
 
 #, fuzzy
 msgid "Raw"
 msgstr "Toores"
 
-#, fuzzy
 msgid "RAW"
 msgstr "RAW"
 
-#, fuzzy
 msgid "RAW Conversion"
-msgstr "RAW konverteerimine"
+msgstr "RAW teisendamine"
 
-#, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Indekseerige uuesti kõik originaalid, sealhulgas juba indekseeritud ja muutmata failid."
+msgstr ""
+"Indekseeri uuesti kõik originaalid, sealhulgas juba indekseeritud ja "
+"muutmata failid."
 
 #, fuzzy
 msgid "Read the Docs"
 msgstr "Lugege dokumente"
 
-#, fuzzy
 msgid "Read-Only Mode"
-msgstr "Ainult lugemisrežiim"
+msgstr "Kirjutuskaitserežiim"
 
-#, fuzzy
 msgid "Recently Added"
 msgstr "Hiljuti lisatud"
 
-#, fuzzy
 msgid "Recently Edited"
-msgstr "Hiljuti redigeeritud"
+msgstr "Hiljuti muudetud"
 
 #, fuzzy
 msgid "Recognition starts after indexing has been completed."
@@ -1660,21 +1464,17 @@ msgstr "Tunnustamine algab pärast indekseerimise lõpetamist."
 msgid "Recognized"
 msgstr "Tunnustatud"
 
-#, fuzzy
 msgid "Recognizes faces so that specific people can be found."
-msgstr "Tunnistab nägusid, et konkreetseid inimesi oleks võimalik leida."
+msgstr "Tuvastab nägusid, et oleks võimalik konkreetseid inimesi leida."
 
-#, fuzzy
 msgid "Red"
 msgstr "Punane"
 
-#, fuzzy
 msgid "Reload"
-msgstr "Laadige uuesti"
+msgstr "Laadi uuesti"
 
-#, fuzzy
 msgid "Reloading…"
-msgstr "Ümberlaadimine…"
+msgstr "Uuesti laadimine…"
 
 #, fuzzy
 msgid "Remote Sync"
@@ -1684,51 +1484,43 @@ msgstr "Kaugsünkroonimine"
 msgid "Remove"
 msgstr "Eemaldage"
 
-#, fuzzy
 msgid "remove failed: unknown album"
 msgstr "eemaldamine ebaõnnestus: tundmatu album"
 
-#, fuzzy
 msgid "Remove from album"
 msgstr "Eemalda albumist"
 
-#, fuzzy
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Eemaldage imporditud failid, et säästa salvestusruumi. Toetamata failitüüpe ei kustutata kunagi, need jäävad oma praegusesse asukohta."
+msgstr ""
+"Eemalda imporditud failid salvestusruumi säästmiseks. Mittetoetatud "
+"failitüüpe ei kustutata kunagi, need jäävad oma praegusesse asukohta."
 
-#, fuzzy
 msgid "Request failed - invalid response"
-msgstr "Taotlus ebaõnnestus - kehtetu vastus"
+msgstr "Päring ebaõnnestus - vigane vastus"
 
 #, fuzzy
 msgid "Required"
 msgstr "Nõutav"
 
-#, fuzzy
 msgid "Resolution"
 msgstr "Resolutsioon"
 
-#, fuzzy
 msgid "Restore"
 msgstr "Taasta"
 
-#, fuzzy
 msgid "Retry Limit"
-msgstr "Korduvkatsete piirarv"
+msgstr "Korduvkatsete limiit"
 
-#, fuzzy
 msgid "Retype Password"
-msgstr "Korrigeeri parool"
+msgstr "Parool uuesti"
 
 #, fuzzy
 msgid "Review"
 msgstr "Ülevaade"
 
-#, fuzzy
 msgid "Satellite"
 msgstr "Satelliit"
 
-#, fuzzy
 msgid "Save"
 msgstr "Salvesta"
 
@@ -1740,21 +1532,18 @@ msgstr "Skaneeri"
 msgid "Scans"
 msgstr "Skaneerib"
 
-#, fuzzy
 msgid "Search"
 msgstr "Otsi"
 
-#, fuzzy
 msgid "Search and display photos on a map."
-msgstr "Fotode otsimine ja kuvamine kaardil."
+msgstr "Otsi ja kuva fotosid kaardil."
 
 #, fuzzy
 msgid "Season"
 msgstr "Hooaeg"
 
-#, fuzzy
 msgid "Seaweed"
-msgstr "Merivetikad"
+msgstr "Seaweed"
 
 #, fuzzy
 msgid "Secret"
@@ -1768,38 +1557,30 @@ msgstr "Turvalisus ja juurdepääs"
 msgid "Select"
 msgstr "Valige"
 
-#, fuzzy
 msgid "Select albums or create a new one"
-msgstr "Valige albumid või looge uus album"
+msgstr "Vali albumid või lisa uus"
 
-#, fuzzy
 msgid "Selection approved"
 msgstr "Valik heaks kiidetud"
 
-#, fuzzy
 msgid "Selection archived"
 msgstr "Valik arhiveeritud"
 
 msgid "Selection restored"
 msgstr "Valik taastatud"
 
-#, fuzzy
 msgid "Send"
 msgstr "Saada"
 
-#, fuzzy
 msgid "Sequential Name"
-msgstr "Järjekordne nimi"
+msgstr "Järjestikune nimi"
 
-#, fuzzy
 msgid "Service URL"
 msgstr "Teenuse URL"
 
-#, fuzzy
 msgid "Services"
 msgstr "Teenused"
 
-#, fuzzy
 msgid "Settings"
 msgstr "Seaded"
 
@@ -1810,7 +1591,6 @@ msgstr "Seaded salvestatud"
 msgid "Setup"
 msgstr "Seadistamine"
 
-#, fuzzy
 msgid "Shadow"
 msgstr "Shadow"
 
@@ -1822,15 +1602,13 @@ msgstr "Jaga"
 msgid "Share %{name}"
 msgstr "Jaga %{nimi}"
 
-#, fuzzy
 msgid "Share your pictures with other apps and services."
-msgstr "Jagage oma pilte teiste rakenduste ja teenustega."
+msgstr "Jaga oma pilte teiste rakenduste ja teenustega."
 
 #, fuzzy
 msgid "Show"
 msgstr "Näita"
 
-#, fuzzy
 msgid "Show all new faces"
 msgstr "Näita kõiki uusi nägusid"
 
@@ -1838,11 +1616,9 @@ msgstr "Näita kõiki uusi nägusid"
 msgid "Show hidden"
 msgstr "Näita peidetud"
 
-#, fuzzy
 msgid "Show less"
 msgstr "Näita vähem"
 
-#, fuzzy
 msgid "Show more"
 msgstr "Näita rohkem"
 
@@ -1850,19 +1626,16 @@ msgstr "Näita rohkem"
 msgid "Show server logs in Library."
 msgstr "Näita serverilogisid raamatukogus."
 
-#, fuzzy
 msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Näitab üksikasjalikumaid logisõnumeid. Nõuab taaskäivitamist."
+msgstr "Näitab detailsemaid logisõnumeid. Nõuab taaskäivitamist."
 
 #, fuzzy
 msgid "Sidecar"
 msgstr "Külgkorv"
 
-#, fuzzy
 msgid "Sign in"
 msgstr "Logi sisse"
 
-#, fuzzy
 msgid "Sign Up"
 msgstr "Registreeru"
 
@@ -1870,11 +1643,9 @@ msgstr "Registreeru"
 msgid "Similar"
 msgstr "Sarnane"
 
-#, fuzzy
 msgid "Size"
 msgstr "Suurus"
 
-#, fuzzy
 msgid "Slow"
 msgstr "Aeglane"
 
@@ -1890,25 +1661,24 @@ msgstr "Allikas"
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
 msgstr "Sponsorid saavad juurdepääsu lisafunktsioonidele, saavad otsest tehnilist tuge e-posti teel ja saavad liituda meie privaatse jututuppa aadressil matrix.org."
 
-#, fuzzy
 msgid "Stack"
-msgstr "Stack"
+msgstr "Virn"
 
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Stack-failid, mis jagavad sama unikaalset kujutise või instantsi identifikaatorit."
+msgstr ""
+"Pane virna failid, mis jagavad sama unikaalset kujutist või identifikaatorit."
 
-#, fuzzy
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Paneeri täpselt samal ajal ja samas kohas tehtud pilte nende metaandmete põhjal."
+msgstr ""
+"Pane virna metaandmete alusel täpselt samal ajal ja samas kohas tehtud "
+"pildid."
 
 #, fuzzy
 msgid "Stackable"
 msgstr "Stackable"
 
-#, fuzzy
 msgid "Stacks"
-msgstr "Stacks"
+msgstr "Virnad"
 
 #, fuzzy
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
@@ -1922,13 +1692,11 @@ msgstr "Start"
 msgid "Start/Stop Slideshow"
 msgstr "Slaidiesitluse käivitamine/peatamine"
 
-#, fuzzy
 msgid "States"
-msgstr "Ühendriigid"
+msgstr "Osariigid"
 
-#, fuzzy
 msgid "Static Size Limit: %{n}px"
-msgstr "Staatilise suuruse piirang: %{n}px"
+msgstr "Staatiline suuruse limiit: %{n}px"
 
 #, fuzzy
 msgid "Status"
@@ -1938,7 +1706,6 @@ msgstr "Staatus"
 msgid "Storage"
 msgstr "Ladustamine"
 
-#, fuzzy
 msgid "Streets"
 msgstr "Tänavad"
 
@@ -1970,9 +1737,8 @@ msgstr "Võetud"
 msgid "Teal"
 msgstr "Teal"
 
-#, fuzzy
 msgid "Text too long"
-msgstr "Liiga pikk tekst"
+msgstr "Tekst on liiga pikk"
 
 #, fuzzy
 msgid "The index currently contains %{n} hidden files."
@@ -1990,17 +1756,18 @@ msgstr "Teema"
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr "See on praegu sponsori funktsioon, et tänada kõiki, kes toetavad selle rakenduse arendamist."
 
-#, fuzzy
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"See ühendab originaalide kausta võrgukettana ja võimaldab teil avada, muuta ja kustutada faile.\n"
+"See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja "
+"kustutada faile\n"
 "          oma arvutist või nutitelefonist, nagu oleksid need kohalikud."
 
-#, fuzzy
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "See ühendab originaalide kausta võrgukettana ja võimaldab teil avada, redigeerida ja kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
+msgstr ""
+"See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja "
+"kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
 
 #, fuzzy
 msgid "Thumbnail Generation"
@@ -2010,7 +1777,6 @@ msgstr "Väikeste piltide genereerimine"
 msgid "Time UTC"
 msgstr "Kellaaeg UTC"
 
-#, fuzzy
 msgid "Time Zone"
 msgstr "Ajavöönd"
 
@@ -2018,7 +1784,6 @@ msgstr "Ajavöönd"
 msgid "Timeout"
 msgstr "Timeout"
 
-#, fuzzy
 msgid "Title"
 msgstr "Pealkiri"
 
@@ -2026,19 +1791,16 @@ msgstr "Pealkiri"
 msgid "Title / Position"
 msgstr "Pealkiri / ametikoht"
 
-#, fuzzy
 msgid "Title too long"
-msgstr "Liiga pikk pealkiri"
+msgstr "Pealkiri on liiga pikk"
 
-#, fuzzy
 msgid "Toggle View"
-msgstr "Vaate muutmine"
+msgstr "Muuda vaadet"
 
 #, fuzzy
 msgid "Token"
 msgstr "Token"
 
-#, fuzzy
 msgid "Topographic"
 msgstr "Topograafiline"
 
@@ -2050,7 +1812,6 @@ msgstr "Vigade kõrvaldamise kontrollnimekirjad"
 msgid "Try again using other filters or keywords."
 msgstr "Proovige uuesti, kasutades teisi filtreid või märksõnu."
 
-#, fuzzy
 msgid "Type"
 msgstr "Tüüp"
 
@@ -2058,7 +1819,6 @@ msgstr "Tüüp"
 msgid "Undo"
 msgstr "Undo"
 
-#, fuzzy
 msgid "Unique ID"
 msgstr "Unikaalne ID"
 
@@ -2070,7 +1830,6 @@ msgstr "Teadmata"
 msgid "Unregistered"
 msgstr "Registreerimata"
 
-#, fuzzy
 msgid "Unsorted"
 msgstr "Sorteerimata"
 
@@ -2090,7 +1849,6 @@ msgstr "Nägude uuendamine"
 msgid "Updating index"
 msgstr "Indeksi uuendamine"
 
-#, fuzzy
 msgid "Updating moments"
 msgstr "Hetkede uuendamine"
 
@@ -2106,19 +1864,15 @@ msgstr "Eelvaadete uuendamine"
 msgid "Updating stacks"
 msgstr "Korstnate uuendamine"
 
-#, fuzzy
 msgid "Upload"
-msgstr "Laadige üles"
+msgstr "Üleslaadimine"
 
-#, fuzzy
 msgid "Upload complete"
 msgstr "Üleslaadimine lõpetatud"
 
-#, fuzzy
 msgid "Upload complete. Indexing…"
 msgstr "Üleslaadimine lõpetatud. Indekseerimine…"
 
-#, fuzzy
 msgid "Upload failed"
 msgstr "Üleslaadimine ebaõnnestus"
 
@@ -2126,27 +1880,23 @@ msgstr "Üleslaadimine ebaõnnestus"
 msgid "Upload local files"
 msgstr "Kohalike failide üleslaadimine"
 
-#, fuzzy
 msgid "Upload to WebDAV and share links with friends."
-msgstr "Laadige üles WebDAV-i ja jagage linke sõpradega."
+msgstr "Laadi üles WebDAV-i ja jaga linke sõpradega."
 
 #, fuzzy
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{n} %{t} üleslaadimine…"
 
-#, fuzzy
 msgid "Uploading photos…"
 msgstr "Fotode üleslaadimine…"
 
-#, fuzzy
 msgid "Uploading…"
 msgstr "Üleslaadimine…"
 
-#, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
+msgstr ""
+"Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
 
-#, fuzzy
 msgid "URL"
 msgstr "URL"
 
@@ -2154,23 +1904,18 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Kasutage eelseadistusi"
 
-#, fuzzy
 msgid "User"
 msgstr "Kasutaja"
 
-#, fuzzy
 msgid "User Guide"
-msgstr "Kasutusjuhend"
+msgstr "Kasutajajuhend"
 
-#, fuzzy
 msgid "User Interface"
 msgstr "Kasutajaliides"
 
-#, fuzzy
 msgid "Username"
 msgstr "Kasutajanimi"
 
-#, fuzzy
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2178,15 +1923,12 @@ msgstr "Vanta"
 msgid "Verified"
 msgstr "Kinnitatud"
 
-#, fuzzy
 msgid "Video"
 msgstr "Video"
 
-#, fuzzy
 msgid "Video Duration"
 msgstr "Video kestus"
 
-#, fuzzy
 msgid "Videos"
 msgstr "Videod"
 
@@ -2194,19 +1936,17 @@ msgstr "Videod"
 msgid "View"
 msgstr "Vaata"
 
-#, fuzzy
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Külasta docs.photoprism.app/user-guide, et teada saada, kuidas oma pilte sünkroonida, organiseerida ja jagada."
+msgstr ""
+"Aadressilt docs.photoprism.app/user-guide saad teada, kuidas oma pilte "
+"sünkroonida, organiseerida ja jagada."
 
-#, fuzzy
 msgid "Visual Similarity"
 msgstr "Visuaalne sarnasus"
 
-#, fuzzy
 msgid "We appreciate your feedback!"
 msgstr "Me hindame teie tagasisidet!"
 
-#, fuzzy
 msgid "We do our best to respond within five business days or less."
 msgstr "Anname endast parima, et vastata viie tööpäeva jooksul või vähem."
 
@@ -2218,27 +1958,24 @@ msgstr "Anname endast parima, et vastata kõigile teie küsimustele. Vastutasuks
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
 msgstr "Me anname teile teada, kuidas seda lubada, kui registreerute Patreoni või GitHubi sponsoritele."
 
-#, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "WebDAV-kliendid saavad PhotoPrismiga ühenduda järgmise URL-i kaudu:"
+msgstr "WebDAV kliendid saavad PhotoPrismiga ühenduda järgmise URL-i kaudu:"
 
-#, fuzzy
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"WebDAV-kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad otse ühendada\n"
-"          PhotoPrismiga."
+"WebDAV kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad "
+"\n"
+"PhotoPrismiga otse ühenduda."
 
 #, fuzzy
 msgid "WebDAV Upload"
 msgstr "WebDAV üleslaadimine"
 
-#, fuzzy
 msgid "Website"
 msgstr "Veebileht"
 
-#, fuzzy
 msgid "White"
 msgstr "Valge"
 
@@ -2246,61 +1983,53 @@ msgstr "Valge"
 msgid "Work Details"
 msgstr "Töö üksikasjad"
 
-#, fuzzy
 msgid "Year"
 msgstr "Aasta"
 
-#, fuzzy
 msgid "Yellow"
 msgstr "Kollane"
 
-#, fuzzy
 msgid "Yellowstone"
 msgstr "Yellowstone"
 
-#, fuzzy
 msgid "Yes"
 msgstr "Jah"
 
-#, fuzzy
 msgid "you are welcome to join us on Reddit"
-msgstr "olete oodatud meiega liituma Redditil"
+msgstr "oled oodatud liituma meiega Redditis"
 
-#, fuzzy
 msgid "You can only download one album"
-msgstr "Saate alla laadida ainult ühe albumi"
+msgstr "Võid alla laadida ainult ühe albumi"
 
-#, fuzzy
 msgid "You can only download one label"
-msgstr "Saate alla laadida ainult ühe etiketi"
+msgstr "Võid alla laadida ainult ühe sildi"
 
-#, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "Saate seda kasutada kodus, eraserveris või pilves."
+msgstr "Saad seda kasutada kodus, isiklikus serveris või pilves."
 
-#, fuzzy
 msgid "You may only select one item"
-msgstr "Saate valida ainult ühe eseme"
+msgstr "Võid valida ainult ühe objekti"
 
-#, fuzzy
 msgid "You may rescan your library to find additional faces."
-msgstr "Te võite oma raamatukogu uuesti skaneerida, et leida täiendavaid nägusid."
+msgstr "Võid oma kogu uuesti skaneerida, et veel nägusid leida."
 
-#, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Teie jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda sõltumatuks, et me saaksime täita oma missiooni ja kaitsta teie privaatsust."
+msgstr ""
+"Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda "
+"sõltumatuks, et me saaksime täita oma missiooni ja kaitsta sinu privaatsust."
 
-#, fuzzy
 msgid "Your continued support helps us provide regular updates and services like world maps."
-msgstr "Teie jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja teenuseid, nagu maailmakaardid."
+msgstr ""
+"Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja teenuseid "
+"nagu maailmakaardid."
 
-#, fuzzy
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Teie raamatukogu analüüsitakse pidevalt, et luua automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
+msgstr ""
+"Sinu kogu analüüsitakse pidevalt, et luua automaatselt albumied erilistest "
+"hetkedest, reisidest ja kohtadest."
 
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Suumimine sisse/välja"
+msgstr "Suumi sisse/välja"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"
