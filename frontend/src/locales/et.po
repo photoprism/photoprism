@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-12 01:52+0000\n"
+"PO-Revision-Date: 2022-11-12 19:47+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -390,9 +390,8 @@ msgstr "Ühendatud"
 msgid "Contact Details"
 msgstr "Kontaktandmed"
 
-#, fuzzy
 msgid "Contact Us"
-msgstr "Võtke meiega ühendust"
+msgstr "Võta meiega ühendust"
 
 msgid "Contains %{n} pictures."
 msgstr "Sisaldab %{n} pilti."
@@ -440,7 +439,6 @@ msgstr "Cubic: mõõdukas kvaliteet, hea jõudlus"
 msgid "Current Password"
 msgstr "Praegune parool"
 
-#, fuzzy
 msgid "Customer Support"
 msgstr "Klienditugi"
 
@@ -458,9 +456,8 @@ msgstr "Igapäevane"
 msgid "Day"
 msgstr "Päev"
 
-#, fuzzy
 msgid "Debug Logs"
-msgstr "Vigade kõrvaldamise logid"
+msgstr "Tõrkeotsingu logid"
 
 #, fuzzy
 msgid "Default"
@@ -566,7 +563,6 @@ msgstr "Kaugfailide allalaadimine"
 msgid "Download single files and zip archives."
 msgstr "Laadige alla üksikuid faile ja zip-arhiive."
 
-#, fuzzy
 msgid "Downloading…"
 msgstr "Allalaadimine…"
 
@@ -614,9 +610,8 @@ msgstr "Konto muutmine"
 msgid "Edit Photo"
 msgstr "Fotode redigeerimine"
 
-#, fuzzy
 msgid "Edited"
-msgstr "Redigeeritud"
+msgstr "Muudetud"
 
 msgid "Email"
 msgstr "E-post"
@@ -627,7 +622,6 @@ msgstr "Luba uued, veel arenduses olevad funktsioonid."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Lubab RAW-konverteri eelseadistused. Võib vähendada jõudlust."
 
-#, fuzzy
 msgid "Errors"
 msgstr "Vead"
 
@@ -660,7 +654,6 @@ msgstr "Laienda otsingut"
 msgid "Experimental Features"
 msgstr "Eksperimentaalsed funktsioonid"
 
-#, fuzzy
 msgid "Expires"
 msgstr "Aegub"
 
@@ -698,7 +691,6 @@ msgstr "Lemmik"
 msgid "Favorites"
 msgstr "Lemmikud"
 
-#, fuzzy
 msgid "Feature Request"
 msgstr "Funktsiooni taotlus"
 
@@ -766,7 +758,6 @@ msgstr "Kaadrisagedus"
 msgid "Frames"
 msgstr "Raamid"
 
-#, fuzzy
 msgid "Fullscreen"
 msgstr "Täisekraan"
 
@@ -779,9 +770,8 @@ msgstr "Sugu"
 msgid "General"
 msgstr "Üldine"
 
-#, fuzzy
 msgid "Getting Support"
-msgstr "Toetuse saamine"
+msgstr "Abi saamine"
 
 msgid "Given Name"
 msgstr "Eesnimi"
@@ -801,11 +791,9 @@ msgstr "Hall"
 msgid "Hash"
 msgstr "Räsi"
 
-#, fuzzy
 msgid "Help"
 msgstr "Abi"
 
-#, fuzzy
 msgid "Help & Support"
 msgstr "Abi ja tugi"
 
@@ -833,11 +821,9 @@ msgstr "Kõrge"
 msgid "High Dynamic Range (HDR)"
 msgstr "Kõrge dünaamiline ulatus (HDR)"
 
-#, fuzzy
 msgid "How can we help?"
 msgstr "Kuidas me saame aidata?"
 
-#, fuzzy
 msgid "I'm a sponsor"
 msgstr "Ma olen sponsor"
 
@@ -886,9 +872,10 @@ msgstr "aadressil"
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
 
-#, fuzzy
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Kui teie poolt oodatud pildid on puudu, skannige oma raamatukogu uuesti ja oodake, kuni indekseerimine on lõpetatud."
+msgstr ""
+"Kui pildid, mida ootasid, on puudu, skanni oma kogu uuesti ja oota, kuni "
+"indekseerimine on lõpetatud."
 
 #, fuzzy
 msgid "Index"
@@ -897,11 +884,9 @@ msgstr "Indeks"
 msgid "Index and import files through the user interface."
 msgstr "Indekseeri ja impordi faile kasutajaliidese kaudu."
 
-#, fuzzy
 msgid "Indexing"
 msgstr "Indekseerimine"
 
-#, fuzzy
 msgid "Indexing failed"
 msgstr "Indekseerimine ebaõnnestus"
 
@@ -948,7 +933,6 @@ msgstr "JPEG suuruse limiit: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG- ja pisipildid renderdatakse automaatselt vastavalt vajadusele."
 
-#, fuzzy
 msgid "Keywords"
 msgstr "Märksõnad"
 
@@ -959,14 +943,12 @@ msgstr "Teadmiste baas"
 msgid "Label"
 msgstr "Silt"
 
-#, fuzzy
 msgid "Labels"
-msgstr "Märgised"
+msgstr "Sildid"
 
 msgid "Labels deleted"
 msgstr "Sildid kustutatud"
 
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: detailide säilitamine, minimaalsed artefaktid"
 
@@ -1056,7 +1038,6 @@ msgstr "Logid"
 msgid "Longitude"
 msgstr "Pikkuskraad"
 
-#, fuzzy
 msgid "Low"
 msgstr "Madal"
 
@@ -1069,7 +1050,6 @@ msgstr "Põhivärv"
 msgid "Male"
 msgstr "Mees"
 
-#, fuzzy
 msgid "manual"
 msgstr "käsitsi"
 
@@ -1084,18 +1064,15 @@ msgstr "Kaardid"
 msgid "Marker"
 msgstr "Märgistus"
 
-#, fuzzy
 msgid "Medium"
 msgstr "Keskmine"
 
-#, fuzzy
 msgid "Merge %{a} with %{b}?"
 msgstr "Ühendada %{a} ja %{b}?"
 
 msgid "Message sent"
 msgstr "Sõnum saadetud"
 
-#, fuzzy
 msgid "Minimize"
 msgstr "Minimeeri"
 
@@ -1147,7 +1124,6 @@ msgstr "Nimi"
 msgid "Name too long"
 msgstr "Nimi on liiga pikk"
 
-#, fuzzy
 msgid "Never"
 msgstr "Mitte kunagi"
 
@@ -1175,25 +1151,20 @@ msgstr "Inimesi ei leitud"
 msgid "No pictures found"
 msgstr "Pilte ei leitud"
 
-#, fuzzy
 msgid "No recently edited pictures"
-msgstr "Hiljuti töödeldud pilte ei ole"
+msgstr "Hiljuti muudetud pilte ei ole"
 
-#, fuzzy
 msgid "No servers configured."
-msgstr "Servereid ei ole konfigureeritud."
+msgstr "Ühtegi serverit pole seadistatud."
 
-#, fuzzy
 msgid "No services configured."
-msgstr "Teenuseid ei ole konfigureeritud."
+msgstr "Ühtegi teenust pole seadistatud."
 
-#, fuzzy
 msgid "No thanks"
 msgstr "Ei aitäh"
 
-#, fuzzy
 msgid "No video selected"
-msgstr "Ei ole valitud videot"
+msgstr "Ühtegi videot pole valitud"
 
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr ""
@@ -1218,7 +1189,6 @@ msgstr ""
 "Pane tähele, et võid originaalide kausta käsitsi hallata, importimine on "
 "vabatahtlik."
 
-#, fuzzy
 msgid "Note:"
 msgstr "Märkus:"
 
@@ -1227,7 +1197,6 @@ msgstr ""
 "Märkus: Ainult WebDAV servereid, nagu Nextcloud või PhotoPrism, saab "
 "seadistada kaugteenusena varundamiseks ja failide üleslaadimiseks."
 
-#, fuzzy
 msgid "Notes"
 msgstr "Märkused"
 
@@ -1297,9 +1266,8 @@ msgstr "Esialgne nimi"
 msgid "Originals"
 msgstr "Originaalid"
 
-#, fuzzy
 msgid "Other"
-msgstr "Muud"
+msgstr "Muu"
 
 #, fuzzy
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1405,11 +1373,9 @@ msgstr "Esmane"
 msgid "Private"
 msgstr "Eraldi"
 
-#, fuzzy
 msgid "Product Feedback"
-msgstr "Toote tagasiside"
+msgstr "Tagasiside"
 
-#, fuzzy
 msgid "Projection"
 msgstr "Projektsioon"
 
@@ -1443,9 +1409,8 @@ msgstr ""
 "Indekseeri uuesti kõik originaalid, sealhulgas juba indekseeritud ja "
 "muutmata failid."
 
-#, fuzzy
 msgid "Read the Docs"
-msgstr "Lugege dokumente"
+msgstr "Loe dokumentatsiooni"
 
 msgid "Read-Only Mode"
 msgstr "Kirjutuskaitserežiim"
@@ -1637,7 +1602,7 @@ msgid "Sign in"
 msgstr "Logi sisse"
 
 msgid "Sign Up"
-msgstr "Registreeru"
+msgstr "Liitu"
 
 #, fuzzy
 msgid "Similar"
@@ -1657,9 +1622,10 @@ msgstr "Sorteerimisjärjekord"
 msgid "Source"
 msgstr "Allikas"
 
-#, fuzzy
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "Sponsorid saavad juurdepääsu lisafunktsioonidele, saavad otsest tehnilist tuge e-posti teel ja saavad liituda meie privaatse jututuppa aadressil matrix.org."
+msgstr ""
+"Sponsorid saavad juurdepääsu lisafunktsioonidele, otsest tehnilist tuge e-"
+"posti teel ning võivad liituda meie privaatse jututoaga aadressil matrix.org."
 
 msgid "Stack"
 msgstr "Virn"
@@ -1752,9 +1718,10 @@ msgstr "Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse
 msgid "Theme"
 msgstr "Teema"
 
-#, fuzzy
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-msgstr "See on praegu sponsori funktsioon, et tänada kõiki, kes toetavad selle rakenduse arendamist."
+msgstr ""
+"See funktsioon on praegu kättesaadav ainult sponsoritele, et tänada kõiki, "
+"kes toetavad selle rakenduse arendamist."
 
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
@@ -1808,9 +1775,8 @@ msgstr "Topograafiline"
 msgid "Troubleshooting Checklists"
 msgstr "Vigade kõrvaldamise kontrollnimekirjad"
 
-#, fuzzy
 msgid "Try again using other filters or keywords."
-msgstr "Proovige uuesti, kasutades teisi filtreid või märksõnu."
+msgstr "Proovi uuesti, kasutades teisi filtreid või märksõnu."
 
 msgid "Type"
 msgstr "Tüüp"
@@ -1950,13 +1916,15 @@ msgstr "Me hindame teie tagasisidet!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Anname endast parima, et vastata viie tööpäeva jooksul või vähem."
 
-#, fuzzy
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Anname endast parima, et vastata kõigile teie küsimustele. Vastutasuks palume teid toetada meid Patreonis või GitHubi sponsoritega."
+msgstr ""
+"Anname endast parima, et vastata kõigile küsimustele. Vastutasuks palume "
+"meid toetada Patreoni või GitHub Sponsors kaudu."
 
-#, fuzzy
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr "Me anname teile teada, kuidas seda lubada, kui registreerute Patreoni või GitHubi sponsoritele."
+msgstr ""
+"Me anname sulle teada, kuidas seda kasutama hakata, kui liitud Patreoni või "
+"GitHubi Sponsors abil."
 
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV kliendid saavad PhotoPrismiga ühenduda järgmise URL-i kaudu:"
