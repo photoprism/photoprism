@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-12 19:47+0000\n"
+"PO-Revision-Date: 2022-11-14 21:46+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -177,9 +177,8 @@ msgstr "Kõrgus"
 msgid "Altitude (m)"
 msgstr "Kõrgus (m)"
 
-#, fuzzy
 msgid "An error occurred - are you offline?"
-msgstr "Tekkis viga - kas olete võrguühenduseta?"
+msgstr "Tekkis viga - kas oled võrguühenduseta?"
 
 msgid "Animated"
 msgstr "Animeeritud"
@@ -188,7 +187,7 @@ msgid "Animation"
 msgstr "Animatsioon"
 
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Kõik privaatsed fotod ja videod jäävad privaatseks ja neid ei jagata."
+msgstr "Kõik isiklikud fotod ja videod jäävad isiklikuks ja neid ei jagata."
 
 msgid "API Key"
 msgstr "API võti"
@@ -267,9 +266,8 @@ msgstr "Sünnikuupäev"
 msgid "Black"
 msgstr "Must"
 
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos modifikatsioon, vähem helisevaid artefakte"
+msgstr "Blackman: Lanczos modifikatsioon, vähem artefakte"
 
 msgid "Blue"
 msgstr "Sinine"
@@ -300,9 +298,8 @@ msgstr "Kalender"
 msgid "Camera"
 msgstr "Kaamera"
 
-#, fuzzy
 msgid "Camera Serial"
-msgstr "Kaamera seeriaviisiline"
+msgstr "Kaamera seerianumber"
 
 msgid "Can't load more, limit reached"
 msgstr "Rohkem ei saa laadida, limiit on saavutatud"
@@ -313,7 +310,6 @@ msgstr "Rohkem objekte ei saa valida"
 msgid "Cancel"
 msgstr "Katkesta"
 
-#, fuzzy
 msgid "Cards"
 msgstr "Kaardid"
 
@@ -332,14 +328,12 @@ msgstr "Muuta isikliku profiili ja turvaseadeid."
 msgid "Change photo titles, locations, and other metadata."
 msgstr "Muuda fotode pealkirju, asukohti ja muid metaandmeid."
 
-#, fuzzy
 msgid "Change private flag"
-msgstr "Muuda eraviisilist lippu"
+msgstr "Muuda isiklikkust"
 
 msgid "Changes successfully saved"
 msgstr "Muudatused edukalt salvestatud"
 
-#, fuzzy
 msgid "Checked"
 msgstr "Kontrollitud"
 
@@ -350,9 +344,8 @@ msgstr "Chroma"
 msgid "Close"
 msgstr "Sulge"
 
-#, fuzzy
 msgid "Codec"
-msgstr "Codec"
+msgstr "Koodek"
 
 msgid "Color"
 msgstr "Värv"
@@ -363,9 +356,10 @@ msgstr "Värviprofiil"
 msgid "Colors"
 msgstr "Värvid"
 
-#, fuzzy
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Tavalised probleemid saab kiiresti diagnoosida ja lahendada, kasutades meie poolt pakutavaid tõrkeotsingu kontrollnimekirju."
+msgstr ""
+"Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie "
+"poolt pakutavat tõrkeotsingu meelespead."
 
 #, fuzzy
 msgid "Complete Rescan"
@@ -396,7 +390,6 @@ msgstr "Võta meiega ühendust"
 msgid "Contains %{n} pictures."
 msgstr "Sisaldab %{n} pilti."
 
-#, fuzzy
 msgid "Contains one picture."
 msgstr "Sisaldab ühte pilti."
 
@@ -410,24 +403,20 @@ msgstr "Konverteerimine"
 msgid "Copied to clipboard"
 msgstr "Kopeeritud lõikelauale"
 
-#, fuzzy
 msgid "Copyright"
 msgstr "Autoriõigus"
 
-#, fuzzy
 msgid "Couldn't find anything."
-msgstr "Ei leidnud midagi."
+msgstr "Midagi ei leitud."
 
 msgid "Country"
 msgstr "Riik"
 
-#, fuzzy
 msgid "Create album"
-msgstr "Loo album"
+msgstr "Lisa album"
 
-#, fuzzy
 msgid "Created"
-msgstr "Loodud"
+msgstr "Lisatud"
 
 #, fuzzy
 msgid "Creating thumbnails for"
@@ -442,9 +431,8 @@ msgstr "Praegune parool"
 msgid "Customer Support"
 msgstr "Klienditugi"
 
-#, fuzzy
 msgid "Cyan"
-msgstr "Cyan"
+msgstr "Tsüaan"
 
 msgid "Cyano"
 msgstr "Cyano"
@@ -512,7 +500,6 @@ msgstr "Keela WebDAV"
 msgid "Disables reverse geocoding and maps."
 msgstr "Keelab asukohatuvastuse ja kaardid."
 
-#, fuzzy
 msgid "Discover"
 msgstr "Avasta"
 
@@ -570,13 +557,13 @@ msgstr "Allalaadimine…"
 msgid "Downscaling Filter"
 msgstr "Alamklassifitseerimise filter"
 
-#, fuzzy
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Meile saabuvate e-kirjade suure hulga tõttu ei pruugi meie meeskond olla võimeline teile kohe vastama."
+msgstr ""
+"Meile saabuvate e-kirjade suure hulga tõttu ei pruugi meie meeskond olla "
+"võimeline kohe vastama."
 
-#, fuzzy
 msgid "Duplicates will be skipped and only appear once."
-msgstr "Duplikaadid jäetakse vahele ja need ilmuvad ainult üks kord."
+msgstr "Duplikaadid jäetakse vahele ja neid kuvatakse ainult ühekordselt."
 
 msgid "Duration"
 msgstr "Kestus"
@@ -637,17 +624,15 @@ msgstr "Iga kahe päeva tagant"
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr ""
 "Välista otsingutulemustest, jagatud albumitest, siltidest ja kohtadest "
-"privaatseks märgitud sisu."
+"isiklikuks märgitud sisu."
 
-#, fuzzy
 msgid "Exclude hidden"
-msgstr "Välja arvatud varjatud"
+msgstr "Välista peidetud"
 
 #, fuzzy
 msgid "Expand"
 msgstr "Laiendage"
 
-#, fuzzy
 msgid "Expand Search"
 msgstr "Laienda otsingut"
 
@@ -712,9 +697,8 @@ msgstr "Naine"
 msgid "File"
 msgstr "Faili"
 
-#, fuzzy
 msgid "File Browser"
-msgstr "Faili brauser"
+msgstr "Failibrauser"
 
 msgid "File Name"
 msgstr "Faili nimi"
@@ -797,29 +781,23 @@ msgstr "Abi"
 msgid "Help & Support"
 msgstr "Abi ja tugi"
 
-#, fuzzy
 msgid "Hidden"
 msgstr "Peidetud"
 
-#, fuzzy
 msgid "Hidden Files"
 msgstr "Peidetud failid"
 
-#, fuzzy
 msgid "Hide"
 msgstr "Peida"
 
-#, fuzzy
 msgid "Hide photos that have been moved to archive."
 msgstr "Peida fotod, mis on viidud arhiivi."
 
-#, fuzzy
 msgid "High"
 msgstr "Kõrge"
 
-#, fuzzy
 msgid "High Dynamic Range (HDR)"
-msgstr "Kõrge dünaamiline ulatus (HDR)"
+msgstr "Lai dünaamiline diapasoon (HDR)"
 
 msgid "How can we help?"
 msgstr "Kuidas me saame aidata?"
@@ -830,15 +808,12 @@ msgstr "Ma olen sponsor"
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Kui see ei aita või sul on muid küsimusi:"
 
-#, fuzzy
 msgid "image"
 msgstr "pilt"
 
-#, fuzzy
 msgid "Image"
 msgstr "Pilt"
 
-#, fuzzy
 msgid "Images"
 msgstr "Pildid"
 
@@ -969,9 +944,8 @@ msgstr "Lavender"
 msgid "Learn more"
 msgstr "Lisateave"
 
-#, fuzzy
 msgid "Legal Information"
-msgstr "Õiguslik teave"
+msgstr "Õigusalane teave"
 
 msgid "Lens"
 msgstr "Objektiiv"
@@ -1031,7 +1005,6 @@ msgstr "Logi sisse"
 msgid "Logout"
 msgstr "Logi välja"
 
-#, fuzzy
 msgid "Logs"
 msgstr "Logid"
 
@@ -1369,9 +1342,8 @@ msgstr "Eelvaade"
 msgid "Primary"
 msgstr "Esmane"
 
-#, fuzzy
 msgid "Private"
-msgstr "Eraldi"
+msgstr "Isiklik"
 
 msgid "Product Feedback"
 msgstr "Tagasiside"
@@ -1503,9 +1475,8 @@ msgstr "Otsi"
 msgid "Search and display photos on a map."
 msgstr "Otsi ja kuva fotosid kaardil."
 
-#, fuzzy
 msgid "Season"
-msgstr "Hooaeg"
+msgstr "Aastaaeg"
 
 msgid "Seaweed"
 msgstr "Seaweed"
@@ -1604,9 +1575,8 @@ msgstr "Logi sisse"
 msgid "Sign Up"
 msgstr "Liitu"
 
-#, fuzzy
 msgid "Similar"
-msgstr "Sarnane"
+msgstr "Sarnased"
 
 msgid "Size"
 msgstr "Suurus"
