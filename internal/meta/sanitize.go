@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -64,7 +65,7 @@ func SanitizeString(s string) string {
 
 	s = strings.TrimSpace(s)
 
-	return strings.Replace(s, "\"", "", -1)
+	return clean.Unicode(strings.Replace(s, "\"", "", -1))
 }
 
 // SanitizeUID normalizes unique IDs found in XMP or Exif metadata.

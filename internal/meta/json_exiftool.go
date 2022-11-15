@@ -9,15 +9,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/video"
-
-	"github.com/photoprism/photoprism/pkg/projection"
-
-	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
 	"gopkg.in/photoprism/go-tz.v2/tz"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/projection"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/video"
 )
 
 const MimeVideoMP4 = "video/mp4"
@@ -47,7 +46,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	jsonValues := j.Map()
 
 	for key, val := range jsonValues {
-		data.json[key] = val.String()
+		data.json[key] = SanitizeString(val.String())
 	}
 
 	if fileName, ok := data.json["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
@@ -134,22 +133,22 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 				}
 			case []string:
 				existing := fieldValue.Interface().([]string)
-				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeString(jsonValue.String()))))
 			case Keywords:
 				existing := fieldValue.Interface().(Keywords)
-				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeString(jsonValue.String()))))
 			case projection.Type:
 				if !fieldValue.IsZero() {
 					continue
 				}
 
-				fieldValue.Set(reflect.ValueOf(projection.Type(strings.TrimSpace(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(projection.Type(SanitizeString(jsonValue.String()))))
 			case string:
 				if !fieldValue.IsZero() {
 					continue
 				}
 
-				fieldValue.SetString(strings.TrimSpace(jsonValue.String()))
+				fieldValue.SetString(SanitizeString(jsonValue.String()))
 			case bool:
 				if !fieldValue.IsZero() {
 					continue
