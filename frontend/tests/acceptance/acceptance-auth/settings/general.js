@@ -65,7 +65,7 @@ test.meta("testID", "settings-general-002").meta({ type: "short", mode: "auth" }
 
     await menu.openPage("settings");
     await t
-      .click(settings.languageInput)
+      .click(settings.languageOpenSelection)
       .hover(Selector("div").withText("Deutsch").parent('div[role="listitem"]'))
       .click(Selector("div").withText("Deutsch").parent('div[role="listitem"]'));
     await t.eval(() => location.reload());
@@ -73,7 +73,7 @@ test.meta("testID", "settings-general-002").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".nav-browse").innerText).contains("Suche");
 
     await t
-      .click(settings.languageInput)
+      .click(settings.languageOpenSelection)
       .hover(Selector("div").withText("English").parent('div[role="listitem"]'))
       .click(Selector("div").withText("English").parent('div[role="listitem"]'));
 
