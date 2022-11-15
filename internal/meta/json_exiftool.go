@@ -46,7 +46,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	jsonValues := j.Map()
 
 	for key, val := range jsonValues {
-		data.json[key] = SanitizeString(val.String())
+		data.json[key] = SanitizeUnicode(val.String())
 	}
 
 	if fileName, ok := data.json["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
@@ -133,22 +133,22 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 				}
 			case []string:
 				existing := fieldValue.Interface().([]string)
-				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeString(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeUnicode(jsonValue.String()))))
 			case Keywords:
 				existing := fieldValue.Interface().(Keywords)
-				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeString(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeUnicode(jsonValue.String()))))
 			case projection.Type:
 				if !fieldValue.IsZero() {
 					continue
 				}
 
-				fieldValue.Set(reflect.ValueOf(projection.Type(SanitizeString(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(projection.Type(SanitizeUnicode(jsonValue.String()))))
 			case string:
 				if !fieldValue.IsZero() {
 					continue
 				}
 
-				fieldValue.SetString(SanitizeString(jsonValue.String()))
+				fieldValue.SetString(SanitizeUnicode(jsonValue.String()))
 			case bool:
 				if !fieldValue.IsZero() {
 					continue
