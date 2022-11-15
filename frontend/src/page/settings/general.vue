@@ -275,7 +275,7 @@
               <v-checkbox
                   v-model="settings.features.account"
                   :disabled="busy || isDemo"
-                  class="ma-0 pa-0 input-places"
+                  class="ma-0 pa-0 input-account"
                   color="secondary-dark"
                   :label="$gettext('Account')"
                   :hint="$gettext('Change personal profile and security settings.')"
