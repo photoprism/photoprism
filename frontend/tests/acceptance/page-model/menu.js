@@ -5,7 +5,7 @@ export default class Page {
 
   async openNav() {
     if (await Selector("div.nav-expand").visible) {
-      await t.click(Selector("div.nav-expand"));
+      await t.click(Selector("div.nav-expand a"));
     } else if (await Selector("div.nav-expand").visible) {
       await t.click(Selector("div.nav-expand i"));
     }

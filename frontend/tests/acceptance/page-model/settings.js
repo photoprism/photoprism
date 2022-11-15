@@ -4,29 +4,34 @@ export default class Page {
   constructor() {
     this.generalTab = Selector("#tab-settings_general");
     this.languageInput = Selector(".input-language input");
-    this.uploadCheckbox = Selector(".input-upload input");
-    this.downloadCheckbox = Selector(".input-download input");
-    this.importCheckbox = Selector(".input-import input");
-    this.archiveCheckbox = Selector('input[aria-label="Archive"]');
-    this.editCheckbox = Selector(".input-edit input");
-    this.filesCheckbox = Selector(".input-files input");
-    this.momentsCheckbox = Selector(".input-moments input");
-    this.labelsCheckbox = Selector(".input-labels input");
-    this.logsCheckbox = Selector(".input-logs input");
-    this.shareCheckbox = Selector(".input-share input");
-    this.placesCheckbox = Selector('input[aria-label="Places"]');
-    this.privateCheckbox = Selector('input[aria-label="Private"]');
-    this.peopleCheckbox = Selector(".input-people input");
-    this.deleteCheckbox = Selector(".input-delete input");
-    this.libraryCheckbox = Selector(".input-library input");
+    this.languageOpenSelection = Selector(".input-language div.v-select__selections");
+    this.uploadCheckbox = Selector(".input-upload div.v-input--selection-controls__ripple");
+    this.downloadCheckbox = Selector(".input-download div.v-input--selection-controls__ripple");
+    this.importCheckbox = Selector(".input-import div.v-input--selection-controls__ripple");
+    this.archiveCheckbox = Selector(".input-archive div.v-input--selection-controls__ripple");
+    this.editCheckbox = Selector(".input-edit div.v-input--selection-controls__ripple");
+    this.filesCheckbox = Selector(".input-files div.v-input--selection-controls__ripple");
+    this.momentsCheckbox = Selector(".input-moments div.v-input--selection-controls__ripple");
+    this.labelsCheckbox = Selector(".input-labels div.v-input--selection-controls__ripple");
+    this.logsCheckbox = Selector(".input-logs div.v-input--selection-controls__ripple");
+    this.shareCheckbox = Selector(".input-share div.v-input--selection-controls__ripple");
+    this.placesCheckbox = Selector(".input-places div.v-input--selection-controls__ripple");
+    this.privateCheckbox = Selector(
+      'input[aria-label="Private"] + div.v-input--selection-controls__ripple'
+    );
+    this.peopleCheckbox = Selector(".input-people div.v-input--selection-controls__ripple");
+    this.deleteCheckbox = Selector(".input-delete div.v-input--selection-controls__ripple");
+    this.libraryCheckbox = Selector(".input-library div.v-input--selection-controls__ripple");
 
     this.libraryTab = Selector("#tab-settings_media");
-    this.reviewCheckbox = Selector(".input-review input");
-    this.convertCheckbox = Selector(".input-convert input");
-    this.estimatesCheckbox = Selector(".input-estimates input");
-    this.dateTimeStacksCheckbox = Selector(".input-stack-meta input");
-    this.uuidStacksCheckbox = Selector(".input-stack-uuid input");
-    this.nameStacksCheckbox = Selector(".input-stack-name input");
+    this.reviewCheckbox = Selector(".input-review div.v-input--selection-controls__ripple");
+    this.convertCheckbox = Selector(".input-convert div.v-input--selection-controls__ripple");
+    this.estimatesCheckbox = Selector(".input-estimates div.v-input--selection-controls__ripple");
+    this.dateTimeStacksCheckbox = Selector(
+      ".input-stack-meta div.v-input--selection-controls__ripple"
+    );
+    this.uuidStacksCheckbox = Selector(".input-stack-uuid div.v-input--selection-controls__ripple");
+    this.nameStacksCheckbox = Selector(".input-stack-name div.v-input--selection-controls__ripple");
 
     this.advancedTab = Selector("#tab-settings_advanced");
     this.debugCheckbox = Selector("label").withText("Debug Logs");
@@ -38,6 +43,5 @@ export default class Page {
 
     this.accountTab = Selector("#tab-settings_account");
     this.servicesTab = Selector("#tab-settings_services");
-
   }
 }
