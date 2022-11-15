@@ -1209,4 +1209,54 @@ func TestJSON(t *testing.T) {
 		//TODO
 		//assert.Equal(t, "zqdtcxt1q9wrxnur", data.DocumentID)
 	})
+
+	t.Run("iPhone_6s.json", func(t *testing.T) {
+		data, err := JSON("testdata/iPhone_6s.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %+v", data)
+
+		assert.Equal(t, CodecJpeg, data.Codec)
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, "2022-11-02 12:54:16 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2022-11-02 11:54:16 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, 698000000, data.TakenNs)
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, 4032, data.Width)
+		assert.Equal(t, 3024, data.Height)
+		assert.Equal(t, 6, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 6s", data.CameraModel)
+		assert.Equal(t, "iPhone 6s back camera 4.15mm f/2.2", data.LensModel)
+	})
+
+	t.Run("iPhone_14_Pro.json", func(t *testing.T) {
+		data, err := JSON("testdata/iPhone_14_Pro.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %+v", data)
+
+		assert.Equal(t, CodecJpeg, data.Codec)
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, "2022-09-23 13:30:04 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2022-09-23 12:30:04 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, 630000000, data.TakenNs)
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, 4032, data.Width)
+		assert.Equal(t, 3024, data.Height)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 14 Pro Max", data.CameraModel)
+		assert.Equal(t, "iPhone 14 Pro Max back triple camera 9mm f/2.8", data.LensModel)
+	})
 }
