@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-14 21:46+0000\n"
+"PO-Revision-Date: 2022-11-16 08:52+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -447,7 +447,6 @@ msgstr "Päev"
 msgid "Debug Logs"
 msgstr "Tõrkeotsingu logid"
 
-#, fuzzy
 msgid "Default"
 msgstr "Vaikimisi"
 
@@ -509,9 +508,8 @@ msgstr "Esitusnimi"
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "Ära varunda fotode ja albumite metaandmeid YAML-failidesse."
 
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Ärge looge ExifTool JSON-faile parema metaandmete väljavõtte jaoks."
+msgstr "Ära loo ExifTool JSON-faile metaandmete ekstraktimise parandamiseks."
 
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
@@ -589,13 +587,11 @@ msgstr "Muuda"
 msgid "Edit %{name}"
 msgstr "Muuda %{nimi}"
 
-#, fuzzy
 msgid "Edit Account"
 msgstr "Konto muutmine"
 
-#, fuzzy
 msgid "Edit Photo"
-msgstr "Fotode redigeerimine"
+msgstr "Foto muutmine"
 
 msgid "Edited"
 msgstr "Muudetud"
@@ -629,9 +625,8 @@ msgstr ""
 msgid "Exclude hidden"
 msgstr "Välista peidetud"
 
-#, fuzzy
 msgid "Expand"
-msgstr "Laiendage"
+msgstr "Laienda"
 
 msgid "Expand Search"
 msgstr "Laienda otsingut"
@@ -669,7 +664,6 @@ msgstr "Perekonnanimi"
 msgid "Fast"
 msgstr "Kiire"
 
-#, fuzzy
 msgid "Favorite"
 msgstr "Lemmik"
 
@@ -679,9 +673,8 @@ msgstr "Lemmikud"
 msgid "Feature Request"
 msgstr "Funktsiooni taotlus"
 
-#, fuzzy
 msgid "Feed"
-msgstr "Sööt"
+msgstr "Kanal"
 
 msgid "Feedback"
 msgstr "Tagasiside"
@@ -693,9 +686,8 @@ msgstr ""
 msgid "Female"
 msgstr "Naine"
 
-#, fuzzy
 msgid "File"
-msgstr "Faili"
+msgstr "Fail"
 
 msgid "File Browser"
 msgstr "Failibrauser"
@@ -738,9 +730,8 @@ msgstr "Unustasid parooli?"
 msgid "FPS"
 msgstr "Kaadrisagedus"
 
-#, fuzzy
 msgid "Frames"
-msgstr "Raamid"
+msgstr "Kaadrid"
 
 msgid "Fullscreen"
 msgstr "Täisekraan"
@@ -836,13 +827,11 @@ msgstr ""
 msgid "Importing %{name}…"
 msgstr "%{nimi} importimine…"
 
-#, fuzzy
 msgid "Importing files to originals…"
-msgstr "Failide importimine originaalidele…"
+msgstr "Failide importimine originaalidesse…"
 
-#, fuzzy
 msgid "in"
-msgstr "aadressil"
+msgstr "ajaga"
 
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
@@ -852,7 +841,6 @@ msgstr ""
 "Kui pildid, mida ootasid, on puudu, skanni oma kogu uuesti ja oota, kuni "
 "indekseerimine on lõpetatud."
 
-#, fuzzy
 msgid "Index"
 msgstr "Indeks"
 
@@ -865,13 +853,11 @@ msgstr "Indekseerimine"
 msgid "Indexing failed"
 msgstr "Indekseerimine ebaõnnestus"
 
-#, fuzzy
 msgid "Indexing media and sidecar files…"
-msgstr "Meedia ja külgkorvi failide indekseerimine…"
+msgstr "Meedia- ja abifailide indekseerimine…"
 
-#, fuzzy
 msgid "Instance ID"
-msgstr "Instantsi ID"
+msgstr "Eksemplari ID"
 
 msgid "Interval"
 msgstr "Intervall"
@@ -885,9 +871,8 @@ msgstr "Vigane kuupäev"
 msgid "Invalid parameters"
 msgstr "Vigased parameetrid"
 
-#, fuzzy
 msgid "Invalid photo selected"
-msgstr "Valitud vale foto"
+msgstr "Vigane foto valitud"
 
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr ""
@@ -940,7 +925,6 @@ msgstr "Laiuskraad"
 msgid "Lavender"
 msgstr "Lavender"
 
-#, fuzzy
 msgid "Learn more"
 msgstr "Lisateave"
 
@@ -969,7 +953,6 @@ msgstr "Limiit saavutatud, näidatakse esimest %{n} faili"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineaarne: väga sujuv, parim jõudlus"
 
-#, fuzzy
 msgid "Link"
 msgstr "Link"
 
@@ -998,7 +981,6 @@ msgstr ""
 "Siia ilmuvad logiteated, kui PhotoPrism leiab katkiseid faile või kui esineb "
 "muid probleeme."
 
-#, fuzzy
 msgid "Login"
 msgstr "Logi sisse"
 
@@ -1033,9 +1015,8 @@ msgstr "Käsitsi üleslaadimine"
 msgid "Maps"
 msgstr "Kaardid"
 
-#, fuzzy
 msgid "Marker"
-msgstr "Märgistus"
+msgstr "Märk"
 
 msgid "Medium"
 msgstr "Keskmine"
@@ -1049,16 +1030,14 @@ msgstr "Sõnum saadetud"
 msgid "Minimize"
 msgstr "Minimeeri"
 
-#, fuzzy
 msgid "Missing"
-msgstr "Puuduv"
+msgstr "Puudub"
 
 msgid "Moments"
 msgstr "Hetked"
 
-#, fuzzy
 msgid "Monochrome"
-msgstr "Ühevärviline"
+msgstr "Mustvalge"
 
 msgid "Month"
 msgstr "Kuu"
@@ -1081,9 +1060,8 @@ msgstr "Rohkem kui 20 inimest leitud"
 msgid "Mosaic"
 msgstr "Mosaiik"
 
-#, fuzzy
 msgid "Most Relevant"
-msgstr "Kõige asjakohasemad"
+msgstr "Asjakohasemad eespool"
 
 msgid "Move Files"
 msgstr "Liiguta failid"
@@ -1149,7 +1127,6 @@ msgstr ""
 "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne "
 "kui nad otsingutulemustes ilmuvad."
 
-#, fuzzy
 msgid "None"
 msgstr "Puudub"
 
@@ -1176,9 +1153,8 @@ msgstr "Märkused"
 msgid "Nothing to see here yet."
 msgstr "Siin pole veel midagi näha."
 
-#, fuzzy
 msgid "Offline"
-msgstr "Offline"
+msgstr "Võrguühenduseta"
 
 msgid "Oldest First"
 msgstr "Vanemad eespool"
@@ -1213,7 +1189,6 @@ msgstr "Üks pilt leitud"
 msgid "Onyx"
 msgstr "Onyx"
 
-#, fuzzy
 msgid "Options"
 msgstr "Valikud"
 
@@ -1314,9 +1289,8 @@ msgstr ""
 "Pane tähele, et parooli muutmine logib sind teistes seadmetes ja brauserites "
 "välja."
 
-#, fuzzy
 msgid "Portrait"
-msgstr "Portree"
+msgstr "Püstformaat"
 
 msgid "post your question in GitHub Discussions"
 msgstr "postita oma küsimus GitHub'i aruteludesse"
@@ -1327,20 +1301,17 @@ msgstr "Säilita failinimed"
 msgid "Press button to start importing…"
 msgstr "Importimise alustamiseks vajuta nuppu…"
 
-#, fuzzy
 msgid "Press button to start indexing…"
-msgstr "Indekseerimise alustamiseks vajutage nuppu…"
+msgstr "Indekseerimise alustamiseks vajuta nuppu…"
 
-#, fuzzy
 msgid "Press enter to create a new album."
-msgstr "Uue albumi loomiseks vajutage enter."
+msgstr "Uue albumi lisamiseks vajuta Enter."
 
 msgid "Preview"
 msgstr "Eelvaade"
 
-#, fuzzy
 msgid "Primary"
-msgstr "Esmane"
+msgstr "Primaarne"
 
 msgid "Private"
 msgstr "Isiklik"
@@ -1366,9 +1337,8 @@ msgstr "Juhuslik"
 msgid "Raspberry"
 msgstr "Raspberry"
 
-#, fuzzy
 msgid "Raw"
-msgstr "Toores"
+msgstr "RAW"
 
 msgid "RAW"
 msgstr "RAW"
@@ -1393,13 +1363,11 @@ msgstr "Hiljuti lisatud"
 msgid "Recently Edited"
 msgstr "Hiljuti muudetud"
 
-#, fuzzy
 msgid "Recognition starts after indexing has been completed."
-msgstr "Tunnustamine algab pärast indekseerimise lõpetamist."
+msgstr "Tuvastamine algab pärast indekseerimise lõppemist."
 
-#, fuzzy
 msgid "Recognized"
-msgstr "Tunnustatud"
+msgstr "Tuvastatud"
 
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Tuvastab nägusid, et oleks võimalik konkreetseid inimesi leida."
@@ -1417,9 +1385,8 @@ msgstr "Uuesti laadimine…"
 msgid "Remote Sync"
 msgstr "Kaugsünkroonimine"
 
-#, fuzzy
 msgid "Remove"
-msgstr "Eemaldage"
+msgstr "Eemalda"
 
 msgid "remove failed: unknown album"
 msgstr "eemaldamine ebaõnnestus: tundmatu album"
@@ -1461,13 +1428,11 @@ msgstr "Satelliit"
 msgid "Save"
 msgstr "Salvesta"
 
-#, fuzzy
 msgid "Scan"
-msgstr "Skaneeri"
+msgstr "Skannitud"
 
-#, fuzzy
 msgid "Scans"
-msgstr "Skaneerib"
+msgstr "Skannid"
 
 msgid "Search"
 msgstr "Otsi"
@@ -1485,9 +1450,8 @@ msgstr "Seaweed"
 msgid "Secret"
 msgstr "Salajane"
 
-#, fuzzy
 msgid "Security and Access"
-msgstr "Turvalisus ja juurdepääs"
+msgstr "Turvalisus ja ligipääs"
 
 #, fuzzy
 msgid "Select"
@@ -1530,7 +1494,6 @@ msgstr "Seadistamine"
 msgid "Shadow"
 msgstr "Shadow"
 
-#, fuzzy
 msgid "Share"
 msgstr "Jaga"
 
@@ -1541,14 +1504,12 @@ msgstr "Jaga %{nimi}"
 msgid "Share your pictures with other apps and services."
 msgstr "Jaga oma pilte teiste rakenduste ja teenustega."
 
-#, fuzzy
 msgid "Show"
 msgstr "Näita"
 
 msgid "Show all new faces"
 msgstr "Näita kõiki uusi nägusid"
 
-#, fuzzy
 msgid "Show hidden"
 msgstr "Näita peidetud"
 
@@ -1584,11 +1545,9 @@ msgstr "Suurus"
 msgid "Slow"
 msgstr "Aeglane"
 
-#, fuzzy
 msgid "Sort Order"
-msgstr "Sorteerimisjärjekord"
+msgstr "Järjekord"
 
-#, fuzzy
 msgid "Source"
 msgstr "Allikas"
 
@@ -1620,13 +1579,11 @@ msgstr "Virnad"
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr "Failide virnad rühmitavad faile, millel on sarnane võrdlusraamistik, kuid erinevused kvaliteedis, formaadis, suuruses või värvitoonis."
 
-#, fuzzy
 msgid "Start"
-msgstr "Start"
+msgstr "Alusta"
 
-#, fuzzy
 msgid "Start/Stop Slideshow"
-msgstr "Slaidiesitluse käivitamine/peatamine"
+msgstr "Käivita/peata slaidiesitlus"
 
 msgid "States"
 msgstr "Osariigid"
@@ -1634,28 +1591,24 @@ msgstr "Osariigid"
 msgid "Static Size Limit: %{n}px"
 msgstr "Staatiline suuruse limiit: %{n}px"
 
-#, fuzzy
 msgid "Status"
 msgstr "Staatus"
 
-#, fuzzy
 msgid "Storage"
-msgstr "Ladustamine"
+msgstr "Asukoht"
 
 msgid "Streets"
 msgstr "Tänavad"
 
-#, fuzzy
 msgid "Subject"
-msgstr "Teema"
+msgstr "Subjekt"
 
 #, fuzzy
 msgid "Successfully Connected"
 msgstr "Edukalt ühendatud"
 
-#, fuzzy
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Aja jooksul lisatakse toetus täiendavatele teenustele, näiteks Google Drive'ile."
+msgstr "Tugi täiendavatele teenustele nagu Google Drive lisandub aja jooksul."
 
 #, fuzzy
 msgid "Sync"
@@ -1665,20 +1618,17 @@ msgstr "Sünkroonimine"
 msgid "Sync raw and video files"
 msgstr "Toor- ja videofailide sünkroonimine"
 
-#, fuzzy
 msgid "Taken"
-msgstr "Võetud"
+msgstr "Pildistatud"
 
-#, fuzzy
 msgid "Teal"
-msgstr "Teal"
+msgstr "Sinakasroheline"
 
 msgid "Text too long"
 msgstr "Tekst on liiga pikk"
 
-#, fuzzy
 msgid "The index currently contains %{n} hidden files."
-msgstr "Indeks sisaldab praegu %{n} peidetud faile."
+msgstr "Indeks sisaldab praegu %{n} peidetud faili."
 
 #, fuzzy
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -1758,13 +1708,11 @@ msgstr "Undo"
 msgid "Unique ID"
 msgstr "Unikaalne ID"
 
-#, fuzzy
 msgid "Unknown"
 msgstr "Teadmata"
 
-#, fuzzy
 msgid "Unregistered"
-msgstr "Registreerimata"
+msgstr "Mitteregistreeritud"
 
 msgid "Unsorted"
 msgstr "Sorteerimata"
@@ -1773,32 +1721,26 @@ msgstr "Sorteerimata"
 msgid "Unstack"
 msgstr "Unstack"
 
-#, fuzzy
 msgid "Updated"
 msgstr "Uuendatud"
 
-#, fuzzy
 msgid "Updating faces"
 msgstr "Nägude uuendamine"
 
-#, fuzzy
 msgid "Updating index"
 msgstr "Indeksi uuendamine"
 
 msgid "Updating moments"
 msgstr "Hetkede uuendamine"
 
-#, fuzzy
 msgid "Updating picture…"
 msgstr "Pildi uuendamine…"
 
-#, fuzzy
 msgid "Updating previews"
 msgstr "Eelvaadete uuendamine"
 
-#, fuzzy
 msgid "Updating stacks"
-msgstr "Korstnate uuendamine"
+msgstr "Virnade uuendamine"
 
 msgid "Upload"
 msgstr "Üleslaadimine"
@@ -1868,9 +1810,8 @@ msgstr "Video kestus"
 msgid "Videos"
 msgstr "Videod"
 
-#, fuzzy
 msgid "View"
-msgstr "Vaata"
+msgstr "Vaade"
 
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr ""
