@@ -97,6 +97,7 @@ var Extensions = FileExtensions{
 	".f4v":      VideoFlash,
 	".mkv":      VideoMKV,
 	".mts":      VideoAVCHD,
+	".m2ts":     VideoBDAV,
 	".ogv":      VideoOGV,
 	".ogg":      VideoOGV,
 	".ogx":      VideoOGV,

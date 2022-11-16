@@ -40,6 +40,7 @@ const (
 	VideoFlash      Type = "flv"  // Flash Video
 	VideoMKV        Type = "mkv"  // Matroska Multimedia Container, free and open
 	VideoAVCHD      Type = "mts"  // AVCHD (Advanced Video Coding High Definition)
+	VideoBDAV       Type = "m2ts" // Blu-ray MPEG-2 Transport Stream
 	VideoOGV        Type = "ogv"  // Ogg container format maintained by the Xiph.Org, free and open
 	VideoASF        Type = "asf"  // Advanced Systems/Streaming Format (ASF)
 	VideoWMV        Type = "wmv"  // Windows Media Video (based on ASF)

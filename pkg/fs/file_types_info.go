@@ -32,6 +32,7 @@ var TypeInfo = map[Type]string{
 	VideoMPG:        "Moving Picture Experts Group (MPEG)",
 	VideoMJPG:       "Motion JPEG",
 	VideoAVCHD:      "Advanced Video Coding High Definition (AVCHD)",
+	VideoBDAV:       "Blu-ray MPEG-2 Transport Stream",
 	VideoOGV:        "Ogg Media (OGG)",
 	SidecarXMP:      "Adobe Extensible Metadata Platform",
 	SidecarAAE:      "Apple Image Edits XML",

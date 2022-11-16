@@ -191,6 +191,10 @@ export default class Util {
         return "High Efficiency Video Coding (HEVC) / H.265";
       case "mkv":
         return "Matroska Multimedia Container";
+      case "mts":
+        return "Advanced Video Coding High Definition (AVCHD)";
+      case "m2ts":
+        return "Blu-ray MPEG-2 Transport Stream";
       case "webp":
         return "Google WebP";
       case "webm":
