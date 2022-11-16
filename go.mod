@@ -24,7 +24,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/cpuid/v2 v2.2.0
+	github.com/klauspost/cpuid/v2 v2.2.1
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.8.0 // indirect
@@ -67,7 +67,7 @@ require (
 require (
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
-	github.com/zitadel/oidc v1.9.1
+	github.com/zitadel/oidc v1.11.0
 	golang.org/x/oauth2 v0.0.0-20221006150949-b44042a4b9c1 // indirect
 )
 
