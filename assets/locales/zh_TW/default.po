@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:19+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-11-16 13:07+0000\n"
+"Last-Translator: SeanPai <seanpai96@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -187,7 +187,7 @@ msgstr "您的賬戶無法連接"
 
 #: messages.go:137
 msgid "Changes successfully saved"
-msgstr "更改成功儲存"
+msgstr "成功儲存變更"
 
 #: messages.go:138
 msgid "Album created"
@@ -303,7 +303,7 @@ msgstr "正在從 %s 中複製檔案"
 
 #: messages.go:163
 msgid "Labels deleted"
-msgstr "標籤已刪除"
+msgstr "已刪除標籤"
 
 #: messages.go:164
 msgid "Label saved"
@@ -344,7 +344,7 @@ msgstr "上傳已處理"
 
 #: messages.go:173
 msgid "Selection approved"
-msgstr "選擇項目已核准"
+msgstr "選取項目已核准"
 
 #: messages.go:174
 msgid "Selection archived"
@@ -352,7 +352,7 @@ msgstr "選取項目已封存"
 
 #: messages.go:175
 msgid "Selection restored"
-msgstr "選取項目已被恢復"
+msgstr "選取項目已被復原"
 
 #: messages.go:176
 msgid "Selection marked as private"
