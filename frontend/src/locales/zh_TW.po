@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-01 13:13+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
+"PO-Revision-Date: 2022-11-16 13:07+0000\n"
+"Last-Translator: SeanPai <seanpai96@gmail.com>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.2\n"
 "Generated-By: easygettext\n"
 
 msgid "%{n} albums found"
@@ -69,13 +70,13 @@ msgid "Add Album"
 msgstr "新增相簿"
 
 msgid "Add files to your library via Web Upload."
-msgstr "從網頁新增檔案到收藏庫。"
+msgstr "從網頁上傳檔案到收藏庫。"
 
 msgid "Add Link"
 msgstr "新增連結"
 
 msgid "Add pictures from search results by selecting them."
-msgstr "通過選擇從搜索結果中添加圖片。"
+msgstr "從搜索結果中透過選取加入圖片。"
 
 msgid "Add to album"
 msgstr "新增到相簿"
@@ -87,28 +88,28 @@ msgid "Advanced"
 msgstr "進階"
 
 msgid "After 1 day"
-msgstr "1 天過後"
+msgstr "1 天後"
 
 msgid "After 3 days"
-msgstr "3 天過後"
+msgstr "3 天後"
 
 msgid "After 7 days"
-msgstr "7 天過後"
+msgstr "7 天後"
 
 msgid "After one month"
-msgstr "1 個月過後"
+msgstr "1 個月後"
 
 msgid "After one year"
-msgstr "1 年過後"
+msgstr "1 年後"
 
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "從搜索結果中選擇圖片後，您可以使用上下文菜單將它們添加到相簿。"
+msgstr "從搜尋結果選擇圖片後，您可以使用內容選單將它們加入相簿。"
 
 msgid "After two months"
-msgstr "2 個月過後"
+msgstr "2 個月後"
 
 msgid "After two weeks"
-msgstr "2 星期過後"
+msgstr "2 星期後"
 
 msgid "Album"
 msgstr "相簿"
@@ -120,16 +121,16 @@ msgid "Albums"
 msgstr "相簿"
 
 msgid "Albums deleted"
-msgstr "已刪除相簿"
+msgstr "相簿已刪除"
 
 msgid "All %{n} albums loaded"
-msgstr "%{n} 本相簿已載入"
+msgstr "共 %{n} 本相簿已載入"
 
 msgid "All %{n} labels loaded"
-msgstr "%{n} 個標籤已載入"
+msgstr "共 %{n} 個標籤已載入"
 
 msgid "All %{n} people loaded"
-msgstr "所有 %{n} 人已加載"
+msgstr "共 %{n} 人已讀取"
 
 msgid "All Cameras"
 msgstr "所有相機"
@@ -147,7 +148,7 @@ msgid "All fields are required"
 msgstr "所有的欄位都是必填的"
 
 msgid "All files from import folder"
-msgstr "匯入資料夾中所有的檔案"
+msgstr "匯入資料夾中的所有檔案"
 
 msgid "All Lenses"
 msgstr "所有鏡頭"
@@ -162,7 +163,7 @@ msgid "All Years"
 msgstr "所有年份"
 
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr "另外，如果你喜歡這個項目，請在 GitHub 上留下星星。它提供了繼續前進的額外動力。"
+msgstr "另外，如果你喜歡這個項目，請在 GitHub 上給一顆星星。它提供了繼續進步的動力。"
 
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "或者，你也可以直接使用WebDAV（例如 NextCloud）等服務上傳檔案。"
@@ -201,55 +202,55 @@ msgid "Archived"
 msgstr "已封存"
 
 msgid "Are you sure you want to archive the selection?"
-msgstr "你確定你要封存選取的項目嗎？"
+msgstr "確定要封存所選的項目嗎？"
 
 msgid "Are you sure you want to delete these albums?"
-msgstr "你確定你要刪除選取的相簿嗎？"
+msgstr "確定要刪除這些相簿嗎？"
 
 msgid "Are you sure you want to delete these labels?"
-msgstr "你確定你要刪除選取的標籤嗎？"
+msgstr "確定要刪除這些標籤嗎？"
 
 msgid "Are you sure you want to delete this account?"
-msgstr "你確定你要刪除這個帳號嗎？"
+msgstr "確定要刪除這個帳號嗎？"
 
 msgid "Are you sure you want to permanently delete these pictures?"
 msgstr "確定要永久刪除這些圖片嗎？"
 
 msgid "Are you sure you want to permanently delete this file?"
-msgstr "你確定你要永久刪除這個檔案嗎？"
+msgstr "確定要永久刪除這個檔案嗎？"
 
 msgid "Are you sure?"
-msgstr "你確定？"
+msgstr "你確定嗎？"
 
 msgid "Artist"
-msgstr "藝術家"
+msgstr "作者"
 
 msgid "Aspect Ratio"
 msgstr "長寬比"
 
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "自動新增 JPEGs 檔案以顯示在瀏覽器中。"
+msgstr "自動建立 JPEG 縮圖讓其他檔案型態可以顯示在瀏覽器中。"
 
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "自動創建特殊時刻、旅行和地點的相冊。"
+msgstr "自動建立特殊時刻、旅行和地點的相冊。"
 
 msgid "Basic"
 msgstr "基本"
 
 msgid "Become a sponsor"
-msgstr "成為贊助商"
+msgstr "成為贊助者"
 
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "在提交支持請求之前，請使用我們的故障排除清單來確定問題的原因。"
+msgstr "在提交支援請求之前，請使用我們的疑難排解清單來確定問題的原因。"
 
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "作為 100% 自籌資金和獨立的公司，我們可以向您保證，我們永遠不會出售您的數據，並且我們將始終對我們的軟件和服務保持透明。"
 
 msgid "Bio"
-msgstr "個人簡歷"
+msgstr "個人資料"
 
 msgid "Birth Date"
-msgstr "生日"
+msgstr "出生日期"
 
 msgid "Black"
 msgstr "黑色"
@@ -264,10 +265,10 @@ msgid "Brown"
 msgstr "棕色"
 
 msgid "Browse and edit image classification labels."
-msgstr "瀏覽以及編輯分類標籤。"
+msgstr "瀏覽並編輯分類標籤。"
 
 msgid "Browse indexed files and folders in Library."
-msgstr "瀏覽收藏庫中索引好的檔案和資料夾。"
+msgstr "在收藏庫中瀏覽已索引的檔案和資料夾。"
 
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "瀏覽知識庫以獲取有關特定產品功能、服務和相關資源的詳細信息。"
@@ -276,7 +277,7 @@ msgid "Bug Report"
 msgstr "回報問題"
 
 msgid "Busy, please wait…"
-msgstr "忙碌中，請稍後…"
+msgstr "忙碌中，請稍候…"
 
 msgid "Calendar"
 msgstr "日曆"
@@ -288,10 +289,10 @@ msgid "Camera Serial"
 msgstr "相機系列"
 
 msgid "Can't load more, limit reached"
-msgstr "已達極限，無法載入更多"
+msgstr "已達上限，無法再載入更多"
 
 msgid "Can't select more items"
-msgstr "沒辦法選取更多項目"
+msgstr "無法選取更多項目"
 
 msgid "Cancel"
 msgstr "取消"
@@ -318,10 +319,10 @@ msgid "Change private flag"
 msgstr "更改私人選項"
 
 msgid "Changes successfully saved"
-msgstr "变更保存成功"
+msgstr "成功儲存變更"
 
 msgid "Checked"
-msgstr "已確認"
+msgstr "已選擇"
 
 msgid "Chroma"
 msgstr "彩度"
@@ -345,7 +346,7 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "使用我們提供的故障排除清單可以快速診斷和解決常見問題。"
 
 msgid "Complete Rescan"
-msgstr "完整重新索引"
+msgstr "重新完整掃描"
 
 msgid "Confidence"
 msgstr "信心度"
@@ -357,7 +358,7 @@ msgid "Connect via WebDAV"
 msgstr "使用 WebDAV 連線"
 
 msgid "Connected"
-msgstr "已連結"
+msgstr "已連接"
 
 msgid "Contact Details"
 msgstr "聯繫方式"
@@ -372,13 +373,13 @@ msgid "Contains one picture."
 msgstr "包含一張圖片。"
 
 msgid "Convert to JPEG"
-msgstr "轉成 JPEG"
+msgstr "轉為 JPEG"
 
 msgid "Converting"
 msgstr "轉換中"
 
 msgid "Copied to clipboard"
-msgstr "已經複製到剪貼簿了"
+msgstr "已複製到剪貼簿"
 
 msgid "Copyright"
 msgstr "版權"
@@ -396,13 +397,13 @@ msgid "Created"
 msgstr "已新增"
 
 msgid "Creating thumbnails for"
-msgstr "新增縮圖"
+msgstr "為以下項目新增縮圖"
 
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "立方：中等質量，良好性能"
+msgstr "立方：中等品質，良好效能"
 
 msgid "Current Password"
-msgstr "現任密碼"
+msgstr "現在密碼"
 
 msgid "Customer Support"
 msgstr "客戶支援"
@@ -411,16 +412,16 @@ msgid "Cyan"
 msgstr "青色"
 
 msgid "Cyano"
-msgstr "藍諾"
+msgstr "深青"
 
 msgid "Daily"
-msgstr "每天的"
+msgstr "每日"
 
 msgid "Day"
-msgstr "天"
+msgstr "日"
 
 msgid "Debug Logs"
-msgstr "調試日誌"
+msgstr "除錯紀錄"
 
 msgid "Default"
 msgstr "預設"
@@ -435,7 +436,7 @@ msgid "Description"
 msgstr "描述"
 
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "更多指示可以在用戶導引中找到。"
+msgstr "詳細指示可以在用戶指南中找到。"
 
 msgid "Details"
 msgstr "細節"
@@ -444,34 +445,34 @@ msgid "Dimensions"
 msgstr "尺寸"
 
 msgid "Disable Backups"
-msgstr "上次備份"
+msgstr "停用備份"
 
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "禁用內置的WebDAV服務器。需要重啟。"
+msgstr "停用內建的WebDAV服務器。需要重啟。"
 
 msgid "Disable Darktable"
-msgstr "禁用暗表"
+msgstr "停用 Darktable"
 
 msgid "Disable ExifTool"
-msgstr "禁用ExifTool"
+msgstr "停用 ExifTool"
 
 msgid "Disable FFmpeg"
-msgstr "禁用 FFmpeg"
+msgstr "停用 FFmpeg"
 
 msgid "Disable Places"
-msgstr "已停用"
+msgstr "停用位置"
 
 msgid "Disable RawTherapee"
-msgstr "禁用 RawTherapee"
+msgstr "停用 RawTherapee"
 
 msgid "Disable TensorFlow"
-msgstr "禁用TensorFlow"
+msgstr "停用 TensorFlow"
 
 msgid "Disable WebDAV"
-msgstr "已停用"
+msgstr "停用 WebDAV"
 
 msgid "Disables reverse geocoding and maps."
-msgstr "禁用反向地理編碼和地圖。"
+msgstr "禁用尋找座標及地圖。"
 
 msgid "Discover"
 msgstr "發現"
@@ -480,13 +481,13 @@ msgid "Display Name"
 msgstr "顯示名稱"
 
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr "不要將照片和相冊元數據備份到YAML文件中。"
+msgstr "不要將照片和相簿元數據備份到YAML文件中。"
 
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "不要創建ExifTool JSON文件來改進元數據提取。"
+msgstr "不要建立ExifTool JSON文件來改善元數據讀取。"
 
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "不要修改原件文件夾。禁用導入，上傳和刪除。"
+msgstr "不要修改\"originals\"文件夾。停用導入，上傳和刪除。"
 
 msgid "Don't transcode videos with FFmpeg."
 msgstr "不要使用 FFmpeg 對視頻進行轉碼。"
@@ -498,7 +499,7 @@ msgid "Don't use RawTherapee to convert RAW files."
 msgstr "不要使用 RawTherapee 來轉換 RAW 文件。"
 
 msgid "Don't use TensorFlow for image classification."
-msgstr "瀏覽以及編輯分類標籤。"
+msgstr "不要使用 TensorFlow 來進行圖片分類。"
 
 msgid "Donations"
 msgstr "贊助"
@@ -522,25 +523,25 @@ msgid "Downloading…"
 msgstr "下載中…"
 
 msgid "Downscaling Filter"
-msgstr "品質過濾"
+msgstr "縮小濾鏡"
 
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "由於我們收到大量電子郵件，我們的團隊可能無法立即回复您。"
+msgstr "由於我們收到大量電子郵件，我們的團隊可能無法立即回覆您。"
 
 msgid "Duplicates will be skipped and only appear once."
-msgstr "重複的項目會被跳過，只會出現一個。"
+msgstr "重複的項目會被跳過並只會出現一次。"
 
 msgid "Duration"
-msgstr "持續時間"
+msgstr "時長"
 
 msgid "Dynamic Previews"
-msgstr "未緩存的預覽"
+msgstr "動態預覽"
 
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "按需渲染需要強大的CPU，不建議用於小型家用服務器或NAS設備。"
+msgstr "動態渲染需要強大的伺服器，不建議用於小型家用服務器或NAS設備。"
 
 msgid "Dynamic Size Limit: %{n}px"
-msgstr "未緩存的大小限制：%{n} px"
+msgstr "動態大小限制：%{n} px"
 
 msgid "E-Mail"
 msgstr "電子郵件"
@@ -564,16 +565,16 @@ msgid "Email"
 msgstr "電子郵件"
 
 msgid "Enable new features currently under development."
-msgstr "啟用當前正在開發的新功能。"
+msgstr "啟用目前正在開發的新功能。"
 
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "啟用 RAW 轉換器預設。可能會降低性能。"
+msgstr "啟用 RAW 轉換器預設集。可能會降低性能。"
 
 msgid "Errors"
 msgstr "錯誤"
 
 msgid "Estimate the approximate location of pictures without coordinates."
-msgstr "估計沒有坐標的圖片的大概位置。"
+msgstr "估算沒有附坐標的圖片大概的位置。"
 
 msgid "Estimates"
 msgstr "估計"
@@ -582,34 +583,34 @@ msgid "Every two days"
 msgstr "每兩天"
 
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "从搜索结果，共享相册，标签和地点中排除标记为私人的内容。"
+msgstr "在搜尋結果，分享相簿，標籤，位置排除標為私人的內容。"
 
 msgid "Exclude hidden"
 msgstr "排除隱藏"
 
 msgid "Expand"
-msgstr "展开搜寻"
+msgstr "展開"
 
 msgid "Expand Search"
-msgstr "展開搜尋"
+msgstr "擴展搜尋"
 
 msgid "Experimental Features"
 msgstr "測試功能"
 
 msgid "Expires"
-msgstr "期限"
+msgstr "有效期限"
 
 msgid "Exposure"
 msgstr "曝光"
 
 msgid "F Number"
-msgstr "F號"
+msgstr "F值"
 
 msgid "Face"
 msgstr "臉"
 
 msgid "Faces"
-msgstr "面"
+msgstr "臉"
 
 msgid "Failed copying to clipboard"
 msgstr "複製到剪貼簿失敗"
@@ -621,7 +622,7 @@ msgid "Failed updating link"
 msgstr "更新連結失敗"
 
 msgid "Family Name"
-msgstr "姓"
+msgstr "姓氏"
 
 msgid "Fast"
 msgstr "快"
@@ -636,7 +637,7 @@ msgid "Feature Request"
 msgstr "功能要求"
 
 msgid "Feed"
-msgstr "RSS源"
+msgstr "訂閱源"
 
 msgid "Feedback"
 msgstr "回饋"
@@ -666,10 +667,10 @@ msgid "Files"
 msgstr "檔案"
 
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "例如 IMG_1234 (2)' or 'IMG_1234 copy 2' 會被當作同一張照片。"
+msgstr "連續檔名例如 'IMG_1234 (2)' 及 'IMG_1234 (3)' 會被當作同一張照片。"
 
 msgid "Focal Length"
-msgstr "焦段"
+msgstr "焦距"
 
 msgid "Folder"
 msgstr "資料夾"
@@ -705,10 +706,10 @@ msgid "General"
 msgstr "一般"
 
 msgid "Getting Support"
-msgstr "獲得支持"
+msgstr "尋找支持"
 
 msgid "Given Name"
-msgstr "英"
+msgstr "名字"
 
 msgid "Gold"
 msgstr "金色"
@@ -726,7 +727,7 @@ msgid "Hash"
 msgstr "雜湊"
 
 msgid "Help"
-msgstr "說明"
+msgstr "支援"
 
 msgid "Help & Support"
 msgstr "支援與幫助"
@@ -741,7 +742,7 @@ msgid "Hide"
 msgstr "隱藏"
 
 msgid "Hide photos that have been moved to archive."
-msgstr "隱藏的檔案已經移至封存。"
+msgstr "隱藏的圖片已經移至封存。"
 
 msgid "High"
 msgstr "高"
@@ -753,10 +754,10 @@ msgid "How can we help?"
 msgstr "我們可以幫你什麼？"
 
 msgid "I'm a sponsor"
-msgstr "我是讚助商"
+msgstr "我是贊助者"
 
 msgid "If this doesn't help, or you have other questions:"
-msgstr "如果這沒有幫助，或者您還有其他問題："
+msgstr "如果這沒有用，或者您還有其他問題："
 
 msgid "image"
 msgstr "圖片"
@@ -768,49 +769,49 @@ msgid "Images"
 msgstr "圖片"
 
 msgid "Import"
-msgstr "引入"
+msgstr "匯入"
 
 msgid "Import failed"
-msgstr "引入失敗"
+msgstr "匯入失敗"
 
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "引入的檔案會依照日期排序，並且給予一個獨特的名字以防止重複。"
+msgstr "匯入的檔案會依照日期排序，並且給予一個獨特的名字以防止重複。"
 
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "引入的檔案會依照日期排序，並且給予一個獨特的名字。"
+msgstr "匯入的檔案會依照日期排序，並且給予一個獨特的名字。"
 
 msgid "Importing %{name}…"
-msgstr "引入中 %{name}…"
+msgstr "匯入 %{name} 中…"
 
 msgid "Importing files to originals…"
-msgstr "引入檔案到來源…"
+msgstr "匯入檔案到\"originals\"…"
 
 msgid "in"
 msgstr "在"
 
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr "此外，贊助商還可以通過電子郵件獲得直接的技術支持。"
+msgstr "此外，贊助商還可以透過電子郵件獲得直接的技術支持。"
 
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "如果您期望的圖片丟失，請重新掃描您的庫並等待索引完成。"
+msgstr "如果您覺得應該會在的圖片不見了，請重新掃描您的資料庫並等待索引完成。"
 
 msgid "Index"
 msgstr "索引"
 
 msgid "Index and import files through the user interface."
-msgstr "通過用戶界面索引和導入文件。"
+msgstr "透過用戶界面建立索引和匯入文件。"
 
 msgid "Indexing"
-msgstr "索引中"
+msgstr "建立索引中"
 
 msgid "Indexing failed"
-msgstr "索引失敗"
+msgstr "建立索引失敗"
 
 msgid "Indexing media and sidecar files…"
-msgstr "索引媒體和檔案…"
+msgstr "正在建立媒體和sidecar檔案的索引…"
 
 msgid "Instance ID"
-msgstr "實體 ID"
+msgstr "實例 ID"
 
 msgid "Interval"
 msgstr "間隔"
@@ -819,7 +820,7 @@ msgid "Invalid"
 msgstr "無效"
 
 msgid "Invalid date"
-msgstr "錯誤的日期"
+msgstr "無效的日期"
 
 msgid "Invalid parameters"
 msgstr "無效的參數"
@@ -873,10 +874,10 @@ msgid "Lavender"
 msgstr "薰衣草"
 
 msgid "Learn more"
-msgstr "深入了解"
+msgstr "了解更多"
 
 msgid "Legal Information"
-msgstr "法律信息"
+msgstr "法律資訊"
 
 msgid "Lens"
 msgstr "鏡頭"
@@ -894,7 +895,7 @@ msgid "Lime"
 msgstr "萊姆色"
 
 msgid "Limit reached, showing first %{n} files"
-msgstr "顯示前 %{n} 個檔案"
+msgstr "到達上限，顯示前 %{n} 個檔案"
 
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "線性：非常平滑，最佳性能"
@@ -909,7 +910,7 @@ msgid "Live"
 msgstr "即時"
 
 msgid "Live Photos"
-msgstr "實況照片"
+msgstr "原況照片"
 
 msgid "Local Time"
 msgstr "本地時間"
@@ -921,7 +922,7 @@ msgid "Location"
 msgstr "地點"
 
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "日誌訊息會在檔案損毀時，或是其他問題出現時出現。"
+msgstr "日誌訊息會在PhotoPrism遇到損毀的檔案，或是其他問題出現時出現。"
 
 msgid "Login"
 msgstr "登入"
@@ -939,7 +940,7 @@ msgid "Low"
 msgstr "低"
 
 msgid "Magenta"
-msgstr "品紅"
+msgstr "洋紅"
 
 msgid "Main Color"
 msgstr "主要顏色"
@@ -996,19 +997,19 @@ msgid "More than 20 labels found"
 msgstr "找到超過 20 個標籤"
 
 msgid "More than 20 people found"
-msgstr "20多人發現"
+msgstr "找到超過 20 人"
 
 msgid "Mosaic"
-msgstr "鑲嵌"
+msgstr "馬賽克"
 
 msgid "Most Relevant"
-msgstr "最相关的"
+msgstr "最相關的"
 
 msgid "Move Files"
 msgstr "移動檔案"
 
 msgid "Must have at least 8 characters."
-msgstr "必須至少有 8 個字符。"
+msgstr "必須至少有 8 個字元。"
 
 msgid "Name"
 msgstr "名稱"
@@ -1020,13 +1021,13 @@ msgid "Never"
 msgstr "永不"
 
 msgid "New"
-msgstr "新規"
+msgstr "新"
 
 msgid "New Password"
 msgstr "新密碼"
 
 msgid "Newest First"
-msgstr "最新優先"
+msgstr "按最新優先"
 
 msgid "No"
 msgstr "否"
@@ -1038,31 +1039,31 @@ msgid "No labels found"
 msgstr "找不到標籤"
 
 msgid "No people found"
-msgstr "沒有人找到"
+msgstr "找不到人"
 
 msgid "No pictures found"
-msgstr "沒有找到圖片"
+msgstr "找不到圖片"
 
 msgid "No recently edited pictures"
 msgstr "沒有最近編輯的圖片"
 
 msgid "No servers configured."
-msgstr "沒有配置好的伺服器。"
+msgstr "沒有設定好的伺服器。"
 
 msgid "No services configured."
-msgstr "未配置服務。"
+msgstr "沒有設定服務。"
 
 msgid "No thanks"
 msgstr "不用了，謝謝"
 
 msgid "No video selected"
-msgstr "未選影片"
+msgstr "未選擇影片"
 
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "沒有包含此關鍵字的警告或錯誤。請注意，搜索區分大小寫。"
+msgstr "沒有包含此關鍵字的警告或錯誤。請注意，搜尋區分大小寫。"
 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "非照相和低質量圖像需要進行手動確認，才會出現在搜索結果中。"
+msgstr "非照片和低品質圖像需要進行手動確認，才會出現在搜索結果中。"
 
 msgid "None"
 msgstr "無"
@@ -1071,19 +1072,20 @@ msgid "Not Found"
 msgstr "找不到"
 
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "請注意，您可以手動管理原始文件夾，而導入是可選的。"
+msgstr "請注意，您可以手動管理\"originals\"文件夾，而匯入是選用的。"
 
 msgid "Note:"
 msgstr "注意："
 
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "注意：只能將WebDAV服務器（如Nextcloud或PhotoPrism）配置為遠程服務，以進行備份和文件上傳。"
+msgstr "注意：只能將WebDAV伺服器（如Nextcloud或PhotoPrism）設定為遠端服務，以進行備份"
+"和文件上傳。"
 
 msgid "Notes"
 msgstr "備註"
 
 msgid "Nothing to see here yet."
-msgstr "这里什么也看不到，耐心一点。"
+msgstr "這裡什麼都沒有。"
 
 msgid "Offline"
 msgstr "離線"
@@ -1092,10 +1094,10 @@ msgid "Oldest First"
 msgstr "最舊優先"
 
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr "在 Windows 上，在連接對話框中輸入以下資源："
+msgstr "在 Windows 上，於連接對話框中輸入以下資訊："
 
 msgid "Once a week"
-msgstr "一個星期一次"
+msgstr "一周一次"
 
 msgid "One album found"
 msgstr "找到 1 本相簿"
@@ -1104,7 +1106,7 @@ msgid "One file found"
 msgstr "找到 1 個檔案"
 
 msgid "One file uploaded"
-msgstr "上傳了一個文件"
+msgstr "已上傳一個文件"
 
 msgid "One folder found"
 msgstr "找到 1 個資料夾"
@@ -1113,13 +1115,13 @@ msgid "One label found"
 msgstr "找到一個標籤"
 
 msgid "One person found"
-msgstr "發現了一個人"
+msgstr "找到一個人"
 
 msgid "One picture found"
 msgstr "找到一張圖片"
 
 msgid "Onyx"
-msgstr "y瑪瑙"
+msgstr "瑪瑙"
 
 msgid "Options"
 msgstr "選項"
@@ -1140,7 +1142,7 @@ msgid "Original file names will be stored and indexed."
 msgstr "來源檔案名稱會被儲存及索引。"
 
 msgid "Original Name"
-msgstr "來源名稱"
+msgstr "原始名稱"
 
 msgid "Originals"
 msgstr "來源"
@@ -1149,10 +1151,10 @@ msgid "Other"
 msgstr "其他"
 
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "我們的用戶指南還涵蓋了許多高級主題，例如從 Google 相冊遷移和縮略圖質量設置。"
+msgstr "我們的用戶指南還涵蓋了許多進階主題，例如從 Google 相冊轉移和縮圖品質設定。"
 
 msgid "Outdoor"
-msgstr "對外"
+msgstr "外出"
 
 msgid "Panorama"
 msgstr "全景照片"
@@ -1164,7 +1166,7 @@ msgid "Password"
 msgstr "密碼"
 
 msgid "Password changed"
-msgstr "已更改密碼"
+msgstr "密碼已更改"
 
 msgid "People"
 msgstr "人"
@@ -1176,7 +1178,7 @@ msgid "Permanently deleted"
 msgstr "永久刪除"
 
 msgid "Permanently remove files to free up storage."
-msgstr "永久刪除文件以釋放存儲空間。"
+msgstr "永久刪除文件以釋放儲存空間。"
 
 msgid "Phone"
 msgstr "電話"
@@ -1185,10 +1187,10 @@ msgid "Photo"
 msgstr "相片"
 
 msgid "PhotoPrism has been updated…"
-msgstr "PhotoPrism更新啦…"
+msgstr "PhotoPrism更新囉…"
 
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® 是用於去中心化網絡的 AI 驅動的照片應用程序。"
+msgstr "PhotoPrism® 是基於去中心化網絡的 AI 驅動的照片應用程序。"
 
 msgid "Photos"
 msgstr "照片"
@@ -1206,13 +1208,13 @@ msgid "Places"
 msgstr "地點"
 
 msgid "Please confirm your new password."
-msgstr "請確認新密碼。"
+msgstr "請確認你的新密碼。"
 
 msgid "Please don't upload photos containing offensive content."
-msgstr "請不要上傳包含攻擊性內容的照片。"
+msgstr "請不要上傳包含冒犯性內容的照片。"
 
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "請注意，更改密碼將使您在其他設備和瀏覽器上註銷。"
+msgstr "請注意，更改密碼將使您在其他設備和瀏覽器上登出。"
 
 msgid "Portrait"
 msgstr "人像"
@@ -1224,13 +1226,13 @@ msgid "Preserve filenames"
 msgstr "保留檔案名稱"
 
 msgid "Press button to start importing…"
-msgstr "點擊按鈕以開始引入…"
+msgstr "按下按鈕以開始匯入…"
 
 msgid "Press button to start indexing…"
-msgstr "點擊按鈕以開始索引…"
+msgstr "按下按鈕以開始索引…"
 
 msgid "Press enter to create a new album."
-msgstr "點擊按鈕以新增相簿。"
+msgstr "按下按鈕以新增相簿。"
 
 msgid "Preview"
 msgstr "預覽"
@@ -1242,7 +1244,7 @@ msgid "Private"
 msgstr "私人的"
 
 msgid "Product Feedback"
-msgstr "回饋"
+msgstr "產品回饋"
 
 msgid "Projection"
 msgstr "投影"
@@ -1254,7 +1256,7 @@ msgid "Quality Filter"
 msgstr "品質過濾"
 
 msgid "Quality Score"
-msgstr "品質"
+msgstr "品質成績"
 
 msgid "Random"
 msgstr "隨機"
@@ -1266,34 +1268,34 @@ msgid "Raw"
 msgstr "原始"
 
 msgid "RAW"
-msgstr "原始"
+msgstr "RAW"
 
 msgid "RAW Conversion"
-msgstr "轉換中"
+msgstr "RAW 轉換"
 
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "重新索引，包含已經索引過的檔案。"
+msgstr "重新索引所有原始檔案，包含已經索引過及未變更過的檔案。"
 
 msgid "Read the Docs"
-msgstr "閱讀說明文件"
+msgstr "閱讀文件"
 
 msgid "Read-Only Mode"
-msgstr "只讀模式"
+msgstr "唯讀模式"
 
 msgid "Recently Added"
-msgstr "最近添加的"
+msgstr "最近新增"
 
 msgid "Recently Edited"
 msgstr "最近編輯"
 
 msgid "Recognition starts after indexing has been completed."
-msgstr "索引完成後開始識別。"
+msgstr "索引完成後開始辨識。"
 
 msgid "Recognized"
-msgstr "認可"
+msgstr "已辨識"
 
 msgid "Recognizes faces so that specific people can be found."
-msgstr "識別面孔，以便可以找到特定的人。"
+msgstr "辨識面孔，以找到特定的人。"
 
 msgid "Red"
 msgstr "紅色"
@@ -1314,13 +1316,14 @@ msgid "remove failed: unknown album"
 msgstr "移除失敗：未知的相簿"
 
 msgid "Remove from album"
-msgstr "從相冊中刪除"
+msgstr "從相簿中刪除"
 
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "刪除導入的文件以節省存儲空間。不支持的文件類型將永遠不會被刪除，它們會保留在當前位置。"
+msgstr "刪除已匯入的檔案以節省儲存空間。不支援的檔案類型將不會被刪除，它們會保留在當"
+"前位置。"
 
 msgid "Request failed - invalid response"
-msgstr "要求失敗 - 非法的回應"
+msgstr "要求失敗 - 無效的回應"
 
 msgid "Required"
 msgstr "必填"
@@ -1329,7 +1332,7 @@ msgid "Resolution"
 msgstr "解析度"
 
 msgid "Restore"
-msgstr "恢復"
+msgstr "復原"
 
 msgid "Retry Limit"
 msgstr "重試限制"
@@ -1356,7 +1359,7 @@ msgid "Search"
 msgstr "搜尋"
 
 msgid "Search and display photos on a map."
-msgstr "搜尋及顯示在地圖上。"
+msgstr "搜尋並在地圖上顯示圖片。"
 
 msgid "Season"
 msgstr "季節"
@@ -1368,7 +1371,7 @@ msgid "Secret"
 msgstr "秘密"
 
 msgid "Security and Access"
-msgstr "安全和訪問"
+msgstr "安全和存取"
 
 msgid "Select"
 msgstr "選擇"
@@ -1377,19 +1380,19 @@ msgid "Select albums or create a new one"
 msgstr "選擇或新增相簿"
 
 msgid "Selection approved"
-msgstr "選擇已核准"
+msgstr "選取項目已核准"
 
 msgid "Selection archived"
 msgstr "選取項目已封存"
 
 msgid "Selection restored"
-msgstr "選取項目已被恢復"
+msgstr "選取項目已被復原"
 
 msgid "Send"
 msgstr "傳送"
 
 msgid "Sequential Name"
-msgstr "順序名稱"
+msgstr "連續名稱"
 
 msgid "Service URL"
 msgstr "服務 URL"
@@ -1398,10 +1401,10 @@ msgid "Services"
 msgstr "服務"
 
 msgid "Settings"
-msgstr "设置"
+msgstr "設定"
 
 msgid "Settings saved"
-msgstr "已儲存設定"
+msgstr "設定已儲存"
 
 msgid "Setup"
 msgstr "設定"
@@ -1416,7 +1419,7 @@ msgid "Share %{name}"
 msgstr "分享 %{name}"
 
 msgid "Share your pictures with other apps and services."
-msgstr "與其他應用程序和服務共享您的照片。"
+msgstr "與其他應用程式和服務分享您的照片。"
 
 msgid "Show"
 msgstr "顯示"
@@ -1428,7 +1431,7 @@ msgid "Show hidden"
 msgstr "顯示隱藏"
 
 msgid "Show less"
-msgstr "顯示少點"
+msgstr "顯示較少"
 
 msgid "Show more"
 msgstr "顯示更多"
@@ -1440,7 +1443,7 @@ msgid "Shows more detailed log messages. Requires a restart."
 msgstr "顯示更詳細的日誌消息。需要重新啟動。"
 
 msgid "Sidecar"
-msgstr "側邊欄"
+msgstr "Sidecar檔案"
 
 msgid "Sign in"
 msgstr "登入"
@@ -1464,25 +1467,26 @@ msgid "Source"
 msgstr "來源"
 
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "贊助商可以訪問其他功能，通過電子郵件獲得直接的技術支持，並且可以加入我們在 matrix.org 上的私人聊天室。"
+msgstr "贊助者可以使用其他功能，通過電子郵件獲得直接的技術支援，並且可以加入我們在 "
+"matrix.org 上的私人聊天室。"
 
 msgid "Stack"
 msgstr "堆疊"
 
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "共享相同唯一映像或實例標識符的堆棧文件。"
+msgstr "共享相同唯一映像或實例標識符的堆疊文件。"
 
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "根據元數據，將在相同時間和位置拍攝的照片堆疊在一起。"
 
 msgid "Stackable"
-msgstr "堆疊"
+msgstr "可堆疊"
 
 msgid "Stacks"
-msgstr "堆放"
+msgstr "堆疊"
 
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "使用相似的參考框架堆疊組文件，但是質量，格式，大小或顏色有所不同。"
+msgstr "堆疊使用相似的參考框架組織文件，但是品質，格式，大小或顏色有所不同。"
 
 msgid "Start"
 msgstr "開始"
@@ -1494,7 +1498,7 @@ msgid "States"
 msgstr "州"
 
 msgid "Static Size Limit: %{n}px"
-msgstr "渲染前大小限制：%{n} px"
+msgstr "靜態大小限制：%{n} px"
 
 msgid "Status"
 msgstr "狀態"
@@ -1512,16 +1516,16 @@ msgid "Successfully Connected"
 msgstr "成功連接"
 
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "隨著時間的推移，將增加對其他服務的支持，例如Google雲端硬盤。"
+msgstr "隨著時間的推移，將增加對其他服務的支援，例如Google雲端硬碟。"
 
 msgid "Sync"
 msgstr "同步"
 
 msgid "Sync raw and video files"
-msgstr "同步 RAW 照片"
+msgstr "同步 RAW 照片及影片"
 
 msgid "Taken"
-msgstr "已採取"
+msgstr "拍攝於"
 
 msgid "Teal"
 msgstr "藍綠"
@@ -1533,21 +1537,25 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "索引目前包含%{n}個隱藏檔案。"
 
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "它們的格式可能不受支持，或尚未轉換為JPEG，或存在重複。"
+msgstr "它們的格式可能不被支援，或尚未轉換為JPEG，或存在重複。"
 
 msgid "Theme"
 msgstr "主題"
 
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-msgstr "這是一項搶先體驗功能，感謝我們的讚助商和貢獻者。"
+msgstr "這是一項贊助者搶先體驗功能，為了感謝所有支援這個專案的人。"
 
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "這會將原始文件夾安裝為網絡驅動器，並允許您從計算機或智能手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
+msgstr ""
+"這會將\"originals\"資料夾安裝為網絡硬碟"
+"，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，\n"
+"          就像它們是本地文件一樣。"
 
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "這會將原始文件夾安裝為網絡驅動器，並允許您從計算機或智能手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
+msgstr "這會將\"originals\"資料夾安裝為網絡硬碟"
+"，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
 
 msgid "Thumbnail Generation"
 msgstr "縮圖產生"
@@ -1565,10 +1573,10 @@ msgid "Title"
 msgstr "標題"
 
 msgid "Title / Position"
-msgstr "標題 / 位置"
+msgstr "職位 / 位置"
 
 msgid "Title too long"
-msgstr "標題太常啦"
+msgstr "標題太長"
 
 msgid "Toggle View"
 msgstr "切換檢視"
@@ -1583,7 +1591,7 @@ msgid "Troubleshooting Checklists"
 msgstr "故障排除清單"
 
 msgid "Try again using other filters or keywords."
-msgstr "請使用其他篩選條件或是關鍵讚。"
+msgstr "請使用其他篩選條件或是關鍵字。"
 
 msgid "Type"
 msgstr "格式"
@@ -1604,7 +1612,7 @@ msgid "Unsorted"
 msgstr "未分類"
 
 msgid "Unstack"
-msgstr "拆箱"
+msgstr "取消堆疊"
 
 msgid "Updated"
 msgstr "已更新"
@@ -1625,7 +1633,7 @@ msgid "Updating previews"
 msgstr "更新預覽"
 
 msgid "Updating stacks"
-msgstr "更新堆棧"
+msgstr "更新堆疊"
 
 msgid "Upload"
 msgstr "上傳"
@@ -1652,10 +1660,10 @@ msgid "Uploading photos…"
 msgstr "上傳照片中…"
 
 msgid "Uploading…"
-msgstr "上傳..."
+msgstr "上傳…"
 
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "可能包含此類圖像的上傳將被自動拒絕。"
+msgstr "上傳此類圖像將可能被自動拒絕。"
 
 msgid "URL"
 msgstr "網址"
@@ -1676,7 +1684,7 @@ msgid "Username"
 msgstr "使用者名稱"
 
 msgid "Vanta"
-msgstr "萬塔"
+msgstr "Vanta"
 
 msgid "Verified"
 msgstr "已驗證"
@@ -1685,7 +1693,7 @@ msgid "Video"
 msgstr "影片"
 
 msgid "Video Duration"
-msgstr "影片播放長度"
+msgstr "影片長度"
 
 msgid "Videos"
 msgstr "影片"
@@ -1694,22 +1702,23 @@ msgid "View"
 msgstr "檢視"
 
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "訪問 docs.photoprism.app/user-guide 了解如何同步、組織和共享您的圖片。"
+msgstr "請見 docs.photoprism.app/user-guide 了解如何同步、分類和共享您的圖片。"
 
 msgid "Visual Similarity"
 msgstr "視覺相似度"
 
 msgid "We appreciate your feedback!"
-msgstr "感謝您的反饋！"
+msgstr "感謝您的回饋！"
 
 msgid "We do our best to respond within five business days or less."
 msgstr "我們盡最大努力在五個工作日或更短的時間內做出回應。"
 
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "我們將盡力回答您的所有問題。作為回報，我們要求您在 Patreon 或 GitHub 贊助商上支持我們。"
+msgstr "我們將盡力回答您的所有問題。作為回報，我們希望您在 Patreon 或 GitHub "
+"贊助商上支持我們。"
 
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr "當您在 Patreon 或 GitHub 贊助商上註冊時，我們會告訴您如何啟用它。"
+msgstr "當您在 Patreon 或 GitHub 上贊助時，我們會告訴您如何啟用它。"
 
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV客戶端可以使用以下URL連接到PhotoPrism："
@@ -1717,7 +1726,10 @@ msgstr "WebDAV客戶端可以使用以下URL連接到PhotoPrism："
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV客戶端（例如Microsoft的Windows資源管理器或Apple的Finder）可以直接連接到PhotoPrism。"
+msgstr ""
+"WebDAV客戶端（例如Microsoft Windows的檔案總管或Apple的Finder）"
+"可以直接連接到\n"
+"PhotoPrism。"
 
 msgid "WebDAV Upload"
 msgstr "WebDAV上傳"
@@ -1759,16 +1771,16 @@ msgid "You may only select one item"
 msgstr "你只能選取一個項目"
 
 msgid "You may rescan your library to find additional faces."
-msgstr "您可以重新掃描您的圖書館以查找其他面孔。"
+msgstr "您可以重新掃描您的收藏庫以查找其他面孔。"
 
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "您的持續支持有助於我們提供定期更新並保持獨立，因此我們可以完成我們的使命並保護您的隱私。"
 
 msgid "Your continued support helps us provide regular updates and services like world maps."
-msgstr "您的持續支持有助於我們提供衛星地圖等服務並開發新功能。"
+msgstr "您的持續支持有助於我們提供衛星地圖等服務並提供常態更新。"
 
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "您的資料庫會持續進行分析，以自動創建有關特殊時刻、旅行和地點的相簿。"
+msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻、旅行和地點的相簿。"
 
 msgid "Zoom in/out"
 msgstr "縮放"
