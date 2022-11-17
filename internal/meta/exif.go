@@ -80,9 +80,11 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	// Ignore IFD1 data.exif with existing IFD0 values.
 	// see https://github.com/photoprism/photoprism/issues/2231
 	for _, tag := range entries {
-		s := strings.Split(tag.FormattedFirst, "\x00")[0]
-		if tag.TagName != "" && s != "" && (data.exif[tag.TagName] == "" || tag.IfdPath != exif.ThumbnailFqIfdPath) {
-			data.exif[tag.TagName] = s
+		s := strings.Split(tag.FormattedFirst, "\x00")
+		if tag.TagName == "" || len(s) == 0 {
+			// Do nothing.
+		} else if s[0] != "" && (data.exif[tag.TagName] == "" || tag.IfdPath != exif.ThumbnailFqIfdPath) {
+			data.exif[tag.TagName] = s[0]
 		}
 	}
 
@@ -96,13 +98,13 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 
 	// Find and parse GPS coordinates.
 	if err != nil {
-		log.Debugf("metadata: %s in %s (exif)", err, logName)
+		log.Debugf("metadata: %s in %s (exif collect)", err, logName)
 	} else {
 		var ifd *exif.Ifd
 		if ifd, err = ifdIndex.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity); err == nil {
 			var gi *exif.GpsInfo
 			if gi, err = ifd.GpsInfo(); err != nil {
-				log.Infof("metadata: %s in %s (exif)", err, logName)
+				log.Debugf("metadata: %s in %s (exif gps-info)", err, logName)
 			} else {
 				if !math.IsNaN(gi.Latitude.Decimal()) && !math.IsNaN(gi.Longitude.Decimal()) {
 					data.Lat = float32(gi.Latitude.Decimal())
@@ -201,8 +203,8 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 		if i, err := strconv.Atoi(value); err == nil {
 			data.FocalLength = i
 		}
-	} else if value, ok := data.exif["FocalLength"]; ok {
-		values := strings.Split(value, "/")
+	} else if v, ok := data.exif["FocalLength"]; ok {
+		values := strings.Split(v, "/")
 
 		if len(values) == 2 && values[1] != "0" && values[1] != "" {
 			number, _ := strconv.ParseFloat(values[0], 64)

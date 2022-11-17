@@ -46,7 +46,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	jsonValues := j.Map()
 
 	for key, val := range jsonValues {
-		data.json[key] = SanitizeUnicode(val.String())
+		data.json[key] = val.String()
 	}
 
 	if fileName, ok := data.json["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {

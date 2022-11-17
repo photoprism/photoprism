@@ -78,19 +78,23 @@ func SanitizeString(s string) string {
 }
 
 // SanitizeUID normalizes unique IDs found in XMP or Exif metadata.
-func SanitizeUID(value string) string {
-	value = SanitizeString(value)
+func SanitizeUID(s string) string {
+	s = SanitizeString(s)
 
-	if start := strings.LastIndex(value, ":"); start != -1 {
-		value = value[start+1:]
+	if len(s) < 15 {
+		return ""
+	}
+
+	if start := strings.LastIndex(s, ":"); start != -1 {
+		s = s[start+1:]
 	}
 
 	// Not a unique ID?
-	if len(value) < 15 || len(value) > 36 {
-		value = ""
+	if len(s) < 15 || len(s) > 36 {
+		s = ""
 	}
 
-	return strings.ToLower(value)
+	return strings.ToLower(s)
 }
 
 // SanitizeTitle normalizes titles and removes unwanted information.
@@ -122,22 +126,25 @@ func SanitizeTitle(title string) string {
 func SanitizeDescription(s string) string {
 	s = SanitizeString(s)
 
-	if s == "" {
+	switch {
+	case s == "":
 		return ""
-	} else if remove := UnwantedDescriptions[s]; remove {
-		s = ""
-	} else if strings.HasPrefix(s, "DCIM\\") && !strings.Contains(s, " ") {
-		s = ""
+	case UnwantedDescriptions[s]:
+		return ""
+	case strings.HasPrefix(s, "DCIM\\") && !strings.Contains(s, " "):
+		return ""
+	default:
+		return s
 	}
-
-	return s
 }
 
 // SanitizeMeta normalizes metadata fields that may contain JSON arrays like keywords and subject.
 func SanitizeMeta(s string) string {
 	if s == "" {
 		return ""
-	} else if strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]") {
+	}
+
+	if strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]") {
 		var words []string
 
 		if err := json.Unmarshal([]byte(s), &words); err != nil {
