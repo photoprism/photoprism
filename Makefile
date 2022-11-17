@@ -294,7 +294,7 @@ docker-build:
 	docker compose build
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
-docker-develop-latest: docker-develop-ubuntu docker-develop-armv7
+docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
 docker-develop-ubuntu: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
