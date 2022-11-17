@@ -45,12 +45,13 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
         libc6 ca-certificates sudo bash tzdata avahi-utils \
         gpg zip unzip wget curl rsync make nano \
-        jq lsof lshw sqlite3 mariadb-client imagemagick \
+        jq lsof lshw sqlite3 imagemagick \
         exiftool rawtherapee librsvg2-bin \
         ffmpeg ffmpegthumbnailer libavcodec-extra \
         libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
         x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
     && \
+    /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
