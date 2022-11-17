@@ -7,4 +7,4 @@ set -ex
 scripts/install-qemu.sh
 
 # Build develop images.
-make docker-develop-all
+make docker-develop
