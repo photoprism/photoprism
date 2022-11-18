@@ -1,0 +1,96 @@
+/* Electra Theme */
+
+body.dark-theme.theme-electra {
+    background: #161025 !important;
+}
+
+#photoprism.theme-electra .theme--light.v-text-field--solo>.v-input__control>.v-input__slot{
+    background: rgba(250, 250, 255, 0.1);
+}
+
+#photoprism.container.theme-electra {
+    background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
+}
+
+#photoprism.container.theme-electra div.loading-animation {
+    color: #AFB4D4 !important;
+    caret-color: #AFB4D4 !important;
+}
+
+#photoprism.container.theme-electra div.loading-animation .loading-underlay {
+    stroke: rgba(196, 241, 229, 0.3);
+}
+
+.theme-electra .v-content__wrap,
+.theme-electra .p-page,
+.theme-electra .form,
+.theme-electra .v-content {
+    background: #161025 !important;
+}
+
+#photoprism.theme-electra .theme--light.v-small-dialog__content,
+#photoprism.theme-electra .theme--light.v-sheet,
+#photoprism.theme-electra .theme--light.v-card {
+    background: #161025;
+}
+
+.theme-electra .application.theme--light {
+    background: #161025;
+}
+
+#photoprism.theme-electra .theme--light .v-table {
+    background: #161025;
+}
+
+#photoprism. .theme--light.v-table thead th,
+#photoprism.theme-electra .theme--light.v-table tbody td {
+    color: #fff;
+}
+
+#photoprism.theme-electra .theme--light.v-table tbody tr:hover {
+    background: #23164f;
+}
+
+#photoprism.theme-electra .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-electra .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-electra .theme--light.v-input--is-disabled .v-label,
+#photoprism.theme-electra .theme--light.v-input--is-disabled input,
+#photoprism.theme-electra .theme--light.v-input--is-disabled textarea {
+    color: #ccc;
+}
+
+#photoprism.theme-electra .theme--light.v-list {
+    background: #434057;
+}
+
+#photoprism.theme-electra a.text-link {
+    color: #D2CEEB !important;
+}
+
+#photoprism.theme-electra .footer .body-link {
+    color: #D2CEEB !important;
+}
+
+#photoprism.theme-electra .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-electra .accent--text {
+    color: #D3CBFF !important;
+}
+
+#photoprism.theme-electra .theme--light.v-input:not(.v-input--is-disabled) input,
+#photoprism.theme-electra .theme--light.v-input:not(.v-input--is-disabled) textarea {
+    color: #fff;
+}
+
+#photoprism.theme-electra .theme--light.v-btn.v-btn--disabled,
+#photoprism.theme-electra .theme--light.v-btn.v-btn--disabled .v-btn__loading,
+#photoprism.theme-electra .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-electra .theme--light.v-list .v-list__tile__mask {
+    color: #cccccc;
+    background: transparent;
+}

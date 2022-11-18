@@ -340,9 +340,9 @@ let themes = {
     colors: {
       application: "#212121",
       form: "#AFB42B",
-      primary: "#7e57c2",
+      primary: "#814fd9",
       "primary-button": "#7e57c2",
-      "secondary-dark": "#7e57c2",
+      "secondary-dark": "#814fd9",
       secondary: "#111111",
       "secondary-light": "#1a1a1a",
       accent: "#090c10",
@@ -393,6 +393,37 @@ let themes = {
       "navigation-home": "#131316",
     },
   },
+  electra: {
+    dark: true,
+    sponsor: true,
+    title: "Electra",
+    name: "electra",
+    colors: {
+      application: "#161025",
+      form: "#eeeeee",
+      primary: "#D3CBFF",
+      "primary-button": "#53478a",
+      "secondary-dark": "#9c8aef",
+      secondary: "#0f0723",
+      "secondary-light": "#2f2b44",
+      accent: "#262238",
+      error: "#e57373",
+      info: "#00acc1",
+      success: "#4db6ac",
+      warning: "#ffd740",
+      remove: "#e57373",
+      restore: "#64b5f6",
+      album: "#ffab00",
+      download: "#00bfa5",
+      private: "#00b8d4",
+      edit: "#00b8d4",
+      share: "#9575cd",
+      love: "#ef5350",
+      terminal: "#070121",
+      navigation: "#070121",
+      "navigation-home": "#02000e",
+    },
+  },
 };
 
 /* Available Themes */
@@ -416,6 +447,11 @@ let options = [
   {
     text: $gettext("Abyss"),
     value: "abyss",
+    disabled: false,
+  },
+  {
+    text: $gettext("Electra"),
+    value: "electra",
     disabled: false,
   },
   {
