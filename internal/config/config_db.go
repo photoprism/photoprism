@@ -316,7 +316,7 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		}
 		var res Res
 		if err := db.Raw("SHOW VARIABLES LIKE 'innodb_version'").Scan(&res).Error; err != nil {
-			return err
+			return nil
 		} else if v := strings.Split(res.Value, "."); len(v) < 3 {
 			log.Warnf("config: unknown database server version")
 		} else if major := txt.UInt(v[0]); major < 10 {
