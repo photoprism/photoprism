@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-17 05:52+0000\n"
+"PO-Revision-Date: 2022-11-18 08:52+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -66,7 +66,7 @@ msgid "Add Album"
 msgstr "Lisa album"
 
 msgid "Add files to your library via Web Upload."
-msgstr "Lisa faile oma kogusse üleslaadimise teel."
+msgstr "Lisa faile oma fototeeki üleslaadimise teel."
 
 msgid "Add Link"
 msgstr "Lisa link"
@@ -80,9 +80,8 @@ msgstr "Lisa albumisse"
 msgid "Added"
 msgstr "Lisatud"
 
-#, fuzzy
 msgid "Advanced"
-msgstr "Täiustatud"
+msgstr "Täpsemad"
 
 msgid "After 1 day"
 msgstr "1 päeva pärast"
@@ -278,7 +277,7 @@ msgid "Browse and edit image classification labels."
 msgstr "Sirvi ja muuda piltide klassifitseerimise silte."
 
 msgid "Browse indexed files and folders in Library."
-msgstr "Sirvi kogus olevaid indekseeritud faile ja kaustu."
+msgstr "Sirvi fototeegis olevaid indekseeritud faile ja kaustu."
 
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr ""
@@ -538,9 +537,8 @@ msgstr "Laadi alla üksikuid faile ja ZIP-arhiive."
 msgid "Downloading…"
 msgstr "Allalaadimine…"
 
-#, fuzzy
 msgid "Downscaling Filter"
-msgstr "Alamklassifitseerimise filter"
+msgstr "Skaleerimisfilter"
 
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
 msgstr ""
@@ -729,7 +727,7 @@ msgid "Gender"
 msgstr "Sugu"
 
 msgid "General"
-msgstr "Üldine"
+msgstr "Üldised"
 
 msgid "Getting Support"
 msgstr "Abi saamine"
@@ -824,7 +822,7 @@ msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
 
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr ""
-"Kui pildid, mida ootasid, on puudu, skanni oma kogu uuesti ja oota, kuni "
+"Kui pildid, mida ootasid, on puudu, skanni oma fototeek uuesti ja oota, kuni "
 "indekseerimine on lõpetatud."
 
 msgid "Index"
@@ -880,9 +878,8 @@ msgstr "JPEG- ja pisipildid renderdatakse automaatselt vastavalt vajadusele."
 msgid "Keywords"
 msgstr "Märksõnad"
 
-#, fuzzy
 msgid "Knowledge Base"
-msgstr "Teadmiste baas"
+msgstr "Teadmusbaas"
 
 msgid "Label"
 msgstr "Silt"
@@ -917,9 +914,8 @@ msgstr "Õigusalane teave"
 msgid "Lens"
 msgstr "Objektiiv"
 
-#, fuzzy
 msgid "Library"
-msgstr "Raamatukogu"
+msgstr "Fototeek"
 
 msgid "License"
 msgstr "Litsents"
@@ -946,9 +942,8 @@ msgstr "Loend"
 msgid "Live"
 msgstr "Live"
 
-#, fuzzy
 msgid "Live Photos"
-msgstr "Elusad fotod"
+msgstr "Liikuvad fotod"
 
 msgid "Local Time"
 msgstr "Kohalik aeg"
@@ -1396,9 +1391,8 @@ msgstr "Korduvkatsete limiit"
 msgid "Retype Password"
 msgstr "Parool uuesti"
 
-#, fuzzy
 msgid "Review"
-msgstr "Ülevaade"
+msgstr "Läbivaatamine"
 
 msgid "Satellite"
 msgstr "Satelliit"
@@ -1473,7 +1467,6 @@ msgstr "Shadow"
 msgid "Share"
 msgstr "Jaga"
 
-#, fuzzy
 msgid "Share %{name}"
 msgstr "Jaga %{nimi}"
 
@@ -1495,16 +1488,14 @@ msgstr "Näita vähem"
 msgid "Show more"
 msgstr "Näita rohkem"
 
-#, fuzzy
 msgid "Show server logs in Library."
-msgstr "Näita serverilogisid raamatukogus."
+msgstr "Näita serverilogisid fototeegis."
 
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Näitab detailsemaid logisõnumeid. Nõuab taaskäivitamist."
 
-#, fuzzy
 msgid "Sidecar"
-msgstr "Külgkorv"
+msgstr "Abifail"
 
 msgid "Sign in"
 msgstr "Logi sisse"
@@ -1544,16 +1535,16 @@ msgstr ""
 "Pane virna metaandmete alusel täpselt samal ajal ja samas kohas tehtud "
 "pildid."
 
-#, fuzzy
 msgid "Stackable"
-msgstr "Stackable"
+msgstr "Virnastatav"
 
 msgid "Stacks"
 msgstr "Virnad"
 
-#, fuzzy
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Failide virnad rühmitavad faile, millel on sarnane võrdlusraamistik, kuid erinevused kvaliteedis, formaadis, suuruses või värvitoonis."
+msgstr ""
+"Failide virnad grupeerivad faile, millel on sarnane võrdlusraamistik, kuid "
+"erinevused kvaliteedis, formaadis, suuruses või värvitoonis."
 
 msgid "Start"
 msgstr "Alusta"
@@ -1603,13 +1594,13 @@ msgstr "Tekst on liiga pikk"
 msgid "The index currently contains %{n} hidden files."
 msgstr "Indeks sisaldab praegu %{n} peidetud faili."
 
-#, fuzzy
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse konverteeritud või on olemas duplikaadid."
+msgstr ""
+"Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse "
+"konverteeritud või on olemas duplikaadid."
 
-#, fuzzy
 msgid "Theme"
-msgstr "Teema"
+msgstr "Välimus"
 
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
@@ -1660,9 +1651,8 @@ msgstr "Token"
 msgid "Topographic"
 msgstr "Topograafiline"
 
-#, fuzzy
 msgid "Troubleshooting Checklists"
-msgstr "Vigade kõrvaldamise kontrollnimekirjad"
+msgstr "Tõrkeotsingu meelespead"
 
 msgid "Try again using other filters or keywords."
 msgstr "Proovi uuesti, kasutades teisi filtreid või märksõnu."
@@ -1744,9 +1734,8 @@ msgstr ""
 msgid "URL"
 msgstr "URL"
 
-#, fuzzy
 msgid "Use Presets"
-msgstr "Kasutage eelseadistusi"
+msgstr "Kasuta eelseadistusi"
 
 msgid "User"
 msgstr "Kasutaja"
@@ -1763,7 +1752,6 @@ msgstr "Kasutajanimi"
 msgid "Vanta"
 msgstr "Vanta"
 
-#, fuzzy
 msgid "Verified"
 msgstr "Kinnitatud"
 
@@ -1855,7 +1843,7 @@ msgid "You may only select one item"
 msgstr "Võid valida ainult ühe objekti"
 
 msgid "You may rescan your library to find additional faces."
-msgstr "Võid oma kogu uuesti skaneerida, et veel nägusid leida."
+msgstr "Võid oma fototeeki uuesti skaneerida, et veel nägusid leida."
 
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr ""
@@ -1869,8 +1857,8 @@ msgstr ""
 
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr ""
-"Sinu kogu analüüsitakse pidevalt, et luua automaatselt albumied erilistest "
-"hetkedest, reisidest ja kohtadest."
+"Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied "
+"erilistest hetkedest, reisidest ja kohtadest."
 
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
