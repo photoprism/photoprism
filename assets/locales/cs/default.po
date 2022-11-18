@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:32+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"PO-Revision-Date: 2022-11-18 11:30+0000\n"
+"Last-Translator: Roman Janiczek <roman@janiczek.cz>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
 "backend/cs/>\n"
 "Language: cs\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -187,7 +187,7 @@ msgstr "Váš účet se nepodařilo připojit"
 
 #: messages.go:137
 msgid "Changes successfully saved"
-msgstr "Změny úspěšně uloženy"
+msgstr "Změny byly úspěšně uloženy"
 
 #: messages.go:138
 msgid "Album created"
