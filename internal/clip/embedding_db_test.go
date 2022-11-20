@@ -27,7 +27,7 @@ func TestSaveAndLoadEmbedding(t *testing.T) {
 
 	t.Run("id=123 is not in database yet", func(t *testing.T) {
 		notExistingEmbedding, err := db.LoadEmbedding(testId)
-		assert.Error(t, err, "embedding with id=123 does not exist in database")
+		assert.Error(t, err)
 		assert.Nil(t, notExistingEmbedding)
 	})
 	t.Run("add id=123 to database", func(t *testing.T) {
@@ -62,11 +62,13 @@ func TestKNearestNeighbors(t *testing.T) {
 	candidate := face.Embedding{1, 1, 1, 1}
 	closeNeighbors := []face.Embedding{{3, 3, 3, 3}, {0.9, 0.99, 0.99, 0.99}, {1, 1, 0.9, 0.8}}
 	for idx, embedding := range closeNeighbors {
-		db.SaveEmbedding(embedding, uint(idx))
+		err := db.SaveEmbedding(embedding, uint(idx))
+		assert.NoError(t, err)
 	}
 	otherNeighbors := []face.Embedding{{-3, 1.2, 0, 2}, {17, -2, 9, 1}, {0.123, -2, 0, 0}}
 	for idx, embedding := range otherNeighbors {
-		db.SaveEmbedding(embedding, uint(idx)+10)
+		err := db.SaveEmbedding(embedding, uint(idx)+10)
+		assert.NoError(t, err)
 	}
 	actual, err := db.KNearestNeighbors(candidate, 3, 0.0)
 	assert.Nil(t, err)

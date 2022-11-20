@@ -38,9 +38,9 @@ func (db *EmbeddingDB) getStatus() (string, error) {
 }
 
 func (db *EmbeddingDB) createCollection() error {
-	body := fmt.Sprintf(`{"create_collection": {"distance": "Cosine", "name": "%s", "vector_size": %d}}`, db.Collection, db.VectorSize)
+	body := fmt.Sprintf(`{"vectors": {"size": %d, "distance": "Cosine"}}`, db.VectorSize)
 	var jsonData = []byte(body)
-	req, err := http.NewRequest("POST", db.Url+"/collections", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("PUT", db.collectionUrl(), bytes.NewBuffer(jsonData))
 	if err != nil {
 		return err
 	}
@@ -60,10 +60,7 @@ func (db *EmbeddingDB) createCollection() error {
 
 // delete collection from embedding db
 func (db *EmbeddingDB) DeleteCollection() error {
-	body := fmt.Sprintf(`{"delete_collection": "%s"}`, db.Collection)
-	fmt.Printf("DeleteCollection body: %s\n", body)
-	var jsonData = []byte(body)
-	req, err := http.NewRequest("POST", db.Url+"/collections", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("DELETE", db.collectionUrl(), nil)
 	if err != nil {
 		return err
 	}
@@ -103,10 +100,12 @@ func (db *EmbeddingDB) CreateCollectionIfNotExisting() error {
 
 // save an embedding with an id to embedding database
 func (db *EmbeddingDB) SaveEmbedding(embedding face.Embedding, id uint) error {
-	body := fmt.Sprintf(`{"upsert_points": {"points": [{"id": %d, "vector": %s}] }}`, id, embedding.MarshalEmbedding())
+	body := fmt.Sprintf(`{"points": [{"id": %d, "vector": %s}]}`, id, embedding.MarshalEmbedding())
 	fmt.Printf("SaveEmbedding body: %v\n", body)
 	var jsonData = []byte(body)
-	req, err := http.NewRequest("POST", db.collectionUrl(), bytes.NewBuffer(jsonData))
+	// @TODO: do not wait in production, only while testing
+	url := db.Url + fmt.Sprintf("/collections/%s/points?wait=true", db.Collection)
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return err
 	}
@@ -146,10 +145,12 @@ func (db *EmbeddingDB) LoadEmbedding(id uint) (face.Embedding, error) {
 
 // Delete Embedding by id from embedding database
 func (db *EmbeddingDB) DeleteEmbedding(id uint) error {
-	body := fmt.Sprintf(`{"delete_points": {"ids": [%d]}}`, id)
+	body := fmt.Sprintf(`{"points": [%d]}`, id)
 	fmt.Printf("DeleteEmbedding body: %v\n", body)
 	var jsonData = []byte(body)
-	req, err := http.NewRequest("POST", db.collectionUrl(), bytes.NewBuffer(jsonData))
+	// @TODO: do not wait in production, only while testing
+	url := db.Url + fmt.Sprintf("/collections/%s/points/delete?wait=true", db.Collection)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return err
 	}

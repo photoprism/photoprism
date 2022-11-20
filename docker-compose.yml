@@ -207,7 +207,7 @@ services:
     ports:
       - 8000:8000
   embedding-db:
-    image: generall/qdrant
+    image: qdrant/qdrant
     volumes: 
       - "./embedding-db:/qdrant/storage"
     ports:
