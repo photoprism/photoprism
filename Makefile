@@ -40,6 +40,15 @@ else
     GOTEST=go test
 endif
 
+# Compatibility layer to support “docker-compose” and “docker compose”
+HAS_DOCKER_COMPOSE_WITH_DASH := $(shell which docker-compose)
+
+ifdef HAS_DOCKER_COMPOSE_WITH_DASH
+    DOCKER_COMPOSE=docker-compose
+else
+    DOCKER_COMPOSE=docker compose
+endif
+
 # Declare "make" targets.
 all: dep build-js
 dep: dep-tensorflow dep-npm dep-js
@@ -67,7 +76,7 @@ upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
 .SILENT: help;
 logs:
-	docker compose logs -f
+	$(DOCKER_COMPOSE) logs -f
 help:
 	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
 fix-permissions:
@@ -140,10 +149,10 @@ start:
 stop:
 	./photoprism stop
 terminal:
-	docker compose exec -u $(UID) photoprism bash
+	$(DOCKER_COMPOSE) exec -u $(UID) photoprism bash
 rootshell: root-terminal
 root-terminal:
-	docker compose exec -u root photoprism bash
+	$(DOCKER_COMPOSE) exec -u root photoprism bash
 migrate:
 	go run cmd/photoprism/photoprism.go migrations run
 generate:
@@ -287,11 +296,11 @@ test-coverage:
 	go tool cover -html=coverage.txt -o coverage.html
 	go tool cover -func coverage.txt  | grep total:
 docker-pull:
-	docker compose pull --ignore-pull-failures
-	docker compose -f docker-compose.latest.yml pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml pull --ignore-pull-failures
 docker-build:
-	docker compose pull --ignore-pull-failures
-	docker compose build
+	$(DOCKER_COMPOSE) pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) build
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
@@ -432,31 +441,31 @@ docker-release-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
 start-local:
-	docker compose -f docker-compose.local.yml up -d --wait
+	$(DOCKER_COMPOSE) -f docker-compose.local.yml up -d --wait
 stop-local:
-	docker compose -f docker-compose.local.yml stop
+	$(DOCKER_COMPOSE) -f docker-compose.local.yml stop
 mysql:
-	docker compose -f docker-compose.mysql.yml pull mysql
-	docker compose -f docker-compose.mysql.yml stop mysql
-	docker compose -f docker-compose.mysql.yml up -d --wait mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml pull mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml stop mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml up -d --wait mysql
 start-mysql:
-	docker compose -f docker-compose.mysql.yml up -d --wait mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml up -d --wait mysql
 stop-mysql:
-	docker compose -f docker-compose.mysql.yml stop mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml stop mysql
 logs-mysql:
-	docker compose -f docker-compose.mysql.yml logs -f mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml logs -f mysql
 latest:
-	docker compose -f docker-compose.latest.yml pull photoprism-latest
-	docker compose -f docker-compose.latest.yml stop photoprism-latest
-	docker compose -f docker-compose.latest.yml up -d --wait photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml pull photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml stop photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml up -d --wait photoprism-latest
 start-latest:
-	docker compose -f docker-compose.latest.yml up photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml up photoprism-latest
 stop-latest:
-	docker compose -f docker-compose.latest.yml stop photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml stop photoprism-latest
 terminal-latest:
-	docker compose -f docker-compose.latest.yml exec photoprism-latest bash
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml exec photoprism-latest bash
 logs-latest:
-	docker compose -f docker-compose.latest.yml logs -f photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml logs -f photoprism-latest
 docker-local: docker-local-bookworm
 docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:
