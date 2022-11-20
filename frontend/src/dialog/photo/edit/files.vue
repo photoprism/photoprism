@@ -66,6 +66,11 @@
                                    @click.stop.prevent="showDeleteDialog(file)">
                               <translate>Delete</translate>
                             </v-btn>
+                            <v-btn v-if="file.Primary" small depressed dark color="primary-button"
+                                   class="btn-action action-open-folder"
+                                   :href="getFolderUri(file)">
+                              <translate>Open folder</translate>
+                            </v-btn>
                           </td>
                         </tr>
                         <tr>
@@ -350,6 +355,12 @@ export default {
     },
     openFile(file) {
       this.$viewer.show([Thumb.fromFile(this.model, file)], 0);
+    },
+    getFolderUri(file) {
+      const fileName = file.Name;
+      const folder = fileName.substring(0, fileName.lastIndexOf('/'));
+
+      return(this.config.baseUri + '/library/index/files/' + folder);
     },
     downloadFile(file) {
       Notify.success(this.$gettext("Downloading…"));
