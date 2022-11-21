@@ -52,14 +52,14 @@
                 <div
                     v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
                     :key="photo.Hash"
-                    class="image accent lighten-2"
+                    class="image card darken-1"
                 />
                 <div
                       v-else
                       :key="photo.Hash"
                       :alt="photo.Title"
                       :style="`background-image: url(${photo.thumbnailUrl('tile_50')})`"
-                      class="accent lighten-2 clickable image"
+                      class="card darken-1 clickable image"
                       @touchstart="onMouseDown($event, index)"
                       @touchend.stop.prevent="onClick($event, index)"
                       @mousedown="onMouseDown($event, index)"

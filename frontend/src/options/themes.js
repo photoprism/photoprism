@@ -10,6 +10,7 @@ let themes = {
     colors: {
       application: "#F5F5F5",
       form: "#eeeeee",
+      card: "#bdbdbd",
       primary: "#FFCA28",
       "primary-button": "#212121",
       "secondary-dark": "#212121",
@@ -40,6 +41,7 @@ let themes = {
     colors: {
       application: "#525252",
       form: "#e5e4e2",
+      card: "#444444",
       primary: "#c8bdb1",
       "primary-button": "#726e69",
       "secondary-dark": "#c8bdb1",
@@ -70,6 +72,7 @@ let themes = {
     colors: {
       application: "#eceff1",
       form: "#eceff1",
+      card: "#bdbdbd",
       primary: "#80deea",
       "primary-button": "#757575",
       "secondary-dark": "#757575",
@@ -100,6 +103,7 @@ let themes = {
     colors: {
       application: "#FDEDF5",
       form: "#fafafa",
+      card: "#bdbdbd",
       primary: "#ffb3cc",
       "primary-button": "#EA3495",
       "secondary-dark": "#EA3495",
@@ -123,36 +127,6 @@ let themes = {
       "navigation-home": "#891A55",
     },
   },
-  seaweed: {
-    name: "seaweed",
-    dark: false,
-    sponsor: false,
-    colors: {
-      application: "#fafafa",
-      form: "#fafafa",
-      primary: "#26a69a",
-      "primary-button": "#3b5e5b",
-      "secondary-dark": "#1c7d73",
-      secondary: "#b0bec5",
-      "secondary-light": "#c1ccd1",
-      accent: "#b0bec5",
-      error: "#e57373",
-      info: "#00acc1",
-      success: "#4db6ac",
-      warning: "#ffd740",
-      remove: "#e57373",
-      restore: "#64b5f6",
-      album: "#ffab00",
-      download: "#00bfa5",
-      private: "#00b8d4",
-      edit: "#00b8d4",
-      share: "#9575cd",
-      love: "#ef5350",
-      terminal: "#333333",
-      navigation: "#37474f",
-      "navigation-home": "#263238",
-    },
-  },
   lavender: {
     name: "lavender",
     dark: false,
@@ -160,6 +134,7 @@ let themes = {
     colors: {
       application: "#fafafa",
       form: "#fafafa",
+      card: "#bdbdbd",
       primary: "#9ca2c9",
       "primary-button": "#6c6f84",
       "secondary-dark": "#475185",
@@ -190,6 +165,7 @@ let themes = {
     colors: {
       application: "#eeeeee",
       form: "#eeeeee",
+      card: "#bdbdbd",
       primary: "#a5b3c0",
       "primary-button": "#212121",
       "secondary-dark": "#212121",
@@ -220,6 +196,7 @@ let themes = {
     colors: {
       application: "#e5e4e2",
       form: "#e5e4e2",
+      card: "#bdbdbd",
       primary: "#c8bdb1",
       "primary-button": "#353839",
       "secondary-dark": "#353839",
@@ -250,6 +227,7 @@ let themes = {
     colors: {
       application: "#444",
       form: "#eeeeee",
+      card: "#3c3f41",
       primary: "#c4f1e5",
       "primary-button": "#74817d",
       "secondary-dark": "#c8e3e7",
@@ -280,6 +258,7 @@ let themes = {
     colors: {
       application: "#444",
       form: "#eeeeee",
+      card: "#3c3f41",
       primary: "#ffb700",
       "primary-button": "#918c7d",
       "secondary-dark": "#ffb700",
@@ -310,6 +289,7 @@ let themes = {
     colors: {
       application: "#212121",
       form: "#AFB42B",
+      card: "#3c3f41",
       primary: "#04acaf",
       "primary-button": "#444444",
       "secondary-dark": "#04acaf",
@@ -340,6 +320,7 @@ let themes = {
     colors: {
       application: "#212121",
       form: "#AFB42B",
+      card: "#3c3f41",
       primary: "#814fd9",
       "primary-button": "#7e57c2",
       "secondary-dark": "#814fd9",
@@ -370,6 +351,7 @@ let themes = {
     colors: {
       application: "#353535",
       form: "#eeeeee",
+      card: "#3c3f41",
       primary: "#AFB4D4",
       "primary-button": "#545465",
       "secondary-dark": "#9BA0C5",
@@ -399,12 +381,13 @@ let themes = {
     title: "Electra",
     name: "electra",
     colors: {
-      application: "#161025",
+      application: "#26243a",
       form: "#eeeeee",
+      card: "#3b394e",
       primary: "#D3CBFF",
       "primary-button": "#53478a",
       "secondary-dark": "#9c8aef",
-      secondary: "#0f0723",
+      secondary: "#0c0910",
       "secondary-light": "#2f2b44",
       accent: "#262238",
       error: "#e57373",
@@ -420,7 +403,7 @@ let themes = {
       share: "#9575cd",
       love: "#ef5350",
       terminal: "#070121",
-      navigation: "#070121",
+      navigation: "#0f0e1f",
       "navigation-home": "#02000e",
     },
   },
@@ -482,11 +465,6 @@ let options = [
   {
     text: $gettext("Raspberry"),
     value: "raspberry",
-    disabled: false,
-  },
-  {
-    text: $gettext("Seaweed"),
-    value: "seaweed",
     disabled: false,
   },
   {

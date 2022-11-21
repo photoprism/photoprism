@@ -1,7 +1,7 @@
 /* Electra Theme */
 
 body.dark-theme.theme-electra {
-    background: #161025 !important;
+    background: #26243a !important;
 }
 
 #photoprism.theme-electra .theme--light.v-text-field--solo>.v-input__control>.v-input__slot{
@@ -25,21 +25,21 @@ body.dark-theme.theme-electra {
 .theme-electra .p-page,
 .theme-electra .form,
 .theme-electra .v-content {
-    background: #161025 !important;
+    background: #26243a !important;
 }
 
 #photoprism.theme-electra .theme--light.v-small-dialog__content,
 #photoprism.theme-electra .theme--light.v-sheet,
 #photoprism.theme-electra .theme--light.v-card {
-    background: #161025;
+    background: #26243a;
 }
 
 .theme-electra .application.theme--light {
-    background: #161025;
+    background: #26243a;
 }
 
 #photoprism.theme-electra .theme--light .v-table {
-    background: #161025;
+    background: #26243a;
 }
 
 #photoprism. .theme--light.v-table thead th,
@@ -48,7 +48,7 @@ body.dark-theme.theme-electra {
 }
 
 #photoprism.theme-electra .theme--light.v-table tbody tr:hover {
-    background: #23164f;
+    background: #403e54;
 }
 
 #photoprism.theme-electra .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {

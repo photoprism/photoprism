@@ -46,12 +46,12 @@
             <v-card :data-id="model.ID"
                     tile style="user-select: none;"
                     :class="model.classes()"
-                    class="result accent lighten-3">
-              <div class="card-background accent lighten-3"></div>
+                    class="result card">
+              <div class="card-background card"></div>
               <v-img :src="model.thumbnailUrl('tile_320')"
                      :transition="false"
                      aspect-ratio="1"
-                     class="accent lighten-2 clickable"
+                     class="card darken-1 clickable"
                      @click.stop.prevent="onView(model)">
                 <v-btn :ripple="false" :depressed="false" class="input-hidden"
                        icon flat small absolute

@@ -21,6 +21,18 @@ body.dark-theme #photoprism .v-tabs .v-badge__badge {
     color: #000000;
 }
 
+body.dark-theme #photoprism .theme--light.v-table thead th {
+    color: #ffffff;
+}
+
+.card {
+    background-color: #77787e;
+}
+
+body.dark-theme .card {
+    background-color: #4c4e52;
+}
+
 body.dark-theme #photoprism .v-table .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
     background: transparent;
 }
