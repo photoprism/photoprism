@@ -1,10 +1,9 @@
 package query
 
 import (
-	"time"
-
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -127,7 +126,7 @@ func FixPrimaries() error {
 
 	// Remove primary file flag from broken or missing files.
 	if err := UnscopedDb().Table(entity.File{}.TableName()).
-		Where("file_error <> '' OR file_missing = 1").
+		Where("(file_error <> '' OR file_missing = 1) AND file_primary <> 0").
 		UpdateColumn("file_primary", 0).Error; err != nil {
 		return err
 	}
@@ -161,29 +160,32 @@ func FixPrimaries() error {
 }
 
 // FlagHiddenPhotos sets the quality score of photos without valid primary file to -1.
-func FlagHiddenPhotos() error {
+func FlagHiddenPhotos() (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
+	// Start time for logs.
 	start := time.Now()
 
-	res := Db().Table("photos").
-		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL)").
-		Update("photo_quality", -1)
+	// IDs of hidden photos.
+	var hidden []uint
 
-	switch DbDialect() {
-	case MySQL:
-		if res.RowsAffected > 0 {
-			log.Infof("index: flagged %s as hidden or missing [%s]", english.Plural(int(res.RowsAffected), "photo", "photos"), time.Since(start))
-		}
-	case SQLite3:
-		if res.RowsAffected > 0 {
-			log.Debugf("index: flagged %s as hidden or missing [%s]", english.Plural(int(res.RowsAffected), "photo", "photos"), time.Since(start))
-		}
-	default:
-		log.Warnf("sql: unsupported dialect %s", DbDialect())
+	// Find and flag hidden photos.
+	if err = Db().Table(entity.Photo{}.TableName()).
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
+		Pluck("id", &hidden).Error; err != nil {
+		// Find failed.
+		return err
+	} else if n := len(hidden); n == 0 {
+		// Nothing to do.
 		return nil
+	} else if err = Db().Table(entity.Photo{}.TableName()).Where("id IN (?)", hidden).UpdateColumn("photo_quality", -1).Error; err != nil {
+		// Update failed.
+		return err
+	} else {
+		// Log result.
+		log.Infof("index: flagged %s as hidden or missing [%s]", english.Plural(int(n), "photo", "photos"), time.Since(start))
 	}
 
-	return res.Error
+	return nil
 }
