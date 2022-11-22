@@ -401,6 +401,9 @@ msgstr "Kunne ikke finde noget."
 msgid "Country"
 msgstr "Land"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Opret album"
 

@@ -401,6 +401,9 @@ msgstr "Nisam mogao pronaći ništa."
 msgid "Country"
 msgstr "Država"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Napravite album"
 

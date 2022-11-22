@@ -389,6 +389,9 @@ msgstr "לא נמצא דבר."
 msgid "Country"
 msgstr "מדינה"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "צור אלבום"
 

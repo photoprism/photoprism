@@ -401,6 +401,9 @@ msgstr "Kunde inte hitta något."
 msgid "Country"
 msgstr "Land"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Skapa album"
 

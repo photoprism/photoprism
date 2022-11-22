@@ -398,6 +398,9 @@ msgstr "Δεν μπόρεσα να βρω τίποτα."
 msgid "Country"
 msgstr "Χώρα"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Δημιουργία Συλλογής"
 

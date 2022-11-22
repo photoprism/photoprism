@@ -389,6 +389,9 @@ msgstr "Nebylo nic nalezeno."
 msgid "Country"
 msgstr "Země"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Vytvořit album"
 

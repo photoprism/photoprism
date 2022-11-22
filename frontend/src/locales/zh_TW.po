@@ -389,6 +389,9 @@ msgstr "找不到任何東西。"
 msgid "Country"
 msgstr "國家"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "新增相簿"
 
@@ -559,6 +562,7 @@ msgstr "編輯相片"
 
 msgid "Edited"
 msgstr "已編輯"
+
 msgid "Electra"
 msgstr "Electra"
 

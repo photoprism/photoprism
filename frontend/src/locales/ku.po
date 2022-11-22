@@ -410,6 +410,9 @@ msgstr "هیچ شتێک نەدۆزرایەوە."
 msgid "Country"
 msgstr "وڵات"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "دروستکردنی ئەلبوم"
 

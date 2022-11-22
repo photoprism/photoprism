@@ -389,6 +389,9 @@ msgstr "No he pogut trobar res."
 msgid "Country"
 msgstr "País"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Crea un àlbum"
 

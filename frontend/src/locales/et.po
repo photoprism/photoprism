@@ -386,6 +386,9 @@ msgstr "Midagi ei leitud."
 msgid "Country"
 msgstr "Riik"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Lisa album"
 

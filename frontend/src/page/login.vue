@@ -56,7 +56,7 @@
                 </v-btn>
               </div>
               <div v-if="passwordResetUri" class="text-xs-center opacity-80">
-                <a :href="passwordResetUri" class="text-link" :style="`color: ${colors.link}!important`"><translate>Forgot Password?</translate></a>
+                <a :href="passwordResetUri" class="text-link" :style="`color: ${colors.link}!important`"><translate>Forgot password?</translate></a>
               </div>
             </v-card-text>
           </v-card>

@@ -389,6 +389,9 @@ msgstr "找不到任何东西。"
 msgid "Country"
 msgstr "国家"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "创建相册"
 

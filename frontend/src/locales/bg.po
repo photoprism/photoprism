@@ -424,6 +424,9 @@ msgstr "Не можах да намеря нищо."
 msgid "Country"
 msgstr "Страна"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Създаване на албум"
 

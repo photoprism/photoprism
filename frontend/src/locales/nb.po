@@ -400,6 +400,9 @@ msgstr "Kunne ikke finne noe."
 msgid "Country"
 msgstr "Land"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Opprett album"
 

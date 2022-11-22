@@ -398,6 +398,9 @@ msgstr "نتوانست چیزی پیدا کند."
 msgid "Country"
 msgstr "کشور"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "ایجاد آلبوم"
 

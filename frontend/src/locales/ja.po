@@ -389,6 +389,9 @@ msgstr "何も見つかりませんでした。"
 msgid "Country"
 msgstr "国"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "アルバムを作成"
 

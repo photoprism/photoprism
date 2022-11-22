@@ -389,6 +389,9 @@ msgstr "Не можу знайти нічого."
 msgid "Country"
 msgstr "Країна"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Створити альбом"
 

@@ -392,6 +392,9 @@ msgstr "Nem találtunk semmit."
 msgid "Country"
 msgstr "Ország"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Album létrehozása"
 

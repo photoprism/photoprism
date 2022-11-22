@@ -393,6 +393,9 @@ msgstr "Nu sa putut găsi nimic."
 msgid "Country"
 msgstr "Țara"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Creați un album"
 

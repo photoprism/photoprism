@@ -474,6 +474,9 @@ msgstr "ไม่พบอะไรเลย"
 msgid "Country"
 msgstr "ประเทศ"
 
+msgid "Create Account"
+msgstr ""
+
 #, fuzzy
 msgid "Create album"
 msgstr "สร้างอัลบั้ม"

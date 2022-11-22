@@ -401,6 +401,9 @@ msgstr "Nepavyko nieko rasti."
 msgid "Country"
 msgstr "Šalis"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Sukurti albumą"
 

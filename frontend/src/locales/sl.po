@@ -396,6 +396,9 @@ msgstr "Ničesar nisem našel."
 msgid "Country"
 msgstr "Država"
 
+msgid "Create Account"
+msgstr ""
+
 msgid "Create album"
 msgstr "Ustvari album"
 
