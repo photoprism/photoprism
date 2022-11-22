@@ -24,8 +24,8 @@ services:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
       - "traefik:keycloak.localssl.dev"
-      - "traefik:dummy-webdav.localssl.dev"
       - "traefik:dummy-oidc.localssl.dev"
+      - "traefik:dummy-webdav.localssl.dev"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
@@ -39,9 +39,26 @@ services:
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
       PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                         # group id
-      PHOTOPRISM_ADMIN_USER: "admin"                       # admin username
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (minimum 8 characters)
+      ## Access Management
+      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (minimum 8 characters)
       PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
+      PHOTOPRISM_REGISTER_URI: "https://keycloak.localssl.dev/admin/"
+      PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
+      ## LDAP Authentication (pre-configured for local tests):
+      PHOTOPRISM_LDAP_URI: "ldaps://dummy-ldap:1636"
+      PHOTOPRISM_LDAP_INSECURE: "true"
+      PHOTOPRISM_LDAP_ROLE: "user"
+      PHOTOPRISM_LDAP_WEBDAV: "true"
+      PHOTOPRISM_LDAP_BIND: "simple"
+      PHOTOPRISM_LDAP_BIND_DN: "cn"
+      PHOTOPRISM_LDAP_BASE_DN: "dc=localssl,dc=dev"
+      ## OpenID Connect (pre-configured for local tests):
+      PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"
+      PHOTOPRISM_OIDC_INSECURE: "true"
+      PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
+      PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
+      ## Site Information
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
@@ -83,10 +100,6 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680                     # size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                        # show TensorFlow log messages for development
-      ## OpenID Connect Provider (pre-configured for local Keycloak test server):
-      PHOTOPRISM_OIDC_ISSUER_URL: "https://keycloak.localssl.dev/auth/realms/master"
-      PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-develop"
-      PHOTOPRISM_OIDC_CLIENT_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
       ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
       PHOTOPRISM_INIT: "https tensorflow"
       ## Hardware Video Transcoding (optional):
@@ -151,6 +164,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:19.0
     command: "start-dev" # development mode, do not use this in production!
+    container_name: keycloak
     links:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
@@ -174,9 +188,32 @@ services:
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
 
+  ## Dummy LDAP Server
+  dummy-ldap:
+    image: openidentityplatform/opendj:latest
+    container_name: dummy-ldap
+    expose:
+      - 1389
+      - 1636
+      - 4444
+    # ports:
+    #  - "1389:1389"
+    #  - "1636:1636"
+    #  - "4444:4444"
+    user: "1001:1000"
+    environment:
+      OPENDJ_USER: 1001
+      PORT: 1389
+      LDAPS_PORT: 1636
+      BASE_DN: "dc=localssl,dc=dev"
+      ADD_BASE_ENTRY: "--addBaseEntry"
+      ROOT_USER_DN: "cn=user"
+      ROOT_PASSWORD: "photoprism"
+
   ## Dummy OpenID Connect Provider
   dummy-oidc:
     image: photoprism/dummy-oidc:220405
+    container_name: dummy-oidc
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
@@ -189,6 +226,7 @@ services:
   ## Dummy WebDAV Server
   dummy-webdav:
     image: photoprism/dummy-webdav:220405
+    container_name: dummy-webdav
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism

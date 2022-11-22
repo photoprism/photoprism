@@ -23,7 +23,7 @@ var UsersListCommand = cli.Command{
 // usersListAction displays existing user accounts.
 func usersListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		cols := []string{"ID", "UID", "User Name", "Display Name", "Email", "Role", "Super Admin", "Web Login", "WebDAV", "Attributes", "Created At"}
+		cols := []string{"User", "Login", "Full Name", "Email", "Role", "Super Admin", "Web UI", "WebDAV", "Attributes", "Created At"}
 
 		// Fetch users from database.
 		users := query.RegisteredUsers()
@@ -35,9 +35,8 @@ func usersListAction(ctx *cli.Context) error {
 		// Display report.
 		for i, user := range users {
 			rows[i] = []string{
-				fmt.Sprintf("%d", user.ID),
 				user.UID(),
-				user.Name(),
+				user.Login(),
 				user.FullName(),
 				user.Email(),
 				user.AclRole().String(),

@@ -45,12 +45,18 @@
               ></v-text-field>
               <v-spacer></v-spacer>
               <div class="action-buttons text-xs-center">
-                <!-- a href="#" target="_blank" class="text-link px-2" :style="`color: ${colors.link}!important`"><translate>Forgot password?</translate></a -->
-                <v-btn :color="colors.primary" depressed :disabled="loginDisabled"
-                       class="white--text action-confirm ra-6 px-3" @click.stop="login">
+                <v-btn v-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
+                       :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80" @click.stop="register">
+                  <translate>Create Account</translate>
+                </v-btn>
+                <v-btn :color="colors.primary" depressed :disabled="loginDisabled" :block="$vuetify.breakpoint.xsOnly"
+                       class="white--text action-confirm ra-6 py-2 px-3" @click.stop="login">
                   <translate>Sign in</translate>
                   <v-icon :right="!rtl" :left="rtl" dark>arrow_forward</v-icon>
                 </v-btn>
+              </div>
+              <div v-if="passwordResetUri" class="text-xs-center opacity-80">
+                <a :href="passwordResetUri" class="text-link" :style="`color: ${colors.link}!important`"><translate>Forgot Password?</translate></a>
               </div>
             </v-card-text>
           </v-card>
@@ -103,7 +109,8 @@ export default {
     return {
       colors: {
         accent: "#05dde1",
-        primary: "#00adb0",
+        primary: "#00a6a9",
+        secondary: "#505050",
         link: "#c8e3e7",
       },
       loading: false,
@@ -115,6 +122,8 @@ export default {
       siteDescription: this.$config.getSiteDescription(),
       nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
       wallpaperUri: this.$config.values.wallpaperUri,
+      registerUri: this.$config.values.registerUri,
+      passwordResetUri: this.$config.values.passwordResetUri,
       rtl: this.$rtl,
     };
   },
@@ -145,6 +154,9 @@ export default {
       });
 
       setTimeout(() => { window.location = route.href; }, 100);
+    },
+    register() {
+      window.location = this.registerUri;
     },
     login() {
       const username = this.username.trim();

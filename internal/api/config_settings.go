@@ -58,8 +58,8 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		var settings *customize.Settings
 
-		if s.User().IsAdmin() {
-			// Only admins may change the global config.
+		// Only super admins can change global config defaults.
+		if s.User().IsSuperAdmin() {
 			settings = conf.Settings()
 
 			if err := c.BindJSON(settings); err != nil {

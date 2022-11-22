@@ -27,6 +27,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"public", fmt.Sprintf("%t", c.Public())},
 		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
 		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},
+		{"login-uri", c.LoginUri()},
+		{"register-uri", c.RegisterUri()},
+		{"password-length", fmt.Sprintf("%d", c.PasswordLength())},
+		{"password-reset-uri", c.PasswordResetUri()},
 
 		// Logging.
 		{"log-level", c.LogLevel().String()},

@@ -17,6 +17,10 @@ func TestConfig_ClientConfig(t *testing.T) {
 		result := c.ClientPublic()
 		assert.IsType(t, ClientConfig{}, result)
 		assert.Equal(t, AuthModePublic, result.AuthMode)
+		assert.Equal(t, "", result.LoginUri)
+		assert.Equal(t, "", result.RegisterUri)
+		assert.Equal(t, 0, result.PasswordLength)
+		assert.Equal(t, "", result.PasswordResetUri)
 		assert.Equal(t, true, result.Public)
 	})
 	t.Run("TestErrorConfig", func(t *testing.T) {

@@ -166,6 +166,9 @@ func (c *Config) Propagate() {
 	places.UserAgent = c.UserAgent()
 	entity.GeoApi = c.GeoApi()
 
+	// Set minimum password length.
+	entity.PasswordLength = c.PasswordLength()
+
 	// Set API preview and download default tokens.
 	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
 	entity.DownloadToken.Set(c.DownloadToken(), entity.TokenConfig)
@@ -673,7 +676,7 @@ func (c *Config) AutoImport() time.Duration {
 	return time.Duration(c.options.AutoImport) * time.Second
 }
 
-// GeoApi returns the preferred geocoding api (none or places).
+// GeoApi returns the preferred geocoding api (places, or none).
 func (c *Config) GeoApi() string {
 	if c.options.DisablePlaces {
 		return ""

@@ -6,6 +6,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAuth(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.Public = true
+	c.options.Demo = false
+	assert.False(t, c.Auth())
+	c.options.Public = false
+	c.options.Demo = false
+	assert.True(t, c.Auth())
+	c.options.Demo = true
+	assert.False(t, c.Auth())
+}
+
 func TestAuthMode(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	c.options.Public = true
@@ -34,16 +46,24 @@ func TestAuthMode(t *testing.T) {
 	c.options.Debug = false
 }
 
-func TestAuth(t *testing.T) {
+func TestLoginUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	c.options.Public = true
-	c.options.Demo = false
-	assert.False(t, c.Auth())
-	c.options.Public = false
-	c.options.Demo = false
-	assert.True(t, c.Auth())
-	c.options.Demo = true
-	assert.False(t, c.Auth())
+	assert.Equal(t, "/library/login", c.LoginUri())
+}
+
+func TestRegisterUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "", c.RegisterUri())
+}
+
+func TestPasswordLength(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, 4, c.PasswordLength())
+}
+
+func TestPasswordResetUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "", c.PasswordResetUri())
 }
 
 func TestSessMaxAge(t *testing.T) {

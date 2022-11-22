@@ -142,6 +142,7 @@ export default class Session {
 
   deleteId() {
     this.session_id = null;
+    this.provider = "";
     this.storage.removeItem("session_id");
 
     delete Api.defaults.headers.common[SessionHeader];
@@ -156,6 +157,9 @@ export default class Session {
 
     if (resp.data.id) {
       this.setId(resp.data.id);
+    }
+    if (resp.data.provider) {
+      this.provider = resp.data.provider;
     }
     if (resp.data.config) {
       this.setConfig(resp.data.config);

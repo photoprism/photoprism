@@ -31,7 +31,7 @@
                     :disabled="disabled"
                     :rules="[textRule]"
                     hide-details box flat
-                    :label="$gettext('Title')"
+                    :label="$pgettext('Photo', 'Title')"
                     placeholder=""
                     color="secondary-dark"
                     browser-autocomplete="off"

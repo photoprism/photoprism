@@ -52,6 +52,12 @@ const (
 	IsUnstacked int8 = -1
 )
 
+// Authentication providers.
+const (
+	ProviderNone     = ""
+	ProviderPassword = "password"
+)
+
 // Sort options.
 const (
 	SortOrderDefault   = ""

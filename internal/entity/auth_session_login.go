@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -13,7 +11,61 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// Auth checks if the credentials are valid and returns the user and authentication provider.
+var Auth = func(f form.Login, m *Session, c *gin.Context) (user *User, provider string, err error) {
+	name := f.Name()
+
+	user = FindUserByName(name)
+	err = AuthPassword(user, f, m)
+
+	if err != nil {
+		return user, ProviderNone, err
+	}
+
+	return user, ProviderPassword, err
+}
+
+// AuthPassword checks if the username and password are valid and returns the user.
+func AuthPassword(user *User, f form.Login, m *Session) (err error) {
+	name := f.Name()
+
+	// User found?
+	if user == nil {
+		message := "account not found"
+		limiter.Login.Reserve(m.IP())
+		event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
+		event.LoginError(m.IP(), "api", name, m.UserAgent, message)
+		m.Status = http.StatusUnauthorized
+		return i18n.Error(i18n.ErrInvalidCredentials)
+	}
+
+	// Login allowed?
+	if !user.CanLogIn() {
+		message := "account disabled"
+		event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
+		event.LoginError(m.IP(), "api", name, m.UserAgent, message)
+		m.Status = http.StatusUnauthorized
+		return i18n.Error(i18n.ErrInvalidCredentials)
+	}
+
+	// Password valid?
+	if user.WrongPassword(f.Password) {
+		message := "incorrect password"
+		limiter.Login.Reserve(m.IP())
+		event.AuditErr([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
+		event.LoginError(m.IP(), "api", name, m.UserAgent, message)
+		m.Status = http.StatusUnauthorized
+		return i18n.Error(i18n.ErrInvalidCredentials)
+	} else {
+		event.AuditInfo([]string{m.IP(), "session %s", "login as %s", "succeeded"}, m.RefID, clean.LogQuote(name))
+		event.LoginInfo(m.IP(), "api", name, m.UserAgent)
+	}
+
+	return err
+}
 
 // LogIn performs authentication checks against the specified login form.
 func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
@@ -21,53 +73,28 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 		m.SetContext(c)
 	}
 
-	// Username and password provided?
+	var user *User
+	var provider string
+
+	// Login credentials provided?
 	if f.HasCredentials() {
 		if m.IsRegistered() {
 			m.RegenerateID()
 		}
 
-		name := f.Name()
-		user := FindUserByName(name)
+		user, provider, err = Auth(f, m, c)
 
-		// User found?
-		if user == nil {
-			message := "account not found"
-			limiter.Login.Reserve(m.IP())
-			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-			m.Status = http.StatusUnauthorized
-			return i18n.Error(i18n.ErrInvalidCredentials)
-		}
-
-		// Login allowed?
-		if !user.CanLogIn() {
-			message := "account disabled"
-			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-			m.Status = http.StatusUnauthorized
-			return i18n.Error(i18n.ErrInvalidCredentials)
-		}
-
-		// Password valid?
-		if user.WrongPassword(f.Password) {
-			message := "incorrect password"
-			limiter.Login.Reserve(m.IP())
-			event.AuditErr([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-			m.Status = http.StatusUnauthorized
-			return i18n.Error(i18n.ErrInvalidCredentials)
-		} else {
-			event.AuditInfo([]string{m.IP(), "session %s", "login as %s", "succeeded"}, m.RefID, clean.LogQuote(name))
-			event.LoginInfo(m.IP(), "api", name, m.UserAgent)
+		if err != nil {
+			return err
 		}
 
 		m.SetUser(user)
+		m.SetProvider(provider)
 	}
 
 	// Share token provided?
 	if f.HasToken() {
-		user := m.User()
+		user = m.User()
 
 		// Redeem token.
 		if user.IsRegistered() {

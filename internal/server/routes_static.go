@@ -4,18 +4,17 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/internal/i18n"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/i18n"
 )
 
 // registerStaticRoutes configures serving static assets and templates.
 func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	// Redirects to the PWA for now, can be replaced by a template later.
 	router.GET(conf.BaseUri("/"), func(c *gin.Context) {
-		c.Redirect(http.StatusTemporaryRedirect, conf.BaseUri("/library/login"))
+		c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 	})
 
 	// Shows "Page Not found" error if no other handler is registered.

@@ -77,7 +77,7 @@ func (c *Config) HttpMode() string {
 	return c.options.HttpMode
 }
 
-// HttpCompression returns the http compression method (none or gzip).
+// HttpCompression returns the http compression method (gzip, or none).
 func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }

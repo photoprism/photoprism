@@ -61,6 +61,7 @@ export default class Config {
       this.themeName = "";
       this.baseUri = "";
       this.staticUri = "/static";
+      this.loginUri = "/library/login";
       this.apiUri = "/api/v1";
       this.contentUri = this.apiUri;
       this.values = {
@@ -75,6 +76,7 @@ export default class Config {
     } else {
       this.baseUri = values.baseUri ? values.baseUri : "";
       this.staticUri = values.staticUri ? values.staticUri : this.baseUri + "/static";
+      this.loginUri = values.loginUri ? values.loginUri : this.baseUri + "/library/login";
       this.apiUri = values.apiUri ? values.apiUri : this.baseUri + "/api/v1";
       this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
     }

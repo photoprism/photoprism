@@ -333,6 +333,7 @@ func TestFindUserByUID(t *testing.T) {
 		assert.Equal(t, "alice@example.com", m.UserEmail)
 		assert.True(t, m.SuperAdmin)
 		assert.True(t, m.IsAdmin())
+		assert.True(t, m.IsSuperAdmin())
 		assert.False(t, m.IsVisitor())
 		assert.True(t, m.CanLogin)
 		assert.NotEmpty(t, m.CreatedAt)
@@ -352,6 +353,7 @@ func TestFindUserByUID(t *testing.T) {
 		assert.Equal(t, "bob@example.com", m.UserEmail)
 		assert.False(t, m.SuperAdmin)
 		assert.True(t, m.IsAdmin())
+		assert.False(t, m.IsSuperAdmin())
 		assert.False(t, m.IsVisitor())
 		assert.True(t, m.CanLogin)
 		assert.NotEmpty(t, m.CreatedAt)
@@ -535,15 +537,6 @@ func TestUser_Validate(t *testing.T) {
 			UserRole:    acl.RoleAdmin.String(),
 		}
 
-		assert.Error(t, u.Validate())
-	})
-	t.Run("NameTooShort", func(t *testing.T) {
-		u := &User{
-			UserName:    "va",
-			DisplayName: "Validate",
-			UserEmail:   "validate@example.com",
-			UserRole:    acl.RoleAdmin.String(),
-		}
 		assert.Error(t, u.Validate())
 	})
 	t.Run("NameNotUnique", func(t *testing.T) {

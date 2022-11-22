@@ -13,8 +13,8 @@ import (
 func AddUser(frm form.User) error {
 	user := NewUser().SetFormValues(frm)
 
-	if len(frm.Password) < LenPasswordMin {
-		return fmt.Errorf("password must have at least %d characters", LenPasswordMin)
+	if len(frm.Password) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
 	}
 
 	if err := user.Validate(); err != nil {

@@ -44,6 +44,30 @@
     max-width: 1264px;
 }
 
+.width-50 {
+    min-width: 50%;
+}
+
+.width-60 {
+    min-width: 60%;
+}
+
+.width-66 {
+    min-width: 66%;
+}
+
+.width-70 {
+    min-width: 70%;
+}
+
+.width-80 {
+    min-width: 80%;
+}
+
+.width-90 {
+    min-width: 90%;
+}
+
 /* Rounded Elements */
 
 .v-progress-linear,

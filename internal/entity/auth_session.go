@@ -257,6 +257,26 @@ func (m *Session) SetUser(u *User) *Session {
 	return m
 }
 
+// Login returns the login name and provider.
+func (m *Session) Login() string {
+	if m.AuthProvider == "" {
+		return m.UserName
+	} else {
+		return fmt.Sprintf("%s@%s", m.UserName, m.AuthProvider)
+	}
+}
+
+// SetProvider updates the session's authentication provider.
+func (m *Session) SetProvider(provider string) *Session {
+	if provider == "" {
+		return m
+	}
+
+	m.AuthProvider = provider
+
+	return m
+}
+
 // ChangePassword changes the password of the current user.
 func (m *Session) ChangePassword(newPw string) (err error) {
 	u := m.User()

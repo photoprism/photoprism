@@ -64,10 +64,10 @@ func usersAddAction(ctx *cli.Context) error {
 			frm.UserEmail = clean.Email(res)
 		}
 
-		if interactive && len(ctx.String("password")) < entity.LenPasswordMin {
+		if interactive && len(ctx.String("password")) < entity.PasswordLength {
 			validate := func(input string) error {
-				if len(input) < entity.LenPasswordMin {
-					return fmt.Errorf("password must have at least %d characters", entity.LenPasswordMin)
+				if len(input) < entity.PasswordLength {
+					return fmt.Errorf("password must have at least %d characters", entity.PasswordLength)
 				}
 				return nil
 			}

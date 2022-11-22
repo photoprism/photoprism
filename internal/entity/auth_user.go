@@ -8,9 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ulule/deepcopier"
-
 	"github.com/jinzhu/gorm"
+	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -27,11 +26,11 @@ const (
 	OwnerUnknown = ""
 )
 
-// LenNameMin specifies the minimum length of the username in characters.
-var LenNameMin = 3
+// UsernameLength specifies the minimum length of the username in characters.
+var UsernameLength = 1
 
-// LenPasswordMin specifies the minimum length of the password in characters.
-var LenPasswordMin = 4
+// PasswordLength specifies the minimum length of the password in characters.
+var PasswordLength = 4
 
 // Users represents a list of users.
 type Users []User
@@ -110,6 +109,8 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("user_name = ?", find.UserName)
 	} else if find.UserEmail != "" {
 		stmt = stmt.Where("user_email = ?", find.UserEmail)
+	} else if find.AuthProvider != "" && find.AuthID != "" {
+		stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
 	} else {
 		return nil
 	}
@@ -512,7 +513,16 @@ func (m *User) IsAdmin() bool {
 		return false
 	}
 
-	return m.IsRegistered() && (m.SuperAdmin || m.AclRole() == acl.RoleAdmin)
+	return m.IsSuperAdmin() || m.IsRegistered() && m.AclRole() == acl.RoleAdmin
+}
+
+// IsSuperAdmin checks if the user is a super admin.
+func (m *User) IsSuperAdmin() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.SuperAdmin
 }
 
 // IsVisitor checks if the user is a sharing link visitor.
@@ -559,8 +569,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len(password) < LenPasswordMin {
-		return fmt.Errorf("password must have at least %d characters", LenPasswordMin)
+	if len(password) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
 	}
 
 	pw := NewPassword(m.UserUID, password)
@@ -614,8 +624,8 @@ func (m *User) Validate() (err error) {
 	}
 
 	// Name too short?
-	if len(m.Name()) < LenNameMin {
-		return fmt.Errorf("username must have at least %d characters", LenNameMin)
+	if len(m.Name()) < UsernameLength {
+		return fmt.Errorf("username must have at least %d characters", UsernameLength)
 	}
 
 	// Validate user role.
@@ -866,4 +876,13 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	m.ThumbSrc = thumbSrc
 
 	return m.Updates(Values{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
+}
+
+// Login returns the login name and provider.
+func (m *User) Login() string {
+	if m.AuthProvider == "" {
+		return m.UserName
+	} else {
+		return fmt.Sprintf("%s@%s", m.UserName, m.AuthProvider)
+	}
 }

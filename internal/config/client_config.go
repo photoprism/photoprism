@@ -23,64 +23,68 @@ const (
 
 // ClientConfig represents HTTP client / Web UI config options.
 type ClientConfig struct {
-	Mode            string              `json:"mode"`
-	Name            string              `json:"name"`
-	About           string              `json:"about"`
-	Edition         string              `json:"edition"`
-	Version         string              `json:"version"`
-	Copyright       string              `json:"copyright"`
-	Flags           string              `json:"flags"`
-	BaseUri         string              `json:"baseUri"`
-	StaticUri       string              `json:"staticUri"`
-	CssUri          string              `json:"cssUri"`
-	JsUri           string              `json:"jsUri"`
-	ManifestUri     string              `json:"manifestUri"`
-	ApiUri          string              `json:"apiUri"`
-	ContentUri      string              `json:"contentUri"`
-	WallpaperUri    string              `json:"wallpaperUri"`
-	SiteUrl         string              `json:"siteUrl"`
-	SiteDomain      string              `json:"siteDomain"`
-	SiteAuthor      string              `json:"siteAuthor"`
-	SiteTitle       string              `json:"siteTitle"`
-	SiteCaption     string              `json:"siteCaption"`
-	SiteDescription string              `json:"siteDescription"`
-	SitePreview     string              `json:"sitePreview"`
-	LegalInfo       string              `json:"legalInfo"`
-	LegalUrl        string              `json:"legalUrl"`
-	AppName         string              `json:"appName"`
-	AppMode         string              `json:"appMode"`
-	AppIcon         string              `json:"appIcon"`
-	Debug           bool                `json:"debug"`
-	Trace           bool                `json:"trace"`
-	Test            bool                `json:"test"`
-	Demo            bool                `json:"demo"`
-	Sponsor         bool                `json:"sponsor"`
-	ReadOnly        bool                `json:"readonly"`
-	UploadNSFW      bool                `json:"uploadNSFW"`
-	Public          bool                `json:"public"`
-	AuthMode        string              `json:"authMode"`
-	Experimental    bool                `json:"experimental"`
-	AlbumCategories []string            `json:"albumCategories"`
-	Albums          entity.Albums       `json:"albums"`
-	Cameras         entity.Cameras      `json:"cameras"`
-	Lenses          entity.Lenses       `json:"lenses"`
-	Countries       entity.Countries    `json:"countries"`
-	People          entity.People       `json:"people"`
-	Thumbs          ThumbSizes          `json:"thumbs"`
-	MapKey          string              `json:"mapKey"`
-	DownloadToken   string              `json:"downloadToken,omitempty"`
-	PreviewToken    string              `json:"previewToken,omitempty"`
-	Disable         ClientDisable       `json:"disable"`
-	Count           ClientCounts        `json:"count"`
-	Pos             ClientPosition      `json:"pos"`
-	Years           Years               `json:"years"`
-	Colors          []map[string]string `json:"colors"`
-	Categories      CategoryLabels      `json:"categories"`
-	Clip            int                 `json:"clip"`
-	Server          env.Resources       `json:"server"`
-	Settings        *customize.Settings `json:"settings,omitempty"`
-	ACL             acl.Grants          `json:"acl,omitempty"`
-	Ext             Values              `json:"ext"`
+	Mode             string              `json:"mode"`
+	Name             string              `json:"name"`
+	About            string              `json:"about"`
+	Edition          string              `json:"edition"`
+	Version          string              `json:"version"`
+	Copyright        string              `json:"copyright"`
+	Flags            string              `json:"flags"`
+	BaseUri          string              `json:"baseUri"`
+	StaticUri        string              `json:"staticUri"`
+	CssUri           string              `json:"cssUri"`
+	JsUri            string              `json:"jsUri"`
+	ManifestUri      string              `json:"manifestUri"`
+	ApiUri           string              `json:"apiUri"`
+	ContentUri       string              `json:"contentUri"`
+	WallpaperUri     string              `json:"wallpaperUri"`
+	SiteUrl          string              `json:"siteUrl"`
+	SiteDomain       string              `json:"siteDomain"`
+	SiteAuthor       string              `json:"siteAuthor"`
+	SiteTitle        string              `json:"siteTitle"`
+	SiteCaption      string              `json:"siteCaption"`
+	SiteDescription  string              `json:"siteDescription"`
+	SitePreview      string              `json:"sitePreview"`
+	LegalInfo        string              `json:"legalInfo"`
+	LegalUrl         string              `json:"legalUrl"`
+	AppName          string              `json:"appName"`
+	AppMode          string              `json:"appMode"`
+	AppIcon          string              `json:"appIcon"`
+	Debug            bool                `json:"debug"`
+	Trace            bool                `json:"trace"`
+	Test             bool                `json:"test"`
+	Demo             bool                `json:"demo"`
+	Sponsor          bool                `json:"sponsor"`
+	ReadOnly         bool                `json:"readonly"`
+	UploadNSFW       bool                `json:"uploadNSFW"`
+	Public           bool                `json:"public"`
+	AuthMode         string              `json:"authMode"`
+	LoginUri         string              `json:"loginUri"`
+	RegisterUri      string              `json:"registerUri"`
+	PasswordLength   int                 `json:"passwordLength"`
+	PasswordResetUri string              `json:"passwordResetUri"`
+	Experimental     bool                `json:"experimental"`
+	AlbumCategories  []string            `json:"albumCategories"`
+	Albums           entity.Albums       `json:"albums"`
+	Cameras          entity.Cameras      `json:"cameras"`
+	Lenses           entity.Lenses       `json:"lenses"`
+	Countries        entity.Countries    `json:"countries"`
+	People           entity.People       `json:"people"`
+	Thumbs           ThumbSizes          `json:"thumbs"`
+	MapKey           string              `json:"mapKey"`
+	DownloadToken    string              `json:"downloadToken,omitempty"`
+	PreviewToken     string              `json:"previewToken,omitempty"`
+	Disable          ClientDisable       `json:"disable"`
+	Count            ClientCounts        `json:"count"`
+	Pos              ClientPosition      `json:"pos"`
+	Years            Years               `json:"years"`
+	Colors           []map[string]string `json:"colors"`
+	Categories       CategoryLabels      `json:"categories"`
+	Clip             int                 `json:"clip"`
+	Server           env.Resources       `json:"server"`
+	Settings         *customize.Settings `json:"settings,omitempty"`
+	ACL              acl.Grants          `json:"acl,omitempty"`
+	Ext              Values              `json:"ext"`
 }
 
 // ApplyACL updates the client config values based on the ACL and Role provided.
@@ -225,54 +229,57 @@ func (c *Config) ClientPublic() ClientConfig {
 			Faces:          true,
 			Classification: true,
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            string(ClientPublic),
-		Name:            c.Name(),
-		About:           c.Edition(),
-		Edition:         c.Hub().Status,
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          a.AppCssUri(),
-		JsUri:           a.AppJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		LegalInfo:       c.LegalInfo(),
-		LegalUrl:        c.LegalUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        c.ReadOnly(),
-		Public:          c.Public(),
-		AuthMode:        c.AuthMode(),
-		Experimental:    c.Experimental(),
-		Albums:          entity.Albums{},
-		Cameras:         entity.Cameras{},
-		Lenses:          entity.Lenses{},
-		Countries:       entity.Countries{},
-		People:          entity.People{},
-		MapKey:          "",
-		Thumbs:          Thumbs,
-		Colors:          colors.All.List(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
-		PreviewToken:    entity.TokenPublic,
-		DownloadToken:   entity.TokenPublic,
-		Ext:             ClientExt(c, ClientPublic),
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientPublic),
+		Name:             c.Name(),
+		About:            c.Edition(),
+		Edition:          c.Hub().Status,
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.AppJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		MapKey:           "",
+		Thumbs:           Thumbs,
+		Colors:           colors.All.List(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		PreviewToken:     entity.TokenPublic,
+		DownloadToken:    entity.TokenPublic,
+		Ext:              ClientExt(c, ClientPublic),
 	}
 
 	return cfg
@@ -301,55 +308,58 @@ func (c *Config) ClientShare() ClientConfig {
 			Faces:          true,
 			Classification: true,
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            string(ClientShare),
-		Name:            c.Name(),
-		About:           c.Edition(),
-		Edition:         c.Hub().Status,
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          a.AppCssUri(),
-		JsUri:           a.ShareJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		LegalInfo:       c.LegalInfo(),
-		LegalUrl:        c.LegalUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        c.ReadOnly(),
-		UploadNSFW:      c.UploadNSFW(),
-		Public:          c.Public(),
-		AuthMode:        c.AuthMode(),
-		Experimental:    c.Experimental(),
-		Albums:          entity.Albums{},
-		Cameras:         entity.Cameras{},
-		Lenses:          entity.Lenses{},
-		Countries:       entity.Countries{},
-		People:          entity.People{},
-		Colors:          colors.All.List(),
-		Thumbs:          Thumbs,
-		MapKey:          c.Hub().MapKey(),
-		DownloadToken:   c.DownloadToken(),
-		PreviewToken:    c.PreviewToken(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
-		Ext:             ClientExt(c, ClientShare),
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientShare),
+		Name:             c.Name(),
+		About:            c.Edition(),
+		Edition:          c.Hub().Status,
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.ShareJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		UploadNSFW:       c.UploadNSFW(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		Colors:           colors.All.List(),
+		Thumbs:           Thumbs,
+		MapKey:           c.Hub().MapKey(),
+		DownloadToken:    c.DownloadToken(),
+		PreviewToken:     c.PreviewToken(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		Ext:              ClientExt(c, ClientShare),
 	}
 
 	return cfg
@@ -383,56 +393,60 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Faces:          c.DisableFaces(),
 			Classification: c.DisableClassification(),
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            string(ClientUser),
-		Name:            c.Name(),
-		About:           c.Edition(),
-		Edition:         c.Hub().Status,
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          a.AppCssUri(),
-		JsUri:           a.AppJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		LegalInfo:       c.LegalInfo(),
-		LegalUrl:        c.LegalUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        c.ReadOnly(),
-		UploadNSFW:      c.UploadNSFW(),
-		Public:          c.Public(),
-		AuthMode:        c.AuthMode(),
-		Experimental:    c.Experimental(),
-		Albums:          entity.Albums{},
-		Cameras:         entity.Cameras{},
-		Lenses:          entity.Lenses{},
-		Countries:       entity.Countries{},
-		People:          entity.People{},
-		Colors:          colors.All.List(),
-		Thumbs:          Thumbs,
-		MapKey:          c.Hub().MapKey(),
-		DownloadToken:   c.DownloadToken(),
-		PreviewToken:    c.PreviewToken(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
-		Server:          env.Info(),
-		Ext:             ClientExt(c, ClientUser),
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientUser),
+		Name:             c.Name(),
+		About:            c.Edition(),
+		Edition:          c.Hub().Status,
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.AppJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		UploadNSFW:       c.UploadNSFW(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordLength:   c.PasswordLength(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		Colors:           colors.All.List(),
+		Thumbs:           Thumbs,
+		MapKey:           c.Hub().MapKey(),
+		DownloadToken:    c.DownloadToken(),
+		PreviewToken:     c.PreviewToken(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		Server:           env.Info(),
+		Ext:              ClientExt(c, ClientUser),
 	}
 
 	hidePrivate := c.Settings().Features.Private

@@ -55,11 +55,12 @@ func GetSession(router *gin.RouterGroup) {
 
 		// Send JSON response with user information, session data, and client config values.
 		data := gin.H{
-			"status": "ok",
-			"id":     sess.ID,
-			"user":   sess.User(),
-			"data":   sess.Data(),
-			"config": get.Config().ClientSession(sess),
+			"status":   "ok",
+			"id":       sess.ID,
+			"provider": sess.AuthProvider,
+			"user":     sess.User(),
+			"data":     sess.Data(),
+			"config":   get.Config().ClientSession(sess),
 		}
 
 		c.JSON(http.StatusOK, data)

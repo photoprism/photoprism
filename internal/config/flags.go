@@ -1,9 +1,12 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/header"
@@ -27,13 +30,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-user, login",
-			Usage:  "admin login `USERNAME`",
+			Usage:  "superadmin `USERNAME`",
 			EnvVar: "PHOTOPRISM_ADMIN_USER",
 			Value:  "admin",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
-			Usage:  "initial admin `PASSWORD`, must have at least 8 characters",
+			Usage:  fmt.Sprintf("initial superadmin `PASSWORD` (minimum %d characters)", entity.PasswordLength),
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 		}}, {
 		Flag: cli.Int64Flag{
@@ -126,10 +129,7 @@ var Flags = CliFlags{
 			Value:  DefaultResolutionLimit,
 			Usage:  "maximum resolution of media files in `MEGAPIXELS` (1-900; -1 to disable)",
 			EnvVar: "PHOTOPRISM_RESOLUTION_LIMIT",
-		},
-		Tags: []string{EnvSponsor},
-	},
-	{
+		}, Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
 			Name:   "storage-path, s",
 			Usage:  "writable storage `PATH` for sidecar, cache, and database files",
@@ -427,12 +427,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-mode, mode",
-			Usage:  "Web server `MODE` (debug, release, or test)",
+			Usage:  "Web server `MODE` (debug, release, test)",
 			EnvVar: "PHOTOPRISM_HTTP_MODE",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-compression, z",
-			Usage:  "Web server compression `METHOD` (none or gzip)",
+			Usage:  "Web server compression `METHOD` (gzip, none)",
 			EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
 		}}, {
 		Flag: cli.StringFlag{

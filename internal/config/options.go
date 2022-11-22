@@ -23,6 +23,10 @@ type Options struct {
 	Copyright             string        `json:"-"`
 	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode              string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
+	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
+	RegisterUri           string        `yaml:"RegisterUri" json:"-" flag:"register-uri"`
+	PasswordLength        int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
+	PasswordResetUri      string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri"`
 	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	AdminUser             string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`

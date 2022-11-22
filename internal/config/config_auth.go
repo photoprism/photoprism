@@ -3,10 +3,9 @@ package config
 import (
 	"regexp"
 
-	"github.com/photoprism/photoprism/internal/entity"
-
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -85,6 +84,11 @@ func (c *Config) SetAuthMode(mode string) {
 	}
 }
 
+// Auth checks if authentication is required.
+func (c *Config) Auth() bool {
+	return !c.Public()
+}
+
 // AuthMode returns the authentication mode.
 func (c *Config) AuthMode() string {
 	if c.options.Public || c.options.Demo {
@@ -99,9 +103,46 @@ func (c *Config) AuthMode() string {
 	}
 }
 
-// Auth checks if authentication is required.
-func (c *Config) Auth() bool {
-	return !c.Public()
+// LoginUri returns the user login URI.
+func (c *Config) LoginUri() string {
+	if c.Public() {
+		return ""
+	}
+
+	if c.options.LoginUri == "" {
+		return c.BaseUri("/library/login")
+	}
+
+	return c.options.LoginUri
+}
+
+// RegisterUri returns the user registration URI.
+func (c *Config) RegisterUri() string {
+	if c.Public() {
+		return ""
+	}
+
+	return c.options.RegisterUri
+}
+
+// PasswordLength returns the minimum password length in characters.
+func (c *Config) PasswordLength() int {
+	if c.Public() {
+		return 0
+	} else if c.options.PasswordLength < 1 {
+		return 4
+	}
+
+	return c.options.PasswordLength
+}
+
+// PasswordResetUri returns the password reset URI.
+func (c *Config) PasswordResetUri() string {
+	if c.Public() {
+		return ""
+	}
+
+	return c.options.PasswordResetUri
 }
 
 // CheckPassword compares given password p with the admin password

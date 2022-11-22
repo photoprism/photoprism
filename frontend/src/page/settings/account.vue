@@ -31,7 +31,7 @@
                       browser-autocomplete="off"
                       autocorrect="off"
                       autocapitalize="none"
-                      :label="$gettext('Title')"
+                      :label="$pgettext('Account', 'Title')"
                       class="input-name-title"
                       color="secondary-dark"
                       :rules="[v => validLength(v, 0, 32) || $gettext('Invalid')]"
