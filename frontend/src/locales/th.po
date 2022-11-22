@@ -702,6 +702,10 @@ msgid "Edited"
 msgstr "แก้ไขแล้ว"
 
 #, fuzzy
+msgid "Electra"
+msgstr "Electra"
+
+#, fuzzy
 msgid "Email"
 msgstr "อีเมล"
 
@@ -1291,8 +1295,8 @@ msgid "Move Files"
 msgstr "ย้ายไฟล์"
 
 #, fuzzy
-msgid "Must have at least 8 characters."
-msgstr "ต้องมีอักขระอย่างน้อย 8 ตัว"
+msgid "Must have at least %{n} characters."
+msgstr "ต้องมีอักขระอย่างน้อย %{n} ตัว"
 
 #, fuzzy
 msgid "Name"
@@ -1762,10 +1766,6 @@ msgid "Season"
 msgstr "ฤดูกาล"
 
 #, fuzzy
-msgid "Seaweed"
-msgstr "สาหร่าย"
-
-#, fuzzy
 msgid "Secret"
 msgstr "ความลับ"
 
@@ -2026,6 +2026,16 @@ msgstr "เขตเวลา"
 #, fuzzy
 msgid "Timeout"
 msgstr "หมดเวลา"
+
+#, fuzzy
+msgctxt "Account"
+msgid "Title"
+msgstr "ชื่อ"
+
+#, fuzzy
+msgctxt "Photo"
+msgid "Title"
+msgstr "ชื่อ"
 
 #, fuzzy
 msgid "Title"
@@ -2306,6 +2316,20 @@ msgstr "ห้องสมุดของคุณได้รับการว
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#, fuzzy
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "ชื่อ"
+
+#, fuzzy
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "ชื่อ"
+
+#, fuzzy
+#~ msgid "Seaweed"
+#~ msgstr "สาหร่าย"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

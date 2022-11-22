@@ -573,6 +573,9 @@ msgstr "ویرایش تصویر"
 msgid "Edited"
 msgstr "ویرایش شده"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "پست الکترونیک"
@@ -1044,8 +1047,10 @@ msgstr "بسیار مرتبط"
 msgid "Move Files"
 msgstr "جابجایی فایل ها"
 
-msgid "Must have at least 8 characters."
-msgstr "باید حداقل 8 حرف داشته باشد."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "باید حداقل %{n} حرف داشته باشد."
 
 msgid "Name"
 msgstr "نام"
@@ -1409,9 +1414,6 @@ msgstr "جستجو و نمایش عکس ها روی نقشه."
 msgid "Season"
 msgstr "فصل"
 
-msgid "Seaweed"
-msgstr "جلبک دریایی"
-
 msgid "Secret"
 msgstr "محرمانه"
 
@@ -1613,6 +1615,18 @@ msgstr "منطقه زمانی"
 
 msgid "Timeout"
 msgstr "تایم اوت"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "عنوان"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "عنوان"
 
 msgid "Title"
 msgstr "عنوان"
@@ -1837,6 +1851,21 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "عنوان"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "عنوان"
+
+#~ msgid "Seaweed"
+#~ msgstr "جلبک دریایی"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

@@ -563,6 +563,9 @@ msgstr "Fénykép szerkesztése"
 msgid "Edited"
 msgstr "Szerkesztette"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "E-mail"
 
@@ -1013,8 +1016,10 @@ msgstr "Legrelevánsabb"
 msgid "Move Files"
 msgstr "Fájlok áthelyezése"
 
-msgid "Must have at least 8 characters."
-msgstr "Legalább 8 karakteresnek kell lennie."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Legalább %{n} karakteresnek kell lennie."
 
 msgid "Name"
 msgstr "Név"
@@ -1373,9 +1378,6 @@ msgstr "Fényképek keresése és megjelenítése a térképen."
 msgid "Season"
 msgstr "Évad"
 
-msgid "Seaweed"
-msgstr "Hínár"
-
 msgid "Secret"
 msgstr "Titok"
 
@@ -1573,6 +1575,18 @@ msgstr "Időzóna"
 
 msgid "Timeout"
 msgstr "Időtúllépés"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Cím"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Cím"
 
 msgid "Title"
 msgstr "Cím"
@@ -1791,6 +1805,21 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Cím"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Cím"
+
+#~ msgid "Seaweed"
+#~ msgstr "Hínár"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

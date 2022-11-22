@@ -574,6 +574,9 @@ msgstr "Uredi fotografiju"
 msgid "Edited"
 msgstr "Uređeno"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "E-mail"
@@ -1040,8 +1043,10 @@ msgstr "Najvažnije"
 msgid "Move Files"
 msgstr "Premjesti datoteke"
 
-msgid "Must have at least 8 characters."
-msgstr "Mora imati najmanje 8 znakova."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Mora imati najmanje %{n} znakova."
 
 msgid "Name"
 msgstr "Ime"
@@ -1407,9 +1412,6 @@ msgstr "Pretraživanje i prikaz fotografija na karti."
 msgid "Season"
 msgstr "Sezona"
 
-msgid "Seaweed"
-msgstr "Alge"
-
 msgid "Secret"
 msgstr "Tajno"
 
@@ -1611,6 +1613,18 @@ msgstr "Vremenska zona"
 
 msgid "Timeout"
 msgstr "Pauza"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Naslov"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Naslov"
 
 msgid "Title"
 msgstr "Naslov"
@@ -1839,6 +1853,21 @@ msgstr "Vaša se knjižnica kontinuirano analizira kako bi se automatski izradil
 
 msgid "Zoom in/out"
 msgstr "Povećavanje/smanjivanje"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Naslov"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Naslov"
+
+#~ msgid "Seaweed"
+#~ msgstr "Alge"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

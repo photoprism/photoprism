@@ -571,6 +571,10 @@ msgid "Edited"
 msgstr "Urejeno"
 
 #, fuzzy
+msgid "Electra"
+msgstr "Electra"
+
+#, fuzzy
 msgid "Email"
 msgstr "E-pošta"
 
@@ -1035,8 +1039,10 @@ msgstr "Najpomembnejši"
 msgid "Move Files"
 msgstr "Premikanje datotek"
 
-msgid "Must have at least 8 characters."
-msgstr "Imeti mora vsaj 8 znakov."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Imeti mora vsaj %{n} znakov."
 
 msgid "Name"
 msgstr "Ime"
@@ -1480,10 +1486,6 @@ msgid "Season"
 msgstr "Sezona"
 
 #, fuzzy
-msgid "Seaweed"
-msgstr "Morske alge"
-
-#, fuzzy
 msgid "Secret"
 msgstr "Skrivnost"
 
@@ -1744,6 +1746,16 @@ msgstr "Časovni pas"
 #, fuzzy
 msgid "Timeout"
 msgstr "Timeout"
+
+#, fuzzy
+msgctxt "Account"
+msgid "Title"
+msgstr "Naslov"
+
+#, fuzzy
+msgctxt "Photo"
+msgid "Title"
+msgstr "Naslov"
 
 #, fuzzy
 msgid "Title"
@@ -2026,6 +2038,20 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#, fuzzy
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Naslov"
+
+#, fuzzy
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Naslov"
+
+#, fuzzy
+#~ msgid "Seaweed"
+#~ msgstr "Morske alge"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

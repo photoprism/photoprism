@@ -560,6 +560,9 @@ msgstr "Bild bearbeiten"
 msgid "Edited"
 msgstr "Bearbeitet"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "E-Mail"
 
@@ -1007,8 +1010,10 @@ msgstr "Relevanz"
 msgid "Move Files"
 msgstr "Dateien verschieben"
 
-msgid "Must have at least 8 characters."
-msgstr "Mindestens 8 Zeichen."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Mindestens %{n} Zeichen."
 
 msgid "Name"
 msgstr "Name"
@@ -1361,9 +1366,6 @@ msgstr "Bilder und Videos auf verschiedenen Weltkarten anzeigen und filtern."
 msgid "Season"
 msgstr "Jahreszeit"
 
-msgid "Seaweed"
-msgstr "Seegras"
-
 msgid "Secret"
 msgstr "Code"
 
@@ -1560,6 +1562,18 @@ msgstr "Zeitzone"
 
 msgid "Timeout"
 msgstr "Timeout"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Titel"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Titel"
 
 msgid "Title"
 msgstr "Titel"
@@ -1772,6 +1786,21 @@ msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von 
 
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Titel"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Titel"
+
+#~ msgid "Seaweed"
+#~ msgstr "Seegras"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "KI-gestütztes Digital Asset Management"

@@ -560,6 +560,9 @@ msgstr "Modifier la photo"
 msgid "Edited"
 msgstr "Modifié"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "Email"
 
@@ -1007,8 +1010,10 @@ msgstr "Le plus pertinent"
 msgid "Move Files"
 msgstr "Déplacer les fichiers"
 
-msgid "Must have at least 8 characters."
-msgstr "Doit comporter au moins 8 caractères."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Doit comporter au moins %{n} caractères."
 
 msgid "Name"
 msgstr "Nom"
@@ -1361,9 +1366,6 @@ msgstr "Rechercher et afficher des images sur une carte."
 msgid "Season"
 msgstr "Saison"
 
-msgid "Seaweed"
-msgstr "Algues"
-
 msgid "Secret"
 msgstr "Secret"
 
@@ -1560,6 +1562,18 @@ msgstr "Fuseau horaire"
 
 msgid "Timeout"
 msgstr "Délai"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Titre"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Titre"
 
 msgid "Title"
 msgstr "Titre"
@@ -1772,6 +1786,21 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Titre"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Titre"
+
+#~ msgid "Seaweed"
+#~ msgstr "Algues"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Gestion des ressources numériques alimentée par l'IA"

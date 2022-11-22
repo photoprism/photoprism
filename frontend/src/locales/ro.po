@@ -5,14 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-11-12 01:52+0000\n"
 "Last-Translator: Sabin Oana <sabin.oana@gmail.com>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
-"20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.14.2\n"
 "Generated-By: easygettext\n"
 
@@ -274,9 +272,7 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Răsfoiți fișierele și folderele indexate din Bibliotecă."
 
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr ""
-"Răsfoiți baza de cunoștințe pentru informații detaliate despre "
-"caracteristicile specifice ale produsului, serviciile și resursele conexe"
+msgstr "Răsfoiți baza de cunoștințe pentru informații detaliate despre caracteristicile specifice ale produsului, serviciile și resursele conexe"
 
 msgid "Bug Report"
 msgstr "Raport de eroare"
@@ -569,6 +565,9 @@ msgstr "Editare fotografie"
 
 msgid "Edited"
 msgstr "Editat"
+
+msgid "Electra"
+msgstr "Electra"
 
 #, fuzzy
 msgid "Email"
@@ -1036,8 +1035,10 @@ msgstr "Cele mai relevante"
 msgid "Move Files"
 msgstr "Muta fișierele"
 
-msgid "Must have at least 8 characters."
-msgstr "Trebuie să aibă cel puțin 8 caractere."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Trebuie să aibă cel puțin %{n} caractere."
 
 msgid "Name"
 msgstr "Nume"
@@ -1403,9 +1404,6 @@ msgstr "Căutați și afișați fotografiile pe hartă."
 msgid "Season"
 msgstr "Sezon"
 
-msgid "Seaweed"
-msgstr "Alge marine"
-
 msgid "Secret"
 msgstr "Secret"
 
@@ -1607,6 +1605,18 @@ msgstr "Fus orar"
 
 msgid "Timeout"
 msgstr "Pauză"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Titlu"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Titlu"
 
 msgid "Title"
 msgstr "Titlu"
@@ -1835,6 +1845,21 @@ msgstr "Biblioteca dvs. este analizată continuu pentru a crea automat albume cu
 
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Titlu"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Titlu"
+
+#~ msgid "Seaweed"
+#~ msgstr "Alge marine"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

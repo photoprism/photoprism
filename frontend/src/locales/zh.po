@@ -560,6 +560,9 @@ msgstr "编辑照片"
 msgid "Edited"
 msgstr "已编辑"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "邮箱"
 
@@ -1007,8 +1010,10 @@ msgstr "按最相关"
 msgid "Move Files"
 msgstr "移动文件"
 
-msgid "Must have at least 8 characters."
-msgstr "必须至少有 8 个字符。"
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "必须至少有 %{n} 个字符。"
 
 msgid "Name"
 msgstr "名称"
@@ -1363,9 +1368,6 @@ msgstr "在地图上搜索并显示照片。"
 msgid "Season"
 msgstr "季节"
 
-msgid "Seaweed"
-msgstr "海藻"
-
 msgid "Secret"
 msgstr "密钥"
 
@@ -1562,6 +1564,18 @@ msgstr "时区"
 
 msgid "Timeout"
 msgstr "超时"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "标题"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "标题"
 
 msgid "Title"
 msgstr "标题"
@@ -1774,6 +1788,21 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "标题"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "标题"
+
+#~ msgid "Seaweed"
+#~ msgstr "海藻"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "AI驱动的数字资产管理"

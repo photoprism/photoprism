@@ -99,9 +99,7 @@ msgid "After one year"
 msgstr "Ühe aasta pärast"
 
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr ""
-"Pärast piltide valimist otsingutulemustest saad need kontekstimenüü abil "
-"albumisse lisada."
+msgstr "Pärast piltide valimist otsingutulemustest saad need kontekstimenüü abil albumisse lisada."
 
 msgid "After two months"
 msgstr "Kahe kuu pärast"
@@ -161,14 +159,10 @@ msgid "All Years"
 msgstr "Kõik aastad"
 
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr ""
-"Samuti jäta palun tärn GitHub'is, kui sulle see projekt meeldib. See annab "
-"jätkamiseks lisamotivatsiooni."
+msgstr "Samuti jäta palun tärn GitHub'is, kui sulle see projekt meeldib. See annab jätkamiseks lisamotivatsiooni."
 
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr ""
-"Alternatiivina saad faile üles laadida otse WebDAV serveritesse nagu "
-"Nextcloud."
+msgstr "Alternatiivina saad faile üles laadida otse WebDAV serveritesse nagu Nextcloud."
 
 msgid "Altitude"
 msgstr "Kõrgus"
@@ -231,9 +225,7 @@ msgid "Aspect Ratio"
 msgstr "Küljesuhe"
 
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr ""
-"Loo automaatselt teistest failitüüpidest JPEG-failid, et neid saaks "
-"brauseris kuvada."
+msgstr "Loo automaatselt teistest failitüüpidest JPEG-failid, et neid saaks brauseris kuvada."
 
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Loob automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
@@ -245,15 +237,10 @@ msgid "Become a sponsor"
 msgstr "Hakka sponsoriks"
 
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr ""
-"Enne tugitaotluse esitamist kasuta palun meie tõrkeotsingu meelespead, et "
-"probleemi põhjus kindlaks teha."
+msgstr "Enne tugitaotluse esitamist kasuta palun meie tõrkeotsingu meelespead, et probleemi põhjus kindlaks teha."
 
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr ""
-"Kuna me oleme 100% isefinantseeritud ja sõltumatud, võime lubada, et me ei "
-"müü kunagi su andmeid ja et oleme oma tarkvara ja teenuste osas alati "
-"läbipaistvad."
+msgstr "Kuna me oleme 100% isefinantseeritud ja sõltumatud, võime lubada, et me ei müü kunagi su andmeid ja et oleme oma tarkvara ja teenuste osas alati läbipaistvad."
 
 msgid "Bio"
 msgstr "Elulugu"
@@ -280,9 +267,7 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Sirvi fototeegis olevaid indekseeritud faile ja kaustu."
 
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr ""
-"Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud "
-"ressursside kohta leiad teadmistebaasist."
+msgstr "Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud ressursside kohta leiad teadmistebaasist."
 
 msgid "Bug Report"
 msgstr "Vearaport"
@@ -354,9 +339,7 @@ msgid "Colors"
 msgstr "Värvid"
 
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr ""
-"Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie "
-"poolt pakutavat tõrkeotsingu meelespead."
+msgstr "Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie poolt pakutavat tõrkeotsingu meelespead."
 
 msgid "Complete Rescan"
 msgstr "Täielik taasskannimine"
@@ -500,9 +483,7 @@ msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "Ära loo ExifTool JSON-faile metaandmete ekstraktimise parandamiseks."
 
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Ära muuda originaalide kausta. Keelab importimise, üleslaadimise ja "
-"kustutamise."
+msgstr "Ära muuda originaalide kausta. Keelab importimise, üleslaadimise ja kustutamise."
 
 msgid "Don't transcode videos with FFmpeg."
 msgstr "Ära transkodeeri videoid FFmpeg abil."
@@ -541,9 +522,7 @@ msgid "Downscaling Filter"
 msgstr "Skaleerimisfilter"
 
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr ""
-"Meile saabuvate e-kirjade suure hulga tõttu ei pruugi meie meeskond olla "
-"võimeline kohe vastama."
+msgstr "Meile saabuvate e-kirjade suure hulga tõttu ei pruugi meie meeskond olla võimeline kohe vastama."
 
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Duplikaadid jäetakse vahele ja neid kuvatakse ainult ühekordselt."
@@ -555,9 +534,7 @@ msgid "Dynamic Previews"
 msgstr "Dünaamilised eelvaated"
 
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr ""
-"Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-"
-"seadmete jaoks."
+msgstr "Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-seadmete jaoks."
 
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dünaamiline suuruse limiit: %{n}px"
@@ -579,6 +556,9 @@ msgstr "Foto muutmine"
 
 msgid "Edited"
 msgstr "Muudetud"
+
+msgid "Electra"
+msgstr "Electra"
 
 msgid "Email"
 msgstr "E-post"
@@ -602,9 +582,7 @@ msgid "Every two days"
 msgstr "Iga kahe päeva tagant"
 
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr ""
-"Välista otsingutulemustest, jagatud albumitest, siltidest ja kohtadest "
-"isiklikuks märgitud sisu."
+msgstr "Välista otsingutulemustest, jagatud albumitest, siltidest ja kohtadest isiklikuks märgitud sisu."
 
 msgid "Exclude hidden"
 msgstr "Välista peidetud"
@@ -664,8 +642,7 @@ msgid "Feedback"
 msgstr "Tagasiside"
 
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
+msgstr "Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
 
 msgid "Female"
 msgstr "Naine"
@@ -689,9 +666,7 @@ msgid "Files"
 msgstr "Failid"
 
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr ""
-"Järjestikuste nimedega failid nagu 'IMG_1234 (2)' ja 'IMG_1234 (3)' kuuluvad "
-"samale pildile."
+msgstr "Järjestikuste nimedega failid nagu 'IMG_1234 (2)' ja 'IMG_1234 (3)' kuuluvad samale pildile."
 
 msgid "Focal Length"
 msgstr "Fookuskaugus"
@@ -799,14 +774,10 @@ msgid "Import failed"
 msgstr "Import ebaõnnestus"
 
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr ""
-"Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse duplikaatide "
-"vältimiseks unikaalne nimi."
+msgstr "Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse duplikaatide vältimiseks unikaalne nimi."
 
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse unikaalne "
-"nimi."
+msgstr "Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse unikaalne nimi."
 
 msgid "Importing %{name}…"
 msgstr "%{nimi} importimine…"
@@ -821,9 +792,7 @@ msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
 
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr ""
-"Kui pildid, mida ootasid, on puudu, skanni oma fototeek uuesti ja oota, kuni "
-"indekseerimine on lõpetatud."
+msgstr "Kui pildid, mida ootasid, on puudu, skanni oma fototeek uuesti ja oota, kuni indekseerimine on lõpetatud."
 
 msgid "Index"
 msgstr "Indeks"
@@ -859,9 +828,7 @@ msgid "Invalid photo selected"
 msgstr "Vigane foto valitud"
 
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr ""
-"See kasutab uusimaid tehnoloogiaid, et märgistada ja leida pilte "
-"automaatselt, ilma sulle jalgu jäämata."
+msgstr "See kasutab uusimaid tehnoloogiaid, et märgistada ja leida pilte automaatselt, ilma sulle jalgu jäämata."
 
 msgid "Item"
 msgstr "Element"
@@ -955,9 +922,7 @@ msgid "Location"
 msgstr "Asukoht"
 
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr ""
-"Siia ilmuvad logiteated, kui PhotoPrism leiab katkiseid faile või kui esineb "
-"muid probleeme."
+msgstr "Siia ilmuvad logiteated, kui PhotoPrism leiab katkiseid faile või kui esineb muid probleeme."
 
 msgid "Login"
 msgstr "Logi sisse"
@@ -1043,8 +1008,10 @@ msgstr "Asjakohasemad eespool"
 msgid "Move Files"
 msgstr "Liiguta failid"
 
-msgid "Must have at least 8 characters."
-msgstr "Peab sisaldama vähemalt 8 tähemärki."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Peab sisaldama vähemalt %{n} tähemärki."
 
 msgid "Name"
 msgstr "Nimi"
@@ -1095,14 +1062,10 @@ msgid "No video selected"
 msgstr "Ühtegi videot pole valitud"
 
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr ""
-"Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et otsing "
-"on tõusutundlik."
+msgstr "Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et otsing on tõusutundlik."
 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr ""
-"Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne "
-"kui nad otsingutulemustes ilmuvad."
+msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne kui nad otsingutulemustes ilmuvad."
 
 msgid "None"
 msgstr "Puudub"
@@ -1111,17 +1074,13 @@ msgid "Not Found"
 msgstr "Ei leitud"
 
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Pane tähele, et võid originaalide kausta käsitsi hallata, importimine on "
-"vabatahtlik."
+msgstr "Pane tähele, et võid originaalide kausta käsitsi hallata, importimine on vabatahtlik."
 
 msgid "Note:"
 msgstr "Märkus:"
 
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr ""
-"Märkus: Ainult WebDAV servereid, nagu Nextcloud või PhotoPrism, saab "
-"seadistada kaugteenusena varundamiseks ja failide üleslaadimiseks."
+msgstr "Märkus: Ainult WebDAV servereid, nagu Nextcloud või PhotoPrism, saab seadistada kaugteenusena varundamiseks ja failide üleslaadimiseks."
 
 msgid "Notes"
 msgstr "Märkused"
@@ -1193,9 +1152,7 @@ msgid "Other"
 msgstr "Muu"
 
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr ""
-"Meie kasutajajuhend hõlmab ka paljusid edasijõudnute teemasid, näiteks "
-"Google Photos'ist migreerimine ja pisipiltide kvaliteediseaded."
+msgstr "Meie kasutajajuhend hõlmab ka paljusid edasijõudnute teemasid, näiteks Google Photos'ist migreerimine ja pisipiltide kvaliteediseaded."
 
 msgid "Outdoor"
 msgstr "Loodus"
@@ -1234,9 +1191,7 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on uuendatud…"
 
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
-"PhotoPrism® on tehisintellektipõhine fotorakendus detsentraliseeritud veebi "
-"jaoks."
+msgstr "PhotoPrism® on tehisintellektipõhine fotorakendus detsentraliseeritud veebi jaoks."
 
 msgid "Photos"
 msgstr "Fotod"
@@ -1260,9 +1215,7 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Palun ära laadi üles solvava sisuga fotosid."
 
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr ""
-"Pane tähele, et parooli muutmine logib sind teistes seadmetes ja brauserites "
-"välja."
+msgstr "Pane tähele, et parooli muutmine logib sind teistes seadmetes ja brauserites välja."
 
 msgid "Portrait"
 msgstr "Püstformaat"
@@ -1322,9 +1275,7 @@ msgid "RAW Conversion"
 msgstr "RAW teisendamine"
 
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Indekseeri uuesti kõik originaalid, sealhulgas juba indekseeritud ja "
-"muutmata failid."
+msgstr "Indekseeri uuesti kõik originaalid, sealhulgas juba indekseeritud ja muutmata failid."
 
 msgid "Read the Docs"
 msgstr "Loe dokumentatsiooni"
@@ -1369,9 +1320,7 @@ msgid "Remove from album"
 msgstr "Eemalda albumist"
 
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr ""
-"Eemalda imporditud failid salvestusruumi säästmiseks. Mittetoetatud "
-"failitüüpe ei kustutata kunagi, need jäävad oma praegusesse asukohta."
+msgstr "Eemalda imporditud failid salvestusruumi säästmiseks. Mittetoetatud failitüüpe ei kustutata kunagi, need jäävad oma praegusesse asukohta."
 
 msgid "Request failed - invalid response"
 msgstr "Päring ebaõnnestus - vigane vastus"
@@ -1414,9 +1363,6 @@ msgstr "Otsi ja kuva fotosid kaardil."
 
 msgid "Season"
 msgstr "Aastaaeg"
-
-msgid "Seaweed"
-msgstr "Seaweed"
 
 #, fuzzy
 msgid "Secret"
@@ -1519,21 +1465,16 @@ msgid "Source"
 msgstr "Allikas"
 
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr ""
-"Sponsorid saavad juurdepääsu lisafunktsioonidele, otsest tehnilist tuge e-"
-"posti teel ning võivad liituda meie privaatse jututoaga aadressil matrix.org."
+msgstr "Sponsorid saavad juurdepääsu lisafunktsioonidele, otsest tehnilist tuge e-posti teel ning võivad liituda meie privaatse jututoaga aadressil matrix.org."
 
 msgid "Stack"
 msgstr "Virn"
 
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Pane virna failid, mis jagavad sama unikaalset kujutist või identifikaatorit."
+msgstr "Pane virna failid, mis jagavad sama unikaalset kujutist või identifikaatorit."
 
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr ""
-"Pane virna metaandmete alusel täpselt samal ajal ja samas kohas tehtud "
-"pildid."
+msgstr "Pane virna metaandmete alusel täpselt samal ajal ja samas kohas tehtud pildid."
 
 msgid "Stackable"
 msgstr "Virnastatav"
@@ -1542,9 +1483,7 @@ msgid "Stacks"
 msgstr "Virnad"
 
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr ""
-"Failide virnad grupeerivad faile, millel on sarnane võrdlusraamistik, kuid "
-"erinevused kvaliteedis, formaadis, suuruses või värvitoonis."
+msgstr "Failide virnad grupeerivad faile, millel on sarnane võrdlusraamistik, kuid erinevused kvaliteedis, formaadis, suuruses või värvitoonis."
 
 msgid "Start"
 msgstr "Alusta"
@@ -1595,30 +1534,23 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "Indeks sisaldab praegu %{n} peidetud faili."
 
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr ""
-"Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse "
-"konverteeritud või on olemas duplikaadid."
+msgstr "Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse konverteeritud või on olemas duplikaadid."
 
 msgid "Theme"
 msgstr "Välimus"
 
 msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-msgstr ""
-"See funktsioon on praegu kättesaadav ainult sponsoritele, et tänada kõiki, "
-"kes toetavad selle rakenduse arendamist."
+msgstr "See funktsioon on praegu kättesaadav ainult sponsoritele, et tänada kõiki, kes toetavad selle rakenduse arendamist."
 
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja "
-"kustutada faile\n"
+"See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja kustutada faile\n"
 "          oma arvutist või nutitelefonist, nagu oleksid need kohalikud."
 
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr ""
-"See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja "
-"kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
+msgstr "See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
 
 msgid "Thumbnail Generation"
 msgstr "Pisipiltide genereerimine"
@@ -1631,6 +1563,18 @@ msgstr "Ajavöönd"
 
 msgid "Timeout"
 msgstr "Ajalõpp"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Pealkiri"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Pealkiri"
 
 msgid "Title"
 msgstr "Pealkiri"
@@ -1728,8 +1672,7 @@ msgid "Uploading…"
 msgstr "Üleslaadimine…"
 
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
+msgstr "Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
 
 msgid "URL"
 msgstr "URL"
@@ -1768,9 +1711,7 @@ msgid "View"
 msgstr "Vaade"
 
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr ""
-"Aadressilt docs.photoprism.app/user-guide saad teada, kuidas oma pilte "
-"sünkroonida, organiseerida ja jagada."
+msgstr "Aadressilt docs.photoprism.app/user-guide saad teada, kuidas oma pilte sünkroonida, organiseerida ja jagada."
 
 msgid "Visual Similarity"
 msgstr "Visuaalne sarnasus"
@@ -1782,14 +1723,10 @@ msgid "We do our best to respond within five business days or less."
 msgstr "Anname endast parima, et vastata viie tööpäeva jooksul või vähem."
 
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr ""
-"Anname endast parima, et vastata kõigile küsimustele. Vastutasuks palume "
-"meid toetada Patreoni või GitHub Sponsors kaudu."
+msgstr "Anname endast parima, et vastata kõigile küsimustele. Vastutasuks palume meid toetada Patreoni või GitHub Sponsors kaudu."
 
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr ""
-"Me anname sulle teada, kuidas seda kasutama hakata, kui liitud Patreoni või "
-"GitHubi Sponsors abil."
+msgstr "Me anname sulle teada, kuidas seda kasutama hakata, kui liitud Patreoni või GitHubi Sponsors abil."
 
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV kliendid saavad PhotoPrismiga ühenduda järgmise URL-i kaudu:"
@@ -1798,8 +1735,7 @@ msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"WebDAV kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad "
-"\n"
+"WebDAV kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad \n"
 "PhotoPrismiga otse ühenduda."
 
 msgid "WebDAV Upload"
@@ -1846,22 +1782,31 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Võid oma fototeeki uuesti skaneerida, et veel nägusid leida."
 
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda "
-"sõltumatuks, et me saaksime täita oma missiooni ja kaitsta sinu privaatsust."
+msgstr "Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda sõltumatuks, et me saaksime täita oma missiooni ja kaitsta sinu privaatsust."
 
 msgid "Your continued support helps us provide regular updates and services like world maps."
-msgstr ""
-"Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja teenuseid "
-"nagu maailmakaardid."
+msgstr "Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja teenuseid nagu maailmakaardid."
 
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr ""
-"Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied "
-"erilistest hetkedest, reisidest ja kohtadest."
+msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied erilistest hetkedest, reisidest ja kohtadest."
 
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Pealkiri"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Pealkiri"
+
+#~ msgid "Seaweed"
+#~ msgstr "Seaweed"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

@@ -573,6 +573,9 @@ msgstr "Rediger Bilde"
 msgid "Edited"
 msgstr "Redigert"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "E-post"
@@ -1039,8 +1042,10 @@ msgstr "Mest relevant"
 msgid "Move Files"
 msgstr "Flytt Filer"
 
-msgid "Must have at least 8 characters."
-msgstr "Må ha minst 8 tegn."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Må ha minst %{n} tegn."
 
 msgid "Name"
 msgstr "Navn"
@@ -1406,9 +1411,6 @@ msgstr "Søk og vis bilder på et kart."
 msgid "Season"
 msgstr "Sesong"
 
-msgid "Seaweed"
-msgstr "Tang"
-
 msgid "Secret"
 msgstr "Hemmelig"
 
@@ -1610,6 +1612,18 @@ msgstr "Tidssone"
 
 msgid "Timeout"
 msgstr "Tidsavbrudd"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Tittel"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Tittel"
 
 msgid "Title"
 msgstr "Tittel"
@@ -1838,6 +1852,21 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Tittel"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Tittel"
+
+#~ msgid "Seaweed"
+#~ msgstr "Tang"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

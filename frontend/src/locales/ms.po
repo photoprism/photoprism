@@ -617,6 +617,9 @@ msgstr "Edit Foto"
 msgid "Edited"
 msgstr "disunting"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "E-mel"
@@ -1167,8 +1170,8 @@ msgid "Move Files"
 msgstr "Alihkan Fail"
 
 #, fuzzy
-msgid "Must have at least 8 characters."
-msgstr "Mesti mempunyai sekurang-kurangnya 8 aksara."
+msgid "Must have at least %{n} characters."
+msgstr "Mesti mempunyai sekurang-kurangnya %{n} aksara."
 
 msgid "Name"
 msgstr "Nama"
@@ -1610,10 +1613,6 @@ msgstr "Cari dan paparkan foto pada peta."
 msgid "Season"
 msgstr "musim"
 
-#, fuzzy
-msgid "Seaweed"
-msgstr "Rumpai laut"
-
 msgid "Secret"
 msgstr "Secret"
 
@@ -1858,6 +1857,18 @@ msgstr "Zon masa"
 #, fuzzy
 msgid "Timeout"
 msgstr "Masa tamat"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Tajuk"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Tajuk"
 
 msgid "Title"
 msgstr "Tajuk"
@@ -2123,6 +2134,22 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Tajuk"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Tajuk"
+
+#, fuzzy
+#~ msgid "Seaweed"
+#~ msgstr "Rumpai laut"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

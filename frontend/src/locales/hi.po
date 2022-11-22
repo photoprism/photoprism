@@ -574,6 +574,9 @@ msgstr "फ़ोटो संपादित करें"
 msgid "Edited"
 msgstr "संपादित"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "ईमेल"
@@ -1040,8 +1043,10 @@ msgstr "सबसे ज़रूरी"
 msgid "Move Files"
 msgstr "फ़ाइलें ले जाएँ"
 
-msgid "Must have at least 8 characters."
-msgstr "कम से कम 8 अक्षर होने चाहिए।"
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "कम से कम %{n} अक्षर होने चाहिए।"
 
 msgid "Name"
 msgstr "नाम"
@@ -1407,9 +1412,6 @@ msgstr "मानचित्र पर फ़ोटो खोजें और �
 msgid "Season"
 msgstr "मौसम"
 
-msgid "Seaweed"
-msgstr "समुद्री सिवार"
-
 msgid "Secret"
 msgstr "गुप्त"
 
@@ -1611,6 +1613,18 @@ msgstr "समय क्षेत्र"
 
 msgid "Timeout"
 msgstr "समय समाप्त"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "शीर्षक"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "शीर्षक"
 
 msgid "Title"
 msgstr "शीर्षक"
@@ -1839,6 +1853,21 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "शीर्षक"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "शीर्षक"
+
+#~ msgid "Seaweed"
+#~ msgstr "समुद्री सिवार"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

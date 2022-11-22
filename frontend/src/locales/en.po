@@ -558,6 +558,8 @@ msgstr ""
 
 msgid "Edited"
 msgstr ""
+msgid "Electra"
+msgstr ""
 
 msgid "Email"
 msgstr ""
@@ -1006,7 +1008,7 @@ msgstr ""
 msgid "Move Files"
 msgstr ""
 
-msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
 msgstr ""
 
 msgid "Name"
@@ -1360,9 +1362,6 @@ msgstr ""
 msgid "Season"
 msgstr ""
 
-msgid "Seaweed"
-msgstr ""
-
 msgid "Secret"
 msgstr ""
 
@@ -1558,6 +1557,14 @@ msgid "Time Zone"
 msgstr ""
 
 msgid "Timeout"
+msgstr ""
+
+msgctxt "Account"
+msgid "Title"
+msgstr ""
+
+msgctxt "Photo"
+msgid "Title"
 msgstr ""
 
 msgid "Title"

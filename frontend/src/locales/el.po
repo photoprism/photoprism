@@ -571,6 +571,9 @@ msgstr "Επεξεργασία Φωτογραφίας"
 msgid "Edited"
 msgstr "Επεξεργάστηκε"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "Ηλεκτρονικό ταχυδρομείο"
@@ -1050,8 +1053,10 @@ msgstr "Το πιο σχετικό"
 msgid "Move Files"
 msgstr "Μετακίνηση αρχείων"
 
-msgid "Must have at least 8 characters."
-msgstr "Πρέπει να έχει τουλάχιστον 8 χαρακτήρες."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Πρέπει να έχει τουλάχιστον %{n} χαρακτήρες."
 
 msgid "Name"
 msgstr "Όνομα"
@@ -1427,10 +1432,6 @@ msgid "Season"
 msgstr "Περίοδος"
 
 #, fuzzy
-msgid "Seaweed"
-msgstr "Φύκια"
-
-#, fuzzy
 msgid "Secret"
 msgstr "Μυστικό"
 
@@ -1661,6 +1662,18 @@ msgstr "Ζώνη ώρας"
 #, fuzzy
 msgid "Timeout"
 msgstr "Timeout"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Τίτλος"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Τίτλος"
 
 msgid "Title"
 msgstr "Τίτλος"
@@ -1928,6 +1941,22 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Τίτλος"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Τίτλος"
+
+#, fuzzy
+#~ msgid "Seaweed"
+#~ msgstr "Φύκια"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

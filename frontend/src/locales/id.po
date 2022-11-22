@@ -574,6 +574,9 @@ msgstr "Mengedit Foto"
 msgid "Edited"
 msgstr "Diedit"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "Email"
@@ -1040,8 +1043,10 @@ msgstr "Paling relevan"
 msgid "Move Files"
 msgstr "Pindahkan File"
 
-msgid "Must have at least 8 characters."
-msgstr "Harus memiliki setidaknya 8 karakter."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Harus memiliki setidaknya %{n} karakter."
 
 msgid "Name"
 msgstr "Nama"
@@ -1407,9 +1412,6 @@ msgstr "Mencari dan menampilkan foto di peta."
 msgid "Season"
 msgstr "Musim"
 
-msgid "Seaweed"
-msgstr "Rumput laut"
-
 msgid "Secret"
 msgstr "Rahasia"
 
@@ -1611,6 +1613,18 @@ msgstr "Zona Waktu"
 
 msgid "Timeout"
 msgstr "Tenggat waktu"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Judul"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Judul"
 
 msgid "Title"
 msgstr "Judul"
@@ -1839,6 +1853,21 @@ msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat al
 
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Judul"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Judul"
+
+#~ msgid "Seaweed"
+#~ msgstr "Rumput laut"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

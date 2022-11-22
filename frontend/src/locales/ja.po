@@ -560,6 +560,9 @@ msgstr "写真を編集"
 msgid "Edited"
 msgstr "編集済み"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "メールアドレス"
 
@@ -1007,7 +1010,9 @@ msgstr "最適"
 msgid "Move Files"
 msgstr "ファイルを移動"
 
-msgid "Must have at least 8 characters."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
 msgstr "最低6文字。"
 
 msgid "Name"
@@ -1361,9 +1366,6 @@ msgstr "検索して、地図に写真を表示します。"
 msgid "Season"
 msgstr "季節"
 
-msgid "Seaweed"
-msgstr "海藻"
-
 msgid "Secret"
 msgstr "秘密"
 
@@ -1560,6 +1562,18 @@ msgstr "タイムゾーン"
 
 msgid "Timeout"
 msgstr "タイムゾーン"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "タイトル"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "タイトル"
 
 msgid "Title"
 msgstr "タイトル"
@@ -1772,6 +1786,21 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "タイトル"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "タイトル"
+
+#~ msgid "Seaweed"
+#~ msgstr "海藻"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "AIを活用したデジタルアセットマネジメント"

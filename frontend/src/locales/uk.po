@@ -560,6 +560,9 @@ msgstr "Редагувати фото"
 msgid "Edited"
 msgstr "Відредаговано"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "Email"
 
@@ -1007,8 +1010,10 @@ msgstr "Найбільш актуальні"
 msgid "Move Files"
 msgstr "Перемістити файли"
 
-msgid "Must have at least 8 characters."
-msgstr "Повинен містити принаймні 8 символів."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Повинен містити принаймні %{n} символів."
 
 msgid "Name"
 msgstr "Ім'я"
@@ -1361,9 +1366,6 @@ msgstr "Пошук і відображення фотографій на кар�
 msgid "Season"
 msgstr "Сезон"
 
-msgid "Seaweed"
-msgstr "Морські водорості"
-
 msgid "Secret"
 msgstr "Таємний"
 
@@ -1562,6 +1564,18 @@ msgstr "Часовий пояс"
 
 msgid "Timeout"
 msgstr "Час вийшов"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Заголовок"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Заголовок"
 
 msgid "Title"
 msgstr "Заголовок"
@@ -1776,6 +1790,21 @@ msgstr "Ваша бібліотека постійно аналізується,
 
 msgid "Zoom in/out"
 msgstr "Збільшення/зменшення"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Заголовок"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Заголовок"
+
+#~ msgid "Seaweed"
+#~ msgstr "Морські водорості"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Управління цифровими активами на основі штучного інтелекту"

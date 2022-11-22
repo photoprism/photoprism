@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-11-12 01:52+0000\n"
 "Last-Translator: jsonmona <jsonmona@outlook.com>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ko/>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -244,10 +243,7 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "지원 요청을 제출하기 전에 문제 해결 체크리스트를 사용하여 문제의 원인을 확인하십시오."
 
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr ""
-"100% 자체 자금으로 운영되며 독립되었기에, 우리는 귀하의 데이터를 절대 "
-"판매하지 않으며 소프트웨어와 서비스에 대해 항상 투명할 것임을 약속할 수 "
-"있습니다."
+msgstr "100% 자체 자금으로 운영되며 독립되었기에, 우리는 귀하의 데이터를 절대 판매하지 않으며 소프트웨어와 서비스에 대해 항상 투명할 것임을 약속할 수 있습니다."
 
 msgid "Bio"
 msgstr "바이오"
@@ -563,6 +559,9 @@ msgstr "사진 편집"
 
 msgid "Edited"
 msgstr "편집됨"
+
+msgid "Electra"
+msgstr "Electra"
 
 msgid "Email"
 msgstr "이메일"
@@ -1011,7 +1010,9 @@ msgstr "가장 관련성"
 msgid "Move Files"
 msgstr "파일 이동하기"
 
-msgid "Must have at least 8 characters."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
 msgstr "8자 이상이어야 합니다."
 
 msgid "Name"
@@ -1365,9 +1366,6 @@ msgstr "검색하고 지도에서 시진을 표시합니다."
 msgid "Season"
 msgstr "계절"
 
-msgid "Seaweed"
-msgstr "해초"
-
 msgid "Secret"
 msgstr "비밀"
 
@@ -1564,6 +1562,18 @@ msgstr "시간대"
 
 msgid "Timeout"
 msgstr "타임아웃"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "주제"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "주제"
 
 msgid "Title"
 msgstr "주제"
@@ -1776,6 +1786,21 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "주제"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "주제"
+
+#~ msgid "Seaweed"
+#~ msgstr "해초"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "AI 기반 디지털 자산 관리"

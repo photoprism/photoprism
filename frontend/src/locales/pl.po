@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-11-12 01:52+0000\n"
 "Last-Translator: lacrimal <jareeq@gmail.com>\n"
-"Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/pl/>\n"
+"Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -561,6 +560,9 @@ msgstr "Edytuj zdjęcie"
 msgid "Edited"
 msgstr "Data ostatniej edycji"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "Email"
 
@@ -1008,8 +1010,10 @@ msgstr "Najważniejsze"
 msgid "Move Files"
 msgstr "Przenieś pliki"
 
-msgid "Must have at least 8 characters."
-msgstr "Musi mieć co najmniej 8 znaków."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Musi mieć co najmniej %{n} znaków."
 
 msgid "Name"
 msgstr "Nazwa"
@@ -1362,9 +1366,6 @@ msgstr "Wyszukiwanie i wyświetlanie zdjęć na mapie."
 msgid "Season"
 msgstr "Sezon"
 
-msgid "Seaweed"
-msgstr "Wodorosty morskie"
-
 msgid "Secret"
 msgstr "Klucz"
 
@@ -1561,6 +1562,18 @@ msgstr "Strefa czasowa"
 
 msgid "Timeout"
 msgstr "Upłynął limit czasu"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Tytuł"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Tytuł"
 
 msgid "Title"
 msgstr "Tytuł"
@@ -1773,6 +1786,21 @@ msgstr "Twoja biblioteka jest na bieżąco analizowana, aby automatycznie tworzy
 
 msgid "Zoom in/out"
 msgstr "Powiększ / Pomniejsz"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Tytuł"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Tytuł"
+
+#~ msgid "Seaweed"
+#~ msgstr "Wodorosty morskie"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Zarządzanie zasobami cyfrowymi oparte na sztucznej inteligencji"

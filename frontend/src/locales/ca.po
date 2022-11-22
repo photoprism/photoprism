@@ -560,6 +560,9 @@ msgstr "Edita la foto"
 msgid "Edited"
 msgstr "Editat"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -1007,8 +1010,10 @@ msgstr "El més rellevant"
 msgid "Move Files"
 msgstr "Mou arxius"
 
-msgid "Must have at least 8 characters."
-msgstr "Ha de tenir almenys 8 caràcters."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Ha de tenir almenys %{n} caràcters."
 
 msgid "Name"
 msgstr "Nom"
@@ -1361,9 +1366,6 @@ msgstr "Cerca i mostra fotos en un mapa."
 msgid "Season"
 msgstr "Estació"
 
-msgid "Seaweed"
-msgstr "Algues"
-
 msgid "Secret"
 msgstr "Secret"
 
@@ -1562,6 +1564,18 @@ msgstr "Zona horària"
 
 msgid "Timeout"
 msgstr "Delsa"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Títol"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Títol"
 
 msgid "Title"
 msgstr "Títol"
@@ -1776,6 +1790,21 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Títol"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Títol"
+
+#~ msgid "Seaweed"
+#~ msgstr "Algues"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Gestió d'actius digitals impulsada per IA"

@@ -560,6 +560,9 @@ msgstr "Редактировать фотографию"
 msgid "Edited"
 msgstr "Отредактировано"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "Электронная почта"
 
@@ -1007,8 +1010,10 @@ msgstr "Наиболее подходящие"
 msgid "Move Files"
 msgstr "Перемещать файлы"
 
-msgid "Must have at least 8 characters."
-msgstr "Должно быть не менее 8 символов."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Должно быть не менее %{n} символов."
 
 msgid "Name"
 msgstr "Название"
@@ -1361,9 +1366,6 @@ msgstr "Поиск и отображение фотографий на карт�
 msgid "Season"
 msgstr "Сезон"
 
-msgid "Seaweed"
-msgstr "Водоросли"
-
 msgid "Secret"
 msgstr "Секрет"
 
@@ -1562,6 +1564,18 @@ msgstr "Часовой пояс"
 
 msgid "Timeout"
 msgstr "Пауза"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Название"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Название"
 
 msgid "Title"
 msgstr "Название"
@@ -1776,6 +1790,21 @@ msgstr "Ваша библиотека постоянно анализирует�
 
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Название"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Название"
+
+#~ msgid "Seaweed"
+#~ msgstr "Водоросли"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Управление цифровыми активами на основе искусственного интеллекта"

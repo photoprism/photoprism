@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-11-16 13:07+0000\n"
 "Last-Translator: SeanPai <seanpai96@gmail.com>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -560,6 +559,8 @@ msgstr "編輯相片"
 
 msgid "Edited"
 msgstr "已編輯"
+msgid "Electra"
+msgstr "Electra"
 
 msgid "Email"
 msgstr "電子郵件"
@@ -1008,8 +1009,10 @@ msgstr "最相關的"
 msgid "Move Files"
 msgstr "移動檔案"
 
-msgid "Must have at least 8 characters."
-msgstr "必須至少有 8 個字元。"
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "必須至少有 %{n} 個字元。"
 
 msgid "Name"
 msgstr "名稱"
@@ -1078,8 +1081,7 @@ msgid "Note:"
 msgstr "注意："
 
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "注意：只能將WebDAV伺服器（如Nextcloud或PhotoPrism）設定為遠端服務，以進行備份"
-"和文件上傳。"
+msgstr "注意：只能將WebDAV伺服器（如Nextcloud或PhotoPrism）設定為遠端服務，以進行備份和文件上傳。"
 
 msgid "Notes"
 msgstr "備註"
@@ -1319,8 +1321,7 @@ msgid "Remove from album"
 msgstr "從相簿中刪除"
 
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "刪除已匯入的檔案以節省儲存空間。不支援的檔案類型將不會被刪除，它們會保留在當"
-"前位置。"
+msgstr "刪除已匯入的檔案以節省儲存空間。不支援的檔案類型將不會被刪除，它們會保留在當前位置。"
 
 msgid "Request failed - invalid response"
 msgstr "要求失敗 - 無效的回應"
@@ -1363,9 +1364,6 @@ msgstr "搜尋並在地圖上顯示圖片。"
 
 msgid "Season"
 msgstr "季節"
-
-msgid "Seaweed"
-msgstr "海藻"
 
 msgid "Secret"
 msgstr "秘密"
@@ -1467,8 +1465,7 @@ msgid "Source"
 msgstr "來源"
 
 msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-msgstr "贊助者可以使用其他功能，通過電子郵件獲得直接的技術支援，並且可以加入我們在 "
-"matrix.org 上的私人聊天室。"
+msgstr "贊助者可以使用其他功能，通過電子郵件獲得直接的技術支援，並且可以加入我們在 matrix.org 上的私人聊天室。"
 
 msgid "Stack"
 msgstr "堆疊"
@@ -1549,13 +1546,11 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"這會將\"originals\"資料夾安裝為網絡硬碟"
-"，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，\n"
+"這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，\n"
 "          就像它們是本地文件一樣。"
 
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "這會將\"originals\"資料夾安裝為網絡硬碟"
-"，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
+msgstr "這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
 
 msgid "Thumbnail Generation"
 msgstr "縮圖產生"
@@ -1568,6 +1563,18 @@ msgstr "時區"
 
 msgid "Timeout"
 msgstr "逾時"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "標題"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "標題"
 
 msgid "Title"
 msgstr "標題"
@@ -1714,8 +1721,7 @@ msgid "We do our best to respond within five business days or less."
 msgstr "我們盡最大努力在五個工作日或更短的時間內做出回應。"
 
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "我們將盡力回答您的所有問題。作為回報，我們希望您在 Patreon 或 GitHub "
-"贊助商上支持我們。"
+msgstr "我們將盡力回答您的所有問題。作為回報，我們希望您在 Patreon 或 GitHub 贊助商上支持我們。"
 
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
 msgstr "當您在 Patreon 或 GitHub 上贊助時，我們會告訴您如何啟用它。"
@@ -1727,8 +1733,7 @@ msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"WebDAV客戶端（例如Microsoft Windows的檔案總管或Apple的Finder）"
-"可以直接連接到\n"
+"WebDAV客戶端（例如Microsoft Windows的檔案總管或Apple的Finder）可以直接連接到\n"
 "PhotoPrism。"
 
 msgid "WebDAV Upload"
@@ -1784,6 +1789,21 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "標題"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "標題"
+
+#~ msgid "Seaweed"
+#~ msgstr "海藻"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "人工智能驅動的數字資產管理"

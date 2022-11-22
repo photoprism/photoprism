@@ -612,6 +612,10 @@ msgid "Edited"
 msgstr "Redaguota"
 
 #, fuzzy
+msgid "Electra"
+msgstr "Electra"
+
+#, fuzzy
 msgid "Email"
 msgstr "El. paštas"
 
@@ -1203,7 +1207,7 @@ msgid "Move Files"
 msgstr "Failų perkėlimas"
 
 #, fuzzy
-msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
 msgstr "Ne mažiau kaip 6 ženklai."
 
 #, fuzzy
@@ -1671,10 +1675,6 @@ msgid "Season"
 msgstr "Sezonas"
 
 #, fuzzy
-msgid "Seaweed"
-msgstr "Jūros dumbliai"
-
-#, fuzzy
 msgid "Secret"
 msgstr "Paslaptis"
 
@@ -1935,6 +1935,16 @@ msgstr "Laiko juosta"
 #, fuzzy
 msgid "Timeout"
 msgstr "Laiko juosta"
+
+#, fuzzy
+msgctxt "Account"
+msgid "Title"
+msgstr "Pavadinimas"
+
+#, fuzzy
+msgctxt "Photo"
+msgid "Title"
+msgstr "Pavadinimas"
 
 #, fuzzy
 msgid "Title"
@@ -2217,6 +2227,20 @@ msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai k
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
+
+#, fuzzy
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Pavadinimas"
+
+#, fuzzy
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Pavadinimas"
+
+#, fuzzy
+#~ msgid "Seaweed"
+#~ msgstr "Jūros dumbliai"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

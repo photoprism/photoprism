@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-11-18 08:52+0000\n"
 "Last-Translator: Roman Janiczek <roman@janiczek.cz>\n"
-"Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
-"frontend/cs/>\n"
+"Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/frontend/cs/>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -244,10 +243,7 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Před odesláním žádosti o podporu použijte naše kontrolní seznamy pro řešení problémů, abyste zjistili příčinu problému."
 
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr ""
-"Vzhledem k tomu, že jsme stoprocentně financováni z vlastních zdrojů a "
-"nezávislí, můžeme vám slíbit, že vaše údaje nikdy neprodáme a že budeme vždy "
-"transparentní, pokud jde o náš software a služby."
+msgstr "Vzhledem k tomu, že jsme stoprocentně financováni z vlastních zdrojů a nezávislí, můžeme vám slíbit, že vaše údaje nikdy neprodáme a že budeme vždy transparentní, pokud jde o náš software a služby."
 
 msgid "Bio"
 msgstr "Biografie"
@@ -563,6 +559,9 @@ msgstr "Upravit fotografii"
 
 msgid "Edited"
 msgstr "Upraveno"
+
+msgid "Electra"
+msgstr "Electra"
 
 msgid "Email"
 msgstr "Email"
@@ -1011,8 +1010,10 @@ msgstr "Nejrelevantnější"
 msgid "Move Files"
 msgstr "Přesunout soubory"
 
-msgid "Must have at least 8 characters."
-msgstr "Musí obsahovat alespoň 8 znaků."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Musí obsahovat alespoň %{n} znaků."
 
 msgid "Name"
 msgstr "Název"
@@ -1365,9 +1366,6 @@ msgstr "Vyhledat a zobrazit fotografie na mapě."
 msgid "Season"
 msgstr "Období"
 
-msgid "Seaweed"
-msgstr "Seaweed"
-
 msgid "Secret"
 msgstr "Tajemství"
 
@@ -1565,6 +1563,18 @@ msgstr "Časová zóna"
 msgid "Timeout"
 msgstr "Časový limit"
 
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Titulek"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Titulek"
+
 msgid "Title"
 msgstr "Titulek"
 
@@ -1722,8 +1732,7 @@ msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"Klienti WebDAV, jako je Průzkumník Windows od společnosti Microsoft nebo "
-"Finder od společnosti Apple, se mohou připojit přímo k aplikaci\n"
+"Klienti WebDAV, jako je Průzkumník Windows od společnosti Microsoft nebo Finder od společnosti Apple, se mohou připojit přímo k aplikaci\n"
 "          PhotoPrism."
 
 msgid "WebDAV Upload"
@@ -1779,6 +1788,21 @@ msgstr "Vaše knihovna je průběžně analyzována a automaticky vytváří alb
 
 msgid "Zoom in/out"
 msgstr "Přiblížit/Oddálit"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Titulek"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Titulek"
+
+#~ msgid "Seaweed"
+#~ msgstr "Seaweed"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Správa digitálních aktiv na bázi umělé inteligence"

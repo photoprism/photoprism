@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-11-19 12:52+0000\n"
 "Last-Translator: Hristian Dimitrov <hristiyan.dimitrov6dm5@gmail.com>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -104,9 +103,7 @@ msgid "After one year"
 msgstr "След една година"
 
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr ""
-"След като изберете снимки от резултатите от търсенето, можете да ги добавите "
-"в албум чрез контекстното меню."
+msgstr "След като изберете снимки от резултатите от търсенето, можете да ги добавите в албум чрез контекстното меню."
 
 msgid "After two months"
 msgstr "След два месеца"
@@ -166,14 +163,10 @@ msgid "All Years"
 msgstr "Всички години"
 
 msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr ""
-"Също така, моля, оставете звезда в GitHub, ако този проект ви харесва. Това "
-"е допълнителна мотивация да продължим."
+msgstr "Също така, моля, оставете звезда в GitHub, ако този проект ви харесва. Това е допълнителна мотивация да продължим."
 
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr ""
-"Освен това можете да качвате файлове директно на WebDAV сървъри като "
-"Nextcloud."
+msgstr "Освен това можете да качвате файлове директно на WebDAV сървъри като Nextcloud."
 
 msgid "Altitude"
 msgstr "Надморска височина"
@@ -191,8 +184,7 @@ msgid "Animation"
 msgstr "Анимация"
 
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr ""
-"Всички лични снимки и видеоклипове остават лични и няма да бъдат споделяни."
+msgstr "Всички лични снимки и видеоклипове остават лични и няма да бъдат споделяни."
 
 msgid "API Key"
 msgstr "Ключ за API"
@@ -237,9 +229,7 @@ msgid "Aspect Ratio"
 msgstr "Съотношение"
 
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr ""
-"Автоматично създаване на JPEG за други типове файлове, така че да могат да "
-"се показват в браузър."
+msgstr "Автоматично създаване на JPEG за други типове файлове, така че да могат да се показват в браузър."
 
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Автоматично създава албуми на специални моменти, пътувания и места."
@@ -251,15 +241,10 @@ msgid "Become a sponsor"
 msgstr "Станете спонсор"
 
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr ""
-"Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за "
-"отстраняване на проблеми\" за да определите причината за проблема."
+msgstr "Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за отстраняване на проблеми\" за да определите причината за проблема."
 
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr ""
-"Тъй като сме 100% самофинансирани и независими, можем да ви обещаем, че "
-"никога няма да продадем вашите данни и че винаги ще бъдем прозрачни по "
-"отношение на нашия софтуер и услуги."
+msgstr "Тъй като сме 100% самофинансирани и независими, можем да ви обещаем, че никога няма да продадем вашите данни и че винаги ще бъдем прозрачни по отношение на нашия софтуер и услуги."
 
 msgid "Bio"
 msgstr "Биография"
@@ -662,6 +647,10 @@ msgstr "Редактиране на снимка"
 #, fuzzy
 msgid "Edited"
 msgstr "Редактиран"
+
+#, fuzzy
+msgid "Electra"
+msgstr "Electra"
 
 #, fuzzy
 msgid "Email"
@@ -1256,7 +1245,7 @@ msgid "Move Files"
 msgstr "Преместване на файлове"
 
 #, fuzzy
-msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
 msgstr "Най-малко 6 символа."
 
 #, fuzzy
@@ -1726,10 +1715,6 @@ msgid "Season"
 msgstr "Сезон"
 
 #, fuzzy
-msgid "Seaweed"
-msgstr "Морски водорасли"
-
-#, fuzzy
 msgid "Secret"
 msgstr "Тайната"
 
@@ -1986,6 +1971,16 @@ msgstr "Часова зона"
 #, fuzzy
 msgid "Timeout"
 msgstr "Часова зона"
+
+#, fuzzy
+msgctxt "Account"
+msgid "Title"
+msgstr "Заглавие"
+
+#, fuzzy
+msgctxt "Photo"
+msgid "Title"
+msgstr "Заглавие"
 
 #, fuzzy
 msgid "Title"
@@ -2267,6 +2262,20 @@ msgstr "Библиотеката ви се анализира непрекъсн
 
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#, fuzzy
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Заглавие"
+
+#, fuzzy
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Заглавие"
+
+#, fuzzy
+#~ msgid "Seaweed"
+#~ msgstr "Морски водорасли"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

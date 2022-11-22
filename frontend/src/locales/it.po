@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-11-12 14:48+0000\n"
 "Last-Translator: Devmiki <developer.mikitognoni@gmail.com>\n"
-"Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/it/>\n"
+"Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/frontend/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -244,10 +243,7 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Prima di inviare una richiesta di supporto, utilizza le nostre liste di controllo per la risoluzione dei problemi per determinare la causa del tuo problema."
 
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr ""
-"Essendo autofinanziati ed indipendenti, possiamo prometterti che non "
-"venderemo mai i tuoi dati e che saremo sempre trasparenti riguardo al nostro "
-"software e ai nostri servizi."
+msgstr "Essendo autofinanziati ed indipendenti, possiamo prometterti che non venderemo mai i tuoi dati e che saremo sempre trasparenti riguardo al nostro software e ai nostri servizi."
 
 msgid "Bio"
 msgstr "Biografia"
@@ -274,9 +270,7 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Visualizza i file e le cartelle indicizzati nella Libreria."
 
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr ""
-"Consultate la Knowledge Base per ottenere informazioni dettagliate su "
-"caratteristiche specifiche dei prodotti, servizi e risorse correlate."
+msgstr "Consultate la Knowledge Base per ottenere informazioni dettagliate su caratteristiche specifiche dei prodotti, servizi e risorse correlate."
 
 msgid "Bug Report"
 msgstr "Segnala Bug"
@@ -565,6 +559,9 @@ msgstr "Modifica Foto"
 
 msgid "Edited"
 msgstr "Modificato"
+
+msgid "Electra"
+msgstr "Electra"
 
 msgid "Email"
 msgstr "Email"
@@ -1013,8 +1010,10 @@ msgstr "Più rilevante"
 msgid "Move Files"
 msgstr "Sposta File"
 
-msgid "Must have at least 8 characters."
-msgstr "Deve avere almeno 8 caratteri."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Deve avere almeno %{n} caratteri."
 
 msgid "Name"
 msgstr "Nome"
@@ -1367,9 +1366,6 @@ msgstr "Cerca e visualizza le foto in una mappa."
 msgid "Season"
 msgstr "Stagione"
 
-msgid "Seaweed"
-msgstr "Alga"
-
 msgid "Secret"
 msgstr "Segreto"
 
@@ -1566,6 +1562,18 @@ msgstr "Fuso Orario"
 
 msgid "Timeout"
 msgstr "Timeout"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Titolo"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Titolo"
 
 msgid "Title"
 msgstr "Titolo"
@@ -1778,6 +1786,21 @@ msgstr "La tua libreria viene continuamente analizzata per creare automaticament
 
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Titolo"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Titolo"
+
+#~ msgid "Seaweed"
+#~ msgstr "Alga"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Gestione delle risorse digitali basata sull'intelligenza artificiale"

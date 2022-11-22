@@ -560,6 +560,9 @@ msgstr "Fotoğrafı Düzenle"
 msgid "Edited"
 msgstr "Düzenlendi"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "E-posta"
 
@@ -1007,8 +1010,10 @@ msgstr "En Alakalı"
 msgid "Move Files"
 msgstr "Dosyaları Taşı"
 
-msgid "Must have at least 8 characters."
-msgstr "En az 8 karakter olmalıdır."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "En az %{n} karakter olmalıdır."
 
 msgid "Name"
 msgstr "Ad"
@@ -1361,9 +1366,6 @@ msgstr "Fotoğrafları harita üzerinde arayın ve görüntüleyin."
 msgid "Season"
 msgstr "Sezon"
 
-msgid "Seaweed"
-msgstr "Deniz Yosunu"
-
 msgid "Secret"
 msgstr "Gizli"
 
@@ -1562,6 +1564,18 @@ msgstr "Saat dilimi"
 
 msgid "Timeout"
 msgstr "Zaman aşımı"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Başlık"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Başlık"
 
 msgid "Title"
 msgstr "Başlık"
@@ -1776,6 +1790,21 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Başlık"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Başlık"
+
+#~ msgid "Seaweed"
+#~ msgstr "Deniz Yosunu"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Yapay Zeka Destekli Dijital Varlık Yönetimi"

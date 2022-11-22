@@ -560,6 +560,9 @@ msgstr "ערוך תמונה"
 msgid "Edited"
 msgstr "ערוך"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "אימייל"
 
@@ -1007,8 +1010,10 @@ msgstr "הכי רלוונטי"
 msgid "Move Files"
 msgstr "העבר קבצים"
 
-msgid "Must have at least 8 characters."
-msgstr "חייב להכיל לפחות 8 תווים."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "חייב להכיל לפחות %{n} תווים."
 
 msgid "Name"
 msgstr "שם"
@@ -1361,9 +1366,6 @@ msgstr "חפש והצג תמונות על המפה."
 msgid "Season"
 msgstr "עונה"
 
-msgid "Seaweed"
-msgstr "אצה"
-
 msgid "Secret"
 msgstr "קוד סודי"
 
@@ -1560,6 +1562,18 @@ msgstr "אזור זמן"
 
 msgid "Timeout"
 msgstr "פסק זמן"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "כותרת"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "כותרת"
 
 msgid "Title"
 msgstr "כותרת"
@@ -1772,6 +1786,21 @@ msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אל
 
 msgid "Zoom in/out"
 msgstr "זום פנימה\\החוצה"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "כותרת"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "כותרת"
+
+#~ msgid "Seaweed"
+#~ msgstr "אצה"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "ניהול נכסים דיגיטליים באמצעות AI"

@@ -560,6 +560,9 @@ msgstr "تعديل الصورة"
 msgid "Edited"
 msgstr "تم تحريره"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "البريد"
 
@@ -1007,8 +1010,10 @@ msgstr "الأكثر صلة"
 msgid "Move Files"
 msgstr "نقل الملفات"
 
-msgid "Must have at least 8 characters."
-msgstr "يجب أن يحتوي على 8 أحرف على الأقل."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "يجب أن يحتوي على %{n} أحرف على الأقل."
 
 msgid "Name"
 msgstr "اسم"
@@ -1361,9 +1366,6 @@ msgstr "البحث عن الصور وعرضها على الخريطة."
 msgid "Season"
 msgstr "الموسم"
 
-msgid "Seaweed"
-msgstr "الأعشاب البحرية"
-
 msgid "Secret"
 msgstr "سر"
 
@@ -1560,6 +1562,18 @@ msgstr "وحدة زمنية"
 
 msgid "Timeout"
 msgstr "نفذ الوقت"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "عنوان"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "عنوان"
 
 msgid "Title"
 msgstr "عنوان"
@@ -1772,6 +1786,21 @@ msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبوم�
 
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "عنوان"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "عنوان"
+
+#~ msgid "Seaweed"
+#~ msgstr "الأعشاب البحرية"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "إدارة الأصول الرقمية المدعومة بالذكاء الاصطناعي"

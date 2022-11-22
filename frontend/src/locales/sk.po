@@ -560,6 +560,9 @@ msgstr "Upraviť Fotku"
 msgid "Edited"
 msgstr "Upravené"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "E-mail"
 
@@ -1007,8 +1010,10 @@ msgstr "Najrelevantnejšie"
 msgid "Move Files"
 msgstr "Presunúť Súbory"
 
-msgid "Must have at least 8 characters."
-msgstr "Musí obsahovať aspoň 8 znakov."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Musí obsahovať aspoň %{n} znakov."
 
 msgid "Name"
 msgstr "Meno"
@@ -1361,9 +1366,6 @@ msgstr "Nájsť a zobraziť fotky na mape."
 msgid "Season"
 msgstr "Sezóna"
 
-msgid "Seaweed"
-msgstr "Morské riasy"
-
 msgid "Secret"
 msgstr "Tajomstvo"
 
@@ -1560,6 +1562,18 @@ msgstr "Časová Zóna"
 
 msgid "Timeout"
 msgstr "Časový limit"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Titulok"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Titulok"
 
 msgid "Title"
 msgstr "Titulok"
@@ -1772,6 +1786,21 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Titulok"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Titulok"
+
+#~ msgid "Seaweed"
+#~ msgstr "Morské riasy"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Správa digitálnych aktív na báze umelej inteligencie"

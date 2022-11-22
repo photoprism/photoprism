@@ -571,6 +571,9 @@ msgstr "Muokkaa kuvaa"
 msgid "Edited"
 msgstr "Muokattu"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "Sähköposti"
@@ -1037,8 +1040,10 @@ msgstr "Tärkein"
 msgid "Move Files"
 msgstr "Siirrä tiedostoja"
 
-msgid "Must have at least 8 characters."
-msgstr "Vähintään 8 merkkiä."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Vähintään %{n} merkkiä."
 
 msgid "Name"
 msgstr "Nimi"
@@ -1404,9 +1409,6 @@ msgstr "Etsi ja näytä valokuvia kartalla."
 msgid "Season"
 msgstr "Kausi"
 
-msgid "Seaweed"
-msgstr "Merilevä"
-
 msgid "Secret"
 msgstr "Salainen"
 
@@ -1608,6 +1610,18 @@ msgstr "Aikavyöhyke"
 
 msgid "Timeout"
 msgstr "Aikakatkaisu"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Otsikko"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Otsikko"
 
 msgid "Title"
 msgstr "Otsikko"
@@ -1836,6 +1850,21 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Otsikko"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Otsikko"
+
+#~ msgid "Seaweed"
+#~ msgstr "Merilevä"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"

@@ -560,6 +560,9 @@ msgstr "Bewerk Foto"
 msgid "Edited"
 msgstr "Bewerkt"
 
+msgid "Electra"
+msgstr "Electra"
+
 msgid "Email"
 msgstr "E-mail"
 
@@ -1007,8 +1010,10 @@ msgstr "Meest relevant"
 msgid "Move Files"
 msgstr "Bestanden verplaatsen"
 
-msgid "Must have at least 8 characters."
-msgstr "Moet ten minste 8 tekens hebben."
+#, fuzzy
+#| msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
+msgstr "Moet ten minste %{n} tekens hebben."
 
 msgid "Name"
 msgstr "Naam"
@@ -1361,9 +1366,6 @@ msgstr "Zoek en toon foto's op een kaart."
 msgid "Season"
 msgstr "Seizoen"
 
-msgid "Seaweed"
-msgstr "Zeewier"
-
 msgid "Secret"
 msgstr "Geheim"
 
@@ -1562,6 +1564,18 @@ msgstr "Tijdzone"
 
 msgid "Timeout"
 msgstr "time-out"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "Titel"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "Titel"
 
 msgid "Title"
 msgstr "Titel"
@@ -1776,6 +1790,21 @@ msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te m
 
 msgid "Zoom in/out"
 msgstr "In-/uitzoomen"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "Titel"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "Titel"
+
+#~ msgid "Seaweed"
+#~ msgstr "Zeewier"
 
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "AI-gestuurd beheer van digitale activa"

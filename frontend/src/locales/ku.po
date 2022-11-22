@@ -585,6 +585,9 @@ msgstr "دەستکاریکردنی فۆتۆ"
 msgid "Edited"
 msgstr "دەستکاریکرا"
 
+msgid "Electra"
+msgstr "Electra"
+
 #, fuzzy
 msgid "Email"
 msgstr "Email"
@@ -1071,7 +1074,7 @@ msgid "Move Files"
 msgstr "دۆسیەی زیاتر"
 
 #, fuzzy
-msgid "Must have at least 8 characters."
+msgid "Must have at least %{n} characters."
 msgstr "بەلایەنی کەمەوە 6 نووسە"
 
 msgid "Name"
@@ -1449,9 +1452,6 @@ msgstr "گەڕان و پیشاندانی وێنەکان لەسەر نەخشە."
 msgid "Season"
 msgstr "وەرز"
 
-msgid "Seaweed"
-msgstr "گژوگیای دەریایی"
-
 msgid "Secret"
 msgstr "نهێنی"
 
@@ -1659,6 +1659,18 @@ msgstr "ناوچەی کاتی"
 #, fuzzy
 msgid "Timeout"
 msgstr "ناوچەی کاتی"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Account"
+msgid "Title"
+msgstr "ناونیشان"
+
+#, fuzzy
+#| msgid "Title"
+msgctxt "Photo"
+msgid "Title"
+msgstr "ناونیشان"
 
 msgid "Title"
 msgstr "ناونیشان"
@@ -1893,6 +1905,21 @@ msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên dem�
 
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Account|"
+#~ msgid "Title"
+#~ msgstr "ناونیشان"
+
+#, fuzzy
+#~| msgid "Title"
+#~ msgctxt "Photo|"
+#~ msgid "Title"
+#~ msgstr "ناونیشان"
+
+#~ msgid "Seaweed"
+#~ msgstr "گژوگیای دەریایی"
 
 #, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"
