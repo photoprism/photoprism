@@ -3,11 +3,10 @@ package config
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/customize"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -17,7 +16,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 		result := c.ClientPublic()
 		assert.IsType(t, ClientConfig{}, result)
 		assert.Equal(t, AuthModePublic, result.AuthMode)
-		assert.Equal(t, "", result.LoginUri)
+		assert.Equal(t, "/library/browse", result.LoginUri)
 		assert.Equal(t, "", result.RegisterUri)
 		assert.Equal(t, 0, result.PasswordLength)
 		assert.Equal(t, "", result.PasswordResetUri)

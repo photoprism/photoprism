@@ -106,7 +106,7 @@ func (c *Config) AuthMode() string {
 // LoginUri returns the user login URI.
 func (c *Config) LoginUri() string {
 	if c.Public() {
-		return ""
+		return c.BaseUri("/library/browse")
 	}
 
 	if c.options.LoginUri == "" {
