@@ -43,7 +43,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="isDemo || isAdmin" flat tile class="mt-0 px-1 application">
+      <v-card v-if="isDemo || isSuperAdmin" flat tile class="mt-0 px-1 application">
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
@@ -363,7 +363,7 @@ export default {
   data() {
     return {
       isDemo: this.$config.get("demo"),
-      isAdmin: this.$session.isAdmin(),
+      isSuperAdmin: this.$session.isSuperAdmin(),
       isPublic: this.$config.get("public"),
       config: this.$config.values,
       settings: new Settings(this.$config.settings()),

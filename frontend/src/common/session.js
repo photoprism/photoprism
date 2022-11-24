@@ -245,6 +245,10 @@ export default class Session {
     return this.user && this.user.hasId() && (this.user.Role === "admin" || this.user.SuperAdmin);
   }
 
+  isSuperAdmin() {
+    return this.user && this.user.hasId() && this.user.SuperAdmin;
+  }
+
   isAnonymous() {
     return !this.user || !this.user.hasId();
   }
