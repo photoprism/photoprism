@@ -46,13 +46,18 @@ services:
       PHOTOPRISM_REGISTER_URI: "https://keycloak.localssl.dev/admin/"
       PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
       ## LDAP Authentication (pre-configured for local tests):
-      PHOTOPRISM_LDAP_URI: "ldaps://dummy-ldap:1636"
+      PHOTOPRISM_LDAP_URI: "ldap://dummy-ldap:389"
       PHOTOPRISM_LDAP_INSECURE: "true"
-      PHOTOPRISM_LDAP_ROLE: "user"
-      PHOTOPRISM_LDAP_WEBDAV: "true"
       PHOTOPRISM_LDAP_BIND: "simple"
       PHOTOPRISM_LDAP_BIND_DN: "cn"
       PHOTOPRISM_LDAP_BASE_DN: "dc=localssl,dc=dev"
+      PHOTOPRISM_LDAP_SYNC: "true"
+      PHOTOPRISM_LDAP_ROLE: "user"
+      PHOTOPRISM_LDAP_ROLE_DN: "photoprismRole"
+      PHOTOPRISM_LDAP_LOGIN: "true"
+      PHOTOPRISM_LDAP_LOGIN_DN: "photoprismLogin"
+      PHOTOPRISM_LDAP_WEBDAV: "false"
+      PHOTOPRISM_LDAP_WEBDAV_DN: "photoprismWebdav"
       ## OpenID Connect (pre-configured for local tests):
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"
       PHOTOPRISM_OIDC_INSECURE: "true"
@@ -162,7 +167,7 @@ services:
   ## Login: user / photoprism
   ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:19.0
+    image: quay.io/keycloak/keycloak:20.0
     command: "start-dev" # development mode, do not use this in production!
     container_name: keycloak
     links:
@@ -188,27 +193,22 @@ services:
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
 
-  ## Dummy LDAP Server
+  ## Dummy LDAP Directory Server
   dummy-ldap:
-    image: openidentityplatform/opendj:latest
+    image: glauth/glauth-plugins:latest
     container_name: dummy-ldap
-    expose:
-      - 1389
-      - 1636
-      - 4444
-    # ports:
-    #  - "1389:1389"
-    #  - "1636:1636"
-    #  - "4444:4444"
-    user: "1001:1000"
-    environment:
-      OPENDJ_USER: 1001
-      PORT: 1389
-      LDAPS_PORT: 1636
-      BASE_DN: "dc=localssl,dc=dev"
-      ADD_BASE_ENTRY: "--addBaseEntry"
-      ROOT_USER_DN: "cn=user"
-      ROOT_PASSWORD: "photoprism"
+    ports:
+      - "127.0.0.1:389:389"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.ldap.loadbalancer.server.port=5555"
+      - "traefik.http.routers.dummy-ldap.entrypoints=websecure"
+      - "traefik.http.routers.dummy-ldap.rule=Host(`dummy-ldap.localssl.dev`)"
+      - "traefik.http.routers.dummy-ldap.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.dummy-ldap.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.dummy-ldap.tls=true"
+    volumes:
+      - "./.ldap.cfg:/app/config/config.cfg"
 
   ## Dummy OpenID Connect Provider
   dummy-oidc:
