@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-22 21:22+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-11-24 01:09+0000\n"
+"Last-Translator: jakobkreft <jk6684@student.uni-lj.si>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -84,9 +84,8 @@ msgid "Actions"
 msgstr "Akcije"
 
 #: src/dialog/service/add.vue:7
-#, fuzzy
 msgid "Add Account"
-msgstr "Urejanje računa"
+msgstr "Dodaj račun"
 
 #: src/page/albums.vue:122 src/page/albums.vue:163
 msgid "Add Album"
@@ -348,7 +347,6 @@ msgid "Bio"
 msgstr "Bio"
 
 #: src/page/settings/account.vue:67
-#, fuzzy
 msgid "Birth Date"
 msgstr "Datum rojstva"
 
@@ -438,15 +436,13 @@ msgstr "Kategorija"
 #: src/page/settings/account.vue:253 src/page/settings/account.vue:252
 #, fuzzy
 msgid "Change Avatar"
-msgstr "Sprememba zasebne zastave"
+msgstr "Spremeni avatarja"
 
 #: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
-#, fuzzy
 msgid "Change Password"
-msgstr "Novo geslo"
+msgstr "Sprememba gesla"
 
 #: src/page/settings/general.vue:471
-#, fuzzy
 msgid "Change personal profile and security settings."
 msgstr "Spreminjanje osebnega profila in varnostnih nastavitev."
 
@@ -461,12 +457,10 @@ msgstr "Sprememba zasebne zastave"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
-#, fuzzy
 msgid "Changes successfully saved"
 msgstr "Spremembe so bile uspešno shranjene"
 
 #: src/dialog/photo/edit/info.vue:191
-#, fuzzy
 msgid "Checked"
 msgstr "Izbrano"
 
@@ -514,7 +508,6 @@ msgstr "Poveži"
 
 #: src/page/settings/account.vue:57 src/dialog/webdav.vue:4
 #: src/page/settings/services.vue:48
-#, fuzzy
 msgid "Connect via WebDAV"
 msgstr "Poveži preko WebDAV"
 
@@ -523,7 +516,6 @@ msgid "Connected"
 msgstr "Povezano"
 
 #: src/page/settings/account.vue:113 src/page/settings/account.vue:90
-#, fuzzy
 msgid "Contact Details"
 msgstr "Pišite nam"
 
