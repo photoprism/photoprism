@@ -52,12 +52,6 @@ services:
       PHOTOPRISM_LDAP_BIND_DN: "cn"
       PHOTOPRISM_LDAP_BASE_DN: "dc=localssl,dc=dev"
       PHOTOPRISM_LDAP_SYNC: "true"
-      PHOTOPRISM_LDAP_ROLE: "user"
-      PHOTOPRISM_LDAP_ROLE_DN: "photoprismRole"
-      PHOTOPRISM_LDAP_LOGIN: "true"
-      PHOTOPRISM_LDAP_LOGIN_DN: "photoprismLogin"
-      PHOTOPRISM_LDAP_WEBDAV: "false"
-      PHOTOPRISM_LDAP_WEBDAV_DN: "photoprismWebdav"
       ## OpenID Connect (pre-configured for local tests):
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"
       PHOTOPRISM_OIDC_INSECURE: "true"
@@ -194,6 +188,7 @@ services:
       KC_DB_PASSWORD: "keycloak"
 
   ## Dummy LDAP Directory Server
+  ## Docs: https://glauth.github.io/docs/
   dummy-ldap:
     image: glauth/glauth-plugins:latest
     container_name: dummy-ldap
