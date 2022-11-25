@@ -22,7 +22,7 @@ var ShowConfigCommand = cli.Command{
 
 // ConfigReports specifies which configuration reports to display.
 var ConfigReports = []Report{
-	{Title: "Config Options", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
+	{Title: "Global Config Options", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
 		return conf.Report()
 	}},
 }
