@@ -81,7 +81,11 @@ export default {
   },
   created() {
     this.$config.load().then(() => {
-      this.send();
+      if (this.$config.isPublic() || !this.$session.isAdmin()) {
+        this.$router.push({name: "home"});
+      } else {
+        this.send();
+      }
     });
   },
   methods: {
@@ -112,7 +116,7 @@ export default {
         });
       } else {
         this.$notify.error(this.$gettext("Invalid parameters"));
-        this.$router.push({name: "settings"});
+        this.$router.push({name: "upgrade"});
       }
 
     },

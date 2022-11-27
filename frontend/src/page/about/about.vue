@@ -7,45 +7,47 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon href="https://photoprism.app/" target="_blank" class="action-info" :title="$gettext('About')">
-        <v-icon size="26">chat</v-icon>
+      <v-btn icon href="https://photoprism.app/" target="_blank" class="action-info" :title="$gettext('Learn more')">
+        <v-icon size="26">info</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
-      <p class="body-2 text-selectable">
+      <p class="subheading font-weight-bold text-selectable">
         <translate>PhotoPrism® is an AI-Powered Photos App for the Decentralized Web.</translate>
         <translate>It makes use of the latest technologies to tag and find pictures automatically without getting in your way.</translate>
         <translate>You can run it at home, on a private server, or in the cloud.</translate>
       </p>
 
-      <p class="body-1 text-selectable pb-1">
-        <span v-if="sponsor">
-          <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-        </span>
-        <span v-else>
-          <translate>Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org.</translate>
-        </span>
+      <p class="subheading text-selectable">
+        <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
         <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
       </p>
 
-      <div v-if="!sponsor">
+      <div v-if="isPublic">
         <p class="text-xs-center my-4">
           <v-btn
-              href="https://link.photoprism.app/membership"
+              href="https://link.photoprism.app/personal-editions"
               target="_blank"
               color="primary-button"
-              class="white--text px-3 py-2 action-sponsor"
-              round depressed small
+              class="white--text px-3 py-2 action-upgrade"
+              round depressed
           >
-            <translate>Become a sponsor</translate>
-            <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>star</v-icon>
+            <translate>Learn more</translate>
+            <v-icon :left="rtl" :right="!rtl" size="18" class="ml-2" dark>diamond</v-icon>
           </v-btn>
         </p>
-
-        <p class="body-1 pt-2">
-          <a target="_blank" href="https://link.photoprism.app/github">
-            <translate>Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going.</translate>
-          </a>
+      </div>
+      <div v-else-if="isAdmin && !isSponsor">
+        <p class="text-xs-center my-4">
+          <v-btn
+              to="/upgrade"
+              color="primary-button"
+              class="white--text px-3 py-2 action-upgrade"
+              round depressed
+          >
+            <translate>Upgrade Now</translate>
+            <v-icon :left="rtl" :right="!rtl" size="18" class="ml-2" dark>diamond</v-icon>
+          </v-btn>
         </p>
       </div>
 
@@ -77,12 +79,12 @@
       </ul>
       <p class="body-1 text-selectable pb-2">
         <a target="_blank" href="https://photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
-        <span v-if="!sponsor">
+        <span v-if="!isSponsor">
           <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
         </span>
       </p>
 
-      <p v-if="sponsor" class="text-xs-center">
+      <p v-if="isSponsor" class="text-xs-center">
         <img src="https://cdn.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU">
       </p>
 
@@ -123,7 +125,10 @@ export default {
   data() {
     return {
       rtl: this.$rtl,
-      sponsor: this.$config.isSponsor(),
+      isPublic: this.$config.isPublic(),
+      isAdmin: this.$session.isAdmin(),
+      isDemo: this.$config.isDemo(),
+      isSponsor: this.$config.isSponsor(),
     };
   },
   methods: {},

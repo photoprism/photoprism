@@ -86,14 +86,14 @@
         </v-flex>
         <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
           <v-btn
-              href="https://link.photoprism.app/membership"
+              href="https://photoprism.app/"
               target="_blank"
               color="transparent"
-              class="white--text px-3 py-2 ma-0 action-sponsor"
+              class="white--text px-3 py-2 ma-0 action-about"
               round depressed small
           >
-            <translate>Become a sponsor</translate>
-            <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>star</v-icon>
+            <translate>Learn more</translate>
+            <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>diamond</v-icon>
           </v-btn>
         </v-flex>
       </v-layout>

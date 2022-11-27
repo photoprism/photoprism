@@ -471,7 +471,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="!isPublic && isAdmin" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
+            <v-list-tile v-show="!isPublic && isAdmin && isSponsor" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
                          @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
@@ -502,6 +502,17 @@
           </v-list-tile-content>
         </v-list-tile>
 
+        <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" @click.stop="">
+          <v-list-tile-action :title="$gettext('Upgrade')">
+            <v-icon>diamond</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Upgrade">Upgrade</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
 
       <v-list class="p-user-box">
@@ -622,20 +633,15 @@
               <translate>Logs</translate>
             </router-link>
           </div>
-          <!-- div v-if="auth && $config.feature('account') && !routeName('settings')" class="menu-action nav-account">
-            <router-link :to="{ name: 'settings_account' }">
-              <v-icon>person</v-icon>
-              <translate>Account</translate>
+          <div v-if="!isPublic && !isSponsor && isAdmin" class="menu-action nav-membership">
+            <router-link :to="{ name: 'upgrade' }">
+              <v-icon>diamond</v-icon>
+              <translate>Upgrade</translate>
             </router-link>
-          </div -->
+          </div>
           <div class="menu-action nav-manual"><a href="https://link.photoprism.app/docs" target="_blank">
             <v-icon>auto_stories</v-icon>
             <translate>User Guide</translate>
-          </a></div>
-          <div v-if="!isSponsor && isAdmin" class="menu-action nav-membership"><a href="https://link.photoprism.app/membership"
-                                                                       target="_blank">
-            <v-icon>workspace_premium</v-icon>
-            <translate>Become a sponsor</translate>
           </a></div>
           <div v-if="config.legalUrl && isSponsor" class="menu-action nav-legal"><a :href="config.legalUrl"
                                                                                       target="_blank">

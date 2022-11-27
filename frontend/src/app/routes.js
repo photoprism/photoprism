@@ -34,12 +34,13 @@ import People from "page/people.vue";
 import Library from "page/library.vue";
 import Settings from "page/settings.vue";
 import Login from "page/login.vue";
-import Connect from "page/connect.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
 import Feedback from "page/about/feedback.vue";
 import License from "page/about/license.vue";
 import Help from "page/help.vue";
+import Upgrade from "page/upgrade.vue";
+import Connect from "page/connect.vue";
 import { $gettext } from "common/vm";
 import { config, session } from "./session";
 
@@ -89,6 +90,16 @@ export default [
       } else {
         next({ name: "browse" });
       }
+    },
+  },
+  {
+    name: "upgrade",
+    path: "/upgrade",
+    component: Upgrade,
+    meta: {
+      title: siteTitle,
+      auth: true,
+      admin: true,
     },
   },
   {

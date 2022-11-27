@@ -81,7 +81,7 @@ require (
 	github.com/Azure/go-autorest/autorest/azure/cli v0.4.6 // indirect
 	github.com/aws/aws-sdk-go v1.44.115 // indirect
 	github.com/cloudflare/cloudflare-go v0.52.0 // indirect
-	github.com/go-acme/lego/v4 v4.9.0
+	github.com/go-acme/lego/v4 v4.9.1
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.0 // indirect

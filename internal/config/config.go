@@ -727,7 +727,7 @@ func (c *Config) UpdateHub() {
 
 // ResyncHub renews backend api credentials for maps & places with an optional token.
 func (c *Config) ResyncHub(token string) error {
-	if err := c.hub.Resync(token); err != nil {
+	if err := c.hub.ReSync(token); err != nil {
 		log.Debugf("config: %s (refresh backend api tokens)", err)
 		if token != "" {
 			return i18n.Error(i18n.ErrAccountConnect)

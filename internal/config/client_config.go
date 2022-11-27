@@ -71,6 +71,7 @@ type ClientConfig struct {
 	Countries        entity.Countries    `json:"countries"`
 	People           entity.People       `json:"people"`
 	Thumbs           ThumbSizes          `json:"thumbs"`
+	Customer         string              `json:"customer"`
 	MapKey           string              `json:"mapKey"`
 	DownloadToken    string              `json:"downloadToken,omitempty"`
 	PreviewToken     string              `json:"previewToken,omitempty"`
@@ -355,6 +356,7 @@ func (c *Config) ClientShare() ClientConfig {
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
 		MapKey:           c.Hub().MapKey(),
+		Customer:         c.Hub().Customer(),
 		DownloadToken:    c.DownloadToken(),
 		PreviewToken:     c.PreviewToken(),
 		ManifestUri:      c.ClientManifestUri(),
@@ -441,6 +443,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
 		MapKey:           c.Hub().MapKey(),
+		Customer:         c.Hub().Customer(),
 		DownloadToken:    c.DownloadToken(),
 		PreviewToken:     c.PreviewToken(),
 		ManifestUri:      c.ClientManifestUri(),
