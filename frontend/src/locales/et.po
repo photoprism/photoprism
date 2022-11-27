@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-11-22 21:22+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-11-27 06:47+0000\n"
+"Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -556,9 +556,8 @@ msgid "Country"
 msgstr "Riik"
 
 #: src/page/login.vue:16
-#, fuzzy
 msgid "Create Account"
-msgstr "Konto loomine"
+msgstr "Loo konto"
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
@@ -1457,9 +1456,8 @@ msgid "Move Files"
 msgstr "Liiguta failid"
 
 #: src/dialog/account/password.vue:156
-#, fuzzy
 msgid "Must have at least %{n} characters."
-msgstr "Peab sisaldama vähemalt %{n} tähemärki."
+msgstr "Peab olema vähemalt %{n} tähemärki."
 
 #: src/page/about/feedback.vue:171 src/component/photo/cards.vue:498
 #: src/component/photo/list.vue:138 src/component/photo/list.vue:227
@@ -2268,13 +2266,11 @@ msgid "Timeout"
 msgstr "Ajalõpp"
 
 #: src/page/settings/account.vue:113
-#, fuzzy
 msgctxt "Account"
 msgid "Title"
-msgstr "Pealkiri"
+msgstr "Tiitel"
 
 #: src/dialog/photo/edit/details.vue:96
-#, fuzzy
 msgctxt "Photo"
 msgid "Title"
 msgstr "Pealkiri"
