@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 09:09+0000\n"
+"PO-Revision-Date: 2022-11-28 09:39+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -2645,7 +2645,10 @@ msgstr "Der Index kann aktualisiert werden, um weitere Gesichter zu finden."
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 #: src/page/upgrade.vue:20
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Deine kontinuierliche Unterstützung hilft uns, regelmäßige Updates bereitzustellen und unabhängig zu bleiben, damit wir unsere Mission erfüllen und deine Privatsphäre schützen können."
+msgstr ""
+"Deine dauerhafte Unterstützung hilft uns, regelmäßige Updates "
+"bereitzustellen und unabhängig zu bleiben, damit wir unsere Mission erfüllen "
+"und deine Privatsphäre schützen können."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
