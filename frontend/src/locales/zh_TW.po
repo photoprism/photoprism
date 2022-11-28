@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 09:09+0000\n"
+"PO-Revision-Date: 2022-11-28 09:39+0000\n"
 "Last-Translator: Poky Leung <pyleungae@connect.ust.hk>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/frontend/zh_Hant/>\n"
@@ -1468,7 +1468,6 @@ msgid "Move Files"
 msgstr "移動檔案"
 
 #: src/dialog/account/password.vue:156
-#, fuzzy
 msgid "Must have at least %{n} characters."
 msgstr "必須至少有 %{n} 個字元。"
 
@@ -2298,13 +2297,11 @@ msgid "Timeout"
 msgstr "逾時"
 
 #: src/page/settings/account.vue:113
-#, fuzzy
 msgctxt "Account"
 msgid "Title"
 msgstr "標題"
 
 #: src/dialog/photo/edit/details.vue:96
-#, fuzzy
 msgctxt "Photo"
 msgid "Title"
 msgstr "標題"
@@ -2422,17 +2419,15 @@ msgstr "更新堆疊"
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
 msgid "Upgrade"
-msgstr "升级"
+msgstr "升級"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
-#, fuzzy
 msgid "Upgrade Now"
-msgstr "立即升级"
+msgstr "立即升級"
 
 #: src/page/upgrade.vue:17
-#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
-msgstr "现在就升级，享受我们的会员福利!"
+msgstr "現在就升級，享受我們的會員福利!"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
@@ -2577,18 +2572,16 @@ msgid "Website"
 msgstr "網站"
 
 #: src/page/upgrade.vue:61
-#, fuzzy
 msgid "What functionality is generally available?"
-msgstr "什么功能是普遍可用的？"
+msgstr "什麼功能是普遍可用的？"
 
 #: src/options/options.js:401
 msgid "White"
 msgstr "白色"
 
 #: src/page/upgrade.vue:55
-#, fuzzy
 msgid "Why are some features only available to sponsors?"
-msgstr "为什么有些功能只对赞助商开放？"
+msgstr "為什麼有些功能只對贊助者開放？"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
