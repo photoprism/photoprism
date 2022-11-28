@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-22 21:22+0000\n"
+"PO-Revision-Date: 2022-11-28 08:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -86,12 +86,14 @@ msgid "Actions"
 msgstr "Tindakan"
 
 #: src/page/upgrade.vue:37
+#, fuzzy
 msgid "Activate"
-msgstr ""
+msgstr "Aktifkan"
 
 #: src/page/upgrade.vue:134
+#, fuzzy
 msgid "Activation Code"
-msgstr ""
+msgstr "Kod pengaktifan"
 
 #: src/dialog/service/add.vue:7
 #, fuzzy
@@ -507,8 +509,9 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Isu biasa boleh didiagnosis dan diselesaikan dengan cepat menggunakan senarai semak penyelesaian masalah yang kami sediakan."
 
 #: src/page/upgrade.vue:30
+#, fuzzy
 msgid "Compare Features"
-msgstr ""
+msgstr "Bandingkan Ciri"
 
 #: src/page/library/index.vue:115
 #, fuzzy
@@ -1092,8 +1095,9 @@ msgid "Frames"
 msgstr "Bingkai"
 
 #: src/page/upgrade.vue:47
+#, fuzzy
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Soalan Lazim"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1546,8 +1550,9 @@ msgid "Medium"
 msgstr "Sederhana"
 
 #: src/page/connect.vue:4
+#, fuzzy
 msgid "Membership"
-msgstr ""
+msgstr "Keahlian"
 
 #: src/dialog/people/merge.vue:25
 #, fuzzy
@@ -1883,8 +1888,15 @@ msgid "Other"
 msgstr "Lain-lain"
 
 #: src/page/upgrade.vue:64
+#, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
+"Pasukan kami menilai perkara ini secara berterusan, bergantung pada ciri "
+"usaha sokongan dan pilihan konfigurasi yang disebabkan atau telah disebabkan "
+"pada masa lalu, dan sama ada ia secara amnya diperlukan oleh semua orang "
+"atau terutamanya diminta oleh organisasi dan pengguna lanjutan. Oleh kerana "
+"ini membolehkan kami menyediakan lebih banyak ciri kepada orang ramai, kami "
+"menggalakkan semua pengguna untuk menyokong misi kami."
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -1955,8 +1967,13 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism telah dikemas kini…"
 
 #: src/page/upgrade.vue:58
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"PhotoPrism adalah 100% dibiayai sendiri. Derma sukarela tidak meliputi kos "
+"pasukan yang bekerja sepenuh masa untuk memberi anda kemas kini, dokumentasi "
+"dan sokongan. Ia adalah keputusan anda sama ada anda ingin mendaftar untuk "
+"menikmati faedah tambahan."
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -2349,8 +2366,9 @@ msgid "Share your pictures with other apps and services."
 msgstr "Kongsi gambar anda dengan apl dan perkhidmatan lain."
 
 #: src/page/upgrade.vue:49
+#, fuzzy
 msgid "Shouldn't free software be free of costs?"
-msgstr ""
+msgstr "Bukankah perisian percuma sepatutnya bebas daripada kos?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2501,8 +2519,9 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Sokongan untuk perkhidmatan tambahan, seperti Google Drive, akan ditambahkan dari semasa ke semasa."
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
+#, fuzzy
 msgid "Support Our Mission"
-msgstr ""
+msgstr "Sokong Misi Kami"
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2544,8 +2563,14 @@ msgid "Theme"
 msgstr "Tema"
 
 #: src/page/upgrade.vue:52
+#, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
+"Fikirkan \"perisian percuma\" seperti dalam \"percakapan bebas,\" bukan "
+"seperti dalam \"bir percuma.\" Yayasan Perisian Percuma kadangkala "
+"memanggilnya \"perisian percuma,\" meminjam perkataan Perancis atau Sepanyol "
+"untuk \"percuma\" seperti dalam kebebasan, untuk menunjukkan bahawa mereka "
+"tidak bermakna perisian itu percuma."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2607,8 +2632,11 @@ msgid "Title too long"
 msgstr "Tajuk terlalu panjang"
 
 #: src/page/upgrade.vue:21
+#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
+"Untuk menaik taraf, anda boleh sama ada memasukkan kod pengaktifan atau klik "
+"pada \"Daftar\" untuk menaik taraf di tapak web kami:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2721,16 +2749,19 @@ msgstr "Mengemas kini tindanan"
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
+#, fuzzy
 msgid "Upgrade"
-msgstr ""
+msgstr "Naik taraf"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#, fuzzy
 msgid "Upgrade Now"
-msgstr ""
+msgstr "Menaiktaraf sekarang"
 
 #: src/page/upgrade.vue:17
+#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
-msgstr ""
+msgstr "Tingkatkan sekarang dan nikmati faedah ahli kami!"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
@@ -2895,16 +2926,18 @@ msgid "Website"
 msgstr "laman web"
 
 #: src/page/upgrade.vue:61
+#, fuzzy
 msgid "What functionality is generally available?"
-msgstr ""
+msgstr "Apakah fungsi yang tersedia secara umum?"
 
 #: src/options/options.js:401
 msgid "White"
 msgstr "Putih"
 
 #: src/page/upgrade.vue:55
+#, fuzzy
 msgid "Why are some features only available to sponsors?"
-msgstr ""
+msgstr "Mengapakah beberapa ciri hanya tersedia untuk penaja?"
 
 #: src/page/settings/account.vue:90
 #, fuzzy

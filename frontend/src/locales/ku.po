@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-22 21:22+0000\n"
+"PO-Revision-Date: 2022-11-28 08:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
+"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ku/>\n"
 "Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -87,12 +88,14 @@ msgid "Actions"
 msgstr "کردارەکان"
 
 #: src/page/upgrade.vue:37
+#, fuzzy
 msgid "Activate"
-msgstr ""
+msgstr "Çalak bike"
 
 #: src/page/upgrade.vue:134
+#, fuzzy
 msgid "Activation Code"
-msgstr ""
+msgstr "Koda Çalakkirinê"
 
 #: src/dialog/service/add.vue:7
 #, fuzzy
@@ -511,8 +514,9 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Pirsgirêkên hevpar bi karanîna navnîşên kontrolkirina pirsgirêkan ên ku em pêşkêş dikin zû têne tespît kirin û çareser kirin."
 
 #: src/page/upgrade.vue:30
+#, fuzzy
 msgid "Compare Features"
-msgstr ""
+msgstr "Taybetmendiyan berhev bikin"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -1041,8 +1045,9 @@ msgid "Frames"
 msgstr "Frames"
 
 #: src/page/upgrade.vue:47
+#, fuzzy
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Pirsên Pir Pir Pirs"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1461,8 +1466,9 @@ msgid "Medium"
 msgstr "مامناوەند"
 
 #: src/page/connect.vue:4
+#, fuzzy
 msgid "Membership"
-msgstr ""
+msgstr "Endamî"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1766,8 +1772,15 @@ msgid "Other"
 msgstr "هی تر"
 
 #: src/page/upgrade.vue:64
+#, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
+"Tîma me vê yekê li ser bingehek domdar dinirxîne, li gorî taybetmendiyên "
+"hewildana piştgirî û vebijarkên mîhengê ku di paşerojê de bûne sedem an bûne "
+"sedema wan, û gelo ew bi gelemperî ji hêla her kesî ve hewce ne an bi "
+"gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin. Ji ber "
+"ku ev rê dide me ku em bêtir taybetmendiyên ji gel re peyda bikin, em hemî "
+"bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -1829,8 +1842,13 @@ msgid "PhotoPrism has been updated…"
 msgstr "فۆتۆپریزم نوێکرایەوە"
 
 #: src/page/upgrade.vue:58
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"PhotoPrism 100% bixwe-fînanse ye. Bexşên dilxwazî mesrefa tîmek ku bi tevahî "
+"wextê dixebitin nagire da ku nûvekirin, belgekirin û piştgirî peyda bike. "
+"Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd "
+"werbigirin."
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -2183,8 +2201,9 @@ msgid "Share your pictures with other apps and services."
 msgstr "Wêneyên xwe bi serîlêdan û karûbarên din re parve bikin."
 
 #: src/page/upgrade.vue:49
+#, fuzzy
 msgid "Shouldn't free software be free of costs?"
-msgstr ""
+msgstr "Ma ne divê nermalava belaş bê mesref be?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2315,8 +2334,9 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "پشتگیری بۆ خزمەتگوزاری تر وەک Google Drive، بە پێی کات زیاد دەکرێت."
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
+#, fuzzy
 msgid "Support Our Mission"
-msgstr ""
+msgstr "Piştgiriya Mîsyona Me bikin"
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2352,8 +2372,13 @@ msgid "Theme"
 msgstr "ڕووکار"
 
 #: src/page/upgrade.vue:52
+#, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
+"\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra belaş\". "
+"Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" peyva fransî "
+"an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan bide ku ew ne "
+"wateya ku nermalava belaş e."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2410,8 +2435,11 @@ msgid "Title too long"
 msgstr "ناونیشانی زۆر درێژ"
 
 #: src/page/upgrade.vue:21
+#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
+"Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser \"Sign"
+" Up\" bikirtînin da ku li ser malpera me nûve bikin:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2512,16 +2540,19 @@ msgstr "نوێکردنەوەی کەڵەکەکان"
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
+#, fuzzy
 msgid "Upgrade"
-msgstr ""
+msgstr "Upgrade"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#, fuzzy
 msgid "Upgrade Now"
-msgstr ""
+msgstr "Nûvekirina Niha"
 
 #: src/page/upgrade.vue:17
+#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
-msgstr ""
+msgstr "Naha nûve bikin û ji feydeyên endamtiya me sûd werbigirin!"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
@@ -2676,16 +2707,18 @@ msgid "Website"
 msgstr "Website"
 
 #: src/page/upgrade.vue:61
+#, fuzzy
 msgid "What functionality is generally available?"
-msgstr ""
+msgstr "Kîjan fonksiyon bi gelemperî heye?"
 
 #: src/options/options.js:401
 msgid "White"
 msgstr "سپی"
 
 #: src/page/upgrade.vue:55
+#, fuzzy
 msgid "Why are some features only available to sponsors?"
-msgstr ""
+msgstr "Çima hin taybetmendî tenê ji sponsoran re peyda dibin?"
 
 #: src/page/settings/account.vue:90
 #, fuzzy

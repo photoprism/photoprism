@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-22 21:22+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
+"PO-Revision-Date: 2022-11-28 09:09+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
+"frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -87,11 +88,11 @@ msgstr "Aktionen"
 
 #: src/page/upgrade.vue:37
 msgid "Activate"
-msgstr ""
+msgstr "Aktivieren"
 
 #: src/page/upgrade.vue:134
 msgid "Activation Code"
-msgstr ""
+msgstr "Aktivierungscode"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -494,7 +495,7 @@ msgstr "Mit den Checklisten zur Fehlerbehebung lassen sich die häufigsten Probl
 
 #: src/page/upgrade.vue:30
 msgid "Compare Features"
-msgstr ""
+msgstr "Funktionen vergleichen"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -562,7 +563,6 @@ msgid "Country"
 msgstr "Land"
 
 #: src/page/login.vue:16
-#, fuzzy
 msgid "Create Account"
 msgstr "Konto erstellen"
 
@@ -1007,7 +1007,7 @@ msgstr "Frames"
 
 #: src/page/upgrade.vue:47
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Häufig gestellte Fragen"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1402,7 +1402,7 @@ msgstr "Mittel"
 
 #: src/page/connect.vue:4
 msgid "Membership"
-msgstr ""
+msgstr "Mitgliedschaft"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1468,7 +1468,6 @@ msgid "Move Files"
 msgstr "Dateien verschieben"
 
 #: src/dialog/account/password.vue:156
-#, fuzzy
 msgid "Must have at least %{n} characters."
 msgstr "Mindestens %{n} Zeichen."
 
@@ -1695,6 +1694,13 @@ msgstr "Sonstiges"
 #: src/page/upgrade.vue:64
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
+"Unser Team bewertet dies fortlaufend, je nachdem, welchen Supportaufwand "
+"Funktionen und Konfigurationsoptionen verursachen oder in der Vergangenheit "
+"verursacht haben und ob sie generell von allen benötigt oder hauptsächlich "
+"von Organisationen und anspruchsvollen Nutzern angefordert werden. Da wir "
+"auf diese Weise mehr Funktionen für die Öffentlichkeit zur Verfügung stellen "
+"können, ermutigen wir alle Nutzerinnen und Nutzer, unsere Mission zu "
+"unterstützen."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1755,6 +1761,10 @@ msgstr "PhotoPrism wurde aktualisiert…"
 #: src/page/upgrade.vue:58
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"PhotoPrism ist zu 100% selbstfinanziert. Freiwillige Spenden decken nicht "
+"die Kosten für ein Team, das Vollzeit arbeitet, um dich mit Updates, "
+"Dokumentation und Support zu versorgen. Es ist deine Entscheidung, ob du "
+"dich anmelden möchtest, um die zusätzlichen Funktionen zu nutzen."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2092,7 +2102,7 @@ msgstr "Teile Bilder mit anderen Anwendungen und Diensten."
 
 #: src/page/upgrade.vue:49
 msgid "Shouldn't free software be free of costs?"
-msgstr ""
+msgstr "Sollte freie Software nicht kostenlos sein?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2222,7 +2232,7 @@ msgstr "Die Unterstützung weiterer Dienste, wie Google Drive, ist geplant."
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
 msgid "Support Our Mission"
-msgstr ""
+msgstr "Unterstütze unsere Mission"
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2260,6 +2270,10 @@ msgstr "Theme"
 #: src/page/upgrade.vue:52
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
+"Denke bei \"freier Software\" an \"freie Rede\", nicht an \"Freibier\". Die "
+"Free Software Foundation nennt sie manchmal \"libre software\" und lehnt "
+"sich dabei an das französische oder spanische Wort für \"frei\" an, um zu "
+"verdeutlichen, dass sie nicht meint, dass die Software kostenlos ist."
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2288,13 +2302,11 @@ msgid "Timeout"
 msgstr "Timeout"
 
 #: src/page/settings/account.vue:113
-#, fuzzy
 msgctxt "Account"
 msgid "Title"
 msgstr "Titel"
 
 #: src/dialog/photo/edit/details.vue:96
-#, fuzzy
 msgctxt "Photo"
 msgid "Title"
 msgstr "Titel"
@@ -2315,6 +2327,9 @@ msgstr "Titel zu lang"
 #: src/page/upgrade.vue:21
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
+"Um das Upgrade durchzuführen, kannst du entweder einen Aktivierungscode "
+"eingeben oder dich auf unserer Website mit einem Klick auf \"Sign Up\" "
+"anmelden:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2412,15 +2427,15 @@ msgstr "Aktualisiere Bildstapel"
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
 msgid "Upgrade"
-msgstr ""
+msgstr "Upgrade"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
 msgid "Upgrade Now"
-msgstr ""
+msgstr "Jetzt upgraden"
 
 #: src/page/upgrade.vue:17
 msgid "Upgrade now and enjoy our member benefits!"
-msgstr ""
+msgstr "Upgrade jetzt und genieße unsere Mitgliedervorteile!"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
@@ -2564,7 +2579,7 @@ msgstr "Website"
 
 #: src/page/upgrade.vue:61
 msgid "What functionality is generally available?"
-msgstr ""
+msgstr "Welche Funktionen sind für alle verfügbar?"
 
 #: src/options/options.js:401
 msgid "White"
@@ -2572,7 +2587,7 @@ msgstr "Weiß"
 
 #: src/page/upgrade.vue:55
 msgid "Why are some features only available to sponsors?"
-msgstr ""
+msgstr "Warum sind einige Funktionen nur für Sponsoren verfügbar?"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
