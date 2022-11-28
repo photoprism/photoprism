@@ -55,7 +55,6 @@ msgstr ""
 #: src/component/navigation.vue:424
 #: src/component/navigation.vue:27
 #: src/page/about/about.vue:4
-#: src/page/about/about.vue:166
 #: src/page/help.vue:43
 msgid "About"
 msgstr ""
@@ -64,13 +63,12 @@ msgstr ""
 msgid "Abyss"
 msgstr ""
 
-#: src/component/navigation.vue:3
 #: src/component/navigation.vue:93
-#: src/component/navigation.vue:1908
+#: src/component/navigation.vue:1944
 #: src/dialog/share/upload.vue:108
 #: src/model/service.js:98
 #: src/model/user.js:144
-#: src/page/settings.vue:83
+#: src/page/settings.vue:84
 #: src/page/settings/general.vue:470
 msgid "Account"
 msgstr ""
@@ -86,6 +84,14 @@ msgstr ""
 #: src/dialog/photo/edit/files.vue:28
 #: src/dialog/photo/edit/files.vue:25
 msgid "Actions"
+msgstr ""
+
+#: src/page/upgrade.vue:37
+msgid "Activate"
+msgstr ""
+
+#: src/page/upgrade.vue:134
+msgid "Activation Code"
 msgstr ""
 
 #: src/dialog/service/add.vue:7
@@ -123,7 +129,7 @@ msgstr ""
 msgid "Added"
 msgstr ""
 
-#: src/page/settings.vue:59
+#: src/page/settings.vue:60
 msgid "Advanced"
 msgstr ""
 
@@ -169,13 +175,13 @@ msgstr ""
 msgid "Album Name"
 msgstr ""
 
-#: src/app/routes.js:151
+#: src/app/routes.js:162
 #: src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:147
 #: src/component/navigation.vue:157
-#: src/component/navigation.vue:539
+#: src/component/navigation.vue:550
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:621
+#: src/component/navigation.vue:617
 msgid "Albums"
 msgstr ""
 
@@ -240,10 +246,6 @@ msgstr ""
 msgid "All Years"
 msgstr ""
 
-#: src/page/about/about.vue:40
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr ""
-
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
@@ -292,7 +294,7 @@ msgstr ""
 msgid "Approve"
 msgstr ""
 
-#: src/app/routes.js:232
+#: src/app/routes.js:243
 #: src/component/navigation.vue:134
 #: src/component/photo/cards.vue:379
 #: src/component/photo/clipboard.vue:204
@@ -353,18 +355,12 @@ msgstr ""
 msgid "Basic"
 msgstr ""
 
-#: src/component/navigation.vue:584
-#: src/dialog/sponsor.vue:7
-#: src/page/about/about.vue:33
-#: src/page/login.vue:53
-msgid "Become a sponsor"
-msgstr ""
-
-#: src/page/about/about.vue:62
+#: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr ""
 
-#: src/page/about/about.vue:27
+#: src/dialog/sponsor.vue:22
+#: src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr ""
 
@@ -403,7 +399,7 @@ msgstr ""
 msgid "Browse indexed files and folders in Library."
 msgstr ""
 
-#: src/page/about/about.vue:54
+#: src/page/about/about.vue:51
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr ""
 
@@ -417,9 +413,9 @@ msgstr ""
 msgid "Busy, please wait…"
 msgstr ""
 
-#: src/app/routes.js:164
+#: src/app/routes.js:175
 #: src/component/navigation.vue:253
-#: src/component/navigation.vue:989
+#: src/component/navigation.vue:985
 msgid "Calendar"
 msgstr ""
 
@@ -551,8 +547,12 @@ msgstr ""
 msgid "Colors"
 msgstr ""
 
-#: src/page/about/about.vue:49
+#: src/page/about/about.vue:46
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgstr ""
+
+#: src/page/upgrade.vue:30
+msgid "Compare Features"
 msgstr ""
 
 #: src/page/library/index.vue:115
@@ -576,7 +576,7 @@ msgstr ""
 msgid "Connect via WebDAV"
 msgstr ""
 
-#: src/page/connect.vue:30
+#: src/page/connect.vue:34
 msgid "Connected"
 msgstr ""
 
@@ -768,10 +768,10 @@ msgstr ""
 msgid "Disables reverse geocoding and maps."
 msgstr ""
 
-#: src/app/routes.js:408
-#: src/app/routes.js:415
-#: src/app/routes.js:422
-#: src/app/routes.js:429
+#: src/app/routes.js:419
+#: src/app/routes.js:426
+#: src/app/routes.js:433
+#: src/app/routes.js:440
 msgid "Discover"
 msgstr ""
 
@@ -934,7 +934,7 @@ msgstr ""
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr ""
 
-#: src/app/routes.js:283
+#: src/app/routes.js:294
 #: src/component/navigation.vue:391
 msgid "Errors"
 msgstr ""
@@ -960,7 +960,7 @@ msgstr ""
 msgid "Exclude hidden"
 msgstr ""
 
-#: src/component/navigation.vue:298
+#: src/component/navigation.vue:294
 msgid "Expand"
 msgstr ""
 
@@ -1019,9 +1019,9 @@ msgstr ""
 msgid "Favorite"
 msgstr ""
 
-#: src/app/routes.js:197
+#: src/app/routes.js:208
 #: src/component/navigation.vue:227
-#: src/component/navigation.vue:899
+#: src/component/navigation.vue:895
 msgid "Favorites"
 msgstr ""
 
@@ -1040,7 +1040,8 @@ msgstr ""
 msgid "Feedback"
 msgstr ""
 
-#: src/dialog/sponsor.vue:24
+#: src/dialog/sponsor.vue:25
+#: src/page/upgrade.vue:43
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 
@@ -1052,7 +1053,7 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#: src/app/routes.js:270
+#: src/app/routes.js:281
 msgid "File Browser"
 msgstr ""
 
@@ -1073,7 +1074,7 @@ msgstr ""
 msgid "Filename"
 msgstr ""
 
-#: src/component/navigation.vue:557
+#: src/component/navigation.vue:568
 #: src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:296
@@ -1105,9 +1106,9 @@ msgstr ""
 msgid "Folder is empty"
 msgstr ""
 
-#: src/app/routes.js:177
+#: src/app/routes.js:188
 #: src/component/navigation.vue:328
-#: src/component/navigation.vue:1254
+#: src/component/navigation.vue:1250
 msgid "Folders"
 msgstr ""
 
@@ -1125,6 +1126,10 @@ msgstr ""
 msgid "Frames"
 msgstr ""
 
+#: src/page/upgrade.vue:47
+msgid "Frequently Asked Questions"
+msgstr ""
+
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr ""
@@ -1138,11 +1143,11 @@ msgstr ""
 msgid "Gender"
 msgstr ""
 
-#: src/page/settings.vue:35
+#: src/page/settings.vue:36
 msgid "General"
 msgstr ""
 
-#: src/page/about/about.vue:58
+#: src/page/about/about.vue:55
 msgid "Getting Support"
 msgstr ""
 
@@ -1176,7 +1181,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: src/app/routes.js:77
+#: src/app/routes.js:78
 msgid "Help & Support"
 msgstr ""
 
@@ -1184,7 +1189,7 @@ msgstr ""
 msgid "Hidden"
 msgstr ""
 
-#: src/app/routes.js:276
+#: src/app/routes.js:287
 msgid "Hidden Files"
 msgstr ""
 
@@ -1211,11 +1216,7 @@ msgstr ""
 msgid "How can we help?"
 msgstr ""
 
-#: src/dialog/sponsor.vue:36
-msgid "I'm a sponsor"
-msgstr ""
-
-#: src/page/about/about.vue:63
+#: src/page/about/about.vue:60
 msgid "If this doesn't help, or you have other questions:"
 msgstr ""
 
@@ -1265,7 +1266,7 @@ msgstr ""
 msgid "in"
 msgstr ""
 
-#: src/page/about/about.vue:72
+#: src/page/about/about.vue:69
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr ""
 
@@ -1282,7 +1283,7 @@ msgstr ""
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr ""
 
-#: src/component/navigation.vue:563
+#: src/component/navigation.vue:574
 #: src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
@@ -1347,8 +1348,8 @@ msgstr ""
 msgid "Invalid date"
 msgstr ""
 
-#: src/page/connect.vue:42
-#: src/page/connect.vue:48
+#: src/page/connect.vue:46
+#: src/page/connect.vue:52
 msgid "Invalid parameters"
 msgstr ""
 
@@ -1380,7 +1381,7 @@ msgstr ""
 msgid "Keywords"
 msgstr ""
 
-#: src/page/about/about.vue:53
+#: src/page/about/about.vue:50
 msgid "Knowledge Base"
 msgstr ""
 
@@ -1389,9 +1390,9 @@ msgstr ""
 msgid "Label"
 msgstr ""
 
-#: src/app/routes.js:289
+#: src/app/routes.js:300
 #: src/component/navigation.vue:315
-#: src/component/navigation.vue:1209
+#: src/component/navigation.vue:1205
 #: src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:195
@@ -1424,11 +1425,16 @@ msgstr ""
 msgid "Lavender"
 msgstr ""
 
-#: src/page/about/about.vue:55
+#: src/dialog/sponsor.vue:37
+#: src/page/about/about.vue:28
+#: src/page/about/about.vue:52
+#: src/page/about/about.vue:161
+#: src/page/login.vue:53
+#: src/page/upgrade.vue:66
 msgid "Learn more"
 msgstr ""
 
-#: src/component/navigation.vue:588
+#: src/component/navigation.vue:595
 msgid "Legal Information"
 msgstr ""
 
@@ -1436,14 +1442,14 @@ msgstr ""
 msgid "Lens"
 msgstr ""
 
-#: src/app/routes.js:325
-#: src/app/routes.js:332
-#: src/app/routes.js:339
+#: src/app/routes.js:336
+#: src/app/routes.js:343
+#: src/app/routes.js:350
 #: src/component/navigation.vue:354
 #: src/component/navigation.vue:364
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1346
-#: src/page/settings.vue:47
+#: src/component/navigation.vue:1342
+#: src/page/settings.vue:48
 #: src/page/settings/general.vue:404
 msgid "Library"
 msgstr ""
@@ -1480,7 +1486,7 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-#: src/app/routes.js:204
+#: src/app/routes.js:215
 #: src/component/photo/cards.vue:290
 #: src/component/photo/list.vue:182
 #: src/component/photo/mosaic.vue:214
@@ -1515,19 +1521,19 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr ""
 
 #: src/component/navigation.vue:454
-#: src/component/navigation.vue:1686
-#: src/component/navigation.vue:1960
+#: src/component/navigation.vue:1682
+#: src/component/navigation.vue:1996
 msgid "Login"
 msgstr ""
 
-#: src/component/navigation.vue:501
-#: src/component/navigation.vue:1797
-#: src/component/navigation.vue:1828
-#: src/component/navigation.vue:1879
+#: src/component/navigation.vue:512
+#: src/component/navigation.vue:1833
+#: src/component/navigation.vue:1864
+#: src/component/navigation.vue:1915
 msgid "Logout"
 msgstr ""
 
-#: src/component/navigation.vue:569
+#: src/component/navigation.vue:580
 #: src/page/library.vue:58
 #: src/page/settings/general.vue:448
 msgid "Logs"
@@ -1575,6 +1581,10 @@ msgstr ""
 msgid "Medium"
 msgstr ""
 
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr ""
+
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
 msgstr ""
@@ -1584,7 +1594,7 @@ msgstr ""
 msgid "Message sent"
 msgstr ""
 
-#: src/component/navigation.vue:251
+#: src/component/navigation.vue:247
 msgid "Minimize"
 msgstr ""
 
@@ -1593,9 +1603,9 @@ msgstr ""
 msgid "Missing"
 msgstr ""
 
-#: src/app/routes.js:138
+#: src/app/routes.js:149
 #: src/component/navigation.vue:240
-#: src/component/navigation.vue:944
+#: src/component/navigation.vue:940
 #: src/page/settings/general.vue:162
 msgid "Moments"
 msgstr ""
@@ -1765,7 +1775,7 @@ msgstr ""
 msgid "No services configured."
 msgstr ""
 
-#: src/dialog/sponsor.vue:31
+#: src/dialog/sponsor.vue:34
 msgid "No thanks"
 msgstr ""
 
@@ -1825,8 +1835,8 @@ msgstr ""
 msgid "Nothing to see here yet."
 msgstr ""
 
-#: src/component/navigation.vue:470
-#: src/component/navigation.vue:1731
+#: src/component/navigation.vue:481
+#: src/component/navigation.vue:1767
 msgid "Offline"
 msgstr ""
 
@@ -1883,7 +1893,7 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
 msgstr ""
 
@@ -1923,7 +1933,11 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: src/page/about/about.vue:48
+#: src/page/upgrade.vue:64
+msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+msgstr ""
+
+#: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr ""
 
@@ -1951,11 +1965,11 @@ msgstr ""
 msgid "Password changed"
 msgstr ""
 
-#: src/app/routes.js:295
-#: src/app/routes.js:319
+#: src/app/routes.js:306
+#: src/app/routes.js:330
 #: src/component/navigation.vue:214
-#: src/component/navigation.vue:545
-#: src/component/navigation.vue:854
+#: src/component/navigation.vue:556
+#: src/component/navigation.vue:850
 #: src/dialog/photo/edit.vue:52
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246
@@ -1988,11 +2002,15 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
+#: src/page/upgrade.vue:58
+msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr ""
 
-#: src/app/routes.js:131
+#: src/app/routes.js:142
 msgid "Photos"
 msgstr ""
 
@@ -2008,17 +2026,17 @@ msgstr ""
 msgid "Place & Time"
 msgstr ""
 
-#: src/app/routes.js:239
-#: src/app/routes.js:245
-#: src/app/routes.js:251
-#: src/app/routes.js:257
+#: src/app/routes.js:250
+#: src/app/routes.js:256
+#: src/app/routes.js:262
+#: src/app/routes.js:268
 #: src/component/navigation.vue:280
 #: src/component/navigation.vue:290
-#: src/component/navigation.vue:551
+#: src/component/navigation.vue:562
 #: src/component/navigation.vue:8
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1089
+#: src/component/navigation.vue:1085
 #: src/page/settings/general.vue:118
 #: src/page/settings/general.vue:494
 msgid "Places"
@@ -2041,7 +2059,7 @@ msgstr ""
 msgid "Portrait"
 msgstr ""
 
-#: src/page/about/about.vue:68
+#: src/page/about/about.vue:65
 msgid "post your question in GitHub Discussions"
 msgstr ""
 
@@ -2075,9 +2093,9 @@ msgstr ""
 msgid "Primary"
 msgstr ""
 
-#: src/app/routes.js:225
+#: src/app/routes.js:236
 #: src/component/navigation.vue:341
-#: src/component/navigation.vue:1299
+#: src/component/navigation.vue:1295
 #: src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:206
 msgid "Private"
@@ -2130,7 +2148,7 @@ msgstr ""
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 
-#: src/page/about/about.vue:51
+#: src/page/about/about.vue:48
 msgid "Read the Docs"
 msgstr ""
 
@@ -2169,7 +2187,7 @@ msgid "Red"
 msgstr ""
 
 #: src/component/album/toolbar.vue:64
-#: src/component/navigation.vue:1893
+#: src/component/navigation.vue:1929
 #: src/component/photo/toolbar.vue:54
 #: src/dialog/reload.vue:12
 #: src/page/albums.vue:126
@@ -2240,7 +2258,7 @@ msgstr ""
 msgid "Retype Password"
 msgstr ""
 
-#: src/app/routes.js:218
+#: src/app/routes.js:229
 #: src/component/navigation.vue:125
 msgid "Review"
 msgstr ""
@@ -2266,9 +2284,9 @@ msgstr ""
 
 #: src/component/navigation.vue:65
 #: src/component/navigation.vue:75
-#: src/component/navigation.vue:533
+#: src/component/navigation.vue:544
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:330
+#: src/component/navigation.vue:326
 #: src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96
 #: src/page/labels.vue:72
@@ -2330,23 +2348,23 @@ msgstr ""
 msgid "Service URL"
 msgstr ""
 
-#: src/page/settings.vue:71
+#: src/page/settings.vue:72
 #: src/page/settings/general.vue:382
 msgid "Services"
 msgstr ""
 
-#: src/app/routes.js:347
-#: src/app/routes.js:359
-#: src/app/routes.js:372
-#: src/app/routes.js:385
-#: src/app/routes.js:397
+#: src/app/routes.js:358
+#: src/app/routes.js:370
+#: src/app/routes.js:383
+#: src/app/routes.js:396
+#: src/app/routes.js:408
 #: src/component/navigation.vue:405
 #: src/component/navigation.vue:415
 #: src/component/navigation.vue:8
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1520
-#: src/component/navigation.vue:1926
+#: src/component/navigation.vue:1516
+#: src/component/navigation.vue:1962
 msgid "Settings"
 msgstr ""
 
@@ -2376,6 +2394,10 @@ msgstr ""
 
 #: src/page/settings/general.vue:383
 msgid "Share your pictures with other apps and services."
+msgstr ""
+
+#: src/page/upgrade.vue:49
+msgid "Shouldn't free software be free of costs?"
 msgstr ""
 
 #: src/page/people/new.vue:219
@@ -2416,7 +2438,7 @@ msgstr ""
 msgid "Sign in"
 msgstr ""
 
-#: src/dialog/sponsor.vue:39
+#: src/page/upgrade.vue:33
 msgid "Sign Up"
 msgstr ""
 
@@ -2442,10 +2464,6 @@ msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:21
 msgid "Source"
-msgstr ""
-
-#: src/page/about/about.vue:25
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
 msgstr ""
 
 #: src/component/photo/cards.vue:313
@@ -2485,7 +2503,7 @@ msgstr ""
 #: src/component/navigation.vue:266
 #: src/component/navigation.vue:300
 #: src/component/navigation.vue:28
-#: src/component/navigation.vue:1036
+#: src/component/navigation.vue:1032
 msgid "States"
 msgstr ""
 
@@ -2517,6 +2535,11 @@ msgstr ""
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+
+#: src/dialog/sponsor.vue:7
+#: src/page/upgrade.vue:4
+msgid "Support Our Mission"
 msgstr ""
 
 #: src/page/settings/services.vue:28
@@ -2554,8 +2577,8 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: src/dialog/sponsor.vue:17
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#: src/page/upgrade.vue:52
+msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
 
 #: src/page/settings/services.vue:40
@@ -2606,6 +2629,10 @@ msgstr ""
 
 #: src/page/albums.vue:62
 msgid "Title too long"
+msgstr ""
+
+#: src/page/upgrade.vue:21
+msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
 
 #: src/component/album/toolbar.vue:139
@@ -2686,7 +2713,7 @@ msgstr ""
 msgid "Unregistered"
 msgstr ""
 
-#: src/app/routes.js:190
+#: src/app/routes.js:201
 #: src/component/navigation.vue:167
 msgid "Unsorted"
 msgstr ""
@@ -2726,8 +2753,24 @@ msgstr ""
 msgid "Updating stacks"
 msgstr ""
 
+#: src/component/navigation.vue:466
+#: src/component/navigation.vue:586
+#: src/component/navigation.vue:1722
+#: src/page/upgrade.vue:57
+msgid "Upgrade"
+msgstr ""
+
+#: src/dialog/sponsor.vue:40
+#: src/page/about/about.vue:36
+msgid "Upgrade Now"
+msgstr ""
+
+#: src/page/upgrade.vue:17
+msgid "Upgrade now and enjoy our member benefits!"
+msgstr ""
+
 #: src/component/album/toolbar.vue:192
-#: src/component/navigation.vue:1944
+#: src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
@@ -2790,8 +2833,8 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: src/component/navigation.vue:580
-#: src/page/about/about.vue:45
+#: src/component/navigation.vue:591
+#: src/page/about/about.vue:42
 msgid "User Guide"
 msgstr ""
 
@@ -2830,11 +2873,11 @@ msgstr ""
 msgid "Video Duration"
 msgstr ""
 
-#: src/app/routes.js:211
+#: src/app/routes.js:222
 #: src/component/navigation.vue:180
 #: src/component/navigation.vue:190
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:738
+#: src/component/navigation.vue:734
 msgid "Videos"
 msgstr ""
 
@@ -2844,7 +2887,7 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: src/page/about/about.vue:47
+#: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr ""
 
@@ -2864,12 +2907,8 @@ msgstr ""
 msgid "We do our best to respond within five business days or less."
 msgstr ""
 
-#: src/page/about/about.vue:74
+#: src/page/about/about.vue:71
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr ""
-
-#: src/dialog/sponsor.vue:18
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
 msgstr ""
 
 #: src/dialog/webdav.vue:8
@@ -2893,8 +2932,16 @@ msgstr ""
 msgid "Website"
 msgstr ""
 
+#: src/page/upgrade.vue:61
+msgid "What functionality is generally available?"
+msgstr ""
+
 #: src/options/options.js:401
 msgid "White"
+msgstr ""
+
+#: src/page/upgrade.vue:55
+msgid "Why are some features only available to sponsors?"
 msgstr ""
 
 #: src/page/settings/account.vue:90
@@ -2935,7 +2982,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: src/page/about/about.vue:67
+#: src/page/about/about.vue:64
 msgid "you are welcome to join us on Reddit"
 msgstr ""
 
@@ -2963,12 +3010,10 @@ msgstr ""
 msgid "You may rescan your library to find additional faces."
 msgstr ""
 
-#: src/page/about/about.vue:22
+#: src/dialog/sponsor.vue:19
+#: src/page/about/about.vue:21
+#: src/page/upgrade.vue:20
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-
-#: src/dialog/sponsor.vue:21
-msgid "Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 
 #: src/page/albums.vue:43

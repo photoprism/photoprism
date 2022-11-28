@@ -2,7 +2,7 @@
   <div class="p-page p-page-connect">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <a href="https://link.photoprism.app/membership" target="_blank">Membership</a> <v-icon>navigate_next</v-icon>
+        <a href="https://link.photoprism.app/membership" target="_blank"><translate>Membership</translate></a> <v-icon>navigate_next</v-icon>
         <span v-if="busy">
           <translate>Busy, please wait…</translate>
         </span>

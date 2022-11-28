@@ -61,6 +61,12 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
+msgid "Activate"
+msgstr ""
+
+msgid "Activation Code"
+msgstr ""
+
 msgid "Add Account"
 msgstr ""
 
@@ -160,9 +166,6 @@ msgstr ""
 msgid "All Years"
 msgstr ""
 
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr ""
-
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
 
@@ -233,9 +236,6 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr ""
 
 msgid "Basic"
-msgstr ""
-
-msgid "Become a sponsor"
 msgstr ""
 
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -341,6 +341,9 @@ msgid "Colors"
 msgstr ""
 
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgstr ""
+
+msgid "Compare Features"
 msgstr ""
 
 msgid "Complete Rescan"
@@ -697,6 +700,9 @@ msgstr ""
 msgid "Frames"
 msgstr ""
 
+msgid "Frequently Asked Questions"
+msgstr ""
+
 msgid "Fullscreen"
 msgstr ""
 
@@ -755,9 +761,6 @@ msgid "High Dynamic Range (HDR)"
 msgstr ""
 
 msgid "How can we help?"
-msgstr ""
-
-msgid "I'm a sponsor"
 msgstr ""
 
 msgid "If this doesn't help, or you have other questions:"
@@ -967,6 +970,9 @@ msgstr ""
 msgid "Medium"
 msgstr ""
 
+msgid "Membership"
+msgstr ""
+
 msgid "Merge %{a} with %{b}?"
 msgstr ""
 
@@ -1153,6 +1159,9 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
+msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+msgstr ""
+
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr ""
 
@@ -1190,6 +1199,9 @@ msgid "Photo"
 msgstr ""
 
 msgid "PhotoPrism has been updated…"
+msgstr ""
+
+msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
 
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1420,6 +1432,9 @@ msgstr ""
 msgid "Share your pictures with other apps and services."
 msgstr ""
 
+msgid "Shouldn't free software be free of costs?"
+msgstr ""
+
 msgid "Show"
 msgstr ""
 
@@ -1463,9 +1478,6 @@ msgid "Sort Order"
 msgstr ""
 
 msgid "Source"
-msgstr ""
-
-msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
 msgstr ""
 
 msgid "Stack"
@@ -1516,6 +1528,9 @@ msgstr ""
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr ""
 
+msgid "Support Our Mission"
+msgstr ""
+
 msgid "Sync"
 msgstr ""
 
@@ -1540,7 +1555,7 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
 
 msgid ""
@@ -1578,6 +1593,9 @@ msgid "Title / Position"
 msgstr ""
 
 msgid "Title too long"
+msgstr ""
+
+msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
 
 msgid "Toggle View"
@@ -1635,6 +1653,15 @@ msgid "Updating previews"
 msgstr ""
 
 msgid "Updating stacks"
+msgstr ""
+
+msgid "Upgrade"
+msgstr ""
+
+msgid "Upgrade Now"
+msgstr ""
+
+msgid "Upgrade now and enjoy our member benefits!"
 msgstr ""
 
 msgid "Upload"
@@ -1718,9 +1745,6 @@ msgstr ""
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr ""
 
-msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-msgstr ""
-
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
 
@@ -1735,7 +1759,13 @@ msgstr ""
 msgid "Website"
 msgstr ""
 
+msgid "What functionality is generally available?"
+msgstr ""
+
 msgid "White"
+msgstr ""
+
+msgid "Why are some features only available to sponsors?"
 msgstr ""
 
 msgid "Work Details"
@@ -1772,9 +1802,6 @@ msgid "You may rescan your library to find additional faces."
 msgstr ""
 
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-
-msgid "Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
