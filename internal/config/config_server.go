@@ -107,8 +107,10 @@ func (c *Config) TemplatesPath() string {
 
 // CustomTemplatesPath returns the path to custom templates.
 func (c *Config) CustomTemplatesPath() string {
-	if p := c.CustomAssetsPath(); p != "" {
-		return filepath.Join(p, "templates")
+	if dir := c.CustomAssetsPath(); dir == "" {
+		return ""
+	} else if dir = filepath.Join(dir, "templates"); fs.PathExists(dir) {
+		return dir
 	}
 
 	return ""
@@ -118,10 +120,22 @@ func (c *Config) CustomTemplatesPath() string {
 func (c *Config) TemplateFiles() []string {
 	results := make([]string, 0, 32)
 
-	tmplPaths := []string{c.TemplatesPath(), c.CustomTemplatesPath()}
+	var tmplPaths []string
 
-	for _, p := range tmplPaths {
-		matches, err := filepath.Glob(regexp.QuoteMeta(p) + "/[A-Za-z0-9]*.*")
+	// Path set for custom templates?
+	if cDir := c.CustomTemplatesPath(); cDir != "" {
+		tmplPaths = []string{c.TemplatesPath(), cDir}
+	} else {
+		tmplPaths = []string{c.TemplatesPath()}
+	}
+
+	// Find template files.
+	for _, dir := range tmplPaths {
+		if dir == "" {
+			continue
+		}
+
+		matches, err := filepath.Glob(regexp.QuoteMeta(dir) + "/[A-Za-z0-9]*.*")
 
 		if err != nil {
 			continue
@@ -139,8 +153,8 @@ func (c *Config) TemplateFiles() []string {
 func (c *Config) TemplateExists(name string) bool {
 	if found := fs.FileExists(filepath.Join(c.TemplatesPath(), name)); found {
 		return true
-	} else if p := c.CustomTemplatesPath(); p != "" {
-		return fs.FileExists(filepath.Join(p, name))
+	} else if dir := c.CustomTemplatesPath(); dir != "" {
+		return fs.FileExists(filepath.Join(dir, name))
 	} else {
 		return false
 	}
