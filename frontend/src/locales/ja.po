@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-22 21:22+0000\n"
+"PO-Revision-Date: 2022-11-28 08:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
+"Language-Team: Japanese <https://translate.photoprism.app/projects/"
+"photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -86,12 +87,14 @@ msgid "Actions"
 msgstr "アクション"
 
 #: src/page/upgrade.vue:37
+#, fuzzy
 msgid "Activate"
-msgstr ""
+msgstr "アクティベート"
 
 #: src/page/upgrade.vue:134
+#, fuzzy
 msgid "Activation Code"
-msgstr ""
+msgstr "アクティベーションコード"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -493,8 +496,9 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "よくある問題は、私たちが提供するトラブルシューティングチェックリストを使って素早く診断し、解決することができます。"
 
 #: src/page/upgrade.vue:30
+#, fuzzy
 msgid "Compare Features"
-msgstr ""
+msgstr "機能比較"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -1006,8 +1010,9 @@ msgid "Frames"
 msgstr "フレーム"
 
 #: src/page/upgrade.vue:47
+#, fuzzy
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "よくある質問"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1401,8 +1406,9 @@ msgid "Medium"
 msgstr "中"
 
 #: src/page/connect.vue:4
+#, fuzzy
 msgid "Membership"
-msgstr ""
+msgstr "メンバーシップ"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1693,8 +1699,14 @@ msgid "Other"
 msgstr "他"
 
 #: src/page/upgrade.vue:64
+#, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
+"私たちのチームは、機能や設定オプションがサポートの労力を引き起こすか、過去に"
+"引き起こしたか、また、それらが一般的にすべての人に必要とされているか、主に組"
+"織や上級ユーザーから要求されているかによって、継続的にこれを評価します。これ"
+"により、より多くの機能を一般に提供できるようになるため、すべてのユーザーが私"
+"たちのミッションをサポートすることを推奨しています。"
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1753,8 +1765,13 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism はアップデートされています …"
 
 #: src/page/upgrade.vue:58
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"PhotoPrismは100%自己資金で運営されています。ご寄付は、アップデート、ドキュメ"
+"ンテーション、サポートを提供するためにフルタイムで働くチームの費用をカバーす"
+"るものではありません。ご登録いただくことで、より多くの特典をご利用いただけま"
+"す。"
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2091,8 +2108,9 @@ msgid "Share your pictures with other apps and services."
 msgstr "他のアプリやサービスと写真を共有することができます。"
 
 #: src/page/upgrade.vue:49
+#, fuzzy
 msgid "Shouldn't free software be free of costs?"
-msgstr ""
+msgstr "フリーソフトはコストフリーであるべきではないか？"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2221,8 +2239,9 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "将来に渡って、Google ドライブなどの追加のサービスのサポートが追加される予定です。"
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
+#, fuzzy
 msgid "Support Our Mission"
-msgstr ""
+msgstr "私たちのミッションを支援する"
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2258,8 +2277,14 @@ msgid "Theme"
 msgstr "テーマ"
 
 #: src/page/upgrade.vue:52
+#, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
+"自由ソフトウェア」は「言論の自由」のように考えるのであって、「無料のビール」"
+"のように考えるのではありません。フリーソフトウェアファウンデーションは、フラ"
+"ンス語かスペイン語の「自由」を自由の意味で借用して、「libre software」と呼ぶ"
+"ことがありますが、これはソフトウェアが無料であるという意味ではないことを示す"
+"ものです。"
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2313,8 +2338,10 @@ msgid "Title too long"
 msgstr "タイトルが長すぎます"
 
 #: src/page/upgrade.vue:21
+#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr ""
+msgstr "アップグレードするには、アクティベーションコードを入力するか、当社ウェブサイ"
+"ト上で「サインアップ」をクリックしてアップグレードしてください。"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2411,16 +2438,19 @@ msgstr "スタックを更新しています"
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
+#, fuzzy
 msgid "Upgrade"
-msgstr ""
+msgstr "アップグレード"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#, fuzzy
 msgid "Upgrade Now"
-msgstr ""
+msgstr "今すぐアップグレード"
 
 #: src/page/upgrade.vue:17
+#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
-msgstr ""
+msgstr "今すぐアップグレードして、会員特典をお楽しみください。"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
@@ -2563,16 +2593,18 @@ msgid "Website"
 msgstr "ウェブサイト"
 
 #: src/page/upgrade.vue:61
+#, fuzzy
 msgid "What functionality is generally available?"
-msgstr ""
+msgstr "一般的にどのような機能があるのでしょうか？"
 
 #: src/options/options.js:401
 msgid "White"
 msgstr "白"
 
 #: src/page/upgrade.vue:55
+#, fuzzy
 msgid "Why are some features only available to sponsors?"
-msgstr ""
+msgstr "なぜ、スポンサーだけが利用できる機能があるのですか？"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"

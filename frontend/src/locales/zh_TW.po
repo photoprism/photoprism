@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-22 21:22+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
+"PO-Revision-Date: 2022-11-28 09:09+0000\n"
+"Last-Translator: Poky Leung <pyleungae@connect.ust.hk>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -87,11 +88,11 @@ msgstr "動作"
 
 #: src/page/upgrade.vue:37
 msgid "Activate"
-msgstr ""
+msgstr "激活"
 
 #: src/page/upgrade.vue:134
 msgid "Activation Code"
-msgstr ""
+msgstr "激活碼"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -494,7 +495,7 @@ msgstr "使用我們提供的故障排除清單可以快速診斷和解決常見
 
 #: src/page/upgrade.vue:30
 msgid "Compare Features"
-msgstr ""
+msgstr "比較功能"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -562,9 +563,8 @@ msgid "Country"
 msgstr "國家"
 
 #: src/page/login.vue:16
-#, fuzzy
 msgid "Create Account"
-msgstr "创建账户"
+msgstr "創建賬戶"
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
@@ -1007,7 +1007,7 @@ msgstr "框架"
 
 #: src/page/upgrade.vue:47
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "常見問題"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1402,7 +1402,7 @@ msgstr "中"
 
 #: src/page/connect.vue:4
 msgid "Membership"
-msgstr ""
+msgstr "會員資格"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1695,6 +1695,9 @@ msgstr "其他"
 #: src/page/upgrade.vue:64
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
+"我們的團隊會持續進行評估，這取決於功能和配置選項引起或在過去引起的支持工作，"
+"以及它們是否每個人普遍需要的還是主要由組織和高級用戶要求的。我們鼓勵所有用戶"
+"支持我們的任務，使我們能夠向公眾提供更多的功能。"
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1755,6 +1758,8 @@ msgstr "PhotoPrism更新囉…"
 #: src/page/upgrade.vue:58
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"PhotoPrism是100%自籌資金的。自願捐款並不包括一個全職工作的團隊為您提供更新、"
+"文檔和支持的費用。您可以決定是否要註冊以享受額外的好處。"
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2092,7 +2097,7 @@ msgstr "與其他應用程式和服務分享您的照片。"
 
 #: src/page/upgrade.vue:49
 msgid "Shouldn't free software be free of costs?"
-msgstr ""
+msgstr "免費軟件不應該是沒有成本的嗎？"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2222,7 +2227,7 @@ msgstr "隨著時間的推移，將增加對其他服務的支援，例如Google
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
 msgid "Support Our Mission"
-msgstr ""
+msgstr "支持我們的使命"
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2260,6 +2265,9 @@ msgstr "主題"
 #: src/page/upgrade.vue:52
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
+"把 \"免費軟件 \"想成是 \"言論自由\"，而不是 \"免費啤酒\"。"
+"自由軟件基金會有時稱之為 \"自由軟件\"，借用法語或西班牙語中自由的 \"自由 "
+"\"一詞，以表明他們並不意味着軟件是免費的。"
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2316,7 +2324,7 @@ msgstr "標題太長"
 
 #: src/page/upgrade.vue:21
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr ""
+msgstr "要升級，你可以在我們的網站上輸入激活碼或點擊 \"註冊 \"來升級："
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2414,15 +2422,17 @@ msgstr "更新堆疊"
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
 msgid "Upgrade"
-msgstr ""
+msgstr "升级"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#, fuzzy
 msgid "Upgrade Now"
-msgstr ""
+msgstr "立即升级"
 
 #: src/page/upgrade.vue:17
+#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
-msgstr ""
+msgstr "现在就升级，享受我们的会员福利!"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
@@ -2567,16 +2577,18 @@ msgid "Website"
 msgstr "網站"
 
 #: src/page/upgrade.vue:61
+#, fuzzy
 msgid "What functionality is generally available?"
-msgstr ""
+msgstr "什么功能是普遍可用的？"
 
 #: src/options/options.js:401
 msgid "White"
 msgstr "白色"
 
 #: src/page/upgrade.vue:55
+#, fuzzy
 msgid "Why are some features only available to sponsors?"
-msgstr ""
+msgstr "为什么有些功能只对赞助商开放？"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"

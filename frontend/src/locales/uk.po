@@ -3,14 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-22 21:22+0000\n"
+"PO-Revision-Date: 2022-11-28 08:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.14.2\n"
 "Generated-By: easygettext\n"
 
@@ -86,12 +87,14 @@ msgid "Actions"
 msgstr "Дії"
 
 #: src/page/upgrade.vue:37
+#, fuzzy
 msgid "Activate"
-msgstr ""
+msgstr "Активувати"
 
 #: src/page/upgrade.vue:134
+#, fuzzy
 msgid "Activation Code"
-msgstr ""
+msgstr "Код активації"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -493,8 +496,9 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Поширені проблеми можна швидко діагностувати та вирішити за допомогою контрольних списків з усунення несправностей, які ми надаємо."
 
 #: src/page/upgrade.vue:30
+#, fuzzy
 msgid "Compare Features"
-msgstr ""
+msgstr "Порівняти характеристики"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -1006,8 +1010,9 @@ msgid "Frames"
 msgstr "Кадрів"
 
 #: src/page/upgrade.vue:47
+#, fuzzy
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Поширені запитання"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1401,8 +1406,9 @@ msgid "Medium"
 msgstr "Середній"
 
 #: src/page/connect.vue:4
+#, fuzzy
 msgid "Membership"
-msgstr ""
+msgstr "Членство"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1693,8 +1699,15 @@ msgid "Other"
 msgstr "Інше"
 
 #: src/page/upgrade.vue:64
+#, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
+"Наша команда оцінює це на постійній основі, залежно від того, які зусилля з "
+"підтримки функції та параметри конфігурації викликають або викликали в "
+"минулому, і чи потрібні вони в цілому всім або в основному запитуються "
+"організаціями та досвідченими користувачами. Оскільки це дозволяє нам "
+"зробити більше функцій доступними для громадськості, ми закликаємо всіх "
+"користувачів підтримати нашу місію."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1753,8 +1766,13 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism було оновлено…"
 
 #: src/page/upgrade.vue:58
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"PhotoPrism на 100% самофінансується. Добровільні пожертви не покривають "
+"витрати команди, яка працює повний робочий день, щоб забезпечити вас "
+"оновленнями, документацією та підтримкою. Ви самі вирішуєте, чи хочете ви "
+"підписатися, щоб користуватися додатковими перевагами."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2091,8 +2109,9 @@ msgid "Share your pictures with other apps and services."
 msgstr "Діліться своїми фотографіями з іншими програмами та сервісами."
 
 #: src/page/upgrade.vue:49
+#, fuzzy
 msgid "Shouldn't free software be free of costs?"
-msgstr ""
+msgstr "Чи не повинно вільне програмне забезпечення бути безкоштовним?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2221,8 +2240,9 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Підтримка додаткових служб, як-от Google Drive, буде додана з часом."
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
+#, fuzzy
 msgid "Support Our Mission"
-msgstr ""
+msgstr "Підтримайте нашу місію"
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2258,8 +2278,14 @@ msgid "Theme"
 msgstr "Тема"
 
 #: src/page/upgrade.vue:52
+#, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
+"Думайте про \"вільне програмне забезпечення\" як про \"свободу слова\", а не "
+"як про \"безкоштовне пиво\". Фонд вільного програмного забезпечення іноді "
+"називає його \"вільним програмним забезпеченням\", запозичуючи французьке "
+"або іспанське слово \"libre\", що означає свободу, щоб показати, що це не "
+"означає, що програмне забезпечення є безкоштовним."
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2315,8 +2341,11 @@ msgid "Title too long"
 msgstr "Надто довгий заголовок"
 
 #: src/page/upgrade.vue:21
+#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
+"Для оновлення ви можете або ввести код активації, або натиснути кнопку "
+"\"Зареєструватися\" на нашому сайті:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2413,16 +2442,21 @@ msgstr "Оновлення стеків"
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
+#, fuzzy
 msgid "Upgrade"
-msgstr ""
+msgstr "Модернізація"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#, fuzzy
 msgid "Upgrade Now"
-msgstr ""
+msgstr "Оновіть зараз"
 
 #: src/page/upgrade.vue:17
+#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
 msgstr ""
+"Переходьте на новий тарифний план та користуйтеся нашими перевагами для "
+"учасників!"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
@@ -2567,16 +2601,18 @@ msgid "Website"
 msgstr "Сайт"
 
 #: src/page/upgrade.vue:61
+#, fuzzy
 msgid "What functionality is generally available?"
-msgstr ""
+msgstr "Який функціонал є загальнодоступним?"
 
 #: src/options/options.js:401
 msgid "White"
 msgstr "Білий"
 
 #: src/page/upgrade.vue:55
+#, fuzzy
 msgid "Why are some features only available to sponsors?"
-msgstr ""
+msgstr "Чому деякі функції доступні тільки для спонсорів?"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
