@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 08:51+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-11-28 14:46+0000\n"
+"Last-Translator: 2andgi <andrew.grushka@gmail.com>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -55,7 +55,7 @@ msgstr "4 години"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
-msgstr "Клацання скопіює його в буфер обміну."
+msgstr "Копіювання до буферу обміну по кліку."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:254
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
@@ -87,12 +87,10 @@ msgid "Actions"
 msgstr "Дії"
 
 #: src/page/upgrade.vue:37
-#, fuzzy
 msgid "Activate"
 msgstr "Активувати"
 
 #: src/page/upgrade.vue:134
-#, fuzzy
 msgid "Activation Code"
 msgstr "Код активації"
 
@@ -342,7 +340,10 @@ msgstr "Перш ніж надсилати запит на підтримку, �
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Будучи на 100% self-фінансованими та незалежними, ми можемо пообіцяти вам, що ми ніколи не будемо продавати ваші дані і що ми завжди будемо прозорими щодо нашого програмного забезпечення та послуг."
+msgstr ""
+"Будучи на 100% самофінансованими та незалежними, ми можемо пообіцяти вам, що "
+"ми ніколи не будемо продавати ваші дані і що ми завжди будемо прозорими щодо "
+"нашого програмного забезпечення та послуг."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -460,7 +461,7 @@ msgstr "Змінити означку приватності"
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
-msgstr "Зміни збережено вдало"
+msgstr "Зміни успішно збережено"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -496,9 +497,8 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Поширені проблеми можна швидко діагностувати та вирішити за допомогою контрольних списків з усунення несправностей, які ми надаємо."
 
 #: src/page/upgrade.vue:30
-#, fuzzy
 msgid "Compare Features"
-msgstr "Порівняти характеристики"
+msgstr "Порівняти функції"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -524,7 +524,7 @@ msgstr "Підключено"
 
 #: src/page/settings/account.vue:113 src/page/settings/account.vue:90
 msgid "Contact Details"
-msgstr "Контактні дані"
+msgstr "Контактна інформація"
 
 #: src/page/about/feedback.vue:4
 msgid "Contact Us"
@@ -566,7 +566,6 @@ msgid "Country"
 msgstr "Країна"
 
 #: src/page/login.vue:16
-#, fuzzy
 msgid "Create Account"
 msgstr "Створити обліковий запис"
 
@@ -699,7 +698,7 @@ msgstr "Огляд"
 
 #: src/page/settings/account.vue:193 src/page/settings/account.vue:192
 msgid "Display Name"
-msgstr "Відображуване ім’я"
+msgstr "Ім'я користувача"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
@@ -823,12 +822,12 @@ msgstr "Відредаговано"
 
 #: src/options/themes.js:436
 msgid "Electra"
-msgstr "Electra"
+msgstr "Електра"
 
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 #: src/page/settings/account.vue:220
 msgid "Email"
-msgstr "Email"
+msgstr "Електронна пошта"
 
 #: src/page/settings/advanced.vue:119
 msgid "Enable new features currently under development."
@@ -908,7 +907,7 @@ msgstr "Не вдалось оновити посилання"
 
 #: src/page/settings/account.vue:166 src/page/settings/account.vue:165
 msgid "Family Name"
-msgstr "Прізвище, ім'я та по батькові"
+msgstr "Прізвище"
 
 #: src/options/options.js:253
 msgid "Fast"
@@ -929,7 +928,7 @@ msgstr "Запит можливостей"
 
 #: src/page/settings/account.vue:818 src/page/settings/account.vue:671
 msgid "Feed"
-msgstr "Годувати"
+msgstr "Канал"
 
 #: src/component/navigation.vue:432 src/component/navigation.vue:35
 msgid "Feedback"
@@ -954,7 +953,7 @@ msgstr "Оглядач файлів"
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
 msgid "File Name"
-msgstr "Назва файлу"
+msgstr "Ім'я файлу"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:55
 #: src/dialog/album/edit.vue:24
@@ -1010,7 +1009,6 @@ msgid "Frames"
 msgstr "Кадрів"
 
 #: src/page/upgrade.vue:47
-#, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Поширені запитання"
 
@@ -1195,7 +1193,7 @@ msgstr "Інтервал"
 #: src/page/settings/account.vue:618 src/page/settings/account.vue:646
 #: src/page/settings/account.vue:674
 msgid "Invalid"
-msgstr "Невірний"
+msgstr "Недійсний"
 
 #: src/dialog/photo/edit/details.vue:112
 msgid "Invalid date"
@@ -1211,7 +1209,9 @@ msgstr "вибрано невірне фото"
 
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Він використовує новітні технології, щоб автоматично позначати і знаходити фотографії, не заважаючи вам."
+msgstr ""
+"Використовуються новітні технології, щоб автоматично позначати і знаходити "
+"фотографії, не заважаючи вам."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1406,7 +1406,6 @@ msgid "Medium"
 msgstr "Середній"
 
 #: src/page/connect.vue:4
-#, fuzzy
 msgid "Membership"
 msgstr "Членство"
 
@@ -1474,9 +1473,8 @@ msgid "Move Files"
 msgstr "Перемістити файли"
 
 #: src/dialog/account/password.vue:156
-#, fuzzy
 msgid "Must have at least %{n} characters."
-msgstr "Повинен містити принаймні %{n} символів."
+msgstr "Повинно містити не менше %{n} символів."
 
 #: src/page/about/feedback.vue:171 src/component/photo/cards.vue:498
 #: src/component/photo/list.vue:138 src/component/photo/list.vue:227
@@ -1616,7 +1614,7 @@ msgstr "Поза мережею"
 #: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:51
 #: src/dialog/album/edit.vue:20
 msgid "Oldest First"
-msgstr "Найстаріші спершу"
+msgstr "Спочатку найстарші"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
@@ -1699,7 +1697,6 @@ msgid "Other"
 msgstr "Інше"
 
 #: src/page/upgrade.vue:64
-#, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
 "Наша команда оцінює це на постійній основі, залежно від того, які зусилля з "
@@ -1766,7 +1763,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism було оновлено…"
 
 #: src/page/upgrade.vue:58
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
 "PhotoPrism на 100% самофінансується. Добровільні пожертви не покривають "
@@ -1901,7 +1897,7 @@ msgstr "Переіндексуйте усі оригінали, включаюч
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
-msgstr "Прочитайте документи"
+msgstr "Прочитайте інструкції"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -2109,7 +2105,6 @@ msgid "Share your pictures with other apps and services."
 msgstr "Діліться своїми фотографіями з іншими програмами та сервісами."
 
 #: src/page/upgrade.vue:49
-#, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Чи не повинно вільне програмне забезпечення бути безкоштовним?"
 
@@ -2176,7 +2171,7 @@ msgstr "Джерело"
 
 #: src/component/photo/cards.vue:313 src/component/photo/mosaic.vue:240
 msgid "Stack"
-msgstr "Група"
+msgstr "Серії"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
@@ -2240,7 +2235,6 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Підтримка додаткових служб, як-от Google Drive, буде додана з часом."
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
-#, fuzzy
 msgid "Support Our Mission"
 msgstr "Підтримайте нашу місію"
 
@@ -2278,7 +2272,6 @@ msgid "Theme"
 msgstr "Тема"
 
 #: src/page/upgrade.vue:52
-#, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
 "Думайте про \"вільне програмне забезпечення\" як про \"свободу слова\", а не "
@@ -2316,13 +2309,11 @@ msgid "Timeout"
 msgstr "Час вийшов"
 
 #: src/page/settings/account.vue:113
-#, fuzzy
 msgctxt "Account"
 msgid "Title"
 msgstr "Заголовок"
 
 #: src/dialog/photo/edit/details.vue:96
-#, fuzzy
 msgctxt "Photo"
 msgid "Title"
 msgstr "Заголовок"
@@ -2341,7 +2332,6 @@ msgid "Title too long"
 msgstr "Надто довгий заголовок"
 
 #: src/page/upgrade.vue:21
-#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
 "Для оновлення ви можете або ввести код активації, або натиснути кнопку "
@@ -2430,7 +2420,7 @@ msgstr "Оновлення моментів"
 
 #: src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "Оновлення зображення.."
+msgstr "Оновлення зображення…"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2442,17 +2432,14 @@ msgstr "Оновлення стеків"
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
-#, fuzzy
 msgid "Upgrade"
-msgstr "Модернізація"
+msgstr "Оновлення"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
-#, fuzzy
 msgid "Upgrade Now"
-msgstr "Оновіть зараз"
+msgstr "Оновити зараз"
 
 #: src/page/upgrade.vue:17
-#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
 msgstr ""
 "Переходьте на новий тарифний план та користуйтеся нашими перевагами для "
@@ -2496,7 +2483,7 @@ msgstr "Вивантаження фотографій…"
 
 #: src/page/settings/account.vue:127
 msgid "Uploading…"
-msgstr "Завантаження.."
+msgstr "Вивантаження…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
@@ -2598,10 +2585,9 @@ msgstr "Вивантаження WebDAV"
 #: src/page/settings/account.vue:644 src/page/settings/account.vue:790
 #: src/page/settings/account.vue:643
 msgid "Website"
-msgstr "Сайт"
+msgstr "Веб-сайт"
 
 #: src/page/upgrade.vue:61
-#, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Який функціонал є загальнодоступним?"
 
@@ -2610,7 +2596,6 @@ msgid "White"
 msgstr "Білий"
 
 #: src/page/upgrade.vue:55
-#, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Чому деякі функції доступні тільки для спонсорів?"
 
