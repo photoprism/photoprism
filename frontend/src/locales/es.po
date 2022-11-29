@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 08:51+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-11-29 06:52+0000\n"
+"Last-Translator: Fernando <dfjzao4g@duck.com>\n"
 "Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/es/>\n"
 "Language: es\n"
@@ -848,7 +848,7 @@ msgstr "Estimar la ubicación aproximada de las imágenes sin coordenadas."
 
 #: src/page/settings/library.vue:69
 msgid "Estimates"
-msgstr "Presupuestos"
+msgstr "Estimaciones"
 
 #: src/options/options.js:372
 msgid "Every two days"
@@ -1010,7 +1010,6 @@ msgid "Frames"
 msgstr "Marcos"
 
 #: src/page/upgrade.vue:47
-#, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Preguntas frecuentes"
 
@@ -1407,9 +1406,8 @@ msgid "Medium"
 msgstr "Mediano"
 
 #: src/page/connect.vue:4
-#, fuzzy
 msgid "Membership"
-msgstr "Afiliación"
+msgstr "Membresía"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1700,12 +1698,11 @@ msgid "Other"
 msgstr "Otro"
 
 #: src/page/upgrade.vue:64
-#, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
 "Nuestro equipo evalúa esto de forma continua, dependiendo del esfuerzo de "
 "soporte que las características y opciones de configuración causan o han "
-"causado en el pasado, y si son generalmente necesarias para todos o "
+"causado en el pasado, y si son ampliamente necesarias para todos o "
 "principalmente solicitadas por organizaciones y usuarios avanzados. Como "
 "esto nos permite poner más funciones a disposición del público, animamos a "
 "todos los usuarios a apoyar nuestra misión."
@@ -1767,11 +1764,10 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism ha sido actualizado…"
 
 #: src/page/upgrade.vue:58
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
-"PhotoPrism se autofinancia al 100%. Las donaciones voluntarias no cubren el "
-"coste de un equipo que trabaja a tiempo completo para proporcionarle "
+"PhotoPrism es autofinanciado al 100%. Las donaciones voluntarias no cubren "
+"el coste de un equipo que trabaja a tiempo completo para proporcionarle "
 "actualizaciones, documentación y soporte. Es tu decisión si quieres "
 "inscribirte para disfrutar de beneficios adicionales."
 
@@ -2111,9 +2107,8 @@ msgid "Share your pictures with other apps and services."
 msgstr "Comparte tus fotos con otras aplicaciones y servicios."
 
 #: src/page/upgrade.vue:49
-#, fuzzy
 msgid "Shouldn't free software be free of costs?"
-msgstr "¿El software libre no debería estar libre de costes?"
+msgstr "¿No debería el software libre estar libre de costos?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2280,13 +2275,15 @@ msgid "Theme"
 msgstr "Tema"
 
 #: src/page/upgrade.vue:52
-#, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
 "Piense en \"software libre\" como en \"libertad de expresión\", no como en "
-"\"cerveza gratis\". La Free Software Foundation a veces lo llama \"software "
-"libre\", tomando prestada la palabra francesa o española para \"libre\" como "
-"en libertad, para mostrar que no quieren decir que el software sea gratis."
+"\"cerveza gratis\". En inglés, \"gratis\" y \"libre\" pueden ser ambas "
+"traducidas como \"free\". Es por esto que la Free Software Foundation a "
+"veces lo llama en este idioma como \"libre software\", tomando prestada la "
+"palabra de lenguajes como el francés o el español para \"libre\" como en "
+"libertad, para mostrar que no quieren decir que el software sea \"free\" de "
+"gratis."
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2342,11 +2339,10 @@ msgid "Title too long"
 msgstr "Título demasiado largo"
 
 #: src/page/upgrade.vue:21
-#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
-"Para actualizar, puede introducir un código de activación o hacer clic en "
-"\"Registrarse\" para actualizar en nuestro sitio web:"
+"Para mejorar su plan, puede introducir un código de activación o hacer clic "
+"en \"Registrarse\" para actualizar en nuestro sitio web:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2443,19 +2439,16 @@ msgstr "Actualizando pilas"
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
-#, fuzzy
 msgid "Upgrade"
-msgstr "Actualizar"
+msgstr "Mejorar plan"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
-#, fuzzy
 msgid "Upgrade Now"
-msgstr "Actualizar ahora"
+msgstr "Mejore su plan ahora"
 
 #: src/page/upgrade.vue:17
-#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Actualícese ahora y disfrute de nuestras ventajas como miembro."
+msgstr "¡Mejore su plan ahora y disfrute de nuestras ventajas como miembro!"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
@@ -2600,19 +2593,16 @@ msgid "Website"
 msgstr "Página web"
 
 #: src/page/upgrade.vue:61
-#, fuzzy
 msgid "What functionality is generally available?"
-msgstr "¿Qué funciones están disponibles en general?"
+msgstr "¿Qué funciones están ampliamente disponibles?"
 
 #: src/options/options.js:401
 msgid "White"
 msgstr "Blanco"
 
 #: src/page/upgrade.vue:55
-#, fuzzy
 msgid "Why are some features only available to sponsors?"
-msgstr ""
-"¿Por qué algunas funciones sólo están disponibles para los patrocinadores?"
+msgstr "¿Por qué algunas funciones sólo están disponibles para patrocinadores?"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
