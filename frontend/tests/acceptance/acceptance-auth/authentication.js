@@ -106,8 +106,8 @@ test.meta("testID", "authentication-003").meta({ type: "short", mode: "auth" })(
     await t
       .click(account.confirm)
       .typeText(account.currentPassword, "photoprism", { replace: true })
-      .typeText(account.newPassword, "1234567", { replace: true })
-      .typeText(account.retypePassword, "1234567", { replace: true });
+      .typeText(account.newPassword, "123", { replace: true })
+      .typeText(account.retypePassword, "123", { replace: true });
 
     await t.expect(account.confirm.hasAttribute("disabled", "disabled")).ok();
 
