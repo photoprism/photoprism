@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 08:51+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-12-01 10:47+0000\n"
+"Last-Translator: Bastien <basti1.dr@gmail.com>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "frontend/fr/>\n"
 "Language: fr\n"
@@ -87,12 +87,10 @@ msgid "Actions"
 msgstr "Actions"
 
 #: src/page/upgrade.vue:37
-#, fuzzy
 msgid "Activate"
 msgstr "Activez"
 
 #: src/page/upgrade.vue:134
-#, fuzzy
 msgid "Activation Code"
 msgstr "Code d'activation"
 
@@ -496,9 +494,8 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Les problèmes courants peuvent être rapidement diagnostiqués et résolus à l'aide des listes de contrôle de dépannage que nous fournissons."
 
 #: src/page/upgrade.vue:30
-#, fuzzy
 msgid "Compare Features"
-msgstr "Comparer les caractéristiques"
+msgstr "Comparer les fonctionnalités"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -566,7 +563,6 @@ msgid "Country"
 msgstr "Pays"
 
 #: src/page/login.vue:16
-#, fuzzy
 msgid "Create Account"
 msgstr "Créer un compte"
 
@@ -822,6 +818,7 @@ msgid "Edited"
 msgstr "Modifié"
 
 #: src/options/themes.js:436
+#, fuzzy
 msgid "Electra"
 msgstr "Electra"
 
@@ -1010,7 +1007,6 @@ msgid "Frames"
 msgstr "Cadres"
 
 #: src/page/upgrade.vue:47
-#, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Questions fréquemment posées"
 
@@ -1406,7 +1402,6 @@ msgid "Medium"
 msgstr "Moyen"
 
 #: src/page/connect.vue:4
-#, fuzzy
 msgid "Membership"
 msgstr "Adhésion"
 
@@ -1474,7 +1469,6 @@ msgid "Move Files"
 msgstr "Déplacer les fichiers"
 
 #: src/dialog/account/password.vue:156
-#, fuzzy
 msgid "Must have at least %{n} characters."
 msgstr "Doit comporter au moins %{n} caractères."
 
@@ -1999,6 +1993,7 @@ msgid "Review"
 msgstr "Examen"
 
 #: src/options/options.js:281
+#, fuzzy
 msgid "Satellite"
 msgstr "Satellite"
 
@@ -2292,7 +2287,10 @@ msgstr ""
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Cela monte le dossier des originaux en tant que lecteur réseau et vous permet d'ouvrir, modifier et supprimer des fichiers de votre ordinateur ou smartphone comme s'ils étaient locaux."
+msgstr ""
+"Cela monte le dossier des originaux en tant que lecteur réseau et vous "
+"permet d'ouvrir, modifier et supprimer des fichiers\n"
+"de votre ordinateur ou smartphone comme s'ils étaient locaux."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2430,7 +2428,7 @@ msgstr "Mise à jour des moments"
 
 #: src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "Mise à jour de l'image.."
+msgstr "Mise à jour de l'image …"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2585,7 +2583,10 @@ msgstr "Les clients WebDAV peuvent se connecter à PhotoPrism en utilisant l'URL
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "Les clients au protocole WebDAV, comme Microsoft’s Windows Explorer ou Apple's Finder, peuvent se connecter directement à PhotoPrism."
+msgstr ""
+"Les clients au protocole WebDAV, comme Microsoft’s Windows Explorer ou "
+"Apple's Finder, peuvent se connecter directement à\n"
+"PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2606,7 +2607,6 @@ msgid "White"
 msgstr "Blanc"
 
 #: src/page/upgrade.vue:55
-#, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr ""
 "Pourquoi certaines fonctions ne sont-elles accessibles qu'aux sponsors ?"
