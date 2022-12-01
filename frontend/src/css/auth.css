@@ -51,6 +51,8 @@
     color: #fff;
 }
 
+#photoprism main .auth-login .theme--light.v-icon,
+#photoprism main .auth-login .theme--light.v-label,
 #photoprism main .auth-login .v-input__append-inner .v-icon {
     color: rgba(0,0,0,.54);
 }

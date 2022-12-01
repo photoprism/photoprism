@@ -11,7 +11,7 @@
               <v-spacer></v-spacer>
               <v-text-field
                   v-model="username"
-                  required hide-details solo flat light autofocus
+                  hide-details required solo flat light autofocus
                   type="text"
                   :disabled="loading"
                   name="username"
@@ -20,14 +20,13 @@
                   :label="$gettext('Name')"
                   background-color="grey lighten-5"
                   class="input-username text-selectable"
-                  :color="colors.accent"
-                  :placeholder="$gettext('Name')"
-                  prepend-icon="person"
+                  color="#00a6a9"
+                  prepend-inner-icon="person"
                   @keyup.enter.native="login"
               ></v-text-field>
               <v-text-field
                   v-model="password"
-                  required hide-details solo flat light
+                  hide-details required solo flat light
                   :type="showPassword ? 'text' : 'password'"
                   :disabled="loading"
                   name="password"
@@ -35,24 +34,23 @@
                   autocapitalize="none"
                   :label="$gettext('Password')"
                   background-color="grey lighten-5"
-                  :placeholder="$gettext('Password')"
                   class="input-password mt-1 text-selectable"
                   :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                  prepend-icon="lock"
-                  :color="colors.accent"
+                  prepend-inner-icon="lock"
+                  color="#00a6a9"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter.native="login"
               ></v-text-field>
               <v-spacer></v-spacer>
               <div class="action-buttons text-xs-center">
                 <v-btn v-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
-                       :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80" @click.stop="register">
+                       :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80" @click.stop.prevent="register">
                   <translate>Create Account</translate>
                 </v-btn>
                 <v-btn :color="colors.primary" depressed :disabled="loginDisabled" :block="$vuetify.breakpoint.xsOnly"
-                       class="white--text action-confirm ra-6 py-2 px-3" @click.stop="login">
+                       class="white--text action-confirm ra-6 py-2 px-3" @click.stop.prevent="login">
                   <translate>Sign in</translate>
-                  <v-icon :right="!rtl" :left="rtl" dark>arrow_forward</v-icon>
+                  <v-icon dark>navigate_next</v-icon>
                 </v-btn>
               </div>
               <div v-if="passwordResetUri" class="text-xs-center opacity-80">
@@ -65,7 +63,7 @@
     </v-layout>
     <footer v-if="sponsor">
       <v-layout wrap align-top pa-0 ma-0>
-        <v-flex xs12 class="pa-0 body-2 text-selectable text-xs-center white--tex text-sm-left sm6">
+        <v-flex xs12 sm6 class="pa-0 body-2 text-selectable text-xs-center white--text text-sm-left">
           {{ $config.getAbout() }}
         </v-flex>
 
