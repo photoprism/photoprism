@@ -9,52 +9,63 @@
                 <img :src="$config.getIcon()" :alt="config.name">
               </div>
               <v-spacer></v-spacer>
-              <v-text-field
-                  v-model="username"
-                  hide-details required solo flat light autofocus
-                  type="text"
-                  :disabled="loading"
-                  name="username"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  :label="$gettext('Name')"
-                  background-color="grey lighten-5"
-                  class="input-username text-selectable"
-                  color="#00a6a9"
-                  prepend-inner-icon="person"
-                  @keyup.enter.native="login"
-              ></v-text-field>
-              <v-text-field
-                  v-model="password"
-                  hide-details required solo flat light
-                  :type="showPassword ? 'text' : 'password'"
-                  :disabled="loading"
-                  name="password"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  :label="$gettext('Password')"
-                  background-color="grey lighten-5"
-                  class="input-password mt-1 text-selectable"
-                  :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                  prepend-inner-icon="lock"
-                  color="#00a6a9"
-                  @click:append="showPassword = !showPassword"
-                  @keyup.enter.native="login"
-              ></v-text-field>
-              <v-spacer></v-spacer>
-              <div class="action-buttons text-xs-center">
-                <v-btn v-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
-                       :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80" @click.stop.prevent="register">
-                  <translate>Create Account</translate>
-                </v-btn>
-                <v-btn :color="colors.primary" depressed :disabled="loginDisabled" :block="$vuetify.breakpoint.xsOnly"
-                       class="white--text action-confirm ra-6 py-2 px-3" @click.stop.prevent="login">
-                  <translate>Sign in</translate>
-                  <v-icon dark>navigate_next</v-icon>
-                </v-btn>
-              </div>
+              <v-layout wrap align-top>
+                <v-flex xs12 class="px-2 py-1">
+                  <v-text-field
+                      v-model="username"
+                      hide-details required solo flat light autofocus
+                      type="text"
+                      :disabled="loading"
+                      name="username"
+                      autocorrect="off"
+                      autocapitalize="none"
+                      :label="$gettext('Name')"
+                      background-color="grey lighten-5"
+                      class="input-username text-selectable"
+                      color="#00a6a9"
+                      prepend-inner-icon="person"
+                      @keyup.enter.native="login"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12 class="pa-2">
+                  <v-text-field
+                      v-model="password"
+                      hide-details required solo flat light
+                      :type="showPassword ? 'text' : 'password'"
+                      :disabled="loading"
+                      name="password"
+                      autocorrect="off"
+                      autocapitalize="none"
+                      :label="$gettext('Password')"
+                      background-color="grey lighten-5"
+                      class="input-password text-selectable"
+                      :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                      prepend-inner-icon="lock"
+                      color="#00a6a9"
+                      @click:append="showPassword = !showPassword"
+                      @keyup.enter.native="login"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12 class="px-2 py-1">
+                  <div class="action-buttons text-xs-center">
+                    <v-btn v-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
+                           :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80"
+                           @click.stop.prevent="register">
+                      <translate>Create Account</translate>
+                    </v-btn>
+                    <v-btn :color="colors.primary" depressed :disabled="loginDisabled"
+                           :block="$vuetify.breakpoint.xsOnly"
+                           class="white--text action-confirm ra-6 py-2 px-3" @click.stop.prevent="login">
+                      <translate>Sign in</translate>
+                      <v-icon dark>navigate_next</v-icon>
+                    </v-btn>
+                  </div>
+                </v-flex>
+              </v-layout>
               <div v-if="passwordResetUri" class="text-xs-center opacity-80">
-                <a :href="passwordResetUri" class="text-link" :style="`color: ${colors.link}!important`"><translate>Forgot password?</translate></a>
+                <a :href="passwordResetUri" class="text-link" :style="`color: ${colors.link}!important`">
+                  <translate>Forgot password?</translate>
+                </a>
               </div>
             </v-card-text>
           </v-card>
@@ -151,7 +162,9 @@ export default {
         name: this.$session.getHome(),
       });
 
-      setTimeout(() => { window.location = route.href; }, 100);
+      setTimeout(() => {
+        window.location = route.href;
+      }, 100);
     },
     register() {
       window.location = this.registerUri;
