@@ -20,7 +20,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 
 # Install Docker with Compose Plugin.
 sudo apt-get update
-sudo apt-get -qq install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo apt-get -qq install docker-ce docker-ce-cli containerd.io docker-compose-plugin aufs-tools cgroupfs-mount
 
 # Verify installation works.
 sudo docker run hello-world
