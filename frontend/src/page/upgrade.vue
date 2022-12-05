@@ -7,7 +7,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon href="https://link.photoprism.app/personal-editions" target="_blank" class="action-upgrade" :title="$gettext('Upgrade')">
+      <v-btn icon href="https://link.photoprism.app/personal-editions" target="_blank" class="action-upgrade"
+             :title="$gettext('Upgrade')">
         <v-icon size="26">diamond</v-icon>
       </v-btn>
     </v-toolbar>
@@ -15,7 +16,9 @@
       <v-layout row wrap>
         <v-flex xs12 class="px-2 pt-2 pb-0">
           <p class="subheading text-selectable">
-            <strong><translate>Upgrade now and enjoy our member benefits!</translate></strong>
+            <strong>
+              <translate>Upgrade now and enjoy our member benefits!</translate>
+            </strong>
           </p>
           <p class="subheading text-selectable">
             <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
@@ -60,7 +63,9 @@
           </p>
         </v-flex>
         <v-flex xs12 class="px-2 pt-3 pb-0">
-          <h3 class="pb-3"><translate>Frequently Asked Questions</translate></h3>
+          <h3 class="pb-3">
+            <translate>Frequently Asked Questions</translate>
+          </h3>
           <p class="body-2 text-selectable">
             <translate>Shouldn't free software be free of costs?</translate>
           </p>
@@ -124,10 +129,10 @@ export default {
       window.open('https://link.photoprism.app/personal-editions', '_blank').focus();
     },
     upgrade() {
-      window.location ='https://my.photoprism.app/register?upgrade='+encodeURIComponent(window.location);
+      window.location = 'https://my.photoprism.app/register?upgrade=' + encodeURIComponent(window.location);
     },
     activate() {
-      this.$router.push({name: "connect", params: {name:"hub",token:""}});
+      this.$router.push({name: "connect", params: {name: "hub", token: this.form.token}});
     }
   },
 };
