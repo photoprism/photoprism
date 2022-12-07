@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 08:51+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-12-07 19:47+0000\n"
+"Last-Translator: Ilya <admin@redguy.ru>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/ru/>\n"
 "Language: ru\n"
@@ -87,12 +87,10 @@ msgid "Actions"
 msgstr "Действия"
 
 #: src/page/upgrade.vue:37
-#, fuzzy
 msgid "Activate"
 msgstr "Активировать"
 
 #: src/page/upgrade.vue:134
-#, fuzzy
 msgid "Activation Code"
 msgstr "Код активации"
 
