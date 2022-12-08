@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-07 19:47+0000\n"
-"Last-Translator: Ilya <admin@redguy.ru>\n"
+"PO-Revision-Date: 2022-12-08 23:47+0000\n"
+"Last-Translator: Aleksandr Vinokhodov <VinokhodovAlex@gmail.com>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/ru/>\n"
 "Language: ru\n"
@@ -55,7 +55,7 @@ msgstr "4 часа"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
-msgstr "Щелчок мыши скопирует его в буфер обмена."
+msgstr "Клик скопирует это в буфер обмена."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:254
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
@@ -65,14 +65,14 @@ msgstr "О нас"
 
 #: src/options/themes.js:431
 msgid "Abyss"
-msgstr "Бездна"
+msgstr "Пропасть"
 
 #: src/component/navigation.vue:93 src/component/navigation.vue:1944
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:144 src/page/settings.vue:84
 #: src/page/settings/general.vue:470
 msgid "Account"
-msgstr "Учетная запись"
+msgstr "Учётная запись"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -96,7 +96,7 @@ msgstr "Код активации"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
-msgstr "Добавить учетную запись"
+msgstr "Добавить учётную запись"
 
 #: src/page/albums.vue:122 src/page/albums.vue:163
 msgid "Add Album"
@@ -104,7 +104,7 @@ msgstr "Добавить альбом"
 
 #: src/page/settings/general.vue:229
 msgid "Add files to your library via Web Upload."
-msgstr "Добавляйте файлы в свою библиотеку через Web Upload."
+msgstr "Добавьте файлы в свою библиотеку через Веб Загрузку."
 
 #: src/dialog/share.vue:79
 msgid "Add Link"
@@ -112,7 +112,7 @@ msgstr "Добавить ссылку"
 
 #: src/page/albums.vue:96
 msgid "Add pictures from search results by selecting them."
-msgstr "Добавляйте картинки из результатов поиска, выбирая их."
+msgstr "Добавьте картинки из результатов поиска, выбирая их."
 
 #: src/component/album/clipboard.vue:129 src/component/file/clipboard.vue:85
 #: src/component/label/clipboard.vue:61 src/component/photo/clipboard.vue:180
@@ -130,7 +130,7 @@ msgstr "Дополнительно"
 
 #: src/options/options.js:378
 msgid "After 1 day"
-msgstr "Спустя день"
+msgstr "Спустя 1 день"
 
 #: src/options/options.js:379
 msgid "After 3 days"
@@ -142,11 +142,11 @@ msgstr "Спустя 7 дней"
 
 #: src/options/options.js:382
 msgid "After one month"
-msgstr "Спустя месяц"
+msgstr "Спустя 1 месяц"
 
 #: src/options/options.js:384
 msgid "After one year"
-msgstr "Спустя год"
+msgstr "Спустя 1 год"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
@@ -246,7 +246,7 @@ msgstr "Высота (м)"
 
 #: src/common/api.js:99
 msgid "An error occurred - are you offline?"
-msgstr "Ошибка - вы отключены от сети?"
+msgstr "Возникла ошибка - вы отключены от сети?"
 
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
@@ -261,7 +261,8 @@ msgstr "Анимация"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Любые личные фотографии и видео остаются личными и не будут передаваться."
+msgstr ""
+"Любые личные фотографии и видео остаются личными и не будут распространяться."
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -280,11 +281,11 @@ msgstr "Подтвердить"
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:338
 msgid "Archive"
-msgstr "Архив"
+msgstr "Архивировать"
 
 #: src/dialog/photo/edit/info.vue:199
 msgid "Archived"
-msgstr "В архиве"
+msgstr "Заархивировано"
 
 #: src/dialog/photo/archive.vue:10
 msgid "Are you sure you want to archive the selection?"
@@ -494,7 +495,6 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Распространенные проблемы могут быть быстро диагностированы и решены с помощью предоставляемых нами контрольных списков устранения неполадок."
 
 #: src/page/upgrade.vue:30
-#, fuzzy
 msgid "Compare Features"
 msgstr "Сравнить характеристики"
 
@@ -564,7 +564,6 @@ msgid "Country"
 msgstr "Страна"
 
 #: src/page/login.vue:16
-#, fuzzy
 msgid "Create Account"
 msgstr "Создать учетную запись"
 
@@ -1008,7 +1007,6 @@ msgid "Frames"
 msgstr "ფრეიმი"
 
 #: src/page/upgrade.vue:47
-#, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Часто задаваемые вопросы"
 
@@ -1404,7 +1402,6 @@ msgid "Medium"
 msgstr "Средний"
 
 #: src/page/connect.vue:4
-#, fuzzy
 msgid "Membership"
 msgstr "Членство"
 
@@ -1472,7 +1469,6 @@ msgid "Move Files"
 msgstr "Перемещать файлы"
 
 #: src/dialog/account/password.vue:156
-#, fuzzy
 msgid "Must have at least %{n} characters."
 msgstr "Должно быть не менее %{n} символов."
 
@@ -1697,12 +1693,11 @@ msgid "Other"
 msgstr "Другой"
 
 #: src/page/upgrade.vue:64
-#, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
-"Наша команда оценивает это на постоянной основе, в зависимости от усилий по "
-"поддержке, которые функции и опции конфигурации вызывают или вызывали в "
-"прошлом, а также от того, нужны ли они в целом всем или в основном "
+"Наша команда оценивает это на постоянной основе, в зависимости от того, "
+"какие усилия по поддержке вызывают или вызывали в прошлом функции и опции "
+"конфигурации, а также от того, нужны ли они в целом всем или в основном "
 "запрашиваются организациями и продвинутыми пользователями. Поскольку это "
 "позволяет нам сделать больше функций общедоступными, мы призываем всех "
 "пользователей поддержать нашу миссию."
@@ -1764,7 +1759,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism был обновлен…"
 
 #: src/page/upgrade.vue:58
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
 "PhotoPrism находится на 100% самофинансировании. Добровольные пожертвования "
@@ -2107,7 +2101,6 @@ msgid "Share your pictures with other apps and services."
 msgstr "Делись своими фотографиями с другими приложениями и сервисами."
 
 #: src/page/upgrade.vue:49
-#, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr ""
 "Разве свободное программное обеспечение не должно быть свободным от затрат?"
@@ -2232,14 +2225,13 @@ msgstr "Тема"
 
 #: src/page/connect.vue:33
 msgid "Successfully Connected"
-msgstr "Успешно подключен"
+msgstr "Успешно подключено"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Поддержка дополнительных служб, таких как Google Drive, будет добавлена позже."
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
-#, fuzzy
 msgid "Support Our Mission"
 msgstr "Поддержите нашу миссию"
 
@@ -2277,7 +2269,6 @@ msgid "Theme"
 msgstr "Тема"
 
 #: src/page/upgrade.vue:52
-#, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
 "Думайте о \"свободном ПО\" как о \"свободе слова\", а не как о \"свободном "
@@ -2315,13 +2306,11 @@ msgid "Timeout"
 msgstr "Пауза"
 
 #: src/page/settings/account.vue:113
-#, fuzzy
 msgctxt "Account"
 msgid "Title"
 msgstr "Название"
 
 #: src/dialog/photo/edit/details.vue:96
-#, fuzzy
 msgctxt "Photo"
 msgid "Title"
 msgstr "Название"
@@ -2340,7 +2329,6 @@ msgid "Title too long"
 msgstr "Название слишком длинное"
 
 #: src/page/upgrade.vue:21
-#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
 "Для обновления вы можете ввести код активации или нажать кнопку "
@@ -2441,17 +2429,14 @@ msgstr "Обновление серий"
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:586
 #: src/component/navigation.vue:1722 src/page/upgrade.vue:57
-#, fuzzy
 msgid "Upgrade"
 msgstr "Обновление"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
-#, fuzzy
 msgid "Upgrade Now"
 msgstr "Обновить сейчас"
 
 #: src/page/upgrade.vue:17
-#, fuzzy
 msgid "Upgrade now and enjoy our member benefits!"
 msgstr ""
 "Повысьте свой статус сейчас и воспользуйтесь нашими преимуществами для "
@@ -2600,7 +2585,6 @@ msgid "Website"
 msgstr "Сайт"
 
 #: src/page/upgrade.vue:61
-#, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Какая функциональность обычно доступна?"
 
@@ -2609,7 +2593,6 @@ msgid "White"
 msgstr "Белый"
 
 #: src/page/upgrade.vue:55
-#, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Почему некоторые функции доступны только спонсорам?"
 
