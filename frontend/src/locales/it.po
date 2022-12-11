@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 08:51+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-12-11 22:47+0000\n"
+"Last-Translator: Ruggero Montalto <ruggero.montalto@protonmail.com>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/it/>\n"
 "Language: it\n"
@@ -87,12 +87,10 @@ msgid "Actions"
 msgstr "Azioni"
 
 #: src/page/upgrade.vue:37
-#, fuzzy
 msgid "Activate"
-msgstr "Attivare"
+msgstr "Attiva"
 
 #: src/page/upgrade.vue:134
-#, fuzzy
 msgid "Activation Code"
 msgstr "Codice di attivazione"
 
@@ -496,7 +494,6 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "I problemi più comuni possono essere diagnosticati e risolti rapidamente utilizzando le liste di controllo per la risoluzione dei problemi che ti forniamo."
 
 #: src/page/upgrade.vue:30
-#, fuzzy
 msgid "Compare Features"
 msgstr "Confronta le caratteristiche"
 
@@ -566,9 +563,8 @@ msgid "Country"
 msgstr "Nazione"
 
 #: src/page/login.vue:16
-#, fuzzy
 msgid "Create Account"
-msgstr "Creare un account"
+msgstr "Crea account"
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
@@ -1010,7 +1006,6 @@ msgid "Frames"
 msgstr "Fotogrammi"
 
 #: src/page/upgrade.vue:47
-#, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Domande frequenti"
 
@@ -1474,9 +1469,8 @@ msgid "Move Files"
 msgstr "Sposta File"
 
 #: src/dialog/account/password.vue:156
-#, fuzzy
 msgid "Must have at least %{n} characters."
-msgstr "Deve avere almeno %{n} caratteri."
+msgstr "Minimo %{n} caratteri obbligatori."
 
 #: src/page/about/feedback.vue:171 src/component/photo/cards.vue:498
 #: src/component/photo/list.vue:138 src/component/photo/list.vue:227
@@ -2240,9 +2234,8 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Il supporto ad altri servizi, come Google Drive, verrà aggiunto in futuro."
 
 #: src/dialog/sponsor.vue:7 src/page/upgrade.vue:4
-#, fuzzy
 msgid "Support Our Mission"
-msgstr "Sostenere la nostra missione"
+msgstr "Sostienici nella nostra missione"
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
