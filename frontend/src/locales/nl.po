@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-29 06:52+0000\n"
-"Last-Translator: Donaldini <Donald@donaldini.be>\n"
+"PO-Revision-Date: 2022-12-11 22:47+0000\n"
+"Last-Translator: Ruggero Montalto <ruggero.montalto@protonmail.com>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "frontend/nl/>\n"
 "Language: nl\n"
@@ -17,11 +17,11 @@ msgstr ""
 
 #: src/page/albums.vue:421
 msgid "%{n} albums found"
-msgstr "%{n} gevonden albums"
+msgstr "%{n} albums gevonden"
 
 #: src/dialog/share/upload.vue:81
 msgid "%{n} files uploaded"
-msgstr "%{n} bestanden geüpload"
+msgstr "%{n} opgeladen bestanden"
 
 #: src/page/library/browse.vue:311
 msgid "%{n} folders found"
@@ -34,7 +34,7 @@ msgstr "%{n} labels gevonden"
 #: src/page/people/new.vue:286 src/page/people/new.vue:372
 #: src/page/people/recognized.vue:508
 msgid "%{n} people found"
-msgstr "%{n} mensen gevonden"
+msgstr "%{n} personen gevonden"
 
 #: src/page/album/photos.vue:240 src/page/album/photos.vue:393
 #: src/page/photos.vue:325 src/page/photos.vue:490
@@ -47,7 +47,7 @@ msgstr "1 uur"
 
 #: src/options/options.js:370
 msgid "12 hours"
-msgstr "12 uur"
+msgstr "12 uren"
 
 #: src/options/options.js:369
 msgid "4 hours"
