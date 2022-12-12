@@ -20,7 +20,7 @@ func DeleteSession(router *gin.RouterGroup) {
 		if id == "" {
 			AbortBadRequest(c)
 			return
-		} else if get.Config().Public() {
+		} else if !get.Config().Auth() {
 			c.JSON(http.StatusOK, gin.H{"status": "authentication disabled", "id": id})
 			return
 		}

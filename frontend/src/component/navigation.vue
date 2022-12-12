@@ -530,7 +530,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" class="p-profile" @click.stop="onAccount">
+        <v-list-tile v-show="auth && isAuthRequired && $config.feature('settings')" class="p-profile" @click.stop="onAccount">
           <v-list-tile-avatar size="36">
             <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo">
           </v-list-tile-avatar>
@@ -549,7 +549,7 @@
           </v-list-tile-action>
         </v-list-tile>
 
-        <v-list-tile v-show="isMini && auth && !isPublic" class="nav-logout" @click.stop.prevent="onLogout">
+        <v-list-tile v-show="isMini && auth && isAuthRequired" class="nav-logout" @click.stop.prevent="onLogout">
           <v-list-tile-action :title="$gettext('Logout')">
             <v-icon>power_settings_new</v-icon>
           </v-list-tile-action>
@@ -565,7 +565,7 @@
     <div id="mobile-menu" :class="{'active': speedDial}" @click.stop="speedDial = false">
       <div class="menu-content grow-top-right">
         <div class="menu-icons">
-          <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" class="menu-action nav-logout"
+          <a v-if="auth && isAuthRequired" href="#" :title="$gettext('Logout')" class="menu-action nav-logout"
              @click.prevent="onLogout">
             <v-icon>power_settings_new</v-icon>
           </a>
@@ -584,7 +584,7 @@
              class="menu-action nav-upload" @click.prevent="openUpload()">
             <v-icon>cloud_upload</v-icon>
           </a>
-          <router-link v-if="!auth && !isPublic" :to="{ name: 'login' }" :title="$gettext('Login')"
+          <router-link v-if="!auth && isAuthRequired" :to="{ name: 'login' }" :title="$gettext('Login')"
                        class="menu-action nav-login">
             <v-icon>login</v-icon>
           </router-link>
@@ -706,6 +706,7 @@ export default {
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
       isPublic: this.$config.get("public"),
+      isAuthRequired: this.$config.isAuthRequired(),
       isDemo: this.$config.get("demo"),
       isAdmin: this.$session.isAdmin(),
       isSponsor: this.$config.isSponsor(),
@@ -734,7 +735,7 @@ export default {
   },
   computed: {
     auth() {
-      return this.session.auth || this.isPublic;
+      return this.session.auth || !this.isAuthRequired;
     },
     visible() {
       return !this.$route.meta.hideNav;

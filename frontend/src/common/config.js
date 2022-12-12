@@ -570,12 +570,20 @@ export default class Config {
     return [];
   }
 
+  isAuthRequired() {
+    return this.values && this.values.authMode === "password";
+  }
+
   isPublic() {
     return this.values && this.values.public;
   }
 
   isDemo() {
     return this.values && this.values.demo;
+  }
+
+  isSingleUser() {
+    return this.values && this.values.authMode === "singleUser";
   }
 
   isSponsor() {

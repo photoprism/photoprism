@@ -141,6 +141,16 @@ export default {
       return this.loading || this.username.trim() === "" || this.password.trim() === "";
     }
   },
+  mounted() {
+    if (!this.$config.isAuthRequired()) {
+      this.loading = true;
+      this.$session.login('', '').then(
+        () => {
+          this.load();
+        }
+      ).catch(() => this.loading = false);
+    }
+  },
   created() {
     this.$scrollbar.hide(this.$isMobile);
   },

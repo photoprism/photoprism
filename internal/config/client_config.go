@@ -205,7 +205,7 @@ func (c *Config) Flags() (flags []string) {
 
 // ClientPublic returns config values for use by the JavaScript UI and other clients.
 func (c *Config) ClientPublic() ClientConfig {
-	if c.Public() {
+	if !c.Auth() {
 		return c.ClientUser(true).ApplyACL(acl.Resources, acl.RoleAdmin)
 	}
 

@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	AuthModePublic = "public"
-	AuthModePasswd = "password"
+	AuthModePublic     = "public"
+	AuthModePasswd     = "password"
+	AuthModeSingleUser = "singleUser"
 )
 
 func isBcrypt(s string) bool {
@@ -77,6 +78,10 @@ func (c *Config) SetAuthMode(mode string) {
 		c.options.AuthMode = AuthModePublic
 		c.options.Public = true
 		entity.CheckTokens = false
+	case AuthModeSingleUser:
+		c.options.AuthMode = AuthModeSingleUser
+		c.options.Public = false
+		entity.CheckTokens = false
 	default:
 		c.options.AuthMode = AuthModePasswd
 		c.options.Public = false
@@ -86,7 +91,7 @@ func (c *Config) SetAuthMode(mode string) {
 
 // Auth checks if authentication is required.
 func (c *Config) Auth() bool {
-	return !c.Public()
+	return c.AuthMode() == AuthModePasswd
 }
 
 // AuthMode returns the authentication mode.
@@ -98,6 +103,8 @@ func (c *Config) AuthMode() string {
 	switch c.options.AuthMode {
 	case AuthModePublic:
 		return AuthModePublic
+	case AuthModeSingleUser:
+		return AuthModeSingleUser
 	default:
 		return AuthModePasswd
 	}
@@ -105,7 +112,7 @@ func (c *Config) AuthMode() string {
 
 // LoginUri returns the user login URI.
 func (c *Config) LoginUri() string {
-	if c.Public() {
+	if !c.Auth() {
 		return c.BaseUri("/library/browse")
 	}
 
@@ -118,7 +125,7 @@ func (c *Config) LoginUri() string {
 
 // RegisterUri returns the user registration URI.
 func (c *Config) RegisterUri() string {
-	if c.Public() {
+	if !c.Auth() {
 		return ""
 	}
 

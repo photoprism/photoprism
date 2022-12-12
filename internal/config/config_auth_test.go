@@ -33,6 +33,8 @@ func TestAuthMode(t *testing.T) {
 	c.options.Demo = false
 	c.options.AuthMode = "pass"
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
+	c.options.AuthMode = "singleUser"
+	assert.Equal(t, AuthModeSingleUser, c.AuthMode())
 	c.options.AuthMode = "password"
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
 	c.options.Debug = false
@@ -41,6 +43,8 @@ func TestAuthMode(t *testing.T) {
 	c.options.Debug = true
 	c.SetAuthMode(AuthModePublic)
 	assert.Equal(t, AuthModePublic, c.AuthMode())
+	c.SetAuthMode(AuthModeSingleUser)
+	assert.Equal(t, AuthModeSingleUser, c.AuthMode())
 	c.SetAuthMode(AuthModePasswd)
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
 	c.options.Debug = false

@@ -82,7 +82,7 @@ func WebSocket(router *gin.RouterGroup) {
 		// Init connection.
 		wsAuth.mutex.Lock()
 
-		if conf.Public() {
+		if !conf.Auth() {
 			wsAuth.user[connId] = entity.Admin
 		} else {
 			wsAuth.user[connId] = entity.UnknownUser

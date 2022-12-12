@@ -29,7 +29,7 @@ func GetSession(router *gin.RouterGroup) {
 
 		// Skip authentication if app is running in public mode.
 		var sess *entity.Session
-		if conf.Public() {
+		if !conf.Auth() {
 			sess = get.Session().Public()
 		} else {
 			sess = Session(id)

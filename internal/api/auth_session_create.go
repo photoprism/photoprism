@@ -29,7 +29,7 @@ func CreateSession(router *gin.RouterGroup) {
 		conf := get.Config()
 
 		// Skip authentication if app is running in public mode.
-		if conf.Public() {
+		if !conf.Auth() {
 			sess := get.Session().Public()
 			data := gin.H{
 				"status":   "ok",

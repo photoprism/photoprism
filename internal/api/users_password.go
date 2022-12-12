@@ -23,7 +23,7 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		conf := get.Config()
 
 		// You cannot change any passwords without authentication and settings enabled.
-		if conf.Public() || conf.DisableSettings() {
+		if !conf.Auth() || conf.DisableSettings() {
 			Abort(c, http.StatusForbidden, i18n.ErrPublic)
 			return
 		}

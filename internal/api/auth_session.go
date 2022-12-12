@@ -23,7 +23,7 @@ func SessionID(c *gin.Context) (sessId string) {
 // Session finds the client session for the given ID or returns nil otherwise.
 func Session(id string) *entity.Session {
 	// Skip authentication if app is running in public mode.
-	if get.Config().Public() {
+	if !get.Config().Auth() {
 		return get.Session().Public()
 	} else if id == "" {
 		return nil
