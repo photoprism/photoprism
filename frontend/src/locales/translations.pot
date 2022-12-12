@@ -86,7 +86,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/page/upgrade.vue:37
+#: src/page/upgrade.vue:39
 msgid "Activate"
 msgstr ""
 
@@ -551,8 +551,8 @@ msgstr ""
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
 
-#: src/page/upgrade.vue:30
-msgid "Compare Features"
+#: src/page/upgrade.vue:32
+msgid "Compare Editions"
 msgstr ""
 
 #: src/page/library/index.vue:115
@@ -630,7 +630,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: src/page/login.vue:16
+#: src/page/login.vue:21
 msgid "Create Account"
 msgstr ""
 
@@ -1041,7 +1041,7 @@ msgid "Feedback"
 msgstr ""
 
 #: src/dialog/sponsor.vue:25
-#: src/page/upgrade.vue:43
+#: src/page/upgrade.vue:45
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 
@@ -1112,7 +1112,7 @@ msgstr ""
 msgid "Folders"
 msgstr ""
 
-#: src/page/login.vue:24
+#: src/page/login.vue:32
 msgid "Forgot password?"
 msgstr ""
 
@@ -1126,7 +1126,7 @@ msgstr ""
 msgid "Frames"
 msgstr ""
 
-#: src/page/upgrade.vue:47
+#: src/page/upgrade.vue:50
 msgid "Frequently Asked Questions"
 msgstr ""
 
@@ -1429,8 +1429,8 @@ msgstr ""
 #: src/page/about/about.vue:28
 #: src/page/about/about.vue:52
 #: src/page/about/about.vue:161
-#: src/page/login.vue:53
-#: src/page/upgrade.vue:66
+#: src/page/login.vue:62
+#: src/page/upgrade.vue:70
 msgid "Learn more"
 msgstr ""
 
@@ -1675,8 +1675,7 @@ msgstr ""
 #: src/dialog/service/edit.vue:427
 #: src/page/about/feedback.vue:171
 #: src/page/labels.vue:339
-#: src/page/login.vue:82
-#: src/page/login.vue:86
+#: src/page/login.vue:92
 #: src/page/people/new.vue:52
 #: src/page/people/new.vue:299
 #: src/page/people/recognized.vue:396
@@ -1933,8 +1932,8 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: src/page/upgrade.vue:64
-msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#: src/page/upgrade.vue:68
+msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr ""
 
 #: src/page/about/about.vue:45
@@ -1956,8 +1955,7 @@ msgstr ""
 #: src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487
 #: src/dialog/share.vue:24
-#: src/page/login.vue:103
-#: src/page/login.vue:105
+#: src/page/login.vue:120
 msgid "Password"
 msgstr ""
 
@@ -2002,7 +2000,7 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/page/upgrade.vue:58
+#: src/page/upgrade.vue:62
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
 
@@ -2396,7 +2394,7 @@ msgstr ""
 msgid "Share your pictures with other apps and services."
 msgstr ""
 
-#: src/page/upgrade.vue:49
+#: src/page/upgrade.vue:53
 msgid "Shouldn't free software be free of costs?"
 msgstr ""
 
@@ -2434,11 +2432,11 @@ msgstr ""
 msgid "Sidecar"
 msgstr ""
 
-#: src/page/login.vue:19
+#: src/page/login.vue:24
 msgid "Sign in"
 msgstr ""
 
-#: src/page/upgrade.vue:33
+#: src/page/upgrade.vue:35
 msgid "Sign Up"
 msgstr ""
 
@@ -2577,7 +2575,7 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: src/page/upgrade.vue:52
+#: src/page/upgrade.vue:56
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
 
@@ -2631,7 +2629,7 @@ msgstr ""
 msgid "Title too long"
 msgstr ""
 
-#: src/page/upgrade.vue:21
+#: src/page/upgrade.vue:23
 msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 msgstr ""
 
@@ -2765,7 +2763,7 @@ msgstr ""
 msgid "Upgrade Now"
 msgstr ""
 
-#: src/page/upgrade.vue:17
+#: src/page/upgrade.vue:18
 msgid "Upgrade now and enjoy our member benefits!"
 msgstr ""
 
@@ -2932,7 +2930,7 @@ msgstr ""
 msgid "Website"
 msgstr ""
 
-#: src/page/upgrade.vue:61
+#: src/page/upgrade.vue:65
 msgid "What functionality is generally available?"
 msgstr ""
 
@@ -2940,7 +2938,7 @@ msgstr ""
 msgid "White"
 msgstr ""
 
-#: src/page/upgrade.vue:55
+#: src/page/upgrade.vue:59
 msgid "Why are some features only available to sponsors?"
 msgstr ""
 
@@ -3012,7 +3010,7 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:19
 #: src/page/about/about.vue:21
-#: src/page/upgrade.vue:20
+#: src/page/upgrade.vue:22
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr ""
 

@@ -38,7 +38,7 @@
                  depressed
                  :disabled="busy"
                  @click.stop="compare">
-            <translate>Compare Features</translate>
+            <translate>Compare Editions</translate>
           </v-btn>
           <v-btn v-if="form.token.length < 1" color="primary-button"
                  class="white--text ml-0" :block="$vuetify.breakpoint.xsOnly"
@@ -82,7 +82,7 @@
             <translate>What functionality is generally available?</translate>
           </p>
           <p class="body-1 text-selectable">
-            <translate>Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission.</translate>
+            <translate>Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission.</translate>
           </p>
           <p><a href="https://link.photoprism.app/membership" class="text-link" target="_blank"><translate>Learn more</translate> ›</a></p>
         </v-flex>
