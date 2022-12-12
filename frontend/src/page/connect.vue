@@ -1,30 +1,37 @@
 <template>
-  <div class="p-page p-page-connect">
+  <div class="p-page p-page-upgrade">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <a href="https://link.photoprism.app/membership" target="_blank"><translate>Membership</translate></a> <v-icon>navigate_next</v-icon>
+        <a href="https://link.photoprism.app/membership" target="_blank"><translate>Upgrade</translate></a> <v-icon>navigate_next</v-icon>
         <span v-if="busy">
           <translate>Busy, please wait…</translate>
         </span>
         <span v-else-if="success">
           <translate>Verified</translate>
         </span>
-        <span v-else>
-          <translate>Connect</translate>
+        <span v-else-if="error">
+          <translate>Failed</translate>
         </span>
+        <span v-else>
+          <translate>Support Our Mission</translate>
+      </span>
       </v-toolbar-title>
+
       <v-spacer></v-spacer>
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
-      </svg>
+
+      <v-btn icon href="https://link.photoprism.app/personal-editions" target="_blank" class="action-upgrade"
+             :title="$gettext('Learn more')">
+        <v-icon size="26">diamond</v-icon>
+      </v-btn>
     </v-toolbar>
-    <v-container fluid fill-height row wrap class="pa-4">
-      <v-layout align-center justify-center fill-height>
-        <v-flex v-if="busy" xs12 d-flex class="text-sm-center py-3">
+    <v-form ref="form" v-model="valid" autocomplete="off" class="px-3 pt-3 pb-0" lazy-validation>
+      <v-layout v-if="busy" row wrap>
+        <v-flex xs12 d-flex class="text-sm-center pa-2">
           <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
         </v-flex>
-        <v-flex v-else-if="error" xs12 d-flex class="text-sm-left mb-3">
+      </v-layout>
+      <v-layout v-else-if="error" row wrap>
+        <v-flex xs12 class="text-sm-left pa-2">
           <v-alert
               :value="true"
               color="error"
@@ -35,7 +42,25 @@
             {{ error }}
           </v-alert>
         </v-flex>
-        <v-flex v-else-if="success" xs12 d-flex class="text-sm-left mb-3">
+        <v-flex xs12 class="pa-2">
+          <v-btn color="secondary-light" :block="$vuetify.breakpoint.xsOnly"
+                 class="ml-0"
+                 depressed
+                 :disabled="busy"
+                 @click.stop="reset">
+            <translate>Cancel</translate>
+          </v-btn>
+          <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly"
+                 class="white--text ml-0"
+                 href="https://photoprism.app/contact"
+                 target="_blank"
+                 depressed>
+            <translate>Contact Us</translate>
+          </v-btn>
+        </v-flex>
+      </v-layout>
+      <v-layout v-else-if="success" row wrap>
+        <v-flex xs12 d-flex class="text-sm-left pa-2">
           <v-alert
               :value="true"
               color="success"
@@ -46,57 +71,140 @@
             <translate>Successfully Connected</translate>
           </v-alert>
         </v-flex>
-        <v-flex v-else xs12 d-flex class="text-sm-left mb-3">
-          <v-alert
-              :value="true"
-              color="warning"
-              icon="gpp_maybe"
-              class="mt-3 ra-4"
-              outline
-          >
-            <translate>Request failed - invalid response</translate>
-          </v-alert>
+      </v-layout>
+      <v-layout v-else row wrap>
+        <v-flex xs12 class="px-2 pt-2 pb-0">
+          <p class="subheading text-selectable">
+            <strong><translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate></strong>
+          </p>
+          <p class="subheading text-selectable">
+            <translate>To upgrade, you may either enter an activation code or click on "Proceed" to sign up on our website:</translate>
+          </p>
+        </v-flex>
+        <v-flex xs12 class="pa-2">
+          <v-text-field v-model="form.token" flat solo hide-details return-masked-value :mask="tokenMask"
+                        browser-autocomplete="off"
+                        color="secondary-dark"
+                        background-color="secondary-light" :label="$gettext('Activation Code')" type="text">
+          </v-text-field>
+        </v-flex>
+        <v-flex xs12 grow class="px-2 pb-2 pt-1">
+          <v-btn v-if="!form.token.length" color="primary-button"
+                 class="white--text ml-0" :block="$vuetify.breakpoint.xsOnly"
+                 depressed
+                 :disabled="busy"
+                 @click.stop="upgrade">
+            <translate>Proceed</translate>
+            <v-icon :right="!rtl" :left="rtl" dark>navigate_next</v-icon>
+          </v-btn>
+          <v-btn v-else color="primary-button" :block="$vuetify.breakpoint.xsOnly"
+                 class="white--text ml-0"
+                 depressed
+                 :disabled="busy || form.token.length !== tokenMask.length"
+                 @click.stop="activate">
+            <translate>Activate</translate>
+            <v-icon :right="!rtl" :left="rtl" dark>navigate_next</v-icon>
+          </v-btn>
+        </v-flex>
+        <v-flex xs12 class="px-2 pt-3 pb-0">
+          <p class="body-1 text-selectable">
+            <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
+          </p>
+        </v-flex>
+        <v-flex v-show="showInfo" xs12 class="px-2 pt-3 pb-0">
+          <h3 class="pb-3">
+            <translate>Frequently Asked Questions</translate>
+          </h3>
+          <p class="body-2 text-selectable">
+            <translate>Shouldn't free software be free of costs?</translate>
+          </p>
+          <p class="body-1 text-selectable">
+            <translate>Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis.</translate>
+          </p>
+          <p class="body-2 text-selectable">
+            <translate>Why are some features only available to sponsors?</translate>
+          </p>
+          <p class="body-1 text-selectable">
+            <translate>PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits.</translate>
+          </p>
+          <p class="body-2 text-selectable">
+            <translate>What functionality is generally available?</translate>
+          </p>
+          <p class="body-1 text-selectable">
+            <translate>Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission.</translate>
+          </p>
+        </v-flex>
+        <v-flex v-show="showInfo" xs12 class="pa-2">
+          <v-btn color="secondary-light" :block="$vuetify.breakpoint.xsOnly"
+                 class="ml-0"
+                 depressed
+                 :disabled="busy"
+                 @click.stop="compare">
+            <translate>Compare Editions</translate>
+          </v-btn>
         </v-flex>
       </v-layout>
-    </v-container>
+    </v-form>
     <p-about-footer></p-about-footer>
   </div>
 </template>
 
 <script>
 import * as options from "options/options";
-import Api from "common/api";
+import Api from "../common/api";
 
 export default {
   name: 'PPageConnect',
   data() {
+    const token = this.$route.params.token ? this.$route.params.token : "";
     return {
       success: false,
       busy: false,
       valid: false,
       error: "",
       options: options,
+      isPublic: this.$config.isPublic(),
+      isAdmin: this.$session.isAdmin(),
+      isDemo: this.$config.isDemo(),
+      isSponsor: this.$config.isSponsor(),
+      showInfo: !token,
       rtl: this.$rtl,
+      tokenMask: 'nnnn-nnnn-nnnn',
+      form: {
+        token,
+      },
     };
   },
   created() {
     this.$config.load().then(() => {
       if (this.$config.isPublic() || !this.$session.isAdmin()) {
         this.$router.push({name: "home"});
-      } else {
-        this.send();
       }
     });
   },
   methods: {
-    send() {
-      const name = this.$route.params.name.replace(/[^a-z0-9]/gi, '');
-      const values = {Token: this.$route.params.token};
+    reset() {
+      this.success = false;
+      this.busy = false;
+      this.error = "";
+    },
+    compare() {
+      window.open('https://link.photoprism.app/personal-editions', '_blank').focus();
+    },
+    upgrade() {
+      window.location = 'https://my.photoprism.app/upgrade/' + encodeURIComponent(window.location);
+    },
+    activate() {
+      if (!this.form.token || this.form.token.length !== this.tokenMask.length) {
+        return;
+      }
 
-      if (name !== '' && values.Token.length >= 4) {
+      const values = {Token: this.form.token};
+
+      if (values.Token.length >= 4) {
         this.busy = true;
         this.$notify.blockUI();
-        Api.put("connect/"+name, values).then(() => {
+        Api.put("connect/hub", values).then(() => {
           this.$notify.success(this.$gettext("Connected"));
           this.success = true;
           this.busy = false;

@@ -366,7 +366,7 @@ msgid "Contact Details"
 msgstr "Kontaktangaben"
 
 msgid "Contact Us"
-msgstr "Kontakt"
+msgstr "Kontakt aufnehmen"
 
 msgid "Contains %{n} pictures."
 msgstr "Enthält %{n} Bilder."
@@ -619,6 +619,9 @@ msgstr "Gesicht"
 
 msgid "Faces"
 msgstr "Gesichter"
+
+msgid "Failed"
+msgstr "Fehlgeschlagen"
 
 msgid "Failed copying to clipboard"
 msgstr "Konnte nicht in die Zwischenablage kopiert werden"
@@ -971,9 +974,6 @@ msgstr "Bildbereich"
 msgid "Medium"
 msgstr "Mittel"
 
-msgid "Membership"
-msgstr "Mitgliedschaft"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "%{a} und %{b} zusammenfassen?"
 
@@ -1161,7 +1161,7 @@ msgid "Other"
 msgstr "Sonstiges"
 
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
-msgstr "Unser Team bewertet dies fortlaufend, abhängig vom Supportaufwand, den die Funktionen verursachen, von den Kosten für uns und davon, ob sie generell von allen benötigt werden oder hauptsächlich von Organisationen und anspruchsvollen Nutzern verwendet werden. Da wir auf diese Weise mehr Funktionen für die Allgemeinheit verfügbar machen können, ermutigen wir alle Nutzerinnen und Nutzer, unsere Mission zu unterstützen."
+msgstr "Unser Team entscheidet dies fortlaufend, abhängig vom Supportaufwand, den die Funktionen verursachen, von den Kosten für uns und davon, ob sie generell von allen benötigt werden oder hauptsächlich von Organisationen und anspruchsvollen Nutzern verwendet werden. Da wir auf diese Weise mehr Funktionen für die Allgemeinheit verfügbar machen können, ermutigen wir alle Nutzerinnen und Nutzer, unsere Mission zu unterstützen."
 
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Unsere Anleitung deckt auch viele weiterführende Themen ab, wie die Migration von Google Photos und Qualitätseinstellungen für Thumbnails."
@@ -1203,7 +1203,7 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism wurde aktualisiert…"
 
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism ist zu 100% selbstfinanziert. Freiwillige Spenden decken nicht die Kosten für ein Team, das Vollzeit arbeitet, um dich mit Updates, Dokumentation und Support zu versorgen. Es ist deine Entscheidung, ob du dich anmelden möchtest, um die zusätzlichen Funktionen zu nutzen."
+msgstr "PhotoPrism ist zu 100% selbstfinanziert. Freiwillige Spenden decken nicht die Kosten für ein Team, das Vollzeit arbeitet, um Updates, Dokumentation und Support für dich bereitzustellen. Es ist deine Entscheidung, ob du uns unterstützt, um in den Genuss zusätzlicher Funktionen zu kommen."
 
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism® ist eine KI-gestützte Foto-App für das dezentrale Web."
@@ -1258,6 +1258,9 @@ msgstr "Primärdatei"
 
 msgid "Private"
 msgstr "Privat"
+
+msgid "Proceed"
+msgstr "Fortfahren"
 
 msgid "Product Feedback"
 msgstr "Allgemeines Feedback"
@@ -1463,9 +1466,6 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "Anmelden"
 
-msgid "Sign Up"
-msgstr "Anmelden"
-
 msgid "Similar"
 msgstr "Ähnlich"
 
@@ -1557,7 +1557,7 @@ msgid "Theme"
 msgstr "Theme"
 
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "Denke bei \"freier Software\" an \"freie Rede\", nicht an \"Freibier\". Die Free Software Foundation nennt sie manchmal \"libre software\" und lehnt sich dabei an das französische oder spanische Wort für \"frei\" an, um zu verdeutlichen, dass sie nicht meint, dass die Software kostenlos ist."
+msgstr "Die ursprüngliche Bedeutung des Begriffs bezieht sich auf die Freiheit der Nutzer, nicht darauf, dass die Software möglichst kostenlos sein soll. Die Free Software Foundation verwendet manchmal auch den Begriff \"Libre Software\", der vom französischen oder spanischen Wort für \"unabhängig\" abgeleitet ist, um dies zu verdeutlichen."
 
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
@@ -1596,8 +1596,8 @@ msgstr "Titel / Position"
 msgid "Title too long"
 msgstr "Titel zu lang"
 
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Um das Upgrade durchzuführen, kannst du entweder einen Aktivierungscode eingeben oder dich auf unserer Website registrieren, indem du auf \"Anmelden\" klickst:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr "Um zu upgraden, kannst du entweder einen Aktivierungscode eingeben oder auf \"Fortfahren\" klicken, um dich auf unserer Website zu registrieren:"
 
 msgid "Toggle View"
 msgstr "Ansicht wechseln"
@@ -1661,9 +1661,6 @@ msgstr "Upgrade"
 
 msgid "Upgrade Now"
 msgstr "Jetzt upgraden"
-
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Upgrade jetzt und genieße unsere Mitgliedervorteile!"
 
 msgid "Upload"
 msgstr "Upload"
@@ -1761,7 +1758,7 @@ msgid "Website"
 msgstr "Website"
 
 msgid "What functionality is generally available?"
-msgstr "Welche Funktionen sind kostenlos verfügbar?"
+msgstr "Welche Funktionen sind generell für jeden verfügbar?"
 
 msgid "White"
 msgstr "Weiß"
@@ -1803,13 +1800,28 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Der Index kann aktualisiert werden, um weitere Gesichter zu finden."
 
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Deine dauerhafte Unterstützung hilft uns, regelmäßige Updates bereitzustellen und unabhängig zu bleiben, damit wir unsere Mission erfüllen und deine Privatsphäre schützen können."
+msgstr "Deine Unterstützung hilft uns, regelmäßige Updates bereitzustellen und unabhängig zu bleiben, damit wir unsere Mission erfüllen und deine Privatsphäre schützen können."
 
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von besonderen Momenten, Reisen und Orten zu erstellen."
 
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#~ msgid "Get started"
+#~ msgstr "Fortfahren"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Um das Upgrade durchzuführen, kannst du entweder einen Aktivierungscode eingeben oder dich auf unserer Website registrieren, indem du auf \"Anmelden\" klickst:"
+
+#~ msgid "Sign up"
+#~ msgstr "Anmelden"
+
+#~ msgid "Membership"
+#~ msgstr "Mitgliedschaft"
+
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Upgrade jetzt und genieße unsere Mitgliedervorteile!"
 
 #~ msgid "Compare Features"
 #~ msgstr "Funktionen vergleichen"

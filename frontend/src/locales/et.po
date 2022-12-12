@@ -617,6 +617,9 @@ msgstr "Nägu"
 msgid "Faces"
 msgstr "Näod"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Lõikelauale kopeerimine ebaõnnestus"
 
@@ -968,9 +971,6 @@ msgstr "Märk"
 msgid "Medium"
 msgstr "Keskmine"
 
-msgid "Membership"
-msgstr "Liikmelisus"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Ühendada %{a} ja %{b}?"
 
@@ -1256,6 +1256,9 @@ msgstr "Primaarne"
 msgid "Private"
 msgstr "Isiklik"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Tagasiside"
 
@@ -1461,9 +1464,6 @@ msgstr "Abifail"
 msgid "Sign in"
 msgstr "Logi sisse"
 
-msgid "Sign Up"
-msgstr "Liitu"
-
 msgid "Similar"
 msgstr "Sarnased"
 
@@ -1596,8 +1596,8 @@ msgstr "Tiitel / ametikoht"
 msgid "Title too long"
 msgstr "Pealkiri on liiga pikk"
 
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Uuendamiseks võid sisestada aktiveerimiskoodi või liituda meie veebilehel:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Muuda vaadet"
@@ -1663,9 +1663,6 @@ msgstr "Uuendamine"
 
 msgid "Upgrade Now"
 msgstr "Uuenda nüüd"
-
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Uuenda nüüd ja naudi meie liikmete eeliseid!"
 
 msgid "Upload"
 msgstr "Üleslaadimine"
@@ -1815,6 +1812,18 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Uuendamiseks võid sisestada aktiveerimiskoodi või liituda meie veebilehel:"
+
+#~ msgid "Sign up"
+#~ msgstr "Liitu"
+
+#~ msgid "Membership"
+#~ msgstr "Liikmelisus"
+
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Uuenda nüüd ja naudi meie liikmete eeliseid!"
 
 #~ msgid "Compare Features"
 #~ msgstr "Võrdle funktsioone"

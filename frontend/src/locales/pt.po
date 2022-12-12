@@ -623,6 +623,9 @@ msgstr "Face"
 msgid "Faces"
 msgstr "Faces"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Falha ao copiar para a área de transferência de texto"
 
@@ -975,10 +978,6 @@ msgstr "Marcador"
 msgid "Medium"
 msgstr "Médio"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Filiação"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Fundir %{a} com %{b}?"
 
@@ -1266,6 +1265,9 @@ msgstr "Primário"
 msgid "Private"
 msgstr "Privado"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Opinião sobre o produto"
 
@@ -1471,9 +1473,6 @@ msgstr "Secundários"
 msgid "Sign in"
 msgstr "Entrar"
 
-msgid "Sign Up"
-msgstr "Registar"
-
 msgid "Similar"
 msgstr "Semelhante"
 
@@ -1608,8 +1607,7 @@ msgstr "Título / Posição"
 msgid "Title too long"
 msgstr "Título muito longo"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Para atualizar, você pode inserir um código de ativação ou clicar em \"Inscrever-se\" para atualizar em nosso site:"
 
 msgid "Toggle View"
@@ -1676,10 +1674,6 @@ msgstr "Melhoria"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Atualize agora"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Atualize agora e aproveite nossos benefícios para membros!"
 
 msgid "Upload"
 msgstr "Enviar"
@@ -1828,6 +1822,17 @@ msgstr "Sua biblioteca é continuamente analisada para criar automaticamente ál
 
 msgid "Zoom in/out"
 msgstr "Aproximar/Afastar"
+
+#~ msgid "Sign up"
+#~ msgstr "Registar"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Filiação"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Atualize agora e aproveite nossos benefícios para membros!"
 
 #, fuzzy
 #~ msgid "Compare Features"

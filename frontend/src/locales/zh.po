@@ -623,6 +623,9 @@ msgstr "面部"
 msgid "Faces"
 msgstr "面部"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "复制到剪贴板失败"
 
@@ -975,10 +978,6 @@ msgstr "标记"
 msgid "Medium"
 msgstr "中"
 
-#, fuzzy
-msgid "Membership"
-msgstr "会员资格"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "将 %{a} 与 %{b} 合并？"
 
@@ -1267,6 +1266,9 @@ msgstr "主文件"
 msgid "Private"
 msgstr "私有"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "产品反馈"
 
@@ -1473,9 +1475,6 @@ msgstr "附属"
 msgid "Sign in"
 msgstr "登录"
 
-msgid "Sign Up"
-msgstr "注册"
-
 msgid "Similar"
 msgstr "相似"
 
@@ -1610,9 +1609,8 @@ msgstr "标题/位置"
 msgid "Title too long"
 msgstr "标题太长了"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "要升级，你可以在我们的网站上输入激活码或点击 \"注册 \"来升级。"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "切换视图"
@@ -1678,10 +1676,6 @@ msgstr "升级"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "立即升级"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "现在就升级，享受我们的会员福利!"
 
 msgid "Upload"
 msgstr "上传"
@@ -1830,6 +1824,21 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "要升级，你可以在我们的网站上输入激活码或点击 \"注册 \"来升级。"
+
+#~ msgid "Sign up"
+#~ msgstr "注册"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "会员资格"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "现在就升级，享受我们的会员福利!"
 
 #, fuzzy
 #~ msgid "Compare Features"

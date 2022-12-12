@@ -780,6 +780,9 @@ msgstr "ใบหน้า"
 msgid "Faces"
 msgstr "ใบหน้า"
 
+msgid "Failed"
+msgstr ""
+
 #, fuzzy
 msgid "Failed copying to clipboard"
 msgstr "คัดลอกไปยังคลิปบอร์ดไม่สำเร็จ"
@@ -1243,10 +1246,6 @@ msgid "Medium"
 msgstr "ปานกลาง"
 
 #, fuzzy
-msgid "Membership"
-msgstr "การเป็นสมาชิก"
-
-#, fuzzy
 msgid "Merge %{a} with %{b}?"
 msgstr "ผสาน %{a} กับ %{b}?"
 
@@ -1624,6 +1623,9 @@ msgstr "หลัก"
 msgid "Private"
 msgstr "ส่วนตัว"
 
+msgid "Proceed"
+msgstr ""
+
 #, fuzzy
 msgid "Product Feedback"
 msgstr "คำติชมสินค้า"
@@ -1897,10 +1899,6 @@ msgid "Sign in"
 msgstr "เข้าสู่ระบบ"
 
 #, fuzzy
-msgid "Sign Up"
-msgstr "ลงชื่อ"
-
-#, fuzzy
 msgid "Similar"
 msgstr "คล้ายกัน"
 
@@ -2072,9 +2070,8 @@ msgstr "ชื่อเรื่องยาวเกินไป"
 msgid "Title too long"
 msgstr "ชื่อเรื่องยาวเกินไป"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"สมัคร\" เพื่ออัปเกรดบนเว็บไซต์ของเรา:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 #, fuzzy
 msgid "Toggle View"
@@ -2159,10 +2156,6 @@ msgstr "อัปเกรด"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "อัพเกรดเดี๋ยวนี้"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "อัปเกรดทันทีและเพลิดเพลินไปกับสิทธิประโยชน์สำหรับสมาชิกของเรา!"
 
 #, fuzzy
 msgid "Upload"
@@ -2355,6 +2348,22 @@ msgstr "ห้องสมุดของคุณได้รับการว
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"สมัคร\" เพื่ออัปเกรดบนเว็บไซต์ของเรา:"
+
+#, fuzzy
+#~ msgid "Sign up"
+#~ msgstr "ลงชื่อ"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "การเป็นสมาชิก"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "อัปเกรดทันทีและเพลิดเพลินไปกับสิทธิประโยชน์สำหรับสมาชิกของเรา!"
 
 #, fuzzy
 #~ msgid "Compare Features"

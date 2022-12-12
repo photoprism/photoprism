@@ -624,6 +624,9 @@ msgstr "Visage"
 msgid "Faces"
 msgstr "Visages"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Échec de la copie vers le presse-papier"
 
@@ -975,9 +978,6 @@ msgstr "Marqueur"
 msgid "Medium"
 msgstr "Moyen"
 
-msgid "Membership"
-msgstr "Adhésion"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Fusionner %{a} avec %{b} ?"
 
@@ -1263,6 +1263,9 @@ msgstr "Primaire"
 msgid "Private"
 msgstr "Privée"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Commentaires sur le produit"
 
@@ -1468,9 +1471,6 @@ msgstr "Fichier annexe"
 msgid "Sign in"
 msgstr "S'identifier"
 
-msgid "Sign Up"
-msgstr "S'identifier"
-
 msgid "Similar"
 msgstr "Similaire"
 
@@ -1603,8 +1603,8 @@ msgstr "Profession"
 msgid "Title too long"
 msgstr "Titre trop long"
 
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Pour effectuer une mise à niveau, vous pouvez soit saisir un code d'activation, soit cliquer sur \"S'inscrire\" pour effectuer une mise à niveau sur notre site web :"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr "Pour effectuer une mise à niveau, vous pouvez soit saisir un code d'activation, soit cliquer sur \"Procéder\" pour effectuer une mise à niveau sur notre site web :"
 
 msgid "Toggle View"
 msgstr "Basculer la vue"
@@ -1668,10 +1668,6 @@ msgstr "Mise à niveau"
 
 msgid "Upgrade Now"
 msgstr "Mettre à niveau maintenant"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Mettez votre logiciel à niveau maintenant et profitez de nos avantages réservés aux membres !"
 
 msgid "Upload"
 msgstr "Chargement"
@@ -1821,6 +1817,16 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "Sign up"
+#~ msgstr "S'identifier"
+
+#~ msgid "Membership"
+#~ msgstr "Adhésion"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Mettez votre logiciel à niveau maintenant et profitez de nos avantages réservés aux membres !"
 
 #~ msgid "Compare Features"
 #~ msgstr "Comparer les fonctionnalités"

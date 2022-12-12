@@ -692,6 +692,9 @@ msgstr "Wajah"
 msgid "Faces"
 msgstr "Muka"
 
+msgid "Failed"
+msgstr ""
+
 #, fuzzy
 msgid "Failed copying to clipboard"
 msgstr "Gagal menyalin ke papan keratan"
@@ -1121,10 +1124,6 @@ msgid "Medium"
 msgstr "Sederhana"
 
 #, fuzzy
-msgid "Membership"
-msgstr "Keahlian"
-
-#, fuzzy
 msgid "Merge %{a} with %{b}?"
 msgstr "Gabungkan %{a} dengan %{b}?"
 
@@ -1481,6 +1480,9 @@ msgstr "Utama"
 msgid "Private"
 msgstr "Sulit"
 
+msgid "Proceed"
+msgstr ""
+
 #, fuzzy
 msgid "Product Feedback"
 msgstr "Maklum Balas Produk"
@@ -1735,9 +1737,6 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "Log masuk"
 
-msgid "Sign Up"
-msgstr "Daftar"
-
 #, fuzzy
 msgid "Similar"
 msgstr "serupa"
@@ -1902,9 +1901,8 @@ msgstr "Tajuk terlalu panjang"
 msgid "Title too long"
 msgstr "Tajuk terlalu panjang"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Untuk menaik taraf, anda boleh sama ada memasukkan kod pengaktifan atau klik pada \"Daftar\" untuk menaik taraf di tapak web kami:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 #, fuzzy
 msgid "Toggle View"
@@ -1986,10 +1984,6 @@ msgstr "Naik taraf"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Menaiktaraf sekarang"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Tingkatkan sekarang dan nikmati faedah ahli kami!"
 
 msgid "Upload"
 msgstr "Muat naik"
@@ -2171,6 +2165,21 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Untuk menaik taraf, anda boleh sama ada memasukkan kod pengaktifan atau klik pada \"Daftar\" untuk menaik taraf di tapak web kami:"
+
+#~ msgid "Sign up"
+#~ msgstr "Daftar"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Keahlian"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Tingkatkan sekarang dan nikmati faedah ahli kami!"
 
 #, fuzzy
 #~ msgid "Compare Features"

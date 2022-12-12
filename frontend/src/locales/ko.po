@@ -623,6 +623,9 @@ msgstr "얼굴"
 msgid "Faces"
 msgstr "얼굴"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "클립보드에 복사하지 못했습니다"
 
@@ -975,10 +978,6 @@ msgstr "마커"
 msgid "Medium"
 msgstr "중간"
 
-#, fuzzy
-msgid "Membership"
-msgstr "멤버쉽"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "%{a}을 %{b}과(를) 병합하시겠습니까?"
 
@@ -1266,6 +1265,9 @@ msgstr "주요"
 msgid "Private"
 msgstr "비공개"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "제품 피드백"
 
@@ -1471,9 +1473,6 @@ msgstr "사이드카"
 msgid "Sign in"
 msgstr "등록"
 
-msgid "Sign Up"
-msgstr "회원가입"
-
 msgid "Similar"
 msgstr "비슷한"
 
@@ -1608,9 +1607,8 @@ msgstr "직위"
 msgid "Title too long"
 msgstr "주제 너무 긴다"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"가입\"을 클릭하여 당사 웹 사이트에서 업그레이드할 수 있습니다."
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "보기형식 변경"
@@ -1676,10 +1674,6 @@ msgstr "업그레이드"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "지금 업그레이드"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "지금 업그레이드하고 회원 혜택을 누리십시오!"
 
 msgid "Upload"
 msgstr "업로드"
@@ -1828,6 +1822,21 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"가입\"을 클릭하여 당사 웹 사이트에서 업그레이드할 수 있습니다."
+
+#~ msgid "Sign up"
+#~ msgstr "회원가입"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "멤버쉽"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "지금 업그레이드하고 회원 혜택을 누리십시오!"
 
 #, fuzzy
 #~ msgid "Compare Features"

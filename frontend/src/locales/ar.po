@@ -623,6 +623,9 @@ msgstr "وجه"
 msgid "Faces"
 msgstr "وجوه"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "فشل النسخ إلى الحافظة"
 
@@ -975,10 +978,6 @@ msgstr "علامة"
 msgid "Medium"
 msgstr "متوسط"
 
-#, fuzzy
-msgid "Membership"
-msgstr "عضوية"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "هل تريد دمج %{a} مع %{b}؟"
 
@@ -1266,6 +1265,9 @@ msgstr "الأولية"
 msgid "Private"
 msgstr "خاص"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "ملاحظات المنتج"
 
@@ -1471,9 +1473,6 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "تسجيل الدخول"
 
-msgid "Sign Up"
-msgstr "اشتراك"
-
 msgid "Similar"
 msgstr "مماثل"
 
@@ -1608,9 +1607,8 @@ msgstr "اللقب / المنصب"
 msgid "Title too long"
 msgstr "العنوان طويل جدًا"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"تسجيل\" للترقية على موقعنا الإلكتروني:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "نظرة قوية"
@@ -1676,10 +1674,6 @@ msgstr "رفع مستوى"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "تحديث الآن"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "قم بالترقية الآن واستمتع بمزايا أعضائنا!"
 
 msgid "Upload"
 msgstr "تحميل"
@@ -1828,6 +1822,21 @@ msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبوم�
 
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"تسجيل\" للترقية على موقعنا الإلكتروني:"
+
+#~ msgid "Sign up"
+#~ msgstr "اشتراك"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "عضوية"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "قم بالترقية الآن واستمتع بمزايا أعضائنا!"
 
 #, fuzzy
 #~ msgid "Compare Features"

@@ -635,6 +635,9 @@ msgstr "Πρόσωπο"
 msgid "Faces"
 msgstr "Πρόσωπα"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Αποτυχία αντιγραφής στο πρόχειρο"
 
@@ -1014,10 +1017,6 @@ msgstr "Δείκτης"
 msgid "Medium"
 msgstr "Μεσαίο"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Μέλη"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Συγχώνευση %{a} με %{b}?"
 
@@ -1320,6 +1319,9 @@ msgstr "Βασικό"
 msgid "Private"
 msgstr "Ιδιωτικό"
 
+msgid "Proceed"
+msgstr ""
+
 #, fuzzy
 msgid "Product Feedback"
 msgstr "Ανατροφοδότηση προϊόντος"
@@ -1547,10 +1549,6 @@ msgid "Sign in"
 msgstr "Συνδεθείτε"
 
 #, fuzzy
-msgid "Sign Up"
-msgstr "Εγγραφείτε"
-
-#, fuzzy
 msgid "Similar"
 msgstr "Παρόμοια"
 
@@ -1708,9 +1706,8 @@ msgstr "Πολύ μεγάλος τίτλος"
 msgid "Title too long"
 msgstr "Πολύ μεγάλος τίτλος"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Για να αναβαθμίσετε, μπορείτε είτε να εισαγάγετε έναν κωδικό ενεργοποίησης είτε να κάνετε κλικ στο \"Εγγραφή\" για αναβάθμιση στην ιστοσελίδα μας:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 #, fuzzy
 msgid "Toggle View"
@@ -1793,10 +1790,6 @@ msgstr "Αναβάθμιση"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Αναβάθμιση τώρα"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Αναβαθμίστε τώρα και απολαύστε τα προνόμια των μελών μας!"
 
 #, fuzzy
 msgid "Upload"
@@ -1979,6 +1972,22 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Για να αναβαθμίσετε, μπορείτε είτε να εισαγάγετε έναν κωδικό ενεργοποίησης είτε να κάνετε κλικ στο \"Εγγραφή\" για αναβάθμιση στην ιστοσελίδα μας:"
+
+#, fuzzy
+#~ msgid "Sign up"
+#~ msgstr "Εγγραφείτε"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Μέλη"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Αναβαθμίστε τώρα και απολαύστε τα προνόμια των μελών μας!"
 
 #, fuzzy
 #~ msgid "Compare Features"

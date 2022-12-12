@@ -620,6 +620,9 @@ msgstr "Лицо"
 msgid "Faces"
 msgstr "Лица"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Не удалось скопировать в буфер обмена"
 
@@ -971,9 +974,6 @@ msgstr "Маркер"
 msgid "Medium"
 msgstr "Средний"
 
-msgid "Membership"
-msgstr "Членство"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Объединить %{a} с %{b}?"
 
@@ -1259,6 +1259,9 @@ msgstr "Главная"
 msgid "Private"
 msgstr "Приватные"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Обратная связь по продукту"
 
@@ -1463,9 +1466,6 @@ msgstr "Сопутствующий файл"
 msgid "Sign in"
 msgstr "Войти"
 
-msgid "Sign Up"
-msgstr "Зарегистрироваться"
-
 msgid "Similar"
 msgstr "Похожие"
 
@@ -1598,8 +1598,8 @@ msgstr "Название / должность"
 msgid "Title too long"
 msgstr "Название слишком длинное"
 
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Для обновления вы можете ввести код активации или нажать кнопку \"Зарегистрироваться\" для обновления на нашем сайте:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Переключить вид"
@@ -1663,9 +1663,6 @@ msgstr "Обновление"
 
 msgid "Upgrade Now"
 msgstr "Обновить сейчас"
-
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Повысьте свой статус сейчас и воспользуйтесь нашими преимуществами для участников!"
 
 msgid "Upload"
 msgstr "Загрузка"
@@ -1814,6 +1811,18 @@ msgstr "Ваша библиотека постоянно анализирует�
 
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Для обновления вы можете ввести код активации или нажать кнопку \"Зарегистрироваться\" для обновления на нашем сайте:"
+
+#~ msgid "Sign up"
+#~ msgstr "Зарегистрироваться"
+
+#~ msgid "Membership"
+#~ msgstr "Членство"
+
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Повысьте свой статус сейчас и воспользуйтесь нашими преимуществами для участников!"
 
 #~ msgid "Compare Features"
 #~ msgstr "Сравнить характеристики"

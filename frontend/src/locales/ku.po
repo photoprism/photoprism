@@ -648,6 +648,9 @@ msgstr "Rû"
 msgid "Faces"
 msgstr "Rûyên"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "کۆپیکردن بۆ کلیپ بۆرد شکستی هێنا"
 
@@ -1035,10 +1038,6 @@ msgstr "Nîşan"
 msgid "Medium"
 msgstr "مامناوەند"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Endamî"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Bi %{b} re bi %{b} re bibe yek?"
 
@@ -1345,6 +1344,9 @@ msgstr "سەرەکی"
 msgid "Private"
 msgstr "تایبەتی"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "ڕەخنە و پێشنیار لە بەرهەم"
 
@@ -1563,9 +1565,6 @@ msgstr "لاتەنیشت"
 msgid "Sign in"
 msgstr "چوونەژوورەوە"
 
-msgid "Sign Up"
-msgstr "چوونەدەرەوە"
-
 msgid "Similar"
 msgstr "وەکویەک"
 
@@ -1705,9 +1704,8 @@ msgstr "ناونیشانی زۆر درێژ"
 msgid "Title too long"
 msgstr "ناونیشانی زۆر درێژ"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser \"Sign Up\" bikirtînin da ku li ser malpera me nûve bikin:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "گۆڕینی رەوش بۆ بینین"
@@ -1777,10 +1775,6 @@ msgstr "Upgrade"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Nûvekirina Niha"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Naha nûve bikin û ji feydeyên endamtiya me sûd werbigirin!"
 
 msgid "Upload"
 msgstr "بارکردن"
@@ -1946,6 +1940,21 @@ msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên dem�
 
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser \"Upgrade Now\" bikirtînin da ku li ser malpera me nûve bikin:"
+
+#~ msgid "Sign up"
+#~ msgstr "چوونەدەرەوە"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Endamî"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Naha nûve bikin û ji feydeyên endamtiya me sûd werbigirin!"
 
 #, fuzzy
 #~ msgid "Compare Features"

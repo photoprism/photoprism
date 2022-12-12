@@ -630,6 +630,9 @@ msgstr "Față"
 msgid "Faces"
 msgstr "Fețe"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Copiere eșuată în clipboard"
 
@@ -999,10 +1002,6 @@ msgstr "Marker"
 msgid "Medium"
 msgstr "Mediu"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Afilierea"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Combină %{a} cu %{b}?"
 
@@ -1300,6 +1299,9 @@ msgstr "Primar"
 msgid "Private"
 msgstr "Privat"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Feedback despre produs"
 
@@ -1512,9 +1514,6 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "Conectați-vă"
 
-msgid "Sign Up"
-msgstr "Înscrieți-vă"
-
 msgid "Similar"
 msgstr "Similar"
 
@@ -1652,9 +1651,8 @@ msgstr "Titlu prea lung"
 msgid "Title too long"
 msgstr "Titlu prea lung"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Pentru a face upgrade, puteți introduce un cod de activare sau puteți face clic pe \"Înregistrare\" pentru a face upgrade pe site-ul nostru web:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Schimbă vizualizarea"
@@ -1722,10 +1720,6 @@ msgstr "Actualizare"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Actualizați acum"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Faceți upgrade acum și bucurați-vă de beneficiile noastre de membru!"
 
 msgid "Upload"
 msgstr "Încărcați"
@@ -1887,6 +1881,21 @@ msgstr "Biblioteca dvs. este analizată continuu pentru a crea automat albume cu
 
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Pentru a face upgrade, puteți introduce un cod de activare sau puteți face clic pe \"Înregistrare\" pentru a face upgrade pe site-ul nostru web:"
+
+#~ msgid "Sign up"
+#~ msgstr "Înscrieți-vă"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Afilierea"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Faceți upgrade acum și bucurați-vă de beneficiile noastre de membru!"
 
 #, fuzzy
 #~ msgid "Compare Features"

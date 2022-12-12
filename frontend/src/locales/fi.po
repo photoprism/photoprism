@@ -635,6 +635,9 @@ msgstr "Kasvot"
 msgid "Faces"
 msgstr "Kasvot"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Kopiointi leikepöydälle epäonnistui"
 
@@ -1004,10 +1007,6 @@ msgstr "Merkki"
 msgid "Medium"
 msgstr "Keskikokoinen"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Jäsenyys"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Yhdistetäänkö %{a} ja %{b}?"
 
@@ -1305,6 +1304,9 @@ msgstr "Ensisijainen"
 msgid "Private"
 msgstr "Yksityinen"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Tuotepalaute"
 
@@ -1517,9 +1519,6 @@ msgstr "Sidecar-tiedosto"
 msgid "Sign in"
 msgstr "Kirjaudu sisään"
 
-msgid "Sign Up"
-msgstr "Rekisteröidy"
-
 msgid "Similar"
 msgstr "Samanlainen"
 
@@ -1657,9 +1656,8 @@ msgstr "Otsikko liian pitkä"
 msgid "Title too long"
 msgstr "Otsikko liian pitkä"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Päivittääksesi voit joko syöttää aktivointikoodin tai klikata \"Rekisteröidy\" päivittääksesi verkkosivustollamme:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Vaihda näkymää"
@@ -1727,10 +1725,6 @@ msgstr "Päivitys"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Päivitä nyt"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Päivitä nyt ja nauti jäseneduistamme!"
 
 msgid "Upload"
 msgstr "Lähetä"
@@ -1892,6 +1886,21 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Päivittääksesi voit joko syöttää aktivointikoodin tai klikata \"Rekisteröidy\" päivittääksesi verkkosivustollamme:"
+
+#~ msgid "Sign up"
+#~ msgstr "Rekisteröidy"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Jäsenyys"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Päivitä nyt ja nauti jäseneduistamme!"
 
 #, fuzzy
 #~ msgid "Compare Features"

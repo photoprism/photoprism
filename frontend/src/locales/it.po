@@ -620,6 +620,9 @@ msgstr "Volto"
 msgid "Faces"
 msgstr "Volti"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Impossibile copiare negli appunti"
 
@@ -971,10 +974,6 @@ msgstr "Segnaposto"
 msgid "Medium"
 msgstr "Medio"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Soci"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Unire %{a} con %{b}?"
 
@@ -1261,6 +1260,9 @@ msgstr "Primario"
 msgid "Private"
 msgstr "Privato"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Feedback Prodotto"
 
@@ -1466,9 +1468,6 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "Accedi"
 
-msgid "Sign Up"
-msgstr "Registrati"
-
 msgid "Similar"
 msgstr "Simile"
 
@@ -1602,9 +1601,8 @@ msgstr "Titolo / Posizione"
 msgid "Title too long"
 msgstr "Titolo troppo lungo"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Per effettuare l'aggiornamento, è possibile inserire un codice di attivazione o cliccare su \"Iscriviti\" per effettuare l'aggiornamento sul nostro sito web:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Cambia Vista"
@@ -1670,10 +1668,6 @@ msgstr "Aggiornamento"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Aggiorna ora"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Effettuate subito l'upgrade e godete dei nostri vantaggi per i soci!"
 
 msgid "Upload"
 msgstr "Upload"
@@ -1822,6 +1816,21 @@ msgstr "La tua libreria viene continuamente analizzata per creare automaticament
 
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Per effettuare l'aggiornamento, è possibile inserire un codice di attivazione o cliccare su \"Iscriviti\" per effettuare l'aggiornamento sul nostro sito web:"
+
+#~ msgid "Sign up"
+#~ msgstr "Registrati"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Soci"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Effettuate subito l'upgrade e godete dei nostri vantaggi per i soci!"
 
 #~ msgid "Compare Features"
 #~ msgstr "Confronta le caratteristiche"

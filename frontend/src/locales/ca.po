@@ -623,6 +623,9 @@ msgstr "Cara"
 msgid "Faces"
 msgstr "Cares"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "No s'ha pogut copiar al porta-retalls"
 
@@ -975,10 +978,6 @@ msgstr "Marcador"
 msgid "Medium"
 msgstr "Mitja"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Pertinença"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Combinar %{a} amb %{b}?"
 
@@ -1266,6 +1265,9 @@ msgstr "Primari"
 msgid "Private"
 msgstr "Privada"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Comentaris del producte"
 
@@ -1471,9 +1473,6 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "Iniciar sessió"
 
-msgid "Sign Up"
-msgstr "Registrar-se"
-
 msgid "Similar"
 msgstr "Similars"
 
@@ -1610,9 +1609,8 @@ msgstr "Títol / posició"
 msgid "Title too long"
 msgstr "Títol massa llarg"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Per actualitzar, podeu introduir un codi d'activació o fer clic a \"Registrar-se\" per actualitzar al nostre lloc web:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Canvia la vista"
@@ -1678,10 +1676,6 @@ msgstr "Actualitza"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Actualitza ara"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Actualitza ara i gaudeix dels nostres avantatges per a membres!"
 
 msgid "Upload"
 msgstr "Pujar"
@@ -1832,6 +1826,21 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Per actualitzar, podeu introduir un codi d'activació o fer clic a \"Registrar-se\" per actualitzar al nostre lloc web:"
+
+#~ msgid "Sign up"
+#~ msgstr "Registrar-se"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Pertinença"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Actualitza ara i gaudeix dels nostres avantatges per a membres!"
 
 #, fuzzy
 #~ msgid "Compare Features"

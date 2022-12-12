@@ -623,6 +623,9 @@ msgstr "Yüz"
 msgid "Faces"
 msgstr "yüzler"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Panoya kopyalanamadı"
 
@@ -975,10 +978,6 @@ msgstr "İşaretleyici"
 msgid "Medium"
 msgstr "Orta"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Üyelik"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "0] ile %{b}'i birleştirelim mi?"
 
@@ -1266,6 +1265,9 @@ msgstr "Birincil"
 msgid "Private"
 msgstr "Özel"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Ürün Geri Bildirimi"
 
@@ -1471,9 +1473,6 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "Giriş Yap"
 
-msgid "Sign Up"
-msgstr "Kaydol"
-
 msgid "Similar"
 msgstr "Benzer"
 
@@ -1610,8 +1609,7 @@ msgstr "Başlık / Pozisyon"
 msgid "Title too long"
 msgstr "Başlık çok uzun"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Yükseltmek için, bir aktivasyon kodu girebilir veya web sitemizde yükseltmek için \"Kaydol\" seçeneğine tıklayabilirsiniz:"
 
 msgid "Toggle View"
@@ -1678,10 +1676,6 @@ msgstr "Yükseltme"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Şimdi Yükselt"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Şimdi yükseltin ve üye avantajlarımızdan yararlanın!"
 
 msgid "Upload"
 msgstr "Yükle"
@@ -1832,6 +1826,17 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
+
+#~ msgid "Sign up"
+#~ msgstr "Kaydol"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Üyelik"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Şimdi yükseltin ve üye avantajlarımızdan yararlanın!"
 
 #, fuzzy
 #~ msgid "Compare Features"

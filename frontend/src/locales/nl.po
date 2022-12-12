@@ -620,6 +620,9 @@ msgstr "Gezichtje"
 msgid "Faces"
 msgstr "Gezichten"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Mislukt kopiëren naar klembord"
 
@@ -971,9 +974,6 @@ msgstr "Symbool"
 msgid "Medium"
 msgstr "Medium"
 
-msgid "Membership"
-msgstr "Lidmaatschap"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "%{a} samenvoegen met %{b}?"
 
@@ -1259,6 +1259,9 @@ msgstr "Primair"
 msgid "Private"
 msgstr "Privé"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Terugkoppeling van producten"
 
@@ -1463,9 +1466,6 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "Inloggen"
 
-msgid "Sign Up"
-msgstr "Aanmelden"
-
 msgid "Similar"
 msgstr "Vergelijkbaar"
 
@@ -1598,8 +1598,8 @@ msgstr "Titel / Positie"
 msgid "Title too long"
 msgstr "Titel is te lang"
 
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Om te upgraden kunt u een activeringscode invoeren of op onze website klikken op \"Aanmelden\" om te upgraden:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Schakelweergave"
@@ -1663,9 +1663,6 @@ msgstr "Upgrade"
 
 msgid "Upgrade Now"
 msgstr "Nu upgraden"
-
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Upgrade nu en geniet van onze ledenvoordelen!"
 
 msgid "Upload"
 msgstr "Uploaden"
@@ -1814,6 +1811,18 @@ msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te m
 
 msgid "Zoom in/out"
 msgstr "In-/uitzoomen"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Om te upgraden kunt u een activeringscode invoeren of op onze website klikken op \"Aanmelden\" om te upgraden:"
+
+#~ msgid "Sign up"
+#~ msgstr "Aanmelden"
+
+#~ msgid "Membership"
+#~ msgstr "Lidmaatschap"
+
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Upgrade nu en geniet van onze ledenvoordelen!"
 
 #~ msgid "Compare Features"
 #~ msgstr "Functies vergelijken"

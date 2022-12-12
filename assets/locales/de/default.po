@@ -137,7 +137,7 @@ msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Worker-Intervall ist %s, muss aber 1h oder weniger betragen"
 
 msgid "Your account could not be connected"
-msgstr "Ihr Konto konnte nicht verbunden werden"
+msgstr "Das Konto konnte nicht verbunden werden"
 
 msgid "Changes successfully saved"
 msgstr "Änderungen erfolgreich gespeichert"

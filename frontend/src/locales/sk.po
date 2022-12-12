@@ -623,6 +623,9 @@ msgstr "Tvár"
 msgid "Faces"
 msgstr "Tváre"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Zlyhalo kopírovanie do schránky"
 
@@ -975,10 +978,6 @@ msgstr "Značka"
 msgid "Medium"
 msgstr "Normálne"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Členstvo"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Zlúčiť %{a} s %{b}?"
 
@@ -1266,6 +1265,9 @@ msgstr "Primárne"
 msgid "Private"
 msgstr "Súkromné"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Spätná väzba produktu"
 
@@ -1471,9 +1473,6 @@ msgstr "Pripojený súbor (sidecar)"
 msgid "Sign in"
 msgstr "Prihlásiť sa"
 
-msgid "Sign Up"
-msgstr "Registrovať sa"
-
 msgid "Similar"
 msgstr "Podobné"
 
@@ -1608,9 +1607,8 @@ msgstr "Titul / pozícia"
 msgid "Title too long"
 msgstr "Titulok je moc dlhý"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Ak chcete aktualizovať, môžete zadať aktivačný kód alebo kliknúť na \"Zaregistrovať sa\" a aktualizovať na našej webovej stránke:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Nastaviť Pohľad"
@@ -1676,10 +1674,6 @@ msgstr "Aktualizácia"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Aktualizujte teraz"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Aktualizujte sa teraz a využívajte naše členské výhody!"
 
 msgid "Upload"
 msgstr "Odovzdať"
@@ -1828,6 +1822,21 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Ak chcete aktualizovať, môžete zadať aktivačný kód alebo kliknúť na \"Zaregistrovať sa\" a aktualizovať na našej webovej stránke:"
+
+#~ msgid "Sign up"
+#~ msgstr "Registrovať sa"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Členstvo"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Aktualizujte sa teraz a využívajte naše členské výhody!"
 
 #, fuzzy
 #~ msgid "Compare Features"

@@ -641,6 +641,9 @@ msgstr "صورت"
 msgid "Faces"
 msgstr "صورت ها"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "کپی در کلیپ بورد ناموفق بود"
 
@@ -1011,10 +1014,6 @@ msgstr "نشانگر"
 msgid "Medium"
 msgstr "متوسط"
 
-#, fuzzy
-msgid "Membership"
-msgstr "عضویت"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "%{a} با %{b} ادغام شود؟"
 
@@ -1310,6 +1309,9 @@ msgstr "اولیه"
 msgid "Private"
 msgstr "خصوصی"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "بازخورد محصول"
 
@@ -1522,9 +1524,6 @@ msgstr "جانبی"
 msgid "Sign in"
 msgstr "ورود"
 
-msgid "Sign Up"
-msgstr "ثبت نام"
-
 msgid "Similar"
 msgstr "مشابه"
 
@@ -1662,9 +1661,8 @@ msgstr "عنوان خیلی طولانی است"
 msgid "Title too long"
 msgstr "عنوان خیلی طولانی است"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ثبت‌نام» کلیک کنید تا در وب‌سایت ما ارتقا یابد:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "تغییر حالت نمایش"
@@ -1731,10 +1729,6 @@ msgstr "ارتقا دهید"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "اکنون ارتقا دهید"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "اکنون ارتقا دهید و از مزایای عضویت ما لذت ببرید!"
 
 msgid "Upload"
 msgstr "آپلود"
@@ -1893,6 +1887,21 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ثبت‌نام» کلیک کنید تا در وب‌سایت ما ارتقا یابد:"
+
+#~ msgid "Sign up"
+#~ msgstr "ثبت نام"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "عضویت"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "اکنون ارتقا دهید و از مزایای عضویت ما لذت ببرید!"
 
 #, fuzzy
 #~ msgid "Compare Features"

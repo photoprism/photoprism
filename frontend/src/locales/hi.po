@@ -638,6 +638,9 @@ msgstr "चेहरा"
 msgid "Faces"
 msgstr "चेहरे के"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "क्लिपबोर्ड पर प्रतिलिपि बनाना विफल रहा"
 
@@ -1007,10 +1010,6 @@ msgstr "निशान"
 msgid "Medium"
 msgstr "मध्यम"
 
-#, fuzzy
-msgid "Membership"
-msgstr "सदस्यता"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "%{a} को %{b} के साथ मिलाएं?"
 
@@ -1308,6 +1307,9 @@ msgstr "मुख्य"
 msgid "Private"
 msgstr "निजी"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "उत्पाद प्रतिक्रिया"
 
@@ -1520,9 +1522,6 @@ msgstr "एक प्रकार का मादक द्रव्य"
 msgid "Sign in"
 msgstr "साइन इन करें"
 
-msgid "Sign Up"
-msgstr "साइन अप"
-
 msgid "Similar"
 msgstr "समान"
 
@@ -1660,9 +1659,8 @@ msgstr "शीर्षक बहुत लंबा है"
 msgid "Title too long"
 msgstr "शीर्षक बहुत लंबा है"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "अपग्रेड करने के लिए, आप या तो एक एक्टिवेशन कोड दर्ज कर सकते हैं या हमारी वेबसाइट पर अपग्रेड करने के लिए \"साइन अप\" पर क्लिक करें:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "टॉगल दृश्य"
@@ -1730,10 +1728,6 @@ msgstr "उन्नत करना"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "अभी अपग्रेड करें"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "अभी अपग्रेड करें और हमारे सदस्य लाभों का आनंद लें!"
 
 msgid "Upload"
 msgstr "डालना"
@@ -1895,6 +1889,21 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "अपग्रेड करने के लिए, आप या तो एक एक्टिवेशन कोड दर्ज कर सकते हैं या हमारी वेबसाइट पर अपग्रेड करने के लिए \"साइन अप\" पर क्लिक करें:"
+
+#~ msgid "Sign up"
+#~ msgstr "साइन अप"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "सदस्यता"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "अभी अपग्रेड करें और हमारे सदस्य लाभों का आनंद लें!"
 
 #, fuzzy
 #~ msgid "Compare Features"

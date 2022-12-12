@@ -623,6 +623,9 @@ msgstr "顔"
 msgid "Faces"
 msgstr "顔"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "クリップボードにコピーできませんでした"
 
@@ -975,10 +978,6 @@ msgstr "マーカー"
 msgid "Medium"
 msgstr "中"
 
-#, fuzzy
-msgid "Membership"
-msgstr "メンバーシップ"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "0}を%{b}と統合する？"
 
@@ -1266,6 +1265,9 @@ msgstr "プライマリ"
 msgid "Private"
 msgstr "プライベート"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "製品のフィードバック"
 
@@ -1471,9 +1473,6 @@ msgstr "サイドカー"
 msgid "Sign in"
 msgstr "サインイン"
 
-msgid "Sign Up"
-msgstr "サインアップ"
-
 msgid "Similar"
 msgstr "似ている項目"
 
@@ -1608,8 +1607,7 @@ msgstr "タイトル / 位置"
 msgid "Title too long"
 msgstr "タイトルが長すぎます"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "アップグレードするには、アクティベーションコードを入力するか、当社ウェブサイト上で「サインアップ」をクリックしてアップグレードしてください。"
 
 msgid "Toggle View"
@@ -1676,10 +1674,6 @@ msgstr "アップグレード"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "今すぐアップグレード"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "今すぐアップグレードして、会員特典をお楽しみください。"
 
 msgid "Upload"
 msgstr "アップロード"
@@ -1828,6 +1822,17 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
+
+#~ msgid "Sign up"
+#~ msgstr "サインアップ"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "メンバーシップ"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "今すぐアップグレードして、会員特典をお楽しみください。"
 
 #, fuzzy
 #~ msgid "Compare Features"

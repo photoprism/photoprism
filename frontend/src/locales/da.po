@@ -638,6 +638,9 @@ msgstr "Ansigt"
 msgid "Faces"
 msgstr "Ansigter"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Kopiering til udklipsholder mislykkedes"
 
@@ -1007,10 +1010,6 @@ msgstr "Markør"
 msgid "Medium"
 msgstr "Mellem"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Medlemskab"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Sammenlægning af %{a} med %{b}?"
 
@@ -1308,6 +1307,9 @@ msgstr "Primær"
 msgid "Private"
 msgstr "Privat"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Produktfeedback"
 
@@ -1520,9 +1522,6 @@ msgstr "Sidevogn"
 msgid "Sign in"
 msgstr "Log ind"
 
-msgid "Sign Up"
-msgstr "Opret"
-
 msgid "Similar"
 msgstr "Lignende"
 
@@ -1660,9 +1659,8 @@ msgstr "Titlen er for lang"
 msgid "Title too long"
 msgstr "Titlen er for lang"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "For at opgradere kan du enten indtaste en aktiveringskode eller klikke på \"Sign Up\" for at opgradere på vores websted:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Skift visning"
@@ -1730,10 +1728,6 @@ msgstr "Opgradering"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Opgrader nu"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Opgrader nu og få glæde af vores medlemsfordele!"
 
 msgid "Upload"
 msgstr "Upload"
@@ -1895,6 +1889,21 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "For at opgradere kan du enten indtaste en aktiveringskode eller klikke på \"Upgrade Now\" for at opgradere på vores websted:"
+
+#~ msgid "Sign up"
+#~ msgstr "Opret"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Medlemskab"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Opgrader nu og få glæde af vores medlemsfordele!"
 
 #, fuzzy
 #~ msgid "Compare Features"

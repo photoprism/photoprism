@@ -692,6 +692,9 @@ msgstr "Veidas"
 msgid "Faces"
 msgstr "Veidai"
 
+msgid "Failed"
+msgstr ""
+
 #, fuzzy
 msgid "Failed copying to clipboard"
 msgstr "Nepavykęs kopijavimas į iškarpinę"
@@ -1157,10 +1160,6 @@ msgid "Medium"
 msgstr "Vidutinis"
 
 #, fuzzy
-msgid "Membership"
-msgstr "Narystė"
-
-#, fuzzy
 msgid "Merge %{a} with %{b}?"
 msgstr "Sujungti %{a} su %{b}?"
 
@@ -1535,6 +1534,9 @@ msgstr "Pagrindinis"
 msgid "Private"
 msgstr "Privatus"
 
+msgid "Proceed"
+msgstr ""
+
 #, fuzzy
 msgid "Product Feedback"
 msgstr "Atsiliepimai apie produktą"
@@ -1807,10 +1809,6 @@ msgid "Sign in"
 msgstr "Prisijunkite"
 
 #, fuzzy
-msgid "Sign Up"
-msgstr "Užsiregistruoti"
-
-#, fuzzy
 msgid "Similar"
 msgstr "Panašiai"
 
@@ -1982,9 +1980,8 @@ msgstr "Per ilga antraštė"
 msgid "Title too long"
 msgstr "Per ilga antraštė"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Užsiregistruoti\" ir atnaujinti mūsų svetainėje:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 #, fuzzy
 msgid "Toggle View"
@@ -2069,10 +2066,6 @@ msgstr "Atnaujinti"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Atnaujinti dabar"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Atnaujinkite dabar ir naudokitės mūsų nario privalumais!"
 
 #, fuzzy
 msgid "Upload"
@@ -2267,6 +2260,22 @@ msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai k
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Užsiregistruoti\" ir atnaujinti mūsų svetainėje:"
+
+#, fuzzy
+#~ msgid "Sign up"
+#~ msgstr "Užsiregistruoti"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Narystė"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Atnaujinkite dabar ir naudokitės mūsų nario privalumais!"
 
 #, fuzzy
 #~ msgid "Compare Features"

@@ -620,6 +620,9 @@ msgstr "臉"
 msgid "Faces"
 msgstr "臉"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "複製到剪貼簿失敗"
 
@@ -971,9 +974,6 @@ msgstr "標記"
 msgid "Medium"
 msgstr "中"
 
-msgid "Membership"
-msgstr "會員資格"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "將 %{a} 與 %{b} 合併？"
 
@@ -1259,6 +1259,9 @@ msgstr "主要的"
 msgid "Private"
 msgstr "私人的"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "產品回饋"
 
@@ -1463,9 +1466,6 @@ msgstr "Sidecar檔案"
 msgid "Sign in"
 msgstr "登入"
 
-msgid "Sign Up"
-msgstr "註冊"
-
 msgid "Similar"
 msgstr "相似"
 
@@ -1598,8 +1598,8 @@ msgstr "職位 / 位置"
 msgid "Title too long"
 msgstr "標題太長"
 
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "要升級，你可以在我們的網站上輸入激活碼或點擊 \"註冊 \"來升級："
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "切換檢視"
@@ -1663,9 +1663,6 @@ msgstr "升級"
 
 msgid "Upgrade Now"
 msgstr "立即升級"
-
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "現在就升級，享受我們的會員福利!"
 
 msgid "Upload"
 msgstr "上傳"
@@ -1814,6 +1811,18 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "要升級，你可以在我們的網站上輸入激活碼或點擊 \"註冊 \"來升級："
+
+#~ msgid "Sign up"
+#~ msgstr "註冊"
+
+#~ msgid "Membership"
+#~ msgstr "會員資格"
+
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "現在就升級，享受我們的會員福利!"
 
 #~ msgid "Compare Features"
 #~ msgstr "比較功能"

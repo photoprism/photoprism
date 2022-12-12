@@ -620,6 +620,9 @@ msgstr "Обличчя"
 msgid "Faces"
 msgstr "Обличчя"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Не вдалося скопіювати в буфер обміну"
 
@@ -971,9 +974,6 @@ msgstr "Маркер"
 msgid "Medium"
 msgstr "Середній"
 
-msgid "Membership"
-msgstr "Членство"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Об'єднати %{a} із %{b}?"
 
@@ -1259,6 +1259,9 @@ msgstr "Первинний"
 msgid "Private"
 msgstr "Приватний"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Відгуки про продукт"
 
@@ -1463,9 +1466,6 @@ msgstr "Додатковий вміст"
 msgid "Sign in"
 msgstr "Увійти"
 
-msgid "Sign Up"
-msgstr "Зареєструватися"
-
 msgid "Similar"
 msgstr "Схожі"
 
@@ -1598,7 +1598,7 @@ msgstr "Звання / посада"
 msgid "Title too long"
 msgstr "Надто довгий заголовок"
 
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Для оновлення ви можете або ввести код активації, або натиснути кнопку \"Зареєструватися\" на нашому сайті:"
 
 msgid "Toggle View"
@@ -1663,9 +1663,6 @@ msgstr "Оновлення"
 
 msgid "Upgrade Now"
 msgstr "Оновити зараз"
-
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Переходьте на новий тарифний план та користуйтеся нашими перевагами для учасників!"
 
 msgid "Upload"
 msgstr "Вивантажити"
@@ -1814,6 +1811,15 @@ msgstr "Ваша бібліотека постійно аналізується,
 
 msgid "Zoom in/out"
 msgstr "Збільшення/зменшення"
+
+#~ msgid "Sign up"
+#~ msgstr "Зареєструватися"
+
+#~ msgid "Membership"
+#~ msgstr "Членство"
+
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Переходьте на новий тарифний план та користуйтеся нашими перевагами для учасників!"
 
 #~ msgid "Compare Features"
 #~ msgstr "Порівняти функції"

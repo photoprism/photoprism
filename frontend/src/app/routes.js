@@ -39,7 +39,6 @@ import About from "page/about/about.vue";
 import Feedback from "page/about/feedback.vue";
 import License from "page/about/license.vue";
 import Help from "page/help.vue";
-import Upgrade from "page/upgrade.vue";
 import Connect from "page/connect.vue";
 import { $gettext } from "common/vm";
 import { config, session } from "./session";
@@ -95,16 +94,17 @@ export default [
   {
     name: "upgrade",
     path: "/upgrade",
-    component: Upgrade,
+    component: Connect,
     meta: {
       title: siteTitle,
       auth: true,
       admin: true,
+      settings: true,
     },
   },
   {
     name: "connect",
-    path: "/connect/:name/:token",
+    path: "/upgrade/:token",
     component: Connect,
     meta: {
       title: siteTitle,

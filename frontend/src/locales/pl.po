@@ -623,6 +623,9 @@ msgstr "Twarz"
 msgid "Faces"
 msgstr "Twarze"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Nie udało się skopiować do schowka"
 
@@ -975,10 +978,6 @@ msgstr "Znacznik"
 msgid "Medium"
 msgstr "Średnia"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Członkostwo"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Złączyć %{a} z %{b}?"
 
@@ -1266,6 +1265,9 @@ msgstr "Główny"
 msgid "Private"
 msgstr "Prywatne"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Opinia o produkcie"
 
@@ -1471,9 +1473,6 @@ msgstr "Plik powiązany"
 msgid "Sign in"
 msgstr "Zaloguj się"
 
-msgid "Sign Up"
-msgstr "Zarejestruj się"
-
 msgid "Similar"
 msgstr "Podobne"
 
@@ -1608,9 +1607,8 @@ msgstr "Tytuł / stanowisko"
 msgid "Title too long"
 msgstr "Tytuł za długi"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Aby uaktualnić, możesz wprowadzić kod aktywacyjny lub kliknąć \"Sign Up\", aby uaktualnić na naszej stronie internetowej:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Zmień widok"
@@ -1676,10 +1674,6 @@ msgstr "Aktualizacja"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Uaktualnij teraz"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Dokonaj aktualizacji już teraz i korzystaj z naszych korzyści członkowskich!"
 
 msgid "Upload"
 msgstr "Wgraj"
@@ -1828,6 +1822,21 @@ msgstr "Twoja biblioteka jest na bieżąco analizowana, aby automatycznie tworzy
 
 msgid "Zoom in/out"
 msgstr "Powiększ / Pomniejsz"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Aby uaktualnić, możesz wprowadzić kod aktywacyjny lub kliknąć \"Upgrade Now\", aby uaktualnić na naszej stronie internetowej:"
+
+#~ msgid "Sign up"
+#~ msgstr "Zarejestruj się"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Członkostwo"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Dokonaj aktualizacji już teraz i korzystaj z naszych korzyści członkowskich!"
 
 #, fuzzy
 #~ msgid "Compare Features"

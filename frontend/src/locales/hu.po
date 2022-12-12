@@ -626,6 +626,9 @@ msgstr "Arc"
 msgid "Faces"
 msgstr "Arcok"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Nem sikerült a vágólapra másolni"
 
@@ -981,10 +984,6 @@ msgstr "Jelző"
 msgid "Medium"
 msgstr "Közepes"
 
-#, fuzzy
-msgid "Membership"
-msgstr "Tagság"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "Összevonja %{a}-t a %{b}-val?"
 
@@ -1276,6 +1275,9 @@ msgstr "Elsődleges"
 msgid "Private"
 msgstr "Privát"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Termék visszajelzés"
 
@@ -1483,9 +1485,6 @@ msgstr "Oldalkocsi"
 msgid "Sign in"
 msgstr "Bejelentkezés"
 
-msgid "Sign Up"
-msgstr "Regisztrálj"
-
 msgid "Similar"
 msgstr "Hasonló"
 
@@ -1622,9 +1621,8 @@ msgstr "Cím / Pozíció"
 msgid "Title too long"
 msgstr "A cím túl hosszú"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "A frissítéshez vagy megadhat egy aktiváló kódot, vagy a weboldalunkon a \"Regisztráció\" gombra kattintva frissíthet:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr ""
 
 msgid "Toggle View"
 msgstr "Nézet váltása"
@@ -1690,10 +1688,6 @@ msgstr "Frissítés"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Frissítés most"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "Frissítsen most és élvezze tagi előnyeinket!"
 
 msgid "Upload"
 msgstr "Feltöltés"
@@ -1847,6 +1841,21 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#, fuzzy
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "A frissítéshez vagy megadhat egy aktiváló kódot, vagy a weboldalunkon a \"Regisztráció\" gombra kattintva frissíthet:"
+
+#~ msgid "Sign up"
+#~ msgstr "Regisztrálj"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "Tagság"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "Frissítsen most és élvezze tagi előnyeinket!"
 
 #, fuzzy
 #~ msgid "Compare Features"

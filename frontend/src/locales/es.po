@@ -623,6 +623,9 @@ msgstr "Cara"
 msgid "Faces"
 msgstr "Caras"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "Falló la cópia al portapapeles"
 
@@ -975,9 +978,6 @@ msgstr "Marcador"
 msgid "Medium"
 msgstr "Mediano"
 
-msgid "Membership"
-msgstr "Membresía"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "¿Fusionar %{a} con %{b}?"
 
@@ -1264,6 +1264,9 @@ msgstr "Primario"
 msgid "Private"
 msgstr "Privado"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "Comentarios sobre el producto"
 
@@ -1469,9 +1472,6 @@ msgstr "Adicional"
 msgid "Sign in"
 msgstr "Iniciar sesión"
 
-msgid "Sign Up"
-msgstr "Registrarse"
-
 msgid "Similar"
 msgstr "Similares"
 
@@ -1607,8 +1607,8 @@ msgstr "Título / Cargo"
 msgid "Title too long"
 msgstr "Título demasiado largo"
 
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-msgstr "Para mejorar su plan, puede introducir un código de activación o hacer clic en \"Registrarse\" para actualizar en nuestro sitio web:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr "Para mejorar su plan, puede introducir un código de activación o hacer clic en \"Proceed\" para actualizar en nuestro sitio web:"
 
 msgid "Toggle View"
 msgstr "Cambiar Vista"
@@ -1672,9 +1672,6 @@ msgstr "Mejorar plan"
 
 msgid "Upgrade Now"
 msgstr "Mejore su plan ahora"
-
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "¡Mejore su plan ahora y disfrute de nuestras ventajas como miembro!"
 
 msgid "Upload"
 msgstr "Subir"
@@ -1823,6 +1820,15 @@ msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbu
 
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
+
+#~ msgid "Sign up"
+#~ msgstr "Registrarse"
+
+#~ msgid "Membership"
+#~ msgstr "Membresía"
+
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "¡Mejore su plan ahora y disfrute de nuestras ventajas como miembro!"
 
 #, fuzzy
 #~ msgid "Compare Features"

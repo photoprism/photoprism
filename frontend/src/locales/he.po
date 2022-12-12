@@ -623,6 +623,9 @@ msgstr "פָּנִים"
 msgid "Faces"
 msgstr "פנים"
 
+msgid "Failed"
+msgstr ""
+
 msgid "Failed copying to clipboard"
 msgstr "ההעתקה ללוח נכשלה"
 
@@ -975,10 +978,6 @@ msgstr "סמן"
 msgid "Medium"
 msgstr "בינוני"
 
-#, fuzzy
-msgid "Membership"
-msgstr "חֲבֵרוּת"
-
 msgid "Merge %{a} with %{b}?"
 msgstr "למזג %{a} עם %{b}?"
 
@@ -1266,6 +1265,9 @@ msgstr "ראשי"
 msgid "Private"
 msgstr "פרטי"
 
+msgid "Proceed"
+msgstr ""
+
 msgid "Product Feedback"
 msgstr "משוב על המוצר"
 
@@ -1471,9 +1473,6 @@ msgstr "חזית רכב"
 msgid "Sign in"
 msgstr "התחבר"
 
-msgid "Sign Up"
-msgstr "הרשם"
-
 msgid "Similar"
 msgstr "דומה"
 
@@ -1608,8 +1607,7 @@ msgstr "שם / מיקום"
 msgid "Title too long"
 msgstr "הכותרת ארוכה מדי"
 
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר האינטרנט שלנו:"
 
 msgid "Toggle View"
@@ -1676,10 +1674,6 @@ msgstr "שדרוג"
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "שדרג עכשיו"
-
-#, fuzzy
-msgid "Upgrade now and enjoy our member benefits!"
-msgstr "שדרג עכשיו ותיהנה מהטבות החבר שלנו!"
 
 msgid "Upload"
 msgstr "העלה"
@@ -1828,6 +1822,17 @@ msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אל
 
 msgid "Zoom in/out"
 msgstr "זום פנימה\\החוצה"
+
+#~ msgid "Sign up"
+#~ msgstr "הרשם"
+
+#, fuzzy
+#~ msgid "Membership"
+#~ msgstr "חֲבֵרוּת"
+
+#, fuzzy
+#~ msgid "Upgrade now and enjoy our member benefits!"
+#~ msgstr "שדרג עכשיו ותיהנה מהטבות החבר שלנו!"
 
 #, fuzzy
 #~ msgid "Compare Features"
