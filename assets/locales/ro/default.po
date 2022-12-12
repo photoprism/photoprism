@@ -6,17 +6,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-03 10:03+0000\n"
+"PO-Revision-Date: 2022-12-12 23:36+0000\n"
 "Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/backend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/"
+"photoprism/backend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14.1\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
+"X-Generator: Weblate 4.14.2\n"
 
 msgid "Unexpected error, please try again"
 msgstr "Eroare neașteptată, vă rugăm să încercați din nou"
@@ -32,7 +34,7 @@ msgstr "Nu a putut fi șters"
 
 #, c-format
 msgid "%s already exists"
-msgstr "%s există deja"
+msgstr "%s deja există"
 
 msgid "Not found"
 msgstr "Nu a fost găsit"
@@ -43,12 +45,11 @@ msgstr "Fișier nedescoperit"
 msgid "File too large"
 msgstr "Fișierul este prea mare"
 
-#, fuzzy
 msgid "Unsupported format"
 msgstr "Fisier incompatibil"
 
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Dosarul cu fisiere originale este gol"
 
 msgid "Selection not found"
 msgstr "Selecția nu a fost găsită"
@@ -80,32 +81,27 @@ msgstr "Fața nu a fost găsită"
 msgid "Not available in public mode"
 msgstr "Nu este disponibil în modul public"
 
-#, fuzzy
 msgid "Not available in read-only mode"
-msgstr "nu este disponibil în modul doar pentru citire"
+msgstr "Nu este disponibil în modul doar pentru citire"
 
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "Vă rugăm să vă conectați și să încercați din nou"
+msgstr "Vă rugăm să vă conectați"
 
-#, fuzzy
 msgid "Permission denied"
-msgstr "Persoană eliminată"
+msgstr "Accesul a fost refuzat"
 
 msgid "Upload might be offensive"
 msgstr "Încărcarea poate fi ofensatoare"
 
 msgid "Upload failed"
-msgstr ""
+msgstr "Încărcarea a eșuat"
 
 msgid "No items selected"
 msgstr "Niciun element selectat"
 
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Nu a reușit să creeze fișierul, vă rugăm să verificați permisiunile"
 
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Nu s-a reușit crearea dosarului, vă rugăm să verificați permisiunile"
 
@@ -127,7 +123,6 @@ msgstr "Nu sunt selectate albume"
 msgid "No files available for download"
 msgstr "Nu există fișiere disponibile pentru descărcare"
 
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Nu a reușit să creeze fișierul zip"
 
@@ -146,9 +141,10 @@ msgstr "Ocupat, vă rugăm să încercați din nou mai târziu"
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr ""
+"Intervalul de trezire este %s, dar trebuie sa fie de 1 oră sau mai puțin"
 
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Contul dvs. nu a putut fi conectat"
 
 msgid "Changes successfully saved"
 msgstr "Modificări salvate cu succes"
@@ -164,7 +160,7 @@ msgid "Album %s deleted"
 msgstr "Album %s șters"
 
 msgid "Album contents cloned"
-msgstr "Conținutul albumului clonat"
+msgstr "Conținutul albumului a fost clonat"
 
 msgid "File removed from stack"
 msgstr "Fișier eliminat din stivă"
@@ -230,7 +226,7 @@ msgstr "Indexare anulată"
 
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr "Eliminat fișierele %d și fotografiile %d"
+msgstr "Sau eliminat %d fișiere și %d fotografii"
 
 #, c-format
 msgid "Moving files from %s"
@@ -258,20 +254,18 @@ msgstr "Persoană salvată"
 msgid "Person deleted"
 msgstr "Persoană eliminată"
 
-#, fuzzy
 msgid "File uploaded"
-msgstr "Fișier șters"
+msgstr "Fișierul a fost încarcat"
 
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d fișiere încărcate în %d s"
 
 msgid "Processing upload..."
-msgstr ""
+msgstr "Se procesează încărcarea..."
 
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "Încărcarea poate fi ofensatoare"
+msgstr "Încărcarea a fost procesată"
 
 msgid "Selection approved"
 msgstr "Selecție aprobată"
@@ -290,11 +284,11 @@ msgstr "Albume șterse"
 
 #, c-format
 msgid "Zip created in %d s"
-msgstr "Zip creat în %d s"
+msgstr "Fișierul Zip creat în %d s"
 
 msgid "Permanently deleted"
 msgstr "Șterse definitiv"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been restored"
-msgstr "Selecție restabilită"
+msgstr "%s a fost restabilită"
