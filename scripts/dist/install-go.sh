@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-# Installs latest Go on Linux
+# This installs latest Go on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-go.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 DESTDIR=$(realpath "${1:-/usr/local}")
 
-# Abort if not executed as root.
+# Abort if not executed as root..
 if [[ $(id -u) != "0" ]]; then
   echo "Usage: run ${0##*/} as root" 1>&2
   exit 1

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# Installs GPU drivers on Linux
+# This installs GPU drivers on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-gpu.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
-# abort if not executed as root
+# Abort if not executed as root.
 if [[ $(id -u) != "0" ]]; then
   echo "Error: Run ${0##*/} as root" 1>&2
   exit 1

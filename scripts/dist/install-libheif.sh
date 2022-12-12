@@ -9,7 +9,7 @@ DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
 
 . /etc/os-release
 
-# abort if not executed as root
+# Abort if not executed as root.
 if [[ $(id -u) != "0" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]; then
   echo "Error: Run ${0##*/} as root to install in a system directory!" 1>&2
   exit 1
