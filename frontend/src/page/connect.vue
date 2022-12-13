@@ -2,7 +2,7 @@
   <div class="p-page p-page-upgrade">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <translate>Upgrade</translate>
+        <translate>Membership</translate>
         <v-icon v-if="rtl">navigate_before</v-icon>
         <v-icon v-else>navigate_next</v-icon>
         <span v-if="busy">
@@ -12,10 +12,10 @@
           <translate>Verified</translate>
         </span>
         <span v-else-if="error">
-          <translate>Failed</translate>
+          <translate>Invalid</translate>
         </span>
         <span v-else>
-          <translate>Support Our Mission</translate>
+          <translate>Upgrade</translate>
       </span>
       </v-toolbar-title>
 
@@ -80,11 +80,11 @@
                  :disabled="busy">
               <translate>Manage account</translate>
           </v-btn>
-          <v-btn href="https://my.photoprism.app/get-started" target="_blank" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
+          <v-btn v-if="!isSponsor" href="https://my.photoprism.app/get-started" target="_blank" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
                  class="white--text ml-0"
                  depressed
                  :disabled="busy">
-            <translate>Get started</translate>
+            <translate>Upgrade Now</translate>
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
             <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
@@ -92,11 +92,12 @@
       </v-layout>
       <v-layout v-else row wrap>
         <v-flex xs12 class="px-2 pt-2 pb-0">
+          <h3 class="title pb-3">
+            <translate>Support Our Mission</translate>
+          </h3>
           <p class="subheading text-selectable">
-            <strong>
-              <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-              <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
-            </strong>
+            <strong><translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate></strong>
+            <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
           </p>
           <p class="subheading text-selectable">
             <translate>To upgrade, you may either enter an activation code or click on "Proceed" to sign up on our website:</translate>
