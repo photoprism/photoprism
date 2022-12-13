@@ -156,7 +156,7 @@
 
 <script>
 import * as options from "options/options";
-import Api from "../common/api";
+import Api from "common/api";
 
 export default {
   name: 'PPageConnect',
