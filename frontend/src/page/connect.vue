@@ -151,7 +151,7 @@
             <translate>What functionality is generally available?</translate>
           </p>
           <p class="body-1 text-selectable">
-            <translate>Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission.</translate>
+            <translate>Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission.</translate>
           </p>
         </v-flex>
         <v-flex v-show="showInfo" xs12 class="pa-2">

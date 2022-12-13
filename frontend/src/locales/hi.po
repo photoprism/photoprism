@@ -1745,7 +1745,7 @@ msgstr "अन्य"
 
 #: src/page/connect.vue:115
 #, fuzzy
-msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "हमारी टीम निरंतर आधार पर इसका मूल्यांकन करती है, सुविधाओं के लिए आवश्यक समर्थन प्रयास, हमारे लिए लागत, और क्या वे आम तौर पर सभी के लिए आवश्यक हैं या मुख्य रूप से संगठनों और उन्नत उपयोगकर्ताओं द्वारा अनुरोध किए जाने पर निर्भर करते हैं। चूंकि यह हमें जनता को और अधिक सुविधाएँ प्रदान करने की अनुमति देता है, इसलिए हम सभी उपयोगकर्ताओं को हमारे मिशन का समर्थन करने के लिए प्रोत्साहित करते हैं।"
 
 #: src/page/about/about.vue:45
