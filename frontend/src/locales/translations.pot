@@ -86,10 +86,12 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/page/connect.vue:72
+#: src/page/connect.vue:75
+#: src/page/connect.vue:75
 msgid "Activate"
 msgstr ""
 
+#: src/page/connect.vue:293
 #: src/page/connect.vue:311
 msgid "Activation Code"
 msgstr ""
@@ -408,8 +410,9 @@ msgstr ""
 msgid "Bug Report"
 msgstr ""
 
+#: src/page/connect.vue:8
 #: src/common/notify.js:94
-#: src/page/connect.vue:6
+#: src/page/connect.vue:8
 msgid "Busy, please wait…"
 msgstr ""
 
@@ -450,6 +453,7 @@ msgstr ""
 msgid "Can't select more items"
 msgstr ""
 
+#: src/page/connect.vue:41
 #: src/dialog/account/password.vue:36
 #: src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:42
@@ -464,7 +468,7 @@ msgstr ""
 #: src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25
 #: src/dialog/share/upload.vue:29
-#: src/page/connect.vue:39
+#: src/page/connect.vue:41
 #: src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
@@ -552,7 +556,8 @@ msgstr ""
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
 
-#: src/page/connect.vue:106
+#: src/page/connect.vue:67
+#: src/page/connect.vue:110
 msgid "Compare Editions"
 msgstr ""
 
@@ -577,6 +582,7 @@ msgid "Connect via WebDAV"
 msgstr ""
 
 #: src/page/connect.vue:56
+#: src/page/connect.vue:56
 msgid "Connected"
 msgstr ""
 
@@ -586,8 +592,9 @@ msgid "Contact Details"
 msgstr ""
 
 #: src/page/about/feedback.vue:4
+#: src/page/connect.vue:44
 #: src/page/about/feedback.vue:4
-#: src/page/connect.vue:42
+#: src/page/connect.vue:44
 msgid "Contact Us"
 msgstr ""
 
@@ -994,7 +1001,8 @@ msgstr ""
 msgid "Faces"
 msgstr ""
 
-#: src/page/connect.vue:12
+#: src/page/connect.vue:14
+#: src/page/connect.vue:14
 msgid "Failed"
 msgstr ""
 
@@ -1045,8 +1053,9 @@ msgstr ""
 msgid "Feedback"
 msgstr ""
 
+#: src/page/connect.vue:82
 #: src/dialog/sponsor.vue:25
-#: src/page/connect.vue:78
+#: src/page/connect.vue:82
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 
@@ -1117,7 +1126,7 @@ msgstr ""
 msgid "Folders"
 msgstr ""
 
-#: src/page/login.vue:32
+#: src/page/login.vue:33
 msgid "Forgot password?"
 msgstr ""
 
@@ -1131,7 +1140,7 @@ msgstr ""
 msgid "Frames"
 msgstr ""
 
-#: src/page/connect.vue:83
+#: src/page/connect.vue:87
 msgid "Frequently Asked Questions"
 msgstr ""
 
@@ -1355,6 +1364,8 @@ msgstr ""
 
 #: src/page/connect.vue:68
 #: src/page/connect.vue:74
+#: src/page/connect.vue:68
+#: src/page/connect.vue:74
 msgid "Invalid parameters"
 msgstr ""
 
@@ -1430,12 +1441,13 @@ msgstr ""
 msgid "Lavender"
 msgstr ""
 
+#: src/page/connect.vue:98
 #: src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:28
 #: src/page/about/about.vue:52
 #: src/page/about/about.vue:161
 #: src/page/connect.vue:106
-#: src/page/login.vue:62
+#: src/page/login.vue:63
 msgid "Learn more"
 msgstr ""
 
@@ -1459,6 +1471,7 @@ msgstr ""
 msgid "Library"
 msgstr ""
 
+#: src/page/connect.vue:17
 #: src/component/navigation.vue:440
 #: src/component/navigation.vue:43
 #: src/dialog/photo/edit/details.vue:557
@@ -1525,8 +1538,8 @@ msgstr ""
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr ""
 
-#: src/component/navigation.vue:454
-#: src/component/navigation.vue:1682
+#: src/component/navigation.vue:466
+#: src/component/navigation.vue:1722
 #: src/component/navigation.vue:1996
 msgid "Login"
 msgstr ""
@@ -1933,7 +1946,7 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: src/page/connect.vue:101
+#: src/page/connect.vue:105
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr ""
 
@@ -2001,7 +2014,7 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/page/connect.vue:95
+#: src/page/connect.vue:99
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
 
@@ -2100,7 +2113,8 @@ msgstr ""
 msgid "Private"
 msgstr ""
 
-#: src/page/connect.vue:68
+#: src/page/connect.vue:70
+#: src/page/connect.vue:70
 msgid "Proceed"
 msgstr ""
 
@@ -2398,7 +2412,7 @@ msgstr ""
 msgid "Share your pictures with other apps and services."
 msgstr ""
 
-#: src/page/connect.vue:86
+#: src/page/connect.vue:90
 msgid "Shouldn't free software be free of costs?"
 msgstr ""
 
@@ -2527,7 +2541,8 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: src/page/connect.vue:49
+#: src/page/connect.vue:51
+#: src/page/connect.vue:51
 msgid "Successfully Connected"
 msgstr ""
 
@@ -2536,7 +2551,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr ""
 
 #: src/dialog/sponsor.vue:7
-#: src/page/connect.vue:15
+#: src/page/connect.vue:17
 msgid "Support Our Mission"
 msgstr ""
 
@@ -2575,7 +2590,7 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: src/page/connect.vue:89
+#: src/page/connect.vue:93
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
 
@@ -2629,7 +2644,8 @@ msgstr ""
 msgid "Title too long"
 msgstr ""
 
-#: src/page/connect.vue:59
+#: src/page/connect.vue:58
+#: src/page/connect.vue:61
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2751,9 +2767,10 @@ msgstr ""
 msgid "Updating stacks"
 msgstr ""
 
-#: src/component/navigation.vue:466
+#: src/page/connect.vue:4
+#: src/component/navigation.vue:454
 #: src/component/navigation.vue:586
-#: src/component/navigation.vue:1722
+#: src/component/navigation.vue:1682
 #: src/page/connect.vue:4
 msgid "Upgrade"
 msgstr ""
@@ -2846,7 +2863,8 @@ msgstr ""
 msgid "Vanta"
 msgstr ""
 
-#: src/page/connect.vue:9
+#: src/page/connect.vue:11
+#: src/page/connect.vue:11
 msgid "Verified"
 msgstr ""
 
@@ -2926,7 +2944,7 @@ msgstr ""
 msgid "Website"
 msgstr ""
 
-#: src/page/connect.vue:98
+#: src/page/connect.vue:102
 msgid "What functionality is generally available?"
 msgstr ""
 
@@ -2934,7 +2952,7 @@ msgstr ""
 msgid "White"
 msgstr ""
 
-#: src/page/connect.vue:92
+#: src/page/connect.vue:96
 msgid "Why are some features only available to sponsors?"
 msgstr ""
 
@@ -3006,7 +3024,7 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:19
 #: src/page/about/about.vue:21
-#: src/page/connect.vue:56
+#: src/page/connect.vue:58
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr ""
 

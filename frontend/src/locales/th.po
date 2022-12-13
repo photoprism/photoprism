@@ -90,12 +90,12 @@ msgstr "การกระทำ"
 msgid "Actions"
 msgstr "การกระทำ"
 
-#: src/page/connect.vue:72
+#: src/page/connect.vue:75
 #, fuzzy
 msgid "Activate"
 msgstr "เปิดใช้งาน"
 
-#: src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:311
 #, fuzzy
 msgid "Activation Code"
 msgstr "รหัสเปิดใช้งาน"
@@ -160,7 +160,9 @@ msgstr "หลังจากหนึ่งปี"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
 #, fuzzy
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
 msgstr "หลังจากเลือกรูปภาพจากผลการค้นหาแล้ว คุณสามารถเพิ่มรูปภาพลงในอัลบั้มโดยใช้เมนูบริบท"
 
 #: src/options/options.js:383
@@ -260,7 +262,9 @@ msgstr "ปีทั้งหมด"
 
 #: src/dialog/share.vue:75
 #, fuzzy
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
 msgstr "หรือคุณสามารถอัปโหลดไฟล์โดยตรงไปยังเซิร์ฟเวอร์ WebDAV เช่น Nextcloud"
 
 #: src/dialog/photo/edit/info.vue:151
@@ -370,7 +374,9 @@ msgstr "อัตราส่วน"
 
 #: src/page/settings/library.vue:112
 #, fuzzy
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
 msgstr "สร้างไฟล์ JPEG สำหรับไฟล์ประเภทอื่น ๆ โดยอัตโนมัติเพื่อให้สามารถแสดงผลในเบราว์เซอร์"
 
 #: src/page/settings/general.vue:163
@@ -385,13 +391,21 @@ msgstr "ขั้นพื้นฐาน"
 
 #: src/page/about/about.vue:59
 #, fuzzy
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "ก่อนส่งคำขอรับการสนับสนุน โปรดใช้รายการตรวจสอบการแก้ไขปัญหาของเราเพื่อระบุสาเหตุของปัญหา"
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"ก่อนส่งคำขอรับการสนับสนุน โปรดใช้รายการตรวจสอบการแก้ไขปัญหาของเราเพื่อระบุสาเหตุของปัญหา"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 #, fuzzy
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "ด้วยการจัดหาเงินทุนด้วยตนเองและเป็นอิสระ 100% เราสามารถสัญญากับคุณได้ว่าเราจะไม่ขายข้อมูลของคุณและเราจะมีความโปร่งใสเกี่ยวกับซอฟต์แวร์และบริการของเราเสมอ"
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"ด้วยการจัดหาเงินทุนด้วยตนเองและเป็นอิสระ 100% "
+"เราสามารถสัญญากับคุณได้ว่าเราจะไม่ขายข้อมูลของคุณและเราจะมีความโปร่งใสเกี่ยวกับซอฟต์แวร์และบริการของเราเสมอ"
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -433,15 +447,19 @@ msgstr "เรียกดูไฟล์และโฟลเดอร์ที
 
 #: src/page/about/about.vue:51
 #, fuzzy
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "เรียกดูฐานข้อมูลสำหรับข้อมูลโดยละเอียดเกี่ยวกับคุณลักษณะเฉพาะของผลิตภัณฑ์ บริการ และทรัพยากรที่เกี่ยวข้อง"
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
+msgstr ""
+"เรียกดูฐานข้อมูลสำหรับข้อมูลโดยละเอียดเกี่ยวกับคุณลักษณะเฉพาะของผลิตภัณฑ์ บริการ "
+"และทรัพยากรที่เกี่ยวข้อง"
 
 #: src/page/about/feedback.vue:8 src/options/options.js:410
 #, fuzzy
 msgid "Bug Report"
 msgstr "รายงานข้อผิดพลาด"
 
-#: src/common/notify.js:94 src/page/connect.vue:6
+#: src/page/connect.vue:8 src/common/notify.js:94
 #, fuzzy
 msgid "Busy, please wait…"
 msgstr "ไม่ว่าง โปรดรอ…"
@@ -476,14 +494,14 @@ msgstr "โหลดเพิ่มไม่ได้แล้ว หมดเ�
 msgid "Can't select more items"
 msgstr "ไม่สามารถเลือกรายการเพิ่มเติมได้"
 
-#: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
-#: src/dialog/album/edit.vue:42 src/dialog/confirm.vue:15
-#: src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15
-#: src/dialog/photo/album.vue:18 src/dialog/photo/delete.vue:15
-#: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
-#: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
-#: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:39 src/page/library/import.vue:34
+#: src/page/connect.vue:41 src/dialog/account/password.vue:36
+#: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:42
+#: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
+#: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
+#: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
+#: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
+#: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
+#: src/dialog/share/upload.vue:29 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "ยกเลิก"
@@ -564,10 +582,12 @@ msgstr "สี"
 
 #: src/page/about/about.vue:46
 #, fuzzy
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
 msgstr "ปัญหาทั่วไปสามารถวินิจฉัยและแก้ไขได้อย่างรวดเร็วโดยใช้รายการตรวจสอบการแก้ไขปัญหาที่เรามีให้"
 
-#: src/page/connect.vue:106
+#: src/page/connect.vue:67 src/page/connect.vue:110
 #, fuzzy
 msgid "Compare Editions"
 msgstr "เปรียบเทียบรุ่น"
@@ -601,7 +621,7 @@ msgstr "เชื่อมต่อ"
 msgid "Contact Details"
 msgstr "ติดต่อเรา"
 
-#: src/page/about/feedback.vue:4 src/page/connect.vue:42
+#: src/page/about/feedback.vue:4 src/page/connect.vue:44
 #, fuzzy
 msgid "Contact Us"
 msgstr "ติดต่อเรา"
@@ -899,7 +919,9 @@ msgstr "ตัวกรองการลดขนาด"
 
 #: src/page/about/feedback.vue:16
 #, fuzzy
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
 msgstr "เนื่องจากเราได้รับอีเมลเป็นจำนวนมาก ทีมงานของเราจึงอาจไม่สามารถติดต่อกลับได้ทันที"
 
 #: src/page/library/browse.vue:37
@@ -919,7 +941,9 @@ msgstr "การแสดงตัวอย่างแบบไดนามิ
 
 #: src/page/settings/advanced.vue:303
 #, fuzzy
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
 msgstr "การเรนเดอร์แบบไดนามิกต้องการเซิร์ฟเวอร์ที่ทรงพลัง ไม่แนะนำสำหรับอุปกรณ์ NAS"
 
 #: src/page/settings/advanced.vue:345
@@ -1002,7 +1026,9 @@ msgstr "ทุกสองวัน"
 
 #: src/page/settings/general.vue:207
 #, fuzzy
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
 msgstr "ยกเว้นเนื้อหาที่ทำเครื่องหมายว่าเป็นส่วนตัวจากผลการค้นหา อัลบั้มที่แชร์ ป้ายกำกับ และสถานที่"
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
@@ -1050,7 +1076,7 @@ msgstr "ใบหน้า"
 msgid "Faces"
 msgstr "ใบหน้า"
 
-#: src/page/connect.vue:12
+#: src/page/connect.vue:14
 msgid "Failed"
 msgstr ""
 
@@ -1105,9 +1131,10 @@ msgstr "ข้อเสนอแนะ"
 msgid "Feedback"
 msgstr "ข้อเสนอแนะ"
 
-#: src/dialog/sponsor.vue:25 src/page/connect.vue:78
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
 #, fuzzy
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "โปรดติดต่อเราที่ hello@photoprism.app หากคุณมีคำถามใด ๆ"
 
 #: src/options/options.js:424
@@ -1150,7 +1177,9 @@ msgstr "ไฟล์"
 
 #: src/page/settings/library.vue:214
 #, fuzzy
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
 msgstr "ไฟล์ที่มีชื่อตามลำดับ เช่น 'IMG_1234 (2)' และ 'IMG_1234 (3)' เป็นของรูปภาพเดียวกัน"
 
 #: src/dialog/photo/edit/details.vue:484
@@ -1180,7 +1209,7 @@ msgstr "โฟลเดอร์ว่างเปล่า"
 msgid "Folders"
 msgstr "โฟลเดอร์"
 
-#: src/page/login.vue:32
+#: src/page/login.vue:33
 #, fuzzy
 msgid "Forgot password?"
 msgstr "ลืมรหัสผ่าน?"
@@ -1194,7 +1223,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "เฟรม"
 
-#: src/page/connect.vue:83
+#: src/page/connect.vue:87
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "คำถามที่พบบ่อย"
@@ -1328,7 +1357,9 @@ msgstr "นำเข้าไม่สำเร็จ"
 
 #: src/page/library/import.vue:25
 #, fuzzy
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
 msgstr "ไฟล์ที่นำเข้าจะถูกจัดเรียงตามวันที่และกำหนดชื่อเฉพาะเพื่อหลีกเลี่ยงการซ้ำซ้อน"
 
 #: src/page/settings/general.vue:273
@@ -1363,8 +1394,12 @@ msgstr "นอกจากนี้ ผู้สนับสนุนยัง�
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 #, fuzzy
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "ในกรณีที่รูปภาพที่คุณคาดว่าจะหายไป โปรดสแกนไลบรารีของคุณอีกครั้งและรอจนกว่าการจัดทำดัชนีจะเสร็จสมบูรณ์"
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"ในกรณีที่รูปภาพที่คุณคาดว่าจะหายไป "
+"โปรดสแกนไลบรารีของคุณอีกครั้งและรอจนกว่าการจัดทำดัชนีจะเสร็จสมบูรณ์"
 
 #: src/component/navigation.vue:574 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1436,7 +1471,9 @@ msgstr "เลือกรูปภาพไม่ถูกต้อง"
 
 #: src/page/about/about.vue:16
 #, fuzzy
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
 msgstr "ใช้เทคโนโลยีล่าสุดในการแท็กและค้นหารูปภาพโดยอัตโนมัติโดยไม่รบกวนคุณ"
 
 #: src/model/rest.js:167
@@ -1512,9 +1549,9 @@ msgstr "ละติจูด"
 msgid "Lavender"
 msgstr "ลาเวนเดอร์"
 
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
-#: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:106 src/page/login.vue:62
+#: src/page/connect.vue:98 src/dialog/sponsor.vue:37
+#: src/page/about/about.vue:28 src/page/about/about.vue:52
+#: src/page/about/about.vue:161 src/page/connect.vue:106 src/page/login.vue:63
 #, fuzzy
 msgid "Learn more"
 msgstr "เรียนรู้เพิ่มเติม"
@@ -1537,8 +1574,9 @@ msgstr "เลนส์"
 msgid "Library"
 msgstr "ห้องสมุด"
 
-#: src/component/navigation.vue:440 src/component/navigation.vue:43
-#: src/dialog/photo/edit/details.vue:557 src/page/about/license.vue:4
+#: src/page/connect.vue:17 src/component/navigation.vue:440
+#: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:557
+#: src/page/about/license.vue:4
 #, fuzzy
 msgid "License"
 msgstr "ใบอนุญาต"
@@ -1604,10 +1642,12 @@ msgstr "ที่ตั้ง"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 #, fuzzy
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
 msgstr "ข้อความบันทึกจะปรากฏที่นี่ทุกครั้งที่ PhotoPrism เจอไฟล์เสีย หรือมีปัญหาอื่นๆ ที่อาจเกิดขึ้น"
 
-#: src/component/navigation.vue:454 src/component/navigation.vue:1682
+#: src/component/navigation.vue:466 src/component/navigation.vue:1722
 #: src/component/navigation.vue:1996
 #, fuzzy
 msgid "Login"
@@ -1865,8 +1905,11 @@ msgstr "ไม่ได้เลือกวิดีโอ"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 #, fuzzy
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "ไม่มีคำเตือนหรือข้อผิดพลาดที่มีคีย์เวิร์ดนี้ โปรดทราบว่าการค้นหาคำนึงถึงตัวพิมพ์เล็กและตัวพิมพ์ใหญ่"
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"ไม่มีคำเตือนหรือข้อผิดพลาดที่มีคีย์เวิร์ดนี้ โปรดทราบว่าการค้นหาคำนึงถึงตัวพิมพ์เล็กและตัวพิมพ์ใหญ่"
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1876,7 +1919,9 @@ msgstr "ไม่มีคำเตือนหรือข้อผิดพล
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
 #, fuzzy
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
 msgstr "รูปภาพที่ไม่ใช่ภาพถ่ายและคุณภาพต่ำต้องได้รับการตรวจสอบก่อนที่จะปรากฏในผลการค้นหา"
 
 #: src/options/options.js:249 src/options/options.js:334
@@ -1891,8 +1936,10 @@ msgstr "ไม่พบ"
 
 #: src/page/library/import.vue:28
 #, fuzzy
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "โปรดทราบว่าคุณสามารถจัดการโฟลเดอร์ต้นฉบับของคุณได้ด้วยตนเอง และการนำเข้าเป็นทางเลือก"
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"โปรดทราบว่าคุณสามารถจัดการโฟลเดอร์ต้นฉบับของคุณได้ด้วยตนเอง และการนำเข้าเป็นทางเลือก"
 
 #: src/page/settings/services.vue:36
 #, fuzzy
@@ -1901,8 +1948,12 @@ msgstr "บันทึก:"
 
 #: src/dialog/service/add.vue:28
 #, fuzzy
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "หมายเหตุ: เฉพาะเซิร์ฟเวอร์ WebDAV เช่น Nextcloud หรือ PhotoPrism เท่านั้นที่สามารถกำหนดค่าเป็นบริการระยะไกลสำหรับการสำรองข้อมูลและการอัปโหลดไฟล์"
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"หมายเหตุ: เฉพาะเซิร์ฟเวอร์ WebDAV เช่น Nextcloud หรือ PhotoPrism "
+"เท่านั้นที่สามารถกำหนดค่าเป็นบริการระยะไกลสำหรับการสำรองข้อมูลและการอัปโหลดไฟล์"
 
 #: src/dialog/photo/edit/details.vue:656
 #, fuzzy
@@ -2024,15 +2075,28 @@ msgstr "ต้นฉบับ"
 msgid "Other"
 msgstr "อื่น"
 
-#: src/page/connect.vue:101
+#: src/page/connect.vue:105
 #, fuzzy
-msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
-msgstr "ทีมงานของเราประเมินสิ่งนี้อย่างต่อเนื่อง โดยขึ้นอยู่กับความพยายามในการสนับสนุนที่ฟีเจอร์ต้องการ ค่าใช้จ่ายสำหรับเรา และไม่ว่าโดยทั่วไปแล้วทุกคนต้องการหรือต้องการโดยองค์กรและผู้ใช้ขั้นสูงเป็นหลัก เนื่องจากสิ่งนี้ช่วยให้เราสามารถให้บริการคุณลักษณะต่างๆ แก่สาธารณะได้มากขึ้น เราจึงสนับสนุนให้ผู้ใช้ทุกคนสนับสนุนภารกิจของเรา"
+msgid ""
+"Our team evaluates this on an ongoing basis, depending on the support effort "
+"the features require, the cost to us, and whether they are generally needed "
+"by everyone or mainly requested by organizations and advanced users. As this "
+"allows us to provide more features to the public, we encourage all users to "
+"support our mission."
+msgstr ""
+"ทีมงานของเราประเมินสิ่งนี้อย่างต่อเนื่อง โดยขึ้นอยู่กับความพยายามในการสนับสนุนที่ฟีเจอร์ต้องการ "
+"ค่าใช้จ่ายสำหรับเรา และไม่ว่าโดยทั่วไปแล้วทุกคนต้องการหรือต้องการโดยองค์กรและผู้ใช้ขั้นสูงเป็นหลัก "
+"เนื่องจากสิ่งนี้ช่วยให้เราสามารถให้บริการคุณลักษณะต่างๆ แก่สาธารณะได้มากขึ้น "
+"เราจึงสนับสนุนให้ผู้ใช้ทุกคนสนับสนุนภารกิจของเรา"
 
 #: src/page/about/about.vue:45
 #, fuzzy
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "คู่มือผู้ใช้ของเรายังครอบคลุมหัวข้อขั้นสูงมากมาย เช่น การย้ายข้อมูลจาก Google Photos และการตั้งค่าคุณภาพของภาพขนาดย่อ"
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
+msgstr ""
+"คู่มือผู้ใช้ของเรายังครอบคลุมหัวข้อขั้นสูงมากมาย เช่น การย้ายข้อมูลจาก Google Photos "
+"และการตั้งค่าคุณภาพของภาพขนาดย่อ"
 
 #: src/options/options.js:286
 #, fuzzy
@@ -2098,10 +2162,17 @@ msgstr "รูปถ่าย"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism ได้รับการอัพเดต…"
 
-#: src/page/connect.vue:95
+#: src/page/connect.vue:99
 #, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism ใช้เงินตัวเอง 100% การบริจาคโดยสมัครใจไม่ครอบคลุมค่าใช้จ่ายของทีมที่ทำงานเต็มเวลาเพื่อแจ้งข้อมูลอัปเดต เอกสาร และการสนับสนุนแก่คุณ เป็นการตัดสินใจของคุณว่าคุณต้องการสมัครเพื่อรับสิทธิประโยชน์เพิ่มเติมหรือไม่"
+msgid ""
+"PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of "
+"a team working full time to provide you with updates, documentation, and "
+"support. It is your decision whether you want to sign up to enjoy additional "
+"benefits."
+msgstr ""
+"PhotoPrism ใช้เงินตัวเอง 100% "
+"การบริจาคโดยสมัครใจไม่ครอบคลุมค่าใช้จ่ายของทีมที่ทำงานเต็มเวลาเพื่อแจ้งข้อมูลอัปเดต เอกสาร "
+"และการสนับสนุนแก่คุณ เป็นการตัดสินใจของคุณว่าคุณต้องการสมัครเพื่อรับสิทธิประโยชน์เพิ่มเติมหรือไม่"
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -2149,7 +2220,9 @@ msgstr "กรุณาอย่าอัปโหลดรูปภาพที
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr "โปรดทราบว่าการเปลี่ยนรหัสผ่านจะทำให้คุณออกจากระบบบนอุปกรณ์และเบราว์เซอร์อื่นๆ"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
@@ -2201,7 +2274,7 @@ msgstr "หลัก"
 msgid "Private"
 msgstr "ส่วนตัว"
 
-#: src/page/connect.vue:68
+#: src/page/connect.vue:70
 msgid "Proceed"
 msgstr ""
 
@@ -2340,8 +2413,12 @@ msgstr "นำออกจากอัลบั้ม"
 
 #: src/page/library/import.vue:120
 #, fuzzy
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "ลบไฟล์ที่นำเข้าเพื่อประหยัดพื้นที่จัดเก็บ ประเภทไฟล์ที่ไม่รองรับจะไม่ถูกลบ โดยจะยังคงอยู่ในตำแหน่งปัจจุบัน"
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"ลบไฟล์ที่นำเข้าเพื่อประหยัดพื้นที่จัดเก็บ ประเภทไฟล์ที่ไม่รองรับจะไม่ถูกลบ "
+"โดยจะยังคงอยู่ในตำแหน่งปัจจุบัน"
 
 #: src/common/api.js:74
 #, fuzzy
@@ -2516,7 +2593,7 @@ msgstr "แบ่งปัน %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "แบ่งปันรูปภาพของคุณกับแอพและบริการอื่นๆ"
 
-#: src/page/connect.vue:86
+#: src/page/connect.vue:90
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "ซอฟต์แวร์ฟรีไม่ควรมีค่าใช้จ่ายใช่หรือไม่"
@@ -2604,7 +2681,9 @@ msgstr "สแต็คไฟล์ที่แชร์รูปภาพที
 
 #: src/page/settings/library.vue:172
 #, fuzzy
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
 msgstr "กองรูปภาพที่ถ่ายในเวลาและสถานที่เดียวกันโดยอิงตามข้อมูลเมตา"
 
 #: src/dialog/photo/edit/info.vue:86
@@ -2619,7 +2698,9 @@ msgstr "กอง"
 
 #: src/page/settings/library.vue:138
 #, fuzzy
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
 msgstr "สแต็คไฟล์กลุ่มที่มีกรอบอ้างอิงคล้ายกัน แต่มีความแตกต่างด้านคุณภาพ รูปแบบ ขนาด หรือสี"
 
 #: src/page/library/index.vue:31
@@ -2663,17 +2744,18 @@ msgstr "ถนน"
 msgid "Subject"
 msgstr "เรื่อง"
 
-#: src/page/connect.vue:49
+#: src/page/connect.vue:51
 #, fuzzy
 msgid "Successfully Connected"
 msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 
 #: src/dialog/service/add.vue:29
 #, fuzzy
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr "การสนับสนุนบริการเพิ่มเติม เช่น Google ไดรฟ์ จะถูกเพิ่มเข้ามาเรื่อยๆ"
 
-#: src/dialog/sponsor.vue:7 src/page/connect.vue:15
+#: src/dialog/sponsor.vue:7 src/page/connect.vue:17
 #, fuzzy
 msgid "Support Our Mission"
 msgstr "สนับสนุนภารกิจของเรา"
@@ -2711,7 +2793,9 @@ msgstr "ขณะนี้ดัชนีมีไฟล์ที่ซ่อน
 
 #: src/page/library/index.vue:37
 #, fuzzy
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
 msgstr "รูปแบบของไฟล์อาจไม่ได้รับการสนับสนุน ยังไม่ได้แปลงเป็น JPEG หรือมีรูปแบบที่ซ้ำกัน"
 
 #: src/page/settings/general.vue:70
@@ -2719,22 +2803,37 @@ msgstr "รูปแบบของไฟล์อาจไม่ได้รั
 msgid "Theme"
 msgstr "ธีม"
 
-#: src/page/connect.vue:89
+#: src/page/connect.vue:93
 #, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "คิดว่า \"ซอฟต์แวร์ฟรี\" เป็น \"คำพูดฟรี\" ไม่ใช่ใน \"เบียร์ฟรี\" บางครั้ง Free Software Foundation เรียกมันว่า \"ซอฟต์แวร์เสรี\" โดยยืมคำภาษาฝรั่งเศสหรือภาษาสเปนที่แปลว่า \"ฟรี\" ในคำว่า อิสระ เพื่อแสดงให้เห็นว่าซอฟต์แวร์เหล่านี้ไม่ได้หมายความว่าเป็นซอฟต์แวร์ฟรี"
+msgid ""
+"Think of “free software” as in “free speech,” not as in “free beer.” The "
+"Free Software Foundation sometimes calls it “libre software,” borrowing the "
+"French or Spanish word for “free” as in freedom, to show they do not mean "
+"the software is gratis."
+msgstr ""
+"คิดว่า \"ซอฟต์แวร์ฟรี\" เป็น \"คำพูดฟรี\" ไม่ใช่ใน \"เบียร์ฟรี\" บางครั้ง Free Software "
+"Foundation เรียกมันว่า \"ซอฟต์แวร์เสรี\" โดยยืมคำภาษาฝรั่งเศสหรือภาษาสเปนที่แปลว่า \"ฟรี\" "
+"ในคำว่า อิสระ เพื่อแสดงให้เห็นว่าซอฟต์แวร์เหล่านี้ไม่ได้หมายความว่าเป็นซอฟต์แวร์ฟรี"
 
 #: src/page/settings/services.vue:40
 #, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "การดำเนินการนี้จะต่อเชื่อมโฟลเดอร์ต้นฉบับเป็นไดรฟ์เครือข่าย และช่วยให้คุณสามารถเปิด แก้ไข และลบไฟล์จากคอมพิวเตอร์หรือสมาร์ทโฟนได้เสมือนอยู่ในเครื่อง"
+msgstr ""
+"การดำเนินการนี้จะต่อเชื่อมโฟลเดอร์ต้นฉบับเป็นไดรฟ์เครือข่าย และช่วยให้คุณสามารถเปิด แก้ไข "
+"และลบไฟล์จากคอมพิวเตอร์หรือสมาร์ทโฟนได้เสมือนอยู่ในเครื่อง"
 
 #: src/dialog/webdav.vue:26
 #, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "การดำเนินการนี้จะต่อเชื่อมโฟลเดอร์ต้นฉบับเป็นไดรฟ์เครือข่าย และช่วยให้คุณสามารถเปิด แก้ไข และลบไฟล์จากคอมพิวเตอร์หรือสมาร์ทโฟนได้เสมือนอยู่ในเครื่อง"
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"การดำเนินการนี้จะต่อเชื่อมโฟลเดอร์ต้นฉบับเป็นไดรฟ์เครือข่าย และช่วยให้คุณสามารถเปิด แก้ไข "
+"และลบไฟล์จากคอมพิวเตอร์หรือสมาร์ทโฟนได้เสมือนอยู่ในเครื่อง"
 
 #: src/page/settings/advanced.vue:250
 #, fuzzy
@@ -2784,8 +2883,10 @@ msgstr "ชื่อเรื่องยาวเกินไป"
 msgid "Title too long"
 msgstr "ชื่อเรื่องยาวเกินไป"
 
-#: src/page/connect.vue:59
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#: src/page/connect.vue:58 src/page/connect.vue:61
+msgid ""
+"To upgrade, you may either enter an activation code or click on \"Proceed\" "
+"to sign up on our website:"
 msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
@@ -2900,8 +3001,8 @@ msgstr "กำลังอัปเดตตัวอย่าง"
 msgid "Updating stacks"
 msgstr "กำลังอัปเดตกอง"
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:586
-#: src/component/navigation.vue:1722 src/page/connect.vue:4
+#: src/page/connect.vue:4 src/component/navigation.vue:454
+#: src/component/navigation.vue:586 src/component/navigation.vue:1682
 #, fuzzy
 msgid "Upgrade"
 msgstr "อัปเกรด"
@@ -3001,7 +3102,7 @@ msgstr "ชื่อผู้ใช้"
 msgid "Vanta"
 msgstr "วันทา"
 
-#: src/page/connect.vue:9
+#: src/page/connect.vue:11
 #, fuzzy
 msgid "Verified"
 msgstr "ตรวจสอบแล้ว"
@@ -3035,8 +3136,11 @@ msgstr "ดู"
 
 #: src/page/about/about.vue:44
 #, fuzzy
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "ไปที่ docs.photoprism.app/user-guide เพื่อเรียนรู้วิธีซิงค์ จัดระเบียบ และแบ่งปันรูปภาพของคุณ"
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
+msgstr ""
+"ไปที่ docs.photoprism.app/user-guide เพื่อเรียนรู้วิธีซิงค์ จัดระเบียบ และแบ่งปันรูปภาพของคุณ"
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:27
@@ -3056,8 +3160,12 @@ msgstr "เราพยายามอย่างเต็มที่ที่
 
 #: src/page/about/about.vue:71
 #, fuzzy
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "เราจะพยายามอย่างเต็มที่เพื่อตอบคำถามของคุณ ในทางกลับกัน เราขอให้คุณสนับสนุนเราใน Patreon หรือผู้สนับสนุน GitHub"
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"เราจะพยายามอย่างเต็มที่เพื่อตอบคำถามของคุณ ในทางกลับกัน เราขอให้คุณสนับสนุนเราใน Patreon "
+"หรือผู้สนับสนุน GitHub"
 
 #: src/dialog/webdav.vue:8
 #, fuzzy
@@ -3067,9 +3175,12 @@ msgstr "ไคลเอ็นต์ WebDAV สามารถเชื่อม�
 #: src/page/settings/services.vue:37
 #, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "ไคลเอ็นต์ WebDAV เช่น Windows Explorer ของ Microsoft หรือ Finder ของ Apple สามารถเชื่อมต่อกับ PhotoPrism ได้โดยตรง"
+msgstr ""
+"ไคลเอ็นต์ WebDAV เช่น Windows Explorer ของ Microsoft หรือ Finder ของ Apple "
+"สามารถเชื่อมต่อกับ PhotoPrism ได้โดยตรง"
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 #, fuzzy
@@ -3082,7 +3193,7 @@ msgstr "อัพโหลด WebDAV"
 msgid "Website"
 msgstr "เว็บไซต์"
 
-#: src/page/connect.vue:98
+#: src/page/connect.vue:102
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "โดยทั่วไปมีฟังก์ชันอะไรบ้าง?"
@@ -3091,7 +3202,7 @@ msgstr "โดยทั่วไปมีฟังก์ชันอะไรบ
 msgid "White"
 msgstr "สีขาว"
 
-#: src/page/connect.vue:92
+#: src/page/connect.vue:96
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "เหตุใดฟีเจอร์บางอย่างจึงมีให้เฉพาะผู้สนับสนุนเท่านั้น"
@@ -3160,15 +3271,21 @@ msgid "You may rescan your library to find additional faces."
 msgstr "คุณสามารถสแกนห้องสมุดของคุณเพื่อค้นหาใบหน้าเพิ่มเติม"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:56
+#: src/page/connect.vue:58
 #, fuzzy
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
 msgstr "การสนับสนุนอย่างต่อเนื่องของคุณช่วยให้เราอัปเดตและบริการต่างๆ เป็นประจำ เช่น แผนที่โลก"
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
 #, fuzzy
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "ห้องสมุดของคุณได้รับการวิเคราะห์อย่างต่อเนื่องเพื่อสร้างอัลบั้มของช่วงเวลาพิเศษ การเดินทาง และสถานที่พิเศษ"
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"ห้องสมุดของคุณได้รับการวิเคราะห์อย่างต่อเนื่องเพื่อสร้างอัลบั้มของช่วงเวลาพิเศษ การเดินทาง "
+"และสถานที่พิเศษ"
 
 #: src/component/photo-viewer.vue:176
 #, fuzzy
@@ -3188,12 +3305,20 @@ msgstr "ซูมเข้า/ออก"
 #~ msgstr "ลงชื่อ"
 
 #, fuzzy
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"สมัคร\" เพื่ออัปเกรดบนเว็บไซต์ของเรา:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"สมัคร\" "
+#~ "เพื่ออัปเกรดบนเว็บไซต์ของเรา:"
 
 #, fuzzy
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
-#~ msgstr "หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"สมัคร\" เพื่ออัปเกรดบนเว็บไซต์ของเรา:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
+#~ "Now\" to sign up on our website:"
+#~ msgstr ""
+#~ "หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"สมัคร\" "
+#~ "เพื่ออัปเกรดบนเว็บไซต์ของเรา:"
 
 #, fuzzy
 #~ msgid "Sign up"
@@ -3204,12 +3329,25 @@ msgstr "ซูมเข้า/ออก"
 #~ msgstr "เปรียบเทียบคุณสมบัติ"
 
 #, fuzzy
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "ทีมงานของเราประเมินสิ่งนี้อย่างต่อเนื่อง โดยขึ้นอยู่กับคุณลักษณะความพยายามในการสนับสนุนและตัวเลือกการกำหนดค่าที่เป็นต้นเหตุหรือเกิดขึ้นในอดีต และขึ้นอยู่กับว่าโดยทั่วไปแล้วทุกคนต้องการหรือได้รับการร้องขอจากองค์กรและผู้ใช้ขั้นสูงเป็นหลัก เนื่องจากสิ่งนี้ช่วยให้เราสามารถเผยแพร่คุณลักษณะต่างๆ ได้มากขึ้น เราจึงสนับสนุนให้ผู้ใช้ทุกคนสนับสนุนภารกิจของเรา"
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "ทีมงานของเราประเมินสิ่งนี้อย่างต่อเนื่อง "
+#~ "โดยขึ้นอยู่กับคุณลักษณะความพยายามในการสนับสนุนและตัวเลือกการกำหนดค่าที่เป็นต้นเหตุหรือเกิดขึ้นในอดีต "
+#~ "และขึ้นอยู่กับว่าโดยทั่วไปแล้วทุกคนต้องการหรือได้รับการร้องขอจากองค์กรและผู้ใช้ขั้นสูงเป็นหลัก "
+#~ "เนื่องจากสิ่งนี้ช่วยให้เราสามารถเผยแพร่คุณลักษณะต่างๆ ได้มากขึ้น "
+#~ "เราจึงสนับสนุนให้ผู้ใช้ทุกคนสนับสนุนภารกิจของเรา"
 
 #, fuzzy
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "นอกจากนี้ โปรดให้ดาวบน GitHub หากคุณชอบโครงการนี้ มันให้แรงจูงใจเพิ่มเติมเพื่อไปต่อ"
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "นอกจากนี้ โปรดให้ดาวบน GitHub หากคุณชอบโครงการนี้ มันให้แรงจูงใจเพิ่มเติมเพื่อไปต่อ"
 
 #, fuzzy
 #~ msgid "Become a sponsor"
@@ -3219,20 +3357,31 @@ msgstr "ซูมเข้า/ออก"
 #~ msgstr "ฉันเป็นสปอนเซอร์"
 
 #, fuzzy
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "ผู้สนับสนุนสามารถเข้าถึงคุณสมบัติเพิ่มเติม รับการสนับสนุนทางเทคนิคโดยตรงผ่านอีเมล และสามารถเข้าร่วมห้องสนทนาส่วนตัวของเราบน matrix.org"
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "ผู้สนับสนุนสามารถเข้าถึงคุณสมบัติเพิ่มเติม รับการสนับสนุนทางเทคนิคโดยตรงผ่านอีเมล "
+#~ "และสามารถเข้าร่วมห้องสนทนาส่วนตัวของเราบน matrix.org"
 
 #, fuzzy
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
 #~ msgstr "ปัจจุบันนี้เป็นคุณลักษณะของสปอนเซอร์เพื่อขอบคุณทุกคนที่สนับสนุนการพัฒนาแอปพลิเคชันนี้"
 
 #, fuzzy
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
 #~ msgstr "เราจะแจ้งให้คุณทราบวิธีเปิดใช้งานเมื่อคุณสมัครใช้งาน Patreon หรือผู้สนับสนุน GitHub"
 
 #, fuzzy
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "การสนับสนุนอย่างต่อเนื่องของคุณช่วยให้เราอัปเดตและบริการต่างๆ เป็นประจำ เช่น แผนที่โลก"
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "การสนับสนุนอย่างต่อเนื่องของคุณช่วยให้เราอัปเดตและบริการต่างๆ เป็นประจำ เช่น แผนที่โลก"
 
 #, fuzzy
 #~ msgctxt "Account|"
@@ -3319,12 +3468,18 @@ msgstr "ซูมเข้า/ออก"
 #~ msgstr "ล้มเหลวขณะนำเข้าไฟล์ที่อัปโหลด"
 
 #, fuzzy
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
 #~ msgstr "หมายเหตุ: การอัปเดตรหัสผ่านจะไม่เพิกถอนการเข้าถึงจากผู้ใช้ที่ตรวจสอบสิทธิ์แล้ว"
 
 #, fuzzy
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "ภารกิจของเราคือการจัดหาโซลูชันที่เป็นมิตรต่อผู้ใช้และความเป็นส่วนตัวมากที่สุด เพื่อให้รูปภาพของคุณเป็นระเบียบและเข้าถึงได้"
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "ภารกิจของเราคือการจัดหาโซลูชันที่เป็นมิตรต่อผู้ใช้และความเป็นส่วนตัวมากที่สุด "
+#~ "เพื่อให้รูปภาพของคุณเป็นระเบียบและเข้าถึงได้"
 
 #, fuzzy
 #~ msgid "Play"
@@ -3343,8 +3498,12 @@ msgstr "ซูมเข้า/ออก"
 #~ msgstr "แสดงไลบรารีในเมนูการนำทาง"
 
 #, fuzzy
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "แผนงานแสดงให้เห็นว่างานใดที่กำลังดำเนินการอยู่ สิ่งที่ต้องทดสอบ และคำขอคุณลักษณะใดที่จะดำเนินการต่อไป"
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "แผนงานแสดงให้เห็นว่างานใดที่กำลังดำเนินการอยู่ สิ่งที่ต้องทดสอบ "
+#~ "และคำขอคุณลักษณะใดที่จะดำเนินการต่อไป"
 
 #, fuzzy
 #~ msgid "to"
