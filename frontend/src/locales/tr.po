@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-11-28 08:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/tr/>\n"
+"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -151,12 +150,8 @@ msgid "After one year"
 msgstr "Bir yıl sonra"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
-msgid ""
-"After selecting pictures from search results, you can add them to an album "
-"using the context menu."
-msgstr ""
-"Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak "
-"bunları bir albüme ekleyebilirsiniz."
+msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgstr "Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak bunları bir albüme ekleyebilirsiniz."
 
 #: src/options/options.js:383
 msgid "After two months"
@@ -239,12 +234,8 @@ msgid "All Years"
 msgstr "Bütün yıllar"
 
 #: src/dialog/share.vue:75
-msgid ""
-"Alternatively, you can upload files directly to WebDAV servers like "
-"Nextcloud."
-msgstr ""
-"Alternatif olarak, dosyaları doğrudan Nextcloud gibi WebDAV sunucularına "
-"yükleyebilirsiniz."
+msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgstr "Alternatif olarak, dosyaları doğrudan Nextcloud gibi WebDAV sunucularına yükleyebilirsiniz."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -333,39 +324,24 @@ msgid "Aspect Ratio"
 msgstr "En Boy Oranı"
 
 #: src/page/settings/library.vue:112
-msgid ""
-"Automatically create JPEGs for other file types so that they can be "
-"displayed in a browser."
-msgstr ""
-"Bir tarayıcıda görüntülenebilmeleri için diğer dosya türleri için otomatik "
-"olarak JPEG'ler oluşturun."
+msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgstr "Bir tarayıcıda görüntülenebilmeleri için diğer dosya türleri için otomatik olarak JPEG'ler oluşturun."
 
 #: src/page/settings/general.vue:163
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr ""
-"Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturur."
+msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturur."
 
 #: src/options/options.js:272
 msgid "Basic"
 msgstr "Temel"
 
 #: src/page/about/about.vue:59
-msgid ""
-"Before submitting a support request, please use our Troubleshooting "
-"Checklists to determine the cause of your problem."
-msgstr ""
-"Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için "
-"lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
+msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+msgstr "Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-msgid ""
-"Being 100% self-funded and independent, we can promise you that we will "
-"never sell your data and that we will always be transparent about our "
-"software and services."
-msgstr ""
-"100% self tarafından finanse edilen ve bağımsız bir şirket olarak, "
-"verilerinizi asla satmayacağımıza ve yazılım ve hizmetlerimiz konusunda her "
-"zaman şeffaf olacağımıza dair size söz verebiliriz."
+msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgstr "100% self tarafından finanse edilen ve bağımsız bir şirket olarak, verilerinizi asla satmayacağımıza ve yazılım ve hizmetlerimiz konusunda her zaman şeffaf olacağımıza dair size söz verebiliriz."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -401,12 +377,8 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Kitaplık'ta dizine alınmış dosya ve klasörlere göz atın."
 
 #: src/page/about/about.vue:51
-msgid ""
-"Browse the Knowledge Base for detailed information on specific product "
-"features, services, and related resources."
-msgstr ""
-"Belirli ürün özellikleri, hizmetler ve ilgili kaynaklar hakkında ayrıntılı "
-"bilgi için Bilgi Tabanına göz atın."
+msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgstr "Belirli ürün özellikleri, hizmetler ve ilgili kaynaklar hakkında ayrıntılı bilgi için Bilgi Tabanına göz atın."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:410
 msgid "Bug Report"
@@ -520,12 +492,8 @@ msgid "Colors"
 msgstr "Renkler"
 
 #: src/page/about/about.vue:46
-msgid ""
-"Common issues can be quickly diagnosed and solved using the troubleshooting "
-"checklists we provide."
-msgstr ""
-"Yaygın sorunlar, sağladığımız sorun giderme kontrol listeleri kullanılarak "
-"hızlı bir şekilde teşhis edilebilir ve çözülebilir."
+msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgstr "Yaygın sorunlar, sağladığımız sorun giderme kontrol listeleri kullanılarak hızlı bir şekilde teşhis edilebilir ve çözülebilir."
 
 #: src/page/connect.vue:67 src/page/connect.vue:110
 #, fuzzy
@@ -689,8 +657,7 @@ msgstr "Yedekleri Devredışı Bırak"
 
 #: src/page/settings/advanced.vue:163
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr ""
-"Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
+msgstr "Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
 
 #: src/page/settings/advanced.vue:481
 msgid "Disable Darktable"
@@ -739,14 +706,11 @@ msgstr "Fotoğraf ve albüm meta verilerini YAML dosyalarına yedeklemeyin."
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
+msgstr "Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi "
-"devre dışı bırakır."
+msgstr "Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi devre dışı bırakır."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
@@ -807,12 +771,8 @@ msgid "Downscaling Filter"
 msgstr "Ölçek küçültme filtresi"
 
 #: src/page/about/feedback.vue:16
-msgid ""
-"Due to the high volume of emails we receive, our team may be unable to get "
-"back to you immediately."
-msgstr ""
-"Aldığımız e-postaların yoğunluğu nedeniyle ekibimiz size hemen geri dönüş "
-"yapamayabilir."
+msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgstr "Aldığımız e-postaların yoğunluğu nedeniyle ekibimiz size hemen geri dönüş yapamayabilir."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -827,11 +787,8 @@ msgid "Dynamic Previews"
 msgstr "Dinamik Önizlemeler"
 
 #: src/page/settings/advanced.vue:303
-msgid ""
-"Dynamic rendering requires a powerful server. It is not recommended for NAS "
-"devices."
-msgstr ""
-"Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
+msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgstr "Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -897,12 +854,8 @@ msgid "Every two days"
 msgstr "iki günde bir"
 
 #: src/page/settings/general.vue:207
-msgid ""
-"Exclude content marked as private from search results, shared albums, "
-"labels, and places."
-msgstr ""
-"Özel olarak işaretlenen içeriği arama sonuçlarından, paylaşılan albümlerden, "
-"etiketlerden ve yerlerden hariç tutun."
+msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgstr "Özel olarak işaretlenen içeriği arama sonuçlarından, paylaşılan albümlerden, etiketlerden ve yerlerden hariç tutun."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -986,11 +939,8 @@ msgid "Feedback"
 msgstr "Geri bildirim"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25
-msgid ""
-"Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime "
-"geçmekten çekinmeyin."
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr "Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime geçmekten çekinmeyin."
 
 #: src/options/options.js:424
 msgid "Female"
@@ -1024,12 +974,8 @@ msgid "Files"
 msgstr "Dosyalar"
 
 #: src/page/settings/library.vue:214
-msgid ""
-"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
-"the same picture."
-msgstr ""
-"'IMG_1234 (2)' ve 'IMG_1234 (3)' gibi sıralı adlara sahip dosyalar aynı "
-"resme aittir."
+msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgstr "'IMG_1234 (2)' ve 'IMG_1234 (3)' gibi sıralı adlara sahip dosyalar aynı resme aittir."
 
 #: src/dialog/photo/edit/details.vue:484
 msgid "Focal Length"
@@ -1177,18 +1123,12 @@ msgid "Import failed"
 msgstr "İçe aktarılamadı"
 
 #: src/page/library/import.vue:25
-msgid ""
-"Imported files will be sorted by date and given a unique name to avoid "
-"duplicates."
-msgstr ""
-"İçe aktarılan dosyalar tarihe göre sıralanacak ve yinelemeleri önlemek için "
-"benzersiz bir ad verilecektir."
+msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgstr "İçe aktarılan dosyalar tarihe göre sıralanacak ve yinelemeleri önlemek için benzersiz bir ad verilecektir."
 
 #: src/page/settings/general.vue:273
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"İçe aktarılan dosyalar tarihe göre sıralanacak ve benzersiz bir ad "
-"verilecektir."
+msgstr "İçe aktarılan dosyalar tarihe göre sıralanacak ve benzersiz bir ad verilecektir."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1212,12 +1152,8 @@ msgstr "Ayrıca, sponsorlar e-posta yoluyla doğrudan teknik destek alırlar."
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid ""
-"In case pictures you expect are missing, please rescan your library and wait "
-"until indexing has been completed."
-msgstr ""
-"Beklediğiniz resimlerin eksik olması durumunda lütfen kitaplığınızı yeniden "
-"tarayın ve indeksleme tamamlanana kadar bekleyin."
+msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr "Beklediğiniz resimlerin eksik olması durumunda lütfen kitaplığınızı yeniden tarayın ve indeksleme tamamlanana kadar bekleyin."
 
 #: src/component/navigation.vue:574 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1277,12 +1213,8 @@ msgid "Invalid photo selected"
 msgstr "Geçersiz fotoğraf seçildi"
 
 #: src/page/about/about.vue:16
-msgid ""
-"It makes use of the latest technologies to tag and find pictures "
-"automatically without getting in your way."
-msgstr ""
-"Yolunuza çıkmadan resimleri otomatik olarak etiketlemek ve bulmak için en "
-"son teknolojilerden yararlanır."
+msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgstr "Yolunuza çıkmadan resimleri otomatik olarak etiketlemek ve bulmak için en son teknolojilerden yararlanır."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1419,12 +1351,8 @@ msgid "Location"
 msgstr "Konum"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid ""
-"Log messages appear here whenever PhotoPrism comes across broken files, or "
-"there are other potential issues."
-msgstr ""
-"PhotoPrism bozuk dosyalarla karşılaştığında veya başka olası sorunlar "
-"olduğunda günlük mesajları burada görünür."
+msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgstr "PhotoPrism bozuk dosyalarla karşılaştığında veya başka olası sorunlar olduğunda günlük mesajları burada görünür."
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:1722
 #: src/component/navigation.vue:1996
@@ -1639,12 +1567,8 @@ msgid "No video selected"
 msgstr "Seçili video yok"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid ""
-"No warnings or error containing this keyword. Note that search is case-"
-"sensitive."
-msgstr ""
-"Bu anahtar kelimeyi içeren uyarı veya hata yok. Aramanın büyük/küçük harfe "
-"duyarlı olduğunu unutmayın."
+msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgstr "Bu anahtar kelimeyi içeren uyarı veya hata yok. Aramanın büyük/küçük harfe duyarlı olduğunu unutmayın."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1653,12 +1577,8 @@ msgstr ""
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
-msgid ""
-"Non-photographic and low-quality images require a review before they appear "
-"in search results."
-msgstr ""
-"Fotoğrafik olmayan ve düşük kaliteli görseller, arama sonuçlarında "
-"görünmeden önce bir inceleme gerektirir."
+msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgstr "Fotoğrafik olmayan ve düşük kaliteli görseller, arama sonuçlarında görünmeden önce bir inceleme gerektirir."
 
 #: src/options/options.js:249 src/options/options.js:334
 msgid "None"
@@ -1669,23 +1589,16 @@ msgid "Not Found"
 msgstr "Bulunamadı"
 
 #: src/page/library/import.vue:28
-msgid ""
-"Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Orijinaller klasörünüzü manuel olarak yönetebileceğinizi ve içe aktarmanın "
-"isteğe bağlı olduğunu unutmayın."
+msgid "Note you may manually manage your originals folder and importing is optional."
+msgstr "Orijinaller klasörünüzü manuel olarak yönetebileceğinizi ve içe aktarmanın isteğe bağlı olduğunu unutmayın."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Not:"
 
 #: src/dialog/service/add.vue:28
-msgid ""
-"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
-"as remote service for backup and file upload."
-msgstr ""
-"Not: Yalnızca Nextcloud veya PhotoPrism gibi WebDAV sunucuları yedekleme ve "
-"dosya yükleme için uzak hizmet olarak yapılandırılabilir."
+msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
+msgstr "Not: Yalnızca Nextcloud veya PhotoPrism gibi WebDAV sunucuları yedekleme ve dosya yükleme için uzak hizmet olarak yapılandırılabilir."
 
 #: src/dialog/photo/edit/details.vue:656
 msgid "Notes"
@@ -1786,27 +1699,12 @@ msgstr "Diğer"
 
 #: src/page/connect.vue:105
 #, fuzzy
-msgid ""
-"Our team evaluates this on an ongoing basis, depending on the support effort "
-"the features require, the cost to us, and whether they are generally needed "
-"by everyone or mainly requested by organizations and advanced users. As this "
-"allows us to provide more features to the public, we encourage all users to "
-"support our mission."
-msgstr ""
-"Ekibimiz bunu, özelliklerin gerektirdiği destek çabasına, bize maliyetine ve "
-"genel olarak herkes tarafından ihtiyaç duyulup duyulmadığına veya çoğunlukla "
-"kuruluşlar ve ileri düzey kullanıcılar tarafından talep edilip edilmediğine "
-"bağlı olarak sürekli olarak değerlendirmektedir. Bu sayede halka daha fazla "
-"özellik sunabildiğimiz için tüm kullanıcıları misyonumuzu desteklemeye "
-"teşvik ediyoruz."
+msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
+msgstr "Ekibimiz bunu, özelliklerin gerektirdiği destek çabasına, bize maliyetine ve genel olarak herkes tarafından ihtiyaç duyulup duyulmadığına veya çoğunlukla kuruluşlar ve ileri düzey kullanıcılar tarafından talep edilip edilmediğine bağlı olarak sürekli olarak değerlendirmektedir. Bu sayede halka daha fazla özellik sunabildiğimiz için tüm kullanıcıları misyonumuzu desteklemeye teşvik ediyoruz."
 
 #: src/page/about/about.vue:45
-msgid ""
-"Our User Guide also covers many advanced topics, such as migrating from "
-"Google Photos and thumbnail quality settings."
-msgstr ""
-"Kullanıcı Kılavuzumuz ayrıca Google Fotoğraflar'dan geçiş ve küçük resim "
-"kalitesi ayarları gibi birçok gelişmiş konuyu da kapsamaktadır."
+msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgstr "Kullanıcı Kılavuzumuz ayrıca Google Fotoğraflar'dan geçiş ve küçük resim kalitesi ayarları gibi birçok gelişmiş konuyu da kapsamaktadır."
 
 #: src/options/options.js:286
 msgid "Outdoor"
@@ -1838,8 +1736,7 @@ msgstr "Kişi"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr ""
-"Bağlantı paylaştığınız kişiler herkese açık içerikleri görüntüleyebilecektir."
+msgstr "Bağlantı paylaştığınız kişiler herkese açık içerikleri görüntüleyebilecektir."
 
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
@@ -1863,22 +1760,12 @@ msgstr "PhotoPrism güncellendi.."
 
 #: src/page/connect.vue:99
 #, fuzzy
-msgid ""
-"PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of "
-"a team working full time to provide you with updates, documentation, and "
-"support. It is your decision whether you want to sign up to enjoy additional "
-"benefits."
-msgstr ""
-"PhotoPrism %100 kendi kendini finanse etmektedir. Gönüllü bağışlar, size "
-"güncellemeler, dokümantasyon ve destek sağlamak için tam zamanlı çalışan bir "
-"ekibin maliyetini karşılamaz. Ek avantajlardan yararlanmak için kaydolmak "
-"isteyip istemediğiniz sizin kararınızdır."
+msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr "PhotoPrism %100 kendi kendini finanse etmektedir. Gönüllü bağışlar, size güncellemeler, dokümantasyon ve destek sağlamak için tam zamanlı çalışan bir ekibin maliyetini karşılamaz. Ek avantajlardan yararlanmak için kaydolmak isteyip istemediğiniz sizin kararınızdır."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
-"PhotoPrism®, Merkezi Olmayan Web için Yapay Zeka Destekli bir Fotoğraf "
-"Uygulamasıdır."
+msgstr "PhotoPrism®, Merkezi Olmayan Web için Yapay Zeka Destekli bir Fotoğraf Uygulamasıdır."
 
 #: src/app/routes.js:142
 msgid "Photos"
@@ -1914,12 +1801,8 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Lütfen saldırgan içerik barındıran fotoğraflar yüklemeyin."
 
 #: src/dialog/account/password.vue:17
-msgid ""
-"Please note that changing your password will log you out on other devices "
-"and browsers."
-msgstr ""
-"Lütfen şifrenizi değiştirdiğinizde diğer cihazlarda ve tarayıcılarda "
-"oturumunuzu kapatacağınızı unutmayın."
+msgid "Please note that changing your password will log you out on other devices and browsers."
+msgstr "Lütfen şifrenizi değiştirdiğinizde diğer cihazlarda ve tarayıcılarda oturumunuzu kapatacağınızı unutmayın."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -2007,9 +1890,7 @@ msgstr "RAW Dönüştürme"
 
 #: src/page/library/index.vue:116
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Önceden indekslenmiş ve değişmemiş dosyalar da dahil olmak üzere tüm "
-"orijinalleri yeniden indeksleyin."
+msgstr "Önceden indekslenmiş ve değişmemiş dosyalar da dahil olmak üzere tüm orijinalleri yeniden indeksleyin."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -2076,12 +1957,8 @@ msgid "Remove from album"
 msgstr "Albümden çıkar"
 
 #: src/page/library/import.vue:120
-msgid ""
-"Remove imported files to save storage. Unsupported file types will never be "
-"deleted, they remain in their current location."
-msgstr ""
-"Depolama alanından tasarruf etmek için içe aktarılan dosyaları kaldırın. "
-"Desteklenmeyen dosya türleri asla silinmez, mevcut konumlarında kalırlar."
+msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgstr "Depolama alanından tasarruf etmek için içe aktarılan dosyaları kaldırın. Desteklenmeyen dosya türleri asla silinmez, mevcut konumlarında kalırlar."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2292,15 +2169,11 @@ msgstr "Yığın"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Aynı benzersiz görüntü veya örnek tanımlayıcısını paylaşan yığın dosyaları."
+msgstr "Aynı benzersiz görüntü veya örnek tanımlayıcısını paylaşan yığın dosyaları."
 
 #: src/page/settings/library.vue:172
-msgid ""
-"Stack pictures taken at the exact same time and location based on their "
-"metadata."
-msgstr ""
-"Aynı zamanda ve konumda çekilen fotoğrafları meta verilerine göre yığınlayın."
+msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgstr "Aynı zamanda ve konumda çekilen fotoğrafları meta verilerine göre yığınlayın."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2311,12 +2184,8 @@ msgid "Stacks"
 msgstr "Yığınlar"
 
 #: src/page/settings/library.vue:138
-msgid ""
-"Stacks group files with a similar frame of reference, but differences of "
-"quality, format, size or color."
-msgstr ""
-"Yığınlar, benzer referans çerçevesine sahip, ancak kalite, format, boyut "
-"veya renk farklılıkları olan dosyaları gruplandırır."
+msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+msgstr "Yığınlar, benzer referans çerçevesine sahip, ancak kalite, format, boyut veya renk farklılıkları olan dosyaları gruplandırır."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2356,8 +2225,7 @@ msgid "Successfully Connected"
 msgstr "Başarıyla Bağlandı"
 
 #: src/dialog/service/add.vue:29
-msgid ""
-"Support for additional services, like Google Drive, will be added over time."
+msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Google Drive gibi ek hizmetler için destek zaman içinde eklenecektir."
 
 #: src/dialog/sponsor.vue:7 src/page/connect.vue:17
@@ -2391,12 +2259,8 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "Dizin şu anda %{n} gizli dosya içermektedir."
 
 #: src/page/library/index.vue:37
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet "
-"or there are duplicates."
-msgstr ""
-"Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir "
-"veya mükerrer olabilir."
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir veya mükerrer olabilir."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2404,36 +2268,20 @@ msgstr "Tema"
 
 #: src/page/connect.vue:93
 #, fuzzy
-msgid ""
-"Think of “free software” as in “free speech,” not as in “free beer.” The "
-"Free Software Foundation sometimes calls it “libre software,” borrowing the "
-"French or Spanish word for “free” as in freedom, to show they do not mean "
-"the software is gratis."
-msgstr ""
-"\"Özgür yazılım \"ı \"özgür konuşma\" gibi düşünün, \"özgür bira\" gibi "
-"değil. Özgür Yazılım Vakfı, yazılımın bedava olduğunu kastetmediklerini "
-"göstermek için bazen Fransızca veya İspanyolca \"özgür\" kelimesini ödünç "
-"alarak \"libre yazılım\" olarak adlandırmaktadır."
+msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+msgstr "\"Özgür yazılım \"ı \"özgür konuşma\" gibi düşünün, \"özgür bira\" gibi değil. Özgür Yazılım Vakfı, yazılımın bedava olduğunu kastetmediklerini göstermek için bazen Fransızca veya İspanyolca \"özgür\" kelimesini ödünç alarak \"libre yazılım\" olarak adlandırmaktadır."
 
 #: src/page/settings/services.vue:40
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları "
-"açmanıza, düzenlemenize ve silmenize olanak tanır\n"
+"Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları açmanıza, düzenlemenize ve silmenize olanak tanır\n"
 "          bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi."
 
 #: src/dialog/webdav.vue:26
-msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files from your computer or smartphone as if they were "
-"local."
-msgstr ""
-"Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları "
-"bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi açmanıza, "
-"düzenlemenize ve silmenize olanak tanır."
+msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgstr "Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi açmanıza, düzenlemenize ve silmenize olanak tanır."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2477,12 +2325,8 @@ msgid "Title too long"
 msgstr "Başlık çok uzun"
 
 #: src/page/connect.vue:58 src/page/connect.vue:61
-msgid ""
-"To upgrade, you may either enter an activation code or click on \"Proceed\" "
-"to sign up on our website:"
-msgstr ""
-"Yükseltmek için, bir aktivasyon kodu girebilir veya web sitemizde yükseltmek "
-"için \"Kaydol\" seçeneğine tıklayabilirsiniz:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr "Yükseltmek için, bir aktivasyon kodu girebilir veya web sitemizde yükseltmek için \"Kaydol\" seçeneğine tıklayabilirsiniz:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2630,8 +2474,7 @@ msgstr "Yükleniyor…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedilecektir."
+msgstr "Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedilecektir."
 
 #: src/dialog/share.vue:153
 msgid "URL"
@@ -2690,13 +2533,8 @@ msgid "View"
 msgstr "Görünüm"
 
 #: src/page/about/about.vue:44
-msgid ""
-"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
-"share your pictures."
-msgstr ""
-"Fotoğraflarınızı nasıl senkronize edeceğinizi, düzenleyeceğinizi ve "
-"paylaşacağınızı öğrenmek için docs.photoprism.app/user-guide adresini "
-"ziyaret edin."
+msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgstr "Fotoğraflarınızı nasıl senkronize edeceğinizi, düzenleyeceğinizi ve paylaşacağınızı öğrenmek için docs.photoprism.app/user-guide adresini ziyaret edin."
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:27
@@ -2709,32 +2547,22 @@ msgstr "Görüşleriniz için teşekkür ederiz!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr ""
-"Beş iş günü veya daha kısa bir süre içinde yanıt vermek için elimizden "
-"geleni yapıyoruz."
+msgstr "Beş iş günü veya daha kısa bir süre içinde yanıt vermek için elimizden geleni yapıyoruz."
 
 #: src/page/about/about.vue:71
-msgid ""
-"We'll do our best to answer all your questions. In return, we ask you to "
-"back us on Patreon or GitHub Sponsors."
-msgstr ""
-"Tüm sorularınızı yanıtlamak için elimizden geleni yapacağız. Karşılığında "
-"sizden bizi Patreon veya GitHub Sponsorları üzerinden desteklemenizi rica "
-"ediyoruz."
+msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+msgstr "Tüm sorularınızı yanıtlamak için elimizden geleni yapacağız. Karşılığında sizden bizi Patreon veya GitHub Sponsorları üzerinden desteklemenizi rica ediyoruz."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr ""
-"WebDAV istemcileri aşağıdaki URL'yi kullanarak PhotoPrism'e bağlanabilir:"
+msgstr "WebDAV istemcileri aşağıdaki URL'yi kullanarak PhotoPrism'e bağlanabilir:"
 
 #: src/page/settings/services.vue:37
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
-"connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"Microsoft'un Windows Explorer'ı veya Apple'ın Finder'ı gibi WebDAV "
-"istemcileri doğrudan\n"
+"Microsoft'un Windows Explorer'ı veya Apple'ın Finder'ı gibi WebDAV istemcileri doğrudan\n"
 "          PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
@@ -2815,21 +2643,12 @@ msgstr "Başka yüzler bulmak için kütüphanenizi yeniden tarayabilirsiniz."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 #: src/page/connect.vue:58
-msgid ""
-"Your continued support helps us provide regular updates and remain "
-"independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Devam eden desteğiniz düzenli güncellemeler sağlamamıza ve bağımsız "
-"kalmamıza yardımcı olur, böylece misyonumuzu yerine getirebilir ve "
-"gizliliğinizi koruyabiliriz."
+msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgstr "Devam eden desteğiniz düzenli güncellemeler sağlamamıza ve bağımsız kalmamıza yardımcı olur, böylece misyonumuzu yerine getirebilir ve gizliliğinizi koruyabiliriz."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
-msgid ""
-"Your library is continuously analyzed to automatically create albums of "
-"special moments, trips, and places."
-msgstr ""
-"Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturmak "
-"için kitaplığınız sürekli olarak analiz edilir."
+msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluşturmak için kitaplığınız sürekli olarak analiz edilir."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
@@ -2847,12 +2666,8 @@ msgstr "Yakınlaştır / uzaklaştır"
 #~ msgstr "Kaydol"
 
 #, fuzzy
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
-#~ msgstr ""
-#~ "Yükseltmek için, bir aktivasyon kodu girebilir veya web sitemizde "
-#~ "yükseltmek için \"Kaydol\" seçeneğine tıklayabilirsiniz:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+#~ msgstr "Yükseltmek için, bir aktivasyon kodu girebilir veya web sitemizde yükseltmek için \"Kaydol\" seçeneğine tıklayabilirsiniz:"
 
 #~ msgid "Sign up"
 #~ msgstr "Kaydol"
@@ -2862,27 +2677,11 @@ msgstr "Yakınlaştır / uzaklaştır"
 #~ msgstr "Özellikleri Karşılaştırın"
 
 #, fuzzy
-#~ msgid ""
-#~ "Our team evaluates this on an ongoing basis, depending on the support "
-#~ "effort features and config options cause or have caused in the past, and "
-#~ "whether they are generally needed by everyone or mainly requested by "
-#~ "organizations and advanced users. As this allows us to make more features "
-#~ "available to the public, we encourage all users to support our mission."
-#~ msgstr ""
-#~ "Ekibimiz, özelliklerin ve yapılandırma seçeneklerinin neden olduğu veya "
-#~ "geçmişte neden olduğu destek çabasına ve genel olarak herkes tarafından "
-#~ "ihtiyaç duyulup duyulmadığına veya çoğunlukla kuruluşlar ve ileri düzey "
-#~ "kullanıcılar tarafından talep edilip edilmediğine bağlı olarak bunu "
-#~ "sürekli olarak değerlendirmektedir. Bu, halka daha fazla özellik "
-#~ "sunmamızı sağladığından, tüm kullanıcıları misyonumuzu desteklemeye "
-#~ "teşvik ediyoruz."
+#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Ekibimiz, özelliklerin ve yapılandırma seçeneklerinin neden olduğu veya geçmişte neden olduğu destek çabasına ve genel olarak herkes tarafından ihtiyaç duyulup duyulmadığına veya çoğunlukla kuruluşlar ve ileri düzey kullanıcılar tarafından talep edilip edilmediğine bağlı olarak bunu sürekli olarak değerlendirmektedir. Bu, halka daha fazla özellik sunmamızı sağladığından, tüm kullanıcıları misyonumuzu desteklemeye teşvik ediyoruz."
 
-#~ msgid ""
-#~ "Also, please leave a star on GitHub if you like this project. It provides "
-#~ "additional motivation to keep going."
-#~ msgstr ""
-#~ "Ayrıca, bu projeyi beğendiyseniz lütfen GitHub'da bir yıldız bırakın. "
-#~ "Devam etmek için ek motivasyon sağlar."
+#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+#~ msgstr "Ayrıca, bu projeyi beğendiyseniz lütfen GitHub'da bir yıldız bırakın. Devam etmek için ek motivasyon sağlar."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Sponsor olun"
@@ -2890,33 +2689,17 @@ msgstr "Yakınlaştır / uzaklaştır"
 #~ msgid "I'm a sponsor"
 #~ msgstr "Ben sponsorum"
 
-#~ msgid ""
-#~ "Sponsors get access to additional features, receive direct technical "
-#~ "support via email, and can join our private chat room on matrix.org."
-#~ msgstr ""
-#~ "Sponsorlar ek özelliklere erişebilir, e-posta yoluyla doğrudan teknik "
-#~ "destek alabilir ve matrix.org'daki özel sohbet odamıza katılabilir."
+#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
+#~ msgstr "Sponsorlar ek özelliklere erişebilir, e-posta yoluyla doğrudan teknik destek alabilir ve matrix.org'daki özel sohbet odamıza katılabilir."
 
-#~ msgid ""
-#~ "This currently is a sponsor feature to thank everyone who supports the "
-#~ "development of this application."
-#~ msgstr ""
-#~ "Bu, şu anda bu uygulamanın geliştirilmesini destekleyen herkese teşekkür "
-#~ "etmek için bir sponsor özelliğidir."
+#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#~ msgstr "Bu, şu anda bu uygulamanın geliştirilmesini destekleyen herkese teşekkür etmek için bir sponsor özelliğidir."
 
-#~ msgid ""
-#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
-#~ "Sponsors."
-#~ msgstr ""
-#~ "Patreon veya GitHub Sponsorlarına kaydolduğunuzda bunu nasıl "
-#~ "etkinleştireceğinizi size bildireceğiz."
+#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+#~ msgstr "Patreon veya GitHub Sponsorlarına kaydolduğunuzda bunu nasıl etkinleştireceğinizi size bildireceğiz."
 
-#~ msgid ""
-#~ "Your continued support helps us provide regular updates and services like "
-#~ "world maps."
-#~ msgstr ""
-#~ "Devam eden desteğiniz, düzenli güncellemeler ve dünya haritaları gibi "
-#~ "hizmetler sunmamıza yardımcı oluyor."
+#~ msgid "Your continued support helps us provide regular updates and services like world maps."
+#~ msgstr "Devam eden desteğiniz, düzenli güncellemeler ve dünya haritaları gibi hizmetler sunmamıza yardımcı oluyor."
 
 #, fuzzy
 #~ msgctxt "Account|"
@@ -2987,20 +2770,12 @@ msgstr "Yakınlaştır / uzaklaştır"
 #~ msgstr "Yüklenen dosyalar içe aktarılırken hata oluştu"
 
 #, fuzzy
-#~ msgid ""
-#~ "Note: Updating the password will not revoke access from already "
-#~ "authenticated users."
-#~ msgstr ""
-#~ "Not: Parolanın güncellenmesi, zaten kimliği doğrulanmış kullanıcıların "
-#~ "erişimini iptal etmeyecektir."
+#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgstr "Not: Parolanın güncellenmesi, zaten kimliği doğrulanmış kullanıcıların erişimini iptal etmeyecektir."
 
 #, fuzzy
-#~ msgid ""
-#~ "Our mission is to provide the most user- and privacy-friendly solution to "
-#~ "keep your pictures organized and accessible."
-#~ msgstr ""
-#~ "Misyonumuz, resimlerinizi düzenli ve erişilebilir tutmak için en "
-#~ "kullanıcı ve gizlilik dostu çözümü sunmaktır."
+#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+#~ msgstr "Misyonumuz, resimlerinizi düzenli ve erişilebilir tutmak için en kullanıcı ve gizlilik dostu çözümü sunmaktır."
 
 #, fuzzy
 #~ msgid "Play"
@@ -3019,13 +2794,8 @@ msgstr "Yakınlaştır / uzaklaştır"
 #~ msgstr "Gezinti menüsünde Kitaplığı göster."
 
 #, fuzzy
-#~ msgid ""
-#~ "The roadmap shows what tasks are in progress, what needs testing, and "
-#~ "which feature requests are going to be implemented next."
-#~ msgstr ""
-#~ "Yol haritası, hangi görevlerin devam ettiğini, nelerin test edilmesi "
-#~ "gerektiğini ve hangi özellik taleplerinin daha sonra uygulanacağını "
-#~ "gösterir."
+#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
+#~ msgstr "Yol haritası, hangi görevlerin devam ettiğini, nelerin test edilmesi gerektiğini ve hangi özellik taleplerinin daha sonra uygulanacağını gösterir."
 
 #, fuzzy
 #~ msgid "to"
