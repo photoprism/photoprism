@@ -70,4 +70,15 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "iPhone 7 back camera 3.99mm f/1.8", data.LensModel)
 	})
 
+	t.Run("DateHeic", func(t *testing.T) {
+		data, err := XMP("testdata/date.heic.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, time.Date(2022, 9, 4, 0, 48, 26, 0, time.UTC), data.TakenAt.UTC())
+		assert.True(t, data.TakenAtLocal.IsZero())
+		assert.Equal(t, "UTC", data.TimeZone)
+	})
 }

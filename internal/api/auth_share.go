@@ -33,7 +33,7 @@ func Shares(router *gin.RouterGroup) {
 		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s", clientConfig.SiteUrl, token)
 
 		uri := conf.BaseUri("/library/albums")
-		c.HTML(http.StatusOK, "share.tmpl", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
+		c.HTML(http.StatusOK, "share.gohtml", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})
 
 	router.GET("/:token/:shared", func(c *gin.Context) {
@@ -65,6 +65,6 @@ func Shares(router *gin.RouterGroup) {
 
 		uri := conf.BaseUri(path.Join("/library/albums", uid, shared))
 
-		c.HTML(http.StatusOK, "share.tmpl", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
+		c.HTML(http.StatusOK, "share.gohtml", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})
 }

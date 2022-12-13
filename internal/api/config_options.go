@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
@@ -90,14 +91,14 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		}
 
 		// Make sure directory exists.
-		if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
+		if err := os.MkdirAll(filepath.Dir(fileName), fs.ModeDir); err != nil {
 			log.Errorf("config: failed creating config path %s (%s)", filepath.Dir(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
 		// Write YAML data to file.
-		if err := os.WriteFile(fileName, yamlData, os.ModePerm); err != nil {
+		if err := os.WriteFile(fileName, yamlData, fs.ModeFile); err != nil {
 			log.Errorf("config: failed writing values to %s (%s)", clean.Log(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
@@ -110,12 +111,17 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			return
 		}
 
+		// Propagate changes.
 		conf.Propagate()
 
+		// Flush session cache and update client config.
+		entity.FlushSessionCache()
 		UpdateClientConfig()
 
+		// Show info message.
 		event.InfoMsg(i18n.MsgSettingsSaved)
 
+		// Return updated config options.
 		c.JSON(http.StatusOK, conf.Options())
 	})
 }

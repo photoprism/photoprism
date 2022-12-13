@@ -19,7 +19,8 @@ const (
 	ImageTIFF       Type = "tiff" // TIFF image
 	ImageDNG        Type = "dng"  // Adobe Digital Negative image
 	ImageAVIF       Type = "avif" // AV1 Image File Format (AVIF)
-	ImageHEIF       Type = "heif" // High Efficiency Image File Format (HEIF/HEIC)
+	ImageHEIF       Type = "heif" // High Efficiency Image File Format (HEIF)
+	ImageHEIC       Type = "heic" // High Efficiency Image Container (HEIC)
 	ImageBMP        Type = "bmp"  // BMP image
 	ImageMPO        Type = "mpo"  // Stereoscopic Image that consists of two JPG images that are combined into one 3D image
 	ImageWebP       Type = "webp" // Google WebP Image
@@ -39,6 +40,7 @@ const (
 	VideoFlash      Type = "flv"  // Flash Video
 	VideoMKV        Type = "mkv"  // Matroska Multimedia Container, free and open
 	VideoAVCHD      Type = "mts"  // AVCHD (Advanced Video Coding High Definition)
+	VideoBDAV       Type = "m2ts" // Blu-ray MPEG-2 Transport Stream
 	VideoOGV        Type = "ogv"  // Ogg container format maintained by the Xiph.Org, free and open
 	VideoASF        Type = "asf"  // Advanced Systems/Streaming Format (ASF)
 	VideoWMV        Type = "wmv"  // Windows Media Video (based on ASF)

@@ -29,6 +29,8 @@ import User from "model/user";
 import Socket from "websocket.js";
 
 const SessionHeader = "X-Session-ID";
+const PublicID = "234200000000000000000000000000000000000000000000";
+const LoginPage = "login";
 
 export default class Session {
   /**
@@ -140,6 +142,7 @@ export default class Session {
 
   deleteId() {
     this.session_id = null;
+    this.provider = "";
     this.storage.removeItem("session_id");
 
     delete Api.defaults.headers.common[SessionHeader];
@@ -154,6 +157,9 @@ export default class Session {
 
     if (resp.data.id) {
       this.setId(resp.data.id);
+    }
+    if (resp.data.provider) {
+      this.provider = resp.data.provider;
     }
     if (resp.data.config) {
       this.setConfig(resp.data.config);
@@ -227,7 +233,7 @@ export default class Session {
 
   getHome() {
     if (this.loginRequired()) {
-      return "login";
+      return LoginPage;
     } else if (this.config.allow("photos", "access_library")) {
       return "browse";
     } else {
@@ -237,6 +243,10 @@ export default class Session {
 
   isAdmin() {
     return this.user && this.user.hasId() && (this.user.Role === "admin" || this.user.SuperAdmin);
+  }
+
+  isSuperAdmin() {
+    return this.user && this.user.hasId() && this.user.SuperAdmin;
   }
 
   isAnonymous() {
@@ -285,10 +295,17 @@ export default class Session {
     }
   }
 
-  login(name, password, token) {
+  isLogin() {
+    if (!window || !window.location) {
+      return true;
+    }
+    return LoginPage === window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
+  }
+
+  login(username, password, token) {
     this.deleteId();
 
-    return Api.post("session", { name, password, token }).then((resp) => {
+    return Api.post("session", { username, password, token }).then((resp) => {
       const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
       this.sendClientInfo();
@@ -297,7 +314,16 @@ export default class Session {
   }
 
   refresh() {
-    if (this.hasId() && !this.config.isPublic()) {
+    // Refresh session information.
+    if (this.config.isPublic()) {
+      // No authentication in public mode.
+      this.setId(PublicID);
+      return Api.get("session/" + this.getId()).then((resp) => {
+        this.setResp(resp);
+        return Promise.resolve();
+      });
+    } else if (this.hasId()) {
+      // Verify authentication.
       return Api.get("session/" + this.getId())
         .then((resp) => {
           this.setResp(resp);
@@ -305,10 +331,13 @@ export default class Session {
         })
         .catch(() => {
           this.deleteId();
-          window.location.reload();
+          if (!this.isLogin()) {
+            window.location.reload();
+          }
           return Promise.reject();
         });
     } else {
+      // No authentication yet.
       return Promise.resolve();
     }
   }
@@ -326,7 +355,7 @@ export default class Session {
 
   onLogout(noRedirect) {
     this.deleteId();
-    if (noRedirect !== true) {
+    if (noRedirect !== true && !this.isLogin()) {
       window.location = this.config.baseUri + "/";
     }
     return Promise.resolve();

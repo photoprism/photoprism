@@ -153,7 +153,7 @@ export default class Page {
         )
       )
       .ok()
-      .click(Selector(".input-" + type + " input"))
+      .click(Selector(".input-" + type + " input + div.v-input--selection-controls__ripple"))
       .expect(
         Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
           "aria-checked",
@@ -173,7 +173,7 @@ export default class Page {
         )
       )
       .ok()
-      .click(Selector(".input-" + type + " input"))
+      .click(Selector(".input-" + type + " input + div.v-input--selection-controls__ripple"))
       .expect(
         Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
           "aria-checked",

@@ -37,8 +37,8 @@ func TestAlbum_SetName(t *testing.T) {
 		album := NewAlbum("initial name", AlbumDefault)
 		assert.Equal(t, "initial name", album.AlbumTitle)
 		assert.Equal(t, "initial-name", album.AlbumSlug)
-		album.SetTitle("New Album Name")
-		assert.Equal(t, "New Album Name", album.AlbumTitle)
+		album.SetTitle("New Album \"Name\"")
+		assert.Equal(t, "New Album “Name“", album.AlbumTitle)
 		assert.Equal(t, "new-album-name", album.AlbumSlug)
 	})
 	t.Run("empty name", func(t *testing.T) {

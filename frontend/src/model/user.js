@@ -67,7 +67,6 @@ export class User extends RestModel {
         UpdatedAt: "",
       },
       Details: {
-        IdURL: "",
         SubjUID: "",
         SubjSrc: "",
         PlaceID: "",
@@ -76,13 +75,15 @@ export class User extends RestModel {
         BirthYear: -1,
         BirthMonth: -1,
         BirthDay: -1,
-        NamePrefix: "",
+        NameTitle: "",
         GivenName: "",
         MiddleName: "",
         FamilyName: "",
         NameSuffix: "",
         NickName: "",
+        NameSrc: "",
         Gender: "",
+        About: "",
         Bio: "",
         Location: "",
         Country: "",
@@ -91,11 +92,12 @@ export class User extends RestModel {
         ProfileURL: "",
         FeedURL: "",
         AvatarURL: "",
-        OrgName: "",
         OrgTitle: "",
+        OrgName: "",
         OrgEmail: "",
         OrgPhone: "",
         OrgURL: "",
+        IdURL: "",
         CreatedAt: "",
         UpdatedAt: "",
       },
@@ -153,22 +155,22 @@ export class User extends RestModel {
   }
 
   getAvatarURL(size) {
-    if (!this.Thumb) {
-      return `${config.contentUri}/svg/user`;
-    }
-
     if (!size) {
       size = "tile_500";
     }
 
-    return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+    if (this.Thumb) {
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+    } else {
+      return `${config.staticUri}/img/avatar/${size}.jpg`;
+    }
   }
 
   uploadAvatar(files) {
     if (this.busy) {
-      return;
+      return Promise.reject(this);
     } else if (!files || files.length !== 1) {
-      return;
+      return Promise.reject(this);
     }
 
     let file = files[0];

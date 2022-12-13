@@ -701,7 +701,7 @@
 
 <script>
 export default {
-  name: 'p-page-license',
+  name: 'PPageLicense',
   data() {
     return {};
   },

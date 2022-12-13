@@ -110,7 +110,10 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 		var stderr bytes.Buffer
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
-		cmd.Env = []string{fmt.Sprintf("HOME=%s", c.conf.CmdCachePath())}
+		cmd.Env = []string{
+			fmt.Sprintf("HOME=%s", c.conf.CmdCachePath()),
+			fmt.Sprintf("LD_LIBRARY_PATH=%s", c.conf.CmdLibPath()),
+		}
 
 		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(jpegName)), filepath.Base(cmd.Path))
 
@@ -130,7 +133,7 @@ func (c *Convert) ToJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 			break
 		} else if res := out.Bytes(); len(res) < 512 || !mimetype.Detect(res).Is(fs.MimeTypeJpeg) {
 			continue
-		} else if err = os.WriteFile(jpegName, res, os.ModePerm); err != nil {
+		} else if err = os.WriteFile(jpegName, res, fs.ModeFile); err != nil {
 			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
 			continue
 		} else {

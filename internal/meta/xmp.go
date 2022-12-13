@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime/debug"
+	"time"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 
@@ -64,8 +65,11 @@ func (data *Data) XMP(fileName string) (err error) {
 		data.LensModel = doc.LensModel()
 	}
 
-	if takenAt := doc.TakenAt(); !takenAt.IsZero() {
-		data.TakenAt = takenAt
+	if takenAt := doc.TakenAt(data.TimeZone); !takenAt.IsZero() {
+		data.TakenAt = takenAt.UTC()
+		if data.TimeZone == "" {
+			data.TimeZone = time.UTC.String()
+		}
 	}
 
 	if len(doc.Keywords()) != 0 {

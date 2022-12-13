@@ -40,6 +40,15 @@ else
     GOTEST=go test
 endif
 
+# Compatibility layer to support “docker-compose” and “docker compose”
+HAS_DOCKER_COMPOSE_WITH_DASH := $(shell which docker-compose)
+
+ifdef HAS_DOCKER_COMPOSE_WITH_DASH
+    DOCKER_COMPOSE=docker-compose
+else
+    DOCKER_COMPOSE=docker compose
+endif
+
 # Declare "make" targets.
 all: dep build-js
 dep: dep-tensorflow dep-npm dep-js
@@ -67,7 +76,7 @@ upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
 .SILENT: help;
 logs:
-	docker-compose logs -f
+	$(DOCKER_COMPOSE) logs -f
 help:
 	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
 fix-permissions:
@@ -81,6 +90,8 @@ fix-permissions:
 	else\
 		echo "Running as root. Nothing to do."; \
 	fi
+gettext-merge:
+	./scripts/gettext-merge.sh
 clean:
 	rm -f *.log .test*
 	[ ! -f "$(BINARY_NAME)" ] || rm -f $(BINARY_NAME)
@@ -97,7 +108,7 @@ install:
 	mkdir --mode=$(INSTALL_MODE) -p $(DESTDIR)
 	env TMPDIR="$(BUILD_PATH)" ./scripts/dist/install-tensorflow.sh $(DESTDIR)
 	rm -rf --preserve-root $(DESTDIR)/include
-	(cd $(DESTDIR) && mkdir -p bin sbin lib assets config config/examples)
+	(cd $(DESTDIR) && mkdir -p bin lib assets config config/examples)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	wget -O $(DESTDIR)/assets/static/img/wallpaper/welcome.jpg https://cdn.photoprism.app/wallpaper/welcome.jpg
@@ -130,18 +141,18 @@ acceptance-sqlite-stop:
 acceptance-auth-sqlite-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
-	./photoprism --auth-mode "passwd" -c "./storage/acceptance/config-sqlite" --test start -d
+	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" --test start -d
 acceptance-auth-sqlite-stop:
-	./photoprism --auth-mode "passwd" -c "./storage/acceptance/config-sqlite" --test stop
+	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" --test stop
 start:
 	./photoprism start -d
 stop:
 	./photoprism stop
 terminal:
-	docker-compose exec -u $(UID) photoprism bash
+	$(DOCKER_COMPOSE) exec -u $(UID) photoprism bash
 rootshell: root-terminal
 root-terminal:
-	docker-compose exec -u root photoprism bash
+	$(DOCKER_COMPOSE) exec -u root photoprism bash
 migrate:
 	go run cmd/photoprism/photoprism.go migrations run
 generate:
@@ -153,6 +164,9 @@ generate:
 		git checkout -- assets/locales/messages.pot;\
 		echo "Reverted unnecessary change in assets/locales/messages.pot.";\
 	fi
+go-generate:
+	go generate ./pkg/... ./internal/...
+	go fmt ./pkg/... ./internal/...
 clean-local-assets:
 	rm -rf $(BUILD_PATH)/assets/*
 clean-local-cache:
@@ -280,15 +294,16 @@ test-coverage:
 	$(info Running all Go tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
+	go tool cover -func coverage.txt  | grep total:
 docker-pull:
-	docker-compose pull --ignore-pull-failures
-	docker-compose -f docker-compose.latest.yml pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml pull --ignore-pull-failures
 docker-build:
-	docker-compose pull --ignore-pull-failures
-	docker-compose build
+	$(DOCKER_COMPOSE) pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) build
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
-docker-develop-latest: docker-develop-ubuntu docker-develop-armv7
+docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
 docker-develop-ubuntu: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
@@ -385,7 +400,7 @@ docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
 docker-release-ubuntu: docker-release-jammy
-docker-release-other: docker-preview-debian docker-release-bullseye
+docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
@@ -426,31 +441,31 @@ docker-release-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
 start-local:
-	docker-compose -f docker-compose.local.yml up -d --wait
+	$(DOCKER_COMPOSE) -f docker-compose.local.yml up -d --wait
 stop-local:
-	docker-compose -f docker-compose.local.yml stop
+	$(DOCKER_COMPOSE) -f docker-compose.local.yml stop
 mysql:
-	docker-compose -f docker-compose.mysql.yml pull mysql
-	docker-compose -f docker-compose.mysql.yml stop mysql
-	docker-compose -f docker-compose.mysql.yml up -d --wait mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml pull mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml stop mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml up -d --wait mysql
 start-mysql:
-	docker-compose -f docker-compose.mysql.yml up -d --wait mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml up -d --wait mysql
 stop-mysql:
-	docker-compose -f docker-compose.mysql.yml stop mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml stop mysql
 logs-mysql:
-	docker-compose -f docker-compose.mysql.yml logs -f mysql
+	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml logs -f mysql
 latest:
-	docker-compose -f docker-compose.latest.yml pull photoprism-latest
-	docker-compose -f docker-compose.latest.yml stop photoprism-latest
-	docker-compose -f docker-compose.latest.yml up -d --wait photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml pull photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml stop photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml up -d --wait photoprism-latest
 start-latest:
-	docker-compose -f docker-compose.latest.yml up photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml up photoprism-latest
 stop-latest:
-	docker-compose -f docker-compose.latest.yml stop photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml stop photoprism-latest
 terminal-latest:
-	docker-compose -f docker-compose.latest.yml exec photoprism-latest bash
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml exec photoprism-latest bash
 logs-latest:
-	docker-compose -f docker-compose.latest.yml logs -f photoprism-latest
+	$(DOCKER_COMPOSE) -f docker-compose.latest.yml logs -f photoprism-latest
 docker-local: docker-local-bookworm
 docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:

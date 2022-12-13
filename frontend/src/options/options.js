@@ -107,6 +107,10 @@ export const Languages = () => [
     value: "de",
   },
   {
+    text: "Eesti", // Estonian
+    value: "et",
+  },
+  {
     text: "Español", // Spanish
     value: "es",
   },
@@ -214,7 +218,7 @@ export const Languages = () => [
     value: "zh",
   },
   {
-    text: "繁体中文", // Chinese (Traditional)
+    text: "繁體中文", // Chinese (Traditional)
     value: "zh_TW",
   },
   {
@@ -261,7 +265,11 @@ export const MapsAnimate = () => [
 
 export const MapsStyle = () => [
   {
-    text: $gettext("Offline"),
+    text: $gettext("Default"),
+    value: "",
+  },
+  {
+    text: $gettext("Basic"),
     value: "offline",
   },
   {
@@ -270,18 +278,18 @@ export const MapsStyle = () => [
     sponsor: true,
   },
   {
-    text: $gettext("Hybrid"),
+    text: $gettext("Satellite"),
     value: "hybrid",
-    sponsor: true,
-  },
-  {
-    text: $gettext("Topographic"),
-    value: "topographique",
     sponsor: true,
   },
   {
     text: $gettext("Outdoor"),
     value: "outdoor",
+    sponsor: true,
+  },
+  {
+    text: $gettext("Topographic"),
+    value: "topographique",
     sponsor: true,
   },
 ];
@@ -411,15 +419,8 @@ export const ThumbFilters = () => [
   { value: "linear", text: $gettext("Linear: Very Smooth, Best Performance") },
 ];
 
-export const UserRoles = () => [
-  { value: "admin", text: $gettext("Admin") },
-  { value: "user", text: $gettext("User") },
-  { value: "family", text: $gettext("Family") },
-  { value: "friend", text: $gettext("Friend") },
-  { value: "viewer", text: $gettext("Viewer") },
-  { value: "contributor", text: $gettext("Contributor") },
-  { value: "guest", text: $gettext("Guest") },
-  { value: "visitor", text: $gettext("Visitor") },
-  { value: "unauthorized", text: $gettext("Unauthorized") },
-  { value: "", text: $gettext("Unknown") },
+export const Gender = () => [
+  { value: "male", text: $gettext("Male") },
+  { value: "female", text: $gettext("Female") },
+  { value: "other", text: $gettext("Other") },
 ];

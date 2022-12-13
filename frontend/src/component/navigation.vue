@@ -471,7 +471,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="!isPublic && isAdmin" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
+            <v-list-tile v-show="!isPublic && isAdmin && isSponsor" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
                          @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
@@ -490,6 +490,18 @@
           </v-list-group>
         </template>
 
+        <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" @click.stop="">
+          <v-list-tile-action :title="$gettext('Upgrade')">
+            <v-icon>diamond</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Upgrade">Upgrade</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
         <v-list-tile v-show="!auth" :to="{ name: 'login' }" class="nav-login" @click.stop="">
           <v-list-tile-action :title="$gettext('Login')">
             <v-icon>lock</v-icon>
@@ -501,7 +513,6 @@
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-
       </v-list>
 
       <v-list class="p-user-box">
@@ -521,10 +532,7 @@
 
         <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" class="p-profile" @click.stop="onAccount">
           <v-list-tile-avatar size="36">
-            <v-img :src="user.getAvatarURL()"
-                   :alt="displayName"  aspect-ratio="1"
-                   class="primary-button elevation-0 clickable"
-            ></v-img>
+            <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo">
           </v-list-tile-avatar>
 
           <v-list-tile-content>
@@ -625,22 +633,17 @@
               <translate>Logs</translate>
             </router-link>
           </div>
-          <!-- div v-if="auth && $config.feature('account') && !routeName('settings')" class="menu-action nav-account">
-            <router-link :to="{ name: 'settings_account' }">
-              <v-icon>person</v-icon>
-              <translate>Account</translate>
+          <div v-if="!isPublic && !isSponsor && isAdmin" class="menu-action nav-membership">
+            <router-link :to="{ name: 'upgrade' }">
+              <v-icon>diamond</v-icon>
+              <translate>Upgrade</translate>
             </router-link>
-          </div -->
+          </div>
           <div class="menu-action nav-manual"><a href="https://link.photoprism.app/docs" target="_blank">
             <v-icon>auto_stories</v-icon>
             <translate>User Guide</translate>
           </a></div>
-          <div v-if="!isSponsor && isAdmin" class="menu-action nav-membership"><a href="https://link.photoprism.app/membership"
-                                                                       target="_blank">
-            <v-icon>workspace_premium</v-icon>
-            <translate>Become a sponsor</translate>
-          </a></div>
-          <div v-if="config.imprintUrl && isSponsor" class="menu-action nav-legal"><a :href="config.imprintUrl"
+          <div v-if="config.legalUrl && isSponsor" class="menu-action nav-legal"><a :href="config.legalUrl"
                                                                                       target="_blank">
             <v-icon>info</v-icon>
             <translate>Legal Information</translate>
@@ -648,9 +651,9 @@
         </div>
       </div>
     </div>
-    <div v-if="config.imprint && visible" id="imprint">
-      <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank">{{ config.imprint }}</a>
-      <span v-else>{{ config.imprint }}</span>
+    <div v-if="config.legalInfo && visible" id="legal-info">
+      <a v-if="config.legalUrl" :href="config.legalUrl" target="_blank">{{ config.legalInfo }}</a>
+      <span v-else>{{ config.legalInfo }}</span>
     </div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
     <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
@@ -663,8 +666,6 @@
 <script>
 import Album from "model/album";
 import Event from "pubsub-js";
-import Notify from "../common/notify";
-import User from "../model/user";
 
 export default {
   name: "PNavigation",
@@ -698,7 +699,7 @@ export default {
       canManagePeople: this.$config.allow("people", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
-      appEdition: this.$config.getEdition(),
+      appAbout: this.$config.getAbout(),
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,
@@ -745,6 +746,9 @@ export default {
       }
 
       return this.$gettext("Unregistered");
+    },
+    userAvatarURL() {
+      return this.$session.getUser().getAvatarURL('tile_50');
     },
     accountInfo() {
       const user = this.$session.getUser();

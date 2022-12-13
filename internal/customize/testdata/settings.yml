@@ -8,7 +8,7 @@ Search:
   BatchSize: 0
 Maps:
   Animate: 0
-  Style: streets
+  Style: ""
 Features:
   Account: true
   Advanced: false
@@ -59,4 +59,4 @@ Download:
   MediaRaw: false
   MediaSidecar: false
 Templates:
-  Default: index.tmpl
+  Default: index.gohtml

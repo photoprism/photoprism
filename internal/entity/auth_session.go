@@ -245,15 +245,34 @@ func (m *Session) SetUser(u *User) *Session {
 		return m
 	}
 
+	// Update user.
 	m.user = u
+	m.UserUID = u.UserUID
+	m.UserName = u.UserName
 
-	if u.UserUID != "" {
-		m.UserUID = u.UserUID
-		m.UserName = u.UserName
-	}
-
+	// Update tokens.
 	m.SetPreviewToken(u.PreviewToken)
 	m.SetDownloadToken(u.DownloadToken)
+
+	return m
+}
+
+// Login returns the login name and provider.
+func (m *Session) Login() string {
+	if m.AuthProvider == "" {
+		return m.UserName
+	} else {
+		return fmt.Sprintf("%s@%s", m.UserName, m.AuthProvider)
+	}
+}
+
+// SetProvider updates the session's authentication provider.
+func (m *Session) SetProvider(provider string) *Session {
+	if provider == "" {
+		return m
+	}
+
+	m.AuthProvider = provider
 
 	return m
 }

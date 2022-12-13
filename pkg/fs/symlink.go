@@ -19,7 +19,7 @@ func SymlinksSupported(storagePath string) (bool, error) {
 	}(linkName, targetName)
 
 	// Create empty test target file.
-	if targetFile, err := os.OpenFile(targetName, os.O_RDONLY|os.O_CREATE, os.ModePerm); err != nil {
+	if targetFile, err := os.OpenFile(targetName, os.O_RDONLY|os.O_CREATE, ModeFile); err != nil {
 		return false, err
 	} else if err = targetFile.Close(); err != nil {
 		return false, err

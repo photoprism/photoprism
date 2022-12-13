@@ -8,5 +8,5 @@ import (
 
 // New creates a session with a context if it is specified.
 func (s *Session) New(c *gin.Context) (m *entity.Session) {
-	return entity.NewSession(s.conf.SessMaxAge(), s.conf.SessTimeout()).SetContext(c)
+	return entity.NewSession(s.conf.SessionMaxAge(), s.conf.SessionTimeout()).SetContext(c)
 }

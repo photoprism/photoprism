@@ -54,7 +54,7 @@ func showOptionsAction(ctx *cli.Context) error {
 		{Start: "PHOTOPRISM_READONLY", Title: "Feature Flags"},
 		{Start: "PHOTOPRISM_DEFAULT_LOCALE", Title: "Customization"},
 		{Start: "PHOTOPRISM_CDN_URL", Title: "Site Information"},
-		{Start: "PHOTOPRISM_HTTP_PORT", Title: "Web Server"},
+		{Start: "PHOTOPRISM_TRUSTED_PROXY", Title: "Web Server"},
 		{Start: "PHOTOPRISM_DATABASE_DRIVER", Title: "Database Connection"},
 		{Start: "PHOTOPRISM_DARKTABLE_BIN", Title: "File Converters"},
 		{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Title: "Security Tokens"},

@@ -23,17 +23,6 @@ func TestConfig_SidecarPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/sidecar", c.SidecarPath())
 }
 
-func TestConfig_FilePath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	t.Run("Valid", func(t *testing.T) {
-		s := c.FilePath("c476503628b4543c9ef97d69a6daa700b05d19bc")
-		assert.True(t, strings.HasSuffix(s, "/c/4/7/c476503628b4543c9ef97d69a6daa700b05d19bc"))
-	})
-	t.Run("InvalidHash", func(t *testing.T) {
-		assert.Equal(t, "", c.FilePath("YE"))
-	})
-}
-
 func TestConfig_UsersPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Contains(t, c.UsersPath(), "testdata/users")
@@ -141,6 +130,15 @@ func TestConfig_CmdCachePath(t *testing.T) {
 		t.Fatal("cmd cache path is empty")
 	} else if !strings.HasPrefix(dir, c.CachePath()) {
 		t.Fatalf("unexpected cmd cache path: %s", dir)
+	}
+}
+
+func TestConfig_CmdLibPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	if dir := c.CmdLibPath(); dir == "" {
+		t.Fatal("cmd lib path is empty")
+	} else if !strings.HasPrefix(dir, "/usr") {
+		t.Fatalf("unexpected cmd lib path: %s", dir)
 	}
 }
 

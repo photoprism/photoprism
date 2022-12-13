@@ -42,7 +42,7 @@ func SharePreview(router *gin.RouterGroup) {
 
 		thumbPath := path.Join(conf.ThumbCachePath(), "share")
 
-		if err := os.MkdirAll(thumbPath, os.ModePerm); err != nil {
+		if err := os.MkdirAll(thumbPath, fs.ModeDir); err != nil {
 			log.Error(err)
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return

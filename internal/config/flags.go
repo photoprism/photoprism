@@ -1,9 +1,12 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/header"
@@ -27,26 +30,26 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-user, login",
-			Usage:  "admin login `USERNAME`",
+			Usage:  "superadmin `USERNAME`",
 			EnvVar: "PHOTOPRISM_ADMIN_USER",
 			Value:  "admin",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
-			Usage:  "initial admin `PASSWORD`, must have at least 8 characters",
+			Usage:  fmt.Sprintf("initial superadmin `PASSWORD` (minimum %d characters)", entity.PasswordLength),
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 		}}, {
 		Flag: cli.Int64Flag{
-			Name:   "sess-maxage",
-			Value:  DefaultSessMaxAge,
-			Usage:  "time in `SECONDS` until user sessions expire automatically (-1 to disable)",
-			EnvVar: "PHOTOPRISM_SESS_MAXAGE",
+			Name:   "session-maxage",
+			Value:  DefaultSessionMaxAge,
+			Usage:  "time in `SECONDS` until API sessions expire automatically (-1 to disable)",
+			EnvVar: "PHOTOPRISM_SESSION_MAXAGE",
 		}}, {
 		Flag: cli.Int64Flag{
-			Name:   "sess-timeout",
-			Value:  DefaultSessTimeout,
-			Usage:  "time in `SECONDS` until user sessions expire due to inactivity (-1 to disable)",
-			EnvVar: "PHOTOPRISM_SESS_TIMEOUT",
+			Name:   "session-timeout",
+			Value:  DefaultSessionTimeout,
+			Usage:  "time in `SECONDS` until API sessions expire due to inactivity (-1 to disable)",
+			EnvVar: "PHOTOPRISM_SESSION_TIMEOUT",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "log-level, l",
@@ -126,10 +129,7 @@ var Flags = CliFlags{
 			Value:  DefaultResolutionLimit,
 			Usage:  "maximum resolution of media files in `MEGAPIXELS` (1-900; -1 to disable)",
 			EnvVar: "PHOTOPRISM_RESOLUTION_LIMIT",
-		},
-		Tags: []string{EnvSponsor},
-	},
-	{
+		}, Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
 			Name:   "storage-path, s",
 			Usage:  "writable storage `PATH` for sidecar, cache, and database files",
@@ -332,16 +332,32 @@ var Flags = CliFlags{
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
 			Name:   "imprint",
-			Usage:  "legal `INFORMATION`, displayed in the page footer",
+			Usage:  "legal information `TEXT`, displayed in the page footer",
 			Value:  "",
+			Hidden: true,
 			EnvVar: "PHOTOPRISM_IMPRINT",
+		},
+		Tags: []string{EnvSponsor}}, {
+		Flag: cli.StringFlag{
+			Name:   "legal-info",
+			Usage:  "legal information `TEXT`, displayed in the page footer",
+			Value:  "",
+			EnvVar: "PHOTOPRISM_LEGAL_INFO",
 		},
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
 			Name:   "imprint-url",
 			Usage:  "legal information `URL`",
 			Value:  "",
+			Hidden: true,
 			EnvVar: "PHOTOPRISM_IMPRINT_URL",
+		},
+		Tags: []string{EnvSponsor}}, {
+		Flag: cli.StringFlag{
+			Name:   "legal-url",
+			Usage:  "legal information `URL`",
+			Value:  "",
+			EnvVar: "PHOTOPRISM_LEGAL_URL",
 		},
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
@@ -360,7 +376,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",
-			Value:  "http://localhost:2342/",
+			Value:  "http://photoprism.me:2342/",
 			EnvVar: "PHOTOPRISM_SITE_URL",
 		}}, {
 		Flag: cli.StringFlag{
@@ -393,60 +409,47 @@ var Flags = CliFlags{
 		}, Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringSliceFlag{
 			Name:   "trusted-proxy",
-			Usage:  "`CIDR` range from which IP and HTTPS proxy headers can be trusted",
+			Usage:  "`CIDR` range from which reverse proxy headers can be trusted",
 			Value:  &cli.StringSlice{header.CidrDockerInternal},
 			EnvVar: "PHOTOPRISM_TRUSTED_PROXY",
 		}}, {
+		Flag: cli.StringSliceFlag{
+			Name:   "proxy-proto-header",
+			Usage:  "proxy protocol header `NAME`",
+			Value:  &cli.StringSlice{header.ForwardedProto},
+			EnvVar: "PHOTOPRISM_PROXY_PROTO_HEADER",
+		}}, {
+		Flag: cli.StringSliceFlag{
+			Name:   "proxy-proto-https",
+			Usage:  "forwarded HTTPS protocol `NAME`",
+			Value:  &cli.StringSlice{header.ProtoHttps},
+			EnvVar: "PHOTOPRISM_PROXY_PROTO_HTTPS",
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-mode, mode",
-			Usage:  "HTTP server `MODE` (debug, release, or test)",
+			Usage:  "Web server `MODE` (debug, release, test)",
 			EnvVar: "PHOTOPRISM_HTTP_MODE",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-compression, z",
-			Usage:  "HTTP server compression `METHOD` (none or gzip)",
+			Usage:  "Web server compression `METHOD` (gzip, none)",
 			EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-host, ip",
-			Usage:  "HTTP server `IP` address",
+			Usage:  "Web server `IP` address",
 			EnvVar: "PHOTOPRISM_HTTP_HOST",
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-port, port",
 			Value:  2342,
-			Usage:  "HTTP server port `NUMBER`",
+			Usage:  "Web server port `NUMBER`",
 			EnvVar: "PHOTOPRISM_HTTP_PORT",
 		}}, {
-		Flag: cli.StringFlag{
-			Name:   "auto-tls",
-			Usage:  "`EMAIL` address to enable automatic HTTPS via Let's Encrypt",
-			EnvVar: "PHOTOPRISM_AUTO_TLS",
-			Hidden: true,
-		}}, {
-		Flag: cli.IntFlag{
-			Name:   "https-port",
-			Value:  2443,
-			Usage:  "HTTPS server port `NUMBER` if TLS is configured",
-			EnvVar: "PHOTOPRISM_HTTPS_PORT",
-		}}, {
-		Flag: cli.StringSliceFlag{
-			Name:   "https-proxy-header",
-			Usage:  "proxy protocol header `NAME`",
-			Value:  &cli.StringSlice{header.ForwardedProto},
-			EnvVar: "PHOTOPRISM_HTTPS_PROXY_HEADER",
-		}}, {
-		Flag: cli.StringSliceFlag{
-			Name:   "https-proxy-proto",
-			Usage:  "forwarded HTTPS protocol `NAME`",
-			Value:  &cli.StringSlice{header.ProtoHttps},
-			EnvVar: "PHOTOPRISM_HTTPS_PROXY_PROTO",
-		}}, {
-		Flag: cli.IntFlag{
-			Name:   "https-redirect",
-			Value:  0,
-			Usage:  "status `CODE` when redirecting from HTTP to HTTPS (300-399)",
-			EnvVar: "PHOTOPRISM_HTTPS_REDIRECT",
+		Flag: cli.BoolFlag{
+			Name:   "disable-tls",
+			Usage:  "disable HTTPS even if a certificate is available",
+			EnvVar: "PHOTOPRISM_DISABLE_TLS",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "database-driver, db",
@@ -572,12 +575,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "download-token",
-			Usage:  "`SECRET` download URL token for originals (default: random)",
+			Usage:  "`DEFAULT` download URL token for originals (leave empty for a random value)",
 			EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "preview-token",
-			Usage:  "`SECRET` thumbnail and video streaming URL token (default: random)",
+			Usage:  "`DEFAULT` thumbnail and video streaming URL token (leave empty for a random value)",
 			EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 		}}, {
 		Flag: cli.StringFlag{

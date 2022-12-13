@@ -4,6 +4,7 @@
 @import url("themes/yellowstone.css");
 @import url("themes/abyss.css");
 @import url("themes/gemstone.css");
+@import url("themes/electra.css");
 
 /* General Styles */
 
@@ -18,6 +19,18 @@ input:-webkit-autofill:focus {
 
 body.dark-theme #photoprism .v-tabs .v-badge__badge {
     color: #000000;
+}
+
+body.dark-theme #photoprism .theme--light.v-table thead th {
+    color: #ffffff;
+}
+
+.card {
+    background-color: #77787e;
+}
+
+body.dark-theme .card {
+    background-color: #4c4e52;
 }
 
 body.dark-theme #photoprism .v-table .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
@@ -54,8 +67,7 @@ body.dark-theme #photoprism .map-control .theme--light.v-input:not(.v-input--is-
 }
 
 body.dark-theme #photoprism .theme--light.v-chip,
-body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__control>.v-input__slot,
-body.dark-theme #photoprism .v-card .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__control>.v-input__slot {
     background: #00000033;
 }
 

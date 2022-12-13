@@ -58,8 +58,8 @@ const UnixDay = UnixHour * 24
 // UnixWeek is one week in UnixTime.
 const UnixWeek = UnixDay * 7
 
-// DefaultSessMaxAge is the default session expiration time in seconds.
-const DefaultSessMaxAge = UnixWeek * 2
+// DefaultSessionMaxAge is the default session expiration time in seconds.
+const DefaultSessionMaxAge = UnixWeek * 2
 
-// DefaultSessTimeout is the default session timeout time in seconds.
-const DefaultSessTimeout = UnixWeek
+// DefaultSessionTimeout is the default session timeout time in seconds.
+const DefaultSessionTimeout = UnixWeek

@@ -14,19 +14,6 @@ func TestUser(t *testing.T) {
 	assert.Equal(t, "passwd", form.Password)
 }
 
-func TestNewUser(t *testing.T) {
-	val := &User{UserName: "foobar", UserEmail: "test@test.com", Password: "passwd"}
-	form, err := NewUser(val)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.Equal(t, "foobar", form.UserName)
-	assert.Equal(t, "test@test.com", form.UserEmail)
-	assert.Equal(t, "passwd", form.Password)
-}
-
 func TestUser_Name(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		form := &User{UserName: "", UserEmail: "test@test.com", Password: "passwd"}

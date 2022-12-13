@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -21,7 +22,7 @@ var ShowConfigCommand = cli.Command{
 
 // ConfigReports specifies which configuration reports to display.
 var ConfigReports = []Report{
-	{Title: "Config Options", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
+	{Title: "Global Config Options", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
 		return conf.Report()
 	}},
 }
@@ -36,8 +37,6 @@ func showConfigAction(ctx *cli.Context) error {
 		log.Debug(err)
 	}
 
-	fmt.Println("")
-
 	for _, rep := range ConfigReports {
 		// Get values.
 		rows, cols := rep.Report(conf)
@@ -48,7 +47,7 @@ func showConfigAction(ctx *cli.Context) error {
 
 		// Show report.
 		if opt.Format == report.Default {
-			fmt.Printf("### %s ###\n\n", rep.Title)
+			fmt.Printf("\n%s\n\n", strings.ToUpper(rep.Title))
 		}
 
 		fmt.Println(result)

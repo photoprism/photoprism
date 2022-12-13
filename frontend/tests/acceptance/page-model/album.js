@@ -53,8 +53,16 @@ export default class Page {
     }
   }
 
-  async openNthAlbum(nth) {
-    await t.click(Selector("a.is-album").nth(nth));
+  async openNthAlbum(nth, type) {
+    if (!type || type === "all") {
+      if (await Selector("a.is-album").nth(nth).visible) {
+        await t.click(Selector("a.is-album").nth(nth));
+      }
+    } else {
+      if (await Selector("a.type-" + type).nth(nth).visible) {
+        await t.click(Selector("a.type-" + type).nth(nth));
+      }
+    }
   }
 
   async openAlbumWithUid(uid) {
@@ -96,10 +104,18 @@ export default class Page {
     }
     if (mode === "nth") {
       await t.hover(Selector("a.is-album").nth(uidOrNth));
-      if (visible) {
-        await t.expect(Selector(`button.input-` + action).visible).ok();
+      if (action != "share") {
+        if (visible) {
+          await t.expect(Selector(`button.input-` + action).visible).ok();
+        } else {
+          await t.expect(Selector(`button.input-` + action).visible).notOk();
+        }
       } else {
-        await t.expect(Selector(`button.input-` + action).visible).notOk();
+        if (visible) {
+          await t.expect(Selector(`button.action-` + action).visible).ok();
+        } else {
+          await t.expect(Selector(`button.action-` + action).visible).notOk();
+        }
       }
     }
   }

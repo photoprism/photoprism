@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -31,16 +32,18 @@ const (
 
 // Config represents backend api credentials for maps & geodata.
 type Config struct {
-	Version   string `json:"version" yaml:"Version"`
-	FileName  string `json:"-" yaml:"-"`
-	Key       string `json:"key" yaml:"Key"`
-	Secret    string `json:"secret" yaml:"Secret"`
-	Session   string `json:"session" yaml:"Session"`
-	Status    string `json:"status" yaml:"Status"`
-	Serial    string `json:"serial" yaml:"Serial"`
-	Env       string `json:"-" yaml:"-"`
-	UserAgent string `json:"-" yaml:"-"`
-	PartnerID string `json:"-" yaml:"-"`
+	Version   string     `json:"version" yaml:"Version"`
+	FileName  string     `json:"-" yaml:"-"`
+	Key       string     `json:"key" yaml:"Key"`
+	Secret    string     `json:"secret" yaml:"Secret"`
+	Session   string     `json:"session" yaml:"Session"`
+	session   *Session   `json:"-" yaml:"-"`
+	sessionMu sync.Mutex `json:"-" yaml:"-"`
+	Status    string     `json:"status" yaml:"Status"`
+	Serial    string     `json:"serial" yaml:"Serial"`
+	Env       string     `json:"-" yaml:"-"`
+	UserAgent string     `json:"-" yaml:"-"`
+	PartnerID string     `json:"-" yaml:"-"`
 }
 
 // NewConfig creates a new backend api credentials instance.
@@ -61,10 +64,19 @@ func NewConfig(version, fileName, serial, env, userAgent, partnerId string) *Con
 
 // MapKey returns the maps api key.
 func (c *Config) MapKey() string {
-	if sess, err := c.DecodeSession(); err != nil {
+	if sess, err := c.DecodeSession(true); err != nil {
 		return ""
 	} else {
 		return sess.MapKey
+	}
+}
+
+// Customer returns the customer name.
+func (c *Config) Customer() string {
+	if sess, err := c.DecodeSession(true); err != nil {
+		return ""
+	} else {
+		return sess.Customer
 	}
 }
 
@@ -99,14 +111,27 @@ func (c *Config) Sanitize() {
 }
 
 // DecodeSession decodes backend api session data.
-func (c *Config) DecodeSession() (Session, error) {
+func (c *Config) DecodeSession(cached bool) (Session, error) {
+	c.sessionMu.Lock()
+	defer c.sessionMu.Unlock()
+
 	c.Sanitize()
 
-	result := Session{}
-
+	// No session?
 	if c.Session == "" {
-		return result, fmt.Errorf("empty session")
+		c.session = nil
+		return Session{}, fmt.Errorf("empty session")
 	}
+
+	if cached && c.session != nil {
+		// Return cached session.
+		return *c.session, nil
+	} else {
+		// Clear session cache.
+		c.session = nil
+	}
+
+	result := Session{}
 
 	s, err := hex.DecodeString(c.Session)
 
@@ -140,20 +165,27 @@ func (c *Config) DecodeSession() (Session, error) {
 		return result, err
 	}
 
+	// Cache session.
+	c.session = &result
+
 	return result, nil
 }
 
 // Update renews backend api credentials without a token.
 func (c *Config) Update() error {
-	return c.Resync("")
+	return c.ReSync("")
 }
 
-// Resync renews backend api credentials with an optional token.
-func (c *Config) Resync(token string) (err error) {
+// ReSync renews backend api credentials with an optional token.
+func (c *Config) ReSync(token string) (err error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	if err := os.MkdirAll(filepath.Dir(c.FileName), os.ModePerm); err != nil {
+	// Clear session.
+	c.session = nil
+
+	// Make sure storage folder exists.
+	if err = os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
 		return err
 	}
 
@@ -251,7 +283,7 @@ func (c *Config) Load() error {
 	c.Sanitize()
 	c.Propagate()
 
-	if sess, err := c.DecodeSession(); err != nil {
+	if sess, err := c.DecodeSession(false); err != nil {
 		return err
 	} else if sess.Expired() {
 		return errors.New("session expired")
@@ -275,11 +307,11 @@ func (c *Config) Save() error {
 
 	c.Propagate()
 
-	if err := os.MkdirAll(filepath.Dir(c.FileName), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(c.FileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(c.FileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 

@@ -127,7 +127,7 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 				srcName = name
 			}
 
-			// RunFailed?
+			// Failed?
 			if err != nil {
 				log.Errorf("media: failed creating %s (%s)", name.String(), err)
 				return err

@@ -38,7 +38,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PROG="photoprism"
 
 # copy scripts and debian backports sources list
-COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 COPY --chown=root:root --chmod=644 /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 

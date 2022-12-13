@@ -128,7 +128,7 @@ func (w *Share) Start() (err error) {
 				file.Status = entity.FileShareShared
 			}
 
-			// RunFailed too often?
+			// Failed too often?
 			if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 				file.Status = entity.FileShareError
 			}

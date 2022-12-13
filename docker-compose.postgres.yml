@@ -1,12 +1,13 @@
 version: '3.5'
 
-# ATTENTION: PostgreSQL is NOT supported yet as Gorm (our ORM library) needs to be upgraded first.
-# The current Gorm version does NOT support compatible general data types:
-# https://github.com/photoprism/photoprism/issues/47
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
   ## PhotoPrism Development Environment (PostgresSQL)
-  ## Docs: https://docs.photoprism.app/developer-guide/
+  # ATTENTION: PostgreSQL is NOT supported yet as Gorm (our ORM library) needs to be upgraded first.
+  # The current Gorm version does NOT support compatible general data types:
+  # https://github.com/photoprism/photoprism/issues/47
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -25,9 +26,11 @@ services:
       - "go-mod:/go/pkg/mod"
     shm_size: "2gb"
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
-      PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_INIT: "https"
+      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
+      PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"

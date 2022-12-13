@@ -1,8 +1,10 @@
 version: '3.5'
 
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
+
 services:
   ## Continuous Integration (CI) Environment
-  ## Docs: https://docs.photoprism.app/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -16,9 +18,11 @@ services:
       - "~/.cache/npm:/root/.cache/npm"
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # initial "admin" password (minimum 8 characters)
-      PHOTOPRISM_AUTH_MODE: "public"          # authentication mode (public, password)
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_INIT: "https"
+      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "public"                       # authentication mode (public, password)
+      PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
@@ -142,7 +146,7 @@ services:
   ## MariaDB Database Server
   ## Docs: https://mariadb.com/docs/reference/
   mariadb:
-    image: mariadb:10.9
+    image: mariadb:10.10
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined

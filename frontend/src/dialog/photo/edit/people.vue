@@ -23,12 +23,12 @@
                   :data-id="marker.UID"
                   style="user-select: none;"
                   :class="marker.classes()"
-                  class="result accent lighten-3">
-            <div class="card-background accent lighten-3"></div>
+                  class="result card">
+            <div class="card-background card"></div>
             <v-img :src="marker.thumbnailUrl('tile_320')"
                    :transition="false"
                    aspect-ratio="1"
-                   class="accent lighten-2">
+                   class="card darken-1">
               <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" :depressed="false" class="input-reject"
                      icon flat small absolute :title="$gettext('Remove')"
                      @click.stop.prevent="onReject(marker)">

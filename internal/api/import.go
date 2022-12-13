@@ -58,10 +58,10 @@ func StartImport(router *gin.RouterGroup) {
 		importPath := conf.ImportPath()
 
 		// Import from sub-folder?
-		if srcFolder = clean.Path(c.Param("path")); srcFolder != "" && srcFolder != "/" {
-			srcFolder = strings.Replace(srcFolder, ".", "", -1)
+		if srcFolder = c.Param("path"); srcFolder != "" && srcFolder != "/" {
+			srcFolder = clean.UserPath(srcFolder)
 		} else if f.Path != "" {
-			srcFolder = strings.Replace(f.Path, ".", "", -1)
+			srcFolder = clean.UserPath(f.Path)
 		}
 
 		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".

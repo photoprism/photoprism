@@ -69,19 +69,19 @@
             <v-card tile
                     :data-uid="model.UID"
                     style="user-select: none"
-                    class="result accent lighten-3"
+                    class="result card"
                     :class="model.classes(selection.includes(model.UID))"
                     :to="model.route(view)"
                     @contextmenu.stop="onContextMenu($event, index)"
             >
-              <div class="card-background accent lighten-3"></div>
+              <div class="card-background card"></div>
               <v-img
                   :src="model.thumbnailUrl('tile_320')"
                   :alt="model.Name"
                   :transition="false"
                   aspect-ratio="1"
                   style="user-select: none"
-                  class="accent lighten-2 clickable"
+                  class="card darken-1 clickable"
                   @touchstart.passive="input.touchStart($event, index)"
                   @touchend.stop.prevent="onClick($event, index)"
                   @mousedown.stop.prevent="input.mouseDown($event, index)"

@@ -172,7 +172,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
-		data, err := Exif("testdata/iphone_7.heic", fs.ImageHEIF, true)
+		data, err := Exif("testdata/iphone_7.heic", fs.ImageHEIC, true)
 		if err != nil {
 			t.Fatal(err)
 		}

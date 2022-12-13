@@ -317,7 +317,7 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 	assert.NotEmpty(t, info.Height)
 }
 
-func TestMediaFile_Exif_HEIF(t *testing.T) {
+func TestMediaFile_Exif_HEIC(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}

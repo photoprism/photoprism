@@ -17,22 +17,23 @@ const (
 // UserDetails represents user profile information.
 type UserDetails struct {
 	UserUID      string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"-"`
-	IdURL        string    `gorm:"type:VARBINARY(512);column:id_url;" json:"IdURL,omitempty" yaml:"IdURL,omitempty"`
 	SubjUID      string    `gorm:"type:VARBINARY(42);index;" json:"SubjUID,omitempty" yaml:"SubjUID,omitempty"`
 	SubjSrc      string    `gorm:"type:VARBINARY(8);default:'';" json:"-" yaml:"SubjSrc,omitempty"`
 	PlaceID      string    `gorm:"type:VARBINARY(42);index;default:'zz'" json:"-" yaml:"-"`
 	PlaceSrc     string    `gorm:"type:VARBINARY(8);" json:"-" yaml:"PlaceSrc,omitempty"`
 	CellID       string    `gorm:"type:VARBINARY(42);index;default:'zz'" json:"-" yaml:"CellID,omitempty"`
-	BirthYear    int       `gorm:"default:-1;" json:"BirthYear" yaml:"BirthYear,omitempty"`
-	BirthMonth   int       `gorm:"default:-1;" json:"BirthMonth" yaml:"BirthMonth,omitempty"`
-	BirthDay     int       `gorm:"default:-1;" json:"BirthDay" yaml:"BirthDay,omitempty"`
-	NamePrefix   string    `gorm:"size:32;" json:"NamePrefix" yaml:"NamePrefix,omitempty"`
+	BirthYear    int       `json:"BirthYear" yaml:"BirthYear,omitempty"`
+	BirthMonth   int       `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
+	BirthDay     int       `json:"BirthDay" yaml:"BirthDay,omitempty"`
+	NameTitle    string    `gorm:"size:32;" json:"NameTitle" yaml:"NameTitle,omitempty"`
 	GivenName    string    `gorm:"size:64;" json:"GivenName" yaml:"GivenName,omitempty"`
 	MiddleName   string    `gorm:"size:64;" json:"MiddleName" yaml:"MiddleName,omitempty"`
 	FamilyName   string    `gorm:"size:64;" json:"FamilyName" yaml:"FamilyName,omitempty"`
 	NameSuffix   string    `gorm:"size:32;" json:"NameSuffix" yaml:"NameSuffix,omitempty"`
 	NickName     string    `gorm:"size:64;" json:"NickName" yaml:"NickName,omitempty"`
+	NameSrc      string    `gorm:"type:VARBINARY(8);" json:"NameSrc" yaml:"NameSrc,omitempty"`
 	UserGender   string    `gorm:"size:16;" json:"Gender" yaml:"Gender,omitempty"`
+	UserAbout    string    `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
 	UserBio      string    `gorm:"size:512;" json:"Bio" yaml:"Bio,omitempty"`
 	UserLocation string    `gorm:"size:512;" json:"Location" yaml:"Location,omitempty"`
 	UserCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
@@ -41,11 +42,12 @@ type UserDetails struct {
 	ProfileURL   string    `gorm:"type:VARBINARY(512);column:profile_url" json:"ProfileURL" yaml:"ProfileURL,omitempty"`
 	FeedURL      string    `gorm:"type:VARBINARY(512);column:feed_url" json:"FeedURL,omitempty" yaml:"FeedURL,omitempty"`
 	AvatarURL    string    `gorm:"type:VARBINARY(512);column:avatar_url" json:"AvatarURL,omitempty" yaml:"AvatarURL,omitempty"`
-	OrgName      string    `gorm:"size:128;" json:"OrgName" yaml:"OrgName,omitempty"`
 	OrgTitle     string    `gorm:"size:64;" json:"OrgTitle" yaml:"OrgTitle,omitempty"`
+	OrgName      string    `gorm:"size:128;" json:"OrgName" yaml:"OrgName,omitempty"`
 	OrgEmail     string    `gorm:"size:255;index;" json:"OrgEmail" yaml:"OrgEmail,omitempty"`
 	OrgPhone     string    `gorm:"size:32;" json:"OrgPhone" yaml:"OrgPhone,omitempty"`
 	OrgURL       string    `gorm:"type:VARBINARY(512);column:org_url" json:"OrgURL" yaml:"OrgURL,omitempty"`
+	IdURL        string    `gorm:"type:VARBINARY(512);column:id_url;" json:"IdURL,omitempty" yaml:"IdURL,omitempty"`
 	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }

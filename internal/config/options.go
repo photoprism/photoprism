@@ -23,11 +23,15 @@ type Options struct {
 	Copyright             string        `json:"-"`
 	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode              string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
+	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
+	RegisterUri           string        `yaml:"RegisterUri" json:"-" flag:"register-uri"`
+	PasswordLength        int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
+	PasswordResetUri      string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri"`
 	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	AdminUser             string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
-	SessMaxAge            int64         `yaml:"SessMaxAge" json:"-" flag:"sess-maxage"`
-	SessTimeout           int64         `yaml:"SessTimeout" json:"-" flag:"sess-timeout"`
+	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
+	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Prod                  bool          `yaml:"Prod" json:"Prod" flag:"prod"`
 	Debug                 bool          `yaml:"Debug" json:"Debug" flag:"debug"`
@@ -45,7 +49,6 @@ type Options struct {
 	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	FilesPath             string        `yaml:"FilesPath" json:"-" flag:"files-path"`
 	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
@@ -81,8 +84,8 @@ type Options struct {
 	AppIcon               string        `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
 	AppName               string        `yaml:"AppName" json:"AppName" flag:"app-name"`
 	AppMode               string        `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
-	Imprint               string        `yaml:"Imprint" json:"Imprint" flag:"imprint"`
-	ImprintUrl            string        `yaml:"ImprintUrl" json:"ImprintUrl" flag:"imprint-url"`
+	LegalInfo             string        `yaml:"LegalInfo" json:"LegalInfo" flag:"legal-info"`
+	LegalUrl              string        `yaml:"LegalUrl" json:"LegalUrl" flag:"legal-url"`
 	WallpaperUri          string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
 	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
 	SiteUrl               string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
@@ -92,17 +95,16 @@ type Options struct {
 	SiteDescription       string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string        `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
 	TrustedProxies        []string      `yaml:"TrustedProxies" json:"-" flag:"trusted-proxy"`
+	ProxyProtoHeaders     []string      `yaml:"ProxyProtoHeaders" json:"-" flag:"proxy-proto-header"`
+	ProxyProtoHttps       []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
 	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
 	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
-	AutoTLS               string        `yaml:"AutoTLS" json:"AutoTLS" flag:"auto-tls"` // AutoTLS enabled automatic HTTPS via Let's Encrypt if set a valid email address.
-	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
+	DisableTLS            bool          `yaml:"DisableTLS" json:"DisableTLS" flag:"disable-tls"`
+	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"` // TLSEmail enabled automatic HTTPS via Let's Encrypt if set a valid email address.
 	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
-	HttpsPort             int           `yaml:"HttpsPort" json:"HttpsPort" flag:"https-port"` // HttpsPort is the port number to be used for HTTPS connections.
-	HttpsProxyHeaders     []string      `yaml:"HttpsProxyHeaders" json:"-" flag:"https-proxy-header"`
-	HttpsProxyProto       []string      `yaml:"HttpsProxyProto" json:"-" flag:"https-proxy-proto"`
-	HttpsRedirect         int           `yaml:"HttpsRedirect" json:"HttpsRedirect" flag:"https-redirect"`
+	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseName          string        `yaml:"DatabaseName" json:"-" flag:"database-name"`
@@ -166,7 +168,7 @@ func NewOptions(ctx *cli.Context) *Options {
 	}
 
 	// Set app edition from metadata if possible.
-	if s, ok := ctx.App.Metadata["Edition"]; ok {
+	if s, ok := ctx.App.Metadata["About"]; ok {
 		c.Edition = fmt.Sprintf("%s", s)
 	}
 
@@ -194,6 +196,7 @@ func NewOptions(ctx *cli.Context) *Options {
 func (c *Options) expandFilenames() {
 	c.ConfigPath = fs.Abs(c.ConfigPath)
 	c.StoragePath = fs.Abs(c.StoragePath)
+	c.UsersPath = fs.Abs(c.UsersPath)
 	c.BackupPath = fs.Abs(c.BackupPath)
 	c.AssetsPath = fs.Abs(c.AssetsPath)
 	c.CachePath = fs.Abs(c.CachePath)

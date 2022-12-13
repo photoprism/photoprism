@@ -124,11 +124,16 @@ export default class Page {
     }
   }
 
-  async checkListViewActionAvailability(action, disabled) {
-    if (disabled) {
-      await t.expect(Selector(`td button.input-` + action).hasAttribute("disabled")).ok();
+  async checkListViewActionAvailability(action, disabled, visible) {
+    if (visible) {
+      await t.expect(Selector(`td button.input-` + action).visible).ok();
+      if (disabled) {
+        await t.expect(Selector(`td button.input-` + action).hasAttribute("disabled")).ok();
+      } else {
+        await t.expect(Selector(`td button.input-` + action).hasAttribute("disabled")).notOk();
+      }
     } else {
-      await t.expect(Selector(`td button.input-` + action).hasAttribute("disabled")).notOk();
+      await t.expect(Selector(`td button.input-` + action).visible).notOk();
     }
   }
 }

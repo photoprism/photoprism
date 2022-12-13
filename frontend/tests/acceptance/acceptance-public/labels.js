@@ -35,8 +35,8 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
     await t.expect(PhotoKeywords).contains("beacon");
 
     await t
-      .click(photoedit.labelsTab, { timeout: 7000 })
-      .click(photoedit.removeLabel, { timeout: 7000 })
+      .click(photoedit.labelsTab)
+      .click(photoedit.removeLabel)
       .typeText(photoedit.inputLabelName, "Test")
       .click(Selector(photoedit.addLabel))
       .click(photoedit.detailsTab);
@@ -60,9 +60,9 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
     await toolbar.setFilter("view", "Cards");
     await t
       .click(page.cardTitle.withAttribute("data-uid", PhotoBeaconUid))
-      .click(photoedit.labelsTab, { timeout: 7000 })
-      .click(photoedit.deleteLabel, { timeout: 7000 })
-      .click(photoedit.activateLabel, { timeout: 7000 })
+      .click(photoedit.labelsTab)
+      .click(photoedit.deleteLabel)
+      .click(photoedit.activateLabel)
       .click(photoedit.detailsTab);
     const PhotoKeywordsAfterUndo = await photoedit.keywords.value;
 
@@ -159,35 +159,35 @@ test.meta("testID", "labels-003").meta({ mode: "public" })(
     await album.openAlbumWithUid(AlbumUid);
     const PhotoCount = await photo.getPhotoCount("all");
     await menu.openPage("labels");
-    await toolbar.search("landscape");
-    const LabelLandscape = await label.getNthLabeltUid(1);
-    await label.openLabelWithUid(LabelLandscape);
-    const FirstPhotoLandscape = await photo.getNthPhotoUid("all", 0);
-    const SecondPhotoLandscape = await photo.getNthPhotoUid("all", 1);
-    const ThirdPhotoLandscape = await photo.getNthPhotoUid("all", 2);
-    const FourthPhotoLandscape = await photo.getNthPhotoUid("all", 3);
-    const FifthPhotoLandscape = await photo.getNthPhotoUid("all", 4);
-    const SixthPhotoLandscape = await photo.getNthPhotoUid("all", 5);
+    await toolbar.search("sunglasses");
+    const LabelSunglasses = await label.getNthLabeltUid(0);
+    await label.openLabelWithUid(LabelSunglasses);
+    const FirstPhotoSunglasses = await photo.getNthPhotoUid("all", 0);
+    const SecondPhotoSunglasses = await photo.getNthPhotoUid("all", 1);
+    const ThirdPhotoSunglasses = await photo.getNthPhotoUid("all", 2);
+    const FourthPhotoSunglasses = await photo.getNthPhotoUid("all", 3);
+    const FifthPhotoSunglasses = await photo.getNthPhotoUid("all", 4);
+
     await menu.openPage("labels");
-    await label.triggerHoverAction("uid", LabelLandscape, "select");
+    await label.triggerHoverAction("uid", LabelSunglasses, "select");
     await contextmenu.checkContextMenuCount("1");
     await contextmenu.triggerContextMenuAction("album", "Christmas");
     await menu.openPage("albums");
     await album.openAlbumWithUid(AlbumUid);
     const PhotoCountAfterAdd = await photo.getPhotoCount("all");
 
-    await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 6);
+    await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 5);
 
-    await photo.triggerHoverAction("uid", FirstPhotoLandscape, "select");
-    await photo.triggerHoverAction("uid", SecondPhotoLandscape, "select");
-    await photo.triggerHoverAction("uid", ThirdPhotoLandscape, "select");
-    await photo.triggerHoverAction("uid", FourthPhotoLandscape, "select");
-    await photo.triggerHoverAction("uid", FifthPhotoLandscape, "select");
-    await photo.triggerHoverAction("uid", SixthPhotoLandscape, "select");
+    await photo.triggerHoverAction("uid", FirstPhotoSunglasses, "select");
+    await photo.triggerHoverAction("uid", SecondPhotoSunglasses, "select");
+    await photo.triggerHoverAction("uid", ThirdPhotoSunglasses, "select");
+    await photo.triggerHoverAction("uid", FourthPhotoSunglasses, "select");
+    await photo.triggerHoverAction("uid", FifthPhotoSunglasses, "select");
+
     await contextmenu.triggerContextMenuAction("remove", "");
     const PhotoCountAfterDelete = await photo.getPhotoCount("all");
 
-    await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 6);
+    await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 5);
   }
 );
 

@@ -44,6 +44,7 @@ export default class Config {
     this.storage_key = "config";
     this.previewToken = "";
     this.downloadToken = "";
+    this.updating = false;
 
     this.$vuetify = null;
     this.translations = translations;
@@ -60,9 +61,13 @@ export default class Config {
       this.themeName = "";
       this.baseUri = "";
       this.staticUri = "/static";
+      this.loginUri = "/library/login";
       this.apiUri = "/api/v1";
       this.contentUri = this.apiUri;
-      this.values = {};
+      this.values = {
+        mode: "test",
+        name: "Test",
+      };
       this.page = {
         title: "PhotoPrism",
         caption: "AI-Powered Photos App",
@@ -71,6 +76,7 @@ export default class Config {
     } else {
       this.baseUri = values.baseUri ? values.baseUri : "";
       this.staticUri = values.staticUri ? values.staticUri : this.baseUri + "/static";
+      this.loginUri = values.loginUri ? values.loginUri : this.baseUri + "/library/login";
       this.apiUri = values.apiUri ? values.apiUri : this.baseUri + "/api/v1";
       this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
     }
@@ -106,6 +112,7 @@ export default class Config {
     this.updateTokens();
 
     Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
+    Event.subscribe("config.tokens", (ev, data) => this.setTokens(data));
     Event.subscribe("count", (ev, data) => this.onCount(ev, data));
     Event.subscribe("people", (ev, data) => this.onPeople(ev, data));
 
@@ -125,16 +132,27 @@ export default class Config {
       return this.update();
     }
 
-    return Promise.resolve();
+    return Promise.resolve(this);
   }
 
   update() {
-    return Api.get("config")
+    if (this.updating !== false) {
+      return this.updating;
+    }
+
+    this.updating = Api.get("config")
       .then(
-        (response) => this.setValues(response.data),
+        (resp) => {
+          return this.setValues(resp.data);
+        },
         () => console.warn("config update failed")
       )
-      .finally(() => Promise.resolve());
+      .finally(() => {
+        this.updating = false;
+        return Promise.resolve(this);
+      });
+
+    return this.updating;
   }
 
   setValues(values) {
@@ -525,6 +543,16 @@ export default class Config {
     return Languages().some((lang) => lang.value === this.values.settings.ui.language && lang.rtl);
   }
 
+  setTokens(tokens) {
+    if (!tokens || !tokens.previewToken || !tokens.downloadToken) {
+      return;
+    }
+    this.previewToken = tokens.previewToken;
+    this.values.previewToken = tokens.previewToken;
+    this.downloadToken = tokens.downloadToken;
+    this.values.downloadToken = tokens.downloadToken;
+  }
+
   updateTokens() {
     if (this.values["previewToken"]) {
       this.previewToken = this.values.previewToken;
@@ -570,11 +598,21 @@ export default class Config {
     return name;
   }
 
+  getAbout() {
+    const about = this.get("about");
+
+    if (!about) {
+      return "PhotoPrism® Dev";
+    }
+
+    return about;
+  }
+
   getEdition() {
     const edition = this.get("edition");
 
     if (!edition) {
-      return "PhotoPrism® Dev";
+      return "ce";
     }
 
     return edition;

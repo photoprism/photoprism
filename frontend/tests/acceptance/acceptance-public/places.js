@@ -2,12 +2,14 @@ import { Selector } from "testcafe";
 import { ClientFunction } from "testcafe";
 import testcafeconfig from "../../testcafeconfig.json";
 import Menu from "../page-model/menu";
+import Places from "../page-model/places";
 
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture`Search and open photo from places`.page`${testcafeconfig.url}`;
 
 const menu = new Menu();
+const places = new Places();
 
 test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places", async (t) => {
   await menu.openPage("places");
@@ -30,10 +32,8 @@ test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places"
     .expect(Selector("div.map-control").visible)
     .ok();
 
-  await t
-    .typeText(Selector('input[aria-label="Search"]'), "canada", { replace: true })
-    .pressKey("enter")
-    .wait(8000);
+  await places.search("canada");
+  await t.wait(8000);
 
   await t.expect(Selector('div[title="Cape / Bowen Island / 2019"]').visible).ok();
 

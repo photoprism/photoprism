@@ -42,7 +42,7 @@ func (c *Config) CreateDarktableCachePath() (string, error) {
 
 	if cachePath == "" {
 		return "", nil
-	} else if err := os.MkdirAll(cachePath, os.ModePerm); err != nil {
+	} else if err := os.MkdirAll(cachePath, fs.ModeDir); err != nil {
 		return cachePath, err
 	} else {
 		c.options.DarktableCachePath = cachePath
@@ -57,7 +57,7 @@ func (c *Config) CreateDarktableConfigPath() (string, error) {
 
 	if configPath == "" {
 		return "", nil
-	} else if err := os.MkdirAll(configPath, os.ModePerm); err != nil {
+	} else if err := os.MkdirAll(configPath, fs.ModeDir); err != nil {
 		return configPath, err
 	} else {
 		c.options.DarktableConfigPath = configPath

@@ -66,10 +66,18 @@ func CreateDefaultUsers() {
 		// Set legacy values.
 		if leg := FindLegacyUser(Admin); leg != nil {
 			Admin.UserUID = leg.UserUID
-			Admin.UserName = leg.UserName
-			Admin.UserEmail = leg.PrimaryEmail
-			Admin.DisplayName = leg.FullName
-			Admin.LoginAt = leg.LoginAt
+			if leg.UserName != "" {
+				Admin.UserName = leg.UserName
+			}
+			if leg.PrimaryEmail != "" {
+				Admin.UserEmail = leg.PrimaryEmail
+			}
+			if leg.FullName != "" {
+				Admin.DisplayName = leg.FullName
+			}
+			if leg.LoginAt != nil {
+				Admin.LoginAt = leg.LoginAt
+			}
 			log.Infof("users: migrating %s account", Admin.UserName)
 		}
 

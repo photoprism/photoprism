@@ -39,7 +39,7 @@ Data and all config files related to PhotoPrism can be found in
 
   /opt/photoprism
 
-The main docker-compose config file for changing config options is
+The main docker compose config file for changing config options is
 
   /opt/photoprism/docker-compose.yml
 
@@ -86,18 +86,18 @@ traefik.yaml (see inline instructions in !! UPPERCASE !!):
 
 Then restart services in a terminal for the changes to take effect:
 
-  docker-compose stop
-  docker-compose up -d
+  docker compose stop
+  docker compose up -d
 
 To check logs for errors:
 
-  docker-compose logs -f
+  docker compose logs -f
 
 If you see a "letsencrypt.json" file permission error:
 
   chmod 600 /opt/photoprism/traefik/letsencrypt.json
-  docker-compose stop
-  docker-compose up -d
+  docker compose stop
+  docker compose up -d
 
 You should now be able to access your instance without security warnings:
 

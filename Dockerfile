@@ -1,5 +1,5 @@
 # Ubuntu 22.04 LTS (Jammy Jellyfish)
-FROM photoprism/develop:221012-jammy
+FROM photoprism/develop:221212-jammy
 
 ## Alternative Environments:
 # FROM photoprism/develop:bookworm # Debian 12 (Bookworm)
@@ -12,4 +12,4 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Copy source to image.
 COPY . .
-COPY --chown=root:root /scripts/dist/* /scripts/
+COPY --chown=root:root /scripts/dist/ /scripts/

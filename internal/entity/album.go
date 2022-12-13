@@ -424,7 +424,7 @@ func (m *Album) IsDefault() bool {
 // SetTitle changes the album name.
 func (m *Album) SetTitle(title string) {
 	title = strings.Trim(title, "_&|{}<>: \n\r\t\\")
-	title = strings.ReplaceAll(title, "\"", "'")
+	title = strings.ReplaceAll(title, "\"", "“")
 	title = txt.Shorten(title, txt.ClipDefault, txt.Ellipsis)
 
 	if title == "" {

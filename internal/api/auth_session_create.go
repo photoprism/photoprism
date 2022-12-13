@@ -32,18 +32,19 @@ func CreateSession(router *gin.RouterGroup) {
 		if conf.Public() {
 			sess := get.Session().Public()
 			data := gin.H{
-				"status": "ok",
-				"id":     sess.ID,
-				"user":   sess.User(),
-				"data":   sess.Data(),
-				"config": conf.ClientPublic(),
+				"status":   "ok",
+				"id":       sess.ID,
+				"provider": sess.AuthProvider,
+				"user":     sess.User(),
+				"data":     sess.Data(),
+				"config":   conf.ClientPublic(),
 			}
 			c.JSON(http.StatusOK, data)
 			return
 		}
 
 		// Check limit for failed auth requests (max. 10 per minute).
-		if limiter.Auth.Reject(ClientIP(c)) {
+		if limiter.Login.Reject(ClientIP(c)) {
 			limiter.AbortJSON(c)
 			return
 		}
@@ -86,11 +87,12 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// User information, session data, and client config values.
 		data := gin.H{
-			"status": "ok",
-			"id":     sess.ID,
-			"user":   sess.User(),
-			"data":   sess.Data(),
-			"config": clientConfig,
+			"status":   "ok",
+			"id":       sess.ID,
+			"provider": sess.AuthProvider,
+			"user":     sess.User(),
+			"data":     sess.Data(),
+			"config":   clientConfig,
 		}
 
 		// Send JSON response.

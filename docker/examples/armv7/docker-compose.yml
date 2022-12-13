@@ -4,6 +4,7 @@ version: '3.5'
 #
 # Note:
 # - Use https://dl.photoprism.app/docker/arm64/docker-compose.yml for running PhotoPrism on ARM64-based (64-bit) devices.
+# - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - In case you see Docker errors related to "cgroups", try adding the following parameters to /boot/firmware/cmdline.txt
@@ -13,28 +14,17 @@ version: '3.5'
 #   in clear text and can be intercepted by anyone, including your provider, hackers, and governments:
 #   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
-# Documentation : https://docs.photoprism.app/getting-started/raspberry-pi/
-# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
+# Setup Guides:
+# - https://docs.photoprism.app/getting-started/docker-compose/
+# - https://docs.photoprism.app/getting-started/raspberry-pi/
 #
-# DOCKER COMPOSE COMMAND REFERENCE
-# see https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
-# --------------------------------------------------------------------------
-# Start    | docker-compose up -d
-# Stop     | docker-compose stop
-# Update   | docker-compose pull
-# Logs     | docker-compose logs --tail=25 -f
-# Terminal | docker-compose exec photoprism bash
-# Help     | docker-compose exec photoprism photoprism help
-# Config   | docker-compose exec photoprism photoprism config
-# Reset    | docker-compose exec photoprism photoprism reset
-# Backup   | docker-compose exec photoprism photoprism backup -a -i
-# Restore  | docker-compose exec photoprism photoprism restore -a -i
-# Index    | docker-compose exec photoprism photoprism index
-# Reindex  | docker-compose exec photoprism photoprism index -f
-# Import   | docker-compose exec photoprism photoprism import
+# Troubleshooting Checklists:
+# - https://docs.photoprism.app/getting-started/troubleshooting/
+# - https://docs.photoprism.app/getting-started/troubleshooting/docker/
+# - https://docs.photoprism.app/getting-started/troubleshooting/mariadb/
 #
-# To search originals for faces without a complete rescan:
-# docker-compose exec photoprism photoprism faces index
+# CLI Commands:
+# - https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 #
 # All commands may have to be prefixed with "sudo" when not running as root.
 # This will point the home directory shortcut ~ to /root in volume mounts.
@@ -55,9 +45,10 @@ services:
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # INITIAL PASSWORD FOR "admin" USER, MINIMUM 8 CHARACTERS
+      PHOTOPRISM_ADMIN_USER: "admin"                 # superadmin username
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial superadmin password (minimum 8 characters)
       PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # public server URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "none"            # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_WORKERS: 1                          # Limits the number of indexing workers to reduce system load

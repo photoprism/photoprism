@@ -1,6 +1,8 @@
 version: '3.5'
 
-# MySQL versions for testing compatibility
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
+
 services:
   ## MySQL 8 Database Server
   ## Docs: https://dev.mysql.com/doc/refman/8.0/en/

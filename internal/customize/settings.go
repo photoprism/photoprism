@@ -48,7 +48,7 @@ func NewSettings(theme, lang string) *Settings {
 		},
 		Maps: MapsSettings{
 			Animate: 0,
-			Style:   "streets",
+			Style:   "",
 		},
 		Features: FeatureSettings{
 			Favorites: true,
@@ -98,7 +98,7 @@ func NewSettings(theme, lang string) *Settings {
 		},
 		Download: NewDownloadSettings(),
 		Templates: TemplateSettings{
-			Default: "index.tmpl",
+			Default: "index.gohtml",
 		},
 	}
 }
@@ -154,7 +154,7 @@ func (s *Settings) Save(fileName string) error {
 
 	s.Propagate()
 
-	if err := os.WriteFile(fileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(fileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 

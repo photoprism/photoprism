@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark" class="overflow-y-hidden">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0{{if not .config.Settings.UI.Zoom }}, maximum-scale=1.0, user-scalable=no{{end}}">
+
+  <title>{{ .config.Name }}</title>
+
+  {{if .config.SiteAuthor}}<meta name="author" content="{{ .config.SiteAuthor }}">{{end}}
+  {{if .config.SiteDescription}}<meta name="description" content="{{ .config.SiteDescription }}"/>{{end}}
+
+{{template "favicons.gohtml" .}}
+
+  <link rel="stylesheet" href="{{ .config.CssUri }}">
+</head>
+<body>
+<div id="photoprism" class="container">
+  <div class="fullscreen animate-rainbow">
+    <div class="logo-large">
+      <svg id="b14cd102-2241-4742-aeeb-4ebca536e025" data-name="logo" xmlns="http://www.w3.org/2000/svg"
+           viewBox="0 0 342.77 342.77">
+        <defs>
+          <style>
+            .e973c102-193a-465f-a6ce-238077277871,.fc6d24c6-9a63-4383-a118-2195cb69577d{fill:none;}
+            .bb0146b0-9b01-4116-a7e2-79b9809a5f83{clip-path:url(#aced1c04-d137-4184-b323-97ff0384d552);}
+            .b8904b42-fb62-4aa5-aae5-dc17759b185d{clip-path:url(#ed8c2ee9-6712-480b-97dc-53fde4d07a40);}
+            .e973c102-193a-465f-a6ce-238077277871{stroke:#141412;stroke-miterlimit:10;stroke-width:5px;}
+            .f5ddff88-48c1-46f9-a031-aee9bce94bd6{clip-path:url(#a1251993-bbf1-4548-8238-fa794c0bb4e3);}
+            .ead6f749-dce3-444a-a4f2-acc8f3078dec{clip-path:url(#be2d8169-fac1-479f-9595-ff9fe03b48a4);}
+            .a34fac52-8499-4455-a7f4-105abc9df09b,.f18ba0a9-054f-4ae5-b0d0-1c52cbadb98f{font-size:63px;fill:#141412;}
+            .a34fac52-8499-4455-a7f4-105abc9df09b{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";}
+            .beccc81f-4365-4373-9899-0d823daf22a9{letter-spacing:0.01em;}
+            .f18ba0a9-054f-4ae5-b0d0-1c52cbadb98f{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";font-weight:300;letter-spacing:0em;}
+            .a1c74a14-667e-420f-8ecb-79364b36eb33{letter-spacing:0.01em;}
+          </style>
+          <clipPath id="aced1c04-d137-4184-b323-97ff0384d552">
+            <rect class="fc6d24c6-9a63-4383-a118-2195cb69577d" x="12.89" y="201.65" width="321" height="126"/>
+          </clipPath>
+          <clipPath id="ed8c2ee9-6712-480b-97dc-53fde4d07a40">
+            <rect class="fc6d24c6-9a63-4383-a118-2195cb69577d" x="-44.79" y="40.23" width="457.74" height="262.31"/>
+          </clipPath>
+          <clipPath id="a1251993-bbf1-4548-8238-fa794c0bb4e3">
+            <rect class="fc6d24c6-9a63-4383-a118-2195cb69577d" x="58.39" y="20.65" width="232" height="126"/>
+          </clipPath>
+          <clipPath id="be2d8169-fac1-479f-9595-ff9fe03b48a4">
+            <rect class="fc6d24c6-9a63-4383-a118-2195cb69577d" x="-46.29" y="40.23" width="457.74" height="262.31"/>
+          </clipPath>
+        </defs>
+        <g class="bb0146b0-9b01-4116-a7e2-79b9809a5f83">
+          <g class="b8904b42-fb62-4aa5-aae5-dc17759b185d">
+            <path class="e973c102-193a-465f-a6ce-238077277871"
+                  d="M319.18,262l-7.06,39.05m-288-37.76,23.24,23m155.07-223-155,222.31a.17.17,0,0,0,.12.25L311.86,301a.15.15,0,0,0,.15-.22L202.72,63.35A.15.15,0,0,0,202.46,63.33ZM170.52,41.82,23.45,263a.2.2,0,0,0,.17.31L318.27,262a.2.2,0,0,0,.16-.31L170.86,41.82A.21.21,0,0,0,170.52,41.82Zm.18-.25,31.91,21.54"/>
+          </g>
+        </g>
+        <g class="f5ddff88-48c1-46f9-a031-aee9bce94bd6">
+          <g class="ead6f749-dce3-444a-a4f2-acc8f3078dec">
+            <path class="e973c102-193a-465f-a6ce-238077277871"
+                  d="M317.68,262l-7.06,39.05m-288-37.76,23.24,23M201,63.33,46,285.64a.17.17,0,0,0,.12.25L310.36,301a.15.15,0,0,0,.15-.22L201.22,63.35A.15.15,0,0,0,201,63.33ZM169,41.82,22,263a.2.2,0,0,0,.17.31L316.77,262a.2.2,0,0,0,.16-.31L169.36,41.82A.21.21,0,0,0,169,41.82Zm.18-.25,31.91,21.54"/>
+          </g>
+        </g>
+        <text class="a34fac52-8499-4455-a7f4-105abc9df09b" transform="translate(5.42 195.82)">
+          <tspan class="beccc81f-4365-4373-9899-0d823daf22a9" x="0" y="0">Photo</tspan>
+        </text>
+        <text class="f18ba0a9-054f-4ae5-b0d0-1c52cbadb98f" transform="translate(174.45 195.82)">
+          <tspan class="a1c74a14-667e-420f-8ecb-79364b36eb33" x="0" y="0">Prism</tspan>
+        </text>
+      </svg>
+    </div>
+  </div>
+</div>
+</body>
+</html>

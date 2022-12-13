@@ -30,7 +30,7 @@
                                    aspect-ratio="1"
                                    max-width="112"
                                    max-height="112"
-                                   class="accent lighten-2 elevation-0 clickable my-1"
+                                   class="card darken-1 elevation-0 clickable my-1"
                                    @click.exact="openFile(file)"
                             >
                             </v-img>

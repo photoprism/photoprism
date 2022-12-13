@@ -6,6 +6,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSanitizeUnicode(t *testing.T) {
+	t.Run("Ascii", func(t *testing.T) {
+		assert.Equal(t, "IMG_0599", SanitizeUnicode("IMG_0599"))
+	})
+
+	t.Run("Unicode", func(t *testing.T) {
+		assert.Equal(t, "Naïve bonds and futures surge as inflation eases 🚀🚀🚀", SanitizeUnicode("  Naïve bonds and futures surge as inflation eases 🚀🚀🚀 "))
+	})
+
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", SanitizeUnicode(""))
+	})
+}
+
 func TestSanitizeTitle(t *testing.T) {
 	t.Run("IMG_0599", func(t *testing.T) {
 		result := SanitizeTitle("IMG_0599")

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# Installs GPU drivers on Linux
+# This installs GPU drivers on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-gpu.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
-# abort if not executed as root
+# Abort if not executed as root.
 if [[ $(id -u) != "0" ]]; then
   echo "Error: Run ${0##*/} as root" 1>&2
   exit 1
@@ -44,24 +44,16 @@ case $DESTARCH in
     ;;
 esac
 
-# TODO: Install NVIDIA Drivers from https://developer.download.nvidia.com/compute/cuda/repos/
-# curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/{DIST}/x86_64/7fa2af80.pub | gpg --dearmor -o /etc/apt/trusted.gpg.d/developer.download.nvidia.com.gpg
-# add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/{DIST}/x86_64/ /"
-# curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/{DIST}/x86_64/cuda-{DIST}.pin > /etc/apt/preferences.d/cuda-repository-pin-600
-# apt-get update
-# apt-get install libglvnd-dev pkg-config dkms build-essential cuda nvidia-driver-510 nvidia-settings nvidia-utils-510 linux-headers-$(uname -r)
-
 # shellcheck disable=SC2068
 for t in ${GPU_DETECTED[@]}; do
   case $t in
-    i915)
+    i915 | i965 | intel | opencl | icd)
       echo "Installing Intel Drivers..."
-      apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx1 libva2 vainfo libva-wayland2
+      apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-gen-dev va-driver-all vainfo libva-dev
       ;;
 
     nvidia)
-      echo "Installing Nvidia Drivers..."
-      apt-get -qq install libcuda1 libnvcuvid1 libnvidia-encode1 nvidia-opencl-icd nvidia-vdpau-driver nvidia-driver-libs nvidia-kernel-dkms libva2 vainfo libva-wayland2
+      echo "NVIDIA Container Toolkit must be installed: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html"
       ;;
 
     "null")

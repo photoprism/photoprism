@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-09 00:51+0000\n"
+"POT-Creation-Date: 2022-10-31 12:20+0000\n"
 "PO-Revision-Date: 2022-02-19 14:34+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
@@ -19,250 +19,377 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.10.1\n"
 
+#: messages.go:94
 msgid "Unexpected error, please try again"
 msgstr "هەڵەیەکی چاوەڕوان نەکراو، تکایە دووبارە هەوڵ بدەوە"
 
+#: messages.go:95
 msgid "Invalid request"
 msgstr "داواکاری نادروست"
 
+#: messages.go:96
 msgid "Changes could not be saved"
 msgstr "گۆڕانکاریەکان پاشەکەوت نەکراوە"
 
+#: messages.go:97
 msgid "Could not be deleted"
 msgstr "نەتوانرا بسڕێتەوە"
 
+#: messages.go:98
 #, c-format
 msgid "%s already exists"
 msgstr "%s پێشتر هەیە"
 
+#: messages.go:99
 msgid "Not found"
 msgstr "نەدۆزرایەوە"
 
+#: messages.go:100
 msgid "File not found"
 msgstr "دۆسیەکە نەدۆزرایەوە"
 
+#: messages.go:101
+msgid "File too large"
+msgstr ""
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr ""
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr ""
+
+#: messages.go:104
 msgid "Selection not found"
 msgstr "هەڵبژاردەکان نەدۆزرایەوە"
 
+#: messages.go:105
 msgid "Entity not found"
 msgstr "هیچ ئەلبومێکی نەدۆزیوەتەوە"
 
+#: messages.go:106
 msgid "Account not found"
 msgstr "هەژمارەکە نەدۆزرایەوە"
 
+#: messages.go:107
 msgid "User not found"
 msgstr "بەکارهێنەرەکە نەدۆزرایەوە"
 
+#: messages.go:108
 msgid "Label not found"
 msgstr "پێناسەکە نەدۆزرایەوە"
 
+#: messages.go:109
 msgid "Album not found"
 msgstr "ئەلبومەکە نەدۆزرایەوە"
 
+#: messages.go:110
 msgid "Subject not found"
 msgstr "ناونیشان"
 
+#: messages.go:111
 msgid "Person not found"
 msgstr "هیچ ئەلبومێکی نەدۆزیوەتەوە"
 
+#: messages.go:112
 msgid "Face not found"
 msgstr "نەدۆزرایەوە"
 
+#: messages.go:113
 msgid "Not available in public mode"
 msgstr "بەردەست نیە بۆ دۆخی گشتی"
 
-msgid "not available in read-only mode"
+#: messages.go:114
+#, fuzzy
+msgid "Not available in read-only mode"
 msgstr "بەردەست نییە لە دۆخی تەنها-خوێندنەوە"
 
-msgid "Please log in and try again"
+#: messages.go:115
+#, fuzzy
+msgid "Please log in to your account"
 msgstr "تکایە تێپەڕبە پاشان هەوڵبدەرەوە"
 
+#: messages.go:116
+#, fuzzy
+msgid "Permission denied"
+msgstr "ئەلبومەکان سڕانەوە"
+
+#: messages.go:117
 msgid "Upload might be offensive"
 msgstr "بارکردن لەوانەیە سووکایەتی بێت"
 
+#: messages.go:118
+msgid "Upload failed"
+msgstr ""
+
+#: messages.go:119
 msgid "No items selected"
 msgstr "هیچ ئایتمێک دەستنیشان نەکراوە"
 
+#: messages.go:120
+#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "شکست لە دروستکردنی پەڕگە، تکایە مۆڵەتەکان بپشکنە"
 
+#: messages.go:121
+#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "شکست لە دروستکردنی بوخچە، تکایە مۆڵەتەکان بپشکنە"
 
+#: messages.go:122
 msgid "Could not connect, please try again"
 msgstr "نەیتوانی پەیوەندی بگرێت، تکایە دووبارە هەوڵ بدەوە"
 
+#: messages.go:123
 msgid "Invalid password, please try again"
 msgstr "تێپەرەوشە هەڵەیە، تکایە جارێکی تر هەوڵبدەوە"
 
+#: messages.go:124
 msgid "Feature disabled"
 msgstr "تایبەتمەندی ناچالاک کراوە"
 
+#: messages.go:125
 msgid "No labels selected"
 msgstr "هیج لە پێناسەکان هەڵنەبژێردراوە"
 
+#: messages.go:126
 msgid "No albums selected"
 msgstr "هیج لە ئەلبومەکان هەڵنەبژێردراوە"
 
+#: messages.go:127
 msgid "No files available for download"
 msgstr "هیچ پەڕگەیەک ئامادە نیە بۆ داگرتن"
 
+#: messages.go:128
+#, fuzzy
 msgid "Failed to create zip file"
 msgstr "دروستکردنی فایلی زیپ سەرکەوتوو نەبوو"
 
+#: messages.go:129
 msgid "Invalid credentials"
 msgstr "زانیارییەکان نادروستە"
 
+#: messages.go:130
 msgid "Invalid link"
 msgstr "بەستەرەکە نادروستە"
 
+#: messages.go:131
 msgid "Invalid name"
 msgstr "بەروارێکی نادروست"
 
+#: messages.go:132
 #, fuzzy
-#| msgid "Invalid password, please try again"
 msgid "Busy, please try again later"
 msgstr "تێپەرەوشە هەڵەیە، تکایە جارێکی تر هەوڵبدەوە"
 
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr ""
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr ""
+
+#: messages.go:137
 msgid "Changes successfully saved"
 msgstr "گۆڕانکاریەکان سەرکەوتوانە پاشەکەوتکرا"
 
+#: messages.go:138
 msgid "Album created"
 msgstr "ئەلبومەکە دروستکرا"
 
+#: messages.go:139
 msgid "Album saved"
 msgstr "ئەلبومەکە پاشەکەوتکرا"
 
+#: messages.go:140
 #, c-format
 msgid "Album %s deleted"
 msgstr "ئەلبومی %s سڕایەوە"
 
+#: messages.go:141
 msgid "Album contents cloned"
 msgstr "ناوەڕۆکەکانی ئەلبومەکە هاووێنە کرا"
 
+#: messages.go:142
 msgid "File removed from stack"
 msgstr "دۆسیەکە کۆژاوەتەوە لە کەڵەکەکە"
 
+#: messages.go:143
 msgid "File deleted"
 msgstr "پەڕگە سڕایەوە"
 
+#: messages.go:144
 #, c-format
 msgid "Selection added to %s"
 msgstr "دەستنیشان کراو زیادکرایە %s"
 
+#: messages.go:145
 #, c-format
 msgid "One entry added to %s"
 msgstr "یەک تێکراو زیاد کرایە %s"
 
+#: messages.go:146
 #, fuzzy, c-format
 msgid "%d entries added to %s"
 msgstr "%d تێکراو زیاد کرایە  %s"
 
+#: messages.go:147
 #, c-format
 msgid "One entry removed from %s"
 msgstr "یەک تێکراو لابرا لە %s"
 
+#: messages.go:148
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d تێکراو لابرا لە %s"
 
+#: messages.go:149
 msgid "Account created"
 msgstr "هەژمارەکە دروستکرا"
 
+#: messages.go:150
 msgid "Account saved"
 msgstr "هەژمارەکە پاشەکەوتکرا"
 
+#: messages.go:151
 msgid "Account deleted"
 msgstr "هەژمارەکە سڕایەوە"
 
+#: messages.go:152
 #, fuzzy
 msgid "Settings saved"
 msgstr "ڕێکخستنەکان پاشەکەوتکرا"
 
+#: messages.go:153
 #, fuzzy
 msgid "Password changed"
 msgstr "تێپەڕەوشە گۆڕدرا"
 
+#: messages.go:154
 #, fuzzy, c-format
 msgid "Import completed in %d s"
 msgstr "هاوردن تەواو بوو بە %d  چرکە"
 
+#: messages.go:155
 msgid "Import canceled"
 msgstr "هاوردن هەڵوەشێنرایەوە"
 
+#: messages.go:156
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "نیشانە کردن تەواو بوو بە %d چرکە"
 
+#: messages.go:157
 msgid "Indexing originals..."
 msgstr "نیشانەکردنی ڕەسەنەکان..."
 
+#: messages.go:158
 #, c-format
 msgid "Indexing files in %s"
 msgstr "نیشانەکردنی پەڕگەکان لە %s"
 
+#: messages.go:159
 msgid "Indexing canceled"
 msgstr "نیشانەکردن هەڵوەشێنرایەوە"
 
+#: messages.go:160
 #, fuzzy, c-format
 msgid "Removed %d files and %d photos"
 msgstr "لابردنی %d پەڕگە و  %d وێنە"
 
+#: messages.go:161
 #, c-format
 msgid "Moving files from %s"
 msgstr "گواستنەوەی پەڕگە لە %s"
 
+#: messages.go:162
 #, c-format
 msgid "Copying files from %s"
 msgstr "کۆپی کردنی پەڕگە لە%s"
 
+#: messages.go:163
 #, fuzzy
 msgid "Labels deleted"
 msgstr "پێناسەکان سڕانەوە"
 
+#: messages.go:164
 msgid "Label saved"
 msgstr "پێناسەکە پاشەکەوتکرا"
 
+#: messages.go:165
 msgid "Subject saved"
 msgstr "ناونیشان"
 
+#: messages.go:166
 msgid "Subject deleted"
 msgstr "ناونیشان"
 
+#: messages.go:167
 msgid "Person saved"
 msgstr "ڕێکخستنەکان پاشەکەوتکراو"
 
+#: messages.go:168
 msgid "Person deleted"
 msgstr "ئەلبومەکان سڕانەوە"
 
+#: messages.go:169
+#, fuzzy
+msgid "File uploaded"
+msgstr "پەڕگە سڕایەوە"
+
+#: messages.go:170
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d پەڕگە بارکرە بە %d چرکە"
 
+#: messages.go:171
+msgid "Processing upload..."
+msgstr ""
+
+#: messages.go:172
+#, fuzzy
+msgid "Upload has been processed"
+msgstr "بارکردن لەوانەیە سووکایەتی بێت"
+
+#: messages.go:173
 msgid "Selection approved"
 msgstr "دەستنیشان کراو پەسەند کرا"
 
+#: messages.go:174
 #, fuzzy
 msgid "Selection archived"
 msgstr "هەڵبژاردەکە ئەرشیفکرا"
 
+#: messages.go:175
 #, fuzzy
 msgid "Selection restored"
 msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 
+#: messages.go:176
 msgid "Selection marked as private"
 msgstr "دەستنیشانکراوەکان کران بە تایبەتی"
 
+#: messages.go:177
 #, fuzzy
 msgid "Albums deleted"
 msgstr "ئەلبومەکان سڕایەوە"
 
+#: messages.go:178
 #, c-format
 msgid "Zip created in %d s"
 msgstr "زیپ بە %d چرکە دروستکرا"
 
+#: messages.go:179
 msgid "Permanently deleted"
 msgstr "بە هەمیشەیی سڕاوەتەوە"
+
+#: messages.go:180
+#, fuzzy, c-format
+msgid "%s has been restored"
+msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "نەدۆزرایەوە لە سەر ڕاژە، سڕایەوە؟"

@@ -2,14 +2,14 @@
 
 set -e
 
-LIBHEIF_VERSION=${1:-v1.13.0}
-DESTDIR=$(realpath "${2:-/usr/local}")
+DESTDIR=$(realpath "${1:-/usr/local}")
+LIBHEIF_VERSION=${2:-v1.13.0}
 SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
 DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
 
 . /etc/os-release
 
-# abort if not executed as root
+# Abort if not executed as root.
 if [[ $(id -u) != "0" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]; then
   echo "Error: Run ${0##*/} as root to install in a system directory!" 1>&2
   exit 1

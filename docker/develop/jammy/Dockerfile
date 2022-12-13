@@ -38,7 +38,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PROG="photoprism"
 
 # Copy scripts and package sources config.
-COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
 # Update base image and add dependencies.
@@ -49,9 +49,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
-        libc6 ca-certificates sudo bash tzdata \
+        libc6 ca-certificates sudo bash tzdata avahi-utils \
         gpg zip unzip wget curl rsync make nano \
-        jq lsof lshw sqlite3 mariadb-client imagemagick \
+        jq lsof lshw sqlite3 imagemagick \
         exiftool rawtherapee librsvg2-bin \
         ffmpeg ffmpegthumbnailer libavcodec-extra \
         libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
@@ -66,6 +66,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
     && \
     /scripts/install-nodejs.sh && \
+    /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-tensorflow.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \

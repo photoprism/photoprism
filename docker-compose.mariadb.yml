@@ -1,6 +1,7 @@
 version: '3.5'
 
-# Additional MariaDB and MySQL versions for testing compatibility
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
   ## MariaDB 10.8 Database Server

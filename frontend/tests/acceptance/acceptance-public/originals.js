@@ -47,7 +47,7 @@ test.meta("testID", "originals-001").meta({ type: "short", mode: "public" })(
     const FirstItemInBotanicalGardenName = await Selector("div.result", { timeout: 15000 }).nth(0)
       .innerText;
     await t.expect(FirstItemInBotanicalGardenName).contains("originals-001_1.jpg");
-    await t.click(Selector('a[href="/library/files/Vacation"]'));
+    await t.click(Selector('a[href="/library/index/files/Vacation"]'));
     const FolderCount = await originals.getFolderCount();
 
     await t.expect(FolderCount).eql(2);
@@ -69,7 +69,7 @@ test.meta("testID", "originals-002").meta({ type: "short", mode: "public" })(
     const FilesCountInKanada = await originals.getFileCount();
     await t.click(Selector("button").withText("BotanicalGarden"));
     const FilesCountInKanadaSubfolder = await originals.getFileCount();
-    await t.navigateTo("/library/files/Vacation");
+    await t.navigateTo("/library/index/files/Vacation");
     await originals.triggerHoverAction("is-folder", "uid", KanadaFolderUid, "select");
     await contextmenu.checkContextMenuCount("1");
     await contextmenu.triggerContextMenuAction("album", "KanadaVacation");

@@ -19,6 +19,7 @@
 /assets/static/build/
 /package-lock.json
 /frontend/tests_output
+/tmp/
 *.log
 *.pid
 *.db

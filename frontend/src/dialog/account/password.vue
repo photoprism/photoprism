@@ -44,7 +44,7 @@
                 :label="$gettext('New Password')"
                 class="input-new-password"
                 color="secondary-dark"
-                :hint="$gettext('Must have at least 8 characters.')"
+                :hint="$gettextInterpolate($gettext('Must have at least %{n} characters.'), {n: passwordLength})"
             ></v-text-field>
           </v-flex>
 
@@ -101,6 +101,7 @@ export default {
       oldPassword: "",
       newPassword: "",
       confirmPassword: "",
+      passwordLength: this.$config.get("passwordLength"),
       rtl: this.$rtl,
     };
   },
@@ -112,7 +113,7 @@ export default {
   },
   methods: {
     disabled() {
-      return (this.isDemo || this.busy || this.oldPassword === "" || this.newPassword.length < 8 || (this.newPassword !== this.confirmPassword));
+      return (this.isDemo || this.busy || this.oldPassword === "" || this.newPassword.length < this.passwordLength || (this.newPassword !== this.confirmPassword));
     },
     confirm() {
       this.busy = true;

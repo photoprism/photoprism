@@ -7,34 +7,22 @@ assignees: ''
 
 ---
 
-STOP! BEFORE YOU PROCEED: ARE YOU 100% SURE THAT THE PROBLEM AND THE PROPOSED SOLUTION ARE COMPLETELY CLEAR AND THAT NO SIMILAR ISSUE ALREADY EXISTS?
+PLEASE ONLY PROCEED IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPPORT INCIDENT AND/OR A PROBLEM WITH OTHER SOFTWARE YOU ARE USING. PLEASE ALSO CHECK OUR PUBLIC ROADMAP AND TRY TO FIND EXISTING FEATURE REQUESTS FIRST:
 
-- Never use GitHub Issues if you have a general question, need help, or an issue has not (yet) been clearly identified
-- When creating a new feature request, be sure to **answer all of the questions below** so that we and other community members have a good understanding of the problem and the proposed solution
-- Note that all issue **subscribers receive an email notification** from GitHub for each new comment, so these should only be used for sharing important information and not for personal discussions/questions
-
-BEFORE OPENING AN ISSUE, PLEASE CHECK OUR PUBLIC ROADMAP AND SEARCH EXISTING FEATURE REQUESTS:
-
-  <https://github.com/photoprism/photoprism/issues>
-  <https://link.photoprism.app/roadmap>
-
-FOR GENERAL QUESTIONS, TECHNICAL SUPPORT, AND TO GET TO KNOW OTHER COMMUNITY MEMBERS:
-
-  <https://github.com/photoprism/photoprism/discussions>
-
-PLEASE PROCEED ONLY IF YOU ARE 100% SURE THAT THE PROBLEM AND THE PROPOSED SOLUTION ARE COMPLETELY CLEAR AND THAT NO SIMILAR ISSUE ALREADY EXISTS.
-
-**THANK YOU FOR YOUR CAREFUL CONSIDERATION!**
+- <https://link.photoprism.app/roadmap>
+- <https://github.com/photoprism/photoprism/issues>
+ 
+VISIT <https://photoprism.app/kb/getting-support> TO LEARN MORE ABOUT OUR SUPPORT OPTIONS. THANK YOU FOR YOUR CAREFUL CONSIDERATION!
 
 ===============================================================================
 
-**Is your feature request related to a problem? Please describe.**
+**Describe what problem this solves and why this would be valuable to many users**
 
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+A clear and concise description of what the problem is and why it is important to solve it.
 
 **Describe the solution you'd like**
 
-A clear and concise description of what you want to happen.
+A clear and concise description of what you suggest to happen.
 
 **Describe alternatives you've considered**
 

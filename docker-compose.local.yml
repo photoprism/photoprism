@@ -1,5 +1,8 @@
 version: '3.5'
 
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
+
 services:
   ## Local Test Build
   ## Docs: https://docs.photoprism.org/
@@ -19,12 +22,12 @@ services:
       - "traefik.http.routers.latest.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.latest.tls=true"
     environment:
-      PHOTOPRISM_UID: ${UID:-1000}                   # user id, should match your host user id
-      PHOTOPRISM_GID: ${GID:-1000}                   # group id
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
-      PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
-      ## Public server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_SITE_URL: "https://latest.localssl.dev/"
+      PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
+      PHOTOPRISM_GID: ${GID:-1000}                         # group id
+      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
+      PHOTOPRISM_SITE_URL: "https://latest.localssl.dev/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
@@ -34,7 +37,7 @@ services:
       PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
       PHOTOPRISM_DATABASE_NAME: "local"
@@ -58,7 +61,7 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 85             # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                 # show TensorFlow log messages for development
-      PHOTOPRISM_INIT: "gpu tensorflow"       # Options: "update gpu tensorflow davfs clitools clean"
+      PHOTOPRISM_INIT: "http gpu tensorflow"  # Options: "update https gpu tensorflow davfs clitools clean"
       PHOTOPRISM_FFMPEG_ENCODER: "nvidia"     # Options: "software", "intel", "nvidia", "apple", "raspberry"
       PHOTOPRISM_STORAGE_PATH: "/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/photoprism/storage/originals"

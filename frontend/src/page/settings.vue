@@ -57,6 +57,7 @@ export default {
   data() {
     const isDemo = this.$config.isDemo();
     const isPublic = this.$config.isPublic();
+    const isSuperAdmin = this.$session.isSuperAdmin();
 
     const tabs = [
       {
@@ -81,7 +82,7 @@ export default {
         'public': true,
         'admin': true,
         'demo': true,
-        'show': config.allow("config", "manage"),
+        'show': config.allow("config", "manage") && isSuperAdmin,
       },
       {
         'name': 'settings_advanced',
@@ -135,6 +136,10 @@ export default {
       active = tabs.findIndex((t) => t.name === this.$route.name);
     } else if (typeof this.tab === 'string' && this.tab !== '') {
       active = tabs.findIndex((t) => t.name === this.tab);
+    }
+
+    if (active < 0) {
+      active = 0;
     }
 
     return {

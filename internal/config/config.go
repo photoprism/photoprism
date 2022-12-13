@@ -132,6 +132,15 @@ func (c *Config) CliContext() *cli.Context {
 	return c.cliCtx
 }
 
+// CliGlobalString returns a global cli string flag value if set.
+func (c *Config) CliGlobalString(name string) string {
+	if c.cliCtx == nil {
+		return ""
+	}
+
+	return c.cliCtx.GlobalString(name)
+}
+
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
@@ -156,6 +165,9 @@ func (c *Config) Propagate() {
 	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()
 	entity.GeoApi = c.GeoApi()
+
+	// Set minimum password length.
+	entity.PasswordLength = c.PasswordLength()
 
 	// Set API preview and download default tokens.
 	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
@@ -275,11 +287,11 @@ func (c *Config) initSerial() (err error) {
 	storageName := filepath.Join(c.StoragePath(), serialName)
 	backupName := filepath.Join(c.BackupPath(), serialName)
 
-	if err = os.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
+	if err = os.WriteFile(storageName, []byte(c.serial), fs.ModeFile); err != nil {
 		return fmt.Errorf("could not create %s: %s", storageName, err)
 	}
 
-	if err = os.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {
+	if err = os.WriteFile(backupName, []byte(c.serial), fs.ModeFile); err != nil {
 		return fmt.Errorf("could not create %s: %s", backupName, err)
 	}
 
@@ -382,10 +394,10 @@ func (c *Config) StaticUri() string {
 	return c.CdnUrl(c.BaseUri(StaticUri))
 }
 
-// SiteUrl returns the public server URL (default is "http://localhost:2342/").
+// SiteUrl returns the public server URL (default is "http://photoprism.me:2342/").
 func (c *Config) SiteUrl() string {
 	if c.options.SiteUrl == "" {
-		return "http://localhost:2342/"
+		return "http://photoprism.me:2342/"
 	}
 
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
@@ -446,22 +458,32 @@ func (c *Config) SitePreview() string {
 	return c.options.SitePreview
 }
 
-// Imprint returns the legal info text for the page footer.
-func (c *Config) Imprint() string {
+// LegalInfo returns the legal info text for the page footer.
+func (c *Config) LegalInfo() string {
 	if c.NoSponsor() {
 		return MsgSponsor
 	}
 
-	return c.options.Imprint
+	if s := c.CliGlobalString("imprint"); s != "" {
+		log.Warnf("config: option 'imprint' is deprecated, please use 'legal-info'")
+		return s
+	}
+
+	return c.options.LegalInfo
 }
 
-// ImprintUrl returns the legal info url.
-func (c *Config) ImprintUrl() string {
+// LegalUrl returns the legal info url.
+func (c *Config) LegalUrl() string {
 	if c.NoSponsor() {
 		return SignUpURL
 	}
 
-	return c.options.ImprintUrl
+	if s := c.CliGlobalString("imprint-url"); s != "" {
+		log.Warnf("config: option 'imprint-url' is deprecated, please use 'legal-url'")
+		return s
+	}
+
+	return c.options.LegalUrl
 }
 
 // Prod checks if production mode is enabled, hides non-essential log messages.
@@ -608,7 +630,7 @@ func (c *Config) Workers() int {
 // required for face recognition and index maintenance(1-86400s).
 func (c *Config) WakeupInterval() time.Duration {
 	if c.options.WakeupInterval <= 0 {
-		if c.options.Unsafe {
+		if c.Unsafe() {
 			// Worker can be disabled only in unsafe mode.
 			return time.Duration(0)
 		} else {
@@ -654,7 +676,7 @@ func (c *Config) AutoImport() time.Duration {
 	return time.Duration(c.options.AutoImport) * time.Second
 }
 
-// GeoApi returns the preferred geocoding api (none or places).
+// GeoApi returns the preferred geocoding api (places, or none).
 func (c *Config) GeoApi() string {
 	if c.options.DisablePlaces {
 		return ""
@@ -705,7 +727,7 @@ func (c *Config) UpdateHub() {
 
 // ResyncHub renews backend api credentials for maps & places with an optional token.
 func (c *Config) ResyncHub(token string) error {
-	if err := c.hub.Resync(token); err != nil {
+	if err := c.hub.ReSync(token); err != nil {
 		log.Debugf("config: %s (refresh backend api tokens)", err)
 		if token != "" {
 			return i18n.Error(i18n.ErrAccountConnect)

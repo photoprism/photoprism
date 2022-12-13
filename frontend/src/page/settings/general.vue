@@ -43,7 +43,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="isDemo || isAdmin" flat tile class="mt-0 px-1 application">
+      <v-card v-if="isDemo || isSuperAdmin" flat tile class="mt-0 px-1 application">
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
@@ -275,7 +275,7 @@
               <v-checkbox
                   v-model="settings.features.account"
                   :disabled="busy || isDemo"
-                  class="ma-0 pa-0 input-places"
+                  class="ma-0 pa-0 input-account"
                   color="secondary-dark"
                   :label="$gettext('Account')"
                   :hint="$gettext('Change personal profile and security settings.')"
@@ -318,8 +318,8 @@
               <v-select
                   v-model="settings.maps.style"
                   :disabled="busy"
-                  :items="mapsStyle"
-                  :label="$gettext('Style')"
+                  :items="options.MapsStyle()"
+                  :label="$gettext('Maps')"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
@@ -363,7 +363,7 @@ export default {
   data() {
     return {
       isDemo: this.$config.get("demo"),
-      isAdmin: this.$session.isAdmin(),
+      isSuperAdmin: this.$session.isSuperAdmin(),
       isPublic: this.$config.get("public"),
       config: this.$config.values,
       settings: new Settings(this.$config.settings()),
@@ -457,7 +457,7 @@ export default {
           this.$notify.blockUI();
           setTimeout(() => window.location.reload(), 100);
         } else {
-          this.$notify.success(this.$gettext("Settings saved"));
+          this.$notify.success(this.$gettext("Changes successfully saved"));
         }
       }).finally(() => this.busy = false);
     },

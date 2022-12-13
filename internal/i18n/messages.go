@@ -9,7 +9,7 @@ const (
 	ErrNotFound
 	ErrFileNotFound
 	ErrFileTooLarge
-	ErrWrongFileType
+	ErrUnsupportedFormat
 	ErrOriginalsEmpty
 	ErrSelectionNotFound
 	ErrEntityNotFound
@@ -99,7 +99,7 @@ var Messages = MessageMap{
 	ErrNotFound:           gettext("Not found"),
 	ErrFileNotFound:       gettext("File not found"),
 	ErrFileTooLarge:       gettext("File too large"),
-	ErrWrongFileType:      gettext("Wrong file type"),
+	ErrUnsupportedFormat:  gettext("Unsupported format"),
 	ErrOriginalsEmpty:     gettext("Originals folder is empty"),
 	ErrSelectionNotFound:  gettext("Selection not found"),
 	ErrEntityNotFound:     gettext("Entity not found"),
@@ -117,15 +117,15 @@ var Messages = MessageMap{
 	ErrOffensiveUpload:    gettext("Upload might be offensive"),
 	ErrUploadFailed:       gettext("Upload failed"),
 	ErrNoItemsSelected:    gettext("No items selected"),
-	ErrCreateFile:         gettext("RunFailed creating file, please check permissions"),
-	ErrCreateFolder:       gettext("RunFailed creating folder, please check permissions"),
+	ErrCreateFile:         gettext("Failed creating file, please check permissions"),
+	ErrCreateFolder:       gettext("Failed creating folder, please check permissions"),
 	ErrConnectionFailed:   gettext("Could not connect, please try again"),
 	ErrInvalidPassword:    gettext("Invalid password, please try again"),
 	ErrFeatureDisabled:    gettext("Feature disabled"),
 	ErrNoLabelsSelected:   gettext("No labels selected"),
 	ErrNoAlbumsSelected:   gettext("No albums selected"),
 	ErrNoFilesForDownload: gettext("No files available for download"),
-	ErrZipFailed:          gettext("RunFailed to create zip file"),
+	ErrZipFailed:          gettext("Failed to create zip file"),
 	ErrInvalidCredentials: gettext("Invalid credentials"),
 	ErrInvalidLink:        gettext("Invalid link"),
 	ErrInvalidName:        gettext("Invalid name"),

@@ -35,9 +35,9 @@
       >
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
              :data-uid="photo.UID"
-             class="accent lighten-3 result placeholder"
+             class="card result placeholder"
         >
-          <div class="accent lighten-2 image"/>
+          <div class="card darken-1 image"/>
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
           <div class="pa-3 card-details">
             <div>
@@ -73,17 +73,15 @@
           </div>
         </div>
         <div v-else
-              tile
               :data-id="photo.ID"
               :data-uid="photo.UID"
-              class="result accent lighten-3"
+              class="result card"
               :class="photo.classes()"
               @contextmenu.stop="onContextMenu($event, index)">
-          <div class="card-background accent lighten-3"></div>
+          <div class="card-background card"></div>
           <div :key="photo.Hash"
-                :alt="photo.Title"
                 :title="photo.Title"
-                class="accent lighten-2 clickable image"
+                class="card darken-1 clickable image"
                 :style="`background-image: url(${photo.thumbnailUrl('tile_500')})`"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop.prevent="onClick($event, index)"
@@ -161,7 +159,7 @@
           <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
             <v-layout row wrap align-center>
               <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="accent lighten-2"
+                <v-btn color="card darken-1"
                       small depressed dark block :round="false"
                       class="action-archive text-xs-center"
                       :title="$gettext('Archive')" @click.stop="photo.archive()">
@@ -169,7 +167,7 @@
                 </v-btn>
               </v-flex>
               <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="accent lighten-2"
+                <v-btn color="card darken-1"
                       small depressed dark block :round="false"
                       class="action-approve text-xs-center"
                       :title="$gettext('Approve')" @click.stop="photo.approve()">

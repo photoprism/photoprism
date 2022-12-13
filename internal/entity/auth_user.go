@@ -8,15 +8,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ulule/deepcopier"
-
 	"github.com/jinzhu/gorm"
+	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // User identifier prefixes.
@@ -26,11 +26,11 @@ const (
 	OwnerUnknown = ""
 )
 
-// LenNameMin specifies the minimum length of the username in characters.
-var LenNameMin = 3
+// UsernameLength specifies the minimum length of the username in characters.
+var UsernameLength = 1
 
-// LenPasswordMin specifies the minimum length of the password in characters.
-var LenPasswordMin = 4
+// PasswordLength specifies the minimum length of the password in characters.
+var PasswordLength = 4
 
 // Users represents a list of users.
 type Users []User
@@ -109,6 +109,8 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("user_name = ?", find.UserName)
 	} else if find.UserEmail != "" {
 		stmt = stmt.Where("user_email = ?", find.UserEmail)
+	} else if find.AuthProvider != "" && find.AuthID != "" {
+		stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
 	} else {
 		return nil
 	}
@@ -385,18 +387,26 @@ func (m *User) Name() string {
 
 // SetName sets the login username to the specified string.
 func (m *User) SetName(login string) (err error) {
+	if m.ID < 0 {
+		return fmt.Errorf("system users cannot be modified")
+	}
+
 	login = clean.Username(login)
 
 	// Empty?
 	if login == "" {
-		return fmt.Errorf("username cannot be empty")
+		return fmt.Errorf("username is empty")
+	} else if m.UserName == login {
+		return nil
+	} else if m.UserName != "" && m.ID != 1 {
+		return fmt.Errorf("username cannot be changed")
 	}
 
 	// Update username and slug.
 	m.UserName = login
 
 	// Update display name.
-	if m.DisplayName == "" || m.DisplayName == AdminDisplayName {
+	if m.DisplayName == "" || m.DisplayName == AdminDisplayName && m.ID == 1 {
 		m.DisplayName = clean.NameCapitalized(login)
 	}
 
@@ -503,7 +513,16 @@ func (m *User) IsAdmin() bool {
 		return false
 	}
 
-	return m.IsRegistered() && (m.SuperAdmin || m.AclRole() == acl.RoleAdmin)
+	return m.IsSuperAdmin() || m.IsRegistered() && m.AclRole() == acl.RoleAdmin
+}
+
+// IsSuperAdmin checks if the user is a super admin.
+func (m *User) IsSuperAdmin() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.SuperAdmin
 }
 
 // IsVisitor checks if the user is a sharing link visitor.
@@ -550,8 +569,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len(password) < LenPasswordMin {
-		return fmt.Errorf("password must have at least %d characters", LenPasswordMin)
+	if len(password) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
 	}
 
 	pw := NewPassword(m.UserUID, password)
@@ -605,8 +624,8 @@ func (m *User) Validate() (err error) {
 	}
 
 	// Name too short?
-	if len(m.Name()) < LenNameMin {
-		return fmt.Errorf("username must have at least %d characters", LenNameMin)
+	if len(m.Name()) < UsernameLength {
+		return fmt.Errorf("username must have at least %d characters", UsernameLength)
 	}
 
 	// Validate user role.
@@ -767,20 +786,43 @@ func (m *User) RedeemToken(token string) (n int) {
 	return n
 }
 
+// Form returns a populated user form to perform changes.
+func (m *User) Form() (form.User, error) {
+	frm := form.User{UserDetails: &form.UserDetails{}}
+
+	if err := deepcopier.Copy(m).To(&frm); err != nil {
+		return frm, err
+	}
+
+	if err := deepcopier.Copy(m.UserDetails).To(frm.UserDetails); err != nil {
+		return frm, err
+	}
+
+	return frm, nil
+}
+
 // SaveForm updates the entity using form data and stores it in the database.
 func (m *User) SaveForm(f form.User) error {
 	if m.UserName == "" || m.ID <= 0 {
 		return fmt.Errorf("system users cannot be updated")
 	}
 
-	if err := deepcopier.Copy(m.UserDetails).From(f.UserDetails); err != nil {
+	// Ignore details if not set.
+	if f.UserDetails == nil {
+		// Ignore.
+	} else if err := deepcopier.Copy(f.UserDetails).To(m.UserDetails); err != nil {
 		return err
+	} else {
+		m.UserDetails.UserAbout = strings.TrimSpace(m.UserDetails.UserAbout)
+		m.UserDetails.UserBio = strings.TrimSpace(m.UserDetails.UserBio)
 	}
 
+	// Sanitize display name.
 	if n := clean.Name(f.DisplayName); n != "" && n != m.DisplayName {
-		m.DisplayName = n
+		m.SetDisplayName(n)
 	}
 
+	// Sanitize email address.
 	if email := clean.Email(f.UserEmail); email != "" && email != m.UserEmail {
 		m.UserEmail = email
 		m.VerifiedAt = nil
@@ -788,6 +830,36 @@ func (m *User) SaveForm(f form.User) error {
 	}
 
 	return m.Save()
+}
+
+// SetDisplayName sets a new display name and, if possible, splits it into its components.
+func (m *User) SetDisplayName(name string) *User {
+	name = clean.Name(name)
+
+	// Empty?
+	if name == "" {
+		return m
+	}
+
+	m.DisplayName = name
+
+	d := m.Details()
+
+	if SrcPriority[SrcAuto] < SrcPriority[d.NameSrc] {
+		return m
+	}
+
+	// Try to parse name into components.
+	n := txt.ParseName(name)
+
+	d.NameTitle = n.Title
+	d.GivenName = n.Given
+	d.MiddleName = n.Middle
+	d.FamilyName = n.Family
+	d.NameSuffix = n.Suffix
+	d.NickName = n.Nick
+
+	return m
 }
 
 // SetAvatar updates the user avatar image.
@@ -804,4 +876,13 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	m.ThumbSrc = thumbSrc
 
 	return m.Updates(Values{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
+}
+
+// Login returns the login name and provider.
+func (m *User) Login() string {
+	if m.AuthProvider == "" {
+		return m.UserName
+	} else {
+		return fmt.Sprintf("%s@%s", m.UserName, m.AuthProvider)
+	}
 }

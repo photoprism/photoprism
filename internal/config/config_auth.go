@@ -3,10 +3,9 @@ package config
 import (
 	"regexp"
 
-	"github.com/photoprism/photoprism/internal/entity"
-
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -40,26 +39,26 @@ func (c *Config) AdminPassword() string {
 	return clean.Password(c.options.AdminPassword)
 }
 
-// SessMaxAge returns the time in seconds until browser sessions expire automatically.
-func (c *Config) SessMaxAge() int64 {
-	if c.options.SessMaxAge < 0 {
+// SessionMaxAge returns the time in seconds until API sessions expire automatically.
+func (c *Config) SessionMaxAge() int64 {
+	if c.options.SessionMaxAge < 0 {
 		return 0
-	} else if c.options.SessMaxAge == 0 {
-		return DefaultSessMaxAge
+	} else if c.options.SessionMaxAge == 0 {
+		return DefaultSessionMaxAge
 	}
 
-	return c.options.SessMaxAge
+	return c.options.SessionMaxAge
 }
 
-// SessTimeout returns the time in seconds until browser sessions expire due to inactivity
-func (c *Config) SessTimeout() int64 {
-	if c.options.SessTimeout < 0 {
+// SessionTimeout returns the time in seconds until API sessions expire due to inactivity
+func (c *Config) SessionTimeout() int64 {
+	if c.options.SessionTimeout < 0 {
 		return 0
-	} else if c.options.SessTimeout == 0 {
-		return DefaultSessTimeout
+	} else if c.options.SessionTimeout == 0 {
+		return DefaultSessionTimeout
 	}
 
-	return c.options.SessTimeout
+	return c.options.SessionTimeout
 }
 
 // Public checks if app runs in public mode and requires no authentication.
@@ -85,6 +84,11 @@ func (c *Config) SetAuthMode(mode string) {
 	}
 }
 
+// Auth checks if authentication is required.
+func (c *Config) Auth() bool {
+	return !c.Public()
+}
+
 // AuthMode returns the authentication mode.
 func (c *Config) AuthMode() string {
 	if c.options.Public || c.options.Demo {
@@ -99,9 +103,46 @@ func (c *Config) AuthMode() string {
 	}
 }
 
-// Auth checks if authentication is required.
-func (c *Config) Auth() bool {
-	return !c.Public()
+// LoginUri returns the user login URI.
+func (c *Config) LoginUri() string {
+	if c.Public() {
+		return c.BaseUri("/library/browse")
+	}
+
+	if c.options.LoginUri == "" {
+		return c.BaseUri("/library/login")
+	}
+
+	return c.options.LoginUri
+}
+
+// RegisterUri returns the user registration URI.
+func (c *Config) RegisterUri() string {
+	if c.Public() {
+		return ""
+	}
+
+	return c.options.RegisterUri
+}
+
+// PasswordLength returns the minimum password length in characters.
+func (c *Config) PasswordLength() int {
+	if c.Public() {
+		return 0
+	} else if c.options.PasswordLength < 1 {
+		return 4
+	}
+
+	return c.options.PasswordLength
+}
+
+// PasswordResetUri returns the password reset URI.
+func (c *Config) PasswordResetUri() string {
+	if c.Public() {
+		return ""
+	}
+
+	return c.options.PasswordResetUri
 }
 
 // CheckPassword compares given password p with the admin password

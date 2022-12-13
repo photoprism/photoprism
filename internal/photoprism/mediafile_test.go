@@ -970,7 +970,7 @@ func TestMediaFile_Move(t *testing.T) {
 	origName := tmpPath + "/original.jpg"
 	destName := tmpPath + "/destination.jpg"
 
-	if err := os.MkdirAll(tmpPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(tmpPath, fs.ModeDir); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1006,7 +1006,7 @@ func TestMediaFile_Copy(t *testing.T) {
 
 	tmpPath := conf.CachePath() + "/_tmp/TestMediaFile_Copy"
 
-	if err := os.MkdirAll(tmpPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(tmpPath, fs.ModeDir); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1113,7 +1113,7 @@ func TestMediaFile_HasType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, true, mediaFile.HasFileType("heif"))
+		assert.Equal(t, true, mediaFile.HasFileType("heic"))
 	})
 	t.Run("iphone_7.xmp", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.xmp")
@@ -1124,7 +1124,7 @@ func TestMediaFile_HasType(t *testing.T) {
 	})
 }
 
-func TestMediaFile_IsHEIF(t *testing.T) {
+func TestMediaFile_IsHEIC(t *testing.T) {
 	conf := config.TestConfig()
 
 	t.Run("iphone_7.json", func(t *testing.T) {
@@ -2359,7 +2359,7 @@ func TestMediaFile_RenameSidecarFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := os.MkdirAll(filepath.Join(conf.SidecarPath(), "foo"), os.ModePerm); err != nil {
+		if err := os.MkdirAll(filepath.Join(conf.SidecarPath(), "foo"), fs.ModeDir); err != nil {
 			t.Fatal(err)
 		}
 

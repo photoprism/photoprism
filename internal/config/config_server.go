@@ -19,29 +19,29 @@ func (c *Config) DetachServer() bool {
 	return c.options.DetachServer
 }
 
-// TrustedProxy returns the list of trusted proxy servers as comma-separated list.
+// TrustedProxy returns the ranges from which reverse proxy headers can be trusted as comma-separated list.
 func (c *Config) TrustedProxy() string {
 	return strings.Join(c.options.TrustedProxies, ", ")
 }
 
-// TrustedProxies returns proxy server ranges from which client and protocol headers can be trusted.
+// TrustedProxies returns proxy server ranges from which reverse proxy headers can be trusted.
 func (c *Config) TrustedProxies() []string {
 	return c.options.TrustedProxies
 }
 
-// HttpsProxyHeader returns the proxy protocol header names.
-func (c *Config) HttpsProxyHeader() []string {
-	return c.options.HttpsProxyHeaders
+// ProxyProtoHeader returns the proxy protocol header names.
+func (c *Config) ProxyProtoHeader() []string {
+	return c.options.ProxyProtoHeaders
 }
 
-// HttpsProxyProto returns the proxy protocol header HTTPS values.
-func (c *Config) HttpsProxyProto() []string {
-	return c.options.HttpsProxyProto
+// ProxyProtoHttps returns the proxy protocol header HTTPS values.
+func (c *Config) ProxyProtoHttps() []string {
+	return c.options.ProxyProtoHttps
 }
 
-// HttpsProxyHeaders returns a map with the proxy https protocol headers.
-func (c *Config) HttpsProxyHeaders() map[string]string {
-	p := len(c.options.HttpsProxyHeaders)
+// ProxyProtoHeaders returns a map with the proxy https protocol headers.
+func (c *Config) ProxyProtoHeaders() map[string]string {
+	p := len(c.options.ProxyProtoHeaders)
 	h := make(map[string]string, p+1)
 
 	if p == 0 {
@@ -49,13 +49,13 @@ func (c *Config) HttpsProxyHeaders() map[string]string {
 		return h
 	}
 
-	for k, v := range c.options.HttpsProxyHeaders {
-		if l := len(c.options.HttpsProxyProto); l == 0 {
+	for k, v := range c.options.ProxyProtoHeaders {
+		if l := len(c.options.ProxyProtoHttps); l == 0 {
 			h[v] = header.ProtoHttps
 		} else if l > k {
-			h[v] = c.options.HttpsProxyProto[k]
+			h[v] = c.options.ProxyProtoHttps[k]
 		} else {
-			h[v] = c.options.HttpsProxyProto[0]
+			h[v] = c.options.ProxyProtoHttps[0]
 		}
 	}
 
@@ -77,7 +77,7 @@ func (c *Config) HttpMode() string {
 	return c.options.HttpMode
 }
 
-// HttpCompression returns the http compression method (none or gzip).
+// HttpCompression returns the http compression method (gzip, or none).
 func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
@@ -107,8 +107,10 @@ func (c *Config) TemplatesPath() string {
 
 // CustomTemplatesPath returns the path to custom templates.
 func (c *Config) CustomTemplatesPath() string {
-	if p := c.CustomAssetsPath(); p != "" {
-		return filepath.Join(p, "templates")
+	if dir := c.CustomAssetsPath(); dir == "" {
+		return ""
+	} else if dir = filepath.Join(dir, "templates"); fs.PathExists(dir) {
+		return dir
 	}
 
 	return ""
@@ -118,10 +120,22 @@ func (c *Config) CustomTemplatesPath() string {
 func (c *Config) TemplateFiles() []string {
 	results := make([]string, 0, 32)
 
-	tmplPaths := []string{c.TemplatesPath(), c.CustomTemplatesPath()}
+	var tmplPaths []string
 
-	for _, p := range tmplPaths {
-		matches, err := filepath.Glob(regexp.QuoteMeta(p) + "/[A-Za-z0-9]*.*")
+	// Path set for custom templates?
+	if cDir := c.CustomTemplatesPath(); cDir != "" {
+		tmplPaths = []string{c.TemplatesPath(), cDir}
+	} else {
+		tmplPaths = []string{c.TemplatesPath()}
+	}
+
+	// Find template files.
+	for _, dir := range tmplPaths {
+		if dir == "" {
+			continue
+		}
+
+		matches, err := filepath.Glob(regexp.QuoteMeta(dir) + "/[A-Za-z0-9]*.*")
 
 		if err != nil {
 			continue
@@ -135,18 +149,18 @@ func (c *Config) TemplateFiles() []string {
 	return results
 }
 
-// TemplateExists checks if a template with the given name exists (e.g. index.tmpl).
+// TemplateExists checks if a template with the given name exists (e.g. index.gohtml).
 func (c *Config) TemplateExists(name string) bool {
 	if found := fs.FileExists(filepath.Join(c.TemplatesPath(), name)); found {
 		return true
-	} else if p := c.CustomTemplatesPath(); p != "" {
-		return fs.FileExists(filepath.Join(p, name))
+	} else if dir := c.CustomTemplatesPath(); dir != "" {
+		return fs.FileExists(filepath.Join(dir, name))
 	} else {
 		return false
 	}
 }
 
-// TemplateName returns the name of the default template (e.g. index.tmpl).
+// TemplateName returns the name of the default template (e.g. index.gohtml).
 func (c *Config) TemplateName() string {
 	if s := c.Settings(); s != nil {
 		if c.TemplateExists(s.Templates.Default) {
@@ -154,7 +168,7 @@ func (c *Config) TemplateName() string {
 		}
 	}
 
-	return "index.tmpl"
+	return "index.gohtml"
 }
 
 // StaticPath returns the static assets' path.

@@ -126,12 +126,12 @@ export default class Page {
     if (!(await Selector(filterSelector).visible)) {
       await t.click(Selector(".p-expand-search"));
     }
-    await t.click(filterSelector, { timeout: 15000 });
+    await t.click(filterSelector);
 
     if (option) {
-      await t.click(Selector('div[role="listitem"]').withText(option), { timeout: 15000 });
+      await t.click(Selector('div[role="listitem"]').withText(option));
     } else {
-      await t.click(Selector('div[role="listitem"]').nth(1), { timeout: 15000 });
+      await t.click(Selector('div[role="listitem"]').nth(1));
     }
   }
 }

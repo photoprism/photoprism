@@ -131,6 +131,11 @@ export default {
     }
   },
   created() {
+    if (this.$config.deny("logs", "view")) {
+      this.$router.push({ name: "albums" });
+      return;
+    }
+
     this.loadMore();
   },
   methods: {

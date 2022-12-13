@@ -51,6 +51,8 @@
     color: #fff;
 }
 
+#photoprism main .auth-login .theme--light.v-icon,
+#photoprism main .auth-login .theme--light.v-label,
 #photoprism main .auth-login .v-input__append-inner .v-icon {
     color: rgba(0,0,0,.54);
 }
@@ -88,8 +90,9 @@
     position: relative;
     text-align: center;
     vertical-align: middle;
-    width: 100%;
-    max-width: 150px;
-    max-height: 150px;
+    max-width: 100%;
+    max-height: 100%;
+    width: 128px;
+    height: 128px;
     overflow: hidden;
 }

@@ -45,7 +45,7 @@ func SearchFoldersImport(router *gin.RouterGroup) {
 // SearchFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
 func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 	handler := func(c *gin.Context) {
-		s := Auth(c, acl.ResourceFolders, acl.ActionSearch)
+		s := Auth(c, acl.ResourceFiles, acl.AccessLibrary)
 
 		// Abort if permission was not granted.
 		if s.Abort(c) {
@@ -67,7 +67,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		listFiles := f.Files
 		uncached := listFiles || f.Uncached
 		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: !uncached}
-		path := clean.Path(c.Param("path"))
+		path := clean.UserPath(c.Param("path"))
 
 		cacheKey := fmt.Sprintf("folder:%s:%t:%t", filepath.Join(rootName, path), recursive, listFiles)
 
