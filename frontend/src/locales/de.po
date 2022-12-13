@@ -1395,7 +1395,7 @@ msgstr "Männlich"
 
 #: src/page/connect.vue:56
 msgid "Manage account"
-msgstr ""
+msgstr "Konto verwalten"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
