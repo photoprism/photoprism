@@ -57,7 +57,8 @@
                            :block="$vuetify.breakpoint.xsOnly"
                            class="white--text action-confirm ra-6 py-2 px-3" @click.stop.prevent="login">
                       <translate>Sign in</translate>
-                      <v-icon dark>navigate_next</v-icon>
+                      <v-icon v-if="rtl" left dark>navigate_before</v-icon>
+                      <v-icon v-else right dark>navigate_next</v-icon>
                     </v-btn>
                   </div>
                 </v-flex>

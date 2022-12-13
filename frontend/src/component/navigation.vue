@@ -490,18 +490,6 @@
           </v-list-group>
         </template>
 
-        <v-list-tile v-show="!auth" :to="{ name: 'login' }" class="nav-login" @click.stop="">
-          <v-list-tile-action :title="$gettext('Login')">
-            <v-icon>lock</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Login">Login</translate>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
         <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" @click.stop="">
           <v-list-tile-action :title="$gettext('Upgrade')">
             <v-icon>diamond</v-icon>
@@ -510,6 +498,18 @@
           <v-list-tile-content>
             <v-list-tile-title>
               <translate key="Upgrade">Upgrade</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <v-list-tile v-show="!auth" :to="{ name: 'login' }" class="nav-login" @click.stop="">
+          <v-list-tile-action :title="$gettext('Login')">
+            <v-icon>lock</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Login">Login</translate>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>

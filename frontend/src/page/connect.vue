@@ -2,7 +2,9 @@
   <div class="p-page p-page-upgrade">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <a href="https://link.photoprism.app/membership" target="_blank"><translate>Upgrade</translate></a> <v-icon>navigate_next</v-icon>
+        <translate>Upgrade</translate>
+        <v-icon v-if="rtl">navigate_before</v-icon>
+        <v-icon v-else>navigate_next</v-icon>
         <span v-if="busy">
           <translate>Busy, please wait…</translate>
         </span>
@@ -95,7 +97,8 @@
                  :disabled="busy"
                  @click.stop="upgrade">
             <translate>Proceed</translate>
-            <v-icon :right="!rtl" :left="rtl" dark>navigate_next</v-icon>
+            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
+            <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
           <v-btn v-else color="primary-button" :block="$vuetify.breakpoint.xsOnly"
                  class="white--text ml-0"
@@ -103,7 +106,8 @@
                  :disabled="busy || form.token.length !== tokenMask.length"
                  @click.stop="activate">
             <translate>Activate</translate>
-            <v-icon :right="!rtl" :left="rtl" dark>navigate_next</v-icon>
+            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
+            <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
         </v-flex>
         <v-flex xs12 class="px-2 pt-3 pb-0">
@@ -141,6 +145,7 @@
                  :disabled="busy"
                  @click.stop="compare">
             <translate>Compare Editions</translate>
+            <v-icon :right="!rtl" :left="rtl" dark>compare_arrows</v-icon>
           </v-btn>
         </v-flex>
       </v-layout>
