@@ -45,9 +45,9 @@
           </v-alert>
         </v-flex>
         <v-flex xs12 class="pa-2">
-          <v-btn color="secondary-light" :block="$vuetify.breakpoint.xsOnly"
+          <v-btn color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
                  class="ml-0"
-                 depressed
+                 outline
                  :disabled="busy"
                  @click.stop="reset">
             <translate>Cancel</translate>
@@ -74,9 +74,9 @@
           </v-alert>
         </v-flex>
         <v-flex xs12 grow class="pa-2">
-          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="secondary-light"
-                 class="ml-0" :block="$vuetify.breakpoint.xsOnly"
-                 depressed
+          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
+                 class="ml-0"
+                 outline
                  :disabled="busy">
               <translate>Manage account</translate>
           </v-btn>
