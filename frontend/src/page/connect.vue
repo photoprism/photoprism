@@ -93,20 +93,30 @@
       <v-layout v-else row wrap>
         <v-flex xs12 class="px-2 pt-2 pb-0">
           <p class="subheading text-selectable">
-            <strong><translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate></strong>
+            <strong>
+              <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
+              <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
+            </strong>
           </p>
           <p class="subheading text-selectable">
             <translate>To upgrade, you may either enter an activation code or click on "Proceed" to sign up on our website:</translate>
           </p>
         </v-flex>
-        <v-flex xs12 class="pa-2">
+        <v-flex xs12 grow align-center justify-center class="px-2 py-1">
           <v-text-field v-model="form.token" flat solo hide-details return-masked-value :mask="tokenMask"
                         browser-autocomplete="off"
                         color="secondary-dark"
                         background-color="secondary-light" :label="$gettext('Activation Code')" type="text">
           </v-text-field>
         </v-flex>
-        <v-flex xs12 grow class="px-2 pb-2 pt-1">
+        <v-flex xs12 grow align-center justify-center class="px-2 py-1">
+          <v-btn color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
+                 class="ml-0"
+                 outline
+                 :disabled="busy"
+                 @click.stop="compare">
+            <translate>Compare Editions</translate>
+          </v-btn>
           <v-btn v-if="!form.token.length" color="primary-button"
                  class="white--text ml-0 action-proceed" :block="$vuetify.breakpoint.xsOnly"
                  depressed
@@ -128,11 +138,12 @@
         </v-flex>
         <v-flex xs12 class="px-2 pt-3 pb-0">
           <p class="body-1 text-selectable">
+            <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
             <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
           </p>
         </v-flex>
         <v-flex v-show="showInfo" xs12 class="px-2 pt-3 pb-0">
-          <h3 class="pb-3">
+          <h3 class="subheading pb-3">
             <translate>Frequently Asked Questions</translate>
           </h3>
           <p class="body-2 text-selectable">
@@ -153,16 +164,6 @@
           <p class="body-1 text-selectable">
             <translate>Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission.</translate>
           </p>
-        </v-flex>
-        <v-flex v-show="showInfo" xs12 class="pa-2">
-          <v-btn color="secondary-light" :block="$vuetify.breakpoint.xsOnly"
-                 class="ml-0"
-                 depressed
-                 :disabled="busy"
-                 @click.stop="compare">
-            <translate>Compare Editions</translate>
-            <v-icon :right="!rtl" :left="rtl" dark>compare_arrows</v-icon>
-          </v-btn>
         </v-flex>
       </v-layout>
     </v-form>

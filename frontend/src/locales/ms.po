@@ -56,7 +56,7 @@ msgstr "4 jam"
 msgid "A click will copy it to your clipboard."
 msgstr "Satu klik akan menyalinnya ke papan klip anda."
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:254
+#: src/page/about/about.vue:4 src/page/about/about.vue:253
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -85,12 +85,12 @@ msgstr "Tindakan"
 msgid "Actions"
 msgstr "Tindakan"
 
-#: src/page/connect.vue:75 src/page/connect.vue:85
+#: src/page/connect.vue:75 src/page/connect.vue:91
 #, fuzzy
 msgid "Activate"
 msgstr "Aktifkan"
 
-#: src/page/connect.vue:293 src/page/connect.vue:379
+#: src/page/connect.vue:293 src/page/connect.vue:388
 #, fuzzy
 msgid "Activation Code"
 msgstr "Kod pengaktifan"
@@ -344,6 +344,7 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Sebelum menghantar permintaan sokongan, sila gunakan Senarai Semak Penyelesaian Masalah (Troubleshooting Checklists) kami untuk cuba mengenal pasti punca masalah anda."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
+#: src/page/connect.vue:70
 #, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Sebagai 100% dibiayai sendiri dan bebas, kami boleh berjanji kepada anda bahawa kami tidak akan menjual data anda dan kami akan sentiasa telus tentang perisian dan perkhidmatan kami."
@@ -395,6 +396,10 @@ msgstr "Laporan Pepijat"
 #: src/page/connect.vue:8 src/common/notify.js:94
 msgid "Busy, please wait…"
 msgstr "Tengah sibuk, sila tunggu…"
+
+#: src/page/connect.vue:82 src/page/connect.vue:98
+msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
+msgstr ""
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -509,7 +514,7 @@ msgstr "Warna"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Isu biasa boleh didiagnosis dan diselesaikan dengan cepat menggunakan senarai semak penyelesaian masalah yang kami sediakan."
 
-#: src/page/connect.vue:67 src/page/connect.vue:120
+#: src/page/connect.vue:67 src/page/connect.vue:83
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Bandingkan Edisi"
@@ -1014,7 +1019,7 @@ msgstr "Maklumbalas"
 msgid "Feedback"
 msgstr "Maklumbalas"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:99
 #, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Sila hubungi kami di hello@photoprism.app jika anda mempunyai sebarang pertanyaan."
@@ -1098,7 +1103,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Bingkai"
 
-#: src/page/connect.vue:97
+#: src/page/connect.vue:104
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Soalan Lazim"
@@ -1895,7 +1900,7 @@ msgstr "Asal"
 msgid "Other"
 msgstr "Lain-lain"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:122
 #, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "Pasukan kami menilai perkara ini secara berterusan, bergantung pada usaha sokongan yang diperlukan oleh ciri, kos kepada kami dan sama ada ia secara amnya diperlukan oleh semua orang atau terutamanya diminta oleh organisasi dan pengguna lanjutan. Oleh kerana ini membolehkan kami menyediakan lebih banyak ciri kepada orang ramai, kami menggalakkan semua pengguna untuk menyokong misi kami."
@@ -1968,7 +1973,7 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism telah dikemas kini…"
 
-#: src/page/connect.vue:109
+#: src/page/connect.vue:116
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism adalah 100% dibiayai sendiri. Derma sukarela tidak meliputi kos pasukan yang bekerja sepenuh masa untuk memberi anda kemas kini, dokumentasi dan sokongan. Ia adalah keputusan anda sama ada anda ingin mendaftar untuk menikmati faedah tambahan."
@@ -2067,7 +2072,7 @@ msgstr "Utama"
 msgid "Private"
 msgstr "Sulit"
 
-#: src/page/connect.vue:70 src/page/connect.vue:80
+#: src/page/connect.vue:70 src/page/connect.vue:86
 msgid "Proceed"
 msgstr ""
 
@@ -2367,7 +2372,7 @@ msgstr "Kongsi %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Kongsi gambar anda dengan apl dan perkhidmatan lain."
 
-#: src/page/connect.vue:100
+#: src/page/connect.vue:107
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Bukankah perisian percuma sepatutnya bebas daripada kos?"
@@ -2560,7 +2565,7 @@ msgstr "Format mereka mungkin tidak disokong, mereka belum ditukar kepada JPEG l
 msgid "Theme"
 msgstr "Tema"
 
-#: src/page/connect.vue:103
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Fikirkan \"perisian percuma\" seperti dalam \"percakapan bebas,\" bukan seperti dalam \"bir percuma.\" Yayasan Perisian Percuma kadangkala memanggilnya \"perisian percuma,\" meminjam perkataan Perancis atau Sepanyol untuk \"percuma\" seperti dalam kebebasan, untuk menunjukkan bahawa mereka tidak bermakna perisian itu percuma."
@@ -2624,7 +2629,7 @@ msgstr "Tajuk terlalu panjang"
 msgid "Title too long"
 msgstr "Tajuk terlalu panjang"
 
-#: src/page/connect.vue:58 src/page/connect.vue:71
+#: src/page/connect.vue:58 src/page/connect.vue:74
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2910,7 +2915,7 @@ msgstr "Muat Naik WebDAV"
 msgid "Website"
 msgstr "laman web"
 
-#: src/page/connect.vue:112
+#: src/page/connect.vue:119
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Apakah fungsi yang tersedia secara umum?"
@@ -2919,7 +2924,7 @@ msgstr "Apakah fungsi yang tersedia secara umum?"
 msgid "White"
 msgstr "Putih"
 
-#: src/page/connect.vue:106
+#: src/page/connect.vue:113
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Mengapakah beberapa ciri hanya tersedia untuk penaja?"
@@ -2986,7 +2991,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Anda boleh mengimbas semula pustaka anda untuk mencari wajah tambahan."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:68
+#: src/page/connect.vue:69
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Sokongan berterusan anda membantu kami menyediakan kemas kini dan perkhidmatan tetap seperti peta dunia."

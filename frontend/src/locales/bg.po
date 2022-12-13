@@ -56,7 +56,7 @@ msgstr "4 часа"
 msgid "A click will copy it to your clipboard."
 msgstr "Едно кликване ще го копира в клипборда ви."
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:254
+#: src/page/about/about.vue:4 src/page/about/about.vue:253
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -86,12 +86,12 @@ msgstr "Действие"
 msgid "Actions"
 msgstr "Действия"
 
-#: src/page/connect.vue:75 src/page/connect.vue:85
+#: src/page/connect.vue:75 src/page/connect.vue:91
 #, fuzzy
 msgid "Activate"
 msgstr "Активиране на"
 
-#: src/page/connect.vue:293 src/page/connect.vue:379
+#: src/page/connect.vue:293 src/page/connect.vue:388
 #, fuzzy
 msgid "Activation Code"
 msgstr "Код за активиране"
@@ -341,6 +341,7 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за отстраняване на проблеми\" за да определите причината за проблема."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
+#: src/page/connect.vue:70
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Тъй като сме 100% самофинансирани и независими, можем да ви обещаем, че никога няма да продадем вашите данни и че винаги ще бъдем прозрачни по отношение на нашия софтуер и услуги."
 
@@ -393,6 +394,10 @@ msgstr "Доклад за грешка"
 #, fuzzy
 msgid "Busy, please wait…"
 msgstr "Заето, моля, изчакайте…"
+
+#: src/page/connect.vue:82 src/page/connect.vue:98
+msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
+msgstr ""
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -518,7 +523,7 @@ msgstr "Цветове"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Често срещаните проблеми могат да бъдат бързо диагностицирани и решени с помощта на предоставените от нас контролни списъци за отстраняване на неизправности."
 
-#: src/page/connect.vue:67 src/page/connect.vue:120
+#: src/page/connect.vue:67 src/page/connect.vue:83
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Сравняване на изданията"
@@ -1054,7 +1059,7 @@ msgstr "Обратна връзка"
 msgid "Feedback"
 msgstr "Обратна връзка"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:99
 #, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Не се колебайте да се свържете с нас на hello@photoprism.app, ако имате някакви въпроси."
@@ -1144,7 +1149,7 @@ msgstr "Кадър в секунда"
 msgid "Frames"
 msgstr "Рамки"
 
-#: src/page/connect.vue:97
+#: src/page/connect.vue:104
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Често задавани въпроси"
@@ -1984,7 +1989,7 @@ msgstr "Оригинали"
 msgid "Other"
 msgstr "Други"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:122
 #, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "Екипът ни преценява това постоянно, в зависимост от усилията за поддръжка, които изискват функциите, разходите за нас и дали те са необходими на всички или се изискват предимно от организации и напреднали потребители. Тъй като това ни позволява да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
@@ -2056,7 +2061,7 @@ msgstr "Снимка"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism е актуализиран…"
 
-#: src/page/connect.vue:109
+#: src/page/connect.vue:116
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism се финансира 100% самостоятелно. Доброволните дарения не покриват разходите на екипа, който работи на пълен работен ден, за да ви предоставя актуализации, документация и поддръжка. Вие решавате дали искате да се регистрирате, за да се възползвате от допълнителните ползи."
@@ -2160,7 +2165,7 @@ msgstr "Първичен"
 msgid "Private"
 msgstr "Частна"
 
-#: src/page/connect.vue:70 src/page/connect.vue:80
+#: src/page/connect.vue:70 src/page/connect.vue:86
 msgid "Proceed"
 msgstr ""
 
@@ -2471,7 +2476,7 @@ msgstr "Споделяне на %{име}"
 msgid "Share your pictures with other apps and services."
 msgstr "Споделяйте снимките си с други приложения и услуги."
 
-#: src/page/connect.vue:100
+#: src/page/connect.vue:107
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Не би ли трябвало свободният софтуер да е свободен от разходи?"
@@ -2674,7 +2679,7 @@ msgstr "Възможно е техният формат да не се подд�
 msgid "Theme"
 msgstr "Тема"
 
-#: src/page/connect.vue:103
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Мислете за \"свободен софтуер\" като за \"свобода на словото\", а не като за \"свободна бира\". Фондацията за свободен софтуер понякога го нарича \"libre software\", като заимства френската или испанската дума за \"free\" (свободен), за да покаже, че няма предвид, че софтуерът е безплатен."
@@ -2739,7 +2744,7 @@ msgstr "Твърде дълго заглавие"
 msgid "Title too long"
 msgstr "Твърде дълго заглавие"
 
-#: src/page/connect.vue:58 src/page/connect.vue:71
+#: src/page/connect.vue:58 src/page/connect.vue:74
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -3037,7 +3042,7 @@ msgstr "Качване на WebDAV"
 msgid "Website"
 msgstr "Уебсайт"
 
-#: src/page/connect.vue:112
+#: src/page/connect.vue:119
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Каква функционалност е общодостъпна?"
@@ -3047,7 +3052,7 @@ msgstr "Каква функционалност е общодостъпна?"
 msgid "White"
 msgstr "Бял"
 
-#: src/page/connect.vue:106
+#: src/page/connect.vue:113
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Защо някои функции са достъпни само за спонсори?"
@@ -3117,7 +3122,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Можете да сканирате отново библиотеката си, за да намерите допълнителни лица."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:68
+#: src/page/connect.vue:69
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации и услуги като световни карти."

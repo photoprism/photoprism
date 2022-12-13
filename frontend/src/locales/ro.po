@@ -56,7 +56,7 @@ msgstr "4 ore"
 msgid "A click will copy it to your clipboard."
 msgstr "Un clic îl va copia în clipboard."
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:254
+#: src/page/about/about.vue:4 src/page/about/about.vue:253
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -85,11 +85,11 @@ msgstr "Acțiune"
 msgid "Actions"
 msgstr "Acțiuni"
 
-#: src/page/connect.vue:75 src/page/connect.vue:85
+#: src/page/connect.vue:75 src/page/connect.vue:91
 msgid "Activate"
 msgstr "Activați"
 
-#: src/page/connect.vue:293 src/page/connect.vue:379
+#: src/page/connect.vue:293 src/page/connect.vue:388
 msgid "Activation Code"
 msgstr "Cod de activare"
 
@@ -338,6 +338,7 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Înainte de a trimite o solicitare de asistență, vă rugăm să utilizați listele noastre de verificare pentru depanare pentru a determina cauza problemei dumneavoastră."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
+#: src/page/connect.vue:70
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Fiind 100% autofinanțați și independenți, vă putem promite că nu vă vom vinde niciodată datele și că vom fi întotdeauna transparenți în ceea ce privește software-ul și serviciile noastre."
 
@@ -385,6 +386,10 @@ msgstr "Raport de eroare"
 #: src/page/connect.vue:8 src/common/notify.js:94
 msgid "Busy, please wait…"
 msgstr "Ocupat, vă rugăm să așteptați…"
+
+#: src/page/connect.vue:82 src/page/connect.vue:98
+msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
+msgstr ""
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -493,7 +498,7 @@ msgstr "Culori"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Problemele obișnuite pot fi diagnosticate și rezolvate rapid cu ajutorul listelor de verificare pentru depanare pe care le oferim."
 
-#: src/page/connect.vue:67 src/page/connect.vue:120
+#: src/page/connect.vue:67 src/page/connect.vue:83
 msgid "Compare Editions"
 msgstr "Comparați edițiile"
 
@@ -934,7 +939,7 @@ msgstr "Flux"
 msgid "Feedback"
 msgstr "Părere"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:99
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Nu ezitați să ne contactați la hello@photoprism.app dacă aveți întrebări."
 
@@ -1008,7 +1013,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Cadre"
 
-#: src/page/connect.vue:97
+#: src/page/connect.vue:104
 msgid "Frequently Asked Questions"
 msgstr "Întrebări frecvente"
 
@@ -1699,7 +1704,7 @@ msgstr "Originale"
 msgid "Other"
 msgstr "Altele"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:122
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "Echipa noastră evaluează acest lucru în mod continuu, în funcție de efortul de asistență pe care îl necesită funcțiile, de costul pentru noi și de faptul că acestea sunt în general necesare pentru toată lumea sau sunt solicitate în principal de organizații și utilizatori avansați. Întrucât acest lucru ne permite să oferim mai multe funcții publicului, încurajăm toți utilizatorii să ne susțină misiunea."
 
@@ -1759,7 +1764,7 @@ msgstr "Fotografie"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism a fost actualizat…"
 
-#: src/page/connect.vue:109
+#: src/page/connect.vue:116
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism este 100% autofinanțat. Donațiile voluntare nu acoperă costul unei echipe care lucrează cu normă întreagă pentru a vă oferi actualizări, documentație și asistență. Este decizia dvs. dacă doriți să vă înscrieți pentru a vă bucura de beneficii suplimentare."
 
@@ -1844,7 +1849,7 @@ msgstr "Primar"
 msgid "Private"
 msgstr "Privat"
 
-#: src/page/connect.vue:70 src/page/connect.vue:80
+#: src/page/connect.vue:70 src/page/connect.vue:86
 msgid "Proceed"
 msgstr ""
 
@@ -2101,7 +2106,7 @@ msgstr "Distribuie %{nume}"
 msgid "Share your pictures with other apps and services."
 msgstr "Partajați-vă fotografiile cu alte aplicații și servicii."
 
-#: src/page/connect.vue:100
+#: src/page/connect.vue:107
 msgid "Shouldn't free software be free of costs?"
 msgstr "Nu ar trebui ca software-ul liber să fie lipsit de costuri?"
 
@@ -2264,7 +2269,7 @@ msgstr "Este posibil ca formatul lor să nu fie acceptat, să nu fi fost încă 
 msgid "Theme"
 msgstr "Temă"
 
-#: src/page/connect.vue:103
+#: src/page/connect.vue:110
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Gândiți-vă la \"software gratuit\" ca la \"libertatea de exprimare\", nu ca la \"bere gratuită\". Fundația Free Software Foundation îl numește uneori \"libre software\", împrumutând cuvântul francez sau spaniol pentru \"gratuit\" ca în libertate, pentru a arăta că nu înseamnă că software-ul este gratuit."
 
@@ -2319,7 +2324,7 @@ msgstr "Titlu / Poziție"
 msgid "Title too long"
 msgstr "Titlu prea lung"
 
-#: src/page/connect.vue:58 src/page/connect.vue:71
+#: src/page/connect.vue:58 src/page/connect.vue:74
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2567,7 +2572,7 @@ msgstr "Încărcare WebDAV"
 msgid "Website"
 msgstr "Site-ul web"
 
-#: src/page/connect.vue:112
+#: src/page/connect.vue:119
 msgid "What functionality is generally available?"
 msgstr "Ce funcționalitate este disponibilă în general?"
 
@@ -2575,7 +2580,7 @@ msgstr "Ce funcționalitate este disponibilă în general?"
 msgid "White"
 msgstr "Alb"
 
-#: src/page/connect.vue:106
+#: src/page/connect.vue:113
 msgid "Why are some features only available to sponsors?"
 msgstr "De ce unele caracteristici sunt disponibile doar pentru sponsori?"
 
@@ -2633,7 +2638,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Puteți scana din nou biblioteca pentru a găsi fețe suplimentare."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:68
+#: src/page/connect.vue:69
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Sprijinul dvs. continuu ne ajută să furnizăm actualizări regulate și servicii precum hărțile lumii."
 

@@ -55,7 +55,7 @@ msgstr "4 óra"
 msgid "A click will copy it to your clipboard."
 msgstr "A kattintás egy másolatot helyez a vágólapra."
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:254
+#: src/page/about/about.vue:4 src/page/about/about.vue:253
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -84,12 +84,12 @@ msgstr "Művelet"
 msgid "Actions"
 msgstr "Műveletek"
 
-#: src/page/connect.vue:75 src/page/connect.vue:85
+#: src/page/connect.vue:75 src/page/connect.vue:91
 #, fuzzy
 msgid "Activate"
 msgstr "Aktiválja a  címet."
 
-#: src/page/connect.vue:293 src/page/connect.vue:379
+#: src/page/connect.vue:293 src/page/connect.vue:388
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktiválási kód"
@@ -340,6 +340,7 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Mielőtt támogatási kérelmet nyújt be, kérjük, használja hibaelhárítási ellenőrző listáinkat a probléma okának meghatározásához."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
+#: src/page/connect.vue:70
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Mivel 100%-ban önfinanszírozók és függetlenek vagyunk, megígérhetjük, hogy soha nem adjuk el az adatait, és mindig átláthatóak leszünk a szoftverünkkel és szolgáltatásainkkal kapcsolatban."
 
@@ -388,6 +389,10 @@ msgstr "Hibajelentés"
 #: src/page/connect.vue:8 src/common/notify.js:94
 msgid "Busy, please wait…"
 msgstr "Elfoglalt, kérem, várjon…"
+
+#: src/page/connect.vue:82 src/page/connect.vue:98
+msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
+msgstr ""
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -498,7 +503,7 @@ msgstr "Színek"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "A gyakori problémák gyorsan diagnosztizálhatók és megoldhatók az általunk biztosított hibaelhárítási ellenőrző listák segítségével."
 
-#: src/page/connect.vue:67 src/page/connect.vue:120
+#: src/page/connect.vue:67 src/page/connect.vue:83
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Edíciók összehasonlítása"
@@ -942,7 +947,7 @@ msgstr "Visszacsatolás"
 msgid "Feedback"
 msgstr "Visszacsatolás"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:99
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kérjük, lépjen kapcsolatba velünk a hello@photoprism.app címen, ha kérdése van, vagy segítségre van szüksége."
 
@@ -1017,7 +1022,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Keretek"
 
-#: src/page/connect.vue:97
+#: src/page/connect.vue:104
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Gyakran ismételt kérdések"
@@ -1714,7 +1719,7 @@ msgstr "Eredetiek"
 msgid "Other"
 msgstr "Egyéb"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:122
 #, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "Csapatunk ezt folyamatosan értékeli, attól függően, hogy a funkciók milyen támogatási erőfeszítést igényelnek, mennyibe kerülnek nekünk, és hogy általában mindenkinek szüksége van-e rájuk, vagy elsősorban szervezetek és haladó felhasználók igénylik őket. Mivel ez lehetővé teszi számunkra, hogy több funkciót biztosítsunk a nyilvánosság számára, minden felhasználót arra bátorítunk, hogy támogassa küldetésünket."
@@ -1776,7 +1781,7 @@ msgstr "Fénykép"
 msgid "PhotoPrism has been updated…"
 msgstr "A PhotoPrism frissítve lett…"
 
-#: src/page/connect.vue:109
+#: src/page/connect.vue:116
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "A PhotoPrism 100%-ban önfinanszírozó. Az önkéntes adományok nem fedezik a teljes munkaidőben dolgozó csapat költségeit, hogy frissítéseket, dokumentációt és támogatást nyújtsanak Önnek. Az Ön döntése, hogy szeretne-e regisztrálni, hogy élvezhesse a további előnyöket."
@@ -1862,7 +1867,7 @@ msgstr "Elsődleges"
 msgid "Private"
 msgstr "Privát"
 
-#: src/page/connect.vue:70 src/page/connect.vue:80
+#: src/page/connect.vue:70 src/page/connect.vue:86
 msgid "Proceed"
 msgstr ""
 
@@ -2121,7 +2126,7 @@ msgstr "%{name} megosztása"
 msgid "Share your pictures with other apps and services."
 msgstr "Ossza meg képeit más alkalmazásokkal és szolgáltatásokkal."
 
-#: src/page/connect.vue:100
+#: src/page/connect.vue:107
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Az ingyenes szoftvereknek nem kellene költségmentesnek lenniük?"
@@ -2286,7 +2291,7 @@ msgstr "Előfordulhat, hogy a formátumuk nem támogatott, még nem konvertált�
 msgid "Theme"
 msgstr "Téma"
 
-#: src/page/connect.vue:103
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Gondoljon a \"szabad szoftverre\" úgy, mint a \"szabad beszédre\", ne úgy, mint a \"szabad sörre\". A Szabad Szoftver Alapítvány néha \"libre software\"-nek nevezi, a francia vagy spanyol \"free\" szóból kölcsönözve a \"szabad\" szót, mint a szabadságot, hogy megmutassa, hogy nem azt jelenti, hogy a szoftver ingyenes."
@@ -2344,7 +2349,7 @@ msgstr "Cím / Pozíció"
 msgid "Title too long"
 msgstr "A cím túl hosszú"
 
-#: src/page/connect.vue:58 src/page/connect.vue:71
+#: src/page/connect.vue:58 src/page/connect.vue:74
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2595,7 +2600,7 @@ msgstr "WebDAV feltöltés"
 msgid "Website"
 msgstr "Weboldal"
 
-#: src/page/connect.vue:112
+#: src/page/connect.vue:119
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Milyen funkciók állnak általában rendelkezésre?"
@@ -2604,7 +2609,7 @@ msgstr "Milyen funkciók állnak általában rendelkezésre?"
 msgid "White"
 msgstr "Fehér"
 
-#: src/page/connect.vue:106
+#: src/page/connect.vue:113
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Miért vannak olyan funkciók, amelyek csak a szponzorok számára elérhetőek?"
@@ -2664,7 +2669,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Újra beolvashatja könyvtárát, hogy további arcokat találjon."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:68
+#: src/page/connect.vue:69
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Folyamatos támogatása segít nekünk olyan szolgáltatásokat nyújtani, mint a műholdas térképek és új funkciók fejlesztése."
