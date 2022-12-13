@@ -85,11 +85,11 @@ msgstr "動作"
 msgid "Actions"
 msgstr "動作"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 msgid "Activate"
 msgstr "激活"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 msgid "Activation Code"
 msgstr "激活碼"
 
@@ -493,7 +493,7 @@ msgstr "顏色"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "使用我們提供的故障排除清單可以快速診斷和解決常見問題。"
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "版本比较"
@@ -935,7 +935,7 @@ msgstr "訂閱源"
 msgid "Feedback"
 msgstr "回饋"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "如果您有任何問題或需要幫助，請通過 hello@photoprism.app 與我們聯繫。"
 
@@ -1009,7 +1009,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "框架"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 msgid "Frequently Asked Questions"
 msgstr "常見問題"
 
@@ -1028,6 +1028,10 @@ msgstr "性別"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "一般"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1385,6 +1389,10 @@ msgstr "主要顏色"
 msgid "Male"
 msgstr "男性"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "手動"
@@ -1692,7 +1700,7 @@ msgstr "來源"
 msgid "Other"
 msgstr "其他"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "我们的团队会根据这些功能所需的支持力度、我们的成本，以及这些功能是大家普遍需要的还是主要由组织和高级用户要求的，不断对此进行评估。由于这使我们能够向公众提供更多的功能，我们鼓励所有用户支持我们的任务。"
@@ -1753,7 +1761,7 @@ msgstr "相片"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism更新囉…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism是100%自籌資金的。自願捐款並不包括一個全職工作的團隊為您提供更新、文檔和支持的費用。您可以決定是否要註冊以享受額外的好處。"
 
@@ -1838,7 +1846,7 @@ msgstr "主要的"
 msgid "Private"
 msgstr "私人的"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2095,7 +2103,7 @@ msgstr "分享 %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "與其他應用程式和服務分享您的照片。"
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 msgid "Shouldn't free software be free of costs?"
 msgstr "免費軟件不應該是沒有成本的嗎？"
 
@@ -2258,7 +2266,7 @@ msgstr "它們的格式可能不被支援，或尚未轉換為JPEG，或存在�
 msgid "Theme"
 msgstr "主題"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "把 \"免費軟件 \"想成是 \"言論自由\"，而不是 \"免費啤酒\"。自由軟件基金會有時稱之為 \"自由軟件\"，借用法語或西班牙語中自由的 \"自由 \"一詞，以表明他們並不意味着軟件是免費的。"
 
@@ -2313,7 +2321,7 @@ msgstr "職位 / 位置"
 msgid "Title too long"
 msgstr "標題太長"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2561,7 +2569,7 @@ msgstr "WebDAV上傳"
 msgid "Website"
 msgstr "網站"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 msgid "What functionality is generally available?"
 msgstr "什麼功能是普遍可用的？"
 
@@ -2569,7 +2577,7 @@ msgstr "什麼功能是普遍可用的？"
 msgid "White"
 msgstr "白色"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 msgid "Why are some features only available to sponsors?"
 msgstr "為什麼有些功能只對贊助者開放？"
 
@@ -2627,7 +2635,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "您可以重新掃描您的收藏庫以查找其他面孔。"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "您的持續支持有助於我們提供定期更新並保持獨立，因此我們可以完成我們的使命並保護您的隱私。"
 

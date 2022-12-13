@@ -85,11 +85,11 @@ msgstr "Aktion"
 msgid "Actions"
 msgstr "Aktionen"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 msgid "Activate"
 msgstr "Aktivieren"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 msgid "Activation Code"
 msgstr "Aktivierungscode"
 
@@ -493,7 +493,7 @@ msgstr "Farben"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Mit den Checklisten zur Fehlerbehebung lassen sich die häufigsten Probleme schnell diagnostizieren und lösen."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 msgid "Compare Editions"
 msgstr "Editionen vergleichen"
 
@@ -934,7 +934,7 @@ msgstr "Feed"
 msgid "Feedback"
 msgstr "Feedback"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Bei Fragen, Wünschen oder Problemen helfen wir gerne per E-Mail an hello@photoprism.app."
 
@@ -1008,7 +1008,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Frames"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 msgid "Frequently Asked Questions"
 msgstr "Häufig gestellte Fragen"
 
@@ -1027,6 +1027,10 @@ msgstr "Geschlecht"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Allgemein"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr "Fortfahren"
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1384,6 +1388,10 @@ msgstr "Hauptfarbe"
 msgid "Male"
 msgstr "Männlich"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "Manuell"
@@ -1691,7 +1699,7 @@ msgstr "Originale"
 msgid "Other"
 msgstr "Sonstiges"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Unser Team entscheidet dies fortlaufend, abhängig vom Supportaufwand, den die Funktionen verursachen, von den Kosten für uns und davon, ob sie generell von allen benötigt werden oder hauptsächlich von Organisationen und anspruchsvollen Nutzern verwendet werden. Da wir auf diese Weise mehr Funktionen für die Allgemeinheit verfügbar machen können, ermutigen wir alle Nutzerinnen und Nutzer, unsere Mission zu unterstützen."
 
@@ -1751,7 +1759,7 @@ msgstr "Bild"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism wurde aktualisiert…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism ist zu 100% selbstfinanziert. Freiwillige Spenden decken nicht die Kosten für ein Team, das Vollzeit arbeitet, um Updates, Dokumentation und Support für dich bereitzustellen. Es ist deine Entscheidung, ob du uns unterstützt, um in den Genuss zusätzlicher Funktionen zu kommen."
 
@@ -1836,7 +1844,7 @@ msgstr "Primärdatei"
 msgid "Private"
 msgstr "Privat"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr "Fortfahren"
 
@@ -2093,7 +2101,7 @@ msgstr "%{name} teilen"
 msgid "Share your pictures with other apps and services."
 msgstr "Teile Bilder mit anderen Anwendungen und Diensten."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 msgid "Shouldn't free software be free of costs?"
 msgstr "Sollte freie Software nicht kostenlos sein?"
 
@@ -2256,7 +2264,7 @@ msgstr "Ihr Format wird möglicherweise nicht unterstützt, es handelt sich um D
 msgid "Theme"
 msgstr "Theme"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Die ursprüngliche Bedeutung des Begriffs bezieht sich auf die Freiheit der Nutzer, nicht darauf, dass die Software möglichst kostenlos sein soll. Die Free Software Foundation verwendet manchmal auch den Begriff \"Libre Software\", der vom französischen oder spanischen Wort für \"unabhängig\" abgeleitet ist, um dies zu verdeutlichen."
 
@@ -2309,7 +2317,7 @@ msgstr "Titel / Position"
 msgid "Title too long"
 msgstr "Titel zu lang"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Um zu upgraden, kannst du entweder einen Aktivierungscode eingeben oder auf \"Fortfahren\" klicken, um dich auf unserer Website zu registrieren:"
 
@@ -2555,7 +2563,7 @@ msgstr "WebDAV Upload"
 msgid "Website"
 msgstr "Website"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 msgid "What functionality is generally available?"
 msgstr "Welche Funktionen sind generell für jeden verfügbar?"
 
@@ -2563,7 +2571,7 @@ msgstr "Welche Funktionen sind generell für jeden verfügbar?"
 msgid "White"
 msgstr "Weiß"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 msgid "Why are some features only available to sponsors?"
 msgstr "Warum sind einige Funktionen nur für Sponsoren verfügbar?"
 
@@ -2621,7 +2629,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Der Index kann aktualisiert werden, um weitere Gesichter zu finden."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Deine Unterstützung hilft uns, regelmäßige Updates bereitzustellen und unabhängig zu bleiben, damit wir unsere Mission erfüllen und deine Privatsphäre schützen können."
 
@@ -2644,9 +2652,6 @@ msgstr "Herein/Herauszoomen"
 
 #~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
 #~ msgstr "Um das Upgrade durchzuführen, kannst du entweder einen Aktivierungscode eingeben oder dich auf unserer Website registrieren, indem du auf \"Anmelden\" klickst:"
-
-#~ msgid "Get started"
-#~ msgstr "Fortfahren"
 
 #~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
 #~ msgstr "Um das Upgrade durchzuführen, kannst du entweder einen Aktivierungscode eingeben oder dich auf unserer Website registrieren, indem du auf \"Anmelden\" klickst:"

@@ -85,12 +85,12 @@ msgstr "Akcja"
 msgid "Actions"
 msgstr "Akcje"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "Aktywuj"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "Kod aktywacji"
@@ -495,7 +495,7 @@ msgstr "Kolory"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Najczęstsze problemy można szybko zdiagnozować i rozwiązać za pomocą dostarczanych przez nas list kontrolnych dotyczących rozwiązywania problemów."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Porównaj wydania"
@@ -938,7 +938,7 @@ msgstr "Kanał"
 msgid "Feedback"
 msgstr "Opinia"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "W razie pytań prosimy o kontakt pod adresem hello@photoprism.app."
 
@@ -1012,7 +1012,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Klatki"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Najczęściej zadawane pytania"
@@ -1032,6 +1032,10 @@ msgstr "Płeć"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Ogólne"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1389,6 +1393,10 @@ msgstr "Główny kolor"
 msgid "Male"
 msgstr "Mężczyzna"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "dodana ręcznie"
@@ -1697,7 +1705,7 @@ msgstr "Oryginały"
 msgid "Other"
 msgstr "Inne"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Nasz zespół ocenia to na bieżąco, w zależności od wysiłku, jakiego wymagają te funkcje, kosztów dla nas oraz tego, czy są one ogólnie potrzebne wszystkim, czy też są głównie wymagane przez organizacje i zaawansowanych użytkowników. Ponieważ dzięki temu możemy udostępnić więcej funkcji dla społeczeństwa, zachęcamy wszystkich użytkowników do wspierania naszej misji."
@@ -1758,7 +1766,7 @@ msgstr "Zdjęcie"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism został zaktualizowany…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism jest w 100% finansowany z własnych środków. Dobrowolne datki nie pokrywają kosztów zespołu pracującego w pełnym wymiarze czasu, aby zapewnić Ci aktualizacje, dokumentację i wsparcie. To twoja decyzja, czy chcesz się zapisać, aby korzystać z dodatkowych korzyści."
@@ -1844,7 +1852,7 @@ msgstr "Główny"
 msgid "Private"
 msgstr "Prywatne"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2101,7 +2109,7 @@ msgstr "Udostępnij %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Udostępniaj swoje zdjęcia innym aplikacjom i usługom."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Czy wolne oprogramowanie nie powinno być wolne od kosztów?"
@@ -2266,7 +2274,7 @@ msgstr "Może być to spowodowane brakiem wsparcia dla ich formatu, nieukończon
 msgid "Theme"
 msgstr "Motyw"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Myślcie o \"wolnym oprogramowaniu\" jak o \"wolnej mowie\", a nie jak o \"wolnym piwie\". Fundacja Wolnego Oprogramowania nazywa je czasem \"libre software\", zapożyczając francuskie lub hiszpańskie słowo na \"free\" jak wolność, aby pokazać, że nie oznacza to, że oprogramowanie jest darmowe."
@@ -2322,7 +2330,7 @@ msgstr "Tytuł / stanowisko"
 msgid "Title too long"
 msgstr "Tytuł za długi"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2570,7 +2578,7 @@ msgstr "Wyślij na WebDAV"
 msgid "Website"
 msgstr "Strona internetowa"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Jaka funkcjonalność jest ogólnie dostępna?"
@@ -2579,7 +2587,7 @@ msgstr "Jaka funkcjonalność jest ogólnie dostępna?"
 msgid "White"
 msgstr "Biały"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Dlaczego niektóre funkcje są dostępne tylko dla sponsorów?"
@@ -2638,7 +2646,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Możesz ponownie przeskanować swoją bibliotekę, aby znaleźć dodatkowe twarze."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Twoje stałe wsparcie pomaga nam dostarczać regularne aktualizacje i zachować niezależność, dzięki czemu możemy wypełniać naszą misję i chronić Twoją prywatność."
 

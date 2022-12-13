@@ -85,12 +85,12 @@ msgstr "동작"
 msgid "Actions"
 msgstr "동작"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "활성화"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "활성화 코드"
@@ -495,7 +495,7 @@ msgstr "색깔"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "일반적인 문제는 당사가 제공하는 문제 해결 체크리스트를 사용하여 신속하게 진단하고 해결할 수 있습니다."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "에디션 비교"
@@ -938,7 +938,7 @@ msgstr "최신글"
 msgid "Feedback"
 msgstr "피드백"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "질문이 있거나 도움이 필요하면 hello@photoprism.app으로 문의하십시오."
 
@@ -1012,7 +1012,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "프레임"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "자주 묻는 질문"
@@ -1032,6 +1032,10 @@ msgstr "성별"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "일반"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1389,6 +1393,10 @@ msgstr "주요 색깔"
 msgid "Male"
 msgstr "남성"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "수동"
@@ -1697,7 +1705,7 @@ msgstr "오리지널"
 msgid "Other"
 msgstr "다른"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "우리 팀은 기능에 필요한 지원 노력, 비용, 일반적으로 모든 사람에게 필요한지 또는 주로 조직 및 고급 사용자가 요청하는지 여부에 따라 이를 지속적으로 평가합니다. 이를 통해 대중에게 더 많은 기능을 제공할 수 있으므로 모든 사용자가 우리의 임무를 지원하도록 권장합니다."
@@ -1758,7 +1766,7 @@ msgstr "사진"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism 업데이트되었습니다…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "포토프리즘은 100% 자체 자금으로 운영됩니다. 자발적인 기부는 업데이트, 문서 및 지원을 제공하기 위해 풀타임으로 일하는 팀의 비용을 충당하지 않습니다. 추가 혜택을 누리기 위해 가입할지 여부는 귀하의 결정입니다."
@@ -1844,7 +1852,7 @@ msgstr "주요"
 msgid "Private"
 msgstr "비공개"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2101,7 +2109,7 @@ msgstr "%{name} 공유하기"
 msgid "Share your pictures with other apps and services."
 msgstr "다른 앱 및 서비스와 사진을 공유하십시오."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "자유 소프트웨어는 비용이 없어야 하지 않습니까?"
@@ -2266,7 +2274,7 @@ msgstr "형식이 지원되지 않을 수 있고, 아직 JPEG 형식으로 변�
 msgid "Theme"
 msgstr "테마"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "\"자유 소프트웨어\"를 \"무료 맥주\"가 아니라 \"표현의 자유\"로 생각하십시오. 자유 소프트웨어 재단(Free Software Foundation)은 소프트웨어가 무료라는 의미가 아님을 보여주기 위해 \"자유\"라는 프랑스어 또는 스페인어 단어를 빌려 \"자유로운 소프트웨어\"라고 부르기도 합니다."
@@ -2322,7 +2330,7 @@ msgstr "직위"
 msgid "Title too long"
 msgstr "주제 너무 긴다"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2570,7 +2578,7 @@ msgstr "WebDAV 업로드"
 msgid "Website"
 msgstr "웹사이트"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "일반적으로 사용할 수 있는 기능은 무엇입니까?"
@@ -2579,7 +2587,7 @@ msgstr "일반적으로 사용할 수 있는 기능은 무엇입니까?"
 msgid "White"
 msgstr "백색"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "일부 기능은 스폰서만 사용할 수 있는 이유는 무엇입니까?"
@@ -2638,7 +2646,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "추가 얼굴을 찾기 위해 라이브러리를 다시 검색할 수 있습니다."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "귀하의 지속적인 지원은 정기적인 업데이트를 제공하고 독립적인 상태를 유지하는 데 도움이 되어 당사의 사명을 완수하고 귀하의 개인 정보를 보호할 수 있습니다."
 

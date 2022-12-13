@@ -66,12 +66,28 @@
           <v-alert
               :value="true"
               color="success"
-              icon="verified_user"
+              icon="verified"
               class="mt-3"
               outline
           >
             <translate>Successfully Connected</translate>
           </v-alert>
+        </v-flex>
+        <v-flex xs12 grow class="pa-2">
+          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="secondary-light"
+                 class="ml-0" :block="$vuetify.breakpoint.xsOnly"
+                 depressed
+                 :disabled="busy">
+              <translate>Manage account</translate>
+          </v-btn>
+          <v-btn href="https://my.photoprism.app/get-started" target="_blank" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
+                 class="white--text ml-0"
+                 depressed
+                 :disabled="busy">
+            <translate>Get started</translate>
+            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
+            <v-icon v-else right dark>navigate_next</v-icon>
+          </v-btn>
         </v-flex>
       </v-layout>
       <v-layout v-else row wrap>
@@ -92,16 +108,16 @@
         </v-flex>
         <v-flex xs12 grow class="px-2 pb-2 pt-1">
           <v-btn v-if="!form.token.length" color="primary-button"
-                 class="white--text ml-0" :block="$vuetify.breakpoint.xsOnly"
+                 class="white--text ml-0 action-proceed" :block="$vuetify.breakpoint.xsOnly"
                  depressed
                  :disabled="busy"
-                 @click.stop="upgrade">
+                 @click.stop="connect">
             <translate>Proceed</translate>
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
             <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
           <v-btn v-else color="primary-button" :block="$vuetify.breakpoint.xsOnly"
-                 class="white--text ml-0"
+                 class="white--text ml-0 action-activate"
                  depressed
                  :disabled="busy || form.token.length !== tokenMask.length"
                  @click.stop="activate">
@@ -196,8 +212,8 @@ export default {
     compare() {
       window.open('https://link.photoprism.app/personal-editions', '_blank').focus();
     },
-    upgrade() {
-      window.location = 'https://my.photoprism.app/upgrade/' + encodeURIComponent(window.location);
+    connect() {
+      window.location = 'https://my.photoprism.app/connect/' + encodeURIComponent(window.location);
     },
     activate() {
       if (!this.form.token || this.form.token.length !== this.tokenMask.length) {

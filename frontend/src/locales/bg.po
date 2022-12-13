@@ -86,12 +86,12 @@ msgstr "Действие"
 msgid "Actions"
 msgstr "Действия"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "Активиране на"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "Код за активиране"
@@ -518,7 +518,7 @@ msgstr "Цветове"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Често срещаните проблеми могат да бъдат бързо диагностицирани и решени с помощта на предоставените от нас контролни списъци за отстраняване на неизправности."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Сравняване на изданията"
@@ -1054,7 +1054,7 @@ msgstr "Обратна връзка"
 msgid "Feedback"
 msgstr "Обратна връзка"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 #, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Не се колебайте да се свържете с нас на hello@photoprism.app, ако имате някакви въпроси."
@@ -1144,7 +1144,7 @@ msgstr "Кадър в секунда"
 msgid "Frames"
 msgstr "Рамки"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Често задавани въпроси"
@@ -1168,6 +1168,10 @@ msgstr "Лавандула"
 #, fuzzy
 msgid "General"
 msgstr "Обща информация"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 #, fuzzy
@@ -1602,6 +1606,10 @@ msgstr "Основен цвят"
 msgid "Male"
 msgstr "Мъжки"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
 msgid "manual"
@@ -1976,7 +1984,7 @@ msgstr "Оригинали"
 msgid "Other"
 msgstr "Други"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Екипът ни преценява това постоянно, в зависимост от усилията за поддръжка, които изискват функциите, разходите за нас и дали те са необходими на всички или се изискват предимно от организации и напреднали потребители. Тъй като това ни позволява да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
@@ -2048,7 +2056,7 @@ msgstr "Снимка"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism е актуализиран…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism се финансира 100% самостоятелно. Доброволните дарения не покриват разходите на екипа, който работи на пълен работен ден, за да ви предоставя актуализации, документация и поддръжка. Вие решавате дали искате да се регистрирате, за да се възползвате от допълнителните ползи."
@@ -2152,7 +2160,7 @@ msgstr "Първичен"
 msgid "Private"
 msgstr "Частна"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2463,7 +2471,7 @@ msgstr "Споделяне на %{име}"
 msgid "Share your pictures with other apps and services."
 msgstr "Споделяйте снимките си с други приложения и услуги."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Не би ли трябвало свободният софтуер да е свободен от разходи?"
@@ -2666,7 +2674,7 @@ msgstr "Възможно е техният формат да не се подд�
 msgid "Theme"
 msgstr "Тема"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Мислете за \"свободен софтуер\" като за \"свобода на словото\", а не като за \"свободна бира\". Фондацията за свободен софтуер понякога го нарича \"libre software\", като заимства френската или испанската дума за \"free\" (свободен), за да покаже, че няма предвид, че софтуерът е безплатен."
@@ -2731,7 +2739,7 @@ msgstr "Твърде дълго заглавие"
 msgid "Title too long"
 msgstr "Твърде дълго заглавие"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -3029,7 +3037,7 @@ msgstr "Качване на WebDAV"
 msgid "Website"
 msgstr "Уебсайт"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Каква функционалност е общодостъпна?"
@@ -3039,7 +3047,7 @@ msgstr "Каква функционалност е общодостъпна?"
 msgid "White"
 msgstr "Бял"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Защо някои функции са достъпни само за спонсори?"
@@ -3109,7 +3117,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Можете да сканирате отново библиотеката си, за да намерите допълнителни лица."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации и услуги като световни карти."

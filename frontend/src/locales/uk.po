@@ -85,11 +85,11 @@ msgstr "Дія"
 msgid "Actions"
 msgstr "Дії"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 msgid "Activate"
 msgstr "Активувати"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 msgid "Activation Code"
 msgstr "Код активації"
 
@@ -493,7 +493,7 @@ msgstr "Кольори"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Поширені проблеми можна швидко діагностувати та вирішити за допомогою контрольних списків з усунення несправностей, які ми надаємо."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Порівняти видання"
@@ -935,7 +935,7 @@ msgstr "Канал"
 msgid "Feedback"
 msgstr "Відгук"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Не соромтеся зв’язатися з нами за адресою hello@photoprism.app, якщо у вас виникнуть запитання."
 
@@ -1009,7 +1009,7 @@ msgstr "к/с"
 msgid "Frames"
 msgstr "Кадрів"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 msgid "Frequently Asked Questions"
 msgstr "Поширені запитання"
 
@@ -1028,6 +1028,10 @@ msgstr "Стать"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Загальний"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1385,6 +1389,10 @@ msgstr "Основний колір"
 msgid "Male"
 msgstr "Чоловік"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "ручний"
@@ -1692,7 +1700,7 @@ msgstr "Оригінали"
 msgid "Other"
 msgstr "Інше"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Наша команда оцінює це на постійній основі, залежно від зусиль з підтримки, яких вимагають функції, вартості для нас, а також від того, чи потрібні вони взагалі всім, чи в основному запитуються організаціями та досвідченими користувачами. Оскільки це дозволяє нам надавати більше функцій громадськості, ми закликаємо всіх користувачів підтримувати нашу місію."
@@ -1753,7 +1761,7 @@ msgstr "Фото"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism було оновлено…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism на 100% самофінансується. Добровільні пожертви не покривають витрати команди, яка працює повний робочий день, щоб забезпечити вас оновленнями, документацією та підтримкою. Ви самі вирішуєте, чи хочете ви підписатися, щоб користуватися додатковими перевагами."
 
@@ -1838,7 +1846,7 @@ msgstr "Первинний"
 msgid "Private"
 msgstr "Приватний"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2095,7 +2103,7 @@ msgstr "Поділитися %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Діліться своїми фотографіями з іншими програмами та сервісами."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 msgid "Shouldn't free software be free of costs?"
 msgstr "Чи не повинно вільне програмне забезпечення бути безкоштовним?"
 
@@ -2258,7 +2266,7 @@ msgstr "Можливо, їх формат не підтримується, во�
 msgid "Theme"
 msgstr "Тема"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Думайте про \"вільне програмне забезпечення\" як про \"свободу слова\", а не як про \"безкоштовне пиво\". Фонд вільного програмного забезпечення іноді називає його \"вільним програмним забезпеченням\", запозичуючи французьке або іспанське слово \"libre\", що означає свободу, щоб показати, що це не означає, що програмне забезпечення є безкоштовним."
 
@@ -2313,7 +2321,7 @@ msgstr "Звання / посада"
 msgid "Title too long"
 msgstr "Надто довгий заголовок"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Для оновлення ви можете або ввести код активації, або натиснути кнопку \"Зареєструватися\" на нашому сайті:"
 
@@ -2561,7 +2569,7 @@ msgstr "Вивантаження WebDAV"
 msgid "Website"
 msgstr "Веб-сайт"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 msgid "What functionality is generally available?"
 msgstr "Який функціонал є загальнодоступним?"
 
@@ -2569,7 +2577,7 @@ msgstr "Який функціонал є загальнодоступним?"
 msgid "White"
 msgstr "Білий"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 msgid "Why are some features only available to sponsors?"
 msgstr "Чому деякі функції доступні тільки для спонсорів?"
 
@@ -2627,7 +2635,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Ви можете пересканувати вашу бібліотеку щоб знайти додаткові обличчя."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Ваша постійна підтримка допомагає нам надавати регулярні оновлення та залишатися незалежними, щоб ми могли виконувати нашу місію та захищати вашу конфіденційність."
 

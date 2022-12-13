@@ -85,11 +85,11 @@ msgstr "Действие"
 msgid "Actions"
 msgstr "Действия"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 msgid "Activate"
 msgstr "Активировать"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 msgid "Activation Code"
 msgstr "Код активации"
 
@@ -493,7 +493,7 @@ msgstr "Цвета"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Распространенные проблемы могут быть быстро диагностированы и решены с помощью предоставляемых нами контрольных списков устранения неполадок."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Сравнить издания"
@@ -935,7 +935,7 @@ msgstr "Лента"
 msgid "Feedback"
 msgstr "Обратная связь"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Пожалуйста, свяжитесь с нами по адресу hello@photoprism.app, если у вас есть вопросы или вам нужна помощь."
 
@@ -1009,7 +1009,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "ფრეიმი"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 msgid "Frequently Asked Questions"
 msgstr "Часто задаваемые вопросы"
 
@@ -1028,6 +1028,10 @@ msgstr "Пол"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Основные"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1385,6 +1389,10 @@ msgstr "Основной цвет"
 msgid "Male"
 msgstr "Мужской"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "ручной"
@@ -1692,7 +1700,7 @@ msgstr "Оригиналы"
 msgid "Other"
 msgstr "Другой"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Наша команда оценивает это на постоянной основе, в зависимости от того, каких усилий требует поддержка функций, какова стоимость для нас, а также от того, нужны ли они в целом всем или в основном запрашиваются организациями и продвинутыми пользователями. Поскольку это позволяет нам предоставлять больше функций широкой публике, мы призываем всех пользователей поддержать нашу миссию."
@@ -1753,7 +1761,7 @@ msgstr "Фотография"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism был обновлен…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism находится на 100% самофинансировании. Добровольные пожертвования не покрывают расходы команды, работающей полный рабочий день, чтобы предоставить вам обновления, документацию и поддержку. Вы сами решаете, хотите ли вы подписаться, чтобы пользоваться дополнительными преимуществами."
 
@@ -1838,7 +1846,7 @@ msgstr "Главная"
 msgid "Private"
 msgstr "Приватные"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2095,7 +2103,7 @@ msgstr "Поделится %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Делись своими фотографиями с другими приложениями и сервисами."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 msgid "Shouldn't free software be free of costs?"
 msgstr "Разве свободное программное обеспечение не должно быть свободным от затрат?"
 
@@ -2258,7 +2266,7 @@ msgstr "Их формат может быть не поддерживаемым,
 msgid "Theme"
 msgstr "Тема"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Думайте о \"свободном ПО\" как о \"свободе слова\", а не как о \"свободном пиве\". Фонд свободного программного обеспечения иногда называет его \"libre software\", заимствуя французское или испанское слово \"free\", означающее свободу, чтобы показать, что они не имеют в виду, что программное обеспечение является бесплатным."
 
@@ -2313,7 +2321,7 @@ msgstr "Название / должность"
 msgid "Title too long"
 msgstr "Название слишком длинное"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2561,7 +2569,7 @@ msgstr "WebDAV загрузка"
 msgid "Website"
 msgstr "Сайт"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 msgid "What functionality is generally available?"
 msgstr "Какая функциональность обычно доступна?"
 
@@ -2569,7 +2577,7 @@ msgstr "Какая функциональность обычно доступн�
 msgid "White"
 msgstr "Белый"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 msgid "Why are some features only available to sponsors?"
 msgstr "Почему некоторые функции доступны только спонсорам?"
 
@@ -2627,7 +2635,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Вы можете повторно просканировать свою библиотеку, чтобы найти дополнительные лица."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Ваша постоянная поддержка помогает нам предоставлять регулярные обновления и оставаться независимыми, чтобы мы могли выполнять нашу миссию и защищать вашу частную жизнь."
 

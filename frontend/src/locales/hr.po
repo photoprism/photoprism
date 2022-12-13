@@ -85,12 +85,12 @@ msgstr "Radnja"
 msgid "Actions"
 msgstr "Radnje"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "Aktivirati"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktivacijski kod"
@@ -505,7 +505,7 @@ msgstr "Boje"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Uobičajeni problemi mogu se brzo dijagnosticirati i riješiti pomoću kontrolnih popisa za rješavanje problema koje nudimo."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Usporedite izdanja"
@@ -955,7 +955,7 @@ msgstr "Povratne informacije"
 msgid "Feedback"
 msgstr "Povratne informacije"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Slobodno nas kontaktirajte na hello@photoprism.app ako imate bilo kakvih pitanja."
 
@@ -1032,7 +1032,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Okviri"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Često postavljana pitanja"
@@ -1053,6 +1053,10 @@ msgstr "Lavanda"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Općenito"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1420,6 +1424,10 @@ msgstr "Glavna Boja"
 msgid "Male"
 msgstr "Muški"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "priručnik"
@@ -1735,7 +1743,7 @@ msgstr "Originali"
 msgid "Other"
 msgstr "Ostalo"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Naš tim to kontinuirano procjenjuje, ovisno o podršci koju značajke zahtijevaju, troškovima za nas i jesu li općenito potrebne svima ili ih uglavnom traže organizacije i napredni korisnici. Budući da nam to omogućuje pružanje više značajki javnosti, potičemo sve korisnike da podrže našu misiju."
@@ -1798,7 +1806,7 @@ msgstr "Fotografija"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism je ažuriran…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism se 100% financira sam. Dobrovoljne donacije ne pokrivaju troškove tima koji radi puno radno vrijeme kako bi vam pružio ažuriranja, dokumentaciju i podršku. Vaša je odluka želite li se prijaviti i uživati u dodatnim pogodnostima."
@@ -1886,7 +1894,7 @@ msgstr "Glavni"
 msgid "Private"
 msgstr "Privatno"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2150,7 +2158,7 @@ msgstr "Podijeli %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Dijelite svoje slike s drugim aplikacijama i uslugama."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Ne bi li besplatni softver trebao biti besplatan?"
@@ -2316,7 +2324,7 @@ msgstr "Njihov format možda nije podržan, još nisu pretvoreni u JPEG ili post
 msgid "Theme"
 msgstr "Tema"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Razmišljajte o \"slobodnom softveru\" kao o \"slobodi govora\", a ne kao o \"besplatnom pivu\". Zaklada za slobodni softver ga ponekad naziva \"slobodnim softverom\", posuđujući francusku ili španjolsku riječ za \"besplatno\" kao što je sloboda, kako bi pokazali da ne misle da je softver besplatan."
@@ -2374,7 +2382,7 @@ msgstr "Naslov predug"
 msgid "Title too long"
 msgstr "Naslov predug"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2634,7 +2642,7 @@ msgstr "WebDAV Upload"
 msgid "Website"
 msgstr "Web stranica"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Koja je funkcionalnost općenito dostupna?"
@@ -2643,7 +2651,7 @@ msgstr "Koja je funkcionalnost općenito dostupna?"
 msgid "White"
 msgstr "Bijelo"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Zašto su neke značajke dostupne samo sponzorima?"
@@ -2704,7 +2712,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Možete ponovno skenirati svoju biblioteku kako biste pronašli dodatna lica."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Vaša stalna podrška pomaže nam pružiti redovita ažuriranja i usluge kao što su karte svijeta."

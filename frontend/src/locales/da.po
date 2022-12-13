@@ -85,12 +85,12 @@ msgstr "Handling"
 msgid "Actions"
 msgstr "Handlinger"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "Aktivér"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktiveringskode"
@@ -505,7 +505,7 @@ msgstr "Farver"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Almindelige problemer kan hurtigt diagnosticeres og løses ved hjælp af de tjeklister til fejlfinding, som vi leverer."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Sammenlign udgaver"
@@ -955,7 +955,7 @@ msgstr "Feedback"
 msgid "Feedback"
 msgstr "Feedback"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kontakt os venligst på hello@photoprism.app, hvis du har spørgsmål eller har brug for hjælp."
 
@@ -1032,7 +1032,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Rammer"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Ofte stillede spørgsmål"
@@ -1053,6 +1053,10 @@ msgstr "Lavendel"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "General"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1420,6 +1424,10 @@ msgstr "Hovedfarve"
 msgid "Male"
 msgstr "Mand"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "manuel"
@@ -1735,7 +1743,7 @@ msgstr "Originaler"
 msgid "Other"
 msgstr "Andre"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Vores team vurderer dette løbende, afhængigt af den supportindsats, som funktionerne kræver, omkostningerne for os, og om de generelt er nødvendige for alle eller primært efterspørges af organisationer og avancerede brugere. Da dette giver os mulighed for at stille flere funktioner til rådighed for offentligheden, opfordrer vi alle brugere til at støtte vores mission."
@@ -1798,7 +1806,7 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism er opdateret …"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism er 100 % selvfinansieret. Frivillige donationer dækker ikke omkostningerne til et team, der arbejder fuld tid på at give dig opdateringer, dokumentation og support. Det er din beslutning, om du vil tilmelde dig for at nyde godt af yderligere fordele."
@@ -1886,7 +1894,7 @@ msgstr "Primær"
 msgid "Private"
 msgstr "Privat"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2150,7 +2158,7 @@ msgstr "Del %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Del dine billeder med andre apps og tjenester."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Burde gratis software ikke være gratis?"
@@ -2316,7 +2324,7 @@ msgstr "Deres format understøttes muligvis ikke, de er ikke konverteret til JPE
 msgid "Theme"
 msgstr "Tema"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Tænk på \"fri software\" som i \"ytringsfrihed\", ikke som i \"fri øl\". Free Software Foundation kalder det nogle gange \"libre software\", idet de låner det franske eller spanske ord for \"free\" som i frihed, for at vise, at de ikke mener, at softwaren er gratis."
@@ -2374,7 +2382,7 @@ msgstr "Titlen er for lang"
 msgid "Title too long"
 msgstr "Titlen er for lang"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2634,7 +2642,7 @@ msgstr "WebDAV-upload"
 msgid "Website"
 msgstr "Websted"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Hvilke funktioner er generelt tilgængelige?"
@@ -2643,7 +2651,7 @@ msgstr "Hvilke funktioner er generelt tilgængelige?"
 msgid "White"
 msgstr "Hvid"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Hvorfor er nogle funktioner kun tilgængelige for sponsorer?"
@@ -2704,7 +2712,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Du kan scanne dit bibliotek igen for at finde flere ansigter."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Din fortsatte støtte hjælper os med at finansiere driftsomkostninger, levere tjenester som satellitkort og udvikle nye funktioner."

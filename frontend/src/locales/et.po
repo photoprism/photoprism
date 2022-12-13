@@ -82,11 +82,11 @@ msgstr "Tegevus"
 msgid "Actions"
 msgstr "Tegevused"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 msgid "Activate"
 msgstr "Aktiveeri"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 msgid "Activation Code"
 msgstr "Aktiveerimiskood"
 
@@ -490,7 +490,7 @@ msgstr "Värvid"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie poolt pakutavat tõrkeotsingu meelespead."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Võrdle väljaandeid"
@@ -932,7 +932,7 @@ msgstr "Kanal"
 msgid "Feedback"
 msgstr "Tagasiside"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
 
@@ -1006,7 +1006,7 @@ msgstr "Kaadrisagedus"
 msgid "Frames"
 msgstr "Kaadrid"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 msgid "Frequently Asked Questions"
 msgstr "Korduma kippuvad küsimused"
 
@@ -1025,6 +1025,10 @@ msgstr "Sugu"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Üldised"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1382,6 +1386,10 @@ msgstr "Põhivärv"
 msgid "Male"
 msgstr "Mees"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "käsitsi"
@@ -1689,7 +1697,7 @@ msgstr "Originaalid"
 msgid "Other"
 msgstr "Muu"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Meie meeskond hindab seda jooksvalt, sõltuvalt sellest, kui palju tugitegevust funktsioonid nõuavad, kui palju need meile maksma lähevad ja kas neid funktsioone vajavad üldiselt kõik või soovivad neid peamiselt organisatsioonid ja edasijõudnud kasutajad. Kuna see võimaldab meil pakkuda üldsusele rohkem funktsioone, julgustame kõiki kasutajaid meie missiooni toetama."
@@ -1750,7 +1758,7 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on uuendatud…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism on 100% omafinantseeringuline. Vabatahtlikud annetused ei kata täiskohaga töötava meeskonna kulusid, et pakkuda teile uuendusi, dokumentatsiooni ja tuge. Sina otsustad, kas soovid lisahüvede saamiseks liituda."
 
@@ -1835,7 +1843,7 @@ msgstr "Primaarne"
 msgid "Private"
 msgstr "Isiklik"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2093,7 +2101,7 @@ msgstr "Jaga %{nimi}"
 msgid "Share your pictures with other apps and services."
 msgstr "Jaga oma pilte teiste rakenduste ja teenustega."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 msgid "Shouldn't free software be free of costs?"
 msgstr "Kas vaba tarkvara ei peaks olema tasuta?"
 
@@ -2256,7 +2264,7 @@ msgstr "Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse
 msgid "Theme"
 msgstr "Välimus"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Vaba tarkvara viitab vabavarale, mitte tasuta tarkvarale. Free Software Foundation kasutab mõnikord terminit \"libre software\", laenates prantsuse- või hispaaniakeelset sõna, näitamaks, et tarkvara ei ole tingimata tasuta."
 
@@ -2311,7 +2319,7 @@ msgstr "Tiitel / ametikoht"
 msgid "Title too long"
 msgstr "Pealkiri on liiga pikk"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2561,7 +2569,7 @@ msgstr "WebDAV üleslaadimine"
 msgid "Website"
 msgstr "Veebileht"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 msgid "What functionality is generally available?"
 msgstr "Milline funktsionaalsus on kõigile kättesaadav?"
 
@@ -2569,7 +2577,7 @@ msgstr "Milline funktsionaalsus on kõigile kättesaadav?"
 msgid "White"
 msgstr "Valge"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 msgid "Why are some features only available to sponsors?"
 msgstr "Miks on mõned funktsioonid kättesaadavad ainult sponsoritele?"
 
@@ -2628,7 +2636,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Võid oma fototeeki uuesti skaneerida, et veel nägusid leida."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda sõltumatuks, et me saaksime täita oma missiooni ja kaitsta sinu privaatsust."
 

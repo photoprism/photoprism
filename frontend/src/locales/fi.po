@@ -82,12 +82,12 @@ msgstr "Toiminnot"
 msgid "Actions"
 msgstr "Toiminnot"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "Aktivoi"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktivointikoodi"
@@ -502,7 +502,7 @@ msgstr "Värit"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Yleiset ongelmat voidaan diagnosoida ja ratkaista nopeasti toimittamiemme vianmäärityksen tarkistuslistojen avulla."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Vertaa painoksia"
@@ -952,7 +952,7 @@ msgstr "Palaute"
 msgid "Feedback"
 msgstr "Palaute"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Ota rohkeasti yhteyttä osoitteeseen hello@photoprism.app, jos sinulla on kysyttävää."
 
@@ -1029,7 +1029,7 @@ msgstr "Ruutunopeus (FPS)"
 msgid "Frames"
 msgstr "Ruudut"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Usein kysytyt kysymykset"
@@ -1050,6 +1050,10 @@ msgstr "Laventeli"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Yleinen"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1417,6 +1421,10 @@ msgstr "Pääväri"
 msgid "Male"
 msgstr "Mies"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "manuaalinen"
@@ -1732,7 +1740,7 @@ msgstr "Alkuperäiset"
 msgid "Other"
 msgstr "Muut"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Tiimimme arvioi tätä jatkuvasti sen mukaan, kuinka paljon tukipalvelua ominaisuudet vaativat, kuinka paljon ne maksavat meille ja ovatko ne yleisesti kaikkien tarvitsemia vai lähinnä organisaatioiden ja edistyneiden käyttäjien pyytämiä. Koska näin voimme tarjota enemmän ominaisuuksia yleisölle, kannustamme kaikkia käyttäjiä tukemaan tehtäviämme."
@@ -1795,7 +1803,7 @@ msgstr "Kuva"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on päivitetty…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism on 100-prosenttisesti omarahoitteinen. Vapaaehtoiset lahjoitukset eivät kata kustannuksia, jotka aiheutuvat kokopäiväisesti työskentelevästä tiimistä, joka tarjoaa sinulle päivityksiä, dokumentaatiota ja tukea. On sinun päätöksesi, haluatko rekisteröityä ja nauttia lisäeduista."
@@ -1883,7 +1891,7 @@ msgstr "Ensisijainen"
 msgid "Private"
 msgstr "Yksityinen"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2147,7 +2155,7 @@ msgstr "Jaa %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Jaa kuvasi muiden sovellusten ja palveluiden kanssa."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Eikö ilmaisen ohjelmiston pitäisi olla ilmainen?"
@@ -2313,7 +2321,7 @@ msgstr "Niiden muotoa ei ehkä tueta, niitä ei ole vielä muunnettu JPEG-muotoo
 msgid "Theme"
 msgstr "Teema"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Ajattele \"vapaita ohjelmistoja\" kuten \"vapaata puhetta\", ei kuten \"ilmaista olutta\". Free Software Foundation kutsuu sitä joskus \"libre software\", jolloin se lainaa ranskan tai espanjan sanaa \"free\" (vapaa) osoittaakseen, ettei se tarkoita, että ohjelmisto on ilmainen."
@@ -2371,7 +2379,7 @@ msgstr "Otsikko liian pitkä"
 msgid "Title too long"
 msgstr "Otsikko liian pitkä"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2631,7 +2639,7 @@ msgstr "WebDAV-lähetys"
 msgid "Website"
 msgstr "Verkkosivusto"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Mitä toimintoja on yleisesti saatavilla?"
@@ -2640,7 +2648,7 @@ msgstr "Mitä toimintoja on yleisesti saatavilla?"
 msgid "White"
 msgstr "Valkoinen"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Miksi jotkin ominaisuudet ovat vain sponsoreiden käytettävissä?"
@@ -2701,7 +2709,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Voit skannata kirjastosi uudelleen löytääksesi lisää kasvoja."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä ja palveluja, kuten maailmankarttoja."

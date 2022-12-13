@@ -85,12 +85,12 @@ msgstr "Veiksmas"
 msgid "Actions"
 msgstr "Veiksmai"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "Suaktyvinti"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktyvinimo kodas"
@@ -505,7 +505,7 @@ msgstr "Spalvos"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Dažniausiai pasitaikančias problemas galima greitai diagnozuoti ir išspręsti naudojantis mūsų pateiktais trikčių šalinimo kontroliniais sąrašais."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Palyginti leidimus"
@@ -1017,7 +1017,7 @@ msgstr "Atsiliepimai"
 msgid "Feedback"
 msgstr "Atsiliepimai"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 #, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Jei turite klausimų, susisiekite su mumis el. paštu hello@photoprism.app."
@@ -1106,7 +1106,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Kadrai"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Dažnai užduodami klausimai"
@@ -1130,6 +1130,10 @@ msgstr "Levandų"
 #, fuzzy
 msgid "General"
 msgstr "Bendra"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 #, fuzzy
@@ -1565,6 +1569,10 @@ msgstr "Pagrindinė spalva"
 msgid "Male"
 msgstr "Vyras"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
 msgid "manual"
@@ -1935,7 +1943,7 @@ msgstr "Originalai"
 msgid "Other"
 msgstr "Kita"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Mūsų komanda tai nuolat vertina, atsižvelgdama į tai, kiek palaikymo pastangų reikalauja funkcijos, kiek jos mums kainuoja ir ar jos apskritai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai. Kadangi tai leidžia mums teikti daugiau funkcijų visuomenei, raginame visus naudotojus remti mūsų misiją."
@@ -2009,7 +2017,7 @@ msgstr "Nuotrauka"
 msgid "PhotoPrism has been updated…"
 msgstr "\"PhotoPrism\" buvo atnaujintas…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "\"PhotoPrism\" yra 100 % finansuojama savo lėšomis. Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri teikia jums atnaujinimus, dokumentaciją ir palaikymą, išlaidų. Jūs patys sprendžiate, ar norite užsiregistruoti, kad galėtumėte naudotis papildomais privalumais."
@@ -2113,7 +2121,7 @@ msgstr "Pagrindinis"
 msgid "Private"
 msgstr "Privatus"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2427,7 +2435,7 @@ msgstr "Dalintis %{pavadinimas}"
 msgid "Share your pictures with other apps and services."
 msgstr "bendrinkite nuotraukas su kitomis programomis ir paslaugomis."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Argi nemokama programinė įranga neturėtų būti nemokama?"
@@ -2630,7 +2638,7 @@ msgstr "Jų formatas gali būti nepalaikomas, jos dar nebuvo konvertuotos į JPE
 msgid "Theme"
 msgstr "Tema"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Galvokite apie \"laisvą programinę įrangą\" kaip apie \"laisvą žodį\", o ne kaip apie \"laisvą alų\". Laisvosios programinės įrangos fondas kartais ją vadina \"laisvąja programine įranga\", pasiskolindamas prancūzišką ar ispanišką žodį \"free\" (laisvė), kad parodytų, jog tai nereiškia, kad programinė įranga yra nemokama."
@@ -2695,7 +2703,7 @@ msgstr "Per ilga antraštė"
 msgid "Title too long"
 msgstr "Per ilga antraštė"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2993,7 +3001,7 @@ msgstr "WebDAV įkėlimas"
 msgid "Website"
 msgstr "Svetainė"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Kokios funkcijos paprastai yra prieinamos?"
@@ -3003,7 +3011,7 @@ msgstr "Kokios funkcijos paprastai yra prieinamos?"
 msgid "White"
 msgstr "Balta"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Kodėl kai kurios funkcijos prieinamos tik rėmėjams?"
@@ -3073,7 +3081,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Norėdami rasti papildomų veidų, galite iš naujo nuskaityti savo biblioteką."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Jūsų nuolatinė parama padeda mums reguliariai teikti atnaujinimus ir tokias paslaugas kaip pasaulio žemėlapiai."

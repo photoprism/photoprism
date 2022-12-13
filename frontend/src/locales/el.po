@@ -82,12 +82,12 @@ msgstr "Ενέργεια"
 msgid "Actions"
 msgstr "Ενέργειες"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "Ενεργοποίηση"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "Κωδικός ενεργοποίησης"
@@ -502,7 +502,7 @@ msgstr "Χρώματα"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Τα συνήθη προβλήματα μπορούν να διαγνωστούν και να επιλυθούν γρήγορα χρησιμοποιώντας τις λίστες ελέγχου αντιμετώπισης προβλημάτων που παρέχουμε."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Σύγκριση εκδόσεων"
@@ -952,7 +952,7 @@ msgstr "Ανατροφοδότηση"
 msgid "Feedback"
 msgstr "Ανατροφοδότηση"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μας στο hello@photoprism.app αν έχετε οποιεσδήποτε ερωτήσεις."
 
@@ -1029,7 +1029,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Πλαίσια"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Συχνές ερωτήσεις"
@@ -1051,6 +1051,10 @@ msgstr "Λεβάντα"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Γενικά"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1425,6 +1429,10 @@ msgstr "Κύριο χρώμα"
 msgid "Male"
 msgstr "Αρσενικό"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
 msgid "manual"
@@ -1747,7 +1755,7 @@ msgstr "Πρωτότυπα"
 msgid "Other"
 msgstr "Άλλα"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Η ομάδα μας το αξιολογεί αυτό σε συνεχή βάση, ανάλογα με την προσπάθεια υποστήριξης που απαιτούν οι λειτουργίες, το κόστος για εμάς και το αν χρειάζονται γενικά από όλους ή αν ζητούνται κυρίως από οργανισμούς και προχωρημένους χρήστες. Καθώς αυτό μας επιτρέπει να παρέχουμε περισσότερα χαρακτηριστικά στο κοινό, ενθαρρύνουμε όλους τους χρήστες να υποστηρίξουν την αποστολή μας."
@@ -1810,7 +1818,7 @@ msgstr "Φωτογραφία"
 msgid "PhotoPrism has been updated…"
 msgstr "Το PhotoPrism έχει ενημερωθεί…"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Η PhotoPrism είναι 100% αυτοχρηματοδοτούμενη. Οι εθελοντικές δωρεές δεν καλύπτουν το κόστος μιας ομάδας που εργάζεται με πλήρη απασχόληση για να σας παρέχει ενημερώσεις, τεκμηρίωση και υποστήριξη. Είναι δική σας απόφαση αν θέλετε να εγγραφείτε για να απολαμβάνετε πρόσθετα οφέλη."
@@ -1898,7 +1906,7 @@ msgstr "Βασικό"
 msgid "Private"
 msgstr "Ιδιωτικό"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2174,7 +2182,7 @@ msgstr "Μοιραστείτε το %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Μοιραστείτε τις φωτογραφίες σας με άλλες εφαρμογές και υπηρεσίες."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Το ελεύθερο λογισμικό δεν θα έπρεπε να είναι απαλλαγμένο από κόστος;"
@@ -2360,7 +2368,7 @@ msgstr "Μπορεί να μην υποστηρίζεται η μορφή του
 msgid "Theme"
 msgstr "Θέμα"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Σκεφτείτε το \"ελεύθερο λογισμικό\" όπως το \"ελεύθερος λόγος\", όχι όπως το \"ελεύθερη μπύρα\". Το Ίδρυμα Ελεύθερου Λογισμικού το αποκαλεί μερικές φορές \"libre software\", δανειζόμενο τη γαλλική ή ισπανική λέξη για το \"free\" όπως στην ελευθερία, για να δείξει ότι δεν εννοεί ότι το λογισμικό είναι δωρεάν."
@@ -2421,7 +2429,7 @@ msgstr "Πολύ μεγάλος τίτλος"
 msgid "Title too long"
 msgstr "Πολύ μεγάλος τίτλος"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2711,7 +2719,7 @@ msgstr "Ανέβασμα WebDAV"
 msgid "Website"
 msgstr "Ιστοσελίδα"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Ποιες λειτουργίες είναι γενικά διαθέσιμες;"
@@ -2720,7 +2728,7 @@ msgstr "Ποιες λειτουργίες είναι γενικά διαθέσι
 msgid "White"
 msgstr "Λευκό"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Γιατί ορισμένες λειτουργίες είναι διαθέσιμες μόνο στους χορηγούς;"
@@ -2786,7 +2794,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Μπορείτε να σαρώσετε εκ νέου τη βιβλιοθήκη σας για να βρείτε επιπλέον πρόσωπα."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Η συνεχής υποστήριξή σας μας βοηθά να παρέχουμε τακτικές ενημερώσεις και υπηρεσίες όπως οι παγκόσμιοι χάρτες."

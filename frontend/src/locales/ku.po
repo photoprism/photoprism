@@ -86,12 +86,12 @@ msgstr "کردار"
 msgid "Actions"
 msgstr "کردارەکان"
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:75 src/page/connect.vue:85
 #, fuzzy
 msgid "Activate"
 msgstr "Çalak bike"
 
-#: src/page/connect.vue:293 src/page/connect.vue:311
+#: src/page/connect.vue:293 src/page/connect.vue:379
 #, fuzzy
 msgid "Activation Code"
 msgstr "Koda Çalakkirinê"
@@ -513,7 +513,7 @@ msgstr "ڕەنگەکان"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Pirsgirêkên hevpar bi karanîna navnîşên kontrolkirina pirsgirêkan ên ku em pêşkêş dikin zû têne tespît kirin û çareser kirin."
 
-#: src/page/connect.vue:67 src/page/connect.vue:110
+#: src/page/connect.vue:67 src/page/connect.vue:120
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Berawirdî Weşanan"
@@ -965,7 +965,7 @@ msgstr "ڕەخنە و پێشنیار"
 msgid "Feedback"
 msgstr "ڕەخنە و پێشنیار"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:92
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "تکایە پەیوەندیمان پێوە بکە hello@photoprism.app ئەگەر پرسیارت هەیە یان پێویستیت بە یارمەتیە."
 
@@ -1047,7 +1047,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Frames"
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:97
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Pirsên Pir Pir Pirs"
@@ -1069,6 +1069,10 @@ msgstr "ئەرخەوان"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "گشتی"
+
+#: src/page/connect.vue:59
+msgid "Get started"
+msgstr ""
 
 #: src/page/about/about.vue:55
 #, fuzzy
@@ -1448,6 +1452,10 @@ msgstr "ڕەنگی سەرەکی"
 msgid "Male"
 msgstr "Nêrî"
 
+#: src/page/connect.vue:56
+msgid "Manage account"
+msgstr ""
+
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
 msgstr "دەستی"
@@ -1770,7 +1778,7 @@ msgstr "ڕەسەنەکان"
 msgid "Other"
 msgstr "هی تر"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:115
 #, fuzzy
 msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
 msgstr "Tîma me vê yekê li ser bingehek domdar dinirxîne, li gorî hewildana piştevaniyê ya ku taybetmendî hewce dike, lêçûna ji me re, û gelo ew bi gelemperî ji her kesî re hewce ne an bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin. Ji ber ku ev dihêle ku em bêtir taybetmendiyan ji gel re peyda bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
@@ -1834,7 +1842,7 @@ msgstr "وێنە"
 msgid "PhotoPrism has been updated…"
 msgstr "فۆتۆپریزم نوێکرایەوە"
 
-#: src/page/connect.vue:99
+#: src/page/connect.vue:109
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism 100% bixwe-fînanse ye. Bexşên dilxwazî mesrefa tîmek ku bi tevahî wextê dixebitin nagire da ku nûvekirin, belgekirin û piştgirî peyda bike. Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd werbigirin."
@@ -1923,7 +1931,7 @@ msgstr "سەرەکی"
 msgid "Private"
 msgstr "تایبەتی"
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:70 src/page/connect.vue:80
 msgid "Proceed"
 msgstr ""
 
@@ -2193,7 +2201,7 @@ msgstr "هاوبەشیپێکردنی %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Wêneyên xwe bi serîlêdan û karûbarên din re parve bikin."
 
-#: src/page/connect.vue:90
+#: src/page/connect.vue:100
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Ma ne divê nermalava belaş bê mesref be?"
@@ -2360,7 +2368,7 @@ msgstr "فۆرماتەکەیان لەوانەیە پشتگیری کراو نەب
 msgid "Theme"
 msgstr "ڕووکار"
 
-#: src/page/connect.vue:93
+#: src/page/connect.vue:103
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra belaş\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" peyva fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan bide ku ew ne wateya ku nermalava belaş e."
@@ -2419,7 +2427,7 @@ msgstr "ناونیشانی زۆر درێژ"
 msgid "Title too long"
 msgstr "ناونیشانی زۆر درێژ"
 
-#: src/page/connect.vue:58 src/page/connect.vue:61
+#: src/page/connect.vue:58 src/page/connect.vue:71
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2683,7 +2691,7 @@ msgstr "WebDAV Upload"
 msgid "Website"
 msgstr "Website"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:112
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Kîjan fonksiyon bi gelemperî heye?"
@@ -2692,7 +2700,7 @@ msgstr "Kîjan fonksiyon bi gelemperî heye?"
 msgid "White"
 msgstr "سپی"
 
-#: src/page/connect.vue:96
+#: src/page/connect.vue:106
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Çima hin taybetmendî tenê ji sponsoran re peyda dibin?"
@@ -2755,7 +2763,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Hûn dikarin pirtûkxaneya xwe ji bo dîtina rûyên zêde ji nû ve şeh bikin."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:58
+#: src/page/connect.vue:68
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Piştgiriya weya domdar ji me re dibe alîkar ku em lêçûnên xebitandinê fînanse bikin, karûbarên wekî nexşeyên satelîtê peyda bikin, û taybetmendiyên nû pêşve bixin."
