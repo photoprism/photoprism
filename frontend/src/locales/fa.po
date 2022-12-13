@@ -151,12 +151,8 @@ msgid "After one year"
 msgstr "بعد از یک سال"
 
 #: src/page/albums.vue:40 src/page/albums.vue:1
-msgid ""
-"After selecting pictures from search results, you can add them to an album "
-"using the context menu."
-msgstr ""
-"پس از انتخاب تصاویر از نتایج جستجو، می توانید آنها را با استفاده از منوی "
-"زمینه به آلبوم اضافه کنید."
+msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgstr "پس از انتخاب تصاویر از نتایج جستجو، می توانید آنها را با استفاده از منوی زمینه به آلبوم اضافه کنید."
 
 #: src/options/options.js:383
 msgid "After two months"
@@ -239,12 +235,8 @@ msgid "All Years"
 msgstr "همه سالها"
 
 #: src/dialog/share.vue:75
-msgid ""
-"Alternatively, you can upload files directly to WebDAV servers like "
-"Nextcloud."
-msgstr ""
-"از طرف دیگر، می‌توانید فایل‌ها را مستقیماً در سرورهای WebDAV مانند Nextcloud "
-"آپلود کنید."
+msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgstr "از طرف دیگر، می‌توانید فایل‌ها را مستقیماً در سرورهای WebDAV مانند Nextcloud آپلود کنید."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -333,12 +325,8 @@ msgid "Aspect Ratio"
 msgstr "نسبت ابعاد"
 
 #: src/page/settings/library.vue:112
-msgid ""
-"Automatically create JPEGs for other file types so that they can be "
-"displayed in a browser."
-msgstr ""
-"به طور خودکار برای انواع فایل های دیگر JPEG ایجاد کنید تا بتوان آنها را در "
-"مرورگر نمایش داد."
+msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgstr "به طور خودکار برای انواع فایل های دیگر JPEG ایجاد کنید تا بتوان آنها را در مرورگر نمایش داد."
 
 #: src/page/settings/general.vue:163
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -350,21 +338,12 @@ msgid "Basic"
 msgstr "پایه ای"
 
 #: src/page/about/about.vue:59
-msgid ""
-"Before submitting a support request, please use our Troubleshooting "
-"Checklists to determine the cause of your problem."
-msgstr ""
-"قبل از ارسال درخواست پشتیبانی، لطفاً از چک لیست های عیب یابی ما برای تعیین "
-"علت مشکل خود استفاده کنید."
+msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+msgstr "قبل از ارسال درخواست پشتیبانی، لطفاً از چک لیست های عیب یابی ما برای تعیین علت مشکل خود استفاده کنید."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-msgid ""
-"Being 100% self-funded and independent, we can promise you that we will "
-"never sell your data and that we will always be transparent about our "
-"software and services."
-msgstr ""
-"ما با تامین مالی مستقل و 100% خود، می توانیم به شما قول بدهیم که هرگز داده "
-"های شما را نمی فروشیم و همیشه در مورد نرم افزار و خدمات خود شفاف خواهیم بود."
+msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgstr "ما با تامین مالی مستقل و 100% خود، می توانیم به شما قول بدهیم که هرگز داده های شما را نمی فروشیم و همیشه در مورد نرم افزار و خدمات خود شفاف خواهیم بود."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -402,12 +381,8 @@ msgid "Browse indexed files and folders in Library."
 msgstr "پرونده ها و پوشه های فهرست بندی شده را در کتابخانه مرور کنید."
 
 #: src/page/about/about.vue:51
-msgid ""
-"Browse the Knowledge Base for detailed information on specific product "
-"features, services, and related resources."
-msgstr ""
-"برای اطلاعات دقیق در مورد ویژگی‌های خاص محصول، خدمات و منابع مرتبط، پایگاه "
-"دانش را مرور کنید."
+msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgstr "برای اطلاعات دقیق در مورد ویژگی‌های خاص محصول، خدمات و منابع مرتبط، پایگاه دانش را مرور کنید."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:410
 msgid "Bug Report"
@@ -525,12 +500,8 @@ msgid "Colors"
 msgstr "رنگ ها"
 
 #: src/page/about/about.vue:46
-msgid ""
-"Common issues can be quickly diagnosed and solved using the troubleshooting "
-"checklists we provide."
-msgstr ""
-"مشکلات رایج را می توان با استفاده از چک لیست های عیب یابی که ارائه می دهیم، "
-"به سرعت تشخیص داده و حل کرد."
+msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgstr "مشکلات رایج را می توان با استفاده از چک لیست های عیب یابی که ارائه می دهیم، به سرعت تشخیص داده و حل کرد."
 
 #: src/page/connect.vue:67 src/page/connect.vue:110
 #, fuzzy
@@ -750,8 +721,7 @@ msgstr "پرونده های Exiftool JSON را برای بهبود استخرا�
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"پوشه Originals را اصلاح نکنید. واردات ، بارگذاری و حذف را غیرفعال می کند."
+msgstr "پوشه Originals را اصلاح نکنید. واردات ، بارگذاری و حذف را غیرفعال می کند."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
@@ -814,12 +784,8 @@ msgstr "فیلتر کاهش مقیاس"
 
 #: src/page/about/feedback.vue:16
 #, fuzzy
-msgid ""
-"Due to the high volume of emails we receive, our team may be unable to get "
-"back to you immediately."
-msgstr ""
-"به دلیل حجم بالای ایمیل‌هایی که دریافت می‌کنیم، تیم ما ممکن است نتواند فوراً با "
-"شما تماس بگیرد."
+msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgstr "به دلیل حجم بالای ایمیل‌هایی که دریافت می‌کنیم، تیم ما ممکن است نتواند فوراً با شما تماس بگیرد."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -834,11 +800,8 @@ msgid "Dynamic Previews"
 msgstr "پیش نمایش پویا"
 
 #: src/page/settings/advanced.vue:303
-msgid ""
-"Dynamic rendering requires a powerful server. It is not recommended for NAS "
-"devices."
-msgstr ""
-"رندر پویا به یک سرور قدرتمند نیاز دارد. برای دستگاه های NAS توصیه نمی شود."
+msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgstr "رندر پویا به یک سرور قدرتمند نیاز دارد. برای دستگاه های NAS توصیه نمی شود."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -905,12 +868,8 @@ msgid "Every two days"
 msgstr "هر دو روز"
 
 #: src/page/settings/general.vue:207
-msgid ""
-"Exclude content marked as private from search results, shared albums, "
-"labels, and places."
-msgstr ""
-"محتوای علامت‌گذاری‌شده به‌عنوان خصوصی را از نتایج جستجو، آلبوم‌های مشترک، "
-"برچسب‌ها و مکان‌ها حذف کنید."
+msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgstr "محتوای علامت‌گذاری‌شده به‌عنوان خصوصی را از نتایج جستجو، آلبوم‌های مشترک، برچسب‌ها و مکان‌ها حذف کنید."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 #, fuzzy
@@ -1000,11 +959,8 @@ msgid "Feedback"
 msgstr "بازخورد"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25
-msgid ""
-"Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"در صورت داشتن هرگونه سوال می توانید از طریق ایمیل hello@photoprism.app با "
-"تماس بگیرید."
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr "در صورت داشتن هرگونه سوال می توانید از طریق ایمیل hello@photoprism.app با تماس بگیرید."
 
 #: src/options/options.js:424
 #, fuzzy
@@ -1041,12 +997,8 @@ msgid "Files"
 msgstr "فایل ها"
 
 #: src/page/settings/library.vue:214
-msgid ""
-"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
-"the same picture."
-msgstr ""
-"فایل‌هایی با نام‌های متوالی مانند «IMG_1234 (2)» و «IMG_1234 (3)» متعلق به یک "
-"تصویر هستند."
+msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgstr "فایل‌هایی با نام‌های متوالی مانند «IMG_1234 (2)» و «IMG_1234 (3)» متعلق به یک تصویر هستند."
 
 #: src/dialog/photo/edit/details.vue:484
 msgid "Focal Length"
@@ -1198,17 +1150,12 @@ msgid "Import failed"
 msgstr "خطا در وارد کردن"
 
 #: src/page/library/import.vue:25
-msgid ""
-"Imported files will be sorted by date and given a unique name to avoid "
-"duplicates."
-msgstr ""
-"فایل‌های وارد شده بر اساس تاریخ مرتب می‌شوند و برای جلوگیری از تکرار نامی "
-"منحصر به فرد به آن‌ها داده می‌شود."
+msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgstr "فایل‌های وارد شده بر اساس تاریخ مرتب می‌شوند و برای جلوگیری از تکرار نامی منحصر به فرد به آن‌ها داده می‌شود."
 
 #: src/page/settings/general.vue:273
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"فایل های وارد شده بر اساس تاریخ مرتب شده و یک نام منحصر به فرد داده می شود."
+msgstr "فایل های وارد شده بر اساس تاریخ مرتب شده و یک نام منحصر به فرد داده می شود."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1232,12 +1179,8 @@ msgstr "علاوه بر این، حامیان مالی، پشتیبانی فنی
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid ""
-"In case pictures you expect are missing, please rescan your library and wait "
-"until indexing has been completed."
-msgstr ""
-"در صورتی که تصاویری که انتظار دارید گم شدند، لطفاً کتابخانه خود را مجدداً اسکن "
-"کنید و منتظر بمانید تا نمایه سازی کامل شود."
+msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr "در صورتی که تصاویری که انتظار دارید گم شدند، لطفاً کتابخانه خود را مجدداً اسکن کنید و منتظر بمانید تا نمایه سازی کامل شود."
 
 #: src/component/navigation.vue:574 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1299,12 +1242,8 @@ msgid "Invalid photo selected"
 msgstr "عکس نامعتبر انتخاب شد"
 
 #: src/page/about/about.vue:16
-msgid ""
-"It makes use of the latest technologies to tag and find pictures "
-"automatically without getting in your way."
-msgstr ""
-"از جدیدترین فناوری‌ها برای برچسب‌گذاری و یافتن خودکار عکس‌ها بدون ایجاد مانع "
-"استفاده می‌کند."
+msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgstr "از جدیدترین فناوری‌ها برای برچسب‌گذاری و یافتن خودکار عکس‌ها بدون ایجاد مانع استفاده می‌کند."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1446,12 +1385,8 @@ msgid "Location"
 msgstr "محل"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid ""
-"Log messages appear here whenever PhotoPrism comes across broken files, or "
-"there are other potential issues."
-msgstr ""
-"هر زمان که PhotoPrism با فایل های شکسته مواجه می شود یا مشکلات احتمالی دیگری "
-"وجود دارد، پیام های گزارش در اینجا ظاهر می شوند."
+msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgstr "هر زمان که PhotoPrism با فایل های شکسته مواجه می شود یا مشکلات احتمالی دیگری وجود دارد، پیام های گزارش در اینجا ظاهر می شوند."
 
 #: src/component/navigation.vue:466 src/component/navigation.vue:1722
 #: src/component/navigation.vue:1996
@@ -1671,12 +1606,8 @@ msgid "No video selected"
 msgstr "هیچ ویدیویی انتخاب نشده است"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid ""
-"No warnings or error containing this keyword. Note that search is case-"
-"sensitive."
-msgstr ""
-"هیچ هشدار یا خطایی حاوی این کلمه کلیدی نیست. توجه داشته باشید که جستجو به "
-"حروف کوچک و بزرگ حساس است."
+msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgstr "هیچ هشدار یا خطایی حاوی این کلمه کلیدی نیست. توجه داشته باشید که جستجو به حروف کوچک و بزرگ حساس است."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1685,12 +1616,8 @@ msgstr ""
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:50 src/page/settings/library.vue:91
-msgid ""
-"Non-photographic and low-quality images require a review before they appear "
-"in search results."
-msgstr ""
-"تصاویر غیرعکاسی و با کیفیت پایین قبل از اینکه در نتایج جستجو ظاهر شوند نیاز "
-"به بررسی دارند."
+msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgstr "تصاویر غیرعکاسی و با کیفیت پایین قبل از اینکه در نتایج جستجو ظاهر شوند نیاز به بررسی دارند."
 
 #: src/options/options.js:249 src/options/options.js:334
 msgid "None"
@@ -1701,23 +1628,16 @@ msgid "Not Found"
 msgstr "پیدا نشد"
 
 #: src/page/library/import.vue:28
-msgid ""
-"Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"توجه داشته باشید که می توانید به صورت دستی پوشه اصلی خود را مدیریت کنید و "
-"وارد کردن اختیاری است."
+msgid "Note you may manually manage your originals folder and importing is optional."
+msgstr "توجه داشته باشید که می توانید به صورت دستی پوشه اصلی خود را مدیریت کنید و وارد کردن اختیاری است."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "یادداشت:"
 
 #: src/dialog/service/add.vue:28
-msgid ""
-"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
-"as remote service for backup and file upload."
-msgstr ""
-"توجه: فقط سرورهای WebDAV، مانند Nextcloud یا PhotoPrism، می توانند به عنوان "
-"سرویس راه دور برای پشتیبان گیری و آپلود فایل پیکربندی شوند."
+msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
+msgstr "توجه: فقط سرورهای WebDAV، مانند Nextcloud یا PhotoPrism، می توانند به عنوان سرویس راه دور برای پشتیبان گیری و آپلود فایل پیکربندی شوند."
 
 #: src/dialog/photo/edit/details.vue:656
 msgid "Notes"
@@ -1821,26 +1741,12 @@ msgstr "دیگر"
 
 #: src/page/connect.vue:105
 #, fuzzy
-msgid ""
-"Our team evaluates this on an ongoing basis, depending on the support effort "
-"the features require, the cost to us, and whether they are generally needed "
-"by everyone or mainly requested by organizations and advanced users. As this "
-"allows us to provide more features to the public, we encourage all users to "
-"support our mission."
-msgstr ""
-"تیم ما این را به صورت مستمر ارزیابی می‌کند، بسته به تلاش پشتیبانی که ویژگی‌ها "
-"نیاز دارند، هزینه‌ای که برای ما دارد، و اینکه آیا آنها عموماً مورد نیاز همه "
-"هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته درخواست می‌شوند. از آنجایی که "
-"این امکان را به ما می دهد تا ویژگی های بیشتری را در اختیار عموم قرار دهیم، "
-"همه کاربران را تشویق می کنیم که از ماموریت ما حمایت کنند."
+msgid "Our team evaluates this on an ongoing basis, depending on the support effort the features require, the cost to us, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to provide more features to the public, we encourage all users to support our mission."
+msgstr "تیم ما این را به صورت مستمر ارزیابی می‌کند، بسته به تلاش پشتیبانی که ویژگی‌ها نیاز دارند، هزینه‌ای که برای ما دارد، و اینکه آیا آنها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته درخواست می‌شوند. از آنجایی که این امکان را به ما می دهد تا ویژگی های بیشتری را در اختیار عموم قرار دهیم، همه کاربران را تشویق می کنیم که از ماموریت ما حمایت کنند."
 
 #: src/page/about/about.vue:45
-msgid ""
-"Our User Guide also covers many advanced topics, such as migrating from "
-"Google Photos and thumbnail quality settings."
-msgstr ""
-"راهنمای کاربر ما همچنین بسیاری از موضوعات پیشرفته مانند مهاجرت از Google "
-"Photos و تنظیمات کیفیت تصاویر بندانگشتی را پوشش می‌دهد."
+msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgstr "راهنمای کاربر ما همچنین بسیاری از موضوعات پیشرفته مانند مهاجرت از Google Photos و تنظیمات کیفیت تصاویر بندانگشتی را پوشش می‌دهد."
 
 #: src/options/options.js:286
 msgid "Outdoor"
@@ -1872,9 +1778,7 @@ msgstr "مردم"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr ""
-"افرادی که لینکی را با آنها به اشتراک می گذارید می توانند محتوای عمومی را "
-"مشاهده کنند."
+msgstr "افرادی که لینکی را با آنها به اشتراک می گذارید می توانند محتوای عمومی را مشاهده کنند."
 
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
@@ -1899,16 +1803,8 @@ msgstr "PhotoPrism به روز شد…"
 
 #: src/page/connect.vue:99
 #, fuzzy
-msgid ""
-"PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of "
-"a team working full time to provide you with updates, documentation, and "
-"support. It is your decision whether you want to sign up to enjoy additional "
-"benefits."
-msgstr ""
-"PhotoPrism 100% تامین مالی شده است. کمک های داوطلبانه هزینه های یک تیم کار "
-"تمام وقت برای ارائه به روز رسانی ها، اسناد و پشتیبانی شما را پوشش نمی دهد. "
-"این شما هستید که می خواهید برای بهره مندی از مزایای اضافی ثبت نام کنید یا "
-"خیر."
+msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr "PhotoPrism 100% تامین مالی شده است. کمک های داوطلبانه هزینه های یک تیم کار تمام وقت برای ارائه به روز رسانی ها، اسناد و پشتیبانی شما را پوشش نمی دهد. این شما هستید که می خواهید برای بهره مندی از مزایای اضافی ثبت نام کنید یا خیر."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1949,12 +1845,8 @@ msgstr "لطفا عکس های حاوی محتوای توهین آمیز آپل�
 
 #: src/dialog/account/password.vue:17
 #, fuzzy
-msgid ""
-"Please note that changing your password will log you out on other devices "
-"and browsers."
-msgstr ""
-"لطفاً توجه داشته باشید که تغییر رمز عبور شما را از سایر دستگاه ها و مرورگرها "
-"خارج می کند."
+msgid "Please note that changing your password will log you out on other devices and browsers."
+msgstr "لطفاً توجه داشته باشید که تغییر رمز عبور شما را از سایر دستگاه ها و مرورگرها خارج می کند."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -2043,9 +1935,7 @@ msgstr "تبدیل RAW"
 
 #: src/page/library/index.vue:116
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"نمایه سازی مجدد همه نسخه های اصلی، از جمله فایل های از قبل نمایه شده و بدون "
-"تغییر."
+msgstr "نمایه سازی مجدد همه نسخه های اصلی، از جمله فایل های از قبل نمایه شده و بدون تغییر."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -2114,12 +2004,8 @@ msgid "Remove from album"
 msgstr "حذف از آلبوم"
 
 #: src/page/library/import.vue:120
-msgid ""
-"Remove imported files to save storage. Unsupported file types will never be "
-"deleted, they remain in their current location."
-msgstr ""
-"برای صرفه جویی در فضای ذخیره سازی، فایل های وارد شده را حذف کنید. انواع فایل "
-"های پشتیبانی نشده هرگز حذف نمی شوند، آنها در مکان فعلی خود باقی می مانند."
+msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgstr "برای صرفه جویی در فضای ذخیره سازی، فایل های وارد شده را حذف کنید. انواع فایل های پشتیبانی نشده هرگز حذف نمی شوند، آنها در مکان فعلی خود باقی می مانند."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2334,17 +2220,11 @@ msgstr "پشته"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"پشته فایل هایی که همان تصویر منحصر به فرد یا شناسه نمونه را به اشتراک می "
-"گذارند."
+msgstr "پشته فایل هایی که همان تصویر منحصر به فرد یا شناسه نمونه را به اشتراک می گذارند."
 
 #: src/page/settings/library.vue:172
-msgid ""
-"Stack pictures taken at the exact same time and location based on their "
-"metadata."
-msgstr ""
-"عکس‌هایی را که دقیقاً در همان زمان و مکان گرفته شده‌اند، بر اساس ابرداده‌هایشان "
-"روی هم قرار دهید."
+msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgstr "عکس‌هایی را که دقیقاً در همان زمان و مکان گرفته شده‌اند، بر اساس ابرداده‌هایشان روی هم قرار دهید."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2355,12 +2235,8 @@ msgid "Stacks"
 msgstr "پشته ها"
 
 #: src/page/settings/library.vue:138
-msgid ""
-"Stacks group files with a similar frame of reference, but differences of "
-"quality, format, size or color."
-msgstr ""
-"دسته بندی فایل ها با قاب یا مرجع مشابه، اما متفاوت در کیفیت، فرمت، اندازه یا "
-"رنگ."
+msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+msgstr "دسته بندی فایل ها با قاب یا مرجع مشابه، اما متفاوت در کیفیت، فرمت، اندازه یا رنگ."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2400,8 +2276,7 @@ msgid "Successfully Connected"
 msgstr "با موفقیت وصل شد"
 
 #: src/dialog/service/add.vue:29
-msgid ""
-"Support for additional services, like Google Drive, will be added over time."
+msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "پشتیبانی از خدمات اضافی، مانند Google Drive، به مرور اضافه خواهد شد."
 
 #: src/dialog/sponsor.vue:7 src/page/connect.vue:17
@@ -2435,12 +2310,8 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "این فهرست در حال حاضر حاوی %{n} فایل پنهان است."
 
 #: src/page/library/index.vue:37
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet "
-"or there are duplicates."
-msgstr ""
-"ممکن است فرمت آنها پشتیبانی نشود، هنوز به JPEG تبدیل نشده اند یا موارد "
-"تکراری وجود دارد."
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "ممکن است فرمت آنها پشتیبانی نشود، هنوز به JPEG تبدیل نشده اند یا موارد تکراری وجود دارد."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2448,35 +2319,20 @@ msgstr "قالب"
 
 #: src/page/connect.vue:93
 #, fuzzy
-msgid ""
-"Think of “free software” as in “free speech,” not as in “free beer.” The "
-"Free Software Foundation sometimes calls it “libre software,” borrowing the "
-"French or Spanish word for “free” as in freedom, to show they do not mean "
-"the software is gratis."
-msgstr ""
-"به \"نرم افزار آزاد\" مانند \"آزادی بیان\" فکر کنید، نه مانند \"آبجو "
-"رایگان\". بنیاد نرم‌افزار آزاد گاهی اوقات آن را «نرم‌افزار آزاد» می‌نامد، و "
-"کلمه فرانسوی یا اسپانیایی را به معنای «رایگان» وام می‌گیرد تا نشان دهد که این "
-"نرم‌افزار رایگان است."
+msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+msgstr "به \"نرم افزار آزاد\" مانند \"آزادی بیان\" فکر کنید، نه مانند \"آبجو رایگان\". بنیاد نرم‌افزار آزاد گاهی اوقات آن را «نرم‌افزار آزاد» می‌نامد، و کلمه فرانسوی یا اسپانیایی را به معنای «رایگان» وام می‌گیرد تا نشان دهد که این نرم‌افزار رایگان است."
 
 #: src/page/settings/services.vue:40
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"این پوشه اصلی را به عنوان درایو شبکه نصب می کند و به شما امکان می دهد فایل "
-"ها را باز، ویرایش و حذف کنید\n"
+"این پوشه اصلی را به عنوان درایو شبکه نصب می کند و به شما امکان می دهد فایل ها را باز، ویرایش و حذف کنید\n"
 "           از رایانه یا تلفن هوشمند خود به گونه ای که گویی محلی هستند."
 
 #: src/dialog/webdav.vue:26
-msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files from your computer or smartphone as if they were "
-"local."
-msgstr ""
-"این پوشه اصلی را به عنوان درایو شبکه نصب می کند و به شما امکان می دهد فایل "
-"ها را از رایانه یا تلفن هوشمند خود باز، ویرایش و حذف کنید، گویی محلی هستند."
+msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgstr "این پوشه اصلی را به عنوان درایو شبکه نصب می کند و به شما امکان می دهد فایل ها را از رایانه یا تلفن هوشمند خود باز، ویرایش و حذف کنید، گویی محلی هستند."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2521,9 +2377,7 @@ msgid "Title too long"
 msgstr "عنوان خیلی طولانی است"
 
 #: src/page/connect.vue:58 src/page/connect.vue:61
-msgid ""
-"To upgrade, you may either enter an activation code or click on \"Proceed\" "
-"to sign up on our website:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
@@ -2674,8 +2528,7 @@ msgstr "در حال بارگیری مجدد…"
 
 #: src/dialog/upload.vue:46
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"آپلودهایی که ممکن است حاوی چنین تصاویری باشند به طور خودکار رد می شوند."
+msgstr "آپلودهایی که ممکن است حاوی چنین تصاویری باشند به طور خودکار رد می شوند."
 
 #: src/dialog/share.vue:153
 #, fuzzy
@@ -2737,12 +2590,8 @@ msgid "View"
 msgstr "نمایش"
 
 #: src/page/about/about.vue:44
-msgid ""
-"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
-"share your pictures."
-msgstr ""
-"از docs.photoprism.app/user-guide دیدن کنید تا نحوه همگام سازی، سازماندهی و "
-"اشتراک گذاری تصاویر خود را بیاموزید."
+msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgstr "از docs.photoprism.app/user-guide دیدن کنید تا نحوه همگام سازی، سازماندهی و اشتراک گذاری تصاویر خود را بیاموزید."
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:27
@@ -2759,26 +2608,19 @@ msgid "We do our best to respond within five business days or less."
 msgstr "ما تمام تلاش خود را می کنیم تا ظرف پنج روز کاری یا کمتر پاسخ دهیم."
 
 #: src/page/about/about.vue:71
-msgid ""
-"We'll do our best to answer all your questions. In return, we ask you to "
-"back us on Patreon or GitHub Sponsors."
-msgstr ""
-"ما تمام تلاش خود را می کنیم تا به تمام سوالات شما پاسخ دهیم. در عوض، ما از "
-"شما می خواهیم که از ما در Patreon یا GitHub Sponsors حمایت کنید."
+msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+msgstr "ما تمام تلاش خود را می کنیم تا به تمام سوالات شما پاسخ دهیم. در عوض، ما از شما می خواهیم که از ما در Patreon یا GitHub Sponsors حمایت کنید."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr ""
-"کلاینت های WebDAV می توانند با استفاده از URL زیر به PhotoPrism متصل شوند:"
+msgstr "کلاینت های WebDAV می توانند با استفاده از URL زیر به PhotoPrism متصل شوند:"
 
 #: src/page/settings/services.vue:37
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
-"connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"کلاینت های WebDAV، مانند Windows Explorer مایکروسافت یا Apple's Finder، می "
-"توانند مستقیماً به آن متصل شوند\n"
+"کلاینت های WebDAV، مانند Windows Explorer مایکروسافت یا Apple's Finder، می توانند مستقیماً به آن متصل شوند\n"
 "           PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
@@ -2858,26 +2700,16 @@ msgstr "شما فقط می توانید یک مورد را انتخاب کنید
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr ""
-"می‌توانید کتابخانه خود را مجدداً اسکن کنید تا چهره‌های دیگری را پیدا کنید."
+msgstr "می‌توانید کتابخانه خود را مجدداً اسکن کنید تا چهره‌های دیگری را پیدا کنید."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 #: src/page/connect.vue:58
-msgid ""
-"Your continued support helps us provide regular updates and remain "
-"independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"پشتیبانی مستمر شما به ما کمک می‌کند تا به‌روزرسانی‌های منظم را ارائه کنیم و "
-"مستقل بمانیم، بنابراین می‌توانیم مأموریت خود را انجام دهیم و از حریم خصوصی "
-"شما محافظت کنیم."
+msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgstr "پشتیبانی مستمر شما به ما کمک می‌کند تا به‌روزرسانی‌های منظم را ارائه کنیم و مستقل بمانیم، بنابراین می‌توانیم مأموریت خود را انجام دهیم و از حریم خصوصی شما محافظت کنیم."
 
 #: src/page/albums.vue:43 src/page/albums.vue:1
-msgid ""
-"Your library is continuously analyzed to automatically create albums of "
-"special moments, trips, and places."
-msgstr ""
-"کتابخانه شما به طور مداوم تجزیه و تحلیل می شود تا به طور خودکار آلبوم هایی "
-"از لحظات، سفرها و مکان های خاص ایجاد شود."
+msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل می شود تا به طور خودکار آلبوم هایی از لحظات، سفرها و مکان های خاص ایجاد شود."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
@@ -2895,20 +2727,12 @@ msgstr "بزرگنمایی/کوچک کردن"
 #~ msgstr "ثبت نام"
 
 #, fuzzy
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
-#~ msgstr ""
-#~ "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ثبت‌نام» کلیک کنید "
-#~ "تا در وب‌سایت ما ارتقا یابد:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+#~ msgstr "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ثبت‌نام» کلیک کنید تا در وب‌سایت ما ارتقا یابد:"
 
 #, fuzzy
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
-#~ "Now\" to sign up on our website:"
-#~ msgstr ""
-#~ "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ثبت‌نام» کلیک کنید "
-#~ "تا در وب‌سایت ما ارتقا یابد:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ثبت‌نام» کلیک کنید تا در وب‌سایت ما ارتقا یابد:"
 
 #~ msgid "Sign up"
 #~ msgstr "ثبت نام"
@@ -2918,26 +2742,11 @@ msgstr "بزرگنمایی/کوچک کردن"
 #~ msgstr "مقایسه ویژگی ها"
 
 #, fuzzy
-#~ msgid ""
-#~ "Our team evaluates this on an ongoing basis, depending on the support "
-#~ "effort features and config options cause or have caused in the past, and "
-#~ "whether they are generally needed by everyone or mainly requested by "
-#~ "organizations and advanced users. As this allows us to make more features "
-#~ "available to the public, we encourage all users to support our mission."
-#~ msgstr ""
-#~ "تیم ما این را به طور مداوم ارزیابی می‌کند، بسته به ویژگی‌های تلاش پشتیبانی "
-#~ "و گزینه‌های پیکربندی که در گذشته ایجاد کرده یا ایجاد کرده‌اند، و اینکه آیا "
-#~ "آن‌ها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته "
-#~ "درخواست می‌شوند. از آنجایی که این به ما امکان می دهد ویژگی های بیشتری را "
-#~ "در دسترس عموم قرار دهیم، همه کاربران را تشویق می کنیم که از ماموریت ما "
-#~ "حمایت کنند."
+#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "تیم ما این را به طور مداوم ارزیابی می‌کند، بسته به ویژگی‌های تلاش پشتیبانی و گزینه‌های پیکربندی که در گذشته ایجاد کرده یا ایجاد کرده‌اند، و اینکه آیا آن‌ها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته درخواست می‌شوند. از آنجایی که این به ما امکان می دهد ویژگی های بیشتری را در دسترس عموم قرار دهیم، همه کاربران را تشویق می کنیم که از ماموریت ما حمایت کنند."
 
-#~ msgid ""
-#~ "Also, please leave a star on GitHub if you like this project. It provides "
-#~ "additional motivation to keep going."
-#~ msgstr ""
-#~ "همچنین اگر این پروژه را دوست دارید، لطفاً یک ستاره در GitHub بگذارید. این "
-#~ "انگیزه اضافی برای ادامه راه فراهم می کند."
+#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+#~ msgstr "همچنین اگر این پروژه را دوست دارید، لطفاً یک ستاره در GitHub بگذارید. این انگیزه اضافی برای ادامه راه فراهم می کند."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "اسپانسر شوید"
@@ -2945,34 +2754,17 @@ msgstr "بزرگنمایی/کوچک کردن"
 #~ msgid "I'm a sponsor"
 #~ msgstr "من اسپانسر هستم"
 
-#~ msgid ""
-#~ "Sponsors get access to additional features, receive direct technical "
-#~ "support via email, and can join our private chat room on matrix.org."
-#~ msgstr ""
-#~ "حامیان مالی به ویژگی های اضافی دسترسی پیدا می کنند، پشتیبانی فنی مستقیم "
-#~ "از طریق ایمیل دریافت می کنند و می توانند به اتاق چت خصوصی ما در matrix."
-#~ "org بپیوندند."
+#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
+#~ msgstr "حامیان مالی به ویژگی های اضافی دسترسی پیدا می کنند، پشتیبانی فنی مستقیم از طریق ایمیل دریافت می کنند و می توانند به اتاق چت خصوصی ما در matrix.org بپیوندند."
 
-#~ msgid ""
-#~ "This currently is a sponsor feature to thank everyone who supports the "
-#~ "development of this application."
-#~ msgstr ""
-#~ "این در حال حاضر یک ویژگی برای تشکر از همه کسانی است که از توسعه این "
-#~ "برنامه پشتیبانی می کنند."
+#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#~ msgstr "این در حال حاضر یک ویژگی برای تشکر از همه کسانی است که از توسعه این برنامه پشتیبانی می کنند."
 
-#~ msgid ""
-#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
-#~ "Sponsors."
-#~ msgstr ""
-#~ "وقتی در Patreon یا GitHub Sponsors ثبت نام کردید، نحوه فعال کردن آن را به "
-#~ "شما اطلاع خواهیم داد."
+#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+#~ msgstr "وقتی در Patreon یا GitHub Sponsors ثبت نام کردید، نحوه فعال کردن آن را به شما اطلاع خواهیم داد."
 
-#~ msgid ""
-#~ "Your continued support helps us provide regular updates and services like "
-#~ "world maps."
-#~ msgstr ""
-#~ "پشتیبانی مستمر شما به ما کمک می‌کند تا به‌روزرسانی‌ها و خدمات منظمی مانند "
-#~ "نقشه‌های جهان را ارائه دهیم."
+#~ msgid "Your continued support helps us provide regular updates and services like world maps."
+#~ msgstr "پشتیبانی مستمر شما به ما کمک می‌کند تا به‌روزرسانی‌ها و خدمات منظمی مانند نقشه‌های جهان را ارائه دهیم."
 
 #, fuzzy
 #~ msgctxt "Account|"
@@ -3057,12 +2849,8 @@ msgstr "بزرگنمایی/کوچک کردن"
 #~ msgid "Guest"
 #~ msgstr "مهمان"
 
-#~ msgid ""
-#~ "Note: Updating the password will not revoke access from already "
-#~ "authenticated users."
-#~ msgstr ""
-#~ "توجه: به روز رسانی رمز عبور، دسترسی کاربرانی که قبلاً احراز هویت شده اند "
-#~ "را لغو نمی کند."
+#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgstr "توجه: به روز رسانی رمز عبور، دسترسی کاربرانی که قبلاً احراز هویت شده اند را لغو نمی کند."
 
 #~ msgid "Server"
 #~ msgstr "سرور"
