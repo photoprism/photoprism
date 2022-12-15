@@ -382,7 +382,7 @@ msgstr "Hõivatud, palun oota…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
+msgstr "Meie poolt pakutavat tarkvara ja teenuseid kasutades nõustud kasutustingimuste, privaatsuspoliitika ja käitumiskoodeksiga."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -496,9 +496,8 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie poolt pakutavat tõrkeotsingu meelespead."
 
 #: src/page/connect.vue:67 src/page/connect.vue:84
-#, fuzzy
 msgid "Compare Editions"
-msgstr "Võrdle väljaandeid"
+msgstr "Võrdle versioone"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -1385,7 +1384,7 @@ msgstr "Mees"
 
 #: src/page/connect.vue:56
 msgid "Manage account"
-msgstr ""
+msgstr "Halda kontot"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1699,9 +1698,8 @@ msgid "Other"
 msgstr "Muu"
 
 #: src/page/connect.vue:123
-#, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Meie meeskond hindab seda jooksvalt, sõltuvalt sellest, kui palju tugitegevust funktsioonid nõuavad, kui palju need meile maksma lähevad ja kas neid funktsioone vajavad üldiselt kõik või soovivad neid peamiselt organisatsioonid ja edasijõudnud kasutajad. Kuna see võimaldab meil pakkuda üldsusele rohkem funktsioone, julgustame kõiki kasutajaid meie missiooni toetama."
+msgstr "Meie meeskond otsustab seda jooksvalt, lähtudes tugitegevuse mahust, serverite ja litsentside maksumusest ning sellest, kas neid funktsioone vajavad üldiselt kõik või soovivad neid peamiselt organisatsioonid ja edasijõudnud kasutajad. Kuna see võimaldab meil pakkuda üldsusele rohkem funktsioone, julgustame kõiki kasutajaid meie missiooni toetama."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1846,7 +1844,7 @@ msgstr "Isiklik"
 
 #: src/page/connect.vue:70 src/page/connect.vue:87
 msgid "Proceed"
-msgstr ""
+msgstr "Jätka"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:408
 msgid "Product Feedback"
@@ -2322,7 +2320,7 @@ msgstr "Pealkiri on liiga pikk"
 
 #: src/page/connect.vue:58 src/page/connect.vue:75
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
+msgstr "Uuendamiseks võid sisestada aktiveerimiskoodi või klõpsata \"Jätka\", et registreeruda meie veebilehel:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2652,6 +2650,12 @@ msgstr "Suumi sisse/välja"
 
 #~ msgid "Basic"
 #~ msgstr "Lihtne"
+
+#~ msgid "Electra"
+#~ msgstr "Electra"
+
+#~ msgid "Get started"
+#~ msgstr "Alusta"
 
 #~ msgid "Upgrade now and enjoy our member benefits!"
 #~ msgstr "Uuenda nüüd ja naudi meie liikmete eeliseid!"

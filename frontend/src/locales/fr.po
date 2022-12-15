@@ -216,7 +216,6 @@ msgid "All files from import folder"
 msgstr "Tous les fichiers du dossier d'importation"
 
 #: src/component/photo/toolbar.vue:37
-#, fuzzy
 msgid "All Lenses"
 msgstr "Tous les objectifs"
 
@@ -386,7 +385,7 @@ msgstr "Veuillez patienter…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
+msgstr "En utilisant le logiciel et les services que nous fournissons, vous acceptez nos conditions d'utilisation, notre politique de confidentialité et notre code de conduite."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -463,7 +462,6 @@ msgstr "Modifier le statut privé"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
-#, fuzzy
 msgid "Changes successfully saved"
 msgstr "Les modifications ont bien été enregistrées"
 
@@ -501,7 +499,6 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Les problèmes courants peuvent être rapidement diagnostiqués et résolus à l'aide des listes de contrôle de dépannage que nous fournissons."
 
 #: src/page/connect.vue:67 src/page/connect.vue:84
-#, fuzzy
 msgid "Compare Editions"
 msgstr "Comparer les éditions"
 
@@ -701,7 +698,6 @@ msgid "Discover"
 msgstr "Découvrir"
 
 #: src/page/settings/account.vue:193 src/page/settings/account.vue:192
-#, fuzzy
 msgid "Display Name"
 msgstr "Nom affiché"
 
@@ -1391,7 +1387,7 @@ msgstr "Homme"
 
 #: src/page/connect.vue:56
 msgid "Manage account"
-msgstr ""
+msgstr "Gérer le compte"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1705,7 +1701,6 @@ msgid "Other"
 msgstr "Autre"
 
 #: src/page/connect.vue:123
-#, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "Notre équipe l'évalue en permanence, en fonction de l'effort de support que les fonctionnalités requièrent, de leur coût pour nous et du fait qu'elles sont généralement nécessaires à tous ou principalement demandées par des organisations et des utilisateurs avancés. Comme cela nous permet de fournir davantage de fonctionnalités au public, nous encourageons tous les utilisateurs à soutenir notre mission."
 
@@ -1851,8 +1846,9 @@ msgid "Private"
 msgstr "Privée"
 
 #: src/page/connect.vue:70 src/page/connect.vue:87
+#, fuzzy
 msgid "Proceed"
-msgstr ""
+msgstr "Executer"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:408
 msgid "Product Feedback"
@@ -1913,7 +1909,6 @@ msgstr "Récemment ajouté"
 
 #: src/component/album/toolbar.vue:68 src/component/photo/toolbar.vue:53
 #: src/dialog/album/edit.vue:22
-#, fuzzy
 msgid "Recently Edited"
 msgstr "Récemment Modifiés"
 
@@ -2280,8 +2275,8 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"Cela monte le dossier des originaux en tant que lecteur réseau et vous permet d'ouvrir, modifier et supprimer des fichiers\n"
-"de votre ordinateur ou smartphone comme s'ils étaient locaux."
+"Cela monte le dossier des originaux comme un lecteur réseau et vous permet d'ouvrir, d'éditer et de supprimer des fichiers\n"
+"          depuis votre ordinateur ou votre smartphone comme s'ils étaient locaux."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2320,7 +2315,7 @@ msgstr "Titre"
 
 #: src/page/settings/account.vue:562
 msgid "Title / Position"
-msgstr "Profession"
+msgstr "Titre / Poste"
 
 #: src/page/albums.vue:62
 msgid "Title too long"
@@ -2413,7 +2408,7 @@ msgstr "Mise à jour des moments"
 
 #: src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "Mise à jour de l'image …"
+msgstr "Mise à jour de l'image…"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2563,8 +2558,8 @@ msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"Les clients au protocole WebDAV, comme Microsoft’s Windows Explorer ou Apple's Finder, peuvent se connecter directement à\n"
-"PhotoPrism."
+"Les clients WebDAV, comme l'Explorateur Windows de Microsoft ou le Finder d'Apple, peuvent se connecter directement à\n"
+"          PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2576,7 +2571,6 @@ msgid "Website"
 msgstr "Site web"
 
 #: src/page/connect.vue:120
-#, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Quelles sont les fonctionnalités généralement disponibles ?"
 
@@ -2590,7 +2584,7 @@ msgstr "Pourquoi certaines fonctions ne sont-elles accessibles qu'aux sponsors ?
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
-msgstr "Détails de la prestation"
+msgstr "Détails du travail"
 
 #: src/page/settings/account.vue:493 src/component/photo/toolbar.vue:268
 #: src/dialog/photo/edit/details.vue:169 src/page/settings/account.vue:492
@@ -2654,9 +2648,17 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
 
-#, fuzzy
 #~ msgid "Basic"
 #~ msgstr "Basique"
+
+#~ msgid "Electra"
+#~ msgstr "Electra"
+
+#~ msgid "Failed"
+#~ msgstr "Échoué"
+
+#~ msgid "Get started"
+#~ msgstr "Commencer"
 
 #, fuzzy
 #~ msgid "Upgrade now and enjoy our member benefits!"
