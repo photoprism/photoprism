@@ -56,7 +56,7 @@ msgstr "4 часа"
 msgid "A click will copy it to your clipboard."
 msgstr "Едно кликване ще го копира в клипборда ви."
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:253
+#: src/page/about/about.vue:4 src/page/about/about.vue:256
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -86,12 +86,12 @@ msgstr "Действие"
 msgid "Actions"
 msgstr "Действия"
 
-#: src/page/connect.vue:75 src/page/connect.vue:91
+#: src/page/connect.vue:75 src/page/connect.vue:92
 #, fuzzy
 msgid "Activate"
 msgstr "Активиране на"
 
-#: src/page/connect.vue:293 src/page/connect.vue:388
+#: src/page/connect.vue:293 src/page/connect.vue:400
 #, fuzzy
 msgid "Activation Code"
 msgstr "Код за активиране"
@@ -332,16 +332,12 @@ msgstr "Автоматично създаване на JPEG за други ти
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Автоматично създава албуми на специални моменти, пътувания и места."
 
-#: src/options/options.js:272
-msgid "Basic"
-msgstr "Основен"
-
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за отстраняване на проблеми\" за да определите причината за проблема."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:70
+#: src/page/connect.vue:72
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Тъй като сме 100% самофинансирани и независими, можем да ви обещаем, че никога няма да продадем вашите данни и че винаги ще бъдем прозрачни по отношение на нашия софтуер и услуги."
 
@@ -395,7 +391,7 @@ msgstr "Доклад за грешка"
 msgid "Busy, please wait…"
 msgstr "Заето, моля, изчакайте…"
 
-#: src/page/connect.vue:82 src/page/connect.vue:98
+#: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
 
@@ -441,6 +437,11 @@ msgstr "Не мога да избера повече елементи"
 #, fuzzy
 msgid "Cancel"
 msgstr "Отмяна на"
+
+#: src/options/themes.js:436
+#, fuzzy
+msgid "Carbon"
+msgstr "Carbon"
 
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 #, fuzzy
@@ -523,7 +524,7 @@ msgstr "Цветове"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Често срещаните проблеми могат да бъдат бързо диагностицирани и решени с помощта на предоставените от нас контролни списъци за отстраняване на неизправности."
 
-#: src/page/connect.vue:67 src/page/connect.vue:83
+#: src/page/connect.vue:67 src/page/connect.vue:84
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Сравняване на изданията"
@@ -913,11 +914,6 @@ msgstr "Редактиране на снимка"
 msgid "Edited"
 msgstr "Редактиран"
 
-#: src/options/themes.js:436
-#, fuzzy
-msgid "Electra"
-msgstr "Electra"
-
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 #: src/page/settings/account.vue:220
 #, fuzzy
@@ -1004,10 +1000,6 @@ msgstr "Лице"
 msgid "Faces"
 msgstr "Лица"
 
-#: src/page/connect.vue:14
-msgid "Failed"
-msgstr ""
-
 #: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 #, fuzzy
 msgid "Failed copying to clipboard"
@@ -1059,7 +1051,7 @@ msgstr "Обратна връзка"
 msgid "Feedback"
 msgstr "Обратна връзка"
 
-#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:99
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:100
 #, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Не се колебайте да се свържете с нас на hello@photoprism.app, ако имате някакви въпроси."
@@ -1149,7 +1141,7 @@ msgstr "Кадър в секунда"
 msgid "Frames"
 msgstr "Рамки"
 
-#: src/page/connect.vue:104
+#: src/page/connect.vue:105
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Често задавани въпроси"
@@ -1173,10 +1165,6 @@ msgstr "Лавандула"
 #, fuzzy
 msgid "General"
 msgstr "Обща информация"
-
-#: src/page/connect.vue:59
-msgid "Get started"
-msgstr ""
 
 #: src/page/about/about.vue:55
 #, fuzzy
@@ -1364,19 +1352,19 @@ msgstr "Идентификатор на инстанцията"
 msgid "Interval"
 msgstr "Интервал"
 
-#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
-#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
-#: src/page/settings/account.vue:224 src/page/settings/account.vue:281
-#: src/page/settings/account.vue:565 src/page/settings/account.vue:591
-#: src/page/settings/account.vue:619 src/page/settings/account.vue:647
-#: src/page/settings/account.vue:711 src/page/settings/account.vue:738
-#: src/page/settings/account.vue:765 src/page/settings/account.vue:793
-#: src/page/settings/account.vue:821 src/page/settings/account.vue:90
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:142
-#: src/page/settings/account.vue:168 src/page/settings/account.vue:223
-#: src/page/settings/account.vue:280 src/page/settings/account.vue:564
-#: src/page/settings/account.vue:618 src/page/settings/account.vue:646
-#: src/page/settings/account.vue:674
+#: src/page/connect.vue:14 src/page/settings/account.vue:91
+#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
+#: src/page/settings/account.vue:169 src/page/settings/account.vue:224
+#: src/page/settings/account.vue:281 src/page/settings/account.vue:565
+#: src/page/settings/account.vue:591 src/page/settings/account.vue:619
+#: src/page/settings/account.vue:647 src/page/settings/account.vue:711
+#: src/page/settings/account.vue:738 src/page/settings/account.vue:765
+#: src/page/settings/account.vue:793 src/page/settings/account.vue:821
+#: src/page/settings/account.vue:90 src/page/settings/account.vue:116
+#: src/page/settings/account.vue:142 src/page/settings/account.vue:168
+#: src/page/settings/account.vue:223 src/page/settings/account.vue:280
+#: src/page/settings/account.vue:564 src/page/settings/account.vue:618
+#: src/page/settings/account.vue:646 src/page/settings/account.vue:674
 #, fuzzy
 msgid "Invalid"
 msgstr "Невалидна дата"
@@ -1475,7 +1463,7 @@ msgstr "Лавандула"
 
 #: src/page/connect.vue:98 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:28 src/page/about/about.vue:52
-#: src/page/about/about.vue:161 src/page/connect.vue:106 src/page/login.vue:63
+#: src/page/about/about.vue:161 src/page/connect.vue:107 src/page/login.vue:63
 #, fuzzy
 msgid "Learn more"
 msgstr "Научете повече"
@@ -1498,7 +1486,7 @@ msgstr "Обектив"
 msgid "Library"
 msgstr "Библиотека"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:440
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:557
 #: src/page/about/license.vue:4
 #, fuzzy
@@ -1596,6 +1584,10 @@ msgstr "Дължина"
 msgid "Low"
 msgstr "Нисък"
 
+#: src/options/options.js:272
+msgid "Low Resolution"
+msgstr ""
+
 #: src/options/options.js:389
 #, fuzzy
 msgid "Magenta"
@@ -1639,6 +1631,11 @@ msgstr "Маркер"
 #, fuzzy
 msgid "Medium"
 msgstr "Среден"
+
+#: src/page/connect.vue:4
+#, fuzzy
+msgid "Membership"
+msgstr "Членство"
 
 #: src/dialog/people/merge.vue:25
 #, fuzzy
@@ -1989,7 +1986,7 @@ msgstr "Оригинали"
 msgid "Other"
 msgstr "Други"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:123
 #, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "Екипът ни преценява това постоянно, в зависимост от усилията за поддръжка, които изискват функциите, разходите за нас и дали те са необходими на всички или се изискват предимно от организации и напреднали потребители. Тъй като това ни позволява да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
@@ -2061,7 +2058,7 @@ msgstr "Снимка"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism е актуализиран…"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:117
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism се финансира 100% самостоятелно. Доброволните дарения не покриват разходите на екипа, който работи на пълен работен ден, за да ви предоставя актуализации, документация и поддръжка. Вие решавате дали искате да се регистрирате, за да се възползвате от допълнителните ползи."
@@ -2165,7 +2162,7 @@ msgstr "Първичен"
 msgid "Private"
 msgstr "Частна"
 
-#: src/page/connect.vue:70 src/page/connect.vue:86
+#: src/page/connect.vue:70 src/page/connect.vue:87
 msgid "Proceed"
 msgstr ""
 
@@ -2476,7 +2473,7 @@ msgstr "Споделяне на %{име}"
 msgid "Share your pictures with other apps and services."
 msgstr "Споделяйте снимките си с други приложения и услуги."
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:108
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Не би ли трябвало свободният софтуер да е свободен от разходи?"
@@ -2633,7 +2630,7 @@ msgstr "Успешно свързване"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Поддръжката на допълнителни услуги, като например Google Drive, ще бъде добавена с течение на времето."
 
-#: src/dialog/sponsor.vue:7 src/page/connect.vue:17
+#: src/dialog/sponsor.vue:7 src/page/connect.vue:68
 #, fuzzy
 msgid "Support Our Mission"
 msgstr "Подкрепете нашата мисия"
@@ -2679,7 +2676,7 @@ msgstr "Възможно е техният формат да не се подд�
 msgid "Theme"
 msgstr "Тема"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:111
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Мислете за \"свободен софтуер\" като за \"свобода на словото\", а не като за \"свободна бира\". Фондацията за свободен софтуер понякога го нарича \"libre software\", като заимства френската или испанската дума за \"free\" (свободен), за да покаже, че няма предвид, че софтуерът е безплатен."
@@ -2744,7 +2741,7 @@ msgstr "Твърде дълго заглавие"
 msgid "Title too long"
 msgstr "Твърде дълго заглавие"
 
-#: src/page/connect.vue:58 src/page/connect.vue:74
+#: src/page/connect.vue:58 src/page/connect.vue:75
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2860,13 +2857,14 @@ msgstr "Актуализиране на визуализациите"
 msgid "Updating stacks"
 msgstr "Актуализиране на стекове"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:454
+#: src/page/connect.vue:17 src/component/navigation.vue:454
 #: src/component/navigation.vue:586 src/component/navigation.vue:1682
 #, fuzzy
 msgid "Upgrade"
 msgstr "Надграждане"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#: src/page/connect.vue:59
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Актуализирайте сега"
@@ -3042,7 +3040,7 @@ msgstr "Качване на WebDAV"
 msgid "Website"
 msgstr "Уебсайт"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:120
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Каква функционалност е общодостъпна?"
@@ -3052,7 +3050,7 @@ msgstr "Каква функционалност е общодостъпна?"
 msgid "White"
 msgstr "Бял"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:114
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Защо някои функции са достъпни само за спонсори?"
@@ -3122,7 +3120,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Можете да сканирате отново библиотеката си, за да намерите допълнителни лица."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:69
+#: src/page/connect.vue:71
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации и услуги като световни карти."
@@ -3136,9 +3134,8 @@ msgstr "Библиотеката ви се анализира непрекъсн
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
 
-#, fuzzy
-#~ msgid "Membership"
-#~ msgstr "Членство"
+#~ msgid "Basic"
+#~ msgstr "Основен"
 
 #, fuzzy
 #~ msgid "Upgrade now and enjoy our member benefits!"

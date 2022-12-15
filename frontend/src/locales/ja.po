@@ -56,7 +56,7 @@ msgstr "4時間"
 msgid "A click will copy it to your clipboard."
 msgstr "クリックすると、クリップボードにコピーされます。"
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:253
+#: src/page/about/about.vue:4 src/page/about/about.vue:256
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -85,12 +85,12 @@ msgstr "アクション"
 msgid "Actions"
 msgstr "アクション"
 
-#: src/page/connect.vue:75 src/page/connect.vue:91
+#: src/page/connect.vue:75 src/page/connect.vue:92
 #, fuzzy
 msgid "Activate"
 msgstr "アクティベート"
 
-#: src/page/connect.vue:293 src/page/connect.vue:388
+#: src/page/connect.vue:293 src/page/connect.vue:400
 #, fuzzy
 msgid "Activation Code"
 msgstr "アクティベーションコード"
@@ -331,16 +331,12 @@ msgstr "他のファイル形式の写真のために自動的に JPEG 版を作
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "特別な瞬間、旅、場所を記録したアルバムを自動的に作成します。"
 
-#: src/options/options.js:272
-msgid "Basic"
-msgstr "基本"
-
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "サポートリクエストを送信する前に、トラブルシューティングチェックリストを使って問題の原因を確認してください。"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:70
+#: src/page/connect.vue:72
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "100% selfが出資し、独立しているため、私たちはお客様のデータを決して販売せず、私たちのソフトウェアとサービスについて常に透明性を保つことをお約束できます。"
 
@@ -389,7 +385,7 @@ msgstr "バグ報告"
 msgid "Busy, please wait…"
 msgstr "処理中です、しばらくお待ちください…"
 
-#: src/page/connect.vue:82 src/page/connect.vue:98
+#: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
 
@@ -431,6 +427,10 @@ msgstr "これ以上項目を選択することはできません"
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "キャンセル"
+
+#: src/options/themes.js:436
+msgid "Carbon"
+msgstr "Carbon"
 
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
@@ -500,7 +500,7 @@ msgstr "色"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "よくある問題は、私たちが提供するトラブルシューティングチェックリストを使って素早く診断し、解決することができます。"
 
-#: src/page/connect.vue:67 src/page/connect.vue:83
+#: src/page/connect.vue:67 src/page/connect.vue:84
 #, fuzzy
 msgid "Compare Editions"
 msgstr "エディション比較"
@@ -825,10 +825,6 @@ msgstr "写真を編集"
 msgid "Edited"
 msgstr "編集済み"
 
-#: src/options/themes.js:436
-msgid "Electra"
-msgstr "Electra"
-
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 #: src/page/settings/account.vue:220
 msgid "Email"
@@ -898,10 +894,6 @@ msgstr "顔"
 msgid "Faces"
 msgstr "顔"
 
-#: src/page/connect.vue:14
-msgid "Failed"
-msgstr ""
-
 #: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
 msgstr "クリップボードにコピーできませんでした"
@@ -943,7 +935,7 @@ msgstr "フィード"
 msgid "Feedback"
 msgstr "フィードバック"
 
-#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:99
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:100
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "ご質問やお困りのことがございましたら、hello@photoprism.app までご連絡ください。"
 
@@ -1017,7 +1009,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "フレーム"
 
-#: src/page/connect.vue:104
+#: src/page/connect.vue:105
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "よくある質問"
@@ -1037,10 +1029,6 @@ msgstr "性別"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "一般"
-
-#: src/page/connect.vue:59
-msgid "Get started"
-msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1193,19 +1181,19 @@ msgstr "インスタンス ID"
 msgid "Interval"
 msgstr "間隔"
 
-#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
-#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
-#: src/page/settings/account.vue:224 src/page/settings/account.vue:281
-#: src/page/settings/account.vue:565 src/page/settings/account.vue:591
-#: src/page/settings/account.vue:619 src/page/settings/account.vue:647
-#: src/page/settings/account.vue:711 src/page/settings/account.vue:738
-#: src/page/settings/account.vue:765 src/page/settings/account.vue:793
-#: src/page/settings/account.vue:821 src/page/settings/account.vue:90
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:142
-#: src/page/settings/account.vue:168 src/page/settings/account.vue:223
-#: src/page/settings/account.vue:280 src/page/settings/account.vue:564
-#: src/page/settings/account.vue:618 src/page/settings/account.vue:646
-#: src/page/settings/account.vue:674
+#: src/page/connect.vue:14 src/page/settings/account.vue:91
+#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
+#: src/page/settings/account.vue:169 src/page/settings/account.vue:224
+#: src/page/settings/account.vue:281 src/page/settings/account.vue:565
+#: src/page/settings/account.vue:591 src/page/settings/account.vue:619
+#: src/page/settings/account.vue:647 src/page/settings/account.vue:711
+#: src/page/settings/account.vue:738 src/page/settings/account.vue:765
+#: src/page/settings/account.vue:793 src/page/settings/account.vue:821
+#: src/page/settings/account.vue:90 src/page/settings/account.vue:116
+#: src/page/settings/account.vue:142 src/page/settings/account.vue:168
+#: src/page/settings/account.vue:223 src/page/settings/account.vue:280
+#: src/page/settings/account.vue:564 src/page/settings/account.vue:618
+#: src/page/settings/account.vue:646 src/page/settings/account.vue:674
 msgid "Invalid"
 msgstr "無効"
 
@@ -1286,7 +1274,7 @@ msgstr "ラベンダー"
 
 #: src/page/connect.vue:98 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:28 src/page/about/about.vue:52
-#: src/page/about/about.vue:161 src/page/connect.vue:106 src/page/login.vue:63
+#: src/page/about/about.vue:161 src/page/connect.vue:107 src/page/login.vue:63
 msgid "Learn more"
 msgstr "詳細はこちら"
 
@@ -1305,7 +1293,7 @@ msgstr "レンズ"
 msgid "Library"
 msgstr "ライブラリ"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:440
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:557
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1386,6 +1374,10 @@ msgstr "経度"
 msgid "Low"
 msgstr "低い"
 
+#: src/options/options.js:272
+msgid "Low Resolution"
+msgstr ""
+
 #: src/options/options.js:389
 msgid "Magenta"
 msgstr "マゼンタ"
@@ -1421,6 +1413,11 @@ msgstr "マーカー"
 #: src/options/options.js:257
 msgid "Medium"
 msgstr "中"
+
+#: src/page/connect.vue:4
+#, fuzzy
+msgid "Membership"
+msgstr "メンバーシップ"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1710,7 +1707,7 @@ msgstr "オリジナル"
 msgid "Other"
 msgstr "他"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:123
 #, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "私たちのチームは、その機能が必要とするサポートの労力、私たちにかかるコスト、そしてその機能が一般的にすべての人に必要とされているか、主に組織や上級ユーザーから要求されているかによって、継続的にこれを評価しています。これにより、より多くの機能を一般に提供できるようになりますので、ユーザーの皆様には、私たちのミッションをサポートしていただくことをお勧めします。"
@@ -1771,7 +1768,7 @@ msgstr "写真"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism はアップデートされています …"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:117
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrismは100%自己資金で運営されています。ご寄付は、アップデート、ドキュメンテーション、サポートを提供するためにフルタイムで働くチームの費用をカバーするものではありません。ご登録いただくことで、より多くの特典をご利用いただけます。"
@@ -1857,7 +1854,7 @@ msgstr "プライマリ"
 msgid "Private"
 msgstr "プライベート"
 
-#: src/page/connect.vue:70 src/page/connect.vue:86
+#: src/page/connect.vue:70 src/page/connect.vue:87
 msgid "Proceed"
 msgstr ""
 
@@ -2114,7 +2111,7 @@ msgstr "%{name} を共有"
 msgid "Share your pictures with other apps and services."
 msgstr "他のアプリやサービスと写真を共有することができます。"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:108
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "フリーソフトはコストフリーであるべきではないか？"
@@ -2241,7 +2238,7 @@ msgstr "接続に成功"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "将来に渡って、Google ドライブなどの追加のサービスのサポートが追加される予定です。"
 
-#: src/dialog/sponsor.vue:7 src/page/connect.vue:17
+#: src/dialog/sponsor.vue:7 src/page/connect.vue:68
 #, fuzzy
 msgid "Support Our Mission"
 msgstr "私たちのミッションを支援する"
@@ -2279,7 +2276,7 @@ msgstr "それらの形式がサポートされていないか、まだ JPEG に
 msgid "Theme"
 msgstr "テーマ"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:111
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "自由ソフトウェア」は「言論の自由」のように考えるのであって、「無料のビール」のように考えるのではありません。フリーソフトウェアファウンデーションは、フランス語かスペイン語の「自由」を自由の意味で借用して、「libre software」と呼ぶことがありますが、これはソフトウェアが無料であるという意味ではないことを示すものです。"
@@ -2335,7 +2332,7 @@ msgstr "タイトル / 位置"
 msgid "Title too long"
 msgstr "タイトルが長すぎます"
 
-#: src/page/connect.vue:58 src/page/connect.vue:74
+#: src/page/connect.vue:58 src/page/connect.vue:75
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "アップグレードするには、アクティベーションコードを入力するか、当社ウェブサイト上で「サインアップ」をクリックしてアップグレードしてください。"
 
@@ -2432,13 +2429,14 @@ msgstr "プレビューの更新"
 msgid "Updating stacks"
 msgstr "スタックを更新しています"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:454
+#: src/page/connect.vue:17 src/component/navigation.vue:454
 #: src/component/navigation.vue:586 src/component/navigation.vue:1682
 #, fuzzy
 msgid "Upgrade"
 msgstr "アップグレード"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#: src/page/connect.vue:59
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "今すぐアップグレード"
@@ -2583,7 +2581,7 @@ msgstr "WebDAV アップロード"
 msgid "Website"
 msgstr "ウェブサイト"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:120
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "一般的にどのような機能があるのでしょうか？"
@@ -2592,7 +2590,7 @@ msgstr "一般的にどのような機能があるのでしょうか？"
 msgid "White"
 msgstr "白"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:114
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "なぜ、スポンサーだけが利用できる機能があるのですか？"
@@ -2651,7 +2649,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "追加の顔を見つけるために、ライブラリを再スキャンすることができます。"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:69
+#: src/page/connect.vue:71
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "皆様の継続的なご支援により、私たちは定期的なアップデートを提供し、独立性を保つことができ、私たちの使命を果たし、お客様のプライバシーを保護することができるのです。"
 
@@ -2663,9 +2661,8 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
 
-#, fuzzy
-#~ msgid "Membership"
-#~ msgstr "メンバーシップ"
+#~ msgid "Basic"
+#~ msgstr "基本"
 
 #, fuzzy
 #~ msgid "Upgrade now and enjoy our member benefits!"

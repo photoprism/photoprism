@@ -269,7 +269,7 @@ export const MapsStyle = () => [
     value: "",
   },
   {
-    text: $gettext("Basic"),
+    text: $gettext("Low Resolution"),
     value: "offline",
   },
   {

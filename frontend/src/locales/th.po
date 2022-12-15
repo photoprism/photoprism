@@ -58,7 +58,7 @@ msgstr "4 ชั่วโมง"
 msgid "A click will copy it to your clipboard."
 msgstr "คลิกเพื่อคัดลอกไปยังคลิปบอร์ด"
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:253
+#: src/page/about/about.vue:4 src/page/about/about.vue:256
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -90,12 +90,12 @@ msgstr "การกระทำ"
 msgid "Actions"
 msgstr "การกระทำ"
 
-#: src/page/connect.vue:75 src/page/connect.vue:91
+#: src/page/connect.vue:75 src/page/connect.vue:92
 #, fuzzy
 msgid "Activate"
 msgstr "เปิดใช้งาน"
 
-#: src/page/connect.vue:293 src/page/connect.vue:388
+#: src/page/connect.vue:293 src/page/connect.vue:400
 #, fuzzy
 msgid "Activation Code"
 msgstr "รหัสเปิดใช้งาน"
@@ -378,18 +378,13 @@ msgstr "สร้างไฟล์ JPEG สำหรับไฟล์ประ
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "สร้างอัลบั้มของช่วงเวลาพิเศษ การเดินทาง และสถานที่ต่าง ๆ โดยอัตโนมัติ"
 
-#: src/options/options.js:272
-#, fuzzy
-msgid "Basic"
-msgstr "ขั้นพื้นฐาน"
-
 #: src/page/about/about.vue:59
 #, fuzzy
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "ก่อนส่งคำขอรับการสนับสนุน โปรดใช้รายการตรวจสอบการแก้ไขปัญหาของเราเพื่อระบุสาเหตุของปัญหา"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:70
+#: src/page/connect.vue:72
 #, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "ด้วยการจัดหาเงินทุนด้วยตนเองและเป็นอิสระ 100% เราสามารถสัญญากับคุณได้ว่าเราจะไม่ขายข้อมูลของคุณและเราจะมีความโปร่งใสเกี่ยวกับซอฟต์แวร์และบริการของเราเสมอ"
@@ -447,7 +442,7 @@ msgstr "รายงานข้อผิดพลาด"
 msgid "Busy, please wait…"
 msgstr "ไม่ว่าง โปรดรอ…"
 
-#: src/page/connect.vue:82 src/page/connect.vue:98
+#: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
 
@@ -492,6 +487,11 @@ msgstr "ไม่สามารถเลือกรายการเพิ่
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "ยกเลิก"
+
+#: src/options/themes.js:436
+#, fuzzy
+msgid "Carbon"
+msgstr "Carbon"
 
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 #, fuzzy
@@ -572,7 +572,7 @@ msgstr "สี"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "ปัญหาทั่วไปสามารถวินิจฉัยและแก้ไขได้อย่างรวดเร็วโดยใช้รายการตรวจสอบการแก้ไขปัญหาที่เรามีให้"
 
-#: src/page/connect.vue:67 src/page/connect.vue:83
+#: src/page/connect.vue:67 src/page/connect.vue:84
 #, fuzzy
 msgid "Compare Editions"
 msgstr "เปรียบเทียบรุ่น"
@@ -964,11 +964,6 @@ msgstr "แก้ไขรูปภาพ"
 msgid "Edited"
 msgstr "แก้ไขแล้ว"
 
-#: src/options/themes.js:436
-#, fuzzy
-msgid "Electra"
-msgstr "Electra"
-
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 #: src/page/settings/account.vue:220
 #, fuzzy
@@ -1055,10 +1050,6 @@ msgstr "ใบหน้า"
 msgid "Faces"
 msgstr "ใบหน้า"
 
-#: src/page/connect.vue:14
-msgid "Failed"
-msgstr ""
-
 #: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 #, fuzzy
 msgid "Failed copying to clipboard"
@@ -1110,7 +1101,7 @@ msgstr "ข้อเสนอแนะ"
 msgid "Feedback"
 msgstr "ข้อเสนอแนะ"
 
-#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:99
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:100
 #, fuzzy
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "โปรดติดต่อเราที่ hello@photoprism.app หากคุณมีคำถามใด ๆ"
@@ -1199,7 +1190,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "เฟรม"
 
-#: src/page/connect.vue:104
+#: src/page/connect.vue:105
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "คำถามที่พบบ่อย"
@@ -1223,10 +1214,6 @@ msgstr "ลาเวนเดอร์"
 #, fuzzy
 msgid "General"
 msgstr "ทั่วไป"
-
-#: src/page/connect.vue:59
-msgid "Get started"
-msgstr ""
 
 #: src/page/about/about.vue:55
 msgid "Getting Support"
@@ -1411,19 +1398,19 @@ msgstr "รหัสอินสแตนซ์"
 msgid "Interval"
 msgstr "ช่วงเวลา"
 
-#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
-#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
-#: src/page/settings/account.vue:224 src/page/settings/account.vue:281
-#: src/page/settings/account.vue:565 src/page/settings/account.vue:591
-#: src/page/settings/account.vue:619 src/page/settings/account.vue:647
-#: src/page/settings/account.vue:711 src/page/settings/account.vue:738
-#: src/page/settings/account.vue:765 src/page/settings/account.vue:793
-#: src/page/settings/account.vue:821 src/page/settings/account.vue:90
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:142
-#: src/page/settings/account.vue:168 src/page/settings/account.vue:223
-#: src/page/settings/account.vue:280 src/page/settings/account.vue:564
-#: src/page/settings/account.vue:618 src/page/settings/account.vue:646
-#: src/page/settings/account.vue:674
+#: src/page/connect.vue:14 src/page/settings/account.vue:91
+#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
+#: src/page/settings/account.vue:169 src/page/settings/account.vue:224
+#: src/page/settings/account.vue:281 src/page/settings/account.vue:565
+#: src/page/settings/account.vue:591 src/page/settings/account.vue:619
+#: src/page/settings/account.vue:647 src/page/settings/account.vue:711
+#: src/page/settings/account.vue:738 src/page/settings/account.vue:765
+#: src/page/settings/account.vue:793 src/page/settings/account.vue:821
+#: src/page/settings/account.vue:90 src/page/settings/account.vue:116
+#: src/page/settings/account.vue:142 src/page/settings/account.vue:168
+#: src/page/settings/account.vue:223 src/page/settings/account.vue:280
+#: src/page/settings/account.vue:564 src/page/settings/account.vue:618
+#: src/page/settings/account.vue:646 src/page/settings/account.vue:674
 #, fuzzy
 msgid "Invalid"
 msgstr "วันที่ไม่ถูกต้อง"
@@ -1523,7 +1510,7 @@ msgstr "ลาเวนเดอร์"
 
 #: src/page/connect.vue:98 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:28 src/page/about/about.vue:52
-#: src/page/about/about.vue:161 src/page/connect.vue:106 src/page/login.vue:63
+#: src/page/about/about.vue:161 src/page/connect.vue:107 src/page/login.vue:63
 #, fuzzy
 msgid "Learn more"
 msgstr "เรียนรู้เพิ่มเติม"
@@ -1546,7 +1533,7 @@ msgstr "เลนส์"
 msgid "Library"
 msgstr "ห้องสมุด"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:440
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:557
 #: src/page/about/license.vue:4
 #, fuzzy
@@ -1645,6 +1632,10 @@ msgstr "ลองจิจูด"
 msgid "Low"
 msgstr "ต่ำ"
 
+#: src/options/options.js:272
+msgid "Low Resolution"
+msgstr ""
+
 #: src/options/options.js:389
 #, fuzzy
 msgid "Magenta"
@@ -1688,6 +1679,11 @@ msgstr "เครื่องหมาย"
 #, fuzzy
 msgid "Medium"
 msgstr "ปานกลาง"
+
+#: src/page/connect.vue:4
+#, fuzzy
+msgid "Membership"
+msgstr "การเป็นสมาชิก"
 
 #: src/dialog/people/merge.vue:25
 #, fuzzy
@@ -2038,7 +2034,7 @@ msgstr "ต้นฉบับ"
 msgid "Other"
 msgstr "อื่น"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:123
 #, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "ทีมงานของเราประเมินสิ่งนี้อย่างต่อเนื่อง โดยขึ้นอยู่กับความพยายามในการสนับสนุนที่ฟีเจอร์ต้องการ ค่าใช้จ่ายสำหรับเรา และไม่ว่าโดยทั่วไปแล้วทุกคนต้องการหรือต้องการโดยองค์กรและผู้ใช้ขั้นสูงเป็นหลัก เนื่องจากสิ่งนี้ช่วยให้เราสามารถให้บริการคุณลักษณะต่างๆ แก่สาธารณะได้มากขึ้น เราจึงสนับสนุนให้ผู้ใช้ทุกคนสนับสนุนภารกิจของเรา"
@@ -2112,7 +2108,7 @@ msgstr "รูปถ่าย"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism ได้รับการอัพเดต…"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:117
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism ใช้เงินตัวเอง 100% การบริจาคโดยสมัครใจไม่ครอบคลุมค่าใช้จ่ายของทีมที่ทำงานเต็มเวลาเพื่อแจ้งข้อมูลอัปเดต เอกสาร และการสนับสนุนแก่คุณ เป็นการตัดสินใจของคุณว่าคุณต้องการสมัครเพื่อรับสิทธิประโยชน์เพิ่มเติมหรือไม่"
@@ -2215,7 +2211,7 @@ msgstr "หลัก"
 msgid "Private"
 msgstr "ส่วนตัว"
 
-#: src/page/connect.vue:70 src/page/connect.vue:86
+#: src/page/connect.vue:70 src/page/connect.vue:87
 msgid "Proceed"
 msgstr ""
 
@@ -2530,7 +2526,7 @@ msgstr "แบ่งปัน %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "แบ่งปันรูปภาพของคุณกับแอพและบริการอื่นๆ"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:108
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "ซอฟต์แวร์ฟรีไม่ควรมีค่าใช้จ่ายใช่หรือไม่"
@@ -2687,7 +2683,7 @@ msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "การสนับสนุนบริการเพิ่มเติม เช่น Google ไดรฟ์ จะถูกเพิ่มเข้ามาเรื่อยๆ"
 
-#: src/dialog/sponsor.vue:7 src/page/connect.vue:17
+#: src/dialog/sponsor.vue:7 src/page/connect.vue:68
 #, fuzzy
 msgid "Support Our Mission"
 msgstr "สนับสนุนภารกิจของเรา"
@@ -2733,7 +2729,7 @@ msgstr "รูปแบบของไฟล์อาจไม่ได้รั
 msgid "Theme"
 msgstr "ธีม"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:111
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "คิดว่า \"ซอฟต์แวร์ฟรี\" เป็น \"คำพูดฟรี\" ไม่ใช่ใน \"เบียร์ฟรี\" บางครั้ง Free Software Foundation เรียกมันว่า \"ซอฟต์แวร์เสรี\" โดยยืมคำภาษาฝรั่งเศสหรือภาษาสเปนที่แปลว่า \"ฟรี\" ในคำว่า อิสระ เพื่อแสดงให้เห็นว่าซอฟต์แวร์เหล่านี้ไม่ได้หมายความว่าเป็นซอฟต์แวร์ฟรี"
@@ -2798,7 +2794,7 @@ msgstr "ชื่อเรื่องยาวเกินไป"
 msgid "Title too long"
 msgstr "ชื่อเรื่องยาวเกินไป"
 
-#: src/page/connect.vue:58 src/page/connect.vue:74
+#: src/page/connect.vue:58 src/page/connect.vue:75
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2914,13 +2910,14 @@ msgstr "กำลังอัปเดตตัวอย่าง"
 msgid "Updating stacks"
 msgstr "กำลังอัปเดตกอง"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:454
+#: src/page/connect.vue:17 src/component/navigation.vue:454
 #: src/component/navigation.vue:586 src/component/navigation.vue:1682
 #, fuzzy
 msgid "Upgrade"
 msgstr "อัปเกรด"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#: src/page/connect.vue:59
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "อัพเกรดเดี๋ยวนี้"
@@ -3096,7 +3093,7 @@ msgstr "อัพโหลด WebDAV"
 msgid "Website"
 msgstr "เว็บไซต์"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:120
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "โดยทั่วไปมีฟังก์ชันอะไรบ้าง?"
@@ -3105,7 +3102,7 @@ msgstr "โดยทั่วไปมีฟังก์ชันอะไรบ
 msgid "White"
 msgstr "สีขาว"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:114
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "เหตุใดฟีเจอร์บางอย่างจึงมีให้เฉพาะผู้สนับสนุนเท่านั้น"
@@ -3174,7 +3171,7 @@ msgid "You may rescan your library to find additional faces."
 msgstr "คุณสามารถสแกนห้องสมุดของคุณเพื่อค้นหาใบหน้าเพิ่มเติม"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:69
+#: src/page/connect.vue:71
 #, fuzzy
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "การสนับสนุนอย่างต่อเนื่องของคุณช่วยให้เราอัปเดตและบริการต่างๆ เป็นประจำ เช่น แผนที่โลก"
@@ -3190,8 +3187,8 @@ msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
 
 #, fuzzy
-#~ msgid "Membership"
-#~ msgstr "การเป็นสมาชิก"
+#~ msgid "Basic"
+#~ msgstr "ขั้นพื้นฐาน"
 
 #, fuzzy
 #~ msgid "Upgrade now and enjoy our member benefits!"
