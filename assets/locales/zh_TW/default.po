@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-16 13:07+0000\n"
+"PO-Revision-Date: 2022-12-15 04:06+0000\n"
 "Last-Translator: SeanPai <seanpai96@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hant/>\n"
@@ -106,7 +106,7 @@ msgstr "不適用於唯讀模式"
 
 #: messages.go:115
 msgid "Please log in to your account"
-msgstr "請登錄您的帳戶"
+msgstr "請登入您的帳戶"
 
 #: messages.go:116
 msgid "Permission denied"
@@ -327,7 +327,7 @@ msgstr "人物已刪除"
 
 #: messages.go:169
 msgid "File uploaded"
-msgstr "上載檔案成功"
+msgstr "檔案上傳成功"
 
 #: messages.go:170
 #, c-format
@@ -340,7 +340,7 @@ msgstr "正在處理上傳..."
 
 #: messages.go:172
 msgid "Upload has been processed"
-msgstr "上傳已處理"
+msgstr "上傳已處理完畢"
 
 #: messages.go:173
 msgid "Selection approved"
