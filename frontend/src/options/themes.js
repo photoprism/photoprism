@@ -392,13 +392,13 @@ let options = [
     disabled: false,
   },
   {
-    text: $gettext("Carbon"),
-    value: "carbon",
+    text: $gettext("Gemstone"),
+    value: "gemstone",
     disabled: false,
   },
   {
-    text: $gettext("Gemstone"),
-    value: "gemstone",
+    text: $gettext("Carbon"),
+    value: "carbon",
     disabled: false,
   },
   {
