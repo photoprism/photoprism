@@ -385,7 +385,7 @@ msgstr "忙碌中，請稍候…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
+msgstr "當您開始使用我們提供的軟體及服務時，即表示您同意我們的服務條款、隱私權政策和行為準則。"
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -499,9 +499,8 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "使用我們提供的故障排除清單可以快速診斷和解決常見問題。"
 
 #: src/page/connect.vue:67 src/page/connect.vue:84
-#, fuzzy
 msgid "Compare Editions"
-msgstr "版本比较"
+msgstr "比較版本"
 
 #: src/page/library/index.vue:115
 msgid "Complete Rescan"
@@ -1388,7 +1387,7 @@ msgstr "男性"
 
 #: src/page/connect.vue:56
 msgid "Manage account"
-msgstr ""
+msgstr "管理帳號"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1702,9 +1701,8 @@ msgid "Other"
 msgstr "其他"
 
 #: src/page/connect.vue:123
-#, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "我们的团队会根据这些功能所需的支持力度、我们的成本，以及这些功能是大家普遍需要的还是主要由组织和高级用户要求的，不断对此进行评估。由于这使我们能够向公众提供更多的功能，我们鼓励所有用户支持我们的任务。"
+msgstr "我們的團隊會根據開發這些功能所需要付出的時間及精神，伺服器和認證成本，以及這些功能是每個人普遍都會需要的功能，還是主要是由組織和專業用戶的請求來持續的評估。由於這使我們能夠向大眾提供更多功能，因此我們鼓勵所有用戶支持我們的專案。"
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1849,7 +1847,7 @@ msgstr "私人的"
 
 #: src/page/connect.vue:70 src/page/connect.vue:87
 msgid "Proceed"
-msgstr ""
+msgstr "繼續"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:408
 msgid "Product Feedback"
@@ -2324,7 +2322,7 @@ msgstr "標題太長"
 
 #: src/page/connect.vue:58 src/page/connect.vue:75
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
+msgstr "要升級，你需要輸入金鑰或按下\"繼續\"來登入我們的網站:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2651,6 +2649,15 @@ msgstr "縮放"
 
 #~ msgid "Basic"
 #~ msgstr "基本"
+
+#~ msgid "Electra"
+#~ msgstr "Electra"
+
+#~ msgid "Failed"
+#~ msgstr "失敗"
+
+#~ msgid "Get started"
+#~ msgstr "快速入門"
 
 #~ msgid "Upgrade now and enjoy our member benefits!"
 #~ msgstr "現在就升級，享受我們的會員福利!"

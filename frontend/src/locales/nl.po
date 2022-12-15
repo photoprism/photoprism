@@ -385,7 +385,7 @@ msgstr "Bezig, wacht even…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
+msgstr "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -2651,6 +2651,9 @@ msgstr "In-/uitzoomen"
 
 #~ msgid "Basic"
 #~ msgstr "Basis"
+
+#~ msgid "Electra"
+#~ msgstr "Electra"
 
 #~ msgid "Upgrade now and enjoy our member benefits!"
 #~ msgstr "Upgrade nu en geniet van onze ledenvoordelen!"
