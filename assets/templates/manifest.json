@@ -1,6 +1,6 @@
 {
   "name": "{{ .config.AppName }}",
-  "short_name": "{{ printf "%.16s" .config.AppName }}",
+  "short_name": "{{ printf "%.32s" .config.AppName }}",
   "description": "{{ .config.SiteDescription }}",
   "icons": [
     {
