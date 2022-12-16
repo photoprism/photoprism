@@ -80,7 +80,7 @@
     }
   ],
   "scope": "{{ .config.BaseUri }}/",
-  "start_url": "{{ .config.BaseUri }}/library/",
+  "start_url": "{{ .config.BaseUri }}/",
   "display": "{{ .config.AppMode }}",
   "theme_color": "#000000",
   "background_color": "#000000",
