@@ -14,7 +14,7 @@ describe("model/label", () => {
   });
 
   it("should return batch size", () => {
-    assert.equal(Label.batchSize(), 48);
+    assert.equal(Label.batchSize(), 24);
   });
 
   it("should return classes", () => {

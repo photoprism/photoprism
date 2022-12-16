@@ -213,7 +213,7 @@ describe("model/album", () => {
   });
 
   it("should return batch size", () => {
-    assert.equal(Album.batchSize(), 48);
+    assert.equal(Album.batchSize(), 24);
   });
 
   it("should like album", () => {

@@ -86,7 +86,7 @@ export const DATE_FULL_TZ = {
   timeZoneName: short,
 };
 
-export let BatchSize = 120;
+export let BatchSize = 90;
 
 export class Photo extends RestModel {
   constructor(values) {

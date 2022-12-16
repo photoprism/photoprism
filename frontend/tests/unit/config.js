@@ -296,7 +296,7 @@ const clientConfig = {
       language: "en",
     },
     search: {
-      batchSize: 120,
+      batchSize: 90,
     },
     maps: {
       animate: 0,
