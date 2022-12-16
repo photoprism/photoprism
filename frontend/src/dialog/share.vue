@@ -35,12 +35,11 @@
                     <v-flex xs12 class="pa-2">
                       <v-text-field
                           :value="link.url()"
+                          hide-details box flat readonly
                           :label="$gettext('URL')"
                           autocorrect="off"
                           autocapitalize="none"
                           browser-autocomplete="off"
-                          hide-details box flat
-                          readonly
                           color="secondary-dark"
                           class="input-url"
                           @click.stop="selectText($event)">
@@ -49,9 +48,9 @@
                     <v-flex xs12 sm6 class="pa-2">
                       <v-select
                           v-model="link.Expires"
+                          hide-details box flat
                           :label="expires(link)"
                           browser-autocomplete="off"
-                          hide-details box flat
                           color="secondary-dark"
                           item-text="text"
                           item-value="value"
@@ -62,11 +61,11 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
                       <v-text-field
-                          v-model="link.Token" hide-details
-                          required
+                          v-model="link.Token"
+                          hide-details box flat required
+                          browser-autocomplete="off"
                           autocorrect="off"
                           autocapitalize="none"
-                          browser-autocomplete="off"
                           :label="$gettext('Secret')"
                           :placeholder="$gettext('Token')"
                           color="secondary-dark"
