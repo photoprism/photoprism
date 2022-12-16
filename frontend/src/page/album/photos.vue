@@ -105,7 +105,7 @@ export default {
         loading: false,
         complete: false,
         dirty: false,
-        batchSize: batchSize > 160 ? 480 : batchSize * 3
+        batchSize: 8000,
       },
     };
   },

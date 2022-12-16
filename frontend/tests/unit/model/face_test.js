@@ -125,7 +125,7 @@ describe("model/face", () => {
   });
 
   it("should return batch size", () => {
-    assert.equal(Face.batchSize(), 24);
+    assert.equal(Face.batchSize(), 48);
   });
 
   it("should get collection resource", () => {

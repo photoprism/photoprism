@@ -31,7 +31,7 @@ import { $gettext } from "common/vm";
 import * as src from "common/src";
 import Api from "common/api";
 
-export let BatchSize = 24;
+export let BatchSize = 48;
 
 export class Face extends RestModel {
   constructor(values) {
