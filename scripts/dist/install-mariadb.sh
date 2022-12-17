@@ -18,11 +18,12 @@ fi
 
 set -e
 
-SETUP_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
+MARIADB_VERSION="10.10"
+MARIADB_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
 
 if [ ! -f "/etc/apt/sources.list.d/mariadb.list" ]; then
-  echo "Adding MariaDB packages sources from \"$SETUP_URL\"..."
-  curl -Ls $SETUP_URL | bash  -s -- --mariadb-server-version="mariadb-10.10"
+  echo "Installing MariaDB $MARIADB_VERSION package sources..."
+  curl -Ls $MARIADB_URL | bash  -s -- --mariadb-server-version="mariadb-$MARIADB_VERSION"
 fi
 
 echo "Installing \"$1\"..."
