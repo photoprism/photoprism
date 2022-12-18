@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-12-01 23:47+0000\n"
-"Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
+"PO-Revision-Date: 2022-12-17 23:11+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -1367,8 +1367,9 @@ msgid "Low"
 msgstr "Madal"
 
 #: src/options/options.js:272
+#, fuzzy
 msgid "Low Resolution"
-msgstr ""
+msgstr "Madal resolutsioon"
 
 #: src/options/options.js:389
 msgid "Magenta"
