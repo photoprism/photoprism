@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 08:51+0000\n"
+"PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -386,8 +387,11 @@ msgid "Busy, please wait…"
 msgstr "처리중, 잠시만 기다려주세요…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
+#, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
+"당사가 제공하는 소프트웨어 및 서비스를 사용함으로써 귀하는 당사의 서비스 "
+"약관, 개인 정보 보호 정책 및 행동 강령에 동의하는 것입니다."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -1375,8 +1379,9 @@ msgid "Low"
 msgstr "낮음"
 
 #: src/options/options.js:272
+#, fuzzy
 msgid "Low Resolution"
-msgstr ""
+msgstr "저해상도"
 
 #: src/options/options.js:389
 msgid "Magenta"
@@ -1391,8 +1396,9 @@ msgid "Male"
 msgstr "남성"
 
 #: src/page/connect.vue:56
+#, fuzzy
 msgid "Manage account"
-msgstr ""
+msgstr "계정 관리"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1855,8 +1861,9 @@ msgid "Private"
 msgstr "비공개"
 
 #: src/page/connect.vue:70 src/page/connect.vue:87
+#, fuzzy
 msgid "Proceed"
-msgstr ""
+msgstr "진행하다"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:408
 msgid "Product Feedback"
@@ -2333,8 +2340,10 @@ msgid "Title too long"
 msgstr "주제 너무 긴다"
 
 #: src/page/connect.vue:58 src/page/connect.vue:75
+#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
+msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"진행\"을 클릭하여 당사 웹 "
+"사이트에 가입하십시오."
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71

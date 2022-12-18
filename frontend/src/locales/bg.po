@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 08:51+0000\n"
+"PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -392,8 +393,12 @@ msgid "Busy, please wait…"
 msgstr "Заето, моля, изчакайте…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
+#, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
+"С използването на софтуера и услугите, които предоставяме, вие се "
+"съгласявате с нашите условия за ползване, политика за поверителност и кодекс "
+"на поведение."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -1585,8 +1590,9 @@ msgid "Low"
 msgstr "Нисък"
 
 #: src/options/options.js:272
+#, fuzzy
 msgid "Low Resolution"
-msgstr ""
+msgstr "Ниска разделителна способност"
 
 #: src/options/options.js:389
 #, fuzzy
@@ -1604,8 +1610,9 @@ msgid "Male"
 msgstr "Мъжки"
 
 #: src/page/connect.vue:56
+#, fuzzy
 msgid "Manage account"
-msgstr ""
+msgstr "Управление на акаунт"
 
 #: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
@@ -2163,8 +2170,9 @@ msgid "Private"
 msgstr "Частна"
 
 #: src/page/connect.vue:70 src/page/connect.vue:87
+#, fuzzy
 msgid "Proceed"
-msgstr ""
+msgstr "Продължете"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:408
 #, fuzzy
@@ -2742,8 +2750,11 @@ msgid "Title too long"
 msgstr "Твърде дълго заглавие"
 
 #: src/page/connect.vue:58 src/page/connect.vue:75
+#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
+"За да извършите ъпгрейд, можете да въведете код за активиране или да "
+"кликнете върху \"Продължи\", за да се регистрирате на нашия уебсайт:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71

@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-11 22:47+0000\n"
-"Last-Translator: Ruggero Montalto <ruggero.montalto@protonmail.com>\n"
-"Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/frontend/it/>\n"
+"PO-Revision-Date: 2022-12-17 23:11+0000\n"
+"Last-Translator: bvzasfb <bellavirgolazio@gmail.com>\n"
+"Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
+"frontend/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -386,6 +387,8 @@ msgstr "Occupato, attendere prego…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
+"Utilizzando il software e i servizi, accetti i nostri temini di servizio, "
+"privacy policy e codice di condotta."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -499,7 +502,6 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "I problemi più comuni possono essere diagnosticati e risolti rapidamente utilizzando le liste di controllo per la risoluzione dei problemi che ti forniamo."
 
 #: src/page/connect.vue:67 src/page/connect.vue:84
-#, fuzzy
 msgid "Compare Editions"
 msgstr "Confronta le edizioni"
 
@@ -1372,7 +1374,7 @@ msgstr "Bassa"
 
 #: src/options/options.js:272
 msgid "Low Resolution"
-msgstr ""
+msgstr "Bassa risoluzione"
 
 #: src/options/options.js:389
 msgid "Magenta"
@@ -1388,7 +1390,7 @@ msgstr "Maschile"
 
 #: src/page/connect.vue:56
 msgid "Manage account"
-msgstr ""
+msgstr "Gestione account"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1411,9 +1413,8 @@ msgid "Medium"
 msgstr "Medio"
 
 #: src/page/connect.vue:4
-#, fuzzy
 msgid "Membership"
-msgstr "Soci"
+msgstr "Adesione"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1703,9 +1704,14 @@ msgid "Other"
 msgstr "Altro"
 
 #: src/page/connect.vue:123
-#, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Il nostro team valuta costantemente questo aspetto, in base all'impegno di supporto che le funzioni richiedono, al costo per noi e al fatto che siano generalmente necessarie a tutti o richieste principalmente da organizzazioni e utenti avanzati. Poiché questo ci permette di fornire più funzioni al pubblico, incoraggiamo tutti gli utenti a sostenere la nostra missione."
+msgstr ""
+"Il nostro team valuta costantemente questo aspetto, in base all'impegno di "
+"supporto richiesto, al costo dei server e della licenza e al fatto che le "
+"funzionalità siano generalmente necessarie a tutti o richieste "
+"principalmente da organizzazioni e utenti avanzati. Poiché questo ci "
+"permette di fornire più funzioni al pubblico, incoraggiamo tutti gli utenti "
+"a sostenere la nostra missione."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1764,9 +1770,12 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism è stato aggiornato…"
 
 #: src/page/connect.vue:117
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism è autofinanziato al 100%. Le donazioni volontarie non coprono i costi di un team che lavora a tempo pieno per fornire aggiornamenti, documentazione e supporto. Siete voi a decidere se volete iscrivervi per godere di ulteriori vantaggi."
+msgstr ""
+"PhotoPrism è autofinanziato al 100%. Le donazioni volontarie non coprono i "
+"costi di un team che lavora a tempo pieno per fornire aggiornamenti, "
+"documentazione e supporto. Siete voi a decidere se volete iscrivervi per "
+"godere di ulteriori vantaggi."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1851,7 +1860,7 @@ msgstr "Privato"
 
 #: src/page/connect.vue:70 src/page/connect.vue:87
 msgid "Proceed"
-msgstr ""
+msgstr "Procedi"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:408
 msgid "Product Feedback"
@@ -2302,13 +2311,11 @@ msgid "Timeout"
 msgstr "Timeout"
 
 #: src/page/settings/account.vue:113
-#, fuzzy
 msgctxt "Account"
 msgid "Title"
 msgstr "Titolo"
 
 #: src/dialog/photo/edit/details.vue:96
-#, fuzzy
 msgctxt "Photo"
 msgid "Title"
 msgstr "Titolo"
@@ -2329,6 +2336,8 @@ msgstr "Titolo troppo lungo"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
+"Per effettuare l'upgrade, puoi inserire il codice di attivazione o cliccare "
+"su \"Procedi\" per registrarti sul nostro sito web:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2576,7 +2585,6 @@ msgid "Website"
 msgstr "Sito web"
 
 #: src/page/connect.vue:120
-#, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Quali sono le funzionalità generalmente disponibili?"
 
@@ -2585,7 +2593,6 @@ msgid "White"
 msgstr "Bianco"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Perché alcune funzioni sono disponibili solo per gli sponsor?"
 

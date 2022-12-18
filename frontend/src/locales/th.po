@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-28 08:51+0000\n"
+"PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:421
@@ -443,8 +443,11 @@ msgid "Busy, please wait…"
 msgstr "ไม่ว่าง โปรดรอ…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
+#, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
+"โดยการใช้ซอฟต์แวร์และบริการที่เรามอบให้ แสดงว่าคุณยอมรับข้อกำหนดในการให้บริ"
+"การ นโยบายความเป็นส่วนตัว และจรรยาบรรณของเรา"
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -1633,8 +1636,9 @@ msgid "Low"
 msgstr "ต่ำ"
 
 #: src/options/options.js:272
+#, fuzzy
 msgid "Low Resolution"
-msgstr ""
+msgstr "ความละเอียดต่ำ"
 
 #: src/options/options.js:389
 #, fuzzy
@@ -1652,8 +1656,9 @@ msgid "Male"
 msgstr "ชาย"
 
 #: src/page/connect.vue:56
+#, fuzzy
 msgid "Manage account"
-msgstr ""
+msgstr "จัดการบัญชี"
 
 #: src/dialog/photo/edit/labels.vue:35
 #, fuzzy
@@ -2212,8 +2217,9 @@ msgid "Private"
 msgstr "ส่วนตัว"
 
 #: src/page/connect.vue:70 src/page/connect.vue:87
+#, fuzzy
 msgid "Proceed"
-msgstr ""
+msgstr "ดำเนินการ"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:408
 #, fuzzy
@@ -2795,8 +2801,11 @@ msgid "Title too long"
 msgstr "ชื่อเรื่องยาวเกินไป"
 
 #: src/page/connect.vue:58 src/page/connect.vue:75
+#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
+"หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"ดำเนินการต่อ\" "
+"เพื่อลงทะเบียนบนเว็บไซต์ของเรา:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
