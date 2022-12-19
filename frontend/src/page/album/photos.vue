@@ -67,7 +67,7 @@ export default {
     const uid = this.$route.params.uid;
     const query = this.$route.query;
     const routeName = this.$route.name;
-    const order = query['order'] ? query['order'] : 'oldest';
+    const order = query['order'] ? query['order'] : 'newest';
     const camera = query['camera'] ? parseInt(query['camera']) : 0;
     const q = query['q'] ? query['q'] : '';
     const country = query['country'] ? query['country'] : '';
