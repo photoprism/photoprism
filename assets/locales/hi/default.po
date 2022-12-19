@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-02-19 14:53+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-12-19 00:48+0000\n"
+"Last-Translator: nikhilhurule <nikhilhurule@gmail.com>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
 "backend/hi/>\n"
 "Language: hi\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.15\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -50,15 +50,15 @@ msgstr "फाइल नहीं मिली"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "बहुत बड़ी फाइल"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "असमर्थित प्रारूप"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "मूल फ़ोल्डर खाली है"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -101,41 +101,36 @@ msgid "Not available in public mode"
 msgstr "सार्वजनिक मोड में उपलब्ध नहीं है"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
-msgstr "केवल पढ़ने के लिए मोड में उपलब्ध नहीं है"
+msgstr "रीड ओनली मोड में उपलब्ध नहीं है"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
-msgstr "कृपया पुनः लॉगिन करें और पुनः प्रयास करें"
+msgstr "कृपया अपने खाते लॉग इन करें"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
-msgstr "व्यक्ति हटाया गया"
+msgstr "अनुमति नहीं मिली"
 
 #: messages.go:117
 msgid "Upload might be offensive"
-msgstr "अपलोड आक्रामक हो सकता है"
+msgstr "अपलोड आपत्तिजनक हो सकता है"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "अपलोड विफल"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "कोई आइटम नहीं चुना गया"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
-msgstr "फ़ाइल बनाने में विफल, कृपया अनुमतियां जांचें"
+msgstr "फ़ाइल बनाने में विफल, कृपया अनुमतियों की जाँच करें"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
-msgstr "फ़ोल्डर बनाने में विफल, कृपया अनुमतियां जांचें"
+msgstr "फ़ोल्डर बनाने में विफल, कृपया अनुमतियों की जाँच करें"
 
 #: messages.go:122
 msgid "Could not connect, please try again"
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "डाउनलोड के लिए कोई फाइल उपलब्ध नहीं है"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "ज़िप फ़ाइल बनाने में विफल"
 
@@ -179,18 +173,17 @@ msgid "Invalid name"
 msgstr "अमान्य नाम"
 
 #: messages.go:132
-#, fuzzy
 msgid "Busy, please try again later"
-msgstr "अमान्य पासवर्ड, कृपया पुनः प्रयास करें"
+msgstr "व्यस्त, कृपया बाद में पुन: प्रयास करें"
 
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "वेकअप अंतराल %s है, लेकिन 1h या उससे कम होना चाहिए"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "आपका खाता कनेक्ट नहीं किया जा सका"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -333,9 +326,8 @@ msgid "Person deleted"
 msgstr "व्यक्ति हटाया गया"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
-msgstr "फ़ाइल हटा दी गई"
+msgstr "फ़ाइल अपलोड की गई"
 
 #: messages.go:170
 #, c-format
@@ -344,12 +336,11 @@ msgstr "%d फाइलों को %d में अपलोड किया �
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "अपलोड संसाधित किया जा रहा है..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
-msgstr "अपलोड आक्रामक हो सकता है"
+msgstr "अपलोड संसाधित हो गया है"
 
 #: messages.go:173
 msgid "Selection approved"
@@ -381,9 +372,9 @@ msgid "Permanently deleted"
 msgstr "स्थायी रूप से हटा दिया गया"
 
 #: messages.go:180
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been restored"
-msgstr "चयन बहाल"
+msgstr "%s बहाल कर दिया गया है"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "सर्वर पर नहीं मिला, हटाया गया?"
