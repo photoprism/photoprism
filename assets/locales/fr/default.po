@@ -29,11 +29,11 @@ msgstr "Requête invalide"
 
 #: messages.go:96
 msgid "Changes could not be saved"
-msgstr "Les modifications n'ont pas pu être sauvegardées"
+msgstr "Les modifications n’ont pas pu être sauvegardées"
 
 #: messages.go:97
 msgid "Could not be deleted"
-msgstr "N'a pu être supprimé"
+msgstr "N’a pu être supprimé"
 
 #: messages.go:98
 #, c-format
@@ -160,11 +160,11 @@ msgstr "Aucun fichier disponible au téléchargement"
 
 #: messages.go:128
 msgid "Failed to create zip file"
-msgstr "Échec de la création de l'archive zip"
+msgstr "Échec de la création de l’archive zip"
 
 #: messages.go:129
 msgid "Invalid credentials"
-msgstr "Les informations d'identification sont invalides"
+msgstr "Les informations d’identification sont invalides"
 
 #: messages.go:130
 msgid "Invalid link"
@@ -181,11 +181,11 @@ msgstr "Occupé, veuillez réessayer plus tard"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr "L'intervalle de réveil est %s, mais doit être inférieur ou égal à 1h"
+msgstr "L’intervalle de réveil est %s, mais doit être inférieur ou égal à 1h"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr "Votre compte n'a pas pu être connecté"
+msgstr "Votre compte n’a pas pu être connecté"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -206,7 +206,7 @@ msgstr "Album %s supprimé"
 
 #: messages.go:141
 msgid "Album contents cloned"
-msgstr "Le contenu de l'album a été copié"
+msgstr "Le contenu de l’album a été copié"
 
 #: messages.go:142
 msgid "File removed from stack"
