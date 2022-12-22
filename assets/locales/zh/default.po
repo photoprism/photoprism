@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-10 04:52+0000\n"
-"Last-Translator: SettingDust <settingdust@gmail.com>\n"
+"PO-Revision-Date: 2022-12-22 02:48+0000\n"
+"Last-Translator: Mingtian Yang <tswymt@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -187,7 +187,7 @@ msgstr "你的账户无法连接"
 
 #: messages.go:137
 msgid "Changes successfully saved"
-msgstr "变更成功保存"
+msgstr "更改成功保存"
 
 #: messages.go:138
 msgid "Album created"
