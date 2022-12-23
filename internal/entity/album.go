@@ -146,7 +146,7 @@ func NewUserAlbum(albumTitle, albumType, userUid string) *Album {
 
 	// Set default values.
 	result := &Album{
-		AlbumOrder: SortOrderNewest,
+		AlbumOrder: SortOrderOldest,
 		AlbumType:  albumType,
 		CreatedAt:  now,
 		UpdatedAt:  now,

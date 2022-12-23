@@ -49,7 +49,7 @@ export class Album extends RestModel {
       Description: "",
       Notes: "",
       Filter: "",
-      Order: "newest",
+      Order: "",
       Template: "",
       State: "",
       Country: "",
