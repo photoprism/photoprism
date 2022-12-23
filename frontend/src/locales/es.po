@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-19 21:16+0000\n"
-"Last-Translator: Aleks Clark <aleks.clark@gmail.com>\n"
-"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
+"PO-Revision-Date: 2022-12-23 14:48+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1497,8 +1498,9 @@ msgid "Name too long"
 msgstr "Nombre demasiado largo"
 
 #: src/options/themes.js:451
+#, fuzzy
 msgid "Neon"
-msgstr ""
+msgstr "Neón"
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54

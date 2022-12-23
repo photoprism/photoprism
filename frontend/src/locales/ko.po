@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-17 23:11+0000\n"
+"PO-Revision-Date: 2022-12-23 14:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1506,8 +1507,9 @@ msgid "Name too long"
 msgstr "이름이 너무 깁니다"
 
 #: src/options/themes.js:451
+#, fuzzy
 msgid "Neon"
-msgstr ""
+msgstr "네온"
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
