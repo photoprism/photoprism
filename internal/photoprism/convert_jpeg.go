@@ -171,9 +171,14 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 		result = append(result, exec.Command(c.conf.HeifConvertBin(), "-q", c.conf.JpegQuality().String(), f.FileName(), jpegName))
 	}
 
-	// Video thumbnails can be created with FFmpeg.
+	// Extract a video still image that can be used as preview.
 	if f.IsVideo() && c.conf.FFmpegEnabled() {
-		if f.Duration() > LivePhotoDurationLimit {
+		d := f.Duration()
+
+		// If possible, do not use the first frames to avoid completely black or white thumbnails in case there is an effect or intro.
+		if d > time.Minute {
+			result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:09.000", "-vframes", "1", jpegName))
+		} else if d > LivePhotoDurationLimit {
 			result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:03.000", "-vframes", "1", jpegName))
 		} else {
 			result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName))
