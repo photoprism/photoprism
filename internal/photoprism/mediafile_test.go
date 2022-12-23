@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -2428,55 +2429,63 @@ func TestMediaFile_RemoveSidecarFiles(t *testing.T) {
 }
 
 func TestMediaFile_ColorProfile(t *testing.T) {
-	c := config.TestConfig()
-
 	t.Run("iphone_7.json", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.json")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.json")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "", mediaFile.ColorProfile())
 	})
 	t.Run("iphone_7.xmp", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.xmp")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.xmp")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "", mediaFile.ColorProfile())
 	})
 	t.Run("iphone_7.heic", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.heic")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "", mediaFile.ColorProfile())
 	})
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/canon_eos_6d.dng")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "", mediaFile.ColorProfile())
 	})
 	t.Run("elephants.jpg", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/elephants.jpg")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "Adobe RGB (1998)", mediaFile.ColorProfile())
 	})
 	t.Run("/beach_wood.jpg", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/beach_wood.jpg")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "", mediaFile.ColorProfile())
 	})
 	t.Run("/peacock_blue.jpg", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/peacock_blue.jpg")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/peacock_blue.jpg")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "sRGB IEC61966-2.1", mediaFile.ColorProfile())
+	})
+}
+
+func TestMediaFile_Duration(t *testing.T) {
+	t.Run("earth.mov", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "blue-go-video.mp4")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, time.Duration(2000000000), f.Duration())
+		}
 	})
 }

@@ -173,7 +173,11 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 
 	// Video thumbnails can be created with FFmpeg.
 	if f.IsVideo() && c.conf.FFmpegEnabled() {
-		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName))
+		if f.Duration() > LivePhotoDurationLimit {
+			result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:03.000", "-vframes", "1", jpegName))
+		} else {
+			result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName))
+		}
 	}
 
 	// RAW files may be concerted with Darktable and Rawtherapee.

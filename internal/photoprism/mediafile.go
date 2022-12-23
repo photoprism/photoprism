@@ -763,6 +763,15 @@ func (m *MediaFile) IsVideo() bool {
 	return strings.HasPrefix(m.MimeType(), "video/") || m.Media() == media.Video
 }
 
+// Duration returns the duration if the file is a video.
+func (m *MediaFile) Duration() time.Duration {
+	if !m.IsVideo() {
+		return 0
+	}
+
+	return m.MetaData().Duration
+}
+
 // IsAnimatedGif returns true if it is an animated GIF.
 func (m *MediaFile) IsAnimatedGif() bool {
 	return m.IsGif() && m.MetaData().Frames > 1

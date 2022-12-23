@@ -566,7 +566,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 		if photo.TypeSrc == entity.SrcAuto {
 			// Update photo type only if not manually modified.
-			if file.FileDuration == 0 || file.FileDuration > time.Millisecond*3100 {
+			if file.FileDuration == 0 || file.FileDuration > LivePhotoDurationLimit {
 				photo.PhotoType = entity.MediaVideo
 			} else {
 				photo.PhotoType = entity.MediaLive
