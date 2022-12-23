@@ -62,7 +62,7 @@ msgstr "Auf den Link klicken, um ihn zu kopieren."
 msgid "About"
 msgstr "Info"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Abyss"
 
@@ -426,7 +426,7 @@ msgstr "Maximale Anzahl wurde selektiert"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -598,7 +598,7 @@ msgstr "Support-Anfrage"
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -629,7 +629,7 @@ msgstr "Standard Ordner"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Löschen"
@@ -1013,7 +1013,7 @@ msgstr "Häufig gestellte Fragen"
 msgid "Fullscreen"
 msgstr "Vollbildmodus"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Edelstein"
 
@@ -1263,7 +1263,7 @@ msgstr "Letzte Synchronisation"
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Lavendel"
 
@@ -1443,10 +1443,6 @@ msgstr "Monochrom"
 msgid "Month"
 msgstr "Monat"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Moonlight"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Mehr als %{n} Bilder gefunden"
@@ -1498,6 +1494,10 @@ msgstr "Name"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Name zu lang"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1657,7 +1657,7 @@ msgstr "Eine Person gefunden"
 msgid "One picture found"
 msgstr "Ein Bild gefunden"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1873,7 +1873,7 @@ msgstr "Qualität"
 msgid "Random"
 msgstr "Zufällig"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Raspberry"
 
@@ -2024,7 +2024,7 @@ msgstr "Bilder und Videos auf verschiedenen Weltkarten anzeigen und filtern."
 msgid "Season"
 msgstr "Jahreszeit"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Code"
 
@@ -2085,7 +2085,7 @@ msgstr "Einstellungen gespeichert"
 msgid "Setup"
 msgstr "Einrichtung"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Shadow"
 
@@ -2328,7 +2328,7 @@ msgstr "Um zu upgraden, kannst du entweder einen Aktivierungscode eingeben oder 
 msgid "Toggle View"
 msgstr "Ansicht wechseln"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Code"
 
@@ -2469,7 +2469,7 @@ msgstr "Wird hochgeladen…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Diese werden automatisch erkannt und gelöscht."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2494,7 +2494,7 @@ msgstr "Benutzeroberfläche"
 msgid "Username"
 msgstr "Nutzername"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2642,6 +2642,9 @@ msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#~ msgid "Moonlight"
+#~ msgstr "Moonlight"
 
 #~ msgid "Basic"
 #~ msgstr "Einfach"

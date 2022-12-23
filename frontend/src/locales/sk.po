@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
-"frontend/sk/>\n"
+"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "Kliknutím skopírujete obsah."
 msgid "About"
 msgstr "O nás"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Priepasť"
 
@@ -389,9 +388,7 @@ msgstr "Som zaneprázdnený, prosím čakajte…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Používaním softvéru a služieb, ktoré poskytujeme, súhlasíte s našimi "
-"podmienkami používania, zásadami ochrany osobných údajov a kódexom správania."
+msgstr "Používaním softvéru a služieb, ktoré poskytujeme, súhlasíte s našimi podmienkami používania, zásadami ochrany osobných údajov a kódexom správania."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -432,7 +429,7 @@ msgstr "Nemožno označiť viac položiek"
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -606,7 +603,7 @@ msgstr "Zákaznícka podpora"
 msgid "Cyan"
 msgstr "Tyrkysová"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Modravá"
 
@@ -637,7 +634,7 @@ msgstr "Pôvodná zložka"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Vymazať"
@@ -1022,7 +1019,7 @@ msgstr "Často kladené otázky"
 msgid "Fullscreen"
 msgstr "Plná obrazovka"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Drahokam"
 
@@ -1272,7 +1269,7 @@ msgstr "Posledná synchronizácia"
 msgid "Latitude"
 msgstr "Šírka"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Levanduľa"
 
@@ -1455,10 +1452,6 @@ msgstr "Monochromatický"
 msgid "Month"
 msgstr "Mesiac"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Mesačný svit"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Našlo sa viac ako %{n} obrázkov"
@@ -1511,6 +1504,10 @@ msgstr "Meno"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Meno je príliš dlhé"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1670,7 +1667,7 @@ msgstr "Našla sa jedna osoba"
 msgid "One picture found"
 msgstr "Našla sa jedna fotka"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1889,7 +1886,7 @@ msgstr "Skóre Kvality"
 msgid "Random"
 msgstr "Náhodne"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Malina"
 
@@ -2040,7 +2037,7 @@ msgstr "Nájsť a zobraziť fotky na mape."
 msgid "Season"
 msgstr "Sezóna"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Tajomstvo"
 
@@ -2101,7 +2098,7 @@ msgstr "Nastavenia uložené"
 msgid "Setup"
 msgstr "Prvotné nastavenie"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Tieň"
 
@@ -2342,9 +2339,7 @@ msgstr "Titulok je moc dlhý"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"Ak chcete aktualizovať, môžete zadať aktivačný kód alebo kliknúť na tlačidlo "
-"\"Pokračovať\" a zaregistrovať sa na našej webovej stránke:"
+msgstr "Ak chcete aktualizovať, môžete zadať aktivačný kód alebo kliknúť na tlačidlo \"Pokračovať\" a zaregistrovať sa na našej webovej stránke:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2352,7 +2347,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Nastaviť Pohľad"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Token"
 
@@ -2495,7 +2490,7 @@ msgstr "Nahrávanie.."
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Odovzdávanie takéhoto typu fotiek bude automaticky odmietnuté."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2520,7 +2515,7 @@ msgstr "Používateľské rozhranie"
 msgid "Username"
 msgstr "Meno používateľa"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2670,6 +2665,9 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#~ msgid "Moonlight"
+#~ msgstr "Mesačný svit"
 
 #~ msgid "Basic"
 #~ msgstr "Základný"

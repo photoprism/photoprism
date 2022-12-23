@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -62,7 +61,7 @@ msgstr "A kattintás egy másolatot helyez a vágólapra."
 msgid "About"
 msgstr "Rólunk"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Abyss"
 
@@ -389,10 +388,7 @@ msgstr "Elfoglalt, kérem, várjon…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Az általunk biztosított szoftver és szolgáltatások használatával Ön "
-"elfogadja szolgáltatási feltételeinket, adatvédelmi szabályzatunkat és "
-"magatartási kódexünket."
+msgstr "Az általunk biztosított szoftver és szolgáltatások használatával Ön elfogadja szolgáltatási feltételeinket, adatvédelmi szabályzatunkat és magatartási kódexünket."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -433,7 +429,7 @@ msgstr "Nem lehet több elemet kiválasztani"
 msgid "Cancel"
 msgstr "Mégsem"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -609,7 +605,7 @@ msgstr "Vevőszolgálat"
 msgid "Cyan"
 msgstr "Cián"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -640,7 +636,7 @@ msgstr "Alapértelmezett mappa"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Törlés"
@@ -1027,7 +1023,7 @@ msgstr "Gyakran ismételt kérdések"
 msgid "Fullscreen"
 msgstr "Teljes képernyő"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Drágakő"
 
@@ -1277,7 +1273,7 @@ msgstr "Utolsó szinkronizálás"
 msgid "Latitude"
 msgstr "Szélességi kör"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Levendula"
 
@@ -1461,10 +1457,6 @@ msgstr "Monokróm"
 msgid "Month"
 msgstr "Hónap"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Holdfény"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Több mint %{n} kép található"
@@ -1517,6 +1509,10 @@ msgstr "Név"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "A név túl hosszú"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1678,7 +1674,7 @@ msgstr "Egy személyt találtak"
 msgid "One picture found"
 msgstr "Egy kép található"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Ónix"
 
@@ -1899,7 +1895,7 @@ msgstr "Minőségi mutató"
 msgid "Random"
 msgstr "Véletlen"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Málna"
 
@@ -2052,7 +2048,7 @@ msgstr "Fényképek keresése és megjelenítése a térképen."
 msgid "Season"
 msgstr "Évad"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Titok"
 
@@ -2113,7 +2109,7 @@ msgstr "Beállítások elmentve"
 msgid "Setup"
 msgstr "Beállít"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Árnyék"
 
@@ -2356,9 +2352,7 @@ msgstr "A cím túl hosszú"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"A frissítéshez vagy megadhat egy aktiváló kódot, vagy a \"Tovább\" gombra "
-"kattintva regisztrálhat a weboldalunkon:"
+msgstr "A frissítéshez vagy megadhat egy aktiváló kódot, vagy a \"Tovább\" gombra kattintva regisztrálhat a weboldalunkon:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2366,7 +2360,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Nézet váltása"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Jelképes"
 
@@ -2509,7 +2503,7 @@ msgstr "Feltöltés…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Az esetlegesen ilyen képeket tartalmazó feltöltések automatikusan elutasításra kerülnek."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2534,7 +2528,7 @@ msgstr "Felhasználói felület"
 msgid "Username"
 msgstr "Felhasználónév"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2689,6 +2683,9 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "Moonlight"
+#~ msgstr "Holdfény"
 
 #, fuzzy
 #~ msgid "Basic"

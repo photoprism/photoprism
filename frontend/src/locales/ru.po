@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "Клик скопирует это в буфер обмена."
 msgid "About"
 msgstr "О нас"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Пропасть"
 
@@ -387,10 +386,7 @@ msgstr "Занят, пожалуйста, подождите…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Используя программное обеспечение и услуги, которые мы предоставляем, вы "
-"соглашаетесь с нашими условиями обслуживания, политикой конфиденциальности и "
-"кодексом поведения."
+msgstr "Используя программное обеспечение и услуги, которые мы предоставляем, вы соглашаетесь с нашими условиями обслуживания, политикой конфиденциальности и кодексом поведения."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -431,7 +427,7 @@ msgstr "Нельзя выбрать больше элементов"
 msgid "Cancel"
 msgstr "Отменить"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -604,7 +600,7 @@ msgstr "Поддержка клиента"
 msgid "Cyan"
 msgstr "Сине-зеленый"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Сине-зеленый"
 
@@ -635,7 +631,7 @@ msgstr "Папка по умолчанию"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Удалить"
@@ -1019,7 +1015,7 @@ msgstr "Часто задаваемые вопросы"
 msgid "Fullscreen"
 msgstr "Полный экран"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Драгоценный камень"
 
@@ -1269,7 +1265,7 @@ msgstr "Последняя синхронизация"
 msgid "Latitude"
 msgstr "Широта"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Лаванда"
 
@@ -1451,10 +1447,6 @@ msgstr "Монохромные"
 msgid "Month"
 msgstr "Месяц"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Лунный свет"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Найдено более %{n} изображений"
@@ -1506,6 +1498,10 @@ msgstr "Название"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Название слишком длинное"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1665,7 +1661,7 @@ msgstr "Найден один человек"
 msgid "One picture found"
 msgstr "Найдена одна фотография"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Оникс"
 
@@ -1883,7 +1879,7 @@ msgstr "Показатель Качества"
 msgid "Random"
 msgstr "Случайно"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Малиновый"
 
@@ -2034,7 +2030,7 @@ msgstr "Поиск и отображение фотографий на карт�
 msgid "Season"
 msgstr "Сезон"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Секрет"
 
@@ -2095,7 +2091,7 @@ msgstr "Настройки сохранены"
 msgid "Setup"
 msgstr "Настройка"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Тень"
 
@@ -2333,9 +2329,7 @@ msgstr "Название слишком длинное"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"Для обновления вы можете ввести код активации или нажать кнопку \"Продолжить"
-"\", чтобы зарегистрироваться на нашем сайте:"
+msgstr "Для обновления вы можете ввести код активации или нажать кнопку \"Продолжить\", чтобы зарегистрироваться на нашем сайте:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2343,7 +2337,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Переключить вид"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Токен"
 
@@ -2484,7 +2478,7 @@ msgstr "Загрузка…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Загрузки, которые могут содержать такие изображение будут автоматически отменены."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2509,7 +2503,7 @@ msgstr "Пользовательский интерфейс"
 msgid "Username"
 msgstr "Имя пользователя"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Ванта"
 
@@ -2659,6 +2653,9 @@ msgstr "Ваша библиотека постоянно анализирует�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#~ msgid "Moonlight"
+#~ msgstr "Лунный свет"
 
 #~ msgid "Basic"
 #~ msgstr "Простой"

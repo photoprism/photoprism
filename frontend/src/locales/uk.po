@@ -10,8 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -63,7 +62,7 @@ msgstr "Копіювання до буферу обміну по кліку."
 msgid "About"
 msgstr "Про"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Усі піддиректорії"
 
@@ -387,10 +386,7 @@ msgstr "Система зайнята, будь ласка, зачекайте�
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Використовуючи програмне забезпечення та послуги, які ми надаємо, ви "
-"погоджуєтеся з нашими умовами надання послуг, політикою конфіденційності та "
-"кодексом поведінки."
+msgstr "Використовуючи програмне забезпечення та послуги, які ми надаємо, ви погоджуєтеся з нашими умовами надання послуг, політикою конфіденційності та кодексом поведінки."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -431,7 +427,7 @@ msgstr "Не можливо виділити більше елементів"
 msgid "Cancel"
 msgstr "Відмінити"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Електра"
 
@@ -604,7 +600,7 @@ msgstr "Підтримка клієнтів"
 msgid "Cyan"
 msgstr "Блакитний"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Блакитний"
 
@@ -635,7 +631,7 @@ msgstr "Тека за замовчуванням"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Видалити"
@@ -1019,7 +1015,7 @@ msgstr "Поширені запитання"
 msgid "Fullscreen"
 msgstr "Повний екран"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Коштовний камінь"
 
@@ -1269,7 +1265,7 @@ msgstr "Остання синхронізація"
 msgid "Latitude"
 msgstr "Широта"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Лавандовий"
 
@@ -1451,10 +1447,6 @@ msgstr "Монохромні"
 msgid "Month"
 msgstr "Місяць"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Місячне сяйво"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Знайдено понад %{n} зображень"
@@ -1506,6 +1498,10 @@ msgstr "Ім'я"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Задовге ім'я"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1665,7 +1661,7 @@ msgstr "Одну людину знайдено"
 msgid "One picture found"
 msgstr "Одне зображення знайдено"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Онікс"
 
@@ -1883,7 +1879,7 @@ msgstr "Показник якості"
 msgid "Random"
 msgstr "Випадковий"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Малиновий"
 
@@ -2034,7 +2030,7 @@ msgstr "Пошук і відображення фотографій на кар�
 msgid "Season"
 msgstr "Сезон"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Таємний"
 
@@ -2095,7 +2091,7 @@ msgstr "Налаштування збережено"
 msgid "Setup"
 msgstr "Налаштувати"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Тінь"
 
@@ -2340,7 +2336,7 @@ msgstr "Для оновлення ви можете або ввести код �
 msgid "Toggle View"
 msgstr "Перемкнути перегляд"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Токен"
 
@@ -2481,7 +2477,7 @@ msgstr "Вивантаження…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Вивантаження, які можуть містити такі зображення, автоматично відхилятимуться."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL-адреса"
 
@@ -2506,7 +2502,7 @@ msgstr "Інтерфейс користувача"
 msgid "Username"
 msgstr "Ім'я користувача"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Ванта"
 
@@ -2656,6 +2652,9 @@ msgstr "Ваша бібліотека постійно аналізується,
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Збільшення/зменшення"
+
+#~ msgid "Moonlight"
+#~ msgstr "Місячне сяйво"
 
 #~ msgid "Basic"
 #~ msgstr "Базовий"

@@ -62,7 +62,7 @@ msgstr "یک کلیک آن را در کلیپ بورد شما کپی می کند
 msgid "About"
 msgstr "درباره"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "پرتگاه"
 
@@ -391,9 +391,7 @@ msgstr "مشغول است ، لطفا صبر کنید…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"با استفاده از نرم‌افزار و خدماتی که ما ارائه می‌کنیم، با شرایط خدمات، خط‌مشی "
-"رازداری و آیین‌نامه رفتار ما موافقت می‌کنید."
+msgstr "با استفاده از نرم‌افزار و خدماتی که ما ارائه می‌کنیم، با شرایط خدمات، خط‌مشی رازداری و آیین‌نامه رفتار ما موافقت می‌کنید."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -434,7 +432,7 @@ msgstr "موارد بیشتری را انتخاب نمی کند"
 msgid "Cancel"
 msgstr "لغو"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -613,7 +611,7 @@ msgstr "پشتیبانی مشتری"
 msgid "Cyan"
 msgstr "فیروزه ای"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 #, fuzzy
 msgid "Cyano"
 msgstr "سیانو"
@@ -645,7 +643,7 @@ msgstr "پوشه پیشفرض"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "حذف"
@@ -1044,7 +1042,7 @@ msgstr "سوالات متداول"
 msgid "Fullscreen"
 msgstr "تمام صفحه"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 #, fuzzy
 msgid "Gemstone"
 msgstr "سنگ قیمتی"
@@ -1300,7 +1298,7 @@ msgstr "آخرین همگام سازی"
 msgid "Latitude"
 msgstr "عرض جغرافیایی"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 #, fuzzy
 msgid "Lavender"
 msgstr "اسطوخودوس"
@@ -1489,10 +1487,6 @@ msgstr "تک رنگ"
 msgid "Month"
 msgstr "ماه"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "مهتابی"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "بیش از %{n} تصاویر یافت شده"
@@ -1546,6 +1540,10 @@ msgstr "نام"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "نام خیلی طولانی است"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1708,7 +1706,7 @@ msgstr "یک شخص پیدا شد"
 msgid "One picture found"
 msgstr "یک تصویر پیدا شد"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 #, fuzzy
 msgid "Onyx"
 msgstr "اونیکس"
@@ -1931,7 +1929,7 @@ msgstr "امتیاز کیفیت"
 msgid "Random"
 msgstr "تصادفی"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "تمشک"
 
@@ -2086,7 +2084,7 @@ msgstr "جستجو و نمایش عکس ها روی نقشه."
 msgid "Season"
 msgstr "فصل"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "محرمانه"
 
@@ -2149,7 +2147,7 @@ msgstr "تنظیمات ذخیره شد"
 msgid "Setup"
 msgstr "راه اندازی"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "سایه"
 
@@ -2394,9 +2392,7 @@ msgstr "عنوان خیلی طولانی است"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ادامه» کلیک کنید تا "
-"در وب‌سایت ما ثبت‌نام کنید:"
+msgstr "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ادامه» کلیک کنید تا در وب‌سایت ما ثبت‌نام کنید:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2404,7 +2400,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "تغییر حالت نمایش"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "توکن"
 
@@ -2549,7 +2545,7 @@ msgstr "در حال بارگیری مجدد…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "آپلودهایی که ممکن است حاوی چنین تصاویری باشند به طور خودکار رد می شوند."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 #, fuzzy
 msgid "URL"
 msgstr "URL"
@@ -2575,7 +2571,7 @@ msgstr "رابط کاربری"
 msgid "Username"
 msgstr "نام کاربری"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 #, fuzzy
 msgid "Vanta"
 msgstr "وانتا"
@@ -2733,6 +2729,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Moonlight"
+#~ msgstr "مهتابی"
 
 #, fuzzy
 #~ msgid "Basic"

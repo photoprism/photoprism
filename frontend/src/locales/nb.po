@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
-"photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "Et klikk vil kopiere det til utklippstavlen."
 msgid "About"
 msgstr "Om"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Avgrunn"
 
@@ -392,9 +391,7 @@ msgstr "Opptatt, vennligst vent…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Ved å bruke programvaren og tjenestene vi tilbyr, godtar du våre vilkår for "
-"bruk, personvernerklæring og atferdskodeks."
+msgstr "Ved å bruke programvaren og tjenestene vi tilbyr, godtar du våre vilkår for bruk, personvernerklæring og atferdskodeks."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -435,7 +432,7 @@ msgstr "Kan ikke velge flere elementer"
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -616,7 +613,7 @@ msgstr "Kundeservice"
 msgid "Cyan"
 msgstr "Turkis"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Turkis"
 
@@ -647,7 +644,7 @@ msgstr "Standardmappe"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Slett"
@@ -1040,7 +1037,7 @@ msgstr "ofte stilte spørsmål"
 msgid "Fullscreen"
 msgstr "Fullskjerm"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Edelsten"
 
@@ -1297,7 +1294,7 @@ msgstr "Siste synkronisering"
 msgid "Latitude"
 msgstr "Breddegrad"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Lavendel"
 
@@ -1485,10 +1482,6 @@ msgstr "Monokrom"
 msgid "Month"
 msgstr "Måned"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Måneskinn"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Mer enn %{n} bilder ble funnet"
@@ -1542,6 +1535,10 @@ msgstr "Navn"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Navn for langt"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1705,7 +1702,7 @@ msgstr "En person funnet"
 msgid "One picture found"
 msgstr "Ett bilde funnet"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Onyks"
 
@@ -1929,7 +1926,7 @@ msgstr "Kvalitetspoeng"
 msgid "Random"
 msgstr "Tilfeldig"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Bringebær"
 
@@ -2084,7 +2081,7 @@ msgstr "Søk og vis bilder på et kart."
 msgid "Season"
 msgstr "Sesong"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Hemmelig"
 
@@ -2147,7 +2144,7 @@ msgstr "Innstillinger lagret"
 msgid "Setup"
 msgstr "Oppsett"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Skygge"
 
@@ -2392,9 +2389,7 @@ msgstr "Tittelen er for lang"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"For å oppgradere kan du enten skrive inn en aktiveringskode eller klikke på "
-"\"Fortsett\" for å registrere deg på nettstedet vårt:"
+msgstr "For å oppgradere kan du enten skrive inn en aktiveringskode eller klikke på \"Fortsett\" for å registrere deg på nettstedet vårt:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2402,7 +2397,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Veksle Visning"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Token"
 
@@ -2548,7 +2543,7 @@ msgstr "Oppdaterer…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Opplastinger som kan inneholde slike bilder blir avvist automatisk."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2574,7 +2569,7 @@ msgstr "Brukergrensesnitt"
 msgid "Username"
 msgstr "Brukernavn"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2735,6 +2730,9 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
+
+#~ msgid "Moonlight"
+#~ msgstr "Måneskinn"
 
 #, fuzzy
 #~ msgid "Basic"

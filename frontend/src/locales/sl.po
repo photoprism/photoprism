@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -60,7 +59,7 @@ msgstr "S klikom ga boste kopirali v odložišče."
 msgid "About"
 msgstr "Podrobno"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Brezno"
 
@@ -386,10 +385,7 @@ msgstr "Zaseden, prosim počakajte…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Z uporabo programske opreme in storitev, ki jih ponujamo, se strinjate z "
-"našimi pogoji uporabe storitev, pravilnikom o zasebnosti in kodeksom "
-"ravnanja."
+msgstr "Z uporabo programske opreme in storitev, ki jih ponujamo, se strinjate z našimi pogoji uporabe storitev, pravilnikom o zasebnosti in kodeksom ravnanja."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -430,7 +426,7 @@ msgstr "Ne morete izbrati več elementov"
 msgid "Cancel"
 msgstr "Prekliči"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 #, fuzzy
 msgid "Carbon"
 msgstr "Carbon"
@@ -606,7 +602,7 @@ msgstr "Podpora strankam"
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -637,7 +633,7 @@ msgstr "Privzeta mapa"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Izbriši"
@@ -1031,7 +1027,7 @@ msgstr "Pogosto zastavljena vprašanja"
 msgid "Fullscreen"
 msgstr "Celozaslonski zaslon"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Dragi kamen"
 
@@ -1286,7 +1282,7 @@ msgstr "Zadnja sinhronizacija"
 msgid "Latitude"
 msgstr "Zemljepisna širina"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Sivka"
 
@@ -1475,10 +1471,6 @@ msgstr "Enobarvni"
 msgid "Month"
 msgstr "Mesec"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Moonlight"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Najdenih več kot %{n} slik"
@@ -1532,6 +1524,10 @@ msgstr "Ime"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Predolgo ime"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1700,7 +1696,7 @@ msgstr "Ena oseba je našla"
 msgid "One picture found"
 msgstr "Najdena je bila ena slika"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 #, fuzzy
 msgid "Onyx"
 msgstr "Onyx"
@@ -1966,7 +1962,7 @@ msgstr "Ocena kakovosti"
 msgid "Random"
 msgstr "Naključno"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 #, fuzzy
 msgid "Raspberry"
 msgstr "Raspberry"
@@ -2151,7 +2147,7 @@ msgstr "Iščite in prikažite fotografije na zemljevidu."
 msgid "Season"
 msgstr "Sezona"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 #, fuzzy
 msgid "Secret"
 msgstr "Skrivnost"
@@ -2226,7 +2222,7 @@ msgstr "Shranjene nastavitve"
 msgid "Setup"
 msgstr "Nastavitev"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 #, fuzzy
 msgid "Shadow"
 msgstr "Shadow"
@@ -2518,9 +2514,7 @@ msgstr "Predolg naslov"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"Za nadgradnjo lahko vnesete aktivacijsko kodo ali kliknete \"Nadaljuj\" in "
-"se prijavite na našem spletnem mestu:"
+msgstr "Za nadgradnjo lahko vnesete aktivacijsko kodo ali kliknete \"Nadaljuj\" in se prijavite na našem spletnem mestu:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2529,7 +2523,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Toggle View"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 #, fuzzy
 msgid "Token"
 msgstr "Žeton"
@@ -2700,7 +2694,7 @@ msgstr "Polnjenje…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Prenosi, ki bi lahko vsebovali takšne slike, bodo samodejno zavrnjeni."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 #, fuzzy
 msgid "URL"
 msgstr "URL"
@@ -2731,7 +2725,7 @@ msgstr "Uporabniški vmesnik"
 msgid "Username"
 msgstr "Uporabniško ime"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 #, fuzzy
 msgid "Vanta"
 msgstr "Vanta"
@@ -2911,6 +2905,9 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Moonlight"
+#~ msgstr "Moonlight"
 
 #, fuzzy
 #~ msgid "Basic"

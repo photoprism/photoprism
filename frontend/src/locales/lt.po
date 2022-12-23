@@ -5,15 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/lt/>\n"
+"Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
-"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
-"1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -65,7 +62,7 @@ msgstr "Paspaudę jį nukopijuosite į iškarpinę."
 msgid "About"
 msgstr "Apie"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Bedugnė"
 
@@ -395,9 +392,7 @@ msgstr "Užimtas, palaukite…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Naudodamiesi mūsų teikiama programine įranga ir paslaugomis, sutinkate su "
-"mūsų paslaugų teikimo sąlygomis, privatumo politika ir elgesio kodeksu."
+msgstr "Naudodamiesi mūsų teikiama programine įranga ir paslaugomis, sutinkate su mūsų paslaugų teikimo sąlygomis, privatumo politika ir elgesio kodeksu."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -438,7 +433,7 @@ msgstr "Negalima pasirinkti daugiau elementų"
 msgid "Cancel"
 msgstr "Atšaukti"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 #, fuzzy
 msgid "Carbon"
 msgstr "Carbon"
@@ -620,7 +615,7 @@ msgstr "Klientų aptarnavimas"
 msgid "Cyan"
 msgstr "Žydra"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -651,7 +646,7 @@ msgstr "Numatytasis aplankas"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Ištrinti"
@@ -1118,7 +1113,7 @@ msgstr "Dažnai užduodami klausimai"
 msgid "Fullscreen"
 msgstr "Viso ekrano"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 #, fuzzy
 msgid "Gemstone"
 msgstr "Brangakmenis"
@@ -1424,7 +1419,7 @@ msgstr "Sinchronizavimas"
 msgid "Latitude"
 msgstr "Platuma"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 #, fuzzy
 msgid "Lavender"
 msgstr "Levandų"
@@ -1644,11 +1639,6 @@ msgstr "Vienspalvis"
 msgid "Month"
 msgstr "Mėnuo"
 
-#: src/options/themes.js:441
-#, fuzzy
-msgid "Moonlight"
-msgstr "Mėnulio šviesa"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 #, fuzzy
 msgid "More than %{n} pictures found"
@@ -1709,6 +1699,10 @@ msgstr "Pavadinimas"
 #, fuzzy
 msgid "Name too long"
 msgstr "Per ilgas vardas"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1899,7 +1893,7 @@ msgstr "Vienas asmuo rado"
 msgid "One picture found"
 msgstr "Vienas rastas paveikslėlis"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 #, fuzzy
 msgid "Onyx"
 msgstr "Oniksas"
@@ -2165,7 +2159,7 @@ msgstr "Kokybės balas"
 msgid "Random"
 msgstr "Atsitiktinis"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 #, fuzzy
 msgid "Raspberry"
 msgstr "Aviečių"
@@ -2349,7 +2343,7 @@ msgstr "Ieškokite ir rodykite nuotraukas žemėlapyje."
 msgid "Season"
 msgstr "Sezonas"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 #, fuzzy
 msgid "Secret"
 msgstr "Paslaptis"
@@ -2424,7 +2418,7 @@ msgstr "Išsaugoti nustatymai"
 msgid "Setup"
 msgstr "Sąranka"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 #, fuzzy
 msgid "Shadow"
 msgstr "Šešėlis"
@@ -2716,9 +2710,7 @@ msgstr "Per ilga antraštė"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Tęsti\" "
-"ir užsiregistruoti mūsų svetainėje:"
+msgstr "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Tęsti\" ir užsiregistruoti mūsų svetainėje:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2727,7 +2719,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Perjungti vaizdą"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 #, fuzzy
 msgid "Token"
 msgstr "Žetonas"
@@ -2898,7 +2890,7 @@ msgstr "Perkrovimas…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Siunčiami vaizdai, kuriuose gali būti tokių vaizdų, bus automatiškai atmesti."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 #, fuzzy
 msgid "URL"
 msgstr "URL"
@@ -2929,7 +2921,7 @@ msgstr "Vartotojo sąsaja"
 msgid "Username"
 msgstr "Vartotojo vardas"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 #, fuzzy
 msgid "Vanta"
 msgstr "Vanta"
@@ -3109,6 +3101,10 @@ msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai k
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
+
+#, fuzzy
+#~ msgid "Moonlight"
+#~ msgstr "Mėnulio šviesa"
 
 #, fuzzy
 #~ msgid "Basic"

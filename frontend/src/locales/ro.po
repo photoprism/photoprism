@@ -5,14 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
-"20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -64,7 +62,7 @@ msgstr "Un clic îl va copia în clipboard."
 msgid "About"
 msgstr "Despre"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Abisul"
 
@@ -388,10 +386,7 @@ msgstr "Ocupat, vă rugăm să așteptați…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Prin utilizarea software-ului și a serviciilor pe care le oferim, sunteți de "
-"acord cu termenii și condițiile noastre de utilizare, cu politica de "
-"confidențialitate și cu codul de conduită."
+msgstr "Prin utilizarea software-ului și a serviciilor pe care le oferim, sunteți de acord cu termenii și condițiile noastre de utilizare, cu politica de confidențialitate și cu codul de conduită."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -432,7 +427,7 @@ msgstr "Nu se pot selecta mai multe articole"
 msgid "Cancel"
 msgstr "Anulează"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -604,7 +599,7 @@ msgstr "Asistență pentru clienți"
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -635,7 +630,7 @@ msgstr "Dosar implicit"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Ștergeți"
@@ -1019,7 +1014,7 @@ msgstr "Întrebări frecvente"
 msgid "Fullscreen"
 msgstr "Ecran complet"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Piatră prețioasă"
 
@@ -1269,7 +1264,7 @@ msgstr "Ultima sincronizare"
 msgid "Latitude"
 msgstr "Latitudine"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Lavandă"
 
@@ -1451,10 +1446,6 @@ msgstr "Monocrom"
 msgid "Month"
 msgstr "Lună"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Lumina lunii"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "S-au găsit mai mult de %{n} imagini"
@@ -1506,6 +1497,10 @@ msgstr "Nume"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Nume prea lung"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1665,7 +1660,7 @@ msgstr "O persoană găsită"
 msgid "One picture found"
 msgstr "O imagine găsită"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1882,7 +1877,7 @@ msgstr "Scorul de calitate"
 msgid "Random"
 msgstr "Aleatoriu"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Zmeură"
 
@@ -2033,7 +2028,7 @@ msgstr "Căutați și afișați fotografiile pe hartă."
 msgid "Season"
 msgstr "Sezon"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Secret"
 
@@ -2094,7 +2089,7 @@ msgstr "Setări salvate"
 msgid "Setup"
 msgstr "Configurare"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Umbră"
 
@@ -2332,9 +2327,7 @@ msgstr "Titlu prea lung"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"Pentru a face upgrade, puteți introduce un cod de activare sau puteți face "
-"clic pe \"Continuă\" pentru a vă înregistra pe site-ul nostru:"
+msgstr "Pentru a face upgrade, puteți introduce un cod de activare sau puteți face clic pe \"Continuă\" pentru a vă înregistra pe site-ul nostru:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2342,7 +2335,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Schimbă vizualizarea"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Jeton"
 
@@ -2483,7 +2476,7 @@ msgstr "Se încarcă…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Încărcările care pot conține astfel de imagini vor fi respinse automat."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2508,7 +2501,7 @@ msgstr "Interfața utilizatorului"
 msgid "Username"
 msgstr "Nume de utilizator"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2658,6 +2651,9 @@ msgstr "Biblioteca dvs. este analizată continuu pentru a crea automat albume cu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
+
+#~ msgid "Moonlight"
+#~ msgstr "Lumina lunii"
 
 #~ msgid "Basic"
 #~ msgstr "De bază"

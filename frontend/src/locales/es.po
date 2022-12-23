@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-19 21:16+0000\n"
 "Last-Translator: Aleks Clark <aleks.clark@gmail.com>\n"
-"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/es/>\n"
+"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "Un clic lo copiará al portapapeles."
 msgid "About"
 msgstr "Acerca de"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Abismo"
 
@@ -386,9 +385,7 @@ msgstr "Ocupado, por favor espera…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Al utilizar el software y los servicios que ofrecemos, usted acepta nuestras "
-"condiciones de servicio, política de privacidad y código de conducta."
+msgstr "Al utilizar el software y los servicios que ofrecemos, usted acepta nuestras condiciones de servicio, política de privacidad y código de conducta."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -429,7 +426,7 @@ msgstr "No puedes seleccionar más elementos"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -601,7 +598,7 @@ msgstr "Atención al cliente"
 msgid "Cyan"
 msgstr "Cían"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Ciano"
 
@@ -632,7 +629,7 @@ msgstr "Carpeta por Defecto"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Borrar"
@@ -1016,7 +1013,7 @@ msgstr "Preguntas frecuentes"
 msgid "Fullscreen"
 msgstr "Pantalla completa"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Piedras preciosas"
 
@@ -1266,7 +1263,7 @@ msgstr "Última sincronización"
 msgid "Latitude"
 msgstr "Latitud"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Lavanda"
 
@@ -1447,10 +1444,6 @@ msgstr "Monocromo"
 msgid "Month"
 msgstr "Mes"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Luz de luna"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Más de %{n} imágenes encontradas"
@@ -1502,6 +1495,10 @@ msgstr "Nombre"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Nombre demasiado largo"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1661,7 +1658,7 @@ msgstr "Una persona encontrada"
 msgid "One picture found"
 msgstr "Una foto encontrada"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Ónix"
 
@@ -1706,13 +1703,7 @@ msgstr "Otro"
 
 #: src/page/connect.vue:123
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr ""
-"Nuestro equipo decide esto de forma continua en función del esfuerzo de "
-"soporte necesario, los costes del servidor y las licencias, y si las "
-"funciones son generalmente necesarias para todo el mundo o las solicitan "
-"principalmente organizaciones y usuarios avanzados. Como esto nos permite "
-"poner más funciones a disposición del público, animamos a todos los usuarios "
-"a apoyar nuestra misión."
+msgstr "Nuestro equipo decide esto de forma continua en función del esfuerzo de soporte necesario, los costes del servidor y las licencias, y si las funciones son generalmente necesarias para todo el mundo o las solicitan principalmente organizaciones y usuarios avanzados. Como esto nos permite poner más funciones a disposición del público, animamos a todos los usuarios a apoyar nuestra misión."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1772,11 +1763,7 @@ msgstr "PhotoPrism ha sido actualizado…"
 
 #: src/page/connect.vue:117
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
-"PhotoPrism se autofinancia al 100%. Las donaciones voluntarias no cubren el "
-"coste de un equipo que trabaja a tiempo completo para proporcionarle "
-"actualizaciones, documentación y soporte. Es tu decisión si quieres "
-"inscribirte para disfrutar de beneficios adicionales."
+msgstr "PhotoPrism se autofinancia al 100%. Las donaciones voluntarias no cubren el coste de un equipo que trabaja a tiempo completo para proporcionarle actualizaciones, documentación y soporte. Es tu decisión si quieres inscribirte para disfrutar de beneficios adicionales."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1888,7 +1875,7 @@ msgid "Random"
 msgstr "Aleatorio"
 
 # It can have other meaning depending on the context
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Frambuesa"
 
@@ -2039,7 +2026,7 @@ msgstr "Buscar y mostrar fotos en un mapa."
 msgid "Season"
 msgstr "Temporada"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Secreto"
 
@@ -2100,7 +2087,7 @@ msgstr "Ajustes guardados"
 msgid "Setup"
 msgstr "Configurar"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Sombra"
 
@@ -2282,11 +2269,7 @@ msgstr "Tema"
 
 #: src/page/connect.vue:111
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr ""
-"Piense en \"software libre\" como en \"libertad de expresión\", no como en "
-"\"cerveza gratis\". La Free Software Foundation a veces lo llama \"software "
-"libre\", tomando prestada la palabra francesa o española para \"libre\" como "
-"en libertad, para mostrar que no quieren decir que el software sea gratis."
+msgstr "Piense en \"software libre\" como en \"libertad de expresión\", no como en \"cerveza gratis\". La Free Software Foundation a veces lo llama \"software libre\", tomando prestada la palabra francesa o española para \"libre\" como en libertad, para mostrar que no quieren decir que el software sea gratis."
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2349,7 +2332,7 @@ msgstr "Para mejorar su plan, puede introducir un código de activación o hacer
 msgid "Toggle View"
 msgstr "Cambiar Vista"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Simbólico"
 
@@ -2490,7 +2473,7 @@ msgstr "Subiendo…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Las subidas que puedan contener tales imágenes serán rechazadas automáticamente."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2515,7 +2498,7 @@ msgstr "Interfaz de usuario"
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2598,8 +2581,7 @@ msgstr "Blanco"
 
 #: src/page/connect.vue:114
 msgid "Why are some features only available to sponsors?"
-msgstr ""
-"¿Por qué algunas funciones sólo están disponibles para los patrocinadores?"
+msgstr "¿Por qué algunas funciones sólo están disponibles para los patrocinadores?"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
@@ -2666,6 +2648,9 @@ msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
+
+#~ msgid "Moonlight"
+#~ msgstr "Luz de luna"
 
 #~ msgid "Basic"
 #~ msgstr "Básico"

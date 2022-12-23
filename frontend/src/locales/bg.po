@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "Едно кликване ще го копира в клипборда �
 msgid "About"
 msgstr "За"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 #, fuzzy
 msgid "Abyss"
 msgstr "Abyss"
@@ -395,10 +394,7 @@ msgstr "Заето, моля, изчакайте…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"С използването на софтуера и услугите, които предоставяме, вие се "
-"съгласявате с нашите условия за ползване, политика за поверителност и кодекс "
-"на поведение."
+msgstr "С използването на софтуера и услугите, които предоставяме, вие се съгласявате с нашите условия за ползване, политика за поверителност и кодекс на поведение."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -443,7 +439,7 @@ msgstr "Не мога да избера повече елементи"
 msgid "Cancel"
 msgstr "Отмяна на"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 #, fuzzy
 msgid "Carbon"
 msgstr "Carbon"
@@ -648,7 +644,7 @@ msgstr "Поддръжка на клиенти"
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 #, fuzzy
 msgid "Cyano"
 msgstr "Cyano"
@@ -684,7 +680,7 @@ msgstr "Папка по подразбиране"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 #, fuzzy
 msgid "Delete"
@@ -1156,7 +1152,7 @@ msgstr "Често задавани въпроси"
 msgid "Fullscreen"
 msgstr "Пълен екран"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 #, fuzzy
 msgid "Gemstone"
 msgstr "Скъпоценни камъни"
@@ -1461,7 +1457,7 @@ msgstr "Синхронизиране"
 msgid "Latitude"
 msgstr "Географска ширина"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 #, fuzzy
 msgid "Lavender"
 msgstr "Лавандула"
@@ -1681,11 +1677,6 @@ msgstr "Монохромен"
 msgid "Month"
 msgstr "Месец"
 
-#: src/options/themes.js:441
-#, fuzzy
-msgid "Moonlight"
-msgstr "Лунна светлина"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 #, fuzzy
 msgid "More than %{n} pictures found"
@@ -1747,6 +1738,10 @@ msgstr "Име"
 #, fuzzy
 msgid "Name too long"
 msgstr "Прекалено дълго име"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1940,7 +1935,7 @@ msgstr "Един човек намери"
 msgid "One picture found"
 msgstr "Една намерена снимка"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 #, fuzzy
 msgid "Onyx"
 msgstr "Оникс"
@@ -2204,7 +2199,7 @@ msgstr "Оценка на качеството"
 msgid "Random"
 msgstr "Случаен"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 #, fuzzy
 msgid "Raspberry"
 msgstr "Малина"
@@ -2389,7 +2384,7 @@ msgstr "Търсене и показване на снимки на карта."
 msgid "Season"
 msgstr "Сезон"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 #, fuzzy
 msgid "Secret"
 msgstr "Тайната"
@@ -2460,7 +2455,7 @@ msgstr "Запазени настройки"
 msgid "Setup"
 msgstr "Настройка"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 #, fuzzy
 msgid "Shadow"
 msgstr "Сянка"
@@ -2752,9 +2747,7 @@ msgstr "Твърде дълго заглавие"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"За да извършите ъпгрейд, можете да въведете код за активиране или да "
-"кликнете върху \"Продължи\", за да се регистрирате на нашия уебсайт:"
+msgstr "За да извършите ъпгрейд, можете да въведете код за активиране или да кликнете върху \"Продължи\", за да се регистрирате на нашия уебсайт:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2763,7 +2756,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Превключване на изгледа"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 #, fuzzy
 msgid "Token"
 msgstr "Токен"
@@ -2934,7 +2927,7 @@ msgstr "Презареждане…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Качванията, които могат да съдържат такива изображения, ще бъдат отхвърлени автоматично."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 #, fuzzy
 msgid "URL"
 msgstr "URL"
@@ -2965,7 +2958,7 @@ msgstr "Потребителски интерфейс"
 msgid "Username"
 msgstr "Потребителско име"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 #, fuzzy
 msgid "Vanta"
 msgstr "Vanta"
@@ -3144,6 +3137,10 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#, fuzzy
+#~ msgid "Moonlight"
+#~ msgstr "Лунна светлина"
 
 #~ msgid "Basic"
 #~ msgstr "Основен"

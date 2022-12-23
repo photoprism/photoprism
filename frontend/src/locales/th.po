@@ -64,7 +64,7 @@ msgstr "คลิกเพื่อคัดลอกไปยังคลิป
 msgid "About"
 msgstr "เกี่ยวกับ"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 #, fuzzy
 msgid "Abyss"
 msgstr "เหว"
@@ -445,9 +445,7 @@ msgstr "ไม่ว่าง โปรดรอ…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"โดยการใช้ซอฟต์แวร์และบริการที่เรามอบให้ แสดงว่าคุณยอมรับข้อกำหนดในการให้บริ"
-"การ นโยบายความเป็นส่วนตัว และจรรยาบรรณของเรา"
+msgstr "โดยการใช้ซอฟต์แวร์และบริการที่เรามอบให้ แสดงว่าคุณยอมรับข้อกำหนดในการให้บริการ นโยบายความเป็นส่วนตัว และจรรยาบรรณของเรา"
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -491,7 +489,7 @@ msgstr "ไม่สามารถเลือกรายการเพิ่
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 #, fuzzy
 msgid "Carbon"
 msgstr "Carbon"
@@ -694,7 +692,7 @@ msgstr "สนับสนุนลูกค้า"
 msgid "Cyan"
 msgstr "สีฟ้า"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 #, fuzzy
 msgid "Cyano"
 msgstr "ไซยาโน"
@@ -731,7 +729,7 @@ msgstr "โฟลเดอร์เริ่มต้น"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 #, fuzzy
 msgid "Delete"
@@ -1203,7 +1201,7 @@ msgstr "คำถามที่พบบ่อย"
 msgid "Fullscreen"
 msgstr "เต็มจอ"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 #, fuzzy
 msgid "Gemstone"
 msgstr "พลอย"
@@ -1506,7 +1504,7 @@ msgstr "ซิงค์ล่าสุด"
 msgid "Latitude"
 msgstr "ละติจูด"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 #, fuzzy
 msgid "Lavender"
 msgstr "ลาเวนเดอร์"
@@ -1727,11 +1725,6 @@ msgstr "ขาวดำ"
 msgid "Month"
 msgstr "เดือน"
 
-#: src/options/themes.js:441
-#, fuzzy
-msgid "Moonlight"
-msgstr "แสงจันทร์"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 #, fuzzy
 msgid "More than %{n} pictures found"
@@ -1793,6 +1786,10 @@ msgstr "ชื่อ"
 #, fuzzy
 msgid "Name too long"
 msgstr "ชื่อยาวเกินไป"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1986,7 +1983,7 @@ msgstr "พบหนึ่งคน"
 msgid "One picture found"
 msgstr "พบหนึ่งภาพ"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 #, fuzzy
 msgid "Onyx"
 msgstr "โอนิกซ์"
@@ -2251,7 +2248,7 @@ msgstr "คะแนนคุณภาพ"
 msgid "Random"
 msgstr "สุ่ม"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 #, fuzzy
 msgid "Raspberry"
 msgstr "ราสเบอร์รี่"
@@ -2436,7 +2433,7 @@ msgstr "ค้นหาและแสดงภาพถ่ายบนแผน
 msgid "Season"
 msgstr "ฤดูกาล"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 #, fuzzy
 msgid "Secret"
 msgstr "ความลับ"
@@ -2511,7 +2508,7 @@ msgstr "การตั้งค่าที่บันทึกไว้"
 msgid "Setup"
 msgstr "ติดตั้ง"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 #, fuzzy
 msgid "Shadow"
 msgstr "เงา"
@@ -2803,9 +2800,7 @@ msgstr "ชื่อเรื่องยาวเกินไป"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"ดำเนินการต่อ\" "
-"เพื่อลงทะเบียนบนเว็บไซต์ของเรา:"
+msgstr "หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"ดำเนินการต่อ\" เพื่อลงทะเบียนบนเว็บไซต์ของเรา:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2814,7 +2809,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "สลับมุมมอง"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 #, fuzzy
 msgid "Token"
 msgstr "โทเค็น"
@@ -2985,7 +2980,7 @@ msgstr "กำลังโหลดซ้ำ…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "การอัปโหลดที่อาจมีภาพดังกล่าวจะถูกปฏิเสธโดยอัตโนมัติ"
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 #, fuzzy
 msgid "URL"
 msgstr "URL"
@@ -3016,7 +3011,7 @@ msgstr "หน้าจอผู้ใช้"
 msgid "Username"
 msgstr "ชื่อผู้ใช้"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 #, fuzzy
 msgid "Vanta"
 msgstr "วันทา"
@@ -3194,6 +3189,10 @@ msgstr "ห้องสมุดของคุณได้รับการว
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#, fuzzy
+#~ msgid "Moonlight"
+#~ msgstr "แสงจันทร์"
 
 #, fuzzy
 #~ msgid "Basic"

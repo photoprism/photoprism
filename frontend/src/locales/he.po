@@ -5,14 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
-"frontend/he/>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
-"n % 10 == 0) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -64,7 +62,7 @@ msgstr "לחיצה תעתיק את זה ללוח."
 msgid "About"
 msgstr "אודות"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "תהום"
 
@@ -390,9 +388,7 @@ msgstr "עסוק, בבקשה המתן…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"על ידי שימוש בתוכנה ובשירותים שאנו מספקים, אתה מסכים לתנאי השירות, מדיניות "
-"הפרטיות וקוד ההתנהגות שלנו."
+msgstr "על ידי שימוש בתוכנה ובשירותים שאנו מספקים, אתה מסכים לתנאי השירות, מדיניות הפרטיות וקוד ההתנהגות שלנו."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -433,7 +429,7 @@ msgstr "לא ניתן לבחור עוד פרטים"
 msgid "Cancel"
 msgstr "ביטול"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -607,7 +603,7 @@ msgstr "שירות לקוחות"
 msgid "Cyan"
 msgstr "טורקיז"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "ירקרק"
 
@@ -638,7 +634,7 @@ msgstr "תיקיית ברירת מחדל"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "מחק"
@@ -1023,7 +1019,7 @@ msgstr "שאלות נפוצות"
 msgid "Fullscreen"
 msgstr "מסך מלא"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "אבן חן"
 
@@ -1273,7 +1269,7 @@ msgstr "סנכרון אחרון"
 msgid "Latitude"
 msgstr "קו רוחב"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "לבנדר"
 
@@ -1456,10 +1452,6 @@ msgstr "שקפים"
 msgid "Month"
 msgstr "חודש"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "אור ירח"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "נמצאו יותר מ- %{n} תמונות"
@@ -1512,6 +1504,10 @@ msgstr "שם"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "שם ארוך מדי"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1671,7 +1667,7 @@ msgstr "אדם אחד נמצא"
 msgid "One picture found"
 msgstr "תמונה אחת נמצאה"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "שוהם"
 
@@ -1890,7 +1886,7 @@ msgstr "ציון איכות"
 msgid "Random"
 msgstr "אקראי"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "פטל"
 
@@ -2041,7 +2037,7 @@ msgstr "חפש והצג תמונות על המפה."
 msgid "Season"
 msgstr "עונה"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "קוד סודי"
 
@@ -2102,7 +2098,7 @@ msgstr "ההגדרות נשמרו"
 msgid "Setup"
 msgstr "הגדר"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "צל"
 
@@ -2350,7 +2346,7 @@ msgstr "כדי לשדרג, אתה יכול להזין קוד הפעלה או ל�
 msgid "Toggle View"
 msgstr "החלף תצוגה"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "טוקן"
 
@@ -2493,7 +2489,7 @@ msgstr "מעלה..."
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "העלאות שעשויות להכיל תמונות כאלה יידחו אוטומטית."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "נתיב אתר"
 
@@ -2518,7 +2514,7 @@ msgstr "ממשק משתמש"
 msgid "Username"
 msgstr "שם משתמש"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "ונטה"
 
@@ -2668,6 +2664,9 @@ msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אל
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "זום פנימה\\החוצה"
+
+#~ msgid "Moonlight"
+#~ msgstr "אור ירח"
 
 #~ msgid "Basic"
 #~ msgstr "בסיסי"

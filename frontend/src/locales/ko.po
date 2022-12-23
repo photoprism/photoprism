@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ko/>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "클릭하면 클립보드에 복사됩니다."
 msgid "About"
 msgstr "정보"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "어비스"
 
@@ -389,9 +388,7 @@ msgstr "처리중, 잠시만 기다려주세요…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"당사가 제공하는 소프트웨어 및 서비스를 사용함으로써 귀하는 당사의 서비스 "
-"약관, 개인 정보 보호 정책 및 행동 강령에 동의하는 것입니다."
+msgstr "당사가 제공하는 소프트웨어 및 서비스를 사용함으로써 귀하는 당사의 서비스 약관, 개인 정보 보호 정책 및 행동 강령에 동의하는 것입니다."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -432,7 +429,7 @@ msgstr "더 많은 아이템을 선택할 수 없습니다"
 msgid "Cancel"
 msgstr "취소"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -606,7 +603,7 @@ msgstr "고객 지원"
 msgid "Cyan"
 msgstr "청록색"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "시아노"
 
@@ -637,7 +634,7 @@ msgstr "기본 폴더"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "삭제"
@@ -1022,7 +1019,7 @@ msgstr "자주 묻는 질문"
 msgid "Fullscreen"
 msgstr "전체 화면"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "보석"
 
@@ -1272,7 +1269,7 @@ msgstr "마지막 동기화"
 msgid "Latitude"
 msgstr "위도"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "라벤더색"
 
@@ -1455,10 +1452,6 @@ msgstr "단색"
 msgid "Month"
 msgstr "달"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "월광"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "사진을 %{n}개 이상 찾았습니다."
@@ -1511,6 +1504,10 @@ msgstr "이름"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "이름이 너무 깁니다"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1670,7 +1667,7 @@ msgstr "한 사람이 발견됨"
 msgid "One picture found"
 msgstr "사진 1장 발견"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "오닉스색"
 
@@ -1889,7 +1886,7 @@ msgstr "품질 점수"
 msgid "Random"
 msgstr "랜덤"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "라즈베리색"
 
@@ -2040,7 +2037,7 @@ msgstr "검색하고 지도에서 시진을 표시합니다."
 msgid "Season"
 msgstr "계절"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "비밀"
 
@@ -2101,7 +2098,7 @@ msgstr "설정 저장됨"
 msgid "Setup"
 msgstr "설치"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "그림자"
 
@@ -2342,8 +2339,7 @@ msgstr "주제 너무 긴다"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"진행\"을 클릭하여 당사 웹 "
-"사이트에 가입하십시오."
+msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"진행\"을 클릭하여 당사 웹 사이트에 가입하십시오."
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2351,7 +2347,7 @@ msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"진행\"�
 msgid "Toggle View"
 msgstr "보기형식 변경"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "토큰"
 
@@ -2494,7 +2490,7 @@ msgstr "업로드 중…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "이러한 이미지가 포함될 수 있는 업로드는 자동으로 거부됩니다."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2519,7 +2515,7 @@ msgstr "사용자 인터페이스"
 msgid "Username"
 msgstr "사용자 이름"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "반타"
 
@@ -2669,6 +2665,9 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#~ msgid "Moonlight"
+#~ msgstr "월광"
 
 #~ msgid "Basic"
 #~ msgstr "기본"

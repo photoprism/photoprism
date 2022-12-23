@@ -61,7 +61,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr ""
 
@@ -425,7 +425,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr ""
 
@@ -597,7 +597,7 @@ msgstr ""
 msgid "Cyan"
 msgstr ""
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr ""
 
@@ -628,7 +628,7 @@ msgstr ""
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr ""
@@ -1012,7 +1012,7 @@ msgstr ""
 msgid "Fullscreen"
 msgstr ""
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr ""
 
@@ -1262,7 +1262,7 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr ""
 
@@ -1442,10 +1442,6 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr ""
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr ""
@@ -1496,6 +1492,10 @@ msgstr ""
 #: src/page/labels.vue:45 src/page/library/browse.vue:44
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
+msgstr ""
+
+#: src/options/themes.js:451
+msgid "Neon"
 msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
@@ -1656,7 +1656,7 @@ msgstr ""
 msgid "One picture found"
 msgstr ""
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr ""
 
@@ -1872,7 +1872,7 @@ msgstr ""
 msgid "Random"
 msgstr ""
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr ""
 
@@ -2023,7 +2023,7 @@ msgstr ""
 msgid "Season"
 msgstr ""
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr ""
 
@@ -2084,7 +2084,7 @@ msgstr ""
 msgid "Setup"
 msgstr ""
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr ""
 
@@ -2327,7 +2327,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr ""
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr ""
 
@@ -2468,7 +2468,7 @@ msgstr ""
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr ""
 
@@ -2493,7 +2493,7 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr ""
 

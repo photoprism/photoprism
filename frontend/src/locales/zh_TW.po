@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "點擊以複製到剪貼簿。"
 msgid "About"
 msgstr "關於"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "深淵"
 
@@ -427,7 +426,7 @@ msgstr "無法選取更多項目"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -599,7 +598,7 @@ msgstr "客戶支援"
 msgid "Cyan"
 msgstr "青色"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "深青"
 
@@ -630,7 +629,7 @@ msgstr "預設資料夾"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "刪除"
@@ -1014,7 +1013,7 @@ msgstr "常見問題"
 msgid "Fullscreen"
 msgstr "全螢幕"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "寶石"
 
@@ -1264,7 +1263,7 @@ msgstr "上次同步"
 msgid "Latitude"
 msgstr "緯度"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "薰衣草"
 
@@ -1445,10 +1444,6 @@ msgstr "黑白"
 msgid "Month"
 msgstr "月"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "月光"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "找到超過 %{n} 張圖片"
@@ -1500,6 +1495,10 @@ msgstr "名稱"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "名稱太長了"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1659,7 +1658,7 @@ msgstr "找到一個人"
 msgid "One picture found"
 msgstr "找到一張圖片"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "瑪瑙"
 
@@ -1875,7 +1874,7 @@ msgstr "品質成績"
 msgid "Random"
 msgstr "隨機"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "樹梅"
 
@@ -2026,7 +2025,7 @@ msgstr "搜尋並在地圖上顯示圖片。"
 msgid "Season"
 msgstr "季節"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "秘密"
 
@@ -2087,7 +2086,7 @@ msgstr "設定已儲存"
 msgid "Setup"
 msgstr "設定"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "陰影"
 
@@ -2332,7 +2331,7 @@ msgstr "要升級，你需要輸入金鑰或按下\"繼續\"來登入我們的�
 msgid "Toggle View"
 msgstr "切換檢視"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "令牌"
 
@@ -2473,7 +2472,7 @@ msgstr "上傳…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "上傳此類圖像將可能被自動拒絕。"
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "網址"
 
@@ -2498,7 +2497,7 @@ msgstr "使用者介面"
 msgid "Username"
 msgstr "使用者名稱"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2648,6 +2647,9 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Moonlight"
+#~ msgstr "月光"
 
 #~ msgid "Basic"
 #~ msgstr "基本"

@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-21 14:48+0000\n"
 "Last-Translator: Mingtian Yang <tswymt@gmail.com>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "点击复制到剪贴板。"
 msgid "About"
 msgstr "关于"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "深渊"
 
@@ -427,7 +426,7 @@ msgstr "无法选择更多项目"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "炭黑主题"
 
@@ -599,7 +598,7 @@ msgstr "客户支持"
 msgid "Cyan"
 msgstr "青"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "深蓝"
 
@@ -630,7 +629,7 @@ msgstr "默认文件夹"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "删除"
@@ -1014,7 +1013,7 @@ msgstr "常见问题"
 msgid "Fullscreen"
 msgstr "全屏"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "宝石"
 
@@ -1264,7 +1263,7 @@ msgstr "上次同步"
 msgid "Latitude"
 msgstr "纬度"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "薰衣草"
 
@@ -1444,10 +1443,6 @@ msgstr "黑白"
 msgid "Month"
 msgstr "月"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "月光"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "找到超过 %{n} 张图片"
@@ -1499,6 +1494,10 @@ msgstr "名称"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "名称太长"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1658,7 +1657,7 @@ msgstr "已找到一个人物"
 msgid "One picture found"
 msgstr "已发现一张图片"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "玛瑙"
 
@@ -1704,10 +1703,7 @@ msgstr "其他"
 
 #: src/page/connect.vue:123
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr ""
-"我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是大家普遍需要的"
-"还是主要由组织和高级用户要求的，持续地决定这一点。由于这使我们能够向公众提供"
-"更多的功能，我们鼓励所有用户支持我们的任务。"
+msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是大家普遍需要的还是主要由组织和高级用户要求的，持续地决定这一点。由于这使我们能够向公众提供更多的功能，我们鼓励所有用户支持我们的任务。"
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1767,9 +1763,7 @@ msgstr "PhotoPrism 更新啦…"
 
 #: src/page/connect.vue:117
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
-"PhotoPrism是100%自筹资金的开源软件项目。自愿捐款并不能保证支付一个全职工作的"
-"团队对软件进行更新、支持所产生的费用。您可以决定是否要注册以享受额外的好处。"
+msgstr "PhotoPrism是100%自筹资金的开源软件项目。自愿捐款并不能保证支付一个全职工作的团队对软件进行更新、支持所产生的费用。您可以决定是否要注册以享受额外的好处。"
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1880,7 +1874,7 @@ msgstr "质量得分"
 msgid "Random"
 msgstr "随机"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "树莓"
 
@@ -2032,7 +2026,7 @@ msgstr "在地图上搜索并显示照片。"
 msgid "Season"
 msgstr "季节"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "密钥"
 
@@ -2093,7 +2087,7 @@ msgstr "设置已保存"
 msgid "Setup"
 msgstr "设置"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "阴影"
 
@@ -2275,18 +2269,14 @@ msgstr "主题"
 
 #: src/page/connect.vue:111
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr ""
-"把 \"自由软件 \"想成是 \"自由言论\"，而不是 \"随手可得的啤酒\"。"
-"自由软件基金会有时称之为 \"被解放的软件\"，借用法语或西班牙语中自由的 \"解放 "
-"\"一词，以表明他们并不意味着软件是免费的。"
+msgstr "把 \"自由软件 \"想成是 \"自由言论\"，而不是 \"随手可得的啤酒\"。自由软件基金会有时称之为 \"被解放的软件\"，借用法语或西班牙语中自由的 \"解放 \"一词，以表明他们并不意味着软件是免费的。"
 
 #: src/page/settings/services.vue:40
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"这将原件文件夹挂载为一个网络驱动器，并允许你从你的电脑或智能手机上打开、编辑"
-"和删除文件，就像它们在本地一样。\n"
+"这将原件文件夹挂载为一个网络驱动器，并允许你从你的电脑或智能手机上打开、编辑和删除文件，就像它们在本地一样。\n"
 "          就像它们是本地的一样。"
 
 #: src/dialog/webdav.vue:26
@@ -2342,7 +2332,7 @@ msgstr "输入激活码后进行升级，或者直接点击按钮前往在我们
 msgid "Toggle View"
 msgstr "切换视图"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "令牌"
 
@@ -2483,7 +2473,7 @@ msgstr "上传中…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "可能包含此类图像的上传将被自动拒绝。"
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2508,7 +2498,7 @@ msgstr "用户界面"
 msgid "Username"
 msgstr "用户名"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2658,6 +2648,9 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Moonlight"
+#~ msgstr "月光"
 
 #~ msgid "Basic"
 #~ msgstr "基本"

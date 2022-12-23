@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Japanese <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ja/>\n"
+"Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "クリックすると、クリップボードにコピーされます。
 msgid "About"
 msgstr "概要"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "アビス"
 
@@ -389,9 +388,7 @@ msgstr "処理中です、しばらくお待ちください…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"当社が提供するソフトウェアおよびサービスを利用することにより、お客様は当社の"
-"利用規約、プライバシーポリシー、および行動規範に同意したものとみなされます。"
+msgstr "当社が提供するソフトウェアおよびサービスを利用することにより、お客様は当社の利用規約、プライバシーポリシー、および行動規範に同意したものとみなされます。"
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -432,7 +429,7 @@ msgstr "これ以上項目を選択することはできません"
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -606,7 +603,7 @@ msgstr "顧客向けサポート"
 msgid "Cyan"
 msgstr "シアン"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "暗い青"
 
@@ -637,7 +634,7 @@ msgstr "既定のフォルダ"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "削除"
@@ -1022,7 +1019,7 @@ msgstr "よくある質問"
 msgid "Fullscreen"
 msgstr "全画面"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "ジェムストーン"
 
@@ -1272,7 +1269,7 @@ msgstr "同期"
 msgid "Latitude"
 msgstr "緯度"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "ラベンダー"
 
@@ -1455,10 +1452,6 @@ msgstr "モノクロ"
 msgid "Month"
 msgstr "月"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "月光"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "%{n}枚以上の画像が見つかりました"
@@ -1511,6 +1504,10 @@ msgstr "名前"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "名前が長すぎます"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1670,7 +1667,7 @@ msgstr "一人が見つけた"
 msgid "One picture found"
 msgstr "1枚の写真を発見"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1889,7 +1886,7 @@ msgstr "品質スコア"
 msgid "Random"
 msgstr "ランダム"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "ラズベリー"
 
@@ -2040,7 +2037,7 @@ msgstr "検索して、地図に写真を表示します。"
 msgid "Season"
 msgstr "季節"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "秘密"
 
@@ -2101,7 +2098,7 @@ msgstr "設定が保存されました"
 msgid "Setup"
 msgstr "セットアップ"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "影"
 
@@ -2349,7 +2346,7 @@ msgstr "アップグレードするには、アクティベーションコード
 msgid "Toggle View"
 msgstr "表示を切り替え"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "トークン"
 
@@ -2492,7 +2489,7 @@ msgstr "アップロード中…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "そのような画像を含むアップロードは自動的に拒否されます。"
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2517,7 +2514,7 @@ msgstr "ユーザインタフェース"
 msgid "Username"
 msgstr "ユーザ名"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "バンタ"
 
@@ -2667,6 +2664,9 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
+
+#~ msgid "Moonlight"
+#~ msgstr "月光"
 
 #~ msgid "Basic"
 #~ msgstr "基本"

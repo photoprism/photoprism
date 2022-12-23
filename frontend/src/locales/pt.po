@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Portuguese <https://translate.photoprism.app/projects/"
-"photoprism/frontend/pt/>\n"
+"Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "Um clique irá copiar para a área de transferência."
 msgid "About"
 msgstr "Sobre"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Abismo"
 
@@ -389,9 +388,7 @@ msgstr "Ocupado, por favor aguarde…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Ao usar o software e os serviços que fornecemos, você concorda com nossos "
-"termos de serviço, política de privacidade e código de conduta."
+msgstr "Ao usar o software e os serviços que fornecemos, você concorda com nossos termos de serviço, política de privacidade e código de conduta."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -432,7 +429,7 @@ msgstr "Não é possível selecionar mais itens"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -606,7 +603,7 @@ msgstr "Suporte ao cliente"
 msgid "Cyan"
 msgstr "Ciano"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Ciano"
 
@@ -637,7 +634,7 @@ msgstr "Pasta Padrão"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Apagar"
@@ -1022,7 +1019,7 @@ msgstr "perguntas frequentes"
 msgid "Fullscreen"
 msgstr "Ecrã inteiro"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Gemstone"
 
@@ -1272,7 +1269,7 @@ msgstr "Última Sincronia"
 msgid "Latitude"
 msgstr "Latitude"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Lavanda"
 
@@ -1455,10 +1452,6 @@ msgstr "Monocromático"
 msgid "Month"
 msgstr "Mês"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Luar"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Mais do que %{n} fotos encontradas"
@@ -1511,6 +1504,10 @@ msgstr "Nome"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Nome muito extenso"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1670,7 +1667,7 @@ msgstr "Uma pessoa encontrada"
 msgid "One picture found"
 msgstr "Uma foto encontrada"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Ônix"
 
@@ -1889,7 +1886,7 @@ msgstr "Marcador de qualidade"
 msgid "Random"
 msgstr "Aleatório"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Framboesa"
 
@@ -2040,7 +2037,7 @@ msgstr "Pesquisar e mostrar fotos num mapa."
 msgid "Season"
 msgstr "Estação"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Segredo"
 
@@ -2101,7 +2098,7 @@ msgstr "Configurações salvas"
 msgid "Setup"
 msgstr "Configuração"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Sombra"
 
@@ -2349,7 +2346,7 @@ msgstr "Para atualizar, você pode inserir um código de ativação ou clicar em
 msgid "Toggle View"
 msgstr "Trocar visualização"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Token"
 
@@ -2492,7 +2489,7 @@ msgstr "A carregar."
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Envios que possam conter tais imagens serão rejeitados automaticamente."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2517,7 +2514,7 @@ msgstr "Interface de utilizador"
 msgid "Username"
 msgstr "Nome de utilizador"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vantagem"
 
@@ -2667,6 +2664,9 @@ msgstr "Sua biblioteca é continuamente analisada para criar automaticamente ál
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Aproximar/Afastar"
+
+#~ msgid "Moonlight"
+#~ msgstr "Luar"
 
 #~ msgid "Basic"
 #~ msgstr "Básico"

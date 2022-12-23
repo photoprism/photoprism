@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-12-17 23:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Indonesian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/id/>\n"
+"Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +62,7 @@ msgstr "Satu klik akan menyalinnya ke clipboard Anda."
 msgid "About"
 msgstr "Tentang"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Neraka"
 
@@ -393,9 +392,7 @@ msgstr "Sibuk, harap tunggu…"
 #: src/page/connect.vue:82 src/page/connect.vue:99
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Dengan menggunakan perangkat lunak dan layanan yang kami sediakan, Anda "
-"menyetujui ketentuan layanan, kebijakan privasi, dan kode etik kami."
+msgstr "Dengan menggunakan perangkat lunak dan layanan yang kami sediakan, Anda menyetujui ketentuan layanan, kebijakan privasi, dan kode etik kami."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -436,7 +433,7 @@ msgstr "Tidak dapat memilih item lainnya"
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -617,7 +614,7 @@ msgstr "Dukungan Pelanggan"
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Siano"
 
@@ -648,7 +645,7 @@ msgstr "Folder Default"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Hapus"
@@ -1041,7 +1038,7 @@ msgstr "Pertanyaan yang Sering Diajukan"
 msgid "Fullscreen"
 msgstr "Layar Penuh"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Batu permata"
 
@@ -1298,7 +1295,7 @@ msgstr "Sinkronisasi Terakhir"
 msgid "Latitude"
 msgstr "Lintang"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Lavender"
 
@@ -1486,10 +1483,6 @@ msgstr "Monokrom"
 msgid "Month"
 msgstr "Setelah 1 bulanBulan"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Cahaya Bulan"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Lebih dari %{n} gambar ditemukan"
@@ -1543,6 +1536,10 @@ msgstr "Nama"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Nama terlalu panjang"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1706,7 +1703,7 @@ msgstr "Satu orang ditemukan"
 msgid "One picture found"
 msgstr "Satu gambar ditemukan"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1930,7 +1927,7 @@ msgstr "Angka Mutu"
 msgid "Random"
 msgstr "Acak"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Raspberry"
 
@@ -2085,7 +2082,7 @@ msgstr "Mencari dan menampilkan foto di peta."
 msgid "Season"
 msgstr "Musim"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 msgid "Secret"
 msgstr "Rahasia"
 
@@ -2148,7 +2145,7 @@ msgstr "Pengaturan disimpan"
 msgid "Setup"
 msgstr "Setelan"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Bayangan"
 
@@ -2393,9 +2390,7 @@ msgstr "Judul terlalu panjang"
 #: src/page/connect.vue:58 src/page/connect.vue:75
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik \"Proceed\""
-" untuk mendaftar di situs web kami:"
+msgstr "Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik \"Proceed\" untuk mendaftar di situs web kami:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2403,7 +2398,7 @@ msgstr ""
 msgid "Toggle View"
 msgstr "Beralih Tampilan"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Token"
 
@@ -2549,7 +2544,7 @@ msgstr "Memuat ulang…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Unggahan yang mungkin berisi gambar seperti itu akan ditolak secara otomatis."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2575,7 +2570,7 @@ msgstr "Tampilan Pengguna"
 msgid "Username"
 msgstr "Nama pengguna"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2736,6 +2731,9 @@ msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat al
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
+
+#~ msgid "Moonlight"
+#~ msgstr "Cahaya Bulan"
 
 #, fuzzy
 #~ msgid "Basic"

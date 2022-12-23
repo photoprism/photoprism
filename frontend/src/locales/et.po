@@ -59,7 +59,7 @@ msgstr "Klõpsamine kopeerib selle lõikelauale."
 msgid "About"
 msgstr "Teave"
 
-#: src/options/themes.js:431
+#: src/options/themes.js:441
 msgid "Abyss"
 msgstr "Abyss"
 
@@ -423,7 +423,7 @@ msgstr "Rohkem objekte ei saa valida"
 msgid "Cancel"
 msgstr "Katkesta"
 
-#: src/options/themes.js:436
+#: src/options/themes.js:431
 msgid "Carbon"
 msgstr "Carbon"
 
@@ -595,7 +595,7 @@ msgstr "Klienditugi"
 msgid "Cyan"
 msgstr "Tsüaan"
 
-#: src/options/themes.js:451
+#: src/options/themes.js:466
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -626,7 +626,7 @@ msgstr "Vaikimisi kaust"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:226 src/page/library/errors.vue:88
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:360
 msgid "Delete"
 msgstr "Kustuta"
@@ -1010,7 +1010,7 @@ msgstr "Korduma kippuvad küsimused"
 msgid "Fullscreen"
 msgstr "Täisekraan"
 
-#: src/options/themes.js:461
+#: src/options/themes.js:426
 msgid "Gemstone"
 msgstr "Gemstone"
 
@@ -1260,7 +1260,7 @@ msgstr "Viimane sünkroonimine"
 msgid "Latitude"
 msgstr "Laiuskraad"
 
-#: src/options/themes.js:456
+#: src/options/themes.js:436
 msgid "Lavender"
 msgstr "Lavender"
 
@@ -1441,10 +1441,6 @@ msgstr "Mustvalge"
 msgid "Month"
 msgstr "Kuu"
 
-#: src/options/themes.js:441
-msgid "Moonlight"
-msgstr "Moonlight"
-
 #: src/page/album/photos.vue:396 src/page/photos.vue:493
 msgid "More than %{n} pictures found"
 msgstr "Rohkem kui %{n} pilti leitud"
@@ -1496,6 +1492,10 @@ msgstr "Nimi"
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Nimi on liiga pikk"
+
+#: src/options/themes.js:451
+msgid "Neon"
+msgstr ""
 
 #: src/options/options.js:367 src/options/options.js:377
 #: src/page/settings/services.vue:54
@@ -1655,7 +1655,7 @@ msgstr "Üks inimene leitud"
 msgid "One picture found"
 msgstr "Üks pilt leitud"
 
-#: src/options/themes.js:446
+#: src/options/themes.js:461
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1871,7 +1871,7 @@ msgstr "Kvaliteediskoor"
 msgid "Random"
 msgstr "Juhuslik"
 
-#: src/options/themes.js:466
+#: src/options/themes.js:471
 msgid "Raspberry"
 msgstr "Raspberry"
 
@@ -2022,7 +2022,7 @@ msgstr "Otsi ja kuva fotosid kaardil."
 msgid "Season"
 msgstr "Aastaaeg"
 
-#: src/dialog/share.vue:205
+#: src/dialog/share.vue:207
 #, fuzzy
 msgid "Secret"
 msgstr "Salajane"
@@ -2084,7 +2084,7 @@ msgstr "Seaded salvestatud"
 msgid "Setup"
 msgstr "Seadista"
 
-#: src/options/themes.js:471
+#: src/options/themes.js:456
 msgid "Shadow"
 msgstr "Shadow"
 
@@ -2329,7 +2329,7 @@ msgstr "Uuendamiseks võid sisestada aktiveerimiskoodi või klõpsata \"Jätka\"
 msgid "Toggle View"
 msgstr "Muuda vaadet"
 
-#: src/dialog/share.vue:206
+#: src/dialog/share.vue:208
 #, fuzzy
 msgid "Token"
 msgstr "Token"
@@ -2472,7 +2472,7 @@ msgstr "Üleslaadimine…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
 
-#: src/dialog/share.vue:153
+#: src/dialog/share.vue:157
 msgid "URL"
 msgstr "URL"
 
@@ -2497,7 +2497,7 @@ msgstr "Kasutajaliides"
 msgid "Username"
 msgstr "Kasutajanimi"
 
-#: src/options/themes.js:426
+#: src/options/themes.js:446
 msgid "Vanta"
 msgstr "Vanta"
 
@@ -2648,6 +2648,9 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "Moonlight"
+#~ msgstr "Moonlight"
 
 #~ msgid "Basic"
 #~ msgstr "Lihtne"
