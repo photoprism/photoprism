@@ -1,6 +1,7 @@
 package event
 
 import (
+	"log"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -23,6 +24,13 @@ func init() {
 		ExitFunc:     os.Exit,
 		ReportCaller: false,
 	}
+
+	// Default logger shall use Logrus.
+	log.SetFlags(0)
+	log.SetOutput(&LogWriter{
+		Log:   Log,
+		Level: logrus.DebugLevel,
+	})
 
 	// Create dummy audit logger.
 	AuditLog = dummy.NewLogger()
