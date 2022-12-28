@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-12-28 17:47+0000\n"
+"PO-Revision-Date: 2022-12-28 18:00+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1493,7 +1493,6 @@ msgid "Name too long"
 msgstr "Nimi on liiga pikk"
 
 #: src/options/themes.js:451
-#, fuzzy
 msgid "Neon"
 msgstr "Neon"
 
