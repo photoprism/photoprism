@@ -68,7 +68,7 @@ body.dark-theme.theme-neon {
 }
 
 #photoprism.theme-neon a.text-link {
-    color: #e138de !important;
+    color: #ca4ac9 !important;
 }
 
 #photoprism.theme-neon .theme--light.v-select .v-select__selections {
@@ -77,7 +77,7 @@ body.dark-theme.theme-neon {
 
 #photoprism.theme-neon .theme--light.v-list .v-list__tile__sub-title,
 #photoprism.theme-neon .accent--text {
-    color: #cc36ca !important;
+    color: #d532d2 !important;
 }
 
 #photoprism.theme-neon .theme--light.v-input:not(.v-input--is-disabled) input,
