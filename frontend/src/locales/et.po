@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2022-12-23 14:48+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2022-12-28 17:47+0000\n"
+"Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1367,7 +1367,6 @@ msgid "Low"
 msgstr "Madal"
 
 #: src/options/options.js:272
-#, fuzzy
 msgid "Low Resolution"
 msgstr "Madal resolutsioon"
 
