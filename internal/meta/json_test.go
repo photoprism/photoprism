@@ -1259,4 +1259,23 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 14 Pro Max", data.CameraModel)
 		assert.Equal(t, "iPhone 14 Pro Max back triple camera 9mm f/2.8", data.LensModel)
 	})
+
+	t.Run("buggy_panorama.json", func(t *testing.T) {
+		data, err := JSON("testdata/buggy_panorama.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %+v", data)
+
+		assert.Equal(t, CodecJpeg, data.Codec)
+		assert.Equal(t, "2022-04-24 10:35:53 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2022-04-24 02:35:53 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Asia/Shanghai", data.TimeZone) // Local Time
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(33.640007), data.Lat)
+		assert.Equal(t, float32(103.48), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+	})
 }

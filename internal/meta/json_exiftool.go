@@ -174,10 +174,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	// Set latitude and longitude if known and not already set.
 	if data.Lat == 0 && data.Lng == 0 {
 		if data.GPSPosition != "" {
-			data.Lat, data.Lng = GpsToLatLng(data.GPSPosition)
+			lat, lng := GpsToLatLng(data.GPSPosition)
+			data.Lat, data.Lng = NormalizeGPS(lat, lng)
 		} else if data.GPSLatitude != "" && data.GPSLongitude != "" {
-			data.Lat = GpsToDecimal(data.GPSLatitude)
-			data.Lng = GpsToDecimal(data.GPSLongitude)
+			data.Lat, data.Lng = NormalizeGPS(GpsToDecimal(data.GPSLatitude), GpsToDecimal(data.GPSLongitude))
 		}
 	}
 

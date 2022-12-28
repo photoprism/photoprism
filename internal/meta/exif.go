@@ -107,8 +107,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 				log.Debugf("metadata: %s in %s (exif gps-info)", err, logName)
 			} else {
 				if !math.IsNaN(gi.Latitude.Decimal()) && !math.IsNaN(gi.Longitude.Decimal()) {
-					data.Lat = float32(gi.Latitude.Decimal())
-					data.Lng = float32(gi.Longitude.Decimal())
+					data.Lat, data.Lng = NormalizeGPS(gi.Latitude.Decimal(), gi.Longitude.Decimal())
 				} else if gi.Altitude != 0 || !gi.Timestamp.IsZero() {
 					log.Warnf("metadata: invalid exif gps coordinates in %s (%s)", logName, clean.Log(gi.String()))
 				}

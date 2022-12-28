@@ -628,6 +628,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.Projection)
 		assert.Equal(t, "", data.ColorProfile)
 	})
+
 	t.Run("animated.gif", func(t *testing.T) {
 		_, err := Exif("testdata/animated.gif", fs.ImageGIF, true)
 
@@ -637,6 +638,7 @@ func TestExif(t *testing.T) {
 			assert.Equal(t, "found no exif data", err.Error())
 		}
 	})
+
 	t.Run("aurora.jpg", func(t *testing.T) {
 		data, err := Exif("testdata/aurora.jpg", fs.ImageJPEG, false)
 
@@ -650,5 +652,21 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
+	})
+
+	t.Run("buggy_panorama.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/buggy_panorama.jpg", fs.ImageJPEG, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2022-04-24 10:35:53 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2022-04-24 02:35:53 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Asia/Shanghai", data.TimeZone) // Local Time
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(33.640007), data.Lat)
+		assert.Equal(t, float32(103.48), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
 	})
 }
