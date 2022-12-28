@@ -87,6 +87,10 @@ export const Languages = () => [
     value: "en",
   },
   {
+    text: "Afrikaans", // Afrikaans (South Africa)
+    value: "af",
+  },
+  {
     text: "Bahasa Indonesia", // Bahasa Indonesia
     value: "id",
   },
