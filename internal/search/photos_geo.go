@@ -175,6 +175,15 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		}
 	}
 
+	// Find Unique Image ID (Exif), Document ID, or Instance ID (XMP)?
+	if txt.NotEmpty(f.ID) {
+		for _, id := range SplitAnd(strings.ToLower(f.ID)) {
+			if ids := SplitOr(id); len(ids) > 0 {
+				s = s.Where("files.instance_id IN (?) OR photos.uuid IN (?)", ids, ids)
+			}
+		}
+	}
+
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
 		if f.Title == "" {

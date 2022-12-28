@@ -217,6 +217,15 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
+	// Find Unique Image ID (Exif), Document ID, or Instance ID (XMP)?
+	if txt.NotEmpty(f.ID) {
+		for _, id := range SplitAnd(strings.ToLower(f.ID)) {
+			if ids := SplitOr(id); len(ids) > 0 {
+				s = s.Where("files.instance_id IN (?) OR photos.uuid IN (?)", ids, ids)
+			}
+		}
+	}
+
 	// Filter by label, label category and keywords.
 	var categories []entity.Category
 	var labels []entity.Label

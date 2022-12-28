@@ -11,7 +11,8 @@ type SearchPhotosGeo struct {
 	Query     string    `form:"q"`
 	Scope     string    `form:"s" serialize:"-" example:"s:ariqwb43p5dh9h13" notes:"Limits the results to one album or another scope, if specified"`
 	Filter    string    `form:"filter" serialize:"-" notes:"-"`
-	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Search for specific files or photos, only exact matches"`
+	ID        string    `form:"id" example:"id:123e4567-e89b-..." notes:"Finds pictures by Exif UID, XMP Document ID or Instance ID"`
+	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Limits results to the specified internal unique IDs"`
 	Near      string    `form:"near"`
 	Type      string    `form:"type"`
 	Path      string    `form:"path"`
