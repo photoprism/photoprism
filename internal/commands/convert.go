@@ -19,6 +19,10 @@ var ConvertCommand = cli.Command{
 	Usage:     "Converts files in other formats to JPEG and AVC as needed",
 	ArgsUsage: "[sub-folder]",
 	Flags: []cli.Flag{
+		cli.StringSliceFlag{
+			Name:  "ext, e",
+			Usage: "only process files with the specified extensions, e.g. mp4",
+		},
 		cli.BoolFlag{
 			Name:  "force, f",
 			Usage: "replace existing JPEG files in the sidecar folder",
@@ -61,7 +65,7 @@ func convertAction(ctx *cli.Context) error {
 	w := get.Convert()
 
 	// Start file conversion.
-	if err := w.Start(convertPath, ctx.Bool("force")); err != nil {
+	if err := w.Start(convertPath, ctx.StringSlice("ext"), ctx.Bool("force")); err != nil {
 		log.Error(err)
 	}
 

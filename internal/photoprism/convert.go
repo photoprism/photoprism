@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/list"
 )
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
@@ -37,7 +38,7 @@ func NewConvert(conf *config.Config) *Convert {
 }
 
 // Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(path string, force bool) (err error) {
+func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
@@ -93,8 +94,14 @@ func (c *Convert) Start(path string, force bool) (err error) {
 			isDir, _ := info.IsDirOrSymlinkToDir()
 			isSymlink := info.IsSymlink()
 
+			// Skip file?
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				return result
+			}
+
+			// Process only files with specified extensions?
+			if list.Excludes(ext, fs.NormalizedExt(fileName)) {
+				return nil
 			}
 
 			f, err := NewMediaFile(fileName)

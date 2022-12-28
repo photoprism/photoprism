@@ -29,7 +29,7 @@ func TestConvert_Start(t *testing.T) {
 
 	convert := NewConvert(conf)
 
-	err := convert.Start(conf.ImportPath(), false)
+	err := convert.Start(conf.ImportPath(), nil, false)
 
 	if err != nil {
 		t.Fatal(err)
@@ -57,7 +57,7 @@ func TestConvert_Start(t *testing.T) {
 
 	_ = os.Remove(existingJpegFilename)
 
-	if err := convert.Start(conf.ImportPath(), false); err != nil {
+	if err := convert.Start(conf.ImportPath(), nil, false); err != nil {
 		t.Fatal(err)
 	}
 
