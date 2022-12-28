@@ -329,7 +329,7 @@ let themes = {
       accent: "#090c10",
       error: "#973396",
       info: "#1ea1be",
-      success: "#37a472",
+      success: "#7b56eb",
       warning: "#fece3e",
       love: "#fb4483",
       remove: "#9100a0",
