@@ -323,7 +323,7 @@ let themes = {
       card: "#3c3f41",
       primary: "#e53be2",
       "primary-button": "#80227f",
-      "secondary-dark": "#ba33b8",
+      "secondary-dark": "#c12fbf",
       secondary: "#111111",
       "secondary-light": "#1a1a1a",
       accent: "#090c10",
