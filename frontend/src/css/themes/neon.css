@@ -4,6 +4,10 @@ body.dark-theme.theme-neon {
     background: #212121 !important;
 }
 
+.theme-neon .v-speed-dial .v-btn--floating.v-btn--small {
+    opacity: 0.9;
+}
+
 .theme-neon .v-content__wrap,
 .theme-neon .p-page,
 .theme-neon .form,
