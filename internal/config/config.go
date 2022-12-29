@@ -587,7 +587,7 @@ func (c *Config) Shutdown() {
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
 	} else {
-		log.Info("closed database connection")
+		log.Debug("closed database connection")
 	}
 }
 

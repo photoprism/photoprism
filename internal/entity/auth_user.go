@@ -143,6 +143,7 @@ func FirstOrCreateUser(m *User) *User {
 // FindUserByName returns the matching user or nil if it was not found.
 func FindUserByName(name string) *User {
 	name = clean.Username(name)
+
 	if name == "" {
 		return nil
 	}
