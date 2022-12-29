@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tidwall/gjson"
 )
 
 func TestEmbedding_Kind(t *testing.T) {
@@ -83,5 +84,31 @@ func TestUnmarshalEmbedding(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Equal(t, Embedding{0, 0}, emb)
+	})
+}
+
+func TestNewEmbeddingFromJsonArray(t *testing.T) {
+	const json = `{"test":[1,2,3]}`
+	array := gjson.Get(json, "test").Array()
+	actual := NewEmbeddingFromJsonArray(array)
+	assert.Equal(t, Embedding{1, 2, 3}, actual)
+}
+
+func TestCosineSimilarity(t *testing.T) {
+	t.Run("same angle", func(t *testing.T) {
+		actual := Embedding{1, 1, 1}.CosineSimilarity(Embedding{2, 2, 2})
+		assert.InDelta(t, 1.0, actual, 0.00001)
+	})
+	t.Run("90 °", func(t *testing.T) {
+		actual := Embedding{1, 1}.CosineSimilarity(Embedding{1, -1})
+		assert.InDelta(t, 0.0, actual, 0.00001)
+	})
+	t.Run("180 °", func(t *testing.T) {
+		actual := Embedding{3, 3, 3}.CosineSimilarity(Embedding{-2, -2, -2})
+		assert.InDelta(t, -1.0, actual, 0.00001)
+	})
+	t.Run("some random numbers", func(t *testing.T) {
+		actual := Embedding{1.1, 10.1, -2.2, 7.7}.CosineSimilarity(Embedding{4.6, -2.5, 2.3, 5.1})
+		assert.InDelta(t, 0.14144223658471672, actual, 0.00001)
 	})
 }

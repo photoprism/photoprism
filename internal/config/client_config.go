@@ -116,6 +116,7 @@ type ClientDisable struct {
 	Sips           bool `json:"sips"`
 	HeifConvert    bool `json:"heifconvert"`
 	TensorFlow     bool `json:"tensorflow"`
+	Clip           bool `json:"clip"`
 	Faces          bool `json:"faces"`
 	Classification bool `json:"classification"`
 }
@@ -392,6 +393,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Sips:           c.DisableSips(),
 			HeifConvert:    c.DisableHeifConvert(),
 			TensorFlow:     c.DisableTensorFlow(),
+			Clip:           c.DisableClip(),
 			Faces:          c.DisableFaces(),
 			Classification: c.DisableClassification(),
 		},

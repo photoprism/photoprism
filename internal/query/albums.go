@@ -40,7 +40,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 			f.Public = false
 		}
 
-		if photos, _, err := search.Photos(f); err != nil {
+		if photos, _, err := search.Photos(f, search.Clip()); err != nil {
 			return file, err
 		} else if len(photos) > 0 {
 			for _, photo := range photos {

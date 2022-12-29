@@ -66,6 +66,7 @@ type Options struct {
 	DisableSettings       bool          `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
 	DisablePlaces         bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableTensorFlow     bool          `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
+	DisableClip           bool          `yaml:"DisableClip" json:"DisableClip" flag:"disable-clip"`
 	DisableFaces          bool          `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`
 	DisableClassification bool          `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DisableFFmpeg         bool          `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`

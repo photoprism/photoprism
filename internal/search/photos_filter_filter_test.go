@@ -15,7 +15,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "path:\"1990/04\" public:true"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -28,7 +28,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "%gold"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -41,7 +41,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "I love % dog"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -54,7 +54,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "sale%"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -67,7 +67,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "&IlikeFood"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -80,7 +80,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "Pets & Dogs"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -93,7 +93,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "Light&"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -106,7 +106,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "'Family"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +119,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "Father's type"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -133,7 +133,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "Ice Cream'"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -146,7 +146,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "*Forrest"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -159,7 +159,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "My*Kids"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -172,7 +172,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "Yoga***"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -185,7 +185,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "|Banana"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -198,7 +198,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "Red|Green"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -212,7 +212,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "Blue|"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -226,7 +226,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "345 Shirt"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -239,7 +239,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "type555 Blue"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -252,7 +252,7 @@ func TestPhotosFilterFilter(t *testing.T) {
 		f.Filter = "Route 66"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -268,7 +268,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -281,7 +281,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -294,7 +294,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -307,7 +307,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -320,7 +320,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -333,7 +333,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -346,7 +346,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -359,7 +359,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"Father's type\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -373,7 +373,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -386,7 +386,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -399,7 +399,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -412,7 +412,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -425,7 +425,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -438,7 +438,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -452,7 +452,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -465,7 +465,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -478,7 +478,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"type555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -491,7 +491,7 @@ func TestPhotosQueryFilter(t *testing.T) {
 		f.Filter = "\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

@@ -10,6 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/clip"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -28,24 +29,26 @@ var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}
 var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageWebP.String()}
 
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
-func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
-	return searchPhotos(f, nil, PhotosColsAll)
+func Photos(f form.SearchPhotos, clip *clip.Clip) (results PhotoResults, count int, err error) {
+	return searchPhotos(f, clip, nil, PhotosColsAll)
 }
 
 // UserPhotos finds PhotoResults based on the search form and user session.
 func UserPhotos(f form.SearchPhotos, sess *entity.Session) (results PhotoResults, count int, err error) {
-	return searchPhotos(f, sess, PhotosColsAll)
+	// @TODO: perform clip search here aswell
+	return searchPhotos(f, nil, sess, PhotosColsAll)
 }
 
 // PhotoIds finds photo and file ids based on the search form provided and returns them as PhotoResults.
 func PhotoIds(f form.SearchPhotos) (files PhotoResults, count int, err error) {
 	f.Merged = false
 	f.Primary = true
-	return searchPhotos(f, nil, "photos.id, photos.photo_uid, files.file_uid")
+	// @TODO: perform clip search here aswell
+	return searchPhotos(f, nil, nil, "photos.id, photos.photo_uid, files.file_uid")
 }
 
 // searchPhotos finds photos based on the search form and user session then returns them as PhotoResults.
-func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) (results PhotoResults, count int, err error) {
+func searchPhotos(f form.SearchPhotos, clip *clip.Clip, sess *entity.Session, resultCols string) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
 	// Parse query string and filter.
@@ -178,6 +181,32 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	// Primary files only?
 	if f.Primary {
 		s = s.Where("files.file_primary = 1")
+	}
+
+	if f.Query != "" {
+		embedding, err := clip.Api.EncodeText(f.Query)
+		if err != nil {
+			log.Debugf("search: cannot get clip embedding for '%s'", f.Query)
+		} else {
+			resultIds, err := clip.Db.KNearestNeighbors(embedding, uint(f.Count), 0.2)
+			if err != nil {
+				log.Debugf("search: cannot get KNearestNeighbors for '%s'", f.Query)
+			} else {
+				s = s.Where("photos.id IN (?)", resultIds)
+
+				// Take shortcut!
+				s = s.Order("files.file_primary DESC")
+
+				if result := s.Scan(&results); result.Error != nil {
+					return results, 0, result.Error
+				}
+				log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+				if f.Merged {
+					return results.Merge()
+				}
+				return results, len(results), nil
+			}
+		}
 	}
 
 	// Find specific UIDs only?

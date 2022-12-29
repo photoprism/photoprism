@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/clip"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
@@ -21,8 +22,9 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
 	fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
+	clip := clip.New("clip-testing", 512, conf.DisableClip())
 	convert := NewConvert(conf)
-	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
+	ind := NewIndex(conf, tf, clip, nd, fn, convert, NewFiles(), NewPhotos())
 	imp := &Import{conf, ind, convert}
 
 	mediaFileName := conf.ExamplesPath() + "/beach_sand.jpg"

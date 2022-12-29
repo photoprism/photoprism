@@ -18,7 +18,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	photos0, _, err := Photos(f0, Clip())
 
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,7 +44,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -57,7 +57,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -70,7 +70,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -84,7 +84,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -97,7 +97,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -111,7 +111,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -125,7 +125,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Mother's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -139,7 +139,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -153,7 +153,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -167,7 +167,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -181,7 +181,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -195,7 +195,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -209,7 +209,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -223,7 +223,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -237,7 +237,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -251,7 +251,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Color555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -265,7 +265,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -279,7 +279,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -293,7 +293,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		f.Query = "geo:\"Route %66 | *Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

@@ -18,7 +18,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	photos0, _, err := Photos(f0, Clip())
 
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:yes"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -40,7 +40,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:false"
 		f.Merged = true
 
-		photos2, _, err2 := Photos(f)
+		photos2, _, err2 := Photos(f, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -53,7 +53,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +66,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,7 +79,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -92,7 +92,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -106,7 +106,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +119,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -133,7 +133,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -147,7 +147,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Mother's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -161,7 +161,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -175,7 +175,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -189,7 +189,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -203,7 +203,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -217,7 +217,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -231,7 +231,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -245,7 +245,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -259,7 +259,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -273,7 +273,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Color555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -287,7 +287,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -301,7 +301,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -315,7 +315,7 @@ func TestPhotosQueryReview(t *testing.T) {
 		f.Query = "review:\"Route %66 | *Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

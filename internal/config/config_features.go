@@ -55,6 +55,11 @@ func (c *Config) DisableTensorFlow() bool {
 	return c.options.DisableTensorFlow
 }
 
+// DisableClip tests if all features depending on TensorFlow should be disabled.
+func (c *Config) DisableClip() bool {
+	return c.options.DisableClip
+}
+
 // DisableFaces checks if face recognition is disabled.
 func (c *Config) DisableFaces() bool {
 	if c.DisableTensorFlow() || c.options.DisableFaces {

@@ -97,6 +97,13 @@ func TestConfig_TensorFlowDisabled(t *testing.T) {
 	assert.Equal(t, false, version)
 }
 
+func TestConfig_ClipDisabled(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	version := c.DisableClip()
+	assert.Equal(t, false, version)
+}
+
 func TestConfig_Copyright(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

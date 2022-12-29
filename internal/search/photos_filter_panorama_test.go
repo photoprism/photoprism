@@ -18,7 +18,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	photos0, _, err := Photos(f0, Clip())
 
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:yes"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -40,7 +40,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:false"
 		f.Merged = true
 
-		photos2, _, err2 := Photos(f)
+		photos2, _, err2 := Photos(f, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -53,7 +53,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +66,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,7 +79,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -92,7 +92,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -106,7 +106,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +119,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -133,7 +133,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -147,7 +147,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Mother's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -161,7 +161,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -175,7 +175,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -189,7 +189,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -203,7 +203,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -217,7 +217,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -231,7 +231,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -245,7 +245,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -259,7 +259,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -273,7 +273,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Color555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -287,7 +287,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -301,7 +301,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -315,7 +315,7 @@ func TestPhotosQueryPanorama(t *testing.T) {
 		f.Query = "panorama:\"Route %66 | *Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

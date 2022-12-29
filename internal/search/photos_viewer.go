@@ -17,7 +17,8 @@ func PhotosViewerResults(f form.SearchPhotos, contentUri, apiUri, previewToken, 
 
 // UserPhotosViewerResults finds photos based on the search form and user session and returns them as viewer.Results.
 func UserPhotosViewerResults(f form.SearchPhotos, sess *entity.Session, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
-	if results, count, err := searchPhotos(f, sess, PhotosColsView); err != nil {
+	// @TODO: perform clip search here aswell
+	if results, count, err := searchPhotos(f, nil, sess, PhotosColsView); err != nil {
 		return viewer.Results{}, count, err
 	} else {
 		return results.ViewerResults(contentUri, apiUri, previewToken, downloadToken), count, err

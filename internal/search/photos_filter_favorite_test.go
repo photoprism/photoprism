@@ -18,7 +18,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	photos0, _, err := Photos(f0, Clip())
 
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:yes"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -40,7 +40,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:false"
 		f.Merged = true
 
-		photos2, _, err2 := Photos(f)
+		photos2, _, err2 := Photos(f, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -53,7 +53,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +66,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,7 +79,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -92,7 +92,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -106,7 +106,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +119,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -133,7 +133,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -147,7 +147,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Mother's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -161,7 +161,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -175,7 +175,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -189,7 +189,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -203,7 +203,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -217,7 +217,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -231,7 +231,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -245,7 +245,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -259,7 +259,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -273,7 +273,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Color555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -287,7 +287,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -301,7 +301,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -315,7 +315,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 		f.Query = "favorite:\"Route %66 | *Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

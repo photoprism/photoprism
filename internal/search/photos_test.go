@@ -6,8 +6,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/clip"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestPhotos(t *testing.T) {
@@ -19,7 +21,7 @@ func TestPhotos(t *testing.T) {
 		frm.Offset = 0
 		frm.Order = "duration"
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -33,7 +35,7 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
-		_, _, err := Photos(frm)
+		_, _, err := Photos(frm, Clip())
 
 		assert.NoError(t, err)
 	})
@@ -45,7 +47,7 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
-		results, _, err := Photos(frm)
+		results, _, err := Photos(frm, Clip())
 
 		assert.NoError(t, err)
 		assert.LessOrEqual(t, 1, len(results))
@@ -57,7 +59,7 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -85,7 +87,7 @@ func TestPhotos(t *testing.T) {
 		frm.UID = "pt9jtdre2lvl0yh7"
 		frm.Merged = true
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -101,7 +103,7 @@ func TestPhotos(t *testing.T) {
 		frm.UID = "pt9jtdre2lvl0yh7"
 		frm.Merged = false
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -115,7 +117,7 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
-		photos, count, err := Photos(frm)
+		photos, count, err := Photos(frm, Clip())
 
 		assert.NoError(t, err)
 		assert.Equal(t, PhotoResults{}, photos)
@@ -129,7 +131,7 @@ func TestPhotos(t *testing.T) {
 		frm.Offset = 0
 		frm.Order = "relevance"
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -143,7 +145,7 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
-		photos, count, err := Photos(frm)
+		photos, count, err := Photos(frm, Clip())
 
 		assert.NoError(t, err)
 		assert.Equal(t, PhotoResults{}, photos)
@@ -157,7 +159,7 @@ func TestPhotos(t *testing.T) {
 		frm.Offset = 0
 		frm.Geo = true
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -174,7 +176,7 @@ func TestPhotos(t *testing.T) {
 		frm.Geo = true
 		frm.Error = false
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -189,7 +191,7 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 5000
 		frm.Offset = 0
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -204,7 +206,7 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 5000
 		frm.Offset = 0
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -220,7 +222,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Archived = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -236,7 +238,7 @@ func TestPhotos(t *testing.T) {
 		f.Private = true
 		f.Error = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -251,7 +253,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Public = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -266,7 +268,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Review = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -282,7 +284,7 @@ func TestPhotos(t *testing.T) {
 		f.Quality = 3
 		f.Private = false
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -297,7 +299,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Error = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -312,7 +314,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Camera = "Canon EOS 6D"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -327,7 +329,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -343,7 +345,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Camera = "1000003"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -358,7 +360,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Color = "blue"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -372,7 +374,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -386,7 +388,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -401,7 +403,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -416,7 +418,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -432,7 +434,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -447,7 +449,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -462,7 +464,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -477,7 +479,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -492,7 +494,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -507,7 +509,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 3
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -523,7 +525,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -540,7 +542,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Archived = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -554,7 +556,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 3
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -570,7 +572,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Error = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -586,7 +588,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Order = "oldest"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -601,7 +603,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Order = "newest"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -617,7 +619,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Order = "imported"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -632,7 +634,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Order = "imported"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -648,7 +650,7 @@ func TestPhotos(t *testing.T) {
 		f.Merged = true
 		f.Order = "relevance"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -662,7 +664,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -677,7 +679,7 @@ func TestPhotos(t *testing.T) {
 		f.Camera = "canon"
 		f.Lens = ""
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -692,7 +694,7 @@ func TestPhotos(t *testing.T) {
 		f.Camera = ""
 		f.Lens = "apple"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -707,7 +709,7 @@ func TestPhotos(t *testing.T) {
 		f.Camera = ""
 		f.Lens = "Apple F380"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -721,7 +723,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Camera = ""
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -738,7 +740,7 @@ func TestPhotos(t *testing.T) {
 		f.Year = strconv.Itoa(2790)
 		f.Album = "at9lxuqxpogaaba8"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -750,7 +752,7 @@ func TestPhotos(t *testing.T) {
 		f.Query = ""
 		f.Albums = "Berlin"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -762,7 +764,7 @@ func TestPhotos(t *testing.T) {
 		f.Query = ""
 		f.Album = "Berlin"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -773,7 +775,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.State = "KwaZulu-Natal"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -785,7 +787,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.City = "Mandeni"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -797,7 +799,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Category = "botanical garden"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -810,7 +812,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Label = "botanical-garden|nature|landscape|park"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -823,7 +825,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Primary = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -836,7 +838,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "landscape"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -857,7 +859,7 @@ func TestPhotos(t *testing.T) {
 		f.Path = "/xxx/xxx/"
 		f.Order = entity.SortOrderName
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -881,7 +883,7 @@ func TestPhotos(t *testing.T) {
 		f.Filter = ""
 		f.Order = entity.SortOrderAdded
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -902,7 +904,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -936,7 +938,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -971,7 +973,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -996,7 +998,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1008,7 +1010,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "Yes"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1020,7 +1022,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "No"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1032,7 +1034,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Face = "yes"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1044,7 +1046,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "2"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1064,7 +1066,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1095,7 +1097,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1115,7 +1117,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1150,7 +1152,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1185,7 +1187,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1217,7 +1219,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1248,7 +1250,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1280,7 +1282,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1311,7 +1313,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1342,7 +1344,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1373,7 +1375,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1404,7 +1406,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1435,7 +1437,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1465,7 +1467,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1496,7 +1498,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1527,7 +1529,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1557,7 +1559,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos, _, err := Photos(frm)
+		photos, _, err := Photos(frm, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1579,7 +1581,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Filename = "1990/04/Quality1FavoriteTrue.jpg"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1591,7 +1593,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Original = "my-videos/IMG_88888" + "|" + "Vacation/exampleFileNameOriginal"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1603,7 +1605,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Stack = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1615,7 +1617,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "keywords:kuh|bridge"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1623,7 +1625,7 @@ func TestPhotos(t *testing.T) {
 
 		f.Query = "keywords:bridge&kuh"
 
-		photos2, _, err2 := Photos(f)
+		photos2, _, err2 := Photos(f, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -1635,7 +1637,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "albums:Holiday|Berlin"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1648,7 +1650,7 @@ func TestPhotos(t *testing.T) {
 
 		f.Query = "albums:\"Berlin&Holiday\""
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1659,7 +1661,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.Subjects = "Actor A|Actress A"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1667,7 +1669,7 @@ func TestPhotos(t *testing.T) {
 
 		f.Subjects = "Actor A&Actress A"
 
-		photos2, _, err2 := Photos(f)
+		photos2, _, err2 := Photos(f, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -1679,7 +1681,7 @@ func TestPhotos(t *testing.T) {
 		var f form.SearchPhotos
 		f.People = "Actor"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1693,7 +1695,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos2, _, err2 := Photos(f2)
+		photos2, _, err2 := Photos(f2, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -1710,7 +1712,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos3, _, err3 := Photos(f3)
+		photos3, _, err3 := Photos(f3, Clip())
 
 		if err3 != nil {
 			t.Fatal(err3)
@@ -1724,7 +1726,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photos4, _, err4 := Photos(f4)
+		photos4, _, err4 := Photos(f4, Clip())
 
 		if err4 != nil {
 			t.Fatal(err4)
@@ -1741,7 +1743,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1750,5 +1752,32 @@ func TestPhotos(t *testing.T) {
 		t.Logf("results: %+v", photos)
 		assert.Equal(t, 1, len(photos))
 		assert.Equal(t, photos[0].PhotoTitle, "Neckarbrücke")
+	})
+
+	t.Run("Clip", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		var examplesPath = fs.Abs("../../assets") + "/examples"
+		clip := clip.New("clip-testing", 512, false)
+
+		clip.Db.DeleteCollection()
+		clip.Db.CreateCollectionIfNotExisting()
+
+		// Note: ids do not match with the photos (photos of the .test.db are not avaiable as images here)
+		clip.EncodeImageAndSave(examplesPath+"/beach_sand.jpg", 1000000)
+		clip.EncodeImageAndSave(examplesPath+"/beach_wood.jpg", 1000001)
+		clip.EncodeImageAndSave(examplesPath+"/elephants.jpg", 1000002)
+
+		var frm form.SearchPhotos
+		frm.Query = "some wood on the beach"
+		frm.Count = 1
+		frm.Offset = 0
+
+		results, _, err := Photos(frm, clip)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, len(results))
+		assert.Equal(t, uint(1000001), results[0].FileID)
 	})
 }

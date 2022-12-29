@@ -87,6 +87,7 @@ services:
       PHOTOPRISM_DISABLE_PLACES: "false"             # disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_CLIP: "true"                # don't use Clip for image content search
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW files
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW files (reduces performance)
       PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
@@ -234,6 +235,16 @@ services:
       - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.dummy-webdav.tls=true"
 
+  clip-api:
+    image: photoprism/clip_api
+    ports:
+      - 8000:8000
+  embedding-db:
+    image: qdrant/qdrant
+    volumes: 
+      - "./embedding-db:/qdrant/storage"
+    ports:
+      - 6333:6333
 ## Create named volume for Go module cache
 volumes:
   go-mod:

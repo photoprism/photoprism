@@ -27,7 +27,7 @@ func AlbumPhotos(a entity.Album, count int, shared bool) (results PhotoResults, 
 		return results, err
 	}
 
-	results, _, err = Photos(frm)
+	results, _, err = Photos(frm, Clip())
 
 	return results, err
 }

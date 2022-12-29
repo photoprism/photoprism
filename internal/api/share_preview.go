@@ -84,7 +84,7 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		p, count, err := search.Photos(f)
+		p, count, err := search.Photos(f, search.Clip())
 
 		if err != nil {
 			log.Error(err)

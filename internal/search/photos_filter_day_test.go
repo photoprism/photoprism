@@ -15,7 +15,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "1"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -28,7 +28,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "17"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -41,7 +41,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "1|17"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -54,7 +54,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "1 | 17"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -65,14 +65,14 @@ func TestPhotosFilterDay(t *testing.T) {
 
 	f0.Merged = true
 
-	photos0, _, _ := Photos(f0)
+	photos0, _, _ := Photos(f0, Clip())
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Day = "%gold"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -85,7 +85,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "I love % dog"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -98,7 +98,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "sale%"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -111,7 +111,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "&IlikeFood"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -124,7 +124,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "Pets & Dogs"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -137,7 +137,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "Light&"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -150,7 +150,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "'Family"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -163,7 +163,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "Father's Day"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -177,7 +177,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "Ice Cream'"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -190,7 +190,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "*Forrest"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -203,7 +203,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "My*Kids"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -216,7 +216,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "Yoga***"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -229,7 +229,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "|Banana"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -242,7 +242,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "Red|Green"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -256,7 +256,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "Blue|"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -270,7 +270,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "345 Shirt"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -283,7 +283,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "day555 Blue"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -296,7 +296,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		f.Day = "Route 66"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -312,7 +312,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"1\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -325,7 +325,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"17\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -338,7 +338,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"1|17\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -351,7 +351,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"1 | 17\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -363,7 +363,7 @@ func TestPhotosQueryDay(t *testing.T) {
 
 	f0.Merged = true
 
-	photos0, _, _ := Photos(f0)
+	photos0, _, _ := Photos(f0, Clip())
 
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -371,7 +371,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -384,7 +384,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -397,7 +397,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -410,7 +410,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -423,7 +423,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -436,7 +436,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -449,7 +449,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -462,7 +462,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -476,7 +476,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -489,7 +489,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -502,7 +502,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -515,7 +515,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -528,7 +528,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -541,7 +541,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -555,7 +555,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -568,7 +568,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -581,7 +581,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"day555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -594,7 +594,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		f.Query = "day:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

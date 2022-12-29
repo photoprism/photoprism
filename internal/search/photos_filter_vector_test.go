@@ -18,7 +18,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	photos0, _, err := Photos(f0, Clip())
 
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:yes"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,7 +44,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:yes"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -53,7 +53,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:false"
 		f.Merged = true
 
-		photos2, _, err2 := Photos(f)
+		photos2, _, err2 := Photos(f, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -66,7 +66,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,7 +79,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -92,7 +92,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -105,7 +105,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +119,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -132,7 +132,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -146,7 +146,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -159,7 +159,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Mother's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -173,7 +173,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -187,7 +187,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -201,7 +201,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -215,7 +215,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -229,7 +229,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -243,7 +243,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -257,7 +257,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -271,7 +271,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -285,7 +285,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Color555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -299,7 +299,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -313,7 +313,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -327,7 +327,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		f.Query = "vector:\"Route %66 | *Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

@@ -18,7 +18,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	photos0, _, err := Photos(f0, Clip())
 
 	if err != nil {
 		t.Fatal(err)
@@ -30,7 +30,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 
 		f.Query = "primary:yes"
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -38,7 +38,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		assert.Greater(t, len(photos), len(photos0))
 		f.Query = "primary:false"
 
-		photos2, _, err2 := Photos(f)
+		photos2, _, err2 := Photos(f, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -51,7 +51,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -64,7 +64,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -77,7 +77,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -90,7 +90,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -104,7 +104,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -117,7 +117,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -131,7 +131,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -145,7 +145,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Mother's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -159,7 +159,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -173,7 +173,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -187,7 +187,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -201,7 +201,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -215,7 +215,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -229,7 +229,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -243,7 +243,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -257,7 +257,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -271,7 +271,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Color555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -285,7 +285,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -299,7 +299,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -313,7 +313,7 @@ func TestPhotosQueryPrimary(t *testing.T) {
 		f.Query = "primary:\"Route %66 | *Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

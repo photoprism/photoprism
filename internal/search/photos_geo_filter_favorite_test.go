@@ -19,7 +19,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	photos0, _, err := Photos(f0, Clip())
 
 	if err != nil {
 		t.Fatal(err)
@@ -33,7 +33,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -63,7 +63,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -93,7 +93,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -123,7 +123,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -154,7 +154,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -184,7 +184,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -215,7 +215,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -246,7 +246,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -277,7 +277,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -308,7 +308,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -339,7 +339,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -370,7 +370,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -401,7 +401,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -432,7 +432,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -463,7 +463,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -494,7 +494,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -525,7 +525,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -556,7 +556,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -587,7 +587,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -618,7 +618,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

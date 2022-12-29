@@ -14,7 +14,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2790/07"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -27,7 +27,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2790*"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -40,7 +40,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "London"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -53,7 +53,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "London | 2790/07"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +66,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "London|2790/07"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,7 +79,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "%abc/%folderx"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -92,7 +92,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "ab%c/fol%de"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -105,7 +105,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "abc%/folde%"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +119,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "&abc/&folde"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -133,7 +133,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "tes&r/lo&c"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -147,7 +147,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2020&/vacation&"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -161,7 +161,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "'2020/'vacation"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -175,7 +175,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "20'20/vacat'ion"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -189,7 +189,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2020'/vacation'"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -203,7 +203,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "*2020/*vacation"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -217,7 +217,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "202*3/vac*ation"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -231,7 +231,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2023*/vacatio*"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -245,7 +245,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "|202/|vacation"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -259,7 +259,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "20|22/vacat|ion"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -273,7 +273,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2022|/vacation|"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -287,7 +287,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2000/holiday"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -300,7 +300,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2000/02"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -314,7 +314,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2000/02"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -328,7 +328,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "\"2000/\"02"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -342,7 +342,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "20\"00/0\"2"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -356,7 +356,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2000\"/02\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -370,7 +370,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = " 2000/ 02"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -383,7 +383,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "20 00/ 0 2"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -397,7 +397,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "2000 /02 "
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -411,7 +411,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "%abc/%folderx | 20'20/vacat'ion"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -424,7 +424,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "202*3/vac*ation | 20'20/vacat'ion"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -437,7 +437,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "20|22/vacat|ion | &abc/&folde"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -450,7 +450,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		f.Folder = "London | 1990/04"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -466,7 +466,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2790/07\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -479,7 +479,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2790*\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -492,7 +492,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"London\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -505,7 +505,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"London | 2790/07\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -518,7 +518,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"London|2790/07\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -531,7 +531,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"%abc/%folderx\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -544,7 +544,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"ab%c/fol%de\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -557,7 +557,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"abc%/folde%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -571,7 +571,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"&abc/&folde\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -585,7 +585,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"tes&r/lo&c\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -599,7 +599,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2020&/vacation&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -613,7 +613,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"'2020/'vacation\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -627,7 +627,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"20'20/vacat'ion\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -641,7 +641,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2020'/vacation'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -655,7 +655,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"*2020/*vacation\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -669,7 +669,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"202*3/vac*ation\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -683,7 +683,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2023*/vacatio*\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -697,7 +697,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"|202/|vacation\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -711,7 +711,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"20|22/vacat|ion\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -725,7 +725,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2022|/vacation|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -739,7 +739,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2000/holiday\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -752,7 +752,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2000/02\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -766,7 +766,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2000/02\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -780,7 +780,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"\"2000/\"02\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -794,7 +794,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"20\"00/0\"2\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -810,7 +810,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2000\"/02\"\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -824,7 +824,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\" 2000/ 02\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -837,7 +837,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"20 00/ 0 2\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -851,7 +851,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"2000 /02 \""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -865,7 +865,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"%abc/%folderx | 20'20/vacat'ion\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -878,7 +878,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"202*3/vac*ation | 20'20/vacat'ion\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -891,7 +891,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"20|22/vacat|ion | &abc/&folde\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -904,7 +904,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		f.Query = "folder:\"London | 1990/04\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

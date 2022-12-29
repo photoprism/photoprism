@@ -18,7 +18,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	photos0, _, err := Photos(f0, Clip())
 
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:yes"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,7 +44,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:yes"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -53,7 +53,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:false"
 		f.Merged = true
 
-		photos2, _, err2 := Photos(f)
+		photos2, _, err2 := Photos(f, Clip())
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -66,7 +66,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,7 +79,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -92,7 +92,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -105,7 +105,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +119,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -132,7 +132,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -146,7 +146,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -159,7 +159,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Mother's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -173,7 +173,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -187,7 +187,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -201,7 +201,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -215,7 +215,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -229,7 +229,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -243,7 +243,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -257,7 +257,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -271,7 +271,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -285,7 +285,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Color555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -299,7 +299,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -313,7 +313,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Route 66 & Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -327,7 +327,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		f.Query = "square:\"Route %66 | *Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

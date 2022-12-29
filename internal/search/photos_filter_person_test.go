@@ -15,7 +15,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Ac*"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -28,7 +28,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Actress"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -41,7 +41,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Actress A"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -54,7 +54,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Actor A"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -67,7 +67,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Actor A|Actress A"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -80,7 +80,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Actor A | Actress A"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -93,7 +93,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Actor A&Actress A"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -106,7 +106,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Actor A & Actress A"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +119,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "%gold"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -132,7 +132,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "I love % dog"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -145,7 +145,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "sale%"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -159,7 +159,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "&IlikeFood"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -172,7 +172,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Pets & Dogs"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -186,7 +186,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Light&"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -199,7 +199,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "'Family"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -212,7 +212,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Father's type"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -226,7 +226,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Ice Cream'"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -239,7 +239,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "*Forrest"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -252,7 +252,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "My*Kids"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -265,7 +265,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Yoga***"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -278,7 +278,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "|Banana"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -291,7 +291,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Red|Green"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -305,7 +305,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Blue|"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -319,7 +319,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "345 Shirt"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -332,7 +332,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "type555 Blue"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -345,7 +345,7 @@ func TestPhotosFilterPerson(t *testing.T) {
 		f.Person = "Route 66"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -361,7 +361,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Ac*\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -374,7 +374,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Actress\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -387,7 +387,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Actress A\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -400,7 +400,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Actor A\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -413,7 +413,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Actor A|Actress A\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -426,7 +426,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Actor A | Actress A\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -439,7 +439,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Actor A&Actress A\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -452,7 +452,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Actor A & Actress A\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -465,7 +465,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -478,7 +478,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -491,7 +491,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -505,7 +505,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -518,7 +518,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -532,7 +532,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -545,7 +545,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -558,7 +558,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Father's type\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -572,7 +572,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -585,7 +585,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -598,7 +598,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -611,7 +611,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -624,7 +624,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -637,7 +637,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -651,7 +651,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -664,7 +664,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -677,7 +677,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"type555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -690,7 +690,7 @@ func TestPhotosQueryPerson(t *testing.T) {
 		f.Query = "person:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

@@ -14,14 +14,14 @@ func TestPhotosFilterColor(t *testing.T) {
 	f0.Color = "red|green"
 	f0.Merged = true
 
-	photosredorgreen, _, _ := Photos(f0)
+	photosredorgreen, _, _ := Photos(f0, Clip())
 
 	var f1 form.SearchPhotos
 
 	f1.Color = "blue"
 	f1.Merged = true
 
-	photosblue, _, _ := Photos(f1)
+	photosblue, _, _ := Photos(f1, Clip())
 
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -29,7 +29,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "%gold"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -42,7 +42,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "I love % dog"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -55,7 +55,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "sale%"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -68,7 +68,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "&IlikeFood"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -81,7 +81,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Pets & Dogs"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -94,7 +94,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Light&"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -107,7 +107,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "'Family"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -120,7 +120,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Father's Day"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -134,7 +134,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Ice Cream'"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -147,7 +147,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "*Forrest"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -160,7 +160,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "My*Kids"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -173,7 +173,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Yoga***"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -186,7 +186,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "|Banana"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -199,7 +199,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Red|Green"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -213,7 +213,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Blue|"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -227,7 +227,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "345 Shirt"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -240,7 +240,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Color555 Blue"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -253,7 +253,7 @@ func TestPhotosFilterColor(t *testing.T) {
 		f.Color = "Route 66"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -268,14 +268,14 @@ func TestPhotosQueryColor(t *testing.T) {
 	f0.Color = "red|green"
 	f0.Merged = true
 
-	photosredorgreen, _, _ := Photos(f0)
+	photosredorgreen, _, _ := Photos(f0, Clip())
 
 	var f1 form.SearchPhotos
 
 	f1.Color = "blue"
 	f1.Merged = true
 
-	photosblue, _, _ := Photos(f1)
+	photosblue, _, _ := Photos(f1, Clip())
 
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -283,7 +283,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -296,7 +296,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -309,7 +309,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -322,7 +322,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -335,7 +335,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -348,7 +348,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -361,7 +361,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -374,7 +374,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Father's Day\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -388,7 +388,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -401,7 +401,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -414,7 +414,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -427,7 +427,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -440,7 +440,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -453,7 +453,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -467,7 +467,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -480,7 +480,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -493,7 +493,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Color555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -506,7 +506,7 @@ func TestPhotosQueryColor(t *testing.T) {
 		f.Query = "color:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

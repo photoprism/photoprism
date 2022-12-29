@@ -11,6 +11,7 @@ import (
 	"github.com/karrick/godirwalk"
 
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/clip"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -27,6 +28,7 @@ import (
 type Index struct {
 	conf         *config.Config
 	tensorFlow   *classify.TensorFlow
+	clip         *clip.Clip
 	nsfwDetector *nsfw.Detector
 	faceNet      *face.Net
 	convert      *Convert
@@ -37,7 +39,7 @@ type Index struct {
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
+func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, clip *clip.Clip, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
 	if conf == nil {
 		log.Errorf("index: config is not set")
 		return nil
@@ -46,6 +48,7 @@ func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
+		clip:         clip,
 		nsfwDetector: nsfwDetector,
 		faceNet:      faceNet,
 		convert:      convert,

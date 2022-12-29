@@ -16,7 +16,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -47,7 +47,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -78,7 +78,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -110,7 +110,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -141,7 +141,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -172,7 +172,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -204,7 +204,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -235,7 +235,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -266,7 +266,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -297,7 +297,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -328,7 +328,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -359,7 +359,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -390,7 +390,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -421,7 +421,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -452,7 +452,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -483,7 +483,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -514,7 +514,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -545,7 +545,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -576,7 +576,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -607,7 +607,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -638,7 +638,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -669,7 +669,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -700,7 +700,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -731,7 +731,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, count, err := Photos(f)
+		photos, count, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -767,7 +767,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -798,7 +798,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -829,7 +829,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -860,7 +860,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -891,7 +891,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -922,7 +922,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -953,7 +953,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -984,7 +984,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1015,7 +1015,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1046,7 +1046,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1080,7 +1080,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1112,7 +1112,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1142,7 +1142,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1172,7 +1172,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1202,7 +1202,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1232,7 +1232,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1262,7 +1262,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1292,7 +1292,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1322,7 +1322,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1352,7 +1352,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1382,7 +1382,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1411,7 +1411,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1440,7 +1440,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1470,7 +1470,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1499,7 +1499,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1528,7 +1528,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1558,7 +1558,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1587,7 +1587,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1618,7 +1618,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1648,7 +1648,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1677,7 +1677,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1707,7 +1707,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1737,7 +1737,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1766,7 +1766,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, count, err := Photos(f)
+		photos, count, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1802,7 +1802,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1832,7 +1832,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1862,7 +1862,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1892,7 +1892,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1922,7 +1922,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1952,7 +1952,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -1982,7 +1982,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -2012,7 +2012,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -2042,7 +2042,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -2072,7 +2072,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		f.Primary = true
 		f.Geo = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)

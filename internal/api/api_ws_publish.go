@@ -19,7 +19,7 @@ const (
 
 // PublishPhotoEvent publishes updated photo data after changes have been made.
 func PublishPhotoEvent(ev EntityEvent, uid string, c *gin.Context) {
-	if result, _, err := search.Photos(form.SearchPhotos{UID: uid, Merged: true}); err != nil {
+	if result, _, err := search.Photos(form.SearchPhotos{UID: uid, Merged: true}, search.Clip()); err != nil {
 		event.AuditErr([]string{ClientIP(c), "session %s", "%s photo %s", "%s"}, SessionID(c), string(ev), uid, err)
 	} else {
 		event.PublishEntities("photos", string(ev), result)

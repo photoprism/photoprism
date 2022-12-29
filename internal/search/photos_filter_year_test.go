@@ -13,14 +13,14 @@ func TestPhotosFilterYear(t *testing.T) {
 
 	f0.Merged = true
 
-	photos0, _, _ := Photos(f0)
+	photos0, _, _ := Photos(f0, Clip())
 	t.Run("2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Year = "2008"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -33,7 +33,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "2018"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -46,7 +46,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "19*"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -59,7 +59,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "2018|2008"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -72,7 +72,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "2018 | 2008"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -85,7 +85,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "%gold"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -98,7 +98,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "I love % dog"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -111,7 +111,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "sale%"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -124,7 +124,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "&IlikeFood"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -137,7 +137,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Pets & Dogs"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -150,7 +150,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Light&"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -163,7 +163,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "'Family"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -176,7 +176,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Father's year"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -190,7 +190,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Ice Cream'"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -203,7 +203,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "*Forrest"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -216,7 +216,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "My*Kids"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -229,7 +229,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Yoga***"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -242,7 +242,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "|Banana"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -255,7 +255,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Red|Green"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -269,7 +269,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Blue|"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -283,7 +283,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "345 Shirt"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -296,7 +296,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "year555 Blue"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -309,7 +309,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		f.Year = "Route 66"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -323,7 +323,7 @@ func TestPhotosQueryYear(t *testing.T) {
 
 	f0.Merged = true
 
-	photos0, _, _ := Photos(f0)
+	photos0, _, _ := Photos(f0, Clip())
 
 	t.Run("2008", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -331,7 +331,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"2008\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -344,7 +344,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"2018\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -357,7 +357,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"19*\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -370,7 +370,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"2018|2008\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -383,7 +383,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"2018 | 2008\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -396,7 +396,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"%gold\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -409,7 +409,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"I love % dog\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -422,7 +422,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"sale%\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -435,7 +435,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"&IlikeFood\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -448,7 +448,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Pets & Dogs\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -461,7 +461,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Light&\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -474,7 +474,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"'Family\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -487,7 +487,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Father's year\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -501,7 +501,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Ice Cream'\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -514,7 +514,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"*Forrest\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -527,7 +527,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"My*Kids\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -540,7 +540,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Yoga***\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -553,7 +553,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"|Banana\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -566,7 +566,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Red|Green\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -580,7 +580,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Blue|\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -593,7 +593,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"345 Shirt\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -606,7 +606,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"year555 Blue\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
@@ -619,7 +619,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		f.Query = "year:\"Route 66\""
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := Photos(f, Clip())
 
 		if err != nil {
 			t.Fatal(err)
