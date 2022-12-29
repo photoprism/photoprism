@@ -24,11 +24,6 @@ const (
 	MimeTypeJSON    = "application/json"
 )
 
-// Set mime detection read limit.
-func init() {
-	mimetype.SetLimit(1024)
-}
-
 // MimeType returns the mime type of a file, or an empty string if it could not be detected.
 func MimeType(filename string) (mimeType string) {
 	// Workaround, since "image/dng" cannot be recognized yet.
