@@ -173,16 +173,26 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 
 	// Extract a video still image that can be used as preview.
 	if f.IsVideo() && c.conf.FFmpegEnabled() {
+		// Get video duration.
 		d := f.Duration()
 
-		// If possible, do not use the first frames to avoid completely black or white thumbnails in case there is an effect or intro.
-		if d > time.Minute {
-			result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:09.000", "-vframes", "1", jpegName))
-		} else if d > LivePhotoDurationLimit {
-			result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:03.000", "-vframes", "1", jpegName))
-		} else {
-			result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName))
+		// Extract the first frame for short clips and live photos with a duration of 3 seconds or less.
+		ss := "00:00:00.001"
+
+		// If the video is long enough, don't use the first frames to avoid completely black or white thumbnails in case there is an effect or intro.
+		switch {
+		case d > 15*time.Minute:
+			ss = "00:02:30.000"
+		case d > 3*time.Minute:
+			ss = "00:01:00.000"
+		case d > time.Minute:
+			ss = "00:00:09.000"
+		case d > LivePhotoDurationLimit:
+			ss = "00:00:03.000"
 		}
+
+		// Use "ffmpeg" to extract JPEG still image from video file.
+		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", ss, "-vframes", "1", jpegName))
 	}
 
 	// RAW files may be concerted with Darktable and Rawtherapee.
