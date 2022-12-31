@@ -40,7 +40,7 @@ else
     GOTEST=go test
 endif
 
-# Compatibility layer to support “docker-compose” and “docker compose”
+# Ensure compatibility with "docker-compose" (old) and "docker compose" (new).
 HAS_DOCKER_COMPOSE_WITH_DASH := $(shell which docker-compose)
 
 ifdef HAS_DOCKER_COMPOSE_WITH_DASH
