@@ -1,6 +1,6 @@
 version: '3.5'
 
-# Example Podman Compose config file for PhotoPrism (Linux / AMD64)
+# Example Podman Compose config file for PhotoPrism (RedHat, CentOS, Fedora, and AlmaLinux)
 #
 # Note:
 # - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
