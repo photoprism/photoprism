@@ -1,4 +1,4 @@
-# PhotoPrism Setup (RedHat, CentOS, Fedora, and AlmaLinux / AMD64)
+# PhotoPrism Setup (RedHat, CentOS, Fedora, and AlmaLinux)
 
 Running this command will install the required dependencies and download the configuration files:
 
