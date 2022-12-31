@@ -541,7 +541,7 @@ docker-dummy-oidc:
 	scripts/docker/buildx-multi.sh dummy-oidc linux/amd64,linux/arm64 $(BUILD_DATE)
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
-	(cd ./docker/examples/cloud && packer build digitalocean.json)
+	(cd ./setup/docker/cloud && packer build digitalocean.json)
 drone-sign:
 	drone sign photoprism/photoprism --save
 lint-js:
