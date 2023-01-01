@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-23 14:48+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-01-01 09:47+0000\n"
+"Last-Translator: leosamuele221 <leosamuele221@gmail.com>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "frontend/it/>\n"
 "Language: it\n"
@@ -429,7 +429,7 @@ msgstr "Annulla"
 
 #: src/options/themes.js:431
 msgid "Carbon"
-msgstr "Carbon"
+msgstr "Carbone"
 
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
@@ -774,7 +774,9 @@ msgstr "Filtro di downscaling"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "A causa dell'elevato volume di email che riceviamo, il nostro team potrebbe non essere in grado di risponderti immediatamente."
+msgstr ""
+"A causa dell'elevato numero di email che riceviamo, il nostro team potrebbe "
+"non essere in grado di risponderti immediatamente."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -938,7 +940,7 @@ msgstr "Contattaci a hello@photoprism.app se dovessi avere domande o bisogno di 
 
 #: src/options/options.js:424
 msgid "Female"
-msgstr "Femminile"
+msgstr "Donna"
 
 #: src/model/file.js:291
 msgid "File"
@@ -1231,7 +1233,7 @@ msgstr "Parole chiave"
 
 #: src/page/about/about.vue:50
 msgid "Knowledge Base"
-msgstr "Base di conoscenza"
+msgstr "Conoscenza di base"
 
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
@@ -1384,7 +1386,7 @@ msgstr "Colore Principale"
 
 #: src/options/options.js:423
 msgid "Male"
-msgstr "Maschile"
+msgstr "Uomo"
 
 #: src/page/connect.vue:56
 msgid "Manage account"
@@ -2105,7 +2107,6 @@ msgid "Share your pictures with other apps and services."
 msgstr "Condividi le tue foto con altre app e servizi."
 
 #: src/page/connect.vue:108
-#, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Il software libero non dovrebbe essere privo di costi?"
 
