@@ -7,30 +7,20 @@ echo "Installing dependencies..."
 sudo dnf update -y
 sudo dnf install nano make netavark aardvark-dns podman podman-docker -y
 
-# Specify Podman network backend.
-cat >/etc/containers/containers.conf <<EOL
-[network]
-network_backend = "netavark"
-EOL
-
 # Install Podman Compose if needed.
 if ! command -v "podman-compose" &> /dev/null; then
-  sudo dnf install python3 python3-pip python3-devel -y
-  sudo -H pip3 install --upgrade pip
-  sudo pip3 install python-dotenv
-  sudo pip3 install pyyaml
-  sudo pip3 install podman-compose
+  sudo dnf install epel-release -y
+  sudo dnf install podman-compose -y
 fi
 
 # Start Podman service.
 sudo systemctl start podman
 sudo systemctl enable podman
 
-# Wait 2 seconds.
-sleep 2
+# Wait 1 second.
+sleep 1
 
-# Reset Podman and show version.
-podman system reset --force
+# Show Podman version.
 podman --version
 
 # Download config files.
