@@ -86,9 +86,17 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	case entity.SortOrderRelevance:
 		s = s.Order("albums.album_favorite DESC, albums.updated_at DESC, albums.album_uid DESC")
 	case entity.SortOrderNewest:
-		s = s.Order("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
+		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
+			s = s.Order("albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
+		}
 	case entity.SortOrderOldest:
-		s = s.Order("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
+		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
+			s = s.Order("albums.album_uid ASC")
+		} else {
+			s = s.Order("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
+		}
 	case entity.SortOrderAdded:
 		s = s.Order("albums.album_uid DESC")
 	case entity.SortOrderMoment:
