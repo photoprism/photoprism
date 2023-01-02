@@ -181,10 +181,12 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 
 		// If the video is long enough, don't use the first frames to avoid completely black or white thumbnails in case there is an effect or intro.
 		switch {
-		case d > 15*time.Minute:
+		case d > time.Hour:
 			ss = "00:02:30.000"
-		case d > 3*time.Minute:
+		case d > 10*time.Minute:
 			ss = "00:01:00.000"
+		case d > 3*time.Minute:
+			ss = "00:00:30.000"
 		case d > time.Minute:
 			ss = "00:00:09.000"
 		case d > LivePhotoDurationLimit:
