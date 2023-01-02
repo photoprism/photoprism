@@ -1,7 +1,7 @@
 /* Neon Theme */
 
 body.dark-theme.theme-neon {
-    background: #212121 !important;
+    background: #242323 !important;
 }
 
 .theme-neon .v-speed-dial .v-btn--floating.v-btn--small {
@@ -12,17 +12,17 @@ body.dark-theme.theme-neon {
 .theme-neon .p-page,
 .theme-neon .form,
 .theme-neon .v-content {
-    background: #212121 !important;
+    background: #242323 !important;
 }
 
 #photoprism.theme-neon .theme--light.v-small-dialog__content,
 #photoprism.theme-neon .theme--light.v-sheet,
 #photoprism.theme-neon .theme--light.v-card {
-    background: #212121;
+    background: #242323;
 }
 
 .theme-neon .application.theme--light {
-    background: #212121;
+    background: #242323;
 }
 
 #photoprism.theme-neon .theme--light .v-table {
@@ -72,7 +72,7 @@ body.dark-theme.theme-neon {
 }
 
 #photoprism.theme-neon a.text-link {
-    color: #ca4ac9 !important;
+    color: #f44abf !important;
 }
 
 #photoprism.theme-neon .theme--light.v-select .v-select__selections {
@@ -106,10 +106,10 @@ body.dark-theme.theme-neon {
 }
 
 #photoprism.theme-neon .mobile-dial .v-speed-dial__list .v-btn.highlight {
-    background-color: #6d0850;
+    background-color: #6f215b;
 }
 
 #photoprism.theme-neon .mobile-dial .v-speed-dial__list .v-btn:hover,
 #photoprism.theme-neon .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
-    background-color: #7d0f60;
+    background-color: #712558;
 }
