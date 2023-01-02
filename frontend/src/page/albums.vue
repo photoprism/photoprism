@@ -47,6 +47,7 @@
             <v-flex xs12 sm4 pa-2 class="p-year-select">
               <v-select :value="filter.year"
                         :label="$gettext('Year')"
+                        :disabled="context === 'state'"
                         flat solo hide-details
                         color="secondary-dark"
                         item-value="value"
@@ -268,7 +269,7 @@ export default {
     const order = this.sortOrder();
     const q = query["q"] ? query["q"] : "";
     const category = query["category"] ? query["category"] : "";
-    const year = query['year'] ? parseInt(query['year']) : 0;
+    const year = query['year'] ? parseInt(query['year']) : "";
     const filter = {q, category, order, year};
     const settings = {};
     const features = this.$config.settings().features;
@@ -316,7 +317,7 @@ export default {
       },
       model: new Album(false),
       all: {
-        years: [{value: 0, text: this.$gettext("All Years")}],
+        years: [{value: "", text: this.$gettext("All Years")}],
       },
       options: {
         'sorting': [
@@ -353,7 +354,7 @@ export default {
       this.q = query["q"] ? query["q"] : "";
       this.filter.q = this.q;
       this.filter.category = query["category"] ? query["category"] : "";
-      this.filter.year = query['year'] ? parseInt(query['year']) : 0;
+      this.filter.year = query['year'] ? parseInt(query['year']) : "";
       this.filter.order = this.sortOrder();
 
       this.search();

@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -169,20 +170,32 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		s = s.Where("albums.album_country IN (?)", strings.Split(f.Country, txt.Or))
 	}
 
+	// Favorites only?
 	if f.Favorite {
 		s = s.Where("albums.album_favorite = 1")
 	}
 
-	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.UnknownYear {
-		s = s.Where("albums.album_year = ?", f.Year)
+	// Filter by year?
+	if txt.NotEmpty(f.Year) {
+		// Filter by the pictures included if it is a manually managed album, as these do not have an explicit
+		// year assigned to them, unlike calendar albums and moments for example.
+		if f.Type == entity.AlbumDefault {
+			s = s.Where("? OR albums.album_uid IN (SELECT DISTINCT pay.album_uid FROM photos_albums pay "+
+				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = 0 AND pay.missing = 0)",
+				gorm.Expr(AnyInt("albums.album_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax)), strings.Split(f.Year, txt.Or))
+		} else {
+			s = s.Where(AnyInt("albums.album_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))
+		}
 	}
 
-	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.UnknownMonth {
-		s = s.Where("albums.album_month = ?", f.Month)
+	// Filter by month?
+	if txt.NotEmpty(f.Month) {
+		s = s.Where(AnyInt("albums.album_month", f.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
 	}
 
-	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.UnknownDay {
-		s = s.Where("albums.album_day = ?", f.Day)
+	// Filter by day?
+	if txt.NotEmpty(f.Day) {
+		s = s.Where(AnyInt("albums.album_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
 	// Limit result count.
