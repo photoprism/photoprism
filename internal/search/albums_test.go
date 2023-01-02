@@ -154,4 +154,23 @@ func TestAlbums(t *testing.T) {
 
 		assert.Equal(t, 0, len(result))
 	})
+	t.Run("SearchAlbumForYear", func(t *testing.T) {
+		f := form.SearchAlbums{
+			Type:   entity.AlbumDefault,
+			Year:   "2018",
+			Month:  "",
+			Day:    "",
+			Count:  10,
+			Offset: 0,
+			Order:  "added",
+		}
+
+		result, err := Albums(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 2, len(result))
+	})
 }
