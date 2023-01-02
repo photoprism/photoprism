@@ -85,23 +85,23 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	case entity.SortOrderRelevance:
 		s = s.Order("albums.album_favorite DESC, albums.updated_at DESC, albums.album_uid DESC")
 	case entity.SortOrderNewest:
-		s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
+		s = s.Order("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 	case entity.SortOrderOldest:
-		s = s.Order("albums.album_favorite DESC, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
+		s = s.Order("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
 	case entity.SortOrderAdded:
 		s = s.Order("albums.album_uid DESC")
 	case entity.SortOrderMoment:
 		s = s.Order("albums.album_favorite DESC, has_year, albums.album_year DESC, albums.album_month DESC, albums.album_title ASC, albums.album_uid DESC")
 	case entity.SortOrderPlace:
-		s = s.Order("albums.album_favorite DESC, albums.album_location, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
+		s = s.Order("albums.album_location, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
 	case entity.SortOrderPath:
 		s = s.Order("albums.album_path, albums.album_uid DESC")
 	case entity.SortOrderCategory:
 		s = s.Order("albums.album_category, albums.album_title, albums.album_uid DESC")
 	case entity.SortOrderSlug:
-		s = s.Order("albums.album_favorite DESC, albums.album_slug ASC, albums.album_uid DESC")
+		s = s.Order("albums.album_slug ASC, albums.album_uid DESC")
 	case entity.SortOrderName:
-		s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
+		s = s.Order("albums.album_title ASC, albums.album_uid DESC")
 	default:
 		s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
 	}
