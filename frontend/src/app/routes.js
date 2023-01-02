@@ -186,7 +186,7 @@ export default [
     path: "/folders",
     component: Albums,
     meta: { title: $gettext("Folders"), auth: true },
-    props: { view: "folder", defaultOrder: "newest", staticFilter: { type: "folder" } },
+    props: { view: "folder", defaultOrder: "name", staticFilter: { type: "folder" } },
   },
   {
     name: "folder",

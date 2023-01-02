@@ -110,7 +110,11 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	case entity.SortOrderSlug:
 		s = s.Order("albums.album_slug ASC, albums.album_uid DESC")
 	case entity.SortOrderName:
-		s = s.Order("albums.album_title ASC, albums.album_uid DESC")
+		if f.Type == entity.AlbumFolder {
+			s = s.Order("albums.album_path ASC, albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_title ASC, albums.album_uid DESC")
+		}
 	default:
 		s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
 	}
@@ -130,27 +134,9 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 			likeString := "%" + f.Query + "%"
 			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", likeString, likeString)
 		} else {
-			f.Order = entity.SortOrderPath
-
-			p := f.Query
-
-			if strings.HasPrefix(p, "/") {
-				p = p[1:]
-			}
-
-			if strings.HasSuffix(p, "/") {
-				s = s.Where("albums.album_path = ?", p[:len(p)-1])
-			} else {
-				p = p + "*"
-
-				where, values := OrLike("albums.album_path", p)
-
-				if w, v := OrLike("albums.album_title", p); len(v) > 0 {
-					where = where + " OR " + w
-					values = append(values, v...)
-				}
-
-				s = s.Where(where, values...)
+			searchQuery := strings.Trim(strings.ReplaceAll(f.Query, "\\", "/"), "/")
+			for _, where := range LikeAllNames(Cols{"albums.album_title", "albums.album_location", "albums.album_path"}, searchQuery) {
+				s = s.Where(where)
 			}
 		}
 	}
