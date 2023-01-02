@@ -629,7 +629,7 @@
           </div>
           <div v-if="auth && !routeName('index') && $config.feature('library') && $config.feature('logs')" class="menu-action nav-logs">
             <router-link :to="{ name: 'library_logs' }">
-              <v-icon>assignment</v-icon>
+              <v-icon>feed</v-icon>
               <translate>Logs</translate>
             </router-link>
           </div>
