@@ -10,7 +10,7 @@ let themes = {
     colors: {
       application: "#F5F5F5",
       form: "#eeeeee",
-      card: "#bdbdbd",
+      card: "#e0e0e0",
       primary: "#FFCA28",
       "primary-button": "#212121",
       "secondary-dark": "#212121",
@@ -41,7 +41,7 @@ let themes = {
     colors: {
       application: "#525252",
       form: "#e5e4e2",
-      card: "#444444",
+      card: "#5e5e5e",
       primary: "#c8bdb1",
       "primary-button": "#726e69",
       "secondary-dark": "#c8bdb1",
@@ -72,12 +72,12 @@ let themes = {
     colors: {
       application: "#eceff1",
       form: "#eceff1",
-      card: "#bdbdbd",
+      card: "#d8dbde",
       primary: "#80deea",
       "primary-button": "#757575",
       "secondary-dark": "#757575",
       secondary: "#b0bec5",
-      "secondary-light": "#eeeeee",
+      "secondary-light": "#d8dbde",
       accent: "#757575",
       error: "#e57373",
       info: "#00acc1",
@@ -103,7 +103,7 @@ let themes = {
     colors: {
       application: "#FDEDF5",
       form: "#fafafa",
-      card: "#edd5df",
+      card: "#f9d1e1",
       primary: "#ffb3cc",
       "primary-button": "#d32d86",
       "secondary-dark": "#d34892",
@@ -134,7 +134,7 @@ let themes = {
     colors: {
       application: "#fafafa",
       form: "#fafafa",
-      card: "#bdbdbd",
+      card: "#eef0f6",
       primary: "#9ca2c9",
       "primary-button": "#6c6f84",
       "secondary-dark": "#475185",
@@ -165,7 +165,7 @@ let themes = {
     colors: {
       application: "#e5e4e2",
       form: "#e5e4e2",
-      card: "#bdbdbd",
+      card: "#cdccca",
       primary: "#c8bdb1",
       "primary-button": "#353839",
       "secondary-dark": "#353839",
@@ -196,7 +196,7 @@ let themes = {
     colors: {
       application: "#444",
       form: "#eeeeee",
-      card: "#3c3f41",
+      card: "#666666",
       primary: "#c4f1e5",
       "primary-button": "#74817d",
       "secondary-dark": "#c8e3e7",
@@ -227,7 +227,7 @@ let themes = {
     colors: {
       application: "#444",
       form: "#eeeeee",
-      card: "#3c3f41",
+      card: "#666666",
       primary: "#ffb700",
       "primary-button": "#918c7d",
       "secondary-dark": "#ffb700",
@@ -258,7 +258,7 @@ let themes = {
     colors: {
       application: "#212121",
       form: "#AFB42B",
-      card: "#3c3f41",
+      card: "#1a1a1a",
       primary: "#814fd9",
       "primary-button": "#7e57c2",
       "secondary-dark": "#814fd9",
@@ -289,7 +289,7 @@ let themes = {
     colors: {
       application: "#212121",
       form: "#AFB42B",
-      card: "#3c3f41",
+      card: "#1d1d1d",
       primary: "#04acaf",
       "primary-button": "#444444",
       "secondary-dark": "#04acaf",
@@ -320,7 +320,7 @@ let themes = {
     colors: {
       application: "#212121",
       form: "#AFB42B",
-      card: "#3c3f41",
+      card: "#1a1a1a",
       primary: "#e53be2",
       "primary-button": "#7d177c",
       "secondary-dark": "#b332b1",
@@ -351,7 +351,7 @@ let themes = {
     colors: {
       application: "#353535",
       form: "#eeeeee",
-      card: "#3c3f41",
+      card: "#424242",
       primary: "#AFB4D4",
       "primary-button": "#545465",
       "secondary-dark": "#9BA0C5",
@@ -383,7 +383,7 @@ let themes = {
     colors: {
       application: "#16141c",
       form: "#eeeeee",
-      card: "#403C4D",
+      card: "#292732",
       primary: "#8a6eff",
       "primary-button": "#53478a",
       "secondary-dark": "#7f63fd",

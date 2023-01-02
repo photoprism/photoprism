@@ -27,11 +27,11 @@ body.dark-theme #photoprism .theme--light.v-table thead th {
 }
 
 .card {
-    background-color: #77787e;
+    background-color: #e0e0e0;
 }
 
 body.dark-theme .card {
-    background-color: #4c4e52;
+    background-color: #1a1a1a;
 }
 
 body.dark-theme #photoprism .v-table .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
