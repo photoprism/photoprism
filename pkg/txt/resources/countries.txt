@@ -138,6 +138,7 @@ DE:Mechtersheim
 DE:Dürkheim
 DE:Ulm
 DE:Zugspitze
+DE:Sächsische Schweiz
 LV:Latvia
 LV:Lettland
 LT:Lithuania
@@ -193,6 +194,7 @@ US:Nevada
 US:Texas
 US:USA
 US:United States
+US:Venice Beach
 MN:Mongolia
 CL:Chile
 RW:Rwanda
