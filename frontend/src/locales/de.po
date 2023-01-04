@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-04 12:53+0000\n"
+"PO-Revision-Date: 2023-01-04 12:55+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -1497,7 +1497,6 @@ msgid "Name too long"
 msgstr "Name zu lang"
 
 #: src/options/themes.js:451
-#, fuzzy
 msgid "Neon"
 msgstr "Neon"
 
