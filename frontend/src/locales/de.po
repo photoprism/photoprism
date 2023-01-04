@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-23 14:48+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-01-04 12:53+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
 "Language: de\n"
@@ -1335,13 +1335,13 @@ msgstr "Ortszeit"
 
 #: src/dialog/photo/edit/labels.vue:39
 msgid "location"
-msgstr "Ort"
+msgstr "Ortsangabe"
 
 #: src/page/settings/account.vue:708 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:138 src/dialog/album/edit.vue:125
 #: src/page/settings/account.vue:561
 msgid "Location"
-msgstr "Ort"
+msgstr "Ortsangabe"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
