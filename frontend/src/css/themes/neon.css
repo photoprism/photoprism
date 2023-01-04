@@ -1,32 +1,31 @@
 /* Neon Theme */
 
-body.dark-theme.theme-neon {
-    background: #242323 !important;
-}
-
+.theme-neon .v-snack.v-snack--active.v-snack--bottom,
 .theme-neon .v-speed-dial .v-btn--floating.v-btn--small {
     opacity: 0.9;
 }
 
+.theme-neon .secondary-dark--text.text--lighten-1 {
+    color: #64616a !important;
+}
+
+body.dark-theme.theme-neon,
 .theme-neon .v-content__wrap,
 .theme-neon .p-page,
 .theme-neon .form,
 .theme-neon .v-content {
-    background: #242323 !important;
+    background: #242326 !important;
 }
 
+.theme-neon .application.theme--light,
 #photoprism.theme-neon .theme--light.v-small-dialog__content,
 #photoprism.theme-neon .theme--light.v-sheet,
 #photoprism.theme-neon .theme--light.v-card {
-    background: #242323;
-}
-
-.theme-neon .application.theme--light {
-    background: #242323;
+    background: #242326;
 }
 
 #photoprism.theme-neon .theme--light .v-table {
-    background: #262626;
+    background: #302e32;
 }
 
 #photoprism.theme-neon .theme--light.v-table thead th,
@@ -44,7 +43,7 @@ body.dark-theme.theme-neon {
 }
 
 #photoprism.theme-neon .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
-    background: #262626;
+    background: #2c2b2e;
 }
 
 #photoprism.theme-neon .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
@@ -68,7 +67,7 @@ body.dark-theme.theme-neon {
 }
 
 #photoprism.theme-neon .theme--light.v-list {
-    background: #262626;
+    background: #28272a;
 }
 
 #photoprism.theme-neon a.text-link {
