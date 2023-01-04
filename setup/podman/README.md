@@ -12,7 +12,7 @@ sudo systemctl enable podman
 podman --version
 ```
 
-Running this command will install the required dependencies and download the configuration files:
+We also provide a setup script that conveniently installs Podman and downloads the default configuration to a directory of your choice:
 
 ```
 mkdir -p /opt/photoprism
