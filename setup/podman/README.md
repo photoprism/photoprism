@@ -16,31 +16,30 @@ Users of RedHat-based Linux distributions can substitute the `docker` and `docke
 
 ### Incoming Requests
 
-By default, the application is accessible via port 2342 on all network devices. If you use a firewall, please make sure that this port is reachable from other computers on your network.
+Unless you have changed the default configuration, the application is accessible via port 2342 on all network devices. If you are using a firewall, please make sure that the port is accessible from other computers on your network or your app instance is reachable [through a reverse proxy](https://docs.photoprism.app/getting-started/proxies/traefik/):
+
+![](https://dl.photoprism.app/img/diagrams/proxy-cdn-white.png)
 
 ### Outgoing Connections
 
 For the installation script and app to work as expected, we recommend whitelisting requests to the prsm.app, [photoprism.app](https://photoprism.app), and photoprism.xyz domains and their subdomains, e.g.:
 
-- prsm.app
-- dl.photoprism.app
-- my.photoprism.app
-- api.photoprism.app
-- cdn.photoprism.app
-- hub.photoprism.app
-- setup.photoprism.app
-- places.photoprism.app
-- places.photoprism.xyz
+- [ ] dl.photoprism.app
+- [ ] cdn.photoprism.app
+- [ ] hub.photoprism.app
+- [ ] setup.photoprism.app
+- [ ] places.photoprism.app
+- [ ] places.photoprism.xyz
 
 Visit https://docs.photoprism.app/getting-started/#maps-places to learn more.
 
 In addition, the following domains should be whitelisted so that Docker can pull public images, e.g. for MariaDB:
 
-- auth.docker.io
-- registry-1.docker.io
-- index.docker.io
-- dseasb33srnrn.cloudfront.net
-- production.cloudflare.docker.com
+- [ ] auth.docker.io
+- [ ] registry-1.docker.io
+- [ ] index.docker.io
+- [ ] dseasb33srnrn.cloudfront.net
+- [ ] production.cloudflare.docker.com
 
 ----
 
