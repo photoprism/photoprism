@@ -1,7 +1,22 @@
 /* Carbon Theme */
 
-body.dark-theme.theme-carbon {
+body.dark-theme.theme-carbon,
+.theme-carbon .v-content__wrap,
+.theme-carbon .p-page,
+.theme-carbon .form,
+.theme-carbon .v-content {
     background: #16141c !important;
+}
+
+.theme-carbon .application.theme--light,
+#photoprism.theme-carbon .theme--light.v-small-dialog__content,
+#photoprism.theme-carbon .theme--light.v-sheet,
+#photoprism.theme-carbon .theme--light.v-card {
+    background: #16141c;
+}
+
+#photoprism.theme-carbon .theme--light .v-table {
+    background: #1d1b26;
 }
 
 #photoprism.theme-carbon .theme--light.v-text-field--solo>.v-input__control>.v-input__slot{
@@ -19,27 +34,6 @@ body.dark-theme.theme-carbon {
 
 #photoprism.container.theme-carbon div.loading-animation .loading-underlay {
     stroke: rgba(196, 241, 229, 0.3);
-}
-
-.theme-carbon .v-content__wrap,
-.theme-carbon .p-page,
-.theme-carbon .form,
-.theme-carbon .v-content {
-    background: #16141c !important;
-}
-
-#photoprism.theme-carbon .theme--light.v-small-dialog__content,
-#photoprism.theme-carbon .theme--light.v-sheet,
-#photoprism.theme-carbon .theme--light.v-card {
-    background: #16141c;
-}
-
-.theme-carbon .application.theme--light {
-    background: #16141c;
-}
-
-#photoprism.theme-carbon .theme--light .v-table {
-    background: #16141c;
 }
 
 #photoprism. .theme--light.v-table thead th,
