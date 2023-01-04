@@ -48,6 +48,7 @@
               <v-select :value="filter.year"
                         :label="$gettext('Year')"
                         :disabled="context === 'state'"
+                        :menu-props="{'maxHeight':346}"
                         flat solo hide-details
                         color="secondary-dark"
                         item-value="value"
@@ -59,6 +60,7 @@
             <v-flex xs12 sm4 pa-2 class="p-category-select">
               <v-select :value="filter.category"
                         :label="$gettext('Category')"
+                        :menu-props="{'maxHeight':346}"
                         flat solo hide-details
                         color="secondary-dark"
                         :items="categories"
@@ -68,6 +70,7 @@
             <v-flex xs12 sm4 pa-2 class="p-sort-select">
               <v-select :value="filter.order"
                         :label="$gettext('Sort Order')"
+                        :menu-props="{'maxHeight':400}"
                         flat solo hide-details
                         color="secondary-dark"
                         :items="options.sorting"
@@ -321,13 +324,14 @@ export default {
       },
       options: {
         'sorting': [
-          {value: 'newest', text: this.$gettext('Newest First')},
-          {value: 'oldest', text: this.$gettext('Oldest First')},
-          {value: 'added', text: this.$gettext('Recently Added')},
+          {value: 'favorites', text: this.$gettext('Favorites')},
           {value: 'name', text: this.$gettext('Name')},
           {value: 'place', text: this.$gettext('Location')},
           {value: 'moment', text: this.$gettext('Place & Time')},
-          {value: 'relevance', text: this.$gettext('Most Relevant')},
+          {value: 'newest', text: this.$gettext('Newest First')},
+          {value: 'oldest', text: this.$gettext('Oldest First')},
+          {value: 'added', text: this.$gettext('Recently Added')},
+          {value: 'edited', text: this.$gettext('Recently Edited')},
         ],
       },
     };

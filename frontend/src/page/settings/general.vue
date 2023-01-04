@@ -18,6 +18,7 @@
                   :disabled="busy"
                   :items="themes"
                   :label="$gettext('Theme')"
+                  :menu-props="{'maxHeight':346}"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
@@ -32,6 +33,7 @@
                   :disabled="busy"
                   :items="languages"
                   :label="$gettext('Language')"
+                  :menu-props="{'maxHeight':346}"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
@@ -320,6 +322,7 @@
                   :disabled="busy"
                   :items="options.MapsStyle()"
                   :label="$gettext('Maps')"
+                  :menu-props="{'maxHeight':346}"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
@@ -334,6 +337,7 @@
                   :disabled="busy"
                   :items="options.MapsAnimate()"
                   :label="$gettext('Animation')"
+                  :menu-props="{'maxHeight':346}"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details

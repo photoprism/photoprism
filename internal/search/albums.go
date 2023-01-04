@@ -83,8 +83,6 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	switch f.Order {
 	case entity.SortOrderCount:
 		s = s.Order("photo_count DESC, albums.album_title, albums.album_uid DESC")
-	case entity.SortOrderRelevance:
-		s = s.Order("albums.album_favorite DESC, albums.updated_at DESC, albums.album_uid DESC")
 	case entity.SortOrderNewest:
 		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid DESC")
@@ -99,6 +97,8 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		}
 	case entity.SortOrderAdded:
 		s = s.Order("albums.album_uid DESC")
+	case entity.SortOrderEdited:
+		s = s.Order("albums.updated_at DESC, albums.album_uid DESC")
 	case entity.SortOrderMoment:
 		s = s.Order("albums.album_favorite DESC, has_year, albums.album_year DESC, albums.album_month DESC, albums.album_title ASC, albums.album_uid DESC")
 	case entity.SortOrderPlace:
@@ -109,6 +109,14 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		s = s.Order("albums.album_category, albums.album_title, albums.album_uid DESC")
 	case entity.SortOrderSlug:
 		s = s.Order("albums.album_slug ASC, albums.album_uid DESC")
+	case entity.SortOrderFavorites:
+		if f.Type == entity.AlbumFolder {
+			s = s.Order("albums.album_favorite DESC, albums.album_path ASC, albums.album_uid DESC")
+		} else if f.Type == entity.AlbumMonth {
+			s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
+		}
 	case entity.SortOrderName:
 		if f.Type == entity.AlbumFolder {
 			s = s.Order("albums.album_path ASC, albums.album_uid DESC")
