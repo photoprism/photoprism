@@ -6,7 +6,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon>
-        <v-icon size="26">feedback</v-icon>
+        <v-icon size="26">mail</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container v-if="sent" fluid class="pa-4">
