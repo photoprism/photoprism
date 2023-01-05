@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-23 14:48+0000\n"
+"PO-Revision-Date: 2023-01-05 19:07+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -2222,8 +2222,9 @@ msgid "Slow"
 msgstr "آهسته"
 
 #: src/options/themes.js:493
+#, fuzzy
 msgid "Snow"
-msgstr ""
+msgstr "برف"
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251

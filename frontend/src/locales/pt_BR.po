@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-23 14:48+0000\n"
+"PO-Revision-Date: 2023-01-05 19:07+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/projects/photoprism/frontend/pt_BR/>\n"
+"Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2172,8 +2173,9 @@ msgid "Slow"
 msgstr "Lento"
 
 #: src/options/themes.js:493
+#, fuzzy
 msgid "Snow"
-msgstr ""
+msgstr "Neve"
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
