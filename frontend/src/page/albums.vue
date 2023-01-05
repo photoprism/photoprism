@@ -51,6 +51,7 @@
                         :menu-props="{'maxHeight':346}"
                         flat solo hide-details
                         color="secondary-dark"
+                        background-color="secondary"
                         item-value="value"
                         item-text="text"
                         :items="yearOptions()"
@@ -63,6 +64,7 @@
                         :menu-props="{'maxHeight':346}"
                         flat solo hide-details
                         color="secondary-dark"
+                        background-color="secondary"
                         :items="categories"
                         @change="(v) => {updateQuery({'category': v})}">
               </v-select>
@@ -73,6 +75,7 @@
                         :menu-props="{'maxHeight':400}"
                         flat solo hide-details
                         color="secondary-dark"
+                        background-color="secondary"
                         :items="options.sorting"
                         @change="(v) => {updateQuery({'order': v})}">
               </v-select>

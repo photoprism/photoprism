@@ -407,6 +407,38 @@ let themes = {
       "navigation-home": "#0E0D12",
     },
   },
+  snow: {
+    dark: false,
+    sponsor: true,
+    title: "Snow",
+    name: "snow",
+    colors: {
+      application: "#f7f8fa",
+      form: "#eeeeee",
+      card: "#ECEFF4",
+      primary: "#4ca0b8",
+      "primary-button": "#88C0D0",
+      "secondary-dark": "#4ca0b8",
+      secondary: "#e7ebf1",
+      "secondary-light": "#eceff4",
+      accent: "#81A1C1",
+      error: "#BF616A",
+      info: "#88C0D0",
+      success: "#8FBCBB",
+      warning: "#f0d8a8",
+      remove: "#BF616A",
+      restore: "#81A1C1",
+      album: "#EBCB8B",
+      download: "#8FBCBB",
+      private: "#88C0D0",
+      edit: "#88C0D0",
+      share: "#B48EAD",
+      love: "#ef5350",
+      terminal: "#4C566A",
+      navigation: "#e7ebf1",
+      "navigation-home": "#e2e6ee",
+    },
+  },
 };
 
 /* Available Themes */
@@ -455,6 +487,11 @@ let options = [
   {
     text: $gettext("Shadow"),
     value: "shadow",
+    disabled: false,
+  },
+  {
+    text: $gettext("Snow"),
+    value: "snow",
     disabled: false,
   },
   {

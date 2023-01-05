@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
 
       <v-btn icon href="https://photoprism.app/" target="_blank" class="action-info" :title="$gettext('Learn more')">
-        <v-icon size="26">info</v-icon>
+        <v-icon size="26">diamond</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">

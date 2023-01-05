@@ -44,7 +44,7 @@ body.dark-theme.theme-grayscale {
 }
 
 #photoprism.theme-grayscale .theme--light.v-table tbody tr:hover {
-    background: #666;
+    background: #555;
 }
 
 #photoprism.theme-grayscale .theme--light.v-chip,

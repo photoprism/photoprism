@@ -55,6 +55,7 @@
                       :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="ID"
                       item-text="Name"
                       :items="countryOptions"
@@ -69,6 +70,7 @@
                       :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="ID"
                       item-text="Name"
                       :items="cameraOptions"
@@ -81,6 +83,7 @@
                       :label="$gettext('View')"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       :items="options.views"
                       @change="(v) => {setView(v)}">
             </v-select>
@@ -91,6 +94,7 @@
                       :menu-props="{'maxHeight':400}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       :items="options.sorting"
                       @change="(v) => {updateQuery({'order': v})}">
             </v-select>
@@ -101,6 +105,7 @@
                       :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="value"
                       item-text="text"
                       :items="yearOptions()"
@@ -113,6 +118,7 @@
                       :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="value"
                       item-text="text"
                       :items="monthOptions()"
@@ -124,6 +130,7 @@
                         :label="labels.lens"
                         flat solo hide-details
                         color="secondary-dark"
+                        background-color="secondary-light"
                         item-value="ID"
                         item-text="Model"
                         v-model="filter.lens"
@@ -136,6 +143,7 @@
                       :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="Slug"
                       item-text="Name"
                       :items="colorOptions()"
@@ -148,6 +156,7 @@
                       :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="Slug"
                       item-text="Name"
                       :items="categoryOptions"
