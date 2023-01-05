@@ -6,8 +6,9 @@ export
 all: pull restart
 uninstall: down remove
 restart: stop start
+update: pull restart
 pull:
-	podman-compose pull
+	podman-compose pull --ignore-pull-failures
 start:
 	podman-compose up -d --remove-orphans
 stop:

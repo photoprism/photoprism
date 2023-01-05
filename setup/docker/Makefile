@@ -15,8 +15,9 @@ endif
 all: pull restart
 uninstall: down remove
 restart: stop start
+update: pull restart
 pull:
-	$(DOCKER_COMPOSE) pull
+	$(DOCKER_COMPOSE) pull --ignore-pull-failures
 start:
 	$(DOCKER_COMPOSE) up -d --remove-orphans
 stop:

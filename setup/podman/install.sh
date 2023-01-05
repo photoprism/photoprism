@@ -30,9 +30,9 @@ curl -o docker-compose.yml https://dl.photoprism.app/podman/docker-compose.yml
 
 # Create storage folders.
 echo "Creating storage folders..."
-mkdir -p import mariadb originals storage
-sudo chown 1000:1000 import mariadb originals storage
-sudo chmod u+rwx,g+rwx import mariadb originals storage
+mkdir -p import database originals storage
+sudo chown 1000:1000 import database originals storage
+sudo chmod u+rwx,g+rwx import database originals storage
 
 # Show further instructions.
 echo ""

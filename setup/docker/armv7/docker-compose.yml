@@ -104,7 +104,7 @@ services:
       - apparmor:unconfined
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
-      - "./mariadb:/config" # DO NOT REMOVE
+      - "./database:/config" # DO NOT REMOVE
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
