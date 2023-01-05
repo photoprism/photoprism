@@ -25,12 +25,12 @@ body.dark-theme.theme-lavender,
 
 #photoprism.theme-lavender .cards-view .card.is-selected .card-details {
     color: #333;
-    background-color: #C3C7E0;
+    background-color: #CCCFE0;
 }
 
 #photoprism.theme-lavender .cards-view .card.is-selected,
 #photoprism.theme-lavender .cards-view .card.is-selected .card-background {
-    background-color: #C3C7E0 !important;
+    background-color: #CCCFE0 !important;
 }
 
 #photoprism.theme-lavender .cards-view .card.is-selected .card-details .v-icon {
