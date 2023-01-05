@@ -88,3 +88,17 @@ body.dark-theme.theme-carbon,
     color: #cccccc;
     background: transparent;
 }
+
+#photoprism.theme-carbon .cards-view .card.is-selected .card-details {
+    color: #fff;
+    background-color: #302c3d;
+}
+
+#photoprism.theme-carbon .cards-view .card.is-selected,
+#photoprism.theme-carbon .cards-view .card.is-selected .card-background {
+    background-color: #302c3d !important;
+}
+
+#photoprism.theme-carbon .cards-view .card.is-selected .card-details .v-icon {
+    color: #fff;
+}

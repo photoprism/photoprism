@@ -135,7 +135,7 @@ let themes = {
     colors: {
       application: "#fafafa",
       form: "#fafafa",
-      card: "#eef0f6",
+      card: "#DFE0E8",
       primary: "#9ca2c9",
       "primary-button": "#6c6f84",
       "secondary-dark": "#475185",

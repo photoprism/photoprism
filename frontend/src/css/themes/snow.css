@@ -129,7 +129,16 @@ body.theme-snow,
     background: transparent;
 }
 
-#photoprism.theme-snow .cards-view .result {
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+#photoprism.theme-snow .cards-view .card.is-selected .card-details {
+    color: #333333;
+    background-color: #D8DEE9;
+}
+
+#photoprism.theme-snow .cards-view .card.is-selected,
+#photoprism.theme-snow .cards-view .card.is-selected .card-background {
+    background-color: #D8DEE9 !important;
+}
+
+#photoprism.theme-snow .cards-view .card.is-selected .card-details .v-icon {
+    color: #333333;
 }

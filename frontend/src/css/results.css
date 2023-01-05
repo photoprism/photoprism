@@ -442,7 +442,7 @@ body.chrome #photoprism .search-results .result {
     text-align: center;
 }
 
-#photoprism .cards-view .v-card .card-background {
+#photoprism .cards-view .card .card-background {
     position: absolute;
     top: 0;
     left: 0;
@@ -455,23 +455,23 @@ body.chrome #photoprism .search-results .result {
     text-align: left;
 }
 
-#photoprism .cards-view .v-card .card-details {
+#photoprism .cards-view .card .card-details {
     z-index: 1;
     position: relative;
 }
 
-#photoprism .cards-view .v-card.is-selected .card-details {
+#photoprism .cards-view .card.is-selected .card-details {
     color: #fff;
-    background-color: #333;
+    background-color: #424142;
 }
 
-#photoprism .cards-view .v-card.is-selected .card-details .v-icon {
-    color: #fff;
+#photoprism .cards-view .card.is-selected,
+#photoprism .cards-view .card.is-selected .card-background {
+    background-color: #424142 !important;
 }
 
-#photoprism .cards-view .v-card.is-selected,
-#photoprism .cards-view .v-card.is-selected .card-background {
-    background-color: #333 !important;
+#photoprism .cards-view .card.is-selected .card-details .v-icon {
+    color: #fff;
 }
 
 #photoprism .search-results.list-view .input-select,
