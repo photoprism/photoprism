@@ -196,7 +196,7 @@ body.chrome #photoprism .search-results .result {
     transition-duration: 15ms !important;
     margin: 4px !important;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12) !important;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 #photoprism .search-results .image-container {
@@ -288,7 +288,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .cards-view .result.is-selected,
 #photoprism .mosaic-view .result.is-selected {
-    margin: 0 !important;
+    margin: 1px !important;
     box-shadow: 0 6px 6px -3px rgba(0, 0, 0, .2), 0 10px 14px 1px rgba(0, 0, 0, .14), 0 4px 18px 3px rgba(0, 0, 0, .12) !important;
 }
 
