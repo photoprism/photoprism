@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-01-05 19:07+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-01-06 15:06+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1084,7 +1084,7 @@ msgstr "Βοήθεια"
 
 #: src/app/routes.js:77
 msgid "Help & Support"
-msgstr "Βοήθεια &amp; Υποστήριξη"
+msgstr "Βοήθεια & Υποστήριξη"
 
 #: src/component/navigation.vue:382
 msgid "Hidden"
