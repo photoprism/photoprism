@@ -64,11 +64,11 @@ body.theme-snow,
 
 #photoprism.theme-snow .theme--light.v-chip,
 #photoprism.theme-snow .v-card__actions .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: #ECEFF4;
+    background: #c5dee5;
 }
 
 #photoprism.theme-snow .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: rgba(250, 250, 255, 0.1);
+    background: #eceff4;
 }
 
 #photoprism.theme-snow .map-control .theme--light.v-input:not(.v-input--is-disabled) i,
