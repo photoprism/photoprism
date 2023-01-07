@@ -92,50 +92,56 @@
       </v-layout>
       <v-layout v-else row wrap>
         <v-flex xs12 class="px-2 pt-2 pb-0">
-          <h3 class="title pb-3">
-            <translate>Support Our Mission</translate>
-          </h3>
           <p class="subheading text-selectable">
-            <strong><translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate></strong>
-            <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
+            <strong><translate>Become a sponsor today, support our mission and enjoy our member benefits!</translate></strong>
           </p>
           <p class="subheading text-selectable">
-            <translate>To upgrade, you may either enter an activation code or click on "Proceed" to sign up on our website:</translate>
+            <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
+            <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
           </p>
         </v-flex>
         <v-flex xs12 grow align-center justify-center class="px-2 py-1">
+          <v-alert
+              :value="true"
+              color="secondary-dark"
+              outline
+          >
+          <p class="subheading text-selectable">
+            <strong><translate>To upgrade, you may either enter an activation code or click on "Proceed" to sign up on our website:</translate></strong>
+          </p>
           <v-text-field v-model="form.token" flat solo hide-details return-masked-value :mask="tokenMask"
                         browser-autocomplete="off"
                         color="secondary-dark"
                         background-color="secondary-light" :label="$gettext('Activation Code')" type="text">
           </v-text-field>
-        </v-flex>
-        <v-flex xs12 grow align-center justify-center class="px-2 py-1">
-          <v-btn color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
-                 class="ml-0"
-                 outline
-                 :disabled="busy"
-                 @click.stop="compare">
-            <translate>Compare Editions</translate>
-          </v-btn>
-          <v-btn v-if="!form.token.length" color="primary-button"
-                 class="white--text ml-0 action-proceed" :block="$vuetify.breakpoint.xsOnly"
-                 depressed
-                 :disabled="busy"
-                 @click.stop="connect">
-            <translate>Proceed</translate>
-            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
-            <v-icon v-else right dark>navigate_next</v-icon>
-          </v-btn>
-          <v-btn v-else color="primary-button" :block="$vuetify.breakpoint.xsOnly"
-                 class="white--text ml-0 action-activate"
-                 depressed
-                 :disabled="busy || form.token.length !== tokenMask.length"
-                 @click.stop="activate">
-            <translate>Activate</translate>
-            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
-            <v-icon v-else right dark>navigate_next</v-icon>
-          </v-btn>
+          <div class="action-buttons text-xs-left mt-3">
+            <v-btn color="secondary-dark" :block="$vuetify.breakpoint.xsOnly"
+                   class="ml-0"
+                   outline
+                   :disabled="busy"
+                   @click.stop="compare">
+              <translate>Compare Editions</translate>
+            </v-btn>
+            <v-btn v-if="!form.token.length" color="primary-button"
+                   class="white--text ml-0 action-proceed" :block="$vuetify.breakpoint.xsOnly"
+                   depressed
+                   :disabled="busy"
+                   @click.stop="connect">
+              <translate>Proceed</translate>
+              <v-icon v-if="rtl" left dark>navigate_before</v-icon>
+              <v-icon v-else right dark>navigate_next</v-icon>
+            </v-btn>
+            <v-btn v-else color="primary-button" :block="$vuetify.breakpoint.xsOnly"
+                   class="white--text ml-0 action-activate"
+                   depressed
+                   :disabled="busy || form.token.length !== tokenMask.length"
+                   @click.stop="activate">
+              <translate>Activate</translate>
+              <v-icon v-if="rtl" left dark>navigate_before</v-icon>
+              <v-icon v-else right dark>navigate_next</v-icon>
+            </v-btn>
+          </div>
+          </v-alert>
         </v-flex>
         <v-flex xs12 class="px-2 pt-3 pb-0">
           <p class="body-1 text-selectable">
@@ -144,22 +150,22 @@
           </p>
         </v-flex>
         <v-flex v-show="showInfo" xs12 class="px-2 pt-3 pb-0">
-          <h3 class="subheading pb-3">
+          <h3 class="title pb-3">
             <translate>Frequently Asked Questions</translate>
           </h3>
-          <p class="body-2 text-selectable">
+          <p class="subheading text-selectable">
             <translate>Shouldn't free software be free of costs?</translate>
           </p>
           <p class="body-1 text-selectable">
             <translate>Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis.</translate>
           </p>
-          <p class="body-2 text-selectable">
+          <p class="subheading text-selectable">
             <translate>Why are some features only available to sponsors?</translate>
           </p>
           <p class="body-1 text-selectable">
             <translate>PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits.</translate>
           </p>
-          <p class="body-2 text-selectable">
+          <p class="subheading text-selectable">
             <translate>What functionality is generally available?</translate>
           </p>
           <p class="body-1 text-selectable">
