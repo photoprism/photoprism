@@ -66,10 +66,17 @@ var MomentLabels = map[string]string{
 	"theme park":       "Festivals & Entertainment",
 	"event":            "Festivals & Entertainment",
 	"wine":             "Festivals & Entertainment",
+	"newyearsday":      "Holidays",
+	"halloween":        "Holidays",
+	"thanksgiving":     "Holidays",
+	"christmas":        "Holidays",
 	"cat":              "Pets",
 	"dog":              "Pets",
+	"gerbil":           "Pets",
+	"hamster":          "Pets",	
+	"parakeet":         "Pets",
 	"rabbit":           "Pets",
-	"hamster":          "Pets",
+	"turtle":           "Pets",
 }
 
 // MomentLabelsFilter returns the smart filter string for a moment based on a matching label.
