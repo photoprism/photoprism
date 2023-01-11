@@ -87,7 +87,7 @@ func NewTestOptions(pkg string) *Options {
 	c := &Options{
 		Name:            "PhotoPrism",
 		Version:         "0.0.0",
-		Copyright:       "(c) 2018-2022 PhotoPrism UG. All rights reserved.",
+		Copyright:       "(c) 2018-2023 PhotoPrism UG. All rights reserved.",
 		Public:          true,
 		Sponsor:         true,
 		AuthMode:        "",
