@@ -31,7 +31,7 @@ require (
 	github.com/mandykoh/prism v0.35.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
-	github.com/montanaflynn/stats v0.6.6
+	github.com/montanaflynn/stats v0.7.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
@@ -63,7 +63,7 @@ require github.com/google/uuid v1.3.0
 require (
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
-	github.com/zitadel/oidc v1.12.0
+	github.com/zitadel/oidc v1.12.1
 	golang.org/x/oauth2 v0.0.0-20221006150949-b44042a4b9c1 // indirect
 )
 
