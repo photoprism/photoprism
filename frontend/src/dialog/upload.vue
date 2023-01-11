@@ -113,6 +113,7 @@ export default {
       current: 0,
       total: 0,
       totalSize: 0,
+      totalFailed: 0,
       completedSize: 0,
       completedTotal: 0,
       started: 0,
@@ -179,6 +180,7 @@ export default {
       this.failed = false;
       this.current = 0;
       this.total = 0;
+      this.totalFailed = 0;
       this.totalSize = 0;
       this.completedSize = 0;
       this.completedTotal = 0;
@@ -191,6 +193,10 @@ export default {
       this.$refs.upload.click();
     },
     onUploadProgress(ev) {
+      if (!ev || !ev.loaded || !ev.total) {
+        return;
+      }
+
       const { loaded, total } = ev;
 
       // Update upload status.
@@ -210,6 +216,16 @@ export default {
           );
           this.eta = dur.toHuman();
         }
+      }
+    },
+    onUploadComplete(file) {
+      if (!file || !file.size || file.size < 0) {
+        return;
+      }
+
+      this.completedSize += file.size;
+      if (this.totalSize > 0) {
+        this.completedTotal = Math.floor(((this.completedSize) * 100) / this.totalSize);
       }
     },
     onUpload() {
@@ -232,6 +248,7 @@ export default {
       this.failed = false;
       this.current = 0;
       this.total = this.selected.length;
+      this.totalFailed = 0;
       this.totalSize = 0;
       this.completedSize = 0;
       this.completedTotal = 0;
@@ -278,16 +295,25 @@ export default {
               },
               onUploadProgress: ctx.onUploadProgress,
             }
-          ).finally(() => {
-            ctx.completedSize += file.size;
-            ctx.completedTotal = Math.floor(((ctx.completedSize) * 100) / ctx.totalSize);
+          ).then(() => {
+            ctx.onUploadComplete(file);
+          }).catch(() => {
+            ctx.totalFailed++;
+            ctx.onUploadComplete(file);
           });
         }
       }
 
       performUpload(this).then(() => {
+        if (this.totalFailed >= this.total) {
+          this.reset();
+          Notify.error(this.$gettext("Upload failed"));
+          return;
+        }
+
         this.indexing = true;
         this.eta = "";
+
         const ctx = this;
         Api.put(`users/${userUid}/upload/${ctx.token}`,{
           albums: addToAlbums,
