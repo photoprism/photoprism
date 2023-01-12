@@ -1,7 +1,7 @@
 <template>
   <v-container id="auth-login" fluid fill-height class="auth-login wallpaper background-welcome pa-4" :style="wallpaper()">
     <v-layout id="auth-layout" class="auth-layout">
-      <v-flex xs12 sm9 md6 lg5 xl3 xxl2>
+      <v-flex xs12 sm9 md6 lg4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
           <v-card id="auth-login-box" class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-4">
