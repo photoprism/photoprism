@@ -1,6 +1,6 @@
 {
   "skipJsErrors": true,
-  "quarantineMode": true,
+  "quarantineMode": false,
   "selectorTimeout": 5000,
   "screenshots": {
     "path": "tests/acceptance/screenshots",
