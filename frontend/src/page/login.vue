@@ -46,8 +46,8 @@
                       @keyup.enter.native="login"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 class="px-2 py-1">
-                  <div class="action-buttons text-xs-center">
+                <v-flex xs12 class="px-2 py-1 auth-actions">
+                  <div class="action-buttons auth-buttons text-xs-center">
                     <v-btn v-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
                            :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80"
                            @click.stop.prevent="register">
@@ -61,13 +61,13 @@
                       <v-icon v-else right dark>navigate_next</v-icon>
                     </v-btn>
                   </div>
+                  <div v-if="passwordResetUri" class="auth-links text-xs-center opacity-80">
+                    <a :href="passwordResetUri" class="text-link link--text">
+                      <translate>Forgot password?</translate>
+                    </a>
+                  </div>
                 </v-flex>
               </v-layout>
-              <div v-if="passwordResetUri" class="text-xs-center opacity-80">
-                <a :href="passwordResetUri" class="text-link" :style="`color: ${colors.link}!important`">
-                  <translate>Forgot password?</translate>
-                </a>
-              </div>
             </v-card-text>
           </v-card>
         </v-form>
