@@ -103,7 +103,7 @@ type Photo struct {
 	Cell             *Cell         `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Cell" yaml:"-"`
 	Place            *Place        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Place" yaml:"-"`
 	Keywords         []Keyword     `json:"-" yaml:"-"`
-	Albums           []Album       `json:"-" yaml:"-"`
+	Albums           []Album       `yaml:"-"`
 	Files            []File        `yaml:"-"`
 	Labels           []PhotoLabel  `yaml:"-"`
 	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
