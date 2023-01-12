@@ -285,6 +285,7 @@ test.meta("testID", "photos-upload-delete-005").meta({ type: "short", mode: "pub
       await t
         .setFilesToUpload(Selector(".input-upload"), ["../../upload-files/hentai_2.jpg"])
         .wait(15000);
+      await t.click(Selector("nav.v-toolbar button"));
       await menu.openPage("library");
       await t.click(library.logsTab);
 
