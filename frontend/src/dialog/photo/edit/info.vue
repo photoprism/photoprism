@@ -41,6 +41,12 @@
           </td>
           <td>{{ model.Name }}</td>
         </tr>
+        <tr>
+          <td>
+            <translate>Albums</translate>
+          </td>
+          <td>{{ model.Albums.map(album => album.Title).join(', ') }}</td>
+        </tr>
         <tr v-if="model.OriginalName">
           <td>
             <translate>Original Name</translate>
