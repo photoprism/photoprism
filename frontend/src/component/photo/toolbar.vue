@@ -44,7 +44,7 @@
     </v-toolbar>
 
     <v-card v-show="searchExpanded"
-            class="pt-1"
+            class="pt-1 page-toolbar-expanded"
             flat
             color="secondary-light">
       <v-card-text>

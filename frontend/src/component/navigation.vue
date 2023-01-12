@@ -3,7 +3,7 @@
     <template v-if="visible && $vuetify.breakpoint.smAndDown">
       <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small elevation-2"
                  @click.stop.prevent>
-        <v-avatar tile :size="28" :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">
+        <v-avatar class="nav-avatar" tile :size="28" :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">
           <img :src="appIcon" :alt="config.name" :class="{'animate-hue': indexing}">
         </v-avatar>
         <v-toolbar-title class="nav-title">
@@ -21,7 +21,7 @@
     </template>
     <template v-else-if="visible && !auth">
       <v-toolbar dark flat scroll-off-screen dense color="navigation darken-1" class="nav-small">
-        <v-avatar tile :size="28">
+        <v-avatar class="nav-avatar" tile :size="28">
           <img :src="appIcon" :alt="config.name">
         </v-avatar>
         <v-toolbar-title class="nav-title">
@@ -51,7 +51,7 @@
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown">
         <v-list class="navigation-home">
           <v-list-tile class="nav-logo">
-            <v-list-tile-avatar class="clickable" @click.stop.prevent="goHome">
+            <v-list-tile-avatar class="nav-avatar clickable" @click.stop.prevent="goHome">
               <img :src="appIcon" :alt="appName" :class="{'animate-hue': indexing}">
             </v-list-tile-avatar>
             <v-list-tile-content>

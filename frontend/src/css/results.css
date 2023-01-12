@@ -455,6 +455,11 @@ body.chrome #photoprism .search-results .result {
     text-align: left;
 }
 
+#photoprism .cards-view .card .card-details {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
 #photoprism .cards-view .v-card .card-details {
     z-index: 1;
     position: relative;

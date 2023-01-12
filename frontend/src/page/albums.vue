@@ -39,7 +39,7 @@
         </v-btn>
       </v-toolbar>
       <v-card v-show="searchExpanded"
-              class="pt-1"
+              class="pt-1 page-toolbar-expanded"
               flat
               color="secondary-light">
         <v-card-text>
@@ -371,9 +371,9 @@ export default {
     this.search();
 
     this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
-
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+    this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.onConfigUpdated(data)));
   },
   destroyed() {
     for (let i = 0; i < this.subscriptions.length; i++) {
@@ -381,6 +381,21 @@ export default {
     }
   },
   methods: {
+    onConfigUpdated(data) {
+      if (!data || !data.config?.albumCategories) {
+        return;
+      }
+
+      const c = data.config.albumCategories;
+
+      this.categories = [{"value": "", "text": this.$gettext("All Categories")}];
+
+      if (c.length > 0) {
+        this.categories = this.categories.concat(c.map(cat => {
+          return {"value": cat, "text": cat};
+        }));
+      }
+    },
     yearOptions() {
       return this.all.years.concat(options.IndexedYears());
     },
