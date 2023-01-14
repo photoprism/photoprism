@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-06 15:06+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2023-01-14 08:55+0000\n"
+"Last-Translator: Florian <Florian.Mornet@bordeaux-inp.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "frontend/fr/>\n"
 "Language: fr\n"
@@ -1040,7 +1040,7 @@ msgstr "Or"
 
 #: src/options/themes.js:453
 msgid "Grayscale"
-msgstr "Gamme de gris"
+msgstr "Niveaux de gris"
 
 #: src/options/options.js:400
 msgid "Green"
