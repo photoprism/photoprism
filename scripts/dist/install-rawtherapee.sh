@@ -26,7 +26,7 @@ set -e
 echo "Installing RawTherapee for ${DESTARCH^^}..."
 
 case $DESTARCH in
-  amd64 | AMD64 | x86_64 | x86-64 | arm64 | ARM64 | aarch64)
+  amd64 | AMD64 | x86_64 | x86-64)
     if [[ $VERSION_CODENAME == "jammy" ]]; then
       echo "Pinning rawtherapee to Lunar Lobster"
       cat << EOF > /etc/apt/preferences.d/rawtherapee.pref
@@ -36,6 +36,22 @@ Pin-Priority: 990
 EOF
       echo 'deb http://archive.ubuntu.com/ubuntu/ lunar main' | tee /etc/apt/sources.list.d/rawtherapee.list
       echo 'deb http://archive.ubuntu.com/ubuntu/ lunar universe' | tee -a /etc/apt/sources.list.d/rawtherapee.list
+      echo "install-rawtherapee: installing RawTherapee 5.9 ($DESTARCH) for Jammy from Lunar Lobster repository"
+      apt-get update
+      apt-get -qq install rawtherapee
+    fi
+    ;;
+
+  arm64 | ARM64 | aarch64)
+    if [[ $VERSION_CODENAME == "jammy" ]]; then
+      echo "Pinning rawtherapee to Lunar Lobster"
+      cat << EOF > /etc/apt/preferences.d/rawtherapee.pref
+Package: rawtherapee rawtherapee-data libatkmm-1.6-1v5 libcairomm-1.0-1v5 libglibmm-2.4-1v5 libgtkmm-3.0-1v5 libpangomm-1.4-1v5 liblensfun1 liblensfun-data-v1
+Pin: release n=lunar
+Pin-Priority: 990
+EOF
+      echo 'deb http://ports.ubuntu.com/ubuntu-ports/ lunar main' | tee /etc/apt/sources.list.d/rawtherapee.list
+      echo 'deb http://ports.ubuntu.com/ubuntu-ports/ lunar universe' | tee -a /etc/apt/sources.list.d/rawtherapee.list
       echo "install-rawtherapee: installing RawTherapee 5.9 ($DESTARCH) for Jammy from Lunar Lobster repository"
       apt-get update
       apt-get -qq install rawtherapee
