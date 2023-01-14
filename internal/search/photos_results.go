@@ -93,6 +93,7 @@ type Photo struct {
 	FileDiff         int           `json:"-" select:"files.file_diff"`
 	FileChroma       int16         `json:"-" select:"files.file_chroma"`
 	FileLuminance    string        `json:"-" select:"files.file_luminance"`
+	AlbumUID         string        `json:"AlbumUID" select:"photos_albums.album_uid"`
 	Merged           bool          `json:"Merged" select:"-"`
 	CreatedAt        time.Time     `json:"CreatedAt" select:"photos.created_at"`
 	UpdatedAt        time.Time     `json:"UpdatedAt" select:"photos.updated_at"`
@@ -101,6 +102,7 @@ type Photo struct {
 	DeletedAt        time.Time     `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
 
 	Files []entity.File `json:"Files"`
+	AlbumUIDs []string `json:"AlbumUIDs"`
 }
 
 // IsPlayable returns true if the photo has a related video/animation that is playable.
@@ -145,6 +147,15 @@ func (photos PhotoResults) UIDs() []string {
 	return result
 }
 
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
 // Merge consecutive file results that belong to the same photo.
 func (photos PhotoResults) Merge() (merged PhotoResults, count int, err error) {
 	count = len(photos)
@@ -163,8 +174,13 @@ func (photos PhotoResults) Merge() (merged PhotoResults, count int, err error) {
 		file.ID = photo.FileID
 
 		if photoId == photo.ID && i > 0 {
-			merged[i-1].Files = append(merged[i-1].Files, file)
-			merged[i-1].Merged = true
+			if merged[i-1].Files[len(merged[i-1].Files)-1].ID != photo.FileID {
+				merged[i-1].Files = append(merged[i-1].Files, file)
+				merged[i-1].Merged = true
+			}
+			if !contains(merged[i-1].AlbumUIDs, photo.AlbumUID) {
+				merged[i-1].AlbumUIDs = append(merged[i-1].AlbumUIDs, photo.AlbumUID)
+			}
 			continue
 		}
 
@@ -172,6 +188,7 @@ func (photos PhotoResults) Merge() (merged PhotoResults, count int, err error) {
 		photoId = photo.ID
 		photo.CompositeID = fmt.Sprintf("%d-%d", photoId, file.ID)
 		photo.Files = append(photo.Files, file)
+		photo.AlbumUIDs = append(photo.AlbumUIDs, photo.AlbumUID)
 
 		merged = append(merged, photo)
 	}

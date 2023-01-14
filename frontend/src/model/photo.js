@@ -759,6 +759,11 @@ export class Photo extends RestModel {
     return placeLabel ? placeLabel : $gettext("Unknown");
   });
 
+  getAlbumTitles = (albumTitles) => {
+    // eslint-disable-next-line
+    return this.AlbumUIDs.map((uid) => albumTitles[uid]).filter(Boolean).join(", ");
+  };
+
   addSizeInfo(file, info) {
     if (!file) {
       return;

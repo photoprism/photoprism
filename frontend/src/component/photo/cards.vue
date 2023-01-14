@@ -228,6 +228,12 @@
                     {{ photo.locationInfo() }}
                   </button>
                 </template>
+                <br>
+                <button v-if="photo.AlbumUIDs != '' && Object.keys(albumTitles).length" :title="$gettext('Albums')"
+                        @click.exact="editPhoto(index)">
+                  <i>bookmark</i>
+                  {{ photo.getAlbumTitles(albumTitles) }}
+                </button>
               </div>
             </div>
           </div>
@@ -242,6 +248,11 @@ import Notify from "common/notify";
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 import {virtualizationTools} from 'common/virtualization-tools';
 import IconLivePhoto from "component/icon/live_photo.vue";
+import Album from "model/album";
+
+// Todo: Handle cases where users have more than 10000 albums.
+// Copied from frontend/src/dialog/photo/album.vue
+const MaxResults = 10000;
 
 export default {
   name: 'PPhotoCards',
@@ -290,6 +301,7 @@ export default {
     const debug = this.$config.get('debug');
 
     return {
+      albumTitles: {},
       featPlaces,
       featPrivate,
       debug,
@@ -318,6 +330,9 @@ export default {
   },
   beforeDestroy() {
     this.intersectionObserver.disconnect();
+  },
+  created() {
+    this.loadAlbumTitles();
   },
   methods: {
     observeItems() {
@@ -455,6 +470,20 @@ export default {
        * force an update to fix that.
        */
       this.$forceUpdate();
+    },
+    loadAlbumTitles() {
+      // Copied from frontend/src/dialog/photo/album.vue
+      const params = {
+        q: "",
+        count: MaxResults,
+        offset: 0,
+        type: "album"
+      };
+      Album.search(params).then(response => {
+        response.models.forEach(album => {
+          this.albumTitles[album.UID] = album.Title;
+        });
+      });
     },
   }
 };

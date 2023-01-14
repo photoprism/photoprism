@@ -86,9 +86,11 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		} else {
 			f.Filter = a.AlbumFilter
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
+			s = s.Joins("LEFT JOIN photos_albums ON photos.photo_uid = photos_albums.photo_uid AND photos_albums.hidden = 0")
 		}
 	} else {
 		f.Scope = ""
+		s = s.Joins("LEFT JOIN photos_albums ON photos.photo_uid = photos_albums.photo_uid AND photos_albums.hidden = 0")
 	}
 
 	// Check session permissions and apply as needed.
