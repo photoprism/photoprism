@@ -42,7 +42,8 @@ COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
 # Update base image and add dependencies.
-RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
+RUN echo 'APT::Default-Release "jammy";' > /etc/apt/apt.conf.d/80release && \
+    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
