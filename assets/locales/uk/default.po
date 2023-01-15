@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-28 14:47+0000\n"
+"PO-Revision-Date: 2023-01-15 15:55+0000\n"
 "Last-Translator: 2andgi <andrew.grushka@gmail.com>\n"
 "Language-Team: none\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15\n"
 
 #: messages.go:94
 msgid "Unexpected error, please try again"
@@ -263,7 +263,7 @@ msgstr "Пароль змінено"
 #: messages.go:154
 #, c-format
 msgid "Import completed in %d s"
-msgstr "Імпортування завершиться протягом %d с"
+msgstr "Імпортування тривало %d с"
 
 #: messages.go:155
 msgid "Import canceled"
@@ -272,7 +272,7 @@ msgstr "Імпортування скасовано"
 #: messages.go:156
 #, c-format
 msgid "Indexing completed in %d s"
-msgstr "Індексування завершиться протягом %d с"
+msgstr "Індексування тривало %d с"
 
 #: messages.go:157
 msgid "Indexing originals..."
