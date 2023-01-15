@@ -340,8 +340,8 @@ github.com/dsoprea/go-utility/v2 v2.0.0-20221003142440-7a1927d49d9d/go.mod h1:LV
 github.com/dsoprea/go-utility/v2 v2.0.0-20221003160719-7bc88537c05e/go.mod h1:VZ7cB0pTjm1ADBWhJUOHESu4ZYy9JN+ZPqjfiW09EPU=
 github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 h1:DilThiXje0z+3UQ5YjYiSRRzVdtamFpvBQXKwMglWqw=
 github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349/go.mod h1:4GC5sXji84i/p+irqghpPFZBF8tRN/Q7+700G0/DLe8=
-github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
-github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
+github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
+github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/emirpasic/gods v1.12.0/go.mod h1:YfzfFFoVP/catgzJb4IKIqXjX78Ha8FMSDh3ymbK86o=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=

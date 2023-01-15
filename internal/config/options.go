@@ -38,10 +38,8 @@ type Options struct {
 	Trace                 bool          `yaml:"Trace" json:"Trace" flag:"trace"`
 	Test                  bool          `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool          `yaml:"-" json:"-" flag:"unsafe"`
-	Demo                  bool          `yaml:"Demo" json:"-" flag:"demo"`
+	Demo                  bool          `yaml:"-" json:"-" flag:"demo"`
 	Sponsor               bool          `yaml:"-" json:"-" flag:"sponsor"`
-	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
-	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	ConfigPath            string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
 	DefaultsYaml          string        `json:"-" yaml:"-" flag:"defaults-yaml"`
 	OriginalsPath         string        `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
@@ -61,6 +59,8 @@ type Options struct {
 	WakeupInterval        time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
 	AutoIndex             int           `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
 	AutoImport            int           `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
+	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
+	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
 	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
 	DisableSettings       bool          `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
@@ -102,7 +102,7 @@ type Options struct {
 	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
 	DisableTLS            bool          `yaml:"DisableTLS" json:"DisableTLS" flag:"disable-tls"`
-	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"` // TLSEmail enabled automatic HTTPS via Let's Encrypt if set a valid email address.
+	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"`
 	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
@@ -126,7 +126,6 @@ type Options struct {
 	FFmpegEncoder         string        `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
 	FFmpegBitrate         int           `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
 	ExifToolBin           string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
-	DetachServer          bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
 	DownloadToken         string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
 	PreviewToken          string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbColor            string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
@@ -146,6 +145,7 @@ type Options struct {
 	FaceMatchDist         float64       `yaml:"-" json:"-" flag:"face-match-dist"`
 	PIDFilename           string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
 	LogFilename           string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
+	DetachServer          bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:
