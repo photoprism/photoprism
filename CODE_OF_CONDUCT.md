@@ -36,7 +36,7 @@ Our community standards will be enforced as necessary to protect everyone's well
 
 Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky), especially if your tone is harsh to begin with. In serious cases, we will provide a link to this Code of Conduct to avoid misunderstandings.
 
-Getting a simple **\*plonk\***[^1] in response finally signals that we have lost hope and you're being ignored according to **Rule &#35;3**. This old tradition from Usenet days is as time-saving as it is clear. It is not meant in a disrespectful way.
+Getting a simple **\*plonk\***[^1] in response finally signals that we have lost hope and you're being ignored according to **Rule &#35;3**. This old tradition from the Usenet days is as time-saving as it is clear. It is not meant in a disrespectful way.
 
 In addition, we may use technical measures to temporarily or permanently restrict your access to our infrastructure, including forums and chats.
 
