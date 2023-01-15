@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-05 19:07+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-01-15 03:55+0000\n"
+"Last-Translator: 2andgi <andrew.grushka@gmail.com>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -385,9 +385,11 @@ msgid "Busy, please wait…"
 msgstr "Система зайнята, будь ласка, зачекайте…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:99
-#, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Використовуючи програмне забезпечення та послуги, які ми надаємо, ви погоджуєтеся з нашими умовами надання послуг, політикою конфіденційності та кодексом поведінки."
+msgstr ""
+"Використовуючи програмне забезпечення та послуги, які ми надаємо, ви "
+"погоджуєтеся з нашими умовами надання послуг, політикою конфіденційності та "
+"кодексом поведінки."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:985
@@ -501,7 +503,6 @@ msgid "Common issues can be quickly diagnosed and solved using the troubleshooti
 msgstr "Поширені проблеми можна швидко діагностувати та вирішити за допомогою контрольних списків з усунення несправностей, які ми надаємо."
 
 #: src/page/connect.vue:67 src/page/connect.vue:84
-#, fuzzy
 msgid "Compare Editions"
 msgstr "Порівняти видання"
 
@@ -1373,7 +1374,6 @@ msgid "Low"
 msgstr "Низький"
 
 #: src/options/options.js:276
-#, fuzzy
 msgid "Low Resolution"
 msgstr "Низька роздільна здатність"
 
@@ -1390,9 +1390,8 @@ msgid "Male"
 msgstr "Чоловік"
 
 #: src/page/connect.vue:56
-#, fuzzy
 msgid "Manage account"
-msgstr "Керування рахунком"
+msgstr "Керувати обліковим записом"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1502,7 +1501,6 @@ msgid "Name too long"
 msgstr "Задовге ім'я"
 
 #: src/options/themes.js:483
-#, fuzzy
 msgid "Neon"
 msgstr "Неон"
 
@@ -1708,9 +1706,13 @@ msgid "Other"
 msgstr "Інше"
 
 #: src/page/connect.vue:123
-#, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Наша команда оцінює це на постійній основі, залежно від зусиль з підтримки, яких вимагають функції, вартості для нас, а також від того, чи потрібні вони взагалі всім, чи в основному запитуються організаціями та досвідченими користувачами. Оскільки це дозволяє нам надавати більше функцій громадськості, ми закликаємо всіх користувачів підтримувати нашу місію."
+msgstr ""
+"Наша команда оцінює це на постійній основі, залежно від зусиль з підтримки, "
+"яких вимагають функції, вартості для нас, а також від того, чи потрібні вони "
+"взагалі всім, чи в основному запитуються організаціями та досвідченими "
+"користувачами. Оскільки це дозволяє нам надавати більше функцій "
+"громадськості, ми закликаємо всіх користувачів підтримувати нашу місію."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1854,7 +1856,6 @@ msgid "Private"
 msgstr "Приватний"
 
 #: src/page/connect.vue:70 src/page/connect.vue:87
-#, fuzzy
 msgid "Proceed"
 msgstr "Приступити"
 
@@ -2165,7 +2166,6 @@ msgid "Slow"
 msgstr "Повільний"
 
 #: src/options/themes.js:493
-#, fuzzy
 msgid "Snow"
 msgstr "Сніг"
 
