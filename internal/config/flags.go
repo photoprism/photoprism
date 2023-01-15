@@ -452,6 +452,22 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_DISABLE_TLS",
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "tls-email",
+			Usage:  "`EMAIL` address to enable automatic HTTPS via Let's Encrypt",
+			EnvVar: "PHOTOPRISM_TLS_EMAIL",
+			Hidden: true,
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "tls-cert",
+			Usage:  "public HTTPS certificate `FILE` (.crt)",
+			EnvVar: "PHOTOPRISM_TLS_CERT",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "tls-key",
+			Usage:  "private HTTPS key `FILE` (.key)",
+			EnvVar: "PHOTOPRISM_TLS_KEY",
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "database-driver, db",
 			Usage:  "database `DRIVER` (sqlite, mysql)",
 			Value:  "sqlite",
