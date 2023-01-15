@@ -12,24 +12,18 @@ import (
 
 // ShowOptionsCommand configures the command name, flags, and action.
 var ShowOptionsCommand = cli.Command{
-	Name:    "options",
-	Aliases: []string{"flags"},
-	Usage:   "Displays supported config flags and variable names",
-	Flags:   report.CliFlags,
-	Action:  showOptionsAction,
+	Name:   "options",
+	Usage:  "Displays supported YAML config options and CLI flags",
+	Flags:  report.CliFlags,
+	Action: showOptionsAction,
 }
 
-var faceOptionsInfo = `!!! info ""
-    To [recognize faces](https://docs.photoprism.app/user-guide/organize/people/), PhotoPrism first extracts crops from your images using a [library](https://github.com/esimov/pigo) based on [pixel intensity comparisons](https://dl.photoprism.app/pdf/20140820-Pixel_Intensity_Comparisons.pdf). These are then fed into TensorFlow to compute [512-dimensional vectors](https://dl.photoprism.app/pdf/20150101-FaceNet.pdf) for characterization. In the final step, the [DBSCAN algorithm](https://en.wikipedia.org/wiki/DBSCAN) attempts to cluster these so-called face embeddings, so they can be matched to persons with just a few clicks. A reasonable range for the similarity distance between face embeddings is between 0.60 and 0.70, with a higher value being more aggressive and leading to larger clusters with more false positives. To cluster a smaller number of faces, you can reduce the core to 3 or 2 similar faces.
-
-We recommend that only advanced users change these parameters:`
-
-// showOptionsAction shows environment variable command-line parameter names.
+// showOptionsAction shows supported YAML config file options.
 func showOptionsAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
-	conf.SetLogLevel(logrus.FatalLevel)
+	conf.SetLogLevel(logrus.TraceLevel)
 
-	rows, cols := config.Flags.Report()
+	rows, cols := conf.Options().Report()
 
 	// CSV Export?
 	if ctx.Bool("csv") || ctx.Bool("tsv") {
@@ -47,21 +41,19 @@ func showOptionsAction(ctx *cli.Context) error {
 	}
 
 	s := []Section{
-		{Start: "PHOTOPRISM_ADMIN_PASSWORD", Title: "Authentication"},
-		{Start: "PHOTOPRISM_LOG_LEVEL", Title: "Logging"},
-		{Start: "PHOTOPRISM_CONFIG_PATH", Title: "Storage"},
-		{Start: "PHOTOPRISM_WORKERS", Title: "Index Workers"},
-		{Start: "PHOTOPRISM_READONLY", Title: "Feature Flags"},
-		{Start: "PHOTOPRISM_DEFAULT_LOCALE", Title: "Customization"},
-		{Start: "PHOTOPRISM_CDN_URL", Title: "Site Information"},
-		{Start: "PHOTOPRISM_TRUSTED_PROXY", Title: "Web Server"},
-		{Start: "PHOTOPRISM_DATABASE_DRIVER", Title: "Database Connection"},
-		{Start: "PHOTOPRISM_DARKTABLE_BIN", Title: "File Converters"},
-		{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Title: "Security Tokens"},
-		{Start: "PHOTOPRISM_THUMB_COLOR", Title: "Image Quality"},
-		{Start: "PHOTOPRISM_FACE_SIZE", Title: "Face Recognition",
-			Info: faceOptionsInfo},
-		{Start: "PHOTOPRISM_PID_FILENAME", Title: "Daemon Mode",
+		{Start: "AuthMode", Title: "Authentication"},
+		{Start: "LogLevel", Title: "Logging"},
+		{Start: "ConfigPath", Title: "Storage"},
+		{Start: "Workers", Title: "Index Workers"},
+		{Start: "ReadOnly", Title: "Feature Flags"},
+		{Start: "DefaultTheme", Title: "Customization"},
+		{Start: "CdnUrl", Title: "Site Information"},
+		{Start: "TrustedProxies", Title: "Web Server"},
+		{Start: "DatabaseDriver", Title: "Database Connection"},
+		{Start: "DarktableBin", Title: "File Converters"},
+		{Start: "DownloadToken", Title: "Security Tokens"},
+		{Start: "ThumbColor", Title: "Image Quality"},
+		{Start: "PIDFilename", Title: "Daemon Mode",
 			Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
 	}
 
