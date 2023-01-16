@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-05 19:07+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-01-16 04:24+0000\n"
+"Last-Translator: Alex <alexsus@me.com>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/da/>\n"
 "Language: da\n"
@@ -448,14 +448,12 @@ msgid "Category"
 msgstr "Kategori"
 
 #: src/page/settings/account.vue:253 src/page/settings/account.vue:252
-#, fuzzy
 msgid "Change Avatar"
-msgstr "Ændre privat flag"
+msgstr "Ændre Avatar"
 
 #: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
-#, fuzzy
 msgid "Change Password"
-msgstr "Nyt kodeord"
+msgstr "Ændre adgangskode"
 
 #: src/page/settings/general.vue:473
 #, fuzzy
@@ -473,9 +471,8 @@ msgstr "Ændre privat flag"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
-#, fuzzy
 msgid "Changes successfully saved"
-msgstr "Ændringerne er gemt succesfuld"
+msgstr "Ændringer er gemt med succes"
 
 #: src/dialog/photo/edit/info.vue:191
 msgid "Checked"
@@ -534,14 +531,12 @@ msgid "Connect via WebDAV"
 msgstr "Opret forbindelse via WebDAV"
 
 #: src/page/connect.vue:56
-#, fuzzy
 msgid "Connected"
-msgstr "Opret forbindelse"
+msgstr "Tilsluttet"
 
 #: src/page/settings/account.vue:113 src/page/settings/account.vue:90
-#, fuzzy
 msgid "Contact Details"
-msgstr "Kontakt os"
+msgstr "Kontaktoplysninger"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:44
 msgid "Contact Us"
@@ -923,9 +918,8 @@ msgid "Failed updating link"
 msgstr "Linket kunne ikke opdateres"
 
 #: src/page/settings/account.vue:166 src/page/settings/account.vue:165
-#, fuzzy
 msgid "Family Name"
-msgstr "Etiketnavn"
+msgstr "Efternavn"
 
 #: src/options/options.js:257
 msgid "Fast"
