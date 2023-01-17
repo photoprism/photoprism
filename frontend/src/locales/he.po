@@ -5,18 +5,16 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-05 19:07+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
-"frontend/he/>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
-"n % 10 == 0) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:464
+#: src/page/albums.vue:479
 msgid "%{n} albums found"
 msgstr "%{n} אלבומים נמצאו"
 
@@ -58,7 +56,7 @@ msgstr "4 שעות"
 msgid "A click will copy it to your clipboard."
 msgstr "לחיצה תעתיק את זה ללוח."
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:256
+#: src/page/about/about.vue:4 src/page/about/about.vue:220
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -68,7 +66,7 @@ msgstr "אודות"
 msgid "Abyss"
 msgstr "תהום"
 
-#: src/component/navigation.vue:93 src/component/navigation.vue:1944
+#: src/component/navigation.vue:93 src/component/navigation.vue:1945
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:144 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
@@ -87,12 +85,12 @@ msgstr "פעולה"
 msgid "Actions"
 msgstr "פעולות"
 
-#: src/page/connect.vue:75 src/page/connect.vue:92
+#: src/page/connect.vue:73 src/page/connect.vue:92
 #, fuzzy
 msgid "Activate"
 msgstr "לְהַפְעִיל"
 
-#: src/page/connect.vue:293 src/page/connect.vue:400
+#: src/page/connect.vue:292 src/page/connect.vue:409
 #, fuzzy
 msgid "Activation Code"
 msgstr "קוד הפעלה"
@@ -174,7 +172,7 @@ msgstr "שם אלבום"
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:147 src/component/navigation.vue:157
 #: src/component/navigation.vue:550 src/component/navigation.vue:4
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "אלבומים"
 
@@ -182,7 +180,7 @@ msgstr "אלבומים"
 msgid "Albums deleted"
 msgstr "אלבומים נמחקו"
 
-#: src/page/albums.vue:330
+#: src/page/albums.vue:345
 msgid "All %{n} albums loaded"
 msgstr "כל %{n} האלבומים נטענו"
 
@@ -199,7 +197,7 @@ msgid "All Cameras"
 msgstr "כל המצלמות"
 
 #: src/component/photo/toolbar.vue:39 src/page/albums.vue:37
-#: src/page/albums.vue:574
+#: src/page/albums.vue:145 src/page/albums.vue:589
 msgid "All Categories"
 msgstr "כל הקטגוריות"
 
@@ -333,6 +331,10 @@ msgstr "המר מסוגי קבצים אחרים, כך שניתן יהיה להצ
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "יוצר אוטומטית אלבומים של רגעים מיוחדים, טיולים ומקומות."
 
+#: src/page/connect.vue:68
+msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+msgstr ""
+
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "לפני הגשת בקשת תמיכה, אנא השתמש ברשימת הבדיקות שלנו לפתרון בעיות כדי לקבוע את הגורם לבעיה שלך."
@@ -387,13 +389,13 @@ msgstr "דיווח באג"
 msgid "Busy, please wait…"
 msgstr "עסוק, בבקשה המתן…"
 
-#: src/page/connect.vue:82 src/page/connect.vue:99
+#: src/page/connect.vue:82 src/page/connect.vue:101
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "על ידי שימוש בתוכנה ובשירותים שאנו מספקים, אתה מסכים לתנאי השירות, מדיניות הפרטיות וקוד ההתנהגות שלנו."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
-#: src/component/navigation.vue:985
+#: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "לוח שנה"
 
@@ -411,7 +413,7 @@ msgid "Can't load more, limit reached"
 msgstr "לא ניתן לטעון יותר, הגעת למגבלה"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:512 src/page/albums.vue:528 src/page/labels.vue:204
+#: src/page/albums.vue:527 src/page/albums.vue:543 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:294
@@ -503,7 +505,7 @@ msgstr "צבעים"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "ניתן לאבחן ולפתור בעיות נפוצות במהירות באמצעות רשימות הבדיקה לפתרון בעיות שאנו מספקים."
 
-#: src/page/connect.vue:67 src/page/connect.vue:84
+#: src/page/connect.vue:65 src/page/connect.vue:84
 #, fuzzy
 msgid "Compare Editions"
 msgstr "השווה מהדורות"
@@ -572,7 +574,7 @@ msgstr "לא נמצא דבר."
 msgid "Country"
 msgstr "מדינה"
 
-#: src/page/login.vue:21
+#: src/page/login.vue:19
 #, fuzzy
 msgid "Create Account"
 msgstr "צור חשבון"
@@ -865,7 +867,7 @@ msgstr "אל תכלול תוכן המסומן כפרטי מתוצאות חיפו
 msgid "Exclude hidden"
 msgstr "אל תכלול מוסתר"
 
-#: src/component/navigation.vue:294
+#: src/component/navigation.vue:295
 msgid "Expand"
 msgstr "הרחב"
 
@@ -922,7 +924,7 @@ msgid "Favorite"
 msgstr "מועדף"
 
 #: src/app/routes.js:208 src/component/navigation.vue:227
-#: src/component/navigation.vue:895 src/page/albums.vue:84
+#: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "מועדפים"
 
@@ -938,7 +940,7 @@ msgstr "פיד"
 msgid "Feedback"
 msgstr "משוב"
 
-#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:100
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:102
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "אנא צור איתנו קשר בכתובת hello@photoprism.app אם יש לך שאלות או שאתה זקוק לעזרה."
 
@@ -996,11 +998,11 @@ msgid "Folder is empty"
 msgstr "התיקייה ריקה"
 
 #: src/app/routes.js:188 src/component/navigation.vue:328
-#: src/component/navigation.vue:1250
+#: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "תיקייות"
 
-#: src/page/login.vue:33
+#: src/page/login.vue:29
 msgid "Forgot password?"
 msgstr "שכחת סיסמא?"
 
@@ -1012,7 +1014,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "מסגרות"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:107
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "שאלות נפוצות"
@@ -1245,7 +1247,7 @@ msgid "Label"
 msgstr "תווית"
 
 #: src/app/routes.js:300 src/component/navigation.vue:315
-#: src/component/navigation.vue:1205 src/dialog/photo/edit.vue:39
+#: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
 msgid "Labels"
@@ -1275,9 +1277,10 @@ msgstr "קו רוחב"
 msgid "Lavender"
 msgstr "לבנדר"
 
-#: src/page/connect.vue:98 src/dialog/sponsor.vue:37
-#: src/page/about/about.vue:28 src/page/about/about.vue:52
-#: src/page/about/about.vue:161 src/page/connect.vue:107 src/page/login.vue:63
+#: src/page/connect.vue:99 src/component/auth/footer.vue:24
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
+#: src/page/about/about.vue:52 src/page/about/about.vue:161
+#: src/page/connect.vue:108
 msgid "Learn more"
 msgstr "הצג עוד"
 
@@ -1291,7 +1294,7 @@ msgstr "עדשה"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
 #: src/component/navigation.vue:354 src/component/navigation.vue:364
-#: src/component/navigation.vue:4 src/component/navigation.vue:1342
+#: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "ספריה"
@@ -1354,13 +1357,13 @@ msgstr "מיקום"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "הודעות יומן מופיעות כאן בכל פעם ש- PhotoPrism נתקל בקבצים שבורים, או שיש בעיות פוטנציאליות אחרות."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1722
-#: src/component/navigation.vue:1996
+#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "התחברות"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1833
-#: src/component/navigation.vue:1864 src/component/navigation.vue:1915
+#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "התנתקות"
 
@@ -1432,7 +1435,7 @@ msgstr "למזג %{a} עם %{b}?"
 msgid "Message sent"
 msgstr "ההודעה נשלחה"
 
-#: src/component/navigation.vue:247
+#: src/component/navigation.vue:248
 msgid "Minimize"
 msgstr "הקטנה"
 
@@ -1441,7 +1444,7 @@ msgid "Missing"
 msgstr "חסר"
 
 #: src/app/routes.js:149 src/component/navigation.vue:240
-#: src/component/navigation.vue:940 src/page/settings/general.vue:164
+#: src/component/navigation.vue:941 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "רגעים"
 
@@ -1458,7 +1461,7 @@ msgstr "חודש"
 msgid "More than %{n} pictures found"
 msgstr "נמצאו יותר מ- %{n} תמונות"
 
-#: src/page/albums.vue:467
+#: src/page/albums.vue:482
 msgid "More than 20 albums found"
 msgstr "יותר מ-20 אלבומים נמצאו"
 
@@ -1495,7 +1498,7 @@ msgstr "חייב להכיל לפחות %{n} תווים."
 #: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
 #: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
 #: src/page/about/feedback.vue:171 src/page/albums.vue:85
-#: src/page/labels.vue:339 src/page/login.vue:92 src/page/people/new.vue:52
+#: src/page/labels.vue:339 src/page/login.vue:89 src/page/people/new.vue:52
 #: src/page/people/new.vue:299 src/page/people/recognized.vue:396
 #: src/page/settings/services.vue:26
 msgid "Name"
@@ -1538,7 +1541,7 @@ msgstr "הכי חדש ראשון"
 msgid "No"
 msgstr "לא"
 
-#: src/page/albums.vue:54 src/page/albums.vue:460
+#: src/page/albums.vue:54 src/page/albums.vue:475
 msgid "No albums found"
 msgstr "לא נמצאו אלבומים"
 
@@ -1625,7 +1628,7 @@ msgstr "הערות"
 msgid "Nothing to see here yet."
 msgstr "אין מה לראות כאן עדיין. התאזר בסבלנות."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1767
+#: src/component/navigation.vue:481 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "לא מקוון"
 
@@ -1642,7 +1645,7 @@ msgstr "ב-Windows, הזן את המשאב הבא בתיבת הדו-שיח של 
 msgid "Once a week"
 msgstr "פעם בשבוע"
 
-#: src/page/albums.vue:462
+#: src/page/albums.vue:477
 msgid "One album found"
 msgstr "אלבום אחד נמצא"
 
@@ -1714,7 +1717,7 @@ msgstr "קבצי מקור"
 msgid "Other"
 msgstr "אחר"
 
-#: src/page/connect.vue:123
+#: src/page/connect.vue:125
 #, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "הצוות שלנו מעריך זאת באופן שוטף, בהתאם למאמץ התמיכה שהתכונות דורשות, העלות לנו, והאם הם נחוצים בדרך כלל על ידי כולם או מתבקשים בעיקר על ידי ארגונים ומשתמשים מתקדמים. מכיוון שהדבר מאפשר לנו לספק תכונות נוספות לציבור, אנו מעודדים את כל המשתמשים לתמוך במשימתנו."
@@ -1736,7 +1739,7 @@ msgid "Panoramas"
 msgstr "פנורמות"
 
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/login.vue:120
+#: src/dialog/share.vue:24 src/page/login.vue:118
 msgid "Password"
 msgstr "סיסמה"
 
@@ -1745,7 +1748,7 @@ msgid "Password changed"
 msgstr "סיסמא שונתה"
 
 #: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:850
+#: src/component/navigation.vue:556 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1775,7 +1778,7 @@ msgstr "תמונה"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism עודכן…"
 
-#: src/page/connect.vue:117
+#: src/page/connect.vue:119
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism במימון עצמי של 100%. תרומות מרצון אינן מכסות את העלות של צוות שעובד במשרה מלאה כדי לספק לך עדכונים, תיעוד ותמיכה. זו החלטה שלך אם אתה רוצה להירשם כדי ליהנות מהטבות נוספות."
@@ -1804,7 +1807,7 @@ msgstr "מקום וזמן"
 #: src/app/routes.js:268 src/component/navigation.vue:280
 #: src/component/navigation.vue:290 src/component/navigation.vue:562
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
-#: src/component/navigation.vue:4 src/component/navigation.vue:1085
+#: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
 msgid "Places"
 msgstr "מקומות"
@@ -1856,12 +1859,12 @@ msgid "Primary"
 msgstr "ראשי"
 
 #: src/app/routes.js:236 src/component/navigation.vue:341
-#: src/component/navigation.vue:1295 src/dialog/photo/edit/info.vue:102
+#: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
 msgstr "פרטי"
 
-#: src/page/connect.vue:70 src/page/connect.vue:87
+#: src/page/connect.vue:68 src/page/connect.vue:87
 #, fuzzy
 msgid "Proceed"
 msgstr "להמשיך"
@@ -1945,7 +1948,7 @@ msgstr "מזהה פרצופים כך שאפשר למצוא אנשים ספציפ
 msgid "Red"
 msgstr "אדום"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1929
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1930
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -2027,7 +2030,7 @@ msgstr "סריקות"
 
 #: src/component/navigation.vue:65 src/component/navigation.vue:75
 #: src/component/navigation.vue:544 src/component/navigation.vue:4
-#: src/component/navigation.vue:326 src/component/photo/toolbar.vue:44
+#: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
 msgid "Search"
@@ -2090,7 +2093,7 @@ msgstr "שירותים"
 #: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
 #: src/component/navigation.vue:415 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1516 src/component/navigation.vue:1962
+#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "הגדרות"
 
@@ -2119,7 +2122,7 @@ msgstr "שתף %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "שתף את התמונות שלך עם אפליקציות ושירותים אחרים."
 
-#: src/page/connect.vue:108
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "האם תוכנה חינמית לא צריכה להיות ללא עלויות?"
@@ -2156,7 +2159,7 @@ msgstr "מציג הודעות יומן מפורטות יותר. דורש הפע�
 msgid "Sidecar"
 msgstr "חזית רכב"
 
-#: src/page/login.vue:24
+#: src/page/login.vue:22
 msgid "Sign in"
 msgstr "התחבר"
 
@@ -2220,7 +2223,7 @@ msgid "Start/Stop Slideshow"
 msgstr "התחל / עצור מצגת"
 
 #: src/component/navigation.vue:266 src/component/navigation.vue:300
-#: src/component/navigation.vue:28 src/component/navigation.vue:1032
+#: src/component/navigation.vue:28 src/component/navigation.vue:1033
 msgid "States"
 msgstr "מדינות"
 
@@ -2252,7 +2255,7 @@ msgstr "מחובר בהצלחה"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "תמיכה בשירותים נוספים, כמו Google Drive, תתווסף בהמשך."
 
-#: src/dialog/sponsor.vue:7 src/page/connect.vue:68
+#: src/dialog/sponsor.vue:7
 #, fuzzy
 msgid "Support Our Mission"
 msgstr "תמכו במשימה שלנו"
@@ -2290,7 +2293,7 @@ msgstr "ייתכן שהפורמט שלהם לא נתמך, עדיין לא הומ
 msgid "Theme"
 msgstr "ערכת נושא"
 
-#: src/page/connect.vue:111
+#: src/page/connect.vue:113
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "חשבו על \"תוכנה חופשית\" כמו על \"חופש דיבור\", לא כמו על \"בירה חופשית\". קרן התוכנה החופשית קוראת לזה לפעמים \"תוכנה חופשית\", בהשאלה את המילה הצרפתית או הספרדית ל\"חינם\" כמו בחופש, כדי להראות שהם לא מתכוונים שהתוכנה בחינם."
@@ -2346,7 +2349,7 @@ msgstr "שם / מיקום"
 msgid "Title too long"
 msgstr "הכותרת ארוכה מדי"
 
-#: src/page/connect.vue:58 src/page/connect.vue:75
+#: src/page/connect.vue:59 src/page/connect.vue:78
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר האינטרנט שלנו:"
 
@@ -2444,7 +2447,7 @@ msgid "Updating stacks"
 msgstr "מעדכן קיבוצים"
 
 #: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1682
+#: src/component/navigation.vue:586 src/component/navigation.vue:1683
 #, fuzzy
 msgid "Upgrade"
 msgstr "שדרוג"
@@ -2455,7 +2458,7 @@ msgstr "שדרוג"
 msgid "Upgrade Now"
 msgstr "שדרג עכשיו"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:230
@@ -2463,7 +2466,7 @@ msgstr "שדרג עכשיו"
 msgid "Upload"
 msgstr "העלה"
 
-#: src/dialog/upload.vue:205
+#: src/dialog/upload.vue:231
 msgid "Upload complete"
 msgstr "העלאה הושלמה"
 
@@ -2471,7 +2474,7 @@ msgstr "העלאה הושלמה"
 msgid "Upload complete. Indexing…"
 msgstr "העלאה הושלמה, מאנדקס…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:209
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:219 src/dialog/upload.vue:235
 msgid "Upload failed"
 msgstr "העלאה נכשלה"
 
@@ -2487,7 +2490,7 @@ msgstr "העלה ל- WebDAV ושתף קישורים עם חברים."
 msgid "Uploading %{n} of %{t}…"
 msgstr "מעלה %{n} מתוך %{t}…"
 
-#: src/dialog/upload.vue:66 src/dialog/upload.vue:74 src/dialog/upload.vue:159
+#: src/dialog/upload.vue:67 src/dialog/upload.vue:75 src/dialog/upload.vue:176
 msgid "Uploading photos…"
 msgstr "מעלה תמונות…"
 
@@ -2546,7 +2549,7 @@ msgstr "משך הסרטון"
 
 #: src/app/routes.js:222 src/component/navigation.vue:180
 #: src/component/navigation.vue:190 src/component/navigation.vue:4
-#: src/component/navigation.vue:734
+#: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "סרטונים"
 
@@ -2595,7 +2598,7 @@ msgstr "העלאת WebDAV"
 msgid "Website"
 msgstr "אתר"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:122
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "איזו פונקציונליות זמינה בדרך כלל?"
@@ -2604,7 +2607,7 @@ msgstr "איזו פונקציונליות זמינה בדרך כלל?"
 msgid "White"
 msgstr "לבן"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:116
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "מדוע תכונות מסוימות זמינות רק לנותני חסות?"

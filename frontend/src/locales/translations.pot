@@ -5,7 +5,7 @@ msgstr ""
 "Generated-By: easygettext\n"
 "Project-Id-Version: \n"
 
-#: src/page/albums.vue:464
+#: src/page/albums.vue:479
 msgid "%{n} albums found"
 msgstr ""
 
@@ -51,7 +51,7 @@ msgid "A click will copy it to your clipboard."
 msgstr ""
 
 #: src/page/about/about.vue:4
-#: src/page/about/about.vue:256
+#: src/page/about/about.vue:220
 #: src/component/navigation.vue:424
 #: src/component/navigation.vue:27
 #: src/page/about/about.vue:4
@@ -64,7 +64,7 @@ msgid "Abyss"
 msgstr ""
 
 #: src/component/navigation.vue:93
-#: src/component/navigation.vue:1944
+#: src/component/navigation.vue:1945
 #: src/dialog/share/upload.vue:108
 #: src/model/service.js:98
 #: src/model/user.js:144
@@ -86,13 +86,13 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/page/connect.vue:75
+#: src/page/connect.vue:73
 #: src/page/connect.vue:92
 msgid "Activate"
 msgstr ""
 
-#: src/page/connect.vue:293
-#: src/page/connect.vue:400
+#: src/page/connect.vue:292
+#: src/page/connect.vue:409
 msgid "Activation Code"
 msgstr ""
 
@@ -183,7 +183,7 @@ msgstr ""
 #: src/component/navigation.vue:157
 #: src/component/navigation.vue:550
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:618
 msgid "Albums"
 msgstr ""
 
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Albums deleted"
 msgstr ""
 
-#: src/page/albums.vue:330
+#: src/page/albums.vue:345
 msgid "All %{n} albums loaded"
 msgstr ""
 
@@ -210,7 +210,8 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:39
 #: src/page/albums.vue:37
-#: src/page/albums.vue:574
+#: src/page/albums.vue:145
+#: src/page/albums.vue:589
 msgid "All Categories"
 msgstr ""
 
@@ -354,6 +355,10 @@ msgstr ""
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr ""
 
+#: src/page/connect.vue:68
+msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+msgstr ""
+
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr ""
@@ -415,13 +420,13 @@ msgid "Busy, please wait…"
 msgstr ""
 
 #: src/page/connect.vue:82
-#: src/page/connect.vue:99
+#: src/page/connect.vue:101
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
 
 #: src/app/routes.js:175
 #: src/component/navigation.vue:253
-#: src/component/navigation.vue:985
+#: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr ""
 
@@ -443,8 +448,8 @@ msgstr ""
 
 #: src/common/clipboard.js:100
 #: src/common/clipboard.js:137
-#: src/page/albums.vue:512
-#: src/page/albums.vue:528
+#: src/page/albums.vue:527
+#: src/page/albums.vue:543
 #: src/page/labels.vue:204
 #: src/page/labels.vue:224
 #: src/page/library/browse.vue:201
@@ -563,7 +568,7 @@ msgstr ""
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
 
-#: src/page/connect.vue:67
+#: src/page/connect.vue:65
 #: src/page/connect.vue:84
 msgid "Compare Editions"
 msgstr ""
@@ -645,7 +650,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: src/page/login.vue:21
+#: src/page/login.vue:19
 msgid "Create Account"
 msgstr ""
 
@@ -971,7 +976,7 @@ msgstr ""
 msgid "Exclude hidden"
 msgstr ""
 
-#: src/component/navigation.vue:294
+#: src/component/navigation.vue:295
 msgid "Expand"
 msgstr ""
 
@@ -1033,7 +1038,7 @@ msgstr ""
 
 #: src/app/routes.js:208
 #: src/component/navigation.vue:227
-#: src/component/navigation.vue:895
+#: src/component/navigation.vue:896
 #: src/page/albums.vue:84
 msgid "Favorites"
 msgstr ""
@@ -1055,7 +1060,7 @@ msgstr ""
 
 #: src/page/connect.vue:83
 #: src/dialog/sponsor.vue:25
-#: src/page/connect.vue:100
+#: src/page/connect.vue:102
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 
@@ -1122,11 +1127,11 @@ msgstr ""
 
 #: src/app/routes.js:188
 #: src/component/navigation.vue:328
-#: src/component/navigation.vue:1250
+#: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr ""
 
-#: src/page/login.vue:33
+#: src/page/login.vue:29
 msgid "Forgot password?"
 msgstr ""
 
@@ -1140,7 +1145,7 @@ msgstr ""
 msgid "Frames"
 msgstr ""
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:107
 msgid "Frequently Asked Questions"
 msgstr ""
 
@@ -1410,7 +1415,7 @@ msgstr ""
 
 #: src/app/routes.js:300
 #: src/component/navigation.vue:315
-#: src/component/navigation.vue:1205
+#: src/component/navigation.vue:1206
 #: src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:195
@@ -1443,13 +1448,13 @@ msgstr ""
 msgid "Lavender"
 msgstr ""
 
-#: src/page/connect.vue:98
+#: src/page/connect.vue:99
+#: src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:28
 #: src/page/about/about.vue:52
 #: src/page/about/about.vue:161
-#: src/page/connect.vue:107
-#: src/page/login.vue:63
+#: src/page/connect.vue:108
 msgid "Learn more"
 msgstr ""
 
@@ -1467,7 +1472,7 @@ msgstr ""
 #: src/component/navigation.vue:354
 #: src/component/navigation.vue:364
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1342
+#: src/component/navigation.vue:1343
 #: src/page/settings.vue:48
 #: src/page/settings/general.vue:406
 msgid "Library"
@@ -1542,15 +1547,15 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr ""
 
 #: src/component/navigation.vue:466
-#: src/component/navigation.vue:1722
-#: src/component/navigation.vue:1996
+#: src/component/navigation.vue:1723
+#: src/component/navigation.vue:1997
 msgid "Login"
 msgstr ""
 
 #: src/component/navigation.vue:512
-#: src/component/navigation.vue:1833
-#: src/component/navigation.vue:1864
-#: src/component/navigation.vue:1915
+#: src/component/navigation.vue:1834
+#: src/component/navigation.vue:1865
+#: src/component/navigation.vue:1916
 msgid "Logout"
 msgstr ""
 
@@ -1623,7 +1628,7 @@ msgstr ""
 msgid "Message sent"
 msgstr ""
 
-#: src/component/navigation.vue:247
+#: src/component/navigation.vue:248
 msgid "Minimize"
 msgstr ""
 
@@ -1634,7 +1639,7 @@ msgstr ""
 
 #: src/app/routes.js:149
 #: src/component/navigation.vue:240
-#: src/component/navigation.vue:940
+#: src/component/navigation.vue:941
 #: src/page/settings/general.vue:164
 msgid "Moments"
 msgstr ""
@@ -1655,7 +1660,7 @@ msgstr ""
 msgid "More than %{n} pictures found"
 msgstr ""
 
-#: src/page/albums.vue:467
+#: src/page/albums.vue:482
 msgid "More than 20 albums found"
 msgstr ""
 
@@ -1701,7 +1706,7 @@ msgstr ""
 #: src/page/about/feedback.vue:171
 #: src/page/albums.vue:85
 #: src/page/labels.vue:339
-#: src/page/login.vue:92
+#: src/page/login.vue:89
 #: src/page/people/new.vue:52
 #: src/page/people/new.vue:299
 #: src/page/people/recognized.vue:396
@@ -1756,7 +1761,7 @@ msgid "No"
 msgstr ""
 
 #: src/page/albums.vue:54
-#: src/page/albums.vue:460
+#: src/page/albums.vue:475
 msgid "No albums found"
 msgstr ""
 
@@ -1866,7 +1871,7 @@ msgid "Nothing to see here yet."
 msgstr ""
 
 #: src/component/navigation.vue:481
-#: src/component/navigation.vue:1767
+#: src/component/navigation.vue:1768
 msgid "Offline"
 msgstr ""
 
@@ -1885,7 +1890,7 @@ msgstr ""
 msgid "Once a week"
 msgstr ""
 
-#: src/page/albums.vue:462
+#: src/page/albums.vue:477
 msgid "One album found"
 msgstr ""
 
@@ -1964,7 +1969,7 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: src/page/connect.vue:123
+#: src/page/connect.vue:125
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr ""
 
@@ -1987,7 +1992,7 @@ msgstr ""
 #: src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487
 #: src/dialog/share.vue:24
-#: src/page/login.vue:120
+#: src/page/login.vue:118
 msgid "Password"
 msgstr ""
 
@@ -1999,7 +2004,7 @@ msgstr ""
 #: src/app/routes.js:330
 #: src/component/navigation.vue:214
 #: src/component/navigation.vue:556
-#: src/component/navigation.vue:850
+#: src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246
@@ -2032,7 +2037,7 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/page/connect.vue:117
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
 
@@ -2067,7 +2072,7 @@ msgstr ""
 #: src/component/navigation.vue:8
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1085
+#: src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118
 #: src/page/settings/general.vue:496
 msgid "Places"
@@ -2126,13 +2131,13 @@ msgstr ""
 
 #: src/app/routes.js:236
 #: src/component/navigation.vue:341
-#: src/component/navigation.vue:1295
+#: src/component/navigation.vue:1296
 #: src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
 msgstr ""
 
-#: src/page/connect.vue:70
+#: src/page/connect.vue:68
 #: src/page/connect.vue:87
 msgid "Proceed"
 msgstr ""
@@ -2225,7 +2230,7 @@ msgid "Red"
 msgstr ""
 
 #: src/component/album/toolbar.vue:64
-#: src/component/navigation.vue:1929
+#: src/component/navigation.vue:1930
 #: src/component/photo/toolbar.vue:54
 #: src/dialog/reload.vue:12
 #: src/page/albums.vue:109
@@ -2323,7 +2328,7 @@ msgstr ""
 #: src/component/navigation.vue:75
 #: src/component/navigation.vue:544
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:326
+#: src/component/navigation.vue:327
 #: src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96
 #: src/page/labels.vue:72
@@ -2400,8 +2405,8 @@ msgstr ""
 #: src/component/navigation.vue:8
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1516
-#: src/component/navigation.vue:1962
+#: src/component/navigation.vue:1517
+#: src/component/navigation.vue:1963
 msgid "Settings"
 msgstr ""
 
@@ -2433,7 +2438,7 @@ msgstr ""
 msgid "Share your pictures with other apps and services."
 msgstr ""
 
-#: src/page/connect.vue:108
+#: src/page/connect.vue:110
 msgid "Shouldn't free software be free of costs?"
 msgstr ""
 
@@ -2471,7 +2476,7 @@ msgstr ""
 msgid "Sidecar"
 msgstr ""
 
-#: src/page/login.vue:24
+#: src/page/login.vue:22
 msgid "Sign in"
 msgstr ""
 
@@ -2541,7 +2546,7 @@ msgstr ""
 #: src/component/navigation.vue:266
 #: src/component/navigation.vue:300
 #: src/component/navigation.vue:28
-#: src/component/navigation.vue:1032
+#: src/component/navigation.vue:1033
 msgid "States"
 msgstr ""
 
@@ -2577,7 +2582,6 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr ""
 
 #: src/dialog/sponsor.vue:7
-#: src/page/connect.vue:68
 msgid "Support Our Mission"
 msgstr ""
 
@@ -2616,7 +2620,7 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: src/page/connect.vue:111
+#: src/page/connect.vue:113
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
 
@@ -2670,8 +2674,8 @@ msgstr ""
 msgid "Title too long"
 msgstr ""
 
-#: src/page/connect.vue:58
-#: src/page/connect.vue:75
+#: src/page/connect.vue:59
+#: src/page/connect.vue:78
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr ""
 
@@ -2796,7 +2800,7 @@ msgstr ""
 #: src/page/connect.vue:17
 #: src/component/navigation.vue:454
 #: src/component/navigation.vue:586
-#: src/component/navigation.vue:1682
+#: src/component/navigation.vue:1683
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr ""
@@ -2808,7 +2812,7 @@ msgid "Upgrade Now"
 msgstr ""
 
 #: src/component/album/toolbar.vue:192
-#: src/component/navigation.vue:1980
+#: src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:122
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
@@ -2820,7 +2824,7 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: src/dialog/upload.vue:205
+#: src/dialog/upload.vue:231
 msgid "Upload complete"
 msgstr ""
 
@@ -2829,7 +2833,8 @@ msgid "Upload complete. Indexing…"
 msgstr ""
 
 #: src/dialog/upload.vue:34
-#: src/dialog/upload.vue:209
+#: src/dialog/upload.vue:219
+#: src/dialog/upload.vue:235
 msgid "Upload failed"
 msgstr ""
 
@@ -2845,9 +2850,9 @@ msgstr ""
 msgid "Uploading %{n} of %{t}…"
 msgstr ""
 
-#: src/dialog/upload.vue:66
-#: src/dialog/upload.vue:74
-#: src/dialog/upload.vue:159
+#: src/dialog/upload.vue:67
+#: src/dialog/upload.vue:75
+#: src/dialog/upload.vue:176
 msgid "Uploading photos…"
 msgstr ""
 
@@ -2916,7 +2921,7 @@ msgstr ""
 #: src/component/navigation.vue:180
 #: src/component/navigation.vue:190
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:734
+#: src/component/navigation.vue:735
 msgid "Videos"
 msgstr ""
 
@@ -2971,7 +2976,7 @@ msgstr ""
 msgid "Website"
 msgstr ""
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:122
 msgid "What functionality is generally available?"
 msgstr ""
 
@@ -2979,7 +2984,7 @@ msgstr ""
 msgid "White"
 msgstr ""
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr ""
 
