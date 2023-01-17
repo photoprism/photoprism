@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-16 18:13+0000\n"
+"PO-Revision-Date: 2023-01-17 09:25+0000\n"
 "Last-Translator: Armin F. <kind.words.intended@gmail.com>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -54,7 +54,6 @@ msgid "4 hours"
 msgstr "4 Stunden"
 
 #: src/dialog/share.vue:73
-#, fuzzy
 msgid "A click will copy it to your clipboard."
 msgstr "In die Zwischenablage kopieren."
 
@@ -63,7 +62,7 @@ msgstr "In die Zwischenablage kopieren."
 #: src/page/help.vue:43
 #, fuzzy
 msgid "About"
-msgstr "Über"
+msgstr "Info"
 
 #: src/options/themes.js:473
 msgid "Abyss"
@@ -121,7 +120,7 @@ msgstr "Ausgewählte Bilder können über das Kontextmenü hinzugefügt werden."
 #: src/component/subject/clipboard.vue:82 src/dialog/photo/album.vue:20
 #, fuzzy
 msgid "Add to album"
-msgstr "Zu Album hinzufügen"
+msgstr "Hinzufügen"
 
 #: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
 msgid "Added"
@@ -155,7 +154,7 @@ msgstr "Nach einem Jahr"
 #, fuzzy
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr ""
-"Ausgewählte Bilder können über das Kontextmenü zu einem Album hinzugefügt "
+"Ausgewählte Bilder können über das Kontextmenü einem Album hinzugefügt "
 "werden."
 
 #: src/options/options.js:387
@@ -221,7 +220,7 @@ msgstr "Alle Felder müssen ausgefüllt werden"
 #: src/page/library/import.vue:12
 #, fuzzy
 msgid "All files from import folder"
-msgstr "Alle Dateien aus dem Import-Ordner"
+msgstr "Alle Ordner durchsuchen"
 
 #: src/component/photo/toolbar.vue:37
 msgid "All Lenses"
@@ -243,7 +242,7 @@ msgstr "Alle Jahre"
 #, fuzzy
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
-"Alternativ können Dateien auch direkt auf kompatible WebDAV-Server wie z.B. "
+"Alternativ können Dateien auch direkt auf kompatible WebDAV-Server z.B. "
 "Nextcloud hochgeladen werden."
 
 #: src/dialog/photo/edit/info.vue:151
@@ -275,7 +274,7 @@ msgstr "Als privat markierte Bilder und Videos bleiben privat und werden nicht g
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
-msgstr "API Schlüssel"
+msgstr "API Key"
 
 #: src/dialog/photo/edit/details.vue:117
 msgid "Apply"
@@ -1050,7 +1049,7 @@ msgstr "Gold"
 
 #: src/options/themes.js:453
 msgid "Grayscale"
-msgstr "Graustufen"
+msgstr "Grayscale"
 
 #: src/options/options.js:400
 msgid "Green"
@@ -2099,7 +2098,7 @@ msgstr "Einrichtung"
 
 #: src/options/themes.js:488
 msgid "Shadow"
-msgstr "Schatten"
+msgstr "Shadow"
 
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:296
@@ -2148,7 +2147,7 @@ msgstr "Zeigt ausführlichere Meldungen an, um Fehler zu finden. Änderungen erf
 
 #: src/model/file.js:212
 msgid "Sidecar"
-msgstr "Seitenleiste"
+msgstr "Sidecar"
 
 #: src/page/login.vue:24
 msgid "Sign in"
@@ -2285,19 +2284,20 @@ msgstr "Theme"
 #: src/page/connect.vue:111
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr ""
-"Denke bei kostenloser OpenSource Software an \"Redefreiheit\", nicht an "
-"\"Freibier\". Deshalb verwendet die Free Software Foundation, in Anlehnung "
-"an das französische oder spanische Wort für \"frei\", manchmal auch den "
-"Begriff \"libre software\"."
+"Die ursprüngliche Bedeutung des Begriffs bezieht sich auf die Freiheit der "
+"Nutzer, nicht darauf, dass die Software möglichst kostenlos sein soll. Die "
+"Free Software Foundation verwendet manchmal auch den Begriff \"Libre "
+"Software\", der vom französischen bzw. spanischen Wort für \"unabhängig\" "
+"abgeleitet ist, um dies zu verdeutlichen."
 
 #: src/page/settings/services.vue:40
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"Hiermit werden deine (Original) Dateien und Ordner als Netzwerk-Laufwerke "
-"eingebunden, wodurch du sie lokal auf deinem Computer oder Smartphone "
-"öffnen, bearbeiten und löschen kannst."
+"Dabei werden die Dateien als Netzwerk-Ordner auf deinem Computer oder "
+"Smartphone eingebunden, so dass sie lokal geöffnet, bearbeitet und gelöscht "
+"werden können."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2579,8 +2579,8 @@ msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"WebDAV-Clients, wie der Windows Explorer oder der macOS Finder, können sich "
-"direkt mit PhotoPrism verbinden."
+"WebDAV-Clients, wie der Windows Explorer oder der Finder unter macOS, können "
+"sich direkt mit PhotoPrism verbinden."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
