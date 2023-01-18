@@ -10,11 +10,7 @@ test.meta("testID", "about-001").meta({ mode: "public" })(
   "Core: About page is displayed with all links",
   async (t) => {
     await menu.openPage("about");
-    await t
-      .expect(Selector('a[href="https://photoprism.app/"]').visible)
-      .ok()
-      .expect(Selector('a[href="https://link.photoprism.app/personal-editions"]').exists)
-      .ok();
+    await t.expect(Selector('a[href="https://photoprism.app/"]').visible).ok();
   }
 );
 

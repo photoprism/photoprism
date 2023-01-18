@@ -10,12 +10,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:464
+#: src/page/albums.vue:479
 msgid "%{n} albums found"
 msgstr "Pronađeno je %{n} albuma"
 
@@ -57,7 +56,7 @@ msgstr "4 sata"
 msgid "A click will copy it to your clipboard."
 msgstr "Klik će kopirati u međuspremnik."
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:256
+#: src/page/about/about.vue:4 src/page/about/about.vue:220
 #: src/component/navigation.vue:424 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
@@ -67,7 +66,7 @@ msgstr "O programu"
 msgid "Abyss"
 msgstr "Bezdan"
 
-#: src/component/navigation.vue:93 src/component/navigation.vue:1944
+#: src/component/navigation.vue:93 src/component/navigation.vue:1945
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:144 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
@@ -86,12 +85,12 @@ msgstr "Radnja"
 msgid "Actions"
 msgstr "Radnje"
 
-#: src/page/connect.vue:75 src/page/connect.vue:92
+#: src/page/connect.vue:73 src/page/connect.vue:92
 #, fuzzy
 msgid "Activate"
 msgstr "Aktivirati"
 
-#: src/page/connect.vue:293 src/page/connect.vue:400
+#: src/page/connect.vue:292 src/page/connect.vue:409
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktivacijski kod"
@@ -174,7 +173,7 @@ msgstr "Naziv albuma"
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:147 src/component/navigation.vue:157
 #: src/component/navigation.vue:550 src/component/navigation.vue:4
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Albumi"
 
@@ -182,7 +181,7 @@ msgstr "Albumi"
 msgid "Albums deleted"
 msgstr "Albumi su izbrisani"
 
-#: src/page/albums.vue:330
+#: src/page/albums.vue:345
 msgid "All %{n} albums loaded"
 msgstr "Učitano je svih %{n} albuma"
 
@@ -199,7 +198,7 @@ msgid "All Cameras"
 msgstr "Sve kamere"
 
 #: src/component/photo/toolbar.vue:39 src/page/albums.vue:37
-#: src/page/albums.vue:574
+#: src/page/albums.vue:145 src/page/albums.vue:589
 msgid "All Categories"
 msgstr "Sve kategorije"
 
@@ -333,6 +332,10 @@ msgstr "Automatski kreirajte JPEG-ove za druge vrste datoteka tako da se mogu pr
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Automatski stvara albume posebnih trenutaka, putovanja i mjesta."
 
+#: src/page/connect.vue:68
+msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+msgstr ""
+
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Prije podnošenja zahtjeva za podršku, upotrijebite naše kontrolne liste za rješavanje problema kako biste utvrdili uzrok svog problema."
@@ -390,13 +393,13 @@ msgstr "Izvješće o greškama"
 msgid "Busy, please wait…"
 msgstr "Zauzeto, pričekajte…"
 
-#: src/page/connect.vue:82 src/page/connect.vue:99
+#: src/page/connect.vue:82 src/page/connect.vue:101
 #, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Korištenjem softvera i usluga koje pružamo, slažete se s našim uvjetima pružanja usluge, politikom privatnosti i kodeksom ponašanja."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
-#: src/component/navigation.vue:985
+#: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Kalendar"
 
@@ -414,7 +417,7 @@ msgid "Can't load more, limit reached"
 msgstr "Nije moguće učitati više, dosegnuto je ograničenje"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:512 src/page/albums.vue:528 src/page/labels.vue:204
+#: src/page/albums.vue:527 src/page/albums.vue:543 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:294
@@ -511,7 +514,7 @@ msgstr "Boje"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Uobičajeni problemi mogu se brzo dijagnosticirati i riješiti pomoću kontrolnih popisa za rješavanje problema koje nudimo."
 
-#: src/page/connect.vue:67 src/page/connect.vue:84
+#: src/page/connect.vue:65 src/page/connect.vue:84
 #, fuzzy
 msgid "Compare Editions"
 msgstr "Usporedite izdanja"
@@ -582,7 +585,7 @@ msgstr "Nisam mogao pronaći ništa."
 msgid "Country"
 msgstr "Država"
 
-#: src/page/login.vue:21
+#: src/page/login.vue:19
 #, fuzzy
 msgid "Create Account"
 msgstr "Napravi račun"
@@ -878,7 +881,7 @@ msgstr "Izuzmite sadržaj označen kao privatan iz rezultata pretraživanja, dij
 msgid "Exclude hidden"
 msgstr "Isključi skriveno"
 
-#: src/component/navigation.vue:294
+#: src/component/navigation.vue:295
 msgid "Expand"
 msgstr "Proširiti"
 
@@ -936,7 +939,7 @@ msgid "Favorite"
 msgstr "Favorit"
 
 #: src/app/routes.js:208 src/component/navigation.vue:227
-#: src/component/navigation.vue:895 src/page/albums.vue:84
+#: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "Favoriti"
 
@@ -953,7 +956,7 @@ msgstr "Povratne informacije"
 msgid "Feedback"
 msgstr "Povratne informacije"
 
-#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:100
+#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:102
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Slobodno nas kontaktirajte na hello@photoprism.app ako imate bilo kakvih pitanja."
 
@@ -1014,11 +1017,11 @@ msgid "Folder is empty"
 msgstr "Mapa je prazna"
 
 #: src/app/routes.js:188 src/component/navigation.vue:328
-#: src/component/navigation.vue:1250
+#: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "Mape"
 
-#: src/page/login.vue:33
+#: src/page/login.vue:29
 msgid "Forgot password?"
 msgstr "Zaboravili ste lozinku?"
 
@@ -1030,7 +1033,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Okviri"
 
-#: src/page/connect.vue:105
+#: src/page/connect.vue:107
 #, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Često postavljana pitanja"
@@ -1270,7 +1273,7 @@ msgid "Label"
 msgstr "Oznaka"
 
 #: src/app/routes.js:300 src/component/navigation.vue:315
-#: src/component/navigation.vue:1205 src/dialog/photo/edit.vue:39
+#: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
 msgid "Labels"
@@ -1300,9 +1303,10 @@ msgstr "Zemljopisna širina"
 msgid "Lavender"
 msgstr "Lavanda"
 
-#: src/page/connect.vue:98 src/dialog/sponsor.vue:37
-#: src/page/about/about.vue:28 src/page/about/about.vue:52
-#: src/page/about/about.vue:161 src/page/connect.vue:107 src/page/login.vue:63
+#: src/page/connect.vue:99 src/component/auth/footer.vue:24
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
+#: src/page/about/about.vue:52 src/page/about/about.vue:161
+#: src/page/connect.vue:108
 #, fuzzy
 msgid "Learn more"
 msgstr "Saznajte više"
@@ -1318,7 +1322,7 @@ msgstr "Leće"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
 #: src/component/navigation.vue:354 src/component/navigation.vue:364
-#: src/component/navigation.vue:4 src/component/navigation.vue:1342
+#: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "Zbirka"
@@ -1382,13 +1386,13 @@ msgstr "Lokacija"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Poruke dnevnika pojavljuju se ovdje kad god PhotoPrism naiđe na pokvarene datoteke ili postoje drugi potencijalni problemi."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1722
-#: src/component/navigation.vue:1996
+#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "Prijava"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1833
-#: src/component/navigation.vue:1864 src/component/navigation.vue:1915
+#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "Odjava"
 
@@ -1462,7 +1466,7 @@ msgstr "Spojiti %{a} s %{b}?"
 msgid "Message sent"
 msgstr "Poruka je poslana"
 
-#: src/component/navigation.vue:247
+#: src/component/navigation.vue:248
 msgid "Minimize"
 msgstr "Minimiziraj"
 
@@ -1471,7 +1475,7 @@ msgid "Missing"
 msgstr "Nedostaje"
 
 #: src/app/routes.js:149 src/component/navigation.vue:240
-#: src/component/navigation.vue:940 src/page/settings/general.vue:164
+#: src/component/navigation.vue:941 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "Trenuci"
 
@@ -1488,7 +1492,7 @@ msgstr "Mjesec"
 msgid "More than %{n} pictures found"
 msgstr "Pronađeno je više od %{n} slika"
 
-#: src/page/albums.vue:467
+#: src/page/albums.vue:482
 msgid "More than 20 albums found"
 msgstr "Pronađeno je više od 20 albuma"
 
@@ -1526,7 +1530,7 @@ msgstr "Mora imati najmanje %{n} znakova."
 #: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
 #: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
 #: src/page/about/feedback.vue:171 src/page/albums.vue:85
-#: src/page/labels.vue:339 src/page/login.vue:92 src/page/people/new.vue:52
+#: src/page/labels.vue:339 src/page/login.vue:89 src/page/people/new.vue:52
 #: src/page/people/new.vue:299 src/page/people/recognized.vue:396
 #: src/page/settings/services.vue:26
 msgid "Name"
@@ -1570,7 +1574,7 @@ msgstr "Prvo najnovije"
 msgid "No"
 msgstr "Ne"
 
-#: src/page/albums.vue:54 src/page/albums.vue:460
+#: src/page/albums.vue:54 src/page/albums.vue:475
 msgid "No albums found"
 msgstr "Nije pronađen nijedan album"
 
@@ -1659,7 +1663,7 @@ msgstr "Napomene"
 msgid "Nothing to see here yet."
 msgstr "Ovdje se još nema što vidjeti. Budi strpljiv."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1767
+#: src/component/navigation.vue:481 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "Offline"
 
@@ -1677,7 +1681,7 @@ msgstr "U sustavu Windows unesite sljedeći resurs u dijaloški okvir za poveziv
 msgid "Once a week"
 msgstr "Jednom tjedno"
 
-#: src/page/albums.vue:462
+#: src/page/albums.vue:477
 msgid "One album found"
 msgstr "Pronađen jedan album"
 
@@ -1750,7 +1754,7 @@ msgstr "Originali"
 msgid "Other"
 msgstr "Ostalo"
 
-#: src/page/connect.vue:123
+#: src/page/connect.vue:125
 #, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 msgstr "Naš tim to kontinuirano procjenjuje, ovisno o podršci koju značajke zahtijevaju, troškovima za nas i jesu li općenito potrebne svima ili ih uglavnom traže organizacije i napredni korisnici. Budući da nam to omogućuje pružanje više značajki javnosti, potičemo sve korisnike da podrže našu misiju."
@@ -1773,7 +1777,7 @@ msgid "Panoramas"
 msgstr "Panorame"
 
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/login.vue:120
+#: src/dialog/share.vue:24 src/page/login.vue:118
 msgid "Password"
 msgstr "Lozinka"
 
@@ -1782,7 +1786,7 @@ msgid "Password changed"
 msgstr "Lozinka je promijenjena"
 
 #: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:850
+#: src/component/navigation.vue:556 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1813,7 +1817,7 @@ msgstr "Fotografija"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism je ažuriran…"
 
-#: src/page/connect.vue:117
+#: src/page/connect.vue:119
 #, fuzzy
 msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "PhotoPrism se 100% financira sam. Dobrovoljne donacije ne pokrivaju troškove tima koji radi puno radno vrijeme kako bi vam pružio ažuriranja, dokumentaciju i podršku. Vaša je odluka želite li se prijaviti i uživati u dodatnim pogodnostima."
@@ -1843,7 +1847,7 @@ msgstr "Mjesto i vrijeme"
 #: src/app/routes.js:268 src/component/navigation.vue:280
 #: src/component/navigation.vue:290 src/component/navigation.vue:562
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
-#: src/component/navigation.vue:4 src/component/navigation.vue:1085
+#: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
 msgid "Places"
 msgstr "Mjesta"
@@ -1896,12 +1900,12 @@ msgid "Primary"
 msgstr "Glavni"
 
 #: src/app/routes.js:236 src/component/navigation.vue:341
-#: src/component/navigation.vue:1295 src/dialog/photo/edit/info.vue:102
+#: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
 msgstr "Privatno"
 
-#: src/page/connect.vue:70 src/page/connect.vue:87
+#: src/page/connect.vue:68 src/page/connect.vue:87
 #, fuzzy
 msgid "Proceed"
 msgstr "Nastavi"
@@ -1988,7 +1992,7 @@ msgstr "Prepoznaje lica kako bi se mogle pronaći određene osobe."
 msgid "Red"
 msgstr "Crvena"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1929
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1930
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -2071,7 +2075,7 @@ msgstr "Skenira"
 
 #: src/component/navigation.vue:65 src/component/navigation.vue:75
 #: src/component/navigation.vue:544 src/component/navigation.vue:4
-#: src/component/navigation.vue:326 src/component/photo/toolbar.vue:44
+#: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
 msgid "Search"
@@ -2136,7 +2140,7 @@ msgstr "URL usluge"
 #: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
 #: src/component/navigation.vue:415 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1516 src/component/navigation.vue:1962
+#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "Postavke"
 
@@ -2166,7 +2170,7 @@ msgstr "Podijeli %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Dijelite svoje slike s drugim aplikacijama i uslugama."
 
-#: src/page/connect.vue:108
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Shouldn't free software be free of costs?"
 msgstr "Ne bi li besplatni softver trebao biti besplatan?"
@@ -2203,7 +2207,7 @@ msgstr "Prikazuje detaljnije poruke dnevnika. Zahtijeva ponovno pokretanje."
 msgid "Sidecar"
 msgstr "Prikolica"
 
-#: src/page/login.vue:24
+#: src/page/login.vue:22
 msgid "Sign in"
 msgstr "Prijavi se"
 
@@ -2267,7 +2271,7 @@ msgid "Start/Stop Slideshow"
 msgstr "Pokreni/Zaustavi dijaprojekciju"
 
 #: src/component/navigation.vue:266 src/component/navigation.vue:300
-#: src/component/navigation.vue:28 src/component/navigation.vue:1032
+#: src/component/navigation.vue:28 src/component/navigation.vue:1033
 msgid "States"
 msgstr "Države"
 
@@ -2300,7 +2304,7 @@ msgstr "Uspješno spojen"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Podrška za dodatne usluge, poput Google diska, bit će dodana s vremenom."
 
-#: src/dialog/sponsor.vue:7 src/page/connect.vue:68
+#: src/dialog/sponsor.vue:7
 #, fuzzy
 msgid "Support Our Mission"
 msgstr "Podržite našu misiju"
@@ -2338,7 +2342,7 @@ msgstr "Njihov format možda nije podržan, još nisu pretvoreni u JPEG ili post
 msgid "Theme"
 msgstr "Tema"
 
-#: src/page/connect.vue:111
+#: src/page/connect.vue:113
 #, fuzzy
 msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 msgstr "Razmišljajte o \"slobodnom softveru\" kao o \"slobodi govora\", a ne kao o \"besplatnom pivu\". Zaklada za slobodni softver ga ponekad naziva \"slobodnim softverom\", posuđujući francusku ili španjolsku riječ za \"besplatno\" kao što je sloboda, kako bi pokazali da ne misle da je softver besplatan."
@@ -2396,7 +2400,7 @@ msgstr "Naslov predug"
 msgid "Title too long"
 msgstr "Naslov predug"
 
-#: src/page/connect.vue:58 src/page/connect.vue:75
+#: src/page/connect.vue:59 src/page/connect.vue:78
 #, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Za nadogradnju možete unijeti aktivacijski kod ili kliknuti na \"Nastavi\" da se prijavite na našoj web stranici:"
@@ -2497,7 +2501,7 @@ msgid "Updating stacks"
 msgstr "Ažuriranje hrpa"
 
 #: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1682
+#: src/component/navigation.vue:586 src/component/navigation.vue:1683
 #, fuzzy
 msgid "Upgrade"
 msgstr "Nadogradnja"
@@ -2508,7 +2512,7 @@ msgstr "Nadogradnja"
 msgid "Upgrade Now"
 msgstr "Nadograditi sada"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1980
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:230
@@ -2516,7 +2520,7 @@ msgstr "Nadograditi sada"
 msgid "Upload"
 msgstr "Učitaj"
 
-#: src/dialog/upload.vue:205
+#: src/dialog/upload.vue:231
 msgid "Upload complete"
 msgstr "Prijenos je završen"
 
@@ -2524,7 +2528,7 @@ msgstr "Prijenos je završen"
 msgid "Upload complete. Indexing…"
 msgstr "Prijenos je završen. Indeksiranje…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:209
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:219 src/dialog/upload.vue:235
 msgid "Upload failed"
 msgstr "Prijenos nije uspio"
 
@@ -2540,7 +2544,7 @@ msgstr "Prenesite na WebDAV i podijelite veze s prijateljima."
 msgid "Uploading %{n} of %{t}…"
 msgstr "Prijenos %{n} od %{t}…"
 
-#: src/dialog/upload.vue:66 src/dialog/upload.vue:74 src/dialog/upload.vue:159
+#: src/dialog/upload.vue:67 src/dialog/upload.vue:75 src/dialog/upload.vue:176
 msgid "Uploading photos…"
 msgstr "Prijenos fotografija…"
 
@@ -2603,7 +2607,7 @@ msgstr "Trajanje"
 
 #: src/app/routes.js:222 src/component/navigation.vue:180
 #: src/component/navigation.vue:190 src/component/navigation.vue:4
-#: src/component/navigation.vue:734
+#: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "Video"
 
@@ -2658,7 +2662,7 @@ msgstr "WebDAV Upload"
 msgid "Website"
 msgstr "Web stranica"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:122
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Koja je funkcionalnost općenito dostupna?"
@@ -2667,7 +2671,7 @@ msgstr "Koja je funkcionalnost općenito dostupna?"
 msgid "White"
 msgstr "Bijelo"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:116
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Zašto su neke značajke dostupne samo sponzorima?"
