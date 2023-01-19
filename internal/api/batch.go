@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"path"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -382,6 +383,10 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		// Delete photos.
 		for _, p := range photos {
+			// Report file deletion.
+			event.AuditWarn([]string{ClientIP(c), s.UserName, "delete", path.Join(p.PhotoPath, p.PhotoName+"*")})
+
+			// Remove all related files from storage.
 			n, err := photoprism.DeletePhoto(p, true, true)
 
 			numFiles += n
