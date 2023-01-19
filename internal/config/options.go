@@ -99,14 +99,14 @@ type Options struct {
 	TrustedProxies        []string      `yaml:"TrustedProxies" json:"-" flag:"trusted-proxy"`
 	ProxyProtoHeaders     []string      `yaml:"ProxyProtoHeaders" json:"-" flag:"proxy-proto-header"`
 	ProxyProtoHttps       []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
-	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
-	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
-	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
-	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
 	DisableTLS            bool          `yaml:"DisableTLS" json:"DisableTLS" flag:"disable-tls"`
 	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"`
 	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
+	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
+	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
+	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
+	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseName          string        `yaml:"DatabaseName" json:"-" flag:"database-name"`

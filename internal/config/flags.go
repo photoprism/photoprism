@@ -409,12 +409,12 @@ var Flags = CliFlags{
 		}, Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
 			Name:   "https-proxy",
-			Usage:  "trusted HTTPS proxy to use for outgoing connections",
+			Usage:  "proxy server `URL` to be used for outgoing connections *optional*",
 			EnvVar: "PHOTOPRISM_HTTPS_PROXY",
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "https-proxy-insecure",
-			Usage:  "ignore invalid certificates when using an HTTPS proxy",
+			Usage:  "ignore invalid HTTPS certificates when using a proxy",
 			EnvVar: "PHOTOPRISM_HTTPS_PROXY_INSECURE",
 		}}, {
 		Flag: cli.StringSliceFlag{
@@ -434,27 +434,6 @@ var Flags = CliFlags{
 			Usage:  "forwarded HTTPS protocol `NAME`",
 			Value:  &cli.StringSlice{header.ProtoHttps},
 			EnvVar: "PHOTOPRISM_PROXY_PROTO_HTTPS",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "http-mode, mode",
-			Usage:  "Web server `MODE` (debug, release, test)",
-			EnvVar: "PHOTOPRISM_HTTP_MODE",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "http-compression, z",
-			Usage:  "Web server compression `METHOD` (gzip, none)",
-			EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "http-host, ip",
-			Usage:  "Web server `IP` address",
-			EnvVar: "PHOTOPRISM_HTTP_HOST",
-		}}, {
-		Flag: cli.IntFlag{
-			Name:   "http-port, port",
-			Value:  2342,
-			Usage:  "Web server port `NUMBER`",
-			EnvVar: "PHOTOPRISM_HTTP_PORT",
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-tls",
@@ -476,6 +455,27 @@ var Flags = CliFlags{
 			Name:   "tls-key",
 			Usage:  "private HTTPS key `FILE` (.key)",
 			EnvVar: "PHOTOPRISM_TLS_KEY",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "http-mode, mode",
+			Usage:  "Web server `MODE` (debug, release, test)",
+			EnvVar: "PHOTOPRISM_HTTP_MODE",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "http-compression, z",
+			Usage:  "Web server compression `METHOD` (gzip, none)",
+			EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "http-host, ip",
+			Usage:  "Web server `IP` address",
+			EnvVar: "PHOTOPRISM_HTTP_HOST",
+		}}, {
+		Flag: cli.IntFlag{
+			Name:   "http-port, port",
+			Value:  2342,
+			Usage:  "Web server port `NUMBER`",
+			EnvVar: "PHOTOPRISM_HTTP_PORT",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "database-driver, db",

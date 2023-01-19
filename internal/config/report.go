@@ -128,24 +128,22 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"api-uri", c.ApiUri()},
 		{"base-uri", c.BaseUri("/")},
 
-		// HTTPS Proxy.
+		// Proxy Servers.
 		{"https-proxy", c.HttpsProxy()},
 		{"https-proxy-insecure", fmt.Sprintf("%t", c.HttpsProxyInsecure())},
-
-		// HTTP(S) Proxy.
 		{"trusted-proxy", c.TrustedProxy()},
 		{"proxy-proto-header", strings.Join(c.ProxyProtoHeader(), ", ")},
 		{"proxy-proto-https", strings.Join(c.ProxyProtoHttps(), ", ")},
 
 		// Web Server.
-		{"http-mode", c.HttpMode()},
-		{"http-compression", c.HttpCompression()},
-		{"http-host", c.HttpHost()},
-		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
 		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
 		{"tls-email", c.TLSEmail()},
 		{"tls-cert", c.TLSCert()},
 		{"tls-key", c.TLSKey()},
+		{"http-mode", c.HttpMode()},
+		{"http-compression", c.HttpCompression()},
+		{"http-host", c.HttpHost()},
+		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
 
 		// Database.
 		{"database-driver", c.DatabaseDriver()},
