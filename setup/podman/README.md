@@ -4,7 +4,7 @@
 [Podman](https://podman.io/) is supported as a replacement for Docker on Red Hat Enterprise Linux® and compatible Linux distributions such as CentOS, Fedora, AlmaLinux, and Rocky Linux. The following installs the `podman` and `podman-compose` commands if they are not already installed:
 
 ```
-sudo dnf update -y
+sudo dnf upgrade -y
 sudo dnf install epel-release -y
 sudo dnf install netavark aardvark-dns podman podman-docker podman-compose -y
 sudo systemctl start podman

@@ -4,7 +4,7 @@ set -e
 
 # Install dependencies.
 echo "Installing dependencies..."
-sudo dnf update -y
+sudo dnf upgrade -y
 sudo dnf install nano make netavark aardvark-dns podman podman-docker -y
 
 # Install Podman Compose if needed.
