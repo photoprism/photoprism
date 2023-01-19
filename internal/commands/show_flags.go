@@ -12,10 +12,11 @@ import (
 
 // ShowFlagsCommand configures the command name, flags, and action.
 var ShowFlagsCommand = cli.Command{
-	Name:   "flags",
-	Usage:  "Displays supported environment variables and CLI flags",
-	Flags:  report.CliFlags,
-	Action: showFlagsAction,
+	Name:    "flags",
+	Aliases: []string{"env", "vars"},
+	Usage:   "Displays supported environment variables and CLI flags",
+	Flags:   report.CliFlags,
+	Action:  showFlagsAction,
 }
 
 var faceFlagsInfo = `!!! info ""
@@ -23,7 +24,7 @@ var faceFlagsInfo = `!!! info ""
 
 We recommend that only advanced users change these parameters:`
 
-// showFlagsAction shows environment variable command-line parameter names.
+// showFlagsAction displays supported environment variables and CLI flags.
 func showFlagsAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)
@@ -53,6 +54,7 @@ func showFlagsAction(ctx *cli.Context) error {
 		{Start: "PHOTOPRISM_READONLY", Title: "Feature Flags"},
 		{Start: "PHOTOPRISM_DEFAULT_LOCALE", Title: "Customization"},
 		{Start: "PHOTOPRISM_CDN_URL", Title: "Site Information"},
+		{Start: "PHOTOPRISM_HTTPS_PROXY", Title: "HTTPS Proxy"},
 		{Start: "PHOTOPRISM_TRUSTED_PROXY", Title: "Web Server"},
 		{Start: "PHOTOPRISM_DATABASE_DRIVER", Title: "Database Connection"},
 		{Start: "PHOTOPRISM_DARKTABLE_BIN", Title: "File Converters"},

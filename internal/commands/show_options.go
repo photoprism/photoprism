@@ -18,7 +18,7 @@ var ShowOptionsCommand = cli.Command{
 	Action: showOptionsAction,
 }
 
-// showOptionsAction shows supported YAML config file options.
+// showOptionsAction displays supported YAML config options and CLI flag.
 func showOptionsAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.TraceLevel)

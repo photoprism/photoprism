@@ -107,6 +107,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"app-icon", c.AppIcon()},
 		{"app-name", c.AppName()},
 		{"app-mode", c.AppMode()},
+		{"legal-info", c.LegalInfo()},
+		{"legal-url", c.LegalUrl()},
 		{"wallpaper-uri", c.WallpaperUri()},
 
 		// Site Infos.
@@ -120,15 +122,15 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-description", c.SiteDescription()},
 		{"site-preview", c.SitePreview()},
 
-		// Legal info.
-		{"legal-info", c.LegalInfo()},
-		{"legal-url", c.LegalUrl()},
-
 		// URIs.
 		{"content-uri", c.ContentUri()},
 		{"static-uri", c.StaticUri()},
 		{"api-uri", c.ApiUri()},
 		{"base-uri", c.BaseUri("/")},
+
+		// HTTPS Proxy.
+		{"https-proxy", c.HttpsProxy()},
+		{"https-proxy-insecure", fmt.Sprintf("%t", c.HttpsProxyInsecure())},
 
 		// HTTP(S) Proxy.
 		{"trusted-proxy", c.TrustedProxy()},

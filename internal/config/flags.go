@@ -407,6 +407,16 @@ var Flags = CliFlags{
 			Usage:  "sharing preview image `URL`",
 			EnvVar: "PHOTOPRISM_SITE_PREVIEW",
 		}, Tags: []string{EnvSponsor}}, {
+		Flag: cli.StringFlag{
+			Name:   "https-proxy",
+			Usage:  "trusted HTTPS proxy to use for outgoing connections",
+			EnvVar: "PHOTOPRISM_HTTPS_PROXY",
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "https-proxy-insecure",
+			Usage:  "ignore invalid certificates when using an HTTPS proxy",
+			EnvVar: "PHOTOPRISM_HTTPS_PROXY_INSECURE",
+		}}, {
 		Flag: cli.StringSliceFlag{
 			Name:   "trusted-proxy",
 			Usage:  "`CIDR` range from which reverse proxy headers can be trusted",

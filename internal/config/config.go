@@ -1,9 +1,11 @@
 package config
 
 import (
+	"crypto/tls"
 	"encoding/hex"
 	"fmt"
 	"hash/crc32"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -230,6 +232,15 @@ func (c *Config) Init() error {
 	// and the worker runs less than once per hour.
 	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
+	}
+
+	// Set HTTPS proxy for outgoing connections.
+	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: c.HttpsProxyInsecure(),
+		}
+
+		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
 	}
 
 	// Set HTTP user agent.
@@ -720,20 +731,20 @@ func (c *Config) ResolutionLimit() int {
 	return result
 }
 
-// UpdateHub renews backend api credentials for maps & places without a token.
+// UpdateHub renews backend api credentials for maps and places without a token.
 func (c *Config) UpdateHub() {
 	_ = c.ResyncHub("")
 }
 
-// ResyncHub renews backend api credentials for maps & places with an optional token.
+// ResyncHub renews backend api credentials for maps and places with an optional token.
 func (c *Config) ResyncHub(token string) error {
 	if err := c.hub.ReSync(token); err != nil {
-		log.Debugf("config: %s (refresh backend api tokens)", err)
+		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
 		if token != "" {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
 	} else if err = c.hub.Save(); err != nil {
-		log.Debugf("config: %s (save backend api tokens)", err)
+		log.Debugf("config: %s while saving api keys for maps and places", err)
 	} else {
 		c.hub.Propagate()
 	}
@@ -751,10 +762,10 @@ func (c *Config) initHub() {
 
 	if err := c.hub.Load(); err == nil {
 		// Do nothing.
-	} else if err := c.hub.Update(); err != nil {
-		log.Debugf("config: %s (init backend api tokens)", err)
-	} else if err := c.hub.Save(); err != nil {
-		log.Debugf("config: %s (save backend api tokens)", err)
+	} else if err = c.hub.Update(); err != nil {
+		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
+	} else if err = c.hub.Save(); err != nil {
+		log.Debugf("config: %s while saving api keys for maps and places", err)
 	}
 
 	c.hub.Propagate()
