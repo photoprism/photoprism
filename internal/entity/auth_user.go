@@ -41,8 +41,8 @@ type User struct {
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
 	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
-	AuthID        string        `gorm:"type:VARBINARY(128);index;default:'';" json:"AuthID,omitempty" yaml:"AuthID,omitempty"`
-	UserName      string        `gorm:"size:64;index;" json:"Name" yaml:"Name,omitempty"`
+	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID,omitempty" yaml:"AuthID,omitempty"`
+	UserName      string        `gorm:"size:255;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
 	BackupEmail   string        `gorm:"size:255;" json:"BackupEmail,omitempty" yaml:"BackupEmail,omitempty"`
@@ -142,7 +142,7 @@ func FirstOrCreateUser(m *User) *User {
 
 // FindUserByName returns the matching user or nil if it was not found.
 func FindUserByName(name string) *User {
-	name = clean.Username(name)
+	name = clean.DN(name)
 
 	if name == "" {
 		return nil
@@ -881,7 +881,7 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 
 // Login returns the login name and provider.
 func (m *User) Login() string {
-	if m.AuthProvider == "" {
+	if m.AuthProvider == "" || strings.ContainsRune(m.UserName, '@') {
 		return m.UserName
 	} else {
 		return fmt.Sprintf("%s@%s", m.UserName, m.AuthProvider)

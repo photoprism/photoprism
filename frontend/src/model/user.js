@@ -132,7 +132,7 @@ export class User extends RestModel {
 
   getAccountInfo() {
     if (this.Name) {
-      return `@${this.Name}`;
+      return this.Name;
     } else if (this.Email) {
       return this.Email;
     } else if (this.Details && this.Details.JobTitle) {

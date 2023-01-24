@@ -112,7 +112,7 @@ export default {
       }
     },
     webdavUrl() {
-      let baseUrl = `${window.location.protocol}//${this.user.Name}@${window.location.host}/originals/`;
+      let baseUrl = `${window.location.protocol}//${encodeURIComponent(this.user.Name)}@${window.location.host}/originals/`;
 
       if (this.user.BasePath) {
         baseUrl = `${baseUrl}${this.user.BasePath}/`;

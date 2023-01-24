@@ -536,9 +536,7 @@
           </v-list-tile-avatar>
 
           <v-list-tile-content>
-            <v-list-tile-title>
-              {{ displayName }}
-            </v-list-tile-title>
+            <v-list-tile-title>{{ displayName }}</v-list-tile-title>
             <v-list-tile-sub-title>{{ accountInfo }}</v-list-tile-sub-title>
           </v-list-tile-content>
 
