@@ -24,9 +24,7 @@
         <v-avatar class="nav-avatar" tile :size="28">
           <img :src="appIcon" :alt="config.name">
         </v-avatar>
-        <v-toolbar-title class="nav-title">
-          {{ page.title }}
-        </v-toolbar-title>
+        <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
         <v-btn
             fab dark :ripple="false"
             color="transparent"
@@ -55,9 +53,7 @@
               <img :src="appIcon" :alt="appName" :class="{'animate-hue': indexing}">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title class="title">
-                {{ appName }}
-              </v-list-tile-title>
+              <v-list-tile-title class="title">{{ appName }}</v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
               <v-btn icon class="nav-minimize" @click.stop="toggleIsMini()">
