@@ -10,10 +10,10 @@ var ShowCommand = cli.Command{
 	Usage: "Shows supported formats, features, and config options",
 	Subcommands: []cli.Command{
 		ShowConfigCommand,
-		ShowFlagsCommand,
-		ShowOptionsCommand,
-		ShowFiltersCommand,
-		ShowFormatsCommand,
-		ShowTagsCommand,
+		ShowConfigOptionsCommand,
+		ShowConfigYamlCommand,
+		ShowSearchFiltersCommand,
+		ShowFileFormatsCommand,
+		ShowMetadataCommand,
 	},
 }

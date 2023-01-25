@@ -10,13 +10,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
-// ShowFlagsCommand configures the command name, flags, and action.
-var ShowFlagsCommand = cli.Command{
-	Name:    "flags",
-	Aliases: []string{"env", "vars"},
-	Usage:   "Displays supported environment variables and CLI flags",
-	Flags:   report.CliFlags,
-	Action:  showFlagsAction,
+// ShowConfigOptionsCommand configures the command name, flags, and action.
+var ShowConfigOptionsCommand = cli.Command{
+	Name:   "config-options",
+	Usage:  "Displays supported environment variables and CLI flags",
+	Flags:  report.CliFlags,
+	Action: showConfigOptionsAction,
 }
 
 var faceFlagsInfo = `!!! info ""
@@ -24,8 +23,8 @@ var faceFlagsInfo = `!!! info ""
 
 We recommend that only advanced users change these parameters:`
 
-// showFlagsAction displays supported environment variables and CLI flags.
-func showFlagsAction(ctx *cli.Context) error {
+// showConfigOptionsAction displays supported environment variables and CLI flags.
+func showConfigOptionsAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)
 

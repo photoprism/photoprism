@@ -10,16 +10,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
-// ShowOptionsCommand configures the command name, flags, and action.
-var ShowOptionsCommand = cli.Command{
-	Name:   "options",
+// ShowConfigYamlCommand configures the command name, flags, and action.
+var ShowConfigYamlCommand = cli.Command{
+	Name:   "config-yaml",
 	Usage:  "Displays supported YAML config options and CLI flags",
 	Flags:  report.CliFlags,
-	Action: showOptionsAction,
+	Action: showConfigYamlAction,
 }
 
-// showOptionsAction displays supported YAML config options and CLI flag.
-func showOptionsAction(ctx *cli.Context) error {
+// showConfigYamlAction displays supported YAML config options and CLI flag.
+func showConfigYamlAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.TraceLevel)
 

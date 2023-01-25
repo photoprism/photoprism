@@ -38,7 +38,7 @@ func TestShowTagsCommand(t *testing.T) {
 	ctx := config.CliTestContext()
 
 	output := capture.Output(func() {
-		err = ShowTagsCommand.Run(ctx)
+		err = ShowMetadataCommand.Run(ctx)
 	})
 
 	if err != nil {
@@ -59,7 +59,7 @@ func TestShowFiltersCommand(t *testing.T) {
 	ctx := config.CliTestContext()
 
 	output := capture.Output(func() {
-		err = ShowFiltersCommand.Run(ctx)
+		err = ShowSearchFiltersCommand.Run(ctx)
 	})
 
 	if err != nil {
@@ -80,7 +80,7 @@ func TestShowFormatsCommand(t *testing.T) {
 	ctx := config.CliTestContext()
 
 	output := capture.Output(func() {
-		err = ShowFormatsCommand.Run(ctx)
+		err = ShowFileFormatsCommand.Run(ctx)
 	})
 
 	if err != nil {
