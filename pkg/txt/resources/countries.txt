@@ -1,12 +1,21 @@
 AD:Andorra
 FR:France
 FR:Frankreich
+FR:Francia
+FR:França
+FR:Frankrike
 SK:Bratislava
 SK:Slovakia
+SK:Slovacchia
+SK:Eslovaquia
+SK:Eslováquia
+SK:Slovakien
 AT:Austria
 AT:Hallstatt
 AT:Wörthersee
 AT:Österreich
+AT:Áustria
+AT:Österrike
 AT:Vienna
 AT:Wien
 AT:Salzburg
@@ -14,21 +23,57 @@ AT:Sölden
 AT:Klagenfurt
 AT:Innsbruck
 HU:Hungary
+HU:Ungheria
+HU:Hungría
+HU:Hungria
+HU:Ungern
 GE:Georgia Republic
+GE:Georgia
+GE:Geórgia
+GE:Georgien
 VA:Vatican City
+VA:Vatican
+VA:Vatikan
+VA:Vaticano
+VA:Vatikanen
 PL:Poland
+PL:Polen
+PL:Polonia
+PL:Polónia
+PL:Polônia
 PL:Warsaw
 PL:Warschau
 KH:Cambodia
+KH:Kambodscha
+KH:Cambogia
+KH:Camboya
+KH:Camboja
+KH:Kambodja
+LA:Laos
 LA:Vientiane
 LA:Lao Republic
-LA:Laos
 VN:Vietnam
+VN:Vietnã
 DK:Denmark
+DK:Dänemark
+DK:Danimarca
+DK:Dinamarca
+DK:Danmark
 MM:Myanmar
 CZ:Czechia
 CZ:Czech
+CZ:Tschechien
+CZ:Repubblica Ceca
+CZ:República Checa
+CZ:Tjeckien
 CZ:Karlovy Vary
+CH:Switzerland
+CH:Svizzera
+CH:Suiza
+CH:Suíça
+CH:Schweiz
+CH:Swiss
+CH:Schweiz
 CH:Zurich
 CH:Zürich
 CH:St Gallen
@@ -38,39 +83,91 @@ CH:Lauterbrunnen
 CH:Grindelwald
 CH:Lucerne
 CH:Luzern
-CH:Switzerland
-CH:Swiss
-CH:Schweiz
 BE:Belgium
+BE:Belgien
+BE:Belgio
+BE:Bélgica
+BE:Belgien
 SE:Sweden
 SE:Sverige
 SE:Schweden
+SE:Svezia
+SE:Suecia
+SE:Suécia
 SE:Gotland
 SE:Öland
 FO:Faroe
+FO:Färöer
+FO:Färöarna
 AL:Albania
+AL:Albanien
+AL:Albânia
+AL:Albanien
 MK:Macedonia
+MK:Mazedonien
+MK:Macedónia
+MK:Macedônia
+MK:Makedonien
 ME:Montenegro
 FI:Finland
+FI:Finnland
+FI:Finlandia
+FI:Finlândias
 SM:San Marino
 MD:Moldova
+MD:Moldawien
+MD:Moldavia
+MD:Moldávia
+MD:Moldavien
 BY:Belarus
+BY:Weißrussland
+BY:Bielorussia
+BY:Bielorrússia
+BY:Vitryssland
 BR:Brazil
 BR:Brasil
+BR:Brasilien
+BR:Brasile
 RU:Russia
+RU:Russland
+RU:Rusia
+RU:Rússia
+RU:Ryssland
 UA:Ukraine
+UA:Ucraina
+UA:Ucrânia
+UA:Ukraina
 GB:United Kingdom
+GB:England
+GB:Britain
+GB:Vereinigtes Königreich
+GB:Großbritannien
+GB:Regno Unito
+GB:Inghilterra
+GB:Gran Bretagna
+GB:Reino Unido
+GB:Inglaterra
+GB:Gran Bretaña
+GB:Grã Bretanha
+GB:Storbritannien
 GB:London
 GB:Scotland
 GB:Edinburgh
-GB:England
-GB:Britain
 GB:Buckingham
 IM:Isle of Man
+IM:Isola di Man
+IM:Ilha de Man
 IE:Ireland
+IE:Irland
+IE:Irlanda
 IE:Dublin
 DE:Deutschland
 DE:Germany
+DE:Germania
+DE:Germany
+DE:Alemania
+DE:Alemanha
+DE:Tyskland
 DE:Aachen
 DE:Steglitz
 DE:Friedrichshain
@@ -140,28 +237,66 @@ DE:Ulm
 DE:Zugspitze
 DE:Sächsische Schweiz
 LV:Latvia
+LV:Latvija
 LV:Lettland
+LV:Lettonia
+LV:Letonia
+LV:Letónia
+LV:Letônia
 LT:Lithuania
+LT:Lietuva
 LT:Litauen
+LT:Lituania
+LT:Lituânia
 EE:Estonia
+EE:Eesti
+EE:Estland
+EE:Estónia
+EE:Estônia
 AU:Australia
+AU:Australien
+AU:Austrália
 AU:Melbourne
 AU:Perth
 AU:Tasmania
 AU:Tasmanien
 AU:Sydney
+ZA:South Africa
+ZA:Südafrika
+ZA:Sud Africa
+ZA:Sudáfrica
+ZA:África do Sul
+ZA:Sydafrika
 ZA:Capetown
 ZA:Durban
 ZA:Pretoria
 ZA:Kapstadt
 ZA:Johannesburg
-ZA:South Africa
 SZ:Eswatini
 SZ:Swaziland
+SZ:Swasiland
+SZ:Suazilandia
+SZ:Suazilândia
 RO:Romania
+RO:Rumänien
+RO:Rumania
+RO:Roménia
 EC:Ecuador
+EC:Equador
+MX:Mexico
+MX:Mexiko
+MX:Messico
+MX:Méjico
 MX:Mexico
 CO:Colombia
+CO:Kolumbien
+CO:Colômbia
+US:USA
+US:United States
+US:Vereinigte Staaten
+US:Stati Uniti
+US:Estados Unidos
+US:Förenta Staterna
 US:California
 US:Washington
 US:New York
@@ -192,120 +327,310 @@ US:Orlando
 US:Detroit
 US:Nevada
 US:Texas
-US:USA
-US:United States
 US:Venice Beach
 MN:Mongolia
+MN:Mongolei
+MN:Mongólia
+MN:Mongolia
+MN:Mongoliet
 CL:Chile
 RW:Rwanda
-TR:Istanbul
+RW:Ruanda
 TR:Turkey
 TR:Türkei
+TR:Truthahn
+TR:Turchia
+TR:Turquía
+TR:Turquia
+TR:Turkiet
+TR:Istanbul
 KG:Kyrgyzstan
+KG:Kirgisistan
+KG:Kirguistán
+KG:Quirguistão
+KG:Kirgizistan
 BT:Bhutan
+BT:Bután
+BT:Butão
+NP:Nepal
 NP:Everest
 NP:Kathmandu
-NP:Nepal
 BD:Bangladesh
+BD:Bangladesch
 JO:Jordan
+JO:Jordanien
+JO:Giordania
+JO:Jordán
+JO:Jordânia
 SY:Syria
+SY:Syrien
+SY:Siria
+SY:Síria
 LB:Lebanon
+LB:Libanon
+LB:Libano
+LB:Líbano
 BG:Bulgaria
+BG:Bulgarien
+BG:Bulgária
 BG:Koprivshtitsa
 BG:Melnik
 BG:Sofia
-GR:Corfu
 GR:Greece
 GR:Hellas
+GR:Griechenland
+GR:Grecia
+GR:Grécia
+GR:Grekland
+GR:Corfu
 KP:North Korea
 KP:DPRK
 KP:DPR Korea
+KP:Nord Korea
+KP:Corea del Nord
+KP:Corea del Norte
+KP:Coreia do Norte
+KP:Nordkorea
 DZ:Algeria
+DZ:Algerien
+DZ:Argelia
+DZ:Argélia
+DZ:Algeriet
 TN:Tunisia
+TN:Tunesien
+TN:Túnez
+TN:Tunísia
+TN:Tunisien
 LY:Libya
+LY:Libyen
+LY:Libia
+LY:Líbia
 MR:Mauritania
+MR:Mauretanien
+MR:Mauritânia
 GM:Gambia
+GM:Gâmbia
 SN:Senegal
 GW:Guinea Bissau
+GW:Guinea-Bissau
+GW:Guinea-Bisáu
+GW:Guiné-Bissau
 SL:Sierra Leone
+SL:Sierra Leona
+SL:Serra Leoa
 GN:Guinea
+GN:Guiné
 CI:Ivory Coast
+CI:Elfenbeinküste
+CI:Costa d'Avorio
+CI:Costa de Marfil
+CI:Costa do Marfim
+CI:Elfenbenskusten
 LR:Liberia
+LR:Libéria
 GH:Ghana
+GH:Gana
 TG:Togo
 BF:Burkina Faso
 BJ:Benin
+BJ:Benín
 ML:Mali
+ML:Malí
 NE:Niger
+NE:Níger
 NG:Nigeria
+NG:Nigéria       
 SD:Sudan
+SD:Sudán
+SD:Sudão
 CF:Central African
+CF:Zentralafrikanische
+CF:Centrafricana
+CF:Centroafricana
+CF:Centro-Africana
+CF:Centralafrikanska
 GQ:Equatorial Guinea
+GQ:Äquatorialguinea
+GQ:Guinea Equatoriale
+GQ:Guinea Ecuatorial
+GQ:Guiné Equatorial
+GQ:Ekvatorialguinea
 GA:Gabon
+GA:Gabun
+GA:Gabón
+GA:Gabão
 CG:Congo Brazzaville
+CG:Congo-Brazzaville
+CG:Republic of the Congo
+CG:Republik Kongo
+CG:Repubblica del Congo
+CG:República del Congo
+CG:República do Congo
+CG:Republiken Kongo
 CD:Congo
+CD:Democratic Republic of the Congo
+CD:Demokratische Republik Kongo
+CD:Kongo
+CD:Repubblica Democratica del Congo
+CD:República Democrática del Congo
+CD:República Democrática do Congo
+CD:Demokratiska republiken Kongo
 UG:Uganda
 KE:Kenya
+KE:Kenia 
+KE:Quénia
 SO:Somalia
+SO:Somália
 ET:Ethiopia
+ET:Äthiopien
+ET:Etiopia
+ET:Etiopía
+ET:Etiópia
+ET:Etiopien
 DJ:Djibouti
+DJ:Dschibuti
+DJ:Gibuti
+DJ:Yibuti
 CM:Cameroon
+CM:Kamerun
+CM:Camerun
+CM:Camerún
+CM:Camarões
+CM:Kamerun
 NA:Namibia
+NA:Namíbia
 AO:Angola
 BI:Burundi
 TZ:Tanzania
+TZ:Tansania
+TZ:Tanzânia
 ZM:Zambia
+ZM:Sambia
+ZM:Zâmbia
 ZW:Zimbabwe
 ZW:Rhodesia
+ZW:Simbabwe
+ZW:Zimbabue
 MZ:Mozambique
+MZ:Mosambik
+MZ:Mozambico
+MZ:Moçambique
 MW:Malawi
+MW:Malaui
 UZ:Uzbekistan
+UZ:Usbekistan
+UZ:Uzbekistán
+UZ:Uzbequistão
 TJ:Tajikistan
+TJ:Tadschikistan
+TJ:Tagikistan
+TJ:Tayikistán
+TJ:Tajiquistão
+TJ:Tadzjikistan
 KZ:Kazakhstan
+KZ:Kasachstan
+KZ:Kazakistan
+KZ:Kazajistán
+KZ:Cazaquistão
+KZ:Kazakstan
 HR:Croatia
+HR:Kroatien
+HR:Croazia
+HR:Croacia
+HR:Croácia
 SI:Ljubljana
 SI:Slovenia
+SI:Slowenien
+SI:Eslovenia
+SI:Eslovénia
+SI:Slovenien
 TM:Turkmenistan
+TM:Turkmenistán
+TM:Turquemenistão
 BO:Bolivia
+BO:Bolivien
+BO:Bolívia
 GG:Guernsey
 CN:China
+CN:Cina
+CN:Kina
 CN:Shanghai
 CN:上海市
 CN:Peking
 CN:北京市
 CN:Beijing
 VE:Venezuela
-VG:Virgin Island
+VG:Virgin Islands
+VG:British Virgin Islands
 AR:Argentina
 AR:Argentine
+AR:Argentinien
 UY:Uruguay
+UY:Uruguai
 PY:Paraguay
+PY:Paraguai
 SR:Suriname
+SR:Surinam
 GY:Guyana
+GY:Guiana
 NI:Nicaragua
+NI:Nicarágua
 CR:Costa Rica
 PA:Panama
+PA:Panamá
 HN:Honduras
 BZ:Belize
+BZ:Belice
 PE:Peru
+PE:Perú
 PT:Portugal
+PT:Portogallo
 ER:Eritrea
+ER:Eritreia
 IS:Iceland
 IS:Ísland
+IS:Islanda
+IS:Islandia
+IS:Islândia
 AF:Afghanistan
+AF:Afganistán
+AF:Afeganistão
 IN:India
 IN:Indien
+IN:Índia
 ID:Indonesia
+ID:Indonesien
+ID:Indonésia
 IQ:Iraq
 IQ:Irak
+IQ:Iraque
 IR:Iran
 IR:Persia
+IR:Irán
+IR:Irão
+IR:Irã
 YE:Yemen
+YE:Jemen
+YE:Iémen
 QA:Qatar
+QA:Katar
+QA:Catar
 KW:Kuwait
 OM:Oman
+OM:Omán
+OM:Omã
+OM:Omão
 TL:East Timor
+TL:Osttimor
+TL:Timor Est
+TL:Timor-Leste
+TL:Timor Leste
+TL:Timor Oriental
+TL:Östtimor 
 PK:Pakistan
+PK:Pakistán
+PK:Paquistão
+PK:Paquistã
 SA:Saudi Arabia
 KR:South Korea
 AE:United Arab
