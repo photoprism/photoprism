@@ -15,6 +15,19 @@ import (
 	"github.com/photoprism/photoprism/internal/get"
 )
 
+type CloseableResponseRecorder struct {
+	*httptest.ResponseRecorder
+	closeCh chan bool
+}
+
+func (r *CloseableResponseRecorder) CloseNotify() <-chan bool {
+	return r.closeCh
+}
+
+func (r *CloseableResponseRecorder) closeClient() {
+	r.closeCh <- true
+}
+
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
@@ -55,6 +68,16 @@ func PerformRequestWithBody(r http.Handler, method, path, body string) *httptest
 	reader := strings.NewReader(body)
 	req, _ := http.NewRequest(method, path, reader)
 	w := httptest.NewRecorder()
+
+	r.ServeHTTP(w, req)
+
+	return w
+}
+
+// Executes an API request with a stream response.
+func PerformRequestWithStream(r http.Handler, method, path string) *CloseableResponseRecorder {
+	req, _ := http.NewRequest(method, path, nil)
+	w := &CloseableResponseRecorder{httptest.NewRecorder(), make(chan bool, 1)}
 
 	r.ServeHTTP(w, req)
 

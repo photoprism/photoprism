@@ -166,4 +166,5 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.SendFeedback(APIv1)
 	api.Connect(APIv1)
 	api.WebSocket(APIv1)
+	api.GetMetrics(APIv1)
 }
