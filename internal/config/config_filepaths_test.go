@@ -421,3 +421,26 @@ func TestConfig_SqliteBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Contains(t, c.SqliteBin(), "sqlite")
 }
+
+func TestConfig_SettingsYamlDefaults(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	name1 := c.SettingsYamlDefaults(c.SettingsYaml())
+	t.Logf("(1) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(1) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(1) SettingsYamlDefaults: %s", name1)
+	assert.Equal(t, c.SettingsYaml(), name1)
+	c.options.ConfigPath = "/tmp/012345678ABC"
+	c.options.DefaultsYaml = "testdata/etc/defaults.yml"
+	name2 := c.SettingsYamlDefaults("")
+	t.Logf("(2) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(2) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(2) SettingsYamlDefaults: %s", name2)
+	assert.True(t, strings.HasSuffix(name2, "testdata/etc/settings.yml"))
+	name3 := c.SettingsYamlDefaults(c.SettingsYaml())
+	t.Logf("(3) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(3) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(3) SettingsYamlDefaults: %s", name3)
+	assert.True(t, strings.HasSuffix(name3, "testdata/etc/settings.yml"))
+	assert.NotEqual(t, c.SettingsYaml(), name1)
+	assert.NotEqual(t, c.SettingsYaml(), name3)
+}

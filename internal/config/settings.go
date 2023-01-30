@@ -16,16 +16,17 @@ func (c *Config) initSettings() {
 	// Create settings struct.
 	c.settings = customize.NewSettings(c.DefaultTheme(), c.DefaultLocale())
 
-	// Get YAML file name.
-	fileName := c.SettingsYaml()
+	// Get filenames to load the settings from.
+	settingsFile := c.SettingsYaml()
+	defaultsFile := c.SettingsYamlDefaults(settingsFile)
 
-	// Load values from YAML file.
-	if err := c.settings.Load(fileName); err == nil {
-		log.Debugf("settings: loaded from %s", fileName)
-	} else if err := c.settings.Save(fileName); err != nil {
-		log.Errorf("settings: could not create %s (%s)", fileName, err)
+	// Load values from an existing YAML file or create it otherwise.
+	if err := c.settings.Load(defaultsFile); err == nil {
+		log.Debugf("settings: loaded from %s", defaultsFile)
+	} else if err := c.settings.Save(settingsFile); err != nil {
+		log.Errorf("settings: could not create %s (%s)", settingsFile, err)
 	} else {
-		log.Debugf("settings: saved to %s ", fileName)
+		log.Debugf("settings: saved to %s ", settingsFile)
 	}
 
 	i18n.SetDir(c.LocalesPath())

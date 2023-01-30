@@ -43,7 +43,13 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"options-yaml", c.OptionsYaml()},
 		{"defaults-yaml", c.DefaultsYaml()},
 		{"settings-yaml", c.SettingsYaml()},
+	}
 
+	if settingsDefaults := c.SettingsYamlDefaults(""); settingsDefaults != "" && settingsDefaults != c.SettingsYaml() {
+		rows = append(rows, []string{"settings-yaml", fmt.Sprintf("%s (defaults)", settingsDefaults)})
+	}
+
+	rows = append(rows, [][]string{
 		// Originals.
 		{"originals-path", c.OriginalsPath()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
@@ -195,7 +201,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Daemon Mode.
 		{"pid-filename", c.PIDFilename()},
 		{"log-filename", c.LogFilename()},
-	}
+	}...)
 
 	if v := c.CustomAssetsPath(); v != "" {
 		rows = append(rows, []string{"custom-assets-path", v})
