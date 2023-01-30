@@ -7,7 +7,9 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/search"
+
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/sortby"
 )
 
 // Albums returns a slice of albums.
@@ -29,7 +31,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 	if a, err = AlbumByUID(uid); err != nil {
 		return file, err
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
-		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
+		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: sortby.Relevance, Count: 1, Offset: 0, Merged: false}
 
 		if err = f.ParseQueryString(); err != nil {
 			return file, err

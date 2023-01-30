@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -137,28 +138,30 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 	// Set sort order.
 	switch f.Order {
-	case entity.SortOrderEdited:
+	case sortby.Edited:
 		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.media_id")
-	case entity.SortOrderRelevance:
+	case sortby.Relevance:
 		if f.Label != "" {
 			s = s.Order("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index")
 		} else {
 			s = s.Order("photos.photo_quality DESC, files.time_index")
 		}
-	case entity.SortOrderDuration:
+	case sortby.Duration:
 		s = s.Order("photos.photo_duration DESC, files.time_index")
-	case entity.SortOrderSize:
+	case sortby.Size:
 		s = s.Order("files.file_size DESC, files.time_index")
-	case entity.SortOrderNewest:
+	case sortby.Newest:
 		s = s.Order("files.time_index")
-	case entity.SortOrderOldest:
+	case sortby.Oldest:
 		s = s.Order("files.photo_taken_at, files.media_id")
-	case entity.SortOrderSimilar:
+	case sortby.Similar:
 		s = s.Where("files.file_diff > 0")
 		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.time_index")
-	case entity.SortOrderName:
+	case sortby.Name:
 		s = s.Order("photos.photo_path, photos.photo_name, files.time_index")
-	case entity.SortOrderDefault, entity.SortOrderImported, entity.SortOrderAdded:
+	case sortby.Random:
+		s = s.Order(sortby.RandomExpr(s.Dialect()))
+	case sortby.Default, sortby.Imported, sortby.Added:
 		s = s.Order("files.media_id")
 	default:
 		return PhotoResults{}, 0, ErrBadSortOrder

@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -83,7 +84,7 @@ func NewFolder(root, pathName string, modTime time.Time) Folder {
 		Root:          root,
 		Path:          pathName,
 		FolderType:    MediaUnknown,
-		FolderOrder:   SortOrderName,
+		FolderOrder:   sortby.Name,
 		FolderCountry: UnknownCountry.ID,
 		FolderYear:    year,
 		FolderMonth:   month,
