@@ -467,8 +467,8 @@ terminal-latest:
 	$(DOCKER_COMPOSE) -f docker-compose.latest.yml exec photoprism-latest bash
 logs-latest:
 	$(DOCKER_COMPOSE) -f docker-compose.latest.yml logs -f photoprism-latest
-docker-local: docker-local-bookworm
-docker-local-all: docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
+docker-local: docker-local-jammy
+docker-local-all: docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -489,8 +489,8 @@ docker-local-impish:
 	docker pull photoprism/develop:impish
 	docker pull ubuntu:impish
 	scripts/docker/build.sh photoprism impish /impish "-t photoprism/photoprism:local"
-docker-local-develop: docker-local-develop-bookworm
-docker-local-develop-all: docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+docker-local-develop: docker-local-develop-jammy
+docker-local-develop-all: docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
@@ -500,6 +500,9 @@ docker-local-develop-bullseye:
 docker-local-develop-buster:
 	docker pull golang:1-buster
 	scripts/docker/build.sh develop buster /buster
+docker-local-develop-jammy:
+	docker pull ubuntu:jammy
+	scripts/docker/build.sh develop jammy /jammy
 docker-local-develop-impish:
 	docker pull ubuntu:impish
 	scripts/docker/build.sh develop impish /impish
