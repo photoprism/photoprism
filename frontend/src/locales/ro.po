@@ -3,15 +3,17 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-05 19:07+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
+"PO-Revision-Date: 2023-01-30 10:26+0000\n"
+"Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
+"X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:479
@@ -332,6 +334,8 @@ msgstr "Creează automat albume cu momente, călătorii și locuri speciale."
 #: src/page/connect.vue:68
 msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 msgstr ""
+"Deveniți sponsor astăzi, susțineți misiunea noastră și bucurați-vă de "
+"beneficiile membrilor noștri!"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -388,9 +392,11 @@ msgid "Busy, please wait…"
 msgstr "Ocupat, vă rugăm să așteptați…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:101
-#, fuzzy
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Prin utilizarea software-ului și a serviciilor pe care le oferim, sunteți de acord cu termenii și condițiile noastre de utilizare, cu politica de confidențialitate și cu codul de conduită."
+msgstr ""
+"Prin utilizarea software-ului și a serviciilor pe care le oferim, sunteți de "
+"acord cu termenii și condițiile noastre de utilizare, cu politica de "
+"confidențialitate și cu codul de conduită."
 
 #: src/app/routes.js:175 src/component/navigation.vue:253
 #: src/component/navigation.vue:986
@@ -1376,7 +1382,6 @@ msgid "Low"
 msgstr "Scăzut"
 
 #: src/options/options.js:276
-#, fuzzy
 msgid "Low Resolution"
 msgstr "Rezoluție redusă"
 
@@ -1393,7 +1398,6 @@ msgid "Male"
 msgstr "Bărbat"
 
 #: src/page/connect.vue:56
-#, fuzzy
 msgid "Manage account"
 msgstr "Gestionați contul"
 
@@ -1505,7 +1509,6 @@ msgid "Name too long"
 msgstr "Nume prea lung"
 
 #: src/options/themes.js:483
-#, fuzzy
 msgid "Neon"
 msgstr "Neon"
 
@@ -1856,7 +1859,6 @@ msgid "Private"
 msgstr "Privat"
 
 #: src/page/connect.vue:68 src/page/connect.vue:87
-#, fuzzy
 msgid "Proceed"
 msgstr "Continuați"
 
@@ -2167,7 +2169,6 @@ msgid "Slow"
 msgstr "Încet"
 
 #: src/options/themes.js:493
-#, fuzzy
 msgid "Snow"
 msgstr "Zăpadă"
 
@@ -2338,9 +2339,10 @@ msgid "Title too long"
 msgstr "Titlu prea lung"
 
 #: src/page/connect.vue:59 src/page/connect.vue:78
-#, fuzzy
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Pentru a face upgrade, puteți introduce un cod de activare sau puteți face clic pe \"Continuă\" pentru a vă înregistra pe site-ul nostru:"
+msgstr ""
+"Pentru a face upgrade, puteți introduce un cod de activare sau puteți face "
+"clic pe \"Continuă\" pentru a vă înregistra pe site-ul nostru:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
