@@ -42,17 +42,15 @@ We kindly ask you not to report bugs via GitHub Issues **unless you are certain 
 
 ## Submitting Pull Requests ##
 
-Because we want to create the best possible product for our users, we have a [set of criteria](https://docs.photoprism.app/developer-guide/pull-requests#acceptance-criteria) to ensure that all submissions are acceptable.
+Follow our [step-by-step guide](https://docs.photoprism.app/developer-guide/pull-requests) to learn how to submit new features, bug fixes, and documentation enhancements.
 
-Follow our [step-by-step guide](https://docs.photoprism.app/developer-guide/pull-requests#how-to-create-and-submit-a-pull-request) to learn how to submit
-new features, bug fixes, and documentation enhancements. Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
-[easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
+In general, pull requests that resolve issues [labeled "help wanted"](https://github.com/photoprism/photoprism/labels/help%20wanted) are the easiest to merge and the most helpful, as they allow us to spend more time on core features or other issues that are difficult for external contributors to work on. If you're new to this project, anything [labeled "easy"](https://github.com/photoprism/photoprism/labels/easy) may be a good first contribution.
 
-**Reviewing, testing and finally merging pull requests requires significant resources on our side. If it's not just a small fix, it can take several months.**
+**Be aware that reviewing, testing and finally merging pull requests requires significant resources on our side. It can therefore take several months if it is not just a small fix, especially if extensive testing is needed to prevent bugs from getting into our stable version.**
 
 ## Contributor License Agreement (CLA) ##
 
-After you submit your first pull request, you will be asked to accept our Contributor License Agreement (CLA). Visit [photoprism.app/cla](https://photoprism.app/cla) to learn more.
+After you submit your first pull request, you will be asked to accept our Contributor License Agreement (CLA). Visit [photoprism.app/cla](https://photoprism.app/cla) and [photoprism.app/kb/oss](https://photoprism.app/kb/oss) to learn more.
 
 ## Privacy Notice ##
 
@@ -60,7 +58,7 @@ We operate a number of web services that help us develop and maintain our softwa
 
 Because many of these apps and tools were originally developed for internal use without a high level of privacy in mind, we ask that you do not enter personal information such as your real name or personal email address if you want it to remain private.
 
-**Be aware that such information may unexpectedly show up in logs, source code, translation files, commit messages, and pull request comments.**
+**Personal details may otherwise show up in logs, source code, translation files, commit messages, and pull request comments.**
 
 ----
 
