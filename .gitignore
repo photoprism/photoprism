@@ -7,6 +7,7 @@
 /build/*
 /node_modules
 /pro
+/plus
 /frontend/.eslintcache
 /frontend/node_modules/*
 /frontend/tests/*.html
