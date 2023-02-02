@@ -463,7 +463,7 @@ func (c *Config) SitePreview() string {
 	}
 
 	if !strings.HasPrefix(c.options.SitePreview, "http") {
-		return c.SiteUrl() + c.options.SitePreview
+		return c.SiteUrl() + strings.TrimPrefix(c.options.SitePreview, "/")
 	}
 
 	return c.options.SitePreview

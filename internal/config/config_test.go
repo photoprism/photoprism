@@ -452,11 +452,15 @@ func TestConfig_SiteDomain(t *testing.T) {
 
 func TestConfig_SitePreview(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "http://photoprism.me:2342/static/img/preview.jpg", c.SitePreview())
+	assert.Equal(t, "https://i.photoprism.app/prism?cover=64&style=centered%20dark&caption=none&title=PhotoPrism", c.SitePreview())
 	c.options.SitePreview = "http://preview.jpg"
 	assert.Equal(t, "http://preview.jpg", c.SitePreview())
 	c.options.SitePreview = "preview123.jpg"
 	assert.Equal(t, "http://photoprism.me:2342/preview123.jpg", c.SitePreview())
+	c.options.SitePreview = "foo/preview123.jpg"
+	assert.Equal(t, "http://photoprism.me:2342/foo/preview123.jpg", c.SitePreview())
+	c.options.SitePreview = "/foo/preview123.jpg"
+	assert.Equal(t, "http://photoprism.me:2342/foo/preview123.jpg", c.SitePreview())
 }
 
 func TestConfig_SiteTitle(t *testing.T) {
