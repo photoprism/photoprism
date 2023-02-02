@@ -70,6 +70,8 @@ wait:
 	sleep 20
 wait-2:
 	sleep 20
+show-build:
+	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go
 clean-local: clean-local-config clean-local-cache
