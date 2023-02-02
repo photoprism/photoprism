@@ -459,7 +459,7 @@ func (c *Config) SiteDescription() string {
 // SitePreview returns the site preview image URL for sharing.
 func (c *Config) SitePreview() string {
 	if c.options.SitePreview == "" || c.NoSponsor() {
-		return c.SiteUrl() + "static/img/preview.jpg"
+		return fmt.Sprintf("https://i.photoprism.app/prism?cover=64&style=centered%%20dark&caption=none&title=%s", url.QueryEscape(c.AppName()))
 	}
 
 	if !strings.HasPrefix(c.options.SitePreview, "http") {
