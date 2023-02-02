@@ -243,8 +243,8 @@ msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
 msgstr ""
-"Taip pat galite įkelti failus tiesiai į WebDAV serverius, pvz., "
-"\"Nextcloud\"."
+"Taip pat galite įkelti failus tiesiai į WebDAV serverius, pvz., \"Nextcloud"
+"\"."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -331,10 +331,13 @@ msgid "Artist"
 msgstr "Menininkas"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Tai padeda mums teikti daugiau funkcijų visuomenei, todėl raginame visus "
+"naudotojus remti mūsų misiją."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1289,9 +1292,12 @@ msgid "Invalid photo selected"
 msgstr "Pasirinkta netinkama nuotrauka"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Jūs patys sprendžiate, ar norite užsiregistruoti ir naudotis papildomais "
+"privalumais."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1714,9 +1720,9 @@ msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
 msgstr ""
-"Pastaba: Tik WebDAV serverius, pavyzdžiui, \"Nextcloud\" arba "
-"\"PhotoPrism\", galima konfigūruoti kaip nuotolinę atsarginių kopijų kūrimo "
-"ir failų įkėlimo paslaugą."
+"Pastaba: Tik WebDAV serverius, pavyzdžiui, \"Nextcloud\" arba \"PhotoPrism"
+"\", galima konfigūruoti kaip nuotolinę atsarginių kopijų kūrimo ir failų "
+"įkėlimo paslaugą."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1817,11 +1823,16 @@ msgid "Other"
 msgstr "Kita"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Mūsų komanda tai sprendžia nuolat, atsižvelgdama į reikalingas palaikymo "
+"pastangas, serverio ir licencijavimo išlaidas ir į tai, ar funkcijos "
+"paprastai reikalingos visiems, ar daugiausia jų prašo organizacijos ir "
+"pažengę naudotojai."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1884,8 +1895,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "\"PhotoPrism\" buvo atnaujintas…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "\"PhotoPrism\" yra 100 % savarankiškai finansuojama ir nepriklausoma."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2703,10 +2715,13 @@ msgid "Visual Similarity"
 msgstr "Grupuokite pagal panašumą"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri "
+"teikia jums atnaujinimus, dokumentus ir pagalbą, išlaidų."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2735,8 +2750,8 @@ msgid ""
 "connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"WebDAV klientai, pavyzdžiui, \"Microsoft\" \"Windows Explorer\" arba "
-"\"Apple\" \"Finder\", gali tiesiogiai prisijungti prie \"PhotoPrism\"."
+"WebDAV klientai, pavyzdžiui, \"Microsoft\" \"Windows Explorer\" arba \"Apple"
+"\" \"Finder\", gali tiesiogiai prisijungti prie \"PhotoPrism\"."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2888,8 +2903,8 @@ msgstr "Priartinimas / atitolinimas"
 #~ msgstr "Užsiregistruoti"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti "
 #~ "\"Užsiregistruoti\" ir atnaujinti mūsų svetainėje:"

@@ -328,10 +328,13 @@ msgid "Artist"
 msgstr "Художник"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Тъй като това ни помага да предоставяме повече функции на обществеността, "
+"насърчаваме всички потребители да подкрепят нашата мисия."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1292,9 +1295,12 @@ msgid "Invalid photo selected"
 msgstr "Избрана е невалидна снимка"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Вие решавате дали искате да се регистрирате, за да се възползвате от "
+"допълнителни ползи."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1819,11 +1825,16 @@ msgid "Other"
 msgstr "Други"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Екипът ни решава това текущо в зависимост от необходимите усилия за "
+"поддръжка, разходите за сървър и лицензиране, както и от това дали функциите "
+"са необходими на всички или се изискват предимно от организации и напреднали "
+"потребители."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1887,8 +1898,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism е актуализиран…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism е 100% независима и самофинансираща се компания."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2708,10 +2720,13 @@ msgid "Visual Similarity"
 msgstr "Групиране по сходство"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Доброволните дарения не покриват разходите на екипа, който работи на пълен "
+"работен ден, за да ви предоставя актуализации, документация и поддръжка."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2876,9 +2891,8 @@ msgstr "Увеличаване/намаляване на мащаба"
 #~ msgstr ""
 #~ "Мислете за \"свободен софтуер\" като за \"свобода на словото\", а не като "
 #~ "за \"свободна бира\". Фондацията за свободен софтуер понякога го нарича "
-#~ "\"libre software\", като заимства френската или испанската дума за "
-#~ "\"free\" (свободен), за да покаже, че няма предвид, че софтуерът е "
-#~ "безплатен."
+#~ "\"libre software\", като заимства френската или испанската дума за \"free"
+#~ "\" (свободен), за да покаже, че няма предвид, че софтуерът е безплатен."
 
 #~ msgid "Moonlight"
 #~ msgstr "Лунна светлина"
@@ -2894,8 +2908,8 @@ msgstr "Увеличаване/намаляване на мащаба"
 #~ msgstr "Регистрирайте се"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "За да надстроите, можете да въведете код за активиране или да кликнете "
 #~ "върху \"Регистрация\", за да надстроите на нашия уебсайт:"

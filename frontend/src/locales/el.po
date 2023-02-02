@@ -326,10 +326,13 @@ msgid "Artist"
 msgstr "Καλλιτέχνης"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Καθώς αυτό μας βοηθά να παρέχουμε περισσότερες δυνατότητες στο κοινό, "
+"ενθαρρύνουμε όλους τους χρήστες να στηρίξουν την αποστολή μας."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1290,9 +1293,12 @@ msgid "Invalid photo selected"
 msgstr "Επιλογή μη έγκυρης φωτογραφίας"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Είναι δική σας απόφαση αν θέλετε να εγγραφείτε για να απολαμβάνετε πρόσθετα "
+"οφέλη."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1818,11 +1824,16 @@ msgid "Other"
 msgstr "Άλλα"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Η ομάδα μας το αποφασίζει αυτό σε συνεχή βάση ανάλογα με την απαιτούμενη "
+"προσπάθεια υποστήριξης, το κόστος του διακομιστή και των αδειών χρήσης και "
+"το αν οι λειτουργίες χρειάζονται γενικά από όλους ή ζητούνται κυρίως από "
+"οργανισμούς και προχωρημένους χρήστες."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1888,8 +1899,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "Το PhotoPrism έχει ενημερωθεί…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "Η PhotoPrism είναι 100% αυτοχρηματοδοτούμενη και ανεξάρτητη."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2710,10 +2722,13 @@ msgid "Visual Similarity"
 msgstr "Ομαδοποίηση με βάση την ομοιότητα"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Οι εθελοντικές δωρεές δεν καλύπτουν το κόστος μιας ομάδας που εργάζεται με "
+"πλήρες ωράριο για να σας παρέχει ενημερώσεις, τεκμηρίωση και υποστήριξη."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2901,8 +2916,8 @@ msgstr "Μεγέθυνση/ σμίκρυνση"
 #~ msgstr "Εγγραφείτε"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Για να αναβαθμίσετε, μπορείτε είτε να εισαγάγετε έναν κωδικό "
 #~ "ενεργοποίησης είτε να κάνετε κλικ στο \"Εγγραφή\" για αναβάθμιση στην "

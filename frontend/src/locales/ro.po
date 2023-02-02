@@ -330,10 +330,13 @@ msgid "Artist"
 msgstr "Artist"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Deoarece acest lucru ne ajută să oferim mai multe funcții publicului, "
+"încurajăm toți utilizatorii să ne sprijine misiunea."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1291,9 +1294,12 @@ msgid "Invalid photo selected"
 msgstr "Fotografie invalidă selectată"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Este decizia dumneavoastră dacă doriți să vă înscrieți pentru a vă bucura de "
+"beneficii suplimentare."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1819,11 +1825,16 @@ msgid "Other"
 msgstr "Altele"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Echipa noastră decide acest lucru în permanență, în funcție de efortul de "
+"asistență necesar, de costurile serverului și ale licențelor și de faptul "
+"dacă funcțiile sunt în general necesare pentru toată lumea sau sunt "
+"solicitate în principal de organizații și utilizatori avansați."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1888,8 +1899,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism a fost actualizat…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism este 100% autofinanțat și independent."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2708,10 +2720,13 @@ msgid "Visual Similarity"
 msgstr "Similaritate vizuală"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Donațiile voluntare nu acoperă costul unei echipe care lucrează cu normă "
+"întreagă pentru a vă oferi actualizări, documentație și asistență."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2896,8 +2911,8 @@ msgstr "Măriți/micșorați"
 #~ msgstr "Înscrieți-vă"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Pentru a face upgrade, puteți introduce un cod de activare sau puteți "
 #~ "face clic pe \"Înregistrare\" pentru a face upgrade pe site-ul nostru web:"
