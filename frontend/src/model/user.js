@@ -117,17 +117,11 @@ export class User extends RestModel {
       return this.Details.NickName;
     } else if (this.Details && this.Details.GivenName) {
       return this.Details.GivenName;
-    } else if (this.Role) {
-      return T(Util.capitalize(this.Role));
-    } else if (this.Details && this.Details.JobTitle) {
-      return this.Details.JobTitle;
-    } else if (this.Email) {
-      return this.Email;
     } else if (this.Name) {
-      return `@${this.Name}`;
+      return T(Util.capitalize(this.Name));
     }
 
-    return $gettext("Unregistered");
+    return $gettext("Unknown");
   }
 
   getAccountInfo() {
