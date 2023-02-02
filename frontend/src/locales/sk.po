@@ -327,7 +327,6 @@ msgid "Artist"
 msgstr "Umelec"
 
 #: src/page/connect.vue:122
-#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
@@ -1286,7 +1285,6 @@ msgid "Invalid photo selected"
 msgstr "Vybraná neplatná fotografia"
 
 #: src/page/connect.vue:115
-#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
@@ -1815,7 +1813,6 @@ msgid "Other"
 msgstr "Ostatné"
 
 #: src/page/connect.vue:121
-#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
@@ -1887,7 +1884,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism bol aktualizovaný…"
 
 #: src/page/connect.vue:113
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr ""
 "Spoločnosť PhotoPrism je 100 % financovaná z vlastných zdrojov a je "
@@ -2707,7 +2703,6 @@ msgid "Visual Similarity"
 msgstr "Vizuálna podobnosť"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
@@ -2893,8 +2888,8 @@ msgstr "Priblíziť/Oddialiť"
 #~ msgstr "Registrovať sa"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
-#~ "\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Ak chcete aktualizovať, môžete zadať aktivačný kód alebo kliknúť na "
 #~ "\"Zaregistrovať sa\" a aktualizovať na našej webovej stránke:"

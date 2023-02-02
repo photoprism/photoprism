@@ -7,8 +7,8 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
-"%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -325,7 +325,6 @@ msgid "Artist"
 msgstr "Fotograf"
 
 #: src/page/connect.vue:122
-#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
@@ -1287,7 +1286,6 @@ msgid "Invalid photo selected"
 msgstr "Izbrana napačna fotografija"
 
 #: src/page/connect.vue:115
-#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
@@ -1817,7 +1815,6 @@ msgid "Other"
 msgstr "Drugo"
 
 #: src/page/connect.vue:121
-#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
@@ -1889,7 +1886,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism je bil posodobljen…"
 
 #: src/page/connect.vue:113
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism se 100-odstotno financira sam in je neodvisen."
 
@@ -2706,7 +2702,6 @@ msgid "Visual Similarity"
 msgstr "Skupine po podobnosti"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
@@ -2894,18 +2889,18 @@ msgstr "Povečanje/pomanjšanje"
 #~ msgstr "Prijavite se"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
-#~ "\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
 #~ msgstr ""
-#~ "Za nadgradnjo lahko vnesete aktivacijsko kodo ali kliknete \"Prijavite se"
-#~ "\" in nadgradite na našem spletnem mestu:"
+#~ "Za nadgradnjo lahko vnesete aktivacijsko kodo ali kliknete \"Prijavite "
+#~ "se\" in nadgradite na našem spletnem mestu:"
 
 #~ msgid ""
 #~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
 #~ "Now\" to sign up on our website:"
 #~ msgstr ""
-#~ "Za nadgradnjo lahko vnesete aktivacijsko kodo ali kliknete \"Prijavite se"
-#~ "\" in nadgradite na našem spletnem mestu:"
+#~ "Za nadgradnjo lahko vnesete aktivacijsko kodo ali kliknete \"Prijavite "
+#~ "se\" in nadgradite na našem spletnem mestu:"
 
 #~ msgid "Sign up"
 #~ msgstr "Prijavite se"

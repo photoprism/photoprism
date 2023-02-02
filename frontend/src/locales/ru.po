@@ -328,7 +328,6 @@ msgid "Artist"
 msgstr "Автор"
 
 #: src/page/connect.vue:122
-#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
@@ -1293,7 +1292,6 @@ msgid "Invalid photo selected"
 msgstr "Выбрана недопустимая фотография"
 
 #: src/page/connect.vue:115
-#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
@@ -1823,7 +1821,6 @@ msgid "Other"
 msgstr "Другой"
 
 #: src/page/connect.vue:121
-#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
@@ -1897,7 +1894,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism был обновлен…"
 
 #: src/page/connect.vue:113
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism является на 100% самофинансируемой и независимой компанией."
 
@@ -2497,8 +2493,8 @@ msgid ""
 "To upgrade, you may either enter an activation code or click on \"Proceed\" "
 "to sign up on our website:"
 msgstr ""
-"Для обновления вы можете ввести код активации или нажать кнопку \"Продолжить"
-"\", чтобы зарегистрироваться на нашем сайте:"
+"Для обновления вы можете ввести код активации или нажать кнопку "
+"\"Продолжить\", чтобы зарегистрироваться на нашем сайте:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2719,7 +2715,6 @@ msgid "Visual Similarity"
 msgstr "Визуальное сходство"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
@@ -2917,8 +2912,8 @@ msgstr "Увеличение/уменьшение масштаба"
 #~ msgstr "Зарегистрироваться"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
-#~ "\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Для обновления вы можете ввести код активации или нажать кнопку "
 #~ "\"Зарегистрироваться\" для обновления на нашем сайте:"

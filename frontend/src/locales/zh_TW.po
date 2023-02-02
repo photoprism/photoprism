@@ -323,7 +323,6 @@ msgid "Artist"
 msgstr "作者"
 
 #: src/page/connect.vue:122
-#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
@@ -1251,7 +1250,6 @@ msgid "Invalid photo selected"
 msgstr "選擇的照片無效"
 
 #: src/page/connect.vue:115
-#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "你可以决定是否要注册以享受额外的好处。"
@@ -1768,7 +1766,6 @@ msgid "Other"
 msgstr "其他"
 
 #: src/page/connect.vue:121
-#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
@@ -1837,7 +1834,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism更新囉…"
 
 #: src/page/connect.vue:113
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism是100%自筹资金和独立的。"
 
@@ -2635,7 +2631,6 @@ msgid "Visual Similarity"
 msgstr "視覺相似度"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
@@ -2821,8 +2816,8 @@ msgstr "縮放"
 #~ msgstr "註冊"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
-#~ "\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
 #~ msgstr "要升級，你可以在我們的網站上輸入激活碼或點擊 \"註冊 \"來升級："
 
 #~ msgid ""

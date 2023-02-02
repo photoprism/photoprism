@@ -327,7 +327,6 @@ msgid "Artist"
 msgstr "Kunstner"
 
 #: src/page/connect.vue:122
-#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
@@ -1282,7 +1281,6 @@ msgid "Invalid photo selected"
 msgstr "Ugyldig bilde er valgt"
 
 #: src/page/connect.vue:115
-#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
@@ -1810,7 +1808,6 @@ msgid "Other"
 msgstr "Andre"
 
 #: src/page/connect.vue:121
-#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
@@ -1881,7 +1878,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism har blitt oppdatert…"
 
 #: src/page/connect.vue:113
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism er 100 % selvfinansiert og uavhengig."
 
@@ -2694,7 +2690,6 @@ msgid "Visual Similarity"
 msgstr "Gruppér etter likhet"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
@@ -2878,8 +2873,8 @@ msgstr "Zoom inn/ut"
 #~ msgstr "Registrer deg"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
-#~ "\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
 #~ msgstr ""
 #~ "For å oppgradere kan du enten skrive inn en aktiveringskode eller klikke "
 #~ "på \"Registrer deg\" for å oppgradere på nettsiden vår:"

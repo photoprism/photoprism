@@ -324,7 +324,6 @@ msgid "Artist"
 msgstr "Tekijä"
 
 #: src/page/connect.vue:122
-#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
@@ -1287,7 +1286,6 @@ msgid "Invalid photo selected"
 msgstr "Virheellinen kuva valittu"
 
 #: src/page/connect.vue:115
-#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "On sinun päätöksesi, haluatko rekisteröityä ja nauttia lisäeduista."
@@ -1815,7 +1813,6 @@ msgid "Other"
 msgstr "Muut"
 
 #: src/page/connect.vue:121
-#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
@@ -1887,7 +1884,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on päivitetty…"
 
 #: src/page/connect.vue:113
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism on 100-prosenttisesti omarahoitteinen ja riippumaton."
 
@@ -2705,7 +2701,6 @@ msgid "Visual Similarity"
 msgstr "Ryhmittele samankaltaisuuden mukaan"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
@@ -2897,8 +2892,8 @@ msgstr "Lähennä/loitonna"
 #~ msgstr "Rekisteröidy"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
-#~ "\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Päivittääksesi voit joko syöttää aktivointikoodin tai klikata "
 #~ "\"Rekisteröidy\" päivittääksesi verkkosivustollamme:"

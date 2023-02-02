@@ -326,7 +326,6 @@ msgid "Artist"
 msgstr "אמן"
 
 #: src/page/connect.vue:122
-#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
@@ -1271,7 +1270,6 @@ msgid "Invalid photo selected"
 msgstr "נבחרה תמונה לא חוקית"
 
 #: src/page/connect.vue:115
-#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "זו החלטה שלך אם אתה רוצה להירשם כדי ליהנות מהטבות נוספות."
@@ -1794,7 +1792,6 @@ msgid "Other"
 msgstr "אחר"
 
 #: src/page/connect.vue:121
-#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
@@ -1865,7 +1862,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism עודכן…"
 
 #: src/page/connect.vue:113
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism הוא 100% מימון עצמי ועצמאי."
 
@@ -2671,7 +2667,6 @@ msgid "Visual Similarity"
 msgstr "דמיון חזותי"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
@@ -2835,9 +2830,9 @@ msgstr "זום פנימה\\החוצה"
 #~ "the French or Spanish word for “free” as in freedom, to show they do not "
 #~ "mean the software is gratis."
 #~ msgstr ""
-#~ "חשבו על \"תוכנה חופשית\" כמו על \"חופש דיבור\", לא כמו על \"בירה חופשית"
-#~ "\". קרן התוכנה החופשית קוראת לזה לפעמים \"תוכנה חופשית\", בהשאלה את המילה "
-#~ "הצרפתית או הספרדית ל\"חינם\" כמו בחופש, כדי להראות שהם לא מתכוונים "
+#~ "חשבו על \"תוכנה חופשית\" כמו על \"חופש דיבור\", לא כמו על \"בירה "
+#~ "חופשית\". קרן התוכנה החופשית קוראת לזה לפעמים \"תוכנה חופשית\", בהשאלה את "
+#~ "המילה הצרפתית או הספרדית ל\"חינם\" כמו בחופש, כדי להראות שהם לא מתכוונים "
 #~ "שהתוכנה בחינם."
 
 #~ msgid "Moonlight"
@@ -2853,8 +2848,8 @@ msgstr "זום פנימה\\החוצה"
 #~ msgstr "הרשם"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
-#~ "\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
 #~ msgstr ""
 #~ "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר "
 #~ "האינטרנט שלנו:"

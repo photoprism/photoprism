@@ -327,7 +327,6 @@ msgid "Artist"
 msgstr "هونەرمەند"
 
 #: src/page/connect.vue:122
-#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
@@ -1283,7 +1282,6 @@ msgid "Invalid photo selected"
 msgstr "Wêneyê nederbasdar hat hilbijartin"
 
 #: src/page/connect.vue:115
-#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
@@ -1814,7 +1812,6 @@ msgid "Other"
 msgstr "هی تر"
 
 #: src/page/connect.vue:121
-#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
@@ -1888,7 +1885,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "فۆتۆپریزم نوێکرایەوە"
 
 #: src/page/connect.vue:113
-#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism 100% xwe-fînanse û serbixwe ye."
 
@@ -2705,7 +2701,6 @@ msgid "Visual Similarity"
 msgstr "گروپکردن بە پێی هاوشێوەیی"
 
 #: src/page/connect.vue:114
-#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
@@ -2878,10 +2873,10 @@ msgstr "گەورەکردن/بچووکردن"
 #~ "the French or Spanish word for “free” as in freedom, to show they do not "
 #~ "mean the software is gratis."
 #~ msgstr ""
-#~ "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra belaş"
-#~ "\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" peyva "
-#~ "fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan bide "
-#~ "ku ew ne wateya ku nermalava belaş e."
+#~ "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra "
+#~ "belaş\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" "
+#~ "peyva fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan "
+#~ "bide ku ew ne wateya ku nermalava belaş e."
 
 #~ msgid "Moonlight"
 #~ msgstr "تیشکی مانگ"
@@ -2896,8 +2891,8 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgstr "چوونەدەرەوە"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
-#~ "\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser "
 #~ "\"Sign Up\" bikirtînin da ku li ser malpera me nûve bikin:"
