@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-01-17 16:36+0000\n"
+"PO-Revision-Date: 2023-02-02 11:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:479
@@ -359,8 +359,11 @@ msgid "Artist"
 msgstr "Kunstenaar"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr ""
+"Aangesien dit ons help om meer kenmerke aan die publiek te verskaf, moedig "
+"ons alle gebruikers aan om ons missie te ondersteun."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 #, fuzzy
@@ -1412,8 +1415,9 @@ msgid "Invalid photo selected"
 msgstr "Ongeldige foto gekies"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
+msgstr "Dit is jou besluit of jy wil inteken om bykomende voordele te geniet."
 
 #: src/page/about/about.vue:16
 #, fuzzy
@@ -2023,8 +2027,13 @@ msgid "Other"
 msgstr "Ander"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Ons span besluit dit op 'n deurlopende basis, afhangende van die "
+"ondersteuningspoging wat benodig word, bediener- en lisensiëringskoste, en "
+"of die kenmerke oor die algemeen deur almal benodig word of hoofsaaklik deur "
+"organisasies en gevorderde gebruikers versoek word."
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -2094,8 +2103,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism is opgedateer …"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism is 100% selfbefonds en onafhanklik."
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -3036,8 +3046,11 @@ msgid "Visual Similarity"
 msgstr "Visuele ooreenkoms"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr ""
+"Vrywillige skenkings dek nie die koste van 'n span wat voltyds werk om jou "
+"van opdaterings, dokumentasie en ondersteuning te voorsien nie."
 
 #: src/page/about/feedback.vue:13
 #, fuzzy
