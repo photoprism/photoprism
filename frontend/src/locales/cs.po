@@ -327,10 +327,13 @@ msgid "Artist"
 msgstr "Umělec"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Protože nám to pomáhá poskytovat veřejnosti více funkcí, vyzýváme všechny "
+"uživatele, aby podpořili naše poslání."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1284,9 +1287,11 @@ msgid "Invalid photo selected"
 msgstr "Vybrána neplatná fotografie"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Je na vašem rozhodnutí, zda se chcete zaregistrovat a využívat další výhody."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1810,11 +1815,15 @@ msgid "Other"
 msgstr "Jiné"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Náš tým o tom rozhoduje průběžně v závislosti na náročnosti podpory, "
+"nákladech na server a licence a na tom, zda jsou funkce obecně potřebné pro "
+"všechny, nebo je požadují hlavně organizace a pokročilí uživatelé."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1877,8 +1886,10 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism byl aktualizován…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr ""
+"Společnost PhotoPrism je 100% nezávislá a financovaná z vlastních zdrojů."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2691,10 +2702,13 @@ msgid "Visual Similarity"
 msgstr "Vizuální podobnost"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Dobrovolné dary nepokryjí náklady na tým, který pracuje na plný úvazek a "
+"poskytuje vám aktualizace, dokumentaci a podporu."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2874,8 +2888,8 @@ msgstr "Přiblížit/Oddálit"
 #~ msgstr "Registrace"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Chcete-li provést upgrade, můžete zadat aktivační kód nebo kliknout na "
 #~ "\"Zaregistrovat se\" a provést upgrade na našich webových stránkách:"

@@ -323,10 +323,11 @@ msgid "Artist"
 msgstr "艺术家"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
-msgstr ""
+msgstr "由于这有助于我们向公众提供更多的功能，我们鼓励所有用户支持我们的使命。"
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1249,9 +1250,10 @@ msgid "Invalid photo selected"
 msgstr "选择了无效的照片"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
+msgstr "你可以决定是否要注册以享受额外的好处。"
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1768,11 +1770,14 @@ msgid "Other"
 msgstr "其他"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是每个人普遍需要"
+"的还是主要由组织和高级用户要求的，持续决定这一点。"
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1833,8 +1838,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism 更新啦…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism是100%自筹资金和独立的。"
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2631,10 +2637,11 @@ msgid "Visual Similarity"
 msgstr "视觉相似性"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
-msgstr ""
+msgstr "自愿捐款并不包括一个全职工作的团队为你提供更新、文件和支持的费用。"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2806,8 +2813,8 @@ msgstr "缩放"
 #~ msgstr "注册"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr "要升级，你可以在我们的网站上输入激活码或点击 \"注册 \"来升级。"
 
 #~ msgid ""

@@ -327,10 +327,13 @@ msgid "Artist"
 msgstr "Fotograf"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Eftersom detta hjälper oss att tillhandahålla fler funktioner till "
+"allmänheten, uppmanar vi alla användare att stödja vårt uppdrag."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1277,9 +1280,11 @@ msgid "Invalid photo selected"
 msgstr "Ett ogiltigt foto har valts"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Du bestämmer själv om du vill registrera dig för att få ytterligare förmåner."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1803,11 +1808,15 @@ msgid "Other"
 msgstr "Övrigt"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Vårt team beslutar detta löpande beroende på hur mycket support som krävs, "
+"server- och licenskostnader och om funktionerna behövs av alla eller om de "
+"främst efterfrågas av organisationer och avancerade användare."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1870,8 +1879,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism har uppdaterats…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism är till 100 % självfinansierad och oberoende."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2684,10 +2694,13 @@ msgid "Visual Similarity"
 msgstr "Gruppera efter likhet"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Frivilliga donationer täcker inte kostnaderna för ett team som arbetar "
+"heltid för att ge dig uppdateringar, dokumentation och support."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2847,8 +2860,8 @@ msgstr "Zooma in/ut"
 #~ "the French or Spanish word for “free” as in freedom, to show they do not "
 #~ "mean the software is gratis."
 #~ msgstr ""
-#~ "Tänk på \"fri programvara\" som i \"yttrandefrihet\", inte som i \"fri "
-#~ "öl\". Free Software Foundation kallar det ibland för \"libre software\", "
+#~ "Tänk på \"fri programvara\" som i \"yttrandefrihet\", inte som i \"fri öl"
+#~ "\". Free Software Foundation kallar det ibland för \"libre software\", "
 #~ "vilket lånar det franska eller spanska ordet för \"free\" som i frihet, "
 #~ "för att visa att de inte menar att programvaran är gratis."
 
@@ -2865,8 +2878,8 @@ msgstr "Zooma in/ut"
 #~ msgstr "Registrera dig"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "För att uppgradera kan du antingen ange en aktiveringskod eller klicka på "
 #~ "\"Sign Up\" för att uppgradera på vår webbplats:"

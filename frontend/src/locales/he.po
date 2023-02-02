@@ -326,10 +326,13 @@ msgid "Artist"
 msgstr "אמן"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"מכיוון שזה עוזר לנו לספק יותר תכונות לציבור, אנו מעודדים את כל המשתמשים "
+"לתמוך במשימתנו."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1268,9 +1271,10 @@ msgid "Invalid photo selected"
 msgstr "נבחרה תמונה לא חוקית"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
+msgstr "זו החלטה שלך אם אתה רוצה להירשם כדי ליהנות מהטבות נוספות."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1790,11 +1794,15 @@ msgid "Other"
 msgstr "אחר"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"הצוות שלנו מחליט על כך באופן שוטף בהתאם למאמץ התמיכה הנדרש, עלויות השרת "
+"והרישוי, והאם התכונות נחוצות בדרך כלל על ידי כולם או מתבקשות בעיקר על ידי "
+"ארגונים ומשתמשים מתקדמים."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1857,8 +1865,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism עודכן…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism הוא 100% מימון עצמי ועצמאי."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2662,10 +2671,13 @@ msgid "Visual Similarity"
 msgstr "דמיון חזותי"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"תרומות מרצון אינן מכסות את העלות של צוות שעובד במשרה מלאה כדי לספק לך "
+"עדכונים, תיעוד ותמיכה."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2823,9 +2835,9 @@ msgstr "זום פנימה\\החוצה"
 #~ "the French or Spanish word for “free” as in freedom, to show they do not "
 #~ "mean the software is gratis."
 #~ msgstr ""
-#~ "חשבו על \"תוכנה חופשית\" כמו על \"חופש דיבור\", לא כמו על \"בירה "
-#~ "חופשית\". קרן התוכנה החופשית קוראת לזה לפעמים \"תוכנה חופשית\", בהשאלה את "
-#~ "המילה הצרפתית או הספרדית ל\"חינם\" כמו בחופש, כדי להראות שהם לא מתכוונים "
+#~ "חשבו על \"תוכנה חופשית\" כמו על \"חופש דיבור\", לא כמו על \"בירה חופשית"
+#~ "\". קרן התוכנה החופשית קוראת לזה לפעמים \"תוכנה חופשית\", בהשאלה את המילה "
+#~ "הצרפתית או הספרדית ל\"חינם\" כמו בחופש, כדי להראות שהם לא מתכוונים "
 #~ "שהתוכנה בחינם."
 
 #~ msgid "Moonlight"
@@ -2841,8 +2853,8 @@ msgstr "זום פנימה\\החוצה"
 #~ msgstr "הרשם"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר "
 #~ "האינטרנט שלנו:"

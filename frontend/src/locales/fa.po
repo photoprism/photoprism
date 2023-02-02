@@ -326,10 +326,13 @@ msgid "Artist"
 msgstr "هنرمند"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"از آنجایی که این به ما کمک می‌کند ویژگی‌های بیشتری را برای عموم ارائه کنیم، "
+"همه کاربران را تشویق می‌کنیم از ماموریت ما حمایت کنند."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1277,9 +1280,12 @@ msgid "Invalid photo selected"
 msgstr "عکس نامعتبر انتخاب شد"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"این شما هستید که می خواهید برای بهره مندی از مزایای اضافی ثبت نام کنید یا "
+"خیر."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1803,11 +1809,15 @@ msgid "Other"
 msgstr "دیگر"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"تیم ما بسته به تلاش پشتیبانی مورد نیاز، هزینه‌های سرور و مجوز، و اینکه آیا "
+"ویژگی‌ها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته "
+"درخواست می‌شوند، این موضوع را به‌طور مداوم تصمیم می‌گیرند."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1872,8 +1882,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism به روز شد…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism 100٪ با بودجه شخصی و مستقل است."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2686,10 +2697,13 @@ msgid "Visual Similarity"
 msgstr "گروه بندی بر اساس شباهت"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"کمک های داوطلبانه هزینه های یک تیم کار تمام وقت برای ارائه به روز رسانی ها، "
+"اسناد و پشتیبانی شما را پوشش نمی دهد."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2871,8 +2885,8 @@ msgstr "بزرگنمایی/کوچک کردن"
 #~ msgstr "ثبت نام"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ثبت‌نام» کلیک کنید "
 #~ "تا در وب‌سایت ما ارتقا یابد:"

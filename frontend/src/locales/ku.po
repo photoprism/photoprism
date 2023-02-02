@@ -327,10 +327,13 @@ msgid "Artist"
 msgstr "هونەرمەند"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Ji ber ku ev ji me re dibe alîkar ku bêtir taybetmendiyên ji gel re peyda "
+"bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1280,9 +1283,12 @@ msgid "Invalid photo selected"
 msgstr "Wêneyê nederbasdar hat hilbijartin"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd "
+"werbigirin."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1808,11 +1814,16 @@ msgid "Other"
 msgstr "هی تر"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Tîma me vê yekê bi domdarî li gorî hewildana piştgirî, lêçûnên server û "
+"lîsansê, û gelo taybetmendî bi gelemperî ji hêla her kesî ve hewce ne an bi "
+"gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin, biryar "
+"dide."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1877,8 +1888,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "فۆتۆپریزم نوێکرایەوە"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism 100% xwe-fînanse û serbixwe ye."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2693,10 +2705,13 @@ msgid "Visual Similarity"
 msgstr "گروپکردن بە پێی هاوشێوەیی"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Bexşên dilxwazî mesrefa tîmek ku bi tevahî wextê dixebite nagire da ku "
+"nûvekirin, belgekirin û piştgirî peyda bike."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2863,10 +2878,10 @@ msgstr "گەورەکردن/بچووکردن"
 #~ "the French or Spanish word for “free” as in freedom, to show they do not "
 #~ "mean the software is gratis."
 #~ msgstr ""
-#~ "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra "
-#~ "belaş\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" "
-#~ "peyva fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan "
-#~ "bide ku ew ne wateya ku nermalava belaş e."
+#~ "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra belaş"
+#~ "\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" peyva "
+#~ "fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan bide "
+#~ "ku ew ne wateya ku nermalava belaş e."
 
 #~ msgid "Moonlight"
 #~ msgstr "تیشکی مانگ"
@@ -2881,8 +2896,8 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgstr "چوونەدەرەوە"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser "
 #~ "\"Sign Up\" bikirtînin da ku li ser malpera me nûve bikin:"

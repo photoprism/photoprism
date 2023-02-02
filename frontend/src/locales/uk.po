@@ -10,8 +10,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -329,10 +329,13 @@ msgid "Artist"
 msgstr "Виконавець"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Оскільки це допомагає нам надавати більше можливостей для громадськості, ми "
+"закликаємо всіх користувачів підтримати нашу місію."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1288,9 +1291,12 @@ msgid "Invalid photo selected"
 msgstr "вибрано невірне фото"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Ви самі вирішуєте, чи хочете ви підписатися та користуватися додатковими "
+"перевагами."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1815,11 +1821,16 @@ msgid "Other"
 msgstr "Інше"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Наша команда вирішує це питання на постійній основі залежно від необхідних "
+"зусиль з підтримки, вартості сервера та ліцензій, а також від того, чи "
+"потрібні ці функції всім, чи їх запитують переважно організації та "
+"досвідчені користувачі."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1884,8 +1895,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism було оновлено…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism на 100% самофінансується та є незалежною організацією."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2703,10 +2715,13 @@ msgid "Visual Similarity"
 msgstr "Візуальна схожість"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Добровільні пожертви не покривають витрати команди, яка працює повний "
+"робочий день, щоб забезпечити вас оновленнями, документацією та підтримкою."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2890,8 +2905,8 @@ msgstr "Збільшення/зменшення"
 #~ msgstr "Зареєструватися"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Для оновлення ви можете або ввести код активації, або натиснути кнопку "
 #~ "\"Зареєструватися\" на нашому сайті:"

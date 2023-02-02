@@ -324,10 +324,13 @@ msgid "Artist"
 msgstr "Tekijä"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Koska tämä auttaa meitä tarjoamaan enemmän ominaisuuksia yleisölle, "
+"kannustamme kaikkia käyttäjiä tukemaan tehtäviämme."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1284,9 +1287,10 @@ msgid "Invalid photo selected"
 msgstr "Virheellinen kuva valittu"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
+msgstr "On sinun päätöksesi, haluatko rekisteröityä ja nauttia lisäeduista."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1811,11 +1815,16 @@ msgid "Other"
 msgstr "Muut"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Tiimimme päättää tästä jatkuvasti riippuen tarvittavasta tukiponnistuksesta, "
+"palvelin- ja lisenssikustannuksista sekä siitä, tarvitsevatko kaikki "
+"yleisesti ominaisuuksia vai ovatko ne lähinnä organisaatioiden ja "
+"edistyneiden käyttäjien toivomia."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1878,8 +1887,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on päivitetty…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism on 100-prosenttisesti omarahoitteinen ja riippumaton."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2695,10 +2705,14 @@ msgid "Visual Similarity"
 msgstr "Ryhmittele samankaltaisuuden mukaan"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Vapaaehtoiset lahjoitukset eivät kata kustannuksia, jotka aiheutuvat "
+"kokopäiväisesti työskentelevästä tiimistä, joka tarjoaa sinulle päivityksiä, "
+"dokumentaatiota ja tukea."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2883,8 +2897,8 @@ msgstr "Lähennä/loitonna"
 #~ msgstr "Rekisteröidy"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Päivittääksesi voit joko syöttää aktivointikoodin tai klikata "
 #~ "\"Rekisteröidy\" päivittääksesi verkkosivustollamme:"

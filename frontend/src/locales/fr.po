@@ -328,10 +328,13 @@ msgid "Artist"
 msgstr "Artiste"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Comme cela nous aide à fournir davantage de fonctionnalités au public, nous "
+"encourageons tous les utilisateurs à soutenir notre mission."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1297,9 +1300,12 @@ msgid "Invalid photo selected"
 msgstr "Photo non valide sélectionnée"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"C'est à vous de décider si vous souhaitez vous inscrire pour bénéficier "
+"d'avantages supplémentaires."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1827,11 +1833,16 @@ msgid "Other"
 msgstr "Autre"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Notre équipe en décide en permanence en fonction de l'effort d'assistance "
+"requis, des coûts de serveur et de licence, et du fait que les "
+"fonctionnalités sont généralement nécessaires à tous ou principalement "
+"demandées par des organisations et des utilisateurs avancés."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1898,8 +1909,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism a été mis à jour…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism est 100% autofinancé et indépendant."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2719,10 +2731,14 @@ msgid "Visual Similarity"
 msgstr "Similitude visuelle"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Les dons volontaires ne couvrent pas le coût d'une équipe travaillant à "
+"plein temps pour vous fournir des mises à jour, de la documentation et une "
+"assistance."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2922,8 +2938,8 @@ msgstr "Agrandir/Dézoomer"
 #~ msgstr "S'identifier"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Pour effectuer une mise à niveau, vous pouvez soit saisir un code "
 #~ "d'activation, soit cliquer sur \"S'inscrire\" pour effectuer une mise à "

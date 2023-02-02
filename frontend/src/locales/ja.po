@@ -329,10 +329,13 @@ msgid "Artist"
 msgstr "アーティスト"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"これにより、より多くの機能を提供することができますので、ユーザーの皆様には、"
+"ぜひ私たちのミッションを支えていただきたいと思います。"
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1289,9 +1292,10 @@ msgid "Invalid photo selected"
 msgstr "選択した写真が無効"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
+msgstr "ご登録いただくと、さらに特典が受けられますので、ぜひご登録ください。"
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1813,11 +1817,15 @@ msgid "Other"
 msgstr "他"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"私たちのチームは、必要なサポートの労力、サーバーやライセンスのコスト、一般的"
+"に誰もが必要とする機能か、組織や上級ユーザーからの要望が主なものかによって、"
+"これを継続的に決定しています。"
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1880,8 +1888,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism はアップデートされています …"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrismは100％自己資金で運営されている独立系企業です。"
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2693,10 +2702,13 @@ msgid "Visual Similarity"
 msgstr "視覚的類似性"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"自主的な寄付は、アップデート、ドキュメンテーション、サポートを提供するために"
+"フルタイムで働くチームの費用をカバーするものではありません。"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2877,8 +2889,8 @@ msgstr "ズーム イン/アウト"
 #~ msgstr "サインアップ"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "アップグレードするには、アクティベーションコードを入力するか、当社ウェブサ"
 #~ "イト上で「サインアップ」をクリックしてアップグレードしてください。"

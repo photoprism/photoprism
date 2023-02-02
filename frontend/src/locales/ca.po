@@ -326,10 +326,13 @@ msgid "Artist"
 msgstr "Artista"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Com que això ens ajuda a oferir més funcions al públic, animem a tots els "
+"usuaris a donar suport a la nostra missió."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1285,9 +1288,12 @@ msgid "Invalid photo selected"
 msgstr "S'ha seleccionat una foto no vàlida"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"És la vostra decisió si voleu registrar-vos per gaudir d'avantatges "
+"addicionals."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1814,11 +1820,16 @@ msgid "Other"
 msgstr "Altres"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"El nostre equip ho decideix de manera contínua en funció de l'esforç de "
+"suport requerit, dels costos del servidor i de la llicència, i si les "
+"funcions són generalment necessàries per tothom o principalment "
+"sol·licitades per organitzacions i usuaris avançats."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1883,8 +1894,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism s'ha actualitzat..."
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism és 100% autofinançat i independent."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2483,8 +2495,8 @@ msgid ""
 "To upgrade, you may either enter an activation code or click on \"Proceed\" "
 "to sign up on our website:"
 msgstr ""
-"Per actualitzar, podeu introduir un codi d'activació o fer clic a "
-"\"Continua\" per registrar-vos al nostre lloc web:"
+"Per actualitzar, podeu introduir un codi d'activació o fer clic a \"Continua"
+"\" per registrar-vos al nostre lloc web:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2705,10 +2717,13 @@ msgid "Visual Similarity"
 msgstr "Similitud visual"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Les donacions voluntàries no cobreixen el cost d'un equip que treballa a "
+"temps complet per oferir-vos actualitzacions, documentació i suport."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2895,8 +2910,8 @@ msgstr "Apropa o redueix"
 #~ msgstr "Registrar-se"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Per actualitzar, podeu introduir un codi d'activació o fer clic a "
 #~ "\"Registrar-se\" per actualitzar al nostre lloc web:"

@@ -327,10 +327,13 @@ msgid "Artist"
 msgstr "Artis"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Karena hal ini membantu kami menyediakan lebih banyak fitur kepada publik, "
+"kami mendorong semua pengguna untuk mendukung misi kami."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1283,9 +1286,12 @@ msgid "Invalid photo selected"
 msgstr "Foto yang dipilih tidak valid"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Adalah keputusan Anda apakah Anda ingin mendaftar untuk menikmati manfaat "
+"tambahan."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1811,11 +1817,16 @@ msgid "Other"
 msgstr "Lainnya"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Tim kami memutuskan hal ini secara berkelanjutan tergantung pada upaya "
+"dukungan yang diperlukan, biaya server dan lisensi, dan apakah fitur-fitur "
+"tersebut secara umum dibutuhkan oleh semua orang atau terutama diminta oleh "
+"organisasi dan pengguna tingkat lanjut."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1879,8 +1890,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism telah diperbarui…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "PhotoPrism 100% didanai sendiri dan independen."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2476,8 +2488,8 @@ msgid ""
 "To upgrade, you may either enter an activation code or click on \"Proceed\" "
 "to sign up on our website:"
 msgstr ""
-"Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik "
-"\"Proceed\" untuk mendaftar di situs web kami:"
+"Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik \"Proceed"
+"\" untuk mendaftar di situs web kami:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2697,10 +2709,13 @@ msgid "Visual Similarity"
 msgstr "Kelompokkan menurut kesamaan"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Donasi sukarela tidak mencakup biaya tim yang bekerja penuh waktu untuk "
+"menyediakan pembaruan, dokumentasi, dan dukungan kepada Anda."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2884,8 +2899,8 @@ msgstr "Memperbesar/memperkecil"
 #~ msgstr "Daftar"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik \"Sign "
 #~ "Up\" untuk meng-upgrade di situs web kami:"

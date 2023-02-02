@@ -326,10 +326,13 @@ msgid "Artist"
 msgstr "Művész"
 
 #: src/page/connect.vue:122
+#, fuzzy
 msgid ""
 "As this helps us provide more features to the public, we encourage all users "
 "to support our mission."
 msgstr ""
+"Mivel ez segít abban, hogy több funkciót tudjunk biztosítani a nyilvánosság "
+"számára, minden felhasználót arra bátorítunk, hogy támogassa küldetésünket."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
@@ -1287,9 +1290,12 @@ msgid "Invalid photo selected"
 msgstr "Érvénytelen fénykép kiválasztva"
 
 #: src/page/connect.vue:115
+#, fuzzy
 msgid ""
 "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
+"Az Ön döntése, hogy szeretne-e regisztrálni, hogy további előnyöket "
+"élvezhessen."
 
 #: src/page/about/about.vue:16
 msgid ""
@@ -1815,11 +1821,16 @@ msgid "Other"
 msgstr "Egyéb"
 
 #: src/page/connect.vue:121
+#, fuzzy
 msgid ""
 "Our team decides this on an ongoing basis depending on the support effort "
 "required, server and licensing costs, and whether the features are generally "
 "needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
+"Csapatunk ezt folyamatosan dönti el, attól függően, hogy mekkora támogatási "
+"erőfeszítésre van szükség, milyen szerver- és licencköltségek merülnek fel, "
+"és hogy a funkciókat általában mindenki igényli-e, vagy elsősorban "
+"szervezetek és haladó felhasználók igénylik."
 
 #: src/page/about/about.vue:45
 msgid ""
@@ -1883,8 +1894,9 @@ msgid "PhotoPrism has been updated…"
 msgstr "A PhotoPrism frissítve lett…"
 
 #: src/page/connect.vue:113
+#, fuzzy
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr ""
+msgstr "A PhotoPrism 100%-ban önfinanszírozó és független."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -2703,10 +2715,14 @@ msgid "Visual Similarity"
 msgstr "Csoportosítás hasonlóság szerint"
 
 #: src/page/connect.vue:114
+#, fuzzy
 msgid ""
 "Voluntary donations do not cover the cost of a team working full time to "
 "provide you with updates, documentation, and support."
 msgstr ""
+"Az önkéntes adományok nem fedezik egy teljes munkaidőben dolgozó csapat "
+"költségeit, amely frissítésekkel, dokumentációval és támogatással látja el "
+"Önt."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2889,8 +2905,8 @@ msgstr "Nagyítás/kicsinyítés"
 #~ msgstr "Regisztrálj"
 
 #~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
+#~ "To upgrade, you may either enter an activation code or click on \"Sign Up"
+#~ "\" to upgrade on our website:"
 #~ msgstr ""
 #~ "A frissítéshez vagy megadhat egy aktiváló kódot, vagy a weboldalunkon a "
 #~ "\"Regisztráció\" gombra kattintva frissíthet:"
