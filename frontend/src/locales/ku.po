@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-17 16:36+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ku/>\n"
+"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "کرتەیەک کۆپی دەکاتە کلیپ بۆردەکەت"
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "دەربارە"
@@ -92,7 +91,7 @@ msgstr "کردارەکان"
 msgid "Activate"
 msgstr "Çalak bike"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 #, fuzzy
 msgid "Activation Code"
 msgstr "Koda Çalakkirinê"
@@ -173,8 +172,8 @@ msgid "Album Name"
 msgstr "ناوی ئەلبوم"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "ئەلبومەکان"
@@ -253,7 +252,7 @@ msgstr "بەرزی (m)"
 msgid "An error occurred - are you offline?"
 msgstr "هەڵەیەک ڕوویدا - ئایا ئۆفلاینیت؟"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -282,7 +281,7 @@ msgstr "به‌کاربردن"
 msgid "Approve"
 msgstr "په‌سه‌ندکردن"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -325,6 +324,10 @@ msgstr "Piştrastin?"
 msgid "Artist"
 msgstr "هونەرمەند"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "ڕێژەی ڕوو"
@@ -340,9 +343,7 @@ msgstr "Bixweber albûmên demên taybetî, rêwîtî û deveran diafirîne."
 #: src/page/connect.vue:68
 #, fuzzy
 msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Îro bibin sponsor, piştgirî bidin mîsyona me û ji feydeyên endamtiya me sûd "
-"werbigirin!"
+msgstr "Îro bibin sponsor, piştgirî bidin mîsyona me û ji feydeyên endamtiya me sûd werbigirin!"
 
 #: src/page/about/about.vue:59
 #, fuzzy
@@ -350,7 +351,6 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Berî ku hûn daxwaznameyek piştgiriyê bişînin, ji kerema xwe Lîsteyên Kontrolkirina Pirsgirêkan bikar bînin da ku sedema pirsgirêka xwe diyar bikin."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 #, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Ji ber ku 100% xwe-fînansedar û serbixwe ne, em dikarin soz bidin we ku em ê ti carî daneyên we nefroşin û ku em ê her gav di derheqê nermalava û karûbarên xwe de zelal bin."
@@ -409,7 +409,7 @@ msgstr "سەرقاڵە، تکایە چاوەڕێکە…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Bi karanîna nermalava û karûbarên ku em pêşkêş dikin, hûn şertên karûbarê me, polîtîkaya nepenîtiyê, û koda tevgerê qebûl dikin."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "ڕۆژمێر"
@@ -871,7 +871,7 @@ msgstr "چالاککردنی تایبەتمەندیە نوێکان کە لە ئ�
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Pêşdibistanên veguheztina RAW çalak dike. Dibe ku performans kêm bike."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
 msgstr "هەڵەکان"
 
@@ -952,7 +952,7 @@ msgstr "خێرا"
 msgid "Favorite"
 msgstr "دڵخواز"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "دڵخوازەکان"
@@ -966,7 +966,7 @@ msgstr "داواکردنی تایبەتمەندی"
 msgid "Feed"
 msgstr "ڕەخنە و پێشنیار"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "ڕەخنە و پێشنیار"
 
@@ -1004,7 +1004,7 @@ msgstr "پەڕگە"
 msgid "Filename"
 msgstr "پەڕگە"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "پەڕگەکان"
@@ -1032,7 +1032,7 @@ msgstr "بوخچە %{n} پەڕگەی تێدایە"
 msgid "Folder is empty"
 msgstr "بوخچەکە بەتاڵە"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "بوخچەکان"
@@ -1114,7 +1114,7 @@ msgstr "یارمەتی"
 msgid "Help & Support"
 msgstr "پاڵپشتی کڕیار"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 msgid "Hidden"
 msgstr "شاراوە"
 
@@ -1204,7 +1204,7 @@ msgstr "Wekî din, sponsor piştgirîya teknîkî ya rasterast bi e-nameyê dist
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Ger wêneyên ku hûn li bendê ne wenda nebin, ji kerema xwe pirtûkxaneya xwe ji nû ve şeh bikin û li bendê bimînin heya ku indexing qediya."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "نیشاندەر"
@@ -1265,6 +1265,10 @@ msgstr "بەروارێکی نادروست"
 msgid "Invalid photo selected"
 msgstr "Wêneyê nederbasdar hat hilbijartin"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 #, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
@@ -1299,7 +1303,7 @@ msgstr "Bingeha Zanînê"
 msgid "Label"
 msgstr "پێناس"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1336,12 +1340,12 @@ msgstr "ئەرخەوان"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 #, fuzzy
 msgid "Learn more"
 msgstr "Bêtir hîn bibin"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 #, fuzzy
 msgid "Legal Information"
 msgstr "Agahiyên Hiqûqî"
@@ -1351,13 +1355,13 @@ msgid "Lens"
 msgstr "لێنز"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "کتێبخانە"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1394,7 +1398,7 @@ msgstr "خشتە"
 msgid "Live"
 msgstr "زیندوو"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 #, fuzzy
 msgid "Live Photos"
 msgstr "وێنەکان"
@@ -1417,17 +1421,17 @@ msgstr "ناونیشان"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "لۆگ مەسجەکان لێرە دەردەکەون هەرکاتێک فۆتۆپریزم لەگەڵ فایلی شێواو بەرکەوتنی هەبوو ، یان کێشەی شاراوەی تر بوونی هەبوو."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "چوونە ژوورەوە"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "چوونە دەرەوە"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "تۆماری لۆگەکان"
@@ -1506,12 +1510,12 @@ msgstr "بچووک کردنەوە"
 msgid "Missing"
 msgstr "بزر"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "ساتەکان"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 #, fuzzy
 msgid "Monochrome"
 msgstr "Monochrome"
@@ -1697,7 +1701,7 @@ msgstr "تێبینیەکان"
 msgid "Nothing to see here yet."
 msgstr "هێشتا هیچ شتێک نییە بۆ بینین لێرە. ئارام بگرە."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "ده‌رهێڵ"
 
@@ -1783,7 +1787,7 @@ msgstr "ناوی پەڕگە ڕەسەنەکان هەڵگیراون و نیشان�
 msgid "Original Name"
 msgstr "ناوی ڕەسەن"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 msgid "Originals"
@@ -1793,10 +1797,9 @@ msgstr "ڕەسەنەکان"
 msgid "Other"
 msgstr "هی تر"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Tîma me vê yekê li ser bingehek domdar dinirxîne, li gorî hewildana piştevaniyê ya ku taybetmendî hewce dike, lêçûna ji me re, û gelo ew bi gelemperî ji her kesî re hewce ne an bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin. Ji ber ku ev dihêle ku em bêtir taybetmendiyan ji gel re peyda bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -1811,7 +1814,7 @@ msgstr "دەرەوە"
 msgid "Panorama"
 msgstr "پانۆراما"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 msgid "Panoramas"
 msgstr "پانۆراماکان"
 
@@ -1825,8 +1828,8 @@ msgstr "تێپەڕەوشە"
 msgid "Password changed"
 msgstr "تێپەڕەوشە گۆڕدرا"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1857,10 +1860,9 @@ msgstr "وێنە"
 msgid "PhotoPrism has been updated…"
 msgstr "فۆتۆپریزم نوێکرایەوە"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism 100% bixwe-fînanse ye. Bexşên dilxwazî mesrefa tîmek ku bi tevahî wextê dixebitin nagire da ku nûvekirin, belgekirin û piştgirî peyda bike. Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd werbigirin."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -1884,8 +1886,8 @@ msgid "Place & Time"
 msgstr "شوێن و کات"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1940,7 +1942,7 @@ msgstr "پێشبینین"
 msgid "Primary"
 msgstr "سەرەکی"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
@@ -2095,7 +2097,7 @@ msgstr "Sînora ji nû ve biceribîne"
 msgid "Retype Password"
 msgstr "نوسینەوەی وشه‌ی تێپه‌ڕبوون"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 msgid "Review"
 msgstr "پێشبینین"
 
@@ -2113,12 +2115,12 @@ msgstr "پاشەکەوت"
 msgid "Scan"
 msgstr "پشکنین"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 msgid "Scans"
 msgstr "پشکنینەکان"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2183,10 +2185,10 @@ msgid "Services"
 msgstr "بەستەری خزمەتگوزاری"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "ڕێکخستنەکان"
 
@@ -2216,11 +2218,6 @@ msgstr "هاوبەشیپێکردنی %{name}"
 #, fuzzy
 msgid "Share your pictures with other apps and services."
 msgstr "Wêneyên xwe bi serîlêdan û karûbarên din re parve bikin."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "Ma ne divê nermalava belaş bê mesref be?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2301,7 +2298,7 @@ msgstr "وێنەی کەڵەککراوەکان لەهەمان کات و شوێن 
 msgid "Stackable"
 msgstr "کەڵەکەکراو"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 msgid "Stacks"
 msgstr "کەڵەکەکان"
 
@@ -2317,7 +2314,7 @@ msgstr "ده‌ستپێك"
 msgid "Start/Stop Slideshow"
 msgstr "دەستپێکردن/وەستانی سلایدشۆ"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 msgid "States"
 msgstr "ولایەتەکان"
@@ -2389,11 +2386,6 @@ msgstr "فۆرماتەکەیان لەوانەیە پشتگیری کراو نەب
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "ڕووکار"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra belaş\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" peyva fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan bide ku ew ne wateya ku nermalava belaş e."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2513,7 +2505,7 @@ msgstr "نەزانراو"
 msgid "Unregistered"
 msgstr "Neqeydkirî"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 msgid "Unsorted"
 msgstr "پۆلێن نەکراوە"
 
@@ -2551,8 +2543,8 @@ msgstr "Rojanekirina pêşdîtinan"
 msgid "Updating stacks"
 msgstr "نوێکردنەوەی کەڵەکەکان"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "Upgrade"
@@ -2620,7 +2612,7 @@ msgstr "بەکارهێنانی پێش ڕێکخستنەکان"
 msgid "User"
 msgstr "بەکارهێنەر"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 #, fuzzy
 msgid "User Guide"
 msgstr "Rehbera bikaranînê"
@@ -2657,8 +2649,8 @@ msgstr "ڤیدیۆ"
 msgid "Video Duration"
 msgstr "بەخشینەکان"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "ڤیدیۆکان"
@@ -2678,6 +2670,10 @@ msgstr "Serdana docs.photoprism.app/user-guide bikin da ku fêr bibin ka meriv �
 #, fuzzy
 msgid "Visual Similarity"
 msgstr "گروپکردن بە پێی هاوشێوەیی"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 #, fuzzy
@@ -2715,7 +2711,7 @@ msgstr "WebDAV Upload"
 msgid "Website"
 msgstr "Website"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Kîjan fonksiyon bi gelemperî heye?"
@@ -2724,7 +2720,7 @@ msgstr "Kîjan fonksiyon bi gelemperî heye?"
 msgid "White"
 msgstr "سپی"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Çima hin taybetmendî tenê ji sponsoran re peyda dibin?"
@@ -2800,6 +2796,22 @@ msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên dem�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Tîma me vê yekê li ser bingehek domdar dinirxîne, li gorî hewildana piştevaniyê ya ku taybetmendî hewce dike, lêçûna ji me re, û gelo ew bi gelemperî ji her kesî re hewce ne an bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin. Ji ber ku ev dihêle ku em bêtir taybetmendiyan ji gel re peyda bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "PhotoPrism 100% bixwe-fînanse ye. Bexşên dilxwazî mesrefa tîmek ku bi tevahî wextê dixebitin nagire da ku nûvekirin, belgekirin û piştgirî peyda bike. Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd werbigirin."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "Ma ne divê nermalava belaş bê mesref be?"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra belaş\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" peyva fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan bide ku ew ne wateya ku nermalava belaş e."
 
 #~ msgid "Moonlight"
 #~ msgstr "تیشکی مانگ"

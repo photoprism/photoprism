@@ -60,7 +60,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "'n Klik sal dit na jou knipbord kopieer."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 #, fuzzy
 msgid "About"
@@ -99,7 +99,7 @@ msgstr "Aksies"
 msgid "Activate"
 msgstr "Aktiveer"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktiverings kode"
@@ -191,8 +191,8 @@ msgid "Album Name"
 msgstr "Album naam"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Albums"
@@ -280,7 +280,7 @@ msgstr "Hoogte (m)"
 msgid "An error occurred - are you offline?"
 msgstr "'n Fout het voorgekom - is jy vanlyn?"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -312,7 +312,7 @@ msgstr "Doen aansoek"
 msgid "Approve"
 msgstr "Keur goed"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 #, fuzzy
@@ -358,6 +358,10 @@ msgstr "Is jy seker?"
 msgid "Artist"
 msgstr "Kunstenaar"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 #, fuzzy
 msgid "Aspect Ratio"
@@ -383,7 +387,6 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Voordat u 'n ondersteuningsversoek indien, gebruik asseblief ons probleemopsporingskontrolelys om die oorsaak van u probleem te bepaal."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Omdat ons 100% selfbefonds en onafhanklik is, kan ons jou belowe dat ons nooit jou data sal verkoop nie en dat ons altyd deursigtig sal wees oor ons sagteware en dienste."
 
@@ -441,7 +444,7 @@ msgstr "Besig, wag asseblief…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Deur die sagteware en dienste wat ons verskaf te gebruik, stem jy in tot ons diensbepalings, privaatheidsbeleid en gedragskode."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Kalender"
@@ -955,7 +958,7 @@ msgstr "Aktiveer nuwe kenmerke wat tans ontwikkel word."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiveer RAW-omskakelaarvoorinstellings. Kan prestasie verminder."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
 msgstr "Foute"
 
@@ -1052,7 +1055,7 @@ msgstr "Vinnig"
 msgid "Favorite"
 msgstr "Gunsteling"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 #, fuzzy
 msgid "Favorites"
@@ -1068,7 +1071,7 @@ msgstr "Kenmerkversoek"
 msgid "Feed"
 msgstr "Voer"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 #, fuzzy
 msgid "Feedback"
 msgstr "Terugvoer"
@@ -1110,7 +1113,7 @@ msgstr "Lêergrootte"
 msgid "Filename"
 msgstr "Lêernaam"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 #, fuzzy
 msgid "Files"
@@ -1143,7 +1146,7 @@ msgstr "Gids bevat %{n} lêers"
 msgid "Folder is empty"
 msgstr "Voer is leeg"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 #, fuzzy
 msgid "Folders"
@@ -1234,7 +1237,7 @@ msgstr "Help"
 msgid "Help & Support"
 msgstr "Hulp en ondersteuning"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 #, fuzzy
 msgid "Hidden"
 msgstr "Versteek"
@@ -1340,7 +1343,7 @@ msgstr "Boonop ontvang borge direkte tegniese ondersteuning per e-pos."
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Indien prente wat jy verwag ontbreek, skandeer asseblief jou biblioteek en wag totdat indeksering voltooi is."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 #, fuzzy
 msgid "Index"
@@ -1408,6 +1411,10 @@ msgstr "Ongeldige parameters"
 msgid "Invalid photo selected"
 msgstr "Ongeldige foto gekies"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 #, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
@@ -1448,7 +1455,7 @@ msgstr "Kennis basis"
 msgid "Label"
 msgstr "Etiket"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1488,12 +1495,12 @@ msgstr "Laventel"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 #, fuzzy
 msgid "Learn more"
 msgstr "Leer meer"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 #, fuzzy
 msgid "Legal Information"
 msgstr "Regsinligting"
@@ -1504,14 +1511,14 @@ msgid "Lens"
 msgstr "Lens"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 #, fuzzy
 msgid "Library"
 msgstr "Biblioteek"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 #, fuzzy
@@ -1555,7 +1562,7 @@ msgstr "Lys"
 msgid "Live"
 msgstr "Leef"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 #, fuzzy
 msgid "Live Photos"
 msgstr "Regstreekse Foto's"
@@ -1582,19 +1589,19 @@ msgstr "Ligging"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Logboodskappe verskyn hier wanneer PhotoPrism gebreekte lêers teëkom of daar ander potensiële probleme is."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 #, fuzzy
 msgid "Login"
 msgstr "Teken aan"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 #, fuzzy
 msgid "Logout"
 msgstr "Teken uit"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 #, fuzzy
 msgid "Logs"
@@ -1685,13 +1692,13 @@ msgstr "Minimaliseer"
 msgid "Missing"
 msgstr "Vermis"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 #, fuzzy
 msgid "Moments"
 msgstr "Oomblikke"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 #, fuzzy
 msgid "Monochrome"
 msgstr "Monochroom"
@@ -1905,7 +1912,7 @@ msgstr "Notas"
 msgid "Nothing to see here yet."
 msgstr "Nog niks om hier te sien nie."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 #, fuzzy
 msgid "Offline"
 msgstr "Vanlyn"
@@ -2003,7 +2010,7 @@ msgstr "Oorspronklike lêername sal gestoor en geïndekseer word."
 msgid "Original Name"
 msgstr "Oorspronklike naam"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 #, fuzzy
@@ -2015,10 +2022,9 @@ msgstr "Oorspronklikes"
 msgid "Other"
 msgstr "Ander"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Ons span besluit dit op 'n deurlopende basis, afhangende van die ondersteuningspoging wat benodig word, bediener- en lisensiëringskoste, en of die kenmerke oor die algemeen deur almal benodig word of hoofsaaklik deur organisasies en gevorderde gebruikers versoek word. Aangesien dit ons in staat stel om meer kenmerke aan die publiek beskikbaar te stel, moedig ons alle gebruikers aan om ons missie te ondersteun."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -2035,7 +2041,7 @@ msgstr "Buitelug"
 msgid "Panorama"
 msgstr "Panorama"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 #, fuzzy
 msgid "Panoramas"
 msgstr "Panoramas"
@@ -2050,8 +2056,8 @@ msgstr "Wagwoord"
 msgid "Password changed"
 msgstr "Wagwoord verander"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 #, fuzzy
@@ -2087,10 +2093,9 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism is opgedateer …"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism is 100% selfbefonds. Vrywillige skenkings dek nie die koste van 'n span wat voltyds werk om jou van opdaterings, dokumentasie en ondersteuning te voorsien nie. Dit is jou besluit of jy wil inteken om bykomende voordele te geniet."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -2118,8 +2123,8 @@ msgid "Place & Time"
 msgstr "Plek & Tyd"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -2184,7 +2189,7 @@ msgstr "Voorskou"
 msgid "Primary"
 msgstr "Primêr"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 #, fuzzy
@@ -2366,7 +2371,7 @@ msgstr "Herprobeer Limiet"
 msgid "Retype Password"
 msgstr "Tik wagwoord weer in"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 #, fuzzy
 msgid "Review"
 msgstr "Resensie"
@@ -2387,13 +2392,13 @@ msgstr "Stoor"
 msgid "Scan"
 msgstr "Skandeer"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 #, fuzzy
 msgid "Scans"
 msgstr "Skanderings"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2465,10 +2470,10 @@ msgid "Services"
 msgstr "Dienste"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 #, fuzzy
 msgid "Settings"
 msgstr "Instellings"
@@ -2502,11 +2507,6 @@ msgstr "Deel %{name}"
 #, fuzzy
 msgid "Share your pictures with other apps and services."
 msgstr "Deel jou foto's met ander programme en dienste."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "Behoort gratis sagteware nie kostevry te wees nie?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 #, fuzzy
@@ -2605,7 +2605,7 @@ msgstr "Stapel foto's geneem op presies dieselfde tyd en plek gebaseer op hul me
 msgid "Stackable"
 msgstr "Stapelbaar"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 #, fuzzy
 msgid "Stacks"
 msgstr "Stapels"
@@ -2625,7 +2625,7 @@ msgstr "Begin"
 msgid "Start/Stop Slideshow"
 msgstr "Begin/Stop Skyfievertoning"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 #, fuzzy
 msgid "States"
@@ -2711,11 +2711,6 @@ msgstr "Hulle formaat word dalk nie ondersteun nie, hulle is nog nie na JPEG omg
 #, fuzzy
 msgid "Theme"
 msgstr "Tema"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "Dink aan \"vrye sagteware\" soos in \"vrye spraak,\" nie soos in \"gratis bier nie.\" Die Free Software Foundation noem dit soms \"libre sagteware,\" leen die Franse of Spaanse woord vir \"gratis\" soos in vryheid, om te wys hulle beteken nie dat die sagteware gratis is nie."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2850,7 +2845,7 @@ msgstr "Onbekend"
 msgid "Unregistered"
 msgstr "Ongeregistreer"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 #, fuzzy
 msgid "Unsorted"
 msgstr "Ongesorteer"
@@ -2896,8 +2891,8 @@ msgstr "Opdatering van voorskoue"
 msgid "Updating stacks"
 msgstr "Dateer stapels op"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "Gradeer op"
@@ -2976,7 +2971,7 @@ msgstr "Gebruik voorafinstellings"
 msgid "User"
 msgstr "Gebruiker"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 #, fuzzy
 msgid "User Guide"
 msgstr "Handleiding"
@@ -3016,8 +3011,8 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Video Duur"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 #, fuzzy
 msgid "Videos"
@@ -3039,6 +3034,10 @@ msgstr "Besoek docs.photoprism.app/user-guide om te leer hoe om jou prente te si
 #, fuzzy
 msgid "Visual Similarity"
 msgstr "Visuele ooreenkoms"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 #, fuzzy
@@ -3080,7 +3079,7 @@ msgstr "WebDAV oplaai"
 msgid "Website"
 msgstr "Webwerf"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Watter funksionaliteit is algemeen beskikbaar?"
@@ -3090,7 +3089,7 @@ msgstr "Watter funksionaliteit is algemeen beskikbaar?"
 msgid "White"
 msgstr "Wit"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Waarom is sommige kenmerke slegs vir borge beskikbaar?"
@@ -3175,3 +3174,19 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Ons span besluit dit op 'n deurlopende basis, afhangende van die ondersteuningspoging wat benodig word, bediener- en lisensiëringskoste, en of die kenmerke oor die algemeen deur almal benodig word of hoofsaaklik deur organisasies en gevorderde gebruikers versoek word. Aangesien dit ons in staat stel om meer kenmerke aan die publiek beskikbaar te stel, moedig ons alle gebruikers aan om ons missie te ondersteun."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "PhotoPrism is 100% selfbefonds. Vrywillige skenkings dek nie die koste van 'n span wat voltyds werk om jou van opdaterings, dokumentasie en ondersteuning te voorsien nie. Dit is jou besluit of jy wil inteken om bykomende voordele te geniet."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "Behoort gratis sagteware nie kostevry te wees nie?"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Dink aan \"vrye sagteware\" soos in \"vrye spraak,\" nie soos in \"gratis bier nie.\" Die Free Software Foundation noem dit soms \"libre sagteware,\" leen die Franse of Spaanse woord vir \"gratis\" soos in vryheid, om te wys hulle beteken nie dat die sagteware gratis is nie."

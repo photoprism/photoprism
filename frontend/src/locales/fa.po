@@ -57,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "یک کلیک آن را در کلیپ بورد شما کپی می کند."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "درباره"
@@ -90,7 +90,7 @@ msgstr "اقدامات"
 msgid "Activate"
 msgstr "فعال کنید"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 #, fuzzy
 msgid "Activation Code"
 msgstr "کد فعال سازی"
@@ -171,8 +171,8 @@ msgid "Album Name"
 msgstr "نام آلبوم"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "آلبوم ها"
@@ -250,7 +250,7 @@ msgstr "ارتفاع (M)"
 msgid "An error occurred - are you offline?"
 msgstr "خطایی رخ داده است - آیا شما آفلاین هستید؟"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -278,7 +278,7 @@ msgstr "درخواست"
 msgid "Approve"
 msgstr "تأیید"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -320,6 +320,10 @@ msgstr "مطمئن هستی؟"
 msgid "Artist"
 msgstr "هنرمند"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "نسبت ابعاد"
@@ -335,15 +339,13 @@ msgstr "به طور خودکار آلبوم هایی از لحظات، سفره�
 #: src/page/connect.vue:68
 #, fuzzy
 msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-msgstr ""
-"امروز یک حامی شوید، از ماموریت ما حمایت کنید و از مزایای عضویت ما لذت ببرید!"
+msgstr "امروز یک حامی شوید، از ماموریت ما حمایت کنید و از مزایای عضویت ما لذت ببرید!"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "قبل از ارسال درخواست پشتیبانی، لطفاً از چک لیست های عیب یابی ما برای تعیین علت مشکل خود استفاده کنید."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "ما با تامین مالی مستقل و 100% خود، می توانیم به شما قول بدهیم که هرگز داده های شما را نمی فروشیم و همیشه در مورد نرم افزار و خدمات خود شفاف خواهیم بود."
 
@@ -399,7 +401,7 @@ msgstr "مشغول است ، لطفا صبر کنید…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "با استفاده از نرم‌افزار و خدماتی که ما ارائه می‌کنیم، با شرایط خدمات، خط‌مشی رازداری و آیین‌نامه رفتار ما موافقت می‌کنید."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "تقویم"
@@ -858,7 +860,7 @@ msgstr "فعال کردن ویژگی های جدید در حال توسعه."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "فعال کردن RAW converter presets  . ممکن است عملکرد را کاهش دهد."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
 msgstr "خطا ها"
 
@@ -943,7 +945,7 @@ msgstr "سریع"
 msgid "Favorite"
 msgstr "موردعلاقه"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "موارد دلخواه"
@@ -957,7 +959,7 @@ msgstr "درخواست ویژگی"
 msgid "Feed"
 msgstr "بازخورد"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "بازخورد"
 
@@ -994,7 +996,7 @@ msgstr "فایل"
 msgid "Filename"
 msgstr "نام فایل"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "فایل ها"
@@ -1021,7 +1023,7 @@ msgstr "پوشه حاوی %{n} فایل است"
 msgid "Folder is empty"
 msgstr "پوشه خالی است"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "پوشه ها"
@@ -1099,7 +1101,7 @@ msgstr "راهنما"
 msgid "Help & Support"
 msgstr "راهنما و پشتیبانی"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 msgid "Hidden"
 msgstr "مخفی"
 
@@ -1185,7 +1187,7 @@ msgstr "علاوه بر این، حامیان مالی، پشتیبانی فنی
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "در صورتی که تصاویری که انتظار دارید گم شدند، لطفاً کتابخانه خود را مجدداً اسکن کنید و منتظر بمانید تا نمایه سازی کامل شود."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "نمایه"
@@ -1244,6 +1246,10 @@ msgstr "پارامترهای نامعتبر"
 msgid "Invalid photo selected"
 msgstr "عکس نامعتبر انتخاب شد"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr "از جدیدترین فناوری‌ها برای برچسب‌گذاری و یافتن خودکار عکس‌ها بدون ایجاد مانع استفاده می‌کند."
@@ -1276,7 +1282,7 @@ msgstr "دانش محور"
 msgid "Label"
 msgstr "برچسب"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1312,11 +1318,11 @@ msgstr "اسطوخودوس"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 msgid "Learn more"
 msgstr "بیشتر بدانید"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 msgid "Legal Information"
 msgstr "اطلاعات حقوقی"
 
@@ -1325,13 +1331,13 @@ msgid "Lens"
 msgstr "لنز"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "کتابخانه"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1369,7 +1375,7 @@ msgstr "لیست"
 msgid "Live"
 msgstr "زنده"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 #, fuzzy
 msgid "Live Photos"
 msgstr "تصاویر"
@@ -1392,17 +1398,17 @@ msgstr "محل"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "هر زمان که PhotoPrism با فایل های شکسته مواجه می شود یا مشکلات احتمالی دیگری وجود دارد، پیام های گزارش در اینجا ظاهر می شوند."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "وارد شدن"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "خارج شدن"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "گزارش ها"
@@ -1480,12 +1486,12 @@ msgstr "کوچک کردن"
 msgid "Missing"
 msgstr "گم شده"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "لحظه ها"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 msgid "Monochrome"
 msgstr "تک رنگ"
 
@@ -1668,7 +1674,7 @@ msgstr "یادداشت"
 msgid "Nothing to see here yet."
 msgstr "هنوز چیزی برای دیدن اینجا وجود ندارد."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "آفلاین"
 
@@ -1750,7 +1756,7 @@ msgstr "نام فایل های اصلی ذخیره و نمایه می شود."
 msgid "Original Name"
 msgstr "اسم اصلی"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 msgid "Originals"
@@ -1760,10 +1766,9 @@ msgstr "اصلی ها"
 msgid "Other"
 msgstr "دیگر"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "تیم ما این را به صورت مستمر ارزیابی می‌کند، بسته به تلاش پشتیبانی که ویژگی‌ها نیاز دارند، هزینه‌ای که برای ما دارد، و اینکه آیا آنها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته درخواست می‌شوند. از آنجایی که این امکان را به ما می دهد تا ویژگی های بیشتری را در اختیار عموم قرار دهیم، همه کاربران را تشویق می کنیم که از ماموریت ما حمایت کنند."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1777,7 +1782,7 @@ msgstr "بیرون"
 msgid "Panorama"
 msgstr "پانوراما"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 msgid "Panoramas"
 msgstr "پانوراما"
 
@@ -1790,8 +1795,8 @@ msgstr "رمزعبور"
 msgid "Password changed"
 msgstr "رمز عبور تغییر کرد"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1822,10 +1827,9 @@ msgstr "تصویر"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism به روز شد…"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism 100% تامین مالی شده است. کمک های داوطلبانه هزینه های یک تیم کار تمام وقت برای ارائه به روز رسانی ها، اسناد و پشتیبانی شما را پوشش نمی دهد. این شما هستید که می خواهید برای بهره مندی از مزایای اضافی ثبت نام کنید یا خیر."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1848,8 +1852,8 @@ msgid "Place & Time"
 msgstr "مکان و زمان"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1903,7 +1907,7 @@ msgstr "پیش نمایش"
 msgid "Primary"
 msgstr "اولیه"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
@@ -2055,7 +2059,7 @@ msgstr "محدودیت تلاش"
 msgid "Retype Password"
 msgstr "رمز عبور را دوباره تایپ کنید"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 msgid "Review"
 msgstr "بازبینی"
 
@@ -2073,12 +2077,12 @@ msgstr "ذخیره"
 msgid "Scan"
 msgstr "اسکن"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 msgid "Scans"
 msgstr "اسکن ها"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2141,10 +2145,10 @@ msgid "Services"
 msgstr "URL سرویس"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "تنظیمات"
 
@@ -2173,11 +2177,6 @@ msgstr "اشتراک گذاری %{name}"
 #, fuzzy
 msgid "Share your pictures with other apps and services."
 msgstr "تصاویر خود را با سایر برنامه ها و سرویس ها به اشتراک بگذارید."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "آیا نرم افزار رایگان نباید بدون هزینه باشد؟"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2258,7 +2257,7 @@ msgstr "عکس‌هایی را که دقیقاً در همان زمان و مک�
 msgid "Stackable"
 msgstr "قابل انباشته شدن"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 msgid "Stacks"
 msgstr "پشته ها"
 
@@ -2274,7 +2273,7 @@ msgstr "شروع"
 msgid "Start/Stop Slideshow"
 msgstr "شروع/پایان اسلایدشو"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 msgid "States"
 msgstr "ایالت ها"
@@ -2344,11 +2343,6 @@ msgstr "ممکن است فرمت آنها پشتیبانی نشود، هنوز �
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "قالب"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "به \"نرم افزار آزاد\" مانند \"آزادی بیان\" فکر کنید، نه مانند \"آبجو رایگان\". بنیاد نرم‌افزار آزاد گاهی اوقات آن را «نرم‌افزار آزاد» می‌نامد، و کلمه فرانسوی یا اسپانیایی را به معنای «رایگان» وام می‌گیرد تا نشان دهد که این نرم‌افزار رایگان است."
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2465,7 +2459,7 @@ msgstr "ناشناس"
 msgid "Unregistered"
 msgstr "ثبت نشده"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 msgid "Unsorted"
 msgstr "مرتب نشده است"
 
@@ -2503,8 +2497,8 @@ msgstr "به روزرسانی پیش نمایش ها"
 msgid "Updating stacks"
 msgstr "به روزرسانی پشته ها"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "ارتقا دهید"
@@ -2573,7 +2567,7 @@ msgstr "از Presets استفاده کنید"
 msgid "User"
 msgstr "کاربر"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "راهنمای کاربر"
 
@@ -2608,8 +2602,8 @@ msgstr "ویدیو"
 msgid "Video Duration"
 msgstr "مدت"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "ویدیو ها"
@@ -2628,6 +2622,10 @@ msgstr "از docs.photoprism.app/user-guide دیدن کنید تا نحوه هم
 #, fuzzy
 msgid "Visual Similarity"
 msgstr "گروه بندی بر اساس شباهت"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2663,7 +2661,7 @@ msgstr "آپلود WebDAV"
 msgid "Website"
 msgstr "سایت اینترنتی"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "چه عملکردی به طور کلی در دسترس است؟"
@@ -2672,7 +2670,7 @@ msgstr "چه عملکردی به طور کلی در دسترس است؟"
 msgid "White"
 msgstr "سفید"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "چرا برخی از ویژگی ها فقط در اختیار حامیان مالی هستند؟"
@@ -2745,6 +2743,22 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "تیم ما این را به صورت مستمر ارزیابی می‌کند، بسته به تلاش پشتیبانی که ویژگی‌ها نیاز دارند، هزینه‌ای که برای ما دارد، و اینکه آیا آنها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته درخواست می‌شوند. از آنجایی که این امکان را به ما می دهد تا ویژگی های بیشتری را در اختیار عموم قرار دهیم، همه کاربران را تشویق می کنیم که از ماموریت ما حمایت کنند."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "PhotoPrism 100% تامین مالی شده است. کمک های داوطلبانه هزینه های یک تیم کار تمام وقت برای ارائه به روز رسانی ها، اسناد و پشتیبانی شما را پوشش نمی دهد. این شما هستید که می خواهید برای بهره مندی از مزایای اضافی ثبت نام کنید یا خیر."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "آیا نرم افزار رایگان نباید بدون هزینه باشد؟"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "به \"نرم افزار آزاد\" مانند \"آزادی بیان\" فکر کنید، نه مانند \"آبجو رایگان\". بنیاد نرم‌افزار آزاد گاهی اوقات آن را «نرم‌افزار آزاد» می‌نامد، و کلمه فرانسوی یا اسپانیایی را به معنای «رایگان» وام می‌گیرد تا نشان دهد که این نرم‌افزار رایگان است."
 
 #~ msgid "Moonlight"
 #~ msgstr "مهتابی"

@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-17 16:36+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
-"photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Et klikk vil kopiere det til utklippstavlen."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "Om"
@@ -91,7 +90,7 @@ msgstr "Handlinger"
 msgid "Activate"
 msgstr "Aktiver"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktiviseringskode"
@@ -171,8 +170,8 @@ msgid "Album Name"
 msgstr "Albumnavn"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Album"
@@ -250,7 +249,7 @@ msgstr "Høyde (m)"
 msgid "An error occurred - are you offline?"
 msgstr "En feil oppstod - er du frakoblet?"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -278,7 +277,7 @@ msgstr "Bruk"
 msgid "Approve"
 msgstr "Godkjenn"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -320,6 +319,10 @@ msgstr "Er du sikker?"
 msgid "Artist"
 msgstr "Kunstner"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Sideforhold"
@@ -342,7 +345,6 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Før du sender inn en støtteforespørsel, vennligst bruk våre feilsøkingssjekklister for å finne årsaken til problemet."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 #, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Ved å være 100 % selvfinansiert og uavhengig, kan vi love deg at vi aldri vil selge dataene dine og at vi alltid vil være transparente om programvaren og tjenestene våre."
@@ -399,7 +401,7 @@ msgstr "Opptatt, vennligst vent…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Ved å bruke programvaren og tjenestene vi tilbyr, godtar du våre vilkår for bruk, personvernerklæring og atferdskodeks."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Kalender"
@@ -858,7 +860,7 @@ msgstr "Aktiver nye funksjoner som er under utvikling."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverer forhåndsinnstillinger for RAW -omformer. Kan redusere ytelsen."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
 msgstr "Feil"
 
@@ -939,7 +941,7 @@ msgstr "Hurtig"
 msgid "Favorite"
 msgstr "Favoritt"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "Favoritter"
@@ -953,7 +955,7 @@ msgstr "Funksjonsforespørsel"
 msgid "Feed"
 msgstr "Tilbakemelding"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Tilbakemelding"
 
@@ -990,7 +992,7 @@ msgstr "Fil"
 msgid "Filename"
 msgstr "Filnavn"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Filer"
@@ -1017,7 +1019,7 @@ msgstr "Mappen inneholder %{n} filer"
 msgid "Folder is empty"
 msgstr "Mappen er tom"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "Mapper"
@@ -1093,7 +1095,7 @@ msgstr "Hjelp"
 msgid "Help & Support"
 msgstr "Hjelp og støtte"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 msgid "Hidden"
 msgstr "Skjult"
 
@@ -1179,7 +1181,7 @@ msgstr "I tillegg får sponsorer direkte teknisk støtte via e-post."
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Hvis bilder du forventer mangler, kan du skanne biblioteket på nytt og vente til indekseringen er fullført."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Indeks"
@@ -1239,6 +1241,10 @@ msgstr "Ugyldig dato"
 msgid "Invalid photo selected"
 msgstr "Ugyldig bilde er valgt"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 #, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
@@ -1273,7 +1279,7 @@ msgstr "Kunnskapsbase"
 msgid "Label"
 msgstr "Merkelapp"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1307,12 +1313,12 @@ msgstr "Lavendel"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 #, fuzzy
 msgid "Learn more"
 msgstr "Lære mer"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 #, fuzzy
 msgid "Legal Information"
 msgstr "Juridisk informasjon"
@@ -1322,13 +1328,13 @@ msgid "Lens"
 msgstr "Linse"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "Bibliotek"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1364,7 +1370,7 @@ msgstr "Liste"
 msgid "Live"
 msgstr "Direkte"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 #, fuzzy
 msgid "Live Photos"
 msgstr "Fotoer"
@@ -1387,17 +1393,17 @@ msgstr "Plassering"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Loggmeldinger vises her når PhotoPrism kommer over ødelagte filer eller det er andre potensielle problemer."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "Logg inn"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "Log ut"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "Logger"
@@ -1475,12 +1481,12 @@ msgstr "Minimer"
 msgid "Missing"
 msgstr "Mangler"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "Øyeblikk"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 msgid "Monochrome"
 msgstr "Monokrom"
 
@@ -1664,7 +1670,7 @@ msgstr "Notater"
 msgid "Nothing to see here yet."
 msgstr "Ingenting å se her ennå. Vær tålmodig."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "Frakoblet"
 
@@ -1745,7 +1751,7 @@ msgstr "Filnavn på originaler vil bli lagret og indeksert."
 msgid "Original Name"
 msgstr "Originalnavn"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 msgid "Originals"
@@ -1755,10 +1761,9 @@ msgstr "Originaler"
 msgid "Other"
 msgstr "Andre"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Teamet vårt evaluerer dette fortløpende, avhengig av støtteinnsatsen funksjonene krever, kostnadene for oss, og om de er generelt nødvendige av alle eller hovedsakelig etterspurt av organisasjoner og avanserte brukere. Siden dette lar oss tilby flere funksjoner til publikum, oppfordrer vi alle brukere til å støtte oppdraget vårt."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -1773,7 +1778,7 @@ msgstr "Utendørs"
 msgid "Panorama"
 msgstr "Panorama"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 msgid "Panoramas"
 msgstr "Panoramaer"
 
@@ -1786,8 +1791,8 @@ msgstr "Passord"
 msgid "Password changed"
 msgstr "Passord endret"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1818,10 +1823,9 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism har blitt oppdatert…"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism er 100 % selvfinansiert. Frivillige donasjoner dekker ikke kostnadene for et team som jobber heltid for å gi deg oppdateringer, dokumentasjon og støtte. Det er din avgjørelse om du vil registrere deg for å få ekstra fordeler."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -1845,8 +1849,8 @@ msgid "Place & Time"
 msgstr "Sted og tid"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1900,7 +1904,7 @@ msgstr "Forhåndsvisning"
 msgid "Primary"
 msgstr "Primær"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
@@ -2052,7 +2056,7 @@ msgstr "Prøv på nytt"
 msgid "Retype Password"
 msgstr "Gjenta Passord"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 msgid "Review"
 msgstr "Gjennomgang"
 
@@ -2070,12 +2074,12 @@ msgstr "Lagre"
 msgid "Scan"
 msgstr "Skann"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 msgid "Scans"
 msgstr "Skanninger"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2138,10 +2142,10 @@ msgid "Services"
 msgstr "Tjeneste-URL"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "Innstillinger"
 
@@ -2170,11 +2174,6 @@ msgstr "Del %{name}"
 #, fuzzy
 msgid "Share your pictures with other apps and services."
 msgstr "Del bildene dine med andre apper og tjenester."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "Burde ikke gratis programvare være fri for kostnader?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2255,7 +2254,7 @@ msgstr "Stable bilder som er tatt på samme tid og plassa basert på deres metad
 msgid "Stackable"
 msgstr "Kan stables"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 msgid "Stacks"
 msgstr "Stabler"
 
@@ -2271,7 +2270,7 @@ msgstr "Start"
 msgid "Start/Stop Slideshow"
 msgstr "Start/Stopp Lysbildefremvisning"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 msgid "States"
 msgstr "Tilstander"
@@ -2342,11 +2341,6 @@ msgstr "Formatet deres støttes kanskje ikke, de har ikke blitt konvertert til J
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Tema"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "Tenk på «fri programvare» som i «ytringsfrihet», ikke som i «gratis øl». Free Software Foundation kaller det noen ganger \"libre programvare\", og låner det franske eller spanske ordet for \"gratis\" som i frihet, for å vise at de ikke betyr at programvaren er gratis."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2463,7 +2457,7 @@ msgstr "Ukjent"
 msgid "Unregistered"
 msgstr "Uregistrert"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 msgid "Unsorted"
 msgstr "Usortert"
 
@@ -2501,8 +2495,8 @@ msgstr "Oppdaterer forhåndsvisninger"
 msgid "Updating stacks"
 msgstr "Oppdaterer stabler"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "Oppgradering"
@@ -2570,7 +2564,7 @@ msgstr "Bruk Forhåndsinnstillinger"
 msgid "User"
 msgstr "Bruker"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 #, fuzzy
 msgid "User Guide"
 msgstr "Brukerhåndboken"
@@ -2606,8 +2600,8 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Varighet"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "Videoer"
@@ -2627,6 +2621,10 @@ msgstr "Besøk docs.photoprism.app/user-guide for å lære hvordan du synkronise
 #, fuzzy
 msgid "Visual Similarity"
 msgstr "Gruppér etter likhet"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 #, fuzzy
@@ -2663,7 +2661,7 @@ msgstr "WebDAV-opplasting"
 msgid "Website"
 msgstr "Nettsted"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Hvilken funksjonalitet er generelt tilgjengelig?"
@@ -2672,7 +2670,7 @@ msgstr "Hvilken funksjonalitet er generelt tilgjengelig?"
 msgid "White"
 msgstr "Hvit"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Hvorfor er enkelte funksjoner kun tilgjengelige for sponsorer?"
@@ -2746,6 +2744,22 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Teamet vårt evaluerer dette fortløpende, avhengig av støtteinnsatsen funksjonene krever, kostnadene for oss, og om de er generelt nødvendige av alle eller hovedsakelig etterspurt av organisasjoner og avanserte brukere. Siden dette lar oss tilby flere funksjoner til publikum, oppfordrer vi alle brukere til å støtte oppdraget vårt."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "PhotoPrism er 100 % selvfinansiert. Frivillige donasjoner dekker ikke kostnadene for et team som jobber heltid for å gi deg oppdateringer, dokumentasjon og støtte. Det er din avgjørelse om du vil registrere deg for å få ekstra fordeler."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "Burde ikke gratis programvare være fri for kostnader?"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Tenk på «fri programvare» som i «ytringsfrihet», ikke som i «gratis øl». Free Software Foundation kaller det noen ganger \"libre programvare\", og låner det franske eller spanske ordet for \"gratis\" som i frihet, for å vise at de ikke betyr at programvaren er gratis."
 
 #~ msgid "Moonlight"
 #~ msgstr "Måneskinn"

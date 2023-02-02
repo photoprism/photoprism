@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-17 16:36+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
-"frontend/sk/>\n"
+"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Kliknutím skopírujete obsah."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "O nás"
@@ -91,7 +90,7 @@ msgstr "Akcie"
 msgid "Activate"
 msgstr "Aktivácia stránky"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktivačný kód"
@@ -171,8 +170,8 @@ msgid "Album Name"
 msgstr "Meno Albumu"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Albumy"
@@ -250,7 +249,7 @@ msgstr "Nadmorská výška (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Nastala chyba - ste offline?"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -278,7 +277,7 @@ msgstr "Použiť"
 msgid "Approve"
 msgstr "Schváliť"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -320,6 +319,10 @@ msgstr "Ste si istý?"
 msgid "Artist"
 msgstr "Umelec"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Pomer Strán"
@@ -335,16 +338,13 @@ msgstr "Automaticky vytvára albumy špeciálnych momentov, výletov a miest."
 #: src/page/connect.vue:68
 #, fuzzy
 msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Staňte sa sponzorom ešte dnes, podporte naše poslanie a využívajte naše "
-"členské výhody!"
+msgstr "Staňte sa sponzorom ešte dnes, podporte naše poslanie a využívajte naše členské výhody!"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Pred odoslaním žiadosti o podporu použite naše kontrolné zoznamy na riešenie problémov, aby ste zistili príčinu svojho problému."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Keďže sme financovaní 100% selfmi a sme nezávislí, môžeme vám sľúbiť, že vaše údaje nikdy nepredáme a že náš softvér a služby budú vždy transparentné."
 
@@ -398,7 +398,7 @@ msgstr "Som zaneprázdnený, prosím čakajte…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Používaním softvéru a služieb, ktoré poskytujeme, súhlasíte s našimi podmienkami používania, zásadami ochrany osobných údajov a kódexom správania."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Kalendár"
@@ -847,7 +847,7 @@ msgstr "Povoliť nové funkcie, ktoré sú momentálne vo vývoji."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Povolí predvoľby konvertora RAW. Môže znížiť výkon."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
 msgstr "Chyby"
 
@@ -927,7 +927,7 @@ msgstr "Rýchle"
 msgid "Favorite"
 msgstr "Obľúbený"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "Obľúbené"
@@ -940,7 +940,7 @@ msgstr "Požiadať o funkciu"
 msgid "Feed"
 msgstr "Kanál"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Spätná väzba"
 
@@ -974,7 +974,7 @@ msgstr "Veľkosť súboru"
 msgid "Filename"
 msgstr "Názov súboru"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Súbory"
@@ -1001,7 +1001,7 @@ msgstr "Zložka obsahuje %{n} súborov"
 msgid "Folder is empty"
 msgstr "Zložka je prázdna"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "Zložky"
@@ -1075,7 +1075,7 @@ msgstr "Pomoc"
 msgid "Help & Support"
 msgstr "Pomoc a podpora"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 msgid "Hidden"
 msgstr "Skryté"
 
@@ -1161,7 +1161,7 @@ msgstr "Okrem toho sponzori dostávajú priamu technickú podporu prostredníctv
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "V prípade, že niektoré fotky chýbajú, znova preskenujte svoju knižnicu a počkajte, kým sa indexovanie neukončí."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Index"
@@ -1218,6 +1218,10 @@ msgstr "Neplatné parametre"
 msgid "Invalid photo selected"
 msgstr "Vybraná neplatná fotografia"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr "Využíva najnovšie technológie na automatické označovanie a vyhľadávanie obrázkov bez toho, aby vám prekážali."
@@ -1250,7 +1254,7 @@ msgstr "Báza znalostí"
 msgid "Label"
 msgstr "Štítok"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1284,11 +1288,11 @@ msgstr "Levanduľa"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 msgid "Learn more"
 msgstr "Viac"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 msgid "Legal Information"
 msgstr "Právne informácie"
 
@@ -1297,13 +1301,13 @@ msgid "Lens"
 msgstr "Objektív"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "Knižnica"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1339,7 +1343,7 @@ msgstr "List"
 msgid "Live"
 msgstr "Živé"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 msgid "Live Photos"
 msgstr "Živé fotografie"
 
@@ -1361,17 +1365,17 @@ msgstr "Poloha"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Správy denníka sa tu zobrazia vždy, keď program PhotoPrism narazí na poškodené súbory alebo sa vyskytnú iné potenciálne problémy."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "Prihlásiť sa"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "Odhlásiť sa"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "Záznamy"
@@ -1447,12 +1451,12 @@ msgstr "Minimalizovať"
 msgid "Missing"
 msgstr "Chýba"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "Momenty"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 msgid "Monochrome"
 msgstr "Monochromatický"
 
@@ -1632,7 +1636,7 @@ msgstr "Poznámky"
 msgid "Nothing to see here yet."
 msgstr "Zatiaľ tu nič nie je. Buďte trpezlivý."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "Offline"
 
@@ -1711,7 +1715,7 @@ msgstr "Pôvodné názvy súborov budú uložené a zaindexované."
 msgid "Original Name"
 msgstr "Pôvodný názov"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 msgid "Originals"
@@ -1721,10 +1725,9 @@ msgstr "Pôvodné"
 msgid "Other"
 msgstr "Ostatné"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Náš tím to priebežne vyhodnocuje v závislosti od náročnosti podpory, ktorú si funkcie vyžadujú, od nákladov, ktoré pre nás predstavujú, a od toho, či ich vo všeobecnosti potrebuje každý, alebo ich požadujú najmä organizácie a pokročilí používatelia. Keďže nám to umožňuje poskytovať verejnosti viac funkcií, vyzývame všetkých používateľov, aby podporili naše poslanie."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1738,7 +1741,7 @@ msgstr "Vonkajšie"
 msgid "Panorama"
 msgstr "Panoráma"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 msgid "Panoramas"
 msgstr "Panorámy"
 
@@ -1751,8 +1754,8 @@ msgstr "Heslo"
 msgid "Password changed"
 msgstr "Heslo bolo zmenené"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1782,10 +1785,9 @@ msgstr "Fotka"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism bol aktualizovaný…"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "Spoločnosť PhotoPrism je 100 % financovaná z vlastných zdrojov. Dobrovoľné dary nepokrývajú náklady na tím, ktorý pracuje na plný úväzok, aby vám poskytol aktualizácie, dokumentáciu a podporu. Je na vašom rozhodnutí, či sa chcete zaregistrovať a využívať ďalšie výhody."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1808,8 +1810,8 @@ msgid "Place & Time"
 msgstr "Miesto a čas"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1862,7 +1864,7 @@ msgstr "Ukážka"
 msgid "Primary"
 msgstr "Primárne"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
@@ -2011,7 +2013,7 @@ msgstr "Limit opakovania"
 msgid "Retype Password"
 msgstr "Heslo znovu"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 msgid "Review"
 msgstr "Kontrola"
 
@@ -2028,12 +2030,12 @@ msgstr "Uložiť"
 msgid "Scan"
 msgstr "Sken"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 msgid "Scans"
 msgstr "Skeny"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2094,10 +2096,10 @@ msgid "Services"
 msgstr "Služby"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "Nastavenia"
 
@@ -2125,11 +2127,6 @@ msgstr "Zdieľať %{name}"
 #: src/page/settings/general.vue:385
 msgid "Share your pictures with other apps and services."
 msgstr "Zdieľajte svoje obrázky s inými aplikáciami a službami."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "Nemal by byť slobodný softvér bez nákladov?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2210,7 +2207,7 @@ msgstr "Naskladané fotky nasnímané v rovnakom čase a na rovnakom mieste na z
 msgid "Stackable"
 msgstr "Naskladateľné"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 msgid "Stacks"
 msgstr "Naskladané"
 
@@ -2226,7 +2223,7 @@ msgstr "Štart"
 msgid "Start/Stop Slideshow"
 msgstr "Spustiť/Zastaviť Prezentáciu"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 msgid "States"
 msgstr "Štáty"
@@ -2296,11 +2293,6 @@ msgstr "Ich formát nemusí byť podporovaný, zatiaľ neboli prekonvertované n
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Téma"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "Myslite na \"slobodný softvér\" ako na \"slobodu prejavu\", nie ako na \"pivo zadarmo\". Nadácia pre slobodný softvér ho niekedy nazýva \"libre software\", pričom si požičiava francúzske alebo španielske slovo pre \"free\" ako sloboda, aby ukázala, že tým nemyslí, že softvér je zadarmo."
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2414,7 +2406,7 @@ msgstr "Neznámy"
 msgid "Unregistered"
 msgstr "Neregistrovaný"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 msgid "Unsorted"
 msgstr "Nezoradené"
 
@@ -2451,8 +2443,8 @@ msgstr "Aktualizujú sa náhľady"
 msgid "Updating stacks"
 msgstr "Aktualizujú sa naskladané fotky"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "Aktualizácia"
@@ -2519,7 +2511,7 @@ msgstr "Použiť predvoľbu"
 msgid "User"
 msgstr "Používateľ"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "Používateľská príručka"
 
@@ -2552,8 +2544,8 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Trvanie videa"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "Videá"
@@ -2571,6 +2563,10 @@ msgstr "Navštívte stránku docs.photoprism.app/user-guide, kde sa dozviete, ak
 #: src/dialog/album/edit.vue:27
 msgid "Visual Similarity"
 msgstr "Vizuálna podobnosť"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2603,7 +2599,7 @@ msgstr "Odovzdávanie cez WebDAV"
 msgid "Website"
 msgstr "Webová stránka"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Aké funkcie sú všeobecne dostupné?"
@@ -2612,7 +2608,7 @@ msgstr "Aké funkcie sú všeobecne dostupné?"
 msgid "White"
 msgstr "Biela"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Prečo sú niektoré funkcie dostupné len pre sponzorov?"
@@ -2683,6 +2679,22 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Náš tím to priebežne vyhodnocuje v závislosti od náročnosti podpory, ktorú si funkcie vyžadujú, od nákladov, ktoré pre nás predstavujú, a od toho, či ich vo všeobecnosti potrebuje každý, alebo ich požadujú najmä organizácie a pokročilí používatelia. Keďže nám to umožňuje poskytovať verejnosti viac funkcií, vyzývame všetkých používateľov, aby podporili naše poslanie."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "Spoločnosť PhotoPrism je 100 % financovaná z vlastných zdrojov. Dobrovoľné dary nepokrývajú náklady na tím, ktorý pracuje na plný úväzok, aby vám poskytol aktualizácie, dokumentáciu a podporu. Je na vašom rozhodnutí, či sa chcete zaregistrovať a využívať ďalšie výhody."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "Nemal by byť slobodný softvér bez nákladov?"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Myslite na \"slobodný softvér\" ako na \"slobodu prejavu\", nie ako na \"pivo zadarmo\". Nadácia pre slobodný softvér ho niekedy nazýva \"libre software\", pričom si požičiava francúzske alebo španielske slovo pre \"free\" ako sloboda, aby ukázala, že tým nemyslí, že softvér je zadarmo."
 
 #~ msgid "Moonlight"
 #~ msgstr "Mesačný svit"

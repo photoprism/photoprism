@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-17 16:36+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Едно кликване ще го копира в клипборда ви."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "За"
@@ -92,7 +91,7 @@ msgstr "Действия"
 msgid "Activate"
 msgstr "Активиране на"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 #, fuzzy
 msgid "Activation Code"
 msgstr "Код за активиране"
@@ -172,8 +171,8 @@ msgid "Album Name"
 msgstr "Име на албум"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Албуми"
@@ -251,7 +250,7 @@ msgstr "Надморска височина (м)"
 msgid "An error occurred - are you offline?"
 msgstr "Възникна грешка - офлайн ли сте?"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -279,7 +278,7 @@ msgstr "Направете заявка на"
 msgid "Approve"
 msgstr "Одобряване на"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -321,6 +320,10 @@ msgstr "Сигурен ли сте?"
 msgid "Artist"
 msgstr "Художник"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Съотношение"
@@ -336,16 +339,13 @@ msgstr "Автоматично създава албуми на специалн
 #: src/page/connect.vue:68
 #, fuzzy
 msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Станете спонсор днес, подкрепете мисията ни и се възползвайте от "
-"предимствата за членовете ни!"
+msgstr "Станете спонсор днес, подкрепете мисията ни и се възползвайте от предимствата за членовете ни!"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за отстраняване на проблеми\" за да определите причината за проблема."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Тъй като сме 100% самофинансирани и независими, можем да ви обещаем, че никога няма да продадем вашите данни и че винаги ще бъдем прозрачни по отношение на нашия софтуер и услуги."
 
@@ -404,7 +404,7 @@ msgstr "Заето, моля, изчакайте…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "С използването на софтуера и услугите, които предоставяме, вие се съгласявате с нашите условия за ползване, политика за поверителност и кодекс на поведение."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Календар"
@@ -939,7 +939,7 @@ msgstr "Разрешаване на нови функции, които са в 
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Активира предварителните настройки на конвертора RAW. Може да намали производителността."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 #, fuzzy
 msgid "Errors"
 msgstr "Грешки"
@@ -1039,7 +1039,7 @@ msgstr "Бърз"
 msgid "Favorite"
 msgstr "Любими"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 #, fuzzy
 msgid "Favorites"
@@ -1055,7 +1055,7 @@ msgstr "Заявка за функция"
 msgid "Feed"
 msgstr "Обратна връзка"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 #, fuzzy
 msgid "Feedback"
 msgstr "Обратна връзка"
@@ -1097,7 +1097,7 @@ msgstr "Файл"
 msgid "Filename"
 msgstr "Файл"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 #, fuzzy
 msgid "Files"
@@ -1130,7 +1130,7 @@ msgstr "Папката съдържа %{n} файлове"
 msgid "Folder is empty"
 msgstr "Папката е празна"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 #, fuzzy
 msgid "Folders"
@@ -1220,7 +1220,7 @@ msgstr "Помощ"
 msgid "Help & Support"
 msgstr "Получаване на подкрепа"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 #, fuzzy
 msgid "Hidden"
 msgstr "Скрит"
@@ -1325,7 +1325,7 @@ msgstr "Освен това спонсорите получават директ
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "В случай че очакваните от вас снимки липсват, моля сканирайте отново библиотеката си и изчакайте, докато индексирането приключи."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 #, fuzzy
 msgid "Index"
@@ -1393,6 +1393,10 @@ msgstr "Невалидна дата"
 msgid "Invalid photo selected"
 msgstr "Избрана е невалидна снимка"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 #, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
@@ -1433,7 +1437,7 @@ msgstr "База знания"
 msgid "Label"
 msgstr "Етикет"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1473,12 +1477,12 @@ msgstr "Лавандула"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 #, fuzzy
 msgid "Learn more"
 msgstr "Научете повече"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 #, fuzzy
 msgid "Legal Information"
 msgstr "Правна информация"
@@ -1489,14 +1493,14 @@ msgid "Lens"
 msgstr "Обектив"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 #, fuzzy
 msgid "Library"
 msgstr "Библиотека"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 #, fuzzy
@@ -1540,7 +1544,7 @@ msgstr "Списък"
 msgid "Live"
 msgstr "На живо"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 #, fuzzy
 msgid "Live Photos"
 msgstr "Снимки"
@@ -1567,19 +1571,19 @@ msgstr "Местоположение"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Съобщенията в дневника се появяват тук, когато PhotoPrism се натъкне на повредени файлове или има други потенциални проблеми."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 #, fuzzy
 msgid "Login"
 msgstr "Вход"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 #, fuzzy
 msgid "Logout"
 msgstr "Излизане от системата"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 #, fuzzy
 msgid "Logs"
@@ -1669,13 +1673,13 @@ msgstr "Минимизиране на"
 msgid "Missing"
 msgstr "Липсващ"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 #, fuzzy
 msgid "Moments"
 msgstr "Моменти"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 #, fuzzy
 msgid "Monochrome"
 msgstr "Монохромен"
@@ -1889,7 +1893,7 @@ msgstr "Бележки"
 msgid "Nothing to see here yet."
 msgstr "Все още няма нищо за гледане тук. Бъдете търпеливи."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 #, fuzzy
 msgid "Offline"
 msgstr "Офлайн"
@@ -1987,7 +1991,7 @@ msgstr "Оригиналните имена на файловете ще бъд�
 msgid "Original Name"
 msgstr "Оригинално име"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 #, fuzzy
@@ -1999,10 +2003,9 @@ msgstr "Оригинали"
 msgid "Other"
 msgstr "Други"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Екипът ни преценява това постоянно, в зависимост от усилията за поддръжка, които изискват функциите, разходите за нас и дали те са необходими на всички или се изискват предимно от организации и напреднали потребители. Тъй като това ни позволява да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -2019,7 +2022,7 @@ msgstr "На открито"
 msgid "Panorama"
 msgstr "Панорама"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 #, fuzzy
 msgid "Panoramas"
 msgstr "Панорами"
@@ -2034,8 +2037,8 @@ msgstr "Парола"
 msgid "Password changed"
 msgstr "Паролата е променена"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 #, fuzzy
@@ -2071,10 +2074,9 @@ msgstr "Снимка"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism е актуализиран…"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism се финансира 100% самостоятелно. Доброволните дарения не покриват разходите на екипа, който работи на пълен работен ден, за да ви предоставя актуализации, документация и поддръжка. Вие решавате дали искате да се регистрирате, за да се възползвате от допълнителните ползи."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -2102,8 +2104,8 @@ msgid "Place & Time"
 msgstr "Място & Време"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -2168,7 +2170,7 @@ msgstr "Преглед"
 msgid "Primary"
 msgstr "Първичен"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 #, fuzzy
@@ -2350,7 +2352,7 @@ msgstr "Лимит на повторенията"
 msgid "Retype Password"
 msgstr "Повторно въвеждане на паролата"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 #, fuzzy
 msgid "Review"
 msgstr "Преглед на"
@@ -2371,13 +2373,13 @@ msgstr "Запазете"
 msgid "Scan"
 msgstr "Сканиране"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 #, fuzzy
 msgid "Scans"
 msgstr "Сканиране"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2449,10 +2451,10 @@ msgid "Services"
 msgstr "URL адрес на услугата"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 #, fuzzy
 msgid "Settings"
 msgstr "Настройки"
@@ -2486,11 +2488,6 @@ msgstr "Споделяне на %{име}"
 #, fuzzy
 msgid "Share your pictures with other apps and services."
 msgstr "Споделяйте снимките си с други приложения и услуги."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "Не би ли трябвало свободният софтуер да е свободен от разходи?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 #, fuzzy
@@ -2589,7 +2586,7 @@ msgstr "Подреждайте снимки, направени по едно и
 msgid "Stackable"
 msgstr "Подвижен за стифиране"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 #, fuzzy
 msgid "Stacks"
 msgstr "Stacks"
@@ -2609,7 +2606,7 @@ msgstr "Начало"
 msgid "Start/Stop Slideshow"
 msgstr "Стартиране/спиране на слайдшоу"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 #, fuzzy
 msgid "States"
@@ -2695,11 +2692,6 @@ msgstr "Възможно е техният формат да не се подд�
 #, fuzzy
 msgid "Theme"
 msgstr "Тема"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "Мислете за \"свободен софтуер\" като за \"свобода на словото\", а не като за \"свободна бира\". Фондацията за свободен софтуер понякога го нарича \"libre software\", като заимства френската или испанската дума за \"free\" (свободен), за да покаже, че няма предвид, че софтуерът е безплатен."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2832,7 +2824,7 @@ msgstr "Неизвестно"
 msgid "Unregistered"
 msgstr "Нерегистриран"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 #, fuzzy
 msgid "Unsorted"
 msgstr "Несортиран"
@@ -2878,8 +2870,8 @@ msgstr "Актуализиране на визуализациите"
 msgid "Updating stacks"
 msgstr "Актуализиране на стекове"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "Надграждане"
@@ -2959,7 +2951,7 @@ msgstr "Използване на предварителни настройки"
 msgid "User"
 msgstr "Потребител"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 #, fuzzy
 msgid "User Guide"
 msgstr "Ръководство за потребителя"
@@ -2999,8 +2991,8 @@ msgstr "Видео"
 msgid "Video Duration"
 msgstr "Дарения"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 #, fuzzy
 msgid "Videos"
@@ -3022,6 +3014,10 @@ msgstr "Посетете docs.photoprism.app/user-guide, за да научит�
 #, fuzzy
 msgid "Visual Similarity"
 msgstr "Групиране по сходство"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 #, fuzzy
@@ -3061,7 +3057,7 @@ msgstr "Качване на WebDAV"
 msgid "Website"
 msgstr "Уебсайт"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Каква функционалност е общодостъпна?"
@@ -3071,7 +3067,7 @@ msgstr "Каква функционалност е общодостъпна?"
 msgid "White"
 msgstr "Бял"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Защо някои функции са достъпни само за спонсори?"
@@ -3155,6 +3151,22 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Екипът ни преценява това постоянно, в зависимост от усилията за поддръжка, които изискват функциите, разходите за нас и дали те са необходими на всички или се изискват предимно от организации и напреднали потребители. Тъй като това ни позволява да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "PhotoPrism се финансира 100% самостоятелно. Доброволните дарения не покриват разходите на екипа, който работи на пълен работен ден, за да ви предоставя актуализации, документация и поддръжка. Вие решавате дали искате да се регистрирате, за да се възползвате от допълнителните ползи."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "Не би ли трябвало свободният софтуер да е свободен от разходи?"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Мислете за \"свободен софтуер\" като за \"свобода на словото\", а не като за \"свободна бира\". Фондацията за свободен софтуер понякога го нарича \"libre software\", като заимства френската или испанската дума за \"free\" (свободен), за да покаже, че няма предвид, че софтуерът е безплатен."
 
 #, fuzzy
 #~ msgid "Moonlight"

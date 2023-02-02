@@ -46,7 +46,7 @@
               round depressed
           >
             <translate>Upgrade Now</translate>
-            <v-icon :left="rtl" :right="!rtl" size="18" class="ml-2" dark>diamond</v-icon>
+            <v-icon :left="rtl" :right="!rtl" size="18" class="ml-2" dark>verified</v-icon>
           </v-btn>
         </p>
       </div>

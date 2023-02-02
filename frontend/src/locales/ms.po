@@ -57,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Satu klik akan menyalinnya ke papan klip anda."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "Mengenai"
@@ -89,7 +89,7 @@ msgstr "Tindakan"
 msgid "Activate"
 msgstr "Aktifkan"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 msgid "Activation Code"
 msgstr "Kod pengaktifan"
 
@@ -169,8 +169,8 @@ msgid "Album Name"
 msgstr "Nama Album"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Album"
@@ -248,7 +248,7 @@ msgstr "Ketinggian (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Ralat berlaku - adakah capaian anda tergendala?"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -276,7 +276,7 @@ msgstr "Gunakan"
 msgid "Approve"
 msgstr "Terima"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -318,6 +318,10 @@ msgstr "Adakah anda pasti?"
 msgid "Artist"
 msgstr "Artis"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Nisbah aspek"
@@ -342,7 +346,6 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "Sebelum menghantar permintaan sokongan, sila gunakan Senarai Semak Penyelesaian Masalah (Troubleshooting Checklists) kami untuk cuba mengenal pasti punca masalah anda."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 #, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Sebagai 100% dibiayai sendiri dan bebas, kami boleh berjanji kepada anda bahawa kami tidak akan menjual data anda dan kami akan sentiasa telus tentang perisian dan perkhidmatan kami."
@@ -400,7 +403,7 @@ msgstr "Tengah sibuk, sila tunggu…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Dengan menggunakan perisian dan perkhidmatan yang kami sediakan, anda bersetuju menerima syarat perkhidmatan, dasar privasi dan tatakelakuan kami."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Kalendar"
@@ -900,7 +903,7 @@ msgstr "Dayakan ciri baharu yang sedang dibangunkan."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Mendayakan pratetap penukar RAW. Boleh mengurangkan prestasi."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 #, fuzzy
 msgid "Errors"
 msgstr "Kesilapan"
@@ -995,7 +998,7 @@ msgstr "Cepat"
 msgid "Favorite"
 msgstr "Kegemaran"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "Kegemaran"
@@ -1010,7 +1013,7 @@ msgstr "Permintaan Ciri"
 msgid "Feed"
 msgstr "Maklumbalas"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Maklumbalas"
 
@@ -1049,7 +1052,7 @@ msgstr "Fail"
 msgid "Filename"
 msgstr "Nama Fail"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Fail"
@@ -1079,7 +1082,7 @@ msgstr "Folder mengandungi %{n} fail"
 msgid "Folder is empty"
 msgstr "Folder kosong"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "Folders"
@@ -1163,7 +1166,7 @@ msgstr "Bantuan"
 msgid "Help & Support"
 msgstr "Mendapat Sokongan"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 msgid "Hidden"
 msgstr "Tersembunyi"
 
@@ -1262,7 +1265,7 @@ msgstr "Selain itu, penaja menerima sokongan teknikal langsung melalui e-mel."
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Sekiranya gambar yang anda jangkakan tiada, sila imbas semula pustaka anda dan tunggu sehingga pengindeksan telah selesai."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 #, fuzzy
 msgid "Index"
@@ -1329,6 +1332,10 @@ msgstr "Tarikh tidak sah"
 msgid "Invalid photo selected"
 msgstr "Foto tidak sah dipilih"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 #, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
@@ -1366,7 +1373,7 @@ msgstr "Asas pengetahuan"
 msgid "Label"
 msgstr "Label"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1405,12 +1412,12 @@ msgstr "Lavender"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 #, fuzzy
 msgid "Learn more"
 msgstr "Ketahui lebih lanjut"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 #, fuzzy
 msgid "Legal Information"
 msgstr "Maklumat Undang-undang"
@@ -1421,14 +1428,14 @@ msgid "Lens"
 msgstr "Lensa"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 #, fuzzy
 msgid "Library"
 msgstr "Perpustakaan"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1468,7 +1475,7 @@ msgstr "Senarai"
 msgid "Live"
 msgstr "Langsung"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 #, fuzzy
 msgid "Live Photos"
 msgstr "Foto"
@@ -1494,17 +1501,17 @@ msgstr "Lokasi"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Mesej log dipaparkan di sini setiap kali PhotoPrism menjumpai fail yang rosak, atau terdapat isu lain yang berpotensi."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "Log masuk"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "Log keluar"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "Log"
@@ -1588,13 +1595,13 @@ msgstr "Minimum"
 msgid "Missing"
 msgstr "hilang"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 #, fuzzy
 msgid "Moments"
 msgstr "Detik-detik"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 #, fuzzy
 msgid "Monochrome"
 msgstr "Monokrom"
@@ -1798,7 +1805,7 @@ msgstr "Nota-nota"
 msgid "Nothing to see here yet."
 msgstr "Tiada apa yang boleh dilihat di sini. Bersabarlah."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "Luar Talian"
 
@@ -1893,7 +1900,7 @@ msgstr "Nama fail asal akan disimpan dan diindeks."
 msgid "Original Name"
 msgstr "Nama Asal"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 #, fuzzy
@@ -1904,10 +1911,9 @@ msgstr "Asal"
 msgid "Other"
 msgstr "Lain-lain"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Pasukan kami menilai perkara ini secara berterusan, bergantung pada usaha sokongan yang diperlukan oleh ciri, kos kepada kami dan sama ada ia secara amnya diperlukan oleh semua orang atau terutamanya diminta oleh organisasi dan pengguna lanjutan. Oleh kerana ini membolehkan kami menyediakan lebih banyak ciri kepada orang ramai, kami menggalakkan semua pengguna untuk menyokong misi kami."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -1924,7 +1930,7 @@ msgstr "Luar"
 msgid "Panorama"
 msgstr "Panorama"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 #, fuzzy
 msgid "Panoramas"
 msgstr "Panorama"
@@ -1939,8 +1945,8 @@ msgstr "Kata Laluan"
 msgid "Password changed"
 msgstr "Kata laluan ditukar"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 #, fuzzy
@@ -1977,10 +1983,9 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism telah dikemas kini…"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism adalah 100% dibiayai sendiri. Derma sukarela tidak meliputi kos pasukan yang bekerja sepenuh masa untuk memberi anda kemas kini, dokumentasi dan sokongan. Ia adalah keputusan anda sama ada anda ingin mendaftar untuk menikmati faedah tambahan."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -2007,8 +2012,8 @@ msgid "Place & Time"
 msgstr "Tempat & Masa"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -2070,7 +2075,7 @@ msgstr "Pratonton"
 msgid "Primary"
 msgstr "Utama"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
@@ -2245,7 +2250,7 @@ msgstr "Had Cuba Semula"
 msgid "Retype Password"
 msgstr "Tulis semula kata laluan"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 msgid "Review"
 msgstr "Tinjauan"
 
@@ -2264,13 +2269,13 @@ msgstr "Simpan"
 msgid "Scan"
 msgstr "Imbas"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 #, fuzzy
 msgid "Scans"
 msgstr "Imbasan"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2341,10 +2346,10 @@ msgid "Services"
 msgstr "URL perkhidmatan"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "Tetapan"
 
@@ -2376,11 +2381,6 @@ msgstr "Kongsi %{name}"
 #, fuzzy
 msgid "Share your pictures with other apps and services."
 msgstr "Kongsi gambar anda dengan apl dan perkhidmatan lain."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "Bukankah perisian percuma sepatutnya bebas daripada kos?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2474,7 +2474,7 @@ msgstr "Tumpukan gambar yang diambil pada masa dan lokasi yang sama berdasarkan 
 msgid "Stackable"
 msgstr "Boleh ditindan"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 #, fuzzy
 msgid "Stacks"
 msgstr "tindanan"
@@ -2493,7 +2493,7 @@ msgstr "Mula"
 msgid "Start/Stop Slideshow"
 msgstr "Mula/Hentikan Tayangan Slaid"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 #, fuzzy
 msgid "States"
@@ -2575,11 +2575,6 @@ msgstr "Format mereka mungkin tidak disokong, mereka belum ditukar kepada JPEG l
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Tema"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "Fikirkan \"perisian percuma\" seperti dalam \"percakapan bebas,\" bukan seperti dalam \"bir percuma.\" Yayasan Perisian Percuma kadangkala memanggilnya \"perisian percuma,\" meminjam perkataan Perancis atau Sepanyol untuk \"percuma\" seperti dalam kebebasan, untuk menunjukkan bahawa mereka tidak bermakna perisian itu percuma."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2708,7 +2703,7 @@ msgstr "Tidak Diketahui"
 msgid "Unregistered"
 msgstr "Tidak berdaftar"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 #, fuzzy
 msgid "Unsorted"
 msgstr "Tidak diisih"
@@ -2754,8 +2749,8 @@ msgstr "Mengemas kini pratonton"
 msgid "Updating stacks"
 msgstr "Mengemas kini tindanan"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "Naik taraf"
@@ -2831,7 +2826,7 @@ msgstr "Gunakan Pratetap"
 msgid "User"
 msgstr "Pengguna"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 #, fuzzy
 msgid "User Guide"
 msgstr "Panduan pengguna"
@@ -2868,8 +2863,8 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Tempoh"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "Video"
@@ -2889,6 +2884,10 @@ msgstr "Lawati docs.photoprism.app/user-guide untuk mengetahui cara menyegerak, 
 #, fuzzy
 msgid "Visual Similarity"
 msgstr "Kumpulan mengikut persamaan"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 #, fuzzy
@@ -2928,7 +2927,7 @@ msgstr "Muat Naik WebDAV"
 msgid "Website"
 msgstr "laman web"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Apakah fungsi yang tersedia secara umum?"
@@ -2937,7 +2936,7 @@ msgstr "Apakah fungsi yang tersedia secara umum?"
 msgid "White"
 msgstr "Putih"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Mengapakah beberapa ciri hanya tersedia untuk penaja?"
@@ -3019,6 +3018,22 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Pasukan kami menilai perkara ini secara berterusan, bergantung pada usaha sokongan yang diperlukan oleh ciri, kos kepada kami dan sama ada ia secara amnya diperlukan oleh semua orang atau terutamanya diminta oleh organisasi dan pengguna lanjutan. Oleh kerana ini membolehkan kami menyediakan lebih banyak ciri kepada orang ramai, kami menggalakkan semua pengguna untuk menyokong misi kami."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "PhotoPrism adalah 100% dibiayai sendiri. Derma sukarela tidak meliputi kos pasukan yang bekerja sepenuh masa untuk memberi anda kemas kini, dokumentasi dan sokongan. Ia adalah keputusan anda sama ada anda ingin mendaftar untuk menikmati faedah tambahan."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "Bukankah perisian percuma sepatutnya bebas daripada kos?"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Fikirkan \"perisian percuma\" seperti dalam \"percakapan bebas,\" bukan seperti dalam \"bir percuma.\" Yayasan Perisian Percuma kadangkala memanggilnya \"perisian percuma,\" meminjam perkataan Perancis atau Sepanyol untuk \"percuma\" seperti dalam kebebasan, untuk menunjukkan bahawa mereka tidak bermakna perisian itu percuma."
 
 #, fuzzy
 #~ msgid "Moonlight"

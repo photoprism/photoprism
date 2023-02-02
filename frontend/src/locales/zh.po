@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-17 16:36+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "点击复制到剪贴板。"
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "关于"
@@ -90,7 +89,7 @@ msgstr "动作"
 msgid "Activate"
 msgstr "激活"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 msgid "Activation Code"
 msgstr "激活码"
 
@@ -169,8 +168,8 @@ msgid "Album Name"
 msgstr "相册名称"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "相册"
@@ -248,7 +247,7 @@ msgstr "海拔（米）"
 msgid "An error occurred - are you offline?"
 msgstr "发生错误——您离线了？"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -276,7 +275,7 @@ msgstr "应用"
 msgid "Approve"
 msgstr "批准"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -318,6 +317,10 @@ msgstr "你确定？"
 msgid "Artist"
 msgstr "艺术家"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "长宽比"
@@ -340,7 +343,6 @@ msgid "Before submitting a support request, please use our Troubleshooting Check
 msgstr "在提交支持请求之前，请使用我们的故障排除清单来确定问题的原因。"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "作为 100% 自筹资金和独立的公司，我们可以向您保证，我们永远不会出售您的数据，并且我们将始终对我们的软件和服务保持透明。"
 
@@ -393,7 +395,7 @@ msgstr "正在忙碌，请稍候…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "通过使用我们提供的软件和服务，您同意我们的服务条款、隐私政策和行为准则。"
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "日历"
@@ -840,7 +842,7 @@ msgstr "启用处于开发中的新特性。"
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "启用 RAW 转换器预设，可能会降低性能。"
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
 msgstr "错误"
 
@@ -920,7 +922,7 @@ msgstr "快"
 msgid "Favorite"
 msgstr "收藏"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "收藏"
@@ -933,7 +935,7 @@ msgstr "特性请求"
 msgid "Feed"
 msgstr "订阅源"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "反馈"
 
@@ -967,7 +969,7 @@ msgstr "文件大小"
 msgid "Filename"
 msgstr "文件名"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "文件"
@@ -994,7 +996,7 @@ msgstr "文件夹中有 %{n} 个文件"
 msgid "Folder is empty"
 msgstr "文件夹为空"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "文件夹"
@@ -1067,7 +1069,7 @@ msgstr "帮助"
 msgid "Help & Support"
 msgstr "帮助和支持"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 msgid "Hidden"
 msgstr "隐藏"
 
@@ -1153,7 +1155,7 @@ msgstr "此外，赞助者通过电子邮件获得直接的技术支持。"
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "如果缺少你期望的图片，请重新扫描你的库，并等待索引编制完成。"
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "索引"
@@ -1210,6 +1212,10 @@ msgstr "参数无效"
 msgid "Invalid photo selected"
 msgstr "选择了无效的照片"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr "它利用最新的技术，在不妨碍你的情况下自动标记和查找图片。"
@@ -1242,7 +1248,7 @@ msgstr "知识库"
 msgid "Label"
 msgstr "标签"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1276,11 +1282,11 @@ msgstr "薰衣草"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 msgid "Learn more"
 msgstr "进一步了解"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 msgid "Legal Information"
 msgstr "法律信息"
 
@@ -1289,13 +1295,13 @@ msgid "Lens"
 msgstr "镜头"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "资料库"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1331,7 +1337,7 @@ msgstr "列表"
 msgid "Live"
 msgstr "实况"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 msgid "Live Photos"
 msgstr "现场照片"
 
@@ -1353,17 +1359,17 @@ msgstr "位置"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "每当 PhotoPrism 遇到损坏的文件或其他潜在问题时，日志消息就会出现在这里。"
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "登录"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "登出"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "日志"
@@ -1436,12 +1442,12 @@ msgstr "最小化"
 msgid "Missing"
 msgstr "缺失"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "瞬间"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 msgid "Monochrome"
 msgstr "黑白"
 
@@ -1619,7 +1625,7 @@ msgstr "备注"
 msgid "Nothing to see here yet."
 msgstr "暂无数据。"
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "离线"
 
@@ -1699,7 +1705,7 @@ msgid "Original Name"
 msgstr "源文件名"
 
 # Originals在本项目里有时代表服务器上的照片的储存文件夹，翻译为来源不妥，但我也没想好咋翻译。
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 msgid "Originals"
@@ -1709,9 +1715,9 @@ msgstr "源"
 msgid "Other"
 msgstr "其他"
 
-#: src/page/connect.vue:125
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是大家普遍需要的还是主要由组织和高级用户要求的，持续地决定这一点。由于这使我们能够向公众提供更多的功能，我们鼓励所有用户支持我们的任务。"
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1725,7 +1731,7 @@ msgstr "户外地图"
 msgid "Panorama"
 msgstr "全景"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 msgid "Panoramas"
 msgstr "全景"
 
@@ -1738,8 +1744,8 @@ msgstr "密码"
 msgid "Password changed"
 msgstr "密码已更改"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1769,9 +1775,9 @@ msgstr "相片"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism 更新啦…"
 
-#: src/page/connect.vue:119
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "PhotoPrism是100%自筹资金的开源软件项目。自愿捐款并不能保证支付一个全职工作的团队对软件进行更新、支持所产生的费用。您可以决定是否要注册以享受额外的好处。"
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1794,8 +1800,8 @@ msgid "Place & Time"
 msgstr "地点和时间"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1848,7 +1854,7 @@ msgstr "预览"
 msgid "Primary"
 msgstr "主文件"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
@@ -1997,7 +2003,7 @@ msgstr "重试限制"
 msgid "Retype Password"
 msgstr "重新输入密码"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 msgid "Review"
 msgstr "审查"
 
@@ -2014,12 +2020,12 @@ msgstr "保存"
 msgid "Scan"
 msgstr "扫描"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 msgid "Scans"
 msgstr "扫描"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2080,10 +2086,10 @@ msgid "Services"
 msgstr "服务"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "设置"
 
@@ -2111,10 +2117,6 @@ msgstr "分享 %{name}"
 #: src/page/settings/general.vue:385
 msgid "Share your pictures with other apps and services."
 msgstr "与其他应用程序和服务分享你的图片。"
-
-#: src/page/connect.vue:110
-msgid "Shouldn't free software be free of costs?"
-msgstr "免费软件不应该是免费使用的吗？"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2195,7 +2197,7 @@ msgstr "根据图片的元数据，堆叠在相同的时间和地点拍摄的图
 msgid "Stackable"
 msgstr "可堆叠"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 msgid "Stacks"
 msgstr "堆"
 
@@ -2211,7 +2213,7 @@ msgstr "开始"
 msgid "Start/Stop Slideshow"
 msgstr "开始/停止幻灯片"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 msgid "States"
 msgstr "省份"
@@ -2280,10 +2282,6 @@ msgstr "它们的格式可能不受支持，它们尚未转换为 JPEG 或存在
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "主题"
-
-#: src/page/connect.vue:113
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "把 \"自由软件 \"想成是 \"自由言论\"，而不是 \"随手可得的啤酒\"。自由软件基金会有时称之为 \"被解放的软件\"，借用法语或西班牙语中自由的 \"解放 \"一词，以表明他们并不意味着软件是免费的。"
 
 #: src/page/settings/services.vue:40
 msgid ""
@@ -2396,7 +2394,7 @@ msgstr "未知"
 msgid "Unregistered"
 msgstr "未注册的"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 msgid "Unsorted"
 msgstr "未分类"
 
@@ -2433,8 +2431,8 @@ msgstr "更新预览"
 msgid "Updating stacks"
 msgstr "更新堆"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 msgid "Upgrade"
 msgstr "升级"
 
@@ -2499,7 +2497,7 @@ msgstr "使用预设"
 msgid "User"
 msgstr "用户"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "用户指南"
 
@@ -2532,8 +2530,8 @@ msgstr "视频"
 msgid "Video Duration"
 msgstr "视频时长"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "视频"
@@ -2551,6 +2549,10 @@ msgstr "访问docs.photoprism.app/user-guide，了解如何同步、组织和分
 #: src/dialog/album/edit.vue:27
 msgid "Visual Similarity"
 msgstr "视觉相似性"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2585,7 +2587,7 @@ msgstr "WebDAV 上传"
 msgid "Website"
 msgstr "网站"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 msgid "What functionality is generally available?"
 msgstr "什么功能是普遍可用的？"
 
@@ -2593,7 +2595,7 @@ msgstr "什么功能是普遍可用的？"
 msgid "White"
 msgstr "白"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 msgid "Why are some features only available to sponsors?"
 msgstr "为什么有些功能只对赞助商开放？"
 
@@ -2663,6 +2665,18 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是大家普遍需要的还是主要由组织和高级用户要求的，持续地决定这一点。由于这使我们能够向公众提供更多的功能，我们鼓励所有用户支持我们的任务。"
+
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "PhotoPrism是100%自筹资金的开源软件项目。自愿捐款并不能保证支付一个全职工作的团队对软件进行更新、支持所产生的费用。您可以决定是否要注册以享受额外的好处。"
+
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "免费软件不应该是免费使用的吗？"
+
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "把 \"自由软件 \"想成是 \"自由言论\"，而不是 \"随手可得的啤酒\"。自由软件基金会有时称之为 \"被解放的软件\"，借用法语或西班牙语中自由的 \"解放 \"一词，以表明他们并不意味着软件是免费的。"
 
 #~ msgid "Moonlight"
 #~ msgstr "月光"

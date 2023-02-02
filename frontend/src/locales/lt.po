@@ -5,15 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-17 16:36+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/lt/>\n"
+"Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
-"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
-"1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -60,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Paspaudę jį nukopijuosite į iškarpinę."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "Apie"
@@ -93,7 +90,7 @@ msgstr "Veiksmai"
 msgid "Activate"
 msgstr "Suaktyvinti"
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktyvinimo kodas"
@@ -174,8 +171,8 @@ msgid "Album Name"
 msgstr "Albumo pavadinimas"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Albumai"
@@ -253,7 +250,7 @@ msgstr "Aukštis (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Įvyko klaida - ar esate neprisijungęs?"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -281,7 +278,7 @@ msgstr "Taikyti"
 msgid "Approve"
 msgstr "Patvirtinti"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -323,6 +320,10 @@ msgstr "Ar esate tikri?"
 msgid "Artist"
 msgstr "Menininkas"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Kraštinių santykis"
@@ -338,16 +339,13 @@ msgstr "Automatiškai sukuria ypatingų akimirkų, kelionių ir vietų albumus."
 #: src/page/connect.vue:68
 #, fuzzy
 msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Tapkite rėmėju šiandien, paremkite mūsų misiją ir naudokitės mūsų nariams "
-"teikiamomis privilegijomis!"
+msgstr "Tapkite rėmėju šiandien, paremkite mūsų misiją ir naudokitės mūsų nariams teikiamomis privilegijomis!"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Prieš pateikdami pagalbos užklausą, pasinaudokite mūsų trikčių šalinimo kontroliniais sąrašais, kad nustatytumėte problemos priežastį."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 #, fuzzy
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Kadangi esame 100 % savarankiškai finansuojami ir nepriklausomi, galime pažadėti, kad niekada neparduosime jūsų duomenų ir visada skaidriai informuosime apie savo programinę įrangą ir paslaugas."
@@ -404,7 +402,7 @@ msgstr "Užimtas, palaukite…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Naudodamiesi mūsų teikiama programine įranga ir paslaugomis, sutinkate su mūsų paslaugų teikimo sąlygomis, privatumo politika ir elgesio kodeksu."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Kalendorius"
@@ -903,7 +901,7 @@ msgstr "Įgalinkite šiuo metu kuriamas naujas funkcijas."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Įjungiamos RAW konverterio išankstinės nuostatos. Gali sumažinti našumą."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 #, fuzzy
 msgid "Errors"
 msgstr "Klaidos"
@@ -1003,7 +1001,7 @@ msgstr "Greitai"
 msgid "Favorite"
 msgstr "Mėgstamiausias"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 #, fuzzy
 msgid "Favorites"
@@ -1019,7 +1017,7 @@ msgstr "Funkcijos prašymas"
 msgid "Feed"
 msgstr "Atsiliepimai"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 #, fuzzy
 msgid "Feedback"
 msgstr "Atsiliepimai"
@@ -1061,7 +1059,7 @@ msgstr "Failas"
 msgid "Filename"
 msgstr "Failas"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 #, fuzzy
 msgid "Files"
@@ -1094,7 +1092,7 @@ msgstr "Aplankale yra %{n} failų"
 msgid "Folder is empty"
 msgstr "Aplankas tuščias"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 #, fuzzy
 msgid "Folders"
@@ -1183,7 +1181,7 @@ msgstr "Pagalba"
 msgid "Help & Support"
 msgstr "Paramos gavimas"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 #, fuzzy
 msgid "Hidden"
 msgstr "Paslėptas"
@@ -1288,7 +1286,7 @@ msgstr "Be to, rėmėjai gauna tiesioginę techninę pagalbą el. paštu."
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Jei trūksta nuotraukų, kurių tikėjotės, iš naujo nuskaitykite savo biblioteką ir palaukite, kol bus baigtas indeksavimas."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 #, fuzzy
 msgid "Index"
@@ -1356,6 +1354,10 @@ msgstr "Neteisinga data"
 msgid "Invalid photo selected"
 msgstr "Pasirinkta netinkama nuotrauka"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 #, fuzzy
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
@@ -1396,7 +1398,7 @@ msgstr "Žinių bazė"
 msgid "Label"
 msgstr "Etiketė"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1437,12 +1439,12 @@ msgstr "Levandų"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 #, fuzzy
 msgid "Learn more"
 msgstr "Sužinokite daugiau"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 #, fuzzy
 msgid "Legal Information"
 msgstr "Teisinė informacija"
@@ -1453,14 +1455,14 @@ msgid "Lens"
 msgstr "Objektyvas"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 #, fuzzy
 msgid "Library"
 msgstr "Biblioteka"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 #, fuzzy
@@ -1504,7 +1506,7 @@ msgstr "Sąrašas"
 msgid "Live"
 msgstr "Gyvai"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 #, fuzzy
 msgid "Live Photos"
 msgstr "Nuotraukos"
@@ -1531,19 +1533,19 @@ msgstr "Vieta"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Žurnalo pranešimai čia rodomi, kai \"PhotoPrism\" susiduria su sugadintais failais arba kitomis galimomis problemomis."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 #, fuzzy
 msgid "Login"
 msgstr "Prisijungimas"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 #, fuzzy
 msgid "Logout"
 msgstr "Atsijungimas"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 #, fuzzy
 msgid "Logs"
@@ -1633,13 +1635,13 @@ msgstr "Sumažinkite"
 msgid "Missing"
 msgstr "Trūksta"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 #, fuzzy
 msgid "Moments"
 msgstr "Akimirkos"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 #, fuzzy
 msgid "Monochrome"
 msgstr "Vienspalvis"
@@ -1851,7 +1853,7 @@ msgstr "Pastabos"
 msgid "Nothing to see here yet."
 msgstr "Kol kas čia nieko nematyti. Būkite kantrūs."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 #, fuzzy
 msgid "Offline"
 msgstr "Neprisijungus prie interneto"
@@ -1947,7 +1949,7 @@ msgstr "Originalūs failų pavadinimai bus saugomi ir indeksuojami."
 msgid "Original Name"
 msgstr "Originalus pavadinimas"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 #, fuzzy
@@ -1959,10 +1961,9 @@ msgstr "Originalai"
 msgid "Other"
 msgstr "Kita"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Mūsų komanda tai nuolat vertina, atsižvelgdama į tai, kiek palaikymo pastangų reikalauja funkcijos, kiek jos mums kainuoja ir ar jos apskritai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai. Kadangi tai leidžia mums teikti daugiau funkcijų visuomenei, raginame visus naudotojus remti mūsų misiją."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -1979,7 +1980,7 @@ msgstr "Lauko"
 msgid "Panorama"
 msgstr "Panorama"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 #, fuzzy
 msgid "Panoramas"
 msgstr "Panoramos"
@@ -1995,8 +1996,8 @@ msgstr "Slaptažodis"
 msgid "Password changed"
 msgstr "Pakeistas slaptažodis"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 #, fuzzy
@@ -2033,10 +2034,9 @@ msgstr "Nuotrauka"
 msgid "PhotoPrism has been updated…"
 msgstr "\"PhotoPrism\" buvo atnaujintas…"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "\"PhotoPrism\" yra 100 % finansuojama savo lėšomis. Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri teikia jums atnaujinimus, dokumentaciją ir palaikymą, išlaidų. Jūs patys sprendžiate, ar norite užsiregistruoti, kad galėtumėte naudotis papildomais privalumais."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 #, fuzzy
@@ -2064,8 +2064,8 @@ msgid "Place & Time"
 msgstr "Vieta & amp; laikas"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -2130,7 +2130,7 @@ msgstr "Peržiūra"
 msgid "Primary"
 msgstr "Pagrindinis"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 #, fuzzy
@@ -2311,7 +2311,7 @@ msgstr "Pakartojimo limitas"
 msgid "Retype Password"
 msgstr "Pakartokite slaptažodį"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 #, fuzzy
 msgid "Review"
 msgstr "Peržiūrėkite"
@@ -2332,13 +2332,13 @@ msgstr "Išsaugoti"
 msgid "Scan"
 msgstr "Skenuoti"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 #, fuzzy
 msgid "Scans"
 msgstr "Skenuoja"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2413,10 +2413,10 @@ msgid "Services"
 msgstr "Paslaugos URL"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 #, fuzzy
 msgid "Settings"
 msgstr "Nustatymai"
@@ -2451,11 +2451,6 @@ msgstr "Dalintis %{pavadinimas}"
 #, fuzzy
 msgid "Share your pictures with other apps and services."
 msgstr "bendrinkite nuotraukas su kitomis programomis ir paslaugomis."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "Argi nemokama programinė įranga neturėtų būti nemokama?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 #, fuzzy
@@ -2554,7 +2549,7 @@ msgstr "Sudėkite nuotraukas, padarytas tuo pačiu laiku ir toje pačioje vietoj
 msgid "Stackable"
 msgstr "Sukraunamas"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 #, fuzzy
 msgid "Stacks"
 msgstr "Komodos"
@@ -2574,7 +2569,7 @@ msgstr "Pradžia"
 msgid "Start/Stop Slideshow"
 msgstr "Pradėti / sustabdyti skaidrių peržiūrą"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 #, fuzzy
 msgid "States"
@@ -2660,11 +2655,6 @@ msgstr "Jų formatas gali būti nepalaikomas, jos dar nebuvo konvertuotos į JPE
 #, fuzzy
 msgid "Theme"
 msgstr "Tema"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "Galvokite apie \"laisvą programinę įrangą\" kaip apie \"laisvą žodį\", o ne kaip apie \"laisvą alų\". Laisvosios programinės įrangos fondas kartais ją vadina \"laisvąja programine įranga\", pasiskolindamas prancūzišką ar ispanišką žodį \"free\" (laisvė), kad parodytų, jog tai nereiškia, kad programinė įranga yra nemokama."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2797,7 +2787,7 @@ msgstr "Nežinomas"
 msgid "Unregistered"
 msgstr "Neregistruotas"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 #, fuzzy
 msgid "Unsorted"
 msgstr "Nerūšiuota"
@@ -2843,8 +2833,8 @@ msgstr "Peržiūrų atnaujinimas"
 msgid "Updating stacks"
 msgstr "Kaminų atnaujinimas"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "Atnaujinti"
@@ -2924,7 +2914,7 @@ msgstr "Naudokite išankstinius nustatymus"
 msgid "User"
 msgstr "Vartotojas"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 #, fuzzy
 msgid "User Guide"
 msgstr "Naudotojo vadovas"
@@ -2964,8 +2954,8 @@ msgstr "Vaizdo įrašas"
 msgid "Video Duration"
 msgstr "Dovanos"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 #, fuzzy
 msgid "Videos"
@@ -2987,6 +2977,10 @@ msgstr "Apsilankykite docs.photoprism.app/user-guide ir sužinokite, kaip sinchr
 #, fuzzy
 msgid "Visual Similarity"
 msgstr "Grupuokite pagal panašumą"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 #, fuzzy
@@ -3026,7 +3020,7 @@ msgstr "WebDAV įkėlimas"
 msgid "Website"
 msgstr "Svetainė"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Kokios funkcijos paprastai yra prieinamos?"
@@ -3036,7 +3030,7 @@ msgstr "Kokios funkcijos paprastai yra prieinamos?"
 msgid "White"
 msgstr "Balta"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Kodėl kai kurios funkcijos prieinamos tik rėmėjams?"
@@ -3121,6 +3115,22 @@ msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai k
 #, fuzzy
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Mūsų komanda tai nuolat vertina, atsižvelgdama į tai, kiek palaikymo pastangų reikalauja funkcijos, kiek jos mums kainuoja ir ar jos apskritai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai. Kadangi tai leidžia mums teikti daugiau funkcijų visuomenei, raginame visus naudotojus remti mūsų misiją."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "\"PhotoPrism\" yra 100 % finansuojama savo lėšomis. Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri teikia jums atnaujinimus, dokumentaciją ir palaikymą, išlaidų. Jūs patys sprendžiate, ar norite užsiregistruoti, kad galėtumėte naudotis papildomais privalumais."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "Argi nemokama programinė įranga neturėtų būti nemokama?"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Galvokite apie \"laisvą programinę įrangą\" kaip apie \"laisvą žodį\", o ne kaip apie \"laisvą alų\". Laisvosios programinės įrangos fondas kartais ją vadina \"laisvąja programine įranga\", pasiskolindamas prancūzišką ar ispanišką žodį \"free\" (laisvė), kad parodytų, jog tai nereiškia, kad programinė įranga yra nemokama."
 
 #, fuzzy
 #~ msgid "Moonlight"

@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-17 16:36+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -57,7 +56,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "A kattintás egy másolatot helyez a vágólapra."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:424 src/component/navigation.vue:27
+#: src/component/navigation.vue:432 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "Rólunk"
@@ -90,7 +89,7 @@ msgstr "Műveletek"
 msgid "Activate"
 msgstr "Aktiválja a  címet."
 
-#: src/page/connect.vue:292 src/page/connect.vue:409
+#: src/page/connect.vue:292 src/page/connect.vue:407
 #, fuzzy
 msgid "Activation Code"
 msgstr "Aktiválási kód"
@@ -170,8 +169,8 @@ msgid "Album Name"
 msgstr "Album neve"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:147 src/component/navigation.vue:157
-#: src/component/navigation.vue:550 src/component/navigation.vue:4
+#: src/component/navigation.vue:143 src/component/navigation.vue:153
+#: src/component/navigation.vue:544 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Albumok"
@@ -249,7 +248,7 @@ msgstr "Magasság (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Hiba történt - van internet elérése?"
 
-#: src/component/navigation.vue:101 src/component/photo/cards.vue:299
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
 #: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:224 src/model/file.js:210
 #: src/options/options.js:307
@@ -277,7 +276,7 @@ msgstr "Alkalmaz"
 msgid "Approve"
 msgstr "Jóváhagy"
 
-#: src/app/routes.js:243 src/component/navigation.vue:134
+#: src/app/routes.js:243 src/component/navigation.vue:130
 #: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -319,6 +318,10 @@ msgstr "Biztos benne?"
 msgid "Artist"
 msgstr "Művész"
 
+#: src/page/connect.vue:122
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Képarány"
@@ -334,15 +337,13 @@ msgstr "Automatikusan albumokat hoz létre különleges pillanatokról, utazáso
 #: src/page/connect.vue:68
 #, fuzzy
 msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Legyen szponzor még ma, támogassa küldetésünket és élvezze tagi előnyeinket!"
+msgstr "Legyen szponzor még ma, támogassa küldetésünket és élvezze tagi előnyeinket!"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Mielőtt támogatási kérelmet nyújt be, kérjük, használja hibaelhárítási ellenőrző listáinkat a probléma okának meghatározásához."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#: src/page/connect.vue:72
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Mivel 100%-ban önfinanszírozók és függetlenek vagyunk, megígérhetjük, hogy soha nem adjuk el az adatait, és mindig átláthatóak leszünk a szoftverünkkel és szolgáltatásainkkal kapcsolatban."
 
@@ -397,7 +398,7 @@ msgstr "Elfoglalt, kérem, várjon…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Az általunk biztosított szoftver és szolgáltatások használatával Ön elfogadja szolgáltatási feltételeinket, adatvédelmi szabályzatunkat és magatartási kódexünket."
 
-#: src/app/routes.js:175 src/component/navigation.vue:253
+#: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Naptár"
@@ -848,7 +849,7 @@ msgstr "A jelenleg fejlesztés alatt álló új funkciók engedélyezése."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljesítményt."
 
-#: src/app/routes.js:294 src/component/navigation.vue:391
+#: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
 msgstr "Hibák"
 
@@ -928,7 +929,7 @@ msgstr "Gyors"
 msgid "Favorite"
 msgstr "Kedvenc"
 
-#: src/app/routes.js:208 src/component/navigation.vue:227
+#: src/app/routes.js:208 src/component/navigation.vue:223
 #: src/component/navigation.vue:896 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "Kedvencek"
@@ -942,7 +943,7 @@ msgstr "Funkciókérés"
 msgid "Feed"
 msgstr "Visszacsatolás"
 
-#: src/component/navigation.vue:432 src/component/navigation.vue:35
+#: src/component/navigation.vue:440 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Visszacsatolás"
 
@@ -977,7 +978,7 @@ msgstr "Fájl méret"
 msgid "Filename"
 msgstr "Fájlnév"
 
-#: src/component/navigation.vue:568 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Fájlok"
@@ -1004,7 +1005,7 @@ msgstr "A mappa %{n} fájlt tartalmaz"
 msgid "Folder is empty"
 msgstr "A mappa üres"
 
-#: src/app/routes.js:188 src/component/navigation.vue:328
+#: src/app/routes.js:188 src/component/navigation.vue:324
 #: src/component/navigation.vue:1251
 msgid "Folders"
 msgstr "Mappák"
@@ -1078,7 +1079,7 @@ msgstr "Segítség"
 msgid "Help & Support"
 msgstr "Segítség & Támogatás"
 
-#: src/component/navigation.vue:382
+#: src/component/navigation.vue:378
 msgid "Hidden"
 msgstr "Rejtett"
 
@@ -1164,7 +1165,7 @@ msgstr "A szponzorok emellett közvetlen technikai támogatást kapnak e-mailben
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Ha hiányoznak a várt képek, kérjük, ellenőrizze újra a könyvtárát, és várja meg, amíg az indexelés befejeződik."
 
-#: src/component/navigation.vue:574 src/page/library.vue:35
+#: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Index"
@@ -1221,6 +1222,10 @@ msgstr "Érvénytelen paraméterek"
 msgid "Invalid photo selected"
 msgstr "Érvénytelen fénykép kiválasztva"
 
+#: src/page/connect.vue:115
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr "A legújabb technológiákat használja a képek automatikus megjelölésére és megtalálására anélkül, hogy útban lenne."
@@ -1253,7 +1258,7 @@ msgstr "Tudásbázis"
 msgid "Label"
 msgstr "Címke"
 
-#: src/app/routes.js:300 src/component/navigation.vue:315
+#: src/app/routes.js:300 src/component/navigation.vue:311
 #: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1287,11 +1292,11 @@ msgstr "Levendula"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:108
+#: src/page/connect.vue:125 src/page/connect.vue:112
 msgid "Learn more"
 msgstr "Tudjon meg többet"
 
-#: src/component/navigation.vue:595
+#: src/component/navigation.vue:589
 msgid "Legal Information"
 msgstr "Jogi információk"
 
@@ -1300,13 +1305,13 @@ msgid "Lens"
 msgstr "Lencse"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:354 src/component/navigation.vue:364
+#: src/component/navigation.vue:350 src/component/navigation.vue:360
 #: src/component/navigation.vue:4 src/component/navigation.vue:1343
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "Könyvtár"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:440
+#: src/page/connect.vue:4 src/component/navigation.vue:448
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1342,7 +1347,7 @@ msgstr "Lista"
 msgid "Live"
 msgstr "Élő"
 
-#: src/component/navigation.vue:200
+#: src/component/navigation.vue:196
 #, fuzzy
 msgid "Live Photos"
 msgstr "Fényképek"
@@ -1365,17 +1370,17 @@ msgstr "Elhelyezkedés"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Naplóüzenetek jelennek meg itt, ha a PhotoPrism hibás fájlokat talál, vagy más lehetséges problémák merülnek fel."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1723
+#: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
 msgid "Login"
 msgstr "Belépés"
 
-#: src/component/navigation.vue:512 src/component/navigation.vue:1834
+#: src/component/navigation.vue:506 src/component/navigation.vue:1834
 #: src/component/navigation.vue:1865 src/component/navigation.vue:1916
 msgid "Logout"
 msgstr "Kijelentkezés"
 
-#: src/component/navigation.vue:580 src/page/library.vue:58
+#: src/component/navigation.vue:574 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "Naplók"
@@ -1451,12 +1456,12 @@ msgstr "Minimalizálja"
 msgid "Missing"
 msgstr "Hiányzó"
 
-#: src/app/routes.js:149 src/component/navigation.vue:240
+#: src/app/routes.js:149 src/component/navigation.vue:236
 #: src/component/navigation.vue:941 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "Pillanatok"
 
-#: src/component/navigation.vue:85
+#: src/component/navigation.vue:81
 msgid "Monochrome"
 msgstr "Monokróm"
 
@@ -1637,7 +1642,7 @@ msgstr "Megjegyzések"
 msgid "Nothing to see here yet."
 msgstr "Itt még nincs látnivaló. Legyél türelmes."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1768
+#: src/component/navigation.vue:477 src/component/navigation.vue:1768
 msgid "Offline"
 msgstr "Offline"
 
@@ -1718,7 +1723,7 @@ msgstr "Az eredeti fájlneveket a rendszer tárolja és indexeli."
 msgid "Original Name"
 msgstr "Eredeti Név"
 
-#: src/component/navigation.vue:373 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 msgid "Originals"
@@ -1728,10 +1733,9 @@ msgstr "Eredetiek"
 msgid "Other"
 msgstr "Egyéb"
 
-#: src/page/connect.vue:125
-#, fuzzy
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-msgstr "Csapatunk ezt folyamatosan értékeli, attól függően, hogy a funkciók milyen támogatási erőfeszítést igényelnek, mennyibe kerülnek nekünk, és hogy általában mindenkinek szüksége van-e rájuk, vagy elsősorban szervezetek és haladó felhasználók igénylik őket. Mivel ez lehetővé teszi számunkra, hogy több funkciót biztosítsunk a nyilvánosság számára, minden felhasználót arra bátorítunk, hogy támogassa küldetésünket."
+#: src/page/connect.vue:121
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
 
 #: src/page/about/about.vue:45
 #, fuzzy
@@ -1746,7 +1750,7 @@ msgstr "Szabadtéri"
 msgid "Panorama"
 msgstr "Panoráma"
 
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:89
 msgid "Panoramas"
 msgstr "Panorámák"
 
@@ -1759,8 +1763,8 @@ msgstr "Jelszó"
 msgid "Password changed"
 msgstr "A jelszó megváltozott"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:214
-#: src/component/navigation.vue:556 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
+#: src/component/navigation.vue:550 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1790,10 +1794,9 @@ msgstr "Fénykép"
 msgid "PhotoPrism has been updated…"
 msgstr "A PhotoPrism frissítve lett…"
 
-#: src/page/connect.vue:119
-#, fuzzy
-msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "A PhotoPrism 100%-ban önfinanszírozó. Az önkéntes adományok nem fedezik a teljes munkaidőben dolgozó csapat költségeit, hogy frissítéseket, dokumentációt és támogatást nyújtsanak Önnek. Az Ön döntése, hogy szeretne-e regisztrálni, hogy élvezhesse a további előnyöket."
+#: src/page/connect.vue:113
+msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
@@ -1816,8 +1819,8 @@ msgid "Place & Time"
 msgstr "Hely és idő"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:280
-#: src/component/navigation.vue:290 src/component/navigation.vue:562
+#: src/app/routes.js:268 src/component/navigation.vue:276
+#: src/component/navigation.vue:286 src/component/navigation.vue:556
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1870,7 +1873,7 @@ msgstr "Előnézet"
 msgid "Primary"
 msgstr "Elsődleges"
 
-#: src/app/routes.js:236 src/component/navigation.vue:341
+#: src/app/routes.js:236 src/component/navigation.vue:337
 #: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
@@ -2020,7 +2023,7 @@ msgstr "Újrapróbálkozási korlát"
 msgid "Retype Password"
 msgstr "Gépelje be újra a jelszót"
 
-#: src/app/routes.js:229 src/component/navigation.vue:125
+#: src/app/routes.js:229 src/component/navigation.vue:121
 msgid "Review"
 msgstr "Felülvizsgálat"
 
@@ -2038,12 +2041,12 @@ msgstr "Mentés"
 msgid "Scan"
 msgstr "Felderítés"
 
-#: src/component/navigation.vue:117
+#: src/component/navigation.vue:113
 msgid "Scans"
 msgstr "Szkennel"
 
-#: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:61 src/component/navigation.vue:71
+#: src/component/navigation.vue:538 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2104,10 +2107,10 @@ msgid "Services"
 msgstr "Szolgáltatások"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:405
-#: src/component/navigation.vue:415 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
+#: src/component/navigation.vue:423 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
 msgid "Settings"
 msgstr "Beállítások"
 
@@ -2135,11 +2138,6 @@ msgstr "%{name} megosztása"
 #: src/page/settings/general.vue:385
 msgid "Share your pictures with other apps and services."
 msgstr "Ossza meg képeit más alkalmazásokkal és szolgáltatásokkal."
-
-#: src/page/connect.vue:110
-#, fuzzy
-msgid "Shouldn't free software be free of costs?"
-msgstr "Az ingyenes szoftvereknek nem kellene költségmentesnek lenniük?"
 
 #: src/page/people/new.vue:219 src/page/people/recognized.vue:285
 msgid "Show"
@@ -2220,7 +2218,7 @@ msgstr "A metaadataik alapján csoportosítsa a pontosan ugyanabban az időben �
 msgid "Stackable"
 msgstr "Egymásra rakható"
 
-#: src/component/navigation.vue:109 src/page/settings/library.vue:34
+#: src/component/navigation.vue:105 src/page/settings/library.vue:34
 msgid "Stacks"
 msgstr "Stackek"
 
@@ -2236,7 +2234,7 @@ msgstr "Rajt"
 msgid "Start/Stop Slideshow"
 msgstr "Diavetítés indítása/leállítása"
 
-#: src/component/navigation.vue:266 src/component/navigation.vue:300
+#: src/component/navigation.vue:262 src/component/navigation.vue:296
 #: src/component/navigation.vue:28 src/component/navigation.vue:1033
 msgid "States"
 msgstr "Országok"
@@ -2306,11 +2304,6 @@ msgstr "Előfordulhat, hogy a formátumuk nem támogatott, még nem konvertált�
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Téma"
-
-#: src/page/connect.vue:113
-#, fuzzy
-msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-msgstr "Gondoljon a \"szabad szoftverre\" úgy, mint a \"szabad beszédre\", ne úgy, mint a \"szabad sörre\". A Szabad Szoftver Alapítvány néha \"libre software\"-nek nevezi, a francia vagy spanyol \"free\" szóból kölcsönözve a \"szabad\" szót, mint a szabadságot, hogy megmutassa, hogy nem azt jelenti, hogy a szoftver ingyenes."
 
 #: src/page/settings/services.vue:40
 #, fuzzy
@@ -2426,7 +2419,7 @@ msgstr "Ismeretlen"
 msgid "Unregistered"
 msgstr "Nem regisztrált"
 
-#: src/app/routes.js:201 src/component/navigation.vue:167
+#: src/app/routes.js:201 src/component/navigation.vue:163
 msgid "Unsorted"
 msgstr "Rendezés nélkül"
 
@@ -2463,8 +2456,8 @@ msgstr "Előnézetek frissítése"
 msgid "Updating stacks"
 msgstr "Csoportosítások frissítése"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:454
-#: src/component/navigation.vue:586 src/component/navigation.vue:1683
+#: src/page/connect.vue:17 src/component/navigation.vue:400
+#: src/component/navigation.vue:580 src/component/navigation.vue:1513
 #, fuzzy
 msgid "Upgrade"
 msgstr "Frissítés"
@@ -2531,7 +2524,7 @@ msgstr "Előbeállítások használata"
 msgid "User"
 msgstr "Felhasználó"
 
-#: src/component/navigation.vue:591 src/page/about/about.vue:42
+#: src/component/navigation.vue:585 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "Felhasználói útmutató"
 
@@ -2565,8 +2558,8 @@ msgstr "Videó"
 msgid "Video Duration"
 msgstr "Időtartam"
 
-#: src/app/routes.js:222 src/component/navigation.vue:180
-#: src/component/navigation.vue:190 src/component/navigation.vue:4
+#: src/app/routes.js:222 src/component/navigation.vue:176
+#: src/component/navigation.vue:186 src/component/navigation.vue:4
 #: src/component/navigation.vue:735
 msgid "Videos"
 msgstr "Videók"
@@ -2585,6 +2578,10 @@ msgstr "Látogasson el a docs.photoprism.app/user-guide webhelyre, ahol megtudha
 #, fuzzy
 msgid "Visual Similarity"
 msgstr "Csoportosítás hasonlóság szerint"
+
+#: src/page/connect.vue:114
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr ""
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2618,7 +2615,7 @@ msgstr "WebDAV feltöltés"
 msgid "Website"
 msgstr "Weboldal"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:118
 #, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Milyen funkciók állnak általában rendelkezésre?"
@@ -2627,7 +2624,7 @@ msgstr "Milyen funkciók állnak általában rendelkezésre?"
 msgid "White"
 msgstr "Fehér"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:110
 #, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Miért vannak olyan funkciók, amelyek csak a szponzorok számára elérhetőek?"
@@ -2700,6 +2697,22 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#, fuzzy
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Csapatunk ezt folyamatosan értékeli, attól függően, hogy a funkciók milyen támogatási erőfeszítést igényelnek, mennyibe kerülnek nekünk, és hogy általában mindenkinek szüksége van-e rájuk, vagy elsősorban szervezetek és haladó felhasználók igénylik őket. Mivel ez lehetővé teszi számunkra, hogy több funkciót biztosítsunk a nyilvánosság számára, minden felhasználót arra bátorítunk, hogy támogassa küldetésünket."
+
+#, fuzzy
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "A PhotoPrism 100%-ban önfinanszírozó. Az önkéntes adományok nem fedezik a teljes munkaidőben dolgozó csapat költségeit, hogy frissítéseket, dokumentációt és támogatást nyújtsanak Önnek. Az Ön döntése, hogy szeretne-e regisztrálni, hogy élvezhesse a további előnyöket."
+
+#, fuzzy
+#~ msgid "Shouldn't free software be free of costs?"
+#~ msgstr "Az ingyenes szoftvereknek nem kellene költségmentesnek lenniük?"
+
+#, fuzzy
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Gondoljon a \"szabad szoftverre\" úgy, mint a \"szabad beszédre\", ne úgy, mint a \"szabad sörre\". A Szabad Szoftver Alapítvány néha \"libre software\"-nek nevezi, a francia vagy spanyol \"free\" szóból kölcsönözve a \"szabad\" szót, mint a szabadságot, hogy megmutassa, hogy nem azt jelenti, hogy a szoftver ingyenes."
 
 #~ msgid "Moonlight"
 #~ msgstr "Holdfény"
