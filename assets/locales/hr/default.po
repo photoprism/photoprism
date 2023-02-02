@@ -101,17 +101,14 @@ msgid "Not available in public mode"
 msgstr "Nije dostupno u javnom načinu"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
 msgstr "nije dostupno u načinu samo za čitanje"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
 msgstr "Molimo prijavite se i pokušajte ponovno"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
 msgstr "Osoba je izbrisana"
 
@@ -128,12 +125,10 @@ msgid "No items selected"
 msgstr "Nema odabranih stavki"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Izrada datoteke nije uspjela, provjerite dopuštenja"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Izrada mape nije uspjela, provjerite dopuštenja"
 
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "Nema dostupnih datoteka za preuzimanje"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Izrada zip datoteke nije uspjela"
 
@@ -332,7 +326,6 @@ msgid "Person deleted"
 msgstr "Osoba je izbrisana"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
 msgstr "Datoteka je izbrisana"
 
@@ -346,7 +339,6 @@ msgid "Processing upload..."
 msgstr ""
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
 msgstr "Prijenos bi mogao biti uvredljiv"
 
@@ -380,6 +372,6 @@ msgid "Permanently deleted"
 msgstr "Trajno izbrisano"
 
 #: messages.go:180
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been restored"
 msgstr "Odabir je vraćen"

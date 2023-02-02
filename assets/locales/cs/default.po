@@ -376,6 +376,5 @@ msgstr "Trvale smazáno"
 msgid "%s has been restored"
 msgstr "%s bylo obnoveno"
 
-#, fuzzy
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "Na serveru nenalezeno, vymazáno?"

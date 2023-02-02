@@ -114,8 +114,7 @@ msgstr "アクセス拒否"
 
 #: messages.go:117
 msgid "Upload might be offensive"
-msgstr ""
-"アップロードされた項目に過激なものが含まれている可能性があります"
+msgstr "アップロードされた項目に過激なものが含まれている可能性があります"
 
 #: messages.go:118
 msgid "Upload failed"

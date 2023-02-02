@@ -95,6 +95,8 @@ fix-permissions:
 	fi
 gettext-merge:
 	./scripts/gettext-merge.sh
+gettext-clear-fuzzy:
+	./scripts/gettext-clear-fuzzy.sh
 clean:
 	rm -f *.log .test*
 	[ ! -f "$(BINARY_NAME)" ] || rm -f $(BINARY_NAME)

@@ -10,7 +10,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -86,17 +87,14 @@ msgid "Actions"
 msgstr "Radnje"
 
 #: src/page/connect.vue:73 src/page/connect.vue:92
-#, fuzzy
 msgid "Activate"
 msgstr "Aktivirati"
 
 #: src/page/connect.vue:292 src/page/connect.vue:407
-#, fuzzy
 msgid "Activation Code"
 msgstr "Aktivacijski kod"
 
 #: src/dialog/service/add.vue:7
-#, fuzzy
 msgid "Add Account"
 msgstr "Uredite korisnički račun"
 
@@ -151,8 +149,12 @@ msgid "After one year"
 msgstr "Nakon godinu dana"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Nakon što odaberete slike iz rezultata pretraživanja, možete ih dodati u album pomoću kontekstnog izbornika."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Nakon što odaberete slike iz rezultata pretraživanja, možete ih dodati u "
+"album pomoću kontekstnog izbornika."
 
 #: src/options/options.js:387
 msgid "After two months"
@@ -235,8 +237,12 @@ msgid "All Years"
 msgstr "Sve godine"
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternativno, možete prenijeti datoteke izravno na WebDAV poslužitelje poput Nextclouda."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Alternativno, možete prenijeti datoteke izravno na WebDAV poslužitelje poput "
+"Nextclouda."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -263,7 +269,8 @@ msgstr "Animacija"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Sve privatne fotografije i videozapisi ostaju privatni i neće biti dijeljeni."
+msgstr ""
+"Sve privatne fotografije i videozapisi ostaju privatni i neće biti dijeljeni."
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -321,7 +328,9 @@ msgid "Artist"
 msgstr "Umjetnik"
 
 #: src/page/connect.vue:122
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgid ""
+"As this helps us provide more features to the public, we encourage all users "
+"to support our mission."
 msgstr ""
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
@@ -329,26 +338,41 @@ msgid "Aspect Ratio"
 msgstr "Razmjer proporcija"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Automatski kreirajte JPEG-ove za druge vrste datoteka tako da se mogu prikazati u pregledniku."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"Automatski kreirajte JPEG-ove za druge vrste datoteka tako da se mogu "
+"prikazati u pregledniku."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Automatski stvara albume posebnih trenutaka, putovanja i mjesta."
 
 #: src/page/connect.vue:68
-#, fuzzy
-msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-msgstr "Postanite sponzor već danas, podržite našu misiju i uživajte u našim pogodnostima za članove!"
+msgid ""
+"Become a sponsor today, support our mission and enjoy our member benefits!"
+msgstr ""
+"Postanite sponzor već danas, podržite našu misiju i uživajte u našim "
+"pogodnostima za članove!"
 
 #: src/page/about/about.vue:59
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Prije podnošenja zahtjeva za podršku, upotrijebite naše kontrolne liste za rješavanje problema kako biste utvrdili uzrok svog problema."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Prije podnošenja zahtjeva za podršku, upotrijebite naše kontrolne liste za "
+"rješavanje problema kako biste utvrdili uzrok svog problema."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-#, fuzzy
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Budući da smo 100% sami financirani i neovisni, možemo vam obećati da nikada nećemo prodati vaše podatke i da ćemo uvijek biti transparentni u vezi s našim softverom i uslugama."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"Budući da smo 100% sami financirani i neovisni, možemo vam obećati da nikada "
+"nećemo prodati vaše podatke i da ćemo uvijek biti transparentni u vezi s "
+"našim softverom i uslugama."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -356,7 +380,6 @@ msgid "Bio"
 msgstr "bio"
 
 #: src/page/settings/account.vue:67
-#, fuzzy
 msgid "Birth Date"
 msgstr "Datum rođenja"
 
@@ -385,9 +408,12 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Pregledajte indeksirane datoteke i mape u knjižnici."
 
 #: src/page/about/about.vue:51
-#, fuzzy
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Pregledajte bazu znanja za detaljne informacije o određenim značajkama proizvoda, uslugama i povezanim resursima."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
+msgstr ""
+"Pregledajte bazu znanja za detaljne informacije o određenim značajkama "
+"proizvoda, uslugama i povezanim resursima."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:414
 msgid "Bug Report"
@@ -398,9 +424,12 @@ msgid "Busy, please wait…"
 msgstr "Zauzeto, pričekajte…"
 
 #: src/page/connect.vue:82 src/page/connect.vue:101
-#, fuzzy
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Korištenjem softvera i usluga koje pružamo, slažete se s našim uvjetima pružanja usluge, politikom privatnosti i kodeksom ponašanja."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"Korištenjem softvera i usluga koje pružamo, slažete se s našim uvjetima "
+"pružanja usluge, politikom privatnosti i kodeksom ponašanja."
 
 #: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
@@ -455,17 +484,14 @@ msgid "Category"
 msgstr "Kategorija"
 
 #: src/page/settings/account.vue:253 src/page/settings/account.vue:252
-#, fuzzy
 msgid "Change Avatar"
 msgstr "Promijenite privatnu zastavu"
 
 #: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
-#, fuzzy
 msgid "Change Password"
 msgstr "Nova lozinka"
 
 #: src/page/settings/general.vue:473
-#, fuzzy
 msgid "Change personal profile and security settings."
 msgstr "Promijenite osobni profil i sigurnosne postavke."
 
@@ -480,7 +506,6 @@ msgstr "Promijenite privatnu zastavu"
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
-#, fuzzy
 msgid "Changes successfully saved"
 msgstr "Promjene su uspješno spremljene"
 
@@ -514,12 +539,14 @@ msgid "Colors"
 msgstr "Boje"
 
 #: src/page/about/about.vue:46
-#, fuzzy
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Uobičajeni problemi mogu se brzo dijagnosticirati i riješiti pomoću kontrolnih popisa za rješavanje problema koje nudimo."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
+msgstr ""
+"Uobičajeni problemi mogu se brzo dijagnosticirati i riješiti pomoću "
+"kontrolnih popisa za rješavanje problema koje nudimo."
 
 #: src/page/connect.vue:65 src/page/connect.vue:84
-#, fuzzy
 msgid "Compare Editions"
 msgstr "Usporedite izdanja"
 
@@ -541,12 +568,10 @@ msgid "Connect via WebDAV"
 msgstr "Povežite se putem WebDAV-a"
 
 #: src/page/connect.vue:56
-#, fuzzy
 msgid "Connected"
 msgstr "Spojiti"
 
 #: src/page/settings/account.vue:113 src/page/settings/account.vue:90
-#, fuzzy
 msgid "Contact Details"
 msgstr "Kontaktirajte nas"
 
@@ -590,7 +615,6 @@ msgid "Country"
 msgstr "Država"
 
 #: src/page/login.vue:19
-#, fuzzy
 msgid "Create Account"
 msgstr "Napravi račun"
 
@@ -722,17 +746,19 @@ msgid "Discover"
 msgstr "Otkrij"
 
 #: src/page/settings/account.vue:193 src/page/settings/account.vue:192
-#, fuzzy
 msgid "Display Name"
 msgstr "Ime za prikaz"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Nemojte sigurnosno kopirati fotografije i metapodatke albuma u YAML datoteke."
+msgstr ""
+"Nemojte sigurnosno kopirati fotografije i metapodatke albuma u YAML datoteke."
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Nemojte stvarati ExifTool JSON datoteke za poboljšano izdvajanje metapodataka."
+msgstr ""
+"Nemojte stvarati ExifTool JSON datoteke za poboljšano izdvajanje "
+"metapodataka."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
@@ -797,9 +823,12 @@ msgid "Downscaling Filter"
 msgstr "Filter za smanjenje"
 
 #: src/page/about/feedback.vue:16
-#, fuzzy
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Zbog velike količine e-poruka koje primamo, naš tim vam se možda neće moći odmah javiti."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Zbog velike količine e-poruka koje primamo, naš tim vam se možda neće moći "
+"odmah javiti."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -814,8 +843,12 @@ msgid "Dynamic Previews"
 msgstr "Dinamički pregledi"
 
 #: src/page/settings/advanced.vue:303
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dinamičko renderiranje zahtijeva moćan poslužitelj. Ne preporučuje se za NAS uređaje."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"Dinamičko renderiranje zahtijeva moćan poslužitelj. Ne preporučuje se za NAS "
+"uređaje."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -849,7 +882,6 @@ msgstr "Uređeno"
 
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 #: src/page/settings/account.vue:220
-#, fuzzy
 msgid "Email"
 msgstr "E-mail"
 
@@ -859,7 +891,9 @@ msgstr "Omogućite nove značajke koje su trenutno u razvoju."
 
 #: src/page/settings/advanced.vue:461
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "Omogućuje unaprijed postavljene postavke RAW pretvarača. Može smanjiti performanse."
+msgstr ""
+"Omogućuje unaprijed postavljene postavke RAW pretvarača. Može smanjiti "
+"performanse."
 
 #: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
@@ -878,8 +912,12 @@ msgid "Every two days"
 msgstr "Svaka dva dana"
 
 #: src/page/settings/general.vue:209
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Izuzmite sadržaj označen kao privatan iz rezultata pretraživanja, dijeljenih albuma, oznaka i mjesta."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Izuzmite sadržaj označen kao privatan iz rezultata pretraživanja, dijeljenih "
+"albuma, oznaka i mjesta."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -930,7 +968,6 @@ msgid "Failed updating link"
 msgstr "Neuspješno ažuriranje veze"
 
 #: src/page/settings/account.vue:166 src/page/settings/account.vue:165
-#, fuzzy
 msgid "Family Name"
 msgstr "Prezime"
 
@@ -952,7 +989,6 @@ msgid "Feature Request"
 msgstr "Zahtjev za značajku"
 
 #: src/page/settings/account.vue:818 src/page/settings/account.vue:671
-#, fuzzy
 msgid "Feed"
 msgstr "Povratne informacije"
 
@@ -961,11 +997,13 @@ msgid "Feedback"
 msgstr "Povratne informacije"
 
 #: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:102
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Slobodno nas kontaktirajte na hello@photoprism.app ako imate bilo kakvih pitanja."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+"Slobodno nas kontaktirajte na hello@photoprism.app ako imate bilo kakvih "
+"pitanja."
 
 #: src/options/options.js:428
-#, fuzzy
 msgid "Female"
 msgstr "Žena"
 
@@ -979,13 +1017,11 @@ msgstr "Preglednik datoteka"
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
-#, fuzzy
 msgid "File Name"
 msgstr "Datoteka"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:55
 #: src/dialog/album/edit.vue:24
-#, fuzzy
 msgid "File Size"
 msgstr "Datoteka"
 
@@ -999,8 +1035,12 @@ msgid "Files"
 msgstr "Datoteke"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Datoteke s uzastopnim nazivima poput 'IMG_1234 (2)' i 'IMG_1234 (3)' pripadaju istoj slici."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Datoteke s uzastopnim nazivima poput 'IMG_1234 (2)' i 'IMG_1234 (3)' "
+"pripadaju istoj slici."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1038,7 +1078,6 @@ msgid "Frames"
 msgstr "Okviri"
 
 #: src/page/connect.vue:107
-#, fuzzy
 msgid "Frequently Asked Questions"
 msgstr "Često postavljana pitanja"
 
@@ -1051,7 +1090,6 @@ msgid "Gemstone"
 msgstr "Dragi kamen"
 
 #: src/page/settings/account.vue:81 src/page/settings/account.vue:80
-#, fuzzy
 msgid "Gender"
 msgstr "Lavanda"
 
@@ -1064,7 +1102,6 @@ msgid "Getting Support"
 msgstr "Dobivanje podrške"
 
 #: src/page/settings/account.vue:140 src/page/settings/account.vue:139
-#, fuzzy
 msgid "Given Name"
 msgstr "Originalno ime"
 
@@ -1150,12 +1187,17 @@ msgid "Import failed"
 msgstr "Uvoz nije uspio"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Uvezene datoteke bit će razvrstane po datumu i dati im jedinstveni naziv kako bi se izbjeglo dupliranje."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Uvezene datoteke bit će razvrstane po datumu i dati im jedinstveni naziv "
+"kako bi se izbjeglo dupliranje."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Uvezene datoteke bit će razvrstane po datumu i dati im jedinstveni naziv."
+msgstr ""
+"Uvezene datoteke bit će razvrstane po datumu i dati im jedinstveni naziv."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1179,8 +1221,12 @@ msgstr "Osim toga, sponzori dobivaju izravnu tehničku podršku putem e-pošte."
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "U slučaju da nedostaju slike koje očekujete, ponovno skenirajte svoju biblioteku i pričekajte dok se indeksiranje ne završi."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"U slučaju da nedostaju slike koje očekujete, ponovno skenirajte svoju "
+"biblioteku i pričekajte dok se indeksiranje ne završi."
 
 #: src/component/navigation.vue:568 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1188,7 +1234,6 @@ msgid "Index"
 msgstr "Početna"
 
 #: src/page/settings/general.vue:407
-#, fuzzy
 msgid "Index and import files through the user interface."
 msgstr "Indeksirajte i uvezite datoteke putem korisničkog sučelja."
 
@@ -1225,7 +1270,6 @@ msgstr "Interval"
 #: src/page/settings/account.vue:223 src/page/settings/account.vue:280
 #: src/page/settings/account.vue:564 src/page/settings/account.vue:618
 #: src/page/settings/account.vue:646 src/page/settings/account.vue:674
-#, fuzzy
 msgid "Invalid"
 msgstr "Nevažeći datum"
 
@@ -1234,7 +1278,6 @@ msgid "Invalid date"
 msgstr "Nevažeći datum"
 
 #: src/page/connect.vue:68 src/page/connect.vue:74
-#, fuzzy
 msgid "Invalid parameters"
 msgstr "Nevažeći datum"
 
@@ -1243,13 +1286,17 @@ msgid "Invalid photo selected"
 msgstr "Odabrana je nevažeća fotografija"
 
 #: src/page/connect.vue:115
-msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgid ""
+"It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr ""
 
 #: src/page/about/about.vue:16
-#, fuzzy
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Koristi najnovije tehnologije za označavanje i automatsko pronalaženje slika, a da vam ne smeta."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
+msgstr ""
+"Koristi najnovije tehnologije za označavanje i automatsko pronalaženje "
+"slika, a da vam ne smeta."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1272,7 +1319,6 @@ msgid "Keywords"
 msgstr "Ključne riječi"
 
 #: src/page/about/about.vue:50
-#, fuzzy
 msgid "Knowledge Base"
 msgstr "Baza znanja"
 
@@ -1315,12 +1361,10 @@ msgstr "Lavanda"
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
 #: src/page/connect.vue:125 src/page/connect.vue:112
-#, fuzzy
 msgid "Learn more"
 msgstr "Saznajte više"
 
 #: src/component/navigation.vue:589
-#, fuzzy
 msgid "Legal Information"
 msgstr "Legalna informacija"
 
@@ -1372,7 +1416,6 @@ msgid "Live"
 msgstr "Uživo"
 
 #: src/component/navigation.vue:196
-#, fuzzy
 msgid "Live Photos"
 msgstr "Slike"
 
@@ -1391,8 +1434,12 @@ msgid "Location"
 msgstr "Lokacija"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Poruke dnevnika pojavljuju se ovdje kad god PhotoPrism naiđe na pokvarene datoteke ili postoje drugi potencijalni problemi."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Poruke dnevnika pojavljuju se ovdje kad god PhotoPrism naiđe na pokvarene "
+"datoteke ili postoje drugi potencijalni problemi."
 
 #: src/component/navigation.vue:462 src/component/navigation.vue:1723
 #: src/component/navigation.vue:1997
@@ -1418,7 +1465,6 @@ msgid "Low"
 msgstr "Nisko"
 
 #: src/options/options.js:276
-#, fuzzy
 msgid "Low Resolution"
 msgstr "Niska rezolucija"
 
@@ -1431,12 +1477,10 @@ msgid "Main Color"
 msgstr "Glavna Boja"
 
 #: src/options/options.js:427
-#, fuzzy
 msgid "Male"
 msgstr "Muški"
 
 #: src/page/connect.vue:56
-#, fuzzy
 msgid "Manage account"
 msgstr "Upravljaj računom"
 
@@ -1449,7 +1493,6 @@ msgid "Manual Upload"
 msgstr "Ručno učitavanje"
 
 #: src/page/settings/general.vue:558
-#, fuzzy
 msgid "Maps"
 msgstr "Karte"
 
@@ -1462,7 +1505,6 @@ msgid "Medium"
 msgstr "Srednje"
 
 #: src/page/connect.vue:4
-#, fuzzy
 msgid "Membership"
 msgstr "Članstvo"
 
@@ -1518,7 +1560,6 @@ msgstr "Mozaik"
 
 #: src/component/album/toolbar.vue:72 src/component/photo/toolbar.vue:57
 #: src/dialog/album/edit.vue:26
-#, fuzzy
 msgid "Most Relevant"
 msgstr "Najvažnije"
 
@@ -1527,7 +1568,6 @@ msgid "Move Files"
 msgstr "Premjesti datoteke"
 
 #: src/dialog/account/password.vue:156
-#, fuzzy
 msgid "Must have at least %{n} characters."
 msgstr "Mora imati najmanje %{n} znakova."
 
@@ -1552,7 +1592,6 @@ msgid "Name too long"
 msgstr "Ime predugo"
 
 #: src/options/themes.js:483
-#, fuzzy
 msgid "Neon"
 msgstr "Neon"
 
@@ -1571,7 +1610,6 @@ msgstr "Nova lozinka"
 
 #: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:50
 #: src/dialog/album/edit.vue:19 src/page/albums.vue:88
-#, fuzzy
 msgid "Newest First"
 msgstr "Prvo najnovije"
 
@@ -1616,7 +1654,6 @@ msgid "No servers configured."
 msgstr "Nema konfiguriranih poslužitelja."
 
 #: src/page/settings/services.vue:36
-#, fuzzy
 msgid "No services configured."
 msgstr "Nema konfiguriranih poslužitelja."
 
@@ -1629,8 +1666,12 @@ msgid "No video selected"
 msgstr "Nije odabran nijedan videozapis"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Nema upozorenja ili pogreške koje sadrže ovu ključnu riječ. Imajte na umu da je pretraživanje osjetljivo na velika i mala slova."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Nema upozorenja ili pogreške koje sadrže ovu ključnu riječ. Imajte na umu da "
+"je pretraživanje osjetljivo na velika i mala slova."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1639,8 +1680,12 @@ msgstr "Nema upozorenja ili pogreške koje sadrže ovu ključnu riječ. Imajte n
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52 src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Nefotografske slike i slike niske kvalitete zahtijevaju pregled prije nego što se pojave u rezultatima pretraživanja."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Nefotografske slike i slike niske kvalitete zahtijevaju pregled prije nego "
+"što se pojave u rezultatima pretraživanja."
 
 #: src/options/options.js:253 src/options/options.js:338
 msgid "None"
@@ -1651,23 +1696,30 @@ msgid "Not Found"
 msgstr "Nije pronađeno"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Imajte na umu da svoju mapu izvornika možete ručno upravljati, a uvoz nije obavezan."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Imajte na umu da svoju mapu izvornika možete ručno upravljati, a uvoz nije "
+"obavezan."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Bilješka:"
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Napomena: Samo WebDAV poslužitelji, kao što su Nextcloud ili PhotoPrism, mogu se konfigurirati kao udaljeni servis za sigurnosno kopiranje i prijenos datoteka."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Napomena: Samo WebDAV poslužitelji, kao što su Nextcloud ili PhotoPrism, "
+"mogu se konfigurirati kao udaljeni servis za sigurnosno kopiranje i prijenos "
+"datoteka."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
 msgstr "Napomene"
 
 #: src/page/library/logs.vue:5
-#, fuzzy
 msgid "Nothing to see here yet."
 msgstr "Ovdje se još nema što vidjeti. Budi strpljiv."
 
@@ -1677,13 +1729,13 @@ msgstr "Offline"
 
 #: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:51
 #: src/dialog/album/edit.vue:20 src/page/albums.vue:89
-#, fuzzy
 msgid "Oldest First"
 msgstr "Prvo najstariji"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr "U sustavu Windows unesite sljedeći resurs u dijaloški okvir za povezivanje:"
+msgstr ""
+"U sustavu Windows unesite sljedeći resurs u dijaloški okvir za povezivanje:"
 
 #: src/options/options.js:377
 msgid "Once a week"
@@ -1735,7 +1787,6 @@ msgid "Orange"
 msgstr "Narančasta"
 
 #: src/page/settings/account.vue:588
-#, fuzzy
 msgid "Organization"
 msgstr "Usmjerenje"
 
@@ -1763,13 +1814,19 @@ msgid "Other"
 msgstr "Ostalo"
 
 #: src/page/connect.vue:121
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgid ""
+"Our team decides this on an ongoing basis depending on the support effort "
+"required, server and licensing costs, and whether the features are generally "
+"needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
 
 #: src/page/about/about.vue:45
-#, fuzzy
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Naš korisnički priručnik također pokriva mnoge napredne teme, poput migracije s Google fotografija i postavki kvalitete minijatura."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
+msgstr ""
+"Naš korisnički priručnik također pokriva mnoge napredne teme, poput "
+"migracije s Google fotografija i postavki kvalitete minijatura."
 
 #: src/options/options.js:290
 msgid "Outdoor"
@@ -1812,7 +1869,6 @@ msgid "Permanently remove files to free up storage."
 msgstr "Trajno uklonite datoteke da biste oslobodili prostor za pohranu."
 
 #: src/page/settings/account.vue:762 src/page/settings/account.vue:615
-#, fuzzy
 msgid "Phone"
 msgstr "Telefon"
 
@@ -1829,9 +1885,10 @@ msgid "PhotoPrism is 100% self-funded and independent."
 msgstr ""
 
 #: src/page/about/about.vue:15
-#, fuzzy
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® je aplikacija za fotografije s umjetnom inteligencijom za decentralizirani web."
+msgstr ""
+"PhotoPrism® je aplikacija za fotografije s umjetnom inteligencijom za "
+"decentralizirani web."
 
 #: src/app/routes.js:142
 msgid "Photos"
@@ -1867,9 +1924,12 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Nemojte učitavati fotografije koje sadrže uvredljiv sadržaj."
 
 #: src/dialog/account/password.vue:17
-#, fuzzy
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Imajte na umu da ćete se promjenom lozinke odjaviti s drugih uređaja i preglednika."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Imajte na umu da ćete se promjenom lozinke odjaviti s drugih uređaja i "
+"preglednika."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1912,7 +1972,6 @@ msgid "Private"
 msgstr "Privatno"
 
 #: src/page/connect.vue:68 src/page/connect.vue:87
-#, fuzzy
 msgid "Proceed"
 msgstr "Nastavi"
 
@@ -1958,10 +2017,11 @@ msgstr "RAW konverzija"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Ponovno indeksirajte sve originale, uključujući već indeksirane i nepromijenjene datoteke."
+msgstr ""
+"Ponovno indeksirajte sve originale, uključujući već indeksirane i "
+"nepromijenjene datoteke."
 
 #: src/page/about/about.vue:48
-#, fuzzy
 msgid "Read the Docs"
 msgstr "Pročitajte dokumente"
 
@@ -1971,13 +2031,11 @@ msgstr "Način samo za čitanje"
 
 #: src/component/album/toolbar.vue:67 src/component/photo/toolbar.vue:52
 #: src/dialog/album/edit.vue:21 src/page/albums.vue:90
-#, fuzzy
 msgid "Recently Added"
 msgstr "Nedavno dodano"
 
 #: src/component/album/toolbar.vue:68 src/component/photo/toolbar.vue:53
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:91
-#, fuzzy
 msgid "Recently Edited"
 msgstr "Nedavno uređeno"
 
@@ -2028,8 +2086,12 @@ msgid "Remove from album"
 msgstr "Ukloni iz albuma"
 
 #: src/page/library/import.vue:121
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Uklonite uvezene datoteke da biste spremili pohranu. Nepodržane vrste datoteka nikada se neće izbrisati, ostaju na svojoj trenutnoj lokaciji."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Uklonite uvezene datoteke da biste spremili pohranu. Nepodržane vrste "
+"datoteka nikada se neće izbrisati, ostaju na svojoj trenutnoj lokaciji."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2062,7 +2124,6 @@ msgid "Review"
 msgstr "Recenzija"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Satellite"
 msgstr "Satelit"
 
@@ -2100,7 +2161,6 @@ msgid "Secret"
 msgstr "Tajno"
 
 #: src/page/settings/account.vue:44
-#, fuzzy
 msgid "Security and Access"
 msgstr "Sigurnost i pristup"
 
@@ -2138,7 +2198,6 @@ msgid "Service URL"
 msgstr "URL usluge"
 
 #: src/page/settings.vue:72 src/page/settings/general.vue:384
-#, fuzzy
 msgid "Services"
 msgstr "URL usluge"
 
@@ -2172,7 +2231,6 @@ msgid "Share %{name}"
 msgstr "Podijeli %{name}"
 
 #: src/page/settings/general.vue:385
-#, fuzzy
 msgid "Share your pictures with other apps and services."
 msgstr "Dijelite svoje slike s drugim aplikacijama i uslugama."
 
@@ -2226,7 +2284,6 @@ msgid "Slow"
 msgstr "Sporo"
 
 #: src/options/themes.js:493
-#, fuzzy
 msgid "Snow"
 msgstr "Snijeg"
 
@@ -2245,11 +2302,16 @@ msgstr "Stog"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Stog datoteka koje dijele istu jedinstvenu sliku ili identifikator instance."
+msgstr ""
+"Stog datoteka koje dijele istu jedinstvenu sliku ili identifikator instance."
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Složite slike snimljene u točno isto vrijeme i na istom mjestu na temelju njihovih metapodataka."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Složite slike snimljene u točno isto vrijeme i na istom mjestu na temelju "
+"njihovih metapodataka."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2260,8 +2322,12 @@ msgid "Stacks"
 msgstr "Stogovi"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Grupira datoteke sa sličnim referentnim okvirom, ali razlikama u kvaliteti, formatu, veličini ili boji."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"Grupira datoteke sa sličnim referentnim okvirom, ali razlikama u kvaliteti, "
+"formatu, veličini ili boji."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2297,16 +2363,16 @@ msgid "Subject"
 msgstr "Predmet"
 
 #: src/page/connect.vue:51
-#, fuzzy
 msgid "Successfully Connected"
 msgstr "Uspješno spojen"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Podrška za dodatne usluge, poput Google diska, bit će dodana s vremenom."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Podrška za dodatne usluge, poput Google diska, bit će dodana s vremenom."
 
 #: src/dialog/sponsor.vue:7
-#, fuzzy
 msgid "Support Our Mission"
 msgstr "Podržite našu misiju"
 
@@ -2336,23 +2402,36 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "Indeks trenutno sadrži %{n} skrivenih datoteka."
 
 #: src/page/library/index.vue:37
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Njihov format možda nije podržan, još nisu pretvoreni u JPEG ili postoje duplikati."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Njihov format možda nije podržan, još nisu pretvoreni u JPEG ili postoje "
+"duplikati."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
 msgstr "Tema"
 
 #: src/page/settings/services.vue:40
-#, fuzzy
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Time se mapa originala montira kao mrežni pogon i omogućuje vam otvaranje, uređivanje i brisanje datoteka s računala ili pametnog telefona kao da su lokalne."
+msgstr ""
+"Time se mapa originala montira kao mrežni pogon i omogućuje vam otvaranje, "
+"uređivanje i brisanje datoteka s računala ili pametnog telefona kao da su "
+"lokalne."
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Time se mapa originala montira kao mrežni pogon i omogućuje vam otvaranje, uređivanje i brisanje datoteka s računala ili pametnog telefona kao da su lokalne."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Time se mapa originala montira kao mrežni pogon i omogućuje vam otvaranje, "
+"uređivanje i brisanje datoteka s računala ili pametnog telefona kao da su "
+"lokalne."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2371,13 +2450,11 @@ msgid "Timeout"
 msgstr "Pauza"
 
 #: src/page/settings/account.vue:113
-#, fuzzy
 msgctxt "Account"
 msgid "Title"
 msgstr "Naslov"
 
 #: src/dialog/photo/edit/details.vue:96
-#, fuzzy
 msgctxt "Photo"
 msgid "Title"
 msgstr "Naslov"
@@ -2388,7 +2465,6 @@ msgid "Title"
 msgstr "Naslov"
 
 #: src/page/settings/account.vue:562
-#, fuzzy
 msgid "Title / Position"
 msgstr "Naslov predug"
 
@@ -2397,9 +2473,12 @@ msgid "Title too long"
 msgstr "Naslov predug"
 
 #: src/page/connect.vue:59 src/page/connect.vue:78
-#, fuzzy
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Za nadogradnju možete unijeti aktivacijski kod ili kliknuti na \"Nastavi\" da se prijavite na našoj web stranici:"
+msgid ""
+"To upgrade, you may either enter an activation code or click on \"Proceed\" "
+"to sign up on our website:"
+msgstr ""
+"Za nadogradnju možete unijeti aktivacijski kod ili kliknuti na \"Nastavi\" "
+"da se prijavite na našoj web stranici:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2454,7 +2533,6 @@ msgstr "Nepoznato"
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
 #: src/component/navigation.vue:82 src/model/user.js:130
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:43
-#, fuzzy
 msgid "Unregistered"
 msgstr "Neregistriran"
 
@@ -2484,7 +2562,6 @@ msgid "Updating moments"
 msgstr "Trenuci ažuriranja"
 
 #: src/page/settings/account.vue:124
-#, fuzzy
 msgid "Updating picture…"
 msgstr "Ažuriranje pregleda"
 
@@ -2498,13 +2575,11 @@ msgstr "Ažuriranje hrpa"
 
 #: src/page/connect.vue:17 src/component/navigation.vue:400
 #: src/component/navigation.vue:580 src/component/navigation.vue:1513
-#, fuzzy
 msgid "Upgrade"
 msgstr "Nadogradnja"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
 #: src/page/connect.vue:59
-#, fuzzy
 msgid "Upgrade Now"
 msgstr "Nadograditi sada"
 
@@ -2545,7 +2620,6 @@ msgid "Uploading photos…"
 msgstr "Prijenos fotografija…"
 
 #: src/page/settings/account.vue:127
-#, fuzzy
 msgid "Uploading…"
 msgstr "Pretovar…"
 
@@ -2566,7 +2640,6 @@ msgid "User"
 msgstr "Korisnik"
 
 #: src/component/navigation.vue:585 src/page/about/about.vue:42
-#, fuzzy
 msgid "User Guide"
 msgstr "Korisnički vodič"
 
@@ -2584,7 +2657,6 @@ msgid "Vanta"
 msgstr "Vanta"
 
 #: src/page/connect.vue:11
-#, fuzzy
 msgid "Verified"
 msgstr "Provjereno"
 
@@ -2597,7 +2669,6 @@ msgstr "Video"
 
 #: src/component/album/toolbar.vue:71 src/component/photo/toolbar.vue:56
 #: src/dialog/album/edit.vue:25
-#, fuzzy
 msgid "Video Duration"
 msgstr "Trajanje"
 
@@ -2613,44 +2684,53 @@ msgid "View"
 msgstr "Pregled"
 
 #: src/page/about/about.vue:44
-#, fuzzy
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Posjetite docs.photoprism.app/user-guide kako biste saznali kako sinkronizirati, organizirati i dijeliti svoje slike."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
+msgstr ""
+"Posjetite docs.photoprism.app/user-guide kako biste saznali kako "
+"sinkronizirati, organizirati i dijeliti svoje slike."
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:27
-#, fuzzy
 msgid "Visual Similarity"
 msgstr "Grupirajte po sličnosti"
 
 #: src/page/connect.vue:114
-msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgid ""
+"Voluntary donations do not cover the cost of a team working full time to "
+"provide you with updates, documentation, and support."
 msgstr ""
 
 #: src/page/about/feedback.vue:13
-#, fuzzy
 msgid "We appreciate your feedback!"
 msgstr "Cijenimo vaše povratne informacije!"
 
 #: src/page/about/feedback.vue:17
-#, fuzzy
 msgid "We do our best to respond within five business days or less."
 msgstr "Dajemo sve od sebe da odgovorimo u roku od pet radnih dana ili manje."
 
 #: src/page/about/about.vue:71
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Potrudit ćemo se odgovoriti na sva vaša pitanja. Zauzvrat, molimo vas da nas podržite na Patreonu ili GitHub sponzorima."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Potrudit ćemo se odgovoriti na sva vaša pitanja. Zauzvrat, molimo vas da nas "
+"podržite na Patreonu ili GitHub sponzorima."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "WebDAV klijenti mogu se povezati s PhotoPrismom koristeći sljedeći URL:"
+msgstr ""
+"WebDAV klijenti mogu se povezati s PhotoPrismom koristeći sljedeći URL:"
 
 #: src/page/settings/services.vue:37
-#, fuzzy
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV klijenti, kao što su Microsoftov Windows Explorer ili Appleov Finder, mogu se izravno povezati s PhotoPrismom."
+msgstr ""
+"WebDAV klijenti, kao što su Microsoftov Windows Explorer ili Appleov Finder, "
+"mogu se izravno povezati s PhotoPrismom."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2658,12 +2738,10 @@ msgstr "WebDAV Upload"
 
 #: src/page/settings/account.vue:644 src/page/settings/account.vue:790
 #: src/page/settings/account.vue:643
-#, fuzzy
 msgid "Website"
 msgstr "Web stranica"
 
 #: src/page/connect.vue:118
-#, fuzzy
 msgid "What functionality is generally available?"
 msgstr "Koja je funkcionalnost općenito dostupna?"
 
@@ -2672,12 +2750,10 @@ msgid "White"
 msgstr "Bijelo"
 
 #: src/page/connect.vue:110
-#, fuzzy
 msgid "Why are some features only available to sponsors?"
 msgstr "Zašto su neke značajke dostupne samo sponzorima?"
 
 #: src/page/settings/account.vue:90
-#, fuzzy
 msgid "Work Details"
 msgstr "Detalji"
 
@@ -2719,7 +2795,6 @@ msgid "You can only download one label"
 msgstr "Možete preuzeti samo jednu naljepnicu"
 
 #: src/page/about/about.vue:17
-#, fuzzy
 msgid "You can run it at home, on a private server, or in the cloud."
 msgstr "Možete ga pokrenuti kod kuće, na privatnom poslužitelju ili u oblaku."
 
@@ -2730,73 +2805,120 @@ msgstr "Možete odabrati samo jednu stavku"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr "Možete ponovno skenirati svoju biblioteku kako biste pronašli dodatna lica."
+msgstr ""
+"Možete ponovno skenirati svoju biblioteku kako biste pronašli dodatna lica."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 #: src/page/connect.vue:71
-#, fuzzy
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Vaša stalna podrška pomaže nam pružiti redovita ažuriranja i usluge kao što su karte svijeta."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Vaša stalna podrška pomaže nam pružiti redovita ažuriranja i usluge kao što "
+"su karte svijeta."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Vaša se knjižnica kontinuirano analizira kako bi se automatski izradili albumi posebnih trenutaka, putovanja i mjesta."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Vaša se knjižnica kontinuirano analizira kako bi se automatski izradili "
+"albumi posebnih trenutaka, putovanja i mjesta."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povećavanje/smanjivanje"
 
-#, fuzzy
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Naš tim to kontinuirano procjenjuje, ovisno o podršci koju značajke zahtijevaju, troškovima za nas i jesu li općenito potrebne svima ili ih uglavnom traže organizacije i napredni korisnici. Budući da nam to omogućuje pružanje više značajki javnosti, potičemo sve korisnike da podrže našu misiju."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users. As this allows us to make more features available to the "
+#~ "public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Naš tim to kontinuirano procjenjuje, ovisno o podršci koju značajke "
+#~ "zahtijevaju, troškovima za nas i jesu li općenito potrebne svima ili ih "
+#~ "uglavnom traže organizacije i napredni korisnici. Budući da nam to "
+#~ "omogućuje pružanje više značajki javnosti, potičemo sve korisnike da "
+#~ "podrže našu misiju."
 
-#, fuzzy
-#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "PhotoPrism se 100% financira sam. Dobrovoljne donacije ne pokrivaju troškove tima koji radi puno radno vrijeme kako bi vam pružio ažuriranja, dokumentaciju i podršku. Vaša je odluka želite li se prijaviti i uživati u dodatnim pogodnostima."
+#~ msgid ""
+#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
+#~ "of a team working full time to provide you with updates, documentation, "
+#~ "and support. It is your decision whether you want to sign up to enjoy "
+#~ "additional benefits."
+#~ msgstr ""
+#~ "PhotoPrism se 100% financira sam. Dobrovoljne donacije ne pokrivaju "
+#~ "troškove tima koji radi puno radno vrijeme kako bi vam pružio ažuriranja, "
+#~ "dokumentaciju i podršku. Vaša je odluka želite li se prijaviti i uživati "
+#~ "u dodatnim pogodnostima."
 
-#, fuzzy
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "Ne bi li besplatni softver trebao biti besplatan?"
 
-#, fuzzy
-#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-#~ msgstr "Razmišljajte o \"slobodnom softveru\" kao o \"slobodi govora\", a ne kao o \"besplatnom pivu\". Zaklada za slobodni softver ga ponekad naziva \"slobodnim softverom\", posuđujući francusku ili španjolsku riječ za \"besplatno\" kao što je sloboda, kako bi pokazali da ne misle da je softver besplatan."
+#~ msgid ""
+#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
+#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
+#~ "the French or Spanish word for “free” as in freedom, to show they do not "
+#~ "mean the software is gratis."
+#~ msgstr ""
+#~ "Razmišljajte o \"slobodnom softveru\" kao o \"slobodi govora\", a ne kao "
+#~ "o \"besplatnom pivu\". Zaklada za slobodni softver ga ponekad naziva "
+#~ "\"slobodnim softverom\", posuđujući francusku ili španjolsku riječ za "
+#~ "\"besplatno\" kao što je sloboda, kako bi pokazali da ne misle da je "
+#~ "softver besplatan."
 
 #~ msgid "Moonlight"
 #~ msgstr "Mjesečina"
 
-#, fuzzy
 #~ msgid "Basic"
 #~ msgstr "Osnovni, temeljni"
 
-#, fuzzy
 #~ msgid "Upgrade now and enjoy our member benefits!"
 #~ msgstr "Nadogradite sada i uživajte u našim pogodnostima za članove!"
 
 #~ msgid "Sign Up"
 #~ msgstr "Registracija"
 
-#, fuzzy
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "Za nadogradnju možete unijeti aktivacijski kod ili kliknuti na \"Prijava\" za nadogradnju na našoj web stranici:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "Za nadogradnju možete unijeti aktivacijski kod ili kliknuti na "
+#~ "\"Prijava\" za nadogradnju na našoj web stranici:"
 
-#, fuzzy
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
-#~ msgstr "Za nadogradnju možete unijeti aktivacijski kod ili kliknuti na \"Prijava\" za nadogradnju na našoj web stranici:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
+#~ "Now\" to sign up on our website:"
+#~ msgstr ""
+#~ "Za nadogradnju možete unijeti aktivacijski kod ili kliknuti na "
+#~ "\"Prijava\" za nadogradnju na našoj web stranici:"
 
 #~ msgid "Sign up"
 #~ msgstr "Registracija"
 
-#, fuzzy
 #~ msgid "Compare Features"
 #~ msgstr "Usporedite značajke"
 
-#, fuzzy
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Naš tim to kontinuirano procjenjuje, ovisno o značajkama podrške i konfiguracijskim opcijama koje uzrokuju ili su uzrokovale u prošlosti, te jesu li općenito potrebni svima ili ih uglavnom zahtijevaju organizacije i napredni korisnici. Budući da nam to omogućuje da više značajki učinimo dostupnima javnosti, potičemo sve korisnike da podrže našu misiju."
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Naš tim to kontinuirano procjenjuje, ovisno o značajkama podrške i "
+#~ "konfiguracijskim opcijama koje uzrokuju ili su uzrokovale u prošlosti, te "
+#~ "jesu li općenito potrebni svima ili ih uglavnom zahtijevaju organizacije "
+#~ "i napredni korisnici. Budući da nam to omogućuje da više značajki učinimo "
+#~ "dostupnima javnosti, potičemo sve korisnike da podrže našu misiju."
 
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "Također, ostavite zvjezdicu na GitHubu ako vam se sviđa ovaj projekt. Pruža dodatnu motivaciju za nastavak."
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "Također, ostavite zvjezdicu na GitHubu ako vam se sviđa ovaj projekt. "
+#~ "Pruža dodatnu motivaciju za nastavak."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Postanite sponzor"
@@ -2804,24 +2926,39 @@ msgstr "Povećavanje/smanjivanje"
 #~ msgid "I'm a sponsor"
 #~ msgstr "Ja sam sponzor"
 
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "Sponzori dobivaju pristup dodatnim značajkama, primaju izravnu tehničku podršku putem e-pošte i mogu se pridružiti našoj privatnoj sobi za razgovor na matrix.org."
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "Sponzori dobivaju pristup dodatnim značajkama, primaju izravnu tehničku "
+#~ "podršku putem e-pošte i mogu se pridružiti našoj privatnoj sobi za "
+#~ "razgovor na matrix.org."
 
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-#~ msgstr "Ovo je trenutno značajka sponzora za zahvalu svima koji podržavaju razvoj ove aplikacije."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
+#~ msgstr ""
+#~ "Ovo je trenutno značajka sponzora za zahvalu svima koji podržavaju razvoj "
+#~ "ove aplikacije."
 
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-#~ msgstr "Obavijestit ćemo vas kako to omogućiti kada se prijavite na Patreon ili GitHub sponzore."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
+#~ msgstr ""
+#~ "Obavijestit ćemo vas kako to omogućiti kada se prijavite na Patreon ili "
+#~ "GitHub sponzore."
 
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "Vaša stalna podrška pomaže nam pružiti redovita ažuriranja i usluge kao što su karte svijeta."
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "Vaša stalna podrška pomaže nam pružiti redovita ažuriranja i usluge kao "
+#~ "što su karte svijeta."
 
-#, fuzzy
 #~ msgctxt "Account|"
 #~ msgid "Title"
 #~ msgstr "Naslov"
 
-#, fuzzy
 #~ msgctxt "Photo|"
 #~ msgid "Title"
 #~ msgstr "Naslov"
@@ -2829,15 +2966,12 @@ msgstr "Povećavanje/smanjivanje"
 #~ msgid "Seaweed"
 #~ msgstr "Alge"
 
-#, fuzzy
 #~ msgid "AI-Powered Digital Asset Management"
 #~ msgstr "Upravljanje digitalnom imovinom temeljeno na umjetnoj inteligenciji"
 
-#, fuzzy
 #~ msgid "API Documentation"
 #~ msgstr "Donacije"
 
-#, fuzzy
 #~ msgid "Developer Guide"
 #~ msgstr "Vodič za razvojne programere"
 
@@ -2862,7 +2996,6 @@ msgstr "Povećavanje/smanjivanje"
 #~ msgid "Sort by file name"
 #~ msgstr "Poredaj po nazivu datoteke"
 
-#, fuzzy
 #~ msgid "Terms &amp; Privacy"
 #~ msgstr "Uvjeti &amp; Privatnost"
 
@@ -2887,11 +3020,19 @@ msgstr "Povećavanje/smanjivanje"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Neuspjeh prilikom uvoza prenesenih datoteka"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "Napomena: Ažuriranje lozinke neće opozvati pristup već provjerenim korisnicima."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Napomena: Ažuriranje lozinke neće opozvati pristup već provjerenim "
+#~ "korisnicima."
 
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "Naša misija je pružiti rješenje koje najviše odgovara korisnicima i privatnosti kako bi vaše slike bile organizirane i dostupne."
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "Naša misija je pružiti rješenje koje najviše odgovara korisnicima i "
+#~ "privatnosti kako bi vaše slike bile organizirane i dostupne."
 
 #~ msgid "Play"
 #~ msgstr "igra"
@@ -2905,8 +3046,12 @@ msgstr "Povećavanje/smanjivanje"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Prikaži knjižnicu u navigacijskom izborniku."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Plan pokazuje koji su zadaci u tijeku, što je potrebno testirati i koji će se zahtjevi za značajke sljedeće implementirati."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Plan pokazuje koji su zadaci u tijeku, što je potrebno testirati i koji "
+#~ "će se zahtjevi za značajke sljedeće implementirati."
 
 #~ msgid "to"
 #~ msgstr "do"
@@ -2914,10 +3059,8 @@ msgstr "Povećavanje/smanjivanje"
 #~ msgid "Your message has been sent"
 #~ msgstr "Vaša poruka je poslana"
 
-#, fuzzy
 #~ msgid "PhotoPrism® needs your support"
 #~ msgstr "PhotoPrism® treba vašu podršku"
 
-#, fuzzy
 #~ msgid "Thank you for supporting PhotoPrism®"
 #~ msgstr "Hvala vam što podržavate PhotoPrism®"

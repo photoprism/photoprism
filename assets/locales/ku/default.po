@@ -101,17 +101,14 @@ msgid "Not available in public mode"
 msgstr "بەردەست نیە بۆ دۆخی گشتی"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
 msgstr "بەردەست نییە لە دۆخی تەنها-خوێندنەوە"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
 msgstr "تکایە تێپەڕبە پاشان هەوڵبدەرەوە"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
 msgstr "ئەلبومەکان سڕانەوە"
 
@@ -128,12 +125,10 @@ msgid "No items selected"
 msgstr "هیچ ئایتمێک دەستنیشان نەکراوە"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "شکست لە دروستکردنی پەڕگە، تکایە مۆڵەتەکان بپشکنە"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "شکست لە دروستکردنی بوخچە، تکایە مۆڵەتەکان بپشکنە"
 
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "هیچ پەڕگەیەک ئامادە نیە بۆ داگرتن"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "دروستکردنی فایلی زیپ سەرکەوتوو نەبوو"
 
@@ -179,7 +173,6 @@ msgid "Invalid name"
 msgstr "بەروارێکی نادروست"
 
 #: messages.go:132
-#, fuzzy
 msgid "Busy, please try again later"
 msgstr "تێپەرەوشە هەڵەیە، تکایە جارێکی تر هەوڵبدەوە"
 
@@ -232,7 +225,7 @@ msgid "One entry added to %s"
 msgstr "یەک تێکراو زیاد کرایە %s"
 
 #: messages.go:146
-#, fuzzy, c-format
+#, c-format
 msgid "%d entries added to %s"
 msgstr "%d تێکراو زیاد کرایە  %s"
 
@@ -259,17 +252,15 @@ msgid "Account deleted"
 msgstr "هەژمارەکە سڕایەوە"
 
 #: messages.go:152
-#, fuzzy
 msgid "Settings saved"
 msgstr "ڕێکخستنەکان پاشەکەوتکرا"
 
 #: messages.go:153
-#, fuzzy
 msgid "Password changed"
 msgstr "تێپەڕەوشە گۆڕدرا"
 
 #: messages.go:154
-#, fuzzy, c-format
+#, c-format
 msgid "Import completed in %d s"
 msgstr "هاوردن تەواو بوو بە %d  چرکە"
 
@@ -296,7 +287,7 @@ msgid "Indexing canceled"
 msgstr "نیشانەکردن هەڵوەشێنرایەوە"
 
 #: messages.go:160
-#, fuzzy, c-format
+#, c-format
 msgid "Removed %d files and %d photos"
 msgstr "لابردنی %d پەڕگە و  %d وێنە"
 
@@ -311,7 +302,6 @@ msgid "Copying files from %s"
 msgstr "کۆپی کردنی پەڕگە لە%s"
 
 #: messages.go:163
-#, fuzzy
 msgid "Labels deleted"
 msgstr "پێناسەکان سڕانەوە"
 
@@ -336,7 +326,6 @@ msgid "Person deleted"
 msgstr "ئەلبومەکان سڕانەوە"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
 msgstr "پەڕگە سڕایەوە"
 
@@ -350,7 +339,6 @@ msgid "Processing upload..."
 msgstr ""
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
 msgstr "بارکردن لەوانەیە سووکایەتی بێت"
 
@@ -359,12 +347,10 @@ msgid "Selection approved"
 msgstr "دەستنیشان کراو پەسەند کرا"
 
 #: messages.go:174
-#, fuzzy
 msgid "Selection archived"
 msgstr "هەڵبژاردەکە ئەرشیفکرا"
 
 #: messages.go:175
-#, fuzzy
 msgid "Selection restored"
 msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 
@@ -373,7 +359,6 @@ msgid "Selection marked as private"
 msgstr "دەستنیشانکراوەکان کران بە تایبەتی"
 
 #: messages.go:177
-#, fuzzy
 msgid "Albums deleted"
 msgstr "ئەلبومەکان سڕایەوە"
 
@@ -387,7 +372,7 @@ msgid "Permanently deleted"
 msgstr "بە هەمیشەیی سڕاوەتەوە"
 
 #: messages.go:180
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been restored"
 msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 
