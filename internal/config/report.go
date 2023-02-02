@@ -42,14 +42,16 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"certificates-path", c.CertificatesPath()},
 		{"options-yaml", c.OptionsYaml()},
 		{"defaults-yaml", c.DefaultsYaml()},
-		{"settings-yaml", c.SettingsYaml()},
 	}
 
+	// Settings.
 	if settingsDefaults := c.SettingsYamlDefaults(""); settingsDefaults != "" && settingsDefaults != c.SettingsYaml() {
 		rows = append(rows, []string{"settings-yaml", fmt.Sprintf("%s (defaults)", settingsDefaults)})
 	}
 
 	rows = append(rows, [][]string{
+		{"settings-yaml", c.SettingsYaml()},
+
 		// Originals.
 		{"originals-path", c.OriginalsPath()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
