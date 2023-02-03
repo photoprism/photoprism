@@ -500,7 +500,13 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Take(&cfg.Count)
 	}
 
+	// Calculate total count.
 	cfg.Count.All = cfg.Count.Photos + cfg.Count.Live + cfg.Count.Videos
+
+	// Exclude pictures in review from total count.
+	if c.Settings().Features.Review {
+		cfg.Count.All = cfg.Count.All - cfg.Count.Review
+	}
 
 	c.Db().
 		Table("labels").

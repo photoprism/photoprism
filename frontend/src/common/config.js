@@ -320,6 +320,8 @@ export default class Config {
         this.values.count.favorites += data.count;
         break;
       case "review":
+        this.values.count.all -= data.count;
+        this.values.count.photos -= data.count;
         this.values.count.review += data.count;
         break;
       case "private":

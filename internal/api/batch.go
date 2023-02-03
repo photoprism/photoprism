@@ -182,7 +182,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 		var approved entity.Photos
 
 		for _, p := range photos {
-			if err := p.Approve(); err != nil {
+			if err = p.Approve(); err != nil {
 				log.Errorf("approve: %s", err)
 			} else {
 				approved = append(approved, p)
