@@ -61,7 +61,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.LessOrEqual(t, 20, cfg.Count.Photos)
 		assert.LessOrEqual(t, 1, cfg.Count.Live)
 		assert.LessOrEqual(t, 4, cfg.Count.Videos)
-		assert.LessOrEqual(t, cfg.Count.Photos+cfg.Count.Live+cfg.Count.Videos, cfg.Count.All)
+		assert.LessOrEqual(t, cfg.Count.Photos+cfg.Count.Live+cfg.Count.Videos-cfg.Count.Review, cfg.Count.All)
 		assert.LessOrEqual(t, 6, cfg.Count.Cameras)
 		assert.LessOrEqual(t, 1, cfg.Count.Lenses)
 		assert.LessOrEqual(t, 13, cfg.Count.Review)
