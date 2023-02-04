@@ -68,7 +68,7 @@ export class Album extends RestModel {
   route(view) {
     return {
       name: view,
-      params: { uid: this.UID, slug: this.Slug, year: this.Year, month: this.Month },
+      params: { uid: this.UID, slug: "view", year: this.Year, month: this.Month },
     };
   }
 
