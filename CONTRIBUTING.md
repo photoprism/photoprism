@@ -50,7 +50,7 @@ In general, pull requests that resolve issues [labeled "help wanted"](https://gi
 
 ## Contributor License Agreement (CLA) ##
 
-After you submit your first pull request, you will be asked to accept our Contributor License Agreement (CLA). Visit [photoprism.app/cla](https://photoprism.app/cla) and [photoprism.app/oss/faq](https://photoprism.app/oss/faq) to learn more.
+After you submit your first pull request, you will be asked to accept our Contributor License Agreement (CLA). Visit [photoprism.app/cla](https://photoprism.app/cla) and [photoprism.app/oss/faq](https://photoprism.app/oss/faq#cla) to learn more.
 
 ## Privacy Notice ##
 
