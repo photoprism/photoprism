@@ -2,9 +2,6 @@
   <div class="p-page p-page-upgrade">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <translate>Membership</translate>
-        <v-icon v-if="rtl">navigate_before</v-icon>
-        <v-icon v-else>navigate_next</v-icon>
         <span v-if="busy">
           <translate>Busy, please wait…</translate>
         </span>
@@ -15,8 +12,8 @@
           <translate>Invalid</translate>
         </span>
         <span v-else>
-          <translate>Upgrade</translate>
-      </span>
+          <translate>PhotoPrism+ Membership</translate>
+        </span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -91,15 +88,6 @@
         </v-flex>
       </v-layout>
       <v-layout v-else row wrap>
-        <v-flex xs12 class="px-2 pt-2 pb-0">
-          <p class="subheading text-selectable">
-            <strong><translate>Become a sponsor today, support our mission and enjoy our member benefits!</translate></strong>
-          </p>
-          <p class="subheading text-selectable">
-            <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-            <!-- translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate -->
-          </p>
-        </v-flex>
         <v-flex xs12 grow align-center justify-center class="px-2 py-1">
           <v-alert
               :value="true"
@@ -145,8 +133,8 @@
         </v-flex>
         <v-flex xs12 class="px-2 pt-3 pb-0">
           <p class="body-1 text-selectable">
-            <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
             <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
+            <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
           </p>
         </v-flex>
         <v-flex v-show="showInfo" xs12 class="px-2 pt-3 pb-0">

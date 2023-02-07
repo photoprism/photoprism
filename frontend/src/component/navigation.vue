@@ -435,18 +435,6 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" @click.stop="">
-          <v-list-tile-action :title="$gettext('Upgrade')">
-            <v-icon>verified</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Upgrade">Upgrade</translate>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
         <template v-if="!config.disable.settings">
           <v-list-tile v-if="isMini" v-show="$config.feature('settings')" :to="{ name: 'settings' }" class="nav-settings" @click.stop="">
             <v-list-tile-action :title="$gettext('Settings')">
@@ -492,6 +480,14 @@
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate key="License">License</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                  <translate key="Upgrade">Upgrade</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
