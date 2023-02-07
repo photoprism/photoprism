@@ -169,7 +169,7 @@
             <translate>As this helps us provide more features to the public, we encourage all users to support our mission.</translate>
           </p>
           <p class="body-1">
-            <a href="https://photoprism.app/kb/oss" class="text-link" target="_blank"><translate>Learn more</translate> ›</a>
+            <a href="https://photoprism.app/oss/faq" class="text-link" target="_blank"><translate>Learn more</translate> ›</a>
           </p>
         </v-flex>
       </v-layout>
