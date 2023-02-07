@@ -65,7 +65,7 @@ func init() {
 		LowMem = TotalMem < MinMem
 	}
 
-	if (os.Getenv("UNSAFE_IGNORE_LOW_MEM") == "true") {
+	if os.Getenv("UNSAFE_IGNORE_LOW_MEM") == "true" {
 		LowMem = false
 		log.Warnf("Ignoring memory requirements, because UNSAFE_IGNORE_LOW_MEM is set to true")
 	}

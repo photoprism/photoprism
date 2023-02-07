@@ -516,7 +516,7 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_DATABASE_PASSWORD",
 		}},
 	CliFlag{
-        Flag: cli.StringFlag{
+		Flag: cli.StringFlag{
 			Name:   "database-password-file",
 			Usage:  "a file containing a database user `PASSWORD`",
 			EnvVar: "PHOTOPRISM_DATABASE_PASSWORD_FILE",
