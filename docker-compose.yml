@@ -1,8 +1,10 @@
 version: '3.5'
 
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
+
 services:
   ## PhotoPrism Development Environment (MariaDB)
-  ## Docs: https://docs.photoprism.org/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -13,40 +15,60 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342"   # default HTTP port (host:container)
-      - "2343:2343"   # acceptance Test HTTP port (host:container)
+      - "2342:2342"   # Default HTTP port (host:container)
+      - "2443:2443"   # Default TLS port (host:container)
+      - "2343:2343"   # Acceptance Test HTTP port (host:container)
       - "40000:40000" # Go Debugger (host:container)
     shm_size: "2gb"
     links:
+      - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
       - "traefik:keycloak.localssl.dev"
-      - "traefik:dummy-webdav.localssl.dev"
       - "traefik:dummy-oidc.localssl.dev"
+      - "traefik:dummy-webdav.localssl.dev"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
+      - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
-      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`, `app.localssl.dev`, `photoprism.localssl.dev`)"
+      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`, `app.localssl.dev`)"
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
     environment:
-      PHOTOPRISM_UID: ${UID:-1000}                   # user id, should match your host user id
-      PHOTOPRISM_GID: ${GID:-1000}                   # group id
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # initial "admin" password (minimum 8 characters)
-      ## External development server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"
+      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
+      PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
+      PHOTOPRISM_GID: ${GID:-1000}                         # group id
+      ## Access Management
+      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
+      PHOTOPRISM_REGISTER_URI: "https://keycloak.localssl.dev/admin/"
+      PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
+      ## LDAP Authentication (pre-configured for local tests):
+      PHOTOPRISM_LDAP_URI: "ldap://dummy-ldap:389"
+      PHOTOPRISM_LDAP_INSECURE: "true"
+      PHOTOPRISM_LDAP_BIND: "simple"
+      PHOTOPRISM_LDAP_BIND_DN: "cn"
+      PHOTOPRISM_LDAP_BASE_DN: "dc=localssl,dc=dev"
+      PHOTOPRISM_LDAP_SYNC: "true"
+      ## OpenID Connect (pre-configured for local tests):
+      PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"
+      PHOTOPRISM_OIDC_INSECURE: "true"
+      PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
+      PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
+      ## Site Information
+      PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
-      PHOTOPRISM_PUBLIC: "true"
       PHOTOPRISM_EXPERIMENTAL: "true"
-      PHOTOPRISM_SERVER_MODE: "debug"
+      PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
@@ -58,7 +80,7 @@ services:
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
-      PHOTOPRISM_DISABLE_CHOWN: "false"              # disables storage permission updates on startup
+      PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
@@ -67,36 +89,33 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW files
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW files (reduces performance)
-      PHOTOPRISM_DETECT_NSFW: "false"                # flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that may be offensive
+      PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
       PHOTOPRISM_THUMB_FILTER: "lanczos"             # resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048                    # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
       # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680           # on-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680                     # size limit for converted image files in pixels (720-30000)
-      PHOTOPRISM_JPEG_QUALITY: 85                    # image quality, a higher value reduces compression (25-100)
+      PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                        # show TensorFlow log messages for development
-      ## OpenID Connect Provider (pre-configured for local Keycloak test server):
-      PHOTOPRISM_OIDC_ISSUER_URL: "https://keycloak.localssl.dev/auth/realms/master"
-      PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-develop"
-      PHOTOPRISM_OIDC_CLIENT_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
-      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clitools, clean):
-      # PHOTOPRISM_INIT: "gpu tensorflow"
+      ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
+      PHOTOPRISM_INIT: "https tensorflow"
       ## Hardware Video Transcoding (optional):
-      # PHOTOPRISM_FFMPEG_ENCODER: "nvidia"          # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry")
-      # PHOTOPRISM_FFMPEG_ENCODER: "intel"           # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry")
+      # PHOTOPRISM_FFMPEG_ENCODER: "nvidia"          # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry", "vaapi") Intel: "intel" for Broadwell or later and "vaapi" for Haswell or earlier
+      # PHOTOPRISM_FFMPEG_ENCODER: "intel"           # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry", "vaapi") Intel: "intel" for Broadwell or later and "vaapi" for Haswell or earlier`
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
+      # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
-    #  - "/dev/dri:/dev/dri"                         # Intel (h264_qsv)
-    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia (h264_nvenc)
+    #  - "/dev/dri:/dev/dri"                         # Intel QSV (Broadwell and later) or VAAPI (Haswell and earlier)
+    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia CUDA
     #  - "/dev/nvidiactl:/dev/nvidiactl"
     #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
     #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
     #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
     #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
-    #  - "/dev/video11:/dev/video11"                 # Video4Linux (h264_v4l2m2m)
+    #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
@@ -104,9 +123,13 @@ services:
 
   ## MariaDB Database Server
   ## Docs: https://mariadb.com/docs/reference/
+  ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1010/
   mariadb:
-    image: mariadb:10.7
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    image: mariadb:10.10
+    security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: mysqld --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
     ports:
@@ -121,22 +144,16 @@ services:
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
 
-  ## HTTPS Reverse Proxy
-  ## includes "*.localssl.dev" SSL certificate for local development
+  ## HTTPS Reverse Proxy (recommended) ##
+  ## includes "*.localssl.dev" SSL certificate for test environments
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
-    image: photoprism/traefik:220405
+    image: photoprism/traefik:latest
     ports:
-      # - "80:80" # HTTP (redirects to HTTPS)
+      - "80:80" # HTTP (redirects to HTTPS)
       - "443:443" # HTTPS (required)
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.localssl.dev`)"
-      - "traefik.http.routers.traefik.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.traefik.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.traefik.tls=true"
-      - "traefik.http.routers.traefik.tls.certresolver=myresolver"
-      - "traefik.http.routers.traefik.service=api@internal"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
@@ -144,9 +161,11 @@ services:
   ## Login: user / photoprism
   ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:17.0.1
+    image: quay.io/keycloak/keycloak:20.0
     command: "start-dev" # development mode, do not use this in production!
+    container_name: keycloak
     links:
+      - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
     labels:
       - "traefik.enable=true"
@@ -168,9 +187,28 @@ services:
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
 
+  ## Dummy LDAP Directory Server
+  ## Docs: https://glauth.github.io/docs/
+  dummy-ldap:
+    image: glauth/glauth-plugins:latest
+    container_name: dummy-ldap
+    ports:
+      - "127.0.0.1:389:389"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.ldap.loadbalancer.server.port=5555"
+      - "traefik.http.routers.dummy-ldap.entrypoints=websecure"
+      - "traefik.http.routers.dummy-ldap.rule=Host(`dummy-ldap.localssl.dev`)"
+      - "traefik.http.routers.dummy-ldap.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.dummy-ldap.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.dummy-ldap.tls=true"
+    volumes:
+      - "./.ldap.cfg:/app/config/config.cfg"
+
   ## Dummy OpenID Connect Provider
   dummy-oidc:
     image: photoprism/dummy-oidc:220405
+    container_name: dummy-oidc
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
@@ -183,6 +221,7 @@ services:
   ## Dummy WebDAV Server
   dummy-webdav:
     image: photoprism/dummy-webdav:220405
+    container_name: dummy-webdav
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism

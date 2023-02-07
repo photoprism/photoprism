@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 CPU_DETECTED=$(lshw -c processor -json 2>/dev/null)
 

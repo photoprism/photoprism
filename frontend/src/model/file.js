@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -124,11 +124,11 @@ export class File extends RestModel {
       return `${config.contentUri}/svg/file`;
     }
 
-    return `${config.contentUri}/t/${this.Hash}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${this.Hash}/${config.previewToken}/${size}`;
   }
 
   getDownloadUrl() {
-    return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken()}`;
+    return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken}`;
   }
 
   download() {

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -73,9 +73,9 @@ export class Label extends RestModel {
 
   thumbnailUrl(size) {
     if (this.Thumb) {
-      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
     } else if (this.UID) {
-      return `${config.contentUri}/labels/${this.UID}/t/${config.previewToken()}/${size}`;
+      return `${config.contentUri}/labels/${this.UID}/t/${config.previewToken}/${size}`;
     } else {
       return `${config.contentUri}/svg/label`;
     }

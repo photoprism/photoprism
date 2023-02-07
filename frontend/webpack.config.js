@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -99,8 +99,8 @@ const config = {
   ],
   performance: {
     hints: isDev ? false : "error",
-    maxEntrypointSize: 4000000,
-    maxAssetSize: 4000000,
+    maxEntrypointSize: 5000000,
+    maxAssetSize: 5000000,
   },
   module: {
     rules: [
@@ -140,7 +140,7 @@ const config = {
       },
       {
         test: /\.css$/,
-        include: PATHS.css,
+        include: isCustom ? [PATHS.custom, PATHS.css] : [PATHS.css],
         exclude: /node_modules/,
         use: [
           {

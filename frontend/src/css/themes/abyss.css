@@ -1,24 +1,22 @@
 /* Abyss Theme */
 
+body.dark-theme.theme-abyss,
 .theme-abyss .v-content__wrap,
 .theme-abyss .p-page,
 .theme-abyss .form,
 .theme-abyss .v-content {
-    background: #212121 !important;
+    background: #202020 !important;
 }
 
+.theme-abyss .application.theme--light,
 #photoprism.theme-abyss .theme--light.v-small-dialog__content,
 #photoprism.theme-abyss .theme--light.v-sheet,
 #photoprism.theme-abyss .theme--light.v-card {
-    background: #212121;
-}
-
-.theme-abyss .application.theme--light {
-    background: #212121;
+    background: #202020;
 }
 
 #photoprism.theme-abyss .theme--light .v-table {
-    background: #262626;
+    background: #242424;
 }
 
 #photoprism.theme-abyss .theme--light.v-table thead th,
@@ -27,15 +25,15 @@
 }
 
 #photoprism.theme-abyss .theme--light.v-table tbody tr:hover {
-    background: #333333;
+    background: #342C43;
 }
 
 #photoprism.theme-abyss .theme--light.v-chip,
-#photoprism.theme-abyss .v-card__actions .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+#photoprism.theme-abyss .v-card__actions .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
     background: #333;
 }
 
-#photoprism.theme-abyss .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+#photoprism.theme-abyss .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
     background: #262626;
 }
 
@@ -60,7 +58,7 @@
 }
 
 #photoprism.theme-abyss .theme--light.v-list {
-    background: #262626;
+    background: #181818;
 }
 
 #photoprism.theme-abyss a.text-link {
@@ -90,4 +88,18 @@
 #photoprism.theme-abyss .theme--light.v-list .v-list__tile__mask {
     color: #cccccc;
     background: transparent;
+}
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #432970;
+}
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #643da9;
+}
+
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-abyss .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #7e57c2;
 }

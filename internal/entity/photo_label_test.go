@@ -64,6 +64,7 @@ func TestPhotoLabel_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	//TODO fails on mariadb
 	t.Run("photo not nil and label not nil", func(t *testing.T) {
 		label := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
 		photo := &Photo{}

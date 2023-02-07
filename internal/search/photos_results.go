@@ -42,7 +42,8 @@ type Photo struct {
 	PhotoFaces       int           `json:"Faces,omitempty" select:"photos.photo_faces"`
 	PhotoQuality     int           `json:"Quality" select:"photos.photo_quality"`
 	PhotoResolution  int           `json:"Resolution" select:"photos.photo_resolution"`
-	PhotoColor       uint8         `json:"Color" select:"photos.photo_color"`
+	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"photos.photo_duration"`
+	PhotoColor       int16         `json:"Color" select:"photos.photo_color"`
 	PhotoScan        bool          `json:"Scan" select:"photos.photo_scan"`
 	PhotoPanorama    bool          `json:"Panorama" select:"photos.photo_panorama"`
 	CameraID         uint          `json:"CameraID" select:"photos.camera_id"` // Camera
@@ -89,9 +90,9 @@ type Photo struct {
 	FileProjection   string        `json:"-" select:"files.file_projection"`
 	FileAspectRatio  float32       `json:"-" select:"files.file_aspect_ratio"`
 	FileColors       string        `json:"-" select:"files.file_colors"`
-	FileChroma       uint8         `json:"-" select:"files.file_chroma"`
+	FileDiff         int           `json:"-" select:"files.file_diff"`
+	FileChroma       int16         `json:"-" select:"files.file_chroma"`
 	FileLuminance    string        `json:"-" select:"files.file_luminance"`
-	FileDiff         uint32        `json:"-" select:"files.file_diff"`
 	Merged           bool          `json:"Merged" select:"-"`
 	CreatedAt        time.Time     `json:"CreatedAt" select:"photos.created_at"`
 	UpdatedAt        time.Time     `json:"UpdatedAt" select:"photos.updated_at"`

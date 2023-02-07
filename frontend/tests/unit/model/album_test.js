@@ -10,7 +10,7 @@ describe("model/album", () => {
     const album = new Album(values);
     const result = album.route("test");
     assert.equal(result.name, "test");
-    assert.equal(result.params.slug, "christmas-2019");
+    assert.equal(result.params.slug, "view");
   });
 
   it("should return classes", () => {

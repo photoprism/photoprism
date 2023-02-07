@@ -4,9 +4,9 @@ import (
 	"strings"
 )
 
-// Token removes invalid character from a token string.
+// Token returns the sanitized token string with a length of up to 4096 characters.
 func Token(s string) string {
-	if s == "" || reject(s, 200) {
+	if s == "" || reject(s, MaxLength) {
 		return ""
 	}
 
@@ -20,4 +20,22 @@ func Token(s string) string {
 	}, s)
 
 	return s
+}
+
+// UrlToken returns the sanitized URL token with a length of up to 42 characters.
+func UrlToken(s string) string {
+	if s == "" || len(s) > 64 {
+		return ""
+	}
+
+	return Token(s)
+}
+
+// ShareToken returns the sanitized link share token with a length of up to 160 characters.
+func ShareToken(s string) string {
+	if s == "" || len(s) > 160 {
+		return ""
+	}
+
+	return Token(s)
 }

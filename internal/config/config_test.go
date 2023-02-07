@@ -6,9 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMain(m *testing.M) {
@@ -36,15 +37,43 @@ func TestNewConfig(t *testing.T) {
 	assert.IsType(t, new(Config), c)
 
 	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath())
+	assert.False(t, c.Prod())
 	assert.False(t, c.Debug())
 	assert.False(t, c.ReadOnly())
+}
+
+func TestConfig_Prod(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.Prod())
+	assert.False(t, c.Debug())
+	assert.False(t, c.Trace())
+	c.options.Prod = true
+	c.options.Debug = true
+	assert.True(t, c.Prod())
+	assert.False(t, c.Debug())
+	assert.False(t, c.Trace())
+	c.options.Prod = false
+	assert.True(t, c.Debug())
+	assert.False(t, c.Trace())
+	c.options.Debug = false
+	assert.False(t, c.Debug())
+	assert.False(t, c.Debug())
+	assert.False(t, c.Trace())
 }
 
 func TestConfig_Name(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	name := c.Name()
-	assert.Equal(t, "config.test", name)
+	assert.Equal(t, "PhotoPrism", name)
+}
+
+func TestConfig_Edition(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	name := c.Edition()
+	assert.Equal(t, "PhotoPrism® Dev", name)
 }
 
 func TestConfig_Version(t *testing.T) {
@@ -132,7 +161,7 @@ func TestConfig_HttpServerMode(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	mode := c.HttpMode()
-	assert.Equal(t, "release", mode)
+	assert.Equal(t, HttpModeProd, mode)
 }
 
 func TestConfig_OriginalsPath(t *testing.T) {
@@ -170,11 +199,26 @@ func TestConfig_AssetsPath(t *testing.T) {
 	assert.True(t, strings.HasSuffix(c.AssetsPath(), "/assets"))
 }
 
+func TestConfig_CustomAssetsPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.CustomAssetsPath())
+}
+
 func TestConfig_DetectNSFW(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	result := c.DetectNSFW()
 	assert.Equal(t, true, result)
+}
+
+func TestConfig_AdminUser(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.AdminUser = "foo  "
+	assert.Equal(t, "foo", c.AdminUser())
+	c.options.AdminUser = "  Admin"
+	assert.Equal(t, "admin", c.AdminUser())
 }
 
 func TestConfig_AdminPassword(t *testing.T) {
@@ -217,11 +261,33 @@ func TestConfig_TemplatesPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/templates", path)
 }
 
+func TestConfig_CustomTemplatesPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	path := c.CustomTemplatesPath()
+	assert.Equal(t, "", path)
+}
+
+func TestConfig_TemplatesFiles(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	files := c.TemplateFiles()
+
+	t.Logf("TemplateFiles: %#v", files)
+}
+
 func TestConfig_StaticPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.StaticPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static", path)
+}
+
+func TestConfig_StaticFile(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	path := c.StaticFile("video/404.mp4")
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/video/404.mp4", path)
 }
 
 func TestConfig_BuildPath(t *testing.T) {
@@ -236,45 +302,6 @@ func TestConfig_ImgPath(t *testing.T) {
 
 	path := c.ImgPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", path)
-}
-
-func TestConfig_ClientConfig(t *testing.T) {
-	c := TestConfig()
-
-	cc := c.UserConfig()
-
-	assert.IsType(t, ClientConfig{}, cc)
-
-	if cc.JsUri == "" {
-		t.Error("the JavaScript asset URI must not be empty, make sure that the frontend has been built")
-	}
-
-	if cc.CssUri == "" {
-		t.Error("the CSS asset URI must not be empty, make sure that the frontend has been built")
-	}
-
-	assert.NotEmpty(t, cc.Name)
-	assert.NotEmpty(t, cc.Version)
-	assert.NotEmpty(t, cc.Copyright)
-	assert.NotEmpty(t, cc.Thumbs)
-	assert.NotEmpty(t, cc.ManifestUri)
-	assert.Equal(t, true, cc.Debug)
-	assert.Equal(t, false, cc.Demo)
-	assert.Equal(t, true, cc.Sponsor)
-	assert.Equal(t, false, cc.ReadOnly)
-
-	// Counts.
-	assert.NotEmpty(t, cc.Count.All)
-	assert.NotEmpty(t, cc.Count.Photos)
-	assert.LessOrEqual(t, 20, cc.Count.Photos)
-	assert.LessOrEqual(t, 1, cc.Count.Live)
-	assert.LessOrEqual(t, 4, cc.Count.Videos)
-	assert.LessOrEqual(t, cc.Count.Photos+cc.Count.Live+cc.Count.Videos, cc.Count.All)
-	assert.LessOrEqual(t, 6, cc.Count.Cameras)
-	assert.LessOrEqual(t, 1, cc.Count.Lenses)
-	assert.LessOrEqual(t, 13, cc.Count.Review)
-	assert.LessOrEqual(t, 1, cc.Count.Private)
-	assert.LessOrEqual(t, 4, cc.Count.Albums)
 }
 
 func TestConfig_Workers(t *testing.T) {
@@ -343,6 +370,10 @@ func TestConfig_ResolutionLimit(t *testing.T) {
 	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.ResolutionLimit = -1
 	assert.Equal(t, -1, c.ResolutionLimit())
+	c.options.Sponsor = false
+	assert.Equal(t, 150, c.ResolutionLimit())
+	c.options.Sponsor = true
+	assert.Equal(t, -1, c.ResolutionLimit())
 }
 
 func TestConfig_BaseUri(t *testing.T) {
@@ -402,7 +433,7 @@ func TestConfig_ContentUri(t *testing.T) {
 func TestConfig_SiteUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
+	assert.Equal(t, "http://photoprism.me:2342/", c.SiteUrl())
 	c.options.SiteUrl = "http://superhost:2342/"
 	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
 	c.options.SiteUrl = "http://superhost"
@@ -412,26 +443,30 @@ func TestConfig_SiteUrl(t *testing.T) {
 func TestConfig_SiteDomain(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "localhost", c.SiteDomain())
+	assert.Equal(t, "photoprism.me", c.SiteDomain())
 	c.options.SiteUrl = "https://foo.bar.com:2342/"
 	assert.Equal(t, "foo.bar.com", c.SiteDomain())
 	c.options.SiteUrl = ""
-	assert.Equal(t, "localhost", c.SiteDomain())
+	assert.Equal(t, "photoprism.me", c.SiteDomain())
 }
 
 func TestConfig_SitePreview(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "http://localhost:2342/static/img/preview.jpg", c.SitePreview())
+	assert.Equal(t, "https://i.photoprism.app/prism?cover=64&style=centered%20dark&caption=none&title=PhotoPrism", c.SitePreview())
 	c.options.SitePreview = "http://preview.jpg"
 	assert.Equal(t, "http://preview.jpg", c.SitePreview())
 	c.options.SitePreview = "preview123.jpg"
-	assert.Equal(t, "http://localhost:2342/preview123.jpg", c.SitePreview())
+	assert.Equal(t, "http://photoprism.me:2342/preview123.jpg", c.SitePreview())
+	c.options.SitePreview = "foo/preview123.jpg"
+	assert.Equal(t, "http://photoprism.me:2342/foo/preview123.jpg", c.SitePreview())
+	c.options.SitePreview = "/foo/preview123.jpg"
+	assert.Equal(t, "http://photoprism.me:2342/foo/preview123.jpg", c.SitePreview())
 }
 
 func TestConfig_SiteTitle(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "config.test", c.SiteTitle())
+	assert.Equal(t, "PhotoPrism", c.SiteTitle())
 	c.options.SiteTitle = "Cats"
 	assert.Equal(t, "Cats", c.SiteTitle())
 }
@@ -456,10 +491,68 @@ func TestConfig_SerialChecksum(t *testing.T) {
 	assert.NotEmpty(t, result)
 }
 
-func TestConfigPublic(t *testing.T) {
+func TestConfig_Public(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	c.options.Demo = true
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "public"
 	assert.True(t, c.Public())
+	c.options.Demo = true
+	c.options.Public = false
+	c.options.AuthMode = "public"
+	assert.True(t, c.Public())
+	c.options.Demo = true
+	c.options.Public = true
+	c.options.AuthMode = "public"
+	assert.True(t, c.Public())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "other"
+	assert.False(t, c.Public())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "password"
+	assert.False(t, c.Public())
+	c.options.Demo = false
+	c.options.Public = true
+	c.options.AuthMode = "password"
+	assert.True(t, c.Public())
+	c.options.Demo = true
+	c.options.Public = false
+	c.options.AuthMode = "password"
+	assert.True(t, c.Public())
+}
+
+func TestConfig_Auth(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "public"
+	assert.False(t, c.Auth())
+	c.options.Demo = true
+	c.options.Public = false
+	c.options.AuthMode = "public"
+	assert.False(t, c.Auth())
+	c.options.Demo = true
+	c.options.Public = true
+	c.options.AuthMode = "public"
+	assert.False(t, c.Auth())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "other"
+	assert.True(t, c.Auth())
+	c.options.Demo = false
+	c.options.Public = false
+	c.options.AuthMode = "password"
+	assert.True(t, c.Auth())
+	c.options.Demo = false
+	c.options.Public = true
+	c.options.AuthMode = "password"
+	assert.False(t, c.Auth())
+	c.options.Demo = true
+	c.options.Public = false
+	c.options.AuthMode = "password"
+	assert.False(t, c.Auth())
 }
 
 func TestConfigOptions(t *testing.T) {

@@ -13,12 +13,14 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/list"
 )
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
 	conf                 *config.Config
 	cmdMutex             sync.Mutex
+	sipsBlacklist        fs.Blacklist
 	darktableBlacklist   fs.Blacklist
 	rawtherapeeBlacklist fs.Blacklist
 }
@@ -27,6 +29,7 @@ type Convert struct {
 func NewConvert(conf *config.Config) *Convert {
 	c := &Convert{
 		conf:                 conf,
+		sipsBlacklist:        fs.NewBlacklist(conf.SipsBlacklist()),
 		darktableBlacklist:   fs.NewBlacklist(conf.DarktableBlacklist()),
 		rawtherapeeBlacklist: fs.NewBlacklist(conf.RawtherapeeBlacklist()),
 	}
@@ -35,7 +38,7 @@ func NewConvert(conf *config.Config) *Convert {
 }
 
 // Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(path string, force bool) (err error) {
+func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
@@ -88,16 +91,22 @@ func (c *Convert) Start(path string, force bool) (err error) {
 				return errors.New("canceled")
 			}
 
-			isDir := info.IsDir()
+			isDir, _ := info.IsDirOrSymlinkToDir()
 			isSymlink := info.IsSymlink()
 
+			// Skip file?
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				return result
 			}
 
+			// Process only files with specified extensions?
+			if list.Excludes(ext, fs.NormalizedExt(fileName)) {
+				return nil
+			}
+
 			f, err := NewMediaFile(fileName)
 
-			if err != nil || !(f.IsRaw() || f.IsHEIF() || f.IsImageOther() || f.IsVideo()) {
+			if err != nil || f.Empty() || !(f.IsRaw() || f.IsHEIC() || f.IsAVIF() || f.IsImageOther() || f.IsVideo()) {
 				return nil
 			}
 

@@ -1,20 +1,26 @@
-#### Base Image: Debian 11, Codename 'Bullseye'
-FROM golang:1.18-bullseye
+#### Base Image: Debian 11 (Bullseye)
+FROM golang:1-bullseye
 
-# Open Container Initiative (OCI) Annotations
-# see https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism Build Environment"
-LABEL org.opencontainers.image.description="Debian 11, Codename 'Bullseye'"
+# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://photoprism.app/
+
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism® Dev (Debian 11)"
+LABEL org.opencontainers.image.description="Debian 11 (Bullseye)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
 LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set environment variables
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
@@ -26,12 +32,13 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     TMPDIR="/tmp" \
     TF_CPP_MIN_LOG_LEVEL="0" \
     GOPATH="/go" \
-    GOBIN="/go/bin" \
+    GOBIN="/usr/local/bin" \
     GO111MODULE="on" \
-    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
+    PROG="photoprism"
 
 # copy scripts and debian backports sources list
-COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 COPY --chown=root:root --chmod=644 /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
@@ -80,6 +87,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       libzmq3-dev \
       libx264-dev \
       libx265-dev \
+      libvpx-dev \
+      libwebm-dev \
       libnss3 \
       libfreetype6 \
       libfreetype6-dev \
@@ -89,6 +98,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       tzdata \
       exiftool \
       rawtherapee \
+      imagemagick \
       ffmpeg \
       ffmpegthumbnailer \
       libavcodec-extra \
@@ -106,11 +116,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    /scripts/cleanup.sh && \
     cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
-      /var/lib/photoprism \
-      /tmp/photoprism \
       /photoprism/originals \
       /photoprism/import \
       /photoprism/storage \
@@ -118,10 +125,12 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache
+      /photoprism/storage/cache && \
+    /scripts/cleanup.sh
 
 # download models and testdata
-RUN wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
+RUN mkdir /tmp/photoprism && \
+    wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip

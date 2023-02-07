@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -37,8 +38,8 @@ func TestAlbum_SetName(t *testing.T) {
 		album := NewAlbum("initial name", AlbumDefault)
 		assert.Equal(t, "initial name", album.AlbumTitle)
 		assert.Equal(t, "initial-name", album.AlbumSlug)
-		album.SetTitle("New Album Name")
-		assert.Equal(t, "New Album Name", album.AlbumTitle)
+		album.SetTitle("New Album \"Name\"")
+		assert.Equal(t, "New Album “Name“", album.AlbumTitle)
 		assert.Equal(t, "new-album-name", album.AlbumSlug)
 	})
 	t.Run("empty name", func(t *testing.T) {
@@ -163,13 +164,13 @@ func TestAddPhotoToAlbums(t *testing.T) {
 
 		a := Album{AlbumUID: "at6axuzitogaaiax"}
 
-		if err := a.Find(); err != nil {
-			t.Fatal(err)
+		if found := a.Find(); found == nil {
+			t.Fatal("should find album")
 		}
 
 		var entries PhotoAlbums
 
-		if err := Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
+		if err = Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
 			t.Fatal(err)
 		}
 
@@ -201,13 +202,13 @@ func TestAddPhotoToAlbums(t *testing.T) {
 
 		a := Album{AlbumUID: "at6axuzitogaaiax"}
 
-		if err := a.Find(); err != nil {
-			t.Fatal(err)
+		if found := a.Find(); found == nil {
+			t.Fatal("should find album")
 		}
 
 		var entries PhotoAlbums
 
-		if err := Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
+		if err = Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
 			t.Fatal(err)
 		}
 
@@ -225,7 +226,7 @@ func TestNewFolderAlbum(t *testing.T) {
 		assert.Equal(t, "Dogs", album.AlbumTitle)
 		assert.Equal(t, "dogs", album.AlbumSlug)
 		assert.Equal(t, AlbumFolder, album.AlbumType)
-		assert.Equal(t, SortOrderAdded, album.AlbumOrder)
+		assert.Equal(t, sortby.Added, album.AlbumOrder)
 		assert.Equal(t, "label:dog", album.AlbumFilter)
 	})
 	t.Run("title empty", func(t *testing.T) {
@@ -240,7 +241,7 @@ func TestNewMomentsAlbum(t *testing.T) {
 		assert.Equal(t, "Dogs", album.AlbumTitle)
 		assert.Equal(t, "dogs", album.AlbumSlug)
 		assert.Equal(t, AlbumMoment, album.AlbumType)
-		assert.Equal(t, SortOrderOldest, album.AlbumOrder)
+		assert.Equal(t, sortby.Oldest, album.AlbumOrder)
 		assert.Equal(t, "label:dog", album.AlbumFilter)
 	})
 	t.Run("title empty", func(t *testing.T) {
@@ -255,7 +256,7 @@ func TestNewStateAlbum(t *testing.T) {
 		assert.Equal(t, "Dogs", album.AlbumTitle)
 		assert.Equal(t, "dogs", album.AlbumSlug)
 		assert.Equal(t, AlbumState, album.AlbumType)
-		assert.Equal(t, SortOrderNewest, album.AlbumOrder)
+		assert.Equal(t, sortby.Newest, album.AlbumOrder)
 		assert.Equal(t, "label:dog", album.AlbumFilter)
 	})
 	t.Run("title empty", func(t *testing.T) {
@@ -270,7 +271,7 @@ func TestNewMonthAlbum(t *testing.T) {
 		assert.Equal(t, "Dogs", album.AlbumTitle)
 		assert.Equal(t, "dogs", album.AlbumSlug)
 		assert.Equal(t, AlbumMonth, album.AlbumType)
-		assert.Equal(t, SortOrderOldest, album.AlbumOrder)
+		assert.Equal(t, sortby.Oldest, album.AlbumOrder)
 		assert.Equal(t, "public:true year:2020 month:7", album.AlbumFilter)
 		assert.Equal(t, 7, album.AlbumMonth)
 		assert.Equal(t, 2020, album.AlbumYear)
@@ -283,37 +284,31 @@ func TestNewMonthAlbum(t *testing.T) {
 
 func TestFindAlbumBySlug(t *testing.T) {
 	t.Run("1 result", func(t *testing.T) {
-		album, err := FindAlbumBySlug("holiday-2030", AlbumDefault)
-		assert.NoError(t, err)
+		result := FindAlbumBySlug("holiday-2030", AlbumDefault)
 
-		if album == nil {
+		if result == nil {
 			t.Fatal("album should not be nil")
 		}
 
-		assert.Equal(t, "Holiday 2030", album.AlbumTitle)
-		assert.Equal(t, "holiday-2030", album.AlbumSlug)
+		assert.Equal(t, "Holiday 2030", result.AlbumTitle)
+		assert.Equal(t, "holiday-2030", result.AlbumSlug)
 	})
 	t.Run("state album", func(t *testing.T) {
-		album, err := FindAlbumBySlug("california-usa", AlbumState)
-		assert.NoError(t, err)
+		result := FindAlbumBySlug("california-usa", AlbumState)
 
-		if album == nil {
+		if result == nil {
 			t.Fatal("album should not be nil")
 		}
 
-		assert.Equal(t, "California / USA", album.AlbumTitle)
-		assert.Equal(t, "california-usa", album.AlbumSlug)
+		assert.Equal(t, "California / USA", result.AlbumTitle)
+		assert.Equal(t, "california-usa", result.AlbumSlug)
 	})
 	t.Run("no result", func(t *testing.T) {
-		album, err := FindAlbumBySlug("holiday-2030", AlbumMonth)
-		assert.Error(t, err)
+		result := FindAlbumBySlug("holiday-2030", AlbumMonth)
 
-		if album == nil {
-			t.Fatal("album should not be nil")
+		if result != nil {
+			t.Fatal("album should be nil")
 		}
-
-		assert.Equal(t, uint(0), album.ID)
-		assert.Equal(t, "", album.AlbumUID)
 	})
 }
 
@@ -512,19 +507,23 @@ func TestAlbum_Find(t *testing.T) {
 	t.Run("existing album", func(t *testing.T) {
 		a := Album{AlbumUID: "at6axuzitogaaiax"}
 
-		if err := a.Find(); err != nil {
-			t.Fatal(err)
+		if found := a.Find(); found == nil {
+			t.Fatal("should find album")
 		}
 	})
 	t.Run("invalid id", func(t *testing.T) {
 		a := Album{AlbumUID: "xx"}
 
-		assert.Error(t, a.Find())
+		if found := a.Find(); found != nil {
+			t.Fatal("should not find album")
+		}
 	})
 	t.Run("album not existing", func(t *testing.T) {
 		a := Album{AlbumUID: "at6axuzitogaaxxx"}
 
-		assert.Error(t, a.Find())
+		if found := a.Find(); found != nil {
+			t.Fatal("should not find album")
+		}
 	})
 }
 

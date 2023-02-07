@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -22,7 +23,7 @@ type Folders []Folder
 
 // Folder represents a file system directory.
 type Folder struct {
-	Path              string     `gorm:"type:VARBINARY(500);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
+	Path              string     `gorm:"type:VARBINARY(1024);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
 	Root              string     `gorm:"type:VARBINARY(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
 	FolderUID         string     `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderType        string     `gorm:"type:VARBINARY(16);" json:"Type" yaml:"Type,omitempty"`
@@ -42,17 +43,18 @@ type Folder struct {
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	ModifiedAt        time.Time  `json:"ModifiedAt,omitempty" yaml:"-"`
+	PublishedAt       *time.Time `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt         *time.Time `sql:"index" json:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Folder) TableName() string {
 	return "folders"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.FolderUID, 'd') {
+	if rnd.IsUnique(m.FolderUID, 'd') {
 		return nil
 	}
 
@@ -82,7 +84,7 @@ func NewFolder(root, pathName string, modTime time.Time) Folder {
 		Root:          root,
 		Path:          pathName,
 		FolderType:    MediaUnknown,
-		FolderOrder:   SortOrderName,
+		FolderOrder:   sortby.Name,
 		FolderCountry: UnknownCountry.ID,
 		FolderYear:    year,
 		FolderMonth:   month,
@@ -136,7 +138,7 @@ func (m *Folder) SetValuesFromPath() {
 	}
 
 	if m.FolderTitle == "" {
-		m.FolderTitle = txt.Clip(txt.Title(s), txt.ClipTitle)
+		m.FolderTitle = txt.Clip(txt.Title(s), txt.ClipLongName)
 	}
 }
 
@@ -238,7 +240,7 @@ func (m *Folder) SetForm(f form.Folder) error {
 		return err
 	}
 
-	m.FolderTitle = txt.Clip(m.FolderTitle, txt.ClipTitle)
+	m.FolderTitle = txt.Clip(m.FolderTitle, txt.ClipLongName)
 	m.FolderCategory = txt.Clip(m.FolderCategory, txt.ClipCategory)
 
 	return nil

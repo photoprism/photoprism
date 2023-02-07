@@ -1,5 +1,9 @@
 /* Vanta Theme */
 
+body.dark-theme.theme-vanta {
+    background: #212121 !important;
+}
+
 #photoprism.container.theme-vanta {
     background-image: linear-gradient(160deg, #333333 0%, #000000 100%);
 }
@@ -40,7 +44,7 @@
 }
 
 #photoprism.theme-vanta .theme--light.v-table tbody tr:hover {
-    background: #333333;
+    background: #303536;
 }
 
 #photoprism.theme-vanta .theme--light.v-chip,
@@ -103,4 +107,18 @@
 #photoprism.theme-vanta .theme--light.v-list .v-list__tile__mask {
     color: #cccccc;
     background: transparent;
+}
+
+#photoprism.theme-vanta .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #026264;
+}
+
+#photoprism.theme-vanta .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #037b7d;
+}
+
+#photoprism.theme-vanta .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-vanta .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #04acaf;
 }

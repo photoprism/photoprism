@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -104,8 +104,8 @@ export class Rest extends Model {
       Password: password ? password : "",
       Expires: expires ? expires : 0,
       Slug: this.getSlug(),
-      CanEdit: false,
-      CanComment: false,
+      Comment: "",
+      Perm: 0,
     }).then((resp) => Promise.resolve(new Link(resp.data)));
   }
 
@@ -174,7 +174,7 @@ export class Rest extends Model {
   }
 
   static limit() {
-    return 3333;
+    return 10000;
   }
 
   static search(params) {

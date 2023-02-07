@@ -82,16 +82,21 @@ func TestExpandedFilename(t *testing.T) {
 	})
 }
 
-func TestDirectoryIsEmpty(t *testing.T) {
-	t.Run("not empty path", func(t *testing.T) {
-		assert.Equal(t, false, IsEmpty("./testdata"))
+func TestDirIsEmpty(t *testing.T) {
+	t.Run("CurrentDir", func(t *testing.T) {
+		assert.Equal(t, false, DirIsEmpty("."))
 	})
-	t.Run("not existing path", func(t *testing.T) {
-		assert.Equal(t, false, IsEmpty("./xxx"))
+	t.Run("Testdata", func(t *testing.T) {
+		assert.Equal(t, false, DirIsEmpty("./testdata"))
 	})
-	t.Run("empty path", func(t *testing.T) {
-		os.Mkdir("./testdata/emptyDir", 0777)
+	t.Run("XXX", func(t *testing.T) {
+		assert.Equal(t, false, DirIsEmpty("./xxx"))
+	})
+	t.Run("EmptyDir", func(t *testing.T) {
+		if err := os.Mkdir("./testdata/emptyDir", 0777); err != nil {
+			t.Fatal(err)
+		}
 		defer os.RemoveAll("./testdata/emptyDir")
-		assert.Equal(t, true, IsEmpty("./testdata/emptyDir"))
+		assert.Equal(t, true, DirIsEmpty("./testdata/emptyDir"))
 	})
 }

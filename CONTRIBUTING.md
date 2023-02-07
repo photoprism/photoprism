@@ -5,10 +5,9 @@ We welcome contributions of any kind, including blog posts, tutorials, testing, 
 ## Join the Community ##
 
 Follow us on [Twitter](https://link.photoprism.app/twitter) and join the [Community Chat](https://link.photoprism.app/chat)
-to get regular updates, connect with other contributors, and discuss your ideas.
-Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
+to get regular updates, connect with other contributors, and discuss your ideas. Our [Code of Conduct](https://photoprism.app/code-of-conduct) explains the "dos and don’ts" when interacting with other community members.
 
-An important part of our journey is to explore new ways in product development and build better software through consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
+Feel free to [contact us](https://photoprism.app/contact) with anything that is on your mind. We appreciate your feedback! Due to the high volume of emails we receive, our team may be unable to get back to you immediately. We do our best to respond within five business days or less.
 
 ## Not a Developer? No Problem ##
 
@@ -30,7 +29,7 @@ to determine the cause of your problem. If you have a general question, need hel
 (yet) been clearly identified:
 
 - You are welcome to ask in our [Community Chat](https://link.photoprism.app/chat)
-- or post your question in [GitHub Discussions](https://link.photoprism.app/discussions
+- or post your question in [GitHub Discussions](https://link.photoprism.app/discussions)
 
 ### GitHub Issues ###
 
@@ -43,23 +42,24 @@ We kindly ask you not to report bugs via GitHub Issues **unless you are certain 
 
 ## Submitting Pull Requests ##
 
-Because we want to create the best possible product for our users, we have a [set of criteria](https://docs.photoprism.app/developer-guide/pull-requests#acceptance-criteria) to ensure that all submissions are acceptable.
+Follow our [step-by-step guide](https://docs.photoprism.app/developer-guide/pull-requests) to learn how to submit new features, bug fixes, and documentation enhancements.
 
-Follow our [step-by-step guide](https://docs.photoprism.app/developer-guide/pull-requests#how-to-create-and-submit-a-pull-request) to learn how to submit
-new features, bug fixes, and documentation improvements. Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
-[easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
+In general, pull requests that resolve issues [labeled "help wanted"](https://github.com/photoprism/photoprism/labels/help%20wanted) are the easiest to merge and the most helpful, as they allow us to spend more time on core features or other issues that are difficult for external contributors to work on. If you're new to this project, anything [labeled "easy"](https://github.com/photoprism/photoprism/labels/easy) may be a good first contribution.
 
-**Reviewing, testing and finally merging pull requests requires significant resources on our side. If it's not just a small fix, it can take several months.**
+**Be aware that reviewing, testing and finally merging pull requests requires significant resources on our side. It can therefore take several months if it is not just a small fix, especially if extensive testing is needed to prevent bugs from getting into our stable version.**
 
-### Contributor License Agreement (CLA) ###
+## Contributor License Agreement (CLA) ##
 
-After submitting your first pull request, you will automatically be asked to [accept our CLA](https://link.photoprism.app/cla):
+After you submit your first pull request, you will be asked to accept our Contributor License Agreement (CLA). Visit [photoprism.app/cla](https://photoprism.app/cla) and [photoprism.app/kb/oss](https://photoprism.app/kb/oss) to learn more.
 
-- this gives us the ability to [(re-)license all code and documentation](https://en.wikipedia.org/wiki/Software_relicensing) at any time, *almost* as if we had created it ourselves (you retain the rights to your own work, which may be different for other CLAs)
-- otherwise, we cannot accept pull requests, as this would mean that we are not able to change the license of our software and documentation at a later time, even though most of it was developed and written by us
-- this may be necessary, for example, if the license is incompatible with a larger combined work, we want to remove some restrictions on the AGPL/Creative Commons license, or it turns out that someone is abusing the existing license in a way we don't yet know about
-- the lack of a formal contract [would also lead to legal uncertainty](https://en.wikipedia.org/wiki/SCO%E2%80%93Linux_disputes) for us and all users, as some contributors could later claim that they did not intend to license their code in any way and that it was stolen
+## Privacy Notice ##
+
+We operate a number of web services that help us develop and maintain our software in collaboration with the open source community, such as Weblate hosted at [translate.photoprism.app](https://translate.photoprism.app/) to keep translations up to date.
+
+Because many of these apps and tools were originally developed for internal use without a high level of privacy in mind, we ask that you do not enter personal information such as your real name or personal email address if you want it to remain private.
+
+**Personal details may otherwise show up in logs, source code, translation files, commit messages, and pull request comments.**
 
 ----
 
-*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply. By using our software, you agree to our [terms of service](https://photoprism.app/terms).*
+*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). By using the software and services we provide, you agree to our [Terms of Service](https://photoprism.app/terms), [Privacy Policy](https://photoprism.app/privacy), and [Code of Conduct](https://photoprism.app/code-of-conduct). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply.*

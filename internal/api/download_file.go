@@ -3,12 +3,13 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/internal/customize"
+
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -19,16 +20,16 @@ import (
 // TODO: GET /api/v1/dl/album/:uid
 
 // DownloadName returns the download file name type.
-func DownloadName(c *gin.Context) entity.DownloadName {
+func DownloadName(c *gin.Context) customize.DownloadName {
 	switch c.Query("name") {
 	case "file":
-		return entity.DownloadNameFile
+		return customize.DownloadNameFile
 	case "share":
-		return entity.DownloadNameShare
+		return customize.DownloadNameShare
 	case "original":
-		return entity.DownloadNameOriginal
+		return customize.DownloadNameOriginal
 	default:
-		return service.Config().Settings().Download.Name
+		return get.Config().Settings().Download.Name
 	}
 }
 
@@ -37,7 +38,8 @@ func DownloadName(c *gin.Context) entity.DownloadName {
 // GET /api/v1/dl/:hash
 //
 // Parameters:
-//   hash: string The file hash as returned by the files/photos endpoint
+//
+//	hash: string The file hash as returned by the files/photos endpoint
 func GetDownload(router *gin.RouterGroup) {
 	router.GET("/dl/:hash", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {

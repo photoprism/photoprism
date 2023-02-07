@@ -17,7 +17,7 @@ var faceMutex = sync.Mutex{}
 
 // Face represents the face of a Subject.
 type Face struct {
-	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	ID              string          `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
 	FaceKind        int             `json:"Kind" yaml:"Kind,omitempty"`
 	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
@@ -36,7 +36,7 @@ type Face struct {
 // Faceless can be used as argument to match unmatched face markers.
 var Faceless = []string{""}
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Face) TableName() string {
 	return "faces"
 }
@@ -76,13 +76,13 @@ func (m *Face) SkipMatching() bool {
 // SetEmbeddings assigns face embeddings.
 func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	if len(embeddings) == 0 {
-		return fmt.Errorf("empty")
+		return fmt.Errorf("invalid embedding")
 	}
 
 	m.embedding, m.SampleRadius, m.Samples = face.EmbeddingsMidpoint(embeddings)
 
 	if len(m.embedding) != len(face.NullEmbedding) {
-		return fmt.Errorf("invalid number of values")
+		return fmt.Errorf("embedding has invalid number of values")
 	}
 
 	// Limit sample radius to reduce false positives.
@@ -264,12 +264,12 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 }
 
 // SetSubjectUID updates the face's subject uid and related markers.
-func (m *Face) SetSubjectUID(subjUID string) (err error) {
+func (m *Face) SetSubjectUID(subjUid string) (err error) {
 	// Update face.
-	if err = m.Update("SubjUID", subjUID); err != nil {
+	if err = m.Update("SubjUID", subjUid); err != nil {
 		return err
 	} else {
-		m.SubjUID = subjUID
+		m.SubjUID = subjUid
 	}
 
 	// Update related markers.
@@ -410,13 +410,13 @@ func FindFace(id string) *Face {
 }
 
 // ValidFaceCount counts the number of valid face markers for a file uid.
-func ValidFaceCount(fileUID string) (c int) {
-	if !rnd.EntityUID(fileUID, 'f') {
+func ValidFaceCount(fileUid string) (c int) {
+	if !rnd.IsUID(fileUid, FileUID) {
 		return
 	}
 
 	if err := Db().Model(Marker{}).
-		Where("file_uid = ? AND marker_type = ?", fileUID, MarkerFace).
+		Where("file_uid = ? AND marker_type = ?", fileUid, MarkerFace).
 		Where("marker_invalid = 0").
 		Count(&c).Error; err != nil {
 		log.Errorf("file: %s (count faces)", err)

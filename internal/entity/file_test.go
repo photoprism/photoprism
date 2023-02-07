@@ -6,12 +6,35 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/projection"
 )
+
+func TestFile_RegenerateIndex(t *testing.T) {
+	t.Run("ID", func(t *testing.T) {
+		File{ID: 1000000}.RegenerateIndex()
+	})
+	t.Run("PhotoID", func(t *testing.T) {
+		File{PhotoID: 1000039}.RegenerateIndex()
+	})
+	t.Run("PhotoUID", func(t *testing.T) {
+		File{PhotoUID: "pr2xu7myk7wrbk32"}.RegenerateIndex()
+	})
+	t.Run("FirstFileByHash", func(t *testing.T) {
+		f, err := FirstFileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		if err != nil {
+			t.Fatal(err)
+		}
+		f.RegenerateIndex()
+	})
+	t.Run("All", func(t *testing.T) {
+		File{}.RegenerateIndex()
+	})
+}
 
 func TestFirstFileByHash(t *testing.T) {
 	t.Run("not existing file", func(t *testing.T) {
@@ -434,11 +457,11 @@ func TestFile_DownloadName(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "originalName.jpg", FileName: "filename.jpg"}
 
-		filename := file.DownloadName(DownloadNameFile, 0)
+		filename := file.DownloadName(customize.DownloadNameFile, 0)
 		assert.Contains(t, filename, "filename")
 		assert.Contains(t, filename, fs.ExtJPEG)
 
-		filename2 := file.DownloadName(DownloadNameOriginal, 1)
+		filename2 := file.DownloadName(customize.DownloadNameOriginal, 1)
 		assert.Contains(t, filename2, "originalName")
 		assert.Contains(t, filename2, "(1)")
 		assert.Contains(t, filename2, fs.ExtJPEG)
@@ -637,7 +660,7 @@ func TestFile_ReplaceHash(t *testing.T) {
 }
 
 func TestFile_SetHDR(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 
 		assert.Equal(t, false, m.IsHDR())
@@ -778,5 +801,23 @@ func TestFile_SetDuration(t *testing.T) {
 		assert.Equal(t, time.Hour, m.FileDuration)
 		assert.Equal(t, 60.0, m.FileFPS)
 		assert.Equal(t, 216000, m.FileFrames)
+	})
+}
+
+func TestFile_Bitrate(t *testing.T) {
+	t.Run("HasDuration", func(t *testing.T) {
+		m := File{FileDuration: 1e9 * 20.302, FileSize: 1826192}
+
+		assert.InEpsilon(t, 0.719, m.Bitrate(), 0.01)
+	})
+	t.Run("NoDuration", func(t *testing.T) {
+		m := File{FileDuration: 0, FileSize: 1826192}
+
+		assert.Equal(t, float64(0), m.Bitrate())
+	})
+	t.Run("NoSize", func(t *testing.T) {
+		m := File{FileDuration: 1e9 * 20.302, FileSize: 0}
+
+		assert.Equal(t, float64(0), m.Bitrate())
 	})
 }

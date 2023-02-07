@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/remote/webdav"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Share represents a share worker.
@@ -28,14 +29,14 @@ func NewShare(conf *config.Config) *Share {
 }
 
 // logError logs an error message if err is not nil.
-func (worker *Share) logError(err error) {
+func (w *Share) logError(err error) {
 	if err != nil {
 		log.Errorf("share: %s", err.Error())
 	}
 }
 
 // Start starts the share worker.
-func (worker *Share) Start() (err error) {
+func (w *Share) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("share: %s (panic)\nstack: %s", r, debug.Stack())
@@ -49,7 +50,7 @@ func (worker *Share) Start() (err error) {
 
 	defer mutex.ShareWorker.Stop()
 
-	f := form.SearchAccounts{
+	f := form.SearchServices{
 		Share: true,
 	}
 
@@ -69,13 +70,23 @@ func (worker *Share) Start() (err error) {
 		files, err := query.FileShares(a.ID, entity.FileShareNew)
 
 		if err != nil {
-			worker.logError(err)
+			w.logError(err)
 			continue
 		}
 
 		if len(files) == 0 {
 			// No files to upload for this account
 			continue
+		}
+
+		size := thumb.Size{}
+
+		if a.ShareSize != "" {
+			if s, ok := thumb.Sizes[thumb.Name(a.ShareSize)]; ok {
+				size = s
+			} else {
+				size = thumb.Sizes[thumb.Fit2048]
+			}
 		}
 
 		client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
@@ -97,24 +108,17 @@ func (worker *Share) Start() (err error) {
 
 			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
 
-			if a.ShareSize != "" {
-				size, ok := thumb.Sizes[thumb.Name(a.ShareSize)]
-
-				if !ok {
-					log.Errorf("share: invalid size %s", a.ShareSize)
-					continue
-				}
-
-				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbCachePath(), size.Width, size.Height, file.File.FileOrientation, size.Options...)
+			if fs.ImageJPEG.Equal(file.File.FileType) && size.Width > 0 && size.Height > 0 {
+				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, w.conf.ThumbCachePath(), size.Width, size.Height, file.File.FileOrientation, size.Options...)
 
 				if err != nil {
-					worker.logError(err)
+					w.logError(err)
 					continue
 				}
 			}
 
 			if err := client.Upload(srcFileName, file.RemoteName); err != nil {
-				worker.logError(err)
+				w.logError(err)
 				file.Errors++
 				file.Error = err.Error()
 			} else {
@@ -133,7 +137,7 @@ func (worker *Share) Start() (err error) {
 				return nil
 			}
 
-			worker.logError(entity.Db().Save(&file).Error)
+			w.logError(entity.Db().Save(&file).Error)
 		}
 	}
 
@@ -150,7 +154,7 @@ func (worker *Share) Start() (err error) {
 		files, err := query.ExpiredFileShares(a)
 
 		if err != nil {
-			worker.logError(err)
+			w.logError(err)
 			continue
 		}
 
@@ -177,7 +181,7 @@ func (worker *Share) Start() (err error) {
 			}
 
 			if err := entity.Db().Save(&file).Error; err != nil {
-				worker.logError(err)
+				w.logError(err)
 			}
 		}
 	}

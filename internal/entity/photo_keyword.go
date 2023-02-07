@@ -6,7 +6,7 @@ type PhotoKeyword struct {
 	KeywordID uint `gorm:"primary_key;auto_increment:false;index"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (PhotoKeyword) TableName() string {
 	return "photos_keywords"
 }

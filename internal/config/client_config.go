@@ -4,70 +4,99 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/env"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+type ClientType string
+
+const (
+	ClientPublic ClientType = "public"
+	ClientShare  ClientType = "share"
+	ClientUser   ClientType = "user"
+)
+
 // ClientConfig represents HTTP client / Web UI config options.
 type ClientConfig struct {
-	Mode            string              `json:"mode"`
-	Name            string              `json:"name"`
-	Version         string              `json:"version"`
-	Copyright       string              `json:"copyright"`
-	Flags           string              `json:"flags"`
-	BaseUri         string              `json:"baseUri"`
-	StaticUri       string              `json:"staticUri"`
-	CssUri          string              `json:"cssUri"`
-	JsUri           string              `json:"jsUri"`
-	ManifestUri     string              `json:"manifestUri"`
-	ApiUri          string              `json:"apiUri"`
-	ContentUri      string              `json:"contentUri"`
-	WallpaperUri    string              `json:"wallpaperUri"`
-	SiteUrl         string              `json:"siteUrl"`
-	SiteDomain      string              `json:"siteDomain"`
-	SiteAuthor      string              `json:"siteAuthor"`
-	SiteTitle       string              `json:"siteTitle"`
-	SiteCaption     string              `json:"siteCaption"`
-	SiteDescription string              `json:"siteDescription"`
-	SitePreview     string              `json:"sitePreview"`
-	Imprint         string              `json:"imprint"`
-	ImprintUrl      string              `json:"imprintUrl"`
-	AppName         string              `json:"appName"`
-	AppMode         string              `json:"appMode"`
-	AppIcon         string              `json:"appIcon"`
-	Debug           bool                `json:"debug"`
-	Trace           bool                `json:"trace"`
-	Test            bool                `json:"test"`
-	Demo            bool                `json:"demo"`
-	Sponsor         bool                `json:"sponsor"`
-	ReadOnly        bool                `json:"readonly"`
-	UploadNSFW      bool                `json:"uploadNSFW"`
-	Public          bool                `json:"public"`
-	Experimental    bool                `json:"experimental"`
-	AlbumCategories []string            `json:"albumCategories"`
-	Albums          entity.Albums       `json:"albums"`
-	Cameras         entity.Cameras      `json:"cameras"`
-	Lenses          entity.Lenses       `json:"lenses"`
-	Countries       entity.Countries    `json:"countries"`
-	People          entity.People       `json:"people"`
-	Thumbs          ThumbSizes          `json:"thumbs"`
-	Status          string              `json:"status"`
-	MapKey          string              `json:"mapKey"`
-	DownloadToken   string              `json:"downloadToken"`
-	PreviewToken    string              `json:"previewToken"`
-	Settings        Settings            `json:"settings"`
-	Disable         ClientDisable       `json:"disable"`
-	Count           ClientCounts        `json:"count"`
-	Pos             ClientPosition      `json:"pos"`
-	Years           Years               `json:"years"`
-	Colors          []map[string]string `json:"colors"`
-	Categories      CategoryLabels      `json:"categories"`
-	Clip            int                 `json:"clip"`
-	Server          env.Resources       `json:"server"`
+	Mode             string              `json:"mode"`
+	Name             string              `json:"name"`
+	About            string              `json:"about"`
+	Edition          string              `json:"edition"`
+	Version          string              `json:"version"`
+	Copyright        string              `json:"copyright"`
+	Flags            string              `json:"flags"`
+	BaseUri          string              `json:"baseUri"`
+	StaticUri        string              `json:"staticUri"`
+	CssUri           string              `json:"cssUri"`
+	JsUri            string              `json:"jsUri"`
+	ManifestUri      string              `json:"manifestUri"`
+	ApiUri           string              `json:"apiUri"`
+	ContentUri       string              `json:"contentUri"`
+	WallpaperUri     string              `json:"wallpaperUri"`
+	SiteUrl          string              `json:"siteUrl"`
+	SiteDomain       string              `json:"siteDomain"`
+	SiteAuthor       string              `json:"siteAuthor"`
+	SiteTitle        string              `json:"siteTitle"`
+	SiteCaption      string              `json:"siteCaption"`
+	SiteDescription  string              `json:"siteDescription"`
+	SitePreview      string              `json:"sitePreview"`
+	LegalInfo        string              `json:"legalInfo"`
+	LegalUrl         string              `json:"legalUrl"`
+	AppName          string              `json:"appName"`
+	AppMode          string              `json:"appMode"`
+	AppIcon          string              `json:"appIcon"`
+	Debug            bool                `json:"debug"`
+	Trace            bool                `json:"trace"`
+	Test             bool                `json:"test"`
+	Demo             bool                `json:"demo"`
+	Sponsor          bool                `json:"sponsor"`
+	ReadOnly         bool                `json:"readonly"`
+	UploadNSFW       bool                `json:"uploadNSFW"`
+	Public           bool                `json:"public"`
+	AuthMode         string              `json:"authMode"`
+	LoginUri         string              `json:"loginUri"`
+	RegisterUri      string              `json:"registerUri"`
+	PasswordLength   int                 `json:"passwordLength"`
+	PasswordResetUri string              `json:"passwordResetUri"`
+	Experimental     bool                `json:"experimental"`
+	AlbumCategories  []string            `json:"albumCategories"`
+	Albums           entity.Albums       `json:"albums"`
+	Cameras          entity.Cameras      `json:"cameras"`
+	Lenses           entity.Lenses       `json:"lenses"`
+	Countries        entity.Countries    `json:"countries"`
+	People           entity.People       `json:"people"`
+	Thumbs           ThumbSizes          `json:"thumbs"`
+	Customer         string              `json:"customer"`
+	MapKey           string              `json:"mapKey"`
+	DownloadToken    string              `json:"downloadToken,omitempty"`
+	PreviewToken     string              `json:"previewToken,omitempty"`
+	Disable          ClientDisable       `json:"disable"`
+	Count            ClientCounts        `json:"count"`
+	Pos              ClientPosition      `json:"pos"`
+	Years            Years               `json:"years"`
+	Colors           []map[string]string `json:"colors"`
+	Categories       CategoryLabels      `json:"categories"`
+	Clip             int                 `json:"clip"`
+	Server           env.Resources       `json:"server"`
+	Settings         *customize.Settings `json:"settings,omitempty"`
+	ACL              acl.Grants          `json:"acl,omitempty"`
+	Ext              Values              `json:"ext"`
+}
+
+// ApplyACL updates the client config values based on the ACL and Role provided.
+func (c ClientConfig) ApplyACL(a acl.ACL, r acl.Role) ClientConfig {
+	if c.Settings != nil {
+		c.Settings = c.Settings.ApplyACL(a, r)
+	}
+
+	c.ACL = a.Grants(r)
+
+	return c
 }
 
 // Years represents a list of years.
@@ -174,23 +203,17 @@ func (c *Config) Flags() (flags []string) {
 	return flags
 }
 
-// PublicConfig returns public client config options with as little information as possible.
-func (c *Config) PublicConfig() ClientConfig {
+// ClientPublic returns config values for use by the JavaScript UI and other clients.
+func (c *Config) ClientPublic() ClientConfig {
 	if c.Public() {
-		return c.UserConfig()
+		return c.ClientUser(true).ApplyACL(acl.Resources, acl.RoleAdmin)
 	}
 
-	assets := c.ClientAssets()
-	settings := c.Settings()
+	a := c.ClientAssets()
 
-	result := ClientConfig{
-		Settings: Settings{
-			UI:       settings.UI,
-			Search:   settings.Search,
-			Maps:     settings.Maps,
-			Features: settings.Features,
-			Share:    settings.Share,
-		},
+	cfg := ClientConfig{
+		Settings: c.PublicSettings(),
+		ACL:      acl.Resources.Grants(acl.RoleUnknown),
 		Disable: ClientDisable{
 			Backups:        true,
 			WebDAV:         true,
@@ -207,64 +230,69 @@ func (c *Config) PublicConfig() ClientConfig {
 			Faces:          true,
 			Classification: true,
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            "public",
-		Name:            c.Name(),
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          assets.AppCssUri(),
-		JsUri:           assets.AppJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		Imprint:         c.Imprint(),
-		ImprintUrl:      c.ImprintUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        c.ReadOnly(),
-		Public:          c.Public(),
-		Experimental:    c.Experimental(),
-		Status:          "",
-		MapKey:          "",
-		Thumbs:          Thumbs,
-		Colors:          colors.All.List(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
-		PreviewToken:    "public",
-		DownloadToken:   "public",
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientPublic),
+		Name:             c.Name(),
+		About:            c.Edition(),
+		Edition:          c.Hub().Status,
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.AppJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		MapKey:           "",
+		Thumbs:           Thumbs,
+		Colors:           colors.All.List(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		PreviewToken:     entity.TokenPublic,
+		DownloadToken:    entity.TokenPublic,
+		Ext:              ClientExt(c, ClientPublic),
 	}
 
-	return result
+	return cfg
 }
 
-// GuestConfig returns client config options for the sharing with guests.
-func (c *Config) GuestConfig() ClientConfig {
-	assets := c.ClientAssets()
-	settings := c.Settings()
+// ClientShare returns reduced client config values for share link visitors.
+func (c *Config) ClientShare() ClientConfig {
+	a := c.ClientAssets()
 
-	result := ClientConfig{
-		Settings: Settings{
-			UI:       settings.UI,
-			Search:   settings.Search,
-			Maps:     settings.Maps,
-			Features: settings.Features,
-			Share:    settings.Share,
-		},
+	cfg := ClientConfig{
+		Settings: c.ShareSettings(),
+		ACL:      acl.Resources.Grants(acl.RoleVisitor),
 		Disable: ClientDisable{
 			Backups:        true,
 			WebDAV:         c.DisableWebDAV(),
@@ -281,58 +309,76 @@ func (c *Config) GuestConfig() ClientConfig {
 			Faces:          true,
 			Classification: true,
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            "guest",
-		Name:            c.Name(),
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          assets.ShareCssUri(),
-		JsUri:           assets.ShareJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		Imprint:         c.Imprint(),
-		ImprintUrl:      c.ImprintUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        true,
-		UploadNSFW:      c.UploadNSFW(),
-		Public:          true,
-		Experimental:    false,
-		Colors:          colors.All.List(),
-		Thumbs:          Thumbs,
-		Status:          c.Hub().Status,
-		MapKey:          c.Hub().MapKey(),
-		DownloadToken:   c.DownloadToken(),
-		PreviewToken:    c.PreviewToken(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientShare),
+		Name:             c.Name(),
+		About:            c.Edition(),
+		Edition:          c.Hub().Status,
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.ShareJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		UploadNSFW:       c.UploadNSFW(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		Colors:           colors.All.List(),
+		Thumbs:           Thumbs,
+		MapKey:           c.Hub().MapKey(),
+		Customer:         c.Hub().Customer(),
+		DownloadToken:    c.DownloadToken(),
+		PreviewToken:     c.PreviewToken(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		Ext:              ClientExt(c, ClientShare),
 	}
 
-	return result
+	return cfg
 }
 
-// UserConfig returns client configuration options for registered users.
-func (c *Config) UserConfig() ClientConfig {
-	assets := c.ClientAssets()
+// ClientUser returns complete client config values for users with full access.
+func (c *Config) ClientUser(withSettings bool) ClientConfig {
+	a := c.ClientAssets()
 
-	result := ClientConfig{
-		Settings: *c.Settings(),
+	var s *customize.Settings
+
+	if withSettings {
+		s = c.Settings()
+	}
+
+	cfg := ClientConfig{
+		Settings: s,
 		Disable: ClientDisable{
 			Backups:        c.DisableBackups(),
 			WebDAV:         c.DisableWebDAV(),
@@ -349,49 +395,64 @@ func (c *Config) UserConfig() ClientConfig {
 			Faces:          c.DisableFaces(),
 			Classification: c.DisableClassification(),
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            "user",
-		Name:            c.Name(),
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          assets.AppCssUri(),
-		JsUri:           assets.AppJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		Imprint:         c.Imprint(),
-		ImprintUrl:      c.ImprintUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        c.ReadOnly(),
-		UploadNSFW:      c.UploadNSFW(),
-		Public:          c.Public(),
-		Experimental:    c.Experimental(),
-		Colors:          colors.All.List(),
-		Thumbs:          Thumbs,
-		Status:          c.Hub().Status,
-		MapKey:          c.Hub().MapKey(),
-		DownloadToken:   c.DownloadToken(),
-		PreviewToken:    c.PreviewToken(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
-		Server:          env.Info(),
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientUser),
+		Name:             c.Name(),
+		About:            c.Edition(),
+		Edition:          c.Hub().Status,
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.AppJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		UploadNSFW:       c.UploadNSFW(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordLength:   c.PasswordLength(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		Colors:           colors.All.List(),
+		Thumbs:           Thumbs,
+		MapKey:           c.Hub().MapKey(),
+		Customer:         c.Hub().Customer(),
+		DownloadToken:    c.DownloadToken(),
+		PreviewToken:     c.PreviewToken(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		Server:           env.Info(),
+		Ext:              ClientExt(c, ClientUser),
 	}
+
+	hidePrivate := c.Settings().Features.Private
 
 	c.Db().
 		Table("photos").
@@ -399,33 +460,53 @@ func (c *Config) UserConfig() ClientConfig {
 		Where("deleted_at IS NULL AND photo_lat <> 0 AND photo_lng <> 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).
-		Take(&result.Pos)
+		Take(&cfg.Pos)
 
 	c.Db().
 		Table("cameras").
 		Where("camera_slug <> 'zz' AND camera_slug <> ''").
 		Select("COUNT(*) AS cameras").
-		Take(&result.Count)
+		Take(&cfg.Count)
 
 	c.Db().
 		Table("lenses").
 		Where("lens_slug <> 'zz' AND lens_slug <> ''").
 		Select("COUNT(*) AS lenses").
-		Take(&result.Count)
+		Take(&cfg.Count)
 
-	c.Db().
-		Table("photos").
-		Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
-			"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
-			"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
-			"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
-			"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
-			"SUM(photo_private = 1 AND photo_quality > -1) AS private").
-		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
-		Where("deleted_at IS NULL").
-		Take(&result.Count)
+	if hidePrivate {
+		c.Db().
+			Table("photos").
+			Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
+				"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
+				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
+				"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
+				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
+				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
+			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
+			Where("deleted_at IS NULL").
+			Take(&cfg.Count)
+	} else {
+		c.Db().
+			Table("photos").
+			Select("SUM(photo_type = 'video' AND photo_quality > -1) AS videos, " +
+				"SUM(photo_type = 'live' AND photo_quality > -1) AS live, " +
+				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_quality > -1) AS photos, " +
+				"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1) AS review, " +
+				"SUM(photo_favorite = 1 AND photo_quality > -1) AS favorites, " +
+				"0 AS private").
+			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
+			Where("deleted_at IS NULL").
+			Take(&cfg.Count)
+	}
 
-	result.Count.All = result.Count.Photos + result.Count.Live + result.Count.Videos
+	// Calculate total count.
+	cfg.Count.All = cfg.Count.Photos + cfg.Count.Live + cfg.Count.Videos
+
+	// Exclude pictures in review from total count.
+	if c.Settings().Features.Review {
+		cfg.Count.All = cfg.Count.All - cfg.Count.Review
+	}
 
 	c.Db().
 		Table("labels").
@@ -433,60 +514,68 @@ func (c *Config) UserConfig() ClientConfig {
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
 		Where("(label_priority >= 0 OR label_favorite = 1)").
-		Take(&result.Count)
+		Take(&cfg.Count)
 
-	c.Db().
-		Table("albums").
-		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
-		Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL))").
-		Take(&result.Count)
+	if hidePrivate {
+		c.Db().
+			Table("albums").
+			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.photo_private = 0 AND photos.deleted_at IS NULL))").
+			Take(&cfg.Count)
+	} else {
+		c.Db().
+			Table("albums").
+			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL))").
+			Take(&cfg.Count)
+	}
 
 	c.Db().
 		Table("files").
 		Select("COUNT(*) AS files").
 		Where("file_missing = 0 AND file_root = ?", entity.RootOriginals).
-		Take(&result.Count)
+		Take(&cfg.Count)
 
 	c.Db().
 		Table("countries").
 		Select("(COUNT(*) - 1) AS countries").
-		Take(&result.Count)
+		Take(&cfg.Count)
 
 	c.Db().
 		Table("places").
 		Select("SUM(photo_count > 0) AS places").
 		Where("id <> 'zz'").
-		Take(&result.Count)
+		Take(&cfg.Count)
 
 	c.Db().
 		Order("country_slug").
-		Find(&result.Countries)
+		Find(&cfg.Countries)
 
 	// People are subjects with type person.
-	result.Count.People, _ = query.PeopleCount()
-	result.People, _ = query.People()
+	cfg.Count.People, _ = query.PeopleCount()
+	cfg.People, _ = query.People()
 
 	c.Db().
 		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality > -1 OR photos.deleted_at IS NULL)").
 		Where("deleted_at IS NULL").
 		Limit(10000).Order("camera_slug").
-		Find(&result.Cameras)
+		Find(&cfg.Cameras)
 
 	c.Db().
 		Where("deleted_at IS NULL").
 		Limit(10000).Order("lens_slug").
-		Find(&result.Lenses)
+		Find(&cfg.Lenses)
 
 	c.Db().
 		Where("deleted_at IS NULL AND album_favorite = 1").
 		Limit(20).Order("album_title").
-		Find(&result.Albums)
+		Find(&cfg.Albums)
 
 	c.Db().
 		Table("photos").
 		Where("photo_year > 0 AND (photos.photo_quality > -1 OR photos.deleted_at IS NULL)").
 		Order("photo_year DESC").
-		Pluck("DISTINCT photo_year", &result.Years)
+		Pluck("DISTINCT photo_year", &cfg.Years)
 
 	c.Db().
 		Table("categories").
@@ -496,7 +585,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Group("l.custom_slug").
 		Order("l.custom_slug").
 		Limit(1000).Offset(0).
-		Scan(&result.Categories)
+		Scan(&cfg.Categories)
 
 	c.Db().
 		Table("albums").
@@ -505,7 +594,34 @@ func (c *Config) UserConfig() ClientConfig {
 		Group("album_category").
 		Order("album_category").
 		Limit(1000).Offset(0).
-		Pluck("album_category", &result.AlbumCategories)
+		Pluck("album_category", &cfg.AlbumCategories)
 
-	return result
+	return cfg
+}
+
+// ClientRole provides the client config values for the specified user role.
+func (c *Config) ClientRole(role acl.Role) ClientConfig {
+	return c.ClientUser(true).ApplyACL(acl.Resources, role)
+}
+
+// ClientSession provides the client config values for the specified session.
+func (c *Config) ClientSession(sess *entity.Session) (cfg ClientConfig) {
+	if sess.User().IsVisitor() {
+		cfg = c.ClientShare()
+	} else if sess.User().IsRegistered() {
+		cfg = c.ClientUser(false).ApplyACL(acl.Resources, sess.User().AclRole())
+		cfg.Settings = c.SessionSettings(sess)
+	} else {
+		cfg = c.ClientPublic()
+	}
+
+	if c.Public() {
+		cfg.PreviewToken = entity.TokenPublic
+		cfg.DownloadToken = entity.TokenPublic
+	} else if sess.PreviewToken != "" || sess.DownloadToken != "" {
+		cfg.PreviewToken = sess.PreviewToken
+		cfg.DownloadToken = sess.DownloadToken
+	}
+
+	return cfg
 }

@@ -31,7 +31,7 @@ func TestContains(t *testing.T) {
 		assert.False(t, Contains(nil, "*"))
 		assert.False(t, Contains(nil, "* "))
 		assert.False(t, Contains([]string{}, "*"))
-		assert.False(t, Contains([]string{"foo", "*"}, "baz"))
+		assert.True(t, Contains([]string{"foo", "*"}, "baz"))
 		assert.True(t, Contains([]string{"foo", "*"}, "foo"))
 		assert.True(t, Contains([]string{""}, "*"))
 		assert.True(t, Contains([]string{"foo", "bar"}, "*"))

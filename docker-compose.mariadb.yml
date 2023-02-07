@@ -1,13 +1,17 @@
 version: '3.5'
 
-# Additional MariaDB and MySQL versions for testing compatibility
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
   ## MariaDB 10.8 Database Server
   ## Docs: https://mariadb.com/kb/en/release-notes-mariadb-108-series/
   mariadb-10-8:
-    image: mariadb:10.8-rc
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    image: mariadb:10.8
+    security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
     ports:
@@ -25,7 +29,7 @@ services:
   ## MariaDB 10.7 Database Server
   mariadb-10-7:
     image: mariadb:10.7
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # database port (internal)
     volumes:
@@ -43,7 +47,7 @@ services:
   ## see https://jira.mariadb.org/browse/MDEV-25362
   mariadb-10-5-5:
     image: mariadb:10.5.5
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # database port (internal)
     volumes:
@@ -58,7 +62,7 @@ services:
   ## Docs: https://mariadb.com/docs/reference/cs10.3/
   mariadb-10-3:
     image: mariadb:10.3
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # database port (internal)
     volumes:
@@ -73,7 +77,7 @@ services:
   ## Docs: https://mariadb.com/docs/reference/cs10.2/
   mariadb-10-2:
     image: mariadb:10.2
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # database port (internal)
     volumes:
@@ -87,22 +91,7 @@ services:
   ## MariaDB 10.1 Database Server
   mariadb-10-1:
     image: mariadb:10.1
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    expose:
-      - "4001" # database port (internal)
-    volumes:
-      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
-    environment:
-      MYSQL_DATABASE: "photoprism"
-      MYSQL_USER: "photoprism"
-      MYSQL_PASSWORD: "photoprism"
-      MYSQL_ROOT_PASSWORD: "photoprism"
-
-  ## MySQL 8 Database Server
-  ## Docs: https://dev.mysql.com/doc/refman/8.0/en/
-  mysql:
-    image: mysql:8
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # database port (internal)
     volumes:
@@ -116,5 +105,5 @@ services:
 ## Join shared "photoprism-develop" network
 networks:
   default:
-    external:
-      name: photoprism-develop
+    name: photoprism-develop
+    external: true

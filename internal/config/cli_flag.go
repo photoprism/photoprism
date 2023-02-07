@@ -2,6 +2,7 @@ package config
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/urfave/cli"
@@ -29,6 +30,11 @@ func (f CliFlag) Fields() reflect.Value {
 	return fields
 }
 
+// Default returns the default value.
+func (f CliFlag) Default() string {
+	return f.Flag.GetValue()
+}
+
 // Hidden checks if the flag is hidden.
 func (f CliFlag) Hidden() bool {
 	field := f.Fields().FieldByName("Hidden")
@@ -54,6 +60,12 @@ func (f CliFlag) EnvVar() string {
 // Name returns the command flag name.
 func (f CliFlag) Name() string {
 	return f.Flag.GetName()
+}
+
+// CommandFlag returns the full command flag based on the name.
+func (f CliFlag) CommandFlag() string {
+	n := strings.Split(f.Name(), ",")
+	return "--" + n[0]
 }
 
 // Usage returns the command flag usage.

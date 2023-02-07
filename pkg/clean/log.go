@@ -17,7 +17,7 @@ func Log(s string) string {
 
 	// Remove non-printable and other potentially problematic characters.
 	s = strings.Map(func(r rune) rune {
-		if r < 32 {
+		if r < 32 || r == 127 {
 			return -1
 		}
 
@@ -40,6 +40,15 @@ func Log(s string) string {
 	}
 
 	return s
+}
+
+// LogQuote sanitizes a string and puts it in single quotes for logging.
+func LogQuote(s string) string {
+	if s = Log(s); s[0] != '\'' {
+		return fmt.Sprintf("'%s'", s)
+	} else {
+		return s
+	}
 }
 
 // LogLower sanitizes strings created from user input and converts them to lowercase.

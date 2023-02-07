@@ -6,6 +6,46 @@
     color-scheme: light;
 }
 
+/* Auth Form Colors */
+
+#photoprism main .auth-login .accent {
+    background-color: #05dde1!important;
+}
+
+#photoprism main .auth-login .accent--text {
+    caret-color: #05dde1!important;
+    color: #05dde1!important;
+}
+
+#photoprism main .auth-login .primary {
+    background-color: #00a6a9!important;
+}
+
+#photoprism main .auth-login .primary--text {
+    caret-color: #00a6a9!important;
+    color: #00a6a9!important;
+}
+
+#photoprism main .auth-login .secondary {
+    background-color: #505050!important;
+}
+
+#photoprism main .auth-login .secondary--text {
+    caret-color: #505050!important;
+    color: #505050!important;
+}
+
+#photoprism main .auth-login .link {
+    background-color: #c8e3e7!important;
+}
+
+#photoprism main .auth-login .link--text {
+    caret-color: #c8e3e7!important;
+    color: #c8e3e7!important;
+}
+
+/* Auth Form Logo */
+
 #photoprism .auth-login .logo {
     background-size: contain;
     background-repeat: no-repeat;
@@ -13,9 +53,18 @@
     width: 190px;
     height: 30vh;
     max-height: 190px;
-    margin: 32px auto 16px auto;
+    margin: 20px auto 40px auto;
     position: relative;
     left: unset;
+}
+
+#photoprism .auth-layout {
+    justify-content: center;
+    align-items: center;
+}
+
+#photoprism .auth-login .action-buttons {
+    margin: 30px auto 20px auto;
 }
 
 #photoprism main .auth-login .logo img {
@@ -24,8 +73,8 @@
 
 #photoprism main .auth-login .auth-login-form .v-card
 {
-    background: transparent !important;
-    border-radius: 12px;
+    background: #ccc1 !important;
+    border-radius: 16px;
     z-index: 1;
 }
 
@@ -47,6 +96,8 @@
     color: #fff;
 }
 
+#photoprism main .auth-login .theme--light.v-icon,
+#photoprism main .auth-login .theme--light.v-label,
 #photoprism main .auth-login .v-input__append-inner .v-icon {
     color: rgba(0,0,0,.54);
 }
@@ -72,4 +123,21 @@
 #photoprism main .auth-login footer p {
     padding: 0;
     margin: 0;
+}
+
+/* Account Page */
+
+.user-avatar {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    max-width: 100%;
+    max-height: 100%;
+    width: 128px;
+    height: 128px;
+    overflow: hidden;
 }

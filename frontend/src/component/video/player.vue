@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     videoEl() {
-      return this.$el.childNodes[0];
+      return this.$el.getElementsByTagName('video')[0];
     },
     updateStyle() {
       this.style = `width: ${this.width.toString()}px; height: ${this.height.toString()}px`;

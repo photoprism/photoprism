@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/i18n"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -62,16 +61,14 @@ func (c *Config) AppName() string {
 		name = c.SiteTitle()
 	}
 
-	clean := func(r rune) rune {
+	name = strings.Map(func(r rune) rune {
 		switch r {
 		case '\'', '"':
 			return -1
 		}
 
 		return r
-	}
-
-	name = strings.Map(clean, name)
+	}, name)
 
 	return txt.Clip(name, 32)
 }
@@ -109,9 +106,11 @@ func (c *Config) WallpaperUri() string {
 
 	// Valid URI? Local file?
 	if p := clean.Path(c.options.WallpaperUri); p == "" {
-		return ""
-	} else if fs.FileExists(filepath.Join(c.StaticPath(), assetPath, p)) {
+		c.options.WallpaperUri = ""
+	} else if fs.FileExists(path.Join(c.StaticPath(), assetPath, p)) {
 		c.options.WallpaperUri = path.Join(c.StaticUri(), assetPath, p)
+	} else if fs.FileExists(c.CustomStaticFile(path.Join(assetPath, p))) {
+		c.options.WallpaperUri = path.Join(c.CustomStaticUri(), assetPath, p)
 	} else {
 		c.options.WallpaperUri = ""
 	}

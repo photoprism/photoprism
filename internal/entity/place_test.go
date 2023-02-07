@@ -3,7 +3,6 @@ package entity
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -52,31 +51,6 @@ func TestFindPlace(t *testing.T) {
 		if r != nil {
 			t.Fatal("result should be nil")
 		}
-	})
-}
-
-func TestPlace_Find(t *testing.T) {
-	t.Run("record exists", func(t *testing.T) {
-		m := PlaceFixtures.Get("mexico")
-		if err := m.Find(); err != nil {
-			t.Fatal(err)
-		}
-	})
-	t.Run("record does not exist", func(t *testing.T) {
-		place := &Place{
-			ID:            s2.TokenPrefix + "1110",
-			PlaceLabel:    "test",
-			PlaceCity:     "testCity",
-			PlaceState:    "",
-			PlaceCountry:  "",
-			PlaceKeywords: "",
-			PlaceFavorite: false,
-			PhotoCount:    0,
-			CreatedAt:     TimeStamp(),
-			UpdatedAt:     TimeStamp(),
-		}
-		err := place.Find()
-		assert.EqualError(t, err, "record not found")
 	})
 }
 

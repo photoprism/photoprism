@@ -1,6 +1,7 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,7 +16,7 @@ func TestConfig_RawEnabled(t *testing.T) {
 func TestConfig_RawtherapeeBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/usr/bin/rawtherapee-cli", c.RawtherapeeBin())
+	assert.True(t, strings.Contains(c.RawtherapeeBin(), "/bin/rawtherapee-cli"))
 }
 
 func TestConfig_RawtherapeeBlacklist(t *testing.T) {
@@ -38,7 +39,7 @@ func TestConfig_RawtherapeeEnabled(t *testing.T) {
 func TestConfig_DarktableBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/usr/bin/darktable-cli", c.DarktableBin())
+	assert.True(t, strings.Contains(c.DarktableBin(), "/bin/darktable-cli"))
 }
 
 func TestConfig_DarktableBlacklist(t *testing.T) {

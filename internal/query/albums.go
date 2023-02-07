@@ -7,7 +7,9 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/search"
+
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/sortby"
 )
 
 // Albums returns a slice of albums.
@@ -18,21 +20,27 @@ func Albums(offset, limit int) (results entity.Albums, err error) {
 
 // AlbumByUID returns a Album based on the UID.
 func AlbumByUID(albumUID string) (album entity.Album, err error) {
-	if err := Db().Where("album_uid = ?", albumUID).First(&album).Error; err != nil {
-		return album, err
-	}
-
-	return album, nil
+	return entity.CachedAlbumByUID(albumUID)
 }
 
 // AlbumCoverByUID returns an album cover file based on the uid.
-func AlbumCoverByUID(uid string) (file entity.File, err error) {
+func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 	a := entity.Album{}
 
-	if err := UnscopedDb().Where("album_uid = ?", uid).First(&a).Error; err != nil {
+	// Find album.
+	if a, err = AlbumByUID(uid); err != nil {
 		return file, err
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
-		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
+		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: sortby.Relevance, Count: 1, Offset: 0, Merged: false}
+
+		if err = f.ParseQueryString(); err != nil {
+			return file, err
+		}
+
+		// Public private only?
+		if !public {
+			f.Public = false
+		}
 
 		if photos, _, err := search.Photos(f); err != nil {
 			return file, err
@@ -60,11 +68,19 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 		return file, fmt.Errorf("no cover found")
 	}
 
-	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
+	// Build query.
+	stmt := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uid = ?", uid).
 		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = 0").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
-		Order("photos.photo_quality DESC, photos.taken_at DESC").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL")
+
+	// Public pictures only?
+	if public {
+		stmt = stmt.Where("photos.photo_private = 0")
+	}
+
+	// Find first picture.
+	if err := stmt.Order("photos.photo_quality DESC, photos.taken_at DESC").
 		First(&file).Error; err != nil {
 		return file, err
 	}
@@ -72,7 +88,7 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	return file, nil
 }
 
-// UpdateAlbumDates updates album year, month and day based on indexed photo metadata.
+// UpdateAlbumDates updates the year, month and day of the album based on the indexed photo metadata.
 func UpdateAlbumDates() error {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
@@ -109,4 +125,55 @@ func AlbumEntryFound(uid string) error {
 	default:
 		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 0 WHERE photo_uid = ?`, uid).Error
 	}
+}
+
+// AlbumsPhotoUIDs returns up to 100000 photo UIDs that belong to the specified albums.
+func AlbumsPhotoUIDs(albums []string, includeDefault, includePrivate bool) (photos []string, err error) {
+	for _, albumUid := range albums {
+		a, err := AlbumByUID(albumUid)
+
+		if err != nil {
+			log.Warnf("query: album %s not found (%s)", albumUid, err.Error())
+			continue
+		}
+
+		if a.IsDefault() && !includeDefault {
+			continue
+		}
+
+		frm := form.SearchPhotos{
+			Album:    a.AlbumUID,
+			Filter:   a.AlbumFilter,
+			Count:    100000,
+			Offset:   0,
+			Public:   !includePrivate,
+			Hidden:   false,
+			Archived: false,
+			Quality:  1,
+		}
+
+		if err := frm.ParseQueryString(); err != nil {
+			return photos, err
+		}
+
+		res, count, err := search.PhotoIds(frm)
+
+		if err != nil {
+			return photos, err
+		} else if count == 0 {
+			continue
+		}
+
+		ids := make([]string, 0, count)
+
+		for _, r := range res {
+			ids = append(ids, r.PhotoUID)
+		}
+
+		if len(ids) > 0 {
+			photos = append(photos, ids...)
+		}
+	}
+
+	return photos, nil
 }

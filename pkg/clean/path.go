@@ -1,6 +1,7 @@
 package clean
 
 import (
+	"path"
 	"strings"
 	"unicode"
 )
@@ -29,4 +30,19 @@ func Path(s string) string {
 	}, s)
 
 	return s
+}
+
+// UserPath sanitizes and normalizes a user provided path, so it can be used.
+func UserPath(dir string) string {
+	if dir == "" {
+		return dir
+	}
+
+	dir = strings.Trim(path.Clean(Path(strings.ReplaceAll(dir, "\\", "/"))), "./ \\*%#~?|<>:")
+
+	if strings.Contains(dir, "/.") || strings.Contains(dir, "..") || strings.Contains(dir, "//") {
+		return ""
+	}
+
+	return dir
 }

@@ -12,14 +12,14 @@ import (
 
 // BackupAlbums creates a YAML file backup of all albums.
 func BackupAlbums(backupPath string, force bool) (count int, result error) {
-
 	c := Config()
+
 	if !c.BackupYaml() && !force {
 		log.Debugf("backup: album yaml files disabled")
 		return count, nil
 	}
 
-	albums, err := query.Albums(0, 9999)
+	albums, err := query.Albums(0, 1000000)
 
 	if err != nil {
 		return count, err
@@ -86,14 +86,14 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 	for _, fileName := range albums {
 		a := entity.Album{}
 
-		if err := a.LoadFromYaml(fileName); err != nil {
+		if err = a.LoadFromYaml(fileName); err != nil {
 			log.Errorf("restore: %s in %s", err, clean.Log(filepath.Base(fileName)))
 			result = err
 		} else if a.AlbumType == "" || len(a.Photos) == 0 && a.AlbumFilter == "" {
 			log.Debugf("restore: skipping %s", clean.Log(filepath.Base(fileName)))
-		} else if err := a.Find(); err == nil {
-			log.Infof("%s: %s already exists", a.AlbumType, clean.Log(a.AlbumTitle))
-		} else if err := a.Create(); err != nil {
+		} else if found := a.Find(); found != nil {
+			log.Infof("%s: %s already exists", found.AlbumType, clean.Log(found.AlbumTitle))
+		} else if err = a.Create(); err != nil {
 			log.Errorf("%s: %s in %s", a.AlbumType, err, clean.Log(filepath.Base(fileName)))
 		} else {
 			count++

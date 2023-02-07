@@ -18,7 +18,7 @@ func TestSync_download(t *testing.T) {
 	worker := NewSync(conf)
 
 	assert.IsType(t, &Sync{}, worker)
-	account := entity.AccountFixtureWebdavDummy
+	account := entity.ServiceFixtureWebdavDummy
 
 	if _, err := worker.download(account); err != nil {
 		t.Fatal(err)
@@ -38,7 +38,7 @@ func TestSync_relatedDownloads(t *testing.T) {
 	conf := config.TestConfig()
 
 	worker := NewSync(conf)
-	account := entity.AccountFixtureWebdavDummy
+	account := entity.ServiceFixtureWebdavDummy
 
 	assert.IsType(t, &Sync{}, worker)
 

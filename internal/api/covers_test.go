@@ -4,11 +4,13 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/config"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAlbumCover(t *testing.T) {
-	t.Run("invalid type", func(t *testing.T) {
+	t.Run("InvalidType", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7/t/"+conf.PreviewToken()+"/xxx")
@@ -27,8 +29,10 @@ func TestAlbumCover(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba9/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("invalid token", func(t *testing.T) {
-		app, router, _ := NewApiTest()
+	t.Run("InvalidToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8/t/xxx/tile_500")
 		assert.Equal(t, http.StatusForbidden, r.Code)
@@ -36,7 +40,7 @@ func TestAlbumCover(t *testing.T) {
 }
 
 func TestLabelCover(t *testing.T) {
-	t.Run("invalid type", func(t *testing.T) {
+	t.Run("InvalidType", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		LabelCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c2/t/"+conf.PreviewToken()+"/xxx")
@@ -57,8 +61,10 @@ func TestLabelCover(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c2/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("invalid token", func(t *testing.T) {
-		app, router, _ := NewApiTest()
+	t.Run("InvalidToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
 		LabelCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c3/t/xxx/tile_500")
 		assert.Equal(t, http.StatusForbidden, r.Code)

@@ -9,7 +9,7 @@ import (
 )
 
 // Updates the local list of remote files so that they can be downloaded in batches
-func (worker *Sync) refresh(a entity.Account) (complete bool, err error) {
+func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	if a.AccType != remote.ServiceWebDAV {
 		return false, nil
 	}
@@ -67,11 +67,11 @@ func (worker *Sync) refresh(a entity.Account) (complete bool, err error) {
 			}
 
 			if f.Status == entity.FileSyncIgnore && a.SyncRaw && (content == media.Raw || content == media.Video) {
-				worker.logError(f.Update("Status", entity.FileSyncNew))
+				w.logError(f.Update("Status", entity.FileSyncNew))
 			}
 
 			if f.Status == entity.FileSyncDownloaded && !f.RemoteDate.Equal(file.Date) {
-				worker.logError(f.Updates(map[string]interface{}{
+				w.logError(f.Updates(map[string]interface{}{
 					"Status":     entity.FileSyncNew,
 					"RemoteDate": file.Date,
 					"RemoteSize": file.Size,

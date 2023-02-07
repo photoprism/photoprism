@@ -29,6 +29,10 @@ CREATE DATABASE IF NOT EXISTS testdb;
 CREATE USER IF NOT EXISTS testdb@'%' IDENTIFIED BY 'testdb';
 GRANT ALL PRIVILEGES ON testdb.* TO testdb@'%';
 
+CREATE DATABASE IF NOT EXISTS `migrate`;
+CREATE USER IF NOT EXISTS 'migrate'@'%' IDENTIFIED BY 'migrate';
+GRANT ALL PRIVILEGES ON `migrate`.* TO 'migrate'@'%';
+
 CREATE DATABASE IF NOT EXISTS acceptance;
 CREATE USER IF NOT EXISTS acceptance@'%' IDENTIFIED BY 'acceptance';
 GRANT ALL PRIVILEGES ON acceptance.* TO acceptance@'%';
@@ -49,8 +53,11 @@ CREATE DATABASE IF NOT EXISTS photoprism_05;
 CREATE USER IF NOT EXISTS photoprism_05@'%' IDENTIFIED BY 'photoprism_05';
 GRANT ALL PRIVILEGES ON photoprism_05.* TO photoprism_05@'%';
 
-
 FLUSH PRIVILEGES;
+
+-- ----------------------------------------------------------------------------------------
+-- init "keycloak" db
+-- ----------------------------------------------------------------------------------------
 
 USE keycloak;
 

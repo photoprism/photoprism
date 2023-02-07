@@ -14,6 +14,11 @@ type Password struct {
 	UpdatedAt time.Time `deepcopier:"skip" json:"UpdatedAt"`
 }
 
+// TableName returns the entity table name.
+func (Password) TableName() string {
+	return "passwords"
+}
+
 // NewPassword creates a new password instance.
 func NewPassword(uid, password string) Password {
 	if uid == "" {
@@ -41,13 +46,18 @@ func (m *Password) SetPassword(password string) error {
 	}
 }
 
-// InvalidPassword returns true if the given password does not match the hash.
-func (m *Password) InvalidPassword(password string) bool {
-	if m.Hash == "" && password == "" {
+// Is checks if the password is correct.
+func (m *Password) Is(s string) bool {
+	return !m.IsWrong(s)
+}
+
+// IsWrong checks if the specified password is incorrect.
+func (m *Password) IsWrong(s string) bool {
+	if m.Hash == "" && s == "" {
 		return false
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(m.Hash), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(m.Hash), []byte(s))
 	return err != nil
 }
 
@@ -56,7 +66,7 @@ func (m *Password) Create() error {
 	return Db().Create(m).Error
 }
 
-// Save inserts a new row to the database or updates a row if the primary key already exists.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Password) Save() error {
 	return Db().Save(m).Error
 }

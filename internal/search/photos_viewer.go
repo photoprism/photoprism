@@ -3,6 +3,8 @@ package search
 import (
 	"encoding/json"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/viewer"
@@ -10,7 +12,12 @@ import (
 
 // PhotosViewerResults finds photos based on the search form provided and returns them as viewer.Results.
 func PhotosViewerResults(f form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
-	if results, count, err := searchPhotos(f, PhotosColsView); err != nil {
+	return UserPhotosViewerResults(f, nil, contentUri, apiUri, previewToken, downloadToken)
+}
+
+// UserPhotosViewerResults finds photos based on the search form and user session and returns them as viewer.Results.
+func UserPhotosViewerResults(f form.SearchPhotos, sess *entity.Session, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
+	if results, count, err := searchPhotos(f, sess, PhotosColsView); err != nil {
 		return viewer.Results{}, count, err
 	} else {
 		return results.ViewerResults(contentUri, apiUri, previewToken, downloadToken), count, err
@@ -29,15 +36,15 @@ func (photo Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken 
 		DownloadUrl:  viewer.DownloadUrl(photo.FileHash, apiUri, downloadToken),
 		Width:        photo.FileWidth,
 		Height:       photo.FileHeight,
-		Thumbs: viewer.Thumbs{
-			Fit720:  viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit720], contentUri, previewToken),
-			Fit1280: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1280], contentUri, previewToken),
-			Fit1920: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1920], contentUri, previewToken),
-			Fit2048: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2048], contentUri, previewToken),
-			Fit2560: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2560], contentUri, previewToken),
-			Fit3840: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit3840], contentUri, previewToken),
-			Fit4096: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit4096], contentUri, previewToken),
-			Fit7680: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit7680], contentUri, previewToken),
+		Thumbs: thumb.Public{
+			Fit720:  thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit720], contentUri, previewToken),
+			Fit1280: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1280], contentUri, previewToken),
+			Fit1920: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1920], contentUri, previewToken),
+			Fit2048: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2048], contentUri, previewToken),
+			Fit2560: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2560], contentUri, previewToken),
+			Fit3840: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit3840], contentUri, previewToken),
+			Fit4096: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit4096], contentUri, previewToken),
+			Fit7680: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit7680], contentUri, previewToken),
 		},
 	}
 }
@@ -70,15 +77,15 @@ func (photo GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadTo
 		DownloadUrl:  viewer.DownloadUrl(photo.FileHash, apiUri, downloadToken),
 		Width:        photo.FileWidth,
 		Height:       photo.FileHeight,
-		Thumbs: viewer.Thumbs{
-			Fit720:  viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit720], contentUri, previewToken),
-			Fit1280: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1280], contentUri, previewToken),
-			Fit1920: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1920], contentUri, previewToken),
-			Fit2048: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2048], contentUri, previewToken),
-			Fit2560: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2560], contentUri, previewToken),
-			Fit3840: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit3840], contentUri, previewToken),
-			Fit4096: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit4096], contentUri, previewToken),
-			Fit7680: viewer.NewThumb(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit7680], contentUri, previewToken),
+		Thumbs: thumb.Public{
+			Fit720:  thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit720], contentUri, previewToken),
+			Fit1280: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1280], contentUri, previewToken),
+			Fit1920: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1920], contentUri, previewToken),
+			Fit2048: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2048], contentUri, previewToken),
+			Fit2560: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2560], contentUri, previewToken),
+			Fit3840: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit3840], contentUri, previewToken),
+			Fit4096: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit4096], contentUri, previewToken),
+			Fit7680: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit7680], contentUri, previewToken),
 		},
 	}
 }

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -46,10 +48,37 @@ func DownloadSelection(mediaRaw, mediaSidecar, originals bool) FileSelection {
 }
 
 // ShareSelection selects files to share, for example for upload via WebDAV.
-func ShareSelection(primary bool) FileSelection {
+func ShareSelection(originals bool) FileSelection {
+	var omitMedia []string
+	var omitTypes []string
+
+	if !originals {
+		omitMedia = []string{
+			media.Unknown.String(),
+			media.Raw.String(),
+			media.Sidecar.String(),
+			media.Text.String(),
+			media.Other.String(),
+		}
+
+		omitTypes = []string{
+			fs.ImagePNG.String(),
+			fs.ImageWebP.String(),
+			fs.ImageTIFF.String(),
+			fs.ImageAVIF.String(),
+			fs.ImageHEIC.String(),
+			fs.ImageBMP.String(),
+			fs.ImageGIF.String(),
+		}
+	}
+
 	return FileSelection{
-		Originals: !primary,
-		Primary:   primary,
+		Originals: originals,
+		OmitMedia: omitMedia,
+		OmitTypes: omitTypes,
+		Hidden:    false,
+		Private:   false,
+		Archived:  false,
 		MaxSize:   1024 * MegaByte,
 	}
 }
@@ -58,6 +87,13 @@ func ShareSelection(primary bool) FileSelection {
 func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err error) {
 	if f.Empty() {
 		return results, errors.New("no items selected")
+	}
+
+	// Resolve photos in smart albums.
+	if photoIds, err := AlbumsPhotoUIDs(f.Albums, false, o.Private); err != nil {
+		log.Warnf("query: %s", err.Error())
+	} else if len(photoIds) > 0 {
+		f.Photos = append(f.Photos, photoIds...)
 	}
 
 	var concat string
@@ -79,8 +115,8 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 			SELECT b.path FROM folders a JOIN folders b ON b.path LIKE %s WHERE a.folder_uid IN (?))
 		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND album_uid IN (?))
 		OR files.file_uid IN (SELECT file_uid FROM %s m WHERE m.subj_uid IN (?))
-		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
-		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
+		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND pl.uncertainty < 100 AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
+		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id AND pl.uncertainty < 100 JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
 		concat, entity.Marker{}.TableName())
 
 	// Build search query.
@@ -93,37 +129,37 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 
 	// File size limit?
 	if o.MaxSize > 0 {
-		s = s.Where("file_size < ?", o.MaxSize)
+		s = s.Where("files.file_size < ?", o.MaxSize)
 	}
 
 	// Specific media types only?
 	if len(o.Media) > 0 {
-		s = s.Where("media_type IN (?)", o.Media)
+		s = s.Where("files.media_type IN (?)", o.Media)
 	}
 
 	// Exclude media types?
 	if len(o.OmitMedia) > 0 {
-		s = s.Where("media_type NOT IN (?)", o.OmitMedia)
+		s = s.Where("files.media_type NOT IN (?)", o.OmitMedia)
 	}
 
 	// Specific file types only?
 	if len(o.Types) > 0 {
-		s = s.Where("file_type IN (?)", o.Types)
+		s = s.Where("files.file_type IN (?)", o.Types)
 	}
 
 	// Exclude file types?
 	if len(o.OmitTypes) > 0 {
-		s = s.Where("file_type NOT IN (?)", o.OmitTypes)
+		s = s.Where("files.file_type NOT IN (?)", o.OmitTypes)
 	}
 
 	// Primary files only?
 	if o.Primary {
-		s = s.Where("file_primary = 1")
+		s = s.Where("files.file_primary = 1")
 	}
 
 	// Files in originals only?
 	if o.Originals {
-		s = s.Where("file_root = '/'")
+		s = s.Where("files.file_root = '/'")
 	}
 
 	// Exclude private?

@@ -36,7 +36,7 @@ func TestAlbums(t *testing.T) {
 	})
 
 	t.Run("search with slug", func(t *testing.T) {
-		query := form.NewAlbumSearch("slug:holiday count:10")
+		query := form.NewAlbumSearch("slug:holiday")
 		result, err := Albums(query)
 
 		if err != nil {
@@ -58,7 +58,8 @@ func TestAlbums(t *testing.T) {
 	})
 
 	t.Run("favorites true", func(t *testing.T) {
-		query := form.NewAlbumSearch("favorite:true count:10000")
+		query := form.NewAlbumSearch("favorite:true")
+		query.Count = 100000
 
 		result, err := Albums(query)
 
@@ -69,7 +70,7 @@ func TestAlbums(t *testing.T) {
 		assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
 	})
 	t.Run("empty query", func(t *testing.T) {
-		query := form.NewAlbumSearch("order:slug")
+		query := form.NewAlbumSearch("")
 
 		results, err := Albums(query)
 
@@ -137,9 +138,9 @@ func TestAlbums(t *testing.T) {
 	})
 	t.Run("search for  year/month/day", func(t *testing.T) {
 		f := form.SearchAlbums{
-			Year:   2021,
-			Month:  10,
-			Day:    3,
+			Year:   "2021",
+			Month:  "10",
+			Day:    "3",
 			Count:  0,
 			Offset: 0,
 			Order:  "",
@@ -152,5 +153,24 @@ func TestAlbums(t *testing.T) {
 		}
 
 		assert.Equal(t, 0, len(result))
+	})
+	t.Run("SearchAlbumForYear", func(t *testing.T) {
+		f := form.SearchAlbums{
+			Type:   entity.AlbumDefault,
+			Year:   "2018",
+			Month:  "",
+			Day:    "",
+			Count:  10,
+			Offset: 0,
+			Order:  "added",
+		}
+
+		result, err := Albums(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 2, len(result))
 	})
 }

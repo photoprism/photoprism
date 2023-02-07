@@ -9,16 +9,16 @@ import (
 	"path"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -27,12 +27,12 @@ import (
 // GET /s/:token/:uid/preview
 // TODO: Proof of concept, needs refactoring.
 func SharePreview(router *gin.RouterGroup) {
-	router.GET("/:token/:share/preview", func(c *gin.Context) {
-		conf := service.Config()
+	router.GET("/:token/:shared/preview", func(c *gin.Context) {
+		conf := get.Config()
 
 		token := clean.Token(c.Param("token"))
-		share := clean.Token(c.Param("share"))
-		links := entity.FindLinks(token, share)
+		shared := clean.Token(c.Param("shared"))
+		links := entity.FindLinks(token, shared)
 
 		if len(links) != 1 {
 			log.Warn("share: invalid token (preview)")
@@ -42,23 +42,23 @@ func SharePreview(router *gin.RouterGroup) {
 
 		thumbPath := path.Join(conf.ThumbCachePath(), "share")
 
-		if err := os.MkdirAll(thumbPath, os.ModePerm); err != nil {
+		if err := os.MkdirAll(thumbPath, fs.ModeDir); err != nil {
 			log.Error(err)
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
 
-		previewFilename := fmt.Sprintf("%s/%s.jpg", thumbPath, share)
+		previewFilename := fmt.Sprintf("%s/%s.jpg", thumbPath, shared)
 		yesterday := time.Now().Add(-24 * time.Hour)
 
 		if info, err := os.Stat(previewFilename); err != nil {
-			log.Debugf("share: creating new preview for %s", clean.Log(share))
+			log.Debugf("share: creating new preview for %s", clean.Log(shared))
 		} else if info.ModTime().After(yesterday) {
-			log.Debugf("share: using cached preview for %s", clean.Log(share))
+			log.Debugf("share: using cached preview for %s", clean.Log(shared))
 			c.File(previewFilename)
 			return
 		} else if err := os.Remove(previewFilename); err != nil {
-			log.Errorf("share: could not remove old preview of %s", clean.Log(share))
+			log.Errorf("share: could not remove old preview of %s", clean.Log(shared))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -66,7 +66,7 @@ func SharePreview(router *gin.RouterGroup) {
 		var f form.SearchPhotos
 
 		// Covers may only contain public content in shared albums.
-		f.Album = share
+		f.Album = shared
 		f.Public = true
 		f.Private = false
 		f.Hidden = false
@@ -77,6 +77,12 @@ func SharePreview(router *gin.RouterGroup) {
 		// Get first 12 album entries.
 		f.Count = 12
 		f.Order = "relevance"
+
+		if err := f.ParseQueryString(); err != nil {
+			log.Errorf("preview: %s", err)
+			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		}
 
 		p, count, err := search.Photos(f)
 

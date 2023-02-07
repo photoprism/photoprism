@@ -1,6 +1,7 @@
 package crop
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -59,7 +60,7 @@ func TestThumbFileName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg", r)
+		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
 	})
 }
 
@@ -98,18 +99,18 @@ func TestFindIdealThumbFileName(t *testing.T) {
 	})
 	t.Run("width: 500", func(t *testing.T) {
 		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 500, "./testdata/b/c/c")
-		assert.Equal(t, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg", r)
+		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
 	})
 	t.Run("width: 720", func(t *testing.T) {
 		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 720, "./testdata/b/c/c")
-		assert.Equal(t, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg", r)
+		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
 	})
 	t.Run("width: 800", func(t *testing.T) {
 		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 800, "./testdata/b/c/c")
-		assert.Equal(t, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg", r)
+		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
 	})
 	t.Run("width: 60", func(t *testing.T) {
 		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 60, "./testdata/b/c/c")
-		assert.Equal(t, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg", r)
+		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
 	})
 }

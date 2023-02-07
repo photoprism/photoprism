@@ -5,8 +5,7 @@ import (
 	"strings"
 )
 
-// Save updates a record in the database, or inserts
-// if it does not exist.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func Save(m interface{}, keyNames ...string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {

@@ -1,0 +1,1 @@
+ALTER TABLE accounts RENAME TO services;

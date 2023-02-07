@@ -8,11 +8,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/internal/service"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -24,11 +24,11 @@ import (
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
-			AbortUnauthorized(c)
+			AbortForbidden(c)
 			return
 		}
 
-		conf := service.Config()
+		conf := get.Config()
 
 		if !conf.Settings().Features.Download {
 			AbortFeatureDisabled(c)
@@ -36,10 +36,10 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		a, err := query.AlbumByUID(clean.IdString(c.Param("uid")))
+		a, err := query.AlbumByUID(clean.UID(c.Param("uid")))
 
 		if err != nil {
-			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
+			AbortAlbumNotFound(c)
 			return
 		}
 

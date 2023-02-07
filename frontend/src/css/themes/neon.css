@@ -1,0 +1,114 @@
+/* Neon Theme */
+
+.theme-neon .v-snack.v-snack--active.v-snack--bottom,
+.theme-neon .v-speed-dial .v-btn--floating.v-btn--small {
+    opacity: 0.9;
+}
+
+.theme-neon .secondary-dark--text.text--lighten-1 {
+    color: #64616a !important;
+}
+
+body.dark-theme.theme-neon,
+.theme-neon .v-content__wrap,
+.theme-neon .p-page,
+.theme-neon .form,
+.theme-neon .v-content {
+    background: #242326 !important;
+}
+
+.theme-neon .application.theme--light,
+#photoprism.theme-neon .theme--light.v-small-dialog__content,
+#photoprism.theme-neon .theme--light.v-sheet,
+#photoprism.theme-neon .theme--light.v-card {
+    background: #242326;
+}
+
+#photoprism.theme-neon .theme--light .v-table {
+    background: #302e32;
+}
+
+#photoprism.theme-neon .theme--light.v-table thead th,
+#photoprism.theme-neon .theme--light.v-table tbody td {
+    color: #fff;
+}
+
+#photoprism.theme-neon .theme--light.v-table tbody tr:hover {
+    background: #333333;
+}
+
+#photoprism.theme-neon .theme--light.v-chip,
+#photoprism.theme-neon .v-card__actions .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
+    background: #333;
+}
+
+#photoprism.theme-neon .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
+    background: #2c2b2e;
+}
+
+#photoprism.theme-neon .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-neon .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-neon .theme--light.v-input--is-disabled .v-label,
+#photoprism.theme-neon .theme--light.v-input--is-disabled input,
+#photoprism.theme-neon .theme--light.v-input--is-disabled textarea {
+    color: #ccc;
+}
+
+#photoprism.theme-neon,
+#photoprism.theme-neon .p-page a,
+#photoprism.theme-neon .v-datatable a,
+#photoprism.theme-neon .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-neon .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-neon .theme--light {
+    color: #fff;
+}
+
+#photoprism.theme-neon .theme--light.v-list {
+    background: #28272a;
+}
+
+#photoprism.theme-neon a.text-link {
+    color: #f44abf !important;
+}
+
+#photoprism.theme-neon .theme--light.v-select .v-select__selections {
+    color: #eee;
+}
+
+#photoprism.theme-neon .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-neon .accent--text {
+    color: #d532d2 !important;
+}
+
+#photoprism.theme-neon .theme--light.v-input:not(.v-input--is-disabled) input,
+#photoprism.theme-neon .theme--light.v-input:not(.v-input--is-disabled) textarea {
+    color: #fff;
+}
+
+#photoprism.theme-neon .theme--light.v-btn.v-btn--disabled,
+#photoprism.theme-neon .theme--light.v-btn.v-btn--disabled .v-btn__loading,
+#photoprism.theme-neon .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-neon .theme--light.v-list .v-list__tile__mask {
+    color: #cccccc;
+    background: transparent;
+}
+
+#photoprism.theme-neon .mobile-dial .v-speed-dial__list .v-btn {
+    color: white;
+    background-color: #4c0733;
+}
+
+#photoprism.theme-neon .mobile-dial .v-speed-dial__list .v-btn.highlight {
+    background-color: #6f215b;
+}
+
+#photoprism.theme-neon .mobile-dial .v-speed-dial__list .v-btn:hover,
+#photoprism.theme-neon .mobile-dial .v-speed-dial__list .v-btn.highlight:hover {
+    background-color: #712558;
+}

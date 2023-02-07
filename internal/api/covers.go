@@ -5,13 +5,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
+
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -26,9 +26,10 @@ const (
 // GET /api/v1/albums/:uid/t/:token/:size
 //
 // Parameters:
-//   uid: string album uid
-//   token: string security token (see config)
-//   size: string thumb type, see photoprism.ThumbnailTypes
+//
+//	uid: string album uid
+//	token: string security token (see config)
+//	size: string thumb type, see photoprism.ThumbnailTypes
 func AlbumCover(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -37,9 +38,9 @@ func AlbumCover(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		conf := service.Config()
+		conf := get.Config()
 		thumbName := thumb.Name(clean.Token(c.Param("size")))
-		uid := clean.IdString(c.Param("uid"))
+		uid := clean.UID(c.Param("uid"))
 
 		size, ok := thumb.Sizes[thumbName]
 
@@ -49,11 +50,11 @@ func AlbumCover(router *gin.RouterGroup) {
 			return
 		}
 
-		cache := service.CoverCache()
+		cache := get.CoverCache()
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api-v1: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 
@@ -74,7 +75,7 @@ func AlbumCover(router *gin.RouterGroup) {
 			return
 		}
 
-		f, err := query.AlbumCoverByUID(uid)
+		f, err := query.AlbumCoverByUID(uid, conf.Settings().Features.Private)
 
 		if err != nil {
 			log.Debugf("%s: %s contains no photos, using generic cover", albumCover, uid)
@@ -138,9 +139,10 @@ func AlbumCover(router *gin.RouterGroup) {
 // GET /api/v1/labels/:uid/t/:token/:size
 //
 // Parameters:
-//   uid: string label uid
-//   token: string security token (see config)
-//   size: string thumb type, see photoprism.ThumbnailTypes
+//
+//	uid: string label uid
+//	token: string security token (see config)
+//	size: string thumb type, see photoprism.ThumbnailTypes
 func LabelCover(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -149,9 +151,9 @@ func LabelCover(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		conf := service.Config()
+		conf := get.Config()
 		thumbName := thumb.Name(clean.Token(c.Param("size")))
-		uid := clean.IdString(c.Param("uid"))
+		uid := clean.UID(c.Param("uid"))
 
 		size, ok := thumb.Sizes[thumbName]
 
@@ -161,11 +163,11 @@ func LabelCover(router *gin.RouterGroup) {
 			return
 		}
 
-		cache := service.CoverCache()
+		cache := get.CoverCache()
 		cacheKey := CacheKey(labelCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api-v1: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 

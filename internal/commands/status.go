@@ -15,7 +15,7 @@ import (
 // StatusCommand registers the status command.
 var StatusCommand = cli.Command{
 	Name:   "status",
-	Usage:  "Checks if the web server is running",
+	Usage:  "Checks if the Web server is running",
 	Action: statusAction,
 }
 

@@ -26,7 +26,7 @@ type Cell struct {
 	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Cell) TableName() string {
 	return "cells"
 }
@@ -210,7 +210,7 @@ func (m *Cell) Create() error {
 	return Db().Create(m).Error
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Cell) Save() error {
 	return Db().Save(m).Error
 }
@@ -250,7 +250,7 @@ func FirstOrCreateCell(m *Cell) *Cell {
 // Keywords returns search keywords for a location.
 func (m *Cell) Keywords() (result []string) {
 	if m.Place == nil {
-		log.Errorf("cell: info for %s is nil - possible bug", m.ID)
+		log.Errorf("cell: place for %s is missing - possible bug", m.ID)
 		return result
 	}
 

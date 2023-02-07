@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -235,7 +235,7 @@ export class Thumb extends Model {
       return `${config.contentUri}/svg/photo`;
     }
 
-    return `${config.contentUri}/t/${file.Hash}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${file.Hash}/${config.previewToken}/${size}`;
   }
 
   static downloadUrl(file) {
@@ -243,7 +243,7 @@ export class Thumb extends Model {
       return "";
     }
 
-    return `${config.apiUri}/dl/${file.Hash}?t=${config.downloadToken()}`;
+    return `${config.apiUri}/dl/${file.Hash}?t=${config.downloadToken}`;
   }
 }
 

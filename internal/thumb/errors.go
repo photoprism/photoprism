@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	ErrThumbNotCached = errors.New("thumbnail not cached")
+	ErrNotCached = errors.New("not cached")
 )

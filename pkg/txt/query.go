@@ -5,12 +5,10 @@ import (
 )
 
 const (
-	Empty      = ""
-	Space      = " "
-	Or         = "|"
-	And        = "&"
-	Plus       = "+"
-	SpacedPlus = Space + Plus + Space
+	EmptyString = ""
+	Space       = " "
+	Or          = "|"
+	And         = "&"
 )
 
 // Spaced returns the string padded with a space left and right.
@@ -28,5 +26,5 @@ func StripOr(s string) string {
 func QueryTooShort(q string) bool {
 	q = strings.Trim(q, "- '")
 
-	return q != Empty && len(q) < 3 && IsLatin(q)
+	return q != EmptyString && len(q) < 3 && IsLatin(q)
 }

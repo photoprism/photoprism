@@ -51,21 +51,8 @@ const (
 	IsUnstacked int8 = -1
 )
 
-// Sort options.
+// Authentication providers.
 const (
-	SortOrderDefault   = ""
-	SortOrderRelevance = "relevance"
-	SortOrderCount     = "count"
-	SortOrderAdded     = "added"
-	SortOrderImported  = "imported"
-	SortOrderEdited    = "edited"
-	SortOrderNewest    = "newest"
-	SortOrderOldest    = "oldest"
-	SortOrderPlace     = "place"
-	SortOrderMoment    = "moment"
-	SortOrderName      = "name"
-	SortOrderPath      = "path"
-	SortOrderSlug      = "slug"
-	SortOrderCategory  = "category"
-	SortOrderSimilar   = "similar"
+	ProviderNone     = ""
+	ProviderPassword = "password"
 )

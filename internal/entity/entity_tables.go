@@ -15,34 +15,40 @@ type Tables map[string]interface{}
 // Entities contains database entities and their table names.
 var Entities = Tables{
 	migrate.Migration{}.TableName(): &migrate.Migration{},
-	"errors":                        &Error{},
-	"addresses":                     &Address{},
-	"users":                         &User{},
-	"accounts":                      &Account{},
-	"folders":                       &Folder{},
-	"duplicates":                    &Duplicate{},
+	Error{}.TableName():             &Error{},
+	Password{}.TableName():          &Password{},
+	User{}.TableName():              &User{},
+	UserDetails{}.TableName():       &UserDetails{},
+	UserSettings{}.TableName():      &UserSettings{},
+	Session{}.TableName():           &Session{},
+	Service{}.TableName():           &Service{},
+	Folder{}.TableName():            &Folder{},
+	Duplicate{}.TableName():         &Duplicate{},
 	File{}.TableName():              &File{},
-	"files_share":                   &FileShare{},
-	"files_sync":                    &FileSync{},
+	FileShare{}.TableName():         &FileShare{},
+	FileSync{}.TableName():          &FileSync{},
 	Photo{}.TableName():             &Photo{},
-	"details":                       &Details{},
+	PhotoUser{}.TableName():         &PhotoUser{},
+	Details{}.TableName():           &Details{},
 	Place{}.TableName():             &Place{},
 	Cell{}.TableName():              &Cell{},
-	"cameras":                       &Camera{},
-	"lenses":                        &Lens{},
-	"countries":                     &Country{},
-	"albums":                        &Album{},
-	"photos_albums":                 &PhotoAlbum{},
-	"labels":                        &Label{},
-	"categories":                    &Category{},
-	"photos_labels":                 &PhotoLabel{},
-	"keywords":                      &Keyword{},
-	"photos_keywords":               &PhotoKeyword{},
-	"passwords":                     &Password{},
-	"links":                         &Link{},
+	Camera{}.TableName():            &Camera{},
+	Lens{}.TableName():              &Lens{},
+	Country{}.TableName():           &Country{},
+	Album{}.TableName():             &Album{},
+	AlbumUser{}.TableName():         &AlbumUser{},
+	PhotoAlbum{}.TableName():        &PhotoAlbum{},
+	Label{}.TableName():             &Label{},
+	Category{}.TableName():          &Category{},
+	PhotoLabel{}.TableName():        &PhotoLabel{},
+	Keyword{}.TableName():           &Keyword{},
+	PhotoKeyword{}.TableName():      &PhotoKeyword{},
+	Link{}.TableName():              &Link{},
 	Subject{}.TableName():           &Subject{},
 	Face{}.TableName():              &Face{},
 	Marker{}.TableName():            &Marker{},
+	Reaction{}.TableName():          &Reaction{},
+	UserShare{}.TableName():         &UserShare{},
 }
 
 // WaitForMigration waits for the database migration to be successful.
@@ -59,21 +65,28 @@ func (list Tables) WaitForMigration(db *gorm.DB) {
 				log.Tracef("migrate: %s migrated", clean.Log(name))
 				break
 			} else {
-				log.Debugf("migrate: waiting for %s migration (%s)", clean.Log(name), err.Error())
+				log.Tracef("migrate: waiting for %s migration (%s)", clean.Log(name), err.Error())
+				time.Sleep(100 * time.Millisecond)
 			}
 
 			if i == attempts {
 				panic("migration failed")
 			}
-
-			time.Sleep(50 * time.Millisecond)
 		}
 	}
 }
 
 // Truncate removes all data from tables without dropping them.
 func (list Tables) Truncate(db *gorm.DB) {
-	for name := range list {
+	var name string
+
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("migrate: %s in %s (truncate)", r, name)
+		}
+	}()
+
+	for name = range list {
 		if err := db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error; err == nil {
 			// log.Debugf("entity: removed all data from %s", name)
 			break
@@ -84,15 +97,30 @@ func (list Tables) Truncate(db *gorm.DB) {
 }
 
 // Migrate migrates all database tables of registered entities.
-func (list Tables) Migrate(db *gorm.DB, runFailed bool, ids []string) {
-	if len(ids) == 0 {
-		for name, entity := range list {
+func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
+	var name string
+	var entity interface{}
+
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("migrate: %s in %s (panic)", r, name)
+		}
+	}()
+
+	// Run pre-migrations, if any.
+	if err := migrate.Run(db, opt.Pre()); err != nil {
+		log.Error(err)
+	}
+
+	// Run auto migrations.
+	if opt.AutoMigrate {
+		for name, entity = range list {
 			if err := db.AutoMigrate(entity).Error; err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())
 
 				time.Sleep(time.Second)
 
-				if err := db.AutoMigrate(entity).Error; err != nil {
+				if err = db.AutoMigrate(entity).Error; err != nil {
 					log.Errorf("migrate: failed migrating %s", clean.Log(name))
 					panic(err)
 				}
@@ -100,7 +128,8 @@ func (list Tables) Migrate(db *gorm.DB, runFailed bool, ids []string) {
 		}
 	}
 
-	if err := migrate.Auto(db, runFailed, ids); err != nil {
+	// Run manual migrations, if any.
+	if err := migrate.Run(db, opt); err != nil {
 		log.Error(err)
 	}
 }

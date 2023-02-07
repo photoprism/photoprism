@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 set -e
 
@@ -18,13 +18,13 @@ fi
 
 TMPDIR=${TMPDIR:-/tmp}
 
-# abort if not executed as root
+# Abort if not executed as root.
 if [[ $(id -u) != "0" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]; then
   echo "Error: Run ${0##*/} as root to install in a system directory!" 1>&2
   exit 1
 fi
 
-/bin/mkdir -p "$DESTDIR"
+mkdir -p "$DESTDIR"
 
 if [[ $TF_DRIVER == "auto" ]]; then
   echo "Detecting driver..."

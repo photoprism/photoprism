@@ -1,43 +1,21 @@
 ---
 name: Bug Report
 about: Report a new and clearly identified bug that must be fixed directly in the application
-title: 'Category: Clear and concise title (PLEASE CHANGE)'
+title: 'SHORT DESCRIPTION OF THE PROBLEM YOU ARE REPORTING'
 labels: bug
 assignees: ''
 
 ---
 
-STOP! BEFORE YOU PROCEED: ARE YOU 100% SURE THAT THIS IS NOT A TECHNICAL SUPPORT REQUEST AND/OR A PROBLEM WITH ANOTHER SOFTWARE YOU ARE USING, SUCH AS NGINX?
+PLEASE PROCEED ONLY IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPPORT INCIDENT AND/OR POSSIBLY A PROBLEM WITH SOME OTHER SOFTWARE YOU ARE USING. VISIT <https://photoprism.app/kb/getting-support> TO LEARN MORE ABOUT OUR SUPPORT OPTIONS. THANK YOU FOR YOUR CAREFUL CONSIDERATION!
 
-- We kindly ask you not to report bugs via GitHub Issues **unless you are certain to have found a fully reproducible and previously unreported issue** that must be fixed directly in the app
-- When reporting a problem, **always include the software versions you are using and other information about your environment** such as browser, browser plugins, operating system, storage type, memory size, and processor
-- Note that all issue **subscribers receive an email notification** from GitHub for each new comment, so these should only be used for sharing important information and not for personal discussions/questions
-- Contact us or a community member if you need help, it could be a local configuration problem, or a misunderstanding in how the software works
-- This gives our team the opportunity to improve the docs and provide best-in-class support to you, instead of handling unclear/duplicate bug reports or triggering a flood of notifications by responding to comments
+---------------------------------------------------------------------------
 
-USE THE TROUBLESHOOTING CHECKLISTS IN OUR DOCS TO QUICKLY DIAGNOSE AND FIX COMMON PROBLEMS:
+#### 1. What is not working as documented?
 
-  <https://docs.photoprism.app/getting-started/troubleshooting/>
+Please be as specific as possible and explain what part of the software is not [working as documented](https://docs.photoprism.app/). "No photos found" would not be detailed enough. Also, never report [known issues](https://docs.photoprism.app/known-issues/) or [features not yet implemented](https://github.com/photoprism/photoprism/issues) as bugs. Thank you!
 
-BEFORE OPENING AN ISSUE, MAKE SURE TO SEARCH EXISTING BUG REPORTS AND FEATURE REQUESTS:
-
-  <https://github.com/photoprism/photoprism/issues>
-
-FOR GENERAL QUESTIONS, TECHNICAL SUPPORT, AND TO GET TO KNOW OTHER COMMUNITY MEMBERS:
-
-  <https://github.com/photoprism/photoprism/discussions>
-
-PLEASE PROCEED ONLY IF YOU ARE 100% SURE THAT THIS IS NOT A TECHNICAL SUPPORT REQUEST AND/OR A PROBLEM WITH ANOTHER SOFTWARE YOU ARE USING.
-
-**THANK YOU FOR YOUR CAREFUL CONSIDERATION!**
-
-===============================================================================
-
-**What does not work as described in the documentation?**
-
-"No photos found" is not a sufficient description. Please be more specific and explain which part of the software has a bug and needs to be fixed. Do not report known issues or features not yet implemented as bugs.
-
-**How can we reproduce it?**
+#### 2. How can we reproduce it?
 
 Steps to reproduce the behavior:
 
@@ -46,63 +24,58 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-If reporting an Import, Indexing, or Performance issue, please include the number and type of pictures in your library,
-as well as any configuration options you have changed e.g. for thumbnail quality.
+When reporting an import, indexing, or performance issue, please include the number and type of pictures in your library, as well as any configuration options you have changed, such as for thumbnail quality.
 
-**What behavior do you expect?**
+#### 3. What behavior do you expect?
 
-A clear and concise description of what you expected to happen.
+Give us a clear and concise description of what you expect.
 
-**What could be the cause of your problem?**
+#### 4. What could be the cause of your problem?
 
-Try to determine the cause of your problem before submitting a bug report:
-https://docs.photoprism.app/getting-started/troubleshooting/
+Always try to determine the cause of your problem using the checklists at <https://docs.photoprism.app/getting-started/troubleshooting/> before submitting a bug report.
 
-**Can you provide us with example files for testing, error logs, or screenshots?**
+#### 5. Can you provide us with example files for testing, error logs, or screenshots?
 
-Please add example files or screenshots that help to reproduce your problem.
-You may also send files via email or share a download link:
-https://photoprism.app/contact
+Please include sample files or screenshots that help to reproduce your problem. You can also email files or share a download link, see <https://photoprism.app/contact> for details.
 
-Learn how to diagnose frontend issues:
-https://docs.photoprism.app/getting-started/troubleshooting/browsers/
+Visit <https://docs.photoprism.app/getting-started/troubleshooting/browsers/> to learn how to diagnose frontend issues.
 
-NOTE:
-- You have to provide sample files and logs if it is an IMPORT, INDEXING, or METADATA issue, otherwise we will not be able to process your report
-- If it is an IMPORT issue, please also provide an archive with affected files before importing them so that it's possible to reproduce your issue
+**Important: If it is an import, indexing or metadata issue, we require sample files and logs from you.** Otherwise, we will not be able to process your report. If it is an import problem specifically, please always provide us with an archive of the files before you imported them so we can reproduce the behavior.
 
-**Which software versions do you use?**
+#### 6. Which software versions do you use?
 
-- PhotoPrism Architecture & Build Number (AMD64, ARM64, ARMv7,...)
-- Database Type & Version (MariaDB, MySQL, SQLite,...)
-- Operating System Types & Versions (Linux, Windows, Android,...)
-- Browser Types & Versions (Firefox, Chrome, Safari on iPhone,...)
-- Browser Plugins & Ad Blockers (if any)
+(a) PhotoPrism Architecture & Build Number: AMD64, ARM64, ARMv7,...
 
-The app version / build number can be found in *Settings* when you scroll to the bottom.
-MySQL 8 is not officially supported anymore, see System Requirements.
+(b) Database Type & Version: MariaDB, MySQL, SQLite,...
 
-NOTE:
-- Always provide database and operating system details if it is a Backend, Import, or Indexing issue
-- Always provide web browser and operating system details if it is a Frontend issue
-- If it is a Performance problem, you must provide ALL information
+(c) Operating System Types & Versions: Linux, Windows, Android,...
 
-**On what kind of device is PhotoPrism installed?**
+(d) Browser Types & Versions: Firefox, Chrome, Safari on iPhone,...
 
-This is especially important if you are reporting a Performance, Import, or Indexing problem. You can skip this if you are reporting a problem found on our public demo, or if it is a completely unrelated issue, such as a broken page layout.
+(e) Ad Blockers, Browser Plugins, and/or Firewall Software?
 
-- Device / Processor Type (Raspberry Pi 4, Intel Core i7-3770, AMD Ryzen 7 3800X,...)
-- Physical Memory & Swap Space (in GB)
-- Storage Type (HDD, SSD, RAID, USB, Network Storage,...) 
-- anything else that might be helpful
+You can find the version/build number of the app in *Settings* by scrolling to the bottom. Note that MySQL 8 support has been discontinued, see system requirements at <https://docs.photoprism.app/getting-started/#system-requirements>.
 
-NOTE:
-- Always provide device, memory, and storage details when you have a Backend, Performance, Import, or Indexing issue
+*Always provide database and operating system details if it is a backend, import, or indexing issue. Should it be a frontend issue, at a minimum we require you to provide web browser and operating system details. When reporting a performance problem, we ask that you provide us with complete information about your environment, as there may be more than one cause.*
 
-**Do you use a Reverse Proxy, Firewall, VPN, or CDN?**
+#### 7. On what kind of device is PhotoPrism installed?
+
+This is especially important if you are reporting a performance, import, or indexing issue. You can skip this if you're reporting a problem you found in our public demo, or if it's a completely unrelated issue, such as incorrect page layout.
+
+(a) Device / Processor Type: Raspberry Pi 4, Intel Core i7-3770, AMD Ryzen 7 3800X,...
+
+(b) Physical Memory & Swap Space in GB
+
+(c) Storage Type: HDD, SSD, RAID, USB, Network Storage,...
+
+(d) Anything else that might be helpful to know?
+
+*Always provide device, memory, and storage details if you have a backend, performance, import, or indexing issue.*
+
+#### 8. Do you use a Reverse Proxy, Firewall, VPN, or CDN?
 
 If yes, please specify type and version. You can skip this if you are reporting a completely unrelated issue.
 
-NOTE:
-- Always provide this information when you have a Reliability, Performance, or Frontend problem, such as failed uploads, connection errors, broken thumbnails, or video playback issues
-- If you are using NGINX, also provide its configuration and/or consider asking the NGINX community for advice as we do not specialize in supporting their product: https://docs.photoprism.app/getting-started/proxies/nginx/
+*Always provide this information when you have a reliability, performance, or frontend problem, such as failed uploads, connection errors, broken thumbnails, or video playback issues.*
+
+**Using NGINX?** Please also provide the configuration and/or consider asking the NGINX community for advice as we do not specialize in supporting their product. Docs can be found at <https://docs.photoprism.app/getting-started/proxies/nginx/>.

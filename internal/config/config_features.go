@@ -1,13 +1,10 @@
 package config
 
-// Sponsor checks if sponsor features should be enabled.
-func Sponsor() bool {
-	return Env(EnvDemo, EnvSponsor, EnvTest)
-}
+var Sponsor = Env(EnvDemo, EnvSponsor, EnvTest)
 
 // DisableWebDAV checks if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
-	if c.ReadOnly() || c.Demo() {
+	if c.Public() || c.ReadOnly() || c.Demo() {
 		return true
 	}
 
@@ -44,6 +41,11 @@ func (c *Config) DisableExifTool() bool {
 	return c.options.DisableExifTool
 }
 
+// ExifToolEnabled checks if the use of ExifTool is possible.
+func (c *Config) ExifToolEnabled() bool {
+	return !c.DisableExifTool()
+}
+
 // DisableTensorFlow checks if all features depending on TensorFlow should be disabled.
 func (c *Config) DisableTensorFlow() bool {
 	if LowMem && !c.options.DisableTensorFlow {
@@ -53,7 +55,7 @@ func (c *Config) DisableTensorFlow() bool {
 	return c.options.DisableTensorFlow
 }
 
-// DisableFaces checks if facial recognition is disabled.
+// DisableFaces checks if face recognition is disabled.
 func (c *Config) DisableFaces() bool {
 	if c.DisableTensorFlow() || c.options.DisableFaces {
 		return true

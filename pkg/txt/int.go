@@ -21,9 +21,9 @@ func Int(s string) int {
 }
 
 // IntVal converts a string to a validated integer or a default if invalid.
-func IntVal(s string, min, max, d int) (i int) {
+func IntVal(s string, min, max, def int) (i int) {
 	if s == "" {
-		return d
+		return def
 	} else if s[0] == ' ' {
 		s = strings.TrimSpace(s)
 	}
@@ -31,15 +31,15 @@ func IntVal(s string, min, max, d int) (i int) {
 	result, err := strconv.ParseInt(s, 10, 32)
 
 	if err != nil {
-		return d
+		return def
 	}
 
 	i = int(result)
 
 	if i < min {
-		return d
+		return def
 	} else if max != 0 && i > max {
-		return d
+		return def
 	}
 
 	return i

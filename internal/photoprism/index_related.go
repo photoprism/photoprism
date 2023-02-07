@@ -7,7 +7,6 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -61,7 +60,8 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		// Extract metadata to a JSON file with Exiftool.
 		if f.NeedsExifToolJson() {
 			if jsonName, err := ind.convert.ToJson(f); err != nil {
-				log.Debugf("index: %s in %s (extract metadata)", clean.Log(err.Error()), clean.Log(f.RootRelName()))
+				log.Tracef("exiftool: %s", clean.Log(err.Error()))
+				log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 			} else {
 				log.Debugf("index: created %s", filepath.Base(jsonName))
 			}

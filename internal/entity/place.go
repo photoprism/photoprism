@@ -26,7 +26,7 @@ type Place struct {
 	UpdatedAt     time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Place) TableName() string {
 	return "places"
 }
@@ -51,23 +51,14 @@ func CreateUnknownPlace() {
 
 // FindPlace finds a matching place or returns nil.
 func FindPlace(id string) *Place {
-	place := Place{}
+	m := Place{}
 
-	if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
+	if Db().First(&m, "id = ?", id).RecordNotFound() {
 		log.Debugf("place: %s not found", clean.Log(id))
 		return nil
-	} else {
-		return &place
-	}
-}
-
-// Find fetches entity values from the database the primary key.
-func (m *Place) Find() error {
-	if err := Db().First(m, "id = ?", m.ID).Error; err != nil {
-		return err
 	}
 
-	return nil
+	return &m
 }
 
 // Create inserts a new row to the database.
@@ -78,7 +69,7 @@ func (m *Place) Create() error {
 	return Db().Create(m).Error
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Place) Save() error {
 	placeMutex.Lock()
 	defer placeMutex.Unlock()

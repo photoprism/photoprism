@@ -19,16 +19,16 @@ type PhotoAlbum struct {
 	Album     *Album    `gorm:"PRELOAD:true" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (PhotoAlbum) TableName() string {
 	return "photos_albums"
 }
 
-// NewPhotoAlbum registers an photo and album association using UID
-func NewPhotoAlbum(photoUID, albumUID string) *PhotoAlbum {
+// NewPhotoAlbum creates a new photo and album mapping with UIDs.
+func NewPhotoAlbum(photoUid, albumUid string) *PhotoAlbum {
 	result := &PhotoAlbum{
-		PhotoUID: photoUID,
-		AlbumUID: albumUID,
+		PhotoUID: photoUid,
+		AlbumUID: albumUid,
 	}
 
 	return result

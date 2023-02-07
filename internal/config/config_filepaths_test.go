@@ -4,12 +4,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestConfig_FindExecutable(t *testing.T) {
-	assert.Equal(t, "", findExecutable("yyy", "xxx"))
+	assert.Equal(t, "", findBin("yyy", "xxx"))
 }
 
 func TestConfig_SidecarPath(t *testing.T) {
@@ -20,6 +21,42 @@ func TestConfig_SidecarPath(t *testing.T) {
 	assert.Equal(t, ".photoprism", c.SidecarPath())
 	c.options.SidecarPath = ""
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/sidecar", c.SidecarPath())
+}
+
+func TestConfig_UsersPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.UsersPath(), "testdata/users")
+}
+
+func TestConfig_UserPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "", c.UserPath(""))
+	assert.Equal(t, "", c.UserPath("etaetyget"))
+	assert.Contains(t, c.UserPath("urjult03ceelhw6k"), "testdata/users/urjult03ceelhw6k")
+}
+
+func TestConfig_UserUploadPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	if dir, err := c.UserUploadPath("", ""); err == nil {
+		t.Error("error expected")
+	} else {
+		assert.Equal(t, "", dir)
+	}
+	if dir, err := c.UserUploadPath("etaetyget", ""); err == nil {
+		t.Error("error expected")
+	} else {
+		assert.Equal(t, "", dir)
+	}
+	if dir, err := c.UserUploadPath("urjult03ceelhw6k", ""); err != nil {
+		t.Fatal(err)
+	} else {
+		assert.Contains(t, dir, "testdata/users/urjult03ceelhw6k/upload")
+	}
+	if dir, err := c.UserUploadPath("urjult03ceelhw6k", "foo"); err != nil {
+		t.Fatal(err)
+	} else {
+		assert.Contains(t, dir, "testdata/users/urjult03ceelhw6k/upload/foo")
+	}
 }
 
 func TestConfig_SidecarPathIsAbs(t *testing.T) {
@@ -38,18 +75,52 @@ func TestConfig_SidecarWritable(t *testing.T) {
 
 func TestConfig_FFmpegBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/usr/bin/ffmpeg", c.FFmpegBin())
+
+	assert.True(t, strings.Contains(c.FFmpegBin(), "/bin/ffmpeg"))
 }
 
 func TestConfig_TempPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/temp", c.TempPath())
+
+	d0 := c.tempPath()
+
+	t.Logf("c.options.TempPath: '%s'", c.options.TempPath)
+	t.Logf("c.tempPath(): '%s'", d0)
+
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/temp", c.tempPath())
+
 	c.options.TempPath = ""
 
-	if dir := c.TempPath(); dir == "" {
+	d1 := c.tempPath()
+
+	if d1 == "" {
 		t.Fatal("temp path is empty")
-	} else if !strings.HasPrefix(dir, "/tmp/photoprism") {
-		t.Fatalf("unexpected temp path: %s", dir)
+	}
+
+	if !strings.HasPrefix(d1, "/tmp/photoprism_") {
+		t.Fatalf("unexpected temp path: %s", d1)
+	}
+
+	d2 := c.tempPath()
+
+	if d2 == "" {
+		t.Fatal("temp path is empty")
+	}
+
+	if !strings.HasPrefix(d2, "/tmp/photoprism_") {
+		t.Fatalf("unexpected temp path: %s", d2)
+	}
+
+	if d1 != d2 {
+		t.Fatalf("temp paths should match: '%s' <=> '%s'", d1, d2)
+	} else {
+		t.Logf("temp paths match: '%s' == '%s'", d1, d2)
+	}
+
+	if d4 := c.TempPath(); d4 != d0 {
+		t.Fatalf("temp paths should match: '%s' <=> '%s'", d4, d0)
+	} else {
+		t.Logf("temp paths match: '%s' == '%s'", d4, d0)
 	}
 }
 
@@ -59,6 +130,15 @@ func TestConfig_CmdCachePath(t *testing.T) {
 		t.Fatal("cmd cache path is empty")
 	} else if !strings.HasPrefix(dir, c.CachePath()) {
 		t.Fatalf("unexpected cmd cache path: %s", dir)
+	}
+}
+
+func TestConfig_CmdLibPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	if dir := c.CmdLibPath(); dir == "" {
+		t.Fatal("cmd lib path is empty")
+	} else if !strings.HasPrefix(dir, "/usr") {
+		t.Fatalf("unexpected cmd lib path: %s", dir)
 	}
 }
 
@@ -300,6 +380,15 @@ func TestConfig_OriginalsPath2(t *testing.T) {
 	}
 }
 
+func TestConfig_OriginalsDeletable(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.Settings().Features.Delete = true
+	c.options.ReadOnly = false
+
+	assert.True(t, c.OriginalsDeletable())
+}
+
 func TestConfig_ImportPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/import", c.ImportPath())
@@ -331,4 +420,27 @@ func TestConfig_MysqldumpBin(t *testing.T) {
 func TestConfig_SqliteBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Contains(t, c.SqliteBin(), "sqlite")
+}
+
+func TestConfig_SettingsYamlDefaults(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	name1 := c.SettingsYamlDefaults(c.SettingsYaml())
+	t.Logf("(1) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(1) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(1) SettingsYamlDefaults: %s", name1)
+	assert.Equal(t, c.SettingsYaml(), name1)
+	c.options.ConfigPath = "/tmp/012345678ABC"
+	c.options.DefaultsYaml = "testdata/etc/defaults.yml"
+	name2 := c.SettingsYamlDefaults("")
+	t.Logf("(2) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(2) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(2) SettingsYamlDefaults: %s", name2)
+	assert.True(t, strings.HasSuffix(name2, "testdata/etc/settings.yml"))
+	name3 := c.SettingsYamlDefaults(c.SettingsYaml())
+	t.Logf("(3) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(3) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(3) SettingsYamlDefaults: %s", name3)
+	assert.True(t, strings.HasSuffix(name3, "testdata/etc/settings.yml"))
+	assert.NotEqual(t, c.SettingsYaml(), name1)
+	assert.NotEqual(t, c.SettingsYaml(), name3)
 }

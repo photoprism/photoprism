@@ -7,5 +7,5 @@ import (
 )
 
 func TestWorkersBusy(t *testing.T) {
-	assert.False(t, WorkersBusy())
+	assert.False(t, IndexWorkersRunning())
 }

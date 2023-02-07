@@ -172,7 +172,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
-		data, err := Exif("testdata/iphone_7.heic", fs.ImageHEIF, true)
+		data, err := Exif("testdata/iphone_7.heic", fs.ImageHEIC, true)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -327,8 +327,8 @@ func TestExif(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 3264, data.Width)
-		assert.Equal(t, 1836, data.Height)
+		assert.Equal(t, 326, data.Width)
+		assert.Equal(t, 184, data.Height)
 		assert.Equal(t, 1, data.Orientation)
 
 		if err := data.JSON("testdata/orientation.json", "foo.jpg"); err != nil {
@@ -628,6 +628,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.Projection)
 		assert.Equal(t, "", data.ColorProfile)
 	})
+
 	t.Run("animated.gif", func(t *testing.T) {
 		_, err := Exif("testdata/animated.gif", fs.ImageGIF, true)
 
@@ -636,5 +637,36 @@ func TestExif(t *testing.T) {
 		} else {
 			assert.Equal(t, "found no exif data", err.Error())
 		}
+	})
+
+	t.Run("aurora.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/aurora.jpg", fs.ImageJPEG, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2021-10-29 13:42:00 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2021-10-29 13:42:00 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "", data.TimeZone) // Local Time
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+	})
+
+	t.Run("buggy_panorama.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/buggy_panorama.jpg", fs.ImageJPEG, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2022-04-24 10:35:53 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2022-04-24 02:35:53 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Asia/Shanghai", data.TimeZone) // Local Time
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(33.640007), data.Lat)
+		assert.Equal(t, float32(103.48), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
 	})
 }

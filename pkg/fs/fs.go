@@ -1,28 +1,26 @@
 /*
-
 Package fs provides filesystem related constants and functions.
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
-    This program is free software: you can redistribute it and/or modify
-    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
-    <https://docs.photoprism.app/license/agpl>
+	This program is free software: you can redistribute it and/or modify
+	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+	<https://docs.photoprism.app/license/agpl>
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
 
-    The AGPL is supplemented by our Trademark and Brand Guidelines,
-    which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+	The AGPL is supplemented by our Trademark and Brand Guidelines,
+	which describe how our Brand Assets may be used:
+	<https://photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
-
 */
 package fs
 
@@ -35,8 +33,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
-
-	"github.com/photoprism/photoprism/pkg/rnd"
+	"syscall"
 )
 
 var ignoreCase bool
@@ -86,23 +83,21 @@ func PathExists(path string) bool {
 	return m&os.ModeDir != 0 || m&os.ModeSymlink != 0
 }
 
+// Writable checks if the path is accessible for reading and writing.
+func Writable(path string) bool {
+	if path == "" {
+		return false
+	}
+	return syscall.Access(path, syscall.O_RDWR) == nil
+}
+
 // PathWritable tests if a path exists and is writable.
 func PathWritable(path string) bool {
 	if !PathExists(path) {
 		return false
 	}
 
-	tmpName := filepath.Join(path, "."+rnd.GenerateToken(8))
-
-	if f, err := os.Create(tmpName); err != nil {
-		return false
-	} else if err := f.Close(); err != nil {
-		return false
-	} else if err := os.Remove(tmpName); err != nil {
-		return false
-	}
-
-	return true
+	return Writable(path)
 }
 
 // Overwrite overwrites the file with data. Creates file if not present.
@@ -152,7 +147,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 
 	if f.FileInfo().IsDir() {
 		// Make Folder
-		return fileName, os.MkdirAll(fileName, os.ModePerm)
+		return fileName, os.MkdirAll(fileName, ModeDir)
 	}
 
 	// Make File
@@ -162,7 +157,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 		fdir = fileName[:lastIndex]
 	}
 
-	err = os.MkdirAll(fdir, os.ModePerm)
+	err = os.MkdirAll(fdir, ModeDir)
 	if err != nil {
 		return fileName, err
 	}
@@ -184,7 +179,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 
 // Download downloads a file from a URL.
 func Download(filepath string, url string) error {
-	os.MkdirAll("/tmp/photoprism", os.ModePerm)
+	os.MkdirAll("/tmp/photoprism", ModeDir)
 
 	// Create the file
 	out, err := os.Create(filepath)
@@ -216,8 +211,8 @@ func Download(filepath string, url string) error {
 	return nil
 }
 
-// IsEmpty returns true if a directory is empty.
-func IsEmpty(path string) bool {
+// DirIsEmpty returns true if a directory is empty.
+func DirIsEmpty(path string) bool {
 	f, err := os.Open(path)
 
 	if err != nil {

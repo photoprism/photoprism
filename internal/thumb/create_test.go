@@ -2,6 +2,7 @@ package thumb
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/disintegration/imaging"
@@ -177,7 +178,7 @@ func TestFileName(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
-		assert.Equal(t, "resample: width exceeds limit (-2)", err.Error())
+		assert.Equal(t, "thumb: width exceeds limit (-2)", err.Error())
 		assert.Empty(t, result)
 	})
 	t.Run("invalid height", func(t *testing.T) {
@@ -188,7 +189,8 @@ func TestFileName(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
-		assert.Equal(t, "resample: height exceeds limit (-3)", err.Error())
+
+		assert.Equal(t, "thumb: height exceeds limit (-3)", err.Error())
 		assert.Empty(t, result)
 	})
 	t.Run("invalid hash", func(t *testing.T) {
@@ -199,7 +201,8 @@ func TestFileName(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
-		assert.Equal(t, "resample: file hash is empty or too short (12)", err.Error())
+
+		assert.Equal(t, "thumb: file hash is empty or too short (12)", err.Error())
 		assert.Empty(t, result)
 	})
 	t.Run("invalid thumb path", func(t *testing.T) {
@@ -210,7 +213,75 @@ func TestFileName(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
-		assert.Equal(t, "resample: folder is empty", err.Error())
+
+		assert.Equal(t, "thumb: folder is empty", err.Error())
+		assert.Empty(t, result)
+	})
+}
+
+func TestResolvedName(t *testing.T) {
+	t.Run("colors", func(t *testing.T) {
+		colorThumb := Sizes[Colors]
+
+		result, err := ResolvedName("123456789098765432", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+
+		assert.Error(t, err)
+		assert.Equal(t, "", result)
+	})
+
+	t.Run("fit_720", func(t *testing.T) {
+		fit720 := Sizes[Fit720]
+
+		result, err := ResolvedName("123456789098765432", "testdata", fit720.Width, fit720.Height, fit720.Options...)
+
+		assert.Error(t, err)
+		assert.Equal(t, "", result)
+	})
+	t.Run("invalid width", func(t *testing.T) {
+		colorThumb := Sizes[Colors]
+
+		result, err := ResolvedName("123456789098765432", "testdata", -2, colorThumb.Height, colorThumb.Options...)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+		assert.Equal(t, "thumb: width exceeds limit (-2)", err.Error())
+		assert.Empty(t, result)
+	})
+	t.Run("invalid height", func(t *testing.T) {
+		colorThumb := Sizes[Colors]
+
+		result, err := ResolvedName("123456789098765432", "testdata", colorThumb.Width, -3, colorThumb.Options...)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Equal(t, "thumb: height exceeds limit (-3)", err.Error())
+		assert.Empty(t, result)
+	})
+	t.Run("invalid hash", func(t *testing.T) {
+		colorThumb := Sizes[Colors]
+
+		result, err := ResolvedName("12", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Equal(t, "thumb: file hash is empty or too short (12)", err.Error())
+		assert.Empty(t, result)
+	})
+	t.Run("invalid thumb path", func(t *testing.T) {
+		colorThumb := Sizes[Colors]
+
+		result, err := ResolvedName("123456789098765432", "", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Equal(t, "thumb: folder is empty", err.Error())
 		assert.Empty(t, result)
 	})
 }
@@ -230,7 +301,6 @@ func TestFromFile(t *testing.T) {
 		}
 
 		assert.Equal(t, dst, fileName)
-
 		assert.FileExists(t, dst)
 	})
 
@@ -247,8 +317,7 @@ func TestFromFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, dst, fileName)
-
+		assert.Truef(t, strings.HasSuffix(fileName, dst), fileName, dst)
 		assert.FileExists(t, dst)
 	})
 
@@ -272,7 +341,7 @@ func TestFromFile(t *testing.T) {
 			t.Fatal("error expected")
 		}
 		assert.Equal(t, "", fileName)
-		assert.Equal(t, "resample: invalid file name ''", err.Error())
+		assert.Equal(t, "thumb: invalid file name ''", err.Error())
 	})
 }
 
@@ -287,8 +356,8 @@ func TestFromCache(t *testing.T) {
 
 		assert.Equal(t, "", fileName)
 
-		if err != ErrThumbNotCached {
-			t.Fatal("ErrThumbNotCached expected")
+		if err != ErrNotCached {
+			t.Fatal("ErrNotCached expected")
 		}
 	})
 
@@ -314,7 +383,8 @@ func TestFromCache(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
-		assert.Equal(t, "resample: invalid file hash 12", err.Error())
+
+		assert.Equal(t, "thumb: invalid file hash 12", err.Error())
 		assert.Empty(t, fileName)
 	})
 	t.Run("empty filename", func(t *testing.T) {
@@ -325,7 +395,8 @@ func TestFromCache(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
-		assert.Equal(t, "resample: invalid file name ''", err.Error())
+
+		assert.Equal(t, "thumb: invalid file name ''", err.Error())
 		assert.Empty(t, fileName)
 	})
 }
@@ -430,7 +501,7 @@ func TestCreate(t *testing.T) {
 			t.Fatal("error expected")
 		}
 
-		assert.Equal(t, "resample: width has an invalid value (-5)", err.Error())
+		assert.Equal(t, "thumb: width has an invalid value (-5)", err.Error())
 		t.Log(resized)
 	})
 	t.Run("invalid height", func(t *testing.T) {
@@ -458,7 +529,7 @@ func TestCreate(t *testing.T) {
 			t.Fatal("error expected")
 		}
 
-		assert.Equal(t, "resample: height has an invalid value (-3)", err.Error())
-		t.Log(resized)
+		assert.Equal(t, "thumb: height has an invalid value (-3)", err.Error())
+		assert.NotNil(t, resized)
 	})
 }

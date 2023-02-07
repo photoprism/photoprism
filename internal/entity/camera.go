@@ -30,7 +30,7 @@ type Camera struct {
 	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Camera) TableName() string {
 	return "cameras"
 }

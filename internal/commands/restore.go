@@ -16,8 +16,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -31,7 +31,7 @@ var RestoreCommand = cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,
 	Usage:       "Restores the index from an SQL dump and optionally albums from YAML files",
-	ArgsUsage:   "[filename.sql]",
+	ArgsUsage:   "filename.sql",
 	Flags:       restoreFlags,
 	Action:      restoreAction,
 }
@@ -75,14 +75,17 @@ func restoreAction(ctx *cli.Context) error {
 
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
+
+	conf.RegisterDb()
+	defer conf.Shutdown()
 
 	if restoreIndex {
 		// If empty, use default backup file name.
@@ -132,7 +135,6 @@ func restoreAction(ctx *cli.Context) error {
 			return err
 		}
 
-		entity.SetDbProvider(conf)
 		tables := entity.Entities
 
 		var cmd *exec.Cmd
@@ -196,7 +198,7 @@ func restoreAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	if restoreAlbums {
-		service.SetConfig(conf)
+		get.SetConfig(conf)
 
 		if albumsPath == "" {
 			albumsPath = conf.AlbumsPath()
@@ -218,8 +220,6 @@ func restoreAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("restored in %s", elapsed)
-
-	conf.Shutdown()
 
 	return nil
 }

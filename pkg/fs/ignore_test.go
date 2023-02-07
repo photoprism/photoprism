@@ -139,12 +139,12 @@ func TestNewIgnoreItem(t *testing.T) {
 }
 
 func TestIgnoreList_AppendItems(t *testing.T) {
-	t.Run("error", func(t *testing.T) {
+	t.Run("Error", func(t *testing.T) {
 		ignoreList := NewIgnoreList(".xyz", false, false)
 		assert.Error(t, ignoreList.AppendItems("", []string{"__test_"}))
 	})
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		ignoreList := NewIgnoreList(".xyz", false, false)
 		assert.Nil(t, ignoreList.AppendItems("testdata/directory", []string{"__test_"}))
 	})

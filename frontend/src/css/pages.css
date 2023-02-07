@@ -1,3 +1,23 @@
 .p-page-about {
     line-height: 1.5rem;
 }
+
+.p-page .h30 {
+    min-height: 30vh;
+}
+
+.p-page .h40 {
+    min-height: 40vh;
+}
+
+.p-page .h50 {
+    min-height: 50vh;
+}
+
+.p-page .h60 {
+    min-height: 60vh;
+}
+
+.p-page .h70 {
+    min-height: 70vh;
+}

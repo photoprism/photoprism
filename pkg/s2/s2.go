@@ -1,30 +1,28 @@
 /*
-
 Package s2 encapsulates Google's S2 library.
 
 See https://s2geometry.io/
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
-    This program is free software: you can redistribute it and/or modify
-    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
-    <https://docs.photoprism.app/license/agpl>
+	This program is free software: you can redistribute it and/or modify
+	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+	<https://docs.photoprism.app/license/agpl>
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
 
-    The AGPL is supplemented by our Trademark and Brand Guidelines,
-    which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+	The AGPL is supplemented by our Trademark and Brand Guidelines,
+	which describe how our Brand Assets may be used:
+	<https://photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
-
 */
 package s2
 
@@ -32,7 +30,7 @@ import (
 	gs2 "github.com/golang/geo/s2"
 )
 
-// Default cell level, see https://s2geometry.io/resources/s2cell_statistics.html.
+// DefaultLevel see https://s2geometry.io/resources/s2cell_statistics.html.
 var DefaultLevel = 21
 
 // Token returns the S2 cell token for coordinates using the default level.
@@ -40,7 +38,7 @@ func Token(lat, lng float64) string {
 	return TokenLevel(lat, lng, DefaultLevel)
 }
 
-// Token returns the S2 cell token for coordinates.
+// TokenLevel returns the S2 cell token for coordinates.
 func TokenLevel(lat, lng float64, level int) string {
 	if lat == 0.0 && lng == 0.0 {
 		return ""

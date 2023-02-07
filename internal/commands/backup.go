@@ -15,7 +15,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -75,14 +74,17 @@ func backupAction(ctx *cli.Context) error {
 
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
+
+	conf.RegisterDb()
+	defer conf.Shutdown()
 
 	if backupIndex {
 		// If empty, use default backup file name.
@@ -108,7 +110,7 @@ func backupAction(ctx *cli.Context) error {
 
 			// Create backup directory if not exists.
 			if dir := filepath.Dir(indexFileName); dir != "." {
-				if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+				if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
 					return err
 				}
 			}
@@ -160,16 +162,13 @@ func backupAction(ctx *cli.Context) error {
 			fmt.Println(out.String())
 		} else {
 			// Write output to file.
-			if err := os.WriteFile(indexFileName, []byte(out.String()), os.ModePerm); err != nil {
+			if err := os.WriteFile(indexFileName, []byte(out.String()), fs.ModeFile); err != nil {
 				return err
 			}
 		}
 	}
 
 	if backupAlbums {
-		service.SetConfig(conf)
-		conf.InitDb()
-
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
 				log.Warnf("album files path not writable, using default")
@@ -189,9 +188,7 @@ func backupAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("backup completed in %s", elapsed)
-
-	conf.Shutdown()
+	log.Infof("completed in %s", elapsed)
 
 	return nil
 }

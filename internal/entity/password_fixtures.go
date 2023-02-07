@@ -22,6 +22,7 @@ var PasswordFixtures = PasswordMap{
 	"alice":  NewPassword("uqxetse3cy5eo9z2", "Alice123!"),
 	"bob":    NewPassword("uqxc08w3d0ej2283", "Bobbob123!"),
 	"friend": NewPassword("uqxqg7i1kperxvu7", "!Friend321"),
+	"fowler": NewPassword("urinotv3d6jedvlm", "PleaseChange$42"),
 }
 
 // CreatePasswordFixtures inserts known entities into the database for testing.

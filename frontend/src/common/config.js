@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -25,10 +25,13 @@ Additional information can be found in our Developer Guide:
 
 import Api from "api.js";
 import Event from "pubsub-js";
-import themes from "options/themes.json";
+import * as themes from "options/themes";
 import translations from "locales/translations.json";
 import { Languages } from "options/options";
 import { Photo } from "model/photo";
+import { onInit, onSetTheme } from "common/hooks";
+
+onInit();
 
 export default class Config {
   /**
@@ -39,6 +42,9 @@ export default class Config {
     this.disconnected = false;
     this.storage = storage;
     this.storage_key = "config";
+    this.previewToken = "";
+    this.downloadToken = "";
+    this.updating = false;
 
     this.$vuetify = null;
     this.translations = translations;
@@ -55,9 +61,13 @@ export default class Config {
       this.themeName = "";
       this.baseUri = "";
       this.staticUri = "/static";
+      this.loginUri = "/library/login";
       this.apiUri = "/api/v1";
       this.contentUri = this.apiUri;
-      this.values = {};
+      this.values = {
+        mode: "test",
+        name: "Test",
+      };
       this.page = {
         title: "PhotoPrism",
         caption: "AI-Powered Photos App",
@@ -66,6 +76,7 @@ export default class Config {
     } else {
       this.baseUri = values.baseUri ? values.baseUri : "";
       this.staticUri = values.staticUri ? values.staticUri : this.baseUri + "/static";
+      this.loginUri = values.loginUri ? values.loginUri : this.baseUri + "/library/login";
       this.apiUri = values.apiUri ? values.apiUri : this.baseUri + "/api/v1";
       this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
     }
@@ -74,10 +85,17 @@ export default class Config {
       document.body.classList.remove("nojs");
 
       // Set body class for browser optimizations.
-      if (navigator.appVersion.indexOf("Chrome/") !== -1) {
+      if (navigator.userAgent.indexOf("Chrome/") !== -1) {
         document.body.classList.add("chrome");
-      } else if (navigator.appVersion.indexOf("Safari/") !== -1) {
+      } else if (navigator.userAgent.indexOf("Safari/") !== -1) {
         document.body.classList.add("safari");
+        document.body.classList.add("not-chrome");
+      } else if (navigator.userAgent.indexOf("Firefox/") !== -1) {
+        document.body.classList.add("firefox");
+        document.body.classList.add("not-chrome");
+      } else {
+        document.body.classList.add("other-browser");
+        document.body.classList.add("not-chrome");
       }
     }
 
@@ -91,7 +109,10 @@ export default class Config {
     this.test = !!values.test;
     this.demo = !!values.demo;
 
+    this.updateTokens();
+
     Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
+    Event.subscribe("config.tokens", (ev, data) => this.setTokens(data));
     Event.subscribe("count", (ev, data) => this.onCount(ev, data));
     Event.subscribe("people", (ev, data) => this.onPeople(ev, data));
 
@@ -111,23 +132,34 @@ export default class Config {
       return this.update();
     }
 
-    return Promise.resolve();
+    return Promise.resolve(this);
   }
 
   update() {
-    return Api.get("config")
+    if (this.updating !== false) {
+      return this.updating;
+    }
+
+    this.updating = Api.get("config")
       .then(
-        (response) => this.setValues(response.data),
-        () => console.warn("failed pulling updated client config")
+        (resp) => {
+          return this.setValues(resp.data);
+        },
+        () => console.warn("config update failed")
       )
-      .finally(() => Promise.resolve());
+      .finally(() => {
+        this.updating = false;
+        return Promise.resolve(this);
+      });
+
+    return this.updating;
   }
 
   setValues(values) {
     if (!values) return;
 
     if (this.debug) {
-      console.log("config: new values", values);
+      console.log("config: updated", values);
     }
 
     if (values.jsUri && this.values.jsUri !== values.jsUri) {
@@ -135,13 +167,16 @@ export default class Config {
     }
 
     for (let key in values) {
-      if (values.hasOwnProperty(key)) {
+      if (values.hasOwnProperty(key) && values[key] != null) {
         this.set(key, values[key]);
       }
     }
 
+    this.updateTokens();
+
     if (values.settings) {
       this.setBatchSize(values.settings);
+      this.setLanguage(values.settings.ui.language);
       this.setTheme(values.settings.ui.theme);
     }
 
@@ -221,7 +256,7 @@ export default class Config {
       return result[0];
     } else {
       if (this.debug) {
-        console.warn("more than one person matching the same name", result);
+        console.warn("more than one person having the same name", result);
       }
       return result[0];
     }
@@ -285,6 +320,8 @@ export default class Config {
         this.values.count.favorites += data.count;
         break;
       case "review":
+        this.values.count.all -= data.count;
+        this.values.count.photos -= data.count;
         this.values.count.review += data.count;
         break;
       case "private":
@@ -299,6 +336,19 @@ export default class Config {
 
   setVuetify(instance) {
     this.$vuetify = instance;
+  }
+
+  setBodyTheme(name) {
+    if (!document || !document.body) {
+      return;
+    }
+    document.body.classList.forEach((c) => {
+      if (c.startsWith("theme-")) {
+        document.body.classList.remove(c);
+      }
+    });
+
+    document.body.classList.add("theme-" + name);
   }
 
   setColorMode(value) {
@@ -319,12 +369,126 @@ export default class Config {
     }
   }
 
+  aclClasses(resource) {
+    let result = [];
+    const perms = ["update", "search", "manage", "share", "delete"];
+
+    perms.forEach((perm) => {
+      if (this.deny(resource, perm)) result.push(`disable-${perm}`);
+    });
+
+    return result;
+  }
+
+  // allow checks whether the current user is granted permission for the specified resource.
+  allow(resource, perm) {
+    if (this.values["acl"] && this.values["acl"][resource]) {
+      if (this.values["acl"][resource]["full_access"]) {
+        return true;
+      } else if (this.values["acl"][resource][perm]) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // allowAny checks whether the current user is granted any of the permissions for the specified resource.
+  allowAny(resource, perms) {
+    if (this.values["acl"] && this.values["acl"][resource]) {
+      if (this.values["acl"][resource]["full_access"]) {
+        return true;
+      }
+      for (const perm of perms) {
+        if (this.values["acl"][resource][perm]) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  // deny checks whether the current user must be denied access to the specified resource.
+  deny(resource, perm) {
+    return !this.allow(resource, perm);
+  }
+
+  // denyAll checks whether the current user is granted none of the permissions for the specified resource.
+  denyAll(resource, perm) {
+    return !this.allowAny(resource, perm);
+  }
+
+  settings() {
+    return this.values.settings;
+  }
+
+  setSettings(settings) {
+    if (!settings) return;
+
+    if (this.debug) {
+      console.log("config: new settings", settings);
+    }
+
+    this.values.settings = settings;
+
+    this.setBatchSize(settings);
+    this.setLanguage(settings.ui.language);
+    this.setTheme(settings.ui.theme);
+
+    return this;
+  }
+
+  setLanguage(locale) {
+    if (!locale || this.loading()) {
+      return;
+    }
+
+    if (this.values.settings && this.values.settings.ui) {
+      this.values.settings.ui.language = locale;
+      this.storage.setItem(this.storage_key + ".locale", locale);
+      Api.defaults.headers.common["Accept-Language"] = locale;
+    }
+
+    return this;
+  }
+
+  getLanguage() {
+    let locale = "en";
+
+    if (this.loading()) {
+      const stored = this.storage.getItem(this.storage_key + ".locale");
+      if (stored) {
+        locale = stored;
+      }
+    } else if (
+      this.values.settings &&
+      this.values.settings.ui &&
+      this.values.settings.ui.language
+    ) {
+      locale = this.values.settings.ui.language;
+    }
+
+    return locale;
+  }
+
   setTheme(name) {
-    this.themeName = name;
+    let theme = onSetTheme(name, this);
+
+    if (!theme) {
+      theme = themes.Get(name);
+      this.themeName = theme.name;
+    }
+
+    if (this.values.settings && this.values.settings.ui) {
+      this.values.settings.ui.theme = this.themeName;
+    }
 
     Event.publish("view.refresh", this);
 
-    this.theme = themes[name] ? themes[name] : themes["default"];
+    this.theme = theme;
+
+    this.setBodyTheme(this.themeName);
 
     if (this.theme.dark) {
       this.setColorMode("dark");
@@ -348,6 +512,14 @@ export default class Config {
     return this;
   }
 
+  restoreValues() {
+    const json = this.storage.getItem(this.storage_key);
+    if (json !== "undefined") {
+      this.setValues(JSON.parse(json));
+    }
+    return this;
+  }
+
   set(key, value) {
     this.values[key] = value;
     return this;
@@ -362,11 +534,7 @@ export default class Config {
   }
 
   feature(name) {
-    return this.values.settings.features[name];
-  }
-
-  settings() {
-    return this.values.settings;
+    return this.values.settings.features[name] === true;
   }
 
   rtl() {
@@ -377,12 +545,23 @@ export default class Config {
     return Languages().some((lang) => lang.value === this.values.settings.ui.language && lang.rtl);
   }
 
-  downloadToken() {
-    return this.values["downloadToken"];
+  setTokens(tokens) {
+    if (!tokens || !tokens.previewToken || !tokens.downloadToken) {
+      return;
+    }
+    this.previewToken = tokens.previewToken;
+    this.values.previewToken = tokens.previewToken;
+    this.downloadToken = tokens.downloadToken;
+    this.values.downloadToken = tokens.downloadToken;
   }
 
-  previewToken() {
-    return this.values["previewToken"];
+  updateTokens() {
+    if (this.values["previewToken"]) {
+      this.previewToken = this.values.previewToken;
+    }
+    if (this.values["downloadToken"]) {
+      this.downloadToken = this.values.downloadToken;
+    }
   }
 
   albumCategories() {
@@ -393,6 +572,14 @@ export default class Config {
     return [];
   }
 
+  isPublic() {
+    return this.values && this.values.public;
+  }
+
+  isDemo() {
+    return this.values && this.values.demo;
+  }
+
   isSponsor() {
     if (!this.values || !this.values.sponsor) {
       return false;
@@ -401,7 +588,39 @@ export default class Config {
     return !this.values.demo && !this.values.test;
   }
 
-  appIcon() {
+  getName() {
+    const name = this.get("name");
+
+    if (!name) {
+      return "PhotoPrism";
+    } else if (name === "PhotoPrism" && this.values.sponsor) {
+      return "PhotoPrism+";
+    }
+
+    return name;
+  }
+
+  getAbout() {
+    const about = this.get("about");
+
+    if (!about) {
+      return "PhotoPrism® Dev";
+    }
+
+    return about;
+  }
+
+  getEdition() {
+    const edition = this.get("edition");
+
+    if (!edition) {
+      return "ce";
+    }
+
+    return edition;
+  }
+
+  getIcon() {
     switch (this.get("appIcon")) {
       case "crisp":
       case "mint":
@@ -409,6 +628,21 @@ export default class Config {
         return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
       default:
         return `${this.staticUri}/icons/logo.svg`;
+    }
+  }
+
+  getVersion() {
+    return this.get("version");
+  }
+
+  getSiteDescription() {
+    return this.values.siteDescription ? this.values.siteDescription : this.values.siteCaption;
+  }
+
+  progress(p) {
+    const el = document.getElementById("progress");
+    if (el) {
+      el.value = p;
     }
   }
 }

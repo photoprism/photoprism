@@ -252,7 +252,8 @@ describe("model/photo", () => {
     };
     const photo = new Photo(values);
     const result = photo.getDateString();
-    assert.equal(result, "Sunday, July 8, 2012, 2:45 PM");
+    assert.isTrue(result.startsWith("Sunday, July 8, 2012"));
+    assert.isTrue(result.endsWith("2:45 PM"));
     const values2 = { ID: 5, Title: "Crazy Cat", TakenAtLocal: "", TakenAt: "", TimeZone: "UTC" };
     const photo2 = new Photo(values2);
     const result2 = photo2.getDateString();
@@ -441,7 +442,7 @@ describe("model/photo", () => {
   });
 
   it("should return batch size", () => {
-    assert.equal(Photo.batchSize(), 60);
+    assert.equal(Photo.batchSize(), 90);
   });
 
   it("should get model name", () => {

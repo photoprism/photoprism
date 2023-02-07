@@ -84,7 +84,7 @@ func TestEmbeddingsMidpoint(t *testing.T) {
 }
 
 func TestUnmarshalEmbeddings(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		emb, err := UnmarshalEmbeddings("[[-0.013,-0.031]]")
 
 		assert.NoError(t, err)

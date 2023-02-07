@@ -7,12 +7,13 @@ import (
 // ShowCommand registers the show subcommands.
 var ShowCommand = cli.Command{
 	Name:  "show",
-	Usage: "Configuration and system report subcommands",
+	Usage: "Shows supported formats, features, and config options",
 	Subcommands: []cli.Command{
-		ShowFlagsCommand,
 		ShowConfigCommand,
-		ShowTagsCommand,
-		ShowFiltersCommand,
-		ShowFormatsCommand,
+		ShowConfigOptionsCommand,
+		ShowConfigYamlCommand,
+		ShowSearchFiltersCommand,
+		ShowFileFormatsCommand,
+		ShowMetadataCommand,
 	},
 }

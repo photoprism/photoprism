@@ -1,0 +1,245 @@
+package api
+
+import (
+	"net/http"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
+	"time"
+
+	"github.com/dustin/go-humanize/english"
+	"github.com/gin-gonic/gin"
+
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
+)
+
+// UploadUserFiles adds files to the user upload folder, from where they can be moved and indexed.
+//
+// POST /users/:uid/upload/:token
+func UploadUserFiles(router *gin.RouterGroup) {
+	router.POST("/users/:uid/upload/:token", func(c *gin.Context) {
+		conf := get.Config()
+
+		if conf.ReadOnly() || !conf.Settings().Features.Upload {
+			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
+			return
+		}
+
+		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})
+
+		if s.Abort(c) {
+			return
+		}
+
+		// Users may only upload their own files.
+		if s.User().UserUID != clean.UID(c.Param("uid")) {
+			AbortForbidden(c)
+			return
+		}
+
+		start := time.Now()
+		token := clean.Token(c.Param("token"))
+
+		f, err := c.MultipartForm()
+
+		if err != nil {
+			log.Errorf("upload: %s", err)
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
+
+		event.Publish("upload.start", event.Data{"time": start})
+
+		files := f.File["files"]
+		uploaded := len(files)
+
+		var uploads []string
+
+		uploadDir, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
+
+		if err != nil {
+			log.Errorf("upload: failed to create storage folder (%s)", err)
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
+
+		for _, file := range files {
+			filename := path.Join(uploadDir, filepath.Base(file.Filename))
+
+			log.Debugf("upload: saving file %s", clean.Log(file.Filename))
+
+			if err := c.SaveUploadedFile(file, filename); err != nil {
+				log.Errorf("upload: failed saving file %s", clean.Log(filepath.Base(file.Filename)))
+				Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+				return
+			}
+
+			uploads = append(uploads, filename)
+		}
+
+		if !conf.UploadNSFW() {
+			nd := get.NsfwDetector()
+
+			containsNSFW := false
+
+			for _, filename := range uploads {
+				labels, err := nd.File(filename)
+
+				if err != nil {
+					log.Debug(err)
+					continue
+				}
+
+				if labels.IsSafe() {
+					continue
+				}
+
+				log.Infof("nsfw: %s might be offensive", clean.Log(filename))
+
+				containsNSFW = true
+			}
+
+			if containsNSFW {
+				for _, filename := range uploads {
+					if err := os.Remove(filename); err != nil {
+						log.Errorf("nsfw: could not delete %s", clean.Log(filename))
+					}
+				}
+
+				Abort(c, http.StatusForbidden, i18n.ErrOffensiveUpload)
+				return
+			}
+		}
+
+		elapsed := int(time.Since(start).Seconds())
+
+		msg := i18n.Msg(i18n.MsgFilesUploadedIn, uploaded, elapsed)
+
+		log.Info(msg)
+
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
+	})
+}
+
+// ProcessUserUpload triggers processing once all files have been uploaded.
+//
+// PUT /users/:uid/upload/:token
+func ProcessUserUpload(router *gin.RouterGroup) {
+	router.PUT("/users/:uid/upload/:token", func(c *gin.Context) {
+		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})
+
+		if s.Abort(c) {
+			return
+		}
+
+		// Users may only upload their own files.
+		if s.User().UserUID != clean.UID(c.Param("uid")) {
+			AbortForbidden(c)
+			return
+		}
+
+		conf := get.Config()
+
+		if conf.ReadOnly() || !conf.Settings().Features.Import {
+			AbortFeatureDisabled(c)
+			return
+		}
+
+		start := time.Now()
+
+		var f form.UploadOptions
+
+		if err := c.BindJSON(&f); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
+		token := clean.Token(c.Param("token"))
+		uploadPath, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
+
+		if err != nil {
+			log.Errorf("upload: failed to create storage folder (%s)", err)
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
+
+		imp := get.Import()
+
+		var destFolder string
+		if destFolder = s.User().UploadPath; destFolder == "" {
+			destFolder = conf.ImportDest()
+		}
+
+		// Move uploaded files to the destination folder.
+		event.InfoMsg(i18n.MsgProcessingUpload)
+		opt := photoprism.ImportOptionsUpload(uploadPath, destFolder)
+
+		// Add imported files to albums if allowed.
+		if len(f.Albums) > 0 &&
+			acl.Resources.AllowAny(acl.ResourceAlbums, s.User().AclRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
+			log.Debugf("upload: adding files to album %s", clean.Log(strings.Join(f.Albums, " and ")))
+			opt.Albums = f.Albums
+		}
+
+		// Set user UID if known.
+		if s.UserUID != "" {
+			opt.UserUID = s.UserUID
+		}
+
+		// Start import.
+		imported := imp.Start(opt)
+
+		// Delete empty import directory.
+		if fs.DirIsEmpty(uploadPath) {
+			if err := os.Remove(uploadPath); err != nil {
+				log.Errorf("upload: failed deleting empty folder %s: %s", clean.Log(uploadPath), err)
+			} else {
+				log.Infof("upload: deleted empty folder %s", clean.Log(uploadPath))
+			}
+		}
+
+		// Update moments if files have been imported.
+		if n := len(imported); n == 0 {
+			log.Infof("upload: no new files imported", clean.Log(uploadPath))
+		} else {
+			log.Infof("upload: imported %s", english.Plural(n, "file", "files"))
+			if moments := get.Moments(); moments == nil {
+				log.Warnf("upload: moments service not set - possible bug")
+			} else if err := moments.Start(); err != nil {
+				log.Warnf("moments: %s", err)
+			}
+		}
+
+		elapsed := int(time.Since(start).Seconds())
+
+		// Show success message.
+		msg := i18n.Msg(i18n.MsgUploadProcessed)
+
+		event.Success(msg)
+		event.Publish("import.completed", event.Data{"path": uploadPath, "seconds": elapsed})
+		event.Publish("index.completed", event.Data{"path": uploadPath, "seconds": elapsed})
+
+		for _, uid := range f.Albums {
+			PublishAlbumEvent(EntityUpdated, uid, c)
+		}
+
+		// Update the user interface.
+		UpdateClientConfig()
+
+		// Update album, label, and subject cover thumbs.
+		if err := query.UpdateCovers(); err != nil {
+			log.Warnf("upload: %s (update covers)", err)
+		}
+
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
+	})
+}

@@ -16,7 +16,7 @@ type FacesOptimizeResult struct {
 // Optimize optimizes the face lookup table.
 func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 	if w.Disabled() {
-		return result, fmt.Errorf("facial recognition is disabled")
+		return result, fmt.Errorf("face recognition is disabled")
 	}
 
 	// Iterative merging of manually added face clusters.

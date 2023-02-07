@@ -14,6 +14,9 @@ var OriginalPaths = []string{
 	"/photoprism/storage/media/originals",
 	"/photoprism/media/originals",
 	"/photoprism/originals",
+	"/srv/photoprism/storage/media/originals",
+	"/srv/photoprism/media/originals",
+	"/srv/photoprism/originals",
 	"/opt/photoprism/storage/media/originals",
 	"/opt/photoprism/media/originals",
 	"/opt/photoprism/originals",
@@ -77,6 +80,9 @@ var ImportPaths = []string{
 	"/photoprism/storage/media/import",
 	"/photoprism/media/import",
 	"/photoprism/import",
+	"/srv/photoprism/storage/media/import",
+	"/srv/photoprism/media/import",
+	"/srv/photoprism/import",
 	"/opt/photoprism/storage/media/import",
 	"/opt/photoprism/media/import",
 	"/opt/photoprism/import",
@@ -141,6 +147,13 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 				return filepath.SkipDir
 			}
 
+			// Skip if symlink does not point to existing directory.
+			if typ == os.ModeSymlink {
+				if info, err := os.Stat(fileName); err != nil || !info.IsDir() {
+					return filepath.SkipDir
+				}
+			}
+
 			if fileName != root {
 				if !recursive {
 					appendResult(fileName)
@@ -150,7 +163,7 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 					appendResult(fileName)
 
 					return nil
-				} else if resolved, err := filepath.EvalSymlinks(fileName); err == nil {
+				} else if resolved, err := Resolve(fileName); err == nil {
 					symlinksMutex.Lock()
 					defer symlinksMutex.Unlock()
 

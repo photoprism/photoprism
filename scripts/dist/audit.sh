@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 ######################################## TEST STORAGE FOLDER PERMISSIONS ########################################
 
@@ -12,10 +12,6 @@ set -e
 
 # create directory if not exists
 mkdir -p "${STORAGE_PATH}" || (echo "Failed creating storage folder \"$STORAGE_PATH\", see $DOC_URL" 1>&2; exit 1)
-
-# check directory permissions
-[[ -w "${STORAGE_PATH}" ]] || \
-  (echo "Storage folder \"$STORAGE_PATH\" is not writable, see $DOC_URL" 1>&2; exit 1)
 
 # create and delete test file
 (touch "${STORAGE_PATH}/is-writable" 2>/dev/null && rm "${STORAGE_PATH}/is-writable") || \

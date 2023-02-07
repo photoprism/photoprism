@@ -165,7 +165,7 @@ func TestMarkers_Labels(t *testing.T) {
 }
 
 func TestMarkers_AppendWithEmbedding(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
 		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
 

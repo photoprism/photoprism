@@ -58,20 +58,20 @@ func TestMsg(t *testing.T) {
 func TestError(t *testing.T) {
 	t.Run("already exists", func(t *testing.T) {
 		err := Error(ErrAlreadyExists, "A cat")
-		assert.EqualError(t, err, "a cat already exists")
+		assert.EqualError(t, err, "A cat already exists")
 	})
 
 	t.Run("unexpected error", func(t *testing.T) {
 		err := Error(ErrUnexpected, "A cat")
-		assert.EqualError(t, err, "unexpected error, please try again")
+		assert.EqualError(t, err, "Unexpected error, please try again")
 	})
 
 	t.Run("already exists german", func(t *testing.T) {
 		SetLocale("de")
 		errGerman := Error(ErrAlreadyExists, "Eine Katze")
-		assert.EqualError(t, errGerman, "eine katze existiert bereits")
+		assert.EqualError(t, errGerman, "Eine Katze existiert bereits")
 		SetLocale("")
 		errDefault := Error(ErrAlreadyExists, "A cat")
-		assert.EqualError(t, errDefault, "a cat already exists")
+		assert.EqualError(t, errDefault, "A cat already exists")
 	})
 }

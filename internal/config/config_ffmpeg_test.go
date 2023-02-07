@@ -42,3 +42,24 @@ func TestConfig_FFmpegBitrate(t *testing.T) {
 	c.options.FFmpegBitrate = 800
 	assert.Equal(t, 800, c.FFmpegBitrate())
 }
+
+func TestConfig_FFmpegBitrateExceeded(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.FFmpegBitrate = 0
+	assert.False(t, c.FFmpegBitrateExceeded(0.95))
+	assert.False(t, c.FFmpegBitrateExceeded(1.05))
+	assert.False(t, c.FFmpegBitrateExceeded(2.05))
+	c.options.FFmpegBitrate = 1
+	assert.False(t, c.FFmpegBitrateExceeded(0.95))
+	assert.False(t, c.FFmpegBitrateExceeded(1.0))
+	assert.True(t, c.FFmpegBitrateExceeded(1.05))
+	assert.True(t, c.FFmpegBitrateExceeded(2.05))
+	c.options.FFmpegBitrate = 50
+	assert.False(t, c.FFmpegBitrateExceeded(0.95))
+	assert.False(t, c.FFmpegBitrateExceeded(1.05))
+	assert.False(t, c.FFmpegBitrateExceeded(2.05))
+	c.options.FFmpegBitrate = -5
+	assert.False(t, c.FFmpegBitrateExceeded(0.95))
+	assert.False(t, c.FFmpegBitrateExceeded(1.05))
+	assert.False(t, c.FFmpegBitrateExceeded(2.05))
+}

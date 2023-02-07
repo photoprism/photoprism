@@ -7,12 +7,10 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -40,17 +38,17 @@ var purgeFlags = []cli.Flag{
 func purgeAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	// get cli first argument
 	subPath := strings.TrimSpace(ctx.Args().First())
@@ -65,7 +63,7 @@ func purgeAction(ctx *cli.Context) error {
 		log.Infof("config: read-only mode enabled")
 	}
 
-	w := service.Purge()
+	w := get.Purge()
 
 	opt := photoprism.PurgeOptions{
 		Path: subPath,
@@ -78,8 +76,6 @@ func purgeAction(ctx *cli.Context) error {
 	} else {
 		log.Infof("purged %s and %s in %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(start))
 	}
-
-	conf.Shutdown()
 
 	return nil
 }

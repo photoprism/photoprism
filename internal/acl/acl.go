@@ -1,68 +1,79 @@
 /*
+Package acl provides access control lists for authorization checks.
 
-Package acl contains PhotoPrism's access control lists for authorizing user actions.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+	This program is free software: you can redistribute it and/or modify
+	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+	<https://docs.photoprism.app/license/agpl>
 
-    This program is free software: you can redistribute it and/or modify
-    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
-    <https://docs.photoprism.app/license/agpl>
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    The AGPL is supplemented by our Trademark and Brand Guidelines,
-    which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+	The AGPL is supplemented by our Trademark and Brand Guidelines,
+	which describe how our Brand Assets may be used:
+	<https://photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
-
 */
 package acl
 
-type Permission struct {
-	Roles   Roles
-	Actions Actions
-}
-
+// ACL represents an access control list based on Resource, Roles, and Permissions.
 type ACL map[Resource]Roles
 
-func (l ACL) Deny(resource Resource, role Role, action Action) bool {
-	return !l.Allow(resource, role, action)
+// Deny checks whether the role must be denied access to the specified resource.
+func (acl ACL) Deny(resource Resource, role Role, perm Permission) bool {
+	return !acl.Allow(resource, role, perm)
 }
 
-func (l ACL) Allow(resource Resource, role Role, action Action) bool {
-	if p, ok := l[resource]; ok {
-		return p.Allow(role, action)
-	} else if p, ok := l[ResourceDefault]; ok {
-		return p.Allow(role, action)
+// DenyAll checks whether the role is granted none of the permissions for the specified resource.
+func (acl ACL) DenyAll(resource Resource, role Role, perms Permissions) bool {
+	return !acl.AllowAny(resource, role, perms)
+}
+
+// Allow checks whether the role is granted permission for the specified resource.
+func (acl ACL) Allow(resource Resource, role Role, perm Permission) bool {
+	if p, ok := acl[resource]; ok {
+		return p.Allow(role, perm)
+	} else if p, ok = acl[ResourceDefault]; ok {
+		return p.Allow(role, perm)
 	}
 
 	return false
 }
 
-func (a Actions) Allow(action Action) bool {
-	if result, ok := a[action]; ok {
-		return result
-	} else if result, ok := a[ActionDefault]; ok {
-		return result
+// AllowAny checks whether the role is granted any of the permissions for the specified resource.
+func (acl ACL) AllowAny(resource Resource, role Role, perms Permissions) bool {
+	if len(perms) == 0 {
+		return false
+	}
+
+	for i := range perms {
+		if acl.Allow(resource, role, perms[i]) {
+			return true
+		}
 	}
 
 	return false
 }
 
-func (r Roles) Allow(role Role, action Action) bool {
-	if a, ok := r[role]; ok {
-		return a.Allow(action)
-	} else if a, ok := r[RoleDefault]; ok {
-		return a.Allow(action)
+// AllowAll checks whether the role is granted all of the permissions for the specified resource.
+func (acl ACL) AllowAll(resource Resource, role Role, perms Permissions) bool {
+	if len(perms) == 0 {
+		return false
 	}
 
-	return false
+	for i := range perms {
+		if acl.Deny(resource, role, perms[i]) {
+			return false
+		}
+	}
+
+	return true
 }

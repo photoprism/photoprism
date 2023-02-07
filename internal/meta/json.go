@@ -28,7 +28,10 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 
 	quotedName := clean.Log(filepath.Base(jsonName))
 
-	if !fs.FileExists(jsonName) {
+	// Resolve JSON file name e.g. in case it's a symlink.
+	if jsonName, err = fs.Resolve(jsonName); err != nil {
+		return fmt.Errorf("metadata: %s not found (%s)", quotedName, err)
+	} else if !fs.FileExists(jsonName) {
 		return fmt.Errorf("metadata: %s not found", quotedName)
 	}
 

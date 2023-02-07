@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -52,7 +52,6 @@ export class Subject extends RestModel {
       PhotoCount: 0,
       Thumb: "",
       ThumbSrc: "",
-      Metadata: {},
       CreatedAt: "",
       UpdatedAt: "",
       DeletedAt: "",
@@ -96,7 +95,7 @@ export class Subject extends RestModel {
       size = "tile_160";
     }
 
-    return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
   }
 
   getDateString() {

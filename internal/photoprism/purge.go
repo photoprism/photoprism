@@ -41,6 +41,13 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 	}()
 
+	originalsPath := w.conf.OriginalsPath()
+
+	// Check if originals folder is empty.
+	if fs.DirIsEmpty(originalsPath) {
+		return purgedFiles, purgedPhotos, err
+	}
+
 	var ignore fs.Done
 
 	if opt.Ignore != nil {
@@ -162,7 +169,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			if !fs.FileExists(fileName) {
 				if opt.Dry {
 					purgedFiles[fileName] = true
-					log.Infof("purge: duplicate %s would be removed", clean.Log(file.FileName))
+					log.Infof("purge: duplicate %s would be removed from index", clean.Log(file.FileName))
 					continue
 				}
 
@@ -171,7 +178,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				} else {
 					w.files.Remove(file.FileName, file.FileRoot)
 					purgedFiles[fileName] = true
-					log.Infof("purge: removed duplicate %s", clean.Log(file.FileName))
+					log.Infof("purge: removed duplicate %s from index", clean.Log(file.FileName))
 				}
 			}
 		}
@@ -210,7 +217,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 			if opt.Dry {
 				purgedPhotos[photo.PhotoUID] = true
-				log.Infof("purge: %s would be removed", clean.Log(photo.PhotoName))
+				log.Infof("purge: %s would be removed", photo.String())
 				continue
 			}
 
@@ -220,9 +227,9 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				purgedPhotos[photo.PhotoUID] = true
 
 				if opt.Hard {
-					log.Infof("purge: permanently removed %s", clean.Log(photo.PhotoName))
+					log.Infof("purge: permanently removed %s", photo.String())
 				} else {
-					log.Infof("purge: flagged photo %s as deleted", clean.Log(photo.PhotoName))
+					log.Infof("purge: flagged photo %s as deleted", photo.String())
 				}
 
 				// Remove files from lookup table.
@@ -241,12 +248,12 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	if err := query.FixPrimaries(); err != nil {
-		log.Errorf("index: %s (update primary files)", err.Error())
+	if err = query.FixPrimaries(); err != nil {
+		log.Errorf("index: %s (update primary files)", err)
 	}
 
 	// Set photo quality scores to -1 if files are missing.
-	if err := query.FlagHiddenPhotos(); err != nil {
+	if err = query.FlagHiddenPhotos(); err != nil {
 		return purgedFiles, purgedPhotos, err
 	}
 
@@ -260,7 +267,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			log.Infof("index: found no orphan files")
 		}
 	} else {
-		if err := query.PurgeOrphans(); err != nil {
+		if err = query.PurgeOrphans(); err != nil {
 			log.Errorf("index: %s (purge orphans)", err)
 		}
 
@@ -269,22 +276,22 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	}
 
 	// Hide missing album contents.
-	if err := query.UpdateMissingAlbumEntries(); err != nil {
+	if err = query.UpdateMissingAlbumEntries(); err != nil {
 		log.Errorf("index: %s (update album entries)", err)
 	}
 
 	// Remove unused entries from the places table.
-	if err := query.PurgePlaces(); err != nil {
+	if err = query.PurgePlaces(); err != nil {
 		log.Errorf("index: %s (purge places)", err)
 	}
 
 	// Update precalculated photo and file counts.
-	if err := entity.UpdateCounts(); err != nil {
+	if err = entity.UpdateCounts(); err != nil {
 		log.Warnf("index: %s (update counts)", err)
 	}
 
 	// Update album, subject, and label cover thumbs.
-	if err := query.UpdateCovers(); err != nil {
+	if err = query.UpdateCovers(); err != nil {
 		log.Warnf("index: %s (update covers)", err)
 	}
 

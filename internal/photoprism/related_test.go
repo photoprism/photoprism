@@ -175,7 +175,7 @@ func TestRelatedFiles_MainFileType(t *testing.T) {
 			Files: MediaFiles{mediaFile, mediaFile2},
 			Main:  mediaFile3,
 		}
-		assert.Equal(t, string(fs.ImageHEIF), relatedFiles.MainFileType())
+		assert.Equal(t, string(fs.ImageHEIC), relatedFiles.MainFileType())
 	})
 }
 

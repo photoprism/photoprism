@@ -67,6 +67,7 @@ func ThumbHashMap() (result HashMap, err error) {
 		entity.Label{}.TableName(),
 		entity.Marker{}.TableName(),
 		entity.Subject{}.TableName(),
+		entity.User{}.TableName(),
 	}
 
 	result = make(HashMap)

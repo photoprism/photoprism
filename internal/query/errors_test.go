@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//TODO test non empty case
+// TODO test non empty case
 func TestErrors(t *testing.T) {
 	t.Run("not existing", func(t *testing.T) {
 		errors, err := Errors(1000, 0, "notexistingErrorString")

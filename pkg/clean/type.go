@@ -23,12 +23,3 @@ func ShortType(s string) string {
 func ShortTypeLower(s string) string {
 	return ShortType(strings.ToLower(s))
 }
-
-// LogType returns an entity type string for logging.
-func LogType(entityType string) string {
-	if entityType == "" {
-		return "<unknown-type>"
-	}
-
-	return entityType
-}

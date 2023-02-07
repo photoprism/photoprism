@@ -7,6 +7,10 @@ export let vm = {
   $npgettext: (context, msgid) => msgid,
 };
 
+export function T(msgid) {
+  return vm.$gettext(msgid);
+}
+
 export function $gettext(msgid) {
   return vm.$gettext(msgid);
 }
