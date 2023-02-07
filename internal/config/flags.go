@@ -514,14 +514,12 @@ var Flags = CliFlags{
 			Name:   "database-password, db-pass",
 			Usage:  "database user `PASSWORD`",
 			EnvVar: "PHOTOPRISM_DATABASE_PASSWORD",
-		}},
-	CliFlag{
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "database-password-file",
 			Usage:  "a file containing a database user `PASSWORD`",
 			EnvVar: "PHOTOPRISM_DATABASE_PASSWORD_FILE",
-		}},
-	CliFlag{
+		}}, {
 		Flag: cli.IntFlag{
 			Name:   "database-conns",
 			Usage:  "maximum `NUMBER` of open database connections",
