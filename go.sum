@@ -995,8 +995,8 @@ github.com/zclconf/go-cty v1.10.0/go.mod h1:vVKLxnk3puL4qRAv72AO+W99LUD4da90g3uU
 github.com/zclconf/go-cty-debug v0.0.0-20191215020915-b22d67c1ba0b/go.mod h1:ZRKQfBXbGkpdV6QMzT3rU1kSTAnfu1dO8dPKjYprgj8=
 github.com/zitadel/logging v0.3.4 h1:9hZsTjMMTE3X2LUi0xcF9Q9EdLo+FAezeu52ireBbHM=
 github.com/zitadel/logging v0.3.4/go.mod h1:aPpLQhE+v6ocNK0TWrBrd363hZ95KcI17Q1ixAQwZF0=
-github.com/zitadel/oidc v1.12.1 h1:f+NB+GnNhygzFulgRhsvxJAJnmfcgPTfFSIJmgBIGWw=
-github.com/zitadel/oidc v1.12.1/go.mod h1:RSZbbTbwvbP6cXdw9sj/mjXWHSK+p9s2jqArOlk+81Q=
+github.com/zitadel/oidc v1.13.0 h1:uVRUUr1COGXDTYuP33WSk3qSWVKUD0gGQCf+lr56umA=
+github.com/zitadel/oidc v1.13.0/go.mod h1:RSZbbTbwvbP6cXdw9sj/mjXWHSK+p9s2jqArOlk+81Q=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=

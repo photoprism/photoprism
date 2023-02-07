@@ -63,7 +63,7 @@ require github.com/google/uuid v1.3.0
 require (
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
-	github.com/zitadel/oidc v1.12.1
+	github.com/zitadel/oidc v1.13.0
 	golang.org/x/oauth2 v0.0.0-20221006150949-b44042a4b9c1 // indirect
 )
 
