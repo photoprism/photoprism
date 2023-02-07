@@ -41,7 +41,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-password-file",
-			Usage:  fmt.Sprintf("a file containing an initial admin user `PASSWORD`, which must have at least %d characters", entity.PasswordLen),
+			Usage:  fmt.Sprintf("a file containing an initial admin user `PASSWORD`, which must have at least %d characters", entity.PasswordLength),
 			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD_FILE",
 		}}, {
 		Flag: cli.Int64Flag{
