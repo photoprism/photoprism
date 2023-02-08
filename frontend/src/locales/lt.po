@@ -5,15 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-01-17 16:36+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/lt/>\n"
+"Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
-"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
-"1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
 "X-Generator: Weblate 4.15\n"
 "Generated-By: easygettext\n"
 
@@ -60,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Paspaudę jį nukopijuosite į iškarpinę."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:432 src/component/navigation.vue:27
+#: src/component/navigation.vue:420 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "Apie"
@@ -69,9 +66,9 @@ msgstr "Apie"
 msgid "Abyss"
 msgstr "Bedugnė"
 
-#: src/component/navigation.vue:93 src/component/navigation.vue:1945
+#: src/component/navigation.vue:93 src/component/navigation.vue:1935
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:144 src/page/settings.vue:84
+#: src/model/user.js:138 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "Sąskaita"
@@ -88,11 +85,11 @@ msgstr "Veiksmas"
 msgid "Actions"
 msgstr "Veiksmai"
 
-#: src/page/connect.vue:73 src/page/connect.vue:92
+#: src/page/connect.vue:73 src/page/connect.vue:80
 msgid "Activate"
 msgstr "Suaktyvinti"
 
-#: src/page/connect.vue:292 src/page/connect.vue:407
+#: src/page/connect.vue:292 src/page/connect.vue:360
 msgid "Activation Code"
 msgstr "Aktyvinimo kodas"
 
@@ -151,12 +148,8 @@ msgid "After one year"
 msgstr "Po vienerių metų"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
-msgid ""
-"After selecting pictures from search results, you can add them to an album "
-"using the context menu."
-msgstr ""
-"Pasirinkę nuotraukas iš paieškos rezultatų, galite jas įtraukti į albumą "
-"naudodami kontekstinį meniu."
+msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgstr "Pasirinkę nuotraukas iš paieškos rezultatų, galite jas įtraukti į albumą naudodami kontekstinį meniu."
 
 #: src/options/options.js:387
 msgid "After two months"
@@ -176,7 +169,7 @@ msgstr "Albumo pavadinimas"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:143 src/component/navigation.vue:153
-#: src/component/navigation.vue:544 src/component/navigation.vue:4
+#: src/component/navigation.vue:540 src/component/navigation.vue:4
 #: src/component/navigation.vue:618
 msgid "Albums"
 msgstr "Albumai"
@@ -239,12 +232,8 @@ msgid "All Years"
 msgstr "Visi metai"
 
 #: src/dialog/share.vue:75
-msgid ""
-"Alternatively, you can upload files directly to WebDAV servers like "
-"Nextcloud."
-msgstr ""
-"Taip pat galite įkelti failus tiesiai į WebDAV serverius, pvz., "
-"\"Nextcloud\"."
+msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgstr "Taip pat galite įkelti failus tiesiai į WebDAV serverius, pvz., \"Nextcloud\"."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -271,9 +260,7 @@ msgstr "Animacija"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr ""
-"Visos privačios nuotraukos ir vaizdo įrašai išlieka privatūs ir jais nebus "
-"dalijamasi."
+msgstr "Visos privačios nuotraukos ir vaizdo įrašai išlieka privatūs ir jais nebus dalijamasi."
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -330,54 +317,29 @@ msgstr "Ar esate tikri?"
 msgid "Artist"
 msgstr "Menininkas"
 
-#: src/page/connect.vue:122
-msgid ""
-"As this helps us provide more features to the public, we encourage all users "
-"to support our mission."
-msgstr ""
-"Tai padeda mums teikti daugiau funkcijų visuomenei, todėl raginame visus "
-"naudotojus remti mūsų misiją."
+#: src/page/connect.vue:110
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr "Tai padeda mums teikti daugiau funkcijų visuomenei, todėl raginame visus naudotojus remti mūsų misiją."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Kraštinių santykis"
 
 #: src/page/settings/library.vue:112
-msgid ""
-"Automatically create JPEGs for other file types so that they can be "
-"displayed in a browser."
-msgstr ""
-"Automatiškai sukurkite kitų tipų failų JPEG, kad juos būtų galima rodyti "
-"naršyklėje."
+msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgstr "Automatiškai sukurkite kitų tipų failų JPEG, kad juos būtų galima rodyti naršyklėje."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Automatiškai sukuria ypatingų akimirkų, kelionių ir vietų albumus."
 
-#: src/page/connect.vue:68
-msgid ""
-"Become a sponsor today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Tapkite rėmėju šiandien, paremkite mūsų misiją ir naudokitės mūsų nariams "
-"teikiamomis privilegijomis!"
-
 #: src/page/about/about.vue:59
-msgid ""
-"Before submitting a support request, please use our Troubleshooting "
-"Checklists to determine the cause of your problem."
-msgstr ""
-"Prieš pateikdami pagalbos užklausą, pasinaudokite mūsų trikčių šalinimo "
-"kontroliniais sąrašais, kad nustatytumėte problemos priežastį."
+msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+msgstr "Prieš pateikdami pagalbos užklausą, pasinaudokite mūsų trikčių šalinimo kontroliniais sąrašais, kad nustatytumėte problemos priežastį."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-msgid ""
-"Being 100% self-funded and independent, we can promise you that we will "
-"never sell your data and that we will always be transparent about our "
-"software and services."
-msgstr ""
-"Kadangi esame 100 % savarankiškai finansuojami ir nepriklausomi, galime "
-"pažadėti, kad niekada neparduosime jūsų duomenų ir visada skaidriai "
-"informuosime apie savo programinę įrangą ir paslaugas."
+msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgstr "Kadangi esame 100 % savarankiškai finansuojami ir nepriklausomi, galime pažadėti, kad niekada neparduosime jūsų duomenų ir visada skaidriai informuosime apie savo programinę įrangą ir paslaugas."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -413,28 +375,20 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Naršykite po bibliotekos indeksuotus failus ir aplankus."
 
 #: src/page/about/about.vue:51
-msgid ""
-"Browse the Knowledge Base for detailed information on specific product "
-"features, services, and related resources."
-msgstr ""
-"Žinių bazėje rasite išsamios informacijos apie konkrečias gaminio funkcijas, "
-"paslaugas ir susijusius išteklius."
+msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgstr "Žinių bazėje rasite išsamios informacijos apie konkrečias gaminio funkcijas, paslaugas ir susijusius išteklius."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:414
 msgid "Bug Report"
 msgstr "Pranešimas apie klaidą"
 
-#: src/page/connect.vue:8 src/common/notify.js:94
+#: src/page/connect.vue:8 src/common/notify.js:94 src/page/connect.vue:5
 msgid "Busy, please wait…"
 msgstr "Užimtas, palaukite…"
 
-#: src/page/connect.vue:82 src/page/connect.vue:101
-msgid ""
-"By using the software and services we provide, you agree to our terms of "
-"service, privacy policy, and code of conduct."
-msgstr ""
-"Naudodamiesi mūsų teikiama programine įranga ir paslaugomis, sutinkate su "
-"mūsų paslaugų teikimo sąlygomis, privatumo politika ir elgesio kodeksu."
+#: src/page/connect.vue:83 src/page/connect.vue:90
+msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
+msgstr "Naudodamiesi mūsų teikiama programine įranga ir paslaugomis, sutinkate su mūsų paslaugų teikimo sąlygomis, privatumo politika ir elgesio kodeksu."
 
 #: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
@@ -470,8 +424,8 @@ msgstr "Negalima pasirinkti daugiau elementų"
 #: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/page/library/import.vue:34
-#: src/page/library/index.vue:27
+#: src/dialog/share/upload.vue:29 src/page/connect.vue:38
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Atšaukti"
 
@@ -544,14 +498,10 @@ msgid "Colors"
 msgstr "Spalvos"
 
 #: src/page/about/about.vue:46
-msgid ""
-"Common issues can be quickly diagnosed and solved using the troubleshooting "
-"checklists we provide."
-msgstr ""
-"Dažniausiai pasitaikančias problemas galima greitai diagnozuoti ir išspręsti "
-"naudojantis mūsų pateiktais trikčių šalinimo kontroliniais sąrašais."
+msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgstr "Dažniausiai pasitaikančias problemas galima greitai diagnozuoti ir išspręsti naudojantis mūsų pateiktais trikčių šalinimo kontroliniais sąrašais."
 
-#: src/page/connect.vue:65 src/page/connect.vue:84
+#: src/page/connect.vue:65 src/page/connect.vue:72
 msgid "Compare Editions"
 msgstr "Palyginti leidimus"
 
@@ -581,6 +531,7 @@ msgid "Contact Details"
 msgstr "Susisiekite su mumis"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:44
+#: src/page/connect.vue:41
 msgid "Contact Us"
 msgstr "Susisiekite su mumis"
 
@@ -756,19 +707,15 @@ msgstr "Rodomas vardas"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr ""
-"Nedarykite atsarginių nuotraukų ir albumų metaduomenų kopijų į YAML failus."
+msgstr "Nedarykite atsarginių nuotraukų ir albumų metaduomenų kopijų į YAML failus."
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Nesukurkite \"ExifTool\" JSON failų, kad pagerintumėte metaduomenų "
-"ištraukimą."
+msgstr "Nesukurkite \"ExifTool\" JSON failų, kad pagerintumėte metaduomenų ištraukimą."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Nekeiskite originalų aplanko. Išjungiamas importas, įkėlimas ir ištrynimas."
+msgstr "Nekeiskite originalų aplanko. Išjungiamas importas, įkėlimas ir ištrynimas."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
@@ -829,12 +776,8 @@ msgid "Downscaling Filter"
 msgstr "Mažinimo filtras"
 
 #: src/page/about/feedback.vue:16
-msgid ""
-"Due to the high volume of emails we receive, our team may be unable to get "
-"back to you immediately."
-msgstr ""
-"Dėl didelio gaunamų el. laiškų kiekio mūsų komanda gali nepavykti iš karto "
-"su jumis susisiekti."
+msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgstr "Dėl didelio gaunamų el. laiškų kiekio mūsų komanda gali nepavykti iš karto su jumis susisiekti."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -849,12 +792,8 @@ msgid "Dynamic Previews"
 msgstr "Dinaminės peržiūros"
 
 #: src/page/settings/advanced.vue:303
-msgid ""
-"Dynamic rendering requires a powerful server. It is not recommended for NAS "
-"devices."
-msgstr ""
-"Dinaminiam atvaizdavimui reikia galingo serverio. Jis nerekomenduojamas NAS "
-"įrenginiams."
+msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgstr "Dinaminiam atvaizdavimui reikia galingo serverio. Jis nerekomenduojamas NAS įrenginiams."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -897,8 +836,7 @@ msgstr "Įgalinkite šiuo metu kuriamas naujas funkcijas."
 
 #: src/page/settings/advanced.vue:461
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr ""
-"Įjungiamos RAW konverterio išankstinės nuostatos. Gali sumažinti našumą."
+msgstr "Įjungiamos RAW konverterio išankstinės nuostatos. Gali sumažinti našumą."
 
 #: src/app/routes.js:294 src/component/navigation.vue:387
 msgid "Errors"
@@ -917,12 +855,8 @@ msgid "Every two days"
 msgstr "Kas dvi dienas"
 
 #: src/page/settings/general.vue:209
-msgid ""
-"Exclude content marked as private from search results, shared albums, "
-"labels, and places."
-msgstr ""
-"Neįtraukti turinio, pažymėto kaip privataus, į paieškos rezultatus, "
-"bendrinamus albumus, etiketes ir vietas."
+msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgstr "Neįtraukti turinio, pažymėto kaip privataus, į paieškos rezultatus, bendrinamus albumus, etiketes ir vietas."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -997,15 +931,13 @@ msgstr "Funkcijos prašymas"
 msgid "Feed"
 msgstr "Atsiliepimai"
 
-#: src/component/navigation.vue:440 src/component/navigation.vue:35
+#: src/component/navigation.vue:428 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Atsiliepimai"
 
-#: src/page/connect.vue:83 src/dialog/sponsor.vue:25 src/page/connect.vue:102
-msgid ""
-"Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Jei turite klausimų, susisiekite su mumis el. paštu hello@photoprism.app."
+#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr "Jei turite klausimų, susisiekite su mumis el. paštu hello@photoprism.app."
 
 #: src/options/options.js:428
 msgid "Female"
@@ -1033,18 +965,14 @@ msgstr "Failas"
 msgid "Filename"
 msgstr "Failas"
 
-#: src/component/navigation.vue:562 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:558 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Failai"
 
 #: src/page/settings/library.vue:214
-msgid ""
-"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
-"the same picture."
-msgstr ""
-"Failai su nuosekliais pavadinimais, pavyzdžiui, 'IMG_1234 (2)' ir 'IMG_1234 "
-"(3)', priklauso tai pačiai nuotraukai."
+msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgstr "Failai su nuosekliais pavadinimais, pavyzdžiui, 'IMG_1234 (2)' ir 'IMG_1234 (3)', priklauso tai pačiai nuotraukai."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1081,7 +1009,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Kadrai"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:95
 msgid "Frequently Asked Questions"
 msgstr "Dažnai užduodami klausimai"
 
@@ -1191,18 +1119,12 @@ msgid "Import failed"
 msgstr "Importuoti nepavyko"
 
 #: src/page/library/import.vue:25
-msgid ""
-"Imported files will be sorted by date and given a unique name to avoid "
-"duplicates."
-msgstr ""
-"Importuoti failai bus surūšiuoti pagal datą ir jiems bus suteiktas unikalus "
-"pavadinimas, kad būtų išvengta pasikartojimų."
+msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgstr "Importuoti failai bus surūšiuoti pagal datą ir jiems bus suteiktas unikalus pavadinimas, kad būtų išvengta pasikartojimų."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"Importuoti failai bus surūšiuoti pagal datą ir jiems bus suteiktas unikalus "
-"pavadinimas."
+msgstr "Importuoti failai bus surūšiuoti pagal datą ir jiems bus suteiktas unikalus pavadinimas."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1226,14 +1148,10 @@ msgstr "Be to, rėmėjai gauna tiesioginę techninę pagalbą el. paštu."
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid ""
-"In case pictures you expect are missing, please rescan your library and wait "
-"until indexing has been completed."
-msgstr ""
-"Jei trūksta nuotraukų, kurių tikėjotės, iš naujo nuskaitykite savo "
-"biblioteką ir palaukite, kol bus baigtas indeksavimas."
+msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr "Jei trūksta nuotraukų, kurių tikėjotės, iš naujo nuskaitykite savo biblioteką ir palaukite, kol bus baigtas indeksavimas."
 
-#: src/component/navigation.vue:568 src/page/library.vue:35
+#: src/component/navigation.vue:564 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Indeksas"
@@ -1270,11 +1188,12 @@ msgstr "Intervalas"
 #: src/page/settings/account.vue:647 src/page/settings/account.vue:711
 #: src/page/settings/account.vue:738 src/page/settings/account.vue:765
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:821
-#: src/page/settings/account.vue:90 src/page/settings/account.vue:116
-#: src/page/settings/account.vue:142 src/page/settings/account.vue:168
-#: src/page/settings/account.vue:223 src/page/settings/account.vue:280
-#: src/page/settings/account.vue:564 src/page/settings/account.vue:618
-#: src/page/settings/account.vue:646 src/page/settings/account.vue:674
+#: src/page/connect.vue:11 src/page/settings/account.vue:90
+#: src/page/settings/account.vue:116 src/page/settings/account.vue:142
+#: src/page/settings/account.vue:168 src/page/settings/account.vue:223
+#: src/page/settings/account.vue:280 src/page/settings/account.vue:564
+#: src/page/settings/account.vue:618 src/page/settings/account.vue:646
+#: src/page/settings/account.vue:674
 msgid "Invalid"
 msgstr "Neteisinga data"
 
@@ -1290,20 +1209,13 @@ msgstr "Neteisinga data"
 msgid "Invalid photo selected"
 msgstr "Pasirinkta netinkama nuotrauka"
 
-#: src/page/connect.vue:115
-msgid ""
-"It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
-"Jūs patys sprendžiate, ar norite užsiregistruoti ir naudotis papildomais "
-"privalumais."
+#: src/page/connect.vue:103
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr "Jūs patys sprendžiate, ar norite užsiregistruoti ir naudotis papildomais privalumais."
 
 #: src/page/about/about.vue:16
-msgid ""
-"It makes use of the latest technologies to tag and find pictures "
-"automatically without getting in your way."
-msgstr ""
-"Joje naudojamos naujausios technologijos, kad nuotraukos būtų automatiškai "
-"pažymėtos ir surastos netrukdant jums."
+msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgstr "Joje naudojamos naujausios technologijos, kad nuotraukos būtų automatiškai pažymėtos ir surastos netrukdant jums."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1367,11 +1279,11 @@ msgstr "Levandų"
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
-#: src/page/connect.vue:125 src/page/connect.vue:112
+#: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "Sužinokite daugiau"
 
-#: src/component/navigation.vue:589
+#: src/component/navigation.vue:585
 msgid "Legal Information"
 msgstr "Teisinė informacija"
 
@@ -1386,7 +1298,7 @@ msgstr "Objektyvas"
 msgid "Library"
 msgstr "Biblioteka"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:448
+#: src/page/connect.vue:4 src/component/navigation.vue:436
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1441,24 +1353,20 @@ msgid "Location"
 msgstr "Vieta"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid ""
-"Log messages appear here whenever PhotoPrism comes across broken files, or "
-"there are other potential issues."
-msgstr ""
-"Žurnalo pranešimai čia rodomi, kai \"PhotoPrism\" susiduria su sugadintais "
-"failais arba kitomis galimomis problemomis."
+msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgstr "Žurnalo pranešimai čia rodomi, kai \"PhotoPrism\" susiduria su sugadintais failais arba kitomis galimomis problemomis."
 
-#: src/component/navigation.vue:462 src/component/navigation.vue:1723
-#: src/component/navigation.vue:1997
+#: src/component/navigation.vue:458 src/component/navigation.vue:1713
+#: src/component/navigation.vue:1987
 msgid "Login"
 msgstr "Prisijungimas"
 
-#: src/component/navigation.vue:506 src/component/navigation.vue:1834
-#: src/component/navigation.vue:1865 src/component/navigation.vue:1916
+#: src/component/navigation.vue:502 src/component/navigation.vue:1824
+#: src/component/navigation.vue:1855 src/component/navigation.vue:1906
 msgid "Logout"
 msgstr "Atsijungimas"
 
-#: src/component/navigation.vue:574 src/page/library.vue:58
+#: src/component/navigation.vue:570 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "Žurnalai"
@@ -1487,7 +1395,7 @@ msgstr "Pagrindinė spalva"
 msgid "Male"
 msgstr "Vyras"
 
-#: src/page/connect.vue:56
+#: src/page/connect.vue:53
 msgid "Manage account"
 msgstr "Tvarkyti paskyrą"
 
@@ -1510,10 +1418,6 @@ msgstr "Žymeklis"
 #: src/options/options.js:261
 msgid "Medium"
 msgstr "Vidutinis"
-
-#: src/page/connect.vue:4
-msgid "Membership"
-msgstr "Narystė"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1673,12 +1577,8 @@ msgid "No video selected"
 msgstr "Nėra pasirinkto vaizdo įrašo"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid ""
-"No warnings or error containing this keyword. Note that search is case-"
-"sensitive."
-msgstr ""
-"Jokių įspėjimų ar klaidų su šiuo raktažodžiu nėra. Atkreipkite dėmesį, kad "
-"paieška priklauso nuo mažųjų ir didžiųjų raidžių."
+msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgstr "Jokių įspėjimų ar klaidų su šiuo raktažodžiu nėra. Atkreipkite dėmesį, kad paieška priklauso nuo mažųjų ir didžiųjų raidžių."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1687,12 +1587,8 @@ msgstr ""
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52 src/page/settings/library.vue:91
-msgid ""
-"Non-photographic and low-quality images require a review before they appear "
-"in search results."
-msgstr ""
-"Prieš rodant nefotografuotus ir prastos kokybės vaizdus paieškos "
-"rezultatuose, juos reikia peržiūrėti."
+msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgstr "Prieš rodant nefotografuotus ir prastos kokybės vaizdus paieškos rezultatuose, juos reikia peržiūrėti."
 
 #: src/options/options.js:253 src/options/options.js:338
 msgid "None"
@@ -1703,24 +1599,16 @@ msgid "Not Found"
 msgstr "Nerastas"
 
 #: src/page/library/import.vue:28
-msgid ""
-"Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Atkreipkite dėmesį, kad originalų aplanką galite tvarkyti rankiniu būdu, o "
-"importuoti neprivaloma."
+msgid "Note you may manually manage your originals folder and importing is optional."
+msgstr "Atkreipkite dėmesį, kad originalų aplanką galite tvarkyti rankiniu būdu, o importuoti neprivaloma."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Pastaba:"
 
 #: src/dialog/service/add.vue:28
-msgid ""
-"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
-"as remote service for backup and file upload."
-msgstr ""
-"Pastaba: Tik WebDAV serverius, pavyzdžiui, \"Nextcloud\" arba "
-"\"PhotoPrism\", galima konfigūruoti kaip nuotolinę atsarginių kopijų kūrimo "
-"ir failų įkėlimo paslaugą."
+msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
+msgstr "Pastaba: Tik WebDAV serverius, pavyzdžiui, \"Nextcloud\" arba \"PhotoPrism\", galima konfigūruoti kaip nuotolinę atsarginių kopijų kūrimo ir failų įkėlimo paslaugą."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1730,7 +1618,7 @@ msgstr "Pastabos"
 msgid "Nothing to see here yet."
 msgstr "Kol kas čia nieko nematyti. Būkite kantrūs."
 
-#: src/component/navigation.vue:477 src/component/navigation.vue:1768
+#: src/component/navigation.vue:473 src/component/navigation.vue:1758
 msgid "Offline"
 msgstr "Neprisijungus prie interneto"
 
@@ -1741,8 +1629,7 @@ msgstr "Seniausias pirmas"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr ""
-"\"Windows\" sistemoje prisijungimo dialogo lange įveskite šiuos išteklius:"
+msgstr "\"Windows\" sistemoje prisijungimo dialogo lange įveskite šiuos išteklius:"
 
 #: src/options/options.js:377
 msgid "Once a week"
@@ -1820,24 +1707,13 @@ msgstr "Originalai"
 msgid "Other"
 msgstr "Kita"
 
-#: src/page/connect.vue:121
-msgid ""
-"Our team decides this on an ongoing basis depending on the support effort "
-"required, server and licensing costs, and whether the features are generally "
-"needed by everyone or mainly requested by organizations and advanced users."
-msgstr ""
-"Mūsų komanda tai sprendžia nuolat, atsižvelgdama į reikalingas palaikymo "
-"pastangas, serverio ir licencijavimo išlaidas ir į tai, ar funkcijos "
-"paprastai reikalingos visiems, ar daugiausia jų prašo organizacijos ir "
-"pažengę naudotojai."
+#: src/page/connect.vue:109
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr "Mūsų komanda tai sprendžia nuolat, atsižvelgdama į reikalingas palaikymo pastangas, serverio ir licencijavimo išlaidas ir į tai, ar funkcijos paprastai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai."
 
 #: src/page/about/about.vue:45
-msgid ""
-"Our User Guide also covers many advanced topics, such as migrating from "
-"Google Photos and thumbnail quality settings."
-msgstr ""
-"Mūsų naudotojo vadove taip pat aptariama daug išplėstinių temų, pavyzdžiui, "
-"migravimas iš \"Google Photos\" ir miniatiūrų kokybės nustatymai."
+msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgstr "Mūsų naudotojo vadove taip pat aptariama daug išplėstinių temų, pavyzdžiui, migravimas iš \"Google Photos\" ir miniatiūrų kokybės nustatymai."
 
 #: src/options/options.js:290
 msgid "Outdoor"
@@ -1861,7 +1737,7 @@ msgid "Password changed"
 msgstr "Pakeistas slaptažodis"
 
 #: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
-#: src/component/navigation.vue:550 src/component/navigation.vue:851
+#: src/component/navigation.vue:546 src/component/navigation.vue:851
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1891,15 +1767,17 @@ msgstr "Nuotrauka"
 msgid "PhotoPrism has been updated…"
 msgstr "\"PhotoPrism\" buvo atnaujintas…"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:101
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "\"PhotoPrism\" yra 100 % savarankiškai finansuojama ir nepriklausoma."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
+msgstr "\"PhotoPrism®\" yra dirbtinio intelekto varoma decentralizuoto žiniatinklio nuotraukų programėlė."
+
+#: src/page/connect.vue:14
+msgid "PhotoPrism+ Membership"
 msgstr ""
-"\"PhotoPrism®\" yra dirbtinio intelekto varoma decentralizuoto žiniatinklio "
-"nuotraukų programėlė."
 
 #: src/app/routes.js:142
 msgid "Photos"
@@ -1919,7 +1797,7 @@ msgstr "Vieta & amp; laikas"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
 #: src/app/routes.js:268 src/component/navigation.vue:276
-#: src/component/navigation.vue:286 src/component/navigation.vue:556
+#: src/component/navigation.vue:286 src/component/navigation.vue:552
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1086
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1935,12 +1813,8 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Neįkelkite nuotraukų, kuriose yra įžeidžiančio turinio."
 
 #: src/dialog/account/password.vue:17
-msgid ""
-"Please note that changing your password will log you out on other devices "
-"and browsers."
-msgstr ""
-"Atkreipkite dėmesį, kad pakeitę slaptažodį atsijungsite kituose įrenginiuose "
-"ir naršyklėse."
+msgid "Please note that changing your password will log you out on other devices and browsers."
+msgstr "Atkreipkite dėmesį, kad pakeitę slaptažodį atsijungsite kituose įrenginiuose ir naršyklėse."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1982,7 +1856,7 @@ msgstr "Pagrindinis"
 msgid "Private"
 msgstr "Privatus"
 
-#: src/page/connect.vue:68 src/page/connect.vue:87
+#: src/page/connect.vue:68 src/page/connect.vue:75
 msgid "Proceed"
 msgstr "Tęsti"
 
@@ -2028,9 +1902,7 @@ msgstr "RAW konvertavimas"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Iš naujo indeksuokite visus originalus, įskaitant jau indeksuotus ir "
-"nepakeistus failus."
+msgstr "Iš naujo indeksuokite visus originalus, įskaitant jau indeksuotus ir nepakeistus failus."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -2067,7 +1939,7 @@ msgstr "atpažįsta veidus, kad būtų galima rasti konkrečius žmones."
 msgid "Red"
 msgstr "Raudona"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1930
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1920
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -2097,12 +1969,8 @@ msgid "Remove from album"
 msgstr "Pašalinti iš albumo"
 
 #: src/page/library/import.vue:121
-msgid ""
-"Remove imported files to save storage. Unsupported file types will never be "
-"deleted, they remain in their current location."
-msgstr ""
-"Pašalinkite importuotus failus, kad sutaupytumėte saugyklą. Nepalaikomi "
-"failų tipai niekada nebus ištrinti, jie liks savo dabartinėje vietoje."
+msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgstr "Pašalinkite importuotus failus, kad sutaupytumėte saugyklą. Nepalaikomi failų tipai niekada nebus ištrinti, jie liks savo dabartinėje vietoje."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2152,7 +2020,7 @@ msgid "Scans"
 msgstr "Skenuoja"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:538 src/component/navigation.vue:4
+#: src/component/navigation.vue:534 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2213,10 +2081,10 @@ msgid "Services"
 msgstr "Paslaugos URL"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:413
-#: src/component/navigation.vue:423 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:401
+#: src/component/navigation.vue:411 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1557 src/component/navigation.vue:1963
+#: src/component/navigation.vue:1517 src/component/navigation.vue:1953
 msgid "Settings"
 msgstr "Nustatymai"
 
@@ -2313,17 +2181,11 @@ msgstr "Stack"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Sukaupti failus, turinčius tą patį unikalų atvaizdo arba egzemplioriaus "
-"identifikatorių."
+msgstr "Sukaupti failus, turinčius tą patį unikalų atvaizdo arba egzemplioriaus identifikatorių."
 
 #: src/page/settings/library.vue:172
-msgid ""
-"Stack pictures taken at the exact same time and location based on their "
-"metadata."
-msgstr ""
-"Sudėkite nuotraukas, padarytas tuo pačiu laiku ir toje pačioje vietoje, "
-"remdamiesi jų metaduomenimis."
+msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgstr "Sudėkite nuotraukas, padarytas tuo pačiu laiku ir toje pačioje vietoje, remdamiesi jų metaduomenimis."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2334,12 +2196,8 @@ msgid "Stacks"
 msgstr "Komodos"
 
 #: src/page/settings/library.vue:138
-msgid ""
-"Stacks group files with a similar frame of reference, but differences of "
-"quality, format, size or color."
-msgstr ""
-"Į krūvas grupuojami failai, turintys panašų pagrindą, tačiau besiskiriantys "
-"kokybe, formatu, dydžiu ar spalva."
+msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+msgstr "Į krūvas grupuojami failai, turintys panašų pagrindą, tačiau besiskiriantys kokybe, formatu, dydžiu ar spalva."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2374,16 +2232,13 @@ msgstr "Gatvės"
 msgid "Subject"
 msgstr "Tema"
 
-#: src/page/connect.vue:51
+#: src/page/connect.vue:51 src/page/connect.vue:48
 msgid "Successfully Connected"
 msgstr "Sėkmingai prijungtas"
 
 #: src/dialog/service/add.vue:29
-msgid ""
-"Support for additional services, like Google Drive, will be added over time."
-msgstr ""
-"Papildomų paslaugų, pavyzdžiui, \"Google Drive\", palaikymas bus pridėtas "
-"laikui bėgant."
+msgid "Support for additional services, like Google Drive, will be added over time."
+msgstr "Papildomų paslaugų, pavyzdžiui, \"Google Drive\", palaikymas bus pridėtas laikui bėgant."
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2415,12 +2270,8 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "Šiuo metu rodyklėje yra %{n} paslėptų failų."
 
 #: src/page/library/index.vue:37
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet "
-"or there are duplicates."
-msgstr ""
-"Jų formatas gali būti nepalaikomas, jos dar nebuvo konvertuotos į JPEG arba "
-"yra dublikatų."
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Jų formatas gali būti nepalaikomas, jos dar nebuvo konvertuotos į JPEG arba yra dublikatų."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2428,23 +2279,13 @@ msgstr "Tema"
 
 #: src/page/settings/services.vue:40
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr ""
-"Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite "
-"atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono "
-"taip, tarsi jie būtų vietiniai."
+msgstr "Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono taip, tarsi jie būtų vietiniai."
 
 #: src/dialog/webdav.vue:26
-msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files from your computer or smartphone as if they were "
-"local."
-msgstr ""
-"Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite "
-"atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono "
-"taip, tarsi jie būtų vietiniai."
+msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgstr "Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono taip, tarsi jie būtų vietiniai."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2485,13 +2326,9 @@ msgstr "Per ilga antraštė"
 msgid "Title too long"
 msgstr "Per ilga antraštė"
 
-#: src/page/connect.vue:59 src/page/connect.vue:78
-msgid ""
-"To upgrade, you may either enter an activation code or click on \"Proceed\" "
-"to sign up on our website:"
-msgstr ""
-"Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Tęsti\" "
-"ir užsiregistruoti mūsų svetainėje:"
+#: src/page/connect.vue:59 src/page/connect.vue:66
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Tęsti\" ir užsiregistruoti mūsų svetainėje:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2536,16 +2373,17 @@ msgstr "Unikalus ID"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:697 src/model/photo.js:718
 #: src/model/photo.js:741 src/model/photo.js:759 src/model/photo.js:849
-#: src/model/photo.js:862 src/options/options.js:20 src/options/options.js:34
-#: src/options/options.js:51 src/options/options.js:65
-#: src/options/options.js:77 src/page/library/errors.vue:173
-#: src/page/library/errors.vue:180 src/page/library/logs.vue:18
+#: src/model/photo.js:862 src/model/user.js:124 src/options/options.js:20
+#: src/options/options.js:34 src/options/options.js:51
+#: src/options/options.js:65 src/options/options.js:77
+#: src/page/library/errors.vue:173 src/page/library/errors.vue:180
+#: src/page/library/logs.vue:18
 msgid "Unknown"
 msgstr "Nežinomas"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:82 src/model/user.js:130
-#: src/page/settings/account.vue:35 src/page/settings/account.vue:43
+#: src/component/navigation.vue:82 src/page/settings/account.vue:35
+#: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Neregistruotas"
 
@@ -2586,17 +2424,17 @@ msgstr "Peržiūrų atnaujinimas"
 msgid "Updating stacks"
 msgstr "Kaminų atnaujinimas"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:400
-#: src/component/navigation.vue:580 src/component/navigation.vue:1513
+#: src/page/connect.vue:17 src/component/navigation.vue:444
+#: src/component/navigation.vue:576 src/component/navigation.vue:51
 msgid "Upgrade"
 msgstr "Atnaujinti"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
-#: src/page/connect.vue:59
+#: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "Atnaujinti dabar"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1981
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1971
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:230
@@ -2638,8 +2476,7 @@ msgstr "Perkrovimas…"
 
 #: src/dialog/upload.vue:48
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Siunčiami vaizdai, kuriuose gali būti tokių vaizdų, bus automatiškai atmesti."
+msgstr "Siunčiami vaizdai, kuriuose gali būti tokių vaizdų, bus automatiškai atmesti."
 
 #: src/dialog/share.vue:157
 msgid "URL"
@@ -2649,11 +2486,11 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Naudokite išankstinius nustatymus"
 
-#: src/model/user.js:211
+#: src/model/user.js:205
 msgid "User"
 msgstr "Vartotojas"
 
-#: src/component/navigation.vue:585 src/page/about/about.vue:42
+#: src/component/navigation.vue:581 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "Naudotojo vadovas"
 
@@ -2670,7 +2507,7 @@ msgstr "Vartotojo vardas"
 msgid "Vanta"
 msgstr "Vanta"
 
-#: src/page/connect.vue:11
+#: src/page/connect.vue:11 src/page/connect.vue:8
 msgid "Verified"
 msgstr "Patikrinta"
 
@@ -2698,25 +2535,17 @@ msgid "View"
 msgstr "Peržiūrėti"
 
 #: src/page/about/about.vue:44
-msgid ""
-"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
-"share your pictures."
-msgstr ""
-"Apsilankykite docs.photoprism.app/user-guide ir sužinokite, kaip "
-"sinchronizuoti, tvarkyti ir bendrinti nuotraukas."
+msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgstr "Apsilankykite docs.photoprism.app/user-guide ir sužinokite, kaip sinchronizuoti, tvarkyti ir bendrinti nuotraukas."
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:27
 msgid "Visual Similarity"
 msgstr "Grupuokite pagal panašumą"
 
-#: src/page/connect.vue:114
-msgid ""
-"Voluntary donations do not cover the cost of a team working full time to "
-"provide you with updates, documentation, and support."
-msgstr ""
-"Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri "
-"teikia jums atnaujinimus, dokumentus ir pagalbą, išlaidų."
+#: src/page/connect.vue:102
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr "Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri teikia jums atnaujinimus, dokumentus ir pagalbą, išlaidų."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2727,26 +2556,18 @@ msgid "We do our best to respond within five business days or less."
 msgstr "Stengiamės atsakyti per penkias darbo dienas ar greičiau."
 
 #: src/page/about/about.vue:71
-msgid ""
-"We'll do our best to answer all your questions. In return, we ask you to "
-"back us on Patreon or GitHub Sponsors."
-msgstr ""
-"Stengsimės atsakyti į visus jūsų klausimus. Mainais prašome paremti mus "
-"\"Patreon\" arba \"GitHub\" rėmėjų sąskaita."
+msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+msgstr "Stengsimės atsakyti į visus jūsų klausimus. Mainais prašome paremti mus \"Patreon\" arba \"GitHub\" rėmėjų sąskaita."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr ""
-"WebDAV klientai gali prisijungti prie \"PhotoPrism\" naudodami šį URL adresą:"
+msgstr "WebDAV klientai gali prisijungti prie \"PhotoPrism\" naudodami šį URL adresą:"
 
 #: src/page/settings/services.vue:37
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
-"connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr ""
-"WebDAV klientai, pavyzdžiui, \"Microsoft\" \"Windows Explorer\" arba "
-"\"Apple\" \"Finder\", gali tiesiogiai prisijungti prie \"PhotoPrism\"."
+msgstr "WebDAV klientai, pavyzdžiui, \"Microsoft\" \"Windows Explorer\" arba \"Apple\" \"Finder\", gali tiesiogiai prisijungti prie \"PhotoPrism\"."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2757,7 +2578,7 @@ msgstr "WebDAV įkėlimas"
 msgid "Website"
 msgstr "Svetainė"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:106
 msgid "What functionality is generally available?"
 msgstr "Kokios funkcijos paprastai yra prieinamos?"
 
@@ -2765,7 +2586,7 @@ msgstr "Kokios funkcijos paprastai yra prieinamos?"
 msgid "White"
 msgstr "Balta"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:98
 msgid "Why are some features only available to sponsors?"
 msgstr "Kodėl kai kurios funkcijos prieinamos tik rėmėjams?"
 
@@ -2821,69 +2642,37 @@ msgstr "Galite pasirinkti tik vieną elementą"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr ""
-"Norėdami rasti papildomų veidų, galite iš naujo nuskaityti savo biblioteką."
+msgstr "Norėdami rasti papildomų veidų, galite iš naujo nuskaityti savo biblioteką."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-#: src/page/connect.vue:71
-msgid ""
-"Your continued support helps us provide regular updates and remain "
-"independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Jūsų nuolatinė parama padeda mums reguliariai teikti atnaujinimus ir tokias "
-"paslaugas kaip pasaulio žemėlapiai."
+msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgstr "Jūsų nuolatinė parama padeda mums reguliariai teikti atnaujinimus ir tokias paslaugas kaip pasaulio žemėlapiai."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
-msgid ""
-"Your library is continuously analyzed to automatically create albums of "
-"special moments, trips, and places."
-msgstr ""
-"Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai kurti "
-"ypatingų akimirkų, kelionių ir vietų albumus."
+msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai kurti ypatingų akimirkų, kelionių ir vietų albumus."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
 
-#~ msgid ""
-#~ "Our team decides this on an ongoing basis depending on the support effort "
-#~ "required, server and licensing costs, and whether the features are "
-#~ "generally needed by everyone or mainly requested by organizations and "
-#~ "advanced users. As this allows us to make more features available to the "
-#~ "public, we encourage all users to support our mission."
-#~ msgstr ""
-#~ "Mūsų komanda tai nuolat vertina, atsižvelgdama į tai, kiek palaikymo "
-#~ "pastangų reikalauja funkcijos, kiek jos mums kainuoja ir ar jos apskritai "
-#~ "reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę "
-#~ "naudotojai. Kadangi tai leidžia mums teikti daugiau funkcijų visuomenei, "
-#~ "raginame visus naudotojus remti mūsų misiją."
+#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgstr "Tapkite rėmėju šiandien, paremkite mūsų misiją ir naudokitės mūsų nariams teikiamomis privilegijomis!"
 
-#~ msgid ""
-#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
-#~ "of a team working full time to provide you with updates, documentation, "
-#~ "and support. It is your decision whether you want to sign up to enjoy "
-#~ "additional benefits."
-#~ msgstr ""
-#~ "\"PhotoPrism\" yra 100 % finansuojama savo lėšomis. Savanoriškos aukos "
-#~ "nepadengia visą darbo dieną dirbančios komandos, kuri teikia jums "
-#~ "atnaujinimus, dokumentaciją ir palaikymą, išlaidų. Jūs patys sprendžiate, "
-#~ "ar norite užsiregistruoti, kad galėtumėte naudotis papildomais "
-#~ "privalumais."
+#~ msgid "Membership"
+#~ msgstr "Narystė"
+
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Mūsų komanda tai nuolat vertina, atsižvelgdama į tai, kiek palaikymo pastangų reikalauja funkcijos, kiek jos mums kainuoja ir ar jos apskritai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai. Kadangi tai leidžia mums teikti daugiau funkcijų visuomenei, raginame visus naudotojus remti mūsų misiją."
+
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "\"PhotoPrism\" yra 100 % finansuojama savo lėšomis. Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri teikia jums atnaujinimus, dokumentaciją ir palaikymą, išlaidų. Jūs patys sprendžiate, ar norite užsiregistruoti, kad galėtumėte naudotis papildomais privalumais."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "Argi nemokama programinė įranga neturėtų būti nemokama?"
 
-#~ msgid ""
-#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
-#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
-#~ "the French or Spanish word for “free” as in freedom, to show they do not "
-#~ "mean the software is gratis."
-#~ msgstr ""
-#~ "Galvokite apie \"laisvą programinę įrangą\" kaip apie \"laisvą žodį\", o "
-#~ "ne kaip apie \"laisvą alų\". Laisvosios programinės įrangos fondas "
-#~ "kartais ją vadina \"laisvąja programine įranga\", pasiskolindamas "
-#~ "prancūzišką ar ispanišką žodį \"free\" (laisvė), kad parodytų, jog tai "
-#~ "nereiškia, kad programinė įranga yra nemokama."
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Galvokite apie \"laisvą programinę įrangą\" kaip apie \"laisvą žodį\", o ne kaip apie \"laisvą alų\". Laisvosios programinės įrangos fondas kartais ją vadina \"laisvąja programine įranga\", pasiskolindamas prancūzišką ar ispanišką žodį \"free\" (laisvė), kad parodytų, jog tai nereiškia, kad programinė įranga yra nemokama."
 
 #~ msgid "Moonlight"
 #~ msgstr "Mėnulio šviesa"
@@ -2897,19 +2686,11 @@ msgstr "Priartinimas / atitolinimas"
 #~ msgid "Sign Up"
 #~ msgstr "Užsiregistruoti"
 
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
-#~ msgstr ""
-#~ "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti "
-#~ "\"Užsiregistruoti\" ir atnaujinti mūsų svetainėje:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+#~ msgstr "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Užsiregistruoti\" ir atnaujinti mūsų svetainėje:"
 
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
-#~ "Now\" to sign up on our website:"
-#~ msgstr ""
-#~ "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti "
-#~ "\"Užsiregistruoti\" ir atnaujinti mūsų svetainėje:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Užsiregistruoti\" ir atnaujinti mūsų svetainėje:"
 
 #~ msgid "Sign up"
 #~ msgstr "Užsiregistruoti"
@@ -2917,25 +2698,11 @@ msgstr "Priartinimas / atitolinimas"
 #~ msgid "Compare Features"
 #~ msgstr "Palyginti funkcijas"
 
-#~ msgid ""
-#~ "Our team evaluates this on an ongoing basis, depending on the support "
-#~ "effort features and config options cause or have caused in the past, and "
-#~ "whether they are generally needed by everyone or mainly requested by "
-#~ "organizations and advanced users. As this allows us to make more features "
-#~ "available to the public, we encourage all users to support our mission."
-#~ msgstr ""
-#~ "Mūsų komanda tai nuolat vertina, atsižvelgdama į tai, kiek palaikymo "
-#~ "pastangų funkcijos ir konfigūravimo parinktys reikalauja ar anksčiau "
-#~ "reikalavo ir ar jos apskritai reikalingos visiems, ar daugiausia jų prašo "
-#~ "organizacijos ir pažengę naudotojai. Kadangi tai leidžia mums suteikti "
-#~ "daugiau funkcijų visuomenei, raginame visus naudotojus remti mūsų misiją."
+#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Mūsų komanda tai nuolat vertina, atsižvelgdama į tai, kiek palaikymo pastangų funkcijos ir konfigūravimo parinktys reikalauja ar anksčiau reikalavo ir ar jos apskritai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai. Kadangi tai leidžia mums suteikti daugiau funkcijų visuomenei, raginame visus naudotojus remti mūsų misiją."
 
-#~ msgid ""
-#~ "Also, please leave a star on GitHub if you like this project. It provides "
-#~ "additional motivation to keep going."
-#~ msgstr ""
-#~ "Taip pat prašome palikti žvaigždutę \"GitHub\", jei jums patinka šis "
-#~ "projektas. Tai suteikia papildomos motyvacijos tęsti darbą."
+#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+#~ msgstr "Taip pat prašome palikti žvaigždutę \"GitHub\", jei jums patinka šis projektas. Tai suteikia papildomos motyvacijos tęsti darbą."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Tapkite rėmėju"
@@ -2943,34 +2710,17 @@ msgstr "Priartinimas / atitolinimas"
 #~ msgid "I'm a sponsor"
 #~ msgstr "Esu rėmėjas"
 
-#~ msgid ""
-#~ "Sponsors get access to additional features, receive direct technical "
-#~ "support via email, and can join our private chat room on matrix.org."
-#~ msgstr ""
-#~ "Rėmėjams suteikiama prieiga prie papildomų funkcijų, jie gauna tiesioginę "
-#~ "techninę pagalbą el. paštu ir gali prisijungti prie mūsų privataus "
-#~ "pokalbių kambario matrix.org svetainėje."
+#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
+#~ msgstr "Rėmėjams suteikiama prieiga prie papildomų funkcijų, jie gauna tiesioginę techninę pagalbą el. paštu ir gali prisijungti prie mūsų privataus pokalbių kambario matrix.org svetainėje."
 
-#~ msgid ""
-#~ "This currently is a sponsor feature to thank everyone who supports the "
-#~ "development of this application."
-#~ msgstr ""
-#~ "Šiuo metu tai yra rėmėjų funkcija, kuria norima padėkoti visiems, kurie "
-#~ "remia šios programos kūrimą."
+#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#~ msgstr "Šiuo metu tai yra rėmėjų funkcija, kuria norima padėkoti visiems, kurie remia šios programos kūrimą."
 
-#~ msgid ""
-#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
-#~ "Sponsors."
-#~ msgstr ""
-#~ "Kai užsiregistruosite \"Patreon\" arba \"GitHub\" rėmėjų svetainėje, "
-#~ "sužinosite, kaip ją įjungti."
+#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+#~ msgstr "Kai užsiregistruosite \"Patreon\" arba \"GitHub\" rėmėjų svetainėje, sužinosite, kaip ją įjungti."
 
-#~ msgid ""
-#~ "Your continued support helps us provide regular updates and services like "
-#~ "world maps."
-#~ msgstr ""
-#~ "Jūsų nuolatinė parama padeda mums reguliariai teikti atnaujinimus ir "
-#~ "tokias paslaugas kaip pasaulio žemėlapiai."
+#~ msgid "Your continued support helps us provide regular updates and services like world maps."
+#~ msgstr "Jūsų nuolatinė parama padeda mums reguliariai teikti atnaujinimus ir tokias paslaugas kaip pasaulio žemėlapiai."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -3037,19 +2787,11 @@ msgstr "Priartinimas / atitolinimas"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Nesėkmė importuojant įkeltus failus"
 
-#~ msgid ""
-#~ "Note: Updating the password will not revoke access from already "
-#~ "authenticated users."
-#~ msgstr ""
-#~ "Pastaba: Atnaujinus slaptažodį, jau autentifikuotiems naudotojams prieiga "
-#~ "nebus panaikinta."
+#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgstr "Pastaba: Atnaujinus slaptažodį, jau autentifikuotiems naudotojams prieiga nebus panaikinta."
 
-#~ msgid ""
-#~ "Our mission is to provide the most user- and privacy-friendly solution to "
-#~ "keep your pictures organized and accessible."
-#~ msgstr ""
-#~ "Mūsų misija - pateikti vartotojui patogiausią ir privatumą užtikrinantį "
-#~ "sprendimą, kad nuotraukos būtų tvarkingos ir prieinamos."
+#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+#~ msgstr "Mūsų misija - pateikti vartotojui patogiausią ir privatumą užtikrinantį sprendimą, kad nuotraukos būtų tvarkingos ir prieinamos."
 
 #~ msgid "Play"
 #~ msgstr "Žaisti"
@@ -3063,12 +2805,8 @@ msgstr "Priartinimas / atitolinimas"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Rodyti biblioteką naršymo meniu."
 
-#~ msgid ""
-#~ "The roadmap shows what tasks are in progress, what needs testing, and "
-#~ "which feature requests are going to be implemented next."
-#~ msgstr ""
-#~ "Veiklos planas rodo, kokios užduotys yra vykdomos, ką reikia išbandyti ir "
-#~ "kokios funkcijos bus įgyvendintos vėliau."
+#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
+#~ msgstr "Veiklos planas rodo, kokios užduotys yra vykdomos, ką reikia išbandyti ir kokios funkcijos bus įgyvendintos vėliau."
 
 #~ msgid "to"
 #~ msgstr "į"
