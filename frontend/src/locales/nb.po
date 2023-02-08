@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-17 16:36+0000\n"
+"PO-Revision-Date: 2023-02-08 13:37+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
+"photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:479
@@ -91,7 +92,7 @@ msgstr "Aktiver"
 
 #: src/page/connect.vue:292 src/page/connect.vue:360
 msgid "Activation Code"
-msgstr "Aktiviseringskode"
+msgstr "Aktiveringskode"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -339,7 +340,7 @@ msgstr "Før du sender inn en støtteforespørsel, vennligst bruk våre feilsøk
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Ved å være 100 % selvfinansiert og uavhengig, kan vi love deg at vi aldri vil selge dataene dine og at vi alltid vil være transparente om programvaren og tjenestene våre."
+msgstr "Ved å være 100% selvfinansiert og uavhengig, kan vi love deg at vi aldri vil selge dataene dine og at vi alltid vil være gjennomsiktige om programvaren og tjenestene våre."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -348,7 +349,7 @@ msgstr "Info"
 
 #: src/page/settings/account.vue:67
 msgid "Birth Date"
-msgstr "Bursdag"
+msgstr "Fødselsdato"
 
 #: src/options/options.js:407
 msgid "Black"
@@ -388,7 +389,7 @@ msgstr "Opptatt, vennligst vent…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Ved å bruke programvaren og tjenestene vi tilbyr, godtar du våre vilkår for bruk, personvernerklæring og atferdskodeks."
+msgstr "Ved å bruke programvaren og tjenestene vi tilbyr, godtar du våre vilkår for bruk, personvernerklæring og etiske retningslinjer."
 
 #: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
@@ -431,7 +432,7 @@ msgstr "Avbryt"
 
 #: src/options/themes.js:463
 msgid "Carbon"
-msgstr "Carbon"
+msgstr "Karbon"
 
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
@@ -444,11 +445,11 @@ msgstr "Kategori"
 
 #: src/page/settings/account.vue:253 src/page/settings/account.vue:252
 msgid "Change Avatar"
-msgstr "Endre private flagg"
+msgstr "Endre profilbilde"
 
 #: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
 msgid "Change Password"
-msgstr "Nytt Passord"
+msgstr "Bytt Passord"
 
 #: src/page/settings/general.vue:473
 msgid "Change personal profile and security settings."
@@ -777,7 +778,7 @@ msgstr "Nedskalerer Filter"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "På grunn av det store antallet e-poster vi mottar, kan det hende at teamet vårt ikke kan komme tilbake til deg umiddelbart."
+msgstr "På grunn av det store antallet e-poster vi mottar, kan det hende at teamet vårt ikke kan svare deg umiddelbart."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -929,7 +930,7 @@ msgstr "Funksjonsforespørsel"
 
 #: src/page/settings/account.vue:818 src/page/settings/account.vue:671
 msgid "Feed"
-msgstr "Tilbakemelding"
+msgstr "Feed"
 
 #: src/component/navigation.vue:428 src/component/navigation.vue:35
 msgid "Feedback"
@@ -1011,7 +1012,7 @@ msgstr "Rammer"
 
 #: src/page/connect.vue:95
 msgid "Frequently Asked Questions"
-msgstr "ofte stilte spørsmål"
+msgstr "Ofte stilte spørsmål"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1203,7 +1204,7 @@ msgstr "Ugyldig dato"
 
 #: src/page/connect.vue:68 src/page/connect.vue:74
 msgid "Invalid parameters"
-msgstr "Ugyldig dato"
+msgstr "Ugyldige verdier"
 
 #: src/dialog/photo/edit.vue:119
 msgid "Invalid photo selected"
@@ -1281,7 +1282,7 @@ msgstr "Lavendel"
 #: src/page/about/about.vue:52 src/page/about/about.vue:161
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
-msgstr "Lære mer"
+msgstr "Lær mer"
 
 #: src/component/navigation.vue:585
 msgid "Legal Information"
@@ -1713,7 +1714,7 @@ msgstr "Teamet vårt avgjør dette fortløpende, avhengig av støtteinnsatsen so
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Brukerveiledningen vår dekker også mange avanserte emner, for eksempel migrering fra Google Foto og innstillinger for miniatyrbildekvalitet."
+msgstr "Brukerveiledningen vår dekker mange avanserte emner, for eksempel migrering fra Google Foto og innstillinger for miniatyrbildekvalitet."
 
 #: src/options/options.js:290
 msgid "Outdoor"
@@ -1776,8 +1777,9 @@ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism® er en AI-drevet fotoapp for det desentraliserte nettet."
 
 #: src/page/connect.vue:14
+#, fuzzy
 msgid "PhotoPrism+ Membership"
-msgstr ""
+msgstr "PhotoPrism+-medlemskap"
 
 #: src/app/routes.js:142
 msgid "Photos"
@@ -1858,7 +1860,7 @@ msgstr "Privat"
 
 #: src/page/connect.vue:68 src/page/connect.vue:75
 msgid "Proceed"
-msgstr "Fortsette"
+msgstr "Fortsett"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:412
 msgid "Product Feedback"
@@ -1906,7 +1908,7 @@ msgstr "Indekser alle originaler på nytt, inkludert allerede indekserte og uend
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
-msgstr "Les dokumentene"
+msgstr "Les dokumentasjonen"
 
 #: src/page/settings/advanced.vue:96
 msgid "Read-Only Mode"
@@ -2078,7 +2080,7 @@ msgstr "Tjeneste-URL"
 
 #: src/page/settings.vue:72 src/page/settings/general.vue:384
 msgid "Services"
-msgstr "Tjeneste-URL"
+msgstr "Tjenester"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
 #: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:401
@@ -2234,7 +2236,7 @@ msgstr "Emne"
 
 #: src/page/connect.vue:51 src/page/connect.vue:48
 msgid "Successfully Connected"
-msgstr "Vellykket tilkoblet"
+msgstr "Tilkobing vellykket"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2242,7 +2244,7 @@ msgstr "Støtte for tilleggstjenester som Google Drive vil bli lagt til over tid
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
-msgstr "Støtt vår misjon"
+msgstr "Støtt oppdraget vårt"
 
 #: src/page/settings/services.vue:28
 msgid "Sync"
@@ -2427,7 +2429,7 @@ msgstr "Oppdaterer stabler"
 #: src/page/connect.vue:17 src/component/navigation.vue:444
 #: src/component/navigation.vue:576 src/component/navigation.vue:51
 msgid "Upgrade"
-msgstr "Oppgradering"
+msgstr "Oppgrader"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
 #: src/page/connect.vue:56
@@ -2492,7 +2494,7 @@ msgstr "Bruker"
 
 #: src/component/navigation.vue:581 src/page/about/about.vue:42
 msgid "User Guide"
-msgstr "Brukerhåndboken"
+msgstr "Brukerhåndbok"
 
 #: src/page/settings/general.vue:6
 msgid "User Interface"
@@ -2657,7 +2659,7 @@ msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-#~ msgstr "Bli sponsor i dag, støtt oppdraget vårt og nyt medlemsfordelene våre!"
+#~ msgstr "Bli en sponsor i dag, støtt oppdraget vårt og nyt medlemsfordelene våre!"
 
 #~ msgid "Membership"
 #~ msgstr "Medlemskap"

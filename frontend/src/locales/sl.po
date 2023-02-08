@@ -2,13 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-01-17 16:36+0000\n"
+"PO-Revision-Date: 2023-02-08 13:38+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 4.15\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
+"X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:479
@@ -1773,8 +1774,9 @@ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism® je aplikacija za fotografije z umetno inteligenco za decentralizirani splet."
 
 #: src/page/connect.vue:14
+#, fuzzy
 msgid "PhotoPrism+ Membership"
-msgstr ""
+msgstr "Članstvo PhotoPrism+"
 
 #: src/app/routes.js:142
 msgid "Photos"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-17 16:36+0000\n"
+"PO-Revision-Date: 2023-02-08 13:37+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:479
@@ -103,7 +103,7 @@ msgstr "เพิ่มอัลบั้ม"
 
 #: src/page/settings/general.vue:231
 msgid "Add files to your library via Web Upload."
-msgstr "เพิ่มไฟล์ผ่านการอัปโหลด"
+msgstr "เพิ่มไฟล์ไปยังคลังผ่านการอัปโหลดเว็บ"
 
 #: src/dialog/share.vue:79
 msgid "Add Link"
@@ -1776,8 +1776,9 @@ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism® คือแอปรูปภาพที่ขับเคลื่อนโดย AI สำหรับเว็บแบบกระจายอำนาจ"
 
 #: src/page/connect.vue:14
+#, fuzzy
 msgid "PhotoPrism+ Membership"
-msgstr ""
+msgstr "PhotoPrism+ การเป็นสมาชิก"
 
 #: src/app/routes.js:142
 msgid "Photos"
@@ -2642,7 +2643,7 @@ msgstr "เลือกได้เพียงรายการเดียว
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr "คุณสามารถสแกนห้องสมุดของคุณเพื่อค้นหาใบหน้าเพิ่มเติม"
+msgstr "คุณสามารถสแกนคลังของคุณเพื่อค้นหาใบหน้าเพิ่มเติม"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
@@ -2650,7 +2651,7 @@ msgstr "การสนับสนุนอย่างต่อเนื่อ
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "ห้องสมุดของคุณได้รับการวิเคราะห์อย่างต่อเนื่องเพื่อสร้างอัลบั้มของช่วงเวลาพิเศษ การเดินทาง และสถานที่พิเศษ"
+msgstr "คลังของคุณได้รับการวิเคราะห์อย่างต่อเนื่องเพื่อสร้างอัลบั้มของช่วงเวลา การเดินทาง และสถานที่พิเศษโดยอัตโนมัติ"
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"

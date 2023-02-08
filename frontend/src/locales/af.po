@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-02-02 11:11+0000\n"
+"PO-Revision-Date: 2023-02-08 13:38+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1773,8 +1773,9 @@ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism® is 'n AI-aangedrewe foto's-app vir die gedesentraliseerde web."
 
 #: src/page/connect.vue:14
+#, fuzzy
 msgid "PhotoPrism+ Membership"
-msgstr ""
+msgstr "PhotoPrism+ Lidmaatskap"
 
 #: src/app/routes.js:142
 msgid "Photos"
