@@ -94,7 +94,7 @@ describe("model/album", () => {
     };
     const album = new Album(values);
     const result = album.getCreatedString();
-    assert.equal(result, "Jul 8, 2012, 2:45 PM");
+    assert.equal(result.replaceAll("\u202f", " "), "Jul 8, 2012, 2:45 PM");
   });
 
   it("should get album date string with invalid day", () => {

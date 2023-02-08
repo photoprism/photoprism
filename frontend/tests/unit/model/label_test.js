@@ -90,7 +90,7 @@ describe("model/label", () => {
     };
     const label = new Label(values);
     const result = label.getDateString();
-    assert.equal(result, "Jul 8, 2012, 2:45 PM");
+    assert.equal(result.replaceAll("\u202f", " "), "Jul 8, 2012, 2:45 PM");
   });
 
   it("should get model name", () => {
