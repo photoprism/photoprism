@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auto"
 	"github.com/photoprism/photoprism/internal/config"
+	internal_webdav "github.com/photoprism/photoprism/internal/server/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -26,7 +27,7 @@ func registerWebDAVRoutes(router *gin.Engine, conf *config.Config) {
 		WebDAV(conf.OriginalsPath(), router.Group(conf.BaseUri(WebDAVOriginals), BasicAuth()), conf)
 		log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVOriginals))
 
-		if conf.ImportPath() != "" {
+		if conf.ImportPath() != "" && !conf.ReadOnly() {
 			WebDAV(conf.ImportPath(), router.Group(conf.BaseUri(WebDAVImport), BasicAuth()), conf)
 			log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVImport))
 		}
@@ -49,8 +50,13 @@ func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
 		return
 	}
 
-	// Native file system restricted to a specific directory.
-	fileSystem := webdav.Dir(filePath)
+	var fileSystem webdav.FileSystem
+	if conf.ReadOnly() {
+		fileSystem = internal_webdav.ReadOnlyDir(filePath)
+	} else {
+		// Native file system restricted to a specific directory.
+		fileSystem = webdav.Dir(filePath)
+	}
 
 	// Request logger function.
 	loggerFunc := func(r *http.Request, err error) {

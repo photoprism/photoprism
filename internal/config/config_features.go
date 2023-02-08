@@ -4,7 +4,7 @@ var Sponsor = Env(EnvDemo, EnvSponsor, EnvTest)
 
 // DisableWebDAV checks if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
-	if c.Public() || c.ReadOnly() || c.Demo() {
+	if c.Public() || c.Demo() {
 		return true
 	}
 
