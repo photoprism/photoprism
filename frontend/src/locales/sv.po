@@ -149,8 +149,12 @@ msgid "After one year"
 msgstr "Efter ett år"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "När du har valt bilder från sökresultaten kan du lägga till dem i ett album med hjälp av kontextmenyn."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"När du har valt bilder från sökresultaten kan du lägga till dem i ett album "
+"med hjälp av kontextmenyn."
 
 #: src/options/options.js:387
 msgid "After two months"
@@ -233,8 +237,11 @@ msgid "All Years"
 msgstr "Alla år"
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternativt kan du ladda upp filer direkt till WebDAV-servrar som Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Alternativt kan du ladda upp filer direkt till WebDAV-servrar som Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -261,7 +268,8 @@ msgstr "Animering"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Alla privata foton och videor förblir privata och kommer inte att delas."
+msgstr ""
+"Alla privata foton och videor förblir privata och kommer inte att delas."
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -319,28 +327,46 @@ msgid "Artist"
 msgstr "Fotograf"
 
 #: src/page/connect.vue:110
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "Eftersom detta hjälper oss att tillhandahålla fler funktioner till allmänheten, uppmanar vi alla användare att stödja vårt uppdrag."
+msgid ""
+"As this helps us provide more features to the public, we encourage all users "
+"to support our mission."
+msgstr ""
+"Eftersom detta hjälper oss att tillhandahålla fler funktioner till "
+"allmänheten, uppmanar vi alla användare att stödja vårt uppdrag."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Bildförhållande"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Skapa automatiskt JPEG-filer för andra filtyper så att de kan visas i en webbläsare."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"Skapa automatiskt JPEG-filer för andra filtyper så att de kan visas i en "
+"webbläsare."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Skapa automatiskt album med speciella ögonblick, resor och platser."
 
 #: src/page/about/about.vue:59
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Innan du skickar in en supportbegäran kan du använda våra checklistor för felsökning för att fastställa orsaken till ditt problem."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Innan du skickar in en supportbegäran kan du använda våra checklistor för "
+"felsökning för att fastställa orsaken till ditt problem."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Eftersom vi är 100 % självfinansierade och oberoende kan vi lova dig att vi aldrig kommer att sälja dina uppgifter och att vi alltid kommer att vara transparenta när det gäller vår programvara och våra tjänster."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"Eftersom vi är 100 % självfinansierade och oberoende kan vi lova dig att vi "
+"aldrig kommer att sälja dina uppgifter och att vi alltid kommer att vara "
+"transparenta när det gäller vår programvara och våra tjänster."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -376,8 +402,12 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Bläddra bland indexerade filer och mappar i biblioteket."
 
 #: src/page/about/about.vue:51
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "I kunskapsbasen hittar du detaljerad information om specifika produktfunktioner, tjänster och relaterade resurser."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
+msgstr ""
+"I kunskapsbasen hittar du detaljerad information om specifika "
+"produktfunktioner, tjänster och relaterade resurser."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:414
 msgid "Bug Report"
@@ -388,8 +418,12 @@ msgid "Busy, please wait…"
 msgstr "Upptagen, vänligen vänta…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Genom att använda den programvara och de tjänster som vi tillhandahåller godkänner du våra användarvillkor, vår sekretesspolicy och vår uppförandekod."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"Genom att använda den programvara och de tjänster som vi tillhandahåller "
+"godkänner du våra användarvillkor, vår sekretesspolicy och vår uppförandekod."
 
 #: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
@@ -499,8 +533,12 @@ msgid "Colors"
 msgstr "Färger"
 
 #: src/page/about/about.vue:46
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Vanliga problem kan snabbt diagnostiseras och lösas med hjälp av de checklistor för felsökning som vi tillhandahåller."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
+msgstr ""
+"Vanliga problem kan snabbt diagnostiseras och lösas med hjälp av de "
+"checklistor för felsökning som vi tillhandahåller."
 
 #: src/page/connect.vue:65 src/page/connect.vue:72
 msgid "Compare Editions"
@@ -716,7 +754,8 @@ msgstr "Skapa inte ExifTool JSON-filer för bättre utvinning av metadata."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Ändra inte mappen med original. Inaktiverar import, uppladdning och radering."
+msgstr ""
+"Ändra inte mappen med original. Inaktiverar import, uppladdning och radering."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
@@ -777,8 +816,12 @@ msgid "Downscaling Filter"
 msgstr "Filter för nedskalning"
 
 #: src/page/about/feedback.vue:16
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "På grund av den stora mängden e-post som vi får kan det hända att vårt team inte kan svara dig omedelbart."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"På grund av den stora mängden e-post som vi får kan det hända att vårt team "
+"inte kan svara dig omedelbart."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -793,8 +836,12 @@ msgid "Dynamic Previews"
 msgstr "Dynamiska förhandsgranskningar"
 
 #: src/page/settings/advanced.vue:303
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dynamisk rendering kräver en kraftfull server. Den rekommenderas inte för NAS-enheter."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"Dynamisk rendering kräver en kraftfull server. Den rekommenderas inte för "
+"NAS-enheter."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -856,8 +903,12 @@ msgid "Every two days"
 msgstr "Varannan dag"
 
 #: src/page/settings/general.vue:209
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Undanta innehåll som markerats som privat från sökresultat, delade album, etiketter och platser."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Undanta innehåll som markerats som privat från sökresultat, delade album, "
+"etiketter och platser."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -937,7 +988,8 @@ msgid "Feedback"
 msgstr "Återkoppling"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kontakta oss gärna på hello@photoprism.app om du har några frågor."
 
 #: src/options/options.js:428
@@ -972,8 +1024,12 @@ msgid "Files"
 msgstr "Filer"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Filer med sekventiella namn som 'IMG_1234 (2)' och 'IMG_1234 (3)' tillhör samma bild."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Filer med sekventiella namn som 'IMG_1234 (2)' och 'IMG_1234 (3)' tillhör "
+"samma bild."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1120,8 +1176,12 @@ msgid "Import failed"
 msgstr "Importen misslyckades"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Importerade filer sorteras efter datum och får ett unikt namn för att undvika dubbletter."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Importerade filer sorteras efter datum och får ett unikt namn för att "
+"undvika dubbletter."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
@@ -1149,8 +1209,12 @@ msgstr "Dessutom får sponsorer direkt teknisk support via e-post."
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Om du upplever att bilder saknas, vänligen skanna om biblioteket och vänta tills indexeringen är slutförd."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"Om du upplever att bilder saknas, vänligen skanna om biblioteket och vänta "
+"tills indexeringen är slutförd."
 
 #: src/component/navigation.vue:564 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1211,12 +1275,18 @@ msgid "Invalid photo selected"
 msgstr "Ett ogiltigt foto har valts"
 
 #: src/page/connect.vue:103
-msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "Du bestämmer själv om du vill registrera dig för att få ytterligare förmåner."
+msgid ""
+"It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr ""
+"Du bestämmer själv om du vill registrera dig för att få ytterligare förmåner."
 
 #: src/page/about/about.vue:16
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Den använder sig av den senaste tekniken för att tagga och hitta bilder automatiskt utan att vara i vägen för dig."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
+msgstr ""
+"Den använder sig av den senaste tekniken för att tagga och hitta bilder "
+"automatiskt utan att vara i vägen för dig."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1354,8 +1424,12 @@ msgid "Location"
 msgstr "Plats"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Loggmeddelanden visas här när PhotoPrism stöter på trasiga filer eller när det finns andra potentiella problem."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Loggmeddelanden visas här när PhotoPrism stöter på trasiga filer eller när "
+"det finns andra potentiella problem."
 
 #: src/component/navigation.vue:458 src/component/navigation.vue:1713
 #: src/component/navigation.vue:1987
@@ -1578,8 +1652,12 @@ msgid "No video selected"
 msgstr "Ingen video vald"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Inga varningar eller fel som innehåller detta nyckelord. Observera att sökningen är skiftlägeskänslig."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Inga varningar eller fel som innehåller detta nyckelord. Observera att "
+"sökningen är skiftlägeskänslig."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1588,8 +1666,12 @@ msgstr "Inga varningar eller fel som innehåller detta nyckelord. Observera att 
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52 src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Bilder som inte är fotografiska eller av låg kvalitet måste granskas innan de visas i sökresultaten."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Bilder som inte är fotografiska eller av låg kvalitet måste granskas innan "
+"de visas i sökresultaten."
 
 #: src/options/options.js:253 src/options/options.js:338
 msgid "None"
@@ -1600,16 +1682,23 @@ msgid "Not Found"
 msgstr "Ej hittad"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Observera att du kan hantera mappen med original manuellt och att import är valfritt."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Observera att du kan hantera mappen med original manuellt och att import är "
+"valfritt."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Observera:"
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "OBS: Endast WebDAV-servrar, som Nextcloud eller PhotoPrism, kan konfigureras som fjärrtjänst för säkerhetskopiering och filuppladdning."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"OBS: Endast WebDAV-servrar, som Nextcloud eller PhotoPrism, kan konfigureras "
+"som fjärrtjänst för säkerhetskopiering och filuppladdning."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1709,12 +1798,22 @@ msgid "Other"
 msgstr "Övrigt"
 
 #: src/page/connect.vue:109
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Vårt team beslutar detta löpande beroende på hur mycket support som krävs, server- och licenskostnader och om funktionerna behövs av alla eller om de främst efterfrågas av organisationer och avancerade användare."
+msgid ""
+"Our team decides this on an ongoing basis depending on the support effort "
+"required, server and licensing costs, and whether the features are generally "
+"needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
+"Vårt team beslutar detta löpande beroende på hur mycket support som krävs, "
+"server- och licenskostnader och om funktionerna behövs av alla eller om de "
+"främst efterfrågas av organisationer och avancerade användare."
 
 #: src/page/about/about.vue:45
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Vår användarhandbok täcker också många avancerade ämnen, t.ex. migrering från Google Photos och inställningar för miniatyrbildernas kvalitet."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
+msgstr ""
+"Vår användarhandbok täcker också många avancerade ämnen, t.ex. migrering "
+"från Google Photos och inställningar för miniatyrbildernas kvalitet."
 
 #: src/options/options.js:290
 msgid "Outdoor"
@@ -1777,7 +1876,6 @@ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism® är en AI-driven fotoapp för den decentraliserade webben."
 
 #: src/page/connect.vue:14
-#, fuzzy
 msgid "PhotoPrism+ Membership"
 msgstr "Medlemskap i PhotoPrism+"
 
@@ -1815,8 +1913,12 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Ladda inte upp bilder med stötande innehåll."
 
 #: src/dialog/account/password.vue:17
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Observera att om du ändrar ditt lösenord kommer du att logga ut på andra enheter och webbläsare."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Observera att om du ändrar ditt lösenord kommer du att logga ut på andra "
+"enheter och webbläsare."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1904,7 +2006,8 @@ msgstr "Konvertering av RAW-filer"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Återindexera alla original, inklusive redan indexerade och oförändrade filer."
+msgstr ""
+"Återindexera alla original, inklusive redan indexerade och oförändrade filer."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -1971,8 +2074,12 @@ msgid "Remove from album"
 msgstr "Radera från albumet"
 
 #: src/page/library/import.vue:121
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Ta bort importerade filer för att spara lagringsutrymme. Filer som inte stöds tas aldrig bort, utan förblir på sin nuvarande plats."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Ta bort importerade filer för att spara lagringsutrymme. Filer som inte "
+"stöds tas aldrig bort, utan förblir på sin nuvarande plats."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2186,8 +2293,12 @@ msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "Stapla filer som har samma unika bild- eller instansidentifierare."
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Stapla bilder som tagits vid exakt samma tidpunkt och plats baserat på deras metadata."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Stapla bilder som tagits vid exakt samma tidpunkt och plats baserat på deras "
+"metadata."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2198,8 +2309,12 @@ msgid "Stacks"
 msgstr "Staplar"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Staplar grupperar filer med liknande referensramar, men med skillnader i kvalitet, format, storlek eller färg."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"Staplar grupperar filer med liknande referensramar, men med skillnader i "
+"kvalitet, format, storlek eller färg."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2239,8 +2354,11 @@ msgid "Successfully Connected"
 msgstr "Framgångsrikt ansluten"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Stöd för ytterligare tjänster, som Google Drive, kommer att läggas till med tiden."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Stöd för ytterligare tjänster, som Google Drive, kommer att läggas till med "
+"tiden."
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2272,8 +2390,12 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "Indexet innehåller för närvarande %{n} dolda filer."
 
 #: src/page/library/index.vue:37
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Formatet kanske inte stöds, de har ännu inte konverterats till JPEG eller det finns dubbletter."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Formatet kanske inte stöds, de har ännu inte konverterats till JPEG eller "
+"det finns dubbletter."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2281,13 +2403,23 @@ msgstr "Tema"
 
 #: src/page/settings/services.vue:40
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Detta gör att mappen med originalen monteras som en nätverksenhet, så att du kan öppna, redigera och ta bort filer från din dator eller smartphone som om de vore lokala."
+msgstr ""
+"Detta gör att mappen med originalen monteras som en nätverksenhet, så att du "
+"kan öppna, redigera och ta bort filer från din dator eller smartphone som om "
+"de vore lokala."
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Detta gör att mappen med originalen monteras som en nätverksenhet, så att du kan öppna, redigera och ta bort filer från din dator eller smartphone som om de vore lokala."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Detta gör att mappen med originalen monteras som en nätverksenhet, så att du "
+"kan öppna, redigera och ta bort filer från din dator eller smartphone som om "
+"de vore lokala."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2329,8 +2461,12 @@ msgid "Title too long"
 msgstr "Rubriken är för lång"
 
 #: src/page/connect.vue:59 src/page/connect.vue:66
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "För att uppgradera kan du antingen ange en aktiveringskod eller klicka på \"Fortsätt\" för att registrera dig på vår webbplats:"
+msgid ""
+"To upgrade, you may either enter an activation code or click on \"Proceed\" "
+"to sign up on our website:"
+msgstr ""
+"För att uppgradera kan du antingen ange en aktiveringskod eller klicka på "
+"\"Fortsätt\" för att registrera dig på vår webbplats:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2478,7 +2614,8 @@ msgstr "Laddar om …"
 
 #: src/dialog/upload.vue:48
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Uppladdningar som kan innehålla sådana bilder kommer automatiskt att avvisas."
+msgstr ""
+"Uppladdningar som kan innehålla sådana bilder kommer automatiskt att avvisas."
 
 #: src/dialog/share.vue:157
 msgid "URL"
@@ -2537,8 +2674,12 @@ msgid "View"
 msgstr "Visa"
 
 #: src/page/about/about.vue:44
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Besök docs.photoprism.app/user-guide för att lära dig hur du synkroniserar, organiserar och delar dina bilder."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
+msgstr ""
+"Besök docs.photoprism.app/user-guide för att lära dig hur du synkroniserar, "
+"organiserar och delar dina bilder."
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:27
@@ -2546,8 +2687,12 @@ msgid "Visual Similarity"
 msgstr "Gruppera efter likhet"
 
 #: src/page/connect.vue:102
-msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr "Frivilliga donationer täcker inte kostnaderna för ett team som arbetar heltid för att ge dig uppdateringar, dokumentation och support."
+msgid ""
+"Voluntary donations do not cover the cost of a team working full time to "
+"provide you with updates, documentation, and support."
+msgstr ""
+"Frivilliga donationer täcker inte kostnaderna för ett team som arbetar "
+"heltid för att ge dig uppdateringar, dokumentation och support."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2558,8 +2703,12 @@ msgid "We do our best to respond within five business days or less."
 msgstr "Vi gör vårt bästa för att svara inom fem arbetsdagar eller mindre."
 
 #: src/page/about/about.vue:71
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Vi gör vårt bästa för att besvara alla dina frågor. I gengäld ber vi dig att stödja oss på Patreon eller GitHub Sponsors."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Vi gör vårt bästa för att besvara alla dina frågor. I gengäld ber vi dig att "
+"stödja oss på Patreon eller GitHub Sponsors."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
@@ -2567,9 +2716,12 @@ msgstr "WebDAV-klienter kan ansluta till PhotoPrism via följande URL:"
 
 #: src/page/settings/services.vue:37
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV-klienter, som Microsofts Windows Explorer eller Apple Finder, kan ansluta direkt till PhotoPrism."
+msgstr ""
+"WebDAV-klienter, som Microsofts Windows Explorer eller Apple Finder, kan "
+"ansluta direkt till PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2647,34 +2799,70 @@ msgid "You may rescan your library to find additional faces."
 msgstr "Du kan söka igenom ditt bibliotek på nytt för att hitta fler ansikten."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Ditt fortsatta stöd hjälper oss att tillhandahålla regelbundna uppdateringar och tjänster som t ex världskartor."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Ditt fortsatta stöd hjälper oss att tillhandahålla regelbundna uppdateringar "
+"och tjänster som t ex världskartor."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album med speciella ögonblick, resor och platser."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album med "
+"speciella ögonblick, resor och platser."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
 
-#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-#~ msgstr "Bli en sponsor idag, stöd vårt uppdrag och ta del av våra medlemsförmåner!"
+#~ msgid ""
+#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgstr ""
+#~ "Bli en sponsor idag, stöd vårt uppdrag och ta del av våra medlemsförmåner!"
 
 #~ msgid "Membership"
 #~ msgstr "Medlemskap"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Vårt team utvärderar detta löpande, beroende på hur mycket support funktionerna kräver, vad de kostar oss och om de behövs av alla eller om de främst efterfrågas av organisationer och avancerade användare. Eftersom detta gör det möjligt för oss att tillhandahålla fler funktioner till allmänheten uppmanar vi alla användare att stödja vårt uppdrag."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users. As this allows us to make more features available to the "
+#~ "public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Vårt team utvärderar detta löpande, beroende på hur mycket support "
+#~ "funktionerna kräver, vad de kostar oss och om de behövs av alla eller om "
+#~ "de främst efterfrågas av organisationer och avancerade användare. "
+#~ "Eftersom detta gör det möjligt för oss att tillhandahålla fler funktioner "
+#~ "till allmänheten uppmanar vi alla användare att stödja vårt uppdrag."
 
-#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "PhotoPrism är till 100 % självfinansierat. Frivilliga donationer täcker inte kostnaden för ett team som arbetar heltid för att ge dig uppdateringar, dokumentation och support. Det är ditt beslut om du vill registrera dig för att få ta del av ytterligare förmåner."
+#~ msgid ""
+#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
+#~ "of a team working full time to provide you with updates, documentation, "
+#~ "and support. It is your decision whether you want to sign up to enjoy "
+#~ "additional benefits."
+#~ msgstr ""
+#~ "PhotoPrism är till 100 % självfinansierat. Frivilliga donationer täcker "
+#~ "inte kostnaden för ett team som arbetar heltid för att ge dig "
+#~ "uppdateringar, dokumentation och support. Det är ditt beslut om du vill "
+#~ "registrera dig för att få ta del av ytterligare förmåner."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "Borde inte fri programvara vara kostnadsfri?"
 
-#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-#~ msgstr "Tänk på \"fri programvara\" som i \"yttrandefrihet\", inte som i \"fri öl\". Free Software Foundation kallar det ibland för \"libre software\", vilket lånar det franska eller spanska ordet för \"free\" som i frihet, för att visa att de inte menar att programvaran är gratis."
+#~ msgid ""
+#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
+#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
+#~ "the French or Spanish word for “free” as in freedom, to show they do not "
+#~ "mean the software is gratis."
+#~ msgstr ""
+#~ "Tänk på \"fri programvara\" som i \"yttrandefrihet\", inte som i \"fri "
+#~ "öl\". Free Software Foundation kallar det ibland för \"libre software\", "
+#~ "vilket lånar det franska eller spanska ordet för \"free\" som i frihet, "
+#~ "för att visa att de inte menar att programvaran är gratis."
 
 #~ msgid "Moonlight"
 #~ msgstr "Månsken"
@@ -2688,11 +2876,19 @@ msgstr "Zooma in/ut"
 #~ msgid "Sign Up"
 #~ msgstr "Registrera dig"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "För att uppgradera kan du antingen ange en aktiveringskod eller klicka på \"Sign Up\" för att uppgradera på vår webbplats:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "För att uppgradera kan du antingen ange en aktiveringskod eller klicka på "
+#~ "\"Sign Up\" för att uppgradera på vår webbplats:"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
-#~ msgstr "För att uppgradera kan du antingen ange en aktiveringskod eller klicka på \"Upgrade Now\" för att uppgradera på vår webbplats:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
+#~ "Now\" to sign up on our website:"
+#~ msgstr ""
+#~ "För att uppgradera kan du antingen ange en aktiveringskod eller klicka på "
+#~ "\"Upgrade Now\" för att uppgradera på vår webbplats:"
 
 #~ msgid "Sign up"
 #~ msgstr "Registrera dig"
@@ -2700,11 +2896,26 @@ msgstr "Zooma in/ut"
 #~ msgid "Compare Features"
 #~ msgstr "Jämför funktioner"
 
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Vårt team utvärderar detta löpande, beroende på hur mycket supportfunktioner och konfigurationsalternativ orsakar eller har orsakat tidigare, och om de behövs allmänt av alla eller om de främst efterfrågas av organisationer och avancerade användare. Eftersom detta gör det möjligt för oss att göra fler funktioner tillgängliga för allmänheten uppmanar vi alla användare att stödja vårt uppdrag."
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Vårt team utvärderar detta löpande, beroende på hur mycket "
+#~ "supportfunktioner och konfigurationsalternativ orsakar eller har orsakat "
+#~ "tidigare, och om de behövs allmänt av alla eller om de främst efterfrågas "
+#~ "av organisationer och avancerade användare. Eftersom detta gör det "
+#~ "möjligt för oss att göra fler funktioner tillgängliga för allmänheten "
+#~ "uppmanar vi alla användare att stödja vårt uppdrag."
 
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "Lämna också gärna en stjärna på GitHub om du gillar det här projektet. Det ger ytterligare motivation att fortsätta."
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "Lämna också gärna en stjärna på GitHub om du gillar det här projektet. "
+#~ "Det ger ytterligare motivation att fortsätta."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Bli sponsor"
@@ -2712,17 +2923,33 @@ msgstr "Zooma in/ut"
 #~ msgid "I'm a sponsor"
 #~ msgstr "Jag är en sponsor"
 
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "Sponsorer får tillgång till ytterligare funktioner, får direkt teknisk support via e-post och kan delta i vårt privata chattrum på matrix.org."
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "Sponsorer får tillgång till ytterligare funktioner, får direkt teknisk "
+#~ "support via e-post och kan delta i vårt privata chattrum på matrix.org."
 
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-#~ msgstr "Detta är för närvarande en sponsorfunktion för att tacka alla som stöder utvecklingen av programmet."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
+#~ msgstr ""
+#~ "Detta är för närvarande en sponsorfunktion för att tacka alla som stöder "
+#~ "utvecklingen av programmet."
 
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-#~ msgstr "Du får veta hur du aktiverar det när du registrerar dig på Patreon eller GitHub Sponsors."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
+#~ msgstr ""
+#~ "Du får veta hur du aktiverar det när du registrerar dig på Patreon eller "
+#~ "GitHub Sponsors."
 
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "Ditt fortsatta stöd hjälper oss att tillhandahålla regelbundna uppdateringar och tjänster som t ex världskartor."
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "Ditt fortsatta stöd hjälper oss att tillhandahålla regelbundna "
+#~ "uppdateringar och tjänster som t ex världskartor."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -2789,11 +3016,20 @@ msgstr "Zooma in/ut"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Fel vid import av uppladdade filer"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "OBS: Uppdatering av lösenordet återkallar inte åtkomst för redan autentiserade användare."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "OBS: Uppdatering av lösenordet återkallar inte åtkomst för redan "
+#~ "autentiserade användare."
 
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "Vårt uppdrag är att tillhandahålla den mest användar- och integritetsvänliga lösningen för att hålla dina bilder organiserade och tillgängliga."
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "Vårt uppdrag är att tillhandahålla den mest användar- och "
+#~ "integritetsvänliga lösningen för att hålla dina bilder organiserade och "
+#~ "tillgängliga."
 
 #~ msgid "Play"
 #~ msgstr "Spela"
@@ -2807,8 +3043,12 @@ msgstr "Zooma in/ut"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Visa biblioteket i navigeringsmenyn."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Utvecklingsplanen visar vilka uppgifter som pågår, vad som behöver testas och vilka funktioner som kommer att implementeras härnäst."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Utvecklingsplanen visar vilka uppgifter som pågår, vad som behöver testas "
+#~ "och vilka funktioner som kommer att implementeras härnäst."
 
 #~ msgid "to"
 #~ msgstr "till"

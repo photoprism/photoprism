@@ -149,8 +149,12 @@ msgid "After one year"
 msgstr "1년 후"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "검색 결과에서 사진을 선택한 뒤, 컨텍스트 메뉴를 사용하여 사진을 앨범에 추가할 수 있습니다."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"검색 결과에서 사진을 선택한 뒤, 컨텍스트 메뉴를 사용하여 사진을 앨범에 추가"
+"할 수 있습니다."
 
 #: src/options/options.js:387
 msgid "After two months"
@@ -233,7 +237,9 @@ msgid "All Years"
 msgstr "모든 년도"
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
 msgstr "대신, Nextcloud와 같은 WebDAV 서버에 직접 파일을 업로드할 수 있습니다."
 
 #: src/dialog/photo/edit/info.vue:151
@@ -319,28 +325,44 @@ msgid "Artist"
 msgstr "아티스트"
 
 #: src/page/connect.vue:110
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "이를 통해 더 많은 기능을 대중에게 제공할 수 있으므로 모든 사용자가 트위터의 사명을 지지해 주시기 바랍니다."
+msgid ""
+"As this helps us provide more features to the public, we encourage all users "
+"to support our mission."
+msgstr ""
+"이를 통해 더 많은 기능을 대중에게 제공할 수 있으므로 모든 사용자가 트위터의 "
+"사명을 지지해 주시기 바랍니다."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "종횡비"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "브라우저에 표시할 수 있도록 다른 파일 형식에 대한 JPEG를 자동으로 생성합니다."
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"브라우저에 표시할 수 있도록 다른 파일 형식에 대한 JPEG를 자동으로 생성합니다."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "특별한 순간, 여행 및 장소의 앨범을 자동으로 생성합니다."
 
 #: src/page/about/about.vue:59
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "지원 요청을 제출하기 전에 문제 해결 체크리스트를 사용하여 문제의 원인을 확인하십시오."
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"지원 요청을 제출하기 전에 문제 해결 체크리스트를 사용하여 문제의 원인을 확인"
+"하십시오."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "100% 자체 자금으로 운영되며 독립되었기에, 우리는 귀하의 데이터를 절대 판매하지 않으며 소프트웨어와 서비스에 대해 항상 투명할 것임을 약속할 수 있습니다."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"100% 자체 자금으로 운영되며 독립되었기에, 우리는 귀하의 데이터를 절대 판매하"
+"지 않으며 소프트웨어와 서비스에 대해 항상 투명할 것임을 약속할 수 있습니다."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -376,8 +398,12 @@ msgid "Browse indexed files and folders in Library."
 msgstr "라이브러리에서 인덱싱된 파일 및 폴더를 검색합니다."
 
 #: src/page/about/about.vue:51
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "특정 제품 기능, 서비스 및 관련 리소스에 대한 자세한 정보는 기술 자료를 검색하십시오."
+msgid ""
+"Browse the Knowledge Base for detailed information on specific product "
+"features, services, and related resources."
+msgstr ""
+"특정 제품 기능, 서비스 및 관련 리소스에 대한 자세한 정보는 기술 자료를 검색하"
+"십시오."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:414
 msgid "Bug Report"
@@ -388,8 +414,12 @@ msgid "Busy, please wait…"
 msgstr "처리중, 잠시만 기다려주세요…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "당사가 제공하는 소프트웨어 및 서비스를 사용함으로써 귀하는 당사의 서비스 약관, 개인 정보 보호 정책 및 행동 강령에 동의하는 것입니다."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"당사가 제공하는 소프트웨어 및 서비스를 사용함으로써 귀하는 당사의 서비스 약"
+"관, 개인 정보 보호 정책 및 행동 강령에 동의하는 것입니다."
 
 #: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
@@ -499,8 +529,12 @@ msgid "Colors"
 msgstr "색깔"
 
 #: src/page/about/about.vue:46
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "일반적인 문제는 당사가 제공하는 문제 해결 체크리스트를 사용하여 신속하게 진단하고 해결할 수 있습니다."
+msgid ""
+"Common issues can be quickly diagnosed and solved using the troubleshooting "
+"checklists we provide."
+msgstr ""
+"일반적인 문제는 당사가 제공하는 문제 해결 체크리스트를 사용하여 신속하게 진단"
+"하고 해결할 수 있습니다."
 
 #: src/page/connect.vue:65 src/page/connect.vue:72
 msgid "Compare Editions"
@@ -777,8 +811,12 @@ msgid "Downscaling Filter"
 msgstr "축소 필터"
 
 #: src/page/about/feedback.vue:16
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "저희가 받는 이메일의 양이 많기 때문에 저희 팀에서 즉시 연락을 드리지 못할 수도 있습니다."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"저희가 받는 이메일의 양이 많기 때문에 저희 팀에서 즉시 연락을 드리지 못할 수"
+"도 있습니다."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -793,8 +831,11 @@ msgid "Dynamic Previews"
 msgstr "다이나믹 미리보기"
 
 #: src/page/settings/advanced.vue:303
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "동적 렌더링에는 강력한 서버가 필요합니다. NAS 장치에는 권장하지 않습니다."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"동적 렌더링에는 강력한 서버가 필요합니다. NAS 장치에는 권장하지 않습니다."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -856,8 +897,11 @@ msgid "Every two days"
 msgstr "2일마다"
 
 #: src/page/settings/general.vue:209
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "검색 결과, 공유 앨범, 레이블 및 장소에서 비공개로 표시된 콘텐츠를 제외합니다."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"검색 결과, 공유 앨범, 레이블 및 장소에서 비공개로 표시된 콘텐츠를 제외합니다."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -937,7 +981,8 @@ msgid "Feedback"
 msgstr "피드백"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "질문이 있거나 도움이 필요하면 hello@photoprism.app으로 문의하십시오."
 
 #: src/options/options.js:428
@@ -972,8 +1017,12 @@ msgid "Files"
 msgstr "파일"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "'IMG_1234(2)', 'IMG_1234(3)'과 같이 순차적인 이름을 가진 파일은 같은 그림에 속합니다."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"'IMG_1234(2)', 'IMG_1234(3)'과 같이 순차적인 이름을 가진 파일은 같은 그림에 "
+"속합니다."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1120,8 +1169,12 @@ msgid "Import failed"
 msgstr "가져오기 실패"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "가져온 파일은 날짜별로 정렬되고 중복을 방지하기 위해 유일한 이름이 지정됩니다."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"가져온 파일은 날짜별로 정렬되고 중복을 방지하기 위해 유일한 이름이 지정됩니"
+"다."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
@@ -1149,8 +1202,12 @@ msgstr "또한 후원자는 이메일을 통해 직접적인 기술 지원을 �
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "예상한 사진이 누락된 경우 라이브러리를 다시 검색하고 색인 생성이 완료될 때까지 기다리십시오."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"예상한 사진이 누락된 경우 라이브러리를 다시 검색하고 색인 생성이 완료될 때까"
+"지 기다리십시오."
 
 #: src/component/navigation.vue:564 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1211,12 +1268,16 @@ msgid "Invalid photo selected"
 msgstr "잘못된 사진을 선택했습니다."
 
 #: src/page/connect.vue:103
-msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgid ""
+"It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "추가 혜택을 누리기 위해 가입할지 여부는 회원님이 결정하실 수 있습니다."
 
 #: src/page/about/about.vue:16
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "최신 기술을 사용하여 방해 없이 자동으로 사진에 태그를 지정하고 찾습니다."
+msgid ""
+"It makes use of the latest technologies to tag and find pictures "
+"automatically without getting in your way."
+msgstr ""
+"최신 기술을 사용하여 방해 없이 자동으로 사진에 태그를 지정하고 찾습니다."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1354,8 +1415,12 @@ msgid "Location"
 msgstr "위치"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "PhotoPrism이 깨진 파일을 발견하거나 다른 잠재적인 문제가 있을 때마다 로그 메시지가 여기에 나타납니다."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"PhotoPrism이 깨진 파일을 발견하거나 다른 잠재적인 문제가 있을 때마다 로그 메"
+"시지가 여기에 나타납니다."
 
 #: src/component/navigation.vue:458 src/component/navigation.vue:1713
 #: src/component/navigation.vue:1987
@@ -1578,8 +1643,11 @@ msgid "No video selected"
 msgstr "선택한 비디오가 없습니다"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "이 키워드를 포함하는 경고 또는 오류가 없습니다. 검색은 대소문자를 구분합니다."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"이 키워드를 포함하는 경고 또는 오류가 없습니다. 검색은 대소문자를 구분합니다."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1588,8 +1656,11 @@ msgstr "이 키워드를 포함하는 경고 또는 오류가 없습니다. 검�
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52 src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "사진이 아닌 저품질 이미지는 검색 결과에 표시되기 전에 검토가 필요합니다."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"사진이 아닌 저품질 이미지는 검색 결과에 표시되기 전에 검토가 필요합니다."
 
 #: src/options/options.js:253 src/options/options.js:338
 msgid "None"
@@ -1600,7 +1671,8 @@ msgid "Not Found"
 msgstr "찾을 수 없음"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
 msgstr "원본 폴더를 수동으로 관리할 수 있으며 가져오기는 선택 사항입니다."
 
 #: src/page/settings/services.vue:36
@@ -1608,8 +1680,12 @@ msgid "Note:"
 msgstr "노트:"
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "주의: Nextcloud 또는 PhotoPrism와 같은 WebDAV서버만 백업 및 파일 업로드를 위한 원격 서비스로 구성할 수 있습니다."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"주의: Nextcloud 또는 PhotoPrism와 같은 WebDAV서버만 백업 및 파일 업로드를 위"
+"한 원격 서비스로 구성할 수 있습니다."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1709,12 +1785,22 @@ msgid "Other"
 msgstr "다른"
 
 #: src/page/connect.vue:109
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "저희 팀은 필요한 지원 노력, 서버 및 라이선스 비용, 해당 기능이 일반적으로 모든 사람에게 필요한지 아니면 주로 조직과 고급 사용자가 요청하는 기능인지에 따라 지속적으로 결정합니다."
+msgid ""
+"Our team decides this on an ongoing basis depending on the support effort "
+"required, server and licensing costs, and whether the features are generally "
+"needed by everyone or mainly requested by organizations and advanced users."
+msgstr ""
+"저희 팀은 필요한 지원 노력, 서버 및 라이선스 비용, 해당 기능이 일반적으로 모"
+"든 사람에게 필요한지 아니면 주로 조직과 고급 사용자가 요청하는 기능인지에 따"
+"라 지속적으로 결정합니다."
 
 #: src/page/about/about.vue:45
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "또한 사용자 가이드에서는 Google 포토에서 이전 및 미리보기 이미지 품질 설정과 같은 많은 고급 주제를 다룹니다."
+msgid ""
+"Our User Guide also covers many advanced topics, such as migrating from "
+"Google Photos and thumbnail quality settings."
+msgstr ""
+"또한 사용자 가이드에서는 Google 포토에서 이전 및 미리보기 이미지 품질 설정과 "
+"같은 많은 고급 주제를 다룹니다."
 
 #: src/options/options.js:290
 msgid "Outdoor"
@@ -1777,7 +1863,6 @@ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism®은 분산 웹을 위한 AI 기반 사진 앱입니다."
 
 #: src/page/connect.vue:14
-#, fuzzy
 msgid "PhotoPrism+ Membership"
 msgstr "포토프리즘+ 멤버십"
 
@@ -1815,7 +1900,9 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "불쾌감한 콘텐츠 포함된 사진을 업로드하지 마십시오."
 
 #: src/dialog/account/password.vue:17
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr "비밀번호를 변경하면 다른 장치 및 브라우저에서 로그아웃됩니다."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
@@ -1904,7 +1991,8 @@ msgstr "RAW 변환"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "이미 인덱싱되고 변경되지 않은 파일을 포함하여 모든 원본을 다시 인덱싱합니다."
+msgstr ""
+"이미 인덱싱되고 변경되지 않은 파일을 포함하여 모든 원본을 다시 인덱싱합니다."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -1971,8 +2059,12 @@ msgid "Remove from album"
 msgstr "앨범에서 제거"
 
 #: src/page/library/import.vue:121
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "가져온 파일을 제거하여 저장 공간을 절약하십시오. 지원되지 않는 파일 형식은 삭제되지 않으며 현재 위치에 남아 있습니다."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"가져온 파일을 제거하여 저장 공간을 절약하십시오. 지원되지 않는 파일 형식은 삭"
+"제되지 않으며 현재 위치에 남아 있습니다."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2186,8 +2278,11 @@ msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "동일한 고유 이미지 또는 인스턴스 식별자를 공유하는 스택 파일."
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "메타데이터를 기반으로 정확히 같은 시간과 위치에서 찍은 사진을 쌓습니다."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"메타데이터를 기반으로 정확히 같은 시간과 위치에서 찍은 사진을 쌓습니다."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2198,8 +2293,12 @@ msgid "Stacks"
 msgstr "스택"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "참조 프레임은 유사하지만 품질, 형식, 크기 또는 색상이 다른 그룹 파일을 스택합니다."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"참조 프레임은 유사하지만 품질, 형식, 크기 또는 색상이 다른 그룹 파일을 스택합"
+"니다."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2239,8 +2338,11 @@ msgid "Successfully Connected"
 msgstr "성공적으로 연결됨"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Google 드라이브와 같은 추가 서비스에 대한 지원은 시간이 지남에 따라 추가됩니다."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Google 드라이브와 같은 추가 서비스에 대한 지원은 시간이 지남에 따라 추가됩니"
+"다."
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2272,8 +2374,12 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "현재 색인에서 %{n}개의 숨겨진 파일이 있습니다."
 
 #: src/page/library/index.vue:37
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "형식이 지원되지 않을 수 있고, 아직 JPEG 형식으로 변환되지 않았거나 중복이 있을 수 있습니다."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"형식이 지원되지 않을 수 있고, 아직 JPEG 형식으로 변환되지 않았거나 중복이 있"
+"을 수 있습니다."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2281,13 +2387,21 @@ msgstr "테마"
 
 #: src/page/settings/services.vue:40
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "이렇게 하면 원본 폴더가 네트워크 드라이브로 마운트되고 컴퓨터나 스마트폰에서 파일을 로컬에 있는 것처럼 열고 편집하고 삭제할 수 있습니다."
+msgstr ""
+"이렇게 하면 원본 폴더가 네트워크 드라이브로 마운트되고 컴퓨터나 스마트폰에서 "
+"파일을 로컬에 있는 것처럼 열고 편집하고 삭제할 수 있습니다."
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "이렇게 하면 원본 폴더가 네트워크 드라이브로 마운트되고 컴퓨터나 스마트폰에서 파일을 로컬에 있는 것처럼 열고 편집하고 삭제할 수 있습니다."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"이렇게 하면 원본 폴더가 네트워크 드라이브로 마운트되고 컴퓨터나 스마트폰에서 "
+"파일을 로컬에 있는 것처럼 열고 편집하고 삭제할 수 있습니다."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2329,8 +2443,12 @@ msgid "Title too long"
 msgstr "주제 너무 긴다"
 
 #: src/page/connect.vue:59 src/page/connect.vue:66
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"진행\"을 클릭하여 당사 웹 사이트에 가입하십시오."
+msgid ""
+"To upgrade, you may either enter an activation code or click on \"Proceed\" "
+"to sign up on our website:"
+msgstr ""
+"업그레이드하려면 활성화 코드를 입력하거나 \"진행\"을 클릭하여 당사 웹 사이트"
+"에 가입하십시오."
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2537,8 +2655,12 @@ msgid "View"
 msgstr "보기"
 
 #: src/page/about/about.vue:44
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "사진을 동기화, 구성 및 공유하는 방법을 알아보려면 docs.photoprism.app/user-guide를 방문하세요."
+msgid ""
+"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+"share your pictures."
+msgstr ""
+"사진을 동기화, 구성 및 공유하는 방법을 알아보려면 docs.photoprism.app/user-"
+"guide를 방문하세요."
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:27
@@ -2546,8 +2668,12 @@ msgid "Visual Similarity"
 msgstr "시각적 유사성"
 
 #: src/page/connect.vue:102
-msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr "자발적인 기부로는 업데이트, 문서화 및 지원을 제공하기 위해 풀타임으로 일하는 팀의 비용을 충당할 수 없습니다."
+msgid ""
+"Voluntary donations do not cover the cost of a team working full time to "
+"provide you with updates, documentation, and support."
+msgstr ""
+"자발적인 기부로는 업데이트, 문서화 및 지원을 제공하기 위해 풀타임으로 일하는 "
+"팀의 비용을 충당할 수 없습니다."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2558,18 +2684,26 @@ msgid "We do our best to respond within five business days or less."
 msgstr "영업일 기준 5일 이내로 답변을 드리기 위해 최선을 다합니다."
 
 #: src/page/about/about.vue:71
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "귀하의 모든 질문에 최선을 다해 답변해 드리겠습니다. 그 대가로 Patreon 또는 GitHub 후원자를 후원해 주시기 바랍니다."
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"귀하의 모든 질문에 최선을 다해 답변해 드리겠습니다. 그 대가로 Patreon 또는 "
+"GitHub 후원자를 후원해 주시기 바랍니다."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "WebDAV 클라이언트는 다음 URL을 사용하여 PhotoPrism에 연결할 수 있습니다:"
+msgstr ""
+"WebDAV 클라이언트는 다음 URL을 사용하여 PhotoPrism에 연결할 수 있습니다:"
 
 #: src/page/settings/services.vue:37
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV 클라이언트 (예: 마이코로소프트 Windows Explorer 또는 애플 Finder) 직접적으로 PhotoPrism에 연결할 수 있습니다."
+msgstr ""
+"WebDAV 클라이언트 (예: 마이코로소프트 Windows Explorer 또는 애플 Finder) 직접"
+"적으로 PhotoPrism에 연결할 수 있습니다."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2647,34 +2781,67 @@ msgid "You may rescan your library to find additional faces."
 msgstr "추가 얼굴을 찾기 위해 라이브러리를 다시 검색할 수 있습니다."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "귀하의 지속적인 지원은 정기적인 업데이트를 제공하고 독립적인 상태를 유지하는 데 도움이 되어 당사의 사명을 완수하고 귀하의 개인 정보를 보호할 수 있습니다."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"귀하의 지속적인 지원은 정기적인 업데이트를 제공하고 독립적인 상태를 유지하는 "
+"데 도움이 되어 당사의 사명을 완수하고 귀하의 개인 정보를 보호할 수 있습니다."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행 및 장소의 앨범을 자동으로 생성합니다."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"라이브러리는 지속적으로 분석되어 특별한 순간, 여행 및 장소의 앨범을 자동으로 "
+"생성합니다."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "확대/축소"
 
-#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgid ""
+#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "오늘 스폰서가 되어 미션을 지원하고 멤버 혜택을 누려보세요!"
 
 #~ msgid "Membership"
 #~ msgstr "멤버쉽"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "우리 팀은 기능에 필요한 지원 노력, 비용, 일반적으로 모든 사람에게 필요한지 또는 주로 조직 및 고급 사용자가 요청하는지 여부에 따라 이를 지속적으로 평가합니다. 이를 통해 대중에게 더 많은 기능을 제공할 수 있으므로 모든 사용자가 우리의 임무를 지원하도록 권장합니다."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users. As this allows us to make more features available to the "
+#~ "public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "우리 팀은 기능에 필요한 지원 노력, 비용, 일반적으로 모든 사람에게 필요한"
+#~ "지 또는 주로 조직 및 고급 사용자가 요청하는지 여부에 따라 이를 지속적으로 "
+#~ "평가합니다. 이를 통해 대중에게 더 많은 기능을 제공할 수 있으므로 모든 사용"
+#~ "자가 우리의 임무를 지원하도록 권장합니다."
 
-#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "포토프리즘은 100% 자체 자금으로 운영됩니다. 자발적인 기부는 업데이트, 문서 및 지원을 제공하기 위해 풀타임으로 일하는 팀의 비용을 충당하지 않습니다. 추가 혜택을 누리기 위해 가입할지 여부는 귀하의 결정입니다."
+#~ msgid ""
+#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
+#~ "of a team working full time to provide you with updates, documentation, "
+#~ "and support. It is your decision whether you want to sign up to enjoy "
+#~ "additional benefits."
+#~ msgstr ""
+#~ "포토프리즘은 100% 자체 자금으로 운영됩니다. 자발적인 기부는 업데이트, 문"
+#~ "서 및 지원을 제공하기 위해 풀타임으로 일하는 팀의 비용을 충당하지 않습니"
+#~ "다. 추가 혜택을 누리기 위해 가입할지 여부는 귀하의 결정입니다."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "자유 소프트웨어는 비용이 없어야 하지 않습니까?"
 
-#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-#~ msgstr "\"자유 소프트웨어\"를 \"무료 맥주\"가 아니라 \"표현의 자유\"로 생각하십시오. 자유 소프트웨어 재단(Free Software Foundation)은 소프트웨어가 무료라는 의미가 아님을 보여주기 위해 \"자유\"라는 프랑스어 또는 스페인어 단어를 빌려 \"자유로운 소프트웨어\"라고 부르기도 합니다."
+#~ msgid ""
+#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
+#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
+#~ "the French or Spanish word for “free” as in freedom, to show they do not "
+#~ "mean the software is gratis."
+#~ msgstr ""
+#~ "\"자유 소프트웨어\"를 \"무료 맥주\"가 아니라 \"표현의 자유\"로 생각하십시"
+#~ "오. 자유 소프트웨어 재단(Free Software Foundation)은 소프트웨어가 무료라"
+#~ "는 의미가 아님을 보여주기 위해 \"자유\"라는 프랑스어 또는 스페인어 단어를 "
+#~ "빌려 \"자유로운 소프트웨어\"라고 부르기도 합니다."
 
 #~ msgid "Moonlight"
 #~ msgstr "월광"
@@ -2688,11 +2855,19 @@ msgstr "확대/축소"
 #~ msgid "Sign Up"
 #~ msgstr "회원가입"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"가입\"을 클릭하여 당사 웹 사이트에서 업그레이드할 수 있습니다."
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "업그레이드하려면 활성화 코드를 입력하거나 \"가입\"을 클릭하여 당사 웹 사이"
+#~ "트에서 업그레이드할 수 있습니다."
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
-#~ msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"가입\"을 클릭하여 당사 웹 사이트에서 업그레이드할 수 있습니다."
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
+#~ "Now\" to sign up on our website:"
+#~ msgstr ""
+#~ "업그레이드하려면 활성화 코드를 입력하거나 \"가입\"을 클릭하여 당사 웹 사이"
+#~ "트에서 업그레이드할 수 있습니다."
 
 #~ msgid "Sign up"
 #~ msgstr "회원가입"
@@ -2700,11 +2875,25 @@ msgstr "확대/축소"
 #~ msgid "Compare Features"
 #~ msgstr "기능 비교"
 
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "우리 팀은 지원 노력 기능 및 구성 옵션이 원인이거나 과거에 발생했는지, 그리고 일반적으로 모든 사람에게 필요한지 또는 주로 조직 및 고급 사용자가 요청하는지 여부에 따라 이를 지속적으로 평가합니다. 이를 통해 대중에게 더 많은 기능을 제공할 수 있으므로 모든 사용자가 우리의 임무를 지원하도록 권장합니다."
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "우리 팀은 지원 노력 기능 및 구성 옵션이 원인이거나 과거에 발생했는지, 그리"
+#~ "고 일반적으로 모든 사람에게 필요한지 또는 주로 조직 및 고급 사용자가 요청"
+#~ "하는지 여부에 따라 이를 지속적으로 평가합니다. 이를 통해 대중에게 더 많은 "
+#~ "기능을 제공할 수 있으므로 모든 사용자가 우리의 임무를 지원하도록 권장합니"
+#~ "다."
 
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "이 프로젝트가 마음에 든다 GitHub에 Star를 남겨주세요. 이는 계속 나아가게 하는 동기를 제공합니다."
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "이 프로젝트가 마음에 든다 GitHub에 Star를 남겨주세요. 이는 계속 나아가게 "
+#~ "하는 동기를 제공합니다."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "후원자가 되십시오"
@@ -2712,17 +2901,32 @@ msgstr "확대/축소"
 #~ msgid "I'm a sponsor"
 #~ msgstr "나는 후원자다"
 
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "후원자는 추가 기능에 액세스할 수 있고 이메일을 통해 직접적인 기술 지원을 받을 수 있으며 matrix.org의 비공개 대화방에 참여할 수 있습니다."
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "후원자는 추가 기능에 액세스할 수 있고 이메일을 통해 직접적인 기술 지원을 "
+#~ "받을 수 있으며 matrix.org의 비공개 대화방에 참여할 수 있습니다."
 
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-#~ msgstr "이것은 우리의 후원자와 기여자에게 감사의 말을 전하는 초기 액세스 기능입니다."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
+#~ msgstr ""
+#~ "이것은 우리의 후원자와 기여자에게 감사의 말을 전하는 초기 액세스 기능입니"
+#~ "다."
 
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-#~ msgstr "Patreon 또는 GitHub 스폰서에 가입할 때 활성화하는 방법을 알려드리겠습니다."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
+#~ msgstr ""
+#~ "Patreon 또는 GitHub 스폰서에 가입할 때 활성화하는 방법을 알려드리겠습니다."
 
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "귀하의 지속적인 지원은 위성 지도와 같은 서비스를 제공하고 새로운 기능을 개발하는 데 도움이 됩니다."
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "귀하의 지속적인 지원은 위성 지도와 같은 서비스를 제공하고 새로운 기능을 개"
+#~ "발하는 데 도움이 됩니다."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -2789,11 +2993,19 @@ msgstr "확대/축소"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "업로드된 파일을 가져오는 중 실패"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "참고: 비밀번호를 업데이트해도 이미 인증된 사용자의 액세스 권한은 취소되지 않습니다."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "참고: 비밀번호를 업데이트해도 이미 인증된 사용자의 액세스 권한은 취소되지 "
+#~ "않습니다."
 
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "우리의 임무는 사진을 정리하고 액세스할 수 있도록 가장 사용자 및 개인 정보 보호 친화적 솔루션을 제공하는 것입니다."
+#~ msgid ""
+#~ "Our mission is to provide the most user- and privacy-friendly solution to "
+#~ "keep your pictures organized and accessible."
+#~ msgstr ""
+#~ "우리의 임무는 사진을 정리하고 액세스할 수 있도록 가장 사용자 및 개인 정보 "
+#~ "보호 친화적 솔루션을 제공하는 것입니다."
 
 #~ msgid "Play"
 #~ msgstr "재생"
@@ -2807,8 +3019,12 @@ msgstr "확대/축소"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "탐색 메뉴에 라이브러리를 표시합니다."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "로드맵은 진행 중인 작업, 테스트가 필요한 항목, 다음에 구현될 기능 요청을 보여줍니다."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "로드맵은 진행 중인 작업, 테스트가 필요한 항목, 다음에 구현될 기능 요청을 "
+#~ "보여줍니다."
 
 #~ msgid "to"
 #~ msgstr "~"
@@ -2897,8 +3113,12 @@ msgstr "확대/축소"
 #~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 #~ msgstr "PhotoPrism® 은 Michael Mayer의 등록 상표입니다."
 
-#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
-#~ msgstr "실버 및 골드 스폰서가 승인한 요청은 골든 라벨을 받고 우선 순위가 지정됩니다."
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
+#~ msgstr ""
+#~ "실버 및 골드 스폰서가 승인한 요청은 골든 라벨을 받고 우선 순위가 지정됩니"
+#~ "다."
 
 #~ msgid "Thank you very much!"
 #~ msgstr "매우 감사합니다!"
@@ -2906,14 +3126,27 @@ msgstr "확대/축소"
 #~ msgid "Trademarks"
 #~ msgstr "상표"
 
-#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-#~ msgstr "귀하는 교육 목적으로 당사 소프트웨어를 설명하고 자체 서버를 실행하는 데 필요한 대로 사용할 수 있지만 사전 서면 허가 없이 상업 상품, 제품 또는 서비스를 제공할 수 없습니다. 즉, 물어보십시오."
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "귀하는 교육 목적으로 당사 소프트웨어를 설명하고 자체 서버를 실행하는 데 필"
+#~ "요한 대로 사용할 수 있지만 사전 서면 허가 없이 상업 상품, 제품 또는 서비스"
+#~ "를 제공할 수 없습니다. 즉, 물어보십시오."
 
-#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
-#~ msgstr "PhotoPrism 사용이 마음에 드시면 Patreon 또는 GitHub 스폰서에서 저희를 후원해 주세요."
+#~ msgid ""
+#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
+#~ "GitHub Sponsors."
+#~ msgstr ""
+#~ "PhotoPrism 사용이 마음에 드시면 Patreon 또는 GitHub 스폰서에서 저희를 후원"
+#~ "해 주세요."
 
 #~ msgid "Let us know when we mistakenly label an idea as unfunded."
-#~ msgstr "아이디어에 자금이 지원되지 않는 것으로 잘못 레이블이 지정되면 알려주십시오."
+#~ msgstr ""
+#~ "아이디어에 자금이 지원되지 않는 것으로 잘못 레이블이 지정되면 알려주십시"
+#~ "오."
 
 #~ msgid "This open-source project is made possible thanks to our sponsors."
 #~ msgstr "이 오픈 소스 프로젝트는 후원자 덕분에 가능했습니다."
@@ -2948,7 +3181,8 @@ msgstr "확대/축소"
 #~ msgid "Not implemented yet"
 #~ msgstr "아직 실현되지 않음"
 
-#~ msgid "Note that you can as well manage and re-index your originals manually."
+#~ msgid ""
+#~ "Note that you can as well manage and re-index your originals manually."
 #~ msgstr "주의: 오리기널을 수동으로 관리하고 다시 색인할 수 있습니다."
 
 #~ msgid "One result"
