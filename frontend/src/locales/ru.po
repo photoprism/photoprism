@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-30 20:12+0000\n"
-"Last-Translator: Артем <zlo2k@bk.ru>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
+"PO-Revision-Date: 2023-02-08 13:37+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1776,8 +1777,9 @@ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 msgstr "PhotoPrism® - это фотоприложение на базе искусственного интеллекта для децентрализованной сети."
 
 #: src/page/connect.vue:14
+#, fuzzy
 msgid "PhotoPrism+ Membership"
-msgstr ""
+msgstr "Членство в программе PhotoPrism+"
 
 #: src/app/routes.js:142
 msgid "Photos"
