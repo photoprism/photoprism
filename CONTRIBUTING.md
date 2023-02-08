@@ -44,7 +44,7 @@ We kindly ask you not to report bugs via GitHub Issues **unless you are certain 
 
 Follow our [step-by-step guide](https://docs.photoprism.app/developer-guide/pull-requests) to learn how to submit new features, bug fixes, and documentation enhancements.
 
-In general, pull requests that resolve issues [labeled "help wanted"](https://github.com/photoprism/photoprism/labels/help%20wanted) are the easiest to merge and the most helpful, as they allow us to spend more time on core features or other issues that are difficult for external contributors to work on. If you're new to this project, anything [labeled "easy"](https://github.com/photoprism/photoprism/labels/easy) may be a good first contribution.
+Pull requests solving ["help wanted"](https://github.com/photoprism/photoprism/labels/help%20wanted) issues are the easiest to merge and the most helpful to us, as they allow us to spend more time on core functionality and other issues that are difficult for external contributors to work on. If you are new to this project, anything labeled ["easy"](https://github.com/photoprism/photoprism/labels/easy) may be a good first contribution.
 
 **Be aware that reviewing, testing and finally merging pull requests requires significant resources on our side. It can therefore take several months if it is not just a small fix, especially if extensive testing is needed to prevent bugs from getting into our stable version.**
 
