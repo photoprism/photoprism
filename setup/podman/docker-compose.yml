@@ -12,7 +12,7 @@ version: '3.5'
 #   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
 # Quickstart Guide: https://docs.photoprism.app/getting-started/docker-compose/
-# Knowledge Base: https://photoprism.app/kb
+# Knowledge Base: https://www.photoprism.app/kb
 # Docker Image: https://hub.docker.com/r/photoprism/photoprism
 #
 # PODMAN COMPOSE COMMAND REFERENCE

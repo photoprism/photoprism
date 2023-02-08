@@ -7,7 +7,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon href="https://photoprism.app/" target="_blank" class="action-info" :title="$gettext('Learn more')">
+      <v-btn icon href="https://www.photoprism.app/" target="_blank" class="action-info" :title="$gettext('Learn more')">
         <v-icon size="26">diamond</v-icon>
       </v-btn>
     </v-toolbar>
@@ -26,7 +26,7 @@
       <div v-if="isPublic">
         <p class="text-xs-center my-4">
           <v-btn
-              href="https://photoprism.app/"
+              href="https://www.photoprism.app/"
               target="_blank"
               color="primary-button"
               class="white--text px-3 py-2 action-upgrade"
@@ -61,7 +61,7 @@
 
       <h3 class="subheading py-2"><translate>Knowledge Base</translate></h3>
       <p class="text-selectable"><translate>Browse the Knowledge Base for detailed information on specific product features, services, and related resources.</translate></p>
-      <p><a href="https://photoprism.app/kb" class="text-link" target="_blank"><translate>Learn more</translate> ›</a></p>
+      <p><a href="https://www.photoprism.app/kb" class="text-link" target="_blank"><translate>Learn more</translate> ›</a></p>
 
       <h3 class="subheading py-2">
         <translate>Getting Support</translate>
@@ -78,7 +78,7 @@
         <li><a target="_blank" href="https://link.photoprism.app/chat"><translate>or ask in our Community Chat</translate></a></li>
       </ul>
       <p class="body-1 text-selectable pb-2">
-        <a target="_blank" href="https://photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
+        <a target="_blank" href="https://www.photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
         <span v-if="!isSponsor">
           <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
         </span>
@@ -108,11 +108,11 @@
       </p>
 
       <p class="caption mt-4 text-xs-center">
-        PhotoPrism® is a <a href="https://photoprism.app/trademark" target="_blank" class="text-link">registered trademark</a>.
+        PhotoPrism® is a <a href="https://www.photoprism.app/trademark" target="_blank" class="text-link">registered trademark</a>.
         By using the software and services we provide, you agree to our
-        <a href="https://photoprism.app/terms" target="_blank" class="text-link">Terms of Service</a>,
-        <a href="https://photoprism.app/privacy" target="_blank" class="text-link">Privacy Policy</a>, and
-        <a href="https://photoprism.app/code-of-conduct" target="_blank" class="text-link">Code of Conduct</a>.
+        <a href="https://www.photoprism.app/terms" target="_blank" class="text-link">Terms of Service</a>,
+        <a href="https://www.photoprism.app/privacy" target="_blank" class="text-link">Privacy Policy</a>, and
+        <a href="https://www.photoprism.app/code-of-conduct" target="_blank" class="text-link">Code of Conduct</a>.
       </p>
     </v-container>
     <p-about-footer></p-about-footer>

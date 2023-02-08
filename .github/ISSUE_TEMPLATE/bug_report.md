@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-PLEASE PROCEED ONLY IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPPORT INCIDENT AND/OR POSSIBLY A PROBLEM WITH SOME OTHER SOFTWARE YOU ARE USING. VISIT <https://photoprism.app/kb/getting-support> TO LEARN MORE ABOUT OUR SUPPORT OPTIONS. THANK YOU FOR YOUR CAREFUL CONSIDERATION!
+PLEASE PROCEED ONLY IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPPORT INCIDENT AND/OR POSSIBLY A PROBLEM WITH SOME OTHER SOFTWARE YOU ARE USING. VISIT <https://www.photoprism.app/kb/getting-support> TO LEARN MORE ABOUT OUR SUPPORT OPTIONS. THANK YOU FOR YOUR CAREFUL CONSIDERATION!
 
 ---------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ Always try to determine the cause of your problem using the checklists at <https
 
 #### 5. Can you provide us with example files for testing, error logs, or screenshots?
 
-Please include sample files or screenshots that help to reproduce your problem. You can also email files or share a download link, see <https://photoprism.app/contact> for details.
+Please include sample files or screenshots that help to reproduce your problem. You can also email files or share a download link, see <https://www.photoprism.app/contact> for details.
 
 Visit <https://docs.photoprism.app/getting-started/troubleshooting/browsers/> to learn how to diagnose frontend issues.
 

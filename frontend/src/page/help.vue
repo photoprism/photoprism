@@ -7,7 +7,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon href="https://photoprism.app/" target="_blank" class="action-info" :title="$gettext('About')">
+      <v-btn icon href="https://www.photoprism.app/" target="_blank" class="action-info" :title="$gettext('About')">
         <v-icon size="26">info</v-icon>
       </v-btn>
     </v-toolbar>

@@ -14,7 +14,7 @@ const CustomStaticUri = "/c/static"
 // MsgSponsor and MsgSignUp provide sponsorship info messages;
 // SignUpURL a signup link.
 const MsgSponsor = "PhotoPrism® needs your support!"
-const SignUpURL = "https://photoprism.app/membership"
+const SignUpURL = "https://www.photoprism.app/membership"
 const MsgSignUp = "Visit " + SignUpURL + " to learn more."
 const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
 	" we unfortunately can only offer it to sponsors."

@@ -9,7 +9,7 @@ Because we want to create the best possible product for our users, we have a set
 - What does it implement / fix / improve? Why?
 - Are the changes related to an existing issue?
 
-(2) After you submit your first pull request, you will be asked to accept our CLA, see https://photoprism.app/cla.
+(2) After you submit your first pull request, you will be asked to accept our CLA, see https://www.photoprism.app/cla.
 
 (3) Finally, please confirm that the following criteria are met by replacing "[ ]" with "[x]" (also possible at a later time).
 

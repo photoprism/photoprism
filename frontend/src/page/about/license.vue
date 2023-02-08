@@ -670,7 +670,7 @@
         and elements, whether registered or unregistered („Brand Assets“) — are
         proprietary assets owned exclusively by PhotoPrism UG („PhotoPrism“). We
         reserve the right to object to any use or misuse in any jurisdiction worldwide.
-        Visit <a target="_blank" href="https://photoprism.app/trademark">photoprism.app/trademark</a>
+        Visit <a target="_blank" href="https://www.photoprism.app/trademark">photoprism.app/trademark</a>
         to learn more.
       </p>
       <p>
