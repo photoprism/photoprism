@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-11-12 10:52+0000\n"
 "Last-Translator: jsonmona <jsonmona@outlook.com>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
@@ -20,8 +20,8 @@ msgstr ""
 "X-Generator: Weblate 4.14.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "예기치 않은 오류가 발생했습니다. 다시 시도해 주세요"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -375,3 +375,6 @@ msgstr "영구 삭제됨"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s이(가) 복원되었습니다"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "예기치 않은 오류가 발생했습니다. 다시 시도해 주세요"

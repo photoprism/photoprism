@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-03-08 11:48+0000\n"
 "Last-Translator: Pheggas <petko252@gmail.com>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
@@ -20,8 +20,8 @@ msgstr ""
 "X-Generator: Weblate 4.11.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Nastala neočakávaná chyba, skúste to neskôr prosím"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -375,3 +375,6 @@ msgstr "Trvalo odstránené"
 #, c-format
 msgid "%s has been restored"
 msgstr "Označenie obnovené"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Nastala neočakávaná chyba, skúste to neskôr prosím"

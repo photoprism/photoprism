@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-11-01 07:52+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
@@ -16,8 +16,8 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Unerwarteter Fehler, bitte erneut versuchen"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -371,6 +371,9 @@ msgstr "Endgültig gelöscht"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s wurde wiederhergestellt"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Unerwarteter Fehler, bitte erneut versuchen"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "Nicht auf Server gefunden, gelöscht?"

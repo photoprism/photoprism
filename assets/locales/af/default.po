@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-12-25 09:47+0000\n"
 "Last-Translator: Bloxel25 <bloxel25@gmail.com>\n"
 "Language-Team: none\n"
@@ -19,8 +19,8 @@ msgstr ""
 "X-Generator: Weblate 4.15\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Onverwagte fout, probeer asseblief weer"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -374,3 +374,6 @@ msgstr "Permanent uitgevee"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s geherstel"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Onverwagte fout, probeer asseblief weer"

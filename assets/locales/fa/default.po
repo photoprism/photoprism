@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-10-07 13:15+0330\n"
 "Last-Translator: Ehsan Sabet <ehsan.sabet@hotmail.com>\n"
 "Language-Team: none\n"
@@ -19,8 +19,8 @@ msgstr ""
 "X-Generator: Poedit 3.1.1\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "خطای غیرمنتظره، لطفا دوباره تلاش کنید"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -374,3 +374,6 @@ msgstr "برای همیشه حذف شد"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s بازیابی شده است"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "خطای غیرمنتظره، لطفا دوباره تلاش کنید"

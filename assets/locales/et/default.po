@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-11-06 21:52+0000\n"
 "Last-Translator: Indrek Haav <indrek.haav@hotmail.com>\n"
 "Language-Team: none\n"
@@ -19,8 +19,8 @@ msgstr ""
 "X-Generator: Weblate 4.14.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Ootamatu viga, palun proovi uuesti"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -374,3 +374,6 @@ msgstr "Lõplikult kustutatud"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s on taastatud"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Ootamatu viga, palun proovi uuesti"

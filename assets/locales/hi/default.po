@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-12-19 00:48+0000\n"
 "Last-Translator: nikhilhurule <nikhilhurule@gmail.com>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
@@ -20,8 +20,8 @@ msgstr ""
 "X-Generator: Weblate 4.15\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "अप्रत्याशित त्रुटि, कृपया पुनः प्रयास करें"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -375,6 +375,9 @@ msgstr "स्थायी रूप से हटा दिया गया"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s बहाल कर दिया गया है"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "अप्रत्याशित त्रुटि, कृपया पुनः प्रयास करें"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "सर्वर पर नहीं मिला, हटाया गया?"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-12-22 02:48+0000\n"
 "Last-Translator: Mingtian Yang <tswymt@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
@@ -20,8 +20,8 @@ msgstr ""
 "X-Generator: Weblate 4.15\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "意外错误，请重试"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -375,6 +375,9 @@ msgstr "已永久删除"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s 已恢复"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "意外错误，请重试"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "服务器上不存在此文件, 或已被删除?"

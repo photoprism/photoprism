@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-11-01 13:34+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: none\n"
@@ -19,8 +19,8 @@ msgstr ""
 "X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Неочаквана грешка, моля, опитайте отново"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -374,3 +374,6 @@ msgstr "Постоянно изтрити"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s е възстановена"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Неочаквана грешка, моля, опитайте отново"

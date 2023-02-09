@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2022-02-19 14:34+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
@@ -20,8 +20,8 @@ msgstr ""
 "X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "هەڵەیەکی چاوەڕوان نەکراو، تکایە دووبارە هەوڵ بدەوە"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -375,6 +375,9 @@ msgstr "بە هەمیشەیی سڕاوەتەوە"
 #, c-format
 msgid "%s has been restored"
 msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "هەڵەیەکی چاوەڕوان نەکراو، تکایە دووبارە هەوڵ بدەوە"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "نەدۆزرایەوە لە سەر ڕاژە، سڕایەوە؟"

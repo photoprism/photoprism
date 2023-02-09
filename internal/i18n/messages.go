@@ -91,7 +91,7 @@ const (
 
 var Messages = MessageMap{
 	// Error messages:
-	ErrUnexpected:         gettext("Unexpected error, please try again"),
+	ErrUnexpected:         gettext("Something went wrong"),
 	ErrBadRequest:         gettext("Invalid request"),
 	ErrSaveFailed:         gettext("Changes could not be saved"),
 	ErrDeleteFailed:       gettext("Could not be deleted"),

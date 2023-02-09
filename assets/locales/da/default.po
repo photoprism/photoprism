@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
+"POT-Creation-Date: 2023-02-09 12:19+0000\n"
 "PO-Revision-Date: 2023-01-16 18:13+0000\n"
 "Last-Translator: Alex <alexsus@me.com>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
@@ -20,8 +20,8 @@ msgstr ""
 "X-Generator: Weblate 4.15\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Uventet fejl, prøv venligst igen"
+msgid "Something went wrong"
+msgstr ""
 
 #: messages.go:95
 msgid "Invalid request"
@@ -375,3 +375,6 @@ msgstr "Permanent slettet"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s er blevet genoprettet"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Uventet fejl, prøv venligst igen"
