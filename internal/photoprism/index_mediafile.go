@@ -699,7 +699,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	} else {
 		if p := photo.FirstOrCreate(); p == nil {
 			result.Status = IndexFailed
-			result.Err = fmt.Errorf("index: %s in %s (find or create photo)", err, logName)
+			result.Err = fmt.Errorf("index: failed to create %s", logName)
 			return result
 		} else {
 			photo = *p

@@ -239,6 +239,8 @@ func (m *Photo) String() string {
 func (m *Photo) FirstOrCreate() *Photo {
 	if err := m.Create(); err == nil {
 		return m
+	} else {
+		log.Tracef("photo: %s in %s (create)", err, m.String())
 	}
 
 	return FindPhoto(*m)

@@ -57,7 +57,7 @@ type Data struct {
 	GPSLongitude  string        `meta:"GPSLongitude"`
 	Lat           float32       `meta:"-"`
 	Lng           float32       `meta:"-"`
-	Altitude      int           `meta:"GlobalAltitude,GPSAltitude"`
+	Altitude      float64       `meta:"GlobalAltitude,GPSAltitude"`
 	Width         int           `meta:"ImageWidth,PixelXDimension,ExifImageWidth,SourceImageWidth"`
 	Height        int           `meta:"ImageHeight,ImageLength,PixelYDimension,ExifImageHeight,SourceImageHeight"`
 	Orientation   int           `meta:"-"`

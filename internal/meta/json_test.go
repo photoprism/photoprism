@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/projection"
 	"github.com/photoprism/photoprism/pkg/video"
 )
@@ -434,7 +435,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, float32(52.508522), data.Lat)
 		assert.Equal(t, float32(13.443206), data.Lng)
-		assert.Equal(t, 40, data.Altitude)
+		assert.Equal(t, 40, clean.Altitude(data.Altitude))
 		assert.Equal(t, 0, data.Views)
 
 		assert.Equal(t, "", data.DocumentID)
@@ -463,7 +464,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, float32(52.510796), data.Lat)
 		assert.Equal(t, float32(13.456387), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 1118, data.Views)
 	})
 
@@ -481,7 +482,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.TimeZone)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 177, data.Views)
 	})
 
@@ -499,7 +500,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, float32(52.49967), data.Lat)
 		assert.Equal(t, float32(13.422334), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 0, data.Views)
 	})
 
@@ -541,7 +542,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 7200, data.Width)
 		assert.Equal(t, float32(59.84083), data.Lat)
 		assert.Equal(t, float32(30.51), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/1250", data.Exposure)
 		assert.Equal(t, "SAMSUNG", data.CameraMake)
 		assert.Equal(t, "SM-C200", data.CameraModel)
@@ -572,7 +573,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "", data.Exposure)
 		assert.Equal(t, "OLYMPUS DIGITAL CAMERA", data.CameraMake)
 		assert.Equal(t, "E-PL7", data.CameraModel)
@@ -628,7 +629,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 500, data.Width)
 		assert.Equal(t, float32(52.46052), data.Lat)
 		assert.Equal(t, float32(13.331403), data.Lng)
-		assert.Equal(t, 84, data.Altitude)
+		assert.Equal(t, 84, clean.Altitude(data.Altitude))
 		assert.Equal(t, "1/50", data.Exposure)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
@@ -894,7 +895,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 850, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 30, data.Altitude)
+		assert.Equal(t, 30, clean.Altitude(data.Altitude))
 		assert.Equal(t, "1/6", data.Exposure)
 		assert.Equal(t, "Canon", data.CameraMake)
 		assert.Equal(t, "Canon EOS-1DS", data.CameraModel)
@@ -991,7 +992,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 5472, data.Width)
 		assert.Equal(t, float32(32.843544), data.Lat)
 		assert.Equal(t, float32(-117.28025), data.Lng)
-		assert.Equal(t, 18, data.Altitude)
+		assert.Equal(t, 18, clean.Altitude(data.Altitude))
 		assert.Equal(t, "1/500", data.Exposure)
 		assert.Equal(t, "Canon", data.CameraMake)
 		assert.Equal(t, "Canon EOS 6D", data.CameraModel)
@@ -1015,7 +1016,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 5472, data.Width)
 		assert.Equal(t, float32(32.843544), data.Lat)
 		assert.Equal(t, float32(-117.28025), data.Lng)
-		assert.Equal(t, 18, data.Altitude)
+		assert.Equal(t, 18, clean.Altitude(data.Altitude))
 		assert.Equal(t, "0.002", data.Exposure)
 		assert.Equal(t, "Canon", data.CameraMake)
 		assert.Equal(t, "Canon EOS 6D", data.CameraModel)
@@ -1040,7 +1041,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 1, data.Orientation)
 	})
 
@@ -1058,7 +1059,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 1, data.Orientation)
 	})
 
@@ -1082,7 +1083,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 600, data.Width)
 		assert.Equal(t, float32(65.05558), data.Lat)
 		assert.Equal(t, float32(-16.625702), data.Lng)
-		assert.Equal(t, 30, data.Altitude)
+		assert.Equal(t, 30, clean.Altitude(data.Altitude))
 		assert.Equal(t, "1/8", data.Exposure)
 		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
 		assert.Equal(t, "NIKON D800E", data.CameraModel)
@@ -1115,7 +1116,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 600, data.Width)
 		assert.Equal(t, float32(65.05558), data.Lat)
 		assert.Equal(t, float32(-16.625702), data.Lng)
-		assert.Equal(t, 30, data.Altitude)
+		assert.Equal(t, 30, clean.Altitude(data.Altitude))
 		assert.Equal(t, "0.125", data.Exposure)
 		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
 		assert.Equal(t, "NIKON D800E", data.CameraModel)
@@ -1148,7 +1149,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 600, data.Width)
 		assert.Equal(t, float32(65.05558), data.Lat)
 		assert.Equal(t, float32(-16.625702), data.Lng)
-		assert.Equal(t, 30, data.Altitude)
+		assert.Equal(t, 30, clean.Altitude(data.Altitude))
 		assert.Equal(t, "1/8", data.Exposure)
 		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
 		assert.Equal(t, "NIKON D800E", data.CameraModel)
@@ -1182,7 +1183,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 49*time.Second, data.Duration)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "", data.Exposure)
 		assert.Equal(t, "", data.CameraMake)
 		assert.Equal(t, "", data.CameraModel)
@@ -1276,6 +1277,19 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, float32(33.640007), data.Lat)
 		assert.Equal(t, float32(103.48), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
+	})
+
+	t.Run("altitude.json", func(t *testing.T) {
+		data, err := JSON("testdata/altitude.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, float32(45.75285), data.Lat)
+		assert.Equal(t, float32(33.221977), data.Lng)
+		assert.InEpsilon(t, 4294967284, data.Altitude, 1000)
+		assert.Equal(t, 0, clean.Altitude(data.Altitude))
 	})
 }

@@ -186,7 +186,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		if fl := GpsFloatRegexp.FindAllString(data.json["GPSAltitude"], -1); len(fl) != 1 {
 			// Ignore.
 		} else if alt, err := strconv.ParseFloat(fl[0], 64); err == nil && alt != 0 {
-			data.Altitude = int(alt)
+			data.Altitude = alt
 		}
 	}
 
