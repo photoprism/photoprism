@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2022-12-19 00:48+0000\n"
-"Last-Translator: nikhilhurule <nikhilhurule@gmail.com>\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
 "backend/hi/>\n"
 "Language: hi\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr ""
+msgstr "कुछ गलत हुआ है, दोबारा कोशिश करें"
 
 #: messages.go:95
 msgid "Unable to do that"
-msgstr ""
+msgstr "ऐसा करने में असमर्थ"
 
 #: messages.go:96
 msgid "Changes could not be saved"

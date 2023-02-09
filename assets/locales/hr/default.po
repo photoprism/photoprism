@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2022-10-06 21:13+0000\n"
-"Last-Translator: tomislav177 <tomislav.gal2@skole.hr>\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: none\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr ""
+msgstr "Nešto nije u redu, pokušajte ponovno"
 
 #: messages.go:95
 msgid "Unable to do that"
-msgstr ""
+msgstr "Nesposoban to učiniti"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -50,15 +50,15 @@ msgstr "Datoteka nije pronađena"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Datoteka je prevelika"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Nepodržani format"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Originalna mapa je prazna"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -118,7 +118,7 @@ msgstr "Prijenos bi mogao biti uvredljiv"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Prijenos nije uspio"
 
 #: messages.go:119
 msgid "No items selected"
@@ -179,11 +179,11 @@ msgstr "Zauzeto, pokušajte ponovo kasnije"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Interval buđenja je %s, ali mora biti 1 sat ili manje"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Vaš račun nije bilo moguće povezati"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -336,7 +336,7 @@ msgstr "%d datoteke prenesene u %d s"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Obrada prijenosa..."
 
 #: messages.go:172
 msgid "Upload has been processed"
