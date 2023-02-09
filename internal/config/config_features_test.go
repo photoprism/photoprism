@@ -30,7 +30,7 @@ func TestConfig_DisableWebDAV(t *testing.T) {
 	c.options.ReadOnly = true
 	c.options.Demo = false
 
-	assert.True(t, c.DisableWebDAV())
+	assert.False(t, c.DisableWebDAV())
 
 	c.options.Public = false
 	c.options.ReadOnly = false

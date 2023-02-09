@@ -33,7 +33,7 @@ func momentsAction(ctx *cli.Context) error {
 	defer conf.Shutdown()
 
 	if conf.ReadOnly() {
-		log.Infof("config: read-only mode enabled")
+		log.Infof("config: enabled read-only mode")
 	}
 
 	w := get.Moments()
