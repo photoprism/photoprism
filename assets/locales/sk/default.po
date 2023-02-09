@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2022-03-08 11:48+0000\n"
-"Last-Translator: Pheggas <petko252@gmail.com>\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
 "backend/sk/>\n"
 "Language: sk\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr ""
+msgstr "Niečo sa pokazilo, skúste to znova"
 
 #: messages.go:95
 msgid "Unable to do that"
-msgstr ""
+msgstr "Nemožno to urobiť"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -50,15 +50,15 @@ msgstr "Súbor nenájdený"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Príliš veľký súbor"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Nepodporovaný formát"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Priečinok Originály je prázdny"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -118,7 +118,7 @@ msgstr "Nahrané súbory môžu byť urážlivé"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Odovzdávanie zlyhalo"
 
 #: messages.go:119
 msgid "No items selected"
@@ -179,11 +179,11 @@ msgstr "Systém zaneprázdnený, prosím skúste znovu neskôr"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Interval prebúdzania je %s, ale musí byť najviac 1 h."
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Vaše konto sa nepodarilo pripojiť"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -336,7 +336,7 @@ msgstr "%d súborov nahraných za %d sekúnd"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Spracovanie nahrávania..."
 
 #: messages.go:172
 msgid "Upload has been processed"

@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2022-11-12 10:52+0000\n"
-"Last-Translator: jsonmona <jsonmona@outlook.com>\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
 "backend/ko/>\n"
 "Language: ko\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr ""
+msgstr "문제가 발생했습니다. 다시 시도하세요."
 
 #: messages.go:95
 msgid "Unable to do that"
-msgstr ""
+msgstr "그렇게 할 수 없습니다."
 
 #: messages.go:96
 msgid "Changes could not be saved"

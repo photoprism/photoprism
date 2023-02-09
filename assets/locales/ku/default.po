@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2022-02-19 14:34+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
 "backend/ku/>\n"
 "Language: ku\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr ""
+msgstr "Tiştek xelet derket, dîsa biceribîne"
 
 #: messages.go:95
 msgid "Unable to do that"
-msgstr ""
+msgstr "Nikarin vê yekê bikin"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -50,15 +50,15 @@ msgstr "دۆسیەکە نەدۆزرایەوە"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Pelê pir mezin e"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Format nayê destek kirin"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Peldanka orjînal vala ye"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -118,7 +118,7 @@ msgstr "بارکردن لەوانەیە سووکایەتی بێت"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "بارکردنەکە سەرکەوتوو نەبوو"
 
 #: messages.go:119
 msgid "No items selected"
@@ -179,11 +179,11 @@ msgstr "تێپەرەوشە هەڵەیە، تکایە جارێکی تر هەوڵ�
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Navbera hişyarbûnê %s ye, lê divê 1h an kêmtir be"
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Hesabê te nehat girêdan"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -336,7 +336,7 @@ msgstr "%d پەڕگە بارکرە بە %d چرکە"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Pêvajoya barkirinê..."
 
 #: messages.go:172
 msgid "Upload has been processed"

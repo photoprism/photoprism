@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2022-11-05 11:39+0000\n"
-"Last-Translator: István Lakatos <atyep95@msn.com>\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/"
 "photoprism/backend/hu/>\n"
 "Language: hu\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr ""
+msgstr "Valami rosszul ment, próbálja újra"
 
 #: messages.go:95
 msgid "Unable to do that"
-msgstr ""
+msgstr "Erre képtelen"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -58,7 +58,7 @@ msgstr "Nem támogatott formátum"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Az Originals mappa üres"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -179,7 +179,7 @@ msgstr "Túl magas terhelés, próbálkozzon újra később"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Az ébresztési intervallum a %s, de legfeljebb 1 óra lehet."
 
 #: messages.go:134
 msgid "Your account could not be connected"
