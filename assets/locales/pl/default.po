@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:19+0000\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
 "PO-Revision-Date: 2022-11-07 23:52+0000\n"
 "Last-Translator: lacrimal <jareeq@gmail.com>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
@@ -21,12 +21,12 @@ msgstr ""
 "X-Generator: Weblate 4.14.2\n"
 
 #: messages.go:94
-msgid "Something went wrong"
+msgid "Something went wrong, try again"
 msgstr ""
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Niepoprawne żądanie"
+msgid "Unable to do that"
+msgstr ""
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -378,6 +378,9 @@ msgstr "Trwale usunięty"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s zostało przywrócone"
+
+#~ msgid "Invalid request"
+#~ msgstr "Niepoprawne żądanie"
 
 #~ msgid "Unexpected error, please try again"
 #~ msgstr "Nieoczekiwany błąd, spróbuj ponownie"

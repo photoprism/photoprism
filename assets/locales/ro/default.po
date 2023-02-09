@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:19+0000\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
 "PO-Revision-Date: 2023-01-30 20:12+0000\n"
 "Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
@@ -21,12 +21,12 @@ msgstr ""
 "X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Something went wrong"
+msgid "Something went wrong, try again"
 msgstr ""
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Cerere invalidă"
+msgid "Unable to do that"
+msgstr ""
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -377,6 +377,9 @@ msgstr "Șterse definitiv"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s a fost restabilită"
+
+#~ msgid "Invalid request"
+#~ msgstr "Cerere invalidă"
 
 #~ msgid "Unexpected error, please try again"
 #~ msgstr "Eroare neașteptată, vă rugăm să încercați din nou"

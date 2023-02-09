@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:19+0000\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
 "PO-Revision-Date: 2022-11-01 13:36+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
@@ -20,12 +20,12 @@ msgstr ""
 "X-Generator: Poedit 3.2\n"
 
 #: messages.go:94
-msgid "Something went wrong"
+msgid "Something went wrong, try again"
 msgstr ""
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Ogiltig begäran"
+msgid "Unable to do that"
+msgstr ""
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -375,6 +375,9 @@ msgstr "Permanent borttagen"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s har återställts"
+
+#~ msgid "Invalid request"
+#~ msgstr "Ogiltig begäran"
 
 #~ msgid "Unexpected error, please try again"
 #~ msgstr "Oväntat fel, vänligen försök igen"

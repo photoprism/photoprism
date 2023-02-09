@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:19+0000\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
 "PO-Revision-Date: 2022-11-05 11:39+0000\n"
 "Last-Translator: István Lakatos <atyep95@msn.com>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/"
@@ -20,12 +20,12 @@ msgstr ""
 "X-Generator: Weblate 4.14.1\n"
 
 #: messages.go:94
-msgid "Something went wrong"
+msgid "Something went wrong, try again"
 msgstr ""
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Érvénytelen kérés"
+msgid "Unable to do that"
+msgstr ""
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -375,6 +375,9 @@ msgstr "Véglegesen törölve"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s visszaállítva"
+
+#~ msgid "Invalid request"
+#~ msgstr "Érvénytelen kérés"
 
 #~ msgid "Unexpected error, please try again"
 #~ msgstr "Váratlan hiba történt, próbálja újra"

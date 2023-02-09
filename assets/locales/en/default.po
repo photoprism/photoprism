@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:19+0000\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
 "PO-Revision-Date: 2022-10-31 16:44+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: \n"
@@ -19,11 +19,11 @@ msgstr ""
 "X-Generator: Poedit 2.3\n"
 
 #: messages.go:94
-msgid "Something went wrong"
+msgid "Something went wrong, try again"
 msgstr ""
 
 #: messages.go:95
-msgid "Invalid request"
+msgid "Unable to do that"
 msgstr ""
 
 #: messages.go:96
