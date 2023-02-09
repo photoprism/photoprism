@@ -1,5 +1,6 @@
 {
   "name": "{{ .config.AppName }}",
+  "categories": ["photo"],
   "short_name": "{{ printf "%.32s" .config.AppName }}",
   "description": "{{ .config.SiteDescription }}",
   "icons": [
@@ -80,7 +81,12 @@
     }
   ],
   "scope": "{{ .config.BaseUri }}/",
-  "start_url": "{{ .config.BaseUri }}/",
+  "start_url": "{{ .config.BaseUri }}/library/",
+  "serviceworker": {
+    "src": "sw.js",
+    "scope": "{{ .config.BaseUri }}/",
+    "use_cache": true
+  },
   "display": "{{ .config.AppMode }}",
   "theme_color": "#000000",
   "background_color": "#000000",
