@@ -83,6 +83,12 @@ func TestConfig_Version(t *testing.T) {
 	assert.Equal(t, "0.0.0", version)
 }
 
+func TestConfig_VersionChecksum(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, uint32(0x2e5b4b86), c.VersionChecksum())
+}
+
 func TestConfig_TensorFlowVersion(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

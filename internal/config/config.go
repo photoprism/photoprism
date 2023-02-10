@@ -42,6 +42,7 @@ var log = event.Log
 var once sync.Once
 var LowMem = false
 var TotalMem uint64
+var crc32Castagnoli = crc32.MakeTable(crc32.Castagnoli)
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -323,13 +324,13 @@ func (c *Config) Serial() string {
 func (c *Config) SerialChecksum() string {
 	var result []byte
 
-	hash := crc32.New(crc32.MakeTable(crc32.Castagnoli))
+	crc := crc32.New(crc32Castagnoli)
 
-	if _, err := hash.Write([]byte(c.Serial())); err != nil {
+	if _, err := crc.Write([]byte(c.Serial())); err != nil {
 		log.Warnf("config: %s", err)
 	}
 
-	return hex.EncodeToString(hash.Sum(result))
+	return hex.EncodeToString(crc.Sum(result))
 }
 
 // Name returns the app name.
@@ -355,6 +356,11 @@ func (c *Config) Edition() string {
 // Version returns the application version.
 func (c *Config) Version() string {
 	return c.options.Version
+}
+
+// VersionChecksum returns the application version checksum.
+func (c *Config) VersionChecksum() uint32 {
+	return crc32.ChecksumIEEE([]byte(c.Version()))
 }
 
 // UserAgent returns an HTTP user agent string based on the app config and version.

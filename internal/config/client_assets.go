@@ -85,5 +85,5 @@ func (c *Config) ClientAssets() ClientAssets {
 
 // ClientManifestUri returns the frontend manifest.json URI.
 func (c *Config) ClientManifestUri() string {
-	return c.BaseUri("/manifest.json")
+	return fmt.Sprintf("%s?%x", c.BaseUri("/manifest.json"), c.VersionChecksum())
 }
