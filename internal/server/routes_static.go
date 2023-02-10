@@ -34,37 +34,6 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 		}
 	})
 
-	// Loads Progressive Web App (PWA) on all routes beginning with "library".
-	pwa := func(c *gin.Context) {
-		values := gin.H{
-			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
-			"config": conf.ClientPublic(),
-		}
-		c.HTML(http.StatusOK, conf.TemplateName(), values)
-	}
-	router.Any(conf.BaseUri("/library/*path"), pwa)
-
-	// Progressive Web App (PWA) Manifest.
-	manifest := func(c *gin.Context) {
-		c.Header("Cache-Control", "no-store")
-		c.Header("Content-Type", "application/json")
-
-		clientConfig := conf.ClientPublic()
-		c.HTML(http.StatusOK, "manifest.json", gin.H{"config": clientConfig})
-	}
-	router.Any(conf.BaseUri("/manifest.json"), manifest)
-
-	// Progressive Web App (PWA) Service Worker.
-	swWorker := func(c *gin.Context) {
-		c.Header("Cache-Control", "no-store")
-		c.File(filepath.Join(conf.BuildPath(), "sw.js"))
-	}
-	router.Any("/sw.js", swWorker)
-
-	if swUri := conf.BaseUri("/sw.js"); swUri != "/sw.js" {
-		router.Any(swUri, swWorker)
-	}
-
 	// Serves static favicon.
 	router.StaticFile(conf.BaseUri("/favicon.ico"), filepath.Join(conf.ImgPath(), "favicon.ico"))
 

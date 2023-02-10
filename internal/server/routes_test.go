@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -24,33 +25,35 @@ func TestStaticRoutes(t *testing.T) {
 	// Register routes.
 	registerStaticRoutes(r, conf)
 
-	t.Run("GetHome", func(t *testing.T) {
+	t.Run("GetRoot", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/", nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 307, w.Code)
 		assert.Equal(t, "<a href=\"/library/browse\">Temporary Redirect</a>.\n\n", w.Body.String())
 	})
-	t.Run("HeadHome", func(t *testing.T) {
+	t.Run("HeadRoot", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("HEAD", "/", nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 307, w.Code)
 	})
-	t.Run("GetServiceWorker", func(t *testing.T) {
-		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/sw.js", nil)
-		r.ServeHTTP(w, req)
-		assert.Equal(t, 200, w.Code)
-		assert.NotEmpty(t, w.Body)
-	})
-	t.Run("HeadServiceWorker", func(t *testing.T) {
-		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("HEAD", "/sw.js", nil)
-		r.ServeHTTP(w, req)
-		assert.Equal(t, 200, w.Code)
-		assert.Empty(t, w.Body)
-	})
+}
+
+func TestPWARoutes(t *testing.T) {
+	// Create router.
+	r := gin.Default()
+
+	// Get test config.
+	conf := config.TestConfig()
+
+	// Find and load templates.
+	r.LoadHTMLFiles(conf.TemplateFiles()...)
+
+	// Register routes.
+	registerPWARoutes(r, conf)
+
+	// Bootstrapping.
 	t.Run("GetLibrary", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/library/", nil)
@@ -58,9 +61,9 @@ func TestStaticRoutes(t *testing.T) {
 		assert.Equal(t, 200, w.Code)
 		assert.NotEmpty(t, w.Body)
 	})
-	t.Run("GetLibrary", func(t *testing.T) {
+	t.Run("HeadLibrary", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/library/", nil)
+		req, _ := http.NewRequest("HEAD", "/library/", nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 200, w.Code)
 		assert.NotEmpty(t, w.Body)
@@ -77,5 +80,35 @@ func TestStaticRoutes(t *testing.T) {
 		req, _ := http.NewRequest("HEAD", "/library/browse", nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 200, w.Code)
+	})
+
+	// Manifest.
+	t.Run("GetManifest", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", "/manifest.json", nil)
+		r.ServeHTTP(w, req)
+		assert.Equal(t, 200, w.Code)
+		assert.NotEmpty(t, w.Body.String())
+		manifest := w.Body.String()
+		t.Logf("PWA Manifest: %s", manifest)
+		assert.True(t, strings.Contains(manifest, `"scope": "/",`))
+		assert.True(t, strings.Contains(manifest, `"start_url": "/library/",`))
+		assert.True(t, strings.Contains(manifest, "/static/icons/logo/128.png"))
+	})
+
+	// Service worker.
+	t.Run("GetServiceWorker", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", "/sw.js", nil)
+		r.ServeHTTP(w, req)
+		assert.Equal(t, 200, w.Code)
+		assert.NotEmpty(t, w.Body)
+	})
+	t.Run("HeadServiceWorker", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("HEAD", "/sw.js", nil)
+		r.ServeHTTP(w, req)
+		assert.Equal(t, 200, w.Code)
+		assert.Empty(t, w.Body)
 	})
 }

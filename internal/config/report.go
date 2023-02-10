@@ -112,9 +112,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Customization.
 		{"default-locale", c.DefaultLocale()},
 		{"default-theme", c.DefaultTheme()},
-		{"app-icon", c.AppIcon()},
 		{"app-name", c.AppName()},
 		{"app-mode", c.AppMode()},
+		{"app-icon", c.AppIcon()},
+		{"app-color", c.AppColor()},
 		{"legal-info", c.LegalInfo()},
 		{"legal-url", c.LegalUrl()},
 		{"wallpaper-uri", c.WallpaperUri()},

@@ -312,6 +312,13 @@ var Flags = CliFlags{
 		},
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
+			Name:   "app-name",
+			Usage:  "progressive web app `NAME` when installed on a device",
+			Value:  "",
+			EnvVar: "PHOTOPRISM_APP_NAME",
+		},
+		Tags: []string{EnvSponsor}}, {
+		Flag: cli.StringFlag{
 			Name:   "app-mode",
 			Usage:  "progressive web app `MODE` (fullscreen, standalone, minimal-ui, browser)",
 			Value:  "standalone",
@@ -319,17 +326,16 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "app-icon",
-			Usage:  "progressive web app `ICON` (logo, app, crisp, mint, bold)",
+			Usage:  "home screen `ICON` (logo, app, crisp, mint, bold)",
 			EnvVar: "PHOTOPRISM_APP_ICON",
 		},
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
-			Name:   "app-name",
-			Usage:  "progressive web app `NAME` when installed on a device",
-			Value:  "",
-			EnvVar: "PHOTOPRISM_APP_NAME",
-		},
-		Tags: []string{EnvSponsor}}, {
+			Name:   "app-color",
+			Usage:  "splash screen `COLOR` code",
+			EnvVar: "PHOTOPRISM_APP_COLOR",
+			Value:  "#000000",
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "imprint",
 			Usage:  "legal information `TEXT`, displayed in the page footer",

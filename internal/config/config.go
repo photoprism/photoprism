@@ -155,6 +155,7 @@ func (c *Config) Options() *Options {
 
 // Propagate updates config options in other packages as needed.
 func (c *Config) Propagate() {
+	FlushCache()
 	log.SetLevel(c.LogLevel())
 
 	// Set thumbnail generation parameters.

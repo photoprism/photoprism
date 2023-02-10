@@ -16,6 +16,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Static assets and templates.
 	registerStaticRoutes(router, conf)
 
+	// Web app bootstrapping and configuration.
+	registerPWARoutes(router, conf)
+
 	// Built-in WebDAV server.
 	registerWebDAVRoutes(router, conf)
 
