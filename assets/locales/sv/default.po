@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:36+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "backend/sv/>\n"
 "Language: sv\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Oväntat fel, vänligen försök igen"
+msgid "Something went wrong, try again"
+msgstr "Något gick fel, försök igen"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Ogiltig begäran"
+msgid "Unable to do that"
+msgstr "Det går inte att göra"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -375,3 +375,9 @@ msgstr "Permanent borttagen"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s har återställts"
+
+#~ msgid "Invalid request"
+#~ msgstr "Ogiltig begäran"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Oväntat fel, vänligen försök igen"

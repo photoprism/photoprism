@@ -8,7 +8,6 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // DefaultTheme returns the default user interface theme name.
@@ -27,60 +26,6 @@ func (c *Config) DefaultLocale() string {
 	}
 
 	return c.options.DefaultLocale
-}
-
-// AppIcon returns the app icon when installed on a device.
-func (c *Config) AppIcon() string {
-	defaultIcon := "logo"
-
-	if c.NoSponsor() || c.options.AppIcon == "" || c.options.AppIcon == defaultIcon {
-		// Default.
-	} else if fs.FileExists(c.AppIconsPath(c.options.AppIcon, "512.png")) {
-		return c.options.AppIcon
-	}
-
-	return defaultIcon
-}
-
-// AppIconsPath returns the path to the app icons.
-func (c *Config) AppIconsPath(name ...string) string {
-	if len(name) > 0 {
-		filePath := []string{c.StaticPath(), "icons"}
-		filePath = append(filePath, name...)
-		return filepath.Join(filePath...)
-	}
-
-	return filepath.Join(c.StaticPath(), "icons")
-}
-
-// AppName returns the app name when installed on a device.
-func (c *Config) AppName() string {
-	name := strings.TrimSpace(c.options.AppName)
-
-	if c.NoSponsor() || name == "" {
-		name = c.SiteTitle()
-	}
-
-	name = strings.Map(func(r rune) rune {
-		switch r {
-		case '\'', '"':
-			return -1
-		}
-
-		return r
-	}, name)
-
-	return txt.Clip(name, 32)
-}
-
-// AppMode returns the app mode when installed on a device.
-func (c *Config) AppMode() string {
-	switch c.options.AppMode {
-	case "fullscreen", "standalone", "minimal-ui", "browser":
-		return c.options.AppMode
-	default:
-		return "standalone"
-	}
 }
 
 // WallpaperUri returns the login screen background image `URI`.

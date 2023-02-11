@@ -45,7 +45,7 @@
                                    @click.stop.prevent="downloadFile(file)">
                               <translate>Download</translate>
                             </v-btn>
-                            <v-btn v-if="features.edit && file.FileType === 'jpg' && !file.Error && !file.Primary" small depressed dark
+                            <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed dark
                                    color="primary-button"
                                    class="btn-action action-primary"
                                    @click.stop.prevent="primaryFile(file)">

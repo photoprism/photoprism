@@ -2,7 +2,6 @@ package entity
 
 import (
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/sirupsen/logrus"
 )
 
 // Default values.
@@ -20,11 +19,11 @@ const (
 const (
 	MediaUnknown  = ""
 	MediaImage    = string(media.Image)
-	MediaVector   = string(media.Vector)
+	MediaRaw      = string(media.Raw)
 	MediaAnimated = string(media.Animated)
 	MediaLive     = string(media.Live)
 	MediaVideo    = string(media.Video)
-	MediaRaw      = string(media.Raw)
+	MediaVector   = string(media.Vector)
 	MediaText     = string(media.Text)
 )
 
@@ -56,36 +55,4 @@ const (
 const (
 	ProviderNone     = ""
 	ProviderPassword = "password"
-)
-
-// Sort options.
-const (
-	SortOrderDefault   = ""
-	SortOrderRelevance = "relevance"
-	SortOrderDuration  = "duration"
-	SortOrderSize      = "size"
-	SortOrderCount     = "count"
-	SortOrderAdded     = "added"
-	SortOrderImported  = "imported"
-	SortOrderEdited    = "edited"
-	SortOrderNewest    = "newest"
-	SortOrderOldest    = "oldest"
-	SortOrderPlace     = "place"
-	SortOrderMoment    = "moment"
-	SortOrderName      = "name"
-	SortOrderPath      = "path"
-	SortOrderSlug      = "slug"
-	SortOrderCategory  = "category"
-	SortOrderSimilar   = "similar"
-)
-
-// Log levels.
-const (
-	PanicLevel logrus.Level = iota
-	FatalLevel
-	ErrorLevel
-	WarnLevel
-	InfoLevel
-	DebugLevel
-	TraceLevel
 )

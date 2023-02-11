@@ -118,7 +118,7 @@ export default class Page {
         filterSelector = "div.p-countries-select";
         break;
       case "category":
-        filterSelector = ".input-category";
+        filterSelector = "div.p-category-select";
         break;
       default:
         throw "unknown filter";

@@ -50,15 +50,17 @@
                 </template>
               </v-combobox>
               <span v-else-if="failed"><translate key="Upload failed">Upload failed</translate></span>
-              <span v-else-if="total > 0 && completed < 100">
+              <span v-else-if="total > 0 && completedTotal < 100">
                 <translate :translate-params="{n: current, t: total}">Uploading %{n} of %{t}…</translate>
               </span>
               <span v-else-if="indexing"><translate key="Upload complete">Upload complete. Indexing…</translate></span>
-              <span v-else-if="completed === 100"><translate key="Done">Done.</translate></span>
+              <span v-else-if="completedTotal === 100"><translate key="Done">Done.</translate></span>
             </p>
 
-            <v-progress-linear v-model="completed" color="secondary-dark"
-                               :indeterminate="indexing"></v-progress-linear>
+            <v-progress-linear v-model="completedTotal" height="1.5em" color="secondary-dark"
+                               :indeterminate="indexing">
+              <p class="px-2 ma-0 text-xs-right opacity-85"><span v-if="eta">{{ eta }}</span></p>
+            </v-progress-linear>
 
             <p v-if="safe" class="body-1">
               <translate>Please don't upload photos containing offensive content.</translate>
@@ -91,6 +93,7 @@ import Api from "common/api";
 import Notify from "common/notify";
 import Album from "model/album";
 import Util from "common/util";
+import {Duration} from "luxon";
 
 export default {
   name: 'PUploadDialog',
@@ -109,7 +112,13 @@ export default {
       failed: false,
       current: 0,
       total: 0,
-      completed: 0,
+      totalSize: 0,
+      totalFailed: 0,
+      completedSize: 0,
+      completedTotal: 0,
+      started: 0,
+      remainingTime: -1,
+      eta: "",
       token: "",
       review: this.$config.feature("review"),
       safe: !this.$config.get("uploadNSFW"),
@@ -171,11 +180,53 @@ export default {
       this.failed = false;
       this.current = 0;
       this.total = 0;
-      this.completed = 0;
+      this.totalFailed = 0;
+      this.totalSize = 0;
+      this.completedSize = 0;
+      this.completedTotal = 0;
+      this.started = 0;
+      this.remainingTime = -1;
+      this.eta = "";
       this.token = "";
     },
     onUploadDialog() {
       this.$refs.upload.click();
+    },
+    onUploadProgress(ev) {
+      if (!ev || !ev.loaded || !ev.total) {
+        return;
+      }
+
+      const { loaded, total } = ev;
+
+      // Update upload status.
+      if (loaded > 0 && total > 0 && loaded < total) {
+        const currentSize = loaded + this.completedSize;
+        const elapsedTime = Date.now() - this.started;
+        this.completedTotal = Math.floor((currentSize * 100) / this.totalSize);
+
+        // Show estimate after 10 seconds.
+        if (elapsedTime >= 10000) {
+          const rate = currentSize / elapsedTime;
+          const ms = (this.totalSize / rate) - elapsedTime;
+          this.remainingTime = Math.ceil(ms * 0.001);
+          const dur = Duration.fromObject({
+            minutes: Math.floor(this.remainingTime / 60),
+            seconds: this.remainingTime % 60 },
+          );
+          this.eta = dur.toHuman();
+        }
+      }
+    },
+    onUploadComplete(file) {
+      if (!file || !file.size || file.size < 0) {
+        return;
+      }
+
+      this.completedSize += file.size;
+      if (this.totalSize > 0) {
+        this.completedTotal = Math.floor(((this.completedSize) * 100) / this.totalSize);
+      }
     },
     onUpload() {
       if (this.busy) {
@@ -189,15 +240,27 @@ export default {
         return;
       }
 
+      this.uploads = [];
       this.token = Util.generateToken();
       this.selected = this.$refs.upload.files;
-      this.total = this.selected.length;
       this.busy = true;
       this.indexing = false;
       this.failed = false;
       this.current = 0;
-      this.completed = 0;
-      this.uploads = [];
+      this.total = this.selected.length;
+      this.totalFailed = 0;
+      this.totalSize = 0;
+      this.completedSize = 0;
+      this.completedTotal = 0;
+      this.started = Date.now();
+      this.eta = "";
+      this.remainingTime = -1;
+
+      // Calculate total upload size.
+      for (let i = 0; i < this.selected.length; i++) {
+        let file = this.selected[i];
+        this.totalSize += file.size;
+      }
 
       let userUid = this.$session.getUserUID();
 
@@ -229,18 +292,28 @@ export default {
             {
               headers: {
                 'Content-Type': 'multipart/form-data'
-              }
+              },
+              onUploadProgress: ctx.onUploadProgress,
             }
           ).then(() => {
-            ctx.completed = Math.round((ctx.current / ctx.total) * 100);
+            ctx.onUploadComplete(file);
           }).catch(() => {
-            ctx.completed = Math.round((ctx.current / ctx.total) * 100);
+            ctx.totalFailed++;
+            ctx.onUploadComplete(file);
           });
         }
       }
 
       performUpload(this).then(() => {
+        if (this.totalFailed >= this.total) {
+          this.reset();
+          Notify.error(this.$gettext("Upload failed"));
+          return;
+        }
+
         this.indexing = true;
+        this.eta = "";
+
         const ctx = this;
         Api.put(`users/${userUid}/upload/${ctx.token}`,{
           albums: addToAlbums,

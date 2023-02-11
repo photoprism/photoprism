@@ -144,8 +144,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
-			if o.Convert && f.IsMedia() && !f.HasJpeg() {
-				if jpegFile, err := imp.convert.ToJpeg(f, false); err != nil {
+			if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
+				if jpegFile, err := imp.convert.ToPreview(f, false); err != nil {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), clean.Log(f.RootRelName()))
 					continue
 				} else {
@@ -154,7 +154,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
-			if jpg, err := f.Jpeg(); err != nil {
+			if jpg, err := f.PreviewImage(); err != nil {
 				log.Error(err)
 			} else if exceeds, actual := jpg.ExceedsResolution(o.ResolutionLimit); exceeds {
 				log.Errorf("index: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)

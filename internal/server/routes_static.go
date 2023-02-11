@@ -13,9 +13,10 @@ import (
 // registerStaticRoutes configures serving static assets and templates.
 func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	// Redirects to the PWA for now, can be replaced by a template later.
-	router.GET(conf.BaseUri("/"), func(c *gin.Context) {
+	login := func(c *gin.Context) {
 		c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
-	})
+	}
+	router.Any(conf.BaseUri("/"), login)
 
 	// Shows "Page Not found" error if no other handler is registered.
 	router.NoRoute(func(c *gin.Context) {
@@ -32,34 +33,6 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 			c.HTML(http.StatusNotFound, "404.gohtml", values)
 		}
 	})
-
-	// Loads Progressive Web App (PWA) on all routes beginning with "library".
-	router.GET(conf.BaseUri("/library/*path"), func(c *gin.Context) {
-		values := gin.H{
-			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
-			"config": conf.ClientPublic(),
-		}
-		c.HTML(http.StatusOK, conf.TemplateName(), values)
-	})
-
-	// Progressive Web App (PWA) Manifest.
-	router.GET(conf.BaseUri("/manifest.json"), func(c *gin.Context) {
-		c.Header("Cache-Control", "no-store")
-		c.Header("Content-Type", "application/json")
-
-		clientConfig := conf.ClientPublic()
-		c.HTML(http.StatusOK, "manifest.json", gin.H{"config": clientConfig})
-	})
-
-	// Progressive Web App (PWA) Service Worker.
-	swWorker := func(c *gin.Context) {
-		c.Header("Cache-Control", "no-store")
-		c.File(filepath.Join(conf.BuildPath(), "sw.js"))
-	}
-	router.GET("/sw.js", swWorker)
-	if swUri := conf.BaseUri("/sw.js"); swUri != "/sw.js" {
-		router.GET(swUri, swWorker)
-	}
 
 	// Serves static favicon.
 	router.StaticFile(conf.BaseUri("/favicon.ico"), filepath.Join(conf.ImgPath(), "favicon.ico"))

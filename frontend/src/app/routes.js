@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -147,7 +147,7 @@ export default [
     path: "/moments",
     component: Albums,
     meta: { title: $gettext("Moments"), auth: true },
-    props: { view: "moment", staticFilter: { type: "moment", order: "moment" } },
+    props: { view: "moment", defaultOrder: "moment", staticFilter: { type: "moment" } },
   },
   {
     name: "moment",
@@ -160,7 +160,7 @@ export default [
     path: "/albums",
     component: Albums,
     meta: { title: $gettext("Albums"), auth: true },
-    props: { view: "album", staticFilter: { type: "album", order: "name" } },
+    props: { view: "album", defaultOrder: "favorites", staticFilter: { type: "album" } },
   },
   {
     name: "album",
@@ -173,7 +173,7 @@ export default [
     path: "/calendar",
     component: Albums,
     meta: { title: $gettext("Calendar"), auth: true },
-    props: { view: "month", staticFilter: { type: "month", order: "newest" } },
+    props: { view: "month", defaultOrder: "newest", staticFilter: { type: "month" } },
   },
   {
     name: "month",
@@ -186,7 +186,7 @@ export default [
     path: "/folders",
     component: Albums,
     meta: { title: $gettext("Folders"), auth: true },
-    props: { view: "folder", staticFilter: { type: "folder", order: "newest" } },
+    props: { view: "folder", defaultOrder: "name", staticFilter: { type: "folder" } },
   },
   {
     name: "folder",
@@ -266,7 +266,7 @@ export default [
     path: "/states",
     component: Albums,
     meta: { title: $gettext("Places"), auth: true },
-    props: { view: "state", staticFilter: { type: "state", order: "place" } },
+    props: { view: "state", defaultOrder: "place", staticFilter: { type: "state" } },
   },
   {
     name: "state",

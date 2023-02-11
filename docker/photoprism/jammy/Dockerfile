@@ -1,10 +1,10 @@
 ##################################################### BUILD STAGE ######################################################
 FROM photoprism/develop:jammy as build
 
-# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Declare build parameters.
 ARG TARGETARCH

@@ -67,6 +67,7 @@
                 <v-select
                     v-model="model.Order"
                     :label="$gettext('Sort Order')"
+                    :menu-props="{'maxHeight':400}"
                     hide-details box flat
                     :items="sorting"
                     :disabled="disabled"

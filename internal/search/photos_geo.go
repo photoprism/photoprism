@@ -175,6 +175,15 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		}
 	}
 
+	// Find Unique Image ID (Exif), Document ID, or Instance ID (XMP)?
+	if txt.NotEmpty(f.ID) {
+		for _, id := range SplitAnd(strings.ToLower(f.ID)) {
+			if ids := SplitOr(id); len(ids) > 0 {
+				s = s.Where("files.instance_id IN (?) OR photos.uuid IN (?)", ids, ids)
+			}
+		}
+	}
+
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
 		if f.Title == "" {
@@ -195,8 +204,11 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		case terms["video"]:
 			f.Query = strings.ReplaceAll(f.Query, "video", "")
 			f.Video = true
-		case terms["svg"]:
-			f.Query = strings.ReplaceAll(f.Query, "svg", "")
+		case terms["vectors"]:
+			f.Query = strings.ReplaceAll(f.Query, "vectors", "")
+			f.Vector = true
+		case terms["vector"]:
+			f.Query = strings.ReplaceAll(f.Query, "vector", "")
 			f.Vector = true
 		case terms["animated"]:
 			f.Query = strings.ReplaceAll(f.Query, "animated", "")
@@ -320,7 +332,7 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 	// Find photos in albums or not in an album, unless search results are limited to a scope.
 	if f.Scope == "" {
 		if f.Unsorted {
-			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
+			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE pa.hidden = 0 AND a.deleted_at IS NULL)")
 		} else if txt.NotEmpty(f.Album) {
 			v := strings.Trim(f.Album, "*%") + "%"
 			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)

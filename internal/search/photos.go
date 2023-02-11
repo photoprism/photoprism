@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -25,7 +26,7 @@ var PhotosColsAll = SelectString(Photo{}, []string{"*"})
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
 
 // FileTypes contains a list of browser-compatible file formats returned by search queries.
-var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageWebP.String()}
+var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageWebP.String(), fs.VectorSVG.String()}
 
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
@@ -137,28 +138,30 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 	// Set sort order.
 	switch f.Order {
-	case entity.SortOrderEdited:
+	case sortby.Edited:
 		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.media_id")
-	case entity.SortOrderRelevance:
+	case sortby.Relevance:
 		if f.Label != "" {
 			s = s.Order("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index")
 		} else {
 			s = s.Order("photos.photo_quality DESC, files.time_index")
 		}
-	case entity.SortOrderDuration:
+	case sortby.Duration:
 		s = s.Order("photos.photo_duration DESC, files.time_index")
-	case entity.SortOrderSize:
+	case sortby.Size:
 		s = s.Order("files.file_size DESC, files.time_index")
-	case entity.SortOrderNewest:
+	case sortby.Newest:
 		s = s.Order("files.time_index")
-	case entity.SortOrderOldest:
+	case sortby.Oldest:
 		s = s.Order("files.photo_taken_at, files.media_id")
-	case entity.SortOrderSimilar:
+	case sortby.Similar:
 		s = s.Where("files.file_diff > 0")
 		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.time_index")
-	case entity.SortOrderName:
+	case sortby.Name:
 		s = s.Order("photos.photo_path, photos.photo_name, files.time_index")
-	case entity.SortOrderDefault, entity.SortOrderImported, entity.SortOrderAdded:
+	case sortby.Random:
+		s = s.Order(sortby.RandomExpr(s.Dialect()))
+	case sortby.Default, sortby.Imported, sortby.Added:
 		s = s.Order("files.media_id")
 	default:
 		return PhotoResults{}, 0, ErrBadSortOrder
@@ -166,7 +169,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 	// Limit the result file types if hidden images/videos should not be found.
 	if !f.Hidden {
-		s = s.Where("files.file_type IN (?) OR files.file_video = 1", FileTypes)
+		s = s.Where("files.file_type IN (?) OR files.media_type IN ('vector','video')", FileTypes)
 
 		if f.Error {
 			s = s.Where("files.file_error <> ''")
@@ -217,6 +220,15 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
+	// Find Unique Image ID (Exif), Document ID, or Instance ID (XMP)?
+	if txt.NotEmpty(f.ID) {
+		for _, id := range SplitAnd(strings.ToLower(f.ID)) {
+			if ids := SplitOr(id); len(ids) > 0 {
+				s = s.Where("files.instance_id IN (?) OR photos.uuid IN (?)", ids, ids)
+			}
+		}
+	}
+
 	// Filter by label, label category and keywords.
 	var categories []entity.Category
 	var labels []entity.Label
@@ -262,8 +274,11 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		case terms["video"]:
 			f.Query = strings.ReplaceAll(f.Query, "video", "")
 			f.Video = true
-		case terms["svg"]:
-			f.Query = strings.ReplaceAll(f.Query, "svg", "")
+		case terms["vectors"]:
+			f.Query = strings.ReplaceAll(f.Query, "vectors", "")
+			f.Vector = true
+		case terms["vector"]:
+			f.Query = strings.ReplaceAll(f.Query, "vector", "")
 			f.Vector = true
 		case terms["animated"]:
 			f.Query = strings.ReplaceAll(f.Query, "animated", "")
@@ -520,7 +535,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	} else if f.Live {
 		s = s.Where("photos.photo_type = ?", entity.MediaLive)
 	} else if f.Photo {
-		s = s.Where("photos.photo_type IN ('image','raw','live','animated')")
+		s = s.Where("photos.photo_type IN ('image','live','animated','vector','raw')")
 	}
 
 	// Filter by storage path?
@@ -635,7 +650,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	// Find photos in albums or not in an album, unless search results are limited to a scope.
 	if f.Scope == "" {
 		if f.Unsorted {
-			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
+			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE pa.hidden = 0 AND a.deleted_at IS NULL)")
 		} else if txt.NotEmpty(f.Album) {
 			v := strings.Trim(f.Album, "*%") + "%"
 			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)

@@ -10,9 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -117,9 +115,6 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		// Flush session cache and update client config.
 		entity.FlushSessionCache()
 		UpdateClientConfig()
-
-		// Show info message.
-		event.InfoMsg(i18n.MsgSettingsSaved)
 
 		// Return updated config options.
 		c.JSON(http.StatusOK, conf.Options())

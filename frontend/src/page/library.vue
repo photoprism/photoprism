@@ -86,7 +86,7 @@ export default {
         'label': this.$gettext('Logs'),
         'class': '',
         'path': '/logs',
-        'icon': 'assignment',
+        'icon': 'feed',
         'readonly': true,
         'demo': true,
       });

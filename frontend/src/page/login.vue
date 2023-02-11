@@ -1,17 +1,16 @@
 <template>
-  <v-container fluid fill-height class="auth-login wallpaper background-welcome pa-4" :style="wallpaper()">
-    <v-layout align-center justify-center>
-      <v-flex xs12 sm8 md4 xl3 xxl2>
+  <v-container id="auth-login" fluid fill-height class="auth-login wallpaper background-welcome pa-4" :style="wallpaper()">
+    <v-layout id="auth-layout" class="auth-layout">
+      <v-flex xs12 sm9 md6 lg4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
-          <v-card class="elevation-12 auth-login-box blur-7">
+          <v-card id="auth-login-box" class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-4">
-              <div class="logo text-xs-center">
-                <img :src="$config.getIcon()" :alt="config.name">
-              </div>
+              <p-auth-header></p-auth-header>
               <v-spacer></v-spacer>
               <v-layout wrap align-top>
                 <v-flex xs12 class="px-2 py-1">
                   <v-text-field
+                      id="auth-username"
                       v-model="username"
                       hide-details required solo flat light autofocus
                       type="text"
@@ -22,13 +21,14 @@
                       :label="$gettext('Name')"
                       background-color="grey lighten-5"
                       class="input-username text-selectable"
-                      color="#00a6a9"
+                      color="primary"
                       prepend-inner-icon="person"
                       @keyup.enter.native="login"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 class="pa-2">
                   <v-text-field
+                      id="auth-password"
                       v-model="password"
                       hide-details required solo flat light
                       :type="showPassword ? 'text' : 'password'"
@@ -41,13 +41,13 @@
                       class="input-password text-selectable"
                       :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                       prepend-inner-icon="lock"
-                      color="#00a6a9"
+                      color="primary"
                       @click:append="showPassword = !showPassword"
                       @keyup.enter.native="login"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 class="px-2 py-1">
-                  <div class="action-buttons text-xs-center">
+                <v-flex xs12 class="px-2 py-1 auth-actions">
+                  <div class="action-buttons auth-buttons text-xs-center">
                     <v-btn v-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
                            :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80"
                            @click.stop.prevent="register">
@@ -61,53 +61,19 @@
                       <v-icon v-else right dark>navigate_next</v-icon>
                     </v-btn>
                   </div>
+                  <div v-if="passwordResetUri" class="auth-links text-xs-center opacity-80">
+                    <a :href="passwordResetUri" class="text-link link--text">
+                      <translate>Forgot password?</translate>
+                    </a>
+                  </div>
                 </v-flex>
               </v-layout>
-              <div v-if="passwordResetUri" class="text-xs-center opacity-80">
-                <a :href="passwordResetUri" class="text-link" :style="`color: ${colors.link}!important`">
-                  <translate>Forgot password?</translate>
-                </a>
-              </div>
             </v-card-text>
           </v-card>
         </v-form>
       </v-flex>
     </v-layout>
-    <footer v-if="sponsor">
-      <v-layout wrap align-top pa-0 ma-0>
-        <v-flex xs12 sm6 class="pa-0 body-2 text-selectable text-xs-center white--text text-sm-left">
-          {{ $config.getAbout() }}
-        </v-flex>
-
-        <v-flex v-if="config.legalInfo" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
-          <a v-if="config.legalUrl" :href="config.legalUrl" target="_blank" class="text-link"
-             :style="`color: ${colors.link}!important`">{{ config.legalInfo }}</a>
-          <span v-else>{{ config.legalInfo }}</span>
-        </v-flex>
-        <v-flex v-else xs12 class="pa-0 body-2 text-selectable text-xs-center white--text text-sm-right sm6">
-          <strong>{{ config.siteCaption ? config.siteCaption : config.siteTitle }}</strong>
-        </v-flex>
-      </v-layout>
-    </footer>
-    <footer v-else>
-      <v-layout wrap align-top pa-0 ma-0>
-        <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-left white--text text-selectable">
-          <strong>{{ config.siteTitle }}</strong> – {{ config.siteCaption }}
-        </v-flex>
-        <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
-          <v-btn
-              href="https://photoprism.app/"
-              target="_blank"
-              color="transparent"
-              class="white--text px-3 py-2 ma-0 action-about"
-              round depressed small
-          >
-            <translate>Learn more</translate>
-            <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>diamond</v-icon>
-          </v-btn>
-        </v-flex>
-      </v-layout>
-    </footer>
+    <p-auth-footer :colors="colors"></p-auth-footer>
   </v-container>
 </template>
 

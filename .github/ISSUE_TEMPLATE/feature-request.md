@@ -12,7 +12,7 @@ PLEASE ONLY PROCEED IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPP
 - <https://link.photoprism.app/roadmap>
 - <https://github.com/photoprism/photoprism/issues>
  
-VISIT <https://photoprism.app/kb/getting-support> TO LEARN MORE ABOUT OUR SUPPORT OPTIONS. THANK YOU FOR YOUR CAREFUL CONSIDERATION!
+VISIT <https://www.photoprism.app/kb/getting-support> TO LEARN MORE ABOUT OUR SUPPORT OPTIONS. THANK YOU FOR YOUR CAREFUL CONSIDERATION!
 
 ===============================================================================
 

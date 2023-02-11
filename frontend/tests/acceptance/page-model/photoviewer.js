@@ -44,6 +44,13 @@ export default class Page {
     if (action === "close") {
       if (await Selector("button.pswp__button.action-" + action).visible) {
         await t.click(Selector("button.pswp__button.action-" + action));
+      } else {
+        await t.wait(8000);
+        if (await Selector("button.pswp__button.action-" + action).visible) {
+          await t.click(Selector("button.pswp__button.action-" + action));
+        } else {
+          console.log("Could not close Photoviewer");
+        }
       }
     }
   }

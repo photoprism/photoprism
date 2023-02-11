@@ -105,7 +105,7 @@ func (t Type) FindFirst(fileName string, dirs []string, baseDir string, stripSeq
 
 			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
 				return filepath.Join(dir, info.Name())
-			} else if info, err := os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
+			} else if info, err = os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
 				return filepath.Join(dir, info.Name())
 			}
 
@@ -115,7 +115,7 @@ func (t Type) FindFirst(fileName string, dirs []string, baseDir string, stripSeq
 
 			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
 				return filepath.Join(dir, info.Name())
-			} else if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
+			} else if info, err = os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
 				return filepath.Join(dir, info.Name())
 			}
 		}

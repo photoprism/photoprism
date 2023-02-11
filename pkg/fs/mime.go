@@ -18,24 +18,34 @@ const (
 	MimeTypeAVIF    = "image/avif"
 	MimeTypeHEIC    = "image/heic"
 	MimeTypeWebP    = "image/webp"
+	MimeTypeMP4     = "video/mp4"
+	MimeTypeMOV     = "video/quicktime"
+	MimeTypeSVG     = "image/svg+xml"
+	MimeTypePS      = "application/ps"
+	MimeTypeEPS     = "image/eps"
 	MimeTypeXML     = "text/xml"
 	MimeTypeJSON    = "application/json"
 )
 
-// Set mime detection read limit.
-func init() {
-	mimetype.SetLimit(1024)
-}
-
 // MimeType returns the mime type of a file, or an empty string if it could not be detected.
 func MimeType(filename string) (mimeType string) {
 	// Workaround, since "image/dng" cannot be recognized yet.
-	if ext := strings.ToLower(filepath.Ext(filename)); ext == "" {
+	if ext := Extensions[strings.ToLower(filepath.Ext(filename))]; ext == "" {
 		// Continue.
-	} else if Extensions[ext] == ImageDNG {
+	} else if ext == ImageDNG {
 		return MimeTypeDNG
-	} else if Extensions[ext] == ImageAVIF {
+	} else if ext == ImageAVIF {
 		return MimeTypeAVIF
+	} else if ext == VideoMP4 {
+		return MimeTypeMP4
+	} else if ext == VideoMOV {
+		return MimeTypeMOV
+	} else if ext == VectorSVG {
+		return MimeTypeSVG
+	} else if ext == VectorPS {
+		return MimeTypePS
+	} else if ext == VectorEPS {
+		return MimeTypeEPS
 	}
 
 	if t, err := mimetype.DetectFile(filename); err != nil {

@@ -131,7 +131,7 @@ func (data *Data) GPhoto(jsonData []byte) (err error) {
 		}
 
 		if data.Altitude == 0 {
-			data.Altitude = int(p.Geo.Altitude)
+			data.Altitude = p.Geo.Altitude
 		}
 	}
 

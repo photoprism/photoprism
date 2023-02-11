@@ -43,7 +43,7 @@ type Data struct {
 	CameraSerial  string        `meta:"SerialNumber"`
 	LensMake      string        `meta:"LensMake"`
 	LensModel     string        `meta:"Lens,LensModel" xmp:"LensModel"`
-	Software      string        `meta:"Software,HistorySoftwareAgent,ProcessingSoftware"`
+	Software      string        `meta:"Software,CreatorTool,HistorySoftwareAgent,ProcessingSoftware"`
 	Flash         bool          `meta:"FlashFired"`
 	FocalLength   int           `meta:"FocalLength,FocalLengthIn35mmFormat"`
 	FocalDistance float64       `meta:"HyperfocalDistance"`
@@ -57,7 +57,7 @@ type Data struct {
 	GPSLongitude  string        `meta:"GPSLongitude"`
 	Lat           float32       `meta:"-"`
 	Lng           float32       `meta:"-"`
-	Altitude      int           `meta:"GlobalAltitude,GPSAltitude"`
+	Altitude      float64       `meta:"GlobalAltitude,GPSAltitude"`
 	Width         int           `meta:"ImageWidth,PixelXDimension,ExifImageWidth,SourceImageWidth"`
 	Height        int           `meta:"ImageHeight,ImageLength,PixelYDimension,ExifImageHeight,SourceImageHeight"`
 	Orientation   int           `meta:"-"`

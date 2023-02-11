@@ -263,7 +263,7 @@ func TestCloneAlbums(t *testing.T) {
 		CloneAlbums(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/clone", `{albums: ["`+uid+`"]}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Invalid request", val.String())
+		assert.Equal(t, "Unable to do that", val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }

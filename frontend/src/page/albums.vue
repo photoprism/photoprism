@@ -19,19 +19,6 @@
                       @click:clear="() => {updateQuery({'q': ''})}"
         ></v-text-field>
 
-        <v-overflow-btn v-if="canManage" :value="filter.category"
-                  solo hide-details single-line
-                  :label="$gettext('Category')"
-                  color="secondary-dark"
-                  background-color="secondary"
-                  prepend-icon="local_offer"
-                  append-icon=""
-                  :items="categories"
-                  class="hidden-xs-only input-category background-inherit elevation-0"
-                  @change="(v) => {updateQuery({'category': v})}"
-        >
-        </v-overflow-btn>
-
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>refresh</v-icon>
         </v-btn>
@@ -45,7 +32,57 @@
                @click.prevent="create()">
           <v-icon>add</v-icon>
         </v-btn>
+
+        <v-btn v-if="canManage && !staticFilter['order']" icon class="p-expand-search" :title="$gettext('Expand Search')"
+               @click.stop="searchExpanded = !searchExpanded">
+          <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
+        </v-btn>
       </v-toolbar>
+      <v-card v-show="searchExpanded"
+              class="pt-1 page-toolbar-expanded"
+              flat
+              color="secondary-light">
+        <v-card-text>
+          <v-layout row wrap>
+            <v-flex xs12 sm4 pa-2 class="p-year-select">
+              <v-select :value="filter.year"
+                        :label="$gettext('Year')"
+                        :disabled="context === 'state'"
+                        :menu-props="{'maxHeight':346}"
+                        flat solo hide-details
+                        color="secondary-dark"
+                        background-color="secondary"
+                        item-value="value"
+                        item-text="text"
+                        :items="yearOptions()"
+                        @change="(v) => {updateQuery({'year': v})}">
+              </v-select>
+            </v-flex>
+            <v-flex xs12 sm4 pa-2 class="p-category-select">
+              <v-select :value="filter.category"
+                        :label="$gettext('Category')"
+                        :menu-props="{'maxHeight':346}"
+                        flat solo hide-details
+                        color="secondary-dark"
+                        background-color="secondary"
+                        :items="categories"
+                        @change="(v) => {updateQuery({'category': v})}">
+              </v-select>
+            </v-flex>
+            <v-flex xs12 sm4 pa-2 class="p-sort-select">
+              <v-select :value="filter.order"
+                        :label="$gettext('Sort Order')"
+                        :menu-props="{'maxHeight':400}"
+                        flat solo hide-details
+                        color="secondary-dark"
+                        background-color="secondary"
+                        :items="options.sorting"
+                        @change="(v) => {updateQuery({'order': v})}">
+              </v-select>
+            </v-flex>
+          </v-layout>
+        </v-card-text>
+      </v-card>
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-4">
@@ -214,6 +251,7 @@ import RestModel from "model/rest";
 import {MaxItems} from "common/clipboard";
 import Notify from "common/notify";
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
+import * as options from "options/options";
 
 export default {
   name: 'PPageAlbums',
@@ -221,6 +259,10 @@ export default {
     staticFilter: {
       type: Object,
       default: () => {},
+    },
+    defaultOrder: {
+      type: String,
+      default: "name",
     },
     view: {
       type: String,
@@ -230,9 +272,11 @@ export default {
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
+    const order = this.sortOrder();
     const q = query["q"] ? query["q"] : "";
     const category = query["category"] ? query["category"] : "";
-    const filter = {q, category};
+    const year = query['year'] ? parseInt(query['year']) : "";
+    const filter = {q, category, order, year};
     const settings = {};
     const features = this.$config.settings().features;
 
@@ -245,6 +289,7 @@ export default {
     }
 
     return {
+      searchExpanded: false,
       canUpload: this.$config.allow("files", "upload") && features.upload,
       canShare: this.$config.allow("albums", "share") && features.share,
       canManage: this.$config.allow("albums", "manage"),
@@ -277,6 +322,21 @@ export default {
         edit: false,
       },
       model: new Album(false),
+      all: {
+        years: [{value: "", text: this.$gettext("All Years")}],
+      },
+      options: {
+        'sorting': [
+          {value: 'favorites', text: this.$gettext('Favorites')},
+          {value: 'name', text: this.$gettext('Name')},
+          {value: 'place', text: this.$gettext('Location')},
+          {value: 'moment', text: this.$gettext('Place & Time')},
+          {value: 'newest', text: this.$gettext('Newest First')},
+          {value: 'oldest', text: this.$gettext('Oldest First')},
+          {value: 'added', text: this.$gettext('Recently Added')},
+          {value: 'edited', text: this.$gettext('Recently Edited')},
+        ],
+      },
     };
   },
   computed: {
@@ -301,6 +361,8 @@ export default {
       this.q = query["q"] ? query["q"] : "";
       this.filter.q = this.q;
       this.filter.category = query["category"] ? query["category"] : "";
+      this.filter.year = query['year'] ? parseInt(query['year']) : "";
+      this.filter.order = this.sortOrder();
 
       this.search();
     }
@@ -309,9 +371,9 @@ export default {
     this.search();
 
     this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
-
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+    this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.onConfigUpdated(data)));
   },
   destroyed() {
     for (let i = 0; i < this.subscriptions.length; i++) {
@@ -319,6 +381,39 @@ export default {
     }
   },
   methods: {
+    onConfigUpdated(data) {
+      if (!data || !data.config?.albumCategories) {
+        return;
+      }
+
+      const c = data.config.albumCategories;
+
+      this.categories = [{"value": "", "text": this.$gettext("All Categories")}];
+
+      if (c.length > 0) {
+        this.categories = this.categories.concat(c.map(cat => {
+          return {"value": cat, "text": cat};
+        }));
+      }
+    },
+    yearOptions() {
+      return this.all.years.concat(options.IndexedYears());
+    },
+    sortOrder() {
+      const typeName = this.staticFilter?.type;
+      const keyName = "albums_order_"+typeName;
+      const queryParam = this.$route.query["order"];
+      const storedType = window.localStorage.getItem(keyName);
+
+      if (queryParam) {
+        window.localStorage.setItem(keyName, queryParam);
+        return queryParam;
+      } else if (storedType) {
+        return storedType;
+      }
+
+      return this.defaultOrder;
+    },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("albums_offset"));
 

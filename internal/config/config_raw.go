@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// RawEnabled checks if indexing and conversion of RAW files is enabled.
+// RawEnabled checks if indexing and conversion of RAW images is enabled.
 func (c *Config) RawEnabled() bool {
 	return !c.DisableRaw()
 }
@@ -71,19 +71,19 @@ func (c *Config) DarktableEnabled() bool {
 	return !c.DisableDarktable()
 }
 
-// RawtherapeeBin returns the rawtherapee-cli executable file name.
-func (c *Config) RawtherapeeBin() string {
-	return findBin(c.options.RawtherapeeBin, "rawtherapee-cli")
+// RawTherapeeBin returns the rawtherapee-cli executable file name.
+func (c *Config) RawTherapeeBin() string {
+	return findBin(c.options.RawTherapeeBin, "rawtherapee-cli")
 }
 
-// RawtherapeeBlacklist returns the RawTherapee file extension blacklist.
-func (c *Config) RawtherapeeBlacklist() string {
-	return c.options.RawtherapeeBlacklist
+// RawTherapeeBlacklist returns the RawTherapee file extension blacklist.
+func (c *Config) RawTherapeeBlacklist() string {
+	return c.options.RawTherapeeBlacklist
 }
 
-// RawtherapeeEnabled checks if Rawtherapee is enabled for RAW conversion.
-func (c *Config) RawtherapeeEnabled() bool {
-	return !c.DisableRawtherapee()
+// RawTherapeeEnabled checks if RawTherapee is enabled for RAW conversion.
+func (c *Config) RawTherapeeEnabled() bool {
+	return !c.DisableRawTherapee()
 }
 
 // SipsEnabled checks if SIPS is enabled for RAW conversion.

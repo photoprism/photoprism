@@ -1,10 +1,10 @@
 ##################################################### BUILD STAGE ######################################################
 FROM photoprism/develop:armv7 as build
 
-# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Declare build parameters.
 ARG TARGETARCH
@@ -104,11 +104,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
       libc6 ca-certificates sudo bash tzdata avahi-utils \
       gpg zip unzip wget curl rsync make nano \
-      jq lsof lshw sqlite3 mariadb-client imagemagick \
-      exiftool rawtherapee librsvg2-bin \
-      ffmpeg ffmpegthumbnailer libavcodec-extra \
+      jq lsof lshw sqlite3 mariadb-client exiftool rawtherapee \
+      ffmpeg libavcodec-extra x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
       libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-      x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
     && \
     /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \

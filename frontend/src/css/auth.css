@@ -6,6 +6,46 @@
     color-scheme: light;
 }
 
+/* Auth Form Colors */
+
+#photoprism main .auth-login .accent {
+    background-color: #05dde1!important;
+}
+
+#photoprism main .auth-login .accent--text {
+    caret-color: #05dde1!important;
+    color: #05dde1!important;
+}
+
+#photoprism main .auth-login .primary {
+    background-color: #00a6a9!important;
+}
+
+#photoprism main .auth-login .primary--text {
+    caret-color: #00a6a9!important;
+    color: #00a6a9!important;
+}
+
+#photoprism main .auth-login .secondary {
+    background-color: #505050!important;
+}
+
+#photoprism main .auth-login .secondary--text {
+    caret-color: #505050!important;
+    color: #505050!important;
+}
+
+#photoprism main .auth-login .link {
+    background-color: #c8e3e7!important;
+}
+
+#photoprism main .auth-login .link--text {
+    caret-color: #c8e3e7!important;
+    color: #c8e3e7!important;
+}
+
+/* Auth Form Logo */
+
 #photoprism .auth-login .logo {
     background-size: contain;
     background-repeat: no-repeat;
@@ -16,6 +56,11 @@
     margin: 20px auto 40px auto;
     position: relative;
     left: unset;
+}
+
+#photoprism .auth-layout {
+    justify-content: center;
+    align-items: center;
 }
 
 #photoprism .auth-login .action-buttons {

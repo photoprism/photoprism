@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -27,7 +28,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 2100, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "", data.Exposure)
 		assert.Equal(t, "", data.CameraMake)
 		assert.Equal(t, "", data.CameraModel)
@@ -55,7 +56,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 2100, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "", data.Exposure)
 		assert.Equal(t, "", data.CameraMake)
 		assert.Equal(t, "", data.CameraModel)
@@ -85,7 +86,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 720, data.Width)
 		assert.Equal(t, float32(52.45969), data.Lat)
 		assert.Equal(t, float32(13.321832), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/50", data.Exposure)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
@@ -119,7 +120,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 720, data.Width)
 		assert.Equal(t, float32(51.254852), data.Lat)
 		assert.Equal(t, float32(7.389468), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/125", data.Exposure)
 		assert.Equal(t, "Canon", data.CameraMake)
 		assert.Equal(t, "Canon EOS 50D", data.CameraModel)
@@ -151,7 +152,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 240, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/2462", data.Exposure)
 		assert.Equal(t, "GoPro", data.CameraMake)
 		assert.Equal(t, "HD2", data.CameraModel)
@@ -181,7 +182,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "2018-09-10T12:16:13Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, float32(34.79745), data.Lat)
 		assert.Equal(t, float32(134.76463), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/4000", data.Exposure)
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone 7", data.CameraModel)
@@ -210,7 +211,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 0, data.Width)
 		assert.Equal(t, float32(-38.405193), data.Lat)
 		assert.Equal(t, float32(144.18896), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "", data.Exposure)
 		assert.Equal(t, "", data.CameraMake)
 		assert.Equal(t, "", data.CameraModel)
@@ -247,7 +248,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "2020-05-15T10:25:45Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z")) // TODO
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/1100", data.Exposure)
 		assert.Equal(t, "SAMSUNG", data.CameraMake)
 		assert.Equal(t, "GT-I9000", data.CameraModel)
@@ -269,7 +270,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 955677000, data.TakenNs)
 		assert.Equal(t, float32(53.12349), data.Lat)
 		assert.Equal(t, float32(18.00152), data.Lng)
-		assert.Equal(t, 63, data.Altitude)
+		assert.Equal(t, 63, clean.Altitude(data.Altitude))
 		assert.Equal(t, "1/100", data.Exposure)
 		assert.Equal(t, "Xiaomi", data.CameraMake)
 		assert.Equal(t, "Mi A1", data.CameraModel)
@@ -362,7 +363,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 695326000, data.TakenNs)
 		assert.Equal(t, float32(48.302776), data.Lat)
 		assert.Equal(t, float32(8.9275), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/110", data.Exposure)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
@@ -392,7 +393,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 7200, data.Width)
 		assert.Equal(t, float32(59.84083), data.Lat)
 		assert.Equal(t, float32(30.51), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/1250", data.Exposure)
 		assert.Equal(t, "SAMSUNG", data.CameraMake)
 		assert.Equal(t, "SM-C200", data.CameraModel)
@@ -424,7 +425,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 65, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "", data.Exposure)
 		assert.Equal(t, "", data.CameraMake)
 		assert.Equal(t, "", data.CameraModel)
@@ -456,7 +457,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 3264, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/387", data.Exposure)
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone 5s", data.CameraModel)
@@ -490,7 +491,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 3648, data.Width)
 		assert.Equal(t, float32(52.46052), data.Lat)
 		assert.Equal(t, float32(13.331402), data.Lng)
-		assert.Equal(t, 84, data.Altitude)
+		assert.Equal(t, 84, clean.Altitude(data.Altitude))
 		assert.Equal(t, "1/50", data.Exposure)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
@@ -516,7 +517,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 4000, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/24", data.Exposure)
 		assert.Equal(t, "HMD Global", data.CameraMake)
 		assert.Equal(t, "Nokia X71", data.CameraModel)
@@ -537,7 +538,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 4608, data.Width)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/1600", data.Exposure)
 		assert.Equal(t, "OLYMPUS IMAGING CORP.", data.CameraMake)
 		assert.Equal(t, "TG-830", data.CameraModel)
@@ -585,7 +586,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 600, data.Width)
 		assert.Equal(t, float32(65.05558), data.Lat)
 		assert.Equal(t, float32(-16.625702), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/8", data.Exposure)
 		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
 		assert.Equal(t, "NIKON D800E", data.CameraModel)
@@ -617,7 +618,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 600, data.Width)
 		assert.Equal(t, float32(65.05558), data.Lat)
 		assert.Equal(t, float32(-16.625702), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/8", data.Exposure)
 		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
 		assert.Equal(t, "NIKON D800E", data.CameraModel)
@@ -628,6 +629,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.Projection)
 		assert.Equal(t, "", data.ColorProfile)
 	})
+
 	t.Run("animated.gif", func(t *testing.T) {
 		_, err := Exif("testdata/animated.gif", fs.ImageGIF, true)
 
@@ -637,6 +639,7 @@ func TestExif(t *testing.T) {
 			assert.Equal(t, "found no exif data", err.Error())
 		}
 	})
+
 	t.Run("aurora.jpg", func(t *testing.T) {
 		data, err := Exif("testdata/aurora.jpg", fs.ImageJPEG, false)
 
@@ -650,5 +653,34 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
+	})
+
+	t.Run("buggy_panorama.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/buggy_panorama.jpg", fs.ImageJPEG, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2022-04-24 10:35:53 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2022-04-24 02:35:53 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Asia/Shanghai", data.TimeZone) // Local Time
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(33.640007), data.Lat)
+		assert.Equal(t, float32(103.48), data.Lng)
+		assert.Equal(t, 0.0, data.Altitude)
+	})
+
+	t.Run("altitude.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/altitude.jpg", fs.ImageJPEG, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, float32(45.75285), data.Lat)
+		assert.Equal(t, float32(33.221977), data.Lng)
+		assert.InEpsilon(t, 4294967284, data.Altitude, 1000)
+		assert.Equal(t, 0, clean.Altitude(data.Altitude))
 	})
 }

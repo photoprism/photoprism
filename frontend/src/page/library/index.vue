@@ -27,7 +27,7 @@
         </v-autocomplete>
 
         <p class="options">
-          <v-progress-linear color="secondary-dark" :value="completed"
+          <v-progress-linear color="secondary-dark" height="1.5em" :value="completed"
                              :indeterminate="busy"></v-progress-linear>
         </p>
 

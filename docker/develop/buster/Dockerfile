@@ -1,10 +1,10 @@
 #### Base Image: Debian 10 (Buster)
 FROM golang:1-buster
 
-# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Open Container Initiative (OCI) Annotations
 # see https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -97,7 +97,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       rawtherapee \
       imagemagick \
       ffmpeg \
-      ffmpegthumbnailer \
       libavcodec-extra \
       davfs2 \
       chrpath \

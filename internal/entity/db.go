@@ -15,6 +15,10 @@ func init() {
 
 // Db returns the default *gorm.DB connection.
 func Db() *gorm.DB {
+	if dbConn == nil {
+		return nil
+	}
+
 	return dbConn.Db()
 }
 

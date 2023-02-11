@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:29+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/"
 "photoprism/backend/ja/>\n"
 "Language: ja_JP\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "予期しないエラーが発生しました、再度試してみてください"
+msgid "Something went wrong, try again"
+msgstr "何か問題が発生しました、もう一度やり直してください"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "不正なリクエスト"
+msgid "Unable to do that"
+msgstr "できないこと"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -114,8 +114,7 @@ msgstr "アクセス拒否"
 
 #: messages.go:117
 msgid "Upload might be offensive"
-msgstr ""
-"アップロードされた項目に過激なものが含まれている可能性があります"
+msgstr "アップロードされた項目に過激なものが含まれている可能性があります"
 
 #: messages.go:118
 msgid "Upload failed"
@@ -376,6 +375,12 @@ msgstr "永久に削除"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s が復元されました"
+
+#~ msgid "Invalid request"
+#~ msgstr "不正なリクエスト"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "予期しないエラーが発生しました、再度試してみてください"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "サーバーには見つかりませんでした、削除されましたか？"

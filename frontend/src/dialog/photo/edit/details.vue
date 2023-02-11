@@ -187,6 +187,7 @@
                     :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :label="$gettext('Camera')"
+                    :menu-props="{'maxHeight':346}"
                     browser-autocomplete="off"
                     hide-details box flat
                     color="secondary-dark"
@@ -233,6 +234,7 @@
                     :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :label="$gettext('Lens')"
+                    :menu-props="{'maxHeight':346}"
                     browser-autocomplete="off"
                     hide-details box flat
                     color="secondary-dark"

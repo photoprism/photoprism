@@ -131,7 +131,7 @@ describe("common/session", () => {
     };
     session.setData(values2);
     const result2 = session.getDisplayName();
-    assert.equal(result2, "Admin");
+    assert.equal(result2, "Bar");
     session.deleteData();
   });
 

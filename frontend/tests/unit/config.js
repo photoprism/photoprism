@@ -4,7 +4,7 @@ const clientConfig = {
   about: "PhotoPrism® CE",
   edition: "ce",
   version: "210710-bae1f2d7-Linux-x86_64-DEBUG",
-  copyright: "(c) 2018-2022 PhotoPrism UG. All rights reserved.",
+  copyright: "(c) 2018-2023 PhotoPrism UG. All rights reserved.",
   flags: "public debug experimental settings",
   baseUri: "",
   staticUri: "/static",
@@ -287,7 +287,7 @@ const clientConfig = {
   previewToken: "public",
   cssUri: "/static/build/app.2259c0edcc020e7af593.css",
   jsUri: "/static/build/app.9bd7132eaee8e4c7c7e3.js",
-  manifestUri: "/manifest.json?0e41a7e5",
+  manifestUri: "/manifest.json",
   settings: {
     ui: {
       scrollbar: true,
@@ -296,7 +296,7 @@ const clientConfig = {
       language: "en",
     },
     search: {
-      batchSize: 60,
+      batchSize: 90,
     },
     maps: {
       animate: 0,

@@ -10,10 +10,9 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // binPaths stores known executable paths.
@@ -218,7 +217,7 @@ func (c *Config) OptionsYaml() string {
 
 // DefaultsYaml returns the default options YAML filename.
 func (c *Config) DefaultsYaml() string {
-	return c.options.DefaultsYaml
+	return fs.Abs(c.options.DefaultsYaml)
 }
 
 // HubConfigFile returns the backend api config file name.
@@ -229,6 +228,22 @@ func (c *Config) HubConfigFile() string {
 // SettingsYaml returns the settings YAML filename.
 func (c *Config) SettingsYaml() string {
 	return filepath.Join(c.ConfigPath(), "settings.yml")
+}
+
+// SettingsYamlDefaults returns the default settings YAML filename.
+func (c *Config) SettingsYamlDefaults(settingsYml string) string {
+	if settingsYml != "" && fs.FileExists(settingsYml) {
+		// Use regular settings YAML file.
+	} else if defaultsYml := c.DefaultsYaml(); defaultsYml == "" {
+		// Use regular settings YAML file.
+	} else if dir := filepath.Dir(defaultsYml); dir == "" || dir == "." {
+		// Use regular settings YAML file.
+	} else if fileName := filepath.Join(dir, "settings.yml"); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
+		// Use default settings YAML file.
+		return fileName
+	}
+
+	return settingsYml
 }
 
 // PIDFilename returns the filename for storing the server process id (pid).

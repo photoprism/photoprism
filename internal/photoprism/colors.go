@@ -14,7 +14,7 @@ import (
 
 // Colors returns the ColorPerception of an image (only JPEG supported).
 func (m *MediaFile) Colors(thumbPath string) (perception colors.ColorPerception, err error) {
-	if !m.IsJpeg() {
+	if !m.IsPreviewImage() {
 		return perception, fmt.Errorf("%s is not a jpeg", clean.Log(m.BaseName()))
 	}
 

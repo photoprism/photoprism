@@ -1,14 +1,14 @@
 # A Big Thank You to All Our Sponsors! 💎 #
 
-**PhotoPrism is 100% self-funded and independent.** Your [continued support](https://photoprism.app/membership) helps us provide [regular updates](https://docs.photoprism.app/release-notes/) and remain independent.
+**PhotoPrism is 100% self-funded and independent.** Your [continued support](https://www.photoprism.app/membership) helps us provide [regular updates](https://docs.photoprism.app/release-notes/) and remain independent.
 
-Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://photoprism.app/team) and other sponsors. We currently have the following sponsorship options:
+Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/team) and other sponsors. We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available in 2022, so you can sign up directly in the app
 
-You are welcome to [contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations), bank account details, and business partnerships. Visit [photoprism.app/membership](https://photoprism.app/membership) to learn more.
+You are welcome to [contact us](https://www.photoprism.app/contact) for [crypto donations](https://www.photoprism.app/crypto-donations), bank account details, and business partnerships. Visit [photoprism.app/membership](https://www.photoprism.app/membership) to learn more.
 
 ## Platinum Sponsors ##
 
@@ -62,7 +62,7 @@ Garn Penrod (Patreon, November 2020)
 
 Sandro Petruzzi (Patreon, May 2022)
 
-[Feel free to contact us if you have any change requests.](https://photoprism.app/contact)
+[Feel free to contact us if you have any change requests.](https://www.photoprism.app/contact)
 
 ## One-Time Donations ##
 

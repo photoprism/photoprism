@@ -3,7 +3,7 @@
     <template v-if="visible && $vuetify.breakpoint.smAndDown">
       <v-toolbar dark fixed flat scroll-off-screen dense color="navigation darken-1" class="nav-small elevation-2"
                  @click.stop.prevent>
-        <v-avatar tile :size="28" :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">
+        <v-avatar class="nav-avatar" tile :size="28" :class="{'clickable': auth}" @click.stop.prevent="showNavigation()">
           <img :src="appIcon" :alt="config.name" :class="{'animate-hue': indexing}">
         </v-avatar>
         <v-toolbar-title class="nav-title">
@@ -21,12 +21,10 @@
     </template>
     <template v-else-if="visible && !auth">
       <v-toolbar dark flat scroll-off-screen dense color="navigation darken-1" class="nav-small">
-        <v-avatar tile :size="28">
+        <v-avatar class="nav-avatar" tile :size="28">
           <img :src="appIcon" :alt="config.name">
         </v-avatar>
-        <v-toolbar-title class="nav-title">
-          {{ page.title }}
-        </v-toolbar-title>
+        <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
         <v-btn
             fab dark :ripple="false"
             color="transparent"
@@ -51,13 +49,11 @@
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown">
         <v-list class="navigation-home">
           <v-list-tile class="nav-logo">
-            <v-list-tile-avatar class="clickable" @click.stop.prevent="goHome">
+            <v-list-tile-avatar class="nav-avatar clickable" @click.stop.prevent="goHome">
               <img :src="appIcon" :alt="appName" :class="{'animate-hue': indexing}">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title class="title">
-                {{ appName }}
-              </v-list-tile-title>
+              <v-list-tile-title class="title">{{ appName }}</v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
               <v-btn icon class="nav-minimize" @click.stop="toggleIsMini()">
@@ -487,20 +483,16 @@
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
+
+            <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                  <translate key="Upgrade">Upgrade</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
           </v-list-group>
         </template>
-
-        <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" @click.stop="">
-          <v-list-tile-action :title="$gettext('Upgrade')">
-            <v-icon>diamond</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Upgrade">Upgrade</translate>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
 
         <v-list-tile v-show="!auth" :to="{ name: 'login' }" class="nav-login" @click.stop="">
           <v-list-tile-action :title="$gettext('Login')">
@@ -536,9 +528,7 @@
           </v-list-tile-avatar>
 
           <v-list-tile-content>
-            <v-list-tile-title>
-              {{ displayName }}
-            </v-list-tile-title>
+            <v-list-tile-title>{{ displayName }}</v-list-tile-title>
             <v-list-tile-sub-title>{{ accountInfo }}</v-list-tile-sub-title>
           </v-list-tile-content>
 
@@ -629,7 +619,7 @@
           </div>
           <div v-if="auth && !routeName('index') && $config.feature('library') && $config.feature('logs')" class="menu-action nav-logs">
             <router-link :to="{ name: 'library_logs' }">
-              <v-icon>assignment</v-icon>
+              <v-icon>feed</v-icon>
               <translate>Logs</translate>
             </router-link>
           </div>

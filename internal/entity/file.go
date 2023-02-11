@@ -74,8 +74,8 @@ type File struct {
 	FileWatermark    bool          `gorm:"column:file_watermark;"  json:"Watermark" yaml:"Watermark,omitempty"`
 	FileColorProfile string        `gorm:"type:VARBINARY(64);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
 	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
-	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
-	FileLuminance    string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
+	FileColors       string        `gorm:"type:VARBINARY(18);" json:"Colors" yaml:"Colors,omitempty"`
+	FileLuminance    string        `gorm:"type:VARBINARY(18);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff         int           `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma       int16         `json:"Chroma" yaml:"Chroma,omitempty"`
 	FileSoftware     string        `gorm:"type:VARCHAR(64)" json:"Software" yaml:"Software,omitempty"`
@@ -545,9 +545,14 @@ func (m *File) RelatedPhoto() *Photo {
 	return &photo
 }
 
-// NoJPEG returns true if the file is not a JPEG image file.
+// NoJPEG returns true if the file is not a JPEG image.
 func (m *File) NoJPEG() bool {
 	return fs.ImageJPEG.NotEqual(m.FileType)
+}
+
+// NoPNG returns true if the file is not a PNG image.
+func (m *File) NoPNG() bool {
+	return fs.ImagePNG.NotEqual(m.FileType)
 }
 
 // Links returns all share links for this entity.
@@ -750,7 +755,7 @@ func (m *File) ValidFaceCount() (c int) {
 
 // UpdatePhotoFaceCount updates the faces count in the index and returns it if the file is primary.
 func (m *File) UpdatePhotoFaceCount() (c int, err error) {
-	// Primary file of an existing photo?
+	// Previews file of an existing photo?
 	if !m.FilePrimary || m.PhotoID == 0 {
 		return 0, nil
 	}

@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -84,26 +85,28 @@ func BasicAuth() gin.HandlerFunc {
 		basicAuthMutex.Lock()
 		defer basicAuthMutex.Unlock()
 
-		// Check authentication and authorization.
-		if user := entity.FindUserByName(name); user == nil {
-			// Username not found.
-			message := "account not found"
+		// User credentials.
+		f := form.Login{
+			UserName: name,
+			Password: password,
+		}
 
+		// Check credentials and authorization.
+		if user, _, err := entity.Auth(f, nil, c); err != nil {
+			message := err.Error()
 			limiter.Login.Reserve(clientIp)
-			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
+			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
+			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
+		} else if user == nil {
+			message := "account not found"
+			limiter.Login.Reserve(clientIp)
+			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
 			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
 		} else if !user.CanUseWebDAV() {
 			// Sync disabled for this account.
 			message := "sync disabled"
 
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
-		} else if ok = user.HasPassword(password); !ok {
-			// Wrong password.
-			message := "incorrect password"
-
-			limiter.Login.Reserve(clientIp)
-			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
 			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
 		} else {
 			// Successfully authenticated.

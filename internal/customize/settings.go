@@ -125,7 +125,9 @@ func (s Settings) StackMeta() bool {
 
 // Load user settings from file.
 func (s *Settings) Load(fileName string) error {
-	if !fs.FileExists(fileName) {
+	if fileName == "" {
+		return fmt.Errorf("no settings filename provided")
+	} else if !fs.FileExists(fileName) {
 		return fmt.Errorf("settings file not found: %s", clean.Log(fileName))
 	}
 

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -21,14 +22,21 @@ const WebDAVImport = "/import"
 // registerWebDAVRoutes configures the built-in WebDAV server.
 func registerWebDAVRoutes(router *gin.Engine, conf *config.Config) {
 	if conf.DisableWebDAV() {
-		log.Info("webdav: server disabled")
+		log.Info("webdav: disabled")
 	} else {
+		var info string
+		if conf.ReadOnly() {
+			info = " in read-only mode"
+		} else {
+			info = ""
+		}
+
 		WebDAV(conf.OriginalsPath(), router.Group(conf.BaseUri(WebDAVOriginals), BasicAuth()), conf)
-		log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVOriginals))
+		log.Infof("webdav: shared %s/%s", conf.BaseUri(WebDAVOriginals), info)
 
 		if conf.ImportPath() != "" {
 			WebDAV(conf.ImportPath(), router.Group(conf.BaseUri(WebDAVImport), BasicAuth()), conf)
-			log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVImport))
+			log.Infof("webdav: shared %s/%s", conf.BaseUri(WebDAVImport), info)
 		}
 	}
 }
@@ -101,21 +109,39 @@ func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
 		WebDAVHandler(c, router, srv)
 	}
 
-	// Handle supported HTTP request methods.
-	router.Handle(MethodHead, "/*path", handlerFunc)
-	router.Handle(MethodGet, "/*path", handlerFunc)
-	router.Handle(MethodPut, "/*path", handlerFunc)
-	router.Handle(MethodPost, "/*path", handlerFunc)
-	router.Handle(MethodPatch, "/*path", handlerFunc)
-	router.Handle(MethodDelete, "/*path", handlerFunc)
-	router.Handle(MethodOptions, "/*path", handlerFunc)
-	router.Handle(MethodMkcol, "/*path", handlerFunc)
-	router.Handle(MethodCopy, "/*path", handlerFunc)
-	router.Handle(MethodMove, "/*path", handlerFunc)
-	router.Handle(MethodLock, "/*path", handlerFunc)
-	router.Handle(MethodUnlock, "/*path", handlerFunc)
-	router.Handle(MethodPropfind, "/*path", handlerFunc)
-	router.Handle(MethodProppatch, "/*path", handlerFunc)
+	// handleRead registers WebDAV methods used for browsing and downloading.
+	handleRead := func(h func(*gin.Context)) {
+		router.Handle(MethodHead, "/*path", h)
+		router.Handle(MethodGet, "/*path", h)
+		router.Handle(MethodOptions, "/*path", h)
+		router.Handle(MethodLock, "/*path", h)
+		router.Handle(MethodUnlock, "/*path", h)
+		router.Handle(MethodPropfind, "/*path", h)
+	}
+
+	// handleWrite registers WebDAV methods to may modify the file system.
+	handleWrite := func(h func(*gin.Context)) {
+		router.Handle(MethodPut, "/*path", h)
+		router.Handle(MethodPost, "/*path", h)
+		router.Handle(MethodPatch, "/*path", h)
+		router.Handle(MethodDelete, "/*path", h)
+		router.Handle(MethodMkcol, "/*path", h)
+		router.Handle(MethodCopy, "/*path", h)
+		router.Handle(MethodMove, "/*path", h)
+		router.Handle(MethodProppatch, "/*path", h)
+	}
+
+	// Handle supported WebDAV request methods.
+	handleRead(handlerFunc)
+
+	// Only supported with read-only mode disabled.
+	if conf.ReadOnly() {
+		handleWrite(func(c *gin.Context) {
+			_ = c.AbortWithError(http.StatusForbidden, fmt.Errorf("forbidden in read-only mode"))
+		})
+	} else {
+		handleWrite(handlerFunc)
+	}
 }
 
 // MarkUploadAsFavorite sets the favorite flag for newly uploaded files.

@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/stretchr/testify/assert"
+	"github.com/photoprism/photoprism/pkg/sortby"
 )
 
 func TestGetFoldersOriginals(t *testing.T) {
@@ -45,7 +47,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 		for _, folder := range folders {
 			assert.Equal(t, "", folder.FolderDescription)
 			assert.Equal(t, entity.MediaUnknown, folder.FolderType)
-			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
+			assert.Equal(t, sortby.Name, folder.FolderOrder)
 			assert.Equal(t, entity.RootOriginals, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
@@ -82,7 +84,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 		for _, folder := range folders {
 			assert.Equal(t, "", folder.FolderDescription)
 			assert.Equal(t, entity.MediaUnknown, folder.FolderType)
-			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
+			assert.Equal(t, sortby.Name, folder.FolderOrder)
 			assert.Equal(t, entity.RootOriginals, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
@@ -128,7 +130,7 @@ func TestGetFoldersImport(t *testing.T) {
 		for _, folder := range folders {
 			assert.Equal(t, "", folder.FolderDescription)
 			assert.Equal(t, entity.MediaUnknown, folder.FolderType)
-			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
+			assert.Equal(t, sortby.Name, folder.FolderOrder)
 			assert.Equal(t, entity.RootImport, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
@@ -165,7 +167,7 @@ func TestGetFoldersImport(t *testing.T) {
 		for _, folder := range folders {
 			assert.Equal(t, "", folder.FolderDescription)
 			assert.Equal(t, entity.MediaUnknown, folder.FolderType)
-			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
+			assert.Equal(t, sortby.Name, folder.FolderOrder)
 			assert.Equal(t, entity.RootImport, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)

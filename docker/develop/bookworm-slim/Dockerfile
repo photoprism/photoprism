@@ -1,10 +1,10 @@
 #### Base Image: Debian 12 (Bookworm)
 FROM debian:bookworm-slim
 
-# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -48,9 +48,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       gpg zip unzip wget curl rsync make nano \
       jq lsof lshw sqlite3 mariadb-client imagemagick \
       exiftool darktable rawtherapee libheif-examples librsvg2-bin \
-      ffmpeg ffmpegthumbnailer libavcodec-extra \
+      ffmpeg libavcodec-extra x264 x265 libvpx7 libwebm1 \
       libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-      x264 x265 libvpx7 libwebm1 \
     && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \

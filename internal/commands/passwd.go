@@ -14,17 +14,26 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// PasswdCommand updates a password.
+// PasswdCommand configures the command name, flags, and action.
 var PasswdCommand = cli.Command{
-	Name:   "passwd",
-	Usage:  "Changes the admin account password",
-	Action: passwdAction,
+	Name:      "passwd",
+	Usage:     "Changes the password of the user specified as argument",
+	ArgsUsage: "[username]",
+	Action:    passwdAction,
 }
 
-// passwdAction updates a password.
+// passwdAction changes the password of the user specified as command argument.
 func passwdAction(ctx *cli.Context) error {
+	id := clean.Username(ctx.Args().First())
+
+	// Name or UID provided?
+	if id == "" {
+		return cli.ShowSubcommandHelp(ctx)
+	}
+
 	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
@@ -37,9 +46,20 @@ func passwdAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	user := entity.Admin
+	// Find user record.
+	var m *entity.User
 
-	log.Infof("please enter a new password for %s (mininum 8 characters)\n", clean.Log(user.Name()))
+	if rnd.IsUID(id, entity.UserUID) {
+		m = entity.FindUserByUID(id)
+	} else {
+		m = entity.FindUserByName(id)
+	}
+
+	if m == nil {
+		return fmt.Errorf("user %s not found", clean.LogQuote(id))
+	}
+
+	log.Infof("please enter a new password for %s (minimum %d characters)\n", clean.Log(m.Name()), entity.PasswordLength)
 
 	newPassword := getPassword("New Password: ")
 
@@ -53,11 +73,11 @@ func passwdAction(ctx *cli.Context) error {
 		return errors.New("passwords did not match, please try again")
 	}
 
-	if err := user.SetPassword(newPassword); err != nil {
+	if err = m.SetPassword(newPassword); err != nil {
 		return err
 	}
 
-	log.Infof("changed password for %s\n", clean.Log(user.Name()))
+	log.Infof("changed password for %s\n", clean.Log(m.Name()))
 
 	return nil
 }

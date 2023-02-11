@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-
-	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 type ClientAssets struct {
@@ -87,5 +85,5 @@ func (c *Config) ClientAssets() ClientAssets {
 
 // ClientManifestUri returns the frontend manifest.json URI.
 func (c *Config) ClientManifestUri() string {
-	return fmt.Sprintf("%s?%d", c.BaseUri("/manifest.json"), fs.BirthTime(c.TemplatesPath()+"/manifest.json").Unix())
+	return fmt.Sprintf("%s?%x", c.BaseUri("/manifest.json"), c.VersionChecksum())
 }

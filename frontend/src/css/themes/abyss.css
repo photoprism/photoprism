@@ -1,28 +1,22 @@
 /* Abyss Theme */
 
-body.dark-theme.theme-abyss {
-    background: #212121 !important;
-}
-
+body.dark-theme.theme-abyss,
 .theme-abyss .v-content__wrap,
 .theme-abyss .p-page,
 .theme-abyss .form,
 .theme-abyss .v-content {
-    background: #212121 !important;
+    background: #202020 !important;
 }
 
+.theme-abyss .application.theme--light,
 #photoprism.theme-abyss .theme--light.v-small-dialog__content,
 #photoprism.theme-abyss .theme--light.v-sheet,
 #photoprism.theme-abyss .theme--light.v-card {
-    background: #212121;
-}
-
-.theme-abyss .application.theme--light {
-    background: #212121;
+    background: #202020;
 }
 
 #photoprism.theme-abyss .theme--light .v-table {
-    background: #262626;
+    background: #242424;
 }
 
 #photoprism.theme-abyss .theme--light.v-table thead th,
@@ -31,7 +25,7 @@ body.dark-theme.theme-abyss {
 }
 
 #photoprism.theme-abyss .theme--light.v-table tbody tr:hover {
-    background: #333333;
+    background: #342C43;
 }
 
 #photoprism.theme-abyss .theme--light.v-chip,
@@ -64,7 +58,7 @@ body.dark-theme.theme-abyss {
 }
 
 #photoprism.theme-abyss .theme--light.v-list {
-    background: #262626;
+    background: #181818;
 }
 
 #photoprism.theme-abyss a.text-link {
