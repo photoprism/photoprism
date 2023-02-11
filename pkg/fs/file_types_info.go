@@ -35,6 +35,7 @@ var TypeInfo = map[Type]string{
 	VideoBDAV:       "Blu-ray MPEG-2 Transport Stream",
 	VideoOGV:        "Ogg Media (OGG)",
 	VectorSVG:       "Scalable Vector Graphics",
+	VectorPS:        "Adobe PostScript",
 	VectorEPS:       "Adobe Encapsulated PostScript",
 	SidecarXMP:      "Adobe Extensible Metadata Platform",
 	SidecarAAE:      "Apple Image Edits XML",

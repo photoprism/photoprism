@@ -45,6 +45,7 @@ const (
 	VideoASF        Type = "asf"  // Advanced Systems/Streaming Format (ASF)
 	VideoWMV        Type = "wmv"  // Windows Media Video (based on ASF)
 	VectorSVG       Type = "svg"  // Scalable Vector Graphics
+	VectorPS        Type = "ps"   // Adobe PostScript
 	VectorEPS       Type = "eps"  // Adobe Encapsulated PostScript
 	SidecarXMP      Type = "xmp"  // Adobe XMP sidecar file (XML)
 	SidecarAAE      Type = "aae"  // Apple image edits sidecar file (based on XML)

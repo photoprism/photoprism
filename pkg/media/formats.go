@@ -36,6 +36,7 @@ var Formats = map[fs.Type]Type{
 	fs.VideoASF:        Video,
 	fs.VideoWMV:        Video,
 	fs.VectorSVG:       Vector,
+	fs.VectorPS:        Vector,
 	fs.VectorEPS:       Vector,
 	fs.SidecarXMP:      Sidecar,
 	fs.SidecarXML:      Sidecar,
