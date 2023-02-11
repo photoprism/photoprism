@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-08 13:37+0000\n"
+"PO-Revision-Date: 2023-02-11 20:55+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -723,11 +724,11 @@ msgstr "Не прекодирайте видеоклипове с FFmpeg."
 
 #: src/page/settings/advanced.vue:482
 msgid "Don't use Darktable to convert RAW images."
-msgstr ""
+msgstr "Не използвайте Darktable за конвертиране на RAW изображения."
 
 #: src/page/settings/advanced.vue:503
 msgid "Don't use RawTherapee to convert RAW images."
-msgstr ""
+msgstr "Не използвайте RawTherapee за конвертиране на RAW изображения."
 
 #: src/page/settings/advanced.vue:229
 msgid "Don't use TensorFlow for image classification."
@@ -2511,7 +2512,7 @@ msgstr "Vanta"
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:819 src/options/options.js:330
 msgid "Vector"
-msgstr ""
+msgstr "Вектор"
 
 #: src/page/connect.vue:11 src/page/connect.vue:8
 msgid "Verified"
