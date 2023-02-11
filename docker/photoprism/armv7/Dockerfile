@@ -104,8 +104,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
       libc6 ca-certificates sudo bash tzdata avahi-utils \
       gpg zip unzip wget curl rsync make nano \
-      jq lsof lshw sqlite3 mariadb-client imagemagick \
-      exiftool rawtherapee librsvg2-bin \
+      jq lsof lshw sqlite3 mariadb-client exiftool rawtherapee \
       ffmpeg libavcodec-extra x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
       libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
     && \

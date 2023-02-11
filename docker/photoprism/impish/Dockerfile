@@ -117,7 +117,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       libc6 \
       libatomic1 \
       libheif-examples \
-      librsvg2-bin \
       exiftool \
       rawtherapee \
       ffmpeg \
