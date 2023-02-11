@@ -218,6 +218,9 @@ export class File extends RestModel {
     } else if (this.Video && !this.MediaType) {
       info.push($gettext("Video"));
       return info.join(" ");
+    } else if (this.MediaType === "vector") {
+      info.push(Util.fileType(this.FileType));
+      return info.join(" ");
     } else {
       const format = Util.fileType(this.FileType);
       if (format) {
