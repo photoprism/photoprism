@@ -123,7 +123,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       rawtherapee \
       imagemagick \
       ffmpeg \
-      ffmpegthumbnailer \
       libavcodec-extra \
     && \
     /scripts/install-darktable.sh && \

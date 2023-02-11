@@ -51,11 +51,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
         libc6 ca-certificates sudo bash tzdata avahi-utils \
         gpg zip unzip wget curl rsync make nano \
-        jq lsof lshw sqlite3 imagemagick \
-        exiftool rawtherapee librsvg2-bin \
-        ffmpeg ffmpegthumbnailer libavcodec-extra \
+        jq lsof lshw sqlite3 exiftool rawtherapee \
+        ffmpeg libavcodec-extra x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
         libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-        x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \
@@ -64,6 +62,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
+        imagemagick librsvg2-bin ghostscript \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
@@ -77,6 +76,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \

@@ -96,7 +96,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       exiftool \
       rawtherapee \
       ffmpeg \
-      ffmpegthumbnailer \
       libavcodec-extra \
       apache2-utils \
       fonts-roboto \
