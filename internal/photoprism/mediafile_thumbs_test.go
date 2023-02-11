@@ -177,4 +177,27 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 		assert.FileExists(t, thumbFilename)
 		assert.NoError(t, m.CreateThumbnails(thumbsPath, false))
 	})
+
+	t.Run("photoprism.png", func(t *testing.T) {
+		m, err := NewMediaFile("testdata/photoprism.png")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = m.CreateThumbnails(thumbsPath, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		thumbFilename, err := thumb.FileName(m.Hash(), thumbsPath, thumb.Sizes[thumb.Tile50].Width, thumb.Sizes[thumb.Tile50].Height, thumb.Sizes[thumb.Tile50].Options...)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.FileExists(t, thumbFilename)
+		assert.NoError(t, m.CreateThumbnails(thumbsPath, false))
+	})
 }

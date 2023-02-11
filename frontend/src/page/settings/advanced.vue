@@ -266,7 +266,7 @@
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
                   :label="$gettext('Disable Darktable')"
-                  :hint="$gettext('Don\'t use Darktable to convert RAW files.')"
+                  :hint="$gettext('Don\'t use Darktable to convert RAW images.')"
                   prepend-icon="image_not_supported"
                   persistent-hint
                   @change="onChange"
@@ -281,7 +281,7 @@
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
                   :label="$gettext('Disable RawTherapee')"
-                  :hint="$gettext('Don\'t use RawTherapee to convert RAW files.')"
+                  :hint="$gettext('Don\'t use RawTherapee to convert RAW images.')"
                   prepend-icon="image_not_supported"
                   persistent-hint
                   @change="onChange"

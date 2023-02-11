@@ -12,10 +12,10 @@ type RelatedFiles struct {
 	Main  *MediaFile
 }
 
-// ContainsJpeg returns true if related file list contains a JPEG.
-func (m RelatedFiles) ContainsJpeg() bool {
+// HasPreview checks if the list of files contains a PNG or JPEG image to render a preview in the UI.
+func (m RelatedFiles) HasPreview() bool {
 	for _, f := range m.Files {
-		if f.IsJpeg() {
+		if f.IsPreviewImage() {
 			return true
 		}
 	}
@@ -24,7 +24,7 @@ func (m RelatedFiles) ContainsJpeg() bool {
 		return false
 	}
 
-	return m.Main.IsJpeg()
+	return m.Main.IsPreviewImage()
 }
 
 // String returns file names as string.

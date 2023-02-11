@@ -19,11 +19,11 @@ const (
 const (
 	MediaUnknown  = ""
 	MediaImage    = string(media.Image)
-	MediaVector   = string(media.Vector)
+	MediaRaw      = string(media.Raw)
 	MediaAnimated = string(media.Animated)
 	MediaLive     = string(media.Live)
 	MediaVideo    = string(media.Video)
-	MediaRaw      = string(media.Raw)
+	MediaVector   = string(media.Vector)
 	MediaText     = string(media.Text)
 )
 

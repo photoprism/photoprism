@@ -59,7 +59,7 @@ func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image,
 // CreateThumbnails creates the default thumbnail sizes if the media file
 // is a JPEG and they don't exist yet (except force is true).
 func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
-	if !m.IsJpeg() {
+	if !m.IsPreviewImage() {
 		// Skip.
 		return
 	}

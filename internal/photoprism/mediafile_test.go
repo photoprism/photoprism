@@ -454,8 +454,8 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, related.Files, 7)
-		assert.True(t, related.ContainsJpeg())
+		assert.Len(t, related.Files, 6)
+		assert.True(t, related.HasPreview())
 
 		for _, result := range related.Files {
 			t.Logf("FileName: %s", result.FileName())
@@ -496,7 +496,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		}
 
 		assert.Len(t, related.Files, 3)
-		assert.False(t, related.ContainsJpeg())
+		assert.False(t, related.HasPreview())
 
 		for _, result := range related.Files {
 			t.Logf("FileName: %s", result.FileName())
@@ -937,6 +937,22 @@ func TestMediaFile_MimeType(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, "video/x-msvideo", f.MimeType())
+		}
+	})
+
+	t.Run("agpl.svg", func(t *testing.T) {
+		if f, err := NewMediaFile("testdata/agpl.svg"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, "image/svg+xml", f.MimeType())
+		}
+	})
+
+	t.Run("favicon.ico", func(t *testing.T) {
+		if f, err := NewMediaFile("testdata/favicon.ico"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, "image/x-icon", f.MimeType())
 		}
 	})
 }
@@ -1513,53 +1529,53 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 	})
 }
 
-func TestMediaFile_HasJpeg(t *testing.T) {
+func TestMediaFile_HasPreviewImage(t *testing.T) {
 	t.Run("Random.docx", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		f, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+		f, err := NewMediaFile(cfg.ExamplesPath() + "/Random.docx")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.False(t, f.HasJpeg())
+		assert.False(t, f.HasPreviewImage())
 	})
 	t.Run("ferriswheel_colorful.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		f, err := NewMediaFile(conf.ExamplesPath() + "/ferriswheel_colorful.jpg")
+		f, err := NewMediaFile(cfg.ExamplesPath() + "/ferriswheel_colorful.jpg")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.True(t, f.HasJpeg())
+		assert.True(t, f.HasPreviewImage())
 	})
 	t.Run("Random.docx with jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		f, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
-		f.hasJpeg = true
+		f, err := NewMediaFile(cfg.ExamplesPath() + "/Random.docx")
+		f.hasPreviewImage = true
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.True(t, f.HasJpeg())
+		assert.True(t, f.HasPreviewImage())
 	})
 }
 
-func TestMediaFile_Jpeg(t *testing.T) {
+func TestMediaFile_PreviewImage(t *testing.T) {
 	t.Run("Random.docx", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/Random.docx")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		file, err := mediaFile.Jpeg()
+		file, err := mediaFile.PreviewImage()
 
 		if file != nil {
 			t.Fatal("file should be nil")
@@ -1569,18 +1585,18 @@ func TestMediaFile_Jpeg(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "no jpeg found for Random.docx", err.Error())
+		assert.Equal(t, "no preview image found for Random.docx", err.Error())
 	})
 	t.Run("ferriswheel_colorful.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/ferriswheel_colorful.jpg")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/ferriswheel_colorful.jpg")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		file, err := mediaFile.Jpeg()
+		file, err := mediaFile.PreviewImage()
 
 		if err != nil {
 			t.Fatal(err)
@@ -1589,15 +1605,15 @@ func TestMediaFile_Jpeg(t *testing.T) {
 		assert.FileExists(t, file.fileName)
 	})
 	t.Run("iphone_7.json", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/test.md")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/test.md")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		file, err := mediaFile.Jpeg()
+		file, err := mediaFile.PreviewImage()
 
 		if file != nil {
 			t.Fatal("file should be nil")
@@ -1607,15 +1623,15 @@ func TestMediaFile_Jpeg(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "no jpeg found for test.md", err.Error())
+		assert.Equal(t, "no preview image found for test.md", err.Error())
 	})
 }
 
 func TestMediaFile_decodeDimension(t *testing.T) {
 	t.Run("Random.docx", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/Random.docx")
 
 		if err != nil {
 			t.Fatal(err)
@@ -1627,9 +1643,9 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 	})
 
 	t.Run("clock_purple.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/clock_purple.jpg")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/clock_purple.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -1641,9 +1657,9 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/iphone_7.heic")
 
 		if err != nil {
 			t.Fatal(err)
@@ -1655,9 +1671,9 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 	})
 
 	t.Run("example.png", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/example.png")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/example.png")
 
 		if err != nil {
 			t.Fatal(err)
@@ -1672,15 +1688,15 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 	})
 
 	t.Run("example.gif", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/example.gif")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/example.gif")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if err := mediaFile.decodeDimensions(); err != nil {
+		if err = mediaFile.decodeDimensions(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1689,15 +1705,15 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 	})
 
 	t.Run("blue-go-video.mp4", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/blue-go-video.mp4")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if err := mediaFile.decodeDimensions(); err != nil {
+		if err = mediaFile.decodeDimensions(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1705,15 +1721,15 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 		assert.Equal(t, 1080, mediaFile.Height())
 	})
 	t.Run("blue-go-video.mp4 with orientation >4 and <8", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/blue-go-video.mp4")
 		mediaFile.metaData.Orientation = 5
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if err := mediaFile.decodeDimensions(); err != nil {
+		if err = mediaFile.decodeDimensions(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1724,9 +1740,9 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 
 func TestMediaFile_Width(t *testing.T) {
 	t.Run("Random.docx", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/Random.docx")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -1734,9 +1750,9 @@ func TestMediaFile_Width(t *testing.T) {
 		assert.Equal(t, 0, width)
 	})
 	t.Run("elephant_mono.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephant_mono.jpg")
+		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/elephant_mono.jpg")
 		if err != nil {
 			t.Fatal(err)
 		}

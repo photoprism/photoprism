@@ -152,7 +152,7 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 		s = s.Where("files.file_type NOT IN (?)", o.OmitTypes)
 	}
 
-	// Primary files only?
+	// Previews files only?
 	if o.Primary {
 		s = s.Where("files.file_primary = 1")
 	}

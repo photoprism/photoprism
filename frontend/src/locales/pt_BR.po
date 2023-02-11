@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-08 13:37+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/pt_BR/>\n"
+"Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/projects/photoprism/frontend/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,15 +40,15 @@ msgstr "%{n} pessoas encontradas"
 msgid "%{n} pictures found"
 msgstr "%{n} fotos encontradas"
 
-#: src/options/options.js:372
+#: src/options/options.js:383
 msgid "1 hour"
 msgstr "1 hora"
 
-#: src/options/options.js:374
+#: src/options/options.js:385
 msgid "12 hours"
 msgstr "12 horas"
 
-#: src/options/options.js:373
+#: src/options/options.js:384
 msgid "4 hours"
 msgstr "4 horas"
 
@@ -128,39 +127,35 @@ msgstr "Adicionado"
 msgid "Advanced"
 msgstr "Avançado"
 
-#: src/options/options.js:382
+#: src/options/options.js:393
 msgid "After 1 day"
 msgstr "Depois de 1 dia"
 
-#: src/options/options.js:383
+#: src/options/options.js:394
 msgid "After 3 days"
 msgstr "Depois de 3 dias"
 
-#: src/options/options.js:384
+#: src/options/options.js:395
 msgid "After 7 days"
 msgstr "Depois de 7 dias"
 
-#: src/options/options.js:386
+#: src/options/options.js:397
 msgid "After one month"
 msgstr "Depois de um mês"
 
-#: src/options/options.js:388
+#: src/options/options.js:399
 msgid "After one year"
 msgstr "Depois de um ano"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
-msgid ""
-"After selecting pictures from search results, you can add them to an album "
-"using the context menu."
-msgstr ""
-"Após selecionar as fotos dos resultados da busca, você pode adicioná-las a "
-"um álbum usando o menu de contexto."
+msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgstr "Após selecionar as fotos dos resultados da busca, você pode adicioná-las a um álbum usando o menu de contexto."
 
-#: src/options/options.js:387
+#: src/options/options.js:398
 msgid "After two months"
 msgstr "Depois de dois meses"
 
-#: src/options/options.js:385
+#: src/options/options.js:396
 msgid "After two weeks"
 msgstr "Depois de duas semanas"
 
@@ -237,12 +232,8 @@ msgid "All Years"
 msgstr "Todos os Anos"
 
 #: src/dialog/share.vue:75
-msgid ""
-"Alternatively, you can upload files directly to WebDAV servers like "
-"Nextcloud."
-msgstr ""
-"Como alternativa, você pode enviar arquivos diretamente para servidores "
-"WebDAV, como Nextcloud."
+msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgstr "Como alternativa, você pode enviar arquivos diretamente para servidores WebDAV, como Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -256,10 +247,10 @@ msgstr "Altitude (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Ocorreu um erro - você está conectado à internet?"
 
-#: src/component/navigation.vue:97 src/component/photo/cards.vue:299
-#: src/component/photo/cards.vue:478 src/component/photo/list.vue:191
-#: src/component/photo/mosaic.vue:224 src/model/file.js:210
-#: src/options/options.js:307
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:309
+#: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
+#: src/component/photo/mosaic.vue:229 src/model/file.js:210
+#: src/options/options.js:318
 msgid "Animated"
 msgstr "Animado"
 
@@ -269,8 +260,7 @@ msgstr "Animação"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr ""
-"Qualquer foto ou vídeo privado continuará privado e não será compartilhado."
+msgstr "Qualquer foto ou vídeo privado continuará privado e não será compartilhado."
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -280,13 +270,13 @@ msgstr "Chave API"
 msgid "Apply"
 msgstr "Aplicar"
 
-#: src/component/photo/cards.vue:408 src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:418 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:116
 msgid "Approve"
 msgstr "Aprovar"
 
 #: src/app/routes.js:243 src/component/navigation.vue:130
-#: src/component/photo/cards.vue:379 src/component/photo/clipboard.vue:204
+#: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
 msgstr "Arquivo"
@@ -328,46 +318,28 @@ msgid "Artist"
 msgstr "Artista"
 
 #: src/page/connect.vue:110
-msgid ""
-"As this helps us provide more features to the public, we encourage all users "
-"to support our mission."
-msgstr ""
-"Como isto nos ajuda a fornecer mais recursos ao público, encorajamos todos "
-"os usuários a apoiar nossa missão."
+msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+msgstr "Como isto nos ajuda a fornecer mais recursos ao público, encorajamos todos os usuários a apoiar nossa missão."
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Aspect Ratio"
 msgstr "Proporção da Tela"
 
 #: src/page/settings/library.vue:112
-msgid ""
-"Automatically create JPEGs for other file types so that they can be "
-"displayed in a browser."
-msgstr ""
-"Criar arquivos JPEG automaticamente para outros tipos de arquivo para que "
-"eles possam se exibidos num navegador."
+msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgstr "Criar arquivos JPEG automaticamente para outros tipos de arquivo para que eles possam se exibidos num navegador."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Cria automaticamente álbuns de momentos, viagens e lugares especiais."
 
 #: src/page/about/about.vue:59
-msgid ""
-"Before submitting a support request, please use our Troubleshooting "
-"Checklists to determine the cause of your problem."
-msgstr ""
-"Antes de enviar uma solicitação de suporte, use nossas listas de verificação "
-"de solução de problemas para determinar a causa de seu problema."
+msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+msgstr "Antes de enviar uma solicitação de suporte, use nossas listas de verificação de solução de problemas para determinar a causa de seu problema."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
-msgid ""
-"Being 100% self-funded and independent, we can promise you that we will "
-"never sell your data and that we will always be transparent about our "
-"software and services."
-msgstr ""
-"Sendo 100% self-fundados e independentes, podemos prometer que nunca "
-"venderemos seus dados e que seremos sempre transparentes sobre nossos "
-"softwares e serviços."
+msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgstr "Sendo 100% self-fundados e independentes, podemos prometer que nunca venderemos seus dados e que seremos sempre transparentes sobre nossos softwares e serviços."
 
 #: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
 #: src/page/settings/account.vue:281
@@ -378,19 +350,19 @@ msgstr "Biografia"
 msgid "Birth Date"
 msgstr "Data de Nascimento"
 
-#: src/options/options.js:407
+#: src/options/options.js:418
 msgid "Black"
 msgstr "Preto"
 
-#: src/options/options.js:420
+#: src/options/options.js:431
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Modificação do Lanczos, resulta em menos artefatos"
 
-#: src/options/options.js:403
+#: src/options/options.js:414
 msgid "Blue"
 msgstr "Azul"
 
-#: src/options/options.js:404
+#: src/options/options.js:415
 msgid "Brown"
 msgstr "Marrom"
 
@@ -403,14 +375,10 @@ msgid "Browse indexed files and folders in Library."
 msgstr "Navegar pelos arquivos e pastas indexadas na Biblioteca."
 
 #: src/page/about/about.vue:51
-msgid ""
-"Browse the Knowledge Base for detailed information on specific product "
-"features, services, and related resources."
-msgstr ""
-"Navegue na Base de Conhecimento para informações detalhadas sobre "
-"características específicas do produto, serviços e recursos relacionados."
+msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+msgstr "Navegue na Base de Conhecimento para informações detalhadas sobre características específicas do produto, serviços e recursos relacionados."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:414
+#: src/page/about/feedback.vue:8 src/options/options.js:425
 msgid "Bug Report"
 msgstr "Relatar erro"
 
@@ -419,19 +387,15 @@ msgid "Busy, please wait…"
 msgstr "Ocupado, por favor espere…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
-msgid ""
-"By using the software and services we provide, you agree to our terms of "
-"service, privacy policy, and code of conduct."
-msgstr ""
-"Ao utilizar o software e os serviços que fornecemos, você concorda com "
-"nossos termos de serviço, política de privacidade e código de conduta."
+msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
+msgstr "Ao utilizar o software e os serviços que fornecemos, você concorda com nossos termos de serviço, política de privacidade e código de conduta."
 
 #: src/app/routes.js:175 src/component/navigation.vue:249
 #: src/component/navigation.vue:986
 msgid "Calendar"
 msgstr "Calendário"
 
-#: src/component/photo/cards.vue:486 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:505 src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:204 src/dialog/photo/edit/details.vue:357
 msgid "Camera"
 msgstr "Câmera"
@@ -534,12 +498,8 @@ msgid "Colors"
 msgstr "Cores"
 
 #: src/page/about/about.vue:46
-msgid ""
-"Common issues can be quickly diagnosed and solved using the troubleshooting "
-"checklists we provide."
-msgstr ""
-"Problemas comuns podem ser rapidamente diagnosticados e resolvidos usando as "
-"listas de verificação de solução de problemas que fornecemos."
+msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+msgstr "Problemas comuns podem ser rapidamente diagnosticados e resolvidos usando as listas de verificação de solução de problemas que fornecemos."
 
 #: src/page/connect.vue:65 src/page/connect.vue:72
 msgid "Compare Editions"
@@ -626,7 +586,7 @@ msgstr "Criado"
 msgid "Creating thumbnails for"
 msgstr "Criando miniaturas para"
 
-#: src/options/options.js:422
+#: src/options/options.js:433
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Qualidade razoável, bom desempenho"
 
@@ -634,11 +594,11 @@ msgstr "Cubic: Qualidade razoável, bom desempenho"
 msgid "Current Password"
 msgstr "Senha Atual"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:411
+#: src/page/about/feedback.vue:5 src/options/options.js:422
 msgid "Customer Support"
 msgstr "Suporte ao cliente"
 
-#: src/options/options.js:402
+#: src/options/options.js:413
 msgid "Cyan"
 msgstr "Ciano"
 
@@ -646,7 +606,7 @@ msgstr "Ciano"
 msgid "Cyano"
 msgstr "Ciano"
 
-#: src/options/options.js:375
+#: src/options/options.js:386
 msgid "Daily"
 msgstr "Diariamente"
 
@@ -659,7 +619,7 @@ msgstr "Dia"
 msgid "Debug Logs"
 msgstr "Registros de depuração"
 
-#: src/options/options.js:272 src/options/options.js:326
+#: src/options/options.js:279 src/options/options.js:337
 #: src/options/themes.js:448
 msgid "Default"
 msgstr "Padrão"
@@ -678,7 +638,7 @@ msgstr "Pasta Padrão"
 msgid "Delete"
 msgstr "Excluir"
 
-#: src/component/photo/cards.vue:447 src/dialog/album/edit.vue:147
+#: src/component/photo/cards.vue:457 src/dialog/album/edit.vue:147
 #: src/dialog/photo/edit/details.vue:608 src/page/albums.vue:523
 msgid "Description"
 msgstr "Descrição"
@@ -755,26 +715,25 @@ msgstr "Não criar arquivos JSON ExifTool que melhoram a extração de metadados
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Não modificar a pasta de originais. Desativa importação, envio e remoção."
+msgstr "Não modificar a pasta de originais. Desativa importação, envio e remoção."
 
 #: src/page/settings/advanced.vue:524
 msgid "Don't transcode videos with FFmpeg."
 msgstr "Não transcodifique vídeos com FFmpeg."
 
 #: src/page/settings/advanced.vue:482
-msgid "Don't use Darktable to convert RAW files."
-msgstr "Não use o Darktable para converter arquivos RAW."
+msgid "Don't use Darktable to convert RAW images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:503
-msgid "Don't use RawTherapee to convert RAW files."
-msgstr "Não use RawTherapee para converter arquivos RAW."
+msgid "Don't use RawTherapee to convert RAW images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:229
 msgid "Don't use TensorFlow for image classification."
 msgstr "Não usar TensorFlow para classificação de imagens."
 
-#: src/options/options.js:415
+#: src/options/options.js:426
 msgid "Donations"
 msgstr "Doações"
 
@@ -817,12 +776,8 @@ msgid "Downscaling Filter"
 msgstr "Filtro de redimensionamento"
 
 #: src/page/about/feedback.vue:16
-msgid ""
-"Due to the high volume of emails we receive, our team may be unable to get "
-"back to you immediately."
-msgstr ""
-"Devido ao alto volume de e-mails que recebemos, nossa equipe pode não "
-"conseguir responder-lhe imediatamente."
+msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgstr "Devido ao alto volume de e-mails que recebemos, nossa equipe pode não conseguir responder-lhe imediatamente."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -837,12 +792,8 @@ msgid "Dynamic Previews"
 msgstr "Amostras dinâmicas"
 
 #: src/page/settings/advanced.vue:303
-msgid ""
-"Dynamic rendering requires a powerful server. It is not recommended for NAS "
-"devices."
-msgstr ""
-"Geração dinâmica requer um servidor poderoso. Não recomendado para "
-"dispositivos NAS."
+msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgstr "Geração dinâmica requer um servidor poderoso. Não recomendado para dispositivos NAS."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -899,17 +850,13 @@ msgstr "Estima a localização aproximada das imagens sem coordenadas."
 msgid "Estimates"
 msgstr "Estimativas"
 
-#: src/options/options.js:376
+#: src/options/options.js:387
 msgid "Every two days"
 msgstr "A cada dois dias"
 
 #: src/page/settings/general.vue:209
-msgid ""
-"Exclude content marked as private from search results, shared albums, "
-"labels, and places."
-msgstr ""
-"Excluir conteúdo marcado como privado dos resultados da busca, álbuns "
-"compartilhados, etiquetas e locais."
+msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgstr "Excluir conteúdo marcado como privado dos resultados da busca, álbuns compartilhados, etiquetas e locais."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -963,7 +910,7 @@ msgstr "Falha ao atualizar o link"
 msgid "Family Name"
 msgstr "Nome de família"
 
-#: src/options/options.js:257
+#: src/options/options.js:264
 msgid "Fast"
 msgstr "Rápido"
 
@@ -976,7 +923,7 @@ msgstr "Favorito"
 msgid "Favorites"
 msgstr "Favoritos"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:413
+#: src/page/about/feedback.vue:7 src/options/options.js:424
 msgid "Feature Request"
 msgstr "Solicitar funcionalidade"
 
@@ -989,13 +936,10 @@ msgid "Feedback"
 msgstr "Dê sua opinião"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
-msgid ""
-"Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Por favor, entre em contato via hello@photoprism.app se você tiver dúvidas "
-"ou precisar de ajuda."
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr "Por favor, entre em contato via hello@photoprism.app se você tiver dúvidas ou precisar de ajuda."
 
-#: src/options/options.js:428
+#: src/options/options.js:439
 msgid "Female"
 msgstr "Feminino"
 
@@ -1027,12 +971,8 @@ msgid "Files"
 msgstr "Arquivos"
 
 #: src/page/settings/library.vue:214
-msgid ""
-"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
-"the same picture."
-msgstr ""
-"Arquivos com nomes sequenciais, como \"IMG_1234 (2)\" ou \"IMG_1234 (3)\" "
-"pertencem à mesma foto."
+msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgstr "Arquivos com nomes sequenciais, como \"IMG_1234 (2)\" ou \"IMG_1234 (3)\" pertencem à mesma foto."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1097,7 +1037,7 @@ msgstr "Obtendo apoio"
 msgid "Given Name"
 msgstr "Nome dado"
 
-#: src/options/options.js:397
+#: src/options/options.js:408
 msgid "Gold"
 msgstr "Dourado"
 
@@ -1105,11 +1045,11 @@ msgstr "Dourado"
 msgid "Grayscale"
 msgstr "Escala de cinza"
 
-#: src/options/options.js:400
+#: src/options/options.js:411
 msgid "Green"
 msgstr "Verde"
 
-#: src/options/options.js:406
+#: src/options/options.js:417
 msgid "Grey"
 msgstr "Cinza"
 
@@ -1141,7 +1081,7 @@ msgstr "Esconder"
 msgid "Hide photos that have been moved to archive."
 msgstr "Oculte fotos que foram arquivadas."
 
-#: src/options/options.js:330
+#: src/options/options.js:341
 msgid "High"
 msgstr "Alta"
 
@@ -1161,7 +1101,7 @@ msgstr "Se isto não ajudar, ou se você tiver outras perguntas:"
 msgid "image"
 msgstr "imagem"
 
-#: src/model/file.js:216 src/options/options.js:303
+#: src/model/file.js:216 src/options/options.js:310
 msgid "Image"
 msgstr "Imagem"
 
@@ -1179,17 +1119,12 @@ msgid "Import failed"
 msgstr "Falha na importação"
 
 #: src/page/library/import.vue:25
-msgid ""
-"Imported files will be sorted by date and given a unique name to avoid "
-"duplicates."
-msgstr ""
-"Arquivos importados serão organizados por data e receberão um nome único "
-"para evitar duplicatas."
+msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgstr "Arquivos importados serão organizados por data e receberão um nome único para evitar duplicatas."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"Arquivos importados serão organizados por data e receberão um nome único."
+msgstr "Arquivos importados serão organizados por data e receberão um nome único."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1206,20 +1141,15 @@ msgstr "em"
 
 #: src/page/about/about.vue:69
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr ""
-"Além disso, os patrocinadores recebem suporte técnico direto via e-mail."
+msgstr "Além disso, os patrocinadores recebem suporte técnico direto via e-mail."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
-msgid ""
-"In case pictures you expect are missing, please rescan your library and wait "
-"until indexing has been completed."
-msgstr ""
-"No caso de faltarem as fotos que você espera, por favor, faça uma nova "
-"digitalização de sua biblioteca e aguarde até que a indexação seja concluída."
+msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr "No caso de faltarem as fotos que você espera, por favor, faça uma nova digitalização de sua biblioteca e aguarde até que a indexação seja concluída."
 
 #: src/component/navigation.vue:564 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1280,19 +1210,12 @@ msgid "Invalid photo selected"
 msgstr "Foto inválida selecionada"
 
 #: src/page/connect.vue:103
-msgid ""
-"It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
-"É sua decisão se você deseja se inscrever para usufruir de benefícios "
-"adicionais."
+msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+msgstr "É sua decisão se você deseja se inscrever para usufruir de benefícios adicionais."
 
 #: src/page/about/about.vue:16
-msgid ""
-"It makes use of the latest technologies to tag and find pictures "
-"automatically without getting in your way."
-msgstr ""
-"Ele faz uso das mais recentes tecnologias para etiquetar e encontrar imagens "
-"automaticamente sem atrapalhar seu caminho."
+msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+msgstr "Ele faz uso das mais recentes tecnologias para etiquetar e encontrar imagens automaticamente sem atrapalhar seu caminho."
 
 #: src/model/rest.js:167
 msgid "Item"
@@ -1308,9 +1231,7 @@ msgstr "Tamanho JPEG limite: %{n}px"
 
 #: src/page/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr ""
-"Imagens JPEG e miniaturas são renderizadas automaticamente conforme "
-"necessário."
+msgstr "Imagens JPEG e miniaturas são renderizadas automaticamente conforme necessário."
 
 #: src/dialog/photo/edit/details.vue:633
 msgid "Keywords"
@@ -1335,7 +1256,7 @@ msgstr "Etiquetas"
 msgid "Labels deleted"
 msgstr "Etiquetas excluídas"
 
-#: src/options/options.js:421
+#: src/options/options.js:432
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Preserva detalhes, poucos artefatos"
 
@@ -1387,7 +1308,7 @@ msgstr "Licença"
 msgid "Like"
 msgstr "Gostar"
 
-#: src/options/options.js:399
+#: src/options/options.js:410
 msgid "Lime"
 msgstr "Lima"
 
@@ -1395,7 +1316,7 @@ msgstr "Lima"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limite alcançado, mostrando os primeiros %{n} arquivos"
 
-#: src/options/options.js:423
+#: src/options/options.js:434
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: Suave, melhor desempenho"
 
@@ -1407,9 +1328,9 @@ msgstr "Link"
 msgid "List"
 msgstr "Lista"
 
-#: src/app/routes.js:215 src/component/photo/cards.vue:290
-#: src/component/photo/list.vue:182 src/component/photo/mosaic.vue:214
-#: src/options/options.js:315
+#: src/app/routes.js:215 src/component/photo/cards.vue:293
+#: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
+#: src/options/options.js:322
 msgid "Live"
 msgstr "Ao vivo"
 
@@ -1417,7 +1338,7 @@ msgstr "Ao vivo"
 msgid "Live Photos"
 msgstr "Fotos ao vivo"
 
-#: src/dialog/photo/edit/details.vue:194 src/options/options.js:10
+#: src/dialog/photo/edit/details.vue:194 src/options/options.js:17
 msgid "Local Time"
 msgstr "Hora Local"
 
@@ -1425,19 +1346,15 @@ msgstr "Hora Local"
 msgid "location"
 msgstr "localização"
 
-#: src/page/settings/account.vue:708 src/component/photo/cards.vue:510
-#: src/component/photo/list.vue:138 src/dialog/album/edit.vue:125
+#: src/page/settings/account.vue:708 src/component/photo/cards.vue:529
+#: src/component/photo/list.vue:139 src/dialog/album/edit.vue:125
 #: src/page/albums.vue:86 src/page/settings/account.vue:561
 msgid "Location"
 msgstr "Localização"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid ""
-"Log messages appear here whenever PhotoPrism comes across broken files, or "
-"there are other potential issues."
-msgstr ""
-"Mensagens aparecem aqui sempre que o PhotoPrism encontra arquivos "
-"defeituosos ou existe a possibilidade de outros problemas."
+msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgstr "Mensagens aparecem aqui sempre que o PhotoPrism encontra arquivos defeituosos ou existe a possibilidade de outros problemas."
 
 #: src/component/navigation.vue:458 src/component/navigation.vue:1713
 #: src/component/navigation.vue:1987
@@ -1458,15 +1375,15 @@ msgstr "Registros"
 msgid "Longitude"
 msgstr "Longitute"
 
-#: src/options/options.js:334
+#: src/options/options.js:345
 msgid "Low"
 msgstr "Baixo"
 
-#: src/options/options.js:276
+#: src/options/options.js:283
 msgid "Low Resolution"
 msgstr "Baixa Resolução"
 
-#: src/options/options.js:393
+#: src/options/options.js:404
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1474,7 +1391,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Cor principal"
 
-#: src/options/options.js:427
+#: src/options/options.js:438
 msgid "Male"
 msgstr "Masculino"
 
@@ -1498,7 +1415,7 @@ msgstr "Mapas"
 msgid "Marker"
 msgstr "Marcador"
 
-#: src/options/options.js:261
+#: src/options/options.js:268
 msgid "Medium"
 msgstr "Médio"
 
@@ -1565,8 +1482,8 @@ msgstr "Mover arquivos"
 msgid "Must have at least %{n} characters."
 msgstr "Deve ter pelo menos %{n} caracteres."
 
-#: src/page/about/feedback.vue:172 src/component/photo/cards.vue:498
-#: src/component/photo/list.vue:138 src/component/photo/list.vue:227
+#: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
+#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:104 src/dialog/photo/edit/files.vue:34
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
 #: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
@@ -1589,7 +1506,7 @@ msgstr "Nome muito extenso"
 msgid "Neon"
 msgstr "Néon"
 
-#: src/options/options.js:371 src/options/options.js:381
+#: src/options/options.js:382 src/options/options.js:392
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Nunca"
@@ -1660,12 +1577,8 @@ msgid "No video selected"
 msgstr "Nenhum vídeo selecionado"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid ""
-"No warnings or error containing this keyword. Note that search is case-"
-"sensitive."
-msgstr ""
-"Nenhum alerta ou erro contento esta palavra-chave. Note que a busca "
-"diferencia maiúsculas de minísculas."
+msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgstr "Nenhum alerta ou erro contento esta palavra-chave. Note que a busca diferencia maiúsculas de minísculas."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1674,14 +1587,10 @@ msgstr ""
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52 src/page/settings/library.vue:91
-msgid ""
-"Non-photographic and low-quality images require a review before they appear "
-"in search results."
-msgstr ""
-"Imagens de baixa qualidade ou não-fotográficas necessitam de revisão antes "
-"de aparecerem nos resultados de busca."
+msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgstr "Imagens de baixa qualidade ou não-fotográficas necessitam de revisão antes de aparecerem nos resultados de busca."
 
-#: src/options/options.js:253 src/options/options.js:338
+#: src/options/options.js:260 src/options/options.js:349
 msgid "None"
 msgstr "Nenhum"
 
@@ -1690,24 +1599,16 @@ msgid "Not Found"
 msgstr "Não encontrado"
 
 #: src/page/library/import.vue:28
-msgid ""
-"Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Note que você pode gerenciar manualmente sua pasta de originais e a "
-"importação é opcional."
+msgid "Note you may manually manage your originals folder and importing is optional."
+msgstr "Note que você pode gerenciar manualmente sua pasta de originais e a importação é opcional."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
 msgstr "Nota:"
 
 #: src/dialog/service/add.vue:28
-msgid ""
-"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
-"as remote service for backup and file upload."
-msgstr ""
-"Nota: Apenas servidores WebDAV, tais como Nextcloud ou PhotoPrism, podem ser "
-"configurados como serviço remoto para envio de arquivos e cópias de "
-"segurança."
+msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
+msgstr "Nota: Apenas servidores WebDAV, tais como Nextcloud ou PhotoPrism, podem ser configurados como serviço remoto para envio de arquivos e cópias de segurança."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1730,7 +1631,7 @@ msgstr "Antigos primeiro"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "No Windows, digite o seguinte recurso no diálogo de conexão:"
 
-#: src/options/options.js:377
+#: src/options/options.js:388
 msgid "Once a week"
 msgstr "Uma vez por semana"
 
@@ -1775,7 +1676,7 @@ msgstr "Opções"
 msgid "or ask in our Community Chat"
 msgstr "ou pergunte em nosso Community Chat"
 
-#: src/options/options.js:396
+#: src/options/options.js:407
 msgid "Orange"
 msgstr "Laranjado"
 
@@ -1802,30 +1703,19 @@ msgstr "Nome original"
 msgid "Originals"
 msgstr "Originais"
 
-#: src/options/options.js:416 src/options/options.js:429
+#: src/options/options.js:427 src/options/options.js:440
 msgid "Other"
 msgstr "Outro"
 
 #: src/page/connect.vue:109
-msgid ""
-"Our team decides this on an ongoing basis depending on the support effort "
-"required, server and licensing costs, and whether the features are generally "
-"needed by everyone or mainly requested by organizations and advanced users."
-msgstr ""
-"Nossa equipe decide isso de forma contínua, dependendo do esforço de suporte "
-"necessário, dos custos de servidor e licenciamento, e se as características "
-"são geralmente necessárias para todos ou principalmente solicitadas por "
-"organizações e usuários avançados."
+msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+msgstr "Nossa equipe decide isso de forma contínua, dependendo do esforço de suporte necessário, dos custos de servidor e licenciamento, e se as características são geralmente necessárias para todos ou principalmente solicitadas por organizações e usuários avançados."
 
 #: src/page/about/about.vue:45
-msgid ""
-"Our User Guide also covers many advanced topics, such as migrating from "
-"Google Photos and thumbnail quality settings."
-msgstr ""
-"Nosso Guia do Usuário também cobre muitos tópicos avançados, tais como "
-"migração do Google Photos e configurações de qualidade de miniaturas."
+msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+msgstr "Nosso Guia do Usuário também cobre muitos tópicos avançados, tais como migração do Google Photos e configurações de qualidade de miniaturas."
 
-#: src/options/options.js:290
+#: src/options/options.js:297
 msgid "Outdoor"
 msgstr "Ao ar livre"
 
@@ -1855,9 +1745,7 @@ msgstr "Pessoas"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr ""
-"Pessoas com as quais você compartilha um link poderão ver os conteúdos "
-"públicos."
+msgstr "Pessoas com as quais você compartilha um link poderão ver os conteúdos públicos."
 
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
@@ -1871,7 +1759,7 @@ msgstr "Remover arquivos permanentemente para poupar armazenamento."
 msgid "Phone"
 msgstr "Telefone"
 
-#: src/model/photo.js:1057
+#: src/model/photo.js:1099
 msgid "Photo"
 msgstr "Foto"
 
@@ -1895,7 +1783,7 @@ msgstr "FotoPrism+ Filiação"
 msgid "Photos"
 msgstr "Fotos"
 
-#: src/options/options.js:394
+#: src/options/options.js:405
 msgid "Pink"
 msgstr "Rosa"
 
@@ -1925,12 +1813,8 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Por favor, não envie fotos com conteúdo ofensivo."
 
 #: src/dialog/account/password.vue:17
-msgid ""
-"Please note that changing your password will log you out on other devices "
-"and browsers."
-msgstr ""
-"Por favor, note que a mudança de sua senha fará com que você saia de outros "
-"dispositivos e navegadores."
+msgid "Please note that changing your password will log you out on other devices and browsers."
+msgstr "Por favor, note que a mudança de sua senha fará com que você saia de outros dispositivos e navegadores."
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
@@ -1976,7 +1860,7 @@ msgstr "Privado"
 msgid "Proceed"
 msgstr "Proceder"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:412
+#: src/page/about/feedback.vue:6 src/options/options.js:423
 msgid "Product Feedback"
 msgstr "Opinião sobre o produto"
 
@@ -1984,7 +1868,7 @@ msgstr "Opinião sobre o produto"
 msgid "Projection"
 msgstr "Projeção"
 
-#: src/options/options.js:392
+#: src/options/options.js:403
 msgid "Purple"
 msgstr "Roxo"
 
@@ -2004,11 +1888,11 @@ msgstr "Aleatório"
 msgid "Raspberry"
 msgstr "Framboesa"
 
-#: src/options/options.js:311
+#: src/options/options.js:314
 msgid "Raw"
 msgstr "RAW"
 
-#: src/component/photo/cards.vue:283 src/component/photo/mosaic.vue:206
+#: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "RAW"
 
@@ -2018,8 +1902,7 @@ msgstr "Conversão RAW"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Reindexe todos originais, incluindo arquivos já indexados e não modificados."
+msgstr "Reindexe todos originais, incluindo arquivos já indexados e não modificados."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -2052,7 +1935,7 @@ msgstr "Reconhecido"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Reconhece rostos para que pessoas específicas possam ser encontradas."
 
-#: src/options/options.js:395
+#: src/options/options.js:406
 msgid "Red"
 msgstr "Vermelho"
 
@@ -2086,12 +1969,8 @@ msgid "Remove from album"
 msgstr "Remover do álbum"
 
 #: src/page/library/import.vue:121
-msgid ""
-"Remove imported files to save storage. Unsupported file types will never be "
-"deleted, they remain in their current location."
-msgstr ""
-"Remover arquivos já importados ao armazenamento. Tipos de arquivo não "
-"suportados nunca serão apagados, eles continuam na sua localização atual."
+msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgstr "Remover arquivos já importados ao armazenamento. Tipos de arquivo não suportados nunca serão apagados, eles continuam na sua localização atual."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2123,7 +2002,7 @@ msgstr "Reinsira a senha"
 msgid "Review"
 msgstr "Revisar"
 
-#: src/options/options.js:285
+#: src/options/options.js:292
 msgid "Satellite"
 msgstr "Satélite"
 
@@ -2279,7 +2158,7 @@ msgstr "Semelhante"
 msgid "Size"
 msgstr "Tamanho"
 
-#: src/options/options.js:265
+#: src/options/options.js:272
 msgid "Slow"
 msgstr "Lento"
 
@@ -2296,19 +2175,16 @@ msgstr "Ordem de classificação"
 msgid "Source"
 msgstr "Fonte"
 
-#: src/component/photo/cards.vue:313 src/component/photo/mosaic.vue:240
+#: src/component/photo/cards.vue:323 src/component/photo/mosaic.vue:243
 msgid "Stack"
 msgstr "Pilhas"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Empilhar arquivos com a mesma imagem única ou identificador de instância."
+msgstr "Empilhar arquivos com a mesma imagem única ou identificador de instância."
 
 #: src/page/settings/library.vue:172
-msgid ""
-"Stack pictures taken at the exact same time and location based on their "
-"metadata."
+msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Empilhar fotos tiradas na mesma hora e local conforme os metadados."
 
 #: src/dialog/photo/edit/info.vue:86
@@ -2320,12 +2196,8 @@ msgid "Stacks"
 msgstr "Pilhas"
 
 #: src/page/settings/library.vue:138
-msgid ""
-"Stacks group files with a similar frame of reference, but differences of "
-"quality, format, size or color."
-msgstr ""
-"Empilhar grupos de arquivos com moldura de referência similar, porém "
-"qualidade, formato, tamanho e cores diferentes."
+msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+msgstr "Empilhar grupos de arquivos com moldura de referência similar, porém qualidade, formato, tamanho e cores diferentes."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2352,7 +2224,7 @@ msgstr "Status"
 msgid "Storage"
 msgstr "Armazenamento"
 
-#: src/options/options.js:280
+#: src/options/options.js:287
 msgid "Streets"
 msgstr "Ruas"
 
@@ -2365,11 +2237,8 @@ msgid "Successfully Connected"
 msgstr "Conectado com sucesso"
 
 #: src/dialog/service/add.vue:29
-msgid ""
-"Support for additional services, like Google Drive, will be added over time."
-msgstr ""
-"Suporte para serviços adicionais, como Google Drive, serão adicionados "
-"oportunamente."
+msgid "Support for additional services, like Google Drive, will be added over time."
+msgstr "Suporte para serviços adicionais, como Google Drive, serão adicionados oportunamente."
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2383,12 +2252,12 @@ msgstr "Sincronizar"
 msgid "Sync raw and video files"
 msgstr "Sincronizar imagens e vídeos RAW"
 
-#: src/component/photo/cards.vue:461 src/component/photo/list.vue:136
+#: src/component/photo/cards.vue:471 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:52
 msgid "Taken"
 msgstr "Tirado"
 
-#: src/options/options.js:401
+#: src/options/options.js:412
 msgid "Teal"
 msgstr "Azul marinho"
 
@@ -2401,12 +2270,8 @@ msgid "The index currently contains %{n} hidden files."
 msgstr "O índice atualmente contém %{n} arquivos ocultos."
 
 #: src/page/library/index.vue:37
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet "
-"or there are duplicates."
-msgstr ""
-"O formato delas não é suportado, elas não foram convertidas para JPEG ainda "
-"ou existe duplicação."
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "O formato delas não é suportado, elas não foram convertidas para JPEG ainda ou existe duplicação."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2414,23 +2279,13 @@ msgstr "Tema"
 
 #: src/page/settings/services.vue:40
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr ""
-"Isto monta a pasta de originais como um dispositivo de rede e permite que "
-"você abra, edite e apague arquivos a partir do seu computador ou celular "
-"como se fosses locais."
+msgstr "Isto monta a pasta de originais como um dispositivo de rede e permite que você abra, edite e apague arquivos a partir do seu computador ou celular como se fosses locais."
 
 #: src/dialog/webdav.vue:26
-msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files from your computer or smartphone as if they were "
-"local."
-msgstr ""
-"Isto monta a pasta de originais como um dispositivo de rede e permite que "
-"você abra, edite e apague arquivos a partir do seu computador ou celular "
-"como se fosses locais."
+msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgstr "Isto monta a pasta de originais como um dispositivo de rede e permite que você abra, edite e apague arquivos a partir do seu computador ou celular como se fosses locais."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2458,7 +2313,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Título"
 
-#: src/page/settings/account.vue:114 src/component/photo/list.vue:135
+#: src/page/settings/account.vue:114 src/component/photo/list.vue:136
 #: src/dialog/photo/edit/info.vue:45
 msgid "Title"
 msgstr "Título"
@@ -2472,12 +2327,8 @@ msgid "Title too long"
 msgstr "Título muito longo"
 
 #: src/page/connect.vue:59 src/page/connect.vue:66
-msgid ""
-"To upgrade, you may either enter an activation code or click on \"Proceed\" "
-"to sign up on our website:"
-msgstr ""
-"Para atualizar, você pode digitar um código de ativação ou clicar em "
-"\"Proceder\" para se inscrever em nosso site:"
+msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgstr "Para atualizar, você pode digitar um código de ativação ou clicar em \"Proceder\" para se inscrever em nosso site:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2489,7 +2340,7 @@ msgstr "Trocar visualização"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:295
+#: src/options/options.js:302
 msgid "Topographic"
 msgstr "Topográfico"
 
@@ -2520,11 +2371,11 @@ msgid "Unique ID"
 msgstr "ID único"
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
-#: src/model/album.js:179 src/model/photo.js:697 src/model/photo.js:718
-#: src/model/photo.js:741 src/model/photo.js:759 src/model/photo.js:849
-#: src/model/photo.js:862 src/model/user.js:124 src/options/options.js:20
-#: src/options/options.js:34 src/options/options.js:51
-#: src/options/options.js:65 src/options/options.js:77
+#: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
+#: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:891
+#: src/model/photo.js:904 src/model/user.js:124 src/options/options.js:27
+#: src/options/options.js:41 src/options/options.js:58
+#: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
 #: src/page/library/logs.vue:18
 msgid "Unknown"
@@ -2625,8 +2476,7 @@ msgstr "A carregar."
 
 #: src/dialog/upload.vue:48
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Envios que possam conter tais imagens serão rejeitados automaticamente."
+msgstr "Envios que possam conter tais imagens serão rejeitados automaticamente."
 
 #: src/dialog/share.vue:157
 msgid "URL"
@@ -2657,14 +2507,20 @@ msgstr "Nome de usuário"
 msgid "Vanta"
 msgstr "Vantagem"
 
+#: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
+#: src/model/photo.js:805 src/model/photo.js:819 src/options/options.js:330
+msgid "Vector"
+msgstr ""
+
 #: src/page/connect.vue:11 src/page/connect.vue:8
 msgid "Verified"
 msgstr "Verificado"
 
-#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:469
-#: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:232
-#: src/model/file.js:219 src/model/photo.js:794 src/model/photo.js:810
-#: src/options/options.js:319
+#: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
+#: src/model/file.js:219 src/model/photo.js:836 src/model/photo.js:852
+#: src/options/options.js:326
 msgid "Video"
 msgstr "Vídeo"
 
@@ -2679,18 +2535,14 @@ msgstr "Duração Vídeo"
 msgid "Videos"
 msgstr "Vídeos"
 
-#: src/component/photo/cards.vue:322 src/component/photo/mosaic.vue:249
+#: src/component/photo/cards.vue:332 src/component/photo/mosaic.vue:252
 #: src/component/photo/toolbar.vue:230
 msgid "View"
 msgstr "Visualização"
 
 #: src/page/about/about.vue:44
-msgid ""
-"Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
-"share your pictures."
-msgstr ""
-"Visite docs.photoprism.app/user-guide para aprender como sincronizar, "
-"organizar e compartilhar suas fotos."
+msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+msgstr "Visite docs.photoprism.app/user-guide para aprender como sincronizar, organizar e compartilhar suas fotos."
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:27
@@ -2698,12 +2550,8 @@ msgid "Visual Similarity"
 msgstr "Similaridade visual"
 
 #: src/page/connect.vue:102
-msgid ""
-"Voluntary donations do not cover the cost of a team working full time to "
-"provide you with updates, documentation, and support."
-msgstr ""
-"As doações voluntárias não cobrem o custo de uma equipe que trabalha em "
-"tempo integral para lhe fornecer atualizações, documentação e suporte."
+msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+msgstr "As doações voluntárias não cobrem o custo de uma equipe que trabalha em tempo integral para lhe fornecer atualizações, documentação e suporte."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2711,16 +2559,11 @@ msgstr "Agradecemos seu feedback!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr ""
-"Fazemos nosso melhor para responder dentro de cinco dias úteis ou menos."
+msgstr "Fazemos nosso melhor para responder dentro de cinco dias úteis ou menos."
 
 #: src/page/about/about.vue:71
-msgid ""
-"We'll do our best to answer all your questions. In return, we ask you to "
-"back us on Patreon or GitHub Sponsors."
-msgstr ""
-"Faremos o nosso melhor para responder a todas as suas perguntas. Em troca, "
-"pedimos que nos apoie com Patrocinadores Patreon ou GitHub."
+msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+msgstr "Faremos o nosso melhor para responder a todas as suas perguntas. Em troca, pedimos que nos apoie com Patrocinadores Patreon ou GitHub."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
@@ -2728,12 +2571,9 @@ msgstr "Clientes WebDAV podem se conectar ao PhotoPrism usando a seguinte URL:"
 
 #: src/page/settings/services.vue:37
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
-"connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr ""
-"Clientes WebDAV, como Windows Explorer e o Finder da Apple, podem se "
-"conectar diretamente com o PhotoPrism."
+msgstr "Clientes WebDAV, como Windows Explorer e o Finder da Apple, podem se conectar diretamente com o PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2748,15 +2588,13 @@ msgstr "Site"
 msgid "What functionality is generally available?"
 msgstr "Que funcionalidade está geralmente disponível?"
 
-#: src/options/options.js:405
+#: src/options/options.js:416
 msgid "White"
 msgstr "Branco"
 
 #: src/page/connect.vue:98
 msgid "Why are some features only available to sponsors?"
-msgstr ""
-"Por que algumas características estão disponíveis apenas para os "
-"patrocinadores?"
+msgstr "Por que algumas características estão disponíveis apenas para os patrocinadores?"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
@@ -2768,7 +2606,7 @@ msgstr "Detalhes do trabalho"
 msgid "Year"
 msgstr "Ano"
 
-#: src/options/options.js:398
+#: src/options/options.js:409
 msgid "Yellow"
 msgstr "Amarelo"
 
@@ -2810,78 +2648,43 @@ msgstr "Você pode selecionar apenas um item"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr ""
-"Você pode voltar a digitalizar sua biblioteca para encontrar rostos "
-"adicionais."
+msgstr "Você pode voltar a digitalizar sua biblioteca para encontrar rostos adicionais."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
-msgid ""
-"Your continued support helps us provide regular updates and remain "
-"independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Seu apoio contínuo nos ajuda a fornecer atualizações regulares e a "
-"permanecer independentes, para que possamos cumprir nossa missão e proteger "
-"sua privacidade."
+msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgstr "Seu apoio contínuo nos ajuda a fornecer atualizações regulares e a permanecer independentes, para que possamos cumprir nossa missão e proteger sua privacidade."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
-msgid ""
-"Your library is continuously analyzed to automatically create albums of "
-"special moments, trips, and places."
-msgstr ""
-"Sua biblioteca é continuamente analisada para criar automaticamente álbuns "
-"de momentos, viagens e lugares especiais."
+msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgstr "Sua biblioteca é continuamente analisada para criar automaticamente álbuns de momentos, viagens e lugares especiais."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Aproximar/Afastar"
 
-#~ msgid ""
-#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
-#~ msgstr ""
-#~ "Torne-se um patrocinador hoje, apóie nossa missão e desfrute dos "
-#~ "benefícios de nossos membros!"
+#~ msgid "Don't use Darktable to convert RAW files."
+#~ msgstr "Não use o Darktable para converter arquivos RAW."
+
+#~ msgid "Don't use RawTherapee to convert RAW files."
+#~ msgstr "Não use RawTherapee para converter arquivos RAW."
+
+#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgstr "Torne-se um patrocinador hoje, apóie nossa missão e desfrute dos benefícios de nossos membros!"
 
 #~ msgid "Membership"
 #~ msgstr "Filiação"
 
-#~ msgid ""
-#~ "Our team decides this on an ongoing basis depending on the support effort "
-#~ "required, server and licensing costs, and whether the features are "
-#~ "generally needed by everyone or mainly requested by organizations and "
-#~ "advanced users. As this allows us to make more features available to the "
-#~ "public, we encourage all users to support our mission."
-#~ msgstr ""
-#~ "Nossa equipe avalia isso de forma contínua, dependendo do esforço de "
-#~ "suporte que os recursos requerem, do custo para nós e se eles são "
-#~ "geralmente necessários para todos ou principalmente solicitados por "
-#~ "organizações e usuários avançados. Como isto nos permite fornecer mais "
-#~ "recursos ao público, encorajamos todos os usuários a apoiar nossa missão."
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Nossa equipe avalia isso de forma contínua, dependendo do esforço de suporte que os recursos requerem, do custo para nós e se eles são geralmente necessários para todos ou principalmente solicitados por organizações e usuários avançados. Como isto nos permite fornecer mais recursos ao público, encorajamos todos os usuários a apoiar nossa missão."
 
-#~ msgid ""
-#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
-#~ "of a team working full time to provide you with updates, documentation, "
-#~ "and support. It is your decision whether you want to sign up to enjoy "
-#~ "additional benefits."
-#~ msgstr ""
-#~ "O PhotoPrism é 100% autofinanciado. As doações voluntárias não cobrem o "
-#~ "custo de uma equipe que trabalha em tempo integral para lhe fornecer "
-#~ "atualizações, documentação e suporte. É sua decisão se você deseja se "
-#~ "inscrever para usufruir de benefícios adicionais."
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "O PhotoPrism é 100% autofinanciado. As doações voluntárias não cobrem o custo de uma equipe que trabalha em tempo integral para lhe fornecer atualizações, documentação e suporte. É sua decisão se você deseja se inscrever para usufruir de benefícios adicionais."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "O software gratuito não deveria estar livre de custos?"
 
-#~ msgid ""
-#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
-#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
-#~ "the French or Spanish word for “free” as in freedom, to show they do not "
-#~ "mean the software is gratis."
-#~ msgstr ""
-#~ "Pense em \"software livre\" como em \"liberdade de expressão\", não como "
-#~ "em \"cerveja grátis\". A Free Software Foundation às vezes a chama de "
-#~ "\"software livre\", emprestando a palavra francesa ou espanhola para "
-#~ "\"livre\" como em liberdade, para mostrar que não significa que o "
-#~ "software é gratuito."
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Pense em \"software livre\" como em \"liberdade de expressão\", não como em \"cerveja grátis\". A Free Software Foundation às vezes a chama de \"software livre\", emprestando a palavra francesa ou espanhola para \"livre\" como em liberdade, para mostrar que não significa que o software é gratuito."
 
 #~ msgid "Moonlight"
 #~ msgstr "Luar"
@@ -2895,19 +2698,11 @@ msgstr "Aproximar/Afastar"
 #~ msgid "Sign Up"
 #~ msgstr "Cadastrar"
 
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
-#~ msgstr ""
-#~ "Para atualizar, você pode digitar um código de ativação ou clicar em "
-#~ "\"Sign Up\" para atualizar em nosso site:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+#~ msgstr "Para atualizar, você pode digitar um código de ativação ou clicar em \"Sign Up\" para atualizar em nosso site:"
 
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
-#~ "Now\" to sign up on our website:"
-#~ msgstr ""
-#~ "Para atualizar, você pode digitar um código de ativação ou clicar em "
-#~ "\"Upgrade Now\" para atualizar em nosso site:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Para atualizar, você pode digitar um código de ativação ou clicar em \"Upgrade Now\" para atualizar em nosso site:"
 
 #~ msgid "Sign up"
 #~ msgstr "Cadastrar"
@@ -2915,26 +2710,11 @@ msgstr "Aproximar/Afastar"
 #~ msgid "Compare Features"
 #~ msgstr "Comparar características"
 
-#~ msgid ""
-#~ "Our team evaluates this on an ongoing basis, depending on the support "
-#~ "effort features and config options cause or have caused in the past, and "
-#~ "whether they are generally needed by everyone or mainly requested by "
-#~ "organizations and advanced users. As this allows us to make more features "
-#~ "available to the public, we encourage all users to support our mission."
-#~ msgstr ""
-#~ "Nossa equipe avalia isso de forma contínua, dependendo das "
-#~ "características do esforço de suporte e das opções de configuração "
-#~ "causadas ou causadas no passado, e se são geralmente necessárias por "
-#~ "todos ou principalmente solicitadas por organizações e usuários "
-#~ "avançados. Como isto nos permite disponibilizar mais recursos para o "
-#~ "público, encorajamos todos os usuários a apoiarem nossa missão."
+#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Nossa equipe avalia isso de forma contínua, dependendo das características do esforço de suporte e das opções de configuração causadas ou causadas no passado, e se são geralmente necessárias por todos ou principalmente solicitadas por organizações e usuários avançados. Como isto nos permite disponibilizar mais recursos para o público, encorajamos todos os usuários a apoiarem nossa missão."
 
-#~ msgid ""
-#~ "Also, please leave a star on GitHub if you like this project. It provides "
-#~ "additional motivation to keep going."
-#~ msgstr ""
-#~ "Também, por favor, deixe uma estrela no GitHub se você gostar deste "
-#~ "projeto. Ele proporciona uma motivação adicional para continuar."
+#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+#~ msgstr "Também, por favor, deixe uma estrela no GitHub se você gostar deste projeto. Ele proporciona uma motivação adicional para continuar."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Torne-se um patrocinador"
@@ -2942,34 +2722,17 @@ msgstr "Aproximar/Afastar"
 #~ msgid "I'm a sponsor"
 #~ msgstr "Eu sou um(a) patrocinador(a)"
 
-#~ msgid ""
-#~ "Sponsors get access to additional features, receive direct technical "
-#~ "support via email, and can join our private chat room on matrix.org."
-#~ msgstr ""
-#~ "Os patrocinadores têm acesso a recursos adicionais, recebem suporte "
-#~ "técnico direto via e-mail e podem se juntar a nossa sala de bate-papo "
-#~ "privada no matrix.org."
+#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
+#~ msgstr "Os patrocinadores têm acesso a recursos adicionais, recebem suporte técnico direto via e-mail e podem se juntar a nossa sala de bate-papo privada no matrix.org."
 
-#~ msgid ""
-#~ "This currently is a sponsor feature to thank everyone who supports the "
-#~ "development of this application."
-#~ msgstr ""
-#~ "Esta é uma funcionalidade preferencial de agradecimento aos nossos "
-#~ "patrocinadores e colaboradores."
+#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#~ msgstr "Esta é uma funcionalidade preferencial de agradecimento aos nossos patrocinadores e colaboradores."
 
-#~ msgid ""
-#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
-#~ "Sponsors."
-#~ msgstr ""
-#~ "Nós informaremos como habilitá-la quando você se cadastrar no Patreon ou "
-#~ "GitHub Sponsors."
+#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+#~ msgstr "Nós informaremos como habilitá-la quando você se cadastrar no Patreon ou GitHub Sponsors."
 
-#~ msgid ""
-#~ "Your continued support helps us provide regular updates and services like "
-#~ "world maps."
-#~ msgstr ""
-#~ "Seu apoio contínuo nos ajuda a financiar custos operacionais, fornecer "
-#~ "serviços como mapas de satélite e desenvolver novas características."
+#~ msgid "Your continued support helps us provide regular updates and services like world maps."
+#~ msgstr "Seu apoio contínuo nos ajuda a financiar custos operacionais, fornecer serviços como mapas de satélite e desenvolver novas características."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -3036,19 +2799,11 @@ msgstr "Aproximar/Afastar"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Falha ao importar arquivos carregados"
 
-#~ msgid ""
-#~ "Note: Updating the password will not revoke access from already "
-#~ "authenticated users."
-#~ msgstr ""
-#~ "Nota: A alteraração da senha não revoga o acesso de usuários já "
-#~ "autenticados."
+#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgstr "Nota: A alteraração da senha não revoga o acesso de usuários já autenticados."
 
-#~ msgid ""
-#~ "Our mission is to provide the most user- and privacy-friendly solution to "
-#~ "keep your pictures organized and accessible."
-#~ msgstr ""
-#~ "Nossa missão é fornecer a solução mais amigável ao usuário e à "
-#~ "privacidade para manter suas fotos organizadas e acessíveis."
+#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+#~ msgstr "Nossa missão é fornecer a solução mais amigável ao usuário e à privacidade para manter suas fotos organizadas e acessíveis."
 
 #~ msgid "Play"
 #~ msgstr "Reproduzir"
@@ -3062,12 +2817,8 @@ msgstr "Aproximar/Afastar"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Mostrar Biblioteca no menu de navegação."
 
-#~ msgid ""
-#~ "The roadmap shows what tasks are in progress, what needs testing, and "
-#~ "which feature requests are going to be implemented next."
-#~ msgstr ""
-#~ "O roteiro mostra quais tarefas estão em andamento, o que precisa ser "
-#~ "testado e quais solicitações de recursos serão implementadas em seguida."
+#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
+#~ msgstr "O roteiro mostra quais tarefas estão em andamento, o que precisa ser testado e quais solicitações de recursos serão implementadas em seguida."
 
 #~ msgid "to"
 #~ msgstr "para"
@@ -3153,47 +2904,29 @@ msgstr "Aproximar/Afastar"
 #~ msgid "Spanish"
 #~ msgstr "Espanhol"
 
-#~ msgid ""
-#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
-#~ "GitHub Sponsors."
-#~ msgstr ""
-#~ "Se você gosta de usar o PhotoPrism, por favor, considere apoiar-nos nos "
-#~ "Patrocinadores Patreon ou GitHub."
+#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
+#~ msgstr "Se você gosta de usar o PhotoPrism, por favor, considere apoiar-nos nos Patrocinadores Patreon ou GitHub."
 
 #~ msgid "Let us know when we mistakenly label an idea as unfunded."
-#~ msgstr ""
-#~ "Avise-nos quando rotularmos erroneamente uma idéia como não financiada."
+#~ msgstr "Avise-nos quando rotularmos erroneamente uma idéia como não financiada."
 
 #~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 #~ msgstr "PhotoPrism® é uma marca registrada de Michael Mayer."
 
-#~ msgid ""
-#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
-#~ "will be prioritized."
-#~ msgstr ""
-#~ "Os pedidos endossados pelos patrocinadores prata e ouro recebem um selo "
-#~ "dourado e serão priorizados."
+#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
+#~ msgstr "Os pedidos endossados pelos patrocinadores prata e ouro recebem um selo dourado e serão priorizados."
 
 #~ msgid "Thank you very much!"
 #~ msgstr "Muito obrigado!"
 
 #~ msgid "This open-source project is made possible thanks to our sponsors."
-#~ msgstr ""
-#~ "Este projeto de código aberto é possível graças aos nossos patrocinadores."
+#~ msgstr "Este projeto de código aberto é possível graças aos nossos patrocinadores."
 
 #~ msgid "Trademarks"
 #~ msgstr "Marcas registradas"
 
-#~ msgid ""
-#~ "You may use it as required to describe our software, run your own server, "
-#~ "for educational purposes, but not for offering commercial goods, "
-#~ "products, or services without prior written permission. In other words, "
-#~ "please ask."
-#~ msgstr ""
-#~ "Você pode usá-lo caso necessário para descrever nosso programa, rodar seu "
-#~ "próprio servidor, para propósitos educacionais, mas não para oferecer "
-#~ "serviços ou produtos comerciais sem permissão prévia por escrito. Em "
-#~ "outras palavras, por favor, peça permissão."
+#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
+#~ msgstr "Você pode usá-lo caso necessário para descrever nosso programa, rodar seu próprio servidor, para propósitos educacionais, mas não para oferecer serviços ou produtos comerciais sem permissão prévia por escrito. Em outras palavras, por favor, peça permissão."
 
 #~ msgid "%{n} results"
 #~ msgstr "%{n} resultados"
@@ -3210,11 +2943,8 @@ msgstr "Aproximar/Afastar"
 #~ msgid "developing new features and keeping them free for everyone"
 #~ msgstr "desenvolver novas funcionalidades e mantê-las livres para todos."
 
-#~ msgid ""
-#~ "Disables simultaneous conversion of RAW files to apply Darktable presets."
-#~ msgstr ""
-#~ "Desativa conversão de arquivos RAW para aplicação de pre-definições "
-#~ "Darktable."
+#~ msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
+#~ msgstr "Desativa conversão de arquivos RAW para aplicação de pre-definições Darktable."
 
 #~ msgid "Error"
 #~ msgstr "Erro"
@@ -3234,19 +2964,14 @@ msgstr "Aproximar/Afastar"
 #~ msgid "Not implemented yet"
 #~ msgstr "Ainda não implementado"
 
-#~ msgid ""
-#~ "Note that you can as well manage and re-index your originals manually."
-#~ msgstr ""
-#~ "Note que você também pode gerenciar e reindexar seus originais "
-#~ "manualmente."
+#~ msgid "Note that you can as well manage and re-index your originals manually."
+#~ msgstr "Note que você também pode gerenciar e reindexar seus originais manualmente."
 
 #~ msgid "One result"
 #~ msgstr "Um resultado"
 
 #~ msgid "pay for operating expenses and external services like satellite maps"
-#~ msgstr ""
-#~ "a pagar por custos operacionais e serviços externos como mapas de "
-#~ "satélites."
+#~ msgstr "a pagar por custos operacionais e serviços externos como mapas de satélites."
 
 #~ msgid "Your continuous support helps..."
 #~ msgstr "Seu suporte contínuo ajuda..."

@@ -100,7 +100,7 @@ func (w *Thumbs) Dir(dir string, force bool) (done fs.Done, err error) {
 
 		mf, err := NewMediaFile(fileName)
 
-		if err != nil || mf.Empty() || !mf.IsJpeg() {
+		if err != nil || mf.Empty() || !mf.IsPreviewImage() {
 			return nil
 		}
 

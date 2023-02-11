@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/react"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -920,12 +921,12 @@ func (m *Photo) SetPrimary(fileUid string) (err error) {
 	if fileUid != "" {
 		// Do nothing.
 	} else if err = Db().Model(File{}).
-		Where("photo_uid = ? AND file_type = 'jpg' AND file_missing = 0 AND file_error = ''", m.PhotoUID).
+		Where("photo_uid = ? AND file_type IN (?) AND file_missing = 0 AND file_error = ''", m.PhotoUID, media.PreviewExpr).
 		Order("file_width DESC, file_hdr DESC").Limit(1).
 		Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
-		return fmt.Errorf("found no jpeg for photo uid %s", clean.Log(m.PhotoUID))
+		return fmt.Errorf("found no preview image for %s", clean.Log(m.PhotoUID))
 	} else {
 		fileUid = files[0]
 	}

@@ -91,12 +91,15 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-tensorflow", fmt.Sprintf("%t", c.DisableTensorFlow())},
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
 		{"disable-classification", fmt.Sprintf("%t", c.DisableClassification())},
+		{"disable-sips", fmt.Sprintf("%t", c.DisableSips())},
 		{"disable-ffmpeg", fmt.Sprintf("%t", c.DisableFFmpeg())},
 		{"disable-exiftool", fmt.Sprintf("%t", c.DisableExifTool())},
-		{"disable-heifconvert", fmt.Sprintf("%t", c.DisableHeifConvert())},
 		{"disable-darktable", fmt.Sprintf("%t", c.DisableDarktable())},
-		{"disable-rawtherapee", fmt.Sprintf("%t", c.DisableRawtherapee())},
-		{"disable-sips", fmt.Sprintf("%t", c.DisableSips())},
+		{"disable-rawtherapee", fmt.Sprintf("%t", c.DisableRawTherapee())},
+		{"disable-imagemagick", fmt.Sprintf("%t", c.DisableImageMagick())},
+		{"disable-heifconvert", fmt.Sprintf("%t", c.DisableHeifConvert())},
+		{"disable-rsvgconvert", fmt.Sprintf("%t", c.DisableRsvgConvert())},
+		{"disable-vector", fmt.Sprintf("%t", c.DisableVector())},
 		{"disable-raw", fmt.Sprintf("%t", c.DisableRaw())},
 
 		// Format Flags.
@@ -165,20 +168,23 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"database-conns", fmt.Sprintf("%d", c.DatabaseConns())},
 		{"database-conns-idle", fmt.Sprintf("%d", c.DatabaseConnsIdle())},
 
-		// External Tools.
-		{"darktable-bin", c.DarktableBin()},
-		{"darktable-cache-path", c.DarktableCachePath()},
-		{"darktable-config-path", c.DarktableConfigPath()},
-		{"darktable-blacklist", c.DarktableBlacklist()},
-		{"rawtherapee-bin", c.RawtherapeeBin()},
-		{"rawtherapee-blacklist", c.RawtherapeeBlacklist()},
+		// File Converters.
 		{"sips-bin", c.SipsBin()},
 		{"sips-blacklist", c.SipsBlacklist()},
-		{"heifconvert-bin", c.HeifConvertBin()},
 		{"ffmpeg-bin", c.FFmpegBin()},
 		{"ffmpeg-encoder", c.FFmpegEncoder().String()},
 		{"ffmpeg-bitrate", fmt.Sprintf("%d", c.FFmpegBitrate())},
 		{"exiftool-bin", c.ExifToolBin()},
+		{"darktable-bin", c.DarktableBin()},
+		{"darktable-cache-path", c.DarktableCachePath()},
+		{"darktable-config-path", c.DarktableConfigPath()},
+		{"darktable-blacklist", c.DarktableBlacklist()},
+		{"rawtherapee-bin", c.RawTherapeeBin()},
+		{"rawtherapee-blacklist", c.RawTherapeeBlacklist()},
+		{"imagemagick-bin", c.ImageMagickBin()},
+		{"imagemagick-blacklist", c.ImageMagickBlacklist()},
+		{"heifconvert-bin", c.HeifConvertBin()},
+		{"rsvgconvert-bin", c.RsvgConvertBin()},
 
 		// Thumbnails.
 		{"download-token", c.DownloadToken()},
@@ -190,6 +196,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"thumb-uncached", fmt.Sprintf("%t", c.ThumbUncached())},
 		{"jpeg-quality", fmt.Sprintf("%d", c.JpegQuality())},
 		{"jpeg-size", fmt.Sprintf("%d", c.JpegSize())},
+		{"png-size", fmt.Sprintf("%d", c.PngSize())},
 
 		// Facial Recognition.
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},

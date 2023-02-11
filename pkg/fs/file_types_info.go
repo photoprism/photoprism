@@ -34,6 +34,8 @@ var TypeInfo = map[Type]string{
 	VideoAVCHD:      "Advanced Video Coding High Definition (AVCHD)",
 	VideoBDAV:       "Blu-ray MPEG-2 Transport Stream",
 	VideoOGV:        "Ogg Media (OGG)",
+	VectorSVG:       "Scalable Vector Graphics",
+	VectorEPS:       "Adobe Encapsulated PostScript",
 	SidecarXMP:      "Adobe Extensible Metadata Platform",
 	SidecarAAE:      "Apple Image Edits XML",
 	SidecarXML:      "Extensible Markup Language",

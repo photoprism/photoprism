@@ -10,18 +10,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConvert_ToJpeg(t *testing.T) {
+func TestConvert_ToPreview(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
-	conf := config.TestConfig()
-	conf.InitializeTestData()
-	convert := NewConvert(conf)
+	cnf := config.TestConfig()
+	cnf.InitializeTestData()
+	convert := NewConvert(cnf)
 
 	t.Run("Video", func(t *testing.T) {
-		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
-		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "gopher-video.mp4.jpg")
+		fileName := filepath.Join(cnf.ExamplesPath(), "gopher-video.mp4")
+		outputName := filepath.Join(cnf.SidecarPath(), cnf.ExamplesPath(), "gopher-video.mp4.jpg")
 
 		_ = os.Remove(outputName)
 
@@ -33,7 +33,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jpegFile, err := convert.ToJpeg(mf, false)
+		jpegFile, err := convert.ToPreview(mf, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -48,7 +48,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 	})
 
 	t.Run("Raw", func(t *testing.T) {
-		jpegFilename := filepath.Join(conf.ImportPath(), "fern_green.jpg")
+		jpegFilename := filepath.Join(cnf.ImportPath(), "fern_green.jpg")
 
 		assert.Truef(t, fs.FileExists(jpegFilename), "file does not exist: %s", jpegFilename)
 
@@ -60,7 +60,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		imageJpeg, err := convert.ToJpeg(mf, false)
+		imageJpeg, err := convert.ToPreview(mf, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -72,8 +72,8 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 		assert.Equal(t, "Canon EOS 7D", infoJpeg.CameraModel)
 
-		rawFilename := filepath.Join(conf.ImportPath(), "raw", "IMG_2567.CR2")
-		jpgFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/IMG_2567.CR2.jpg")
+		rawFilename := filepath.Join(cnf.ImportPath(), "raw", "IMG_2567.CR2")
+		jpgFilename := filepath.Join(cnf.SidecarPath(), cnf.ImportPath(), "raw/IMG_2567.CR2.jpg")
 
 		t.Logf("Testing RAW to JPEG convert with %s", rawFilename)
 
@@ -83,13 +83,13 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatalf("%s for %s", err.Error(), rawFilename)
 		}
 
-		imageRaw, err := convert.ToJpeg(rawMediaFile, false)
+		imageRaw, err := convert.ToPreview(rawMediaFile, false)
 
 		if err != nil {
 			t.Fatalf("%s for %s", err.Error(), rawFilename)
 		}
 
-		assert.True(t, fs.FileExists(jpgFilename), "Jpeg file was not found - is Darktable installed?")
+		assert.True(t, fs.FileExists(jpgFilename), "Primary file was not found - is Darktable installed?")
 
 		if imageRaw == nil {
 			t.Fatal("imageRaw is nil")
@@ -102,5 +102,55 @@ func TestConvert_ToJpeg(t *testing.T) {
 		assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
 
 		_ = os.Remove(jpgFilename)
+	})
+
+	t.Run("Svg", func(t *testing.T) {
+		svgFile := fs.Abs("./testdata/agpl.svg")
+
+		mediaFile, err := NewMediaFile(svgFile)
+
+		t.Logf("svg: %s", mediaFile.FileName())
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToPreview(mediaFile, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("jpeg: %s", imageFile.FileName())
+
+		_ = imageFile.Remove()
+	})
+}
+
+func TestConvert_PngConvertCommands(t *testing.T) {
+	cnf := config.TestConfig()
+	convert := NewConvert(cnf)
+
+	t.Run("SVG", func(t *testing.T) {
+		svgFile := fs.Abs("./testdata/agpl.svg")
+		pngFile := fs.Abs("./testdata/agpl.png")
+
+		mediaFile, err := NewMediaFile(svgFile)
+
+		t.Logf("svg: %s", mediaFile.FileName())
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		cmds, useMutex, err := convert.PngConvertCommands(mediaFile, pngFile)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, useMutex)
+
+		t.Logf("commands: %#v", cmds)
 	})
 }

@@ -147,4 +147,10 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"ALTER TABLE albums MODIFY IF EXISTS album_path VARCHAR(1024);"},
 	},
+	{
+		ID:         "20230211-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS file_colors VARBINARY(18);", "ALTER TABLE files MODIFY IF EXISTS File_luminance VARBINARY(18);"},
+	},
 }

@@ -249,7 +249,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .mosaic-view .result.image i,
 #photoprism .list-view .result .image i,
 #photoprism .cards-view .result .image i {
-  color: white;
+  color: #c0c0c0f5;
   font-size: 24px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

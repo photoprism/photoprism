@@ -204,8 +204,11 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		case terms["video"]:
 			f.Query = strings.ReplaceAll(f.Query, "video", "")
 			f.Video = true
-		case terms["svg"]:
-			f.Query = strings.ReplaceAll(f.Query, "svg", "")
+		case terms["vectors"]:
+			f.Query = strings.ReplaceAll(f.Query, "vectors", "")
+			f.Vector = true
+		case terms["vector"]:
+			f.Query = strings.ReplaceAll(f.Query, "vector", "")
 			f.Vector = true
 		case terms["animated"]:
 			f.Query = strings.ReplaceAll(f.Query, "animated", "")

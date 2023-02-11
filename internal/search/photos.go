@@ -26,7 +26,7 @@ var PhotosColsAll = SelectString(Photo{}, []string{"*"})
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
 
 // FileTypes contains a list of browser-compatible file formats returned by search queries.
-var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageWebP.String()}
+var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageWebP.String(), fs.VectorSVG.String()}
 
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
@@ -169,7 +169,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 	// Limit the result file types if hidden images/videos should not be found.
 	if !f.Hidden {
-		s = s.Where("files.file_type IN (?) OR files.file_video = 1", FileTypes)
+		s = s.Where("files.file_type IN (?) OR files.media_type IN ('vector','video')", FileTypes)
 
 		if f.Error {
 			s = s.Where("files.file_error <> ''")
@@ -274,8 +274,11 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		case terms["video"]:
 			f.Query = strings.ReplaceAll(f.Query, "video", "")
 			f.Video = true
-		case terms["svg"]:
-			f.Query = strings.ReplaceAll(f.Query, "svg", "")
+		case terms["vectors"]:
+			f.Query = strings.ReplaceAll(f.Query, "vectors", "")
+			f.Vector = true
+		case terms["vector"]:
+			f.Query = strings.ReplaceAll(f.Query, "vector", "")
 			f.Vector = true
 		case terms["animated"]:
 			f.Query = strings.ReplaceAll(f.Query, "animated", "")
@@ -532,7 +535,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	} else if f.Live {
 		s = s.Where("photos.photo_type = ?", entity.MediaLive)
 	} else if f.Photo {
-		s = s.Where("photos.photo_type IN ('image','raw','live','animated')")
+		s = s.Where("photos.photo_type IN ('image','live','animated','vector','raw')")
 	}
 
 	// Filter by storage path?

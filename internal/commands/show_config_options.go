@@ -56,7 +56,7 @@ func showConfigOptionsAction(ctx *cli.Context) error {
 		{Start: "PHOTOPRISM_HTTPS_PROXY", Title: "Proxy Servers"},
 		{Start: "PHOTOPRISM_DISABLE_TLS", Title: "Web Server"},
 		{Start: "PHOTOPRISM_DATABASE_DRIVER", Title: "Database Connection"},
-		{Start: "PHOTOPRISM_DARKTABLE_BIN", Title: "File Converters"},
+		{Start: "PHOTOPRISM_SIPS_BIN", Title: "File Converters"},
 		{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Title: "Security Tokens"},
 		{Start: "PHOTOPRISM_THUMB_COLOR", Title: "Image Quality"},
 		{Start: "PHOTOPRISM_FACE_SIZE", Title: "Face Recognition",

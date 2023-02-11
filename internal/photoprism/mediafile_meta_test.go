@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/projection"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/meta"
-	"github.com/stretchr/testify/assert"
+	"github.com/photoprism/photoprism/pkg/projection"
 )
 
 func TestMediaFile_HasSidecarJson(t *testing.T) {
@@ -336,15 +336,15 @@ func TestMediaFile_Exif_HEIC(t *testing.T) {
 
 	convert := NewConvert(conf)
 
-	// Create JPEG.
-	jpeg, err := convert.ToJpeg(img, false)
+	// Create JPEG image.
+	jpeg, err := convert.ToPreview(img, false)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Replace JPEG.
-	jpeg, err = convert.ToJpeg(img, true)
+	// Replace JPEG image.
+	jpeg, err = convert.ToPreview(img, true)
 
 	if err != nil {
 		t.Fatal(err)

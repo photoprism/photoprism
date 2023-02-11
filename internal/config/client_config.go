@@ -113,7 +113,7 @@ type ClientDisable struct {
 	FFmpeg         bool `json:"ffmpeg"`
 	Raw            bool `json:"raw"`
 	Darktable      bool `json:"darktable"`
-	Rawtherapee    bool `json:"rawtherapee"`
+	RawTherapee    bool `json:"rawtherapee"`
 	Sips           bool `json:"sips"`
 	HeifConvert    bool `json:"heifconvert"`
 	TensorFlow     bool `json:"tensorflow"`
@@ -224,7 +224,7 @@ func (c *Config) ClientPublic() ClientConfig {
 			FFmpeg:         true,
 			Raw:            true,
 			Darktable:      true,
-			Rawtherapee:    true,
+			RawTherapee:    true,
 			Sips:           true,
 			HeifConvert:    true,
 			TensorFlow:     true,
@@ -304,7 +304,7 @@ func (c *Config) ClientShare() ClientConfig {
 			FFmpeg:         true,
 			Raw:            true,
 			Darktable:      true,
-			Rawtherapee:    true,
+			RawTherapee:    true,
 			Sips:           true,
 			HeifConvert:    true,
 			TensorFlow:     true,
@@ -391,7 +391,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			FFmpeg:         c.DisableFFmpeg(),
 			Raw:            c.DisableRaw(),
 			Darktable:      c.DisableDarktable(),
-			Rawtherapee:    c.DisableRawtherapee(),
+			RawTherapee:    c.DisableRawTherapee(),
 			Sips:           c.DisableSips(),
 			HeifConvert:    c.DisableHeifConvert(),
 			TensorFlow:     c.DisableTensorFlow(),
@@ -483,8 +483,8 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Table("photos").
 			Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
 				"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
-				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
-				"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
+				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','animated','vector','raw') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
+				"SUM(photo_type IN ('image','live','animated','vector','raw') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
 				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
 			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").

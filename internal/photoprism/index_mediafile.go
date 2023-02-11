@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -273,11 +274,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Flag first JPEG as primary file for this photo.
 	if !file.FilePrimary {
 		if photoExists {
-			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = 1 AND file_type = 'jpg' AND file_error = ''", photo.ID).First(&primaryFile); res.Error != nil {
-				file.FilePrimary = m.IsJpeg()
+			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = 1 AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
+				file.FilePrimary = m.IsPreviewImage()
 			}
 		} else {
-			file.FilePrimary = m.IsJpeg()
+			file.FilePrimary = m.IsPreviewImage()
 		}
 	}
 
@@ -358,7 +359,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Handle file types.
 	switch {
-	case m.IsJpeg():
+	case m.IsPreviewImage():
 		// Color information
 		if p, err := m.Colors(Config().ThumbCachePath()); err != nil {
 			log.Debugf("%s while detecting colors", err.Error())
@@ -499,7 +500,67 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				photo.PhotoType = entity.MediaRaw
 			} else if m.IsLive() {
 				photo.PhotoType = entity.MediaLive
+			} else if m.IsVector() {
+				photo.PhotoType = entity.MediaVector
 			}
+		}
+	case m.IsVector():
+		if metaData := m.MetaData(); metaData.Error == nil {
+			// Update basic metadata.
+			photo.SetTitle(metaData.Title, entity.SrcMeta)
+			photo.SetDescription(metaData.Description, entity.SrcMeta)
+			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
+
+			// Update metadata details.
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
+			details.SetNotes(metaData.Notes, entity.SrcMeta)
+			details.SetSubject(metaData.Subject, entity.SrcMeta)
+			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
+			details.SetLicense(metaData.License, entity.SrcMeta)
+			details.SetSoftware(metaData.Software, entity.SrcMeta)
+
+			if metaData.HasDocumentID() && photo.UUID == "" {
+				log.Infof("index: %s has document_id %s", logName, clean.Log(metaData.DocumentID))
+
+				photo.UUID = metaData.DocumentID
+			}
+
+			if metaData.HasInstanceID() {
+				log.Infof("index: %s has instance_id %s", logName, clean.Log(metaData.InstanceID))
+
+				file.InstanceID = metaData.InstanceID
+			}
+
+			if file.OriginalName == "" && filepath.Base(file.FileName) != metaData.FileName {
+				file.OriginalName = metaData.FileName
+				if photo.OriginalName == "" {
+					photo.OriginalName = fs.StripKnownExt(metaData.FileName)
+				}
+			}
+
+			file.FileCodec = metaData.Codec
+			file.FileWidth = m.Width()
+			file.FileHeight = m.Height()
+			file.FileAspectRatio = m.AspectRatio()
+			file.FilePortrait = m.Portrait()
+			file.SetMediaUTC(metaData.TakenAt)
+			file.SetDuration(metaData.Duration)
+			file.SetFPS(metaData.FPS)
+			file.SetFrames(metaData.Frames)
+			file.SetProjection(metaData.Projection)
+			file.SetHDR(metaData.IsHDR())
+			file.SetColorProfile(metaData.ColorProfile)
+			file.SetSoftware(metaData.Software)
+
+			if res := m.Megapixels(); res > photo.PhotoResolution {
+				photo.PhotoResolution = res
+			}
+		}
+
+		// Update photo type if not manually modified.
+		if photo.TypeSrc == entity.SrcAuto {
+			photo.PhotoType = entity.MediaVector
 		}
 	case m.IsVideo():
 		if metaData := m.MetaData(); metaData.Error == nil {
@@ -605,7 +666,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	file.DeletedAt = nil
 	file.FileMissing = false
 
-	// Primary files are used for rendering thumbnails and image classification, plus sidecar files if they exist.
+	// Previews files are used for rendering thumbnails and image classification, plus sidecar files if they exist.
 	if file.FilePrimary {
 		primaryFile = file
 

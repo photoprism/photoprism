@@ -43,7 +43,7 @@ type Data struct {
 	CameraSerial  string        `meta:"SerialNumber"`
 	LensMake      string        `meta:"LensMake"`
 	LensModel     string        `meta:"Lens,LensModel" xmp:"LensModel"`
-	Software      string        `meta:"Software,HistorySoftwareAgent,ProcessingSoftware"`
+	Software      string        `meta:"Software,CreatorTool,HistorySoftwareAgent,ProcessingSoftware"`
 	Flash         bool          `meta:"FlashFired"`
 	FocalLength   int           `meta:"FocalLength,FocalLengthIn35mmFormat"`
 	FocalDistance float64       `meta:"HyperfocalDistance"`
