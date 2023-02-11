@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-02-08 13:37+0000\n"
+"PO-Revision-Date: 2023-02-11 20:55+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2508,7 +2508,7 @@ msgstr "Vantamusta"
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:819 src/options/options.js:330
 msgid "Vector"
-msgstr ""
+msgstr "Vektori"
 
 #: src/page/connect.vue:11 src/page/connect.vue:8
 msgid "Verified"

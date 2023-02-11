@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-02-08 13:38+0000\n"
+"PO-Revision-Date: 2023-02-11 20:55+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -720,11 +720,11 @@ msgstr "Ära transkodeeri videoid FFmpeg abil."
 
 #: src/page/settings/advanced.vue:482
 msgid "Don't use Darktable to convert RAW images."
-msgstr ""
+msgstr "Ärge kasutage Darktable'i RAW-piltide teisendamiseks."
 
 #: src/page/settings/advanced.vue:503
 msgid "Don't use RawTherapee to convert RAW images."
-msgstr ""
+msgstr "Ärge kasutage RawTherapee't RAW-piltide teisendamiseks."
 
 #: src/page/settings/advanced.vue:229
 msgid "Don't use TensorFlow for image classification."
@@ -2510,7 +2510,7 @@ msgstr "Vanta"
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:819 src/options/options.js:330
 msgid "Vector"
-msgstr ""
+msgstr "Vektor"
 
 #: src/page/connect.vue:11 src/page/connect.vue:8
 msgid "Verified"
