@@ -143,7 +143,7 @@ func (c *Config) DisableSips() bool {
 func (c *Config) DisableVector() bool {
 	if c.options.DisableVector || !c.Sponsor() {
 		return true
-	} else if c.RsvgConvertBin() == "" && c.ImageMagickBin() == "" {
+	} else if c.RsvgConvertBin() == "" {
 		c.options.DisableVector = true
 	}
 
