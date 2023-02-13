@@ -90,10 +90,10 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 
 	// Try ImageMagick for other image file formats if allowed.
 	if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
-		(f.IsDNG() || f.IsAVIF() || f.IsHEIC() || f.IsVector() && c.conf.VectorEnabled() || f.IsRaw() && c.conf.RawEnabled()) {
+		(f.IsImage() || f.IsVector() && c.conf.VectorEnabled() || f.IsRaw() && c.conf.RawEnabled()) {
 		quality := fmt.Sprintf("%d", c.conf.JpegQuality())
 		resize := fmt.Sprintf("%dx%d>", c.conf.JpegSize(), c.conf.JpegSize())
-		args := []string{f.FileName(), "-resize", resize, "-quality", quality, jpegName}
+		args := []string{f.FileName(), "-flatten", "-resize", resize, "-quality", quality, jpegName}
 		result = append(result, exec.Command(c.conf.ImageMagickBin(), args...))
 	}
 

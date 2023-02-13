@@ -432,7 +432,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			log.Warn(err.Error())
 			file.FileError = err.Error()
 		}
-	case m.IsRaw(), m.IsDNG(), m.IsHEIC(), m.IsAVIF(), m.IsImageOther():
+	case m.IsRaw(), m.IsImage():
 		if metaData := m.MetaData(); metaData.Error == nil {
 			// Update basic metadata.
 			photo.SetTitle(metaData.Title, entity.SrcMeta)

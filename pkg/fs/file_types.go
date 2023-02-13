@@ -17,6 +17,7 @@ const (
 	ImagePNG        Type = "png"  // PNG image
 	ImageGIF        Type = "gif"  // GIF image
 	ImageTIFF       Type = "tiff" // TIFF image
+	ImagePSD        Type = "psd"  // Adobe Photoshop
 	ImageDNG        Type = "dng"  // Adobe Digital Negative image
 	ImageAVIF       Type = "avif" // AV1 Image File Format (AVIF)
 	ImageHEIF       Type = "heif" // High Efficiency Image File Format (HEIF)
@@ -45,6 +46,8 @@ const (
 	VideoASF        Type = "asf"  // Advanced Systems/Streaming Format (ASF)
 	VideoWMV        Type = "wmv"  // Windows Media Video (based on ASF)
 	VectorSVG       Type = "svg"  // Scalable Vector Graphics
+	VectorPDF       Type = "pdf"  // Portable Document Format
+	VectorAI        Type = "ai"   // Adobe Illustrator
 	VectorPS        Type = "ps"   // Adobe PostScript
 	VectorEPS       Type = "eps"  // Encapsulated PostScript
 	SidecarXMP      Type = "xmp"  // Adobe XMP sidecar file (XML)

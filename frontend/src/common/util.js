@@ -176,6 +176,8 @@ export default class Util {
         return "Portable Network Graphics";
       case "tiff":
         return "TIFF";
+      case "psd":
+        return "Adobe Photoshop";
       case "gif":
         return "GIF";
       case "dng":
@@ -212,6 +214,10 @@ export default class Util {
         return "Windows Media";
       case "svg":
         return "Scalable Vector Graphics";
+      case "pdf":
+        return "Portable Document Format";
+      case "ai":
+        return "Adobe Illustrator";
       case "ps":
         return "Adobe PostScript";
       case "eps":

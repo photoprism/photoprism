@@ -33,9 +33,9 @@ func (c *Convert) PngConvertCommands(f *MediaFile, pngName string) (result []*ex
 
 	// Try ImageMagick for other image file formats if allowed.
 	if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
-		(f.IsDNG() || f.IsAVIF() || f.IsHEIC() || f.IsVector() && c.conf.VectorEnabled() || f.IsRaw() && c.conf.RawEnabled()) {
+		(f.IsImage() || f.IsVector() && c.conf.VectorEnabled() || f.IsRaw() && c.conf.RawEnabled()) {
 		resize := fmt.Sprintf("%dx%d>", c.conf.PngSize(), c.conf.PngSize())
-		args := []string{f.FileName(), "-resize", resize, pngName}
+		args := []string{f.FileName(), "-flatten", "-resize", resize, pngName}
 		result = append(result, exec.Command(c.conf.ImageMagickBin(), args...))
 	} else if f.IsVector() && c.conf.RsvgConvertEnabled() {
 		// Vector graphics may be also be converted with librsvg if installed.

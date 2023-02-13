@@ -21,6 +21,7 @@ const (
 	MimeTypeMP4     = "video/mp4"
 	MimeTypeMOV     = "video/quicktime"
 	MimeTypeSVG     = "image/svg+xml"
+	MimeTypeAI      = "application/vnd.adobe.illustrator"
 	MimeTypePS      = "application/ps"
 	MimeTypeEPS     = "image/eps"
 	MimeTypeXML     = "text/xml"
@@ -29,22 +30,23 @@ const (
 
 // MimeType returns the mime type of a file, or an empty string if it could not be detected.
 func MimeType(filename string) (mimeType string) {
-	// Workaround, since "image/dng" cannot be recognized yet.
-	if ext := Extensions[strings.ToLower(filepath.Ext(filename))]; ext == "" {
-		// Continue.
-	} else if ext == ImageDNG {
+	// Workaround for types that cannot be reliably detected.
+	switch Extensions[strings.ToLower(filepath.Ext(filename))] {
+	case ImageDNG:
 		return MimeTypeDNG
-	} else if ext == ImageAVIF {
+	case MimeTypeAVIF:
 		return MimeTypeAVIF
-	} else if ext == VideoMP4 {
+	case VideoMP4:
 		return MimeTypeMP4
-	} else if ext == VideoMOV {
+	case MimeTypeMOV:
 		return MimeTypeMOV
-	} else if ext == VectorSVG {
+	case VectorSVG:
 		return MimeTypeSVG
-	} else if ext == VectorPS {
+	case VectorAI:
+		return MimeTypeAI
+	case VectorPS:
 		return MimeTypePS
-	} else if ext == VectorEPS {
+	case VectorEPS:
 		return MimeTypeEPS
 	}
 

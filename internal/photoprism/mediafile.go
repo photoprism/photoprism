@@ -379,14 +379,10 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			result.Main = f
 		} else if f.IsVector() {
 			result.Main = f
-		} else if f.IsDNG() {
-			result.Main = f
-		} else if f.IsAVIF() {
-			result.Main = f
 		} else if f.IsHEIC() {
 			isHEIC = true
 			result.Main = f
-		} else if f.IsImageOther() {
+		} else if f.IsImage() && !f.IsPreviewImage() {
 			result.Main = f
 		} else if f.IsVideo() && !isHEIC {
 			result.Main = f
@@ -409,10 +405,14 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		return result, fmt.Errorf("%s is unsupported (%s)", clean.Log(m.BaseName()), t)
 	}
 
-	// Add hidden JPEG if exists.
+	// Add hidden preview image if needed.
 	if !result.HasPreview() {
 		if jpegName := fs.ImageJPEG.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
 			if resultFile, _ := NewMediaFile(jpegName); resultFile.Ok() {
+				result.Files = append(result.Files, resultFile)
+			}
+		} else if pngName := fs.ImagePNG.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); pngName != "" {
+			if resultFile, _ := NewMediaFile(pngName); resultFile.Ok() {
 				result.Files = append(result.Files, resultFile)
 			}
 		}
@@ -771,11 +771,6 @@ func (m *MediaFile) IsWebP() bool {
 	return m.MimeType() == fs.MimeTypeWebP
 }
 
-// IsVideo returns true if this is a video file.
-func (m *MediaFile) IsVideo() bool {
-	return strings.HasPrefix(m.MimeType(), "video/") || m.Media() == media.Video
-}
-
 // Duration returns the duration if the file is a video.
 func (m *MediaFile) Duration() time.Duration {
 	if !m.IsVideo() {
@@ -788,11 +783,6 @@ func (m *MediaFile) Duration() time.Duration {
 // IsAnimatedGif returns true if it is an animated GIF.
 func (m *MediaFile) IsAnimatedGif() bool {
 	return m.IsGif() && m.MetaData().Frames > 1
-}
-
-// IsAnimated returns true if it is a video or animated image.
-func (m *MediaFile) IsAnimated() bool {
-	return m.IsVideo() || m.IsAnimatedGif()
 }
 
 // IsJson return true if this media file is a json sidecar file.
@@ -841,19 +831,39 @@ func (m *MediaFile) HasFileType(fileType fs.Type) bool {
 	return m.FileType() == fileType
 }
 
+// IsImage checks if the file is an image.
+func (m *MediaFile) IsImage() bool {
+	return m.HasMediaType(media.Image)
+}
+
+// IsRaw returns true if this is a RAW file.
+func (m *MediaFile) IsRaw() bool {
+	return m.HasFileType(fs.ImageRaw) || m.HasMediaType(media.Raw) || m.IsDNG()
+}
+
+// IsAnimated returns true if it is a video or animated image.
+func (m *MediaFile) IsAnimated() bool {
+	return m.IsVideo() || m.IsAnimatedGif()
+}
+
+// IsVideo returns true if this is a video file.
+func (m *MediaFile) IsVideo() bool {
+	return strings.HasPrefix(m.MimeType(), "video/") || m.Media() == media.Video
+}
+
 // IsVector returns true if this is a vector graphics.
 func (m *MediaFile) IsVector() bool {
 	return m.HasMediaType(media.Vector) || m.IsSVG()
 }
 
+// IsSidecar checks if the file is a metadata sidecar file, independent of the storage location.
+func (m *MediaFile) IsSidecar() bool {
+	return m.Media() == media.Sidecar
+}
+
 // IsSVG returns true if this is a SVG vector graphics.
 func (m *MediaFile) IsSVG() bool {
 	return m.HasFileType(fs.VectorSVG)
-}
-
-// IsRaw returns true if this is a RAW file.
-func (m *MediaFile) IsRaw() bool {
-	return m.HasFileType(fs.ImageRaw) || m.IsDNG()
 }
 
 // IsXMP returns true if this is a XMP sidecar file.
@@ -869,11 +879,6 @@ func (m *MediaFile) InOriginals() bool {
 // InSidecar checks if the file is stored in the 'sidecar' folder.
 func (m *MediaFile) InSidecar() bool {
 	return m.Root() == entity.RootSidecar
-}
-
-// IsSidecar checks if the file is a metadata sidecar file, independent of the storage location.
-func (m *MediaFile) IsSidecar() bool {
-	return m.Media() == media.Sidecar
 }
 
 // IsPlayableVideo checks if the file is a video in playable format.
@@ -896,11 +901,6 @@ func (m *MediaFile) IsImageNative() bool {
 	return m.IsJpeg() || m.IsImageOther()
 }
 
-// IsImage checks if the file is an image
-func (m *MediaFile) IsImage() bool {
-	return m.IsImageNative() || m.IsRaw() || m.IsDNG() || m.IsAVIF() || m.IsHEIC()
-}
-
 // IsLive checks if the file is a live photo.
 func (m *MediaFile) IsLive() bool {
 	if m.IsHEIC() {
@@ -921,7 +921,7 @@ func (m *MediaFile) ExifSupported() bool {
 
 // IsMedia returns true if this is a media file (photo or video, not sidecar or other).
 func (m *MediaFile) IsMedia() bool {
-	return m.IsImageNative() || m.IsVideo() || m.IsVector() || m.IsRaw() || m.IsDNG() || m.IsAVIF() || m.IsHEIC()
+	return m.IsImage() || m.IsRaw() || m.IsVideo() || m.IsVector()
 }
 
 // PreviewImage returns a PNG or JPEG version of the media file, if exists.
