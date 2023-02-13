@@ -406,7 +406,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			t = "unknown type"
 		}
 
-		return result, fmt.Errorf("no supported files found for %s (%s)", clean.Log(m.BaseName()), t)
+		return result, fmt.Errorf("%s is unsupported (%s)", clean.Log(m.BaseName()), t)
 	}
 
 	// Add hidden JPEG if exists.
