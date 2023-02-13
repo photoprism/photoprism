@@ -215,7 +215,7 @@ export default class Util {
       case "ps":
         return "Adobe PostScript";
       case "eps":
-        return "Adobe Encapsulated PostScript";
+        return "Encapsulated PostScript";
       default:
         return value.toUpperCase();
     }

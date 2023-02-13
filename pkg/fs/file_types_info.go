@@ -36,7 +36,7 @@ var TypeInfo = map[Type]string{
 	VideoOGV:        "Ogg Media (OGG)",
 	VectorSVG:       "Scalable Vector Graphics",
 	VectorPS:        "Adobe PostScript",
-	VectorEPS:       "Adobe Encapsulated PostScript",
+	VectorEPS:       "Encapsulated PostScript",
 	SidecarXMP:      "Adobe Extensible Metadata Platform",
 	SidecarAAE:      "Apple Image Edits XML",
 	SidecarXML:      "Extensible Markup Language",

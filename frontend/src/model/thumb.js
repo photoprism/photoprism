@@ -193,7 +193,7 @@ export class Thumb extends Model {
       for (let j = 0; j < p.Files.length; j++) {
         let f = p.Files[j];
 
-        if (!f || f.FileType !== "jpg") {
+        if (!f || (f.FileType !== "jpg" && f.FileType !== "png")) {
           continue;
         }
 

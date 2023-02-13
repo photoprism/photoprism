@@ -75,7 +75,7 @@
               <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
               <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
               <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
-              <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">draw</i>
+              <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">polyline</i>
               <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
             </button>
 

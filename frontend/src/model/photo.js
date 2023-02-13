@@ -808,20 +808,12 @@ export class Photo extends RestModel {
     const info = [];
 
     if (file.MediaType === MediaVector) {
-      info.push(file.FileType.toUpperCase());
-
-      if (file.Software) {
-        info.push(file.Software);
-      }
-
-      this.addSizeInfo(file, info);
+      info.push(Util.fileType(file.FileType));
     } else {
       info.push($gettext("Vector"));
-
-      if (file.Width && file.Height) {
-        info.push(file.Width + " × " + file.Height);
-      }
     }
+
+    this.addSizeInfo(file, info);
 
     return info.join(", ");
   });
