@@ -116,11 +116,20 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'browse', query: { q: 'gifs' }}" :exact="true" class="nav-animated"
+          <v-list-tile :to="{name: 'browse', query: { q: 'animated' }}" :exact="true" class="nav-animated"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Animated</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile v-show="isSponsor" :to="{name: 'browse', query: { q: 'vectors' }}" :exact="true" class="nav-vectors"
+                       @click.stop="">
+            <v-list-tile-content>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                <translate>Vectors</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>

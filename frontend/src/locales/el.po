@@ -54,7 +54,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Ένα κλικ θα το αντιγράψει στο πρόχειρο."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:420 src/component/navigation.vue:27
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
 #: src/page/help.vue:43
 msgid "About"
 msgstr "Σχετικά"
@@ -63,7 +63,7 @@ msgstr "Σχετικά"
 msgid "Abyss"
 msgstr "Άβυσσος"
 
-#: src/component/navigation.vue:93 src/component/navigation.vue:1935
+#: src/component/navigation.vue:93 src/component/navigation.vue:1965
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:138 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
@@ -165,9 +165,9 @@ msgid "Album Name"
 msgstr "Όνομα Συλλογής"
 
 #: src/app/routes.js:162 src/component/album/toolbar.vue:52
-#: src/component/navigation.vue:143 src/component/navigation.vue:153
-#: src/component/navigation.vue:540 src/component/navigation.vue:4
-#: src/component/navigation.vue:618
+#: src/component/navigation.vue:151 src/component/navigation.vue:161
+#: src/component/navigation.vue:548 src/component/navigation.vue:4
+#: src/component/navigation.vue:648
 msgid "Albums"
 msgstr "Συλλογές"
 
@@ -272,7 +272,7 @@ msgstr "Εφαρμογή"
 msgid "Approve"
 msgstr "Έγκριση"
 
-#: src/app/routes.js:243 src/component/navigation.vue:130
+#: src/app/routes.js:243 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -387,8 +387,8 @@ msgstr "Απασχολημένος, παρακαλώ περιμένετε…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Χρησιμοποιώντας το λογισμικό και τις υπηρεσίες που παρέχουμε, συμφωνείτε με τους όρους χρήσης, την πολιτική απορρήτου και τον κώδικα δεοντολογίας."
 
-#: src/app/routes.js:175 src/component/navigation.vue:249
-#: src/component/navigation.vue:986
+#: src/app/routes.js:175 src/component/navigation.vue:257
+#: src/component/navigation.vue:1016
 msgid "Calendar"
 msgstr "Ημερολόγιο"
 
@@ -835,7 +835,7 @@ msgstr "Ενεργοποίηση νέων χαρακτηριστικών που 
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ενεργοποιεί τις προεπιλογές μετατροπέα RAW. Μπορεί να μειώσει την απόδοση."
 
-#: src/app/routes.js:294 src/component/navigation.vue:387
+#: src/app/routes.js:294 src/component/navigation.vue:395
 msgid "Errors"
 msgstr "Σφάλματα"
 
@@ -915,8 +915,8 @@ msgstr "Γρήγορα"
 msgid "Favorite"
 msgstr "Αγαπημένο"
 
-#: src/app/routes.js:208 src/component/navigation.vue:223
-#: src/component/navigation.vue:896 src/page/albums.vue:84
+#: src/app/routes.js:208 src/component/navigation.vue:231
+#: src/component/navigation.vue:926 src/page/albums.vue:84
 msgid "Favorites"
 msgstr "Αγαπημένα"
 
@@ -928,7 +928,7 @@ msgstr "Αίτηση χαρακτηριστικών"
 msgid "Feed"
 msgstr "Ανατροφοδότηση"
 
-#: src/component/navigation.vue:428 src/component/navigation.vue:35
+#: src/component/navigation.vue:436 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Ανατροφοδότηση"
 
@@ -940,7 +940,7 @@ msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μα�
 msgid "Female"
 msgstr "Γυναίκα"
 
-#: src/model/file.js:291
+#: src/model/file.js:294
 msgid "File"
 msgstr "Αρχείο"
 
@@ -962,7 +962,7 @@ msgstr "Αρχείο"
 msgid "Filename"
 msgstr "Όνομα αρχείου"
 
-#: src/component/navigation.vue:558 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:566 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Αρχεία"
@@ -989,8 +989,8 @@ msgstr "Ο φάκελος περιέχει %{n} αρχεία"
 msgid "Folder is empty"
 msgstr "Ο φάκελος είναι άδειος"
 
-#: src/app/routes.js:188 src/component/navigation.vue:324
-#: src/component/navigation.vue:1251
+#: src/app/routes.js:188 src/component/navigation.vue:332
+#: src/component/navigation.vue:1281
 msgid "Folders"
 msgstr "Φάκελοι"
 
@@ -1062,7 +1062,7 @@ msgstr "Βοήθεια"
 msgid "Help & Support"
 msgstr "Βοήθεια & Υποστήριξη"
 
-#: src/component/navigation.vue:378
+#: src/component/navigation.vue:386
 msgid "Hidden"
 msgstr "Κρυφό"
 
@@ -1148,7 +1148,7 @@ msgstr "Επιπλέον, οι χορηγοί λαμβάνουν άμεση τε
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Σε περίπτωση που λείπουν οι εικόνες που περιμένατε, παρακαλούμε σαρώστε εκ νέου τη βιβλιοθήκη σας και περιμένετε μέχρι να ολοκληρωθεί η δημιουργία ευρετηρίου."
 
-#: src/component/navigation.vue:564 src/page/library.vue:35
+#: src/component/navigation.vue:572 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Ευρετήριο"
@@ -1242,8 +1242,8 @@ msgstr "Βάση γνώσεων"
 msgid "Label"
 msgstr "Ετικέτα"
 
-#: src/app/routes.js:300 src/component/navigation.vue:311
-#: src/component/navigation.vue:1206 src/dialog/photo/edit.vue:39
+#: src/app/routes.js:300 src/component/navigation.vue:319
+#: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
 msgid "Labels"
@@ -1280,7 +1280,7 @@ msgstr "Λεβάντα"
 msgid "Learn more"
 msgstr "Μάθετε περισσότερα"
 
-#: src/component/navigation.vue:585
+#: src/component/navigation.vue:593
 msgid "Legal Information"
 msgstr "Νομικές πληροφορίες"
 
@@ -1289,13 +1289,13 @@ msgid "Lens"
 msgstr "Φακοί"
 
 #: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
-#: src/component/navigation.vue:350 src/component/navigation.vue:360
-#: src/component/navigation.vue:4 src/component/navigation.vue:1343
+#: src/component/navigation.vue:358 src/component/navigation.vue:368
+#: src/component/navigation.vue:4 src/component/navigation.vue:1373
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "Βιβλιοθήκη"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:436
+#: src/page/connect.vue:4 src/component/navigation.vue:444
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1331,7 +1331,7 @@ msgstr "Λίστα"
 msgid "Live"
 msgstr "Ζωντανό"
 
-#: src/component/navigation.vue:196
+#: src/component/navigation.vue:204
 msgid "Live Photos"
 msgstr "Φωτογραφίες"
 
@@ -1353,17 +1353,17 @@ msgstr "Τοποθεσία"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Τα μηνύματα καταγραφής εμφανίζονται εδώ κάθε φορά που το PhotoPrism συναντά προβληματικά αρχεία ή υπάρχουν άλλα πιθανά προβλήματα."
 
-#: src/component/navigation.vue:458 src/component/navigation.vue:1713
-#: src/component/navigation.vue:1987
+#: src/component/navigation.vue:466 src/component/navigation.vue:1743
+#: src/component/navigation.vue:2017
 msgid "Login"
 msgstr "Σύνδεση"
 
-#: src/component/navigation.vue:502 src/component/navigation.vue:1824
-#: src/component/navigation.vue:1855 src/component/navigation.vue:1906
+#: src/component/navigation.vue:510 src/component/navigation.vue:1854
+#: src/component/navigation.vue:1885 src/component/navigation.vue:1936
 msgid "Logout"
 msgstr "Αποσύνδεση"
 
-#: src/component/navigation.vue:570 src/page/library.vue:58
+#: src/component/navigation.vue:578 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "Αρχεία καταγραφής"
@@ -1432,8 +1432,8 @@ msgstr "Ελαχιστοποίηση"
 msgid "Missing"
 msgstr "Απουασιάζει"
 
-#: src/app/routes.js:149 src/component/navigation.vue:236
-#: src/component/navigation.vue:941 src/page/settings/general.vue:164
+#: src/app/routes.js:149 src/component/navigation.vue:244
+#: src/component/navigation.vue:971 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "Στιγμές"
 
@@ -1615,7 +1615,7 @@ msgstr "Σημειώσεις"
 msgid "Nothing to see here yet."
 msgstr "Δεν υπάρχει τίποτα να δείτε εδώ ακόμα. Κάντε υπομονή."
 
-#: src/component/navigation.vue:473 src/component/navigation.vue:1758
+#: src/component/navigation.vue:481 src/component/navigation.vue:1788
 msgid "Offline"
 msgstr "Offline"
 
@@ -1694,7 +1694,7 @@ msgstr "Τα αρχικά ονόματα αρχείων θα αποθηκεύο�
 msgid "Original Name"
 msgstr "Αρχικό όνομα"
 
-#: src/component/navigation.vue:369 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:377 src/dialog/service/edit.vue:107
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 msgid "Originals"
@@ -1733,8 +1733,8 @@ msgstr "Κωδικός πρόσβασης"
 msgid "Password changed"
 msgstr "Ο κωδικός πρόσβασης άλλαξε"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:210
-#: src/component/navigation.vue:546 src/component/navigation.vue:851
+#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:218
+#: src/component/navigation.vue:554 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1756,7 +1756,7 @@ msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερ�
 msgid "Phone"
 msgstr "Τηλέφωνο"
 
-#: src/model/photo.js:1099
+#: src/model/photo.js:1091
 msgid "Photo"
 msgstr "Φωτογραφία"
 
@@ -1793,10 +1793,10 @@ msgid "Place & Time"
 msgstr "Τόπος και χρόνος"
 
 #: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:276
-#: src/component/navigation.vue:286 src/component/navigation.vue:552
+#: src/app/routes.js:268 src/component/navigation.vue:284
+#: src/component/navigation.vue:294 src/component/navigation.vue:560
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
-#: src/component/navigation.vue:4 src/component/navigation.vue:1086
+#: src/component/navigation.vue:4 src/component/navigation.vue:1116
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
 msgid "Places"
 msgstr "Μέρη"
@@ -1847,8 +1847,8 @@ msgstr "Προεπισκόπηση"
 msgid "Primary"
 msgstr "Βασικό"
 
-#: src/app/routes.js:236 src/component/navigation.vue:337
-#: src/component/navigation.vue:1296 src/dialog/photo/edit/info.vue:102
+#: src/app/routes.js:236 src/component/navigation.vue:345
+#: src/component/navigation.vue:1326 src/dialog/photo/edit/info.vue:102
 #: src/page/settings/general.vue:208
 msgid "Private"
 msgstr "Ιδιωτικό"
@@ -1936,7 +1936,7 @@ msgstr "Αναγνωρίζει πρόσωπα ώστε να μπορούν να 
 msgid "Red"
 msgstr "Κόκκινο"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1920
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1950
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1995,7 +1995,7 @@ msgstr "Όριο επανάληψης"
 msgid "Retype Password"
 msgstr "Επαναλάβετε τον κωδικό πρόσβασης"
 
-#: src/app/routes.js:229 src/component/navigation.vue:121
+#: src/app/routes.js:229 src/component/navigation.vue:129
 msgid "Review"
 msgstr "Ανασκόπηση"
 
@@ -2012,12 +2012,12 @@ msgstr "Αποθήκευση"
 msgid "Scan"
 msgstr "Σάρωση"
 
-#: src/component/navigation.vue:113
+#: src/component/navigation.vue:121
 msgid "Scans"
 msgstr "Σαρώσεις"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:534 src/component/navigation.vue:4
+#: src/component/navigation.vue:542 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2078,10 +2078,10 @@ msgid "Services"
 msgstr "URL υπηρεσίας"
 
 #: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:401
-#: src/component/navigation.vue:411 src/component/navigation.vue:8
+#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:409
+#: src/component/navigation.vue:419 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1517 src/component/navigation.vue:1953
+#: src/component/navigation.vue:1547 src/component/navigation.vue:1983
 msgid "Settings"
 msgstr "Ρυθμίσεις"
 
@@ -2188,7 +2188,7 @@ msgstr "Στοιβάζετε φωτογραφίες που τραβήχτηκα�
 msgid "Stackable"
 msgstr "Στοιβαζόμενο"
 
-#: src/component/navigation.vue:105 src/page/settings/library.vue:34
+#: src/component/navigation.vue:113 src/page/settings/library.vue:34
 msgid "Stacks"
 msgstr "Στοίβες"
 
@@ -2204,8 +2204,8 @@ msgstr "Έναρξη"
 msgid "Start/Stop Slideshow"
 msgstr "Έναρξη/διακοπή προβολής διαφανειών"
 
-#: src/component/navigation.vue:262 src/component/navigation.vue:296
-#: src/component/navigation.vue:28 src/component/navigation.vue:1033
+#: src/component/navigation.vue:270 src/component/navigation.vue:304
+#: src/component/navigation.vue:28 src/component/navigation.vue:1063
 msgid "States"
 msgstr "Κράτη"
 
@@ -2369,8 +2369,8 @@ msgstr "Μοναδικό αναγνωριστικό"
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
-#: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:891
-#: src/model/photo.js:904 src/model/user.js:124 src/options/options.js:27
+#: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
+#: src/model/photo.js:896 src/model/user.js:124 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2384,7 +2384,7 @@ msgstr "Άγνωστος"
 msgid "Unregistered"
 msgstr "Μη εγγεγραμμένο"
 
-#: src/app/routes.js:201 src/component/navigation.vue:163
+#: src/app/routes.js:201 src/component/navigation.vue:171
 msgid "Unsorted"
 msgstr "Μη ταξινομημένο"
 
@@ -2421,8 +2421,8 @@ msgstr "Ενημέρωση προεπισκοπήσεων"
 msgid "Updating stacks"
 msgstr "Ενημέρωση στοίβας"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:444
-#: src/component/navigation.vue:576 src/component/navigation.vue:51
+#: src/page/connect.vue:17 src/component/navigation.vue:452
+#: src/component/navigation.vue:584 src/component/navigation.vue:51
 msgid "Upgrade"
 msgstr "Αναβάθμιση"
 
@@ -2431,7 +2431,7 @@ msgstr "Αναβάθμιση"
 msgid "Upgrade Now"
 msgstr "Αναβάθμιση τώρα"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:1971
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2001
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:230
@@ -2487,7 +2487,7 @@ msgstr "Χρήση Προεπιλογών"
 msgid "User"
 msgstr "Χρήστης"
 
-#: src/component/navigation.vue:581 src/page/about/about.vue:42
+#: src/component/navigation.vue:589 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "Οδηγός χρήσης"
 
@@ -2506,9 +2506,13 @@ msgstr "Vanta"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:819 src/options/options.js:330
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:330
 msgid "Vector"
 msgstr "Διάνυσμα"
+
+#: src/component/navigation.vue:105
+msgid "Vectors"
+msgstr ""
 
 #: src/page/connect.vue:11 src/page/connect.vue:8
 msgid "Verified"
@@ -2516,7 +2520,7 @@ msgstr "Επαληθευμένο"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:219 src/model/photo.js:836 src/model/photo.js:852
+#: src/model/file.js:219 src/model/photo.js:828 src/model/photo.js:844
 #: src/options/options.js:326
 msgid "Video"
 msgstr "Βίντεο"
@@ -2526,9 +2530,9 @@ msgstr "Βίντεο"
 msgid "Video Duration"
 msgstr "Διάρκεια"
 
-#: src/app/routes.js:222 src/component/navigation.vue:176
-#: src/component/navigation.vue:186 src/component/navigation.vue:4
-#: src/component/navigation.vue:735
+#: src/app/routes.js:222 src/component/navigation.vue:184
+#: src/component/navigation.vue:194 src/component/navigation.vue:4
+#: src/component/navigation.vue:765
 msgid "Videos"
 msgstr "Βίντεο"
 
