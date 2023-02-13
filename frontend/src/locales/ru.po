@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-11 20:55+0000\n"
+"PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2517,7 +2518,7 @@ msgstr "Вектор"
 
 #: src/component/navigation.vue:105
 msgid "Vectors"
-msgstr ""
+msgstr "Векторы"
 
 #: src/page/connect.vue:11 src/page/connect.vue:8
 msgid "Verified"

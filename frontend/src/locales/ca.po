@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-11 20:55+0000\n"
+"PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -188,7 +188,7 @@ msgstr "S'han carregat totes les %{n} etiquetes"
 
 #: src/page/people/recognized.vue:360
 msgid "All %{n} people loaded"
-msgstr "S'han carregat les %{n} persones"
+msgstr "S'han carregat les totes les persones (%{n})"
 
 #: src/component/album/toolbar.vue:37 src/component/photo/toolbar.vue:36
 msgid "All Cameras"
@@ -2517,7 +2517,7 @@ msgstr "Vector"
 
 #: src/component/navigation.vue:105
 msgid "Vectors"
-msgstr ""
+msgstr "Vectors"
 
 #: src/page/connect.vue:11 src/page/connect.vue:8
 msgid "Verified"
