@@ -43,10 +43,10 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
-        libc6 ca-certificates sudo bash tzdata avahi-utils \
-        exiftool gpg zip unzip wget curl rsync make nano jq lsof lshw sqlite3 \
-        rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev libaom3 libvpx7 \
-        libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+        libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
+        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync \
+        imagemagick rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
+        libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-darktable.sh && \

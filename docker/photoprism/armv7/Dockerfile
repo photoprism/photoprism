@@ -101,12 +101,12 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
-      libc6 ca-certificates sudo bash tzdata avahi-utils \
-      gpg zip unzip wget curl rsync make nano \
-      jq lsof lshw sqlite3 mariadb-client exiftool rawtherapee \
-      ffmpeg libavcodec-extra x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
-      libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+    apt-get update && apt-get -qq upgrade && \
+    apt-get -qq install --no-install-recommends \
+        libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
+        exiftool mariadb-client sqlite3 tzdata gpg make zip unzip wget curl rsync \
+        imagemagick rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
+        libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
     && \
     /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
@@ -115,14 +115,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
-      /photoprism/originals \
-      /photoprism/import \
-      /photoprism/storage \
-      /photoprism/storage/sidecar \
-      /photoprism/storage/albums \
-      /photoprism/storage/backups \
-      /photoprism/storage/config \
-      /photoprism/storage/cache && \
+        /photoprism/originals \
+        /photoprism/import \
+        /photoprism/storage \
+        /photoprism/storage/sidecar \
+        /photoprism/storage/albums \
+        /photoprism/storage/backups \
+        /photoprism/storage/config \
+        /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
 # Default working directory.

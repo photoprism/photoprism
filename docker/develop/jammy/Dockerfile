@@ -49,10 +49,10 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
-        libc6 ca-certificates sudo bash tzdata avahi-utils \
-        exiftool gpg zip unzip wget curl rsync make nano jq lsof lshw sqlite3 \
-        rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev libaom3 libvpx7 \
-        libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+        libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
+        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync \
+        imagemagick rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
+        libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \
@@ -61,7 +61,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
-        imagemagick librsvg2-bin ghostscript \
+        librsvg2-bin ghostscript gsfonts \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
