@@ -46,7 +46,6 @@ const (
 	VideoASF        Type = "asf"  // Advanced Systems/Streaming Format (ASF)
 	VideoWMV        Type = "wmv"  // Windows Media Video (based on ASF)
 	VectorSVG       Type = "svg"  // Scalable Vector Graphics
-	VectorPDF       Type = "pdf"  // Portable Document Format
 	VectorAI        Type = "ai"   // Adobe Illustrator
 	VectorPS        Type = "ps"   // Adobe PostScript
 	VectorEPS       Type = "eps"  // Encapsulated PostScript

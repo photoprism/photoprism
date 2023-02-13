@@ -106,7 +106,6 @@ var Extensions = FileExtensions{
 	".asf":      VideoASF,
 	".wmv":      VideoWMV,
 	".svg":      VectorSVG,
-	".pdf":      VectorPDF,
 	".ai":       VectorAI,
 	".ps":       VectorPS,
 	".ps2":      VectorPS,
