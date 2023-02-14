@@ -19,6 +19,17 @@ func TestSearchPhotosGeo(t *testing.T) {
 
 		assert.Equal(t, "Jens Mander", form.Subjects)
 	})
+	t.Run("id", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "id:\"ii3e4567-e89b-hdgtr\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "ii3e4567-e89b-hdgtr", form.ID)
+	})
 	t.Run("aliases", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "people:\"Jens & Mander\" folder:Foo person:Bar"}
 
