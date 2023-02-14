@@ -4,11 +4,43 @@ FR:Frankreich
 FR:Francia
 FR:França
 FR:Frankrike
+FR:Île-de-France
+FR:Champagne
+FR:Lorraine
+FR:Alsace
+FR:Normandy
+FR:Normandie
+FR:Brittany
+FR:Bretagne
+FR:Pays-de-la-Loire
+FR:Val de Loire
+FR:Burgundy
+FR:Bourgogne
+FR:Franche-Comté
+FR:Poitou-Charentes
+FR:Auvergne
+FR:Rhône-Alpes
+FR:Aquitaine
+FR:Midi-Pyrénées
+FR:Languedoc-Roussillon
+FR:Provence-Alpes
+FR:Côte d'Azur
+FR:Réunion Island
+FR:Corsica
+FR:Corse
+FR:French Guiana
+FR:Guadaloupe
+FR:Martinique
+FR:Mayotte
 FR:Chamonix
-FR:Réunion
 FR:Strassburg
 FR:Strasbourg
 FR:Straßburg
+FR:Lyon
+FR:Bordeaux
+FR:Toulouse
+FR:Nantes
+FR:Marseille
 FR:Paris
 SK:Slovakia
 SK:Slovaquie
@@ -36,10 +68,12 @@ HU:Ungheria
 HU:Hungría
 HU:Hungria
 HU:Ungern
+HU:Budapest
 GE:Georgia Republic
-GE:République-de-Géorgie
-GE:República-da-Geórgia
-GE:Georgien Republik
+GE:Géorgie
+GE:Geórgia
+GE:Georgien
+GE:Tbilisi
 VA:Vatican City
 VA:Vatican
 VA:Vatikan
@@ -51,8 +85,17 @@ PL:Pologne
 PL:Polonia
 PL:Polónia
 PL:Polônia
+PL:Warszawa
 PL:Warsaw
 PL:Warschau
+PL:Poznań
+PL:Kraków
+PL:Łódź
+PL:Wrocław
+PL:Lublin
+PL:Gdańsk
+PL:Katowice
+PL:Rzeszów
 KH:Cambodia
 KH:Kambodscha
 KH:Cambodge
@@ -60,22 +103,48 @@ KH:Cambogia
 KH:Camboya
 KH:Camboja
 KH:Kambodja
+KH:Phnom Penh
+KH:Angkor Wat
+KH:Sihanoukville
+KH:Battambang
+KH:Siem Reap
 LA:Laos
-LA:Vientiane
 LA:Lao Republic
+LA:Vientiane
+LA:Luang Prabang
+LA:Vat Phou
 VN:Vietnam
+VN:Viet Nam
+VN:Việt Nam
 VN:Viêt Nam
 VN:Vietnã
+VN:Hanoi
+VN:Chi Minh
+VN:Hạ Long
+VN:Hội An
 DK:Denmark
 DK:Dänemark
 DK:Danemark
 DK:Danimarca
 DK:Dinamarca
 DK:Danmark
+DK:København
+DK:Copenhagen
+DK:Aarhus
+DK:Aalborg
+DK:Roskilde
+DK:Odense
+DK:Hovedstaden
+DK:Midtjylland
+DK:Nordjylland
+DK:Sjælland
+DK:Syddanmark
 MM:Myanmar
 MM:Birmanie
 MM:Birmania
 MM:Birmânia
+MM:Naypyidaw
+MM:Yangon
 CZ:Czechia
 CZ:Czech
 CZ:Tschechien
@@ -83,6 +152,10 @@ CZ:Tchèque
 CZ:Repubblica Ceca
 CZ:República Checa
 CZ:Tjeckien
+CZ:Prague
+CZ:Praha
+CZ:Brno
+CZ:Ostrava
 CZ:Karlovy Vary
 CH:Switzerland
 CH:Suisse
@@ -94,8 +167,11 @@ CH:Swiss
 CH:Schweiz
 CH:Zurich
 CH:Zürich
-CH:St Gallen
+CH:Bern
+CH:Berne
 CH:Basel
+CH:Lausanne
+CH:St Gallen
 CH:Interlaken
 CH:Lauterbrunnen
 CH:Grindelwald
@@ -107,6 +183,13 @@ BE:Belgique
 BE:Belgio
 BE:Bélgica
 BE:Belgien
+BE:Brussels
+BE:Bruxelles
+BE:Antwerp
+BE:Ghent
+BE:Leuven
+BE:Liège
+BE:Bruges
 SE:Sweden
 SE:Sverige
 SE:Schweden
@@ -114,28 +197,75 @@ SE:Suède
 SE:Svezia
 SE:Suecia
 SE:Suécia
+SE:Stockholm
+SE:Göteborg
+SE:Gothenburg
+SE:Malmö
+SE:Blekinge
+SE:Dalarna
 SE:Gotland
+SE:Gävleborg
+SE:Halland
+SE:Jämtland
+SE:Jönköping
+SE:Kalmar
+SE:Kronoberg
+SE:Norrbotten
+SE:Skåne
+SE:Södermanland
+SE:Uppsala
+SE:Värmland
+SE:Västerbotten
+SE:Västernorrland
+SE:Västmanland
+SE:Västra Götaland
+SE:Örebro
+SE:Östergötland
 SE:Öland
+SE:Visby
+SE:Kiruna
 FO:Faroe
 FO:Färöer
 FO:Färöarna
+FO:Tórshavn
 AL:Albania
 AL:Albanien
 AL:Albanie
 AL:Albânia
+AL:Tirana
+AL:Tirona
 MK:Macedonia
 MK:Mazedonien
 MK:Macédoine
 MK:Macedónia
 MK:Macedônia
 MK:Makedonien
+MK:Skopje
+MK:Скопје
+MK:Shkup
 ME:Montenegro
 ME:Monténégro
+ME:Podgorica
+ME:Budva
+ME:Herceg Novi
+ME:Kotor
+ME:Nikšić
+FI:Suomi
 FI:Finland
 FI:Finnland
 FI:Finlande
 FI:Finlandia
 FI:Finlândia
+FI:Helsinki
+FI:Espoo
+FI:Tampere
+FI:Vantaa
+FI:Oulu
+FI:Turku
+FI:Jyväskylä
+FI:Kuopio
+FI:Rovaniemi
+FI:Lapland
 SM:San Marino
 SM:Saint-Marin
 MD:Moldova
@@ -144,27 +274,76 @@ MD:Moldavie
 MD:Moldavia
 MD:Moldávia
 MD:Moldavien
+MD:Chișinău
+MD:Kishinev
 BY:Belarus
 BY:Weißrussland
 BY:Biélorussie
 BY:Bielorussia
 BY:Bielorrússia
 BY:Vitryssland
+BY:Minsk
 BR:Brazil
 BR:Brasil
 BR:Brasilien
 BR:Brésil
 BR:Brasile
+BR:Brasília
+BR:Macceió
+BR:Manaus
+BR:Bahia
+BR:Ceará
+BR:Fortaleza
+BR:Goiás
+BR:Goiânia
+BR:Maranhão
+BR:Mato Grosso
+BR:Cuiabá
+BR:Minas Gerais
+BR:Belo Horizonte
+BR:Pará
+BR:Paraíba
+BR:João Pessoa
+BR:Paraná
+BR:Curitiba
+BR:Pernambuco
+BR:Recife
+BR:Rio Janeiro
+BR:Rio Grande
+BR:Natal
+BR:Porto Alegre
+BR:Rondônia
+BR:Boa Vista
+BR:Florianópolis
+BR:São Paulo
+BR:Sergipe
+BR:Aracaju
+BR:Tocantis
+BR:Pantanal
+BR:Palmas
 RU:Russia
 RU:Russland
 RU:Russie
 RU:Rusia
 RU:Rússia
 RU:Ryssland
+RU:Rossiya
+RU:Moscow
+RU:Saint Petersburg
+RU:Rostov-on-Don
+RU:Pyatigorsk
+RU:Nizhny Novgorod
+RU:Yekaterinburg
+RU:Novosibirsk
+RU:Vladivostok
+RU:Baikal
+RU:Kremlin
 UA:Ukraine
 UA:Ucraina
 UA:Ucrânia
 UA:Ukraina
+UA:Kyiv
+UA:Kiev
 GB:United Kingdom
 GB:England
 GB:Britain
@@ -180,14 +359,19 @@ GB:Inglaterra
 GB:Gran Bretaña
 GB:Grã Bretanha
 GB:Storbritannien
-GB:London
 GB:Scotland
+GB:Wales
+GB:Nortern Ireland
+GB:London
 GB:Edinburgh
 GB:Buckingham
+GB:Belfast
+GB:Cardiff
 IM:Isle-of-Man
 IM:Île-de-Man
 IM:Isola-di-Man
 IM:Ilha-de-Man
+IE:Éire
 IE:Ireland
 IE:Irland
 IE:Irlande
@@ -197,7 +381,6 @@ DE:Deutschland
 DE:Germany
 DE:Allemagne
 DE:Germania
-DE:Germany
 DE:Alemania
 DE:Alemanha
 DE:Tyskland
@@ -277,27 +460,49 @@ LV:Lettonia
 LV:Letonia
 LV:Letónia
 LV:Letônia
+LV:Riga
+LV:Rīga
+LV:Daugavpils
+LV:Jelgava
+LV:Liepāja
 LT:Lithuania
 LT:Lietuva
 LT:Litauen
 LT:Lituanie
 LT:Lituania
 LT:Lituânia
+LT:Vilnius
+LT:Alytus
+LT:Kaunas
+LT:Klaipėda
+LT:Marijampolė
+LT:Panevėžys
+LT:Šiauliai
+LT:Tauragė
+LT:Telšiai
+LT:Utena
 EE:Estonia
 EE:Eesti
 EE:Estland
 EE:Estonie
 EE:Estónia
 EE:Estônia
+EE:Tallinn
 AU:Australia
 AU:Australien
 AU:Australie
 AU:Austrália
+AU:Sydney
+AU:Canberra
+AU:Darwin
 AU:Melbourne
+AU:Queensland
+AU:Brisbane
 AU:Perth
 AU:Tasmania
 AU:Tasmanien
-AU:Sydney
+AU:Hobart
+AU:Jervis Bay
 ZA:South Africa
 ZA:Südafrika
 ZA:Afrique-du-Sud
@@ -308,31 +513,85 @@ ZA:Sydafrika
 ZA:Capetown
 ZA:Durban
 ZA:Pretoria
-ZA:Kapstadt
 ZA:Johannesburg
+ZA:Bloemfontein
+ZA:Kimberley
+ZA:Gqeberha
+ZA:Kruger
+ZA:Addo Elephant
+ZA:Marakele
+ZA:Mokala
+ZA:Tankwa Karoo
 SZ:Eswatini
 SZ:Swaziland
 SZ:Swasiland
 SZ:Suazilandia
 SZ:Suazilândia
+SZ:Mbabane
+SZ:Lobamba
 RO:Romania
 RO:Rumänien
 RO:Roumanie
 RO:Rumania
 RO:Roménia
+RO:Bucharest
+RO:București
 EC:Ecuador
 EC:Equador
 EC:Équateur
+EC:Quito
+EC:Guayaquil
+EC:Babahoyo
+EC:Cuenca
+EC:Galápagos
+EC:Puerto Baquerizo
 MX:Mexico
 MX:Mexiko
 MX:Mexique
 MX:Messico
 MX:Méjico
 MX:México
+MX:Mexico City
+MX:Baja California
+MX:Sonora
+MX:Chihuahua
+MX:Coahuila
+MX:Sinaloa
+MX:Durango
+MX:Chiapas
+MX:Zacatecas
+MX:Jalisco
+MX:Oaxaca
+MX:Tabasco
+MX:Campeche
+MX:Yucatán
+MX:Quintana Roo
+MX:Cancun
+MX:Chetumal
+MX:Tijuana
+MX:Mexicali
+MX:Aguascalientes
+MX:Tuxtla Gutiérrez
+MX:Guanajuato
+MX:Guadalajara
+MX:Ecatepec
+MX:Toluca
+MX:Monterrey
+MX:Querétaro
+MX:Tlaxcala
 CO:Colombia
 CO:Kolumbien
 CO:Colombie
 CO:Colômbia
+CO:Bogotá
+CO:Cundinamarca
+BO:Leticia
+BO:Medellín
+BO:Barranquilla
+BO:Cartagena
+BO:Popayán
+BO:Valledupar    
+BO:Bucaramanga
 US:USA
 US:United States
 US:Vereinigte Staaten
@@ -340,45 +599,130 @@ US:États-Unis
 US:Stati Uniti
 US:Estados Unidos
 US:Förenta Staterna
+US:Alabama
+US:Montgomery
+US:Alaska
+US:Juneau
+US:Arizona
+US:Phoenix
+US:Arkansas
 US:California
-US:Washington
-US:New York
-US:NYC
-US:Florida
-US:Cape Canaveral
+US:Sacramento
 US:San Francisco
-US:Oakland
 US:San Diego
 US:Los Angeles
-US:Seattle
-US:Chicago
-US:Miami
-US:Dallas
-US:Houston
-US:Las Vegas
-US:Minneapolis
-US:Kansas
-US:Wisconsin
-US:Michigan
-US:Illinois
-US:Boston
-US:Massachusetts
-US:Connecticut
-US:New Jersey
-US:Delaware
-US:Orlando
-US:Detroit
-US:Nevada
-US:Texas
 US:Venice Beach
+US:Oakland
+US:Colorado
+US:Denver
+US:Connecticut
+US:Hartford
+US:Delaware
+US:Florida
+US:Tallahassee
+US:Cape Canaveral
+US:Jacksonville
+US:Miami
+US:Orlando
+US:Georgia State
+US:Georgia USA
+US:Atlanta
+US:Hawaii
+US:Honolulu
+US:Idaho
+US:Illinois
+US:Chicago
+US:Springfield
+US:Indiana
+US:Indianapolis
+US:Iowa
+US:Kansas
+US:Kentucky
+US:Louisiana
+US:Baton Rouge
+US:New Orleans
+US:Maine
+US:Maryland
+US:Baltimore
+US:Massachusetts
+US:Boston
+US:Michigan
+US:Detroit
+US:Minnesota
+US:Minneapolis
+US:Mississippi
+US:Missouri
+US:Kansas City
+US:Montana
+US:Nebraska
+US:Nevada
+US:Las Vegas
+US:New Hampshire
+US:New Jersey
+US:Newark
+US:New Mexico
+US:Albuquerque
+US:New York
+US:NYC
+US:Albany
+US:North Carolina
+US:North Dakota
+US:Ohio
+US:Oklahoma
+US:Oregon
+US:Portland
+US:Pennsylvania
+US:Philadelphia
+US:Rhode Island
+US:South Carolina
+US:South Dakota
+US:Tennessee
+US:Nashville
+US:Texas
+US:Houston
+US:Austin
+US:Dallas
+US:Utah
+US:Lake City
+US:Vermont
+US:Virginia
+US:Washington
+US:Seattle
+US:West Virginia
+US:Wisconsin
+US:Milwaukee
+US:Wyoming
+US:Michigan
 MN:Mongolia
 MN:Mongolei
 MN:Mongolie
 MN:Mongólia
 MN:Mongoliet
+MN:Ulaanbaatar
+MN:Erdenet
+MN:Gobi Desert
 CL:Chile
+CL:Santiago de Chile
+CL:Iquique
+CL:Antofagasta
+CL:Copiapó
+CL:Atacama
+CL:Valparaíso
+CL:Rancagua
+CL:Talca
+CL:Chillán
+CL:Puerto Montt
+CL:Coyhaique
+CL:Punta Arenas
 RW:Rwanda
 RW:Ruanda
+RW:Kigali
+RW:Kibungo
+RW:Gitirama
+RW:Butare
+RW:Kibuye
+RW:Byumba
+TR:Türkiye
 TR:Turkey
 TR:Türkei
 TR:Truthahn
@@ -388,37 +732,87 @@ TR:Turquía
 TR:Turquia
 TR:Turkiet
 TR:Istanbul
+TR:Ankara
+TR:Izmir
+TR:Antalya
+TR:Bodrum
+TR:Fethiye
+TR:Marmaris
+TR:Kuşadası
+TR:Didim
+TR:Alanya
+TR:Cappadocia
+TR:Gallipoli
+TR:Pamukkale
+TR:Hierapolis
+TR:Pergamon
+TR:Ephesus
 KG:Kyrgyzstan
 KG:Kirgisistan
 KG:Kirghizistan
 KG:Kirguistán
 KG:Quirguistão
 KG:Kirgizistan
+KG:Bishkek
+KG:Issyk-Kul
+KG:Cholpon-Ata
 BT:Bhutan
 BT:Bhoutan
 BT:Bután
 BT:Butão
+BT:Thimphu
+BT:Drukgyel Dzong
+BT:Bumdelling
 NP:Nepal
 NP:Népal
 NP:Everest
 NP:Kathmandu
+NP:Pokhara
+NP:Annapurna
+NP:Lumbini
+NP:Sagarmatha
+NP:Chitwan
 BD:Bangladesh
 BD:Bangladesch
+BD:Dhaka
+BD:Chittagong
+BD:Somapura Mahavihara
+BD:Paharpur
+BD:Sundarbans
 JO:Jordan
 JO:Jordanien
 JO:Giordania
 JO:Jordán
 JO:Jordânia
+JO:Amman
+JO:Irbid
+JO:Zarqa
+JO:Al-Karak
+JO:Aqaba
+JO:Petra
+JO:Jerash
+JO:Madaba
+JO:Machaerus
+JO:Mount Nebo
+JO:Umm ar-Rasas
+JO:Wadi Rum
 SY:Syria
 SY:Syrien
 SY:Syrie
 SY:Siria
 SY:Síria
+SY:Damascus
+SY:Idlib
+SY:Aleppo
+SY:Raqqa
+SY:Homs
 LB:Lebanon
 LB:Libanon
 LB:Liban
 LB:Libano
 LB:Líbano
+LB:Beirut
+LB:Sidon
 BG:Bulgaria
 BG:Bulgarien
 BG:Bulgarie
@@ -426,14 +820,59 @@ BG:Bulgária
 BG:Koprivshtitsa
 BG:Melnik
 BG:Sofia
+BG:Burgas
+BG:Blagoevgrad
+BG:Varna
 GR:Greece
 GR:Hellas
+GR:Hellenic Republic
 GR:Griechenland
 GR:Grèce
 GR:Grecia
 GR:Grécia
 GR:Grekland
+GR:Athens
+GR:Athína
+GR:Attica
+GR:Thessaloniki
+GR:Crete
+GR:Heraklion
+GR:Chania
+GR:Komotini
+GR:Epirus
+GR:Ioannina 	
+GR:Ionian
 GR:Corfu
+GR:Kerkyra
+GR:Kérkyra
+GR:Mytilene
+GR:Peloponnese
+GR:Ermoupoli
+GR:Thessaly
+GR:Patras
+GR:Kozani
+GR:Mount Athos
+GR:Evia
+GR:Rhodes
+GR:Lesbos
+GR:Chios
+GR:Zakynthos
+GR:Kefalonia
+GR:Kos
+GR:Samos
+GR:Lefkada
+GR:Syros
+GR:Naxos
+GR:Lemnos
+GR:Thasos
+GR:Paros
+GR:Milos
+GR:Mykonos
+GR:Santorini
+GR:Cyclades
+GR:Ionian Islands
+GR:Dodecanese
+GR:Aegean Islands
 KP:North Korea
 KP:DPRK
 KP:DPR Korea
@@ -443,31 +882,62 @@ KP:Corea-del-Nord
 KP:Corea-del-Norte
 KP:Coreia-do-Norte
 KP:Nordkorea
+KP:Pyongyang
+KP:Masikryong
 DZ:Algeria
 DZ:Algerien
 DZ:Algérie
 DZ:Argelia
 DZ:Argélia
 DZ:Algeriet
+DZ:Algiers
+DZ:Tizi Ouzou
+DZ:Djelfa
+DZ:Chlef
+DZ:M'Sila
+DZ:Djémila
+DZ:Timgad
+DZ:M'Zab
+DZ:Tassili n'Ajjer
 TN:Tunisia
 TN:Tunesien
 TN:Tunisie
 TN:Túnez
 TN:Tunísia
 TN:Tunisien
+TN:Tunis
+TN:Carthage
+TN:Djerba
+TN:Monastir
+TN:Hammamet
+TN:Ain Draham
+TN:Sousse
+TN:Mahdia
+TN:Kairouan
+TN:Tataouine
 LY:Libya
 LY:Libyen
 LY:Libye
 LY:Libia
 LY:Líbia
+LY:Tripoli
+LY:Benghazi
 MR:Mauritania
 MR:Mauretanien
 MR:Mauritanie
 MR:Mauritânia
+MR:Nouakchott
+MR:Nouadhibou
 GM:Gambia
 GM:Gambie
 GM:Gâmbia
+GM:Banjul
+GM:Serekunda
+GM:Brikama
 SN:Senegal
+SN:Dakar
+SN:Diourbel
+SN:Fatick
 GW:Guinea Bissau
 GW:Guinea-Bissau
 GW:Guinea-Bisáu
@@ -476,12 +946,20 @@ GW:Guinée-Bissau
 GW:Guinée Bissau
 GW:Guiné-Bissau
 GW:Guiné Bissau
+GW:Bissau
+GW:Biombo
+GW:Tombali
+GW:Bafatá
+GW:Quinara
+GW:Bolama
 SL:Sierra Leone
 SL:Sierra Leona
 SL:Serra Leoa
+SL:Freetown
 GN:Guinea
 GN:Guinée
 GN:Guiné
+GN:Conakry
 CI:Côte d’Ivoire
 CI:Ivory Coast
 CI:Elfenbeinküste
@@ -489,25 +967,43 @@ CI:Costa d'Avorio
 CI:Costa-de-Marfil
 CI:Costa-do-Marfim
 CI:Elfenbenskusten
+CI:Yamoussoukro
+CI:Abidjan
 LR:Liberia
 LR:Libéria
+LR:Monrovia
 GH:Ghana
 GH:Gana
+GH:Accra
 TG:Togo
+TG:Lomé
 BF:Burkina Faso
+BF:Ouagadougou
 BJ:Benin
 BJ:Bénin
 BJ:Benín
+BJ:Porto-Novo
+BJ:Cotonou
 ML:Mali
 ML:Malí
+ML:Bamako
 NE:Niger
 NE:Níger
 NG:Nigeria
-NG:Nigéria       
+NG:Nigéria
+NG:Abuja
+NG:Lagos
+NG:Kano
+NG:Ibadan
+NG:Benin City
+NG:Port Harcourt
 SD:Sudan
 SD:Soudan
 SD:Sudán
 SD:Sudão
+SD:Khartoum
+SD:Omdurman
+SD:Darfur
 CF:Central African
 CF:Zentralafrikanische
 CF:Centrafricaine
@@ -516,6 +1012,7 @@ CF:Centroafricana
 CF:Centro-Africana
 CF:Centro Africana
 CF:Centralafrikanska
+CF:Bangui
 GQ:Equatorial Guinea
 GQ:Äquatorialguinea
 GQ:Guinée Équatoriale
@@ -523,10 +1020,15 @@ GQ:Guinea Equatoriale
 GQ:Guinea Ecuatorial
 GQ:Guiné Equatorial
 GQ:Ekvatorialguinea
+GQ:Malabo
+GQ:Bioko
+GQ:Annobón
+GQ:Río Muni
 GA:Gabon
 GA:Gabun
 GA:Gabón
 GA:Gabão
+GA:Libreville
 CG:Congo Brazzaville
 CG:Congo-Brazzaville
 CG:Republic-of-the-Congo
@@ -536,6 +1038,7 @@ CG:Repubblica-del-Congo
 CG:República-del-Congo
 CG:República-do-Congo
 CG:Republiken Kongo
+CG:Brazzaville
 CD:Congo
 CD:Democratic-Republic-of-the-Congo
 CD:Demokratische-Republik-Kongo
@@ -545,14 +1048,32 @@ CD:Repubblica-Democratica-del-Congo
 CD:República-Democrática-del-Congo
 CD:República-Democrática-do-Congo
 CD:Demokratiska-republiken-Kongo
+CD:Kinshasa
+CD:Lubumbashi
+CD:Mbuji-Mayi
 UG:Uganda
 UG:Ouganda
+UG:Kampala
+UG:Murchison Falls
+UG:Pian Upe
+UG:Kidepo Valley
+UG:Rwenzori
 KE:Kenya
 KE:Kenia 
 KE:Quénia
+KE:Nairobi
+KE:Kiambu
+KE:Nakuru
+KE:Kakamega
+KE:Bungoma
+KE:Mombasa
+KE:Malindi
+KE:Masaai Mara
+KE:Tsavo West
 SO:Somalia
 SO:Somalie
 SO:Somália
+SO:Mogadishu
 ET:Ethiopia
 ET:Äthiopien
 ET:Éthiopie
@@ -560,6 +1081,14 @@ ET:Etiopia
 ET:Etiopía
 ET:Etiópia
 ET:Etiopien
+ET:Addis Ababa
+ET:Bahir Dar
+ET:Jijiga
+ET:Mek'ele
+ET:Rock-Hewn
+ET:Lalibela
+ET:Aksum
+ET:Fasil Ghebbi
 DJ:Djibouti
 DJ:Dschibuti
 DJ:Gibuti
@@ -571,34 +1100,86 @@ CM:Camerun
 CM:Camerún
 CM:Camarões
 CM:Kamerun
+CM:Yaoundé
+CM:Douala
 NA:Namibia
 NA:Namibie
 NA:Namíbia
+NA:Windhoek
+NA:Caprivi Strip
+NA:Sossusvlei
+NA:Etosha Pan
+NA:Swakopmund
+NA:Walvis Bay
+NA:Lüderitz
 AO:Angola
+AO:Luanda
+AO:Lubango
+AO:Huíla
+AO:Huambo
+AO:Benguela
+AO:Cabinda
+AO:Malanje
+AO:Saurimo
+AO:Lobito
+AO:Cuíto
+AO:Bié
+AO:Uíge
+AO:Cuanza
 BI:Burundi
+BI:Gitega
+BI:Bujumbura
 TZ:Tanzania
 TZ:Tansania
 TZ:Tanzanie
 TZ:Tanzânia
+TZ:Dodoma
+TZ:Dar es Salaam
+TZ:Zanzibar
+TZ:Unguja
+TZ:Mwanza
+TZ:Mbeya
 ZM:Zambia
 ZM:Sambia
 ZM:Zambie
 ZM:Zâmbia
+ZM:Lusaka
 ZW:Zimbabwe
 ZW:Rhodesia
 ZW:Simbabwe
 ZW:Zimbabue
+ZW:Harare
+ZW:Hwange
+ZW:Mount Nyangani
 MZ:Mozambique
 MZ:Mosambik
 MZ:Mozambico
 MZ:Moçambique
+MZ:Maputo
+MZ:Niassa
+MZ:Nampula
+MZ:Inhambane
+MZ:Matola
+MZ:Chimoio
+MZ:Quirimbas
+MZ:Bazaruto
+MZ:Gorongosa
 MW:Malawi
 MW:Malaui
+MW:Lilongwe
+MW:Blantyre
+MW:Mzimba
+MW:Mangochi
 UZ:Uzbekistan
 UZ:Usbekistan
 UZ:Ouzbékistan
 UZ:Uzbekistán
 UZ:Uzbequistão
+UZ:Tashkent
+UZ:Namangan
+UZ:Samarkand
+UZ:Andijan
+UZ:Bukhara
 TJ:Tajikistan
 TJ:Tadschikistan
 TJ:Tadjikistan
@@ -606,18 +1187,34 @@ TJ:Tagikistan
 TJ:Tayikistán
 TJ:Tajiquistão
 TJ:Tadzjikistan
+TJ:Dushanbe
+TJ:Khujand
+TJ:Bokhtar
 KZ:Kazakhstan
 KZ:Kasachstan
 KZ:Kazakistan
 KZ:Kazajistán
 KZ:Cazaquistão
 KZ:Kazakstan
+KZ:Astana
+KZ:Almaty
+KZ:Shymkent
+KZ:Karaganda
+KZ:Balkhash
+KZ:Zaysan
+KZ:Charyn
 HR:Croatia
 HR:Kroatien
 HR:Croatie
 HR:Croazia
 HR:Croacia
 HR:Croácia
+HR:Zagreb
+HR:Opatija
+HR:Plitvice
+HR:Dubrovnik
+HR:Hvar
+HR:Šibenik
 SI:Ljubljana
 SI:Slovenia
 SI:Slowenien
@@ -629,10 +1226,18 @@ TM:Turkmenistan
 TM:Turkménistan
 TM:Turkmenistán
 TM:Turquemenistão
+TM:Ashgabat
+TM:Darvaza
+TM:Daşoguz
 BO:Bolivia
 BO:Bolivien
 BO:Bolivie
 BO:Bolívia
+BO:La Paz
+BO:Santa Cruz de-la-Sierra
+BO:Madidi
+BO:Tiwanaku
+BO:Oruro
 GG:Guernsey
 CN:China
 CN:Chine
@@ -643,85 +1248,183 @@ CN:上海市
 CN:Peking
 CN:北京市
 CN:Beijing
+CN:Xi'an
+CN:Shaanxi
+CN:Tai'an
+CN:Qufu
+CN:Shandong
+CN:Lhasa
+CN:Tibet
+CN:Chengde
+CN:Hebei
+CN:Chengdu
+CN:Leshan
+CN:Sichuan
+CN:Chongqing
+CN:Nanjing
+CN:Jiangsu
+CN:Datong
+CN:Shanxi
+CN:Yunnan
+CN:Macau
+CN:Hangzhou
+CN:Xinjiang
 VE:Venezuela
+VE:Caracas
+VE:Margarita Island
+VE:Los Roques
+VE:Canaima
 VG:Virgin Islands
 VG:British-Virgin-Islands
 AR:Argentina
 AR:Argentine
 AR:Argentinien
+AR:Buenos Aires
+AR:Tucumán
 UY:Uruguay
 UY:Uruguai
+UY:Montevideo
+UY:Colonia del-Sacramento
 PY:Paraguay
 PY:Paraguai
+PY:Asunción
 SR:Suriname
 SR:Surinam
+SR:Paramaribo
 GY:Guyana
 GY:Guyane
 GY:Guiana
+GY:Georgetown
 NI:Nicaragua
 NI:Nicarágua
+NI:Managua
+NI:Masaya
+NI:El Ostional
 CR:Costa Rica
+CR:San José
+CR:Tamarindo
+CR:Arenal
+CR:Manuel Antonio
+CR:Quipos
+CR:Cahuita
+CR:Corcovado
+CR:Guanacaste
+CR:Irazú
+CR:Poás
+CR:Tortuguero
 PA:Panama
 PA:Panamá
+PA:Bocas del-Toro
+PA:San Blas
 HN:Honduras
+HN:Tegucigalpa
 BZ:Belize
 BZ:Belice
+BZ:Belmopan
 PE:Peru
 PE:Pérou
 PE:Perú
+PE:Lima
+PE:Arequipa
+PE:Apurimac
+PE:Cusco
+PE:Machu Picchu
+PE:Huánuco
+PE:Huascarán
 PT:Portugal
 PT:Portogallo
+PT:Lisboa
+PT:Lisbon
+PT:Oporto
+PT:Coimbra
+PT:Alentejo
+PT:Évora
+PT:Algarve
+PT:Faro
+PT:Azores
+PT:Ponta Delgada
+PT:Madeira
+PT:Funchal
+PT:Leiria
+PT:Santarém
+PT:Setúbal
+PT:Aveiro
+PT:Braga
 ER:Eritrea
 ER:Érythrée
 ER:Eritreia
+ER:Asmara
 IS:Iceland
 IS:Ísland
 IS:Islande
 IS:Islanda
 IS:Islandia
 IS:Islândia
+IS:Reykjavík
 AF:Afghanistan
 AF:Afganistán
 AF:Afeganistão
+AF:Kabul
 IN:India
 IN:Indien
 IN:Inde
 IN:Índia
+IN:New Delhi
 ID:Indonesia
 ID:Indonesien
 ID:Indonésie
 ID:Indonésia
+ID:Jakarta
+ID:Bali
+ID:Toraja
+ID:Semarang
+ID:Komodo
+ID:Sawahiunto
 IQ:Iraq
 IQ:Irak
 IQ:Iraque
+IQ:Baghdad
 IR:Iran
 IR:Persia
 IR:Irán
 IR:Irão
 IR:Irã
+IR:Tehran
+IR:Isfahan
+IR:Mashhad
+IR:Shiraz
 YE:Yemen
 YE:Jemen
 YE:Yémen
 YE:Iémen
+YE:Sanaa
+YE:Aden
+YE:Shibam
 QA:Qatar
 QA:Katar
 QA:Catar
+QA:Doha
 KW:Kuwait
 KW:Koweït
 OM:Oman
 OM:Omán
 OM:Omã
 OM:Omão
+OM:Muscat
+OM:Wahiba Sands
 TL:East Timor
 TL:Osttimor
 TL:Timor Est
 TL:Timor-Leste
 TL:Timor Leste
 TL:Timor Oriental
-TL:Östtimor 
+TL:Östtimor
+TL:Dili
 PK:Pakistan
 PK:Pakistán
 PK:Paquistão
+PK:Islamabad
+PK:Karachi
 SA:Saudi Arabia
 SA:Saudi-Arabien
 SA:Saudi Arabien
@@ -729,6 +1432,7 @@ SA:Arabie Saoudite
 SA:Arabia Saudita
 SA:Arábia Saudita
 SA:Saudiarabien
+SA:Riyadh
 KR:South Korea
 KR:Südkorea
 KR:Corée-du-Sud
@@ -736,6 +1440,8 @@ KR:Corea-del-Sud
 KR:Corea-del-Sur
 KR:Coreia-do-Sul
 KR:Sydkorea
+KR:Seoul
+KR:Bukchon Hanok
 AE:United Arab
 AE:UAE
 AE:Vereinigte Arabische
@@ -744,19 +1450,29 @@ AE:Emirati Arabi
 AE:Emiratos Árabes
 AE:Emirados Árabes
 AE:Förenade Arabemiraten
+AE:Abu Dhabi
+AE:Dubai
 CY:Cyprus
 CY:Zypern
 CY:Chypre
 CY:Cipro
 CY:Chipre
 CY:Cypern
+CY:Nicosia
+CY:Lamaca
+CY:Paphos
+CY:Limassol
 DM:Dominica
 DM:Dominique
+DM:Roseau
 HT:Haiti
 HT:Haïti
 HT:Hayti
+HT:Port-au-Prince
 CU:Cuba
 CU:Kuba
+CU:Havana
+CU:Varadero
 PG:New Guinea
 PG:PNG
 PG:Papua-Neuguinea
@@ -764,10 +1480,14 @@ PG:Papouasie Nouvelle-Guinée
 PG:Papua Nuova-Guinea
 PG:Papua Nova-Guiné
 PG:Papua Nya-Guinea
+PG:Port Moresby
+PG:Sepik
+PG:Madang
 AM:Armenia
 AM:Armenien
 AM:Arménie
 AM:Arménia
+AM:Yerevan
 AZ:Azerbaijan
 AZ:Aserbaidschan
 AZ:Azerbaïdjan
@@ -775,34 +1495,52 @@ AZ:Azerbaigian
 AZ:Azerbaiyán
 AZ:Azerbaijão
 AZ:Azerbajdzjan
+AZ:Baku
 MT:Malta
 MT:Malte
+MT:Valletta
 IT:Italy
 IT:Italien
 IT:Italie
 IT:Italia
 IT:Itália
+IT:Rome
+IT:Roma
 IT:Como
 IT:Cortina d'Ampezzo
 IT:Milan
 IT:Milano
-IT:Mailand
 IT:Neapel
+IT:Napoli
 IT:Palermo
 IT:Genua
 IT:Florenz
+IT:Firenza
 IT:Bologna
 IT:Venezia
 IT:Venedig
 IT:Venice
-IT:Italien
+IT:Liguria
 IT:Sicily
+IT:Sicilia
 IT:Trieste
+IT:Abruzzo
+IT:Aosta
+IT:Basilicata
+IT:Calabria
+IT:Campania
+IT:Emilia-Romagna
+IT:Lazio
+IT:Lombardia
+IT:Sardegna
+IT:Toscana
+IT:Veneto
 JE:Jersey Island
 BH:Bahrain
 BH:Bahrein
 BH:Bahreïn
 BH:Baréin
+BH:Manama
 JP:Japan
 JP:Japon
 JP:Giappone
@@ -813,15 +1551,22 @@ JP:Nihon
 JP:Tokyo
 JP:東京都
 JP:Fukushima
+JP:Hokkaido
+JP:Kyoto
+JP:Osaka
+JP:Kyūshū
 PH:Pilipinas
 PH:Filipinas
 PH:Philippines
 PH:Philippinen
 PH:Filippine
 PH:Filippinerna
+PH:Manila
+PH:Quezon
 MG:Madagascar
 MG:Madagaskar
 MG:Madagáscar
+MG:Antananarivo
 TW:Taiwan
 TW:Taïwan
 TW:Taiwán
@@ -832,16 +1577,22 @@ CV:Cap-Vert
 CV:Cap Vert
 CV:Capo Verde
 CV:Cabo Verde
+CV:Mindelo
+CV:Cidade Praia
+CV:Ilha Sal
+CV:Santo Antão
 KM:Comoros
 KM:Komoren
 KM:Comore
 KM:Comoras
 KM:Comores
 KM:Komorerna
+KM:Moroni
 MU:Mauritius
 MU:Maurice
 MU:Mauricio
 MU:Maurícia
+MU:Port Louis
 ST:São Tomé
 ST:São-Tomé-and-Príncipe
 ST:São-Tomé-und-Príncipe
@@ -857,11 +1608,14 @@ MV:Malediven
 MV:Maldive
 MV:Maldivas
 MV:Maldiverna
+MV:Malé
 SG:Singapore
 SG:Singapur
 SG:Singapour
 SG:Singapura
 LK:Sri Lanka
+LK:Sri Jayawardenepura
+LK:Colombo
 KN:Saint Kitts
 KN:Nevis
 KN:San-Cristóbal-y-Nieves
@@ -874,9 +1628,11 @@ AG:Antigua-y-Barbuda
 AG:Antigua-och-Barbuda
 MS:Montserrat Island
 BS:Bahamas
+BS:Nassau
 TC:Turks Island
 TC:Caicos Island
 TC:Turks-and-Caicos
+TC:Grand Turk
 BB:Barbados
 VC:Saint-Vincent-and-the-Grenadines
 GD:Grenada Island
@@ -885,6 +1641,7 @@ JM:Jamaica
 JM:Jamaika
 JM:Jamaïque
 JM:Giamaica
+JM:Kingston
 TT:Trinidad-and-Tobago
 TT:Tobago
 NZ:New Zealand
@@ -895,21 +1652,31 @@ NZ:Nuova Zelanda
 NZ:Nueva Zelanda
 NZ:Nova Zelândia
 NZ:Nya Zeeland
+NZ:Wellington
+NZ:Auckland
 KI:Kiribati
+KI:South Tarawa
 FJ:Fiji
 FJ:Fidschi
 FJ:Fidji
 FJ:Figi
 FJ:Fiyi
 FJ:Bligh Island
+FJ:Suva
 MH:Marshall Island
 FM:Micronesia
 FM:Mikronesien
 FM:Micronésie
 FM:Micronésia
+FM:Palikir
+FM:Weno
 NR:Nauru
+NR:Yaren
+NR:Denigomodu
 PW:Palau
 PW:Palaos
+PW:Ngerulmud
+PW:Koror
 MC:Monaco
 MC:Mónaco
 LI:Liechtenstein
@@ -924,6 +1691,12 @@ ES:Espanha
 ES:Andalusien
 ES:Andalusia
 ES:Canarias
+ES:Canárias
+ES:Catalonia
+ES:Galicia
+ES:Compostela
+ES:Navarra
+ES:Pamplona
 ES:Granada
 ES:Madrid
 ES:Barcelona
@@ -946,6 +1719,12 @@ CA:Alberta
 IL:Israel
 IL:Israël
 IL:Israele
+IL:West Jerusalem
+IL:Nazareth
+IL:Haifa
+IL:Rishon LeZion
+IL:Tel Aviv
+IL:Ashdod
 EG:Egypt
 EG:Ägypten
 EG:Aegypten
@@ -954,9 +1733,12 @@ EG:Egitto
 EG:Egipto
 EG:Egito
 EG:Egypten
+EG:Cairo
 SV:El Salvador
+SV:San Salvador
 GT:Guatemala
 NU:Niue
+NU:Alofi
 SS:South Sudan
 SS:Südsudan
 SS:Soudan-du-Sud
@@ -964,17 +1746,21 @@ SS:Sudan-del-Sud
 SS:Sudán-del-Sur
 SS:Sudão-do-Sul
 SS:Sydsudan
+SS:Juba
 RS:Serbia
 RS:Serbien
 RS:Serbie
 RS:Sérvia
+RS:Belgrade
 SB:Solomon Islands
 SB:Salomonen
 SB:Isole Salomone
 SB:Islas Salomón
 SB:Ilhas Salomão
 SB:Salomonöarna
+SB:Honiara
 WS:Independent-State-of-Samoa
+WS:Apia
 BW:Botswana
 BW:Botsuana
 BW:Gaborone
@@ -987,28 +1773,47 @@ TH:Thailandia
 TH:Thaïlande
 TH:Tailandia
 TH:Tailândia
+TH:Bangkok
+TH:Phuket
 XK:Kosovo
+XK:Pristina
 LS:Lesotho
 LS:Lesoto
+LS:Maseru
 BN:Brunei
 BN:Brunéi
+BN:Bandar Seri 
+BN:Begawan
 MY:Malaysia
 MY:Malesia
 MY:Malaisie
 MY:Malasia
 MY:Malásia
+MY:Putrajaya
+MY:Kuala Lumpur
+MY:Sarawak
+MY:Johor
+MY:Malacca
+MY:Penang
+MY:Kelantan
+MY:Pahang
 LU:Luxembourg
 LU:Luxemburg
 LU:Lussemburgo
 LU:Luxemburgo
 AI:Anguilla Island
 VU:Vanuatu
+VU:Port Vila
 TV:Tuvalu
+TV:Funafuti
 GL:Greenland
 GL:Grönland
 GL:Groenland
 GL:Groenlandia
 GL:Groenlândia
+GL:Nuuk
+GL:Cape Farewell
+GL:Avannaata
 CK:Cook Islands
 CK:Cookinseln
 CK:Îles Cook
@@ -1016,23 +1821,26 @@ CK:Isole Cook
 CK:Islas Cook
 CK:Ilhas Cook
 CK:Cooköarna
-KY:Cayman Islands
+CK:Avarua
+CK:Aitutaki
+CK:Atiu
+CK:Mangaia
+CK:Rarotonga
+KY:Cayman
 KY:Kaimaninseln
 KY:Îles Caïmans
-KY:Isole Cayman
 KY:Islas Caimán
 KY:Ilhas Caimão
 KY:Caymanöarna
-FK:Falkland Islands
+FK:Falkland
 FK:Falklandinseln
-FK:îles Falkland
-FK:Isole Falkland
 FK:Islas Malvine
 FK:Ilhas Malvinas
 FK:Falklandsöarna
 PN:Pitcairn Islands
 TK:Tokelau Islands
 TO:Tonga
+TO:Nukuʻalofa
 NL:Netherlands
 NL:Holland
 NL:Niederlande
@@ -1044,13 +1852,20 @@ NL:Países Baixos
 NL:Nederländerna
 NL:Amsterdam
 NL:Beekse Bergen
+NL:The Hague
+NL:Den Haag
+NL:Arnhem
+NL:Maastricht
 NL:Eindhoven
+NL:Rotterdam
+NL:Utrecht
 TD:Chad
 TD:Tschad
 TD:Tchad
 TD:Ciad
 TD:Chade
 TD:Tchad
+TD:N'Djamena
 BA:Bosnia
 BA:Herzegovina
 BA:Bosnien
@@ -1060,12 +1875,19 @@ BA:Bosnia-Herzegovina
 BA:Bosnie-Herzégovine
 BA:Bósnia
 BA:Hercegovina
+BA:Sarajevo
 NO:Norway
 NO:Norwegen
 NO:Norvège
 NO:Norvegia
 NO:Noruega
 NO:Norge
+NO:Oslo
+NO:Stavanger
+NO:Bærum
+NO:Bergen
+NO:Trondheim
+NO:Tromsø
 MA:Morocco
 MA:Marokko
 MA:Maroc
@@ -1073,10 +1895,20 @@ MA:Marocco
 MA:Marruecos
 MA:Marrocos
 MA:Marocko
+MA:Rabat
+MA:Casablanca
+MA:Fès
+MA:Marrakesh
 PS:Palestine
 PS:Palestinian Territories
 PS:Palästina
 PS:Palestina
+PS:Gaza
+PS:Hebron
+PS:Nablus
+PS:Khan Yunis
+PS:East Jerusalem
+PS:West Bank
 HM:McDonald Islands
 HM:Heard Island
 DO:Dominican Republic
@@ -1085,4 +1917,13 @@ DO:République Dominicaine
 DO:Repubblica Dominicana
 DO:República Dominicana
 DO:Dominikanska Republiken
+DO:Santo Domingo
+DO:Samaná
+DO:Punta Cana
+DO:Jarabacoa
+DO:Constanza
+DO:Pico Duarte
 AS:American Samoa
+AS:Pago Pago
+AS:Fagatogo
+AS:Tāfuna
