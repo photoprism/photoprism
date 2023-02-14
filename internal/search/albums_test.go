@@ -173,4 +173,34 @@ func TestAlbums(t *testing.T) {
 
 		assert.Equal(t, 2, len(result))
 	})
+	t.Run("search folders", func(t *testing.T) {
+		query := form.NewAlbumSearch("19")
+		result, err := Albums(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "April 1990", result[0].AlbumTitle)
+	})
+	t.Run("search states", func(t *testing.T) {
+		query := form.NewAlbumSearch("california")
+		result, err := Albums(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 3, len(result))
+	})
+	t.Run("search albums", func(t *testing.T) {
+		query := form.NewAlbumSearch("blue")
+		result, err := Albums(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 2, len(result))
+	})
 }
