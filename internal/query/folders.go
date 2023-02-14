@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// FoldersByPath returns a slice of folders in a given directory incl sub-folders in recursive mode.
+// FoldersByPath returns a slice of folders in a given directory incl subfolders in recursive mode.
 func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders entity.Folders, err error) {
 	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive, true)
 

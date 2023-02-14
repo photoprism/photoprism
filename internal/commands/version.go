@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// VersionCommand registers the version cli command.
+// VersionCommand configures the command name, flags, and action.
 var VersionCommand = cli.Command{
 	Name:   "version",
 	Usage:  "Shows version information",

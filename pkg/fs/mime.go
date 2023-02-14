@@ -30,6 +30,10 @@ const (
 
 // MimeType returns the mime type of a file, or an empty string if it could not be detected.
 func MimeType(filename string) (mimeType string) {
+	if filename == "" {
+		return MimeTypeUnknown
+	}
+
 	// Workaround for types that cannot be reliably detected.
 	switch Extensions[strings.ToLower(filepath.Ext(filename))] {
 	case ImageDNG:

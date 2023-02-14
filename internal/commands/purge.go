@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// PurgeCommand registers the index cli command.
+// PurgeCommand configures the command name, flags, and action.
 var PurgeCommand = cli.Command{
 	Name:   "purge",
 	Usage:  "Updates missing files, photo counts, and album covers",

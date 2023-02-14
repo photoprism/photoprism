@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers"
 )
 
-// OptimizeCommand registers the index cli command.
+// OptimizeCommand configures the command name, flags, and action.
 var OptimizeCommand = cli.Command{
 	Name:  "optimize",
 	Usage: "Maintains titles, estimates, and other metadata",

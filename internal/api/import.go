@@ -57,7 +57,7 @@ func StartImport(router *gin.RouterGroup) {
 		srcFolder := ""
 		importPath := conf.ImportPath()
 
-		// Import from sub-folder?
+		// Import from subfolder?
 		if srcFolder = c.Param("path"); srcFolder != "" && srcFolder != "/" {
 			srcFolder = clean.UserPath(srcFolder)
 		} else if f.Path != "" {

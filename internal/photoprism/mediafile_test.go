@@ -2139,9 +2139,12 @@ func TestMediaFile_FileType(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.True(t, m.IsJpeg())
-	assert.Equal(t, "jpg", string(m.FileType()))
-	assert.Equal(t, fs.ImageJPEG, m.FileType())
+	// No longer recognized as JPEG to improve indexing performance (skips mime type detection).
+	assert.False(t, m.IsJpeg())
+	assert.False(t, m.IsPng())
+	assert.Equal(t, "png", string(m.FileType()))
+	assert.Equal(t, "image/jpeg", m.MimeType())
+	assert.Equal(t, fs.ImagePNG, m.FileType())
 	assert.Equal(t, ".png", m.Extension())
 }
 

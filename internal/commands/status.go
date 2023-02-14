@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// StatusCommand registers the status command.
+// StatusCommand configures the command name, flags, and action.
 var StatusCommand = cli.Command{
 	Name:   "status",
 	Usage:  "Checks if the Web server is running",

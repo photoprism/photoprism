@@ -40,7 +40,7 @@ func NewConvert(conf *config.Config) *Convert {
 }
 
 // Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(path string, ext []string, force bool) (err error) {
+func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
@@ -48,7 +48,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 		}
 	}()
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err = mutex.MainWorker.Start(); err != nil {
 		return err
 	}
 
@@ -70,7 +70,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 	done := make(fs.Done)
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
-	if err := ignore.Dir(path); err != nil {
+	if err = ignore.Dir(dir); err != nil {
 		log.Infof("convert: %s", err)
 	}
 
@@ -78,7 +78,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 		log.Infof("convert: ignoring %s", clean.Log(filepath.Base(fileName)))
 	}
 
-	err = godirwalk.Walk(path, &godirwalk.Options{
+	err = godirwalk.Walk(dir, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
 			return godirwalk.SkipNode
 		},
@@ -122,7 +122,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 
 			return nil
 		},
-		Unsorted:            true,
+		Unsorted:            false,
 		FollowSymbolicLinks: true,
 	})
 

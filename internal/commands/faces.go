@@ -18,7 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// FacesCommand registers the face recognition subcommands.
+// FacesCommand configures the command name, flags, and action.
 var FacesCommand = cli.Command{
 	Name:  "faces",
 	Usage: "Face recognition subcommands",
@@ -53,7 +53,7 @@ var FacesCommand = cli.Command{
 		{
 			Name:      "index",
 			Usage:     "Searches originals for faces",
-			ArgsUsage: "[sub-folder]",
+			ArgsUsage: "[subfolder]",
 			Action:    facesIndexAction,
 		},
 		{

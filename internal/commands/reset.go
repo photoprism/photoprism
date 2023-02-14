@@ -18,7 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// ResetCommand resets the index, clears the cache, and removes sidecar files after confirmation.
+// ResetCommand configures the command name, flags, and action.
 var ResetCommand = cli.Command{
 	Name:  "reset",
 	Usage: "Resets the index, clears the cache, and removes sidecar files",

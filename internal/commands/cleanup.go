@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
-// CleanUpCommand registers the cleanup command.
+// CleanUpCommand configures the command name, flags, and action.
 var CleanUpCommand = cli.Command{
 	Name:   "cleanup",
 	Usage:  "Removes orphaned index entries, sidecar and thumbnail files",
