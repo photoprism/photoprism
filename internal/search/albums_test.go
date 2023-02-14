@@ -173,7 +173,7 @@ func TestAlbums(t *testing.T) {
 
 		assert.Equal(t, 2, len(result))
 	})
-	t.Run("search folders", func(t *testing.T) {
+	t.Run("Folders", func(t *testing.T) {
 		query := form.NewAlbumSearch("19")
 		result, err := Albums(query)
 
@@ -183,7 +183,7 @@ func TestAlbums(t *testing.T) {
 
 		assert.Equal(t, "April 1990", result[0].AlbumTitle)
 	})
-	t.Run("search states", func(t *testing.T) {
+	t.Run("California", func(t *testing.T) {
 		query := form.NewAlbumSearch("california")
 		result, err := Albums(query)
 
@@ -191,9 +191,11 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Logf("albums: %#v", result)
+
 		assert.Equal(t, 3, len(result))
 	})
-	t.Run("search albums", func(t *testing.T) {
+	t.Run("Blue", func(t *testing.T) {
 		query := form.NewAlbumSearch("blue")
 		result, err := Albums(query)
 
