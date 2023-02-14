@@ -738,6 +738,15 @@ func (m *MediaFile) IsJpeg() bool {
 	return m.MimeType() == fs.MimeTypeJpeg
 }
 
+// IsJpegXL checks if the file is a JPEG XL image with a supported file type extension.
+func (m *MediaFile) IsJpegXL() bool {
+	if fs.FileType(m.fileName) != fs.ImageJPEGXL {
+		return false
+	}
+
+	return m.MimeType() == fs.MimeTypeJpegXL
+}
+
 // IsPng checks if the file is a PNG image with a supported file type extension.
 func (m *MediaFile) IsPng() bool {
 	if fs.FileType(m.fileName) != fs.ImagePNG {
@@ -748,7 +757,8 @@ func (m *MediaFile) IsPng() bool {
 
 	// Since mime type detection is expensive, it is only
 	// performed after other checks have passed.
-	return m.MimeType() == fs.MimeTypePng
+	mimeType := m.MimeType()
+	return mimeType == fs.MimeTypePng || mimeType == fs.MimeTypeAnimatedPng
 }
 
 // IsGif checks if the file is a GIF image with a supported file type extension.
@@ -823,9 +833,9 @@ func (m *MediaFile) Duration() time.Duration {
 	return m.MetaData().Duration
 }
 
-// IsAnimatedGif checks if the file is an animated GIF with a supported file type extension.
-func (m *MediaFile) IsAnimatedGif() bool {
-	return m.IsGif() && m.MetaData().Frames > 1
+// IsAnimatedImage checks if the file is an animated image with a supported file type extension.
+func (m *MediaFile) IsAnimatedImage() bool {
+	return (m.IsGif() || m.IsPng()) && m.MetaData().Frames > 1
 }
 
 // IsJson checks if the file is a JSON sidecar file with a supported file type extension.
@@ -886,7 +896,7 @@ func (m *MediaFile) IsRaw() bool {
 
 // IsAnimated returns true if it is a video or animated image.
 func (m *MediaFile) IsAnimated() bool {
-	return m.IsVideo() || m.IsAnimatedGif()
+	return m.IsVideo() || m.IsAnimatedImage()
 }
 
 // IsVideo returns true if this is a video file.

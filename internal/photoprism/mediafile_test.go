@@ -1506,7 +1506,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, false, f.IsVideo())
 			assert.Equal(t, false, f.IsAnimated())
 			assert.Equal(t, true, f.IsGif())
-			assert.Equal(t, false, f.IsAnimatedGif())
+			assert.Equal(t, false, f.IsAnimatedImage())
 			assert.Equal(t, false, f.IsSidecar())
 		}
 	})
@@ -1518,7 +1518,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, false, f.IsVideo())
 			assert.Equal(t, true, f.IsAnimated())
 			assert.Equal(t, true, f.IsGif())
-			assert.Equal(t, true, f.IsAnimatedGif())
+			assert.Equal(t, true, f.IsAnimatedImage())
 			assert.Equal(t, false, f.IsSidecar())
 		}
 	})
@@ -1530,7 +1530,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, true, f.IsVideo())
 			assert.Equal(t, true, f.IsAnimated())
 			assert.Equal(t, false, f.IsGif())
-			assert.Equal(t, false, f.IsAnimatedGif())
+			assert.Equal(t, false, f.IsAnimatedImage())
 			assert.Equal(t, false, f.IsSidecar())
 		}
 	})

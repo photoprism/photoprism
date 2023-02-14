@@ -25,7 +25,7 @@ type Data struct {
 	TimeZone      string        `meta:"-"`
 	Duration      time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	FPS           float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
-	Frames        int           `meta:"FrameCount"`
+	Frames        int           `meta:"FrameCount,AnimationFrames"`
 	Codec         string        `meta:"CompressorID,VideoCodecID,CodecID,FileType"`
 	Title         string        `meta:"Headline,Title" xmp:"dc:title" dc:"title,title.Alt"`
 	Subject       string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`

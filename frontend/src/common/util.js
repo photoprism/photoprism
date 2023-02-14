@@ -165,6 +165,8 @@ export default class Util {
     switch (value) {
       case "jpg":
         return "JPEG";
+      case "jxl":
+        return "JPEG XL";
       case "raw":
         return "Unprocessed Sensor Data (RAW)";
       case "mov":

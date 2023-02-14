@@ -704,6 +704,9 @@ func (m *File) SetFrames(n int) {
 	// Update FPS.
 	if m.FileFPS <= 0 && m.FileDuration > 0 {
 		m.FileFPS = float64(m.FileFrames) / m.FileDuration.Seconds()
+	} else if m.FileFPS == 0 && m.FileDuration == 0 {
+		m.FileFPS = 30.0 // Assume 30 frames per second.
+		m.FileDuration = time.Duration(float64(m.FileFrames)/m.FileFPS) * time.Second
 	}
 }
 

@@ -31,9 +31,14 @@ func (c *Convert) PngConvertCommands(f *MediaFile, pngName string) (result []*ex
 		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-vframes", "1", pngName))
 	}
 
+	// Decode JPEG XL image if support is enabled.
+	if f.IsJpegXL() && c.conf.JpegXLEnabled() {
+		result = append(result, exec.Command(c.conf.JpegXLDecoderBin(), f.FileName(), pngName))
+	}
+
 	// Try ImageMagick for other image file formats if allowed.
 	if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
-		(f.IsImage() || f.IsVector() && c.conf.VectorEnabled() || f.IsRaw() && c.conf.RawEnabled()) {
+		(f.IsImage() && !f.IsJpegXL() || f.IsVector() && c.conf.VectorEnabled() || f.IsRaw() && c.conf.RawEnabled()) {
 		resize := fmt.Sprintf("%dx%d>", c.conf.PngSize(), c.conf.PngSize())
 		args := []string{f.FileName(), "-flatten", "-resize", resize, pngName}
 		result = append(result, exec.Command(c.conf.ImageMagickBin(), args...))

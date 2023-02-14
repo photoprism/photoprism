@@ -14,6 +14,7 @@ import (
 const (
 	ImageRaw        Type = "raw"  // RAW image
 	ImageJPEG       Type = "jpg"  // JPEG image
+	ImageJPEGXL     Type = "jxl"  // JPEG XL image
 	ImagePNG        Type = "png"  // PNG image
 	ImageGIF        Type = "gif"  // GIF image
 	ImageTIFF       Type = "tiff" // TIFF image

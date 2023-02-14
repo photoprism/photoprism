@@ -5,6 +5,7 @@ var TypeInfo = map[Type]string{
 	ImageRaw:        "Unprocessed Sensor Data",
 	ImageDNG:        "Adobe Digital Negative",
 	ImageJPEG:       "Joint Photographic Experts Group (JPEG)",
+	ImageJPEGXL:     "JPEG XL",
 	ImagePNG:        "Portable Network Graphics",
 	ImageGIF:        "Graphics Interchange Format",
 	ImageTIFF:       "Tag Image File Format",

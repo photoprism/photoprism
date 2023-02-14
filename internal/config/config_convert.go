@@ -29,3 +29,24 @@ func (c *Config) ImageMagickBlacklist() string {
 func (c *Config) ImageMagickEnabled() bool {
 	return !c.DisableImageMagick()
 }
+
+// JpegXLDecoderBin returns the JPEG XL decoder executable file name.
+func (c *Config) JpegXLDecoderBin() string {
+	return findBin("", "djxl")
+}
+
+// JpegXLEnabled checks if JPEG XL file format support is enabled.
+func (c *Config) JpegXLEnabled() bool {
+	return !c.DisableImageMagick()
+}
+
+// DisableJpegXL checks if JPEG XL file format support is disabled.
+func (c *Config) DisableJpegXL() bool {
+	if c.options.DisableJpegXL {
+		return true
+	} else if c.JpegXLDecoderBin() == "" {
+		c.options.DisableJpegXL = true
+	}
+
+	return c.options.DisableJpegXL
+}

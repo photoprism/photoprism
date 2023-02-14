@@ -470,18 +470,18 @@ export class Photo extends RestModel {
     }
 
     if (!file) {
-      file = this.gifFile();
+      file = this.animatedFile();
     }
 
     return file;
   });
 
-  gifFile() {
+  animatedFile() {
     if (!this.Files) {
       return false;
     }
 
-    return this.Files.find((f) => f.FileType === FormatGif);
+    return this.Files.find((f) => f.FileType === FormatGif || !!f.Frames);
   }
 
   videoUrl() {

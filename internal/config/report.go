@@ -100,6 +100,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-heifconvert", fmt.Sprintf("%t", c.DisableHeifConvert())},
 		{"disable-rsvgconvert", fmt.Sprintf("%t", c.DisableRsvgConvert())},
 		{"disable-vector", fmt.Sprintf("%t", c.DisableVector())},
+		{"disable-jpegxl", fmt.Sprintf("%t", c.DisableJpegXL())},
 		{"disable-raw", fmt.Sprintf("%t", c.DisableRaw())},
 
 		// Format Flags.
@@ -185,6 +186,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"imagemagick-blacklist", c.ImageMagickBlacklist()},
 		{"heifconvert-bin", c.HeifConvertBin()},
 		{"rsvgconvert-bin", c.RsvgConvertBin()},
+		{"jpegxldecoder-bin", c.JpegXLDecoderBin()},
 
 		// Thumbnails.
 		{"download-token", c.DownloadToken()},

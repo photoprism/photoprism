@@ -88,9 +88,14 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 		result = append(result, exec.Command(c.conf.ExifToolBin(), "-q", "-q", "-b", "-PreviewImage", f.FileName()))
 	}
 
+	// Decode JPEG XL image if support is enabled.
+	if f.IsJpegXL() && c.conf.JpegXLEnabled() {
+		result = append(result, exec.Command(c.conf.JpegXLDecoderBin(), f.FileName(), jpegName))
+	}
+
 	// Try ImageMagick for other image file formats if allowed.
 	if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
-		(f.IsImage() || f.IsVector() && c.conf.VectorEnabled() || f.IsRaw() && c.conf.RawEnabled()) {
+		(f.IsImage() && !f.IsJpegXL() || f.IsVector() && c.conf.VectorEnabled() || f.IsRaw() && c.conf.RawEnabled()) {
 		quality := fmt.Sprintf("%d", c.conf.JpegQuality())
 		resize := fmt.Sprintf("%dx%d>", c.conf.JpegSize(), c.conf.JpegSize())
 		args := []string{f.FileName(), "-flatten", "-resize", resize, "-quality", quality, jpegName}

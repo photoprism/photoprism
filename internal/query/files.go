@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -78,7 +77,7 @@ func VideoByPhotoUID(photoUID string) (*entity.File, error) {
 		return &f, fmt.Errorf("photo uid required")
 	}
 
-	err := Db().Where("photo_uid = ? AND (file_video = 1 OR file_type = ?)", photoUID, fs.ImageGIF).
+	err := Db().Where("photo_uid = ? AND (file_video = 1 OR file_frames > 0 OR file_type = 'gif')", photoUID).
 		Order("file_video DESC, file_duration DESC, file_frames DESC").
 		Preload("Photo").First(&f).Error
 	return &f, err
