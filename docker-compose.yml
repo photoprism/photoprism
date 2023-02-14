@@ -51,6 +51,7 @@ services:
       PHOTOPRISM_LDAP_BIND: "simple"
       PHOTOPRISM_LDAP_BIND_DN: "cn"
       PHOTOPRISM_LDAP_BASE_DN: "dc=localssl,dc=dev"
+      PHOTOPRISM_LDAP_ROLE_DN: "ou=photoprism-*,ou=groups,dc=localssl,dc=dev"
       PHOTOPRISM_LDAP_SYNC: "true"
       ## OpenID Connect (pre-configured for local tests):
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"

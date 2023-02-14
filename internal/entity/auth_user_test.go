@@ -814,3 +814,27 @@ func TestUser_SetAvatar(t *testing.T) {
 		assert.Equal(t, SrcManual, m.ThumbSrc)
 	})
 }
+
+func TestUser_Login(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.Equal(t, "", Visitor.Login())
+	})
+	t.Run("UnknownUser", func(t *testing.T) {
+		assert.Equal(t, "", UnknownUser.Login())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, "admin", Admin.Login())
+	})
+}
+
+func TestUser_Provider(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.Equal(t, "", Visitor.Provider())
+	})
+	t.Run("UnknownUser", func(t *testing.T) {
+		assert.Equal(t, "", UnknownUser.Provider())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, "password", Admin.Provider())
+	})
+}

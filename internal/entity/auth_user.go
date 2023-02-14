@@ -879,11 +879,18 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	return m.Updates(Values{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
 }
 
-// Login returns the login name and provider.
+// Login returns the username.
 func (m *User) Login() string {
-	if m.AuthProvider == "" || strings.ContainsRune(m.UserName, '@') {
-		return m.UserName
-	} else {
-		return fmt.Sprintf("%s@%s", m.UserName, m.AuthProvider)
+	return m.UserName
+}
+
+// Provider returns the authentication provider name.
+func (m *User) Provider() string {
+	if m.AuthProvider != "" {
+		return m.AuthProvider
+	} else if m.UserName != "" && m.ID > 0 {
+		return "password"
 	}
+
+	return ""
 }
