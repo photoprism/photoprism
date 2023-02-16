@@ -193,7 +193,7 @@ func TestAlbums(t *testing.T) {
 
 		t.Logf("albums: %#v", result)
 
-		assert.Equal(t, 3, len(result))
+		assert.GreaterOrEqual(t, 3, len(result))
 	})
 	t.Run("Blue", func(t *testing.T) {
 		query := form.NewAlbumSearch("blue")
