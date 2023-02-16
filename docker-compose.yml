@@ -48,11 +48,12 @@ services:
       ## LDAP Authentication (pre-configured for local tests):
       PHOTOPRISM_LDAP_URI: "ldap://dummy-ldap:389"
       PHOTOPRISM_LDAP_INSECURE: "true"
+      PHOTOPRISM_LDAP_SYNC: "true"
       PHOTOPRISM_LDAP_BIND: "simple"
       PHOTOPRISM_LDAP_BIND_DN: "cn"
       PHOTOPRISM_LDAP_BASE_DN: "dc=localssl,dc=dev"
+      PHOTOPRISM_LDAP_ROLE: ""
       PHOTOPRISM_LDAP_ROLE_DN: "ou=photoprism-*,ou=groups,dc=localssl,dc=dev"
-      PHOTOPRISM_LDAP_SYNC: "true"
       ## OpenID Connect (pre-configured for local tests):
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"
       PHOTOPRISM_OIDC_INSECURE: "true"
