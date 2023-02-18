@@ -74,10 +74,10 @@ require (
 	golang.org/x/time v0.3.0
 )
 
-require github.com/go-ldap/ldap/v3 v3.4.4
+require github.com/go-ldap/ldap/v3 v3.4.5-0.20230210083308-d16fb563008d
 
 require (
-	github.com/Azure/go-ntlmssp v0.0.0-20220621081337-cb9428e4ac1e // indirect
+	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
