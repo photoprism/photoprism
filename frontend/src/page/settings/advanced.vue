@@ -313,7 +313,7 @@
                   class="ma-0 pa-0 input-disable-imagemagick"
                   color="secondary-dark"
                   :label="$gettext('Disable ImageMagick')"
-                  :hint="$gettext('Don\'t use ImageMagick to convert or modify images.')"
+                  :hint="$gettext('Don\'t use ImageMagick to convert images.')"
                   prepend-icon="auto_fix_off"
                   persistent-hint
                   @change="onChange"

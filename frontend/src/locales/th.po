@@ -738,8 +738,8 @@ msgid "Don't use Darktable to convert RAW images."
 msgstr "อย่าใช้ Darktable เพื่อแปลงไฟล์ RAW"
 
 #: src/page/settings/advanced.vue:558
-msgid "Don't use ImageMagick to convert or modify images."
-msgstr "อย่าใช้ ImageMagick เพื่อแปลงหรือแก้ไขรูปภาพ"
+msgid "Don't use ImageMagick to convert images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -2685,6 +2685,9 @@ msgstr "คลังของคุณได้รับการวิเคร
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#~ msgid "Don't use ImageMagick to convert or modify images."
+#~ msgstr "อย่าใช้ ImageMagick เพื่อแปลงหรือแก้ไขรูปภาพ"
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "อย่าแปลงวิดีโอด้วย FFmpeg"

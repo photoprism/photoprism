@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -739,8 +738,8 @@ msgid "Don't use Darktable to convert RAW images."
 msgstr "不使用 Darktable 转换 RAW 文件。"
 
 #: src/page/settings/advanced.vue:558
-msgid "Don't use ImageMagick to convert or modify images."
-msgstr "不要使用ImageMagick来转换或修改图像。"
+msgid "Don't use ImageMagick to convert images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -2692,6 +2691,9 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Don't use ImageMagick to convert or modify images."
+#~ msgstr "不要使用ImageMagick来转换或修改图像。"
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "不使用 FFmpeg 转码视频。"

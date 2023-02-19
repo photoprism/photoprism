@@ -832,7 +832,7 @@ msgid "Don't use Darktable to convert RAW images."
 msgstr ""
 
 #: src/page/settings/advanced.vue:558
-msgid "Don't use ImageMagick to convert or modify images."
+msgid "Don't use ImageMagick to convert images."
 msgstr ""
 
 #: src/page/settings/advanced.vue:514

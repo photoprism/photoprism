@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Japanese <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ja/>\n"
+"Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -739,8 +738,8 @@ msgid "Don't use Darktable to convert RAW images."
 msgstr "RAWファイルの変換にDarktableを使ってはいけません。"
 
 #: src/page/settings/advanced.vue:558
-msgid "Don't use ImageMagick to convert or modify images."
-msgstr "画像の変換や修正に ImageMagick を使わないでください。"
+msgid "Don't use ImageMagick to convert images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -2686,6 +2685,9 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
+
+#~ msgid "Don't use ImageMagick to convert or modify images."
+#~ msgstr "画像の変換や修正に ImageMagick を使わないでください。"
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "FFmpegで動画をトランスコードしないでください。"

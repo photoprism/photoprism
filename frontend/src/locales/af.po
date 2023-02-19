@@ -735,8 +735,8 @@ msgid "Don't use Darktable to convert RAW images."
 msgstr "Moenie Darktable gebruik om RAW-beelde om te skakel nie."
 
 #: src/page/settings/advanced.vue:558
-msgid "Don't use ImageMagick to convert or modify images."
-msgstr "Moenie ImageMagick gebruik om beelde om te skakel of te verander nie."
+msgid "Don't use ImageMagick to convert images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -2686,6 +2686,9 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#~ msgid "Don't use ImageMagick to convert or modify images."
+#~ msgstr "Moenie ImageMagick gebruik om beelde om te skakel of te verander nie."
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "Moenie video's met FFmpeg transkodeer nie."

@@ -738,8 +738,8 @@ msgid "Don't use Darktable to convert RAW images."
 msgstr "Jangan gunakan Darktable untuk menukar imej RAW."
 
 #: src/page/settings/advanced.vue:558
-msgid "Don't use ImageMagick to convert or modify images."
-msgstr "Jangan gunakan ImageMagick untuk menukar atau mengubah suai imej."
+msgid "Don't use ImageMagick to convert images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -2685,6 +2685,9 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Don't use ImageMagick to convert or modify images."
+#~ msgstr "Jangan gunakan ImageMagick untuk menukar atau mengubah suai imej."
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "Jangan transkod video dengan FFmpeg."

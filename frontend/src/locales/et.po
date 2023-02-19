@@ -735,8 +735,8 @@ msgid "Don't use Darktable to convert RAW images."
 msgstr "Ärge kasutage Darktable'i RAW-piltide teisendamiseks."
 
 #: src/page/settings/advanced.vue:558
-msgid "Don't use ImageMagick to convert or modify images."
-msgstr "Ärge kasutage ImageMagicki piltide teisendamiseks või muutmiseks."
+msgid "Don't use ImageMagick to convert images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -2686,6 +2686,9 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "Don't use ImageMagick to convert or modify images."
+#~ msgstr "Ärge kasutage ImageMagicki piltide teisendamiseks või muutmiseks."
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "Ära transkodeeri videoid FFmpeg abil."

@@ -738,8 +738,8 @@ msgid "Don't use Darktable to convert RAW images."
 msgstr "از DarkTable برای تبدیل پرونده های خام استفاده نکنید."
 
 #: src/page/settings/advanced.vue:558
-msgid "Don't use ImageMagick to convert or modify images."
-msgstr "برای تبدیل یا تغییر تصاویر از ImageMagick استفاده نکنید."
+msgid "Don't use ImageMagick to convert images."
+msgstr ""
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -2689,6 +2689,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Don't use ImageMagick to convert or modify images."
+#~ msgstr "برای تبدیل یا تغییر تصاویر از ImageMagick استفاده نکنید."
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "فیلم های Transcode را با FFMPEG انجام ندهید."
