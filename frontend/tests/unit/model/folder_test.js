@@ -133,7 +133,7 @@ describe("model/folder", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const folder = new Folder(values);
-    assert.equal(folder.getDateString(), "Jul 8, 2012, 2:45 PM");
+    assert.equal(folder.getDateString().replaceAll("\u202f", " "), "Jul 8, 2012, 2:45 PM");
   });
 
   it("should toggle like", () => {

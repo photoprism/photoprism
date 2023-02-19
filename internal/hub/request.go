@@ -16,10 +16,11 @@ type Request struct {
 	ClientCPU     int    `json:"ClientCPU"`
 	ClientEnv     string `json:"ClientEnv"`
 	PartnerID     string `json:"PartnerID"`
+	ApiToken      string `json:"ApiToken"`
 }
 
 // NewRequest creates a new backend key request instance.
-func NewRequest(version, serial, env, partnerId string) *Request {
+func NewRequest(version, serial, env, partnerId, token string) *Request {
 	return &Request{
 		ClientVersion: version,
 		ClientSerial:  serial,
@@ -28,6 +29,7 @@ func NewRequest(version, serial, env, partnerId string) *Request {
 		ClientCPU:     runtime.NumCPU(),
 		ClientEnv:     env,
 		PartnerID:     partnerId,
+		ApiToken:      token,
 	}
 }
 

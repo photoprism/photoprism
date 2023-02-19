@@ -44,7 +44,7 @@ echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # update operating system
 apt-get update
-apt dist-upgrade 2>/dev/null
+apt upgrade 2>/dev/null
 
 # install dependencies
 apt-get -qq install --no-install-recommends apt-transport-https ca-certificates \
@@ -52,7 +52,7 @@ apt-get -qq install --no-install-recommends apt-transport-https ca-certificates 
 
 # install docker if needed
 if ! command -v docker &> /dev/null; then
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/download.docker.com.gpg
   add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
   apt-get update
   apt-get -qq install docker-ce

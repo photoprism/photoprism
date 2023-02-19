@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -23,9 +23,9 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import PAccountAddDialog from "dialog/account/add.vue";
-import PAccountRemoveDialog from "dialog/account/remove.vue";
-import PAccountEditDialog from "dialog/account/edit.vue";
+import PServiceAddDialog from "dialog/service/add.vue";
+import PServiceRemoveDialog from "dialog/service/remove.vue";
+import PServiceEditDialog from "dialog/service/edit.vue";
 import PPhotoArchiveDialog from "dialog/photo/archive.vue";
 import PPhotoAlbumDialog from "dialog/photo/album.vue";
 import PPhotoEditDialog from "dialog/photo/edit.vue";
@@ -47,9 +47,9 @@ import PConfirmDialog from "dialog/confirm.vue";
 const dialogs = {};
 
 dialogs.install = (Vue) => {
-  Vue.component("PAccountAddDialog", PAccountAddDialog);
-  Vue.component("PAccountRemoveDialog", PAccountRemoveDialog);
-  Vue.component("PAccountEditDialog", PAccountEditDialog);
+  Vue.component("PServiceAddDialog", PServiceAddDialog);
+  Vue.component("PServiceRemoveDialog", PServiceRemoveDialog);
+  Vue.component("PServiceEditDialog", PServiceEditDialog);
   Vue.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
   Vue.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
   Vue.component("PPhotoEditDialog", PPhotoEditDialog);

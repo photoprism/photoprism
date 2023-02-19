@@ -35,12 +35,11 @@
                     <v-flex xs12 class="pa-2">
                       <v-text-field
                           :value="link.url()"
+                          hide-details box flat readonly
                           :label="$gettext('URL')"
                           autocorrect="off"
                           autocapitalize="none"
                           browser-autocomplete="off"
-                          hide-details
-                          readonly
                           color="secondary-dark"
                           class="input-url"
                           @click.stop="selectText($event)">
@@ -49,9 +48,9 @@
                     <v-flex xs12 sm6 class="pa-2">
                       <v-select
                           v-model="link.Expires"
+                          hide-details box flat
                           :label="expires(link)"
                           browser-autocomplete="off"
-                          hide-details
                           color="secondary-dark"
                           item-text="text"
                           item-value="value"
@@ -62,11 +61,11 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
                       <v-text-field
-                          v-model="link.Token" hide-details
-                          required
+                          v-model="link.Token"
+                          hide-details box flat required
+                          browser-autocomplete="off"
                           autocorrect="off"
                           autocapitalize="none"
-                          browser-autocomplete="off"
                           :label="$gettext('Secret')"
                           :placeholder="$gettext('Token')"
                           color="secondary-dark"
@@ -93,7 +92,7 @@
                       </v-btn>
                     </v-flex>
                     <v-flex xs6 :text-xs-right="!rtl" :text-xs-left="rtl" class="pa-2">
-                      <v-btn depressed dark color="primary-button" class="ma-0 action-save"
+                      <v-btn depressed dark color="primary-button" class="ma-0 compact action-save"
                              @click.stop.exact="update(link)">
                         <translate>Save</translate>
                       </v-btn>
@@ -112,7 +111,7 @@
           <translate>Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
         </v-container>
       </v-card-text>
-      <v-card-actions class="pt-0">
+      <v-card-actions class="pt-0 px-3">
         <v-layout row wrap class="pa-2">
           <v-flex xs6>
             <v-btn depressed color="secondary-light" class="action-webdav"

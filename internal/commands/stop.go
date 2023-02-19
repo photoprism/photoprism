@@ -6,21 +6,24 @@ import (
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// StopCommand registers the stop cli command.
+// StopCommand configures the command name, flags, and action.
 var StopCommand = cli.Command{
 	Name:    "stop",
 	Aliases: []string{"down"},
-	Usage:   "Stops the web server in daemon mode",
+	Usage:   "Stops the Web server in daemon mode",
 	Action:  stopAction,
 }
 
 // stopAction stops the daemon if it is running.
 func stopAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
+	conf, err := InitConfig(ctx)
+
+	if err != nil {
+		return err
+	}
 
 	log.Infof("looking for pid in %s", clean.Log(conf.PIDFilename()))
 

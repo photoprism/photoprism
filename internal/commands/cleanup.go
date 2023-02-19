@@ -7,15 +7,14 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
-// CleanUpCommand registers the cleanup command.
+// CleanUpCommand configures the command name, flags, and action.
 var CleanUpCommand = cli.Command{
 	Name:   "cleanup",
-	Usage:  "Removes orphan index entries and thumbnail files",
+	Usage:  "Removes orphaned index entries, sidecar and thumbnail files",
 	Flags:  cleanUpFlags,
 	Action: cleanUpAction,
 }
@@ -27,39 +26,38 @@ var cleanUpFlags = []cli.Flag{
 	},
 }
 
-// cleanUpAction removes orphan index entries and thumbnails.
+// cleanUpAction removes orphaned index entries, sidecar and thumbnail files.
 func cleanUpAction(ctx *cli.Context) error {
-	start := time.Now()
+	cleanupStart := time.Now()
 
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
 	conf.InitDb()
+	defer conf.Shutdown()
 
 	if conf.ReadOnly() {
-		log.Infof("config: read-only mode enabled")
+		log.Infof("config: enabled read-only mode")
 	}
 
-	w := service.CleanUp()
+	w := get.CleanUp()
 
 	opt := photoprism.CleanUpOptions{
 		Dry: ctx.Bool("dry"),
 	}
 
-	if thumbs, orphans, err := w.Start(opt); err != nil {
+	// Start cleanup worker.
+	if thumbnails, _, sidecars, err := w.Start(opt); err != nil {
 		return err
-	} else {
-		log.Infof("removed %s and %s in %s", english.Plural(orphans, "index entry", "index entries"), english.Plural(thumbs, "thumbnail", "thumbnails"), time.Since(start))
+	} else if total := thumbnails + sidecars; total > 0 {
+		log.Infof("removed %s in %s", english.Plural(total, "file", "files"), time.Since(cleanupStart))
 	}
-
-	conf.Shutdown()
 
 	return nil
 }

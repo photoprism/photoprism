@@ -7,7 +7,6 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -69,8 +68,8 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		}
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
-		if o.Convert && f.IsMedia() && !f.HasJpeg() {
-			if jpg, err := ind.convert.ToJpeg(f, false); err != nil {
+		if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
+			if jpg, err := ind.convert.ToPreview(f, false); err != nil {
 				result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", clean.Log(f.RootRelName()), err.Error())
 				result.Status = IndexFailed
 				return result

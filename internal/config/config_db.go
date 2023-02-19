@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -16,7 +15,10 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/migrate"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SQL Databases.
@@ -33,13 +35,6 @@ const (
 	SQLiteTestDB    = ".test.db"
 	SQLiteMemoryDSN = ":memory:"
 )
-
-// dsnPattern is a regular expression matching a database DSN string.
-var dsnPattern = regexp.MustCompile(
-	`^(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
-		`(?:(?P<net>[^\(]*)(?:\((?P<server>[^\)]*)\))?)?` +
-		`\/(?P<name>.*?)` +
-		`(?:\?(?P<params>[^\?]*))?$`)
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
@@ -93,7 +88,7 @@ func (c *Config) DatabaseDsn() string {
 				c.DatabasePort(),
 			)
 		case SQLite3:
-			return filepath.Join(c.StoragePath(), "index.db")
+			return filepath.Join(c.StoragePath(), "index.db?_busy_timeout=5000")
 		default:
 			log.Errorf("config: empty database dsn")
 			return ""
@@ -109,28 +104,21 @@ func (c *Config) ParseDatabaseDsn() {
 		return
 	}
 
-	matches := dsnPattern.FindStringSubmatch(c.options.DatabaseDsn)
-	names := dsnPattern.SubexpNames()
+	d := NewDSN(c.options.DatabaseDsn)
 
-	for i, match := range matches {
-		switch names[i] {
-		case "user":
-			c.options.DatabaseUser = match
-		case "password":
-			c.options.DatabasePassword = match
-		case "server":
-			c.options.DatabaseServer = match
-		case "name":
-			c.options.DatabaseName = match
-		}
-	}
+	c.options.DatabaseName = d.Name
+	c.options.DatabaseServer = d.Server
+	c.options.DatabaseUser = d.User
+	c.options.DatabasePassword = d.Password
 }
 
 // DatabaseServer the database server.
 func (c *Config) DatabaseServer() string {
 	c.ParseDatabaseDsn()
 
-	if c.options.DatabaseServer == "" {
+	if c.DatabaseDriver() == SQLite3 {
+		return ""
+	} else if c.options.DatabaseServer == "" {
 		return "localhost"
 	}
 
@@ -139,6 +127,10 @@ func (c *Config) DatabaseServer() string {
 
 // DatabaseHost the database server host.
 func (c *Config) DatabaseHost() string {
+	if c.DatabaseDriver() == SQLite3 {
+		return ""
+	}
+
 	if s := strings.Split(c.DatabaseServer(), ":"); len(s) > 0 {
 		return s[0]
 	}
@@ -150,7 +142,9 @@ func (c *Config) DatabaseHost() string {
 func (c *Config) DatabasePort() int {
 	const defaultPort = 3306
 
-	if s := strings.Split(c.DatabaseServer(), ":"); len(s) != 2 {
+	if server := c.DatabaseServer(); server == "" {
+		return 0
+	} else if s := strings.Split(server, ":"); len(s) != 2 {
 		return defaultPort
 	} else if port, err := strconv.Atoi(s[1]); err != nil {
 		return defaultPort
@@ -163,6 +157,10 @@ func (c *Config) DatabasePort() int {
 
 // DatabasePortString the database server port as string.
 func (c *Config) DatabasePortString() string {
+	if c.DatabaseDriver() == SQLite3 {
+		return ""
+	}
+
 	return strconv.Itoa(c.DatabasePort())
 }
 
@@ -170,7 +168,9 @@ func (c *Config) DatabasePortString() string {
 func (c *Config) DatabaseName() string {
 	c.ParseDatabaseDsn()
 
-	if c.options.DatabaseName == "" {
+	if c.DatabaseDriver() == SQLite3 {
+		return c.DatabaseDsn()
+	} else if c.options.DatabaseName == "" {
 		return "photoprism"
 	}
 
@@ -179,6 +179,10 @@ func (c *Config) DatabaseName() string {
 
 // DatabaseUser returns the database user name.
 func (c *Config) DatabaseUser() string {
+	if c.DatabaseDriver() == SQLite3 {
+		return ""
+	}
+
 	c.ParseDatabaseDsn()
 
 	if c.options.DatabaseUser == "" {
@@ -190,6 +194,10 @@ func (c *Config) DatabaseUser() string {
 
 // DatabasePassword returns the database user password.
 func (c *Config) DatabasePassword() string {
+	if c.DatabaseDriver() == SQLite3 {
+		return ""
+	}
+
 	c.ParseDatabaseDsn()
 
 	return c.options.DatabasePassword
@@ -259,38 +267,75 @@ func (c *Config) SetDbOptions() {
 	}
 }
 
+// RegisterDb sets the database options and connection provider.
+func (c *Config) RegisterDb() {
+	c.SetDbOptions()
+	entity.SetDbProvider(c)
+}
+
 // InitDb initializes the database without running previously failed migrations.
 func (c *Config) InitDb() {
+	c.RegisterDb()
 	c.MigrateDb(false, nil)
 }
 
 // MigrateDb initializes the database and migrates the schema if needed.
 func (c *Config) MigrateDb(runFailed bool, ids []string) {
-	c.SetDbOptions()
-	entity.SetDbProvider(c)
-	entity.InitDb(true, runFailed, ids)
+	entity.Admin.UserName = c.AdminUser()
+	entity.InitDb(migrate.Opt(runFailed, ids))
 
-	entity.Admin.InitPassword(c.AdminPassword())
+	// Init admin account?
+	if c.AdminPassword() == "" {
+		log.Warnf("config: password required to initialize %s account", clean.LogQuote(c.AdminUser()))
+	} else {
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
+	}
 
-	go entity.SaveErrorMessages()
+	go entity.Error{}.LogEvents()
 }
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
-	c.SetDbOptions()
-	entity.SetDbProvider(c)
 	entity.ResetTestFixtures()
 
-	entity.Admin.InitPassword(c.AdminPassword())
+	if c.AdminPassword() == "" {
+		// Do nothing.
+	} else {
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
+	}
 
-	go entity.SaveErrorMessages()
+	go entity.Error{}.LogEvents()
+}
+
+// connectDb checks the database server version.
+func (c *Config) checkDb(db *gorm.DB) error {
+	switch c.DatabaseDriver() {
+	case MySQL:
+		type Res struct {
+			Value string `gorm:"column:Value;"`
+		}
+		var res Res
+		if err := db.Raw("SHOW VARIABLES LIKE 'innodb_version'").Scan(&res).Error; err != nil {
+			return nil
+		} else if v := strings.Split(res.Value, "."); len(v) < 3 {
+			log.Warnf("config: unknown database server version")
+		} else if major := txt.UInt(v[0]); major < 10 {
+			return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+		} else if sub := txt.UInt(v[1]); sub < 5 || sub == 5 && txt.UInt(v[2]) < 12 {
+			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+		}
+	}
+
+	return nil
 }
 
 // connectDb establishes a database connection.
 func (c *Config) connectDb() error {
+	// Make sure this is not running twice.
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
 
+	// Get database driver and data source name.
 	dbDriver := c.DatabaseDriver()
 	dbDsn := c.DatabaseDsn()
 
@@ -302,6 +347,7 @@ func (c *Config) connectDb() error {
 		return errors.New("config: database DSN not specified")
 	}
 
+	// Open database connection.
 	db, err := gorm.Open(dbDriver, dbDsn)
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
@@ -315,20 +361,32 @@ func (c *Config) connectDb() error {
 		}
 
 		if err != nil || db == nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 
+	// Configure database logging.
 	db.LogMode(false)
 	db.SetLogger(log)
 
+	// Set database connection parameters.
 	db.DB().SetMaxOpenConns(c.DatabaseConns())
 	db.DB().SetMaxIdleConns(c.DatabaseConnsIdle())
-	db.DB().SetConnMaxLifetime(10 * time.Minute)
+	db.DB().SetConnMaxLifetime(time.Hour)
 
+	// Check database server version.
+	if err = c.checkDb(db); err != nil {
+		if c.Unsafe() {
+			log.Error(err)
+		} else {
+			return err
+		}
+	}
+
+	// Ok.
 	c.db = db
 
-	return err
+	return nil
 }
 
 // ImportSQL imports a file to the currently configured database.

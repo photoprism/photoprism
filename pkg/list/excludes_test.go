@@ -31,7 +31,7 @@ func TestExcludes(t *testing.T) {
 		assert.False(t, Excludes(nil, "*"))
 		assert.False(t, Excludes(nil, "* "))
 		assert.False(t, Excludes([]string{}, "*"))
-		assert.True(t, Excludes([]string{"foo", "*"}, "baz"))
+		assert.False(t, Excludes([]string{"foo", "*"}, "baz"))
 		assert.False(t, Excludes([]string{"foo", "*"}, "foo"))
 		assert.False(t, Excludes([]string{""}, "*"))
 		assert.False(t, Excludes([]string{"foo", "bar"}, "*"))

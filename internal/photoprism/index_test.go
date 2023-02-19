@@ -19,7 +19,7 @@ func TestIndex_Start(t *testing.T) {
 
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
@@ -28,7 +28,7 @@ func TestIndex_Start(t *testing.T) {
 
 	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 	imp := NewImport(conf, ind, convert)
-	opt := ImportOptionsMove(conf.ImportPath())
+	opt := ImportOptionsMove(conf.ImportPath(), "")
 
 	imp.Start(opt)
 
@@ -45,7 +45,7 @@ func TestIndex_File(t *testing.T) {
 
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
+	conf.InitializeTestData()
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())

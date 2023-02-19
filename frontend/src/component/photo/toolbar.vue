@@ -44,7 +44,7 @@
     </v-toolbar>
 
     <v-card v-show="searchExpanded"
-            class="pt-1"
+            class="pt-1 page-toolbar-expanded"
             flat
             color="secondary-light">
       <v-card-text>
@@ -52,8 +52,10 @@
           <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
             <v-select :value="filter.country"
                       :label="$gettext('Country')"
+                      :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="ID"
                       item-text="Name"
                       :items="countryOptions"
@@ -65,8 +67,10 @@
           <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
             <v-select :value="filter.camera"
                       :label="$gettext('Camera')"
+                      :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="ID"
                       item-text="Name"
                       :items="cameraOptions"
@@ -76,9 +80,10 @@
           <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
             <v-select id="viewSelect"
                       :value="settings.view"
-                      :label="$gettext('View')" flat solo
-                      hide-details
+                      :label="$gettext('View')"
+                      flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       :items="options.views"
                       @change="(v) => {setView(v)}">
             </v-select>
@@ -86,8 +91,10 @@
           <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
             <v-select :value="filter.order"
                       :label="$gettext('Sort Order')"
+                      :menu-props="{'maxHeight':400}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       :items="options.sorting"
                       @change="(v) => {updateQuery({'order': v})}">
             </v-select>
@@ -95,8 +102,10 @@
           <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
             <v-select :value="filter.year"
                       :label="$gettext('Year')"
+                      :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="value"
                       item-text="text"
                       :items="yearOptions()"
@@ -106,8 +115,10 @@
           <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
             <v-select :value="filter.month"
                       :label="$gettext('Month')"
+                      :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="value"
                       item-text="text"
                       :items="monthOptions()"
@@ -119,6 +130,7 @@
                         :label="labels.lens"
                         flat solo hide-details
                         color="secondary-dark"
+                        background-color="secondary-light"
                         item-value="ID"
                         item-text="Model"
                         v-model="filter.lens"
@@ -128,8 +140,10 @@
           <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
             <v-select :value="filter.color"
                       :label="$gettext('Color')"
+                      :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="Slug"
                       item-text="Name"
                       :items="colorOptions()"
@@ -139,8 +153,10 @@
           <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
             <v-select :value="filter.label"
                       :label="$gettext('Category')"
+                      :menu-props="{'maxHeight':346}"
                       flat solo hide-details
                       color="secondary-dark"
+                      background-color="secondary"
                       item-value="Slug"
                       item-text="Name"
                       :items="categoryOptions"
@@ -202,13 +218,15 @@ export default {
           {value: 'list', text: this.$gettext('List')},
         ],
         'sorting': [
-          {value: 'added', text: this.$gettext('Recently added')},
-          {value: 'edited', text: this.$gettext('Recently edited')},
-          {value: 'newest', text: this.$gettext('Newest first')},
-          {value: 'oldest', text: this.$gettext('Oldest first')},
-          {value: 'name', text: this.$gettext('Sort by file name')},
-          {value: 'similar', text: this.$gettext('Group by similarity')},
-          {value: 'relevance', text: this.$gettext('Most relevant')},
+          {value: 'newest', text: this.$gettext('Newest First')},
+          {value: 'oldest', text: this.$gettext('Oldest First')},
+          {value: 'added', text: this.$gettext('Recently Added')},
+          {value: 'edited', text: this.$gettext('Recently Edited')},
+          {value: 'name', text: this.$gettext('File Name')},
+          {value: 'size', text: this.$gettext('File Size')},
+          {value: 'duration', text: this.$gettext('Video Duration')},
+          {value: 'relevance', text: this.$gettext('Most Relevant')},
+          {value: 'similar', text: this.$gettext('Visual Similarity')},
         ],
       },
     };

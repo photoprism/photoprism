@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -38,7 +39,7 @@ type Index struct {
 // NewIndex returns a new indexer and expects its dependencies as arguments.
 func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
 	if conf == nil {
-		log.Errorf("index: config is nil")
+		log.Errorf("index: config is not set")
 		return nil
 	}
 
@@ -81,7 +82,7 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 	done := make(fs.Done)
 
 	if ind.conf == nil {
-		log.Errorf("index: config is nil")
+		log.Errorf("index: config is not set")
 		return done
 	}
 
@@ -89,7 +90,10 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 	optionsPath := filepath.Join(originalsPath, o.Path)
 
 	if !fs.PathExists(optionsPath) {
-		event.Error(fmt.Sprintf("index: %s does not exist", clean.Log(optionsPath)))
+		event.Error(fmt.Sprintf("index: directory %s not found", clean.Log(optionsPath)))
+		return done
+	} else if fs.DirIsEmpty(originalsPath) {
+		event.InfoMsg(i18n.ErrOriginalsEmpty)
 		return done
 	}
 
@@ -152,12 +156,17 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 				return errors.New("canceled")
 			}
 
-			isDir := info.IsDir()
+			isDir, _ := info.IsDirOrSymlinkToDir()
 			isSymlink := info.IsSymlink()
 			relName := fs.RelName(fileName, originalsPath)
 
+			// Skip directories and known files.
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
-				if (isSymlink || isDir) && result != filepath.SkipDir {
+				if !isDir {
+					return result
+				}
+
+				if result != filepath.SkipDir {
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.BirthTime(fileName))
 
 					if err := folder.Create(); err == nil {
@@ -165,11 +174,9 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 					}
 				}
 
-				if isDir {
-					event.Publish("index.folder", event.Data{
-						"filePath": relName,
-					})
-				}
+				event.Publish("index.folder", event.Data{
+					"filePath": relName,
+				})
 
 				return result
 			}
@@ -180,22 +187,32 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 				return nil
 			}
 
-			mf, err := NewMediaFile(fileName)
+			var mf *MediaFile
+			var err error
+			if isSymlink {
+				mf, err = NewMediaFile(fileName)
+			} else {
+				// If the file found while scanning is not a symlink we can
+				// skip resolving the fileName, which is resource intensive.
+				mf, err = NewMediaFileSkipResolve(fileName, fileName)
+			}
 
 			// Check if file exists and is not empty.
 			if err != nil {
 				log.Warnf("index: %s", err)
 				return nil
-			}
-
-			// Ignore RAW images?
-			if mf.IsRaw() && skipRaw {
-				log.Infof("index: skipped raw %s", clean.Log(mf.RootRelName()))
+			} else if mf.Empty() {
 				return nil
 			}
 
-			// Skip?
+			// Skip already indexed?
 			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) {
+				return nil
+			}
+
+			// Skip RAW image?
+			if mf.IsRaw() && skipRaw {
+				log.Infof("index: skipped raw %s", clean.Log(mf.RootRelName()))
 				return nil
 			}
 
@@ -258,9 +275,9 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 			"step": "faces",
 		})
 
-		// Run facial recognition if enabled.
+		// Run face recognition if enabled.
 		if w := NewFaces(ind.conf); w.Disabled() {
-			log.Debugf("index: skipping facial recognition")
+			log.Debugf("index: skipping face recognition")
 		} else if err := w.Start(FacesOptionsDefault()); err != nil {
 			log.Errorf("index: %s", err)
 		}
@@ -289,6 +306,10 @@ func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult)
 	if err != nil {
 		result.Err = err
 		result.Status = IndexFailed
+
+		return result
+	} else if file.Empty() {
+		result.Status = IndexSkipped
 
 		return result
 	}

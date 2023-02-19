@@ -22,6 +22,11 @@ func AlbumPhotos(a entity.Album, count int, shared bool) (results PhotoResults, 
 		frm.Review = false
 	}
 
+	// Parse query string and filter.
+	if err = frm.ParseQueryString(); err != nil {
+		return results, err
+	}
+
 	results, _, err = Photos(frm)
 
 	return results, err

@@ -14,6 +14,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+const (
+	LabelUID = byte('l')
+)
+
 var labelMutex = sync.Mutex{}
 var labelCategoriesMutex = sync.Mutex{}
 
@@ -36,22 +40,23 @@ type Label struct {
 	ThumbSrc         string     `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt        time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`
+	PublishedAt      *time.Time `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt        *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	New              bool       `gorm:"-" json:"-" yaml:"-"`
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Label) TableName() string {
 	return "labels"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.LabelUID, 'l') {
+	if rnd.IsUnique(m.LabelUID, LabelUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LabelUID", rnd.GenerateUID('l'))
+	return scope.SetColumn("LabelUID", rnd.GenerateUID(LabelUID))
 }
 
 // NewLabel returns a new label.
@@ -76,7 +81,7 @@ func NewLabel(name string, priority int) *Label {
 	return result
 }
 
-// Save updates the existing or inserts a new label.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Label) Save() error {
 	labelMutex.Lock()
 	defer labelMutex.Unlock()
@@ -168,7 +173,7 @@ func (m *Label) AfterCreate(scope *gorm.Scope) error {
 
 // SetName changes the label name.
 func (m *Label) SetName(name string) {
-	name = clean.Name(name)
+	name = clean.NameCapitalized(name)
 
 	if name == "" {
 		return

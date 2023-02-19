@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/photoprism/photoprism/internal/migrate"
 )
 
 func gen_migrations(name string) {
@@ -22,6 +24,7 @@ func gen_migrations(name string) {
 
 	type Migration struct {
 		ID         string
+		Stage      string
 		Dialect    string
 		Statements []string
 	}
@@ -55,17 +58,35 @@ func gen_migrations(name string) {
 
 	// Read migrations from files.
 	for _, file := range files {
+		stage := ""
 		filePath := filepath.Join(folder, file.Name())
+		fileName := strings.SplitN(filepath.Base(file.Name()), ".", 3)
 
 		if file.IsDir() {
+			// Skip directory.
 			continue
-		} else if id := strings.SplitN(filepath.Base(file.Name()), ".", 2)[0]; id == "" {
+		} else if len(fileName) < 2 || fileName[0] == "" {
+			// Invalid filename.
 			fmt.Printf("e")
-			// Ignore.
-		} else if s, err := os.ReadFile(filePath); err == nil && len(s) > 0 {
-			fmt.Printf(".")
+			continue
+		} else if fileName[1] != "sql" && fileName[2] != "sql" {
+			// Invalid filename.
+			fmt.Printf("e")
+			continue
+		} else if fileName[1] != "sql" {
+			// Stage, if any.
+			stage = fileName[1]
+		} else {
+			stage = migrate.StageMain
+		}
 
-			migrations = append(migrations, Migration{ID: id, Dialect: dialect, Statements: strToStmts(s)})
+		// Migration ID.
+		id := fileName[0]
+
+		// Extract SQL from file.
+		if s, err := os.ReadFile(filePath); err == nil && len(s) > 0 {
+			fmt.Printf(".")
+			migrations = append(migrations, Migration{ID: id, Stage: stage, Dialect: dialect, Statements: strToStmts(s)})
 		} else {
 			fmt.Printf("f")
 			fmt.Println(err.Error())
@@ -108,6 +129,7 @@ var Dialect{{ print .Name }} = Migrations{
 	{
 		ID:        {{ printf "%q" .ID }},
 		Dialect:   {{ printf "%q" .Dialect }},
+		Stage:     {{ printf "%q" .Stage }},
 		Statements: []string{ {{ range $index, $s := .Statements}}{{if $index}},{{end}}{{ printf "%q" $s }}{{end}} },
 	},	
 {{- end }}

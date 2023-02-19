@@ -2,13 +2,17 @@ package form
 
 import (
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // SearchPhotos represents search form fields for "/api/v1/photos".
 type SearchPhotos struct {
 	Query     string    `form:"q"`
-	Filter    string    `form:"filter" notes:"-"`
-	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Internal Unique ID, only exact matches"`
+	Scope     string    `form:"s" serialize:"-" example:"s:ariqwb43p5dh9h13" notes:"Limits the results to one album or another scope, if specified"`
+	Filter    string    `form:"filter" serialize:"-" notes:"-"`
+	ID        string    `form:"id" example:"id:123e4567-e89b-..." notes:"Finds pictures by Exif UID, XMP Document ID or Instance ID"`
+	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Limits results to the specified internal unique IDs"`
 	Type      string    `form:"type" example:"type:raw" notes:"Media Type (image, video, raw, live, animated); OR search with |"`
 	Path      string    `form:"path" example:"path:2020/Holiday" notes:"Path Name, OR search with |, supports * wildcards"`
 	Folder    string    `form:"folder" example:"folder:\"*/2020\"" notes:"Path Name, OR search with |, supports * wildcards"` // Alias for Path
@@ -44,7 +48,7 @@ type SearchPhotos struct {
 	Dist      uint      `form:"dist" example:"dist:5" notes:"Distance in km in combination with lat/lng"`
 	Fmin      float32   `form:"fmin" notes:"F-number (min)"`
 	Fmax      float32   `form:"fmax" notes:"F-number (max)"`
-	Chroma    uint8     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
+	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
 	Diff      uint32    `form:"diff" notes:"Differential Perceptual Hash (000000-FFFFFF)"`
 	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
 	Geo       bool      `form:"geo" notes:"Finds pictures with GPS location"`
@@ -53,6 +57,7 @@ type SearchPhotos struct {
 	Category  string    `form:"category"  notes:"Location Category Name"`                                                                                                                                             // Moments
 	Country   string    `form:"country" example:"country:\"de|us\"" notes:"Country Code, OR search with |"`                                                                                                           // Moments
 	State     string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"Name of State (Location), OR search with |"`                                                                                       // Moments
+	City      string    `form:"city" example:"city:\"Berlin\"" notes:"Name of City (Location), OR search with |"`                                                                                                     // Moments
 	Year      string    `form:"year" example:"year:1990|2003" notes:"Year Number, OR search with |"`                                                                                                                  // Moments
 	Month     string    `form:"month" example:"month:7|10" notes:"Month (1-12), OR search with |"`                                                                                                                    // Moments
 	Day       string    `form:"day" example:"day:3|13" notes:"Day of Month (1-31), OR search with |"`                                                                                                                 // Moments
@@ -90,17 +95,23 @@ func (f *SearchPhotos) ParseQueryString() error {
 		return err
 	}
 
-	if f.Path == "" && f.Folder != "" {
+	if f.Path != "" {
+		f.Folder = ""
+	} else if f.Folder != "" {
 		f.Path = f.Folder
 		f.Folder = ""
 	}
 
-	if f.Subject == "" && f.Person != "" {
+	if f.Subject != "" {
+		f.Person = ""
+	} else if f.Person != "" {
 		f.Subject = f.Person
 		f.Person = ""
 	}
 
-	if f.Subjects == "" && f.People != "" {
+	if f.Subjects != "" {
+		f.People = ""
+	} else if f.People != "" {
 		f.Subjects = f.People
 		f.People = ""
 	}
@@ -109,6 +120,11 @@ func (f *SearchPhotos) ParseQueryString() error {
 		if err := Unserialize(f, f.Filter); err != nil {
 			return err
 		}
+	}
+
+	// Strip file extensions if any.
+	if f.Name != "" {
+		f.Name = fs.StripKnownExt(f.Name)
 	}
 
 	return nil
@@ -124,6 +140,11 @@ func (f *SearchPhotos) SerializeAll() string {
 	return Serialize(f, true)
 }
 
-func NewPhotoSearch(query string) SearchPhotos {
+// FindUidOnly checks if search filters other than UID may be skipped to improve performance.
+func (f *SearchPhotos) FindUidOnly() bool {
+	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
+}
+
+func NewSearchPhotos(query string) SearchPhotos {
 	return SearchPhotos{Query: query}
 }

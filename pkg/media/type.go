@@ -25,7 +25,7 @@ func (t Type) NotEqual(s string) bool {
 // Main checks if this is a known main media content format.
 func (t Type) Main() bool {
 	switch t {
-	case Raw, Image, Video, Live, Animated, Vector:
+	case Image, Raw, Animated, Live, Video, Vector:
 		return true
 	default:
 		return false

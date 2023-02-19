@@ -5,9 +5,40 @@ import (
 	"strings"
 )
 
-// IdString removes invalid character from an id string.
-func IdString(s string) string {
-	if s == "" || reject(s, 512) {
+// ID sanitizes identifier tokens, for example, a session ID, a UUID, or some other string ID.
+func ID(s string) string {
+	if s == "" || len(s) > 4096 {
+		return ""
+	}
+
+	var prev rune
+
+	// Remove all invalid characters.
+	s = strings.Map(func(r rune) rune {
+		if r == ' ' && (prev == 0 || prev == ' ') {
+			return -1
+		}
+
+		prev = r
+
+		switch r {
+		case ' ', '"', '-', '+', '/', '=', '#', '$', '@', ':', ';', '_':
+			return r
+		}
+
+		if (r < '0' || r > '9') && (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') {
+			return -1
+		}
+
+		return r
+	}, s)
+
+	return s
+}
+
+// UID sanitizes unique identifier strings and returns them in lowercase.
+func UID(s string) string {
+	if l := len(s); l < 16 || l > 64 {
 		return ""
 	}
 
@@ -15,7 +46,12 @@ func IdString(s string) string {
 
 	// Remove all invalid characters.
 	s = strings.Map(func(r rune) rune {
-		if (r < '0' || r > '9') && (r < 'a' || r > 'z') && r != '-' && r != '_' && r != ':' {
+		switch r {
+		case '-', '_', ':':
+			return r
+		}
+
+		if (r < '0' || r > '9') && (r < 'a' || r > 'z') {
 			return -1
 		}
 

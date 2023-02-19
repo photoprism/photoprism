@@ -9,11 +9,11 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
-// PlacesCommand registers the places subcommands.
+// PlacesCommand configures the command name, flags, and action.
 var PlacesCommand = cli.Command{
 	Name:  "places",
 	Usage: "Maps and location details subcommands",
@@ -36,22 +36,22 @@ var PlacesCommand = cli.Command{
 // placesUpdateAction fetches updated location data.
 func placesUpdateAction(ctx *cli.Context) error {
 	// Load config.
-	conf := config.NewConfig(ctx)
-	service.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
-
-	conf.InitDb()
 
 	if !conf.Sponsor() && !conf.Test() {
 		log.Errorf(config.MsgSponsorCommand)
 		return nil
 	}
+
+	conf.InitDb()
+	defer conf.Shutdown()
 
 	if !ctx.Bool("yes") {
 		confirmPrompt := promptui.Prompt{
@@ -68,7 +68,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	// Run places worker.
-	if w := service.Places(); w != nil {
+	if w := get.Places(); w != nil {
 		_, err := w.Start()
 
 		if err != nil {
@@ -77,7 +77,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 	}
 
 	// Run moments worker.
-	if w := service.Moments(); w != nil {
+	if w := get.Moments(); w != nil {
 		err := w.Start()
 
 		if err != nil {
@@ -101,8 +101,6 @@ func placesUpdateAction(ctx *cli.Context) error {
 	}
 
 	log.Infof("completed in %s", time.Since(start))
-
-	conf.Shutdown()
 
 	return nil
 }

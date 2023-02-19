@@ -23,6 +23,20 @@ func UniqueNames(names []string) (result []string) {
 	return result
 }
 
+// AppendName appends a name to an existing name.
+func AppendName(s, n string) string {
+	s = strings.TrimSpace(s)
+	n = strings.TrimSpace(n)
+
+	if s == "" {
+		return n
+	} else if s == n {
+		return s
+	}
+
+	return fmt.Sprintf("%s %s", s, n)
+}
+
 // JoinNames joins a list of names to be used in titles and descriptions.
 func JoinNames(names []string, shorten bool) (result string) {
 	l := len(names)

@@ -25,8 +25,8 @@ import (
 var exifIfdMapping *exifcommon.IfdMapping
 var exifTagIndex = exif.NewTagIndex()
 var exifMutex = sync.Mutex{}
-var exifDateTimeTags = []string{"DateTimeOriginal", "DateTimeDigitized", "CreateDate", "DateTime"}
-var exifSubSecTags = []string{"SubSecTimeOriginal", "SubSecTimeDigitized", "SubSecTime"}
+var exifDateTimeTags = []string{"DateTimeOriginal", "DateTimeCreated", "CreateDate", "DateTime", "DateTimeDigitized"}
+var exifSubSecTags = []string{"SubSecTimeOriginal", "SubSecTime", "SubSecTimeDigitized"}
 
 func init() {
 	exifIfdMapping = exifcommon.NewIfdMapping()
@@ -54,6 +54,11 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 		}
 	}()
 
+	// Resolve file name e.g. in case it's a symlink.
+	if fileName, err = fs.Resolve(fileName); err != nil {
+		return err
+	}
+
 	// Extract raw Exif block.
 	rawExif, err := RawExif(fileName, fileFormat, bruteForce)
 
@@ -75,9 +80,11 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	// Ignore IFD1 data.exif with existing IFD0 values.
 	// see https://github.com/photoprism/photoprism/issues/2231
 	for _, tag := range entries {
-		s := strings.Split(tag.FormattedFirst, "\x00")[0]
-		if tag.TagName != "" && s != "" && (data.exif[tag.TagName] == "" || tag.IfdPath != exif.ThumbnailFqIfdPath) {
-			data.exif[tag.TagName] = s
+		s := strings.Split(tag.FormattedFirst, "\x00")
+		if tag.TagName == "" || len(s) == 0 {
+			// Do nothing.
+		} else if s[0] != "" && (data.exif[tag.TagName] == "" || tag.IfdPath != exif.ThumbnailFqIfdPath) {
+			data.exif[tag.TagName] = s[0]
 		}
 	}
 
@@ -91,23 +98,22 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 
 	// Find and parse GPS coordinates.
 	if err != nil {
-		log.Debugf("metadata: %s in %s (exif)", err, logName)
+		log.Debugf("metadata: %s in %s (exif collect)", err, logName)
 	} else {
 		var ifd *exif.Ifd
 		if ifd, err = ifdIndex.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity); err == nil {
 			var gi *exif.GpsInfo
 			if gi, err = ifd.GpsInfo(); err != nil {
-				log.Infof("metadata: %s in %s (exif)", err, logName)
+				log.Debugf("metadata: %s in %s (exif gps-info)", err, logName)
 			} else {
 				if !math.IsNaN(gi.Latitude.Decimal()) && !math.IsNaN(gi.Longitude.Decimal()) {
-					data.Lat = float32(gi.Latitude.Decimal())
-					data.Lng = float32(gi.Longitude.Decimal())
+					data.Lat, data.Lng = NormalizeGPS(gi.Latitude.Decimal(), gi.Longitude.Decimal())
 				} else if gi.Altitude != 0 || !gi.Timestamp.IsZero() {
 					log.Warnf("metadata: invalid exif gps coordinates in %s (%s)", logName, clean.Log(gi.String()))
 				}
 
 				if gi.Altitude != 0 {
-					data.Altitude = gi.Altitude
+					data.Altitude = float64(gi.Altitude)
 				}
 
 				if !gi.Timestamp.IsZero() {
@@ -196,8 +202,8 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 		if i, err := strconv.Atoi(value); err == nil {
 			data.FocalLength = i
 		}
-	} else if value, ok := data.exif["FocalLength"]; ok {
-		values := strings.Split(value, "/")
+	} else if v, ok := data.exif["FocalLength"]; ok {
+		values := strings.Split(v, "/")
 
 		if len(values) == 2 && values[1] != "0" && values[1] != "" {
 			number, _ := strconv.ParseFloat(values[0], 64)

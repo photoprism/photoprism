@@ -7,7 +7,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -25,13 +24,18 @@ func ImportWorker(jobs <-chan ImportJob) {
 		var destMainFileName string
 
 		o := job.IndexOpt
+
 		imp := job.Imp
-		impOpt := job.ImportOpt
-		impPath := job.ImportOpt.Path
+		opt := job.ImportOpt
+		src := job.ImportOpt.Path
+
 		related := job.Related
 
+		// relatedOriginalNames contains the original filenames of related files.
+		relatedOriginalNames := make(map[string]string, len(related.Files))
+
 		if related.Main == nil {
-			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, impPath)))
+			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, src)))
 			continue
 		}
 
@@ -47,22 +51,26 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 		}
 
-		originalName := related.Main.RelName(impPath)
+		originalName := related.Main.RelName(src)
 
 		event.Publish("import.file", event.Data{
-			"fileName": originalName,
-			"baseName": filepath.Base(related.Main.FileName()),
+			"fileName":  originalName,
+			"baseName":  filepath.Base(related.Main.FileName()),
+			"subFolder": opt.DestFolder,
 		})
 
 		for _, f := range related.Files {
-			relFileName := f.RelName(impPath)
+			relFileName := f.RelName(src)
 
-			if destFileName, err := imp.DestinationFilename(related.Main, f); err == nil {
+			if destFileName, err := imp.DestinationFilename(related.Main, f, opt.DestFolder); err == nil {
 				destDir := filepath.Dir(destFileName)
+
+				// Remember the original filenames of related files, so they can later be indexed and searched.
+				relatedOriginalNames[destFileName] = relFileName
 
 				if fs.PathExists(destDir) {
 					// Do nothing.
-				} else if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
+				} else if err := os.MkdirAll(destDir, fs.ModeDir); err != nil {
 					log.Errorf("import: failed creating folder for %s (%s)", clean.Log(f.BaseName()), err.Error())
 				} else {
 					destDirRel := fs.RelName(destDir, imp.originalsPath())
@@ -81,7 +89,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Infof("import: moving related %s file %s to %s", f.FileType(), clean.Log(relFileName), clean.Log(fs.RelName(destFileName, imp.originalsPath())))
 				}
 
-				if impOpt.Move {
+				if opt.Move {
 					if err := f.Move(destFileName); err != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
 						log.Debugf("import: %s", err.Error())
@@ -102,12 +110,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 					// Do nothing.
 				} else if file, err := entity.FirstFileByHash(fileHash); err != nil {
 					// Do nothing.
-				} else if err := entity.AddPhotoToAlbums(file.PhotoUID, impOpt.Albums); err != nil {
+				} else if err := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, opt.UserUID); err != nil {
 					log.Warn(err)
 				}
 
 				// Remove duplicates to save storage.
-				if impOpt.RemoveExistingFiles {
+				if opt.RemoveExistingFiles {
 					if err := f.Remove(); err != nil {
 						log.Errorf("import: failed deleting %s (%s)", clean.Log(f.BaseName()), err.Error())
 					} else {
@@ -136,8 +144,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
-			if o.Convert && f.IsMedia() && !f.HasJpeg() {
-				if jpegFile, err := imp.convert.ToJpeg(f, false); err != nil {
+			if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
+				if jpegFile, err := imp.convert.ToPreview(f, false); err != nil {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), clean.Log(f.RootRelName()))
 					continue
 				} else {
@@ -146,7 +154,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
-			if jpg, err := f.Jpeg(); err != nil {
+			if jpg, err := f.PreviewImage(); err != nil {
 				log.Error(err)
 			} else if exceeds, actual := jpg.ExceedsResolution(o.ResolutionLimit); exceeds {
 				log.Errorf("index: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
@@ -182,7 +190,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index main MediaFile.
-				res := ind.MediaFile(f, o, originalName, "")
+				res := ind.UserMediaFile(f, o, originalName, "", opt.UserUID)
 
 				// Log result.
 				log.Infof("import: %s main %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
@@ -195,7 +203,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					photoUID = res.PhotoUID
 
 					// Add photo to album if a list of albums was provided when importing.
-					if err := entity.AddPhotoToAlbums(photoUID, impOpt.Albums); err != nil {
+					if err := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, opt.UserUID); err != nil {
 						log.Warn(err)
 					}
 				}
@@ -231,8 +239,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 					}
 				}
 
-				// Index related MediaFile.
-				res := ind.MediaFile(f, o, "", photoUID)
+				// Index related media file including its original filename.
+				res := ind.UserMediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID, opt.UserUID)
 
 				// Save file error.
 				if fileUid, err := res.FileError(); err != nil {

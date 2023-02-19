@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/gin-gonic/gin"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/session"
 )
 
 const (
@@ -50,7 +51,7 @@ func AddDownloadHeader(c *gin.Context, fileName string) {
 
 // AddSessionHeader adds a session id header to the response.
 func AddSessionHeader(c *gin.Context, id string) {
-	c.Header("X-Session-ID", id)
+	c.Header(session.Header, id)
 }
 
 // AddContentTypeHeader adds a content type header to the response.
@@ -65,7 +66,11 @@ func AddFileCountHeaders(c *gin.Context, filesCount, foldersCount int) {
 }
 
 // AddTokenHeaders adds preview token headers to the response.
-func AddTokenHeaders(c *gin.Context) {
-	c.Header("X-Preview-Token", service.Config().PreviewToken())
-	c.Header("X-Download-Token", service.Config().DownloadToken())
+func AddTokenHeaders(c *gin.Context, s *entity.Session) {
+	if s.PreviewToken != "" {
+		c.Header("X-Preview-Token", s.PreviewToken)
+	}
+	if s.DownloadToken != "" {
+		c.Header("X-Download-Token", s.DownloadToken)
+	}
 }

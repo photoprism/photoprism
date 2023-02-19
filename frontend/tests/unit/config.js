@@ -1,15 +1,17 @@
 const clientConfig = {
   mode: "user",
   name: "PhotoPrism",
+  about: "PhotoPrism® CE",
+  edition: "ce",
   version: "210710-bae1f2d7-Linux-x86_64-DEBUG",
-  copyright: "(c) 2018-2022 PhotoPrism UG. All rights reserved.",
+  copyright: "(c) 2018-2023 PhotoPrism UG. All rights reserved.",
   flags: "public debug experimental settings",
   baseUri: "",
   staticUri: "/static",
   apiUri: "/api/v1",
   contentUri: "/api/v1",
-  siteUrl: "http://localhost:2342/",
-  sitePreview: "http://localhost:2342/static/img/preview.jpg",
+  siteUrl: "http://photoprism.me:2342/",
+  sitePreview: "http://photoprism.me:2342/static/img/preview.jpg",
   siteTitle: "PhotoPrism",
   siteCaption: "AI-Powered Photos App",
   siteDescription: "Open-Source Photo Management",
@@ -17,7 +19,7 @@ const clientConfig = {
   debug: false,
   readonly: false,
   uploadNSFW: false,
-  public: true,
+  public: false,
   experimental: true,
   disableSettings: false,
   test: true,
@@ -285,7 +287,7 @@ const clientConfig = {
   previewToken: "public",
   cssUri: "/static/build/app.2259c0edcc020e7af593.css",
   jsUri: "/static/build/app.9bd7132eaee8e4c7c7e3.js",
-  manifestUri: "/manifest.json?0e41a7e5",
+  manifestUri: "/manifest.json",
   settings: {
     ui: {
       scrollbar: true,
@@ -294,7 +296,7 @@ const clientConfig = {
       language: "en",
     },
     search: {
-      batchSize: 60,
+      batchSize: 90,
     },
     maps: {
       animate: 0,
@@ -343,7 +345,7 @@ const clientConfig = {
       name: "file",
     },
     templates: {
-      default: "index.tmpl",
+      default: "index.gohtml",
     },
   },
   disable: {

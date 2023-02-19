@@ -36,7 +36,11 @@ const putEntityResponse = {
 };
 
 const deleteEntityResponse = null;
-Mock.onPost("api/v1/users/55/profile").reply(200, { FullName: "Max New" }, mockHeaders);
+Mock.onPost("api/v1/users/urii20d30w2wqzjf/profile").reply(
+  200,
+  { DisplayName: "Max New" },
+  mockHeaders
+);
 Mock.onGet("api/v1/foo").reply(200, getCollectionResponse, mockHeaders);
 Mock.onGet("api/v1/foo/123").reply(200, getEntityResponse, mockHeaders);
 Mock.onPost("api/v1/foo").reply(201, postEntityResponse, mockHeaders);
@@ -124,20 +128,46 @@ Mock.onDelete("api/v1/photos/pqbemz8276mhtobh/label/12345").reply(
   { success: "ok" },
   mockHeaders
 );
-Mock.onPost("api/v1/session")
-  .reply(200, { id: "8877", data: { user: { ID: 1, PrimaryEmail: "test@test.com" } } }, mockHeaders)
-  .onDelete("api/v1/session/8877")
-  .reply(200)
-  .onDelete("api/v1/session/123")
-  .reply(200);
 
-Mock.onPost("api/v1/session").reply(200, { id: "123", data: { token: "123token" } }, mockHeaders);
+Mock.onPost("api/v1/session").reply(
+  200,
+  {
+    id: "999900000000000000000000000000000000000000000000",
+    data: { token: "123token" },
+    user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
+  },
+  mockHeaders
+);
+
+Mock.onGet("api/v1/session/234200000000000000000000000000000000000000000000").reply(
+  200,
+  {
+    id: "234200000000000000000000000000000000000000000000",
+    data: { token: "123token" },
+    user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
+  },
+  mockHeaders
+);
+
+Mock.onGet("api/v1/session/999900000000000000000000000000000000000000000000").reply(
+  200,
+  {
+    id: "999900000000000000000000000000000000000000000000",
+    data: { token: "123token" },
+    user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
+  },
+  mockHeaders
+);
+
+Mock.onDelete("api/v1/session/999900000000000000000000000000000000000000000000").reply(200);
+
+Mock.onDelete("api/v1/session/234200000000000000000000000000000000000000000000").reply(200);
 
 Mock.onGet("api/v1/settings").reply(200, { download: true, language: "de" }, mockHeaders);
 Mock.onPost("api/v1/settings").reply(200, { download: true, language: "en" }, mockHeaders);
 
-Mock.onGet("api/v1/accounts/123/folders").reply(200, { foo: "folders" }, mockHeaders);
-Mock.onPost("api/v1/accounts/123/share").reply(200, { foo: "share" }, mockHeaders);
+Mock.onGet("api/v1/services/123/folders").reply(200, { foo: "folders" }, mockHeaders);
+Mock.onPost("api/v1/services/123/upload").reply(200, { foo: "upload" }, mockHeaders);
 
 Mock.onGet("api/v1/folders/2011/10-Halloween", {
   params: { recursive: true, uncached: true },
@@ -186,8 +216,8 @@ Mock.onPost("api/v1/albums/66/links").reply(
     Password: "passwd",
     Expires: 8000,
     Slug: "christmas-2019",
-    CanEdit: false,
-    CanComment: false,
+    Comment: "",
+    Perm: 0,
   },
   mockHeaders
 );
@@ -195,8 +225,8 @@ Mock.onDelete("api/v1/albums/66/links/5").reply(200, { Success: "ok" }, mockHead
 Mock.onGet("api/v1/albums/66/links").reply(
   200,
   [
-    { UID: "sqcwh80ifesw74ht", Share: "aqcwh7weohhk49q2", Slug: "july-2020" },
-    { UID: "sqcwhxh1h58rf3c2", Share: "aqcwh7weohhk49q2" },
+    { UID: "sqcwh80ifesw74ht", ShareUID: "aqcwh7weohhk49q2", Slug: "july-2020" },
+    { UID: "sqcwhxh1h58rf3c2", ShareUID: "aqcwh7weohhk49q2" },
   ],
   mockHeaders
 );
@@ -260,9 +290,9 @@ Mock.onPut("api/v1/albums/abc").reply(
   mockHeaders
 );
 
-//Mock.onPost("api/v1/users/55/profile").reply(200, { FullName: "Max New" }, mockHeaders);
-//Mock.onPost("users/55/profile").reply(200, { FullName: "Max New" }, mockHeaders);
-//Mock.onPost("api/v1/users/55/profile").reply(200, { FullName: "Max New" }, mockHeaders);
+//Mock.onPost("api/v1/users/55/profile").reply(200, { DisplayName: "Max New" }, mockHeaders);
+//Mock.onPost("users/55/profile").reply(200, { DisplayName: "Max New" }, mockHeaders);
+//Mock.onPost("api/v1/users/55/profile").reply(200, { DisplayName: "Max New" }, mockHeaders);
 
 Mock.onAny("api/v1/users/52/register").reply(200, { foo: "register" }, mockHeaders);
 
@@ -335,7 +365,6 @@ Mock.onDelete("api/v1/subjects/s123ghytrfggd/like").reply(200, { status: "ok" },
 Mock.onGet("api/v1/config/options").reply(200, { success: "ok" }, mockHeaders);
 Mock.onPost("api/v1/config/options").reply(200, { success: "ok" }, mockHeaders);
 Mock.onPost("api/v1/albums").reply(200, { success: "ok" }, mockHeaders);
-
 
 //Mock.onPost().reply(200);
 //Mock.onDelete().reply(200);

@@ -16,6 +16,11 @@ func StringToDuration(s string) (d time.Duration) {
 	}
 
 	s = strings.TrimSpace(s)
+
+	if s == "" {
+		return d
+	}
+
 	sec := DurationSecondsRegexp.FindAllString(s, -1)
 
 	if len(sec) == 1 {

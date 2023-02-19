@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/migrate"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -20,7 +21,7 @@ func ready() {
 }
 
 // InitDb creates database tables and inserts default fixtures as needed.
-func InitDb(dropDeprecated, runFailed bool, ids []string) {
+func InitDb(opt migrate.Options) {
 	if !HasDbProvider() {
 		log.Error("migrate: no database provider")
 		return
@@ -28,11 +29,11 @@ func InitDb(dropDeprecated, runFailed bool, ids []string) {
 
 	start := time.Now()
 
-	if dropDeprecated && len(ids) == 0 {
+	if opt.DropDeprecated {
 		DeprecatedTables.Drop(Db())
 	}
 
-	Entities.Migrate(Db(), runFailed, ids)
+	Entities.Migrate(Db(), opt)
 	Entities.WaitForMigration(Db())
 
 	CreateDefaultFixtures()
@@ -43,7 +44,7 @@ func InitDb(dropDeprecated, runFailed bool, ids []string) {
 }
 
 // InitTestDb connects to and completely initializes the test database incl fixtures.
-func InitTestDb(driver, dsn string) *Gorm {
+func InitTestDb(driver, dsn string) *DbConn {
 	if HasDbProvider() {
 		return nil
 	}
@@ -68,13 +69,13 @@ func InitTestDb(driver, dsn string) *Gorm {
 
 	log.Infof("initializing %s test db in %s", driver, dsn)
 
-	// Create ORM instance.
-	db := &Gorm{
+	// Create gorm.DB connection provider.
+	db := &DbConn{
 		Driver: driver,
 		Dsn:    dsn,
 	}
 
-	// Insert test fixtures.
+	// Insert test fixtures into the database.
 	SetDbProvider(db)
 	ResetTestFixtures()
 	File{}.RegenerateIndex()

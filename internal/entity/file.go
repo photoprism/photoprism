@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"image"
 	"math"
 	"path/filepath"
 	"sort"
@@ -13,8 +14,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/face"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -24,13 +25,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-type DownloadName string
-
 const (
-	DownloadNameFile     DownloadName = "file"
-	DownloadNameOriginal DownloadName = "original"
-	DownloadNameShare    DownloadName = "share"
-	DownloadNameDefault               = DownloadNameFile
+	FileUID = byte('f')
 )
 
 // Files represents a file result set.
@@ -47,12 +43,12 @@ type File struct {
 	PhotoID          uint          `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
 	PhotoUID         string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	PhotoTakenAt     time.Time     `gorm:"type:DATETIME;index;" json:"TakenAt" yaml:"TakenAt"`
-	TimeIndex        *string       `gorm:"type:VARBINARY(48);" json:"TimeIndex" yaml:"TimeIndex"`
+	TimeIndex        *string       `gorm:"type:VARBINARY(64);" json:"TimeIndex" yaml:"TimeIndex"`
 	MediaID          *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	MediaUTC         int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
-	InstanceID       string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	InstanceID       string        `gorm:"type:VARBINARY(64);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID          string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	FileName         string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileName         string        `gorm:"type:VARBINARY(1024);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
 	FileRoot         string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash         string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
@@ -78,10 +74,10 @@ type File struct {
 	FileWatermark    bool          `gorm:"column:file_watermark;"  json:"Watermark" yaml:"Watermark,omitempty"`
 	FileColorProfile string        `gorm:"type:VARBINARY(64);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
 	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
-	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
-	FileLuminance    string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
+	FileColors       string        `gorm:"type:VARBINARY(18);" json:"Colors" yaml:"Colors,omitempty"`
+	FileLuminance    string        `gorm:"type:VARBINARY(18);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff         int           `json:"Diff" yaml:"Diff,omitempty"`
-	FileChroma       int8          `json:"Chroma" yaml:"Chroma,omitempty"`
+	FileChroma       int16         `json:"Chroma" yaml:"Chroma,omitempty"`
 	FileSoftware     string        `gorm:"type:VARCHAR(64)" json:"Software" yaml:"Software,omitempty"`
 	FileError        string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
 	ModTime          int64         `json:"ModTime" yaml:"-"`
@@ -89,13 +85,14 @@ type File struct {
 	CreatedIn        int64         `json:"CreatedIn" yaml:"-"`
 	UpdatedAt        time.Time     `json:"UpdatedAt" yaml:"-"`
 	UpdatedIn        int64         `json:"UpdatedIn" yaml:"-"`
+	PublishedAt      *time.Time    `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt        *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	Share            []FileShare   `json:"-" yaml:"-"`
 	Sync             []FileSync    `json:"-" yaml:"-"`
 	markers          *Markers
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (File) TableName() string {
 	return "files"
 }
@@ -106,51 +103,51 @@ func (m File) RegenerateIndex() {
 	defer fileIndexMutex.Unlock()
 
 	start := time.Now()
-	filesTable := File{}.TableName()
+
 	photosTable := Photo{}.TableName()
 
 	var updateWhere *gorm.SqlExpr
 	var scope string
 
 	if m.PhotoID > 0 {
-		updateWhere = gorm.Expr("photo_id = ?", m.PhotoID)
-		scope = "partial file index"
+		updateWhere = gorm.Expr("files.photo_id = ?", m.PhotoID)
+		scope = "index by photo id"
 	} else if m.PhotoUID != "" {
-		updateWhere = gorm.Expr("photo_uid = ?", m.PhotoUID)
-		scope = "partial file index"
+		updateWhere = gorm.Expr("files.photo_uid = ?", m.PhotoUID)
+		scope = "index by photo uid"
 	} else if m.ID > 0 {
-		updateWhere = gorm.Expr("id = ?", m.ID)
-		scope = "partial file index"
+		updateWhere = gorm.Expr("files.id = ?", m.ID)
+		scope = "index by file id"
 	} else {
-		updateWhere = gorm.Expr("photo_id IS NOT NULL")
-		scope = "file index"
+		updateWhere = gorm.Expr("files.photo_id IS NOT NULL")
+		scope = "index"
 	}
 
 	switch DbDialect() {
 	case MySQL:
 		Log("files", "regenerate photo_taken_at",
-			Db().Exec("UPDATE ? f JOIN ? p ON p.id = f.photo_id SET f.photo_taken_at = p.taken_at_local WHERE ?",
-				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
+			Db().Exec("UPDATE files JOIN ? p ON p.id = files.photo_id SET files.photo_taken_at = p.taken_at_local WHERE ?",
+				gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
-				gorm.Expr(filesTable), updateWhere).Error)
+			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
+				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
-			Db().Exec("UPDATE ? SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) ELSE NULL END WHERE ?",
-				gorm.Expr(filesTable), updateWhere).Error)
+			Db().Exec("UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) ELSE NULL END WHERE ?",
+				updateWhere).Error)
 	case SQLite3:
 		Log("files", "regenerate photo_taken_at",
-			Db().Exec("UPDATE ? SET photo_taken_at = (SELECT p.taken_at_local FROM ? p WHERE p.id = photo_id) WHERE ?",
-				gorm.Expr(filesTable), gorm.Expr(photosTable), updateWhere).Error)
+			Db().Exec("UPDATE files SET photo_taken_at = (SELECT p.taken_at_local FROM ? p WHERE p.id = photo_id) WHERE ?",
+				gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE ? SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
-				gorm.Expr(filesTable), updateWhere).Error)
+			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
+				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
-			Db().Exec("UPDATE ? SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - strftime('%Y%m%d%H%M%S', photo_taken_at)) || '-' || media_id) ELSE NULL END WHERE ?",
-				gorm.Expr(filesTable), updateWhere).Error)
+			Db().Exec("UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - strftime('%Y%m%d%H%M%S', photo_taken_at)) || '-' || media_id) ELSE NULL END WHERE ?",
+				updateWhere).Error)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 	}
@@ -167,7 +164,7 @@ type FileInfos struct {
 	FileColors      string
 	FileLuminance   string
 	FileDiff        int
-	FileChroma      int8
+	FileChroma      int16
 }
 
 // FirstFileByHash gets a file in db from its hash
@@ -180,10 +177,10 @@ func FirstFileByHash(fileHash string) (File, error) {
 }
 
 // PrimaryFile returns the primary file for a photo uid.
-func PrimaryFile(photoUID string) (*File, error) {
+func PrimaryFile(photoUid string) (*File, error) {
 	file := File{}
 
-	res := Db().Unscoped().First(&file, "file_primary = 1 AND photo_uid = ?", photoUID)
+	res := Db().Unscoped().First(&file, "file_primary = 1 AND photo_uid = ?", photoUid)
 
 	return &file, res.Error
 }
@@ -201,19 +198,19 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	// Return if uid exists.
-	if rnd.ValidID(m.FileUID, 'f') {
+	if rnd.IsUnique(m.FileUID, FileUID) {
 		return nil
 	}
 
-	return scope.SetColumn("FileUID", rnd.GenerateUID('f'))
+	return scope.SetColumn("FileUID", rnd.GenerateUID(FileUID))
 }
 
 // DownloadName returns the download file name.
-func (m *File) DownloadName(n DownloadName, seq int) string {
+func (m *File) DownloadName(n customize.DownloadName, seq int) string {
 	switch n {
-	case DownloadNameFile:
+	case customize.DownloadNameFile:
 		return m.Base(seq)
-	case DownloadNameOriginal:
+	case customize.DownloadNameOriginal:
 		return m.OriginalBase(seq)
 	default:
 		return m.ShareBase(seq)
@@ -441,7 +438,7 @@ func (m *File) ResolvePrimary() (err error) {
 	return err
 }
 
-// Save stores the file in the database.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("file %s: cannot save file with empty photo id", m.FileUID)
@@ -548,9 +545,14 @@ func (m *File) RelatedPhoto() *Photo {
 	return &photo
 }
 
-// NoJPEG returns true if the file is not a JPEG image file.
+// NoJPEG returns true if the file is not a JPEG image.
 func (m *File) NoJPEG() bool {
 	return fs.ImageJPEG.NotEqual(m.FileType)
+}
+
+// NoPNG returns true if the file is not a PNG image.
+func (m *File) NoPNG() bool {
+	return fs.ImagePNG.NotEqual(m.FileType)
 }
 
 // Links returns all share links for this entity.
@@ -570,6 +572,11 @@ func (m *File) Panorama() bool {
 
 	// Decide based on aspect ratio.
 	return float64(m.FileWidth)/float64(m.FileHeight) > 1.9
+}
+
+// Bounds returns the file dimensions as image.Rectangle.
+func (m *File) Bounds() image.Rectangle {
+	return image.Rectangle{Min: image.Point{}, Max: image.Point{X: m.FileWidth, Y: m.FileHeight}}
 }
 
 // Projection returns the panorama projection name if any.
@@ -661,6 +668,17 @@ func (m *File) SetDuration(d time.Duration) {
 	}
 }
 
+// Bitrate returns the average bitrate in MBit/s if the file has a duration.
+func (m *File) Bitrate() float64 {
+	// Make sure size and duration have a positive value.
+	if m.FileSize <= 0 || m.FileDuration <= 0 {
+		return 0
+	}
+
+	// Divide number of bits through the duration in seconds.
+	return ((float64(m.FileSize) * 8) / m.FileDuration.Seconds()) / 1e6
+}
+
 // SetFPS sets the average number of frames per second.
 func (m *File) SetFPS(frameRate float64) {
 	if frameRate <= 0 {
@@ -686,6 +704,9 @@ func (m *File) SetFrames(n int) {
 	// Update FPS.
 	if m.FileFPS <= 0 && m.FileDuration > 0 {
 		m.FileFPS = float64(m.FileFrames) / m.FileDuration.Seconds()
+	} else if m.FileFPS == 0 && m.FileDuration == 0 {
+		m.FileFPS = 30.0 // Assume 30 frames per second.
+		m.FileDuration = time.Duration(float64(m.FileFrames)/m.FileFPS) * time.Second
 	}
 }
 
@@ -710,14 +731,14 @@ func (m *File) AddFaces(faces face.Faces) {
 }
 
 // AddFace adds a face marker to the file.
-func (m *File) AddFace(f face.Face, subjUID string) {
+func (m *File) AddFace(f face.Face, subjUid string) {
 	// Only add faces with exactly one embedding so that they can be compared and clustered.
 	if !f.Embeddings.One() {
 		return
 	}
 
 	// Create new marker from face.
-	marker := NewFaceMarker(f, *m, subjUID)
+	marker := NewFaceMarker(f, *m, subjUid)
 
 	// Failed creating new marker?
 	if marker == nil {
@@ -737,7 +758,7 @@ func (m *File) ValidFaceCount() (c int) {
 
 // UpdatePhotoFaceCount updates the faces count in the index and returns it if the file is primary.
 func (m *File) UpdatePhotoFaceCount() (c int, err error) {
-	// Primary file of an existing photo?
+	// Previews file of an existing photo?
 	if !m.FilePrimary || m.PhotoID == 0 {
 		return 0, nil
 	}

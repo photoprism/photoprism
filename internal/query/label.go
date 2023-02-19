@@ -2,6 +2,7 @@ package query
 
 import (
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // PhotoLabel returns a photo label entity if exists.
@@ -33,7 +34,7 @@ func LabelByUID(labelUID string) (label entity.Label, err error) {
 
 // LabelThumbBySlug returns a label cover file based on the slug name.
 func LabelThumbBySlug(labelSlug string) (file entity.File, err error) {
-	if err := Db().Where("files.file_primary AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
+	if err := Db().Where("files.file_primary AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
 		Joins("JOIN labels ON labels.label_slug = ?", labelSlug).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").

@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/pkg/list"
 )
 
 // CliFlags represents a list of command-line parameters.
@@ -10,14 +11,13 @@ type CliFlags []CliFlag
 
 // Cli returns the currently active command-line parameters.
 func (f CliFlags) Cli() (result []cli.Flag) {
-	var tags []string
+	result = make([]cli.Flag, 0, len(f))
 
-	switch {
-	case Sponsor():
-		tags = []string{EnvSponsor}
+	for _, flag := range f {
+		result = append(result, flag.Flag)
 	}
 
-	return f.Find(tags)
+	return result
 }
 
 // Find finds command-line parameters based on a list of tags.
@@ -33,4 +33,50 @@ func (f CliFlags) Find(tags []string) (result []cli.Flag) {
 	}
 
 	return result
+}
+
+// Remove removes command flags by name.
+func (f CliFlags) Remove(names []string) (result CliFlags) {
+	result = make(CliFlags, 0, len(f))
+
+	for _, flag := range f {
+		if list.Contains(names, flag.Name()) {
+			continue
+		}
+
+		result = append(result, flag)
+	}
+
+	return result
+}
+
+// Insert inserts command flags, if possible after name.
+func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
+	result = make(CliFlags, 0, len(f)+len(insert))
+
+	done := false
+
+	for _, flag := range f {
+		result = append(result, flag)
+
+		if !done && flag.Name() == name {
+			result = append(result, insert...)
+			done = true
+		}
+	}
+
+	if !done {
+		result = append(result, insert...)
+	}
+
+	return result
+}
+
+// Prepend adds command flags at the beginning.
+func (f CliFlags) Prepend(el []CliFlag) (result CliFlags) {
+	result = make(CliFlags, 0, len(f)+len(el))
+
+	result = append(result, el...)
+	return append(result, f...)
+
 }

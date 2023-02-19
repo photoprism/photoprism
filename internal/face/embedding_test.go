@@ -66,7 +66,7 @@ func TestEmbedding_SkipMatching(t *testing.T) {
 }
 
 func TestUnmarshalEmbedding(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		emb, err := UnmarshalEmbedding("[-0.013,-0.031]")
 
 		assert.NoError(t, err)

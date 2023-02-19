@@ -196,11 +196,99 @@ body.chrome #photoprism .search-results .result {
     transition-duration: 15ms !important;
     margin: 4px !important;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12) !important;
+    border-radius: 6px;
 }
+
+#photoprism .search-results .image-container {
+  aspect-ratio: 1;
+  contain: layout paint style size;
+}
+
+#photoprism .cards-view .result .image,
+#photoprism .list-view .result .image,
+#photoprism .mosaic-view .result.image
+{
+  position: relative;
+  user-select: none;
+  aspect-ratio: 1;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+#photoprism .cards-view .result .image button,
+#photoprism .list-view .result .image button,
+#photoprism .mosaic-view .result.image button {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+}
+
+#photoprism .cards-view .result .image button {
+  width: 36px;
+  height: 36px;
+}
+
+#photoprism .list-view .result .image button {
+  width: 44px;
+  height: 44px;
+}
+#photoprism .cards-view .result .image button:hover,
+#photoprism .list-view .result .image button:hover,
+#photoprism .mosaic-view .result.image button:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+#photoprism .mosaic-view .result.image i,
+#photoprism .list-view .result .image i,
+#photoprism .cards-view .result .image i {
+  color: #e2e2e2;
+  font-size: 24px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-family: Material Icons;
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#photoprism .cards-view .result .caption {
+  hyphens: auto;
+  word-break: break-word;
+}
+
+#photoprism .cards-view .result .card-details i {
+  font-size: 14px;
+  display: inline-block;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-family: Material Icons;
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: text-bottom;
+  white-space: nowrap;
+}
+
+
+#photoprism .cards-view .result.placeholder .card-details i {
+  width: 14px;
+}
+
 
 #photoprism .cards-view .result.is-selected,
 #photoprism .mosaic-view .result.is-selected {
-    margin: 0 !important;
+    margin: 1px !important;
     box-shadow: 0 6px 6px -3px rgba(0, 0, 0, .2), 0 10px 14px 1px rgba(0, 0, 0, .14), 0 4px 18px 3px rgba(0, 0, 0, .12) !important;
 }
 
@@ -253,6 +341,14 @@ body.chrome #photoprism .search-results .result {
 #photoprism .search-results .result .input-hidden .select-on,
 #photoprism .search-results .result.is-hidden .input-hidden .select-off {
     display: none;
+}
+
+#photoprism .disable-manage .search-results .result:not(.is-favorite) .input-favorite {
+    visibility: hidden;
+}
+
+#photoprism .disable-manage .search-results .result .input-favorite.v-btn:before {
+    visibility: hidden;
 }
 
 #photoprism .cards-view .input-reject,
@@ -359,23 +455,28 @@ body.chrome #photoprism .search-results .result {
     text-align: left;
 }
 
+#photoprism .cards-view .card .card-details {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
 #photoprism .cards-view .v-card .card-details {
     z-index: 1;
     position: relative;
 }
 
-#photoprism .cards-view .v-card.is-selected .card-details {
+#photoprism .cards-view .card.is-selected .card-details {
     color: #fff;
-    background-color: #333;
+    background-color: #424142;
 }
 
-#photoprism .cards-view .v-card.is-selected .card-details .v-icon {
-    color: #fff;
+#photoprism .cards-view .card.is-selected,
+#photoprism .cards-view .card.is-selected .card-background {
+    background-color: #424142 !important;
 }
 
-#photoprism .cards-view .v-card.is-selected,
-#photoprism .cards-view .v-card.is-selected .card-background {
-    background-color: #333 !important;
+#photoprism .cards-view .card.is-selected .card-details .v-icon {
+    color: #fff;
 }
 
 #photoprism .search-results.list-view .input-select,
@@ -392,4 +493,32 @@ body.chrome #photoprism .search-results .result {
 #photoprism .face-results .is-face.is-hidden,
 #photoprism .face-results .is-marker.is-invalid {
     opacity: 0.5;
+}
+
+/* old browser support */
+@supports not (aspect-ratio: 1) {
+  /* elements with aspect-ratio 1 and without margin */
+  #photoprism .search-results .image-container,
+  #photoprism .cards-view .result .image,
+  #photoprism .list-view .result .image,
+  #photoprism .list-view .result.image,
+  #photoprism .mosaic-view .result.is-selected {
+    height: 0;
+    padding-bottom: 100%
+  }
+
+  /* elements with aspect-ratio 1 and with margin */
+  #photoprism .mosaic-view .result
+  {
+    height: 0;
+    /*
+       8px is required because this aspect-ratio-fallback doesn't take
+       margins into consideration
+    */
+    padding-bottom: calc(100% - 8px)
+  }
+
+  #photoprism .live-player video {
+    margin-top: 100%;
+  }
 }

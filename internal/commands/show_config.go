@@ -2,11 +2,13 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
@@ -18,16 +20,38 @@ var ShowConfigCommand = cli.Command{
 	Action: showConfigAction,
 }
 
+// ConfigReports specifies which configuration reports to display.
+var ConfigReports = []Report{
+	{Title: "Global Config Options", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
+		return conf.Report()
+	}},
+}
+
 // showConfigAction shows global config option names and values.
 func showConfigAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)
+	get.SetConfig(conf)
 
-	rows, cols := conf.Report()
+	if err := conf.Init(); err != nil {
+		log.Debug(err)
+	}
 
-	result, err := report.Render(rows, cols, report.CliFormat(ctx))
+	for _, rep := range ConfigReports {
+		// Get values.
+		rows, cols := rep.Report(conf)
 
-	fmt.Println(result)
+		// Render report.
+		opt := report.Options{Format: report.CliFormat(ctx), NoWrap: rep.NoWrap}
+		result, _ := report.Render(rows, cols, opt)
 
-	return err
+		// Show report.
+		if opt.Format == report.Default {
+			fmt.Printf("\n%s\n\n", strings.ToUpper(rep.Title))
+		}
+
+		fmt.Println(result)
+	}
+
+	return nil
 }

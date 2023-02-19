@@ -13,6 +13,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "1ef744d1e283"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -24,6 +25,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "85d1ea7d382c"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -35,6 +37,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "%gold"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -46,6 +49,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "I love % dog"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -57,6 +61,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "sale%"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -68,6 +73,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "&IlikeFood"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -79,6 +85,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Pets & Dogs"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -90,6 +97,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Light&"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -101,6 +109,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "'Family"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -112,6 +121,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Father's type"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -124,6 +134,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Ice Cream'"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -135,6 +146,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "*Forrest"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -146,6 +158,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "My*Kids"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -157,6 +170,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Yoga***"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -168,6 +182,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "|Banana"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -179,6 +194,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Red|Green"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -191,6 +207,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Blue|"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -203,6 +220,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "345 Shirt"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -214,6 +232,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "type555 Blue"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -225,6 +244,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "Route 66"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -239,6 +259,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:1ef744d1e283"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -250,6 +271,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:85d1ea7d382c"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -261,6 +283,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:85d1ea7d382c|1ef744d1e283"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -272,6 +295,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"%gold\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -283,6 +307,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"I love % dog\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -294,6 +319,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"sale%\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -305,6 +331,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"&IlikeFood\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -316,6 +343,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Pets & Dogs\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -327,6 +355,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Light&\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -338,6 +367,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"'Family\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -349,6 +379,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Father's type\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -361,6 +392,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Ice Cream'\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -372,6 +404,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"*Forrest\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -383,6 +416,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"My*Kids\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -394,6 +428,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Yoga***\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -405,6 +440,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"|Banana\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -416,6 +452,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Red|Green\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -428,6 +465,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"Blue|\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -439,6 +477,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:\"345 Shirt\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {

@@ -44,11 +44,11 @@ func (m *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 	defer mutex.MetaWorker.Stop()
 
-	log.Debugf("metadata: running facial recognition")
+	log.Debugf("metadata: running face recognition")
 
 	// Run faces worker.
 	if w := photoprism.NewFaces(m.conf); w.Disabled() {
-		log.Debugf("metadata: skipping facial recognition")
+		log.Debugf("metadata: skipping face recognition")
 	} else if err := w.Start(photoprism.FacesOptions{}); err != nil {
 		log.Warn(err)
 	}

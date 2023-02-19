@@ -55,7 +55,7 @@ func TestNewConfig(t *testing.T) {
 }
 
 func TestNewRequest(t *testing.T) {
-	r := NewRequest("0.0.0", "zqkunt22r0bewti9", "test", "test")
+	r := NewRequest("0.0.0", "zqkunt22r0bewti9", "test", "test", "")
 
 	assert.IsType(t, &Request{}, r)
 
@@ -74,7 +74,7 @@ func TestConfig_Refresh(t *testing.T) {
 
 		c := NewConfig("0.0.0", fileName, "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 
-		if err := c.Refresh(); err != nil {
+		if err := c.Update(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -82,10 +82,12 @@ func TestConfig_Refresh(t *testing.T) {
 		assert.Len(t, c.Secret, 32)
 		assert.Equal(t, "0.0.0", c.Version)
 
-		if sess, err := c.DecodeSession(); err != nil {
+		if sess, err := c.DecodeSession(false); err != nil {
 			t.Fatal(err)
 		} else if sess.Expired() {
 			t.Fatalf("session expired: %+v", sess)
+		} else {
+			t.Logf("(1) session: %#v", sess)
 		}
 
 		if err := c.Save(); err != nil {
@@ -96,7 +98,7 @@ func TestConfig_Refresh(t *testing.T) {
 
 		assert.FileExists(t, fileName)
 
-		if err := c.Refresh(); err != nil {
+		if err := c.Update(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -104,18 +106,18 @@ func TestConfig_Refresh(t *testing.T) {
 		assert.Len(t, c.Secret, 32)
 		assert.Equal(t, "0.0.0", c.Version)
 
-		if sess, err := c.DecodeSession(); err != nil {
+		if sess, err := c.DecodeSession(false); err != nil {
 			t.Fatal(err)
 		} else if sess.Expired() {
 			t.Fatal("session expired")
 		} else {
-			t.Logf("api session: %+v", sess)
+			t.Logf("(2) session: %#v", sess)
 		}
 
 		if err := c.Save(); err != nil {
 			t.Fatal(err)
 		}
-
+		t.Logf("filename: %s", fileName)
 		assert.FileExists(t, fileName)
 	})
 }

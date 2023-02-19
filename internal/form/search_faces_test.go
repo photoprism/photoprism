@@ -25,9 +25,8 @@ func TestFaceSearch_SetQuery(t *testing.T) {
 }
 
 func TestFaceSearch_ParseQueryString(t *testing.T) {
-
 	t.Run("valid query", func(t *testing.T) {
-		form := &SearchFaces{Query: "subject:test count:10 offset:1"}
+		form := &SearchFaces{Query: "subject:test"}
 
 		err := form.ParseQueryString()
 
@@ -38,12 +37,12 @@ func TestFaceSearch_ParseQueryString(t *testing.T) {
 		}
 
 		assert.Equal(t, "test", form.Subject)
-		assert.Equal(t, 10, form.Count)
-		assert.Equal(t, 1, form.Offset)
+		assert.Equal(t, 0, form.Count)
+		assert.Equal(t, 0, form.Offset)
 
 	})
 	t.Run("valid query with umlauts", func(t *testing.T) {
-		form := &SearchFaces{Query: "query:\"tübingen\""}
+		form := &SearchFaces{Query: "q:\"tübingen\""}
 
 		err := form.ParseQueryString()
 
@@ -66,19 +65,13 @@ func TestFaceSearch_ParseQueryString(t *testing.T) {
 
 		// log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "unknown filter: Xxx", err.Error())
+		assert.Equal(t, "unknown filter: xxx", err.Error())
 	})
 	t.Run("query for count with invalid type", func(t *testing.T) {
 		form := &SearchFaces{Query: "count:cat"}
 
 		err := form.ParseQueryString()
 
-		if err == nil {
-			t.FailNow()
-		}
-
-		// log.Debugf("%+v\n", form)
-
-		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
+		assert.Error(t, err)
 	})
 }

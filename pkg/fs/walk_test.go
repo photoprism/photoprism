@@ -63,7 +63,7 @@ func TestSkipWalk(t *testing.T) {
 
 		err := godirwalk.Walk(testPath, &godirwalk.Options{
 			Callback: func(fileName string, info *godirwalk.Dirent) error {
-				isDir := info.IsDir()
+				isDir, _ := info.IsDirOrSymlinkToDir()
 				isSymlink := info.IsSymlink()
 
 				if skip, result := SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
@@ -77,7 +77,7 @@ func TestSkipWalk(t *testing.T) {
 
 				done[fileName] = Found
 
-				if textName := TextFile.Find(fileName, false); textName != "" {
+				if textName := SidecarText.Find(fileName, false); textName != "" {
 					done[textName] = Found
 				}
 

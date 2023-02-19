@@ -13,6 +13,11 @@ func TestPhotosQueryUnsorted(t *testing.T) {
 	f0.Query = "unsorted:true"
 	f0.Merged = true
 
+	// Parse query string and filter.
+	if err := f0.ParseQueryString(); err != nil {
+		t.Fatal(err)
+	}
+
 	photos0, _, err := Photos(f0)
 
 	if err != nil {

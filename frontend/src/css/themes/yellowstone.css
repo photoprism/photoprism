@@ -1,7 +1,22 @@
 /* Yellowstone Theme */
 
-body.dark-theme.theme-yellowstone {
-    background: #444 !important;
+body.dark-theme.theme-yellowstone,
+.theme-yellowstone .v-content__wrap,
+.theme-yellowstone .p-page,
+.theme-yellowstone .form,
+.theme-yellowstone .v-content {
+    background: #32312f !important;
+}
+
+.theme-yellowstone .application.theme--light,
+#photoprism.theme-yellowstone .theme--light.v-small-dialog__content,
+#photoprism.theme-yellowstone .theme--light.v-sheet,
+#photoprism.theme-yellowstone .theme--light.v-card {
+    background: #32312f;
+}
+
+#photoprism.theme-yellowstone .theme--light .v-table {
+    background: #373532;
 }
 
 #photoprism.container.theme-yellowstone {
@@ -17,43 +32,22 @@ body.dark-theme.theme-yellowstone {
     stroke: rgba(255, 183, 0, 0.5);
 }
 
-.theme-yellowstone .v-content__wrap,
-.theme-yellowstone .p-page,
-.theme-yellowstone .form,
-.theme-yellowstone .v-content {
-    background: #444 !important;
-}
-
-#photoprism.theme-yellowstone .theme--light.v-small-dialog__content,
-#photoprism.theme-yellowstone .theme--light.v-sheet,
-#photoprism.theme-yellowstone .theme--light.v-card {
-    background: #444;
-}
-
-.theme-yellowstone .application.theme--light {
-    background: #444;
-}
-
-#photoprism.theme-yellowstone .theme--light .v-table {
-    background: #4E4E4E;
-}
-
 #photoprism.theme-yellowstone .theme--light.v-table thead th,
 #photoprism.theme-yellowstone .theme--light.v-table tbody td {
     color: #fff;
 }
 
 #photoprism.theme-yellowstone .theme--light.v-table tbody tr:hover {
-    background: #666;
+    background: #403d3a;
 }
 
 #photoprism.theme-yellowstone .theme--light.v-chip,
 #photoprism.theme-yellowstone .v-card__actions .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: #333;
+    background: #2a2928;
 }
 
 #photoprism.theme-yellowstone .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: #4E4E4E;
+    background: #32312e;
 }
 
 #photoprism.theme-yellowstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
@@ -77,7 +71,7 @@ body.dark-theme.theme-yellowstone {
 }
 
 #photoprism.theme-yellowstone .theme--light.v-list {
-    background: #555;
+    background: #21201f;
 }
 
 #photoprism.theme-yellowstone a.text-link {

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -23,22 +23,23 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Photos from "pages/photos.vue";
-import Albums from "pages/albums.vue";
-import AlbumPhotos from "pages/album/photos.vue";
-import Places from "pages/places.vue";
-import Files from "pages/library/files.vue";
-import Errors from "pages/library/errors.vue";
-import Labels from "pages/labels.vue";
-import People from "pages/people.vue";
-import Library from "pages/library.vue";
-import Settings from "pages/settings.vue";
-import AuthLogin from "pages/auth/login.vue";
-import Discover from "pages/discover.vue";
-import About from "pages/about/about.vue";
-import Feedback from "pages/about/feedback.vue";
-import License from "pages/about/license.vue";
-import Help from "pages/help.vue";
+import Photos from "page/photos.vue";
+import Albums from "page/albums.vue";
+import AlbumPhotos from "page/album/photos.vue";
+import Places from "page/places.vue";
+import Browse from "page/library/browse.vue";
+import Errors from "page/library/errors.vue";
+import Labels from "page/labels.vue";
+import People from "page/people.vue";
+import Library from "page/library.vue";
+import Settings from "page/settings.vue";
+import Login from "page/login.vue";
+import Discover from "page/discover.vue";
+import About from "page/about/about.vue";
+import Feedback from "page/about/feedback.vue";
+import License from "page/about/license.vue";
+import Help from "page/help.vue";
+import Connect from "page/connect.vue";
 import { $gettext } from "common/vm";
 import { config, session } from "./session";
 
@@ -59,7 +60,7 @@ export default [
   },
   {
     name: "license",
-    path: "/about/license",
+    path: "/license",
     component: License,
     meta: { title: siteTitle, auth: false },
   },
@@ -77,15 +78,39 @@ export default [
   },
   {
     name: "login",
-    path: "/auth/login",
-    component: AuthLogin,
+    path: "/login",
+    component: Login,
     meta: { title: siteTitle, auth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
-      if (session.isUser()) {
-        next({ name: "home" });
-      } else {
+      if (session.loginRequired()) {
         next();
+      } else if (config.deny("photos", "search")) {
+        next({ name: "albums" });
+      } else {
+        next({ name: "browse" });
       }
+    },
+  },
+  {
+    name: "upgrade",
+    path: "/upgrade",
+    component: Connect,
+    meta: {
+      title: siteTitle,
+      auth: true,
+      admin: true,
+      settings: true,
+    },
+  },
+  {
+    name: "connect",
+    path: "/upgrade/:token",
+    component: Connect,
+    meta: {
+      title: siteTitle,
+      auth: true,
+      admin: true,
+      settings: true,
     },
   },
   {
@@ -93,6 +118,15 @@ export default [
     path: "/browse",
     component: Photos,
     meta: { title: siteTitle, icon: true, auth: true },
+    beforeEnter: (to, from, next) => {
+      if (session.loginRequired()) {
+        next({ name: "login" });
+      } else if (config.deny("photos", "search")) {
+        next({ name: "albums" });
+      } else {
+        next();
+      }
+    },
   },
   {
     name: "all",
@@ -113,52 +147,52 @@ export default [
     path: "/moments",
     component: Albums,
     meta: { title: $gettext("Moments"), auth: true },
-    props: { view: "moment", staticFilter: { type: "moment", order: "moment" } },
+    props: { view: "moment", defaultOrder: "moment", staticFilter: { type: "moment" } },
   },
   {
     name: "moment",
     path: "/moments/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Moments"), auth: true },
+    meta: { collName: "Moments", collRoute: "moments", auth: true },
   },
   {
     name: "albums",
     path: "/albums",
     component: Albums,
     meta: { title: $gettext("Albums"), auth: true },
-    props: { view: "album", staticFilter: { type: "album", order: "name" } },
+    props: { view: "album", defaultOrder: "favorites", staticFilter: { type: "album" } },
   },
   {
     name: "album",
     path: "/albums/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Albums"), auth: true },
+    meta: { collName: "Albums", collRoute: "albums", auth: true },
   },
   {
     name: "calendar",
     path: "/calendar",
     component: Albums,
     meta: { title: $gettext("Calendar"), auth: true },
-    props: { view: "month", staticFilter: { type: "month", order: "newest" } },
+    props: { view: "month", defaultOrder: "newest", staticFilter: { type: "month" } },
   },
   {
     name: "month",
     path: "/calendar/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Calendar"), auth: true },
+    meta: { collName: "Calendar", collRoute: "calendar", auth: true },
   },
   {
     name: "folders",
     path: "/folders",
     component: Albums,
     meta: { title: $gettext("Folders"), auth: true },
-    props: { view: "folder", staticFilter: { type: "folder", order: "newest" } },
+    props: { view: "folder", defaultOrder: "name", staticFilter: { type: "folder" } },
   },
   {
     name: "folder",
     path: "/folders/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Folders"), auth: true },
+    meta: { collName: "Folders", collRoute: "folders", auth: true },
   },
   {
     name: "unsorted",
@@ -216,8 +250,14 @@ export default [
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "place",
+    name: "places_query",
     path: "/places/:q",
+    component: Places,
+    meta: { title: $gettext("Places"), auth: true },
+  },
+  {
+    name: "places_scope",
+    path: "/places/:s/:q",
     component: Places,
     meta: { title: $gettext("Places"), auth: true },
   },
@@ -226,30 +266,30 @@ export default [
     path: "/states",
     component: Albums,
     meta: { title: $gettext("Places"), auth: true },
-    props: { view: "state", staticFilter: { type: "state", order: "place" } },
+    props: { view: "state", defaultOrder: "place", staticFilter: { type: "state" } },
   },
   {
     name: "state",
     path: "/states/:uid/:slug",
     component: AlbumPhotos,
-    meta: { title: $gettext("Places"), auth: true },
+    meta: { collName: "Places", collRoute: "states", auth: true },
   },
   {
     name: "files",
-    path: "/library/files*",
-    component: Files,
+    path: "/index/files*",
+    component: Browse,
     meta: { title: $gettext("File Browser"), auth: true },
   },
   {
     name: "hidden",
-    path: "/library/hidden",
+    path: "/hidden",
     component: Photos,
     meta: { title: $gettext("Hidden Files"), auth: true },
     props: { staticFilter: { hidden: "true" } },
   },
   {
     name: "errors",
-    path: "/library/errors",
+    path: "/errors",
     component: Errors,
     meta: { title: $gettext("Errors"), auth: true },
   },
@@ -271,7 +311,11 @@ export default [
         config.load().finally(() => {
           // Open new faces tab when there are no people.
           if (config.values.count.people === 0) {
-            next({ name: "people_faces" });
+            if (config.allow("people", "manage")) {
+              next({ name: "people_faces" });
+            } else {
+              next({ name: "albums" });
+            }
           } else {
             next();
           }
@@ -286,25 +330,25 @@ export default [
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
   },
   {
-    name: "library",
-    path: "/library",
+    name: "library_index",
+    path: "/index",
     component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
-    props: { tab: "library-index" },
+    props: { tab: "library_index" },
   },
   {
     name: "library_import",
-    path: "/library/import",
+    path: "/import",
     component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
-    props: { tab: "library-import" },
+    props: { tab: "library_import" },
   },
   {
     name: "library_logs",
-    path: "/library/logs",
+    path: "/logs",
     component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
-    props: { tab: "library-logs" },
+    props: { tab: "library_logs" },
   },
   {
     name: "settings",
@@ -319,40 +363,17 @@ export default [
     props: { tab: "settings-general" },
   },
   {
-    name: "settings_library",
-    path: "/settings/library",
+    name: "settings_media",
+    path: "/settings/media",
     component: Settings,
     meta: {
       title: $gettext("Settings"),
       auth: true,
+      admin: true,
       settings: true,
       background: "application-light",
     },
-    props: { tab: "settings-library" },
-  },
-  {
-    name: "settings_sync",
-    path: "/settings/sync",
-    component: Settings,
-    meta: {
-      title: $gettext("Settings"),
-      auth: true,
-      settings: true,
-      background: "application-light",
-    },
-    props: { tab: "settings-sync" },
-  },
-  {
-    name: "settings_account",
-    path: "/settings/account",
-    component: Settings,
-    meta: {
-      title: $gettext("Settings"),
-      auth: true,
-      settings: true,
-      background: "application-light",
-    },
-    props: { tab: "settings-account" },
+    props: { tab: "settings-media" },
   },
   {
     name: "settings_advanced",
@@ -366,6 +387,30 @@ export default [
       background: "application-light",
     },
     props: { tab: "settings-advanced" },
+  },
+  {
+    name: "settings_services",
+    path: "/settings/services",
+    component: Settings,
+    meta: {
+      title: $gettext("Settings"),
+      auth: true,
+      settings: true,
+      background: "application-light",
+    },
+    props: { tab: "settings-services" },
+  },
+  {
+    name: "settings_account",
+    path: "/settings/account",
+    component: Settings,
+    meta: {
+      title: $gettext("Settings"),
+      auth: true,
+      settings: true,
+      background: "application-light",
+    },
+    props: { tab: "settings-account" },
   },
   {
     name: "discover",
@@ -397,6 +442,6 @@ export default [
   },
   {
     path: "*",
-    redirect: "/browse",
+    redirect: "/albums",
   },
 ];

@@ -8,10 +8,13 @@ const ApiUri = "/api/v1"
 // StaticUri is the relative path for serving static content.
 const StaticUri = "/static"
 
+// CustomStaticUri is the relative path for serving custom static content.
+const CustomStaticUri = "/c/static"
+
 // MsgSponsor and MsgSignUp provide sponsorship info messages;
 // SignUpURL a signup link.
 const MsgSponsor = "PhotoPrism® needs your support!"
-const SignUpURL = "https://photoprism.app/membership"
+const SignUpURL = "https://www.photoprism.app/membership"
 const MsgSignUp = "Visit " + SignUpURL + " to learn more."
 const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
 	" we unfortunately can only offer it to sponsors."
@@ -40,5 +43,23 @@ const MinMem = Gigabyte
 // RecommendedMem is the recommended amount of system memory.
 const RecommendedMem = 3 * Gigabyte // 3,000,000,000 Bytes
 
+// DefaultResolutionLimit defines the default resolution limit.
+const DefaultResolutionLimit = 150 // 150 Megapixels
+
 // serialName is the name of the unique storage serial.
 const serialName = "serial"
+
+// UnixHour is one hour in UnixTime.
+const UnixHour int64 = 3600
+
+// UnixDay is one day in UnixTime.
+const UnixDay = UnixHour * 24
+
+// UnixWeek is one week in UnixTime.
+const UnixWeek = UnixDay * 7
+
+// DefaultSessionMaxAge is the default session expiration time in seconds.
+const DefaultSessionMaxAge = UnixWeek * 2
+
+// DefaultSessionTimeout is the default session timeout time in seconds.
+const DefaultSessionTimeout = UnixWeek

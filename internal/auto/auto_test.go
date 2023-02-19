@@ -4,19 +4,19 @@ import (
 	"os"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	c := config.NewTestConfig("auto")
+	c := config.TestConfig()
+	defer c.CloseDb()
 
 	code := m.Run()
-
-	_ = c.CloseDb()
 
 	os.Exit(code)
 }

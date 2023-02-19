@@ -73,7 +73,7 @@ func RawExif(fileName string, fileFormat fs.Type, bruteForce bool) (rawExif []by
 				parsed = true
 			}
 		}
-	case fs.ImageHEIF:
+	case fs.ImageHEIC:
 		heicMp := heicexif.NewHeicExifMediaParser()
 
 		cs, err := heicMp.ParseFile(fileName)

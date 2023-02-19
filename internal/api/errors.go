@@ -6,10 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -19,10 +18,9 @@ import (
 func GetErrors(router *gin.RouterGroup) {
 	router.GET("/errors", func(c *gin.Context) {
 		// Check authentication and authorization.
-		s := Auth(SessionID(c), acl.ResourceLogs, acl.ActionSearch)
+		s := Auth(c, acl.ResourceLogs, acl.ActionSearch)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 
@@ -48,7 +46,7 @@ func GetErrors(router *gin.RouterGroup) {
 // DELETE /api/v1/errors
 func DeleteErrors(router *gin.RouterGroup) {
 	router.DELETE("/errors", func(c *gin.Context) {
-		conf := service.Config()
+		conf := get.Config()
 
 		// Disabled in public mode so that attackers cannot cover their tracks.
 		if conf.Public() {
@@ -57,10 +55,9 @@ func DeleteErrors(router *gin.RouterGroup) {
 		}
 
 		// Check authentication and authorization.
-		s := Auth(SessionID(c), acl.ResourceLogs, acl.ActionDelete)
+		s := Auth(c, acl.ResourceLogs, acl.ActionDelete)
 
-		if s.Invalid() {
-			AbortUnauthorized(c)
+		if s.Abort(c) {
 			return
 		}
 

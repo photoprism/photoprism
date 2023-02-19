@@ -5,6 +5,7 @@ import "time"
 // Session represents backend api session data.
 type Session struct {
 	MapKey    string
+	Customer  string `json:",omitempty"`
 	ExpiresAt string
 }
 

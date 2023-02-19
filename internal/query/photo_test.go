@@ -88,7 +88,7 @@ func TestOrphanPhotos(t *testing.T) {
 	assert.IsType(t, entity.Photos{}, result)
 }
 
-//TODO How to verify?
+// TODO How to verify?
 func TestFixPrimaries(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		err := FixPrimaries()

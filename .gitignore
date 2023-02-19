@@ -1,10 +1,13 @@
 # Application files and directories
 /photoprism
+/photoprism-*
 /photos/originals/*
 /photos/import/*
 /storage/*
 /build/*
 /node_modules
+/pro
+/plus
 /frontend/.eslintcache
 /frontend/node_modules/*
 /frontend/tests/*.html
@@ -17,7 +20,9 @@
 /assets/static/build/
 /package-lock.json
 /frontend/tests_output
+/tmp/
 *.log
+*.pid
 *.db
 *.db-journal
 docker-compose.override.yml

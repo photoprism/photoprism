@@ -1,5 +1,3 @@
-ALTER TABLE accounts MODIFY acc_url VARCHAR(255);
-ALTER TABLE addresses MODIFY address_notes VARCHAR(1024);
 ALTER TABLE albums MODIFY album_caption VARCHAR(1024);
 ALTER TABLE albums MODIFY album_description VARCHAR(2048);
 ALTER TABLE albums MODIFY album_notes VARCHAR(1024);

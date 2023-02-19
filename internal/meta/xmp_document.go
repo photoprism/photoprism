@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // XmpDocument represents an XMP sidecar file.
@@ -259,7 +261,7 @@ func (doc *XmpDocument) LensModel() string {
 }
 
 // TakenAt returns the XMP document taken date.
-func (doc *XmpDocument) TakenAt() time.Time {
+func (doc *XmpDocument) TakenAt(timeZone string) time.Time {
 	taken := time.Time{} // Unknown
 
 	s := SanitizeString(doc.RDF.Description.DateCreated)
@@ -268,14 +270,8 @@ func (doc *XmpDocument) TakenAt() time.Time {
 		return taken
 	}
 
-	if t, err := time.Parse(time.RFC3339, s); err == nil {
-		taken = t
-	} else if t, err := time.Parse("2006-01-02T15:04:05.999999999", s); err == nil {
-		taken = t
-	} else if t, err := time.Parse("2006-01-02T15:04:05Z07:00", s); err == nil {
-		taken = t
-	} else if t, err := time.Parse("2006-01-02T15:04:05", s[:19]); err == nil {
-		taken = t
+	if dateTime := txt.DateTime(s, timeZone); !dateTime.IsZero() {
+		return dateTime
 	}
 
 	return taken

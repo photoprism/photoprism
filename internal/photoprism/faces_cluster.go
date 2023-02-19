@@ -14,7 +14,7 @@ import (
 // Cluster clusters indexed face embeddings.
 func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	if w.Disabled() {
-		return added, fmt.Errorf("facial recognition is disabled")
+		return added, fmt.Errorf("face recognition is disabled")
 	}
 
 	// Skip clustering if index contains no new face markers, and force option isn't set.

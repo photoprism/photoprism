@@ -73,13 +73,14 @@
 import Util from "common/util";
 
 export default {
-  name: 'PDialogWebdav',
+  name: 'PWebdavDialog',
   props: {
     show: Boolean,
   },
   data() {
     return {
       visible: false,
+      user: this.$session.getUser(),
     };
   },
   watch: {
@@ -111,14 +112,29 @@ export default {
       }
     },
     webdavUrl() {
-      return `${window.location.protocol}//admin@${window.location.host}/originals/`;
+      let baseUrl = `${window.location.protocol}//${encodeURIComponent(this.user.Name)}@${window.location.host}/originals/`;
+
+      if (this.user.BasePath) {
+        baseUrl = `${baseUrl}${this.user.BasePath}/`;
+      }
+
+      return baseUrl;
     },
     windowsUrl() {
+      let baseUrl = "";
+
       if (window.location.protocol === "https") {
-        return `\\\\${window.location.host}@SSL\\originals\\`;
+        baseUrl = `\\\\${window.location.host}@SSL\\originals\\`;
       } else {
-        return `\\\\${window.location.host}\\originals\\`;
+        baseUrl = `\\\\${window.location.host}\\originals\\`;
       }
+
+      if (this.user.BasePath) {
+        const basePath = this.user.BasePath.replace(/\//g, '\\');
+        baseUrl = `${baseUrl}${basePath}\\`;
+      }
+
+      return baseUrl;
     },
     windowsHelp(ev) {
       window.open('https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server', '_blank');

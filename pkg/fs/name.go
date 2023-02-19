@@ -21,7 +21,7 @@ func FileName(fileName, dirName, baseDir, fileExt string) string {
 		}
 	}
 
-	if err := os.MkdirAll(dirName, os.ModePerm); err != nil {
+	if err := os.MkdirAll(dirName, ModeDir); err != nil {
 		fmt.Println(err.Error())
 		return ""
 	}
@@ -56,18 +56,27 @@ func RelName(fileName, dir string) string {
 
 // FileNameHidden tests is a file name belongs to a hidden file.
 func FileNameHidden(name string) bool {
-	if name == "" {
+	if len(name) == 0 {
 		return false
 	}
 
 	name = filepath.Base(name)
 
-	prefix := name[0:1]
-
-	switch prefix {
+	// Hidden files and folders starting with "." or "@" should be ignored.
+	switch name[0:1] {
 	case ".", "@":
 		return true
-	default:
+	}
+
+	if len(name) == 1 {
 		return false
 	}
+
+	// File paths starting with _. and __ like __MACOSX should be ignored.
+	switch name[0:2] {
+	case "_.", "__":
+		return true
+	}
+
+	return false
 }

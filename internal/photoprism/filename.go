@@ -46,6 +46,11 @@ func CacheName(fileHash, namespace, cacheKey string) (cacheName string, err erro
 	return cacheName, nil
 }
 
+// ExifToolCacheName returns the ExifTool metadata cache file name.
+func ExifToolCacheName(hash string) (string, error) {
+	return CacheName(hash, "json", "exiftool.json")
+}
+
 // RelName returns the relative filename.
 func RelName(fileName, directory string) string {
 	return fs.RelName(fileName, directory)

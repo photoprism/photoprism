@@ -6,14 +6,21 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// FoldersByPath returns a slice of folders in a given directory incl sub directories in recursive mode.
+// FoldersByPath returns a slice of folders in a given directory incl subfolders in recursive mode.
 func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders entity.Folders, err error) {
 	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive, true)
 
+	// Failed?
 	if err != nil {
-		return folders, err
+		if len(dirs) == 0 {
+			return folders, err
+		} else {
+			// At least one folder found.
+			log.Infof("folders: %s", err)
+		}
 	}
 
 	folders = make(entity.Folders, len(dirs))
@@ -21,7 +28,7 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	for i, dir := range dirs {
 		newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), fs.BirthTime(filepath.Join(rootPath, dir)))
 
-		if err := newFolder.Create(); err == nil {
+		if err = newFolder.Create(); err == nil {
 			folders[i] = newFolder
 		} else if folder := entity.FindFolder(rootName, filepath.Join(path, dir)); folder != nil {
 			folders[i] = *folder
@@ -35,7 +42,7 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 
 // FolderCoverByUID returns a folder cover file based on the uid.
 func FolderCoverByUID(uid string) (file entity.File, err error) {
-	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
+	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
 		Joins("JOIN folders ON photos.photo_path = folders.path AND folders.folder_uid = ?", uid).
 		Order("photos.photo_quality DESC").
@@ -62,7 +69,7 @@ func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 	return folders, nil
 }
 
-// UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
+// UpdateFolderDates updates the year, month and day of the folder based on the indexed photo metadata.
 func UpdateFolderDates() error {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()

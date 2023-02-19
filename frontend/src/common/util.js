@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -153,12 +153,20 @@ export default class Util {
     return s.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
   }
 
+  static generateToken() {
+    return (Math.random() + 1).toString(36).substring(6);
+  }
+
   static fileType(value) {
     if (!value || typeof value !== "string") {
       return "";
     }
 
     switch (value) {
+      case "jpg":
+        return "JPEG";
+      case "jxl":
+        return "JPEG XL";
       case "raw":
         return "Unprocessed Sensor Data (RAW)";
       case "mov":
@@ -170,17 +178,27 @@ export default class Util {
         return "Portable Network Graphics";
       case "tiff":
         return "TIFF";
+      case "psd":
+        return "Adobe Photoshop";
       case "gif":
         return "GIF";
+      case "dng":
+        return "Adobe Digital Negative";
       case "avc":
       case "avc1":
         return "Advanced Video Coding (AVC) / H.264";
+      case "avif":
+        return "AOMedia Video 1 (AV1)";
       case "hevc":
       case "hvc":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
       case "mkv":
         return "Matroska Multimedia Container";
+      case "mts":
+        return "Advanced Video Coding High Definition (AVCHD)";
+      case "m2ts":
+        return "Blu-ray MPEG-2 Transport Stream";
       case "webp":
         return "Google WebP";
       case "webm":
@@ -196,6 +214,16 @@ export default class Util {
         return "Ogg Media";
       case "wmv":
         return "Windows Media";
+      case "svg":
+        return "Scalable Vector Graphics";
+      case "pdf":
+        return "Portable Document Format";
+      case "ai":
+        return "Adobe Illustrator";
+      case "ps":
+        return "Adobe PostScript";
+      case "eps":
+        return "Encapsulated PostScript";
       default:
         return value.toUpperCase();
     }
@@ -235,6 +263,8 @@ export default class Util {
         return "Moving Picture Experts Group (MPEG)";
       case "mjpg":
         return "Motion JPEG (M-JPEG)";
+      case "avif":
+        return "AV1 Image File Format (AVIF)";
       case "heif":
         return "High Efficiency Image File Format (HEIF)";
       case "heic":
@@ -249,6 +279,7 @@ export default class Util {
         return "T6/Group 4 Fax";
       case "5":
         return "LZW";
+      case "jpg":
       case "jpeg":
       case "6":
       case "7":

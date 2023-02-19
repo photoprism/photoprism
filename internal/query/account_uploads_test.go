@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccountUploads(t *testing.T) {
-	a := entity.Account{ID: 1, SyncRaw: false}
+	a := entity.Service{ID: 1, SyncRaw: false}
 
 	t.Run("find uploads", func(t *testing.T) {
 		results, err := AccountUploads(a, 10)

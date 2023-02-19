@@ -1,0 +1,143 @@
+
+          >> Running PhotoPrism on ARM64-based devices (64-bit) <<
+
+Our stable version and development preview have been built into a single multi-arch
+Docker image for 64-bit AMD, Intel, and ARM processors (Apple Silicon, Raspberry Pi 4):
+
+  Stable Release     : photoprism/photoprism:latest
+  Development Preview: photoprism/photoprism:preview
+
+In case the default multi-arch images cause problems, you can also use the following
+single-arch ARM64 images (updated and tested less frequently):
+
+  Stable Release     : photoprism/photoprism:arm64
+  Development Preview: photoprism/photoprism:preview-arm64
+  MariaDB            : arm64v8/mariadb:10.10
+
+If your device meets the system requirements, mostly the same installation instructions
+as for regular Linux servers apply:
+
+  https://docs.photoprism.app/getting-started/docker-compose/
+
+Existing users are advised to check their "docker-compose.yml" against our examples
+at <dl.photoprism.app/docker> from time to time in case there are new configuration
+options or other improvements. Update instructions can be found at the bottom of
+this README file.
+
+Note that Raspberry Pi OS (Raspbian) is a 32-bit user-space Linux with a 64-bit
+kernel to remain compatible with older Raspberry software. This requires special
+configuration to run modern 64-bit applications and Docker images (see below).
+
+If you do not have legacy software, we recommend choosing a standard 64-bit Linux
+distribution as it requires less experience:
+
+ > Raspberry Pi Debian: https://raspi.debian.net/
+ > Ubuntu for Raspberry Pi: https://ubuntu.com/raspberry-pi
+ > UbuntuDockerPi: https://github.com/guysoft/UbuntuDockerPi (Ubuntu incl. Docker pre-configured)
+
+Other distributions that target the same use case as Raspbian, such as CoreELEC,
+may have the same problems and should also not be used to run modern server
+applications.
+
+### Raspberry Pi OS ###
+
+To ensure compatibility with 64-bit Docker images, your Raspberry Pi 3 / 4 must
+boot with the "arm_64bit=1" flag in its "config.txt" file:
+
+  https://www.raspberrypi.org/documentation/installation/installing-images/README.md
+
+An "exec format" error will occur otherwise.
+
+Try explicitly pulling the ARM64 version if you've booted your device with the
+"arm_64bit=1" flag and you see the "no matching manifest" error on
+Raspberry Pi OS (Raspbian):
+
+  docker pull --platform=arm64 photoprism/photoprism:latest
+
+It may also help to set the DOCKER_DEFAULT_PLATFORM environment variable to
+"linux/arm64".
+
+### System Requirements ###
+
+- Your device should have at least 3 GB of physical memory and a 64-bit
+  operating system
+- While PhotoPrism has been reported to work on devices with less memory,
+  we take no responsibility for instability or performance problems
+- RAW image conversion and TensorFlow are disabled on systems with 1 GB
+  or less memory
+- Indexing large photo and video collections significantly benefits from
+  local SSD storage and plenty of memory for caching, especially the conversion
+  of RAW images and the transcoding of videos are very demanding
+- If less than 4 GB of swap space is configured or a manual memory/swap limit
+  is set, this can cause unexpected restarts, for example, when the indexer
+  temporarily needs more memory to process large files
+- High-resolution panoramic images may require additional swap space and/or
+  physical memory above the recommended minimum
+- We recommend disabling kernel security in your docker-compose.yml, especially
+  if you do not have experience with the configuration:
+  ```
+  photoprism:
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+  ```
+- If you install PhotoPrism on a public server outside your home network,
+  always run it behind a secure HTTPS reverse proxy such as Traefik or Caddy:
+  https://docs.photoprism.app/getting-started/proxies/traefik/
+
+### Troubleshooting ###
+
+If your server runs out of memory, the index is frequently locked, or other
+system resources are running low:
+
+- Try reducing the number of workers by setting PHOTOPRISM_WORKERS to a
+  reasonably small value in docker-compose.yml, depending on the performance
+  of your device or cloud server:
+
+  https://docs.photoprism.app/getting-started/config-options/
+
+- If you are using SQLite, switch to MariaDB, which is better optimized
+  for high concurrency
+
+- As a last measure, you can disable the use of TensorFlow for image
+  classification and face recognition
+
+Other issues? Our troubleshooting checklists help you quickly diagnose
+and solve them:
+
+  https://docs.photoprism.app/getting-started/troubleshooting/
+
+### Is a Raspberry Pi fast enough? ###
+
+This largely depends on your expectations and the number of files you have.
+Most users report that PhotoPrism runs smoothly on their Raspberry Pi 4.
+However, initial indexing typically takes much longer than on standard
+desktop computers.
+
+Also keep in mind that the hardware has limited video transcoding capabilities,
+so the conversion of video file formats is not well-supported and software
+transcoding is generally slow.
+
+### Getting Updates ###
+
+Open a terminal and change to the folder where the "docker-compose.yml" file
+was saved. Now run the following commands to download the most recent image
+from Docker Hub and restart your instance in the background:
+
+  docker compose pull --platform=arm64 photoprism
+  docker compose stop photoprism
+  docker compose up -d photoprism
+
+Pulling a new version can take several minutes, depending on your internet
+connection speed.
+
+Even when you use an image with the ":latest" tag, Docker does not automatically
+download new images for you. You can either manually upgrade as shown above, or
+set up a service like Watchtower to get automatic updates:
+
+  https://docs.photoprism.app/getting-started/updates/#watchtower
+
+### Credits ###
+
+A big thank you to Guy Sheffer (https://github.com/guysoft) for helping us
+build a Raspberry Pi version!

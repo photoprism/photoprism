@@ -245,7 +245,7 @@ func TestMarker_InvalidArea(t *testing.T) {
 	})
 }
 
-//TODO fails on mariadb
+// TODO fails on mariadb
 func TestMarker_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 100, 65)

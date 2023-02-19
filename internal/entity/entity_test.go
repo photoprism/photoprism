@@ -6,11 +6,14 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
+	event.AuditLog = log
 
 	db := InitTestDb(
 		os.Getenv("PHOTOPRISM_TEST_DRIVER"),

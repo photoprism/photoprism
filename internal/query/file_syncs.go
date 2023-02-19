@@ -9,7 +9,7 @@ func FileSyncs(accountId uint, status string, limit int) (result []entity.FileSy
 	s := Db().Where(&entity.FileSync{})
 
 	if accountId > 0 {
-		s = s.Where("account_id = ?", accountId)
+		s = s.Where("service_id = ?", accountId)
 	}
 
 	if status != "" {

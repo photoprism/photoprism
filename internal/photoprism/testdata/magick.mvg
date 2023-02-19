@@ -1,0 +1,150 @@
+push graphic-context
+  viewbox 0 0 624 369
+  affine 0.283636 0 0 0.283846 -0 -0
+  push graphic-context
+    push graphic-context
+      fill 'darkslateblue'
+      stroke 'blue'
+      stroke-width 1
+      rectangle 1,1 2199,1299
+    pop graphic-context
+    push graphic-context
+      font-size 40
+      fill 'white'
+      stroke-width 1
+      text 600,1100 'Average: 20.0'
+    pop graphic-context
+    push graphic-context
+      fill 'red'
+      stroke 'black'
+      stroke-width 5
+      path 'M700.0,600.0 L340.0,600.0 A360.0,360.0 0 0,1 408.1452123287954,389.2376150414973 z'
+    pop graphic-context
+    push graphic-context
+      font-size 40
+      fill 'white'
+      stroke-width 1
+      text 1400,140 'MagickWand for PHP'
+    pop graphic-context
+    push graphic-context
+      font-size 30
+      fill 'white'
+      stroke-width 1
+      text 1800,140 '(10.0%)'
+    pop graphic-context
+    push graphic-context
+      fill 'red'
+      stroke 'black'
+      stroke-width 4
+      rectangle 1330,100 1370,140
+    pop graphic-context
+    push graphic-context
+      fill 'yellow'
+      stroke 'black'
+      stroke-width 5
+      path 'M700.0,600.0 L408.1452123287954,389.2376150414973 A360.0,360.0 0 0,1 976.5894480359858,369.56936567559273 z'
+    pop graphic-context
+    push graphic-context
+      font-size 40
+      fill 'white'
+      stroke-width 1
+      text 1400,220 'MagickCore'
+    pop graphic-context
+    push graphic-context
+      font-size 30
+      fill 'white'
+      stroke-width 1
+      text 1800,220 '(29.0%)'
+    pop graphic-context
+    push graphic-context
+      fill 'yellow'
+      stroke 'black'
+      stroke-width 4
+      rectangle 1330,180 1370,220
+    pop graphic-context
+    push graphic-context
+      fill 'fuchsia'
+      stroke 'black'
+      stroke-width 5
+      path 'M700.0,600.0 L976.5894480359858,369.56936567559273 A360.0,360.0 0 0,1 964.2680466142854,844.4634932636567 z'
+    pop graphic-context
+    push graphic-context
+      font-size 40
+      fill 'white'
+      stroke-width 1
+      text 1400,300 'MagickWand'
+    pop graphic-context
+    push graphic-context
+      font-size 30
+      fill 'white'
+      stroke-width 1
+      text 1800,300 '(22.9%)'
+    pop graphic-context
+    push graphic-context
+      fill 'fuchsia'
+      stroke 'black'
+      stroke-width 4
+      rectangle 1330,260 1370,300
+    pop graphic-context
+    push graphic-context
+      fill 'blue'
+      stroke 'black'
+      stroke-width 5
+      path 'M700.0,600.0 L964.2680466142854,844.4634932636567 A360.0,360.0 0 0,1 757.853099990584,955.3210081341651 z'
+    pop graphic-context
+    push graphic-context
+      font-size 40
+      fill 'white'
+      stroke-width 1
+      text 1400,380 'JMagick'
+    pop graphic-context
+    push graphic-context
+      font-size 30
+      fill 'white'
+      stroke-width 1
+      text 1800,380 '(10.6%)'
+    pop graphic-context
+    push graphic-context
+      fill 'blue'
+      stroke 'black'
+      stroke-width 4
+      rectangle 1330,340 1370,380
+    pop graphic-context
+    push graphic-context
+      fill 'lime'
+      stroke 'black'
+      stroke-width 5
+      path 'M700.0,600.0 L757.853099990584,955.3210081341651 A360.0,360.0 0 0,1 340.0,600.0 z'
+    pop graphic-context
+    push graphic-context
+      font-size 40
+      fill 'white'
+      stroke-width 1
+      text 1400,460 'Magick++'
+    pop graphic-context
+    push graphic-context
+      font-size 30
+      fill 'white'
+      stroke-width 1
+      text 1800,460 '(27.5%)'
+    pop graphic-context
+    push graphic-context
+      fill 'lime'
+      stroke 'black'
+      stroke-width 4
+      rectangle 1330,420 1370,460
+    pop graphic-context
+    push graphic-context
+      font-size 100
+      fill 'white'
+      stroke-width 1
+      text 100,150 'ImageMagick'
+    pop graphic-context
+    push graphic-context
+      fill 'none'
+      stroke 'black'
+      stroke-width 5
+      circle 700,600 700,960
+    pop graphic-context
+  pop graphic-context
+pop graphic-context

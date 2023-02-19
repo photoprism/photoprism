@@ -27,7 +27,7 @@ func (r *FacesMatchResult) Add(result FacesMatchResult) {
 // Match matches markers with faces and subjects.
 func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	if w.Disabled() {
-		return result, fmt.Errorf("facial recognition is disabled")
+		return result, fmt.Errorf("face recognition is disabled")
 	}
 
 	var unmatchedMarkers int

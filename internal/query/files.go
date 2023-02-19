@@ -5,9 +5,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // FilesByPath returns a slice of files in a given originals folder.
@@ -78,7 +77,7 @@ func VideoByPhotoUID(photoUID string) (*entity.File, error) {
 		return &f, fmt.Errorf("photo uid required")
 	}
 
-	err := Db().Where("photo_uid = ? AND (file_video = 1 OR file_type = ?)", photoUID, fs.ImageGIF).
+	err := Db().Where("photo_uid = ? AND (file_video = 1 OR file_frames > 0 OR file_type = 'gif')", photoUID).
 		Order("file_video DESC, file_duration DESC, file_frames DESC").
 		Preload("Photo").First(&f).Error
 	return &f, err
@@ -128,7 +127,7 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 
 	if fileUID != "" {
 		// Do nothing.
-	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", photoUID).Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
+	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type IN (?)", photoUID, media.PreviewExpr).Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
 		return fmt.Errorf("cannot find primary file for %s", photoUID)

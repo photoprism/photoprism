@@ -1,0 +1,382 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: none\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.15.2\n"
+
+#: messages.go:94
+msgid "Something went wrong, try again"
+msgstr "Jokin meni pieleen, yritä uudelleen"
+
+#: messages.go:95
+msgid "Unable to do that"
+msgstr "Se ei onnistu"
+
+#: messages.go:96
+msgid "Changes could not be saved"
+msgstr "Muutoksia ei voitu tallentaa"
+
+#: messages.go:97
+msgid "Could not be deleted"
+msgstr "Ei voitu poistaa"
+
+#: messages.go:98
+#, c-format
+msgid "%s already exists"
+msgstr "%s on jo olemassa"
+
+#: messages.go:99
+msgid "Not found"
+msgstr "Ei löytynyt"
+
+#: messages.go:100
+msgid "File not found"
+msgstr "Tiedostoa ei löydy"
+
+#: messages.go:101
+msgid "File too large"
+msgstr "Tiedosto liian suuri"
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr "Ei tuettu muoto"
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr "Originaalit-kansio on tyhjä"
+
+#: messages.go:104
+msgid "Selection not found"
+msgstr "Valintaa ei löydy"
+
+#: messages.go:105
+msgid "Entity not found"
+msgstr "Entiteettiä ei löydy"
+
+#: messages.go:106
+msgid "Account not found"
+msgstr "Tiliä ei löydy"
+
+#: messages.go:107
+msgid "User not found"
+msgstr "Käyttäjää ei löydy"
+
+#: messages.go:108
+msgid "Label not found"
+msgstr "Tarraa ei löydy"
+
+#: messages.go:109
+msgid "Album not found"
+msgstr "Albumia ei löydy"
+
+#: messages.go:110
+msgid "Subject not found"
+msgstr "Aihetta ei löydy"
+
+#: messages.go:111
+msgid "Person not found"
+msgstr "Henkilöä ei löydy"
+
+#: messages.go:112
+msgid "Face not found"
+msgstr "Kasvoja ei löydy"
+
+#: messages.go:113
+msgid "Not available in public mode"
+msgstr "Ei käytettävissä julkisessa tilassa"
+
+#: messages.go:114
+msgid "Not available in read-only mode"
+msgstr "Ei käytettävissä vain luku-tilassa"
+
+#: messages.go:115
+msgid "Please log in to your account"
+msgstr "Kirjaudu sisään tilillesi"
+
+#: messages.go:116
+msgid "Permission denied"
+msgstr "Lupa evätty"
+
+#: messages.go:117
+msgid "Upload might be offensive"
+msgstr "Upload saattaa olla loukkaava"
+
+#: messages.go:118
+msgid "Upload failed"
+msgstr "Lataus epäonnistui"
+
+#: messages.go:119
+msgid "No items selected"
+msgstr "Kohdetta ei ole valittu"
+
+#: messages.go:120
+msgid "Failed creating file, please check permissions"
+msgstr "Tiedoston luominen epäonnistui, tarkista käyttöoikeudet"
+
+#: messages.go:121
+msgid "Failed creating folder, please check permissions"
+msgstr "Kansion luominen epäonnistui, tarkista käyttöoikeudet"
+
+#: messages.go:122
+msgid "Could not connect, please try again"
+msgstr "Yhteyttä ei saatu muodostettua, yritä uudelleen"
+
+#: messages.go:123
+msgid "Invalid password, please try again"
+msgstr "Väärä salasana, yritä uudelleen"
+
+#: messages.go:124
+msgid "Feature disabled"
+msgstr "Ominaisuus poistettu käytöstä"
+
+#: messages.go:125
+msgid "No labels selected"
+msgstr "Ei valittuja tarroja"
+
+#: messages.go:126
+msgid "No albums selected"
+msgstr "Ei valittuja albumeita"
+
+#: messages.go:127
+msgid "No files available for download"
+msgstr "Tiedostoja ei ole ladattavissa"
+
+#: messages.go:128
+msgid "Failed to create zip file"
+msgstr "Zip-tiedoston luominen epäonnistui"
+
+#: messages.go:129
+msgid "Invalid credentials"
+msgstr "Virheelliset valtakirjat"
+
+#: messages.go:130
+msgid "Invalid link"
+msgstr "Virheellinen linkki"
+
+#: messages.go:131
+msgid "Invalid name"
+msgstr "Virheellinen nimi"
+
+#: messages.go:132
+msgid "Busy, please try again later"
+msgstr "Varattu, yritä myöhemmin uudelleen"
+
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "Heräämisväli on %s, mutta sen on oltava enintään 1h"
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr "Tiliäsi ei voitu yhdistää"
+
+#: messages.go:137
+msgid "Changes successfully saved"
+msgstr "Muutokset tallennettu onnistuneesti"
+
+#: messages.go:138
+msgid "Album created"
+msgstr "Albumi luotu"
+
+#: messages.go:139
+msgid "Album saved"
+msgstr "Albumi tallennettu"
+
+#: messages.go:140
+#, c-format
+msgid "Album %s deleted"
+msgstr "Albumi %s poistettu"
+
+#: messages.go:141
+msgid "Album contents cloned"
+msgstr "Albumin sisältö kloonattu"
+
+#: messages.go:142
+msgid "File removed from stack"
+msgstr "Tiedosto poistettu pinosta"
+
+#: messages.go:143
+msgid "File deleted"
+msgstr "Tiedosto poistettu"
+
+#: messages.go:144
+#, c-format
+msgid "Selection added to %s"
+msgstr "Valinta lisätty %s"
+
+#: messages.go:145
+#, c-format
+msgid "One entry added to %s"
+msgstr "Yksi merkintä lisätty kohtaan %s"
+
+#: messages.go:146
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d merkintöjä lisätty %s"
+
+#: messages.go:147
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Yksi merkintä poistettu kohdasta %s"
+
+#: messages.go:148
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d merkinnät poistettu %s"
+
+#: messages.go:149
+msgid "Account created"
+msgstr "Tili luotu"
+
+#: messages.go:150
+msgid "Account saved"
+msgstr "Tallennettu tili"
+
+#: messages.go:151
+msgid "Account deleted"
+msgstr "Tili poistettu"
+
+#: messages.go:152
+msgid "Settings saved"
+msgstr "Asetukset tallennettu"
+
+#: messages.go:153
+msgid "Password changed"
+msgstr "Salasana vaihdettu"
+
+#: messages.go:154
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Tuonti valmis %d s"
+
+#: messages.go:155
+msgid "Import canceled"
+msgstr "Tuonti peruutettu"
+
+#: messages.go:156
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Indeksointi valmis %d s"
+
+#: messages.go:157
+msgid "Indexing originals..."
+msgstr "Alkuperäiskappaleiden indeksointi..."
+
+#: messages.go:158
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Tiedostojen indeksointi osoitteessa %s"
+
+#: messages.go:159
+msgid "Indexing canceled"
+msgstr "Indeksointi peruutettu"
+
+#: messages.go:160
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "Poistettiin %d tiedostoa ja %d valokuvaa"
+
+#: messages.go:161
+#, c-format
+msgid "Moving files from %s"
+msgstr "Tiedostojen siirtäminen %s"
+
+#: messages.go:162
+#, c-format
+msgid "Copying files from %s"
+msgstr "Tiedostojen kopiointi %s"
+
+#: messages.go:163
+msgid "Labels deleted"
+msgstr "Tunnisteet poistettu"
+
+#: messages.go:164
+msgid "Label saved"
+msgstr "Tarra tallennettu"
+
+#: messages.go:165
+msgid "Subject saved"
+msgstr "Aihe tallennettu"
+
+#: messages.go:166
+msgid "Subject deleted"
+msgstr "Aihe poistettu"
+
+#: messages.go:167
+msgid "Person saved"
+msgstr "Tallennettu henkilö"
+
+#: messages.go:168
+msgid "Person deleted"
+msgstr "Henkilö poistettu"
+
+#: messages.go:169
+msgid "File uploaded"
+msgstr "Ladattu tiedosto"
+
+#: messages.go:170
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d tiedostoa ladattu %d s aikana"
+
+#: messages.go:171
+msgid "Processing upload..."
+msgstr "Käsittelen latausta..."
+
+#: messages.go:172
+msgid "Upload has been processed"
+msgstr "Lataus on käsitelty"
+
+#: messages.go:173
+msgid "Selection approved"
+msgstr "Valinta hyväksytty"
+
+#: messages.go:174
+msgid "Selection archived"
+msgstr "Valinta arkistoitu"
+
+#: messages.go:175
+msgid "Selection restored"
+msgstr "Valinta palautettu"
+
+#: messages.go:176
+msgid "Selection marked as private"
+msgstr "Valinta merkitty yksityiseksi"
+
+#: messages.go:177
+msgid "Albums deleted"
+msgstr "Albumit poistettu"
+
+#: messages.go:178
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip luotu %d s"
+
+#: messages.go:179
+msgid "Permanently deleted"
+msgstr "Poistettu pysyvästi"
+
+#: messages.go:180
+#, c-format
+msgid "%s has been restored"
+msgstr "%s on palautettu"
+
+#~ msgid "Invalid request"
+#~ msgstr "Virheellinen pyyntö"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Odottamaton virhe, yritä uudelleen"

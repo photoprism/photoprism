@@ -1,24 +1,41 @@
 ##################################################### BUILD STAGE ######################################################
 FROM photoprism/develop:bookworm as build
 
+# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://www.photoprism.app/
+
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set up project directory
+# Copy source to image.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
-# build and install dist files for prod env
+# Build app.
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Debian 12, Codename "Bookworm"
+#### Base Image: Debian 12 (Bookworm)
 FROM photoprism/develop:bookworm-slim
 
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism® Community Edition (Debian 12)"
+LABEL org.opencontainers.image.description="Debian 12 (Bookworm)"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
+LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
+
+# Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
 
-# set environment variables, see https://docs.photoprism.app/getting-started/config-options/
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
@@ -39,7 +56,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_UPLOAD_NSFW="true" \
     PHOTOPRISM_DETECT_NSFW="false" \
     PHOTOPRISM_EXPERIMENTAL="false" \
-    PHOTOPRISM_SITE_URL="http://localhost:2342/" \
+    PHOTOPRISM_SITE_URL="http://photoprism.me:2342/" \
     PHOTOPRISM_SITE_CAPTION="AI-Powered Photos App" \
     PHOTOPRISM_SITE_DESCRIPTION="" \
     PHOTOPRISM_SITE_AUTHOR="" \
@@ -71,28 +88,25 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
-# copy scripts
-COPY --chown=root:root --chmod=755 /scripts/dist/* /scripts/
+# Copy scripts.
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 
-# update pre-installed packages if needed
+# Update pre-installed packages.
 RUN apt-get update && \
-    apt-get -qq dist-upgrade && \
+    apt-get -qq upgrade && \
     /scripts/cleanup.sh
 
-# define default directory and user
+# Default working directory.
 WORKDIR /photoprism
 
-# expose default http port 2342
-EXPOSE 2342
+# Expose HTTP(S) ports.
+EXPOSE 2342 2443
 
 # copy dist files
-COPY --from=build /opt/photoprism/ /opt/photoprism
-RUN mv /opt/photoprism/sbin/gosu /usr/local/sbin/gosu && \
-    chown root:root /usr/local/sbin/gosu && \
-    chmod 755 /usr/local/sbin/gosu
+COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
 
-# set container entrypoint script
+# Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]
 
-# start app server
+# Start app.
 CMD ["/opt/photoprism/bin/photoprism", "start"]

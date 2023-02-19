@@ -9,13 +9,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/projection"
-
-	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
 	"gopkg.in/photoprism/go-tz.v2/tz"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/projection"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/video"
 )
 
 const MimeVideoMP4 = "video/mp4"
@@ -31,19 +32,27 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	j := gjson.GetBytes(jsonData, "@flatten|@join")
 
-	if !j.IsObject() {
-		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", clean.Log(filepath.Base(originalName)))
+	logName := "json file"
+
+	if originalName != "" {
+		logName = clean.Log(filepath.Base(originalName))
 	}
 
-	jsonStrings := make(map[string]string)
+	if !j.IsObject() {
+		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", logName)
+	}
+
+	data.json = make(map[string]string)
 	jsonValues := j.Map()
 
 	for key, val := range jsonValues {
-		jsonStrings[key] = val.String()
+		data.json[key] = val.String()
 	}
 
-	if fileName, ok := jsonStrings["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
+	if fileName, ok := data.json["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
 		return fmt.Errorf("metadata: original name %s does not match %s (exiftool)", clean.Log(originalName), clean.Log(fileName))
+	} else if fileName != "" && originalName == "" {
+		logName = clean.Log(filepath.Base(fileName))
 	}
 
 	v := reflect.ValueOf(data).Elem()
@@ -63,6 +72,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 			for _, tagValue = range tagValues {
 				if r, ok := jsonValues[tagValue]; !ok {
+					continue
+				} else if txt.Empty(r.String()) {
 					continue
 				} else {
 					jsonValue = r
@@ -95,33 +106,49 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					continue
 				}
 
-				fieldValue.SetInt(jsonValue.Int())
+				if intVal := jsonValue.Int(); intVal != 0 {
+					fieldValue.SetInt(intVal)
+				} else if intVal = txt.Int64(jsonValue.String()); intVal != 0 {
+					fieldValue.SetInt(intVal)
+				}
 			case float32, float64:
 				if !fieldValue.IsZero() {
 					continue
 				}
 
-				fieldValue.SetFloat(jsonValue.Float())
+				if f := jsonValue.Float(); f != 0 {
+					fieldValue.SetFloat(f)
+				} else if f = txt.Float64(jsonValue.String()); f != 0 {
+					fieldValue.SetFloat(f)
+				}
 			case uint, uint64:
 				if !fieldValue.IsZero() {
 					continue
 				}
 
-				fieldValue.SetUint(jsonValue.Uint())
+				if uintVal := jsonValue.Uint(); uintVal > 0 {
+					fieldValue.SetUint(uintVal)
+				} else if intVal := txt.Int64(jsonValue.String()); intVal > 0 {
+					fieldValue.SetUint(uint64(intVal))
+				}
 			case []string:
 				existing := fieldValue.Interface().([]string)
-				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeUnicode(jsonValue.String()))))
 			case Keywords:
 				existing := fieldValue.Interface().(Keywords)
-				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeUnicode(jsonValue.String()))))
 			case projection.Type:
-				fieldValue.Set(reflect.ValueOf(projection.Type(strings.TrimSpace(jsonValue.String()))))
+				if !fieldValue.IsZero() {
+					continue
+				}
+
+				fieldValue.Set(reflect.ValueOf(projection.Type(SanitizeUnicode(jsonValue.String()))))
 			case string:
 				if !fieldValue.IsZero() {
 					continue
 				}
 
-				fieldValue.SetString(strings.TrimSpace(jsonValue.String()))
+				fieldValue.SetString(SanitizeUnicode(jsonValue.String()))
 			case bool:
 				if !fieldValue.IsZero() {
 					continue
@@ -137,7 +164,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	// Nanoseconds.
 	if data.TakenNs <= 0 {
 		for _, name := range exifSubSecTags {
-			if s := jsonStrings[name]; txt.IsPosInt(s) {
+			if s := data.json[name]; txt.IsPosInt(s) {
 				data.TakenNs = txt.Int(s + strings.Repeat("0", 9-len(s)))
 				break
 			}
@@ -147,36 +174,53 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	// Set latitude and longitude if known and not already set.
 	if data.Lat == 0 && data.Lng == 0 {
 		if data.GPSPosition != "" {
-			data.Lat, data.Lng = GpsToLatLng(data.GPSPosition)
+			lat, lng := GpsToLatLng(data.GPSPosition)
+			data.Lat, data.Lng = NormalizeGPS(lat, lng)
 		} else if data.GPSLatitude != "" && data.GPSLongitude != "" {
-			data.Lat = GpsToDecimal(data.GPSLatitude)
-			data.Lng = GpsToDecimal(data.GPSLongitude)
+			data.Lat, data.Lng = NormalizeGPS(GpsToDecimal(data.GPSLatitude), GpsToDecimal(data.GPSLongitude))
 		}
 	}
 
 	if data.Altitude == 0 {
 		// Parseable floating point number?
-		if fl := GpsFloatRegexp.FindAllString(jsonStrings["GPSAltitude"], -1); len(fl) != 1 {
+		if fl := GpsFloatRegexp.FindAllString(data.json["GPSAltitude"], -1); len(fl) != 1 {
 			// Ignore.
 		} else if alt, err := strconv.ParseFloat(fl[0], 64); err == nil && alt != 0 {
-			data.Altitude = int(alt)
+			data.Altitude = alt
 		}
 	}
 
 	hasTimeOffset := false
 
-	// Fallback to GPS timestamp.
+	// Has Media Create Date?
+	if !data.CreatedAt.IsZero() {
+		data.TakenAt = data.CreatedAt
+	}
+
+	// Fallback to GPS UTC Time?
 	if data.TakenAt.IsZero() && data.TakenAtLocal.IsZero() && !data.TakenGps.IsZero() {
 		data.TimeZone = time.UTC.String()
 		data.TakenAt = data.TakenGps.UTC()
 		data.TakenAtLocal = time.Time{}
 	}
 
+	// Check plausibility of the local <> UTC time difference.
+	if !data.TakenAt.IsZero() && !data.TakenAtLocal.IsZero() {
+		if d := data.TakenAt.Sub(data.TakenAtLocal).Abs(); d > time.Hour*27 {
+			log.Infof("metadata: %s has an invalid local time offset (%s)", logName, d.String())
+			log.Debugf("metadata: %s was taken at %s, local time %s, create time %s, time zone %s", logName, clean.Log(data.TakenAt.UTC().String()), clean.Log(data.TakenAtLocal.String()), clean.Log(data.CreatedAt.String()), clean.Log(data.TimeZone))
+			data.TakenAtLocal = data.TakenAt
+			data.TakenAt = data.TakenAt.UTC()
+		}
+	}
+
+	// Has time zone offset?
 	if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
 		hasTimeOffset = true
-	} else if mt, ok := jsonStrings["MIMEType"]; ok && (mt == MimeVideoMP4 || mt == MimeQuicktime) {
+	} else if mt, ok := data.json["MIMEType"]; ok && data.TakenAtLocal.IsZero() && (mt == MimeVideoMP4 || mt == MimeQuicktime) {
 		// Assume default time zone for MP4 & Quicktime videos is UTC.
 		// see https://exiftool.org/TagNames/QuickTime.html
+		log.Debugf("metadata: %s uses utc by default (%s)", logName, clean.Log(mt))
 		data.TimeZone = time.UTC.String()
 		data.TakenAt = data.TakenAt.UTC()
 		data.TakenAtLocal = time.Time{}
@@ -241,7 +285,19 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
-	if orientation, ok := jsonStrings["Orientation"]; ok && orientation != "" {
+	// Use actual image width and height if available, see issue #2447.
+	if jsonValues["ImageWidth"].Exists() && jsonValues["ImageHeight"].Exists() {
+		if val := jsonValues["ImageWidth"].Int(); val > 0 {
+			data.Width = int(val)
+		}
+
+		if val := jsonValues["ImageHeight"].Int(); val > 0 {
+			data.Height = int(val)
+		}
+	}
+
+	// Image orientation, see https://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/.
+	if orientation, ok := data.json["Orientation"]; ok && orientation != "" {
 		switch orientation {
 		case "1", "Horizontal (normal)":
 			data.Orientation = 1
@@ -276,10 +332,14 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
-	// Normalize compression information.
+	// Normalize codec name.
 	data.Codec = strings.ToLower(data.Codec)
-	if strings.Contains(data.Codec, CodecJpeg) {
+	if strings.Contains(data.Codec, CodecJpeg) { // JPEG Image?
 		data.Codec = CodecJpeg
+	} else if c, ok := video.Codecs[data.Codec]; ok { // Video codec?
+		data.Codec = string(c)
+	} else if strings.HasPrefix(data.Codec, "a_") { // Audio codec?
+		data.Codec = ""
 	}
 
 	// Validate and normalize optional DocumentID.

@@ -23,7 +23,7 @@ func TestFaces_IDs(t *testing.T) {
 }
 
 func TestDeleteOrphanFaces(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		if count, err := DeleteOrphanFaces(); err != nil {
 			t.Fatal(err)
 		} else {

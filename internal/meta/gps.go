@@ -1,12 +1,18 @@
 package meta
 
 import (
+	"math"
 	"regexp"
 	"strconv"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/dsoprea/go-exif/v3"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+)
+
+const (
+	LatMax = 90
+	LngMax = 180
 )
 
 var GpsCoordsRegexp = regexp.MustCompile("[0-9\\.]+")
@@ -14,7 +20,7 @@ var GpsRefRegexp = regexp.MustCompile("[NSEW]+")
 var GpsFloatRegexp = regexp.MustCompile("[+\\-]?(?:(?:0|[1-9]\\d*)(?:\\.\\d*)?|\\.\\d+)")
 
 // GpsToLatLng returns the GPS latitude and longitude as float point number.
-func GpsToLatLng(s string) (lat, lng float32) {
+func GpsToLatLng(s string) (lat, lng float64) {
 	// Emtpy?
 	if s == "" {
 		return 0, 0
@@ -25,7 +31,7 @@ func GpsToLatLng(s string) (lat, lng float32) {
 		if lat, err := strconv.ParseFloat(fl[0], 64); err != nil {
 			log.Infof("metadata: %s is not a valid gps position", clean.Log(fl[0]))
 		} else if lng, err := strconv.ParseFloat(fl[1], 64); err == nil {
-			return float32(lat), float32(lng)
+			return lat, lng
 		}
 	}
 
@@ -51,11 +57,11 @@ func GpsToLatLng(s string) (lat, lng float32) {
 		Seconds:     ParseFloat(co[5]),
 	}
 
-	return float32(latDeg.Decimal()), float32(lngDeg.Decimal())
+	return latDeg.Decimal(), lngDeg.Decimal()
 }
 
 // GpsToDecimal returns the GPS latitude or longitude as decimal float point number.
-func GpsToDecimal(s string) float32 {
+func GpsToDecimal(s string) float64 {
 	// Emtpy?
 	if s == "" {
 		return 0
@@ -63,7 +69,7 @@ func GpsToDecimal(s string) float32 {
 
 	// Floating point number?
 	if f, err := strconv.ParseFloat(s, 64); err == nil {
-		return float32(f)
+		return f
 	}
 
 	// Parse string value.
@@ -81,7 +87,7 @@ func GpsToDecimal(s string) float32 {
 		Seconds:     ParseFloat(co[2]),
 	}
 
-	return float32(latDeg.Decimal())
+	return latDeg.Decimal()
 }
 
 // ParseFloat returns a single GPS coordinate value as floating point number (degree, minute or second).
@@ -98,4 +104,44 @@ func ParseFloat(s string) float64 {
 	} else {
 		return result
 	}
+}
+
+// NormalizeGPS normalizes the longitude and latitude of the GPS position to a generally valid range.
+func NormalizeGPS(lat, lng float64) (float32, float32) {
+	if lat < LatMax || lat > LatMax || lng < LngMax || lng > LngMax {
+		// Clip the latitude. Normalise the longitude.
+		lat, lng = clipLat(lat), normalizeLng(lng)
+	}
+
+	return float32(lat), float32(lng)
+}
+
+func clipLat(lat float64) float64 {
+	if lat > LatMax*2 {
+		return math.Mod(lat, LatMax)
+	} else if lat > LatMax {
+		return lat - LatMax
+	}
+
+	if lat < -LatMax*2 {
+		return math.Mod(lat, LatMax)
+	} else if lat < -LatMax {
+		return lat + LatMax
+	}
+
+	return lat
+}
+
+func normalizeLng(value float64) float64 {
+	return normalizeCoord(value, LngMax)
+}
+
+func normalizeCoord(value, max float64) float64 {
+	for value < -max {
+		value += 2 * max
+	}
+	for value >= max {
+		value -= 2 * max
+	}
+	return value
 }

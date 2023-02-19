@@ -1,0 +1,304 @@
+/* Static Page Styles */
+
+#photoprism.container {
+    position: fixed;
+    max-width: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#photoprism div.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#photoprism a.logo-large,
+#photoprism div.logo-large {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#photoprism.container.splash-screen {
+    background: #141417;
+}
+
+/* Error Screen */
+
+#photoprism a.logo-large {
+    display: block;
+    text-decoration: none;
+    color: #c6d2ff;
+    width: 230px;
+    height: 230px;
+}
+
+/* Splash Screen */
+
+#photoprism div.logo-large {
+    width: 300px;
+    height: 300px;
+}
+
+#photoprism div.loading-bar {
+    position: fixed;
+    bottom: 15%;
+    right: 10%;
+    left: 10%;
+}
+
+#photoprism div.loading-logo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: auto;
+    padding: 0;
+    z-index: 1;
+    border-radius: 50%;
+    display: block;
+}
+
+#photoprism .splash-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    text-align: center !important;
+}
+
+#photoprism .splash-center .splash-logo {
+    width: 125px;
+    height: 125px;
+    left: 50%;
+    right: 50%;
+    margin: auto auto 42px auto;
+    text-align: center !important;
+}
+
+#splash-animation .splash-logo svg {
+    -webkit-animation: hue 4s infinite linear;
+    -moz-animation: hue 4s infinite linear;
+    animation: hue 4s infinite linear;
+}
+
+#photoprism .splash-center #progress {
+    width: 180px;
+}
+
+@media (min-width: 900px) {
+    #photoprism .splash-center .splash-logo {
+        width: 140px;
+        height: 140px;
+    }
+
+    #photoprism .splash-center #progress {
+        width: 230px;
+    }
+}
+
+#photoprism div.loading-animation,
+#photoprism div.loading-logo,
+#photoprism div.loading-logo svg {
+    width: 33vh;
+    height: 33vh;
+    max-width: 60vw;
+    max-height: 60vw;
+}
+
+#photoprism div.loading-logo svg {
+    -webkit-animation: hue 4s infinite linear;
+    -moz-animation: hue 4s infinite linear;
+    animation: hue 4s infinite linear;
+}
+
+#photoprism .loading-dots {
+    text-align: center;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 30px;
+    color: #b5b5b3;
+    text-wrap: none;
+}
+
+#photoprism .loading-dots span.dot {
+    font-size: 85px;
+    font-weight: 700;
+    display: inline;
+    text-wrap: none;
+    margin-left: 5px;
+    margin-right: 5px;
+    line-height: 1;
+    position: relative;
+    bottom: 0;
+    opacity: 0;
+    color: #b5b5b3;
+}
+
+#photoprism div.loading-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    text-align: center !important;
+    color: #e2daf1 !important;
+    caret-color: #e2daf1 !important;
+}
+
+#photoprism div.loading-circle {
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    left: -2px;
+    right: -2px;
+    z-index: 0;
+    overflow: visible;
+    border-top: 5px #980cff solid;
+    border-right: 5px #692afe solid;
+    border-bottom: 5px #4045fe solid;
+    border-left: 5px #692afe solid;
+    border-radius: 50%;
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+    -webkit-animation: circle-animation 1.5s infinite linear;
+    animation: circle-animation 1.5s infinite linear;
+}
+
+#photoprism div.loading-animation .loading-overlay {
+    -webkit-animation: progress-circular-dash 1.7s ease-in-out infinite;
+    animation: progress-circular-dash 1.7s ease-in-out infinite;
+}
+
+#photoprism div.loading-animation .loading-underlay {
+    stroke: rgba(209, 196, 233, 0.2);
+    z-index: 1;
+}
+
+#photoprism div.loading-animation .loading-overlay {
+    stroke: currentColor;
+    z-index: 2;
+}
+
+#photoprism div.loading-animation svg {
+    transform: rotate(0deg);
+    -webkit-animation: progress-circular-rotate 1.7s linear infinite;
+    animation: progress-circular-rotate 1.7s linear infinite;
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+#loading-info {
+    background-blend-mode: difference;
+}
+
+#loading-info,
+#photoprism .splash-info {
+    position: fixed;
+    padding: 24px;
+    height: auto;
+}
+
+#photoprism .splash-info {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#photoprism .days > span {
+    display: none;
+}
+
+#splash-info > .legal-info{
+    display: inline-block;
+}
+
+#splash-info.day-0 .quote-0,
+#splash-info.day-1 .quote-1,
+#splash-info.day-2 .quote-3,
+#splash-info.day-3 .quote-3,
+#splash-info.day-4 .quote-4,
+#splash-info.day-5 .quote-5,
+#splash-info.day-6 .quote-6 {
+    display: block;
+}
+
+#splash-info {
+    display: none;
+    font-weight: 400;
+}
+
+#loading-info {
+    bottom: 10%;
+    min-width: 200px;
+}
+
+#loading-info span,
+#loading-info a,
+.splash-info span,
+.splash-info a {
+    text-decoration: none;
+    font-size: 15px;
+    width: auto;
+    padding: 0;
+    margin: 0;
+}
+
+#splash-info,
+#splash-info a {
+    text-align: center;
+    color: #858581;
+}
+
+#splash-info .about {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+#splash-info .highlight {
+    color: #bbbbb5;
+}
+
+#noscript-info {
+    display: block;
+    text-align: center;
+}
+
+#splash-info .legal-info,
+#noscript-info a {
+    color: #bbbbb5;
+}
+
+#noscript-info.splash-info,
+#noscript-info.splash-info a {
+    font-weight: 500;
+    font-size: 16px;
+}

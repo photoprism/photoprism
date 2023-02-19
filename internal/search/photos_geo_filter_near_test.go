@@ -13,6 +13,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "pt9jtdre2lvl0y24"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -24,6 +25,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "pr2xu7myk7wrbk30"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -52,6 +54,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "sale%"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -63,6 +66,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "&IlikeFood"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -74,6 +78,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Pets & Dogs"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -85,6 +90,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Light&"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -96,6 +102,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "'Family"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -107,6 +114,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Father's type"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -119,6 +127,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Ice Cream'"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -130,6 +139,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "*Forrest"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -141,6 +151,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "My*Kids"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -152,6 +163,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Yoga***"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -163,6 +175,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "|Banana"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -174,6 +187,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Red|Green"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -186,6 +200,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Blue|"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -198,6 +213,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "345 Shirt"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -209,6 +225,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "type555 Blue"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -220,6 +237,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "Route 66"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -234,6 +252,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:pt9jtdre2lvl0y24"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -245,6 +264,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:pr2xu7myk7wrbk30"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -257,6 +277,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:pt9jtdre2lvl0y24|pr2xu7myk7wrbk30"
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -268,6 +289,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"%gold\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -279,6 +301,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"I love % dog\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -290,6 +313,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"sale%\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -301,6 +325,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"&IlikeFood\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -312,6 +337,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Pets & Dogs\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -323,6 +349,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Light&\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -334,6 +361,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"'Family\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -345,6 +373,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Father's type\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -357,6 +386,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Ice Cream'\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -368,6 +398,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"*Forrest\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -379,6 +410,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"My*Kids\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -390,6 +422,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Yoga***\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -401,6 +434,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"|Banana\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -412,6 +446,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Red|Green\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -424,6 +459,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"Blue|\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -435,6 +471,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:\"345 Shirt\""
+
 		photos, err := PhotosGeo(f)
 
 		if err != nil {

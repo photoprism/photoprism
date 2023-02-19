@@ -13,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -36,7 +35,7 @@ type Marker struct {
 	SubjUID        string          `gorm:"type:VARBINARY(42);index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	SubjSrc        string          `gorm:"type:VARBINARY(8);index:idx_markers_subj_uid_src;default:'';" json:"SubjSrc" yaml:"SubjSrc,omitempty"`
 	subject        *Subject        `gorm:"foreignkey:SubjUID;association_foreignkey:SubjUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
-	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	FaceID         string          `gorm:"type:VARBINARY(64);index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
 	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
@@ -55,14 +54,14 @@ type Marker struct {
 	UpdatedAt      time.Time
 }
 
-// TableName returns the entity database table name.
+// TableName returns the entity table name.
 func (Marker) TableName() string {
 	return "markers"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.ValidID(m.MarkerUID, 'm') {
+	if rnd.IsUnique(m.MarkerUID, 'm') {
 		return nil
 	}
 
@@ -99,8 +98,8 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 }
 
 // NewFaceMarker creates a new entity.
-func NewFaceMarker(f face.Face, file File, subjUID string) *Marker {
-	m := NewMarker(file, f.CropArea(), subjUID, SrcImage, MarkerFace, f.Size(), f.Score)
+func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
+	m := NewMarker(file, f.CropArea(), subjUid, SrcImage, MarkerFace, f.Size(), f.Score)
 
 	// Failed creating new marker?
 	if m == nil {
@@ -375,7 +374,7 @@ func (m *Marker) InvalidArea() error {
 	return fmt.Errorf("invalid %s crop area x=%d%% y=%d%% w=%d%% h=%d%%", TypeString(m.MarkerType), int(m.X*100), int(m.Y*100), int(m.W*100), int(m.H*100))
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Marker) Save() error {
 	if err := m.InvalidArea(); err != nil {
 		return err

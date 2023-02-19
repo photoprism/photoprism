@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -38,18 +38,18 @@ const testConfig = {
   downloadToken: "public",
   cssUri: "/static/build/app.2259c0edcc020e7af593.css",
   jsUri: "/static/build/app.9bd7132eaee8e4c7c7e3.js",
-  manifestUri: "/manifest.json?0e41a7e5",
+  manifestUri: "/manifest.json",
 };
 
-const config = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
+const c = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
 
 const Api = Axios.create({
-  baseURL: config.apiUri,
+  baseURL: c.apiUri,
   headers: {
     common: {
       "X-Session-ID": window.localStorage.getItem("session_id"),
-      "X-Client-Uri": config.jsUri,
-      "X-Client-Version": config.version,
+      "X-Client-Uri": c.jsUri,
+      "X-Client-Version": c.version,
     },
   },
 });
@@ -75,13 +75,12 @@ Api.interceptors.response.use(
       console.warn("WARNING: Server returned HTML instead of JSON - API not implemented?");
     }
 
-    // Update preview token.
-    if (resp.headers && resp.headers["x-preview-token"]) {
-      const previewToken = resp.headers["x-preview-token"];
-      if (config.previewToken !== previewToken) {
-        config.previewToken = previewToken;
-        Event.publish("config.updated", { config: { previewToken } });
-      }
+    // Update tokens if provided.
+    if (resp.headers && resp.headers["x-preview-token"] && resp.headers["x-download-token"]) {
+      Event.publish("config.tokens", {
+        previewToken: resp.headers["x-preview-token"],
+        downloadToken: resp.headers["x-download-token"],
+      });
     }
 
     return resp;

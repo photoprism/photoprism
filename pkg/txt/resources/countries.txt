@@ -22,6 +22,7 @@ PL:Warschau
 KH:Cambodia
 LA:Vientiane
 LA:Lao Republic
+LA:Laos
 VN:Vietnam
 DK:Denmark
 MM:Myanmar
@@ -137,6 +138,7 @@ DE:Mechtersheim
 DE:Dürkheim
 DE:Ulm
 DE:Zugspitze
+DE:Sächsische Schweiz
 LV:Latvia
 LV:Lettland
 LT:Lithuania
@@ -192,6 +194,7 @@ US:Nevada
 US:Texas
 US:USA
 US:United States
+US:Venice Beach
 MN:Mongolia
 CL:Chile
 RW:Rwanda
@@ -211,6 +214,7 @@ BG:Bulgaria
 BG:Koprivshtitsa
 BG:Melnik
 BG:Sofia
+GR:Corfu
 GR:Greece
 GR:Hellas
 KP:North Korea

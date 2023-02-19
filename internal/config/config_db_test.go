@@ -15,7 +15,18 @@ func TestConfig_DatabaseDriver(t *testing.T) {
 
 func TestConfig_ParseDatabaseDsn(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
 	c.options.DatabaseDsn = "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true"
+	c.options.DatabaseDriver = SQLite3
+
+	assert.Equal(t, "", c.DatabaseServer())
+	assert.Equal(t, "", c.DatabaseHost())
+	assert.Equal(t, 0, c.DatabasePort())
+	assert.Equal(t, "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true", c.DatabaseName())
+	assert.Equal(t, "", c.DatabaseUser())
+	assert.Equal(t, "", c.DatabasePassword())
+
+	c.options.DatabaseDriver = MySQL
 
 	assert.Equal(t, "honeypot:1234", c.DatabaseServer())
 	assert.Equal(t, "honeypot", c.DatabaseHost())
@@ -23,44 +34,53 @@ func TestConfig_ParseDatabaseDsn(t *testing.T) {
 	assert.Equal(t, "baz", c.DatabaseName())
 	assert.Equal(t, "foo", c.DatabaseUser())
 	assert.Equal(t, "b@r", c.DatabasePassword())
+
+	c.options.DatabaseDriver = SQLite3
+
+	assert.Equal(t, "", c.DatabaseServer())
+	assert.Equal(t, "", c.DatabaseHost())
+	assert.Equal(t, 0, c.DatabasePort())
+	assert.Equal(t, "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true", c.DatabaseName())
+	assert.Equal(t, "", c.DatabaseUser())
+	assert.Equal(t, "", c.DatabasePassword())
 }
 
 func TestConfig_DatabaseServer(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "localhost", c.DatabaseServer())
+	assert.Equal(t, "", c.DatabaseServer())
 	c.options.DatabaseServer = "test"
-	assert.Equal(t, "test", c.DatabaseServer())
+	assert.Equal(t, "", c.DatabaseServer())
 }
 
 func TestConfig_DatabaseHost(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "localhost", c.DatabaseHost())
+	assert.Equal(t, "", c.DatabaseHost())
 }
 
 func TestConfig_DatabasePort(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, 3306, c.DatabasePort())
+	assert.Equal(t, 0, c.DatabasePort())
 }
 
 func TestConfig_DatabasePortString(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "3306", c.DatabasePortString())
+	assert.Equal(t, "", c.DatabasePortString())
 }
 
 func TestConfig_DatabaseName(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "photoprism", c.DatabaseName())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseName())
 }
 
 func TestConfig_DatabaseUser(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "photoprism", c.DatabaseUser())
+	assert.Equal(t, "", c.DatabaseUser())
 }
 
 func TestConfig_DatabasePassword(t *testing.T) {
@@ -78,13 +98,13 @@ func TestConfig_DatabaseDsn(t *testing.T) {
 	c.options.DatabaseDriver = "MariaDB"
 	assert.Equal(t, "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", c.DatabaseDsn())
 	c.options.DatabaseDriver = "tidb"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db", c.DatabaseDsn())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDsn())
 	c.options.DatabaseDriver = "Postgres"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db", c.DatabaseDsn())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDsn())
 	c.options.DatabaseDriver = "SQLite"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db", c.DatabaseDsn())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDsn())
 	c.options.DatabaseDriver = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db", c.DatabaseDsn())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDsn())
 }
 
 func TestConfig_DatabaseConns(t *testing.T) {

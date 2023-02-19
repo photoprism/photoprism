@@ -2,7 +2,14 @@ import { timeZonesNames } from "@vvo/tzdb";
 import { $gettext } from "common/vm";
 import { Info } from "luxon";
 import { config } from "app/session";
-import { MediaAnimated, MediaImage, MediaLive, MediaRaw, MediaVideo } from "model/photo";
+import {
+  MediaImage,
+  MediaLive,
+  MediaVideo,
+  MediaAnimated,
+  MediaVector,
+  MediaRaw,
+} from "model/photo";
 
 export const TimeZones = () =>
   [
@@ -79,11 +86,24 @@ export const MonthsShort = () => {
   return result;
 };
 
+// Available locales sorted by region and alphabet.
 export const Languages = () => [
   {
     text: "English", // English
     translated: "English",
     value: "en",
+  },
+  {
+    text: "Afrikaans", // Afrikaans (South Africa)
+    value: "af",
+  },
+  {
+    text: "Bahasa Indonesia", // Bahasa Indonesia
+    value: "id",
+  },
+  {
+    text: "Català", // Catalan
+    value: "ca",
   },
   {
     text: "Čeština", // Czech
@@ -98,6 +118,10 @@ export const Languages = () => [
     value: "de",
   },
   {
+    text: "Eesti", // Estonian
+    value: "et",
+  },
+  {
     text: "Español", // Spanish
     value: "es",
   },
@@ -106,33 +130,37 @@ export const Languages = () => [
     value: "fr",
   },
   {
+    text: "Ελληνικά", // Greek
+    value: "el",
+  },
+  {
     text: "עברית", // Hebrew
     value: "he",
     rtl: true,
   },
   {
-    text: "हिन्दी", // Hindi
-    value: "hi",
+    text: "Hrvatski", // Croatian
+    value: "hr",
+  },
+  {
+    text: "Lietuvis", // Lithuanian
+    value: "lt",
   },
   {
     text: "Magyar", // Hungarian
     value: "hu",
   },
   {
-    text: "Bahasa Indonesia", // Bahasa Indonesia
-    value: "id",
-  },
-  {
-    text: "Italiano", // Italian
-    value: "it",
-  },
-  {
-    text: "한국어", // Korean
-    value: "ko",
+    text: "Melayu", // Malay
+    value: "ms",
   },
   {
     text: "Norsk (Bokmål)", // Norwegian
     value: "nb",
+  },
+  {
+    text: "Italiano", // Italian
+    value: "it",
   },
   {
     text: "Nederlands", // Dutch
@@ -143,7 +171,7 @@ export const Languages = () => [
     value: "pl",
   },
   {
-    text: "Português de Portugal", // Portuguese (Portugal)
+    text: "Português", // Portuguese (Portugal)
     value: "pt",
   },
   {
@@ -151,24 +179,33 @@ export const Languages = () => [
     value: "pt_BR",
   },
   {
-    text: "Русский", // Russian
-    value: "ru",
-  },
-  {
     text: "Slovenčina", // Slovak
     value: "sk",
   },
   {
-    text: "简体中文", // Chinese (Simplified)
-    value: "zh",
+    text: "Slovenščina", // Slovene
+    value: "sl",
   },
   {
-    text: "繁体中文", // Chinese (Traditional)
-    value: "zh_TW",
+    text: "Suomi", // Finnish
+    value: "fi",
   },
   {
-    text: "日本語", // Japanese
-    value: "ja_JP",
+    text: "Svenska", // Swedish
+    value: "sv",
+  },
+  {
+    text: "Română", // Romanian
+    value: "ro",
+  },
+  {
+    text: "Türk", // Turkish
+    value: "tr",
+  },
+  {
+    text: "عربى", // Arabic
+    value: "ar",
+    rtl: true,
   },
   {
     text: "کوردی", // Kurdish
@@ -176,106 +213,48 @@ export const Languages = () => [
     rtl: true,
   },
   {
-    text: "Română", // Romanian
-    value: "ro",
+    text: "български", // Bulgarian
+    value: "bg",
+  },
+  {
+    text: "Українська", // Ukrainian
+    value: "uk",
+  },
+  {
+    text: "Русский", // Russian
+    value: "ru",
+  },
+  {
+    text: "简体中文", // Chinese (Simplified)
+    value: "zh",
+  },
+  {
+    text: "繁體中文", // Chinese (Traditional)
+    value: "zh_TW",
+  },
+  {
+    text: "日本語", // Japanese
+    value: "ja_JP",
+  },
+  {
+    text: "한국어", // Korean
+    value: "ko",
+  },
+  {
+    text: "हिन्दी", // Hindi
+    value: "hi",
   },
   {
     text: "ภาษาไทย", // Thai
     value: "th",
   },
   {
-    text: "Türk", // Turkish
-    value: "tr",
-  },
-  {
-    text: "Svenska", // Swedish
-    value: "sv",
-  },
-  {
-    text: "Lietuvis", // Lithuanian
-    value: "lt",
-  },
-  {
-    text: "Hrvatski", // Croatian
-    value: "hr",
-  },
-  {
-    text: "български", // Bulgarian
-    value: "bg",
-  },
-  {
-    text: "Melayu", // Malay
-    value: "ms",
+    text: "فارسی", // Persian
+    value: "fa",
+    rtl: true,
   },
 ];
 
-export const Themes = () => [
-  {
-    text: $gettext("Default"),
-    value: "default",
-    disabled: false,
-  },
-  {
-    text: $gettext("Grayscale"),
-    value: "grayscale",
-    disabled: false,
-  },
-  {
-    text: $gettext("Vanta"),
-    value: "vanta",
-    disabled: false,
-  },
-  {
-    text: $gettext("Abyss"),
-    value: "abyss",
-    disabled: false,
-  },
-  {
-    text: $gettext("Moonlight"),
-    value: "moonlight",
-    disabled: false,
-  },
-  {
-    text: $gettext("Onyx"),
-    value: "onyx",
-    disabled: false,
-  },
-  {
-    text: $gettext("Cyano"),
-    value: "cyano",
-    disabled: false,
-  },
-  {
-    text: $gettext("Lavender"),
-    value: "lavender",
-    disabled: false,
-  },
-  {
-    text: $gettext("Gemstone"),
-    value: "gemstone",
-    disabled: false,
-  },
-  {
-    text: $gettext("Raspberry"),
-    value: "raspberry",
-    disabled: false,
-  },
-  {
-    text: $gettext("Seaweed"),
-    value: "seaweed",
-    disabled: false,
-  },
-  {
-    text: $gettext("Shadow"),
-    value: "shadow",
-    disabled: false,
-  },
-  {
-    text: $gettext("Yellowstone"),
-    value: "yellowstone",
-    disabled: false,
-  },
-];
 export const MapsAnimate = () => [
   {
     text: $gettext("None"),
@@ -297,7 +276,11 @@ export const MapsAnimate = () => [
 
 export const MapsStyle = () => [
   {
-    text: $gettext("Offline"),
+    text: $gettext("Default"),
+    value: "",
+  },
+  {
+    text: $gettext("Low Resolution"),
     value: "offline",
   },
   {
@@ -306,18 +289,18 @@ export const MapsStyle = () => [
     sponsor: true,
   },
   {
-    text: $gettext("Hybrid"),
+    text: $gettext("Satellite"),
     value: "hybrid",
-    sponsor: true,
-  },
-  {
-    text: $gettext("Topographic"),
-    value: "topographique",
     sponsor: true,
   },
   {
     text: $gettext("Outdoor"),
     value: "outdoor",
+    sponsor: true,
+  },
+  {
+    text: $gettext("Topographic"),
+    value: "topographique",
     sponsor: true,
   },
 ];
@@ -328,12 +311,12 @@ export const PhotoTypes = () => [
     value: MediaImage,
   },
   {
-    text: $gettext("Animated"),
-    value: MediaAnimated,
-  },
-  {
     text: $gettext("Raw"),
     value: MediaRaw,
+  },
+  {
+    text: $gettext("Animated"),
+    value: MediaAnimated,
   },
   {
     text: $gettext("Live"),
@@ -342,6 +325,10 @@ export const PhotoTypes = () => [
   {
     text: $gettext("Video"),
     value: MediaVideo,
+  },
+  {
+    text: $gettext("Vector"),
+    value: MediaVector,
   },
 ];
 
@@ -445,4 +432,10 @@ export const ThumbFilters = () => [
   { value: "lanczos", text: $gettext("Lanczos: Detail Preservation, Minimal Artifacts") },
   { value: "cubic", text: $gettext("Cubic: Moderate Quality, Good Performance") },
   { value: "linear", text: $gettext("Linear: Very Smooth, Best Performance") },
+];
+
+export const Gender = () => [
+  { value: "male", text: $gettext("Male") },
+  { value: "female", text: $gettext("Female") },
+  { value: "other", text: $gettext("Other") },
 ];

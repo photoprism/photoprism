@@ -1,10 +1,10 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" lazy persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
-      <v-container fluid class="pb-2 pr-2 pl-2">
+      <v-card-text class="pt-3 px-3">
         <v-layout row wrap>
-          <v-flex xs3 text-xs-center>
-            <v-icon size="56" color="secondary-dark lighten-1">photo_album</v-icon>
+          <v-flex xs3 text-xs-left>
+            <v-icon size="60" color="secondary-dark lighten-1">photo_album</v-icon>
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
             <v-autocomplete
@@ -15,30 +15,33 @@
                 :items="items"
                 :search-input.sync="search"
                 :loading="loading"
-                hide-details
-                hide-no-data
+                hide-no-data hide-details box flat
                 item-text="Title"
                 item-value="UID"
                 :label="$gettext('Album Name')"
                 color="secondary-dark"
-                flat solo
                 class="input-album"
                 @keyup.enter.native="confirm"
             >
             </v-autocomplete>
           </v-flex>
-          <v-flex xs12 text-xs-right class="pt-3">
-            <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
+        </v-layout>
+      </v-card-text>
+      <v-card-actions class="pt-0 pb-3 px-3">
+        <v-layout row wrap class="pa-0">
+          <v-flex xs12 text-xs-right>
+            <v-btn depressed color="secondary-light" class="action-cancel mx-1" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed dark class="action-confirm"
+            <v-btn depressed color="primary-button"
+                   class="action-confirm white--text compact mx-0"
                    @click.stop="confirm">
               <span v-if="!album">{{ labels.createAlbum }}</span>
               <span v-else>{{ labels.addToAlbum }}</span>
             </v-btn>
           </v-flex>
         </v-layout>
-      </v-container>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -129,7 +132,7 @@ export default {
         this.$nextTick(() => this.$refs.input.focus());
       }).finally(() => {
         this.loading = false;
-      })
+      });
     },
   },
 };

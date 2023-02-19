@@ -7,322 +7,370 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: none\n"
 "Language: ms\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: messages.go:83
-msgid "Unexpected error, please try again"
-msgstr ""
-
-#: messages.go:84
-msgid "Invalid request"
-msgstr ""
-
-#: messages.go:85
-msgid "Changes could not be saved"
-msgstr ""
-
-#: messages.go:86
-msgid "Could not be deleted"
-msgstr ""
-
-#: messages.go:87
-#, c-format
-msgid "%s already exists"
-msgstr ""
-
-#: messages.go:88
-msgid "Not found"
-msgstr ""
-
-#: messages.go:89
-msgid "File not found"
-msgstr ""
-
-#: messages.go:90
-msgid "Selection not found"
-msgstr ""
-
-#: messages.go:91
-msgid "Entity not found"
-msgstr ""
-
-#: messages.go:92
-msgid "Account not found"
-msgstr ""
-
-#: messages.go:93
-msgid "User not found"
-msgstr ""
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Label not found"
-msgstr ""
+msgid "Something went wrong, try again"
+msgstr "Kesilapan telah berlaku, cuba lagi"
 
 #: messages.go:95
-msgid "Album not found"
-msgstr ""
+msgid "Unable to do that"
+msgstr "Tidak mampu berbuat demikian"
 
 #: messages.go:96
-msgid "Subject not found"
-msgstr ""
+msgid "Changes could not be saved"
+msgstr "Perubahan tidak dapat disimpan"
 
 #: messages.go:97
-msgid "Person not found"
-msgstr ""
+msgid "Could not be deleted"
+msgstr "Tidak dapat dipadamkan"
 
 #: messages.go:98
-msgid "Face not found"
-msgstr ""
+#, c-format
+msgid "%s already exists"
+msgstr "%s sudah wujud"
 
 #: messages.go:99
-msgid "Not available in public mode"
-msgstr ""
+msgid "Not found"
+msgstr "Tidak ditemui"
 
 #: messages.go:100
-msgid "not available in read-only mode"
-msgstr ""
+msgid "File not found"
+msgstr "Fail tidak dijumpai"
 
 #: messages.go:101
-msgid "Please log in and try again"
-msgstr ""
+msgid "File too large"
+msgstr "Fail terlalu besar"
 
 #: messages.go:102
-msgid "Upload might be offensive"
-msgstr ""
+msgid "Unsupported format"
+msgstr "Format yang tidak disokong"
 
 #: messages.go:103
-msgid "No items selected"
-msgstr ""
+msgid "Originals folder is empty"
+msgstr "Folder asal kosong"
 
 #: messages.go:104
-msgid "Failed creating file, please check permissions"
-msgstr ""
+msgid "Selection not found"
+msgstr "Pilihan tidak ditemui"
 
 #: messages.go:105
-msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgid "Entity not found"
+msgstr "Entiti tidak ditemui"
 
 #: messages.go:106
-msgid "Could not connect, please try again"
-msgstr ""
+msgid "Account not found"
+msgstr "akaun tidak dijumpai"
 
 #: messages.go:107
-msgid "Invalid password, please try again"
-msgstr ""
+msgid "User not found"
+msgstr "Pengguna tidak dijumpai"
 
 #: messages.go:108
-msgid "Feature disabled"
-msgstr ""
+msgid "Label not found"
+msgstr "Label tidak ditemui"
 
 #: messages.go:109
-msgid "No labels selected"
-msgstr ""
+msgid "Album not found"
+msgstr "Album tidak ditemui"
 
 #: messages.go:110
-msgid "No albums selected"
-msgstr ""
+msgid "Subject not found"
+msgstr "Subjek tidak ditemui"
 
 #: messages.go:111
-msgid "No files available for download"
-msgstr ""
+msgid "Person not found"
+msgstr "Orang tidak ditemui"
 
 #: messages.go:112
-msgid "Failed to create zip file"
-msgstr ""
+msgid "Face not found"
+msgstr "Wajah tidak ditemui"
 
 #: messages.go:113
-msgid "Invalid credentials"
-msgstr ""
+msgid "Not available in public mode"
+msgstr "Tidak tersedia dalam mod awam"
 
 #: messages.go:114
-msgid "Invalid link"
-msgstr ""
+msgid "Not available in read-only mode"
+msgstr "Tidak tersedia dalam mod baca sahaja"
 
 #: messages.go:115
-msgid "Invalid name"
-msgstr ""
+msgid "Please log in to your account"
+msgstr "Sila log masuk ke akaun anda"
 
 #: messages.go:116
-msgid "Busy, please try again later"
-msgstr ""
+msgid "Permission denied"
+msgstr "Kebenaran ditolak"
+
+#: messages.go:117
+msgid "Upload might be offensive"
+msgstr "Muat naik mungkin menyinggung perasaan"
+
+#: messages.go:118
+msgid "Upload failed"
+msgstr "Muat naik gagal"
 
 #: messages.go:119
-msgid "Changes successfully saved"
-msgstr ""
+msgid "No items selected"
+msgstr "Tiada item dipilih"
 
 #: messages.go:120
-msgid "Album created"
-msgstr ""
+msgid "Failed creating file, please check permissions"
+msgstr "Gagal membuat fail, sila semak kebenaran"
 
 #: messages.go:121
-msgid "Album saved"
-msgstr ""
+msgid "Failed creating folder, please check permissions"
+msgstr "Gagal membuat folder, sila semak kebenaran"
 
 #: messages.go:122
-#, c-format
-msgid "Album %s deleted"
-msgstr ""
+msgid "Could not connect, please try again"
+msgstr "Tidak dapat menyambung, sila cuba lagi"
 
 #: messages.go:123
-msgid "Album contents cloned"
-msgstr ""
+msgid "Invalid password, please try again"
+msgstr "Kata laluan tidak sah, sila cuba lagi"
 
 #: messages.go:124
-msgid "File removed from stack"
-msgstr ""
+msgid "Feature disabled"
+msgstr "Ciri dilumpuhkan"
 
 #: messages.go:125
-msgid "File deleted"
-msgstr ""
+msgid "No labels selected"
+msgstr "Tiada label dipilih"
 
 #: messages.go:126
-#, c-format
-msgid "Selection added to %s"
-msgstr ""
+msgid "No albums selected"
+msgstr "Tiada album dipilih"
 
 #: messages.go:127
-#, c-format
-msgid "One entry added to %s"
-msgstr ""
+msgid "No files available for download"
+msgstr "Tiada fail tersedia untuk dimuat turun"
 
 #: messages.go:128
-#, c-format
-msgid "%d entries added to %s"
-msgstr ""
+msgid "Failed to create zip file"
+msgstr "Gagal membuat fail zip"
 
 #: messages.go:129
-#, c-format
-msgid "One entry removed from %s"
-msgstr ""
+msgid "Invalid credentials"
+msgstr "Bukti kelayakan tidak sah"
 
 #: messages.go:130
-#, c-format
-msgid "%d entries removed from %s"
-msgstr ""
+msgid "Invalid link"
+msgstr "Pautan tidak sah"
 
 #: messages.go:131
-msgid "Account created"
-msgstr ""
+msgid "Invalid name"
+msgstr "Nama tidak sah"
 
 #: messages.go:132
-msgid "Account saved"
-msgstr ""
+msgid "Busy, please try again later"
+msgstr "Sibuk, sila cuba lagi nanti"
 
 #: messages.go:133
-msgid "Account deleted"
-msgstr ""
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "Selang bangun ialah %s, tetapi mestilah 1j atau kurang"
 
 #: messages.go:134
-msgid "Settings saved"
-msgstr ""
-
-#: messages.go:135
-msgid "Password changed"
-msgstr ""
-
-#: messages.go:136
-#, c-format
-msgid "Import completed in %d s"
-msgstr ""
+msgid "Your account could not be connected"
+msgstr "Akaun anda tidak dapat disambungkan"
 
 #: messages.go:137
-msgid "Import canceled"
-msgstr ""
+msgid "Changes successfully saved"
+msgstr "Perubahan berjaya disimpan"
 
 #: messages.go:138
-#, c-format
-msgid "Indexing completed in %d s"
-msgstr ""
+msgid "Album created"
+msgstr "Album dibuat"
 
 #: messages.go:139
-msgid "Indexing originals..."
-msgstr ""
+msgid "Album saved"
+msgstr "Album disimpan"
 
 #: messages.go:140
 #, c-format
-msgid "Indexing files in %s"
-msgstr ""
+msgid "Album %s deleted"
+msgstr "Album %s dipadamkan"
 
 #: messages.go:141
-msgid "Indexing canceled"
-msgstr ""
+msgid "Album contents cloned"
+msgstr "Kandungan album diklon"
 
 #: messages.go:142
-#, c-format
-msgid "Removed %d files and %d photos"
-msgstr ""
+msgid "File removed from stack"
+msgstr "Fail dialih keluar daripada timbunan"
 
 #: messages.go:143
-#, c-format
-msgid "Moving files from %s"
-msgstr ""
+msgid "File deleted"
+msgstr "Fail dipadamkan"
 
 #: messages.go:144
 #, c-format
-msgid "Copying files from %s"
-msgstr ""
+msgid "Selection added to %s"
+msgstr "Pilihan ditambahkan pada %s"
 
 #: messages.go:145
-msgid "Labels deleted"
-msgstr ""
+#, c-format
+msgid "One entry added to %s"
+msgstr "Satu entri ditambahkan pada %s"
 
 #: messages.go:146
-msgid "Label saved"
-msgstr ""
+#, c-format
+msgid "%d entries added to %s"
+msgstr "Entri %d ditambahkan pada %s"
 
 #: messages.go:147
-msgid "Subject saved"
-msgstr ""
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Satu entri dialih keluar daripada %s"
 
 #: messages.go:148
-msgid "Subject deleted"
-msgstr ""
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d entri dialih keluar daripada %s"
 
 #: messages.go:149
-msgid "Person saved"
-msgstr ""
+msgid "Account created"
+msgstr "Akaun dibuat"
 
 #: messages.go:150
-msgid "Person deleted"
-msgstr ""
+msgid "Account saved"
+msgstr "Akaun disimpan"
 
 #: messages.go:151
-#, c-format
-msgid "%d files uploaded in %d s"
-msgstr ""
+msgid "Account deleted"
+msgstr "Akaun dipadamkan"
 
 #: messages.go:152
-msgid "Selection approved"
-msgstr ""
+msgid "Settings saved"
+msgstr "Tetapan Disimpan"
 
 #: messages.go:153
-msgid "Selection archived"
-msgstr ""
+msgid "Password changed"
+msgstr "Kata laluan ditukar"
 
 #: messages.go:154
-msgid "Selection restored"
-msgstr ""
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Import selesai dalam %d s"
 
 #: messages.go:155
-msgid "Selection marked as private"
-msgstr ""
+msgid "Import canceled"
+msgstr "Import dibatalkan"
 
 #: messages.go:156
-msgid "Albums deleted"
-msgstr ""
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Pengindeksan selesai dalam %d s"
 
 #: messages.go:157
-#, c-format
-msgid "Zip created in %d s"
-msgstr ""
+msgid "Indexing originals..."
+msgstr "Mengindeks asal..."
 
 #: messages.go:158
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Mengindeks fail dalam %s"
+
+#: messages.go:159
+msgid "Indexing canceled"
+msgstr "Pengindeksan dibatalkan"
+
+#: messages.go:160
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "Mengalih keluar fail %d dan foto %d."
+
+#: messages.go:161
+#, c-format
+msgid "Moving files from %s"
+msgstr "Memindahkan fail dari %s"
+
+#: messages.go:162
+#, c-format
+msgid "Copying files from %s"
+msgstr "Menyalin fail daripada %s"
+
+#: messages.go:163
+msgid "Labels deleted"
+msgstr "Label dipadamkan"
+
+#: messages.go:164
+msgid "Label saved"
+msgstr "Label disimpan"
+
+#: messages.go:165
+msgid "Subject saved"
+msgstr "Subjek disimpan"
+
+#: messages.go:166
+msgid "Subject deleted"
+msgstr "Subjek dipadamkan"
+
+#: messages.go:167
+msgid "Person saved"
+msgstr "Orang yang diselamatkan"
+
+#: messages.go:168
+msgid "Person deleted"
+msgstr "Orang dipadamkan"
+
+#: messages.go:169
+msgid "File uploaded"
+msgstr "Fail dimuat naik"
+
+#: messages.go:170
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "Fail %d dimuat naik dalam %d s"
+
+#: messages.go:171
+msgid "Processing upload..."
+msgstr "Memproses muat naik..."
+
+#: messages.go:172
+msgid "Upload has been processed"
+msgstr "Muat naik telah diproses"
+
+#: messages.go:173
+msgid "Selection approved"
+msgstr "Pemilihan diluluskan"
+
+#: messages.go:174
+msgid "Selection archived"
+msgstr "Pemilihan diarkibkan"
+
+#: messages.go:175
+msgid "Selection restored"
+msgstr "Pemilihan dipulihkan"
+
+#: messages.go:176
+msgid "Selection marked as private"
+msgstr "Pilihan ditandakan sebagai peribadi"
+
+#: messages.go:177
+msgid "Albums deleted"
+msgstr "Album dipadamkan"
+
+#: messages.go:178
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip dibuat dalam %d s"
+
+#: messages.go:179
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Dipadamkan secara kekal"
+
+#: messages.go:180
+#, c-format
+msgid "%s has been restored"
+msgstr "%s telah dipulihkan"

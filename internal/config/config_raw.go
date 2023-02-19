@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// RawEnabled checks if indexing and conversion of RAW files is enabled.
+// RawEnabled checks if indexing and conversion of RAW images is enabled.
 func (c *Config) RawEnabled() bool {
 	return !c.DisableRaw()
 }
@@ -18,7 +18,7 @@ func (c *Config) RawPresets() bool {
 
 // DarktableBin returns the darktable-cli executable file name.
 func (c *Config) DarktableBin() string {
-	return findExecutable(c.options.DarktableBin, "darktable-cli")
+	return findBin(c.options.DarktableBin, "darktable-cli")
 }
 
 // DarktableBlacklist returns the darktable file extension blacklist.
@@ -42,7 +42,7 @@ func (c *Config) CreateDarktableCachePath() (string, error) {
 
 	if cachePath == "" {
 		return "", nil
-	} else if err := os.MkdirAll(cachePath, os.ModePerm); err != nil {
+	} else if err := os.MkdirAll(cachePath, fs.ModeDir); err != nil {
 		return cachePath, err
 	} else {
 		c.options.DarktableCachePath = cachePath
@@ -57,7 +57,7 @@ func (c *Config) CreateDarktableConfigPath() (string, error) {
 
 	if configPath == "" {
 		return "", nil
-	} else if err := os.MkdirAll(configPath, os.ModePerm); err != nil {
+	} else if err := os.MkdirAll(configPath, fs.ModeDir); err != nil {
 		return configPath, err
 	} else {
 		c.options.DarktableConfigPath = configPath
@@ -71,19 +71,19 @@ func (c *Config) DarktableEnabled() bool {
 	return !c.DisableDarktable()
 }
 
-// RawtherapeeBin returns the rawtherapee-cli executable file name.
-func (c *Config) RawtherapeeBin() string {
-	return findExecutable(c.options.RawtherapeeBin, "rawtherapee-cli")
+// RawTherapeeBin returns the rawtherapee-cli executable file name.
+func (c *Config) RawTherapeeBin() string {
+	return findBin(c.options.RawTherapeeBin, "rawtherapee-cli")
 }
 
-// RawtherapeeBlacklist returns the RawTherapee file extension blacklist.
-func (c *Config) RawtherapeeBlacklist() string {
-	return c.options.RawtherapeeBlacklist
+// RawTherapeeBlacklist returns the RawTherapee file extension blacklist.
+func (c *Config) RawTherapeeBlacklist() string {
+	return c.options.RawTherapeeBlacklist
 }
 
-// RawtherapeeEnabled checks if Rawtherapee is enabled for RAW conversion.
-func (c *Config) RawtherapeeEnabled() bool {
-	return !c.DisableRawtherapee()
+// RawTherapeeEnabled checks if RawTherapee is enabled for RAW conversion.
+func (c *Config) RawTherapeeEnabled() bool {
+	return !c.DisableRawTherapee()
 }
 
 // SipsEnabled checks if SIPS is enabled for RAW conversion.
@@ -93,12 +93,17 @@ func (c *Config) SipsEnabled() bool {
 
 // SipsBin returns the SIPS executable file name.
 func (c *Config) SipsBin() string {
-	return findExecutable(c.options.SipsBin, "sips")
+	return findBin(c.options.SipsBin, "sips")
+}
+
+// SipsBlacklist returns the Sips file extension blacklist.
+func (c *Config) SipsBlacklist() string {
+	return c.options.SipsBlacklist
 }
 
 // HeifConvertBin returns the heif-convert executable file name.
 func (c *Config) HeifConvertBin() string {
-	return findExecutable(c.options.HeifConvertBin, "heif-convert")
+	return findBin(c.options.HeifConvertBin, "heif-convert")
 }
 
 // HeifConvertEnabled checks if heif-convert is enabled for HEIF conversion.

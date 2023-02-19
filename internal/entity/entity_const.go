@@ -19,11 +19,11 @@ const (
 const (
 	MediaUnknown  = ""
 	MediaImage    = string(media.Image)
-	MediaVector   = string(media.Vector)
+	MediaRaw      = string(media.Raw)
 	MediaAnimated = string(media.Animated)
 	MediaLive     = string(media.Live)
 	MediaVideo    = string(media.Video)
-	MediaRaw      = string(media.Raw)
+	MediaVector   = string(media.Vector)
 	MediaText     = string(media.Text)
 )
 
@@ -51,21 +51,8 @@ const (
 	IsUnstacked int8 = -1
 )
 
-// Sort options.
+// Authentication providers.
 const (
-	SortOrderDefault   = ""
-	SortOrderRelevance = "relevance"
-	SortOrderCount     = "count"
-	SortOrderAdded     = "added"
-	SortOrderImported  = "imported"
-	SortOrderEdited    = "edited"
-	SortOrderNewest    = "newest"
-	SortOrderOldest    = "oldest"
-	SortOrderPlace     = "place"
-	SortOrderMoment    = "moment"
-	SortOrderName      = "name"
-	SortOrderPath      = "path"
-	SortOrderSlug      = "slug"
-	SortOrderCategory  = "category"
-	SortOrderSimilar   = "similar"
+	ProviderNone     = ""
+	ProviderPassword = "password"
 )

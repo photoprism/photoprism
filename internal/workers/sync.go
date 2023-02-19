@@ -27,21 +27,21 @@ func NewSync(conf *config.Config) *Sync {
 }
 
 // logError logs an error message if err is not nil.
-func (worker *Sync) logError(err error) {
+func (w *Sync) logError(err error) {
 	if err != nil {
 		log.Errorf("sync: %s", err.Error())
 	}
 }
 
 // logWarn logs a warning message if err is not nil.
-func (worker *Sync) logWarn(err error) {
+func (w *Sync) logWarn(err error) {
 	if err != nil {
 		log.Warnf("sync: %s", err.Error())
 	}
 }
 
 // Start starts the sync worker.
-func (worker *Sync) Start() (err error) {
+func (w *Sync) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("sync: %s (panic)\nstack: %s", r, debug.Stack())
@@ -55,7 +55,7 @@ func (worker *Sync) Start() (err error) {
 
 	defer mutex.SyncWorker.Stop()
 
-	f := form.SearchAccounts{
+	f := form.SearchServices{
 		Sync: true,
 	}
 
@@ -71,7 +71,7 @@ func (worker *Sync) Start() (err error) {
 			a.AccSync = false
 
 			if err := entity.Db().Save(&a).Error; err != nil {
-				worker.logError(err)
+				w.logError(err)
 			} else {
 				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
 			}
@@ -87,8 +87,8 @@ func (worker *Sync) Start() (err error) {
 		synced := false
 
 		switch a.SyncStatus {
-		case entity.AccountSyncStatusRefresh:
-			if complete, err := worker.refresh(a); err != nil {
+		case entity.SyncStatusRefresh:
+			if complete, err := w.refresh(a); err != nil {
 				accErrors++
 				accError = err.Error()
 			} else if complete {
@@ -96,47 +96,47 @@ func (worker *Sync) Start() (err error) {
 				accError = ""
 
 				if a.SyncDownload {
-					syncStatus = entity.AccountSyncStatusDownload
+					syncStatus = entity.SyncStatusDownload
 				} else if a.SyncUpload {
-					syncStatus = entity.AccountSyncStatusUpload
+					syncStatus = entity.SyncStatusUpload
 				} else {
-					syncStatus = entity.AccountSyncStatusSynced
+					syncStatus = entity.SyncStatusSynced
 					syncDate.Time = time.Now()
 					syncDate.Valid = true
 				}
 			}
-		case entity.AccountSyncStatusDownload:
-			if complete, err := worker.download(a); err != nil {
+		case entity.SyncStatusDownload:
+			if complete, err := w.download(a); err != nil {
 				accErrors++
 				accError = err.Error()
-				syncStatus = entity.AccountSyncStatusRefresh
+				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				if a.SyncUpload {
-					syncStatus = entity.AccountSyncStatusUpload
+					syncStatus = entity.SyncStatusUpload
 				} else {
 					synced = true
-					syncStatus = entity.AccountSyncStatusSynced
+					syncStatus = entity.SyncStatusSynced
 					syncDate.Time = time.Now()
 					syncDate.Valid = true
 				}
 			}
-		case entity.AccountSyncStatusUpload:
-			if complete, err := worker.upload(a); err != nil {
+		case entity.SyncStatusUpload:
+			if complete, err := w.upload(a); err != nil {
 				accErrors++
 				accError = err.Error()
-				syncStatus = entity.AccountSyncStatusRefresh
+				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				synced = true
-				syncStatus = entity.AccountSyncStatusSynced
+				syncStatus = entity.SyncStatusSynced
 				syncDate.Time = time.Now()
 				syncDate.Valid = true
 			}
-		case entity.AccountSyncStatusSynced:
+		case entity.SyncStatusSynced:
 			if a.SyncDate.Valid && a.SyncDate.Time.Before(time.Now().Add(time.Duration(-1*a.SyncInterval)*time.Second)) {
-				syncStatus = entity.AccountSyncStatusRefresh
+				syncStatus = entity.SyncStatusRefresh
 			}
 		default:
-			syncStatus = entity.AccountSyncStatusRefresh
+			syncStatus = entity.SyncStatusRefresh
 		}
 
 		if mutex.SyncWorker.Canceled() {
@@ -149,7 +149,7 @@ func (worker *Sync) Start() (err error) {
 			"AccErrors":  accErrors,
 			"SyncStatus": syncStatus,
 			"SyncDate":   syncDate}); err != nil {
-			worker.logError(err)
+			w.logError(err)
 		} else if synced {
 			event.Publish("sync.synced", event.Data{"account": a})
 		}

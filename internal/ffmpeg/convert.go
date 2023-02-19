@@ -18,8 +18,8 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 	// Don't transcode more than one video at the same time.
 	useMutex = true
 
-	// Animated GIF?
-	if fs.FileType(fileName) == fs.ImageGIF {
+	// Animated GIF or PNG?
+	if fs.FileType(fileName) == fs.ImageGIF || fs.FileType(fileName) == fs.ImagePNG {
 		result = exec.Command(
 			ffmpegBin,
 			"-i", fileName,
@@ -78,11 +78,28 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			avcName,
 		)
 
+	case VAAPIEncoder:
+		format := "format=nv12,hwupload"
+		result = exec.Command(
+			ffmpegBin,
+			"-hwaccel", "vaapi",
+			"-i", fileName,
+			"-c:a", "aac",
+			"-vf", format,
+			"-c:v", string(encoder),
+			"-vsync", "vfr",
+			"-r", "30",
+			"-b:v", bitrate,
+			"-f", "mp4",
+			"-y",
+			avcName,
+		)
+
 	case NvidiaEncoder:
 		// ffmpeg -hide_banner -h encoder=h264_nvenc
 		result = exec.Command(
 			ffmpegBin,
-			"-r", "30",
+			"-hwaccel", "auto",
 			"-i", fileName,
 			"-pix_fmt", "yuv420p",
 			"-c:v", string(encoder),
@@ -94,9 +111,10 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-rc:v", "constqp",
 			"-cq", "0",
 			"-tune", "2",
+			"-r", "30",
 			"-b:v", bitrate,
 			"-profile:v", "1",
-			"-level:v", "41",
+			"-level:v", "auto",
 			"-coder:v", "1",
 			"-f", "mp4",
 			"-y",

@@ -5,7 +5,7 @@ import StorageShim from "node-storage-shim";
 let chai = require("chai/chai");
 let assert = chai.assert;
 
-const config2 = new Config(new StorageShim(), window.__CONFIG__);
+const defaultConfig = new Config(new StorageShim(), window.__CONFIG__);
 
 describe("common/config", () => {
   it("should get all config values", () => {
@@ -78,25 +78,33 @@ describe("common/config", () => {
     assert.equal(result, "Berlin");
   });
 
+  it("should return app about", () => {
+    assert.equal(defaultConfig.getAbout(), "PhotoPrism® CE");
+  });
+
+  it("should return app edition", () => {
+    assert.equal(defaultConfig.getEdition(), "ce");
+  });
+
   it("should return settings", () => {
-    const result = config2.settings();
+    const result = defaultConfig.settings();
     assert.equal(result.ui.theme, "default");
     assert.equal(result.ui.language, "en");
   });
 
   it("should return feature", () => {
-    assert.equal(config2.feature("places"), true);
-    assert.equal(config2.feature("download"), true);
+    assert.equal(defaultConfig.feature("places"), true);
+    assert.equal(defaultConfig.feature("download"), true);
   });
 
   it("should test get name", () => {
-    const result = config2.getPerson("a");
+    const result = defaultConfig.getPerson("a");
     assert.equal(result, null);
 
-    const result2 = config2.getPerson("Andrea Sander");
+    const result2 = defaultConfig.getPerson("Andrea Sander");
     assert.equal(result2.UID, "jr0jgyx2viicdnf7");
 
-    const result3 = config2.getPerson("Otto Sander");
+    const result3 = defaultConfig.getPerson("Otto Sander");
     assert.equal(result3.UID, "jr0jgyx2viicdn88");
   });
 
@@ -255,16 +263,17 @@ describe("common/config", () => {
     myConfig.onCount("add.review", {
       count: 1,
     });
+    assert.equal(myConfig.values.count.all, 135);
     assert.equal(myConfig.values.count.review, 23);
     assert.equal(myConfig.values.count.private, 0);
     myConfig.onCount("add.private", {
       count: 3,
     });
     assert.equal(myConfig.values.count.private, 3);
-    assert.equal(myConfig.values.count.all, 136);
+    assert.equal(myConfig.values.count.all, 135);
     myConfig.onCount("add.photos", {
       count: 4,
     });
-    assert.equal(myConfig.values.count.all, 140);
+    assert.equal(myConfig.values.count.all, 139);
   });
 });

@@ -1,13 +1,10 @@
 package config
 
-// Sponsor checks if sponsor features should be enabled.
-func Sponsor() bool {
-	return Env(EnvDemo, EnvSponsor, EnvTest)
-}
+var Sponsor = Env(EnvDemo, EnvSponsor, EnvTest)
 
 // DisableWebDAV checks if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
-	if c.ReadOnly() || c.Demo() {
+	if c.Public() || c.Demo() {
 		return true
 	}
 
@@ -44,6 +41,11 @@ func (c *Config) DisableExifTool() bool {
 	return c.options.DisableExifTool
 }
 
+// ExifToolEnabled checks if the use of ExifTool is possible.
+func (c *Config) ExifToolEnabled() bool {
+	return !c.DisableExifTool()
+}
+
 // DisableTensorFlow checks if all features depending on TensorFlow should be disabled.
 func (c *Config) DisableTensorFlow() bool {
 	if LowMem && !c.options.DisableTensorFlow {
@@ -53,7 +55,7 @@ func (c *Config) DisableTensorFlow() bool {
 	return c.options.DisableTensorFlow
 }
 
-// DisableFaces checks if facial recognition is disabled.
+// DisableFaces checks if face recognition is disabled.
 func (c *Config) DisableFaces() bool {
 	if c.DisableTensorFlow() || c.options.DisableFaces {
 		return true
@@ -82,17 +84,7 @@ func (c *Config) DisableFFmpeg() bool {
 	return c.options.DisableFFmpeg
 }
 
-// DisableRaw checks if indexing and conversion of RAW files is disabled.
-func (c *Config) DisableRaw() bool {
-	if LowMem && !c.options.DisableRaw {
-		c.options.DisableRaw = true
-		return true
-	}
-
-	return c.options.DisableRaw
-}
-
-// DisableDarktable checks if conversion of RAW files with Darktable is disabled.
+// DisableDarktable checks if conversion of RAW images with Darktable is disabled.
 func (c *Config) DisableDarktable() bool {
 	if c.DisableRaw() || c.options.DisableDarktable {
 		return true
@@ -103,26 +95,26 @@ func (c *Config) DisableDarktable() bool {
 	return c.options.DisableDarktable
 }
 
-// DisableRawtherapee checks if conversion of RAW files with Rawtherapee is disabled.
-func (c *Config) DisableRawtherapee() bool {
-	if c.DisableRaw() || c.options.DisableRawtherapee {
+// DisableRawTherapee checks if conversion of RAW images with RawTherapee is disabled.
+func (c *Config) DisableRawTherapee() bool {
+	if c.DisableRaw() || c.options.DisableRawTherapee {
 		return true
-	} else if c.RawtherapeeBin() == "" {
-		c.options.DisableRawtherapee = true
+	} else if c.RawTherapeeBin() == "" {
+		c.options.DisableRawTherapee = true
 	}
 
-	return c.options.DisableRawtherapee
+	return c.options.DisableRawTherapee
 }
 
-// DisableSips checks if conversion of RAW files with SIPS is disabled.
-func (c *Config) DisableSips() bool {
-	if c.options.DisableSips {
+// DisableImageMagick checks if conversion of files with ImageMagick is disabled.
+func (c *Config) DisableImageMagick() bool {
+	if c.options.DisableImageMagick {
 		return true
-	} else if c.SipsBin() == "" {
-		c.options.DisableSips = true
+	} else if c.ImageMagickBin() == "" {
+		c.options.DisableImageMagick = true
 	}
 
-	return c.options.DisableSips
+	return c.options.DisableImageMagick
 }
 
 // DisableHeifConvert checks if heif-convert is disabled for HEIF conversion.
@@ -134,4 +126,45 @@ func (c *Config) DisableHeifConvert() bool {
 	}
 
 	return c.options.DisableHeifConvert
+}
+
+// DisableSips checks if conversion of RAW images with SIPS is disabled.
+func (c *Config) DisableSips() bool {
+	if c.options.DisableSips {
+		return true
+	} else if c.SipsBin() == "" {
+		c.options.DisableSips = true
+	}
+
+	return c.options.DisableSips
+}
+
+// DisableVectors checks if vector graphics support is disabled.
+func (c *Config) DisableVectors() bool {
+	if c.options.DisableVectors || !c.Sponsor() {
+		return true
+	} else if c.RsvgConvertBin() == "" {
+		c.options.DisableVectors = true
+	}
+
+	return c.options.DisableVectors
+}
+
+// DisableRsvgConvert checks if rsvg-convert is disabled for SVG conversion.
+func (c *Config) DisableRsvgConvert() bool {
+	if c.options.DisableVectors || !c.Sponsor() {
+		return true
+	}
+
+	return c.RsvgConvertBin() == ""
+}
+
+// DisableRaw checks if indexing and conversion of RAW images is disabled.
+func (c *Config) DisableRaw() bool {
+	if LowMem && !c.options.DisableRaw {
+		c.options.DisableRaw = true
+		return true
+	}
+
+	return c.options.DisableRaw
 }
