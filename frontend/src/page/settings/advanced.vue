@@ -6,7 +6,7 @@
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
-            <translate>Options</translate>
+            <translate>Global Options</translate>
           </h3>
         </v-card-title>
 
