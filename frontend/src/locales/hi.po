@@ -692,7 +692,7 @@ msgstr "रॉ थेरेपी को अक्षम करें"
 msgid "Disable TensorFlow"
 msgstr "TensorFlow अक्षम करें"
 
-#: src/page/settings/advanced.vue:601
+#: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
 msgstr ""
 
@@ -704,7 +704,7 @@ msgstr "विकलांग"
 msgid "Disables reverse geocoding and maps."
 msgstr "रिवर्स जियोकोडिंग और नक्शे अक्षम करता है।"
 
-#: src/page/settings/advanced.vue:602
+#: src/page/settings/advanced.vue:604
 msgid "Disables vector graphics support."
 msgstr ""
 

@@ -691,7 +691,7 @@ msgstr "A RawTherapee letiltása"
 msgid "Disable TensorFlow"
 msgstr "A TensorFlow letiltása"
 
-#: src/page/settings/advanced.vue:601
+#: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
 msgstr ""
 
@@ -703,7 +703,7 @@ msgstr "A WebDAV letiltása"
 msgid "Disables reverse geocoding and maps."
 msgstr "Letiltja a fordított geokódolást és a térképeket."
 
-#: src/page/settings/advanced.vue:602
+#: src/page/settings/advanced.vue:604
 msgid "Disables vector graphics support."
 msgstr ""
 

@@ -692,7 +692,7 @@ msgstr "RawTherapee'yi devre dışı bırak"
 msgid "Disable TensorFlow"
 msgstr "TensorFlow'u devre dışı bırak"
 
-#: src/page/settings/advanced.vue:601
+#: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
 msgstr ""
 
@@ -704,7 +704,7 @@ msgstr "WebDAV'ı devre dışı bırak"
 msgid "Disables reverse geocoding and maps."
 msgstr "Ters coğrafi kodlamayı ve haritaları devre dışı bırakır."
 
-#: src/page/settings/advanced.vue:602
+#: src/page/settings/advanced.vue:604
 msgid "Disables vector graphics support."
 msgstr ""
 

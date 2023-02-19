@@ -692,7 +692,7 @@ msgstr "Zakázať RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "Zakázať TensorFlow"
 
-#: src/page/settings/advanced.vue:601
+#: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
 msgstr ""
 
@@ -704,7 +704,7 @@ msgstr "Zakázať WebDAV"
 msgid "Disables reverse geocoding and maps."
 msgstr "Zakáže reverzné geokódovanie a mapy."
 
-#: src/page/settings/advanced.vue:602
+#: src/page/settings/advanced.vue:604
 msgid "Disables vector graphics support."
 msgstr ""
 

@@ -689,7 +689,7 @@ msgstr "Keela RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "Keela TensorFlow"
 
-#: src/page/settings/advanced.vue:601
+#: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
 msgstr ""
 
@@ -701,7 +701,7 @@ msgstr "Keela WebDAV"
 msgid "Disables reverse geocoding and maps."
 msgstr "Keelab asukohatuvastuse ja kaardid."
 
-#: src/page/settings/advanced.vue:602
+#: src/page/settings/advanced.vue:604
 msgid "Disables vector graphics support."
 msgstr ""
 
