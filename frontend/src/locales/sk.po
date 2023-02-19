@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
-"frontend/sk/>\n"
+"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -464,7 +463,7 @@ msgid "Change private flag"
 msgstr "Zmeniť privátne označenie"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Zmeny boli úspešne uložené"
@@ -665,7 +664,7 @@ msgstr "Posledná Záloha"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Zakázať vstavaný server WebDAV. Vyžaduje reštart."
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr "Zakázať Darktable"
 
@@ -673,21 +672,29 @@ msgstr "Zakázať Darktable"
 msgid "Disable ExifTool"
 msgstr "Zakázať ExifTool"
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
 msgstr "Zakázanie aplikácie FFmpeg"
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
+msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "Zakázať miesta"
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr "Zakázať RawTherapee"
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "Zakázať TensorFlow"
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
+msgstr ""
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -696,6 +703,14 @@ msgstr "Zakázať WebDAV"
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "Zakáže reverzné geokódovanie a mapy."
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
+msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -718,15 +733,15 @@ msgstr "Nevytvárať súbory ExifTool JSON pre vylepšenú extrakciu metadát."
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Neupravovať priečinok s originálmi. Zakáže import, nahrávanie a mazanie."
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr "Netranskódvať videá pomocou programu FFmpeg."
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Na konverziu obrázkov RAW nepoužívajte program Darktable."
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Na konverziu obrázkov RAW nepoužívajte program RawTherapee."
 
@@ -835,7 +850,7 @@ msgstr "E-mail"
 msgid "Enable new features currently under development."
 msgstr "Povoliť nové funkcie, ktoré sú momentálne vo vývoji."
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Povolí predvoľby konvertora RAW. Môže znížiť výkon."
 
@@ -951,6 +966,10 @@ msgstr "Súbor"
 #: src/app/routes.js:281
 msgid "File Browser"
 msgstr "Prehliadač Súborov"
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
+msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1107,8 +1126,8 @@ msgid "Image"
 msgstr "Obrázok"
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
-msgstr "Obrázky"
+msgid "Image Quality"
+msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1817,6 +1836,10 @@ msgstr "Prosím, neodovzdávajte fotky obsahujúce hanobný obsah."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Upozorňujeme, že zmena hesla vás odhlási z iných zariadení a prehliadačov."
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "Portrét"
@@ -1896,10 +1919,6 @@ msgstr "Raw"
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "RAW"
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
-msgstr "Konverzia súborov RAW"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -2483,7 +2502,7 @@ msgstr "Odovzdávanie takéhoto typu fotiek bude automaticky odmietnuté."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr "Použiť predvoľbu"
 
@@ -2666,6 +2685,15 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#~ msgid "Don't transcode videos with FFmpeg."
+#~ msgstr "Netranskódvať videá pomocou programu FFmpeg."
+
+#~ msgid "Images"
+#~ msgstr "Obrázky"
+
+#~ msgid "RAW Conversion"
+#~ msgstr "Konverzia súborov RAW"
 
 #~ msgid "Don't use Darktable to convert RAW files."
 #~ msgstr "Nepoužívať Darktable pre konvertovanie RAW súborov."

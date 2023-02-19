@@ -460,7 +460,7 @@ msgid "Change private flag"
 msgstr "Verander privaat vlag"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Veranderinge suksesvol gestoor"
@@ -661,7 +661,7 @@ msgstr "Deaktiveer rugsteun"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Deaktiveer ingeboude WebDAV-bediener. Vereis 'n herbegin."
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr "Deaktiveer Darktable"
 
@@ -669,21 +669,29 @@ msgstr "Deaktiveer Darktable"
 msgid "Disable ExifTool"
 msgstr "Deaktiveer ExifTool"
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
 msgstr "Deaktiveer FFmpeg"
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
+msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "Deaktiveer Plekke"
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr "Deaktiveer RawTherapee"
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "Deaktiveer TensorFlow"
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
+msgstr ""
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -692,6 +700,14 @@ msgstr "Deaktiveer WebDAV"
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "Deaktiveer omgekeerde geokodering en kaarte."
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
+msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -714,15 +730,15 @@ msgstr "Moenie ExifTool JSON-lêers skep vir verbeterde metadata-onttrekking nie
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Moenie oorspronklike lêergids verander nie. Deaktiveer invoer, oplaai en uitvee."
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr "Moenie video's met FFmpeg transkodeer nie."
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Moenie Darktable gebruik om RAW-beelde om te skakel nie."
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Moenie RawTherapee gebruik om RAW-beelde om te skakel nie."
 
@@ -831,7 +847,7 @@ msgstr "E-pos"
 msgid "Enable new features currently under development."
 msgstr "Aktiveer nuwe kenmerke wat tans ontwikkel word."
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiveer RAW-omskakelaarvoorinstellings. Kan prestasie verminder."
 
@@ -947,6 +963,10 @@ msgstr "lêer"
 #: src/app/routes.js:281
 msgid "File Browser"
 msgstr "Lêerblaaier"
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
+msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1103,8 +1123,8 @@ msgid "Image"
 msgstr "Beeld"
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
-msgstr "Beelde"
+msgid "Image Quality"
+msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1813,6 +1833,10 @@ msgstr "Moet asseblief nie foto's oplaai wat aanstootlike inhoud bevat nie."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Neem asseblief kennis dat die verandering van jou wagwoord jou op ander toestelle en blaaiers sal afmeld."
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "Portret"
@@ -1892,10 +1916,6 @@ msgstr "Rou"
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "RAW"
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
-msgstr "RAW-omskakeling"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -2481,7 +2501,7 @@ msgstr "Oplaaie wat sulke beelde kan bevat, sal outomaties verwerp word."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr "Gebruik voorafinstellings"
 
@@ -2666,6 +2686,15 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#~ msgid "Don't transcode videos with FFmpeg."
+#~ msgstr "Moenie video's met FFmpeg transkodeer nie."
+
+#~ msgid "Images"
+#~ msgstr "Beelde"
+
+#~ msgid "RAW Conversion"
+#~ msgstr "RAW-omskakeling"
 
 #~ msgid "Don't use Darktable to convert RAW files."
 #~ msgstr "Moenie Darktable gebruik om RAW-lêers om te skakel nie."

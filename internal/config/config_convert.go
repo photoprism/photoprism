@@ -2,7 +2,7 @@ package config
 
 // VectorEnabled checks if indexing and conversion of vector graphics is enabled.
 func (c *Config) VectorEnabled() bool {
-	return !c.DisableVector()
+	return !c.DisableVectors()
 }
 
 // RsvgConvertBin returns the rsvg-convert executable file name.
@@ -12,7 +12,7 @@ func (c *Config) RsvgConvertBin() string {
 
 // RsvgConvertEnabled checks if rsvg-convert is enabled for SVG conversion.
 func (c *Config) RsvgConvertEnabled() bool {
-	return !c.DisableVector()
+	return !c.DisableVectors()
 }
 
 // ImageMagickBin returns the ImageMagick "convert" executable file name.

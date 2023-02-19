@@ -186,7 +186,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.archive"
-                  :disabled="busy"
+                  :disabled="busy || isDemo"
                   class="ma-0 pa-0 input-archive"
                   color="secondary-dark"
                   :label="$gettext('Archive')"

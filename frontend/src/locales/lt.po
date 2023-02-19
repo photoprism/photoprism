@@ -5,15 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/lt/>\n"
+"Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
-"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
-"1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -466,7 +463,7 @@ msgid "Change private flag"
 msgstr "Keisti privačią vėliavą"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Pakeitimai sėkmingai išsaugoti"
@@ -667,7 +664,7 @@ msgstr "Išjungti atsargines kopijas"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Išjunkite integruotą WebDAV serverį. Reikia paleisti iš naujo."
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr "Išjungti \"Darktable"
 
@@ -675,21 +672,29 @@ msgstr "Išjungti \"Darktable"
 msgid "Disable ExifTool"
 msgstr "Išjungti \"ExifTool"
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
 msgstr "Išjungti \"FFmpeg"
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
+msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "Išjungti vietas"
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr "Išjungti \"RawTherapee"
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "Išjungti \"TensorFlow"
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
+msgstr ""
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -698,6 +703,14 @@ msgstr "Išjungti WebDAV"
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "Išjungiamas atvirkštinis geokodavimas ir žemėlapiai."
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
+msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -720,15 +733,15 @@ msgstr "Nesukurkite \"ExifTool\" JSON failų, kad pagerintumėte metaduomenų i�
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Nekeiskite originalų aplanko. Išjungiamas importas, įkėlimas ir ištrynimas."
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr "Neperkoduokite vaizdo įrašų su \"FFmpeg\"."
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Nenaudokite \"Darktable\" RAW failams konvertuoti."
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Nenaudokite \"RawTherapee\" RAW failams konvertuoti."
 
@@ -837,7 +850,7 @@ msgstr "El. paštas"
 msgid "Enable new features currently under development."
 msgstr "Įgalinkite šiuo metu kuriamas naujas funkcijas."
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Įjungiamos RAW konverterio išankstinės nuostatos. Gali sumažinti našumą."
 
@@ -953,6 +966,10 @@ msgstr "Failas"
 #: src/app/routes.js:281
 msgid "File Browser"
 msgstr "Failų naršyklė"
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
+msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1109,8 +1126,8 @@ msgid "Image"
 msgstr "Vaizdas"
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
-msgstr "Vaizdai"
+msgid "Image Quality"
+msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1819,6 +1836,10 @@ msgstr "Neįkelkite nuotraukų, kuriose yra įžeidžiančio turinio."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Atkreipkite dėmesį, kad pakeitę slaptažodį atsijungsite kituose įrenginiuose ir naršyklėse."
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "Portretas"
@@ -1898,10 +1919,6 @@ msgstr "Neapdorotas"
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "RAW"
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
-msgstr "RAW konvertavimas"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -2485,7 +2502,7 @@ msgstr "Siunčiami vaizdai, kuriuose gali būti tokių vaizdų, bus automatiška
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr "Naudokite išankstinius nustatymus"
 
@@ -2668,6 +2685,15 @@ msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai k
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
+
+#~ msgid "Don't transcode videos with FFmpeg."
+#~ msgstr "Neperkoduokite vaizdo įrašų su \"FFmpeg\"."
+
+#~ msgid "Images"
+#~ msgstr "Vaizdai"
+
+#~ msgid "RAW Conversion"
+#~ msgstr "RAW konvertavimas"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Tapkite rėmėju šiandien, paremkite mūsų misiją ir naudokitės mūsų nariams teikiamomis privilegijomis!"

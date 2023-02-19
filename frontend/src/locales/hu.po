@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -463,7 +462,7 @@ msgid "Change private flag"
 msgstr "Privát fotóként jelölés"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Módosítások sikeresen mentve"
@@ -664,7 +663,7 @@ msgstr "Biztonsági mentések letiltása"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "A beépített WebDAV szerver letiltása. Újraindítást igényel."
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr "A Darktable letiltása"
 
@@ -672,21 +671,29 @@ msgstr "A Darktable letiltása"
 msgid "Disable ExifTool"
 msgstr "Az ExifTool letiltása"
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
 msgstr "Az FFmpeg letiltása"
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
+msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "Helyek letiltása"
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr "A RawTherapee letiltása"
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "A TensorFlow letiltása"
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
+msgstr ""
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -695,6 +702,14 @@ msgstr "A WebDAV letiltása"
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "Letiltja a fordított geokódolást és a térképeket."
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
+msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -717,15 +732,15 @@ msgstr "Ne hozzon létre ExifTool JSON-fájlokat a metaadatok jobb kinyerése é
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Ne módosítsa az eredeti mappát. Letiltja az importálást, feltöltést és törlést."
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr "Ne kódoljon át videókat az FFmpeg segítségével."
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Ne használja a Darktable-t RAW képek konvertálására."
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Ne használja a RawTherapee-t RAW képek konvertálására."
 
@@ -834,7 +849,7 @@ msgstr "E-mail"
 msgid "Enable new features currently under development."
 msgstr "A jelenleg fejlesztés alatt álló új funkciók engedélyezése."
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljesítményt."
 
@@ -950,6 +965,10 @@ msgstr "Fájl"
 #: src/app/routes.js:281
 msgid "File Browser"
 msgstr "Fájl böngésző"
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
+msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1106,8 +1125,8 @@ msgid "Image"
 msgstr "Kép"
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
-msgstr "Képek"
+msgid "Image Quality"
+msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1816,6 +1835,10 @@ msgstr "Kérjük, ne töltsön fel sértő tartalmat tartalmazó fotókat."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Felhívjuk figyelmét, hogy a jelszó megváltoztatása más eszközökön és böngészőkben is kijelentkezik."
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "Portré"
@@ -1895,10 +1918,6 @@ msgstr "Nyers"
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "NYERS"
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
-msgstr "RAW átalakítás"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -2482,7 +2501,7 @@ msgstr "Az esetlegesen ilyen képeket tartalmazó feltöltések automatikusan el
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr "Előbeállítások használata"
 
@@ -2665,6 +2684,15 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "Don't transcode videos with FFmpeg."
+#~ msgstr "Ne kódoljon át videókat az FFmpeg segítségével."
+
+#~ msgid "Images"
+#~ msgstr "Képek"
+
+#~ msgid "RAW Conversion"
+#~ msgstr "RAW átalakítás"
 
 #~ msgid "Don't use Darktable to convert RAW files."
 #~ msgstr "Ne használja a Darktable-t RAW fájlok konvertálására."

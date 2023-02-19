@@ -5,14 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
-"20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -465,7 +463,7 @@ msgid "Change private flag"
 msgstr "Schimbarea steagului privat"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Modificări salvate cu succes"
@@ -666,7 +664,7 @@ msgstr "Dezactivați copiile de rezervă"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Dezactivați serverul WebDAV încorporat. Necesită o repornire."
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr "Dezactivați Darktable"
 
@@ -674,21 +672,29 @@ msgstr "Dezactivați Darktable"
 msgid "Disable ExifTool"
 msgstr "Dezactivați ExifTool"
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
 msgstr "Dezactivați FFmpeg"
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
+msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "Dezactivați locurile"
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr "Dezactivați RawTherapee"
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "Dezactivați TensorFlow"
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
+msgstr ""
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -697,6 +703,14 @@ msgstr "Dezactivați WebDAV"
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "Dezactivează geocodarea inversă și hărțile."
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
+msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -719,15 +733,15 @@ msgstr "Nu creați fișiere ExifTool JSON pentru o mai bună extragere a metadat
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Nu modificați dosarul originalelor. Dezactivează importul, încărcarea și ștergerea."
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr "Nu transcodați videoclipuri cu FFmpeg."
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Nu utilizați Darktable pentru a converti fișiere RAW."
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Nu utilizați RawTherapee pentru a converti fișiere RAW."
 
@@ -836,7 +850,7 @@ msgstr "Email"
 msgid "Enable new features currently under development."
 msgstr "Activați noi caracteristici aflate în curs de dezvoltare."
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Activează presetările convertorului RAW. Poate reduce performanța."
 
@@ -952,6 +966,10 @@ msgstr "Fișier"
 #: src/app/routes.js:281
 msgid "File Browser"
 msgstr "Browser de fișiere"
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
+msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1108,8 +1126,8 @@ msgid "Image"
 msgstr "Imagine"
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
-msgstr "Imagini"
+msgid "Image Quality"
+msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1818,6 +1836,10 @@ msgstr "Vă rugăm să nu încărcați fotografii care au un conținut jignitor.
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Vă rugăm să rețineți că schimbarea parolei vă va deconecta de pe alte dispozitive și browsere."
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "Portret"
@@ -1897,10 +1919,6 @@ msgstr "Raw"
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "RAW"
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
-msgstr "Conversia RAW"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -2486,7 +2504,7 @@ msgstr "Încărcările care pot conține astfel de imagini vor fi respinse autom
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr "Utilizați presetări"
 
@@ -2671,6 +2689,15 @@ msgstr "Biblioteca dvs. este analizată continuu pentru a crea automat albume cu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
+
+#~ msgid "Don't transcode videos with FFmpeg."
+#~ msgstr "Nu transcodați videoclipuri cu FFmpeg."
+
+#~ msgid "Images"
+#~ msgstr "Imagini"
+
+#~ msgid "RAW Conversion"
+#~ msgstr "Conversia RAW"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Deveniți sponsor astăzi, susțineți misiunea noastră și bucurați-vă de beneficiile membrilor noștri!"

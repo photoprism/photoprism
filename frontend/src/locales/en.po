@@ -462,7 +462,7 @@ msgid "Change private flag"
 msgstr ""
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr ""
@@ -663,7 +663,7 @@ msgstr ""
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr ""
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr ""
 
@@ -671,20 +671,28 @@ msgstr ""
 msgid "Disable ExifTool"
 msgstr ""
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
+msgstr ""
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
 msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr ""
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr ""
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
+msgstr ""
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
 msgstr ""
 
 #: src/page/settings/advanced.vue:162
@@ -693,6 +701,14 @@ msgstr ""
 
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
+msgstr ""
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
 msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
@@ -716,15 +732,15 @@ msgstr ""
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr ""
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr ""
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr ""
 
@@ -833,7 +849,7 @@ msgstr ""
 msgid "Enable new features currently under development."
 msgstr ""
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr ""
 
@@ -948,6 +964,10 @@ msgstr ""
 
 #: src/app/routes.js:281
 msgid "File Browser"
+msgstr ""
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
 msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
@@ -1105,7 +1125,7 @@ msgid "Image"
 msgstr ""
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
+msgid "Image Quality"
 msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
@@ -1815,6 +1835,10 @@ msgstr ""
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr ""
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr ""
@@ -1893,10 +1917,6 @@ msgstr ""
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
-msgstr ""
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
 msgstr ""
 
 #: src/page/library/index.vue:117
@@ -2481,7 +2501,7 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr ""
 

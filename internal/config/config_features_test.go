@@ -150,11 +150,11 @@ func TestConfig_DisableSips(t *testing.T) {
 func TestConfig_DisableVector(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, c.Sponsor(), !c.DisableVector())
-	c.options.DisableVector = true
-	assert.True(t, c.DisableVector())
-	c.options.DisableVector = false
-	assert.Equal(t, c.Sponsor(), !c.DisableVector())
+	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
+	c.options.DisableVectors = true
+	assert.True(t, c.DisableVectors())
+	c.options.DisableVectors = false
+	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
 }
 
 func TestConfig_DisableRaw(t *testing.T) {

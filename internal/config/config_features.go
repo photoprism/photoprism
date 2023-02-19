@@ -139,20 +139,20 @@ func (c *Config) DisableSips() bool {
 	return c.options.DisableSips
 }
 
-// DisableVector checks if vector graphics support is disabled.
-func (c *Config) DisableVector() bool {
-	if c.options.DisableVector || !c.Sponsor() {
+// DisableVectors checks if vector graphics support is disabled.
+func (c *Config) DisableVectors() bool {
+	if c.options.DisableVectors || !c.Sponsor() {
 		return true
 	} else if c.RsvgConvertBin() == "" {
-		c.options.DisableVector = true
+		c.options.DisableVectors = true
 	}
 
-	return c.options.DisableVector
+	return c.options.DisableVectors
 }
 
 // DisableRsvgConvert checks if rsvg-convert is disabled for SVG conversion.
 func (c *Config) DisableRsvgConvert() bool {
-	if c.options.DisableVector || !c.Sponsor() {
+	if c.options.DisableVectors || !c.Sponsor() {
 		return true
 	}
 

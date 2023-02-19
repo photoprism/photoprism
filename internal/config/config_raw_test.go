@@ -100,6 +100,6 @@ func TestConfig_RsvgConvertEnabled(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.True(t, c.RsvgConvertEnabled())
 
-	c.options.DisableVector = true
+	c.options.DisableVectors = true
 	assert.False(t, c.RsvgConvertEnabled())
 }

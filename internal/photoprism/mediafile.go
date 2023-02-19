@@ -326,8 +326,11 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	// Ignore RAW images?
 	skipRaw := Config().DisableRaw()
 
+	// Ignore JPEG XL files?
+	skipJpegXL := Config().DisableJpegXL()
+
 	// Ignore vector graphics?
-	skipVector := Config().DisableVector()
+	skipVectors := Config().DisableVectors()
 
 	// Replace sidecar with originals path in search prefix.
 	if len(sidecarPrefix) > 1 && sidecarPrefix != originalsPrefix && strings.HasPrefix(prefix, sidecarPrefix) {
@@ -364,15 +367,20 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			continue
 		}
 
-		// Ignore file?
-		if f.IsRaw() && skipRaw {
+		// Ignore file format?
+		switch {
+		case skipRaw && f.IsRaw():
 			log.Debugf("media: skipped related raw image %s", clean.Log(f.RootRelName()))
 			continue
-		} else if f.IsVector() && skipVector {
-			log.Debugf("media: skipped related vector graphics %s", clean.Log(f.RootRelName()))
+		case skipJpegXL && f.IsJpegXL():
+			log.Debugf("media: skipped related JPEG XL file %s", clean.Log(f.RootRelName()))
+			continue
+		case skipVectors && f.IsVector():
+			log.Debugf("media: skipped related vector graphic %s", clean.Log(f.RootRelName()))
 			continue
 		}
 
+		// Set main file.
 		if result.Main == nil && f.IsPreviewImage() {
 			result.Main = f
 		} else if f.IsRaw() {

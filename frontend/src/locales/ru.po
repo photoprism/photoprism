@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -464,7 +463,7 @@ msgid "Change private flag"
 msgstr "Изменить флаг приватности"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Изменения успешно сохранены"
@@ -665,7 +664,7 @@ msgstr "Отключить резервное копирование"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Отключить встроенный WebDAV сервер. Требуется перезагрузка."
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr "Отключить Darktable"
 
@@ -673,21 +672,29 @@ msgstr "Отключить Darktable"
 msgid "Disable ExifTool"
 msgstr "Отключить ExifTool"
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
 msgstr "Отключить FFmpeg"
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
+msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "Отключить Места"
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr "Отключить RawTherapee"
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "Отключить TensorFlow"
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
+msgstr ""
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -696,6 +703,14 @@ msgstr "Отключить WebDAV"
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "Отключает обратное геокодирование и карты."
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
+msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -718,15 +733,15 @@ msgstr "Не создавать JSON-файлы ExifTool для улучшенн
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Не изменять папку с оригиналами. Отключает импорт, загрузку и удаление."
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr "Не перекодировать видео с помощью FFmpeg."
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Не использовать Darktable для конвертирования RAW-файлов."
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Не использовать RawTherapee для конвертирования RAW-файлов."
 
@@ -835,7 +850,7 @@ msgstr "Электронная почта"
 msgid "Enable new features currently under development."
 msgstr "Включить новые функции, которые в настоящее время разрабатываются."
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Включает предустановки конвертера RAW. Может снизить производительность."
 
@@ -951,6 +966,10 @@ msgstr "Файлы"
 #: src/app/routes.js:281
 msgid "File Browser"
 msgstr "Файловый менеджер"
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
+msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1107,8 +1126,8 @@ msgid "Image"
 msgstr "Изображение"
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
-msgstr "Изображения"
+msgid "Image Quality"
+msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1817,6 +1836,10 @@ msgstr "Пожалуйста, не загружайте фотографии, с
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Обратите внимание, что изменение пароля приведет к выходу из системы на других устройствах и в браузерах."
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "Портрет"
@@ -1896,10 +1919,6 @@ msgstr "Исходный"
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "RAW"
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
-msgstr "Конвертация RAW"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -2485,7 +2504,7 @@ msgstr "Загрузки, которые могут содержать таки�
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr "Использовать предустановки"
 
@@ -2670,6 +2689,15 @@ msgstr "Ваша библиотека постоянно анализирует�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#~ msgid "Don't transcode videos with FFmpeg."
+#~ msgstr "Не перекодировать видео с помощью FFmpeg."
+
+#~ msgid "Images"
+#~ msgstr "Изображения"
+
+#~ msgid "RAW Conversion"
+#~ msgstr "Конвертация RAW"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Станьте спонсором сегодня, поддержите нашу миссию и воспользуйтесь нашими преимуществами для участников!"

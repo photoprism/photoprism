@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
-"frontend/hi/>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -464,7 +463,7 @@ msgid "Change private flag"
 msgstr "निजी ध्वज बदलें"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "परिवर्तन सफलतापूर्वक सहेजे गए"
@@ -665,7 +664,7 @@ msgstr "पिछला बैकअप"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "अंतर्निहित WebDAV सर्वर अक्षम करें। पुनः आरंभ करने की आवश्यकता है।"
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr "डार्कटेबल अक्षम करें"
 
@@ -673,21 +672,29 @@ msgstr "डार्कटेबल अक्षम करें"
 msgid "Disable ExifTool"
 msgstr "ExifTool अक्षम करें"
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
 msgstr "एफएफएमपीईजी अक्षम करें"
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
+msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "विकलांग"
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr "रॉ थेरेपी को अक्षम करें"
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "TensorFlow अक्षम करें"
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
+msgstr ""
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -696,6 +703,14 @@ msgstr "विकलांग"
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "रिवर्स जियोकोडिंग और नक्शे अक्षम करता है।"
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
+msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -718,15 +733,15 @@ msgstr "बेहतर मेटाडेटा निष्कर्षण क
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "मूल फ़ोल्डर को संशोधित न करें। आयात, अपलोड और हटाना अक्षम करता है।"
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr "FFmpeg के साथ वीडियो ट्रांसकोड न करें।"
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr "रॉ फ़ाइलों को कनवर्ट करने के लिए डार्कटेबल का उपयोग न करें।"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "RAW फ़ाइलों को कनवर्ट करने के लिए RawTherapee का उपयोग न करें।"
 
@@ -835,7 +850,7 @@ msgstr "ईमेल"
 msgid "Enable new features currently under development."
 msgstr "वर्तमान में विकास के तहत नई सुविधाएँ सक्षम करें।"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "रॉ कनवर्टर प्रीसेट सक्षम करता है। प्रदर्शन को कम कर सकता है।"
 
@@ -951,6 +966,10 @@ msgstr "फ़ाइल"
 #: src/app/routes.js:281
 msgid "File Browser"
 msgstr "फ़ाइल ब्राउज़र"
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
+msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1107,8 +1126,8 @@ msgid "Image"
 msgstr "छवि"
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
-msgstr "छवि"
+msgid "Image Quality"
+msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1817,6 +1836,10 @@ msgstr "कृपया आक्रामक सामग्री वाले
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "कृपया ध्यान दें कि अपना पासवर्ड बदलने से आप अन्य उपकरणों और ब्राउज़रों पर लॉग आउट हो जाएंगे।"
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "चित्र"
@@ -1896,10 +1919,6 @@ msgstr "कच्चा"
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "कच्चा"
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
-msgstr "परिवर्तित"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -2485,7 +2504,7 @@ msgstr "ऐसे चित्र शामिल होने वाले अ�
 msgid "URL"
 msgstr "यूआरएल"
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr "प्रीसेट का उपयोग करें"
 
@@ -2670,6 +2689,15 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "Don't transcode videos with FFmpeg."
+#~ msgstr "FFmpeg के साथ वीडियो ट्रांसकोड न करें।"
+
+#~ msgid "Images"
+#~ msgstr "छवि"
+
+#~ msgid "RAW Conversion"
+#~ msgstr "परिवर्तित"
 
 #~ msgid "Don't use Darktable to convert RAW files."
 #~ msgstr "रॉ फ़ाइलों को कनवर्ट करने के लिए डार्कटेबल का उपयोग न करें।"

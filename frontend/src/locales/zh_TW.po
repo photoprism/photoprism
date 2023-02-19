@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-13 15:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -464,7 +463,7 @@ msgid "Change private flag"
 msgstr "更改私人選項"
 
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:42 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "成功儲存變更"
@@ -665,7 +664,7 @@ msgstr "停用備份"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "停用內建的WebDAV服務器。需要重啟。"
 
-#: src/page/settings/advanced.vue:481
+#: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
 msgstr "停用 Darktable"
 
@@ -673,21 +672,29 @@ msgstr "停用 Darktable"
 msgid "Disable ExifTool"
 msgstr "停用 ExifTool"
 
-#: src/page/settings/advanced.vue:523
+#: src/page/settings/advanced.vue:579
 msgid "Disable FFmpeg"
 msgstr "停用 FFmpeg"
+
+#: src/page/settings/advanced.vue:557
+msgid "Disable ImageMagick"
+msgstr ""
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
 msgstr "停用位置"
 
-#: src/page/settings/advanced.vue:502
+#: src/page/settings/advanced.vue:513
 msgid "Disable RawTherapee"
 msgstr "停用 RawTherapee"
 
 #: src/page/settings/advanced.vue:228
 msgid "Disable TensorFlow"
 msgstr "停用 TensorFlow"
+
+#: src/page/settings/advanced.vue:601
+msgid "Disable Vectors"
+msgstr ""
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -696,6 +703,14 @@ msgstr "停用 WebDAV"
 #: src/page/settings/advanced.vue:185
 msgid "Disables reverse geocoding and maps."
 msgstr "禁用尋找座標及地圖。"
+
+#: src/page/settings/advanced.vue:602
+msgid "Disables vector graphics support."
+msgstr ""
+
+#: src/page/settings/advanced.vue:580
+msgid "Disables video transcoding and thumbnail extraction."
+msgstr ""
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -718,15 +733,15 @@ msgstr "不要建立ExifTool JSON文件來改善元數據讀取。"
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "不要修改\"originals\"文件夾。停用導入，上傳和刪除。"
 
-#: src/page/settings/advanced.vue:524
-msgid "Don't transcode videos with FFmpeg."
-msgstr "不要使用 FFmpeg 對視頻進行轉碼。"
-
-#: src/page/settings/advanced.vue:482
+#: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
 msgstr "不要使用 Darktable 來轉換 RAW 文件。"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:558
+msgid "Don't use ImageMagick to convert or modify images."
+msgstr ""
+
+#: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "不要使用 RawTherapee 來轉換 RAW 文件。"
 
@@ -835,7 +850,7 @@ msgstr "電子郵件"
 msgid "Enable new features currently under development."
 msgstr "啟用目前正在開發的新功能。"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "啟用 RAW 轉換器預設集。可能會降低性能。"
 
@@ -951,6 +966,10 @@ msgstr "檔案"
 #: src/app/routes.js:281
 msgid "File Browser"
 msgstr "檔案瀏覽器"
+
+#: src/page/settings/advanced.vue:96
+msgid "File Conversion"
+msgstr ""
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1107,8 +1126,8 @@ msgid "Image"
 msgstr "圖片"
 
 #: src/page/settings/advanced.vue:56
-msgid "Images"
-msgstr "圖片"
+msgid "Image Quality"
+msgstr ""
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1817,6 +1836,10 @@ msgstr "請不要上傳包含冒犯性內容的照片。"
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "請注意，更改密碼將使您在其他設備和瀏覽器上登出。"
 
+#: src/page/settings/advanced.vue:456
+msgid "PNG Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
 msgstr "人像"
@@ -1896,10 +1919,6 @@ msgstr "原始"
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
 msgid "RAW"
 msgstr "RAW"
-
-#: src/page/settings/advanced.vue:96
-msgid "RAW Conversion"
-msgstr "RAW 轉換"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
@@ -2485,7 +2504,7 @@ msgstr "上傳此類圖像將可能被自動拒絕。"
 msgid "URL"
 msgstr "網址"
 
-#: src/page/settings/advanced.vue:460
+#: src/page/settings/advanced.vue:535
 msgid "Use Presets"
 msgstr "使用預設"
 
@@ -2670,6 +2689,15 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Don't transcode videos with FFmpeg."
+#~ msgstr "不要使用 FFmpeg 對視頻進行轉碼。"
+
+#~ msgid "Images"
+#~ msgstr "圖片"
+
+#~ msgid "RAW Conversion"
+#~ msgstr "RAW 轉換"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "今天就成为赞助商，支持我们的使命，享受我们的会员福利"

@@ -75,7 +75,7 @@ type Options struct {
 	DisableRawTherapee    bool          `yaml:"DisableRawTherapee" json:"DisableRawTherapee" flag:"disable-rawtherapee"`
 	DisableImageMagick    bool          `yaml:"DisableImageMagick" json:"DisableImageMagick" flag:"disable-imagemagick"`
 	DisableHeifConvert    bool          `yaml:"DisableHeifConvert" json:"DisableHeifConvert" flag:"disable-heifconvert"`
-	DisableVector         bool          `yaml:"DisableVector" json:"DisableVector" flag:"disable-vector"`
+	DisableVectors        bool          `yaml:"DisableVectors" json:"DisableVectors" flag:"disable-vectors"`
 	DisableJpegXL         bool          `yaml:"DisableJpegXL" json:"DisableJpegXL" flag:"disable-jpegxl"`
 	DisableRaw            bool          `yaml:"DisableRaw" json:"DisableRaw" flag:"disable-raw"`
 	RawPresets            bool          `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`

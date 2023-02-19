@@ -110,7 +110,7 @@
                   color="secondary-dark"
                   :label="$gettext('Disable ExifTool')"
                   :hint="$gettext('Don\'t create ExifTool JSON files for improved metadata extraction.')"
-                  prepend-icon="no_photography"
+                  prepend-icon="filter_alt_off"
                   persistent-hint
                   @change="onChange"
               >
@@ -136,7 +136,7 @@
 
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0" :title="$gettext('Thumbnail Generation')">
-            <translate>Images</translate>
+            <translate>Image Quality</translate>
           </h3>
         </v-card-title>
 
@@ -221,13 +221,13 @@
 
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
-            <translate>RAW Conversion</translate>
+            <translate>File Conversion</translate>
           </h3>
         </v-card-title>
 
         <v-card-actions>
           <v-layout wrap align-top>
-            <v-flex xs12 sm8 class="px-2 pb-2">
+            <v-flex xs12 sm6 class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext('JPEG Size Limit: %{n}px'), {n: settings.JpegSize}) }}
               </v-subheader>
@@ -244,11 +244,58 @@
               </v-flex>
             </v-flex>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm6 class="px-2 pb-2">
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext('PNG Size Limit: %{n}px'), {n: settings.PngSize}) }}
+              </v-subheader>
+              <v-flex class="pr-3">
+                <v-slider
+                    v-model="settings.PngSize"
+                    :min="720"
+                    :max="30000"
+                    :step="20"
+                    :disabled="busy"
+                    class="mt-0"
+                    @change="onChange"
+                ></v-slider>
+              </v-flex>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.DisableDarktable"
+                  :disabled="busy || settings.DisableRaw"
+                  class="ma-0 pa-0 input-disable-darktable"
+                  color="secondary-dark"
+                  :label="$gettext('Disable Darktable')"
+                  :hint="$gettext('Don\'t use Darktable to convert RAW images.')"
+                  prepend-icon="no_photography"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.DisableRawTherapee"
+                  :disabled="busy || settings.DisableRaw"
+                  class="ma-0 pa-0 input-disable-rawtherapee"
+                  color="secondary-dark"
+                  :label="$gettext('Disable RawTherapee')"
+                  :hint="$gettext('Don\'t use RawTherapee to convert RAW images.')"
+                  prepend-icon="raw_off"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.RawPresets"
                   :disabled="busy || settings.DisableRaw"
-                  class="ma-0 pa-0"
+                  class="ma-0 pa-0 input-raw-presets"
                   color="secondary-dark"
                   :label="$gettext('Use Presets')"
                   :hint="$gettext('Enables RAW converter presets. May reduce performance.')"
@@ -259,45 +306,45 @@
               </v-checkbox>
             </v-flex>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.DisableDarktable"
-                  :disabled="busy || settings.DisableRaw"
-                  class="ma-0 pa-0 input-private"
+                  v-model="settings.DisableImageMagick"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-disable-imagemagick"
                   color="secondary-dark"
-                  :label="$gettext('Disable Darktable')"
-                  :hint="$gettext('Don\'t use Darktable to convert RAW images.')"
-                  prepend-icon="image_not_supported"
+                  :label="$gettext('Disable ImageMagick')"
+                  :hint="$gettext('Don\'t use ImageMagick to convert or modify images.')"
+                  prepend-icon="auto_fix_off"
                   persistent-hint
                   @change="onChange"
               >
               </v-checkbox>
             </v-flex>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.DisableRawtherapee"
-                  :disabled="busy || settings.DisableRaw"
-                  class="ma-0 pa-0 input-private"
-                  color="secondary-dark"
-                  :label="$gettext('Disable RawTherapee')"
-                  :hint="$gettext('Don\'t use RawTherapee to convert RAW images.')"
-                  prepend-icon="image_not_supported"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.DisableFFmpeg"
                   :disabled="busy"
-                  class="ma-0 pa-0 input-private"
+                  class="ma-0 pa-0 input-disable-ffmpeg"
                   color="secondary-dark"
                   :label="$gettext('Disable FFmpeg')"
-                  :hint="$gettext('Don\'t transcode videos with FFmpeg.')"
+                  :hint="$gettext('Disables video transcoding and thumbnail extraction.')"
                   prepend-icon="videocam_off"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex v-if="isSponsor" xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.DisableVectors"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-disable-vectors"
+                  color="secondary-dark"
+                  :label="$gettext('Disable Vectors')"
+                  :hint="$gettext('Disables vector graphics support.')"
+                  prepend-icon="font_download_off"
                   persistent-hint
                   @change="onChange"
               >
@@ -338,6 +385,7 @@ export default {
       busy: this.$config.get("demo"),
       isDemo: this.$config.get("demo"),
       isPublic: this.$config.get("public"),
+      isSponsor: this.$config.isSponsor(),
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
       config: this.$config.values,

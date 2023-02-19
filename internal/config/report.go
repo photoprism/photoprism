@@ -99,7 +99,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-imagemagick", fmt.Sprintf("%t", c.DisableImageMagick())},
 		{"disable-heifconvert", fmt.Sprintf("%t", c.DisableHeifConvert())},
 		{"disable-rsvgconvert", fmt.Sprintf("%t", c.DisableRsvgConvert())},
-		{"disable-vector", fmt.Sprintf("%t", c.DisableVector())},
+		{"disable-vectors", fmt.Sprintf("%t", c.DisableVectors())},
 		{"disable-jpegxl", fmt.Sprintf("%t", c.DisableJpegXL())},
 		{"disable-raw", fmt.Sprintf("%t", c.DisableRaw())},
 

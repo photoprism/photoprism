@@ -105,20 +105,23 @@ type Years []int
 
 // ClientDisable represents disabled client features a user cannot turn back on.
 type ClientDisable struct {
-	Backups        bool `json:"backups"`
 	WebDAV         bool `json:"webdav"`
 	Settings       bool `json:"settings"`
 	Places         bool `json:"places"`
-	ExifTool       bool `json:"exiftool"`
-	FFmpeg         bool `json:"ffmpeg"`
-	Raw            bool `json:"raw"`
-	Darktable      bool `json:"darktable"`
-	RawTherapee    bool `json:"rawtherapee"`
-	Sips           bool `json:"sips"`
-	HeifConvert    bool `json:"heifconvert"`
+	Backups        bool `json:"backups"`
 	TensorFlow     bool `json:"tensorflow"`
 	Faces          bool `json:"faces"`
 	Classification bool `json:"classification"`
+	Sips           bool `json:"sips"`
+	FFmpeg         bool `json:"ffmpeg"`
+	ExifTool       bool `json:"exiftool"`
+	Darktable      bool `json:"darktable"`
+	RawTherapee    bool `json:"rawtherapee"`
+	ImageMagick    bool `json:"imagemagick"`
+	HeifConvert    bool `json:"heifconvert"`
+	Vectors        bool `json:"vectors"`
+	JpegXL         bool `json:"jpegxl"`
+	Raw            bool `json:"raw"`
 }
 
 // ClientCounts represents photo, video and album counts for the client UI.
@@ -216,20 +219,23 @@ func (c *Config) ClientPublic() ClientConfig {
 		Settings: c.PublicSettings(),
 		ACL:      acl.Resources.Grants(acl.RoleUnknown),
 		Disable: ClientDisable{
-			Backups:        true,
 			WebDAV:         true,
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
-			ExifTool:       true,
-			FFmpeg:         true,
-			Raw:            true,
-			Darktable:      true,
-			RawTherapee:    true,
-			Sips:           true,
-			HeifConvert:    true,
+			Backups:        true,
 			TensorFlow:     true,
 			Faces:          true,
 			Classification: true,
+			Sips:           true,
+			FFmpeg:         true,
+			ExifTool:       true,
+			Darktable:      true,
+			RawTherapee:    true,
+			ImageMagick:    true,
+			HeifConvert:    true,
+			Vectors:        c.DisableVectors(),
+			JpegXL:         true,
+			Raw:            true,
 		},
 		Flags:            strings.Join(c.Flags(), " "),
 		Mode:             string(ClientPublic),
@@ -296,20 +302,23 @@ func (c *Config) ClientShare() ClientConfig {
 		Settings: c.ShareSettings(),
 		ACL:      acl.Resources.Grants(acl.RoleVisitor),
 		Disable: ClientDisable{
-			Backups:        true,
 			WebDAV:         c.DisableWebDAV(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
-			ExifTool:       true,
+			Backups:        true,
+			TensorFlow:     true,
+			Faces:          c.DisableFaces(),
+			Classification: c.DisableClassification(),
+			Sips:           true,
 			FFmpeg:         true,
-			Raw:            true,
+			ExifTool:       true,
 			Darktable:      true,
 			RawTherapee:    true,
-			Sips:           true,
+			ImageMagick:    true,
 			HeifConvert:    true,
-			TensorFlow:     true,
-			Faces:          true,
-			Classification: true,
+			Vectors:        c.DisableVectors(),
+			JpegXL:         c.DisableJpegXL(),
+			Raw:            c.DisableRaw(),
 		},
 		Flags:            strings.Join(c.Flags(), " "),
 		Mode:             string(ClientShare),
@@ -383,20 +392,23 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	cfg := ClientConfig{
 		Settings: s,
 		Disable: ClientDisable{
-			Backups:        c.DisableBackups(),
 			WebDAV:         c.DisableWebDAV(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
-			ExifTool:       c.DisableExifTool(),
-			FFmpeg:         c.DisableFFmpeg(),
-			Raw:            c.DisableRaw(),
-			Darktable:      c.DisableDarktable(),
-			RawTherapee:    c.DisableRawTherapee(),
-			Sips:           c.DisableSips(),
-			HeifConvert:    c.DisableHeifConvert(),
+			Backups:        c.DisableBackups(),
 			TensorFlow:     c.DisableTensorFlow(),
 			Faces:          c.DisableFaces(),
 			Classification: c.DisableClassification(),
+			Sips:           c.DisableSips(),
+			FFmpeg:         c.DisableFFmpeg(),
+			ExifTool:       c.DisableExifTool(),
+			Darktable:      c.DisableDarktable(),
+			RawTherapee:    c.DisableRawTherapee(),
+			ImageMagick:    c.DisableImageMagick(),
+			HeifConvert:    c.DisableHeifConvert(),
+			Vectors:        c.DisableVectors(),
+			JpegXL:         c.DisableJpegXL(),
+			Raw:            c.DisableRaw(),
 		},
 		Flags:            strings.Join(c.Flags(), " "),
 		Mode:             string(ClientUser),
