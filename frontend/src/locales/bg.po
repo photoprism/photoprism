@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-13 15:01+0000\n"
+"PO-Revision-Date: 2023-02-19 16:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -678,7 +679,7 @@ msgstr "Деактивиране на FFmpeg"
 
 #: src/page/settings/advanced.vue:557
 msgid "Disable ImageMagick"
-msgstr ""
+msgstr "Деактивиране на ImageMagick"
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
@@ -694,7 +695,7 @@ msgstr "Деактивиране на TensorFlow"
 
 #: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
-msgstr ""
+msgstr "Деактивиране на вектори"
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -706,11 +707,11 @@ msgstr "Деактивира обратното геокодиране и кар
 
 #: src/page/settings/advanced.vue:604
 msgid "Disables vector graphics support."
-msgstr ""
+msgstr "Деактивира поддръжката на векторни графики."
 
 #: src/page/settings/advanced.vue:580
 msgid "Disables video transcoding and thumbnail extraction."
-msgstr ""
+msgstr "Деактивира транскодирането на видео и извличането на миниатюри."
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -740,6 +741,7 @@ msgstr "Не използвайте Darktable за конвертиране на
 #: src/page/settings/advanced.vue:558
 msgid "Don't use ImageMagick to convert or modify images."
 msgstr ""
+"Не използвайте ImageMagick за конвертиране или модифициране на изображения."
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -969,7 +971,7 @@ msgstr "Файлов браузър"
 
 #: src/page/settings/advanced.vue:96
 msgid "File Conversion"
-msgstr ""
+msgstr "Конвертиране на файлове"
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1127,7 +1129,7 @@ msgstr "Изображение"
 
 #: src/page/settings/advanced.vue:56
 msgid "Image Quality"
-msgstr ""
+msgstr "Качество на изображението"
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1838,7 +1840,7 @@ msgstr "Моля, имайте предвид, че промяната на па
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
-msgstr ""
+msgstr "Ограничение на размера на PNG: %{n}px"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
