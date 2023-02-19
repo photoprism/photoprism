@@ -1057,6 +1057,10 @@ msgstr "دریافت پشتیبانی"
 msgid "Given Name"
 msgstr "اسم اصلی"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "طلا"
@@ -1687,10 +1691,6 @@ msgstr "یک تصویر پیدا شد"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "اونیکس"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "گزینه ها"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2689,6 +2689,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Options"
+#~ msgstr "گزینه ها"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "برای تبدیل یا تغییر تصاویر از ImageMagick استفاده نکنید."

@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/es/>\n"
+"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1058,6 +1057,10 @@ msgstr "Obtener asistencia"
 msgid "Given Name"
 msgstr "Nombre"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Oro"
@@ -1689,10 +1692,6 @@ msgstr "Una foto encontrada"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Ónix"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Opciones"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2692,6 +2691,9 @@ msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
+
+#~ msgid "Options"
+#~ msgstr "Opciones"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "No utilice ImageMagick para convertir o modificar imágenes."

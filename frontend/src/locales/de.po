@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:40+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
-"frontend/de/>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1058,6 +1057,10 @@ msgstr "Unterstützung erhalten"
 msgid "Given Name"
 msgstr "Vorname"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Gold"
@@ -1688,10 +1691,6 @@ msgstr "Ein Bild gefunden"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyx"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Optionen"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2686,6 +2685,9 @@ msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#~ msgid "Options"
+#~ msgstr "Optionen"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Verwenden Sie ImageMagick nicht, um Bilder zu konvertieren oder zu verändern."

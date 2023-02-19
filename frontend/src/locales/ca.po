@@ -1057,6 +1057,10 @@ msgstr "Obtenint suport"
 msgid "Given Name"
 msgstr "Nom de pila"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Or"
@@ -1687,10 +1691,6 @@ msgstr "S'ha trobat una imatge"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Ònix"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Opcions"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2689,6 +2689,9 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
+
+#~ msgid "Options"
+#~ msgstr "Opcions"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "No utilitzeu ImageMagick per convertir o modificar imatges."

@@ -1054,6 +1054,10 @@ msgstr "Abi saamine"
 msgid "Given Name"
 msgstr "Eesnimi"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Kuld"
@@ -1684,10 +1688,6 @@ msgstr "Üks pilt leitud"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyx"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Valikud"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2686,6 +2686,9 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "Options"
+#~ msgstr "Valikud"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Ärge kasutage ImageMagicki piltide teisendamiseks või muutmiseks."

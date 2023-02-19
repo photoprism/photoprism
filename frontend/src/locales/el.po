@@ -1054,6 +1054,10 @@ msgstr "Λήψη υποστήριξης"
 msgid "Given Name"
 msgstr "Αρχικό όνομα"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Χρυσό"
@@ -1684,10 +1688,6 @@ msgstr "Μια εικόνα που βρέθηκε"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyx"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Επιλογές"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2682,6 +2682,9 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Options"
+#~ msgstr "Επιλογές"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Μην χρησιμοποιείτε το ImageMagick για να μετατρέψετε ή να τροποποιήσετε εικόνες."

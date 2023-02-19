@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/tr/>\n"
+"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1058,6 +1057,10 @@ msgstr "Destek Alma"
 msgid "Given Name"
 msgstr "Verilen İsim"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Altın"
@@ -1688,10 +1691,6 @@ msgstr "Bir resim bulundu"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyx"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Seçenekler"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2690,6 +2689,9 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
+
+#~ msgid "Options"
+#~ msgstr "Seçenekler"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "ImageMagick'i görüntüleri dönüştürmek veya değiştirmek için kullanmayın."

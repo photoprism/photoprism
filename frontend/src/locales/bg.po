@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1058,6 +1057,10 @@ msgstr "Получаване на подкрепа"
 msgid "Given Name"
 msgstr "Оригинално име"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Злато"
@@ -1688,10 +1691,6 @@ msgstr "Една намерена снимка"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Оникс"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Опции"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2686,6 +2685,9 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Options"
+#~ msgstr "Опции"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Не използвайте ImageMagick за конвертиране или модифициране на изображения."

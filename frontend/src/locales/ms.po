@@ -1057,6 +1057,10 @@ msgstr "Mendapat Sokongan"
 msgid "Given Name"
 msgstr "Nama Asal"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "emas"
@@ -1687,10 +1691,6 @@ msgstr "Satu gambar ditemui"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyx"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Pilihan"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2685,6 +2685,9 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Options"
+#~ msgstr "Pilihan"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Jangan gunakan ImageMagick untuk menukar atau mengubah suai imej."

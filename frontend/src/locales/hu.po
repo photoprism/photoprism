@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1057,6 +1056,10 @@ msgstr "Támogatás megszerzése"
 msgid "Given Name"
 msgstr "Keresztnév"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Arany"
@@ -1687,10 +1690,6 @@ msgstr "Egy kép található"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Ónix"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Lehetőségek"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2685,6 +2684,9 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "Options"
+#~ msgstr "Lehetőségek"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Ne használja az ImageMagick programot képek átalakítására vagy módosítására."

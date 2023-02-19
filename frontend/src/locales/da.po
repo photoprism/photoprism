@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/da/>\n"
+"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1058,6 +1057,10 @@ msgstr "Få hjælp"
 msgid "Given Name"
 msgstr "Fornavn"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Guld"
@@ -1688,10 +1691,6 @@ msgstr "Et billede fundet"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyx"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Muligheder"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2690,6 +2689,9 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "Options"
+#~ msgstr "Muligheder"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Du må ikke bruge ImageMagick til at konvertere eller ændre billeder."

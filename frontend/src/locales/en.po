@@ -1056,6 +1056,10 @@ msgstr ""
 msgid "Given Name"
 msgstr ""
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr ""
@@ -1685,10 +1689,6 @@ msgstr ""
 
 #: src/options/themes.js:498
 msgid "Onyx"
-msgstr ""
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
 msgstr ""
 
 #: src/page/about/about.vue:66

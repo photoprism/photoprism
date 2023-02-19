@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/sv/>\n"
+"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1058,6 +1057,10 @@ msgstr "Få stöd"
 msgid "Given Name"
 msgstr "Ursprungligt namn"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Guld"
@@ -1688,10 +1691,6 @@ msgstr "En bild hittades"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyx"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Alternativ"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2686,6 +2685,9 @@ msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
+
+#~ msgid "Options"
+#~ msgstr "Alternativ"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Använd inte ImageMagick för att konvertera eller ändra bilder."

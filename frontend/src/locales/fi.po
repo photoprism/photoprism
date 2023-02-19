@@ -1054,6 +1054,10 @@ msgstr "Tuen saaminen"
 msgid "Given Name"
 msgstr "Alkuperäinen nimi"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Kulta"
@@ -1684,10 +1688,6 @@ msgstr "Yksi kuva löytyi"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyksinmusta"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Vaihtoehdot"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2682,6 +2682,9 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
+
+#~ msgid "Options"
+#~ msgstr "Vaihtoehdot"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Älä käytä ImageMagickia kuvien muuntamiseen tai muokkaamiseen."

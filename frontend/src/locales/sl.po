@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -1055,6 +1054,10 @@ msgstr "Pridobivanje podpore"
 msgid "Given Name"
 msgstr "Izvirno ime"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Zlato"
@@ -1685,10 +1688,6 @@ msgstr "Najdena je bila ena slika"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Onyx"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Možnosti"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2683,6 +2682,9 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Options"
+#~ msgstr "Možnosti"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Ne uporabljajte programa ImageMagick za pretvorbo ali spreminjanje slik."

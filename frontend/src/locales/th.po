@@ -1057,6 +1057,10 @@ msgstr "การขอช่วยเหลือ"
 msgid "Given Name"
 msgstr "ชื่อจริง"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "ทอง"
@@ -1687,10 +1691,6 @@ msgstr "พบหนึ่งภาพ"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "โอนิกซ์"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "ตัวเลือก"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2685,6 +2685,9 @@ msgstr "คลังของคุณได้รับการวิเคร
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#~ msgid "Options"
+#~ msgstr "ตัวเลือก"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "อย่าใช้ ImageMagick เพื่อแปลงหรือแก้ไขรูปภาพ"

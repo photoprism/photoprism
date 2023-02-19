@@ -1054,6 +1054,10 @@ msgstr "Ondersteuning kry"
 msgid "Given Name"
 msgstr "Noemnaam"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "Goud"
@@ -1684,10 +1688,6 @@ msgstr "Een foto gevind"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "Oniks"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "Opsies"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2686,6 +2686,9 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#~ msgid "Options"
+#~ msgstr "Opsies"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "Moenie ImageMagick gebruik om beelde om te skakel of te verander nie."

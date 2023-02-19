@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1058,6 +1057,10 @@ msgstr "获得支持"
 msgid "Given Name"
 msgstr "名"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "金"
@@ -1688,10 +1691,6 @@ msgstr "已发现一张图片"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "玛瑙"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "选项"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2692,6 +2691,9 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Options"
+#~ msgstr "选项"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "不要使用ImageMagick来转换或修改图像。"

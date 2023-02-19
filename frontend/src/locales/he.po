@@ -5,14 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
-"frontend/he/>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
-"n % 10 == 0) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -1059,6 +1057,10 @@ msgstr "קבלת תמיכה"
 msgid "Given Name"
 msgstr "שם פרטי"
 
+#: src/page/settings/advanced.vue:6
+msgid "Global Options"
+msgstr ""
+
 #: src/options/options.js:408
 msgid "Gold"
 msgstr "זהב"
@@ -1689,10 +1691,6 @@ msgstr "תמונה אחת נמצאה"
 #: src/options/themes.js:498
 msgid "Onyx"
 msgstr "שוהם"
-
-#: src/page/settings/advanced.vue:6
-msgid "Options"
-msgstr "אפשרויות"
 
 #: src/page/about/about.vue:66
 msgid "or ask in our Community Chat"
@@ -2687,6 +2685,9 @@ msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אל
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "זום פנימה\\החוצה"
+
+#~ msgid "Options"
+#~ msgstr "אפשרויות"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
 #~ msgstr "אל תשתמש ב-ImageMagick כדי להמיר או לשנות תמונות."
