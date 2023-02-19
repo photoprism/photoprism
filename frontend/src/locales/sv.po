@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-19 16:39+0000\n"
+"PO-Revision-Date: 2023-02-19 17:23+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
+"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1059,7 +1060,7 @@ msgstr "Ursprungligt namn"
 
 #: src/page/settings/advanced.vue:6
 msgid "Global Options"
-msgstr ""
+msgstr "Globala alternativ"
 
 #: src/options/options.js:408
 msgid "Gold"
