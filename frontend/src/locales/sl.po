@@ -2,12 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-02-13 15:01+0000\n"
+"PO-Revision-Date: 2023-02-19 16:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -675,7 +676,7 @@ msgstr "Onemogoči FFmpeg"
 
 #: src/page/settings/advanced.vue:557
 msgid "Disable ImageMagick"
-msgstr ""
+msgstr "Onemogočite ImageMagick"
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
@@ -691,7 +692,7 @@ msgstr "Onemogoči TensorFlow"
 
 #: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
-msgstr ""
+msgstr "Onemogočite vektorje"
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -703,11 +704,11 @@ msgstr "Onemogoči povratno geokodiranje in zemljevide."
 
 #: src/page/settings/advanced.vue:604
 msgid "Disables vector graphics support."
-msgstr ""
+msgstr "Onemogoči podporo za vektorsko grafiko."
 
 #: src/page/settings/advanced.vue:580
 msgid "Disables video transcoding and thumbnail extraction."
-msgstr ""
+msgstr "Onemogoči prekodiranje videoposnetkov in pridobivanje sličic."
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -737,6 +738,7 @@ msgstr "Za pretvorbo datotek RAW ne uporabljajte programa Darktable."
 #: src/page/settings/advanced.vue:558
 msgid "Don't use ImageMagick to convert or modify images."
 msgstr ""
+"Ne uporabljajte programa ImageMagick za pretvorbo ali spreminjanje slik."
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -966,7 +968,7 @@ msgstr "Brskalnik za datoteke"
 
 #: src/page/settings/advanced.vue:96
 msgid "File Conversion"
-msgstr ""
+msgstr "Pretvarjanje datotek"
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1124,7 +1126,7 @@ msgstr "Slika"
 
 #: src/page/settings/advanced.vue:56
 msgid "Image Quality"
-msgstr ""
+msgstr "Kakovost slike"
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1835,7 +1837,7 @@ msgstr "Upoštevajte, da se boste s spremembo gesla odjavili tudi v drugih napra
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
-msgstr ""
+msgstr "Omejitev velikosti PNG: %{n}px"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"

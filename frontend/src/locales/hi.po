@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-13 15:01+0000\n"
+"PO-Revision-Date: 2023-02-19 15:59+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
+"frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -678,7 +679,7 @@ msgstr "एफएफएमपीईजी अक्षम करें"
 
 #: src/page/settings/advanced.vue:557
 msgid "Disable ImageMagick"
-msgstr ""
+msgstr "इमेजमैजिक को अक्षम करें"
 
 #: src/page/settings/advanced.vue:184
 msgid "Disable Places"
@@ -694,7 +695,7 @@ msgstr "TensorFlow अक्षम करें"
 
 #: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
-msgstr ""
+msgstr "वेक्टर अक्षम करें"
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -706,11 +707,11 @@ msgstr "रिवर्स जियोकोडिंग और नक्शे
 
 #: src/page/settings/advanced.vue:604
 msgid "Disables vector graphics support."
-msgstr ""
+msgstr "वेक्टर ग्राफ़िक्स समर्थन अक्षम करता है।"
 
 #: src/page/settings/advanced.vue:580
 msgid "Disables video transcoding and thumbnail extraction."
-msgstr ""
+msgstr "वीडियो ट्रांसकोडिंग और थंबनेल निष्कर्षण अक्षम करता है।"
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
@@ -739,7 +740,7 @@ msgstr "रॉ फ़ाइलों को कनवर्ट करने क�
 
 #: src/page/settings/advanced.vue:558
 msgid "Don't use ImageMagick to convert or modify images."
-msgstr ""
+msgstr "छवियों को बदलने या संशोधित करने के लिए ImageMagick का उपयोग न करें।"
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
@@ -969,7 +970,7 @@ msgstr "फ़ाइल ब्राउज़र"
 
 #: src/page/settings/advanced.vue:96
 msgid "File Conversion"
-msgstr ""
+msgstr "फ़ाइल रूपांतरण"
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:23
@@ -1127,7 +1128,7 @@ msgstr "छवि"
 
 #: src/page/settings/advanced.vue:56
 msgid "Image Quality"
-msgstr ""
+msgstr "छवि के गुणवत्ता"
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
 #: src/page/settings/general.vue:274
@@ -1838,7 +1839,7 @@ msgstr "कृपया ध्यान दें कि अपना पास�
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
-msgstr ""
+msgstr "JPEG आकार सीमा: %{n} px"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
