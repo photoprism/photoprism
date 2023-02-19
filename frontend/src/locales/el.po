@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-02-19 16:00+0000\n"
+"PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -736,7 +736,7 @@ msgstr "Μην χρησιμοποιείτε το Darktable για τη μετα�
 
 #: src/page/settings/advanced.vue:558
 msgid "Don't use ImageMagick to convert images."
-msgstr ""
+msgstr "Μην χρησιμοποιείτε το ImageMagick για τη μετατροπή εικόνων."
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."

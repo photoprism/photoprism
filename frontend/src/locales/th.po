@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-19 16:00+0000\n"
+"PO-Revision-Date: 2023-02-19 16:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -739,7 +739,7 @@ msgstr "อย่าใช้ Darktable เพื่อแปลงไฟล์ 
 
 #: src/page/settings/advanced.vue:558
 msgid "Don't use ImageMagick to convert images."
-msgstr ""
+msgstr "อย่าใช้ ImageMagick เพื่อแปลงรูปภาพ"
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
