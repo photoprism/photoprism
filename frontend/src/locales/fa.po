@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-19 16:39+0000\n"
+"PO-Revision-Date: 2023-02-19 17:23+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -1059,7 +1059,7 @@ msgstr "اسم اصلی"
 
 #: src/page/settings/advanced.vue:6
 msgid "Global Options"
-msgstr ""
+msgstr "گزینه های جهانی"
 
 #: src/options/options.js:408
 msgid "Gold"
