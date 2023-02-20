@@ -384,11 +384,11 @@ func TestUser_String(t *testing.T) {
 	})
 	t.Run("FullName", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "", DisplayName: "Test"}
-		assert.Equal(t, "Test", p.String())
+		assert.Equal(t, "'Test'", p.String())
 	})
 	t.Run("UserName", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "Super-User ", DisplayName: "Test"}
-		assert.Equal(t, "super-user", p.String())
+		assert.Equal(t, "'super-user'", p.String())
 	})
 }
 

@@ -232,7 +232,7 @@ func (m *User) Create() (err error) {
 func (m *User) Save() (err error) {
 	m.GenerateTokens(false)
 
-	err = Db().Save(m).Error
+	err = UnscopedDb().Save(m).Error
 
 	if err == nil {
 		m.SaveRelated()
@@ -242,12 +242,22 @@ func (m *User) Save() (err error) {
 }
 
 // Delete marks the entity as deleted.
-func (m *User) Delete() error {
+func (m *User) Delete() (err error) {
 	if m.ID <= 1 {
 		return fmt.Errorf("cannot delete system user")
+	} else if m.UserUID == "" {
+		return fmt.Errorf("uid is required to delete user")
 	}
 
-	return Db().Delete(m).Error
+	if err = UnscopedDb().Delete(Session{}, "user_uid = ?", m.UserUID).Error; err != nil {
+		event.AuditErr([]string{"user %s", "delete", "failed to remove sessions", "%s"}, m.RefID, err)
+	}
+
+	err = Db().Delete(m).Error
+
+	FlushSessionCache()
+
+	return err
 }
 
 // Deleted checks if the user account has been deleted.
@@ -325,7 +335,11 @@ func (m *User) Disabled() bool {
 
 // CanLogIn checks if the user is allowed to log in and use the web UI.
 func (m *User) CanLogIn() bool {
-	if !m.CanLogin && !m.SuperAdmin || m.ID <= 0 || m.UserName == "" {
+	if m == nil {
+		return false
+	} else if m.Deleted() {
+		return false
+	} else if !m.CanLogin && !m.SuperAdmin || m.ID <= 0 || m.UserName == "" {
 		return false
 	} else if role := m.AclRole(); m.Disabled() || role == acl.RoleUnknown {
 		return false
@@ -404,9 +418,9 @@ func (m *User) SetUploadPath(dir string) *User {
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
 	if n := m.Name(); n != "" {
-		return clean.Log(n)
+		return clean.LogQuote(n)
 	} else if n = m.FullName(); n != "" {
-		return clean.Log(n)
+		return clean.LogQuote(n)
 	}
 
 	return clean.Log(m.UserUID)

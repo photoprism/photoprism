@@ -58,3 +58,24 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 
 	return m.Validate()
 }
+
+// RestoreFromCli restored the account from a CLI context.
+func (m *User) RestoreFromCli(ctx *cli.Context, newPassword string) (err error) {
+	m.DeletedAt = nil
+
+	// Set values.
+	if err = m.SetValuesFromCli(ctx); err != nil {
+		return err
+	}
+
+	// Save values.
+	if err = m.Save(); err != nil {
+		return err
+	} else if newPassword == "" {
+		return nil
+	} else if err = m.SetPassword(newPassword); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -76,7 +76,7 @@ func (m *Migrations) Start(db *gorm.DB, opt Options) {
 	// Log information about existing migrations.
 	if prev := len(executed); prev > 0 {
 		stage := fmt.Sprintf("previously executed %s stage", opt.StageName())
-		log.Debugf("migrate: found %s", english.Plural(len(executed), stage+" migration", stage+" migrations"))
+		log.Tracef("migrate: found %s", english.Plural(len(executed), stage+" migration", stage+" migrations"))
 	}
 
 	// Run migrations.
