@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-19 17:23+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-02-20 16:17+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/ku/>\n"
 "Language: ku\n"
@@ -1839,7 +1839,7 @@ msgstr "Ji kerema xwe not bikin ku guhertina şîfreya xwe dê we li ser cîhaz 
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
-msgstr "سنووری قەبارەی JPEG: %{n}px"
+msgstr "سنووری قەبارەی PNG: %{n}px"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
