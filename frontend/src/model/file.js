@@ -197,18 +197,20 @@ export class File extends RestModel {
     }
   }
 
-  typeInfo() {
-    let info = [];
-
-    if (
+  isAnimated() {
+    return (
       this.MediaType &&
       this.Frames &&
       this.MediaType === MediaImage &&
       this.Frames &&
-      this.Frames > 0
-    ) {
-      info.push($gettext("Animated"));
-    } else if (this.Sidecar) {
+      this.Frames > 1
+    );
+  }
+
+  typeInfo() {
+    let info = [];
+
+    if (this.Sidecar) {
       info.push($gettext("Sidecar"));
     }
 

@@ -112,6 +112,14 @@
                           </td>
                           <td>{{ file.typeInfo() }}</td>
                         </tr>
+                        <tr v-if="file.isAnimated()">
+                          <td>
+                            <translate>Animated</translate>
+                          </td>
+                          <td>
+                            <translate>Yes</translate>
+                          </td>
+                        </tr>
                         <tr v-if="file.Codec && file.Codec !== file.FileType">
                           <td>
                             <translate>Codec</translate>
