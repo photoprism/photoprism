@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-19 17:23+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-02-20 14:58+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/lt/>\n"
 "Language: lt\n"
@@ -742,7 +742,7 @@ msgstr "Nenaudokite \"Darktable\" RAW failams konvertuoti."
 
 #: src/page/settings/advanced.vue:558
 msgid "Don't use ImageMagick to convert images."
-msgstr "Nenaudokite \"ImageMagick\" vaizdams konvertuoti."
+msgstr "Nenaudokite ImageMagick vaizdams konvertuoti."
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."

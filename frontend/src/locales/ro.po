@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-19 17:23+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-02-20 15:00+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/ro/>\n"
 "Language: ro\n"
@@ -696,7 +696,7 @@ msgstr "Dezactivați TensorFlow"
 
 #: src/page/settings/advanced.vue:603
 msgid "Disable Vectors"
-msgstr "Dezactivarea vectorilor"
+msgstr "Dezactivați vectorii"
 
 #: src/page/settings/advanced.vue:162
 msgid "Disable WebDAV"
@@ -741,7 +741,7 @@ msgstr "Nu utilizați Darktable pentru a converti fișiere RAW."
 
 #: src/page/settings/advanced.vue:558
 msgid "Don't use ImageMagick to convert images."
-msgstr "Nu folosiți ImageMagick pentru a converti imagini."
+msgstr "Nu folosiți ImageMagick pentru a converti imaginile."
 
 #: src/page/settings/advanced.vue:514
 msgid "Don't use RawTherapee to convert RAW images."
