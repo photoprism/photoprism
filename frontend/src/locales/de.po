@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-20 14:58+0000\n"
+"PO-Revision-Date: 2023-02-20 16:07+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -711,7 +711,8 @@ msgstr "Deaktiviert die Unterstützung von Vektorgrafiken."
 
 #: src/page/settings/advanced.vue:580
 msgid "Disables video transcoding and thumbnail extraction."
-msgstr "Deaktiviert die Videotranskodierung und die Miniaturbildextraktion."
+msgstr ""
+"Deaktiviert die Videotranskodierung und die Erstellung von Vorschaubildern."
 
 #: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
 #: src/app/routes.js:440
