@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-20 16:07+0000\n"
+"PO-Revision-Date: 2023-02-20 16:17+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -1840,7 +1840,7 @@ msgstr "Bitte beachte, dass du beim Ändern deines Passworts auf anderen Geräte
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
-msgstr "Maximale JPEG-Größe: %{n}px"
+msgstr "Maximale PNG-Größe: %{n}px"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"

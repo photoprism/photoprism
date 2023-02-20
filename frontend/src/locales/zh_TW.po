@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-19 17:23+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-02-20 16:17+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -1839,7 +1839,7 @@ msgstr "請注意，更改密碼將使您在其他設備和瀏覽器上登出。
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
-msgstr "JPEG大小限制：%{n} px"
+msgstr "PNG大小限制：%{n} px"
 
 #: src/dialog/photo/edit/files.vue:135 src/dialog/photo/edit/files.vue:132
 msgid "Portrait"
