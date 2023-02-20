@@ -493,7 +493,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
+            <v-list-tile v-show="isAdmin && !isPublic && !isDemo && featUpgrade" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate key="Upgrade">Upgrade</translate>
@@ -702,6 +702,7 @@ export default {
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,
+      featUpgrade: this.$config.getLicense() === "ce",
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
       isPublic: this.$config.get("public"),
