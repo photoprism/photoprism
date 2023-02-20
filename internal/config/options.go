@@ -18,6 +18,7 @@ import (
 // validation and return defaults if a value is empty.
 type Options struct {
 	Name                  string        `json:"-"`
+	About                 string        `json:"-"`
 	Edition               string        `json:"-"`
 	Version               string        `json:"-"`
 	Copyright             string        `json:"-"`
@@ -177,8 +178,13 @@ func NewOptions(ctx *cli.Context) *Options {
 		c.Name = fmt.Sprintf("%s", s)
 	}
 
-	// Set app edition from metadata if possible.
+	// Set app about from metadata if possible.
 	if s, ok := ctx.App.Metadata["About"]; ok {
+		c.About = fmt.Sprintf("%s", s)
+	}
+
+	// Set app edition from metadata if possible.
+	if s, ok := ctx.App.Metadata["Edition"]; ok {
 		c.Edition = fmt.Sprintf("%s", s)
 	}
 

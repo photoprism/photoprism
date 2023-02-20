@@ -72,6 +72,7 @@ type ClientConfig struct {
 	Countries        entity.Countries    `json:"countries"`
 	People           entity.People       `json:"people"`
 	Thumbs           ThumbSizes          `json:"thumbs"`
+	License          string              `json:"license"`
 	Customer         string              `json:"customer"`
 	MapKey           string              `json:"mapKey"`
 	DownloadToken    string              `json:"downloadToken,omitempty"`
@@ -135,17 +136,22 @@ type ClientCounts struct {
 	Countries      int `json:"countries"`
 	Hidden         int `json:"hidden"`
 	Favorites      int `json:"favorites"`
-	Private        int `json:"private"`
 	Review         int `json:"review"`
 	Stories        int `json:"stories"`
+	Private        int `json:"private"`
 	Albums         int `json:"albums"`
+	PrivateAlbums  int `json:"private_albums"`
 	Moments        int `json:"moments"`
+	PrivateMoments int `json:"private_moments"`
 	Months         int `json:"months"`
+	PrivateMonths  int `json:"private_months"`
+	States         int `json:"states"`
+	PrivateStates  int `json:"private_states"`
 	Folders        int `json:"folders"`
+	PrivateFolders int `json:"private_folders"`
 	Files          int `json:"files"`
 	People         int `json:"people"`
 	Places         int `json:"places"`
-	States         int `json:"states"`
 	Labels         int `json:"labels"`
 	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
@@ -240,8 +246,8 @@ func (c *Config) ClientPublic() ClientConfig {
 		Flags:            strings.Join(c.Flags(), " "),
 		Mode:             string(ClientPublic),
 		Name:             c.Name(),
-		About:            c.Edition(),
-		Edition:          c.Hub().Status,
+		About:            c.About(),
+		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
 		StaticUri:        c.StaticUri(),
 		CssUri:           a.AppCssUri(),
@@ -281,6 +287,8 @@ func (c *Config) ClientPublic() ClientConfig {
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
 		People:           entity.People{},
+		License:          c.Hub().Status,
+		Customer:         "",
 		MapKey:           "",
 		Thumbs:           Thumbs,
 		Colors:           colors.All.List(),
@@ -323,8 +331,8 @@ func (c *Config) ClientShare() ClientConfig {
 		Flags:            strings.Join(c.Flags(), " "),
 		Mode:             string(ClientShare),
 		Name:             c.Name(),
-		About:            c.Edition(),
-		Edition:          c.Hub().Status,
+		About:            c.About(),
+		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
 		StaticUri:        c.StaticUri(),
 		CssUri:           a.AppCssUri(),
@@ -367,8 +375,9 @@ func (c *Config) ClientShare() ClientConfig {
 		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
-		MapKey:           c.Hub().MapKey(),
+		License:          c.Hub().Status,
 		Customer:         c.Hub().Customer(),
+		MapKey:           c.Hub().MapKey(),
 		DownloadToken:    c.DownloadToken(),
 		PreviewToken:     c.PreviewToken(),
 		ManifestUri:      c.ClientManifestUri(),
@@ -413,8 +422,8 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Flags:            strings.Join(c.Flags(), " "),
 		Mode:             string(ClientUser),
 		Name:             c.Name(),
-		About:            c.Edition(),
-		Edition:          c.Hub().Status,
+		About:            c.About(),
+		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
 		StaticUri:        c.StaticUri(),
 		CssUri:           a.AppCssUri(),
@@ -458,8 +467,9 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
-		MapKey:           c.Hub().MapKey(),
+		License:          c.Hub().Status,
 		Customer:         c.Hub().Customer(),
+		MapKey:           c.Hub().MapKey(),
 		DownloadToken:    c.DownloadToken(),
 		PreviewToken:     c.PreviewToken(),
 		ManifestUri:      c.ClientManifestUri(),
@@ -535,7 +545,9 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	if hidePrivate {
 		c.Db().
 			Table("albums").
-			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders, "+
+				"SUM(album_type = ? AND album_private = 1) AS private_albums, SUM(album_type = ? AND album_private = 1) AS private_moments, SUM(album_type = ? AND album_private = 1) AS private_months, SUM(album_type = ? AND album_private = 1) AS private_states, SUM(album_type = ? AND album_private = 1) AS private_folders",
+				entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder, entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.photo_private = 0 AND photos.deleted_at IS NULL))").
 			Take(&cfg.Count)
 	} else {

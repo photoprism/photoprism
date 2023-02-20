@@ -342,12 +342,21 @@ func (c *Config) Name() string {
 	return c.options.Name
 }
 
-// Edition returns the app edition.
+// About returns the app about string.
+func (c *Config) About() string {
+	if c.options.About == "" {
+		return "PhotoPrism® Dev"
+	} else if strings.HasSuffix(c.options.About, "CE") && c.Sponsor() {
+		return strings.Replace(c.options.About, "CE", "Plus", 1)
+	}
+
+	return c.options.About
+}
+
+// Edition returns the edition nane.
 func (c *Config) Edition() string {
 	if c.options.Edition == "" {
-		return "PhotoPrism® Dev"
-	} else if strings.HasSuffix(c.options.Edition, "CE") && c.Sponsor() {
-		return strings.Replace(c.options.Edition, "CE", "Plus", 1)
+		return "ce"
 	}
 
 	return c.options.Edition

@@ -331,6 +331,8 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .result .input-favorite .select-off,
 #photoprism .search-results .result.is-favorite .input-favorite .select-on,
+#photoprism .search-results .result .input-private .select-off,
+#photoprism .search-results .result.is-private .input-private .select-on,
 #photoprism .search-results .result .input-hidden .select-off,
 #photoprism .search-results .result.is-hidden .input-hidden .select-on {
     display: inline-flex;
@@ -338,6 +340,8 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .result .input-favorite .select-on,
 #photoprism .search-results .result.is-favorite .input-favorite .select-off,
+#photoprism .search-results .result .input-private .select-on,
+#photoprism .search-results .result.is-private .input-private .select-off,
 #photoprism .search-results .result .input-hidden .select-on,
 #photoprism .search-results .result.is-hidden .input-hidden .select-off {
     display: none;

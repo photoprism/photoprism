@@ -66,8 +66,10 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		aclRole := user.AclRole()
 
 		// Exclude private content?
-		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
-			f.Public = get.Config().Settings().Features.Private
+		if !get.Config().Settings().Features.Private {
+			f.Public = false
+		} else if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+			f.Public = true
 		}
 
 		cache := get.FolderCache()
