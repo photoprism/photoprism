@@ -10,17 +10,22 @@ import (
 )
 
 // FilesByPath returns a slice of files in a given originals folder.
-func FilesByPath(limit, offset int, rootName, pathName string) (files entity.Files, err error) {
+func FilesByPath(limit, offset int, rootName, pathName string, public bool) (files entity.Files, err error) {
 	if strings.HasPrefix(pathName, "/") {
 		pathName = pathName[1:]
 	}
 
-	err = Db().
+	stmt := Db().
 		Table("files").Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
 		Where("files.file_missing = 0 AND files.file_root = ?", rootName).
-		Where("photos.photo_path = ?", pathName).
-		Order("files.file_name").
+		Where("photos.photo_path = ?", pathName)
+
+	if public {
+		stmt = stmt.Where("photos.photo_private = 0")
+	}
+
+	err = stmt.Order("files.file_name").
 		Limit(limit).Offset(offset).
 		Find(&files).Error
 

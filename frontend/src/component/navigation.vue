@@ -419,7 +419,7 @@
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Originals">Originals</translate>
-                <span v-show="config.count.files > 0"
+                <span v-show="config.count.files > 0 && canAccessPrivate"
                       :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.files | abbreviateCount }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -693,7 +693,7 @@ export default {
 
     return {
       canSearchPlaces: this.$config.allow("places", "search"),
-      canAccessAll: !isRestricted,
+      canAccessPrivate: !isRestricted && this.$config.allow("photos", "access_private"),
       canManagePhotos: this.$config.allow("photos", "manage"),
       canManagePeople: this.$config.allow("people", "manage"),
       appNameSuffix: appNameSuffix,

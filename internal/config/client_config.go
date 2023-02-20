@@ -549,7 +549,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	c.Db().
 		Table("files").
 		Select("COUNT(*) AS files").
-		Where("file_missing = 0 AND file_root = ?", entity.RootOriginals).
+		Where("file_missing = 0 AND file_root = ? AND deleted_at IS NULL", entity.RootOriginals).
 		Take(&cfg.Count)
 
 	c.Db().
