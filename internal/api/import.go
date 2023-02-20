@@ -81,7 +81,7 @@ func StartImport(router *gin.RouterGroup) {
 		RemoveFromFolderCache(entity.RootImport)
 
 		var destFolder string
-		if destFolder = s.User().UploadPath; destFolder == "" {
+		if destFolder = s.User().GetUploadPath(); destFolder == "" {
 			destFolder = conf.ImportDest()
 		}
 

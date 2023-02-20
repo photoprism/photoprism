@@ -65,11 +65,11 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		if sess.IsVisitor() || sess.NotRegistered() {
 			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
 		} else if acl.Resources.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			if user.BasePath == "" {
+			if basePath := user.GetBasePath(); basePath == "" {
 				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
 			} else {
 				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ? OR albums.album_type = ? AND (albums.album_path = ? OR albums.album_path LIKE ?)",
-					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, user.BasePath, user.BasePath+"/%")
+					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, basePath, basePath+"/%")
 			}
 		}
 

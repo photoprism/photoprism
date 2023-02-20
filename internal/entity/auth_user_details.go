@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -99,4 +100,30 @@ func (m *UserDetails) Save() error {
 // Updates multiple properties in the database.
 func (m *UserDetails) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
+}
+
+// SetGivenName updates the user's given name.
+func (m *UserDetails) SetGivenName(name string) *UserDetails {
+	name = clean.Name(name)
+
+	if name == "" || SrcPriority[SrcAuto] < SrcPriority[m.NameSrc] {
+		return m
+	}
+
+	m.GivenName = name
+
+	return m
+}
+
+// SetFamilyName updates the user's family name.
+func (m *UserDetails) SetFamilyName(name string) *UserDetails {
+	name = clean.Name(name)
+
+	if name == "" || SrcPriority[SrcAuto] < SrcPriority[m.NameSrc] {
+		return m
+	}
+
+	m.FamilyName = name
+
+	return m
 }

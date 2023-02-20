@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -352,19 +353,49 @@ func (m *User) CanUpload() bool {
 	}
 }
 
-// SetBasePath changes the user's base folder.
+// GetBasePath returns the user's relative base path.
+func (m *User) GetBasePath() string {
+	return m.BasePath
+}
+
+// SetBasePath changes the user's relative base path.
 func (m *User) SetBasePath(dir string) *User {
-	m.BasePath = clean.UserPath(dir)
+	if list.Contains(list.List{"", ".", "./", "/", "\\"}, dir) {
+		m.BasePath = ""
+	} else if dir == "~" && m.UserUID != "" {
+		m.BasePath = fmt.Sprintf("users/%s", m.UserUID)
+	} else {
+		m.BasePath = clean.UserPath(dir)
+	}
 
 	return m
 }
 
-// SetUploadPath changes the user's upload folder.
+// GetUploadPath returns the user's relative upload path.
+func (m *User) GetUploadPath() string {
+	basePath := m.GetBasePath()
+
+	if list.Contains(list.List{"", ".", "./"}, m.UploadPath) {
+		return basePath
+	} else if basePath != "" && strings.HasPrefix(m.UploadPath, basePath+"/") {
+		return m.UploadPath
+	} else if basePath == "" && m.UploadPath == "~" && m.UserUID != "" {
+		return fmt.Sprintf("users/%s", m.UserUID)
+	}
+
+	return path.Join(basePath, m.UploadPath)
+}
+
+// SetUploadPath changes the user's relative upload path.
 func (m *User) SetUploadPath(dir string) *User {
-	if m.BasePath == "" {
-		m.UploadPath = clean.UserPath(dir)
+	basePath := m.GetBasePath()
+
+	if list.Contains(list.List{"", ".", "./", "/", "\\"}, dir) {
+		m.UploadPath = ""
+	} else if basePath == "" && dir == "~" && m.UserUID != "" {
+		m.UploadPath = fmt.Sprintf("users/%s", m.UserUID)
 	} else {
-		m.UploadPath = path.Join(m.BasePath, clean.UserPath(dir))
+		m.UploadPath = clean.UserPath(dir)
 	}
 
 	return m
@@ -432,13 +463,19 @@ func (m *User) Email() string {
 	return clean.Email(m.UserEmail)
 }
 
+// Handle returns the user's login handle.
+func (m *User) Handle() string {
+	handle, _, _ := strings.Cut(m.UserName, "@")
+	return handle
+}
+
 // FullName returns the name of the user for display purposes.
 func (m *User) FullName() string {
 	switch {
 	case m.DisplayName != "":
 		return m.DisplayName
 	default:
-		return m.UserName
+		return clean.NameCapitalized(strings.ReplaceAll(m.Handle(), ".", " "))
 	}
 }
 
@@ -837,18 +874,13 @@ func (m *User) SaveForm(f form.User) error {
 func (m *User) SetDisplayName(name string) *User {
 	name = clean.Name(name)
 
-	// Empty?
-	if name == "" {
+	d := m.Details()
+
+	if name == "" || SrcPriority[SrcAuto] < SrcPriority[d.NameSrc] {
 		return m
 	}
 
 	m.DisplayName = name
-
-	d := m.Details()
-
-	if SrcPriority[SrcAuto] < SrcPriority[d.NameSrc] {
-		return m
-	}
 
 	// Try to parse name into components.
 	n := txt.ParseName(name)
@@ -860,6 +892,18 @@ func (m *User) SetDisplayName(name string) *User {
 	d.NameSuffix = n.Suffix
 	d.NickName = n.Nick
 
+	return m
+}
+
+// SetGivenName updates the user's given name.
+func (m *User) SetGivenName(name string) *User {
+	m.Details().SetGivenName(name)
+	return m
+}
+
+// SetFamilyName updates the user's family name.
+func (m *User) SetFamilyName(name string) *User {
+	m.Details().SetFamilyName(name)
 	return m
 }
 
