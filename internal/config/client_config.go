@@ -610,7 +610,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Select("l.label_uid, l.custom_slug, l.label_name").
 		Joins("JOIN labels l ON categories.category_id = l.id").
 		Where("l.deleted_at IS NULL").
-		Group("l.custom_slug").
+		Group("l.custom_slug, l.label_uid, l.label_name").
 		Order("l.custom_slug").
 		Limit(1000).Offset(0).
 		Scan(&cfg.Categories)
