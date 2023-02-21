@@ -59,6 +59,7 @@ export class ConfigOptions extends Model {
       ThumbSize: 0,
       ThumbSizeUncached: 0,
       JpegSize: 0,
+      PngSize: 0,
       JpegQuality: 0,
       SiteUrl: config.values.siteUrl,
       SitePreview: config.values.siteUrl,
