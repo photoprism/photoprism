@@ -40,11 +40,11 @@ func MimeType(filename string) (mimeType string) {
 	switch Extensions[strings.ToLower(filepath.Ext(filename))] {
 	case ImageDNG:
 		return MimeTypeDNG
-	case MimeTypeAVIF:
+	case ImageAVIF:
 		return MimeTypeAVIF
 	case VideoMP4:
 		return MimeTypeMP4
-	case MimeTypeMOV:
+	case VideoMOV:
 		return MimeTypeMOV
 	case VectorSVG:
 		return MimeTypeSVG
