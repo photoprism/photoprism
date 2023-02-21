@@ -97,19 +97,19 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		user := sess.User()
 		aclRole := user.AclRole()
 
-		// Exclude private content?
+		// Exclude private content.
 		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
 			f.Public = true
 			f.Private = false
 		}
 
-		// Exclude archived content?
+		// Exclude archived content.
 		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
 			f.Archived = false
 			f.Review = false
 		}
 
-		// Exclude hidden files?
+		// Exclude hidden files.
 		if acl.Resources.Deny(acl.ResourceFiles, aclRole, acl.AccessAll) {
 			f.Hidden = false
 		}
@@ -178,12 +178,12 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Primary files only?
+	// Primary files only.
 	if f.Primary {
 		s = s.Where("files.file_primary = 1")
 	}
 
-	// Find specific UIDs only?
+	// Find specific UIDs only.
 	if txt.NotEmpty(f.UID) {
 		ids := SplitOr(strings.ToLower(f.UID))
 
@@ -204,7 +204,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 			}
 		}
 
-		// Find UIDs only to improve performance?
+		// Find UIDs only to improve performance.
 		if sess == nil && f.FindUidOnly() {
 			if result := s.Scan(&results); result.Error != nil {
 				return results, 0, result.Error
@@ -220,7 +220,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Find Unique Image ID (Exif), Document ID, or Instance ID (XMP)?
+	// Find Unique Image ID (Exif), Document ID, or Instance ID (XMP).
 	if txt.NotEmpty(f.ID) {
 		for _, id := range SplitAnd(strings.ToLower(f.ID)) {
 			if ids := SplitOr(id); len(ids) > 0 {
@@ -319,7 +319,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Filter by location?
+	// Filter by location.
 	if f.Geo == true {
 		s = s.Where("photos.cell_id <> 'zz'")
 
@@ -357,15 +357,17 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Search for one or more keywords?
+	// Search for one or more keywords.
 	if txt.NotEmpty(f.Keywords) {
 		for _, where := range LikeAnyWord("k.keyword", f.Keywords) {
 			s = s.Where("files.photo_id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 		}
 	}
 
-	// Filter by number of faces?
-	if txt.IsUInt(f.Faces) {
+	// Filter by number of faces.
+	if f.Faces == "" {
+		// Do nothing.
+	} else if txt.IsUInt(f.Faces) {
 		s = s.Where("photos.photo_faces >= ?", txt.Int(f.Faces))
 	} else if txt.New(f.Faces) && f.Face == "" {
 		f.Face = f.Faces
@@ -377,7 +379,9 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	}
 
 	// Filter for specific face clusters? Example: PLJ7A3G4MBGZJRMVDIUCBLC46IAP4N7O
-	if len(f.Face) >= 32 {
+	if f.Face == "" {
+		// Do nothing.
+	} else if len(f.Face) >= 32 {
 		for _, f := range SplitAnd(strings.ToUpper(f.Face)) {
 			s = s.Where(fmt.Sprintf("files.photo_id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
 				entity.Marker{}.TableName()), SplitOr(f))
@@ -391,9 +395,12 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	} else if txt.Yes(f.Face) {
 		s = s.Where(fmt.Sprintf("files.photo_id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE face_id IS NOT NULL AND face_id <> '')",
 			entity.Marker{}.TableName()), entity.MarkerFace)
+	} else if txt.IsUInt(f.Face) {
+		s = s.Where("files.photo_id IN (SELECT photo_id FROM files f JOIN markers m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? JOIN faces ON faces.id = m.face_id WHERE m.face_id IS NOT NULL AND m.face_id <> '' AND faces.face_kind = ?)",
+			entity.MarkerFace, txt.Int(f.Face))
 	}
 
-	// Filter for one or more subjects?
+	// Filter for one or more subjects.
 	if txt.NotEmpty(f.Subject) {
 		for _, subj := range SplitAnd(strings.ToLower(f.Subject)) {
 			if subjects := SplitOr(subj); rnd.ContainsUID(subjects, 'j') {
@@ -411,7 +418,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Filter by status?
+	// Filter by status.
 	if f.Hidden {
 		s = s.Where("photos.photo_quality = -1")
 		s = s.Where("photos.deleted_at IS NULL")
@@ -434,7 +441,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Filter by camera id or name?
+	// Filter by camera id or name.
 	if txt.IsPosInt(f.Camera) {
 		s = s.Where("photos.camera_id = ?", txt.UInt(f.Camera))
 	} else if txt.NotEmpty(f.Camera) {
@@ -442,7 +449,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("cameras.camera_name LIKE ? OR cameras.camera_model LIKE ? OR cameras.camera_slug LIKE ?", v, v, v)
 	}
 
-	// Filter by lens id or name?
+	// Filter by lens id or name.
 	if txt.IsPosInt(f.Lens) {
 		s = s.Where("photos.lens_id = ?", txt.UInt(f.Lens))
 	} else if txt.NotEmpty(f.Lens) {
@@ -450,42 +457,42 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
 	}
 
-	// Filter by year?
+	// Filter by year.
 	if f.Year != "" {
 		s = s.Where(AnyInt("photos.photo_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))
 	}
 
-	// Filter by month?
+	// Filter by month.
 	if f.Month != "" {
 		s = s.Where(AnyInt("photos.photo_month", f.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
 	}
 
-	// Filter by day?
+	// Filter by day.
 	if f.Day != "" {
 		s = s.Where(AnyInt("photos.photo_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
-	// Filter by main color?
+	// Filter by main color.
 	if f.Color != "" {
 		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
-	// Find favorites only?
+	// Find favorites only.
 	if f.Favorite {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
-	// Find scans only?
+	// Find scans only.
 	if f.Scan {
 		s = s.Where("photos.photo_scan = 1")
 	}
 
-	// Find panoramas only?
+	// Find panoramas only.
 	if f.Panorama {
 		s = s.Where("photos.photo_panorama = 1")
 	}
 
-	// Find portrait/landscape/square pictures only?
+	// Find portrait/landscape/square pictures only.
 	if f.Portrait {
 		s = s.Where("files.file_portrait = 1")
 	} else if f.Landscape {
@@ -500,28 +507,28 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_stack = -1")
 	}
 
-	// Filter by location country?
+	// Filter by location country.
 	if txt.NotEmpty(f.Country) {
 		s = s.Where("photos.photo_country IN (?)", SplitOr(strings.ToLower(f.Country)))
 	}
 
-	// Filter by location state?
+	// Filter by location state.
 	if txt.NotEmpty(f.State) {
 		s = s.Where("places.place_state IN (?)", SplitOr(f.State))
 	}
 
-	// Filter by location city?
+	// Filter by location city.
 	if txt.NotEmpty(f.City) {
 		s = s.Where("places.place_city IN (?)", SplitOr(f.City))
 	}
 
-	// Filter by location category?
+	// Filter by location category.
 	if txt.NotEmpty(f.Category) {
 		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
 			Where("cells.cell_category IN (?)", SplitOr(strings.ToLower(f.Category)))
 	}
 
-	// Filter by media type?
+	// Filter by media type.
 	if txt.NotEmpty(f.Type) {
 		s = s.Where("photos.photo_type IN (?)", SplitOr(strings.ToLower(f.Type)))
 	} else if f.Video {
@@ -538,7 +545,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_type IN ('image','live','animated','vector','raw')")
 	}
 
-	// Filter by storage path?
+	// Filter by storage path.
 	if txt.NotEmpty(f.Path) {
 		p := f.Path
 
@@ -566,31 +573,32 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where(where, names...)
 	}
 
-	// Filter by complete file names?
+	// Filter by complete file names.
 	if txt.NotEmpty(f.Filename) {
 		where, values := OrLike("files.file_name", f.Filename)
 		s = s.Where(where, values...)
 	}
 
-	// Filter by original file name?
+	// Filter by original file name.
 	if txt.NotEmpty(f.Original) {
 		where, values := OrLike("photos.original_name", f.Original)
 		s = s.Where(where, values...)
 	}
 
-	// Filter by photo title?
+	// Filter by title.
 	if txt.NotEmpty(f.Title) {
 		where, values := OrLike("photos.photo_title", f.Title)
 		s = s.Where(where, values...)
 	}
 
-	// Filter by file hash?
+	// Filter by hash.
 	if txt.NotEmpty(f.Hash) {
 		s = s.Where("files.file_hash IN (?)", SplitOr(strings.ToLower(f.Hash)))
 	}
 
+	// Filter by chroma.
 	if f.Mono {
-		s = s.Where("files.file_chroma = 0 OR file_colors = '111111111'")
+		s = s.Where("files.file_chroma = 0")
 	} else if f.Chroma > 9 {
 		s = s.Where("files.file_chroma > ?", f.Chroma)
 	} else if f.Chroma > 0 {
@@ -635,7 +643,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}
 
-	// Find stacks only?
+	// Find stacks only.
 	if f.Stack {
 		s = s.Where("photos.id IN (SELECT a.photo_id FROM files a JOIN files b ON a.id != b.id AND a.photo_id = b.photo_id AND a.file_type = b.file_type WHERE a.file_type='jpg')")
 	}
@@ -669,7 +677,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	// Log number of results.
 	log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
-	// Merge files that belong to the same photo?
+	// Merge files that belong to the same photo.
 	if f.Merged {
 		// Return merged files.
 		return results.Merge()
