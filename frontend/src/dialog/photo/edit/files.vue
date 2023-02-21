@@ -120,6 +120,12 @@
                             <translate>Yes</translate>
                           </td>
                         </tr>
+                        <tr v-if="file.Software">
+                          <td>
+                            <translate>Software</translate>
+                          </td>
+                          <td>{{ file.Software }}</td>
+                        </tr>
                         <tr v-if="file.Codec && file.Codec !== file.FileType">
                           <td>
                             <translate>Codec</translate>
