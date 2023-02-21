@@ -32,7 +32,7 @@ func init() {
 }
 
 var (
-	YearMin      = 1990
+	YearMin      = 1970
 	YearMinShort = 90
 	YearMax      = time.Now().Add(OneYear * 3).Year()
 	YearShort    = Int(time.Now().Format("06"))

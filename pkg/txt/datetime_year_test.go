@@ -27,8 +27,23 @@ func TestYear(t *testing.T) {
 		assert.Equal(t, 2003, result)
 	})
 
-	t.Run("path", func(t *testing.T) {
+	t.Run("1981", func(t *testing.T) {
 		result := Year("/root/1981/London 2005")
+		assert.Equal(t, 1981, result)
+	})
+
+	t.Run("1970", func(t *testing.T) {
+		result := Year("/root/1970/London 2005")
+		assert.Equal(t, 2005, result)
+	})
+
+	t.Run("1969", func(t *testing.T) {
+		result := Year("/root/1969/London 2005")
+		assert.Equal(t, 2005, result)
+	})
+
+	t.Run("1950", func(t *testing.T) {
+		result := Year("/root/1950/London 2005")
 		assert.Equal(t, 2005, result)
 	})
 
