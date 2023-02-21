@@ -54,7 +54,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	conflicts := 0
 	resolved := 0
 
-	faces, ids, err := query.FacesByID(true, false, false)
+	faces, ids, err := query.FacesByID(true, false, false, false)
 
 	if err != nil {
 		return err
@@ -129,7 +129,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 				if success {
 					log.Infof("faces: successful conflict resolution for %s, face %s had collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
 					resolved++
-					faces, _, err = query.FacesByID(true, false, false)
+					faces, _, err = query.FacesByID(true, false, false, false)
 					logErr("faces", "refresh", err)
 				} else {
 					log.Infof("faces: conflict resolution for %s not successful, face %s still has collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
