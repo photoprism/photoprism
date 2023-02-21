@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-02-20 16:17+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2023-02-21 12:35+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2185,7 +2185,7 @@ msgstr "Lumi"
 
 #: src/dialog/photo/edit/files.vue:103 src/dialog/photo/edit/files.vue:100
 msgid "Software"
-msgstr ""
+msgstr "Tarkvara"
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
