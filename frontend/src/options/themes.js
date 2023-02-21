@@ -372,7 +372,7 @@ let themes = {
       edit: "#00b8d4",
       share: "#9575cd",
       love: "#ef5350",
-      terminal: "#333333",
+      terminal: "#464544",
       navigation: "#191817",
       "navigation-home": "#0c0c0b",
     },

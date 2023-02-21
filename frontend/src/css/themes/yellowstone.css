@@ -47,7 +47,7 @@ body.dark-theme.theme-yellowstone,
 }
 
 #photoprism.theme-yellowstone .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: #32312e;
+    background: rgba(250, 250, 255, 0.1);
 }
 
 #photoprism.theme-yellowstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
