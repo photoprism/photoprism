@@ -337,14 +337,14 @@ func TestMediaFile_Exif_HEIC(t *testing.T) {
 	convert := NewConvert(conf)
 
 	// Create JPEG image.
-	jpeg, err := convert.ToPreview(img, false)
+	jpeg, err := convert.ToImage(img, false)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Replace JPEG image.
-	jpeg, err = convert.ToPreview(img, true)
+	jpeg, err = convert.ToImage(img, true)
 
 	if err != nil {
 		t.Fatal(err)

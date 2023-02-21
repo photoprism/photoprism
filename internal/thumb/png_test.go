@@ -9,17 +9,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-func TestJpeg(t *testing.T) {
-	formats := []string{"bmp", "gif", "png", "tif"}
+func TestPng(t *testing.T) {
+	formats := []string{"bmp", "gif", "tif"}
 
 	for _, ext := range formats {
 		t.Run(ext, func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationRotate270)
+			img, err := Png(src, dst, OrientationRotate270)
 
 			if err != nil {
 				t.Fatal(err)
@@ -37,11 +37,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("OrientationFlipH", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationFlipH)
+			img, err := Png(src, dst, OrientationFlipH)
 
 			if err != nil {
 				t.Fatal(err)
@@ -59,11 +59,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("OrientationFlipV", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationFlipV)
+			img, err := Png(src, dst, OrientationFlipV)
 
 			if err != nil {
 				t.Fatal(err)
@@ -81,11 +81,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("OrientationRotate90", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationRotate90)
+			img, err := Png(src, dst, OrientationRotate90)
 
 			if err != nil {
 				t.Fatal(err)
@@ -103,11 +103,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("OrientationRotate180", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationRotate180)
+			img, err := Png(src, dst, OrientationRotate180)
 
 			if err != nil {
 				t.Fatal(err)
@@ -125,11 +125,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("OrientationTranspose", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationTranspose)
+			img, err := Png(src, dst, OrientationTranspose)
 
 			if err != nil {
 				t.Fatal(err)
@@ -147,11 +147,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("OrientationTransverse", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationTransverse)
+			img, err := Png(src, dst, OrientationTransverse)
 
 			if err != nil {
 				t.Fatal(err)
@@ -169,11 +169,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("OrientationUnspecified", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationUnspecified)
+			img, err := Png(src, dst, OrientationUnspecified)
 
 			if err != nil {
 				t.Fatal(err)
@@ -191,11 +191,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("OrientationNormal", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, OrientationNormal)
+			img, err := Png(src, dst, OrientationNormal)
 
 			if err != nil {
 				t.Fatal(err)
@@ -213,11 +213,11 @@ func TestJpeg(t *testing.T) {
 		})
 		t.Run("invalid orientation", func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + fs.ExtJPEG
+			dst := "testdata/example." + ext + fs.ExtPNG
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst, 500)
+			img, err := Png(src, dst, 500)
 
 			if err != nil {
 				t.Fatal(err)
@@ -237,11 +237,11 @@ func TestJpeg(t *testing.T) {
 
 	t.Run("foo", func(t *testing.T) {
 		src := "testdata/example.foo"
-		dst := "testdata/example.foo.jpg"
+		dst := "testdata/example.foo.png"
 
 		assert.NoFileExists(t, dst)
 
-		img, err := Jpeg(src, dst, OrientationFlipV)
+		img, err := Png(src, dst, OrientationFlipV)
 
 		assert.NoFileExists(t, dst)
 
