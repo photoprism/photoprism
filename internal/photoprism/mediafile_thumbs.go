@@ -3,6 +3,7 @@ package photoprism
 import (
 	"fmt"
 	"image"
+	"strings"
 	"time"
 
 	"github.com/disintegration/imaging"
@@ -98,9 +99,9 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 			if original == nil {
 				img, err := thumb.Open(m.FileName(), m.Orientation())
 
-				// Handle error and try to fix broken JPEGs if possible.
+				// Try to fix broken JPEGs if possible, fail otherwise.
 				if err != nil {
-					if err.Error() != "invalid JPEG format: bad RST marker while decoding" {
+					if !strings.HasPrefix(err.Error(), "invalid JPEG format") {
 						log.Debugf("media: %s in %s", err.Error(), clean.Log(m.RootRelName()))
 						return err
 					}
