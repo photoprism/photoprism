@@ -65,6 +65,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"backup-path", c.BackupPath()},
 		{"cache-path", c.CachePath()},
 		{"cmd-cache-path", c.CmdCachePath()},
+		{"media-cache-path", c.MediaCachePath()},
 		{"thumb-cache-path", c.ThumbCachePath()},
 		{"import-path", c.ImportPath()},
 		{"import-dest", c.ImportDest()},

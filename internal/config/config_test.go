@@ -199,7 +199,14 @@ func TestConfig_CachePath(t *testing.T) {
 	assert.True(t, strings.HasSuffix(c.CachePath(), "storage/testdata/cache"))
 }
 
-func TestConfig_ThumbnailsPath(t *testing.T) {
+func TestConfig_MediaCachePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.True(t, strings.HasPrefix(c.MediaCachePath(), "/"))
+	assert.True(t, strings.HasSuffix(c.MediaCachePath(), "storage/testdata/cache/media"))
+}
+
+func TestConfig_ThumbCachePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.True(t, strings.HasPrefix(c.ThumbCachePath(), "/"))

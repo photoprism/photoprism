@@ -130,6 +130,12 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.CachePath(), err)
 	}
 
+	if c.MediaCachePath() == "" {
+		return notFoundError("media")
+	} else if err := os.MkdirAll(c.MediaCachePath(), fs.ModeDir); err != nil {
+		return createError(c.MediaCachePath(), err)
+	}
+
 	if c.ThumbCachePath() == "" {
 		return notFoundError("thumbs")
 	} else if err := os.MkdirAll(c.ThumbCachePath(), fs.ModeDir); err != nil {
@@ -443,9 +449,14 @@ func (c *Config) CmdLibPath() string {
 	return "/usr/local/lib:/usr/lib"
 }
 
-// ThumbCachePath returns the thumbnail storage directory.
+// MediaCachePath returns the media cache path.
+func (c *Config) MediaCachePath() string {
+	return filepath.Join(c.CachePath(), "media")
+}
+
+// ThumbCachePath returns the thumbnail storage path.
 func (c *Config) ThumbCachePath() string {
-	return c.CachePath() + "/thumbnails"
+	return filepath.Join(c.CachePath(), "thumbnails")
 }
 
 // StoragePath returns the path for generated files like cache and index.

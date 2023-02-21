@@ -98,9 +98,20 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 			if original == nil {
 				img, err := thumb.Open(m.FileName(), m.Orientation())
 
+				// Handle error and try to fix broken JPEGs if possible.
 				if err != nil {
-					log.Debugf("media: %s in %s", err.Error(), clean.Log(m.RootRelName()))
-					return err
+					if err.Error() != "invalid JPEG format: bad RST marker while decoding" {
+						log.Debugf("media: %s in %s", err.Error(), clean.Log(m.RootRelName()))
+						return err
+					}
+
+					if fixed, err := NewConvert(conf).FixJpeg(m, false); err != nil {
+						return err
+					} else if fixedImg, err := thumb.Open(fixed.FileName(), m.Orientation()); err != nil {
+						return err
+					} else {
+						img = fixedImg
+					}
 				}
 
 				original = img
