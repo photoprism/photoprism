@@ -177,7 +177,7 @@ func resetIndexDb(c *config.Config) {
 	tables.Drop(c.Db())
 
 	log.Infoln("restoring default schema")
-	entity.InitDb(migrate.Opt(false, nil))
+	entity.InitDb(migrate.Opt(true, false, nil))
 
 	// Reset admin account?
 	if c.AdminPassword() == "" {

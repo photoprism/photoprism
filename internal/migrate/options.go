@@ -10,8 +10,8 @@ type Options struct {
 }
 
 // Opt returns migration options based on the specified parameters.
-func Opt(runFailed bool, ids []string) Options {
-	runAll := len(ids) == 0
+func Opt(runAll, runFailed bool, ids []string) Options {
+	runAll = len(ids) == 0 && (runAll || runFailed)
 	return Options{
 		AutoMigrate:    runAll,
 		RunStage:       StageMain,

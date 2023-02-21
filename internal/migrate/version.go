@@ -37,7 +37,9 @@ var UnknownVersion = Version{
 
 // NeedsMigration tests if the Version is not yet installed.
 func (m *Version) NeedsMigration() bool {
-	if m.MigratedAt == nil {
+	if m == nil {
+		return true
+	} else if m.MigratedAt == nil || m.CreatedAt.IsZero() {
 		return true
 	} else if m.Unknown() {
 		return true
@@ -141,6 +143,12 @@ func (m *Version) String() string {
 
 // Unknown checks if the version is unknown.
 func (m *Version) Unknown() bool {
+	if m == nil {
+		return true
+	} else if m.Version == "" {
+		return true
+	}
+
 	return m.Version == UnknownVersion.Version
 }
 
@@ -148,6 +156,8 @@ func (m *Version) Unknown() bool {
 func (m *Version) CreateTable(db *gorm.DB) (err error) {
 	if db == nil {
 		return fmt.Errorf("db is nil")
+	} else if m == nil {
+		return fmt.Errorf("version is nil")
 	}
 
 	versionOnce.Do(func() {

@@ -52,7 +52,7 @@ func TestDialectSQLite3(t *testing.T) {
 	db.LogMode(false)
 	db.SetLogger(log)
 
-	opt := Opt(true, nil)
+	opt := Opt(true, true, nil)
 
 	// Run pre-migrations.
 	if err = Run(db, opt.Pre()); err != nil {

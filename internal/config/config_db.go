@@ -285,13 +285,9 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 
 	// Only migrate once automatically per version.
 	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
-	if version.NeedsMigration() || runFailed || len(ids) > 0 {
-		entity.InitDb(migrate.Opt(runFailed, ids))
-		if err := version.Migrated(c.Db()); err != nil {
-			log.Warnf("config: %s (migrate)", err)
-		}
-	} else {
-		log.Debugf("config: skipped migrations, already done")
+	entity.InitDb(migrate.Opt(version.NeedsMigration(), runFailed, ids))
+	if err := version.Migrated(c.Db()); err != nil {
+		log.Warnf("config: %s (migrate)", err)
 	}
 
 	// Init admin account?

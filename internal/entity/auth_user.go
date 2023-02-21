@@ -346,7 +346,6 @@ func (m *User) CanLogIn() bool {
 	} else {
 		return acl.Resources.Allow(acl.ResourceConfig, role, acl.AccessOwn)
 	}
-
 }
 
 // CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
