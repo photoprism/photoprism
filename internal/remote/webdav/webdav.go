@@ -25,6 +25,7 @@ Additional information can be found in our Developer Guide:
 package webdav
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path"
@@ -274,15 +275,17 @@ func (c Client) Upload(from, to string) (err error) {
 
 	file, err := os.Open(from)
 
-	if err != nil || file == nil {
+	if err != nil {
 		return err
 	}
 
-	defer func(file *os.File) {
-		_ = file.Close()
-	}(file)
+	defer file.Close()
 
-	return c.client.WriteStream(to, file, fs.ModeFile)
+	reader := bufio.NewReader(file)
+
+	err = c.client.WriteStream(to, reader, fs.ModeFile)
+
+	return err
 }
 
 // Delete deletes a single file or directory on a remote server.
