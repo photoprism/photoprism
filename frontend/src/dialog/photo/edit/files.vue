@@ -106,6 +106,12 @@
                           </td>
                           <td>{{ file.sizeInfo() }}</td>
                         </tr>
+                        <tr v-if="file.Software">
+                          <td>
+                            <translate>Software</translate>
+                          </td>
+                          <td>{{ file.Software }}</td>
+                        </tr>
                         <tr v-if="file.FileType">
                           <td>
                             <translate>Type</translate>
@@ -119,12 +125,6 @@
                           <td>
                             <translate>Yes</translate>
                           </td>
-                        </tr>
-                        <tr v-if="file.Software">
-                          <td>
-                            <translate>Software</translate>
-                          </td>
-                          <td>{{ file.Software }}</td>
                         </tr>
                         <tr v-if="file.Codec && file.Codec !== file.FileType">
                           <td>
