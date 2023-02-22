@@ -22,12 +22,12 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 	maxSize := strconv.Itoa(c.conf.JpegSize())
 
 	// Apple Scriptable image processing system: https://ss64.com/osx/sips.html
-	if (f.IsRaw() || f.IsHEIC() || f.IsAVIF()) && c.conf.SipsEnabled() && c.sipsBlacklist.Allow(fileExt) {
+	if (f.IsRaw() || f.IsHEIF()) && c.conf.SipsEnabled() && c.sipsBlacklist.Allow(fileExt) {
 		result = append(result, exec.Command(c.conf.SipsBin(), "-Z", maxSize, "-s", "format", "jpeg", "--out", jpegName, f.FileName()))
 	}
 
 	// Extract a still image to be used as preview.
-	if f.IsAnimated() && c.conf.FFmpegEnabled() {
+	if f.IsAnimated() && !f.IsWebP() && c.conf.FFmpegEnabled() {
 		// Use "ffmpeg" to extract a JPEG still image from the video.
 		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-vframes", "1", jpegName))
 	}
@@ -95,7 +95,7 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 
 	// Try ImageMagick for other image file formats if allowed.
 	if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
-		(f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsAnimated() || f.IsVector() && c.conf.VectorEnabled()) {
+		(f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsHEIF() || f.IsVector() && c.conf.VectorEnabled()) {
 		quality := fmt.Sprintf("%d", c.conf.JpegQuality())
 		resize := fmt.Sprintf("%dx%d>", c.conf.JpegSize(), c.conf.JpegSize())
 		args := []string{f.FileName(), "-flatten", "-resize", resize, "-quality", quality, jpegName}

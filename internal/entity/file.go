@@ -555,6 +555,11 @@ func (m *File) NoPNG() bool {
 	return fs.ImagePNG.NotEqual(m.FileType)
 }
 
+// Type returns the file type.
+func (m *File) Type() fs.Type {
+	return fs.Type(m.FileType)
+}
+
 // Links returns all share links for this entity.
 func (m *File) Links() Links {
 	return FindLinks("", m.FileUID)
@@ -617,7 +622,7 @@ func (m *File) HasWatermark() bool {
 
 // IsAnimated returns true if the file has animated image frames.
 func (m *File) IsAnimated() bool {
-	return m.FileFrames > 1 && media.Image.Equal(m.MediaType)
+	return (m.FileFrames > 1 || m.FileDuration > 0) && media.Image.Equal(m.MediaType)
 }
 
 // ColorProfile returns the ICC color profile name if any.

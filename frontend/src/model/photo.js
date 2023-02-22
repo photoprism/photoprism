@@ -37,7 +37,7 @@ import { $gettext } from "common/vm";
 import Clipboard from "common/clipboard";
 import download from "common/download";
 import * as src from "common/src";
-import { canUseOGV, canUseVP8, canUseVP9, canUseAv1, canUseWebm, canUseHevc } from "common/caniuse";
+import { canUseOGV, canUseVP8, canUseVP9, canUseAv1, canUseWebM, canUseHevc } from "common/caniuse";
 
 export const CodecOGV = "ogv";
 export const CodecVP8 = "vp8";
@@ -500,7 +500,7 @@ export class Photo extends RestModel {
         videoFormat = CodecVP9;
       } else if (canUseAv1 && file.Codec === CodecAv1) {
         videoFormat = FormatAv1;
-      } else if (canUseWebm && file.FileType === FormatWebM) {
+      } else if (canUseWebM && file.FileType === FormatWebM) {
         videoFormat = FormatWebM;
       }
 

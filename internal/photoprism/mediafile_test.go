@@ -1507,7 +1507,26 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, true, f.ExifSupported())
 			assert.Equal(t, false, f.IsVideo())
 			assert.Equal(t, false, f.IsGIF())
+			assert.Equal(t, false, f.IsWebP())
 			assert.Equal(t, false, f.IsAVIF())
+			assert.Equal(t, false, f.IsHEIC())
+			assert.Equal(t, false, f.IsHEICS())
+			assert.Equal(t, false, f.IsSidecar())
+		}
+	})
+	t.Run("windows95.webp", func(t *testing.T) {
+		if f, err := NewMediaFile("testdata/windows95.webp"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, true, f.IsImage())
+			assert.Equal(t, true, f.IsWebP())
+			assert.Equal(t, true, f.IsAnimated())
+			assert.Equal(t, true, f.IsAnimatedImage())
+			assert.Equal(t, false, f.ExifSupported())
+			assert.Equal(t, false, f.IsVideo())
+			assert.Equal(t, false, f.IsGIF())
+			assert.Equal(t, false, f.IsAVIF())
+			assert.Equal(t, false, f.IsAVIFS())
 			assert.Equal(t, false, f.IsHEIC())
 			assert.Equal(t, false, f.IsHEICS())
 			assert.Equal(t, false, f.IsSidecar())

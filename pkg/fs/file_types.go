@@ -66,6 +66,7 @@ const (
 var TypeAnimated = TypeMap{
 	ImageGIF:   MimeTypeGIF,
 	ImagePNG:   MimeTypeAPNG,
+	ImageWebP:  MimeTypeWebP,
 	ImageAVIF:  MimeTypeAVIFS,
 	ImageAVIFS: MimeTypeAVIFS,
 	ImageHEIC:  MimeTypeHEICS,

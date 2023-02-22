@@ -39,7 +39,7 @@ export const canUseVP9 = canUseVideo // WebM VP9
 export const canUseAv1 = canUseVideo // AV1, Main Profile, Level 4.0 Main Tier, 8-bit
   ? !!document.createElement("video").canPlayType('video/webm; codecs="av01.0.08M.08"')
   : false;
-export const canUseWebm = canUseVideo
+export const canUseWebM = canUseVideo
   ? !!document.createElement("video").canPlayType("video/webm")
   : false;
 export const canUseHevc = canUseVideo

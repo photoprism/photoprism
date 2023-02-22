@@ -678,7 +678,12 @@ func (m *MediaFile) IsDNG() bool {
 	return m.MimeType() == fs.MimeTypeDNG
 }
 
-// IsHEIC checks if the file is a High Efficiency Image File Format (HEIC/HEIF) image with a supported file type extension.
+// IsHEIF checks if the file is a High Efficiency Image File Format (HEIF) container with a supported file type extension.
+func (m *MediaFile) IsHEIF() bool {
+	return m.IsHEIC() || m.IsHEICS() || m.IsAVIF() || m.IsAVIFS()
+}
+
+// IsHEIC checks if the file is a High Efficiency Image Container (HEIC) image with a supported file type extension.
 func (m *MediaFile) IsHEIC() bool {
 	if t := fs.FileType(m.fileName); t != fs.ImageHEIF && t != fs.ImageHEIC {
 		return false
@@ -735,7 +740,7 @@ func (m *MediaFile) Duration() time.Duration {
 
 // IsAnimatedImage checks if the file is an animated image.
 func (m *MediaFile) IsAnimatedImage() bool {
-	return fs.FileAnimated(m.fileName) && (m.MetaData().Frames > 1 || m.MetaData().Duration > 0)
+	return fs.IsAnimatedImage(m.fileName) && (m.MetaData().Frames > 1 || m.MetaData().Duration > 0)
 }
 
 // IsJSON checks if the file is a JSON sidecar file with a supported file type extension.
@@ -869,7 +874,7 @@ func (m *MediaFile) IsLive() bool {
 
 // ExifSupported returns true if parsing exif metadata is supported for the media file type.
 func (m *MediaFile) ExifSupported() bool {
-	return m.IsJpeg() || m.IsRaw() || m.IsHEIC() || m.IsHEICS() || m.IsAVIF() || m.IsAVIFS() || m.IsPNG() || m.IsTIFF()
+	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsPNG() || m.IsTIFF()
 }
 
 // IsMedia returns true if this is a media file (photo or video, not sidecar or other).

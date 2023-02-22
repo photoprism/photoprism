@@ -87,7 +87,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		} else if f.IsHEIC() {
 			isHEIC = true
 			result.Main = f
-		} else if f.IsAVIF() {
+		} else if f.IsHEIF() {
 			result.Main = f
 		} else if f.IsImage() && !f.IsPreviewImage() {
 			result.Main = f

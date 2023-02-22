@@ -26,7 +26,7 @@ type Data struct {
 	Duration      time.Duration `meta:"Duration,MediaDuration,TrackDuration,PreviewDuration"`
 	FPS           float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
 	Frames        int           `meta:"FrameCount,AnimationFrames"`
-	Codec         string        `meta:"CompressorID,VideoCodecID,CodecID,OtherFormat,MajorBrand,FileType"`
+	Codec         string        `meta:"CompressorID,VideoCodecID,CodecID,OtherFormat,FileType"`
 	Title         string        `meta:"Headline,Title" xmp:"dc:title" dc:"title,title.Alt"`
 	Subject       string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords      Keywords      `meta:"Keywords"`

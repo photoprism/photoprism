@@ -170,35 +170,38 @@ func TestFileType(t *testing.T) {
 	})
 }
 
-func TestFileAnimated(t *testing.T) {
+func TestIsAnimatedImage(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		assert.False(t, FileAnimated(""))
+		assert.False(t, IsAnimatedImage(""))
 	})
 	t.Run("JPEG", func(t *testing.T) {
-		assert.False(t, FileAnimated("testdata/test.jpg"))
+		assert.False(t, IsAnimatedImage("testdata/test.jpg"))
 	})
 	t.Run("RawCRW", func(t *testing.T) {
-		assert.False(t, FileAnimated("testdata/test (jpg).crw"))
+		assert.False(t, IsAnimatedImage("testdata/test (jpg).crw"))
 	})
 	t.Run("MP4", func(t *testing.T) {
-		assert.False(t, FileAnimated("file.mp"))
-		assert.False(t, FileAnimated("file.mp4"))
+		assert.False(t, IsAnimatedImage("file.mp"))
+		assert.False(t, IsAnimatedImage("file.mp4"))
 	})
 	t.Run("GIF", func(t *testing.T) {
-		assert.True(t, FileAnimated("file.gif"))
+		assert.True(t, IsAnimatedImage("file.gif"))
+	})
+	t.Run("WebP", func(t *testing.T) {
+		assert.True(t, IsAnimatedImage("file.webp"))
 	})
 	t.Run("PNG", func(t *testing.T) {
-		assert.True(t, FileAnimated("file.png"))
-		assert.True(t, FileAnimated("file.apng"))
-		assert.True(t, FileAnimated("file.pnga"))
+		assert.True(t, IsAnimatedImage("file.png"))
+		assert.True(t, IsAnimatedImage("file.apng"))
+		assert.True(t, IsAnimatedImage("file.pnga"))
 	})
 	t.Run("AVIF", func(t *testing.T) {
-		assert.True(t, FileAnimated("file.avif"))
-		assert.True(t, FileAnimated("file.avis"))
-		assert.True(t, FileAnimated("file.avifs"))
+		assert.True(t, IsAnimatedImage("file.avif"))
+		assert.True(t, IsAnimatedImage("file.avis"))
+		assert.True(t, IsAnimatedImage("file.avifs"))
 	})
 	t.Run("HEIC", func(t *testing.T) {
-		assert.True(t, FileAnimated("file.heic"))
-		assert.True(t, FileAnimated("file.heics"))
+		assert.True(t, IsAnimatedImage("file.heic"))
+		assert.True(t, IsAnimatedImage("file.heics"))
 	})
 }

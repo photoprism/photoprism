@@ -99,7 +99,7 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 		if err == nil {
 			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), f.FileType())
 			return NewMediaFile(imageName)
-		} else if !f.IsTIFF() {
+		} else if !f.IsTIFF() && !f.IsWebP() {
 			// See https://github.com/photoprism/photoprism/issues/1612
 			// for TIFF file format compatibility.
 			return nil, err

@@ -17,8 +17,8 @@ func FileType(fileName string) Type {
 	return UnknownType
 }
 
-// FileAnimated checks if the type associated with the specified filename may be animated.
-func FileAnimated(fileName string) bool {
+// IsAnimatedImage checks if the type associated with the specified filename may be animated.
+func IsAnimatedImage(fileName string) bool {
 	if t, found := Extensions[LowerExt(fileName)]; found {
 		return TypeAnimated[t] != ""
 	}
