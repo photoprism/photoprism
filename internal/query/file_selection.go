@@ -44,6 +44,7 @@ func DownloadSelection(mediaRaw, mediaSidecar, originals bool) FileSelection {
 		Originals: originals,
 		Private:   true,
 		Archived:  true,
+		Hidden:    true,
 	}
 }
 
