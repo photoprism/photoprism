@@ -43,7 +43,7 @@ func GetVideo(router *gin.RouterGroup) {
 		f, err := query.FileByHash(fileHash)
 
 		if err != nil {
-			log.Errorf("video: %s", err.Error())
+			log.Errorf("video: requested file not found (%s)", err)
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 			return
 		}
@@ -52,7 +52,7 @@ func GetVideo(router *gin.RouterGroup) {
 			f, err = query.VideoByPhotoUID(f.PhotoUID)
 
 			if err != nil {
-				log.Errorf("video: no playable file found")
+				log.Errorf("video: no playable file found (%s)", err)
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 				return
 			}
