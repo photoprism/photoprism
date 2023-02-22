@@ -109,6 +109,7 @@ var Extensions = FileExtensions{
 	".webm":     VideoWebM,
 	".asf":      VideoASF,
 	".wmv":      VideoWMV,
+	".dv":       VideoDV,
 	".svg":      VectorSVG,
 	".ai":       VectorAI,
 	".ps":       VectorPS,

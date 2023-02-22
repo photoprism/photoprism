@@ -48,6 +48,7 @@ const (
 	VideoOGV        Type = "ogv"   // Ogg container format maintained by the Xiph.Org, free and open
 	VideoASF        Type = "asf"   // Advanced Systems/Streaming Format (ASF)
 	VideoWMV        Type = "wmv"   // Windows Media Video (based on ASF)
+	VideoDV         Type = "dv"    // DV Video (https://en.wikipedia.org/wiki/DV)
 	VectorSVG       Type = "svg"   // Scalable Vector Graphics
 	VectorAI        Type = "ai"    // Adobe Illustrator
 	VectorPS        Type = "ps"    // Adobe PostScript

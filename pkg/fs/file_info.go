@@ -31,6 +31,7 @@ var TypeInfo = TypeMap{
 	VideoAVI:        "Microsoft Audio Video Interleave",
 	VideoASF:        "Advanced Systems Format ",
 	VideoWMV:        "Windows Media",
+	VideoDV:         "DV Video",
 	Video3GP:        "Mobile Multimedia Container (3G)",
 	Video3G2:        "Mobile Multimedia Container (CDMA2000)",
 	VideoFlash:      "Adobe Flash",
