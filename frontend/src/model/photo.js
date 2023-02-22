@@ -481,7 +481,7 @@ export class Photo extends RestModel {
       return false;
     }
 
-    return this.Files.find((f) => f.FileType === FormatGif || !!f.Frames);
+    return this.Files.find((f) => f.FileType === FormatGif || !!f.Frames || !!f.Duration);
   }
 
   videoUrl() {

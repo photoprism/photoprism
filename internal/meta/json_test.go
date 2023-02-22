@@ -23,7 +23,8 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, "20170323-083538-Berlin-Zoologischer-Garten-2017-2u4.mov", data.FileName)
 		assert.Equal(t, CodecAvc1, data.Codec)
-		assert.Equal(t, "3s", data.Duration.String())
+		assert.Equal(t, int64(3540), data.Duration.Milliseconds())
+		assert.Equal(t, "3.54s", data.Duration.String())
 		assert.Equal(t, "2018-09-08 19:20:14 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2018-09-08 17:20:14 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 0, data.TakenNs)
@@ -49,7 +50,7 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, "yoga-av1.webm", data.FileName)
 		assert.Equal(t, "", data.Codec)
-		assert.Equal(t, "20s", data.Duration.String())
+		assert.Equal(t, "20.3s", data.Duration.String())
 		assert.Equal(t, 854, data.Width)
 		assert.Equal(t, 480, data.Height)
 		assert.Equal(t, 854, data.ActualWidth())
@@ -65,7 +66,7 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, "stream.webm", data.FileName)
 		assert.Equal(t, CodecAv1, data.Codec)
-		assert.Equal(t, "2m24s", data.Duration.String())
+		assert.Equal(t, "2m24.12s", data.Duration.String())
 		assert.Equal(t, 1280, data.Width)
 		assert.Equal(t, 720, data.Height)
 		assert.Equal(t, 1280, data.ActualWidth())
@@ -113,7 +114,7 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, "earth-animation.ogv.720p.vp9.webm", data.FileName)
 		assert.Equal(t, string(video.CodecVP9), data.Codec)
-		assert.Equal(t, "8s", data.Duration.String())
+		assert.Equal(t, "8.03s", data.Duration.String())
 		assert.Equal(t, 1280, data.Width)
 		assert.Equal(t, 720, data.Height)
 		assert.Equal(t, 1280, data.ActualWidth())
@@ -130,7 +131,7 @@ func TestJSON(t *testing.T) {
 		// t.Logf("DATA: %+v", data)
 
 		assert.Equal(t, CodecAvc1, data.Codec)
-		assert.Equal(t, "2s", data.Duration.String())
+		assert.Equal(t, "2.41s", data.Duration.String())
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 0, data.TakenNs)
@@ -157,7 +158,7 @@ func TestJSON(t *testing.T) {
 		// t.Logf("DATA: %+v", data)
 
 		assert.Equal(t, CodecAvc1, data.Codec)
-		assert.Equal(t, "2s", data.Duration.String())
+		assert.Equal(t, "2.42s", data.Duration.String())
 		assert.Equal(t, "2020-05-11 16:16:48 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-05-11 14:16:48 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
@@ -184,7 +185,7 @@ func TestJSON(t *testing.T) {
 		// t.Logf("DATA: %+v", data)
 
 		assert.Equal(t, CodecAvc1, data.Codec)
-		assert.Equal(t, "4s", data.Duration.String())
+		assert.Equal(t, "4.3s", data.Duration.String())
 		assert.Equal(t, "2020-05-14 13:34:41 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-05-14 11:34:41 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 0, data.TakenNs)
@@ -649,7 +650,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		assert.Equal(t, CodecAvc1, data.Codec)
-		assert.Equal(t, "6s", data.Duration.String())
+		assert.Equal(t, "6.83s", data.Duration.String())
 		assert.Equal(t, "2015-06-10 14:06:09 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2015-06-10 11:06:09 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Moscow", data.TimeZone)
@@ -673,7 +674,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		assert.Equal(t, string(video.CodecAVC), data.Codec)
-		assert.Equal(t, "10s", data.Duration.String())
+		assert.Equal(t, "10.67s", data.Duration.String())
 		assert.Equal(t, "2015-12-06 18:22:29 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2015-12-06 15:22:29 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Moscow", data.TimeZone)
@@ -697,7 +698,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		assert.Equal(t, string(video.CodecHEVC), data.Codec)
-		assert.Equal(t, "6s", data.Duration.String())
+		assert.Equal(t, "6.83s", data.Duration.String())
 		assert.Equal(t, "2020-12-22 02:45:43 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-12-22 01:45:43 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "", data.TimeZone)
@@ -721,7 +722,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		assert.Equal(t, string(video.CodecHEVC), data.Codec)
-		assert.Equal(t, "2s", data.Duration.String())
+		assert.Equal(t, "2.15s", data.Duration.String())
 		assert.Equal(t, "2019-12-12 20:47:21 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2019-12-13 01:47:21 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "America/New_York", data.TimeZone)
@@ -758,7 +759,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		assert.Equal(t, string(video.CodecAVC), data.Codec)
-		assert.Equal(t, "6s", data.Duration.String())
+		assert.Equal(t, "6.09s", data.Duration.String())
 		assert.Equal(t, "2022-06-25 06:50:58 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2022-06-25 04:50:58 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "", data.TimeZone) // Local Time
@@ -934,7 +935,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		assert.Equal(t, string(video.CodecAVC), data.Codec)
-		assert.Equal(t, "1s", data.Duration.String())
+		assert.Equal(t, "1.03s", data.Duration.String())
 		assert.Equal(t, "2012-07-11 07:16:01 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2012-07-11 05:16:01 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Paris", data.TimeZone)
@@ -951,7 +952,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		assert.Equal(t, string(video.CodecAVC), data.Codec)
-		assert.Equal(t, "1s", data.Duration.String())
+		assert.Equal(t, "1.03s", data.Duration.String())
 		assert.Equal(t, "2012-07-11 07:16:01 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2012-07-11 05:16:01 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Paris", data.TimeZone)
@@ -968,7 +969,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		assert.Equal(t, string(video.CodecAVC), data.Codec)
-		assert.Equal(t, "1s", data.Duration.String())
+		assert.Equal(t, "1.03s", data.Duration.String())
 		assert.Equal(t, "2012-07-11 07:16:01 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2012-07-11 05:16:01 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Paris", data.TimeZone)
@@ -1180,7 +1181,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1533, data.Height)
 		assert.Equal(t, 1917, data.Width)
 		assert.Equal(t, 34, data.Frames)
-		assert.Equal(t, 49*time.Second, data.Duration)
+		assert.Equal(t, "49.5s", data.Duration.String())
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
 		assert.Equal(t, 0.0, data.Altitude)

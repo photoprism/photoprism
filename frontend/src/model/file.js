@@ -200,10 +200,8 @@ export class File extends RestModel {
   isAnimated() {
     return (
       this.MediaType &&
-      this.Frames &&
       this.MediaType === MediaImage &&
-      this.Frames &&
-      this.Frames > 1
+      ((this.Frames && this.Frames > 1) || (this.Duration && this.Duration > 1))
     );
   }
 

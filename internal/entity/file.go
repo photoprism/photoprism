@@ -655,7 +655,7 @@ func (m *File) SetDuration(d time.Duration) {
 		return
 	}
 
-	m.FileDuration = d.Round(time.Second)
+	m.FileDuration = d.Round(10e6)
 
 	// Update number of frames.
 	if m.FileFrames == 0 && m.FileFPS > 1 {

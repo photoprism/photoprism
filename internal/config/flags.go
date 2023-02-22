@@ -618,7 +618,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "imagemagick-blacklist",
 			Usage:  "do not use ImageMagick to convert files with these `EXTENSIONS`",
-			Value:  "",
+			Value:  "heif,heic,heics,avif,avifs,jxl",
 			EnvVar: "PHOTOPRISM_IMAGEMAGICK_BLACKLIST",
 		}}, {
 		Flag: cli.StringFlag{

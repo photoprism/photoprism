@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -71,6 +72,7 @@ func FileByPhotoUID(photoUID string) (*entity.File, error) {
 	}
 
 	err := Db().Where("photo_uid = ? AND file_primary = 1", photoUID).Preload("Photo").First(&f).Error
+
 	return &f, err
 }
 
@@ -82,9 +84,11 @@ func VideoByPhotoUID(photoUID string) (*entity.File, error) {
 		return &f, fmt.Errorf("photo uid required")
 	}
 
-	err := Db().Where("photo_uid = ? AND (file_video = 1 OR file_frames > 0 OR file_type = 'gif')", photoUID).
-		Order("file_video DESC, file_duration DESC, file_frames DESC").
+	err := Db().Where("photo_uid = ? AND file_missing = 0", photoUID).
+		Where("file_video = 1 OR file_duration > 0 OR file_frames > 0 OR file_type = ?", fs.ImageGIF).
+		Order("file_error ASC, file_video DESC, file_duration DESC, file_frames DESC").
 		Preload("Photo").First(&f).Error
+
 	return &f, err
 }
 
@@ -97,6 +101,7 @@ func FileByUID(fileUID string) (*entity.File, error) {
 	}
 
 	err := Db().Where("file_uid = ?", fileUID).Preload("Photo").First(&f).Error
+
 	return &f, err
 }
 

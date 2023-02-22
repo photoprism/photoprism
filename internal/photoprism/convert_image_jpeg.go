@@ -26,15 +26,15 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 		result = append(result, exec.Command(c.conf.SipsBin(), "-Z", maxSize, "-s", "format", "jpeg", "--out", jpegName, f.FileName()))
 	}
 
+	// Extract a still image to be used as preview.
+	if f.IsAnimated() && c.conf.FFmpegEnabled() {
+		// Use "ffmpeg" to extract a JPEG still image from the video.
+		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-vframes", "1", jpegName))
+	}
+
 	// Use heif-convert for HEIC/HEIF and AVIF image files.
 	if (f.IsHEIC() || f.IsAVIF()) && c.conf.HeifConvertEnabled() {
 		result = append(result, exec.Command(c.conf.HeifConvertBin(), "-q", c.conf.JpegQuality().String(), f.FileName(), jpegName))
-	}
-
-	// Extract a video still image that can be used as preview.
-	if f.IsVideo() && c.conf.FFmpegEnabled() {
-		// Use "ffmpeg" to extract a JPEG still image from the video.
-		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-vframes", "1", jpegName))
 	}
 
 	// RAW files may be concerted with Darktable and RawTherapee.
@@ -95,7 +95,7 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 
 	// Try ImageMagick for other image file formats if allowed.
 	if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
-		(f.IsImage() && !f.IsJpegXL() && !f.IsRaw() || f.IsVector() && c.conf.VectorEnabled()) {
+		(f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsAnimated() || f.IsVector() && c.conf.VectorEnabled()) {
 		quality := fmt.Sprintf("%d", c.conf.JpegQuality())
 		resize := fmt.Sprintf("%dx%d>", c.conf.JpegSize(), c.conf.JpegSize())
 		args := []string{f.FileName(), "-flatten", "-resize", resize, "-quality", quality, jpegName}

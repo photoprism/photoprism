@@ -8,26 +8,28 @@ import (
 )
 
 const (
-	MimeTypeUnknown     = ""
-	MimeTypeJpeg        = "image/jpeg"
-	MimeTypeJpegXL      = "image/jxl"
-	MimeTypePng         = "image/png"
-	MimeTypeAnimatedPng = "image/vnd.mozilla.apng"
-	MimeTypeGif         = "image/gif"
-	MimeTypeBitmap      = "image/bmp"
-	MimeTypeTiff        = "image/tiff"
-	MimeTypeDNG         = "image/dng"
-	MimeTypeAVIF        = "image/avif"
-	MimeTypeHEIC        = "image/heic"
-	MimeTypeWebP        = "image/webp"
-	MimeTypeMP4         = "video/mp4"
-	MimeTypeMOV         = "video/quicktime"
-	MimeTypeSVG         = "image/svg+xml"
-	MimeTypeAI          = "application/vnd.adobe.illustrator"
-	MimeTypePS          = "application/ps"
-	MimeTypeEPS         = "image/eps"
-	MimeTypeXML         = "text/xml"
-	MimeTypeJSON        = "application/json"
+	MimeTypeUnknown = ""
+	MimeTypeJPEG    = "image/jpeg"
+	MimeTypeJPEGXL  = "image/jxl"
+	MimeTypePNG     = "image/png"
+	MimeTypeAPNG    = "image/vnd.mozilla.apng"
+	MimeTypeGIF     = "image/gif"
+	MimeTypeBMP     = "image/bmp"
+	MimeTypeTIFF    = "image/tiff"
+	MimeTypeDNG     = "image/dng"
+	MimeTypeAVIF    = "image/avif"
+	MimeTypeAVIFS   = "image/avif-sequence"
+	MimeTypeHEIC    = "image/heic"
+	MimeTypeHEICS   = "image/heic-sequence"
+	MimeTypeWebP    = "image/webp"
+	MimeTypeMP4     = "video/mp4"
+	MimeTypeMOV     = "video/quicktime"
+	MimeTypeSVG     = "image/svg+xml"
+	MimeTypeAI      = "application/vnd.adobe.illustrator"
+	MimeTypePS      = "application/ps"
+	MimeTypeEPS     = "image/eps"
+	MimeTypeXML     = "text/xml"
+	MimeTypeJSON    = "application/json"
 )
 
 // MimeType returns the mime type of a file, or an empty string if it could not be detected.
@@ -42,6 +44,12 @@ func MimeType(filename string) (mimeType string) {
 		return MimeTypeDNG
 	case ImageAVIF:
 		return MimeTypeAVIF
+	case ImageAVIFS:
+		return MimeTypeAVIFS
+	case ImageHEIC:
+		return MimeTypeHEIC
+	case ImageHEICS:
+		return MimeTypeHEICS
 	case VideoMP4:
 		return MimeTypeMP4
 	case VideoMOV:

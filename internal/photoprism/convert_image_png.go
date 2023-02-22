@@ -26,9 +26,14 @@ func (c *Convert) PngConvertCommands(f *MediaFile, pngName string) (result []*ex
 	}
 
 	// Extract a video still image that can be used as preview.
-	if f.IsVideo() && c.conf.FFmpegEnabled() {
+	if f.IsAnimated() && c.conf.FFmpegEnabled() {
 		// Use "ffmpeg" to extract a PNG still image from the video.
 		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-vframes", "1", pngName))
+	}
+
+	// Use heif-convert for HEIC/HEIF and AVIF image files.
+	if (f.IsHEIC() || f.IsAVIF()) && c.conf.HeifConvertEnabled() {
+		result = append(result, exec.Command(c.conf.HeifConvertBin(), f.FileName(), pngName))
 	}
 
 	// Decode JPEG XL image if support is enabled.
@@ -38,7 +43,7 @@ func (c *Convert) PngConvertCommands(f *MediaFile, pngName string) (result []*ex
 
 	// Try ImageMagick for other image file formats if allowed.
 	if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
-		(f.IsImage() && !f.IsJpegXL() && !f.IsRaw() || f.IsVector() && c.conf.VectorEnabled()) {
+		(f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsAnimated() || f.IsVector() && c.conf.VectorEnabled()) {
 		resize := fmt.Sprintf("%dx%d>", c.conf.PngSize(), c.conf.PngSize())
 		args := []string{f.FileName(), "-flatten", "-resize", resize, pngName}
 		result = append(result, exec.Command(c.conf.ImageMagickBin(), args...))

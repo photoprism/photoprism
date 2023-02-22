@@ -100,7 +100,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					continue
 				}
 
-				fieldValue.Set(reflect.ValueOf(StringToDuration(jsonValue.String())))
+				fieldValue.Set(reflect.ValueOf(Duration(jsonValue.String())))
 			case int, int64:
 				if !fieldValue.IsZero() {
 					continue
@@ -118,7 +118,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 				if f := jsonValue.Float(); f != 0 {
 					fieldValue.SetFloat(f)
-				} else if f = txt.Float64(jsonValue.String()); f != 0 {
+				} else if f = txt.Float(jsonValue.String()); f != 0 {
 					fieldValue.SetFloat(f)
 				}
 			case uint, uint64:

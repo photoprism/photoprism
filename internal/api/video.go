@@ -52,14 +52,14 @@ func GetVideo(router *gin.RouterGroup) {
 			f, err = query.VideoByPhotoUID(f.PhotoUID)
 
 			if err != nil {
-				log.Errorf("video: %s", err.Error())
+				log.Errorf("video: no playable file found")
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 				return
 			}
 		}
 
 		if f.FileError != "" {
-			log.Errorf("video: file error %s", f.FileError)
+			log.Errorf("video: file has error %s", f.FileError)
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 			return
 		}

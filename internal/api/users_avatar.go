@@ -82,7 +82,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
-		} else if !mimeType.Is(fs.MimeTypeJpeg) {
+		} else if !mimeType.Is(fs.MimeTypeJPEG) {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "upload avatar", "only jpeg supported"}, s.RefID)
 			Abort(c, http.StatusBadRequest, i18n.ErrUnsupportedFormat)
 			return

@@ -176,6 +176,8 @@ export default class Util {
         return "Bitmap";
       case "png":
         return "Portable Network Graphics";
+      case "apng":
+        return "Animated PNG";
       case "tiff":
         return "TIFF";
       case "psd":
@@ -189,6 +191,8 @@ export default class Util {
         return "Advanced Video Coding (AVC) / H.264";
       case "avif":
         return "AOMedia Video 1 (AV1)";
+      case "avifs":
+        return "AVIF Image Sequence";
       case "hevc":
       case "hvc":
       case "hvc1":
@@ -265,10 +269,14 @@ export default class Util {
         return "Motion JPEG (M-JPEG)";
       case "avif":
         return "AV1 Image File Format (AVIF)";
+      case "avifs":
+        return "AVIF Image Sequence";
       case "heif":
         return "High Efficiency Image File Format (HEIF)";
       case "heic":
         return "High Efficiency Image Container (HEIC)";
+      case "heics":
+        return "HEIC Image Sequence";
       case "1":
         return "Uncompressed";
       case "2":

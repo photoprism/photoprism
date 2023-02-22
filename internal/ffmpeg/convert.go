@@ -18,8 +18,8 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 	// Don't transcode more than one video at the same time.
 	useMutex = true
 
-	// Animated GIF or PNG?
-	if fs.FileType(fileName) == fs.ImageGIF || fs.FileType(fileName) == fs.ImagePNG {
+	// Don't use hardware transcoding for animated images.
+	if fs.TypeAnimated[fs.FileType(fileName)] != "" {
 		result = exec.Command(
 			ffmpegBin,
 			"-i", fileName,

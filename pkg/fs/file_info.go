@@ -1,7 +1,9 @@
 package fs
 
+type TypeMap map[Type]string
+
 // TypeInfo contains human-readable descriptions for supported file formats
-var TypeInfo = map[Type]string{
+var TypeInfo = TypeMap{
 	ImageRaw:        "Unprocessed Sensor Data",
 	ImageDNG:        "Adobe Digital Negative",
 	ImageJPEG:       "Joint Photographic Experts Group (JPEG)",
@@ -13,8 +15,10 @@ var TypeInfo = map[Type]string{
 	ImageBMP:        "Bitmap",
 	ImageMPO:        "Stereoscopic JPEG (3D)",
 	ImageAVIF:       "AV1 Image File Format",
+	ImageAVIFS:      "AV1 Image Sequence",
 	ImageHEIF:       "High Efficiency Image File Format",
 	ImageHEIC:       "High Efficiency Image Container",
+	ImageHEICS:      "HEIC Image Sequence",
 	ImageWebP:       "Google WebP",
 	VideoWebM:       "Google WebM",
 	VideoMP2:        "MPEG 2 (H.262)",

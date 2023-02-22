@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -98,7 +99,7 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 		if err == nil {
 			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), f.FileType())
 			return NewMediaFile(imageName)
-		} else if !f.IsTiff() {
+		} else if !f.IsTIFF() {
 			// See https://github.com/photoprism/photoprism/issues/1612
 			// for TIFF file format compatibility.
 			return nil, err
@@ -113,10 +114,10 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 	switch fs.LowerExt(imageName) {
 	case fs.ExtPNG:
 		cmds, useMutex, err = c.PngConvertCommands(f, imageName)
-		expectedMime = fs.MimeTypePng
+		expectedMime = fs.MimeTypePNG
 	case fs.ExtJPEG:
 		cmds, useMutex, err = c.JpegConvertCommands(f, imageName, xmpName)
-		expectedMime = fs.MimeTypeJpeg
+		expectedMime = fs.MimeTypeJPEG
 	default:
 		return nil, fmt.Errorf("convert: unspported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
 	}
@@ -157,11 +158,11 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 
 		// Run convert command.
 		if err = cmd.Run(); err != nil {
-			if stderr.String() != "" {
-				err = errors.New(stderr.String())
+			if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
+				err = errors.New(errStr)
 			}
 
-			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
+			log.Tracef("convert: %s (%s)", strings.TrimSpace(err.Error()), filepath.Base(cmd.Path))
 			continue
 		} else if fs.FileExistsNotEmpty(imageName) {
 			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
