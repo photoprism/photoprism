@@ -38,7 +38,7 @@ require (
 	github.com/sevlyar/go-daemon v0.1.6
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
-	github.com/studio-b12/gowebdav v0.0.0-20211106090535-29e74efa701f
+	github.com/studio-b12/gowebdav v0.0.0-20230203202212-3282f94193f2
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.14.4
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
