@@ -654,6 +654,10 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 	m.CameraID = camera.ID
 	m.Camera = camera
 	m.CameraSrc = source
+
+	if !m.PhotoScan && m.Camera.Scanner() {
+		m.PhotoScan = true
+	}
 }
 
 // SetLens updates the lens.
