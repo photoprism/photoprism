@@ -45,7 +45,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
         exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync \
-        imagemagick rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
+        imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
         libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
