@@ -60,41 +60,52 @@ func StartIndexing(router *gin.RouterGroup) {
 			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}
 
-		// Start indexing.
 		ind := get.Index()
-		lastRun := ind.LastRun()
+		lastRun, lastFound := ind.LastRun()
 		indexStart := time.Now()
-		found, updated := ind.Start(indOpt)
-		updateMoments := updated > 0 || lastRun.IsZero()
 
-		log.Infof("index: updated %s [%s]", english.Plural(updated, "file", "files"), time.Since(indexStart))
+		// Start indexing.
+		found, indexed := ind.Start(indOpt)
 
-		event.Publish("index.updating", event.Data{
-			"step": "purge",
-		})
+		// Only run purge and moments if necessary.
+		forceUpdate := indOpt.Rescan || indexed > 0 || lastRun.IsZero()
+		updateIndex := forceUpdate || len(found) != lastFound
 
-		RemoveFromFolderCache(entity.RootOriginals)
+		log.Infof("index: updated %s [%s]", english.Plural(indexed, "file", "files"), time.Since(indexStart))
 
-		// Configure purge options.
-		prgOpt := photoprism.PurgeOptions{
-			Path:   filepath.Clean(f.Path),
-			Ignore: found,
-			Force:  indOpt.Rescan || updated > 0,
-		}
+		// Update index?
+		if updateIndex {
+			event.Publish("index.updating", event.Data{
+				"step": "folders",
+			})
 
-		// Start purging.
-		prg := get.Purge()
+			RemoveFromFolderCache(entity.RootOriginals)
 
-		if files, photos, err := prg.Start(prgOpt); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
-			return
-		} else if len(files) > 0 || len(photos) > 0 {
-			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
-			updateMoments = true
+			event.Publish("index.updating", event.Data{
+				"step": "purge",
+			})
+
+			// Configure purge options.
+			prgOpt := photoprism.PurgeOptions{
+				Path:   filepath.Clean(f.Path),
+				Ignore: found,
+				Force:  forceUpdate,
+			}
+
+			// Start purging.
+			prg := get.Purge()
+
+			if files, photos, updated, err := prg.Start(prgOpt); err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
+				return
+			} else if updated > 0 {
+				event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
+				forceUpdate = true
+			}
 		}
 
 		// Update moments?
-		if updateMoments {
+		if forceUpdate {
 			event.Publish("index.updating", event.Data{
 				"step": "moments",
 			})

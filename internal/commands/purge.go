@@ -72,10 +72,12 @@ func purgeAction(ctx *cli.Context) error {
 		Force: true,
 	}
 
-	if files, photos, err := w.Start(opt); err != nil {
+	if files, photos, updated, err := w.Start(opt); err != nil {
 		return err
-	} else {
+	} else if updated > 0 {
 		log.Infof("purged %s and %s in %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(start))
+	} else {
+		log.Infof("purge completed in %s", time.Since(start))
 	}
 
 	return nil

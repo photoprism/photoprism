@@ -69,16 +69,16 @@ func indexAction(ctx *cli.Context) error {
 	}
 
 	var found fs.Done
-	var updated int
+	var indexed int
 
 	if w := get.Index(); w != nil {
 		indexStart := time.Now()
 		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"))
 
-		found, updated = w.Start(opt)
+		found, indexed = w.Start(opt)
 
-		log.Infof("index: updated %s [%s]", english.Plural(updated, "file", "files"), time.Since(indexStart))
+		log.Infof("index: updated %s [%s]", english.Plural(indexed, "file", "files"), time.Since(indexStart))
 	}
 
 	if w := get.Purge(); w != nil {
@@ -86,12 +86,12 @@ func indexAction(ctx *cli.Context) error {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
 			Ignore: found,
-			Force:  ctx.Bool("force") || ctx.Bool("cleanup") || updated > 0,
+			Force:  ctx.Bool("force") || ctx.Bool("cleanup") || indexed > 0,
 		}
 
-		if files, photos, err := w.Start(opt); err != nil {
+		if files, photos, updated, err := w.Start(opt); err != nil {
 			log.Error(err)
-		} else if len(files) > 0 || len(photos) > 0 {
+		} else if updated > 0 {
 			log.Infof("purge: removed %s and %s [%s]", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(purgeStart))
 		}
 	}

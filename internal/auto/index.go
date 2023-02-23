@@ -63,10 +63,10 @@ func Index() error {
 	convert := settings.Index.Convert && conf.SidecarWritable()
 	indOpt := photoprism.NewIndexOptions(entity.RootPath, false, convert, true, false, true)
 
-	lastRun := ind.LastRun()
-	found, updated := ind.Start(indOpt)
+	lastRun, lastFound := ind.LastRun()
+	found, indexed := ind.Start(indOpt)
 
-	if updated == 0 && lastRun.IsZero() {
+	if !lastRun.IsZero() && indexed == 0 && len(found) == lastFound {
 		return nil
 	}
 
@@ -80,9 +80,9 @@ func Index() error {
 		Force:  true,
 	}
 
-	if files, photos, err := prg.Start(prgOpt); err != nil {
+	if files, photos, updated, err := prg.Start(prgOpt); err != nil {
 		return err
-	} else if len(files) > 0 || len(photos) > 0 {
+	} else if updated > 0 {
 		event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
 	}
 

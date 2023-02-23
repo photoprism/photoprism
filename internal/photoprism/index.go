@@ -34,6 +34,7 @@ type Index struct {
 	files        *Files
 	photos       *Photos
 	lastRun      time.Time
+	lastFound    int
 	findFaces    bool
 	findLabels   bool
 }
@@ -315,13 +316,14 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	runtime.GC()
 
 	ind.lastRun = entity.TimeStamp()
+	ind.lastFound = len(found)
 
 	return found, updated
 }
 
-// LastRun returns the time when the index was last updated.
-func (ind *Index) LastRun() time.Time {
-	return ind.lastRun
+// LastRun returns the time when the index was last updated and how many files were found.
+func (ind *Index) LastRun() (lastRun time.Time, lastFound int) {
+	return ind.lastRun, ind.lastFound
 }
 
 // FileName indexes a single file and returns the result.
