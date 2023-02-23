@@ -197,6 +197,8 @@ export default class Util {
       case "hvc":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
+      case "m4v":
+        return "Apple iTunes Multimedia Container";
       case "mkv":
         return "Matroska Multimedia Container";
       case "mts":

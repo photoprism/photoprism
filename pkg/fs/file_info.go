@@ -28,6 +28,7 @@ var TypeInfo = TypeMap{
 	VideoAV1:        "AOMedia Video 1",
 	VideoMOV:        "Apple QuickTime",
 	VideoMP4:        "Multimedia Container (MPEG-4 Part 14)",
+	VideoM4V:        "Apple iTunes Multimedia Container",
 	VideoAVI:        "Microsoft Audio Video Interleave",
 	VideoASF:        "Advanced Systems Format ",
 	VideoWMV:        "Windows Media",
