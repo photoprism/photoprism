@@ -72,12 +72,13 @@ func indexAction(ctx *cli.Context) error {
 	var updated int
 
 	if w := get.Index(); w != nil {
+		indexStart := time.Now()
 		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"))
 
 		found, updated = w.Start(opt)
 
-		log.Infof("index: updated %s", english.Plural(updated, "file", "files"))
+		log.Infof("index: updated %s [%s]", english.Plural(updated, "file", "files"), time.Since(indexStart))
 	}
 
 	if w := get.Purge(); w != nil {

@@ -20,12 +20,12 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	f := related.Main
 
 	// Enforce file size and resolution limits.
-	if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
-		result.Err = fmt.Errorf("index: %s exceeds file size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
+	if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+		result.Err = fmt.Errorf("index: %s", limitErr)
 		result.Status = IndexFailed
 		return result
-	} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
-		result.Err = fmt.Errorf("index: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+	} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+		result.Err = fmt.Errorf("index: %s", limitErr)
 		result.Status = IndexFailed
 		return result
 	}
@@ -43,11 +43,11 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 	if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
 		if jpg, err := ind.convert.ToImage(f, false); err != nil {
-			result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", clean.Log(f.RootRelName()), err.Error())
+			result.Err = fmt.Errorf("index: failed creating preview for %s (%s)", clean.Log(f.RootRelName()), err.Error())
 			result.Status = IndexFailed
 			return result
-		} else if exceeds, actual := jpg.ExceedsResolution(o.ResolutionLimit); exceeds {
-			result.Err = fmt.Errorf("index: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+		} else if limitErr, _ := jpg.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+			result.Err = fmt.Errorf("index: %s", limitErr)
 			result.Status = IndexFailed
 			return result
 		} else {

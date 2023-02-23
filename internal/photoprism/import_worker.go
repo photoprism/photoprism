@@ -156,8 +156,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
 			if jpg, err := f.PreviewImage(); err != nil {
 				log.Error(err)
-			} else if exceeds, actual := jpg.ExceedsResolution(o.ResolutionLimit); exceeds {
-				log.Errorf("index: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+			} else if limitErr, _ := jpg.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+				log.Errorf("index: %s", limitErr)
 				continue
 			} else if err := jpg.CreateThumbnails(imp.thumbPath(), false); err != nil {
 				log.Errorf("import: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
@@ -181,11 +181,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 				f := related.Main
 
 				// Enforce file size and resolution limits.
-				if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
-					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
+				if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+					log.Warnf("import: %s", limitErr)
 					continue
-				} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
-					log.Warnf("import: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+				} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+					log.Warnf("import: %s", limitErr)
 					continue
 				}
 
@@ -223,10 +223,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 				done[f.FileName()] = true
 
 				// Show warning if sidecar file exceeds size or resolution limit.
-				if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
-					log.Warnf("import: sidecar file %s exceeds size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
-				} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
-					log.Warnf("import: sidecar file %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+				if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+					log.Warnf("import: %s", limitErr)
+				} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+					log.Warnf("import: %s", limitErr)
 				}
 
 				// Extract metadata to a JSON file with Exiftool.

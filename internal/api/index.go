@@ -63,9 +63,10 @@ func StartIndexing(router *gin.RouterGroup) {
 		// Start indexing.
 		ind := get.Index()
 		lastRun := ind.LastRun()
+		indexStart := time.Now()
 		found, updated := ind.Start(indOpt)
 
-		log.Infof("index: updated %s", english.Plural(updated, "file", "files"))
+		log.Infof("index: updated %s [%s]", english.Plural(updated, "file", "files"), time.Since(indexStart))
 
 		RemoveFromFolderCache(entity.RootOriginals)
 

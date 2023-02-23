@@ -1950,14 +1950,14 @@ func TestMediaFile_Megapixels(t *testing.T) {
 	})
 }
 
-func TestMediaFile_ExceedsFileSize(t *testing.T) {
+func TestMediaFile_ExceedsBytes(t *testing.T) {
 	t.Run("norway-kjetil-moe.webp", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/norway-kjetil-moe.webp"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsFileSize(3)
-			assert.False(t, result)
-			assert.Equal(t, 0, actual)
+			err, actual := f.ExceedsBytes(3145728)
+			assert.NoError(t, err)
+			assert.Equal(t, int64(30320), actual)
 			assert.True(t, f.Ok())
 			assert.False(t, f.Empty())
 		}
@@ -1966,9 +1966,9 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsFileSize(-1)
-			assert.False(t, result)
-			assert.Equal(t, 0, actual)
+			err, actual := f.ExceedsBytes(-1)
+			assert.NoError(t, err)
+			assert.Equal(t, int64(0), actual)
 			assert.True(t, f.Ok())
 			assert.False(t, f.Empty())
 		}
@@ -1977,9 +1977,9 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/6720px_white.jpg"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsFileSize(0)
-			assert.False(t, result)
-			assert.Equal(t, 0, actual)
+			err, actual := f.ExceedsBytes(0)
+			assert.NoError(t, err)
+			assert.Equal(t, int64(0), actual)
 			assert.True(t, f.Ok())
 			assert.False(t, f.Empty())
 		}
@@ -1988,9 +1988,9 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsFileSize(10)
-			assert.False(t, result)
-			assert.Equal(t, 0, actual)
+			err, actual := f.ExceedsBytes(10485760)
+			assert.NoError(t, err)
+			assert.Equal(t, int64(411944), actual)
 			assert.True(t, f.Ok())
 			assert.False(t, f.Empty())
 		}
@@ -1999,15 +1999,14 @@ func TestMediaFile_ExceedsFileSize(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/example.bmp"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsFileSize(10)
-			assert.False(t, result)
-			assert.Equal(t, 0, actual)
+			err, actual := f.ExceedsBytes(10485760)
+			assert.NoError(t, err)
+			assert.Equal(t, int64(20156), actual)
 			assert.True(t, f.Ok())
 			assert.False(t, f.Empty())
 		}
 	})
 }
-
 func TestMediaFile_DecodeConfig(t *testing.T) {
 	t.Run("6720px_white.jpg", func(t *testing.T) {
 		f, err := NewMediaFile(conf.ExamplesPath() + "/6720px_white.jpg")
@@ -2045,7 +2044,7 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			result, actual := f.ExceedsResolution(3)
-			assert.False(t, result)
+			assert.NoError(t, result)
 			assert.Equal(t, 0, actual)
 		}
 	})
@@ -2054,7 +2053,7 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			result, actual := f.ExceedsResolution(3)
-			assert.False(t, result)
+			assert.NoError(t, result)
 			assert.Equal(t, 1, actual)
 		}
 	})
@@ -2065,19 +2064,19 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		exceeds3, actual3 := f.ExceedsResolution(3)
+		err3, actual3 := f.ExceedsResolution(3)
 
-		assert.True(t, exceeds3)
+		assert.Error(t, err3)
 		assert.Equal(t, 30, actual3)
 
-		exceeds30, actual30 := f.ExceedsResolution(30)
+		err30, actual30 := f.ExceedsResolution(30)
 
-		assert.False(t, exceeds30)
+		assert.NoError(t, err30)
 		assert.Equal(t, 30, actual30)
 
-		exceeds33, actual33 := f.ExceedsResolution(33)
+		err33, actual33 := f.ExceedsResolution(33)
 
-		assert.False(t, exceeds33)
+		assert.NoError(t, err33)
 		assert.Equal(t, 30, actual33)
 	})
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
@@ -2085,7 +2084,7 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			result, actual := f.ExceedsResolution(3)
-			assert.False(t, result)
+			assert.NoError(t, result)
 			assert.Equal(t, 0, actual)
 		}
 	})
@@ -2094,7 +2093,7 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			result, actual := f.ExceedsResolution(3)
-			assert.False(t, result)
+			assert.NoError(t, result)
 			assert.Equal(t, 0, actual)
 		}
 	})

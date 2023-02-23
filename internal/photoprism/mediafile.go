@@ -22,6 +22,7 @@ import (
 	_ "golang.org/x/image/webp"
 
 	"github.com/djherbis/times"
+	"github.com/dustin/go-humanize"
 	"github.com/mandykoh/prism/meta/autometa"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -1082,30 +1083,27 @@ func (m *MediaFile) Megapixels() (resolution int) {
 	return resolution
 }
 
-// ExceedsFileSize checks if the file exceeds the configured file size limit in MB.
-func (m *MediaFile) ExceedsFileSize(limit int) (exceeds bool, actual int) {
-	const mega = 1048576
-
-	if limit <= 0 {
-		return false, actual
-	} else if size := m.FileSize(); size <= 0 {
-		return false, actual
+// ExceedsBytes checks if the file exceeds the specified size limit in bytes.
+func (m *MediaFile) ExceedsBytes(bytes int64) (err error, actual int64) {
+	if bytes <= 0 {
+		return nil, 0
+	} else if actual = m.FileSize(); actual <= 0 || actual <= bytes {
+		return nil, actual
 	} else {
-		actual = int(size / mega)
-		return size > int64(limit)*mega, actual
+		return fmt.Errorf("%s exceeds file size limit (%s / %s)", clean.Log(m.RootRelName()), humanize.Bytes(uint64(actual)), humanize.Bytes(uint64(bytes))), actual
 	}
 }
 
 // ExceedsResolution checks if an image in a natively supported format exceeds the configured resolution limit in megapixels.
-func (m *MediaFile) ExceedsResolution(limit int) (exceeds bool, actual int) {
+func (m *MediaFile) ExceedsResolution(limit int) (err error, actual int) {
 	if limit <= 0 {
-		return false, actual
+		return nil, actual
 	} else if !m.IsImage() {
-		return false, actual
-	} else if actual = m.Megapixels(); actual <= 0 {
-		return false, actual
+		return nil, actual
+	} else if actual = m.Megapixels(); actual <= 0 || actual <= limit {
+		return nil, actual
 	} else {
-		return actual > limit, actual
+		return fmt.Errorf("%s exceeds resolution limit (%d / %d MP)", clean.Log(m.RootRelName()), actual, limit), actual
 	}
 }
 

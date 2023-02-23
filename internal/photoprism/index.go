@@ -221,19 +221,33 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			related, err := mf.RelatedFiles(ind.conf.Settings().StackSequences())
 
 			if err != nil {
-				log.Warnf("index: %s", err.Error())
+				log.Warnf("index: %s", err)
 				return nil
 			}
 
 			var files MediaFiles
+
+			if related.Main == nil {
+				// Nothing to do.
+				found[fileName] = fs.Processed
+				return nil
+			} else if limitErr, _ := related.Main.ExceedsBytes(o.ByteLimit); limitErr != nil {
+				found[fileName] = fs.Processed
+				log.Warnf("index: %s", limitErr)
+				return nil
+			}
 
 			for _, f := range related.Files {
 				if found[f.FileName()].Processed() {
 					continue
 				}
 
-				if f.FileSize() == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
+				if fileSize := f.FileSize(); fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
 					found[f.FileName()] = fs.Found
+					continue
+				} else if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+					found[f.FileName()] = fs.Found
+					log.Infof("index: %s", limitErr)
 					continue
 				}
 
@@ -244,7 +258,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			found[fileName] = fs.Processed
 
-			if len(files) == 0 || related.Main == nil {
+			if len(files) == 0 {
 				// Nothing to do.
 				return nil
 			}

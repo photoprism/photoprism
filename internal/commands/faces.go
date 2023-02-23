@@ -250,12 +250,13 @@ func facesIndexAction(ctx *cli.Context) error {
 	settings := conf.Settings()
 
 	if w := get.Index(); w != nil {
+		indexStart := time.Now()
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true)
 
 		found, updated = w.Start(opt)
 
-		log.Infof("index: updated %s", english.Plural(updated, "file", "files"))
+		log.Infof("index: updated %s [%s]", english.Plural(updated, "file", "files"), time.Since(indexStart))
 	}
 
 	if w := get.Purge(); w != nil {
