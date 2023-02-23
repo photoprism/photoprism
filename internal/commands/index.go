@@ -68,20 +68,24 @@ func indexAction(ctx *cli.Context) error {
 		log.Infof("config: enabled read-only mode")
 	}
 
-	var indexed fs.Done
+	var found fs.Done
+	var updated int
 
 	if w := get.Index(); w != nil {
 		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"))
 
-		indexed = w.Start(opt)
+		found, updated = w.Start(opt)
+
+		log.Infof("index: updated %s", english.Plural(updated, "file", "files"))
 	}
 
 	if w := get.Purge(); w != nil {
 		purgeStart := time.Now()
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
-			Ignore: indexed,
+			Ignore: found,
+			Force:  ctx.Bool("force") || ctx.Bool("cleanup") || updated > 0,
 		}
 
 		if files, photos, err := w.Start(opt); err != nil {
@@ -109,7 +113,7 @@ func indexAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
+	log.Infof("indexed %s in %s", english.Plural(len(found), "file", "files"), elapsed)
 
 	return nil
 }

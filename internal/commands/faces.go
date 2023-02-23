@@ -244,7 +244,8 @@ func facesIndexAction(ctx *cli.Context) error {
 		log.Infof("config: enabled read-only mode")
 	}
 
-	var indexed fs.Done
+	var found fs.Done
+	var updated int
 
 	settings := conf.Settings()
 
@@ -252,13 +253,16 @@ func facesIndexAction(ctx *cli.Context) error {
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true)
 
-		indexed = w.Start(opt)
+		found, updated = w.Start(opt)
+
+		log.Infof("index: updated %s", english.Plural(updated, "file", "files"))
 	}
 
 	if w := get.Purge(); w != nil {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
-			Ignore: indexed,
+			Ignore: found,
+			Force:  updated > 0,
 		}
 
 		if files, photos, err := w.Start(opt); err != nil {
@@ -270,7 +274,7 @@ func facesIndexAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
+	log.Infof("indexed %s in %s", english.Plural(len(found), "file", "files"), elapsed)
 
 	return nil
 }

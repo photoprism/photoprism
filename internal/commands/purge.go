@@ -66,9 +66,10 @@ func purgeAction(ctx *cli.Context) error {
 	w := get.Purge()
 
 	opt := photoprism.PurgeOptions{
-		Path: subPath,
-		Dry:  ctx.Bool("dry"),
-		Hard: ctx.Bool("hard"),
+		Path:  subPath,
+		Dry:   ctx.Bool("dry"),
+		Hard:  ctx.Bool("hard"),
+		Force: true,
 	}
 
 	if files, photos, err := w.Start(opt); err != nil {

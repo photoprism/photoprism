@@ -248,6 +248,11 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		time.Sleep(50 * time.Millisecond)
 	}
 
+	// Skip the index update if there are no changes.
+	if len(purgedFiles) == 0 && len(purgedPhotos) == 0 && !opt.Force {
+		return purgedFiles, purgedPhotos, nil
+	}
+
 	if err = query.FixPrimaries(); err != nil {
 		log.Errorf("index: %s (update primary files)", err)
 	}

@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sync"
+	"time"
 
 	"github.com/karrick/godirwalk"
 
@@ -32,6 +33,7 @@ type Index struct {
 	convert      *Convert
 	files        *Files
 	photos       *Photos
+	lastRun      time.Time
 	findFaces    bool
 	findLabels   bool
 }
@@ -72,18 +74,18 @@ func (ind *Index) Cancel() {
 }
 
 // Start indexes media files in the "originals" folder.
-func (ind *Index) Start(o IndexOptions) fs.Done {
+func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
 		}
 	}()
 
-	done := make(fs.Done)
+	found = make(fs.Done)
 
 	if ind.conf == nil {
 		log.Errorf("index: config is not set")
-		return done
+		return found, updated
 	}
 
 	originalsPath := ind.originalsPath()
@@ -91,15 +93,15 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 
 	if !fs.PathExists(optionsPath) {
 		event.Error(fmt.Sprintf("index: directory %s not found", clean.Log(optionsPath)))
-		return done
+		return found, updated
 	} else if fs.DirIsEmpty(originalsPath) {
 		event.InfoMsg(i18n.ErrOriginalsEmpty)
-		return done
+		return found, updated
 	}
 
 	if err := mutex.MainWorker.Start(); err != nil {
 		event.Error(fmt.Sprintf("index: %s", err.Error()))
-		return done
+		return found, updated
 	}
 
 	defer mutex.MainWorker.Stop()
@@ -107,7 +109,7 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("index: %s", err.Error())
 
-		return done
+		return found, updated
 	}
 
 	jobs := make(chan IndexJob)
@@ -129,7 +131,6 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 
 	defer ind.files.Done()
 
-	filesIndexed := 0
 	skipRaw := ind.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
@@ -161,7 +162,7 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 			relName := fs.RelName(fileName, originalsPath)
 
 			// Skip directories and known files.
-			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
+			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, found, ignore); skip {
 				if !isDir {
 					return result
 				}
@@ -181,7 +182,7 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 				return result
 			}
 
-			done[fileName] = fs.Found
+			found[fileName] = fs.Found
 
 			if !media.MainFile(fileName) {
 				return nil
@@ -227,27 +228,28 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if done[f.FileName()].Processed() {
+				if found[f.FileName()].Processed() {
 					continue
 				}
 
 				if f.FileSize() == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
-					done[f.FileName()] = fs.Found
+					found[f.FileName()] = fs.Found
 					continue
 				}
 
 				files = append(files, f)
-				filesIndexed++
-				done[f.FileName()] = fs.Processed
+
+				found[f.FileName()] = fs.Processed
 			}
 
-			done[fileName] = fs.Processed
+			found[fileName] = fs.Processed
 
 			if len(files) == 0 || related.Main == nil {
 				// Nothing to do.
 				return nil
 			}
 
+			updated += len(files)
 			related.Files = files
 
 			jobs <- IndexJob{
@@ -270,7 +272,7 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 		log.Error(err.Error())
 	}
 
-	if filesIndexed > 0 {
+	if updated > 0 {
 		event.Publish("index.updating", event.Data{
 			"step": "faces",
 		})
@@ -296,7 +298,14 @@ func (ind *Index) Start(o IndexOptions) fs.Done {
 
 	runtime.GC()
 
-	return done
+	ind.lastRun = entity.TimeStamp()
+
+	return found, updated
+}
+
+// LastRun returns the time when the index was last updated.
+func (ind *Index) LastRun() time.Time {
+	return ind.lastRun
 }
 
 // FileName indexes a single file and returns the result.

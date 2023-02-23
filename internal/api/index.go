@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -61,14 +62,18 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		// Start indexing.
 		ind := get.Index()
-		indexed := ind.Start(indOpt)
+		lastRun := ind.LastRun()
+		found, updated := ind.Start(indOpt)
+
+		log.Infof("index: updated %s", english.Plural(updated, "file", "files"))
 
 		RemoveFromFolderCache(entity.RootOriginals)
 
 		// Configure purge options.
 		prgOpt := photoprism.PurgeOptions{
 			Path:   filepath.Clean(f.Path),
-			Ignore: indexed,
+			Ignore: found,
+			Force:  indOpt.Rescan || updated > 0,
 		}
 
 		// Start purging.
@@ -81,14 +86,17 @@ func StartIndexing(router *gin.RouterGroup) {
 			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
 		}
 
-		event.Publish("index.updating", event.Data{
-			"step": "moments",
-		})
+		// Update moments?
+		if updated > 0 || lastRun.IsZero() {
+			event.Publish("index.updating", event.Data{
+				"step": "moments",
+			})
 
-		moments := get.Moments()
+			moments := get.Moments()
 
-		if err := moments.Start(); err != nil {
-			log.Warnf("moments: %s", err)
+			if err := moments.Start(); err != nil {
+				log.Warnf("moments: %s", err)
+			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())
