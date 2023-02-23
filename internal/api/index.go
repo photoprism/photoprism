@@ -69,6 +69,10 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		log.Infof("index: updated %s [%s]", english.Plural(updated, "file", "files"), time.Since(indexStart))
 
+		event.Publish("index.updating", event.Data{
+			"step": "purge",
+		})
+
 		RemoveFromFolderCache(entity.RootOriginals)
 
 		// Configure purge options.

@@ -1968,7 +1968,7 @@ func TestMediaFile_ExceedsBytes(t *testing.T) {
 		} else {
 			err, actual := f.ExceedsBytes(-1)
 			assert.NoError(t, err)
-			assert.Equal(t, int64(0), actual)
+			assert.Equal(t, int64(128471), actual)
 			assert.True(t, f.Ok())
 			assert.False(t, f.Empty())
 		}
@@ -1979,7 +1979,7 @@ func TestMediaFile_ExceedsBytes(t *testing.T) {
 		} else {
 			err, actual := f.ExceedsBytes(0)
 			assert.NoError(t, err)
-			assert.Equal(t, int64(0), actual)
+			assert.Equal(t, int64(162877), actual)
 			assert.True(t, f.Ok())
 			assert.False(t, f.Empty())
 		}

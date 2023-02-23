@@ -227,15 +227,15 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			var files MediaFiles
 
-			if related.Main == nil {
+			if f := related.Main; f == nil {
 				// Nothing to do.
 				return nil
-			} else if limitErr, fileSize := related.Main.ExceedsBytes(o.ByteLimit); fileSize == 0 {
-				found[fileName] = fs.Found
+			} else if limitErr, fileSize := f.ExceedsBytes(o.ByteLimit); fileSize == 0 {
+				found[f.FileName()] = fs.Found
 				return nil
 			} else if limitErr != nil {
 				log.Warnf("index: %s", limitErr)
-				found[fileName] = fs.Processed
+				found[f.FileName()] = fs.Processed
 				return nil
 			}
 
