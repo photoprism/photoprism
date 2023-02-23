@@ -1084,26 +1084,26 @@ func (m *MediaFile) Megapixels() (resolution int) {
 }
 
 // ExceedsBytes checks if the file exceeds the specified size limit in bytes.
-func (m *MediaFile) ExceedsBytes(bytes int64) (err error, actual int64) {
-	if bytes <= 0 {
-		return nil, 0
-	} else if actual = m.FileSize(); actual <= 0 || actual <= bytes {
-		return nil, actual
+func (m *MediaFile) ExceedsBytes(limit int64) (err error, fileSize int64) {
+	if fileSize = m.FileSize(); limit <= 0 {
+		return nil, fileSize
+	} else if fileSize <= 0 || fileSize <= limit {
+		return nil, fileSize
 	} else {
-		return fmt.Errorf("%s exceeds file size limit (%s / %s)", clean.Log(m.RootRelName()), humanize.Bytes(uint64(actual)), humanize.Bytes(uint64(bytes))), actual
+		return fmt.Errorf("%s exceeds file size limit (%s / %s)", clean.Log(m.RootRelName()), humanize.Bytes(uint64(fileSize)), humanize.Bytes(uint64(limit))), fileSize
 	}
 }
 
 // ExceedsResolution checks if an image in a natively supported format exceeds the configured resolution limit in megapixels.
-func (m *MediaFile) ExceedsResolution(limit int) (err error, actual int) {
+func (m *MediaFile) ExceedsResolution(limit int) (err error, resolution int) {
 	if limit <= 0 {
-		return nil, actual
+		return nil, resolution
 	} else if !m.IsImage() {
-		return nil, actual
-	} else if actual = m.Megapixels(); actual <= 0 || actual <= limit {
-		return nil, actual
+		return nil, resolution
+	} else if resolution = m.Megapixels(); resolution <= 0 || resolution <= limit {
+		return nil, resolution
 	} else {
-		return fmt.Errorf("%s exceeds resolution limit (%d / %d MP)", clean.Log(m.RootRelName()), actual, limit), actual
+		return fmt.Errorf("%s exceeds resolution limit (%d / %d MP)", clean.Log(m.RootRelName()), resolution, limit), resolution
 	}
 }
 

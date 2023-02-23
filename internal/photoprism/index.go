@@ -229,11 +229,13 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			if related.Main == nil {
 				// Nothing to do.
-				found[fileName] = fs.Processed
 				return nil
-			} else if limitErr, _ := related.Main.ExceedsBytes(o.ByteLimit); limitErr != nil {
-				found[fileName] = fs.Processed
+			} else if limitErr, fileSize := related.Main.ExceedsBytes(o.ByteLimit); fileSize == 0 {
+				found[fileName] = fs.Found
+				return nil
+			} else if limitErr != nil {
 				log.Warnf("index: %s", limitErr)
+				found[fileName] = fs.Processed
 				return nil
 			}
 
@@ -242,12 +244,12 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 					continue
 				}
 
-				if fileSize := f.FileSize(); fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
+				if limitErr, fileSize := f.ExceedsBytes(o.ByteLimit); fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
 					found[f.FileName()] = fs.Found
 					continue
-				} else if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
-					found[f.FileName()] = fs.Found
+				} else if limitErr != nil {
 					log.Infof("index: %s", limitErr)
+					found[f.FileName()] = fs.Processed
 					continue
 				}
 

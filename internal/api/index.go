@@ -65,6 +65,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		lastRun := ind.LastRun()
 		indexStart := time.Now()
 		found, updated := ind.Start(indOpt)
+		updateMoments := updated > 0 || lastRun.IsZero()
 
 		log.Infof("index: updated %s [%s]", english.Plural(updated, "file", "files"), time.Since(indexStart))
 
@@ -85,10 +86,11 @@ func StartIndexing(router *gin.RouterGroup) {
 			return
 		} else if len(files) > 0 || len(photos) > 0 {
 			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
+			updateMoments = true
 		}
 
 		// Update moments?
-		if updated > 0 || lastRun.IsZero() {
+		if updateMoments {
 			event.Publish("index.updating", event.Data{
 				"step": "moments",
 			})
