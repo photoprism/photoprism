@@ -227,41 +227,41 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			var files MediaFiles
 
-			if f := related.Main; f == nil {
-				// Nothing to do.
-				return nil
-			} else if limitErr, fileSize := f.ExceedsBytes(o.ByteLimit); fileSize == 0 {
-				found[f.FileName()] = fs.Found
-				return nil
-			} else if limitErr != nil {
-				log.Warnf("index: %s", limitErr)
-				found[f.FileName()] = fs.Processed
+			// Main media file is required to proceed.
+			if related.Main == nil {
 				return nil
 			}
 
+			skip := false
+
+			// Check related files.
 			for _, f := range related.Files {
 				if found[f.FileName()].Processed() {
+					// Ignore already processed files.
 					continue
-				}
-
-				if limitErr, fileSize := f.ExceedsBytes(o.ByteLimit); fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
+				} else if limitErr, fileSize := f.ExceedsBytes(o.ByteLimit); fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
+					// Flag file as found but not processed.
 					found[f.FileName()] = fs.Found
 					continue
-				} else if limitErr != nil {
+				} else if limitErr == nil {
+					// Add to file list.
+					files = append(files, f)
+				} else if related.Main.FileName() != f.FileName() {
+					// Sidecar file is too large, ignore.
 					log.Infof("index: %s", limitErr)
-					found[f.FileName()] = fs.Processed
-					continue
+				} else {
+					// Main file is too large, skip all.
+					log.Warnf("index: %s", limitErr)
+					skip = true
 				}
-
-				files = append(files, f)
 
 				found[f.FileName()] = fs.Processed
 			}
 
 			found[fileName] = fs.Processed
 
-			if len(files) == 0 {
-				// Nothing to do.
+			// Skip if main file is too large or there are no files left to index.
+			if skip || len(files) == 0 {
 				return nil
 			}
 
