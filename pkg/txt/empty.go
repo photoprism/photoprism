@@ -41,13 +41,13 @@ func EmptyDateTime(s string) bool {
 // DateTimeDefault tests if the datetime string is not empty and not a default value.
 func DateTimeDefault(s string) bool {
 	switch s {
-	case "1970-01-01", "1970-01-01 00:00:00":
+	case "1970-01-01", "1970-01-01 00:00:00", "1970:01:01 00:00:00":
 		// Unix epoch.
 		return true
-	case "1980-01-01", "1980-01-01 00:00:00":
-		// Common default.
+	case "1980-01-01", "1980-01-01 00:00:00", "1980:01:01 00:00:00":
+		// Windows default.
 		return true
-	case "2002:12:08 12:00:00":
+	case "2002-12-08 12:00:00", "2002:12:08 12:00:00":
 		// Android Bug: https://issuetracker.google.com/issues/36967504
 		return true
 	default:

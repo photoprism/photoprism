@@ -154,8 +154,17 @@ func TestDateTimeDefault(t *testing.T) {
 	t.Run("1970-01-01 00:00:00", func(t *testing.T) {
 		assert.True(t, DateTimeDefault("1970-01-01 00:00:00"))
 	})
+	t.Run("1970:01:01 00:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("1970:01:01 00:00:00"))
+	})
 	t.Run("1980-01-01 00:00:00", func(t *testing.T) {
 		assert.True(t, DateTimeDefault("1980-01-01 00:00:00"))
+	})
+	t.Run("1980:01:01 00:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("1980:01:01 00:00:00"))
+	})
+	t.Run("2002-12-08 12:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("2002-12-08 12:00:00"))
 	})
 	t.Run("2002:12:08 12:00:00", func(t *testing.T) {
 		assert.True(t, DateTimeDefault("2002:12:08 12:00:00"))
