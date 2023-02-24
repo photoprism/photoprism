@@ -60,8 +60,8 @@ func DateTime(s, timeZone string) (t time.Time) {
 		}
 	}()
 
-	// Empty time string?
-	if EmptyTime(s) {
+	// Ignore defaults.
+	if DateTimeDefault(s) {
 		return time.Time{}
 	}
 
