@@ -29,9 +29,16 @@ func EmptyDateTime(s string) bool {
 		return true
 	case "0", "00", "0000", "0000:00:00", "00:00:00", "0000-00-00", "00-00-00":
 		return true
+	case "    :  :     :  :  ", "    -  -     -  -  ", "    -  -     :  :  ":
+		// Exif default.
+		return true
 	case "0000:00:00 00:00:00", "0000-00-00 00-00-00", "0000-00-00 00:00:00":
 		return true
-	case "0001-01-01 00:00:00", "0001-01-01 00:00:00 +0000 UTC":
+	case "0001:01:01 00:00:00", "0001-01-01 00-00-00", "0001-01-01 00:00:00":
+		// Go default.
+		return true
+	case "0001:01:01 00:00:00 +0000 UTC", "0001-01-01 00-00-00 +0000 UTC", "0001-01-01 00:00:00 +0000 UTC":
+		// Go default with time zone.
 		return true
 	default:
 		return false
