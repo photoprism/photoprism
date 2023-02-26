@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-21 12:35+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-02-26 21:43+0000\n"
+"Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "frontend/sv/>\n"
 "Language: sv\n"
@@ -2306,7 +2306,10 @@ msgstr "Tema"
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Detta gör att mappen med originalen monteras som en nätverksenhet, så att du kan öppna, redigera och ta bort filer från din dator eller smartphone som om de vore lokala."
+msgstr ""
+"Detta gör att mappen med originalen monteras som en nätverksenhet, så att du "
+"kan öppna, redigera och ta bort filer\n"
+"           från din dator eller smartphone som om de vore lokala."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2439,7 +2442,7 @@ msgstr "Uppdatering av ögonblick"
 
 #: src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "Uppdatering av förhandsgranskningar"
+msgstr "Uppdatering av förhandsgranskningar…"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2602,7 +2605,10 @@ msgstr "WebDAV-klienter kan ansluta till PhotoPrism via följande URL:"
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV-klienter, som Microsofts Windows Explorer eller Apple Finder, kan ansluta direkt till PhotoPrism."
+msgstr ""
+"WebDAV-klienter, som Microsofts Windows Explorer eller Apple's Finder, kan "
+"ansluta direkt till\n"
+"          PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
