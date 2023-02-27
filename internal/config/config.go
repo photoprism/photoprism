@@ -14,11 +14,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"github.com/dustin/go-humanize"
 	"github.com/klauspost/cpuid/v2"
 	"github.com/pbnjay/memory"
 	"github.com/sirupsen/logrus"
@@ -732,13 +732,13 @@ func (c *Config) OriginalsByteLimit() int64 {
 
 // ResolutionLimit returns the maximum resolution of originals in megapixels (width x height).
 func (c *Config) ResolutionLimit() int {
-	if c.NoSponsor() {
-		return DefaultResolutionLimit
-	}
-
 	result := c.options.ResolutionLimit
 
-	if result <= 0 {
+	// Disabling or increasing the limit is at your own risk.
+	// Only sponsors receive support in case of problems.
+	if result == 0 {
+		return DefaultResolutionLimit
+	} else if result < 0 {
 		return -1
 	} else if result > 900 {
 		result = 900

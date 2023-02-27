@@ -129,7 +129,7 @@ var Flags = CliFlags{
 			Value:  DefaultResolutionLimit,
 			Usage:  "maximum resolution of media files in `MEGAPIXELS` (1-900; -1 to disable)",
 			EnvVar: "PHOTOPRISM_RESOLUTION_LIMIT",
-		}, Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "storage-path, s",
 			Usage:  "writable storage `PATH` for sidecar, cache, and database files",

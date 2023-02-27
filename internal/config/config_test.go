@@ -381,17 +381,17 @@ func TestConfig_OriginalsByteLimit(t *testing.T) {
 func TestConfig_ResolutionLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, -1, c.ResolutionLimit())
+	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
 	c.options.ResolutionLimit = 800
 	assert.Equal(t, 800, c.ResolutionLimit())
 	c.options.ResolutionLimit = 950
 	assert.Equal(t, 900, c.ResolutionLimit())
 	c.options.ResolutionLimit = 0
-	assert.Equal(t, -1, c.ResolutionLimit())
+	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
 	c.options.ResolutionLimit = -1
 	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = false
-	assert.Equal(t, 150, c.ResolutionLimit())
+	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = true
 	assert.Equal(t, -1, c.ResolutionLimit())
 }
