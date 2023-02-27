@@ -1,5 +1,10 @@
 /* PhotoPrism Search Result Styles */
 
+/* Disable native long-touch menu on iOS Safari */
+#photoprism .search-results .result {
+    -webkit-touch-callout: none;
+}
+
 /*
 For more information on the contain property, see https://developers.google.com/web/updates/2016/06/css-containment
 */
