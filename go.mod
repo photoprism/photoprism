@@ -25,7 +25,7 @@ require (
 	github.com/karrick/godirwalk v1.17.0
 	github.com/klauspost/cpuid/v2 v2.2.4
 	github.com/leandro-lugaresi/hub v1.1.1
-	github.com/leonelquinteros/gotext v1.5.1
+	github.com/leonelquinteros/gotext v1.5.2
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mandykoh/prism v0.35.0
