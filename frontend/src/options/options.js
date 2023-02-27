@@ -213,7 +213,11 @@ export const Languages = () => [
     rtl: true,
   },
   {
-    text: "български", // Bulgarian
+    text: "Беларуская", // Belarusian
+    value: "be",
+  },
+  {
+    text: "Български", // Bulgarian
     value: "bg",
   },
   {
