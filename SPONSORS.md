@@ -62,6 +62,8 @@ Garn Penrod (Patreon, November 2020)
 
 Sandro Petruzzi (Patreon, May 2022)
 
+[Toly Rugalev](https://github.com/AnatolyRugalev) (GitHub Sponsors, March 2023)
+
 [Feel free to contact us if you have any change requests.](https://www.photoprism.app/contact)
 
 ## One-Time Donations ##
