@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-02-26 21:43+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-03-01 05:47+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -55,7 +55,7 @@ msgstr "4 гадзіны"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
-msgstr "Пстрычка скапіруе яго ў буфер абмену."
+msgstr "Клік скапіруе яго ў буфер абмену."
 
 #: src/page/about/about.vue:4
 #: src/page/about/about.vue:220
@@ -105,7 +105,7 @@ msgstr "Код актывацыі"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
-msgstr "Дадаць уліковы запіс"
+msgstr "Дадаць акаўнт"
 
 #: src/page/albums.vue:145
 #: src/page/albums.vue:146
@@ -114,7 +114,7 @@ msgstr "Дадаць альбом"
 
 #: src/page/settings/general.vue:231
 msgid "Add files to your library via Web Upload."
-msgstr "Дадайце файлы ў сваю бібліятэку праз Web Upload."
+msgstr "Дадайце файлы ў сваю бібліятэку праз вэб загрузку."
 
 #: src/dialog/share.vue:79
 msgid "Add Link"
@@ -140,7 +140,7 @@ msgstr "Дададзена"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
-msgstr "Пашыраны"
+msgstr "Пашыраныя"
 
 #: src/options/options.js:393
 msgid "After 1 day"
@@ -206,7 +206,7 @@ msgstr "Усе %{n} альбомаў загружаны"
 
 #: src/page/labels.vue:276
 msgid "All %{n} labels loaded"
-msgstr "Усе %{n} цэтлікі загружаны"
+msgstr "Усе %{n} ярлыкі загружаны"
 
 #: src/page/people/recognized.vue:360
 msgid "All %{n} people loaded"
@@ -275,7 +275,7 @@ msgstr "Вышыня (м)"
 
 #: src/common/api.js:99
 msgid "An error occurred - are you offline?"
-msgstr "Адбылася памылка - вы па-за сеткай?"
+msgstr "Адбылася памылка - вы у аўтаномным рэжыме?"
 
 #: src/component/navigation.vue:97
 #: src/component/photo/cards.vue:309
@@ -310,7 +310,7 @@ msgstr "Ужыць"
 #: src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:116
 msgid "Approve"
-msgstr "Ухваліць"
+msgstr "Зацвердзіць"
 
 #: src/app/routes.js:243
 #: src/component/navigation.vue:138
@@ -338,7 +338,7 @@ msgstr "Вы ўпэўнены, што жадаеце выдаліць гэтыя
 
 #: src/dialog/service/remove.vue:10
 msgid "Are you sure you want to delete this account?"
-msgstr "Вы ўпэўнены, што хочаце выдаліць гэты ўліковы запіс?"
+msgstr "Вы ўпэўнены, што хочаце выдаліць гэты акаунт?"
 
 #: src/dialog/photo/delete.vue:10
 msgid "Are you sure you want to permanently delete these pictures?"
@@ -543,7 +543,7 @@ msgstr "Змяніць асабісты профіль і параметры б�
 
 #: src/page/settings/general.vue:319
 msgid "Change photo titles, locations, and other metadata."
-msgstr "Змяняйце назвы фатаграфій, месцы і іншыя метаданыя."
+msgstr "Змяніць назвы фатаграфій, месцы і іншыя метаданыя."
 
 #: src/component/photo/clipboard.vue:134
 msgid "Change private flag"
@@ -594,7 +594,7 @@ msgstr "Колеры"
 #: src/page/about/about.vue:46
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
-"Распаўсюджаныя праблемы можна хутка дыягнаставаць і вырашыць з дапамогай "
+"Агульныя праблемы можна хутка дыягнаставаць і вырашыць з дапамогай "
 "кантрольных спісаў па ліквідацыі непаладак, якія мы прапануем."
 
 #: src/page/connect.vue:65
@@ -613,7 +613,7 @@ msgstr "Упэўненасць"
 #: src/dialog/service/add.vue:18
 #: src/page/settings/services.vue:53
 msgid "Connect"
-msgstr "Злучыцца"
+msgstr "Злучыць"
 
 #: src/page/settings/account.vue:57
 #: src/dialog/webdav.vue:4
@@ -681,7 +681,7 @@ msgstr "Краіна"
 
 #: src/page/login.vue:19
 msgid "Create Account"
-msgstr "Стварыць уліковы запіс"
+msgstr "Стварыць акаунт"
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
@@ -689,7 +689,7 @@ msgstr "Стварыць альбом"
 
 #: src/dialog/photo/edit/info.vue:167
 msgid "Created"
-msgstr "Стварылі"
+msgstr "Створана"
 
 #: src/page/library/index.vue:169
 msgid "Creating thumbnails for"
