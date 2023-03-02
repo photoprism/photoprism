@@ -30,9 +30,7 @@ func (c *Config) DefaultLocale() string {
 
 // WallpaperUri returns the login screen background image `URI`.
 func (c *Config) WallpaperUri() string {
-	if c.NoSponsor() {
-		return ""
-	} else if strings.Contains(c.options.WallpaperUri, "/") {
+	if strings.Contains(c.options.WallpaperUri, "/") {
 		return c.options.WallpaperUri
 	}
 

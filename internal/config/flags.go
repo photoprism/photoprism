@@ -381,8 +381,7 @@ var Flags = CliFlags{
 			Usage:  "login screen background image `URI`",
 			EnvVar: "PHOTOPRISM_WALLPAPER_URI",
 			Value:  "",
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "cdn-url",
 			Usage:  "content delivery network `URL`",

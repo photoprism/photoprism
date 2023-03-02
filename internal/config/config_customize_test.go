@@ -53,7 +53,7 @@ func TestConfig_WallpaperUri(t *testing.T) {
 	c.options.Test = true
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.Sponsor = false
-	assert.Equal(t, "", c.WallpaperUri())
+	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.Sponsor = true
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.WallpaperUri = "kashmir"
