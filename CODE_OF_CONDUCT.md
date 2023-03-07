@@ -1,6 +1,6 @@
 # PhotoPrism® Code of Conduct
 
-**By using the software and services we provide, you agree to our [Terms of Service](https://www.photoprism.app/terms), including our [Privacy Policy](https://www.photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with other community members.**
+**By using the software and services we provide, you agree to our [Terms of Service](https://www.photoprism.app/terms), including our [Privacy Policy](https://www.photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with our team and other community members.**
 
 *Last Updated: March 7, 2023*
 
