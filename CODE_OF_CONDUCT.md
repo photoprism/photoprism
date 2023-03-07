@@ -2,7 +2,7 @@
 
 **By using the software and services we provide, you agree to our [Terms of Service](https://www.photoprism.app/terms), including our [Privacy Policy](https://www.photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with other community members.**
 
-*Last Updated: August 10, 2022*
+*Last Updated: March 7, 2023*
 
 ## Rules
 
@@ -18,13 +18,15 @@ Because we want our Code of Conduct to be easy to understand and implement, we h
 
 Not everyone has experience with Open Source communities and intuitively knows what is acceptable. In that case, the following guidelines and examples are meant to provide a quick overview and help you avoid the most common pitfalls:
 
-(a) Do not feel entitled to free software, support, or advice, especially if you are not a contributor, [sponsor](https://www.photoprism.app/membership), or paying customer. Don't ask contributors to report to you and [meet deadlines](https://docs.photoprism.app/developer-guide/code-quality/#go-slow-before-you-go-fast) as if they work for you or owe you something.
+(a) Do not feel entitled to free software, support, or advice, especially if you are not a contributor, [sponsor](https://www.photoprism.app/membership), or paying customer. Don't expect contributors to report to you and [meet deadlines](https://docs.photoprism.app/developer-guide/code-quality/#go-slow-before-you-go-fast) as if they work for you or owe you something, even if you donated a small amount. We also ask that you do not use GitHub Issues or other development tools to start general discussions, get technical support, or express personal opinions.
 
 (b) Honor **Rule &#35;2**, [read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening invalid bug reports, starting a public "shitstorm", or insulting other community members in our chat rooms. Aside from being annoying for everyone, it also keeps our team from working on features and enhancements that users like you are waiting for.
 
 (c) Reckless, [surprisingly harsh](https://github.com/photoprism/photoprism/issues/281#issuecomment-1207233135) or ignorant communication that disregards **Rule &#35;1** is unacceptable, whether public or private. If you are having a bad day and want to offend someone, please go somewhere else.
 
-*PhotoPrism has an amazing community, so problems are rare in practice. Common sense and staying away from the computer when you are tired or hungry should usually be enough to get along with others.*
+We have found that many of the issues that new users get upset about when they read about them in community forums or old issue comments have been resolved in the meantime. If not, we always do our best to improve the software and documentation as soon as we learn about it and have the resources.
+
+*Thanks to our amazing community, problems are rare in practice. Common sense and staying away from the computer when you are tired or hungry should usually be enough to get along with others.*
 
 ## Reporting
 
