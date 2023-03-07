@@ -33,8 +33,25 @@ func Numeric(s string) string {
 	return s
 }
 
-// Float64 converts a string to a 64-bit floating point number or 0 if invalid.
-func Float64(s string) float64 {
+// IsFloat checks if the string represents a floating point number.
+func IsFloat(s string) bool {
+	if s == "" {
+		return false
+	}
+
+	s = strings.TrimSpace(s)
+
+	for _, r := range s {
+		if r != '.' && r != ',' && (r < '0' || r > '9') {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Float converts a string to a 64-bit floating point number or 0 if invalid.
+func Float(s string) float64 {
 	if s == "" {
 		return 0
 	}

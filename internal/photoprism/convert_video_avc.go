@@ -41,12 +41,13 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 		return nil, fmt.Errorf("convert: transcoding disabled in read-only mode (%s)", f.RootRelName())
 	}
 
-	if c.conf.DisableFFmpeg() {
-		return nil, fmt.Errorf("convert: ffmpeg is disabled for transcoding %s", f.RootRelName())
-	}
-
 	fileName := f.RelName(c.conf.OriginalsPath())
-	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtAVC)
+
+	if f.IsAnimatedImage() {
+		avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtMP4)
+	} else {
+		avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtAVC)
+	}
 
 	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoder)
 
@@ -131,6 +132,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 
 // AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
 func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg.AvcEncoder) (result *exec.Cmd, useMutex bool, err error) {
+	fileExt := f.Extension()
 	fileName := f.FileName()
 	bitrate := c.AvcBitrate(f)
 	ffmpegBin := c.conf.FFmpegBin()
@@ -140,12 +142,20 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg
 		return nil, false, fmt.Errorf("convert: %s video filename is empty - possible bug", f.FileType())
 	case bitrate == "":
 		return nil, false, fmt.Errorf("convert: transcoding bitrate is empty - possible bug")
-	case ffmpegBin == "":
-		return nil, false, fmt.Errorf("convert: ffmpeg must be installed to transcode %s", clean.Log(f.BaseName()))
-	case c.conf.DisableFFmpeg():
-		return nil, false, fmt.Errorf("convert: ffmpeg must be enabled to transcode %s", clean.Log(f.BaseName()))
 	case !f.IsAnimated():
 		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded", f.FileType(), clean.Log(f.BaseName()))
+	}
+
+	// Transcode animated WebP images with ImageMagick.
+	if f.IsWebP() && c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) {
+		return exec.Command(c.conf.ImageMagickBin(), f.FileName(), avcName), false, nil
+	}
+
+	// Transcode all other formats with FFmpeg.
+	if ffmpegBin == "" {
+		return nil, false, fmt.Errorf("convert: ffmpeg must be installed to transcode %s", clean.Log(f.BaseName()))
+	} else if c.conf.DisableFFmpeg() {
+		return nil, false, fmt.Errorf("convert: ffmpeg must be enabled to transcode %s", clean.Log(f.BaseName()))
 	}
 
 	return ffmpeg.AvcConvertCommand(fileName, avcName, ffmpegBin, c.AvcBitrate(f), encoder)

@@ -5,23 +5,28 @@ import (
 	"path"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // FilesByPath returns a slice of files in a given originals folder.
-func FilesByPath(limit, offset int, rootName, pathName string) (files entity.Files, err error) {
+func FilesByPath(limit, offset int, rootName, pathName string, public bool) (files entity.Files, err error) {
 	if strings.HasPrefix(pathName, "/") {
 		pathName = pathName[1:]
 	}
 
-	err = Db().
+	stmt := Db().
 		Table("files").Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
 		Where("files.file_missing = 0 AND files.file_root = ?", rootName).
-		Where("photos.photo_path = ?", pathName).
-		Order("files.file_name").
+		Where("photos.photo_path = ?", pathName)
+
+	if public {
+		stmt = stmt.Where("photos.photo_private = 0")
+	}
+
+	err = stmt.Order("files.file_name").
 		Limit(limit).Offset(offset).
 		Find(&files).Error
 
@@ -67,6 +72,7 @@ func FileByPhotoUID(photoUID string) (*entity.File, error) {
 	}
 
 	err := Db().Where("photo_uid = ? AND file_primary = 1", photoUID).Preload("Photo").First(&f).Error
+
 	return &f, err
 }
 
@@ -78,9 +84,11 @@ func VideoByPhotoUID(photoUID string) (*entity.File, error) {
 		return &f, fmt.Errorf("photo uid required")
 	}
 
-	err := Db().Where("photo_uid = ? AND (file_video = 1 OR file_type = ?)", photoUID, fs.ImageGIF).
-		Order("file_video DESC, file_duration DESC, file_frames DESC").
+	err := Db().Where("photo_uid = ? AND file_missing = 0", photoUID).
+		Where("file_video = 1 OR file_duration > 0 OR file_frames > 0 OR file_type = ?", fs.ImageGIF).
+		Order("file_error ASC, file_video DESC, file_duration DESC, file_frames DESC").
 		Preload("Photo").First(&f).Error
+
 	return &f, err
 }
 
@@ -93,6 +101,7 @@ func FileByUID(fileUID string) (*entity.File, error) {
 	}
 
 	err := Db().Where("file_uid = ?", fileUID).Preload("Photo").First(&f).Error
+
 	return &f, err
 }
 
@@ -128,7 +137,7 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 
 	if fileUID != "" {
 		// Do nothing.
-	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", photoUID).Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
+	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type IN (?)", photoUID, media.PreviewExpr).Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
 		return fmt.Errorf("cannot find primary file for %s", photoUID)

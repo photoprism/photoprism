@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -117,22 +117,16 @@ export class User extends RestModel {
       return this.Details.NickName;
     } else if (this.Details && this.Details.GivenName) {
       return this.Details.GivenName;
-    } else if (this.Role) {
-      return T(Util.capitalize(this.Role));
-    } else if (this.Details && this.Details.JobTitle) {
-      return this.Details.JobTitle;
-    } else if (this.Email) {
-      return this.Email;
     } else if (this.Name) {
-      return `@${this.Name}`;
+      return T(Util.capitalize(this.Name));
     }
 
-    return $gettext("Unregistered");
+    return $gettext("Unknown");
   }
 
   getAccountInfo() {
     if (this.Name) {
-      return `@${this.Name}`;
+      return this.Name;
     } else if (this.Email) {
       return this.Email;
     } else if (this.Details && this.Details.JobTitle) {

@@ -1,9 +1,11 @@
 package config
 
 import (
+	"crypto/tls"
 	"encoding/hex"
 	"fmt"
 	"hash/crc32"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -12,11 +14,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"github.com/dustin/go-humanize"
 	"github.com/klauspost/cpuid/v2"
 	"github.com/pbnjay/memory"
 	"github.com/sirupsen/logrus"
@@ -40,6 +42,7 @@ var log = event.Log
 var once sync.Once
 var LowMem = false
 var TotalMem uint64
+var crc32Castagnoli = crc32.MakeTable(crc32.Castagnoli)
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -153,6 +156,7 @@ func (c *Config) Options() *Options {
 
 // Propagate updates config options in other packages as needed.
 func (c *Config) Propagate() {
+	FlushCache()
 	log.SetLevel(c.LogLevel())
 
 	// Set thumbnail generation parameters.
@@ -218,7 +222,7 @@ func (c *Config) Init() error {
 	// Show warning if less than 1 GB RAM was detected.
 	if LowMem {
 		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/Gigabyte)
-		log.Warnf("config: tensorflow as well as indexing and conversion of RAW files have been disabled automatically")
+		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
 	}
 
 	// Show swap info.
@@ -230,6 +234,15 @@ func (c *Config) Init() error {
 	// and the worker runs less than once per hour.
 	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
+	}
+
+	// Set HTTPS proxy for outgoing connections.
+	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: c.HttpsProxyInsecure(),
+		}
+
+		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
 	}
 
 	// Set HTTP user agent.
@@ -311,13 +324,13 @@ func (c *Config) Serial() string {
 func (c *Config) SerialChecksum() string {
 	var result []byte
 
-	hash := crc32.New(crc32.MakeTable(crc32.Castagnoli))
+	crc := crc32.New(crc32Castagnoli)
 
-	if _, err := hash.Write([]byte(c.Serial())); err != nil {
+	if _, err := crc.Write([]byte(c.Serial())); err != nil {
 		log.Warnf("config: %s", err)
 	}
 
-	return hex.EncodeToString(hash.Sum(result))
+	return hex.EncodeToString(crc.Sum(result))
 }
 
 // Name returns the app name.
@@ -329,12 +342,21 @@ func (c *Config) Name() string {
 	return c.options.Name
 }
 
-// Edition returns the app edition.
+// About returns the app about string.
+func (c *Config) About() string {
+	if c.options.About == "" {
+		return "PhotoPrism® Dev"
+	} else if strings.HasSuffix(c.options.About, "CE") && c.Sponsor() {
+		return strings.Replace(c.options.About, "CE", "Plus", 1)
+	}
+
+	return c.options.About
+}
+
+// Edition returns the edition nane.
 func (c *Config) Edition() string {
 	if c.options.Edition == "" {
-		return "PhotoPrism® Dev"
-	} else if strings.HasSuffix(c.options.Edition, "CE") && c.Sponsor() {
-		return strings.Replace(c.options.Edition, "CE", "Plus", 1)
+		return "ce"
 	}
 
 	return c.options.Edition
@@ -343,6 +365,11 @@ func (c *Config) Edition() string {
 // Version returns the application version.
 func (c *Config) Version() string {
 	return c.options.Version
+}
+
+// VersionChecksum returns the application version checksum.
+func (c *Config) VersionChecksum() uint32 {
+	return crc32.ChecksumIEEE([]byte(c.Version()))
 }
 
 // UserAgent returns an HTTP user agent string based on the app config and version.
@@ -448,11 +475,11 @@ func (c *Config) SiteDescription() string {
 // SitePreview returns the site preview image URL for sharing.
 func (c *Config) SitePreview() string {
 	if c.options.SitePreview == "" || c.NoSponsor() {
-		return c.SiteUrl() + "static/img/preview.jpg"
+		return fmt.Sprintf("https://i.photoprism.app/prism?cover=64&style=centered%%20dark&caption=none&title=%s", url.QueryEscape(c.AppName()))
 	}
 
 	if !strings.HasPrefix(c.options.SitePreview, "http") {
-		return c.SiteUrl() + c.options.SitePreview
+		return c.SiteUrl() + strings.TrimPrefix(c.options.SitePreview, "/")
 	}
 
 	return c.options.SitePreview
@@ -694,8 +721,8 @@ func (c *Config) OriginalsLimit() int {
 	return c.options.OriginalsLimit
 }
 
-// OriginalsLimitBytes returns the maximum size of originals in bytes.
-func (c *Config) OriginalsLimitBytes() int64 {
+// OriginalsByteLimit returns the maximum size of originals in bytes.
+func (c *Config) OriginalsByteLimit() int64 {
 	if result := c.OriginalsLimit(); result <= 0 {
 		return -1
 	} else {
@@ -705,13 +732,13 @@ func (c *Config) OriginalsLimitBytes() int64 {
 
 // ResolutionLimit returns the maximum resolution of originals in megapixels (width x height).
 func (c *Config) ResolutionLimit() int {
-	if c.NoSponsor() {
-		return DefaultResolutionLimit
-	}
-
 	result := c.options.ResolutionLimit
 
-	if result <= 0 {
+	// Disabling or increasing the limit is at your own risk.
+	// Only sponsors receive support in case of problems.
+	if result == 0 {
+		return DefaultResolutionLimit
+	} else if result < 0 {
 		return -1
 	} else if result > 900 {
 		result = 900
@@ -720,20 +747,20 @@ func (c *Config) ResolutionLimit() int {
 	return result
 }
 
-// UpdateHub renews backend api credentials for maps & places without a token.
+// UpdateHub renews backend api credentials for maps and places without a token.
 func (c *Config) UpdateHub() {
 	_ = c.ResyncHub("")
 }
 
-// ResyncHub renews backend api credentials for maps & places with an optional token.
+// ResyncHub renews backend api credentials for maps and places with an optional token.
 func (c *Config) ResyncHub(token string) error {
 	if err := c.hub.ReSync(token); err != nil {
-		log.Debugf("config: %s (refresh backend api tokens)", err)
+		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
 		if token != "" {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
 	} else if err = c.hub.Save(); err != nil {
-		log.Debugf("config: %s (save backend api tokens)", err)
+		log.Debugf("config: %s while saving api keys for maps and places", err)
 	} else {
 		c.hub.Propagate()
 	}
@@ -751,10 +778,10 @@ func (c *Config) initHub() {
 
 	if err := c.hub.Load(); err == nil {
 		// Do nothing.
-	} else if err := c.hub.Update(); err != nil {
-		log.Debugf("config: %s (init backend api tokens)", err)
-	} else if err := c.hub.Save(); err != nil {
-		log.Debugf("config: %s (save backend api tokens)", err)
+	} else if err = c.hub.Update(); err != nil {
+		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
+	} else if err = c.hub.Save(); err != nil {
+		log.Debugf("config: %s while saving api keys for maps and places", err)
 	}
 
 	c.hub.Propagate()

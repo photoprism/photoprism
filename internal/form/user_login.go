@@ -14,7 +14,7 @@ type Login struct {
 
 // Name returns the sanitized username in lowercase.
 func (f Login) Name() string {
-	return clean.Username(f.UserName)
+	return clean.DN(f.UserName)
 }
 
 // Email returns the sanitized email in lowercase.

@@ -13,27 +13,27 @@ func TestConfig_RawEnabled(t *testing.T) {
 	assert.NotEqual(t, c.DisableRaw(), c.RawEnabled())
 }
 
-func TestConfig_RawtherapeeBin(t *testing.T) {
+func TestConfig_RawTherapeeBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.True(t, strings.Contains(c.RawtherapeeBin(), "/bin/rawtherapee-cli"))
+	assert.True(t, strings.Contains(c.RawTherapeeBin(), "/bin/rawtherapee-cli"))
 }
 
-func TestConfig_RawtherapeeBlacklist(t *testing.T) {
+func TestConfig_RawTherapeeBlacklist(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	c.options.RawtherapeeBlacklist = "foo,bar"
-	assert.Equal(t, "foo,bar", c.RawtherapeeBlacklist())
-	c.options.RawtherapeeBlacklist = ""
-	assert.Equal(t, "", c.RawtherapeeBlacklist())
+	c.options.RawTherapeeBlacklist = "foo,bar"
+	assert.Equal(t, "foo,bar", c.RawTherapeeBlacklist())
+	c.options.RawTherapeeBlacklist = ""
+	assert.Equal(t, "", c.RawTherapeeBlacklist())
 }
 
-func TestConfig_RawtherapeeEnabled(t *testing.T) {
+func TestConfig_RawTherapeeEnabled(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.True(t, c.RawtherapeeEnabled())
+	assert.True(t, c.RawTherapeeEnabled())
 
-	c.options.DisableRawtherapee = true
-	assert.False(t, c.RawtherapeeEnabled())
+	c.options.DisableRawTherapee = true
+	assert.False(t, c.RawTherapeeEnabled())
 }
 
 func TestConfig_DarktableBin(t *testing.T) {
@@ -87,4 +87,19 @@ func TestConfig_HeifConvertEnabled(t *testing.T) {
 
 	c.options.DisableHeifConvert = true
 	assert.False(t, c.HeifConvertEnabled())
+}
+
+func TestConfig_RsvgConvertBin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	bin := c.RsvgConvertBin()
+	assert.Contains(t, bin, "/bin/rsvg-convert")
+}
+
+func TestConfig_RsvgConvertEnabled(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.True(t, c.RsvgConvertEnabled())
+
+	c.options.DisableVectors = true
+	assert.False(t, c.RsvgConvertEnabled())
 }

@@ -3,6 +3,7 @@ package photoprism
 import (
 	"fmt"
 	"image"
+	"strings"
 	"time"
 
 	"github.com/disintegration/imaging"
@@ -59,7 +60,7 @@ func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image,
 // CreateThumbnails creates the default thumbnail sizes if the media file
 // is a JPEG and they don't exist yet (except force is true).
 func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
-	if !m.IsJpeg() {
+	if !m.IsPreviewImage() {
 		// Skip.
 		return
 	}
@@ -98,9 +99,20 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 			if original == nil {
 				img, err := thumb.Open(m.FileName(), m.Orientation())
 
+				// Try to fix broken JPEGs if possible, fail otherwise.
 				if err != nil {
-					log.Debugf("media: %s in %s", err.Error(), clean.Log(m.RootRelName()))
-					return err
+					if !strings.HasPrefix(err.Error(), "invalid JPEG format") {
+						log.Debugf("media: %s in %s", err.Error(), clean.Log(m.RootRelName()))
+						return err
+					}
+
+					if fixed, err := NewConvert(conf).FixJpeg(m, false); err != nil {
+						return err
+					} else if fixedImg, err := thumb.Open(fixed.FileName(), m.Orientation()); err != nil {
+						return err
+					} else {
+						img = fixedImg
+					}
 				}
 
 				original = img

@@ -10,10 +10,9 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // binPaths stores known executable paths.
@@ -131,6 +130,12 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.CachePath(), err)
 	}
 
+	if c.MediaCachePath() == "" {
+		return notFoundError("media")
+	} else if err := os.MkdirAll(c.MediaCachePath(), fs.ModeDir); err != nil {
+		return createError(c.MediaCachePath(), err)
+	}
+
 	if c.ThumbCachePath() == "" {
 		return notFoundError("thumbs")
 	} else if err := os.MkdirAll(c.ThumbCachePath(), fs.ModeDir); err != nil {
@@ -218,7 +223,7 @@ func (c *Config) OptionsYaml() string {
 
 // DefaultsYaml returns the default options YAML filename.
 func (c *Config) DefaultsYaml() string {
-	return c.options.DefaultsYaml
+	return fs.Abs(c.options.DefaultsYaml)
 }
 
 // HubConfigFile returns the backend api config file name.
@@ -229,6 +234,22 @@ func (c *Config) HubConfigFile() string {
 // SettingsYaml returns the settings YAML filename.
 func (c *Config) SettingsYaml() string {
 	return filepath.Join(c.ConfigPath(), "settings.yml")
+}
+
+// SettingsYamlDefaults returns the default settings YAML filename.
+func (c *Config) SettingsYamlDefaults(settingsYml string) string {
+	if settingsYml != "" && fs.FileExists(settingsYml) {
+		// Use regular settings YAML file.
+	} else if defaultsYml := c.DefaultsYaml(); defaultsYml == "" {
+		// Use regular settings YAML file.
+	} else if dir := filepath.Dir(defaultsYml); dir == "" || dir == "." {
+		// Use regular settings YAML file.
+	} else if fileName := filepath.Join(dir, "settings.yml"); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
+		// Use default settings YAML file.
+		return fileName
+	}
+
+	return settingsYml
 }
 
 // PIDFilename returns the filename for storing the server process id (pid).
@@ -428,9 +449,14 @@ func (c *Config) CmdLibPath() string {
 	return "/usr/local/lib:/usr/lib"
 }
 
-// ThumbCachePath returns the thumbnail storage directory.
+// MediaCachePath returns the media cache path.
+func (c *Config) MediaCachePath() string {
+	return filepath.Join(c.CachePath(), "media")
+}
+
+// ThumbCachePath returns the thumbnail storage path.
 func (c *Config) ThumbCachePath() string {
-	return c.CachePath() + "/thumbnails"
+	return filepath.Join(c.CachePath(), "thumbnails")
 }
 
 // StoragePath returns the path for generated files like cache and index.

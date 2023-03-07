@@ -8,7 +8,7 @@ uninstall: down remove
 restart: stop start
 update: pull restart
 pull:
-	podman-compose pull --ignore-pull-failures
+	podman-compose pull
 start:
 	podman-compose up -d --remove-orphans
 stop:

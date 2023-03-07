@@ -184,7 +184,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file = new File(values);
-    assert.equal(file.getDateString(), "Jul 8, 2012, 2:45 PM");
+    assert.equal(file.getDateString().replaceAll("\u202f", " "), "Jul 8, 2012, 2:45 PM");
   });
 
   it("should get info", () => {

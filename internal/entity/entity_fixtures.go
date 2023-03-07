@@ -20,7 +20,7 @@ func CreateDefaultFixtures() {
 func ResetTestFixtures() {
 	start := time.Now()
 
-	Entities.Migrate(Db(), migrate.Opt(false, nil))
+	Entities.Migrate(Db(), migrate.Opt(true, false, nil))
 	Entities.WaitForMigration(Db())
 	Entities.Truncate(Db())
 

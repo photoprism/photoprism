@@ -10,20 +10,20 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Jpeg converts an image to jpeg, saves and returns it.
-func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, err error) {
+// Jpeg converts an image to JPEG, saves it, and returns it.
+func Jpeg(srcFile, jpgFile string, orientation int) (img image.Image, err error) {
 	// Resolve symlinks.
-	if srcFilename, err = fs.Resolve(srcFilename); err != nil {
-		log.Debugf("jpeg: %s in %s (resolve source image filename)", err, clean.Log(srcFilename))
+	if srcFile, err = fs.Resolve(srcFile); err != nil {
+		log.Debugf("jpeg: %s in %s (resolve filename)", err, clean.Log(srcFile))
 		return img, err
 	}
 
 	// Open source image.
-	img, err = imaging.Open(srcFilename)
+	img, err = imaging.Open(srcFile)
 
 	// Failed?
 	if err != nil {
-		log.Errorf("jpeg: cannot open source image %s", clean.Log(filepath.Base(srcFilename)))
+		log.Debugf("jpeg: failed to open %s", clean.Log(filepath.Base(srcFile)))
 		return img, err
 	}
 
@@ -36,8 +36,8 @@ func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, er
 	quality := JpegQuality.EncodeOption()
 
 	// Save JPEG file.
-	if err = imaging.Save(img, jpgFilename, quality); err != nil {
-		log.Errorf("jpeg: failed to save %s", clean.Log(filepath.Base(jpgFilename)))
+	if err = imaging.Save(img, jpgFile, quality); err != nil {
+		log.Errorf("jpeg: failed to save %s", clean.Log(filepath.Base(jpgFile)))
 		return img, err
 	}
 

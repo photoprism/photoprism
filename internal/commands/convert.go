@@ -13,11 +13,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// ConvertCommand registers the convert cli command.
+// ConvertCommand configures the command name, flags, and action.
 var ConvertCommand = cli.Command{
 	Name:      "convert",
 	Usage:     "Converts files in other formats to JPEG and AVC as needed",
-	ArgsUsage: "[sub-folder]",
+	ArgsUsage: "[subfolder]",
 	Flags: []cli.Flag{
 		cli.StringSliceFlag{
 			Name:  "ext, e",

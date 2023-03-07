@@ -33,7 +33,7 @@ func NewPurge(conf *config.Config, files *Files) *Purge {
 }
 
 // Start removes missing files from search results.
-func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, err error) {
+func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, updated int, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("purge: %s (panic)\nstack: %s", r, debug.Stack())
@@ -45,7 +45,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 	// Check if originals folder is empty.
 	if fs.DirIsEmpty(originalsPath) {
-		return purgedFiles, purgedPhotos, err
+		return purgedFiles, purgedPhotos, 0, err
 	}
 
 	var ignore fs.Done
@@ -61,19 +61,30 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 	if err := mutex.MainWorker.Start(); err != nil {
 		log.Warnf("purge: %s (start)", err.Error())
-		return purgedFiles, purgedPhotos, err
+		return purgedFiles, purgedPhotos, 0, err
 	}
 
 	defer mutex.MainWorker.Stop()
 
-	limit := 500
-	offset := 0
+	// Count updates.
+	updatedFiles := 0
+	updatedDuplicates := 0
+	updatedPhotos := 0
 
+	// Total number of updates.
+	updates := func() int {
+		return updatedFiles + updatedDuplicates + updatedPhotos
+	}
+
+	// Check files.
+	startFiles := time.Now()
+	limit := 10000
+	offset := 0
 	for {
 		files, err := query.Files(limit, offset, opt.Path, true)
 
 		if err != nil {
-			return purgedFiles, purgedPhotos, err
+			return purgedFiles, purgedPhotos, updates(), err
 		}
 
 		if len(files) == 0 {
@@ -82,7 +93,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 		for _, file := range files {
 			if mutex.MainWorker.Canceled() {
-				return purgedFiles, purgedPhotos, errors.New("purge canceled")
+				return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 			}
 
 			fileName := FileName(file.FileRoot, file.FileName)
@@ -98,6 +109,8 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 						continue
 					}
 
+					updatedFiles++
+
 					if err := file.Found(); err != nil {
 						log.Errorf("purge: %s", err)
 					} else {
@@ -110,6 +123,8 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 					log.Infof("purge: file %s would be flagged as missing", clean.Log(file.FileName))
 					continue
 				}
+
+				updatedFiles++
 
 				wasPrimary := file.FilePrimary
 
@@ -133,22 +148,23 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 
 		if mutex.MainWorker.Canceled() {
-			return purgedFiles, purgedPhotos, errors.New("purge canceled")
+			return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 		}
 
 		offset += limit
-
-		time.Sleep(50 * time.Millisecond)
 	}
 
-	limit = 500
-	offset = 0
+	log.Debugf("purge: updated %s [%s]", english.Plural(updatedFiles, "file", "files"), time.Since(startFiles))
 
+	// Check duplicates.
+	startDuplicates := time.Now()
+	limit = 10000
+	offset = 0
 	for {
 		files, err := query.Duplicates(limit, offset, opt.Path)
 
 		if err != nil {
-			return purgedFiles, purgedPhotos, err
+			return purgedFiles, purgedPhotos, updates(), err
 		}
 
 		if len(files) == 0 {
@@ -157,7 +173,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 		for _, file := range files {
 			if mutex.MainWorker.Canceled() {
-				return purgedFiles, purgedPhotos, errors.New("purge canceled")
+				return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 			}
 
 			fileName := FileName(file.FileRoot, file.FileName)
@@ -173,6 +189,8 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 					continue
 				}
 
+				updatedDuplicates++
+
 				if err := file.Purge(); err != nil {
 					log.Errorf("purge: %s", err)
 				} else {
@@ -184,22 +202,23 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 
 		if mutex.MainWorker.Canceled() {
-			return purgedFiles, purgedPhotos, errors.New("purge canceled")
+			return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 		}
 
 		offset += limit
-
-		time.Sleep(50 * time.Millisecond)
 	}
 
-	limit = 500
-	offset = 0
+	log.Debugf("purge: updated %s [%s]", english.Plural(updatedDuplicates, "duplicate", "duplicates"), time.Since(startDuplicates))
 
+	// Check photos.
+	startPhotos := time.Now()
+	limit = 10000
+	offset = 0
 	for {
 		photos, err := query.PhotosMissing(limit, offset)
 
 		if err != nil {
-			return purgedFiles, purgedPhotos, err
+			return purgedFiles, purgedPhotos, updates(), err
 		}
 
 		if len(photos) == 0 {
@@ -208,7 +227,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 		for _, photo := range photos {
 			if mutex.MainWorker.Canceled() {
-				return purgedFiles, purgedPhotos, errors.New("purge canceled")
+				return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 			}
 
 			if purgedPhotos[photo.PhotoUID] {
@@ -220,6 +239,8 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				log.Infof("purge: %s would be removed", photo.String())
 				continue
 			}
+
+			updatedPhotos++
 
 			if files, err := photo.Delete(opt.Hard); err != nil {
 				log.Errorf("purge: %s (delete photo)", err)
@@ -240,13 +261,20 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 
 		if mutex.MainWorker.Canceled() {
-			return purgedFiles, purgedPhotos, errors.New("purge canceled")
+			return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 		}
 
 		offset += limit
-
-		time.Sleep(50 * time.Millisecond)
 	}
+
+	log.Debugf("purge: updated %s [%s]", english.Plural(updatedPhotos, "photo", "photos"), time.Since(startPhotos))
+
+	// Skip the index update if there are no changes.
+	if !opt.Force && updates() == 0 {
+		return purgedFiles, purgedPhotos, updates(), nil
+	}
+
+	startIndex := time.Now()
 
 	if err = query.FixPrimaries(); err != nil {
 		log.Errorf("index: %s (update primary files)", err)
@@ -254,7 +282,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 	// Set photo quality scores to -1 if files are missing.
 	if err = query.FlagHiddenPhotos(); err != nil {
-		return purgedFiles, purgedPhotos, err
+		return purgedFiles, purgedPhotos, updates(), err
 	}
 
 	// Remove orphan index entries.
@@ -295,7 +323,9 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		log.Warnf("index: %s (update covers)", err)
 	}
 
-	return purgedFiles, purgedPhotos, nil
+	log.Debugf("purge: updated index [%s]", time.Since(startIndex))
+
+	return purgedFiles, purgedPhotos, updates(), nil
 }
 
 // Cancel stops the current operation.

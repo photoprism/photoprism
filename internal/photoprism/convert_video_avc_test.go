@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -140,7 +141,7 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 	conf := config.TestConfig()
 	convert := NewConvert(conf)
 
-	t.Run(".mp4", func(t *testing.T) {
+	t.Run("MP4", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 		mf, err := NewMediaFile(fileName)
 
@@ -153,10 +154,11 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Contains(t, r.Path, "ffmpeg")
 		assert.Contains(t, r.Args, "mp4")
 	})
-	t.Run(".jpg", func(t *testing.T) {
+	t.Run("JPEG", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "cat_black.jpg")
 		mf, err := NewMediaFile(fileName)
 
@@ -164,8 +166,30 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		r, _, err := convert.AvcConvertCommand(mf, "avc1", "")
+		r, useMutex, err := convert.AvcConvertCommand(mf, "avc1", "")
+
+		assert.False(t, useMutex)
 		assert.Error(t, err)
 		assert.Nil(t, r)
+	})
+	t.Run("WebP", func(t *testing.T) {
+		webpName := "testdata/windows95.webp"
+		avcName := "windows95.mp4"
+		mf, err := NewMediaFile(webpName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		r, useMutex, err := convert.AvcConvertCommand(mf, avcName, ffmpeg.SoftwareEncoder)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, useMutex)
+		assert.Contains(t, r.Path, "convert")
+		assert.Contains(t, r.Args, webpName)
+		assert.Contains(t, r.Args, avcName)
 	})
 }

@@ -37,7 +37,7 @@ func TestConvert_Start(t *testing.T) {
 
 	jpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/canon_eos_6d.dng.jpg")
 
-	assert.True(t, fs.FileExists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fs.FileExists(jpegFilename), "Primary file was not found - is Darktable installed?")
 
 	image, err := NewMediaFile(jpegFilename)
 
@@ -63,7 +63,7 @@ func TestConvert_Start(t *testing.T) {
 
 	newHash := fs.Hash(existingJpegFilename)
 
-	assert.True(t, fs.FileExists(existingJpegFilename), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fs.FileExists(existingJpegFilename), "Primary file was not found - is Darktable installed?")
 
 	assert.NotEqual(t, oldHash, newHash, "Fingerprint of old and new JPEG file must not be the same")
 }

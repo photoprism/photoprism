@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// CopyCommand registers the copy cli command.
+// CopyCommand configures the command name, flags, and action.
 var CopyCommand = cli.Command{
 	Name:      "cp",
 	Aliases:   []string{"copy"},

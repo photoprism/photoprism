@@ -30,7 +30,7 @@ func TestConfig_DisableWebDAV(t *testing.T) {
 	c.options.ReadOnly = true
 	c.options.Demo = false
 
-	assert.True(t, c.DisableWebDAV())
+	assert.False(t, c.DisableWebDAV())
 
 	c.options.Public = false
 	c.options.ReadOnly = false
@@ -91,26 +91,6 @@ func TestConfig_DisableClassification(t *testing.T) {
 	assert.False(t, c.DisableClassification())
 }
 
-func TestConfig_DisableRaw(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.False(t, c.DisableRaw())
-	c.options.DisableRaw = true
-	assert.True(t, c.DisableRaw())
-	assert.True(t, c.DisableDarktable())
-	assert.True(t, c.DisableRawtherapee())
-	c.options.DisableRaw = false
-	assert.False(t, c.DisableRaw())
-	c.options.DisableDarktable = true
-	c.options.DisableRawtherapee = true
-	assert.False(t, c.DisableRaw())
-	c.options.DisableDarktable = false
-	c.options.DisableRawtherapee = false
-	assert.False(t, c.DisableRaw())
-	assert.False(t, c.DisableDarktable())
-	assert.False(t, c.DisableRawtherapee())
-}
-
 func TestConfig_DisableDarktable(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	missing := c.DarktableBin() == ""
@@ -126,19 +106,34 @@ func TestConfig_DisableDarktable(t *testing.T) {
 	assert.Equal(t, missing, c.DisableDarktable())
 }
 
-func TestConfig_DisableRawtherapee(t *testing.T) {
+func TestConfig_DisableRawTherapee(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	missing := c.RawtherapeeBin() == ""
+	missing := c.RawTherapeeBin() == ""
 
-	assert.Equal(t, missing, c.DisableRawtherapee())
+	assert.Equal(t, missing, c.DisableRawTherapee())
 	c.options.DisableRaw = true
-	assert.True(t, c.DisableRawtherapee())
+	assert.True(t, c.DisableRawTherapee())
 	c.options.DisableRaw = false
-	assert.Equal(t, missing, c.DisableRawtherapee())
-	c.options.DisableRawtherapee = true
-	assert.True(t, c.DisableRawtherapee())
-	c.options.DisableRawtherapee = false
-	assert.Equal(t, missing, c.DisableRawtherapee())
+	assert.Equal(t, missing, c.DisableRawTherapee())
+	c.options.DisableRawTherapee = true
+	assert.True(t, c.DisableRawTherapee())
+	c.options.DisableRawTherapee = false
+	assert.Equal(t, missing, c.DisableRawTherapee())
+}
+
+func TestConfig_DisableImageMagick(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	missing := c.ImageMagickBin() == ""
+
+	assert.Equal(t, missing, c.DisableImageMagick())
+	c.options.DisableRaw = true
+	assert.Equal(t, missing, c.DisableImageMagick())
+	c.options.DisableRaw = false
+	assert.Equal(t, missing, c.DisableImageMagick())
+	c.options.DisableImageMagick = true
+	assert.True(t, c.DisableImageMagick())
+	c.options.DisableImageMagick = false
+	assert.Equal(t, missing, c.DisableImageMagick())
 }
 
 func TestConfig_DisableSips(t *testing.T) {
@@ -150,4 +145,34 @@ func TestConfig_DisableSips(t *testing.T) {
 	assert.True(t, c.DisableSips())
 	c.options.DisableSips = false
 	assert.Equal(t, missing, c.DisableSips())
+}
+
+func TestConfig_DisableVector(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
+	c.options.DisableVectors = true
+	assert.True(t, c.DisableVectors())
+	c.options.DisableVectors = false
+	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
+}
+
+func TestConfig_DisableRaw(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.DisableRaw())
+	c.options.DisableRaw = true
+	assert.True(t, c.DisableRaw())
+	assert.True(t, c.DisableDarktable())
+	assert.True(t, c.DisableRawTherapee())
+	c.options.DisableRaw = false
+	assert.False(t, c.DisableRaw())
+	c.options.DisableDarktable = true
+	c.options.DisableRawTherapee = true
+	assert.False(t, c.DisableRaw())
+	c.options.DisableDarktable = false
+	c.options.DisableRawTherapee = false
+	assert.False(t, c.DisableRaw())
+	assert.False(t, c.DisableDarktable())
+	assert.False(t, c.DisableRawTherapee())
 }

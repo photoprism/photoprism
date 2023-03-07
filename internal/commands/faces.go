@@ -18,7 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// FacesCommand registers the face recognition subcommands.
+// FacesCommand configures the command name, flags, and action.
 var FacesCommand = cli.Command{
 	Name:  "faces",
 	Usage: "Face recognition subcommands",
@@ -53,7 +53,7 @@ var FacesCommand = cli.Command{
 		{
 			Name:      "index",
 			Usage:     "Searches originals for faces",
-			ArgsUsage: "[sub-folder]",
+			ArgsUsage: "[subfolder]",
 			Action:    facesIndexAction,
 		},
 		{
@@ -241,36 +241,42 @@ func facesIndexAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("config: read-only mode enabled")
+		log.Infof("config: enabled read-only mode")
 	}
 
-	var indexed fs.Done
+	var found fs.Done
+	var lastFound, indexed int
 
 	settings := conf.Settings()
 
 	if w := get.Index(); w != nil {
+		indexStart := time.Now()
+		_, lastFound = w.LastRun()
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true)
 
-		indexed = w.Start(opt)
+		found, indexed = w.Start(opt)
+
+		log.Infof("index: updated %s [%s]", english.Plural(indexed, "file", "files"), time.Since(indexStart))
 	}
 
 	if w := get.Purge(); w != nil {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
-			Ignore: indexed,
+			Ignore: found,
+			Force:  lastFound != len(found) || indexed > 0,
 		}
 
-		if files, photos, err := w.Start(opt); err != nil {
+		if files, photos, updated, err := w.Start(opt); err != nil {
 			log.Error(err)
-		} else if len(files) > 0 || len(photos) > 0 {
+		} else if updated > 0 {
 			log.Infof("purge: removed %s and %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"))
 		}
 	}
 
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
+	log.Infof("indexed %s in %s", english.Plural(len(found), "file", "files"), elapsed)
 
 	return nil
 }

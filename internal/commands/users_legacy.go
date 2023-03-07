@@ -23,7 +23,7 @@ var UsersLegacyCommand = cli.Command{
 // usersLegacyAction displays legacy user accounts.
 func usersLegacyAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		cols := []string{"ID", "UID", "User Name", "Display Name", "Email", "Admin", "Created At"}
+		cols := []string{"ID", "UID", "Name", "User", "Email", "Admin", "Created At"}
 
 		// Fetch users from database.
 		users := entity.FindLegacyUsers(ctx.Args().First())
@@ -37,8 +37,8 @@ func usersLegacyAction(ctx *cli.Context) error {
 			rows[i] = []string{
 				fmt.Sprintf("%d", user.ID),
 				user.UserUID,
-				user.UserName,
 				user.FullName,
+				user.UserName,
 				user.PrimaryEmail,
 				report.Bool(user.Admin(), report.Yes, report.No),
 				user.CreatedAt.Format("2006-01-02 15:04:05"),

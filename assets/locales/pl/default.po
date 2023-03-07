@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-07 23:52+0000\n"
-"Last-Translator: lacrimal <jareeq@gmail.com>\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
 "backend/pl/>\n"
 "Language: pl\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Nieoczekiwany błąd, spróbuj ponownie"
+msgid "Something went wrong, try again"
+msgstr "Coś poszło nie tak, spróbuj jeszcze raz"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Niepoprawne żądanie"
+msgid "Unable to do that"
+msgstr "Nie da się tego zrobić"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -378,6 +378,12 @@ msgstr "Trwale usunięty"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s zostało przywrócone"
+
+#~ msgid "Invalid request"
+#~ msgstr "Niepoprawne żądanie"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Nieoczekiwany błąd, spróbuj ponownie"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "Nie znaleziono na serwerze, usunięte?"

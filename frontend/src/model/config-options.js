@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -36,18 +36,21 @@ export class ConfigOptions extends Model {
       OriginalsLimit: 0,
       Workers: 0,
       WakeupInterval: 0,
-      DisableBackups: config.values.disable.backups,
       DisableWebDAV: config.values.disable.webdav,
       DisableSettings: config.values.disable.settings,
       DisablePlaces: config.values.disable.places,
+      DisableBackups: config.values.disable.backups,
+      DisableTensorFlow: config.values.disable.tensorflow,
+      DisableSips: config.values.disable.sips,
+      DisableFFmpeg: config.values.disable.ffmpeg,
       DisableExifTool: config.values.disable.exiftool,
       DisableDarktable: config.values.disable.darktable,
-      DisableRawtherapee: config.values.disable.rawtherapee,
-      DisableSips: config.values.disable.sips,
-      DisableRaw: config.values.disable.raw,
+      DisableRawTherapee: config.values.disable.rawtherapee,
+      DisableImageMagick: config.values.disable.imagemagick,
       DisableHeifConvert: config.values.disable.heifconvert,
-      DisableFFmpeg: config.values.disable.ffmpeg,
-      DisableTensorFlow: config.values.disable.tensorflow,
+      DisableVectors: config.values.disable.vectors,
+      DisableJpegXL: config.values.disable.jpegxl,
+      DisableRaw: config.values.disable.raw,
       DetectNSFW: false,
       UploadNSFW: config.values.uploadNSFW,
       RawPresets: false,
@@ -56,6 +59,7 @@ export class ConfigOptions extends Model {
       ThumbSize: 0,
       ThumbSizeUncached: 0,
       JpegSize: 0,
+      PngSize: 0,
       JpegQuality: 0,
       SiteUrl: config.values.siteUrl,
       SitePreview: config.values.siteUrl,

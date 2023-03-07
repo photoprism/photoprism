@@ -113,8 +113,8 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 		}
 	}
 
-	// Remove thumbnail files.
-	thumbs, err = w.Thumbs(opt)
+	// Remove orphaned media and thumbnail cache files.
+	thumbs, err = w.Cache(opt)
 
 	// Only update counts if anything was deleted.
 	if len(deleted) > 0 {
@@ -135,68 +135,70 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 	return thumbs, orphans, sidecars, err
 }
 
-// Thumbs removes orphan thumbnail files.
-func (w *CleanUp) Thumbs(opt CleanUpOptions) (thumbs int, err error) {
+// Cache removes orphaned media and thumbnail cache files.
+func (w *CleanUp) Cache(opt CleanUpOptions) (deleted int, err error) {
 	cleanupStart := time.Now()
 
 	var fileHashes, thumbHashes query.HashMap
 
 	// Fetch existing media and thumb file hashes.
 	if fileHashes, err = query.FileHashMap(); err != nil {
-		return thumbs, err
+		return deleted, err
 	} else if thumbHashes, err = query.ThumbHashMap(); err != nil {
-		return thumbs, err
+		return deleted, err
 	}
 
 	// At least one SHA1 checksum found?
 	if len(fileHashes) == 0 {
-		log.Info("cleanup: empty index, aborting search for orphaned thumbnails")
-		return thumbs, err
+		log.Info("cleanup: empty index, aborting search for orphaned cache files")
+		return deleted, err
 	}
 
-	// Thumbnails storage path.
-	thumbPath := w.conf.ThumbCachePath()
+	// Cache directories.
+	dirs := []string{w.conf.MediaCachePath(), w.conf.ThumbCachePath()}
 
-	log.Info("cleanup: searching for orphaned thumbnails")
+	log.Info("cleanup: searching for orphaned cache files")
 
 	// Find and remove orphan thumbnail files.
-	err = fastwalk.Walk(thumbPath, func(fileName string, info os.FileMode) error {
-		base := filepath.Base(fileName)
+	for _, dir := range dirs {
+		err = fastwalk.Walk(dir, func(fileName string, info os.FileMode) error {
+			base := filepath.Base(fileName)
 
-		if info.IsDir() || strings.HasPrefix(base, ".") {
+			if info.IsDir() || strings.HasPrefix(base, ".") {
+				return nil
+			}
+
+			// Example: 01244519acf35c62a5fea7a5a7dcefdbec4fb2f5_3x3_resize.png
+			i := strings.IndexAny(base, "_.")
+
+			if i < 39 {
+				return nil
+			}
+
+			hash := base[:i]
+			logName := clean.Log(fs.RelName(fileName, filepath.Dir(dir)))
+
+			if ok := fileHashes[hash]; ok {
+				// Do nothing.
+			} else if ok = thumbHashes[hash]; ok {
+				// Do nothing.
+			} else if opt.Dry {
+				deleted++
+				log.Debugf("cleanup: %s would be removed", logName)
+			} else if err := os.Remove(fileName); err != nil {
+				log.Warnf("cleanup: %s in %s", err, logName)
+			} else {
+				deleted++
+				log.Debugf("cleanup: removed %s from cache", logName)
+			}
+
 			return nil
-		}
+		})
+	}
 
-		// Example: 01244519acf35c62a5fea7a5a7dcefdbec4fb2f5_3x3_resize.png
-		i := strings.Index(base, "_")
+	log.Infof("cleanup: removed %s from cache [%s]", english.Plural(deleted, "file", "files"), time.Since(cleanupStart))
 
-		if i < 39 {
-			return nil
-		}
-
-		hash := base[:i]
-		logName := clean.Log(fs.RelName(fileName, thumbPath))
-
-		if ok := fileHashes[hash]; ok {
-			// Do nothing.
-		} else if ok = thumbHashes[hash]; ok {
-			// Do nothing.
-		} else if opt.Dry {
-			thumbs++
-			log.Debugf("cleanup: thumbnail %s would be removed", logName)
-		} else if err := os.Remove(fileName); err != nil {
-			log.Warnf("cleanup: %s in %s", err, logName)
-		} else {
-			thumbs++
-			log.Debugf("cleanup: removed thumbnail %s from cache", logName)
-		}
-
-		return nil
-	})
-
-	log.Infof("cleanup: removed %s [%s]", english.Plural(thumbs, "thumbnail file", "thumbnail files"), time.Since(cleanupStart))
-
-	return thumbs, err
+	return deleted, err
 }
 
 // Cancel stops the current operation.

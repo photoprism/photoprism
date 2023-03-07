@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -41,8 +42,8 @@ type User struct {
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
 	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
-	AuthID        string        `gorm:"type:VARBINARY(128);index;default:'';" json:"AuthID,omitempty" yaml:"AuthID,omitempty"`
-	UserName      string        `gorm:"size:64;index;" json:"Name" yaml:"Name,omitempty"`
+	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID,omitempty" yaml:"AuthID,omitempty"`
+	UserName      string        `gorm:"size:255;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
 	BackupEmail   string        `gorm:"size:255;" json:"BackupEmail,omitempty" yaml:"BackupEmail,omitempty"`
@@ -142,7 +143,7 @@ func FirstOrCreateUser(m *User) *User {
 
 // FindUserByName returns the matching user or nil if it was not found.
 func FindUserByName(name string) *User {
-	name = clean.Username(name)
+	name = clean.DN(name)
 
 	if name == "" {
 		return nil
@@ -231,7 +232,7 @@ func (m *User) Create() (err error) {
 func (m *User) Save() (err error) {
 	m.GenerateTokens(false)
 
-	err = Db().Save(m).Error
+	err = UnscopedDb().Save(m).Error
 
 	if err == nil {
 		m.SaveRelated()
@@ -241,12 +242,22 @@ func (m *User) Save() (err error) {
 }
 
 // Delete marks the entity as deleted.
-func (m *User) Delete() error {
+func (m *User) Delete() (err error) {
 	if m.ID <= 1 {
 		return fmt.Errorf("cannot delete system user")
+	} else if m.UserUID == "" {
+		return fmt.Errorf("uid is required to delete user")
 	}
 
-	return Db().Delete(m).Error
+	if err = UnscopedDb().Delete(Session{}, "user_uid = ?", m.UserUID).Error; err != nil {
+		event.AuditErr([]string{"user %s", "delete", "failed to remove sessions", "%s"}, m.RefID, err)
+	}
+
+	err = Db().Delete(m).Error
+
+	FlushSessionCache()
+
+	return err
 }
 
 // Deleted checks if the user account has been deleted.
@@ -324,14 +335,17 @@ func (m *User) Disabled() bool {
 
 // CanLogIn checks if the user is allowed to log in and use the web UI.
 func (m *User) CanLogIn() bool {
-	if !m.CanLogin && !m.SuperAdmin || m.ID <= 0 || m.UserName == "" {
+	if m == nil {
+		return false
+	} else if m.Deleted() {
+		return false
+	} else if !m.CanLogin && !m.SuperAdmin || m.ID <= 0 || m.UserName == "" {
 		return false
 	} else if role := m.AclRole(); m.Disabled() || role == acl.RoleUnknown {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourceConfig, role, acl.AccessOwn)
 	}
-
 }
 
 // CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
@@ -352,19 +366,49 @@ func (m *User) CanUpload() bool {
 	}
 }
 
-// SetBasePath changes the user's base folder.
+// GetBasePath returns the user's relative base path.
+func (m *User) GetBasePath() string {
+	return m.BasePath
+}
+
+// SetBasePath changes the user's relative base path.
 func (m *User) SetBasePath(dir string) *User {
-	m.BasePath = clean.UserPath(dir)
+	if list.Contains(list.List{"", ".", "./", "/", "\\"}, dir) {
+		m.BasePath = ""
+	} else if dir == "~" && m.UserUID != "" {
+		m.BasePath = fmt.Sprintf("users/%s", m.UserUID)
+	} else {
+		m.BasePath = clean.UserPath(dir)
+	}
 
 	return m
 }
 
-// SetUploadPath changes the user's upload folder.
+// GetUploadPath returns the user's relative upload path.
+func (m *User) GetUploadPath() string {
+	basePath := m.GetBasePath()
+
+	if list.Contains(list.List{"", ".", "./"}, m.UploadPath) {
+		return basePath
+	} else if basePath != "" && strings.HasPrefix(m.UploadPath, basePath+"/") {
+		return m.UploadPath
+	} else if basePath == "" && m.UploadPath == "~" && m.UserUID != "" {
+		return fmt.Sprintf("users/%s", m.UserUID)
+	}
+
+	return path.Join(basePath, m.UploadPath)
+}
+
+// SetUploadPath changes the user's relative upload path.
 func (m *User) SetUploadPath(dir string) *User {
-	if m.BasePath == "" {
-		m.UploadPath = clean.UserPath(dir)
+	basePath := m.GetBasePath()
+
+	if list.Contains(list.List{"", ".", "./", "/", "\\"}, dir) {
+		m.UploadPath = ""
+	} else if basePath == "" && dir == "~" && m.UserUID != "" {
+		m.UploadPath = fmt.Sprintf("users/%s", m.UserUID)
 	} else {
-		m.UploadPath = path.Join(m.BasePath, clean.UserPath(dir))
+		m.UploadPath = clean.UserPath(dir)
 	}
 
 	return m
@@ -373,9 +417,9 @@ func (m *User) SetUploadPath(dir string) *User {
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
 	if n := m.Name(); n != "" {
-		return clean.Log(n)
+		return clean.LogQuote(n)
 	} else if n = m.FullName(); n != "" {
-		return clean.Log(n)
+		return clean.LogQuote(n)
 	}
 
 	return clean.Log(m.UserUID)
@@ -432,13 +476,19 @@ func (m *User) Email() string {
 	return clean.Email(m.UserEmail)
 }
 
+// Handle returns the user's login handle.
+func (m *User) Handle() string {
+	handle, _, _ := strings.Cut(m.UserName, "@")
+	return handle
+}
+
 // FullName returns the name of the user for display purposes.
 func (m *User) FullName() string {
 	switch {
 	case m.DisplayName != "":
 		return m.DisplayName
 	default:
-		return m.UserName
+		return clean.NameCapitalized(strings.ReplaceAll(m.Handle(), ".", " "))
 	}
 }
 
@@ -837,18 +887,13 @@ func (m *User) SaveForm(f form.User) error {
 func (m *User) SetDisplayName(name string) *User {
 	name = clean.Name(name)
 
-	// Empty?
-	if name == "" {
+	d := m.Details()
+
+	if name == "" || SrcPriority[SrcAuto] < SrcPriority[d.NameSrc] {
 		return m
 	}
 
 	m.DisplayName = name
-
-	d := m.Details()
-
-	if SrcPriority[SrcAuto] < SrcPriority[d.NameSrc] {
-		return m
-	}
 
 	// Try to parse name into components.
 	n := txt.ParseName(name)
@@ -860,6 +905,18 @@ func (m *User) SetDisplayName(name string) *User {
 	d.NameSuffix = n.Suffix
 	d.NickName = n.Nick
 
+	return m
+}
+
+// SetGivenName updates the user's given name.
+func (m *User) SetGivenName(name string) *User {
+	m.Details().SetGivenName(name)
+	return m
+}
+
+// SetFamilyName updates the user's family name.
+func (m *User) SetFamilyName(name string) *User {
+	m.Details().SetFamilyName(name)
 	return m
 }
 
@@ -879,11 +936,18 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	return m.Updates(Values{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
 }
 
-// Login returns the login name and provider.
+// Login returns the username.
 func (m *User) Login() string {
-	if m.AuthProvider == "" {
-		return m.UserName
-	} else {
-		return fmt.Sprintf("%s@%s", m.UserName, m.AuthProvider)
+	return m.UserName
+}
+
+// Provider returns the authentication provider name.
+func (m *User) Provider() string {
+	if m.AuthProvider != "" {
+		return m.AuthProvider
+	} else if m.UserName != "" && m.ID > 0 {
+		return "password"
 	}
+
+	return ""
 }

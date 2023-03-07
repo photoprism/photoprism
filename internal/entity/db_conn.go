@@ -15,7 +15,7 @@ const (
 	MySQL           = "mysql"
 	SQLite3         = "sqlite3"
 	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:"
+	SQLiteMemoryDSN = ":memory:?cache=shared"
 )
 
 // dbConn is the global gorm.DB connection provider.

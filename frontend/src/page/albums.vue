@@ -171,6 +171,17 @@
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
+
+                <v-btn v-if="canManage && featExperimental && featPrivate && album.Private"
+                       :ripple="false"
+                       icon flat absolute
+                       class="input-private"
+                       @touchstart.stop.prevent="input.touchStart($event, index)"
+                       @touchend.stop.prevent="onEdit($event, index)"
+                       @touchmove.stop.prevent
+                       @click.stop.prevent="onEdit($event, index)">
+                  <v-icon color="white" class="select-on">lock</v-icon>
+                </v-btn>
               </v-img>
 
               <v-card-title primary-title class="pl-3 pt-3 pr-3 pb-2 card-details" style="user-select: none;">
@@ -295,7 +306,9 @@ export default {
       canManage: this.$config.allow("albums", "manage"),
       canEdit: this.$config.allow("albums", "update"),
       config: this.$config.values,
-      featureShare: features.share,
+      featExperimental: this.$config.get("experimental") && !this.$config.ce(),
+      featShare: features.share,
+      featPrivate: features.private,
       categories: categories,
       subscriptions: [],
       listen: false,
@@ -504,6 +517,19 @@ export default {
       }
 
       return (rangeEnd - rangeStart) + 1;
+    },
+    onEdit(ev, index) {
+      if (!this.canManage) {
+        return;
+      }
+
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
+      return this.edit(this.results[index]);
     },
     onShare(ev, index) {
       if (!this.canShare) {

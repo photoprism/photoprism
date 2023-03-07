@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-12-22 02:48+0000\n"
-"Last-Translator: Mingtian Yang <tswymt@gmail.com>\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "意外错误，请重试"
+msgid "Something went wrong, try again"
+msgstr "出错了，再试一次"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "无效请求"
+msgid "Unable to do that"
+msgstr "无法做到这一点"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -375,6 +375,12 @@ msgstr "已永久删除"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s 已恢复"
+
+#~ msgid "Invalid request"
+#~ msgstr "无效请求"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "意外错误，请重试"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "服务器上不存在此文件, 或已被删除?"

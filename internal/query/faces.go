@@ -3,6 +3,8 @@ package query
 import (
 	"fmt"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -16,8 +18,8 @@ type IDs []string
 type FaceMap map[string]entity.Face
 
 // FacesByID retrieves faces from the database and returns a map with the Face ID as key.
-func FacesByID(knownOnly, unmatchedOnly, inclHidden bool) (FaceMap, IDs, error) {
-	faces, err := Faces(knownOnly, unmatchedOnly, inclHidden)
+func FacesByID(knownOnly, unmatchedOnly, hidden, ignored bool) (FaceMap, IDs, error) {
+	faces, err := Faces(knownOnly, unmatchedOnly, hidden, ignored)
 
 	if err != nil {
 		return nil, nil, err
@@ -35,7 +37,7 @@ func FacesByID(knownOnly, unmatchedOnly, inclHidden bool) (FaceMap, IDs, error) 
 }
 
 // Faces returns all (known / unmatched) faces from the index.
-func Faces(knownOnly, unmatchedOnly, inclHidden bool) (result entity.Faces, err error) {
+func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
 	stmt := Db()
 
 	if knownOnly {
@@ -46,8 +48,12 @@ func Faces(knownOnly, unmatchedOnly, inclHidden bool) (result entity.Faces, err 
 		stmt = stmt.Where("matched_at IS NULL")
 	}
 
-	if !inclHidden {
+	if !hidden {
 		stmt = stmt.Where("face_hidden = ?", false)
+	}
+
+	if !ignored {
+		stmt = stmt.Where("face_kind <= 1")
 	}
 
 	err = stmt.Order("subj_uid, samples DESC").Find(&result).Error
@@ -56,20 +62,24 @@ func Faces(knownOnly, unmatchedOnly, inclHidden bool) (result entity.Faces, err 
 }
 
 // ManuallyAddedFaces returns all manually added face clusters.
-func ManuallyAddedFaces(hidden bool, kind face.Kind) (result entity.Faces, err error) {
-	err = Db().
+func ManuallyAddedFaces(hidden, ignored bool) (result entity.Faces, err error) {
+	stmt := Db().
 		Where("face_hidden = ?", hidden).
-		Where("face_kind <= ?", int(kind)).
 		Where("face_src = ?", entity.SrcManual).
-		Where("subj_uid <> ''").Order("subj_uid, samples DESC").
-		Find(&result).Error
+		Where("subj_uid <> ''")
+
+	if !ignored {
+		stmt = stmt.Where("face_kind <= 1")
+	}
+
+	err = stmt.Order("subj_uid, samples DESC").Find(&result).Error
 
 	return result, err
 }
 
 // MatchFaceMarkers matches markers with known faces.
 func MatchFaceMarkers() (affected int64, err error) {
-	faces, err := Faces(true, false, false)
+	faces, err := Faces(true, false, false, false)
 
 	if err != nil {
 		return affected, err
@@ -140,12 +150,17 @@ func CountNewFaceMarkers(size, score int) (n int) {
 }
 
 // PurgeOrphanFaces removes unused faces from the index.
-func PurgeOrphanFaces(faceIds []string) (removed int64, err error) {
+func PurgeOrphanFaces(faceIds []string, ignored bool) (removed int64, err error) {
 	// Remove invalid face IDs.
-	if res := Db().
+	stmt := Db().
 		Where("id IN (?)", faceIds).
-		Where(fmt.Sprintf("id NOT IN (SELECT face_id FROM %s)", entity.Marker{}.TableName())).
-		Delete(&entity.Face{}); res.Error != nil {
+		Where("id NOT IN (SELECT face_id FROM ?)", gorm.Expr(entity.Marker{}.TableName()))
+
+	if !ignored {
+		stmt = stmt.Where("face_kind <= 1")
+	}
+
+	if res := stmt.Delete(&entity.Face{}); res.Error != nil {
 		return removed, fmt.Errorf("faces: %s while purging orphans", res.Error)
 	} else {
 		removed += res.RowsAffected
@@ -155,7 +170,7 @@ func PurgeOrphanFaces(faceIds []string) (removed int64, err error) {
 }
 
 // MergeFaces returns a new face that replaces multiple others.
-func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
+func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err error) {
 	if len(merge) < 2 {
 		// Nothing to merge.
 		return merged, fmt.Errorf("faces: two or more clusters required for merging")
@@ -180,7 +195,7 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	}
 
 	// PurgeOrphanFaces removes unused faces from the index.
-	if removed, err := PurgeOrphanFaces(merge.IDs()); err != nil {
+	if removed, err := PurgeOrphanFaces(merge.IDs(), ignored); err != nil {
 		return merged, err
 	} else if removed > 0 {
 		log.Debugf("faces: removed %d orphans for subject %s", removed, clean.Log(subjUID))
@@ -193,7 +208,7 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 
 // ResolveFaceCollisions resolves collisions of different subject's faces.
 func ResolveFaceCollisions() (conflicts, resolved int, err error) {
-	faces, ids, err := FacesByID(true, false, false)
+	faces, ids, err := FacesByID(true, false, false, false)
 
 	if err != nil {
 		return conflicts, resolved, err
@@ -263,7 +278,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 				if success {
 					log.Infof("faces: successful conflict resolution for %s, face %s had collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
 					resolved++
-					faces, _, err = FacesByID(true, false, false)
+					faces, _, err = FacesByID(true, false, false, false)
 					logErr("faces", "refresh", err)
 				} else {
 					log.Infof("faces: conflict resolution for %s not successful, face %s still has collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)

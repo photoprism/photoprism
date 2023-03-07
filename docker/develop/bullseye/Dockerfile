@@ -4,7 +4,7 @@ FROM golang:1-bullseye
 # Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -99,8 +99,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       exiftool \
       rawtherapee \
       imagemagick \
+      libvips-dev \
       ffmpeg \
-      ffmpegthumbnailer \
       libavcodec-extra \
       davfs2 \
       chrpath \

@@ -6,9 +6,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// FoldersByPath returns a slice of folders in a given directory incl sub-folders in recursive mode.
+// FoldersByPath returns a slice of folders in a given directory incl subfolders in recursive mode.
 func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders entity.Folders, err error) {
 	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive, true)
 
@@ -41,8 +42,8 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 
 // FolderCoverByUID returns a folder cover file based on the uid.
 func FolderCoverByUID(uid string) (file entity.File, err error) {
-	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
+	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL AND photos.photo_quality > -1 AND photos.photo_private = 0").
 		Joins("JOIN folders ON photos.photo_path = folders.path AND folders.folder_uid = ?", uid).
 		Order("photos.photo_quality DESC").
 		Limit(1).
@@ -57,7 +58,7 @@ func FolderCoverByUID(uid string) (file entity.File, err error) {
 func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 	db := UnscopedDb().Table("folders").
 		Select("folders.path, folders.root, folders.folder_uid, folders.folder_title, folders.folder_country, folders.folder_year, folders.folder_month, COUNT(photos.id) AS photo_count").
-		Joins("JOIN photos ON photos.photo_path = folders.path AND photos.deleted_at IS NULL AND photos.photo_quality >= 3").
+		Joins("JOIN photos ON photos.photo_path = folders.path AND photos.deleted_at IS NULL AND photos.photo_quality >= 3 AND photos.photo_private = 0").
 		Group("folders.path, folders.root, folders.folder_uid, folders.folder_title, folders.folder_country, folders.folder_year, folders.folder_month").
 		Having("photo_count >= ?", threshold)
 

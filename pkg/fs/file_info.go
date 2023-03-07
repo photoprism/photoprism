@@ -1,18 +1,24 @@
 package fs
 
+type TypeMap map[Type]string
+
 // TypeInfo contains human-readable descriptions for supported file formats
-var TypeInfo = map[Type]string{
+var TypeInfo = TypeMap{
 	ImageRaw:        "Unprocessed Sensor Data",
 	ImageDNG:        "Adobe Digital Negative",
 	ImageJPEG:       "Joint Photographic Experts Group (JPEG)",
+	ImageJPEGXL:     "JPEG XL",
 	ImagePNG:        "Portable Network Graphics",
 	ImageGIF:        "Graphics Interchange Format",
 	ImageTIFF:       "Tag Image File Format",
+	ImagePSD:        "Adobe Photoshop",
 	ImageBMP:        "Bitmap",
 	ImageMPO:        "Stereoscopic JPEG (3D)",
 	ImageAVIF:       "AV1 Image File Format",
+	ImageAVIFS:      "AV1 Image Sequence",
 	ImageHEIF:       "High Efficiency Image File Format",
 	ImageHEIC:       "High Efficiency Image Container",
+	ImageHEICS:      "HEIC Image Sequence",
 	ImageWebP:       "Google WebP",
 	VideoWebM:       "Google WebM",
 	VideoMP2:        "MPEG 2 (H.262)",
@@ -22,9 +28,11 @@ var TypeInfo = map[Type]string{
 	VideoAV1:        "AOMedia Video 1",
 	VideoMOV:        "Apple QuickTime",
 	VideoMP4:        "Multimedia Container (MPEG-4 Part 14)",
+	VideoM4V:        "Apple iTunes Multimedia Container",
 	VideoAVI:        "Microsoft Audio Video Interleave",
 	VideoASF:        "Advanced Systems Format ",
 	VideoWMV:        "Windows Media",
+	VideoDV:         "DV Video",
 	Video3GP:        "Mobile Multimedia Container (3G)",
 	Video3G2:        "Mobile Multimedia Container (CDMA2000)",
 	VideoFlash:      "Adobe Flash",
@@ -34,6 +42,10 @@ var TypeInfo = map[Type]string{
 	VideoAVCHD:      "Advanced Video Coding High Definition (AVCHD)",
 	VideoBDAV:       "Blu-ray MPEG-2 Transport Stream",
 	VideoOGV:        "Ogg Media (OGG)",
+	VectorSVG:       "Scalable Vector Graphics",
+	VectorAI:        "Adobe Illustrator",
+	VectorPS:        "Adobe PostScript",
+	VectorEPS:       "Encapsulated PostScript",
 	SidecarXMP:      "Adobe Extensible Metadata Platform",
 	SidecarAAE:      "Apple Image Edits XML",
 	SidecarXML:      "Extensible Markup Language",

@@ -29,9 +29,10 @@ COPY /docker/demo/index.gohtml /opt/photoprism/assets/templates
 RUN wget -qO- https://dl.photoprism.app/qa/demo.tar.gz | tar xvz -C /photoprism/originals
 
 # Import example photos
-RUN photoprism restore -a
-RUN photoprism index -a
-RUN photoprism moments
+RUN photoprism restore -a && \
+    photoprism index -a && \
+    photoprism moments && \
+    chmod -R a+rwX /photoprism/originals /photoprism/storage
 
 # Start PhotoPrism server
 CMD ["photoprism", "--public", "start"]

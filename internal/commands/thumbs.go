@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/urfave/cli"
@@ -10,24 +11,25 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// ThumbsCommand registers the resample cli command.
+// ThumbsCommand configures the command name, flags, and action.
 var ThumbsCommand = cli.Command{
-	Name:  "thumbs",
-	Usage: "Generates thumbnails using the current settings",
+	Name:      "thumbs",
+	Usage:     "Generates thumbnails using the current settings",
+	ArgsUsage: "[subfolder]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
-			Usage: "replace existing thumbnails",
+			Usage: "replace existing thumbnail files",
 		},
 		cli.BoolFlag{
 			Name:  "originals, o",
-			Usage: "originals only, skip sidecar files",
+			Usage: "scan originals only, skip sidecar folder",
 		},
 	},
 	Action: thumbsAction,
 }
 
-// thumbsAction pre-renders thumbnail images.
+// thumbsAction generates thumbnails using the current settings.
 func thumbsAction(ctx *cli.Context) error {
 	start := time.Now()
 
@@ -43,16 +45,41 @@ func thumbsAction(ctx *cli.Context) error {
 	conf.RegisterDb()
 	defer conf.Shutdown()
 
-	log.Infof("creating thumbs in %s", clean.Log(conf.ThumbCachePath()))
+	dir := strings.TrimSpace(ctx.Args().First())
+	force := ctx.Bool("force")
+	originals := ctx.Bool("originals")
 
-	rs := get.Thumbs()
+	var action, ack string
+	if force {
+		action = "replacing"
+		ack = "replaced"
+	} else {
+		action = "creating"
+		ack = "created"
+	}
 
-	if err := rs.Start(ctx.Bool("force"), ctx.Bool("originals")); err != nil {
-		log.Error(err)
+	// Display info.
+	if dir == "" {
+		if originals {
+			log.Infof("%s thumbnails for originals only", action)
+		} else {
+			log.Infof("%s thumbnails for originals and sidecar files", action)
+		}
+	} else {
+		if originals {
+			log.Infof("%s thumbnails for originals in %s", action, clean.LogQuote(dir))
+		} else {
+			log.Infof("%s thumbnails for originals and sidecar files in %s", action, clean.LogQuote(dir))
+		}
+	}
+
+	w := get.Thumbs()
+
+	if err = w.Start(dir, ctx.Bool("force"), ctx.Bool("originals")); err != nil {
 		return err
 	}
 
-	log.Infof("thumbs created in %s", time.Since(start))
+	log.Infof("thumbnails %s in %s", ack, time.Since(start))
 
 	return nil
 }

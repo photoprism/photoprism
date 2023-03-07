@@ -70,7 +70,7 @@ func (m *Face) MatchId(f Face) string {
 
 // SkipMatching checks whether the face should be skipped when matching.
 func (m *Face) SkipMatching() bool {
-	return m.Embedding().SkipMatching()
+	return m.FaceKind > 1 || m.Embedding().SkipMatching()
 }
 
 // SetEmbeddings assigns face embeddings.
@@ -100,7 +100,11 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 
 	// Update Face ID, Kind, and reset match timestamp,
 	m.ID = base32.StdEncoding.EncodeToString(s[:])
-	m.FaceKind = int(m.embedding.Kind())
+
+	if k := int(m.embedding.Kind()); k > m.FaceKind {
+		m.FaceKind = k
+	}
+
 	m.MatchedAt = nil
 
 	return nil
@@ -183,13 +187,15 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		// Should never happen.
 		return false, fmt.Errorf("collision distance must be positive")
 	} else if dist < 0.02 {
-		// Ignore if distance is very small as faces may belong to the same person.
-		log.Warnf("faces: clearing ambiguous subject %s from face %s, similar face at dist %f with source %s", SubjNames.Log(m.SubjUID), m.ID, dist, SrcString(m.FaceSrc))
+		log.Warnf("faces: %s has ambiguous subject %s with a similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
 
-		// Reset subject UID just in case.
-		m.SubjUID = ""
+		m.FaceKind = int(face.AmbiguousFace)
+		m.UpdatedAt = TimeStamp()
+		m.MatchedAt = &m.UpdatedAt
+		m.Collisions++
+		m.CollisionRadius = dist
 
-		return true, m.Updates(Values{"SubjUID": m.SubjUID})
+		return true, m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++

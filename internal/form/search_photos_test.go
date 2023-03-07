@@ -662,6 +662,17 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
 	})
+	t.Run("id", func(t *testing.T) {
+		form := &SearchPhotos{Query: "id:\"ii3e4567-e89b-hdgtr\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "ii3e4567-e89b-hdgtr", form.ID)
+	})
 }
 
 func TestNewSearchPhotos(t *testing.T) {

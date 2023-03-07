@@ -8,7 +8,7 @@ type IndexOptions struct {
 	Stack           bool
 	FacesOnly       bool
 	SkipArchived    bool
-	OriginalsLimit  int
+	ByteLimit       int64
 	ResolutionLimit int
 }
 
@@ -21,7 +21,7 @@ func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchive
 		Stack:           stack,
 		FacesOnly:       facesOnly,
 		SkipArchived:    skipArchived,
-		OriginalsLimit:  Config().OriginalsLimit(),
+		ByteLimit:       Config().OriginalsByteLimit(),
 		ResolutionLimit: Config().ResolutionLimit(),
 	}
 

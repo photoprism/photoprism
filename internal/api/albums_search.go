@@ -36,10 +36,10 @@ func SearchAlbums(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := get.Config()
+		settings := get.Config().Settings()
 
 		// Ignore private flag if feature is disabled.
-		if !conf.Settings().Features.Private {
+		if !settings.Features.Private {
 			f.Public = false
 		}
 

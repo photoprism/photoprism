@@ -257,13 +257,14 @@ func (m *Session) SetUser(u *User) *Session {
 	return m
 }
 
-// Login returns the login name and provider.
+// Login returns the login name.
 func (m *Session) Login() string {
-	if m.AuthProvider == "" {
-		return m.UserName
-	} else {
-		return fmt.Sprintf("%s@%s", m.UserName, m.AuthProvider)
-	}
+	return m.UserName
+}
+
+// Provider returns the authentication provider name.
+func (m *Session) Provider() string {
+	return m.AuthProvider
 }
 
 // SetProvider updates the session's authentication provider.

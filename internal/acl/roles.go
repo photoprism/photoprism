@@ -8,8 +8,11 @@ const (
 	RoleUnknown Role = ""
 )
 
+// RoleStrings represents user role names mapped to roles.
+type RoleStrings = map[string]Role
+
 // ValidRoles specifies the valid user roles.
-var ValidRoles = map[string]Role{
+var ValidRoles = RoleStrings{
 	string(RoleAdmin):   RoleAdmin,
 	string(RoleVisitor): RoleVisitor,
 	string(RoleUnknown): RoleUnknown,
