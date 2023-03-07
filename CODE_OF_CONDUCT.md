@@ -24,7 +24,7 @@ Not everyone has experience with Open Source communities and intuitively knows w
 
 (c) Reckless, [surprisingly harsh](https://github.com/photoprism/photoprism/issues/281#issuecomment-1207233135) or ignorant communication that disregards **Rule &#35;1** is unacceptable, whether public or private. If you are having a bad day and want to offend someone, please go somewhere else.
 
-We have found that many of the issues that new users get upset about when they read about them in community forums or old issue comments have been resolved in the meantime. If not, we always do our best to improve the software and documentation as soon as we learn about it and have the resources.
+We have found that many of the issues that new users get upset about when they read about them in community forums or old issue comments have been resolved in the meantime. If not, you can be sure that we are always working to improve our products and services to the best of our ability.
 
 *Thanks to our amazing community, problems are rare in practice. Common sense and staying away from the computer when you are tired or hungry should usually be enough to get along with others.*
 
