@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/sortby"
 )
 
 func TestPhotos(t *testing.T) {
@@ -17,7 +18,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = ""
 		frm.Count = 10
 		frm.Offset = 0
-		frm.Order = "duration"
+		frm.Order = sortby.Duration
 
 		photos, _, err := Photos(frm)
 		if err != nil {
@@ -25,6 +26,32 @@ func TestPhotos(t *testing.T) {
 		}
 
 		assert.LessOrEqual(t, 2, len(photos))
+	})
+	t.Run("OrderRandom", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Order = sortby.Random
+
+		photos, _, err := Photos(frm)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 2, len(photos))
+	})
+	t.Run("OrderInvalid", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Order = sortby.Invalid
+
+		_, _, err := Photos(frm)
+		assert.Error(t, err)
 	})
 	t.Run("Chinese", func(t *testing.T) {
 		var frm form.SearchPhotos
@@ -855,7 +882,7 @@ func TestPhotos(t *testing.T) {
 		f.Name = "xxx"
 		f.Original = "xxyy"
 		f.Path = "/xxx/xxx/"
-		f.Order = entity.SortOrderName
+		f.Order = sortby.Name
 
 		photos, _, err := Photos(f)
 
@@ -879,7 +906,7 @@ func TestPhotos(t *testing.T) {
 		f.Stackable = true
 		f.Unsorted = true
 		f.Filter = ""
-		f.Order = entity.SortOrderAdded
+		f.Order = sortby.Added
 
 		photos, _, err := Photos(f)
 
@@ -895,7 +922,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = ""
 		frm.Count = 10
 		frm.Offset = 0
-		frm.Order = entity.SortOrderEdited
+		frm.Order = sortby.Edited
 
 		// Parse query string and filter.
 		if err := frm.ParseQueryString(); err != nil {

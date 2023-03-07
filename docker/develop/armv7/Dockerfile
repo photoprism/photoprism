@@ -4,7 +4,7 @@ FROM ubuntu:jammy
 # Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -55,7 +55,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 \
         libfontconfig1-dev libhdf5-serial-dev libpng-dev libzmq3-dev \
         libx264-dev libx265-dev libde265-dev libaom-dev libnss3 libxtst6 librsvg2-bin tzdata \
-        exiftool ffmpeg ffmpegthumbnailer libavcodec-extra \
+        exiftool ffmpeg libavcodec-extra \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \

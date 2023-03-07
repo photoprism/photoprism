@@ -7,7 +7,7 @@ import {
   canUseVideo,
   canUseVP8,
   canUseVP9,
-  canUseWebm,
+  canUseWebM,
 } from "common/caniuse";
 
 let chai = require("chai/chai");
@@ -38,8 +38,8 @@ describe("common/caniuse", () => {
     assert.equal(canUseAv1, true);
   });
 
-  it("canUseWebm", () => {
-    assert.equal(canUseWebm, true);
+  it("canUseWebM", () => {
+    assert.equal(canUseWebM, true);
   });
 
   it("canUseHevc", () => {

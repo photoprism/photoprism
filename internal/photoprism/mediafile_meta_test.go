@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/projection"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/meta"
-	"github.com/stretchr/testify/assert"
+	"github.com/photoprism/photoprism/pkg/projection"
 )
 
 func TestMediaFile_HasSidecarJson(t *testing.T) {
@@ -142,7 +142,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, 200, data.Iso)
 		assert.Equal(t, float32(-33.45347), data.Lat)
 		assert.Equal(t, float32(25.764645), data.Lng)
-		assert.Equal(t, 190, data.Altitude)
+		assert.Equal(t, 190.0, data.Altitude)
 		assert.Equal(t, 497, data.Width)
 		assert.Equal(t, 331, data.Height)
 		assert.Equal(t, false, data.Flash)
@@ -177,7 +177,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, float32(6.644), info.Aperture)
 		assert.Equal(t, float32(10), info.FNumber)
 		assert.Equal(t, 200, info.Iso)
-		assert.Equal(t, 0, info.Altitude)
+		assert.Equal(t, 0.0, info.Altitude)
 		assert.Equal(t, 331, info.Width)
 		assert.Equal(t, 331, info.Height)
 		assert.Equal(t, true, info.Flash)
@@ -224,7 +224,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, 7200, data.Width)
 		assert.Equal(t, float32(59.84083), data.Lat)
 		assert.Equal(t, float32(30.51), data.Lng)
-		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, "1/1250", data.Exposure)
 		assert.Equal(t, "SAMSUNG", data.CameraMake)
 		assert.Equal(t, "SM-C200", data.CameraModel)
@@ -261,7 +261,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, 500, data.Width)
 		assert.Equal(t, float32(52.46052), data.Lat)
 		assert.Equal(t, float32(13.331402), data.Lng)
-		assert.Equal(t, 84, data.Altitude)
+		assert.Equal(t, 84.0, data.Altitude)
 		assert.Equal(t, "1/50", data.Exposure)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
@@ -304,7 +304,7 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 	assert.Equal(t, 1000, info.Iso)
 	assert.Equal(t, float32(0), info.Lat)
 	assert.Equal(t, float32(0), info.Lng)
-	assert.Equal(t, 0, info.Altitude)
+	assert.Equal(t, 0.0, info.Altitude)
 	assert.Equal(t, false, info.Flash)
 	assert.Equal(t, "", info.Description)
 
@@ -336,15 +336,15 @@ func TestMediaFile_Exif_HEIC(t *testing.T) {
 
 	convert := NewConvert(conf)
 
-	// Create JPEG.
-	jpeg, err := convert.ToJpeg(img, false)
+	// Create JPEG image.
+	jpeg, err := convert.ToImage(img, false)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Replace JPEG.
-	jpeg, err = convert.ToJpeg(img, true)
+	// Replace JPEG image.
+	jpeg, err = convert.ToImage(img, true)
 
 	if err != nil {
 		t.Fatal(err)
@@ -376,7 +376,7 @@ func TestMediaFile_Exif_HEIC(t *testing.T) {
 	assert.Equal(t, 20, jpegInfo.Iso)
 	assert.Equal(t, float32(34.79745), jpegInfo.Lat)
 	assert.Equal(t, float32(134.76463), jpegInfo.Lng)
-	assert.Equal(t, 0, jpegInfo.Altitude)
+	assert.Equal(t, 0.0, jpegInfo.Altitude)
 	assert.Equal(t, 4032, jpegInfo.Width)
 	assert.Equal(t, 3024, jpegInfo.Height)
 	assert.Equal(t, false, jpegInfo.Flash)

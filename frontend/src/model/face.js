@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -117,15 +117,15 @@ export class Face extends RestModel {
     return Api.put(this.getEntityResource(), { Hidden: this.Hidden });
   }
 
-  setName() {
-    if (!this.Name || this.Name.trim() === "") {
+  setName(newName = this.Name) {
+    if (!newName || newName.trim() === "") {
       // Can't save an empty name.
       return Promise.resolve(this);
     }
 
     this.SubjSrc = src.Manual;
 
-    const payload = { SubjSrc: this.SubjSrc, Name: this.Name };
+    const payload = { SubjSrc: this.SubjSrc, Name: newName };
 
     return Api.put(Marker.getCollectionResource() + "/" + this.MarkerUID, payload).then((resp) => {
       if (resp && resp.data && resp.data.Name) {

@@ -2,9 +2,6 @@
   <div class="p-page p-page-upgrade">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <translate>Membership</translate>
-        <v-icon v-if="rtl">navigate_before</v-icon>
-        <v-icon v-else>navigate_next</v-icon>
         <span v-if="busy">
           <translate>Busy, please wait…</translate>
         </span>
@@ -15,15 +12,15 @@
           <translate>Invalid</translate>
         </span>
         <span v-else>
-          <translate>Upgrade</translate>
-      </span>
+          <translate>PhotoPrism+ Membership</translate>
+        </span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <v-btn icon href="https://link.photoprism.app/personal-editions" target="_blank" class="action-upgrade"
              :title="$gettext('Learn more')">
-        <v-icon size="26">diamond</v-icon>
+        <v-icon size="26">verified</v-icon>
       </v-btn>
     </v-toolbar>
     <v-form ref="form" v-model="valid" autocomplete="off" class="px-3 pt-3 pb-0" lazy-validation>
@@ -54,7 +51,7 @@
           </v-btn>
           <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly"
                  class="white--text ml-0"
-                 href="https://photoprism.app/contact"
+                 href="https://www.photoprism.app/contact"
                  target="_blank"
                  depressed>
             <translate>Contact Us</translate>
@@ -66,7 +63,7 @@
           <v-alert
               :value="true"
               color="success"
-              icon="verified"
+              icon="diamond"
               class="mt-3"
               outline
           >
@@ -91,15 +88,6 @@
         </v-flex>
       </v-layout>
       <v-layout v-else row wrap>
-        <v-flex xs12 class="px-2 pt-2 pb-0">
-          <p class="subheading text-selectable">
-            <strong><translate>Become a sponsor today, support our mission and enjoy our member benefits!</translate></strong>
-          </p>
-          <p class="subheading text-selectable">
-            <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-            <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
-          </p>
-        </v-flex>
         <v-flex xs12 grow align-center justify-center class="px-2 py-1">
           <v-alert
               :value="true"
@@ -145,8 +133,8 @@
         </v-flex>
         <v-flex xs12 class="px-2 pt-3 pb-0">
           <p class="body-1 text-selectable">
-            <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
             <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
+            <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
           </p>
         </v-flex>
         <v-flex v-show="showInfo" xs12 class="px-2 pt-3 pb-0">
@@ -154,22 +142,22 @@
             <translate>Frequently Asked Questions</translate>
           </h3>
           <p class="subheading text-selectable">
-            <translate>Shouldn't free software be free of costs?</translate>
-          </p>
-          <p class="body-1 text-selectable">
-            <translate>Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis.</translate>
-          </p>
-          <p class="subheading text-selectable">
             <translate>Why are some features only available to sponsors?</translate>
           </p>
           <p class="body-1 text-selectable">
-            <translate>PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits.</translate>
+            <translate>PhotoPrism is 100% self-funded and independent.</translate>
+            <translate>Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support.</translate>
+            <translate>It is your decision whether you want to sign up to enjoy additional benefits.</translate>
           </p>
           <p class="subheading text-selectable">
             <translate>What functionality is generally available?</translate>
           </p>
           <p class="body-1 text-selectable">
-            <translate>Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission.</translate>
+            <translate>Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users.</translate>
+            <translate>As this helps us provide more features to the public, we encourage all users to support our mission.</translate>
+          </p>
+          <p class="body-1">
+            <a href="https://www.photoprism.app/oss/faq" class="text-link" target="_blank"><translate>Learn more</translate> ›</a>
           </p>
         </v-flex>
       </v-layout>

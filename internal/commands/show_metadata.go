@@ -10,20 +10,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
-// ShowTagsCommand configures the command name, flags, and action.
-var ShowTagsCommand = cli.Command{
-	Name:    "tags",
-	Aliases: []string{"metadata"},
-	Usage:   "Displays supported metadata tags and standards",
+// ShowMetadataCommand configures the command name, flags, and action.
+var ShowMetadataCommand = cli.Command{
+	Name:  "metadata",
+	Usage: "Displays supported metadata tags and standards",
 	Flags: append(report.CliFlags, cli.BoolFlag{
 		Name:  "short, s",
 		Usage: "hide links to documentation",
 	}),
-	Action: showTagsAction,
+	Action: showMetadataAction,
 }
 
-// showTagsAction reports supported Exif and XMP metadata tags.
-func showTagsAction(ctx *cli.Context) error {
+// showMetadataAction reports supported Exif and XMP metadata tags.
+func showMetadataAction(ctx *cli.Context) error {
 	rows, cols := meta.Report(&meta.Data{})
 
 	// Sort rows by type data type and name.

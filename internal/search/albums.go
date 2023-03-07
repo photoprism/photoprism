@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -64,11 +65,11 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		if sess.IsVisitor() || sess.NotRegistered() {
 			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
 		} else if acl.Resources.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			if user.BasePath == "" {
+			if basePath := user.GetBasePath(); basePath == "" {
 				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
 			} else {
 				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ? OR albums.album_type = ? AND (albums.album_path = ? OR albums.album_path LIKE ?)",
-					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, user.BasePath, user.BasePath+"/%")
+					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, basePath, basePath+"/%")
 			}
 		}
 
@@ -81,35 +82,35 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Set sort order.
 	switch f.Order {
-	case entity.SortOrderCount:
+	case sortby.Count:
 		s = s.Order("photo_count DESC, albums.album_title, albums.album_uid DESC")
-	case entity.SortOrderNewest:
+	case sortby.Newest:
 		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		}
-	case entity.SortOrderOldest:
+	case sortby.Oldest:
 		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid ASC")
 		} else {
 			s = s.Order("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
 		}
-	case entity.SortOrderAdded:
+	case sortby.Added:
 		s = s.Order("albums.album_uid DESC")
-	case entity.SortOrderEdited:
+	case sortby.Edited:
 		s = s.Order("albums.updated_at DESC, albums.album_uid DESC")
-	case entity.SortOrderMoment:
+	case sortby.Moment:
 		s = s.Order("albums.album_favorite DESC, has_year, albums.album_year DESC, albums.album_month DESC, albums.album_title ASC, albums.album_uid DESC")
-	case entity.SortOrderPlace:
+	case sortby.Place:
 		s = s.Order("albums.album_location, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
-	case entity.SortOrderPath:
+	case sortby.Path:
 		s = s.Order("albums.album_path, albums.album_uid DESC")
-	case entity.SortOrderCategory:
+	case sortby.Category:
 		s = s.Order("albums.album_category, albums.album_title, albums.album_uid DESC")
-	case entity.SortOrderSlug:
+	case sortby.Slug:
 		s = s.Order("albums.album_slug ASC, albums.album_uid DESC")
-	case entity.SortOrderFavorites:
+	case sortby.Favorites:
 		if f.Type == entity.AlbumFolder {
 			s = s.Order("albums.album_favorite DESC, albums.album_path ASC, albums.album_uid DESC")
 		} else if f.Type == entity.AlbumMonth {
@@ -117,7 +118,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		} else {
 			s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
 		}
-	case entity.SortOrderName:
+	case sortby.Name:
 		if f.Type == entity.AlbumFolder {
 			s = s.Order("albums.album_path ASC, albums.album_uid DESC")
 		} else {
@@ -151,7 +152,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Albums with public pictures only?
 	if f.Public {
-		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL)")
+		s = s.Where("albums.album_private = 0 AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL))")
 	} else {
 		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_quality > -1 AND deleted_at IS NULL)")
 	}

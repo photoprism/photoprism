@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -197,18 +197,18 @@ export class File extends RestModel {
     }
   }
 
+  isAnimated() {
+    return (
+      this.MediaType &&
+      this.MediaType === MediaImage &&
+      ((this.Frames && this.Frames > 1) || (this.Duration && this.Duration > 1))
+    );
+  }
+
   typeInfo() {
     let info = [];
 
-    if (
-      this.MediaType &&
-      this.Frames &&
-      this.MediaType === MediaImage &&
-      this.Frames &&
-      this.Frames > 0
-    ) {
-      info.push($gettext("Animated"));
-    } else if (this.Sidecar) {
+    if (this.Sidecar) {
       info.push($gettext("Sidecar"));
     }
 
@@ -217,6 +217,9 @@ export class File extends RestModel {
       return info.join(" ");
     } else if (this.Video && !this.MediaType) {
       info.push($gettext("Video"));
+      return info.join(" ");
+    } else if (this.MediaType === "vector") {
+      info.push(Util.fileType(this.FileType));
       return info.join(" ");
     } else {
       const format = Util.fileType(this.FileType);

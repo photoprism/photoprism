@@ -43,7 +43,7 @@ body.dark-theme.theme-gemstone,
 
 #photoprism.theme-gemstone .theme--light.v-chip,
 #photoprism.theme-gemstone .v-card__actions .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: #333;
+    background: rgba(250, 250, 255, 0.1);
 }
 
 #photoprism.theme-gemstone .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {

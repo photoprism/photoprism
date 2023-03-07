@@ -143,7 +143,7 @@ func TestClient_UploadAndDelete(t *testing.T) {
 
 	tempName := rnd.UUID() + fs.ExtJPEG
 
-	if err := c.Upload("testdata/example.jpg", tempName); err != nil {
+	if err := c.Upload(fs.Abs("testdata/example.jpg"), tempName); err != nil {
 		t.Fatal(err)
 	}
 

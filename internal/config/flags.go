@@ -129,7 +129,7 @@ var Flags = CliFlags{
 			Value:  DefaultResolutionLimit,
 			Usage:  "maximum resolution of media files in `MEGAPIXELS` (1-900; -1 to disable)",
 			EnvVar: "PHOTOPRISM_RESOLUTION_LIMIT",
-		}, Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "storage-path, s",
 			Usage:  "writable storage `PATH` for sidecar, cache, and database files",
@@ -245,6 +245,11 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_DISABLE_CLASSIFICATION",
 		}}, {
 		Flag: cli.BoolFlag{
+			Name:   "disable-sips",
+			Usage:  "disable conversion of media files with Sips *macOS only*",
+			EnvVar: "PHOTOPRISM_DISABLE_SIPS",
+		}}, {
+		Flag: cli.BoolFlag{
 			Name:   "disable-ffmpeg",
 			Usage:  "disable video transcoding and thumbnail extraction with FFmpeg",
 			EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
@@ -255,33 +260,38 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-heifconvert",
-			Usage:  "disable conversion of HEIC/HEIF files",
-			EnvVar: "PHOTOPRISM_DISABLE_HEIFCONVERT",
-		}}, {
-		Flag: cli.BoolFlag{
 			Name:   "disable-darktable",
-			Usage:  "disable conversion of RAW files with Darktable",
+			Usage:  "disable conversion of RAW images with Darktable",
 			EnvVar: "PHOTOPRISM_DISABLE_DARKTABLE",
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-rawtherapee",
-			Usage:  "disable conversion of RAW files with RawTherapee",
+			Usage:  "disable conversion of RAW images with RawTherapee",
 			EnvVar: "PHOTOPRISM_DISABLE_RAWTHERAPEE",
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-sips",
-			Usage:  "disable conversion of RAW files with Sips *macOS only*",
-			EnvVar: "PHOTOPRISM_DISABLE_SIPS",
+			Name:   "disable-imagemagick",
+			Usage:  "disable conversion of image files with ImageMagick",
+			EnvVar: "PHOTOPRISM_DISABLE_IMAGEMAGICK",
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-heifconvert",
+			Usage:  "disable conversion of HEIC images with libheif",
+			EnvVar: "PHOTOPRISM_DISABLE_HEIFCONVERT",
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-jpegxl",
+			Usage:  "disable JPEG XL file format support",
+			EnvVar: "PHOTOPRISM_DISABLE_JPEGXL",
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-raw",
-			Usage:  "disable indexing and conversion of RAW files",
+			Usage:  "disable indexing and conversion of RAW images",
 			EnvVar: "PHOTOPRISM_DISABLE_RAW",
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "raw-presets",
-			Usage:  "enables applying user presets when converting RAW files (reduces performance)",
+			Usage:  "enables applying user presets when converting RAW images (reduces performance)",
 			EnvVar: "PHOTOPRISM_RAW_PRESETS",
 		}}, {
 		Flag: cli.BoolFlag{
@@ -312,6 +322,13 @@ var Flags = CliFlags{
 		},
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
+			Name:   "app-name",
+			Usage:  "progressive web app `NAME` when installed on a device",
+			Value:  "",
+			EnvVar: "PHOTOPRISM_APP_NAME",
+		},
+		Tags: []string{EnvSponsor}}, {
+		Flag: cli.StringFlag{
 			Name:   "app-mode",
 			Usage:  "progressive web app `MODE` (fullscreen, standalone, minimal-ui, browser)",
 			Value:  "standalone",
@@ -319,17 +336,16 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "app-icon",
-			Usage:  "progressive web app `ICON` (logo, app, crisp, mint, bold)",
+			Usage:  "home screen `ICON` (logo, app, crisp, mint, bold)",
 			EnvVar: "PHOTOPRISM_APP_ICON",
 		},
 		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
-			Name:   "app-name",
-			Usage:  "progressive web app `NAME` when installed on a device",
-			Value:  "",
-			EnvVar: "PHOTOPRISM_APP_NAME",
-		},
-		Tags: []string{EnvSponsor}}, {
+			Name:   "app-color",
+			Usage:  "splash screen `COLOR` code",
+			EnvVar: "PHOTOPRISM_APP_COLOR",
+			Value:  "#000000",
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "imprint",
 			Usage:  "legal information `TEXT`, displayed in the page footer",
@@ -365,8 +381,7 @@ var Flags = CliFlags{
 			Usage:  "login screen background image `URI`",
 			EnvVar: "PHOTOPRISM_WALLPAPER_URI",
 			Value:  "",
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "cdn-url",
 			Usage:  "content delivery network `URL`",
@@ -407,6 +422,16 @@ var Flags = CliFlags{
 			Usage:  "sharing preview image `URL`",
 			EnvVar: "PHOTOPRISM_SITE_PREVIEW",
 		}, Tags: []string{EnvSponsor}}, {
+		Flag: cli.StringFlag{
+			Name:   "https-proxy",
+			Usage:  "proxy server `URL` to be used for outgoing connections *optional*",
+			EnvVar: "PHOTOPRISM_HTTPS_PROXY",
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "https-proxy-insecure",
+			Usage:  "ignore invalid HTTPS certificates when using a proxy",
+			EnvVar: "PHOTOPRISM_HTTPS_PROXY_INSECURE",
+		}}, {
 		Flag: cli.StringSliceFlag{
 			Name:   "trusted-proxy",
 			Usage:  "`CIDR` range from which reverse proxy headers can be trusted",
@@ -424,27 +449,6 @@ var Flags = CliFlags{
 			Usage:  "forwarded HTTPS protocol `NAME`",
 			Value:  &cli.StringSlice{header.ProtoHttps},
 			EnvVar: "PHOTOPRISM_PROXY_PROTO_HTTPS",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "http-mode, mode",
-			Usage:  "Web server `MODE` (debug, release, test)",
-			EnvVar: "PHOTOPRISM_HTTP_MODE",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "http-compression, z",
-			Usage:  "Web server compression `METHOD` (gzip, none)",
-			EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "http-host, ip",
-			Usage:  "Web server `IP` address",
-			EnvVar: "PHOTOPRISM_HTTP_HOST",
-		}}, {
-		Flag: cli.IntFlag{
-			Name:   "http-port, port",
-			Value:  2342,
-			Usage:  "Web server port `NUMBER`",
-			EnvVar: "PHOTOPRISM_HTTP_PORT",
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-tls",
@@ -466,6 +470,27 @@ var Flags = CliFlags{
 			Name:   "tls-key",
 			Usage:  "private HTTPS key `FILE` (.key)",
 			EnvVar: "PHOTOPRISM_TLS_KEY",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "http-mode, mode",
+			Usage:  "Web server `MODE` (debug, release, test)",
+			EnvVar: "PHOTOPRISM_HTTP_MODE",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "http-compression, z",
+			Usage:  "Web server compression `METHOD` (gzip, none)",
+			EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "http-host, ip",
+			Usage:  "Web server `IP` address",
+			EnvVar: "PHOTOPRISM_HTTP_HOST",
+		}}, {
+		Flag: cli.IntFlag{
+			Name:   "http-port, port",
+			Value:  2342,
+			Usage:  "Web server port `NUMBER`",
+			EnvVar: "PHOTOPRISM_HTTP_PORT",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "database-driver, db",
@@ -511,6 +536,43 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_DATABASE_CONNS_IDLE",
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "sips-bin",
+			Usage:  "Sips `COMMAND` for media file conversion *macOS only*",
+			Value:  "sips",
+			EnvVar: "PHOTOPRISM_SIPS_BIN",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "sips-blacklist",
+			Usage:  "do not use Sips to convert files with these `EXTENSIONS` *macOS only*",
+			Value:  "avif,avifs",
+			EnvVar: "PHOTOPRISM_SIPS_BLACKLIST",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "ffmpeg-bin",
+			Usage:  "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
+			Value:  "ffmpeg",
+			EnvVar: "PHOTOPRISM_FFMPEG_BIN",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "ffmpeg-encoder, vc",
+			Usage:  "FFmpeg AVC encoder `NAME`",
+			Value:  "libx264",
+			EnvVar: "PHOTOPRISM_FFMPEG_ENCODER",
+		},
+		Tags: []string{EnvSponsor}}, {
+		Flag: cli.IntFlag{
+			Name:   "ffmpeg-bitrate, vb",
+			Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
+			Value:  50,
+			EnvVar: "PHOTOPRISM_FFMPEG_BITRATE",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "exiftool-bin",
+			Usage:  "ExifTool `COMMAND` for extracting metadata",
+			Value:  "exiftool",
+			EnvVar: "PHOTOPRISM_EXIFTOOL_BIN",
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "darktable-bin",
 			Usage:  "Darktable CLI `COMMAND` for RAW to JPEG conversion",
 			Value:  "darktable-cli",
@@ -547,47 +609,22 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "sips-bin",
-			Usage:  "Sips `COMMAND` for RAW to JPEG conversion *macOS only*",
-			Value:  "sips",
-			EnvVar: "PHOTOPRISM_SIPS_BIN",
+			Name:   "imagemagick-bin",
+			Usage:  "ImageMagick CLI `COMMAND` for image file conversion",
+			Value:  "convert",
+			EnvVar: "PHOTOPRISM_IMAGEMAGICK_BIN",
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "sips-blacklist",
-			Usage:  "do not use Sips to convert files with these `EXTENSIONS` *macOS only*",
-			Value:  "avif,avifs",
-			EnvVar: "PHOTOPRISM_SIPS_BLACKLIST",
+			Name:   "imagemagick-blacklist",
+			Usage:  "do not use ImageMagick to convert files with these `EXTENSIONS`",
+			Value:  "heif,heic,heics,avif,avifs,jxl",
+			EnvVar: "PHOTOPRISM_IMAGEMAGICK_BLACKLIST",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "heifconvert-bin",
-			Usage:  "HEIC/HEIF/AVIF image conversion `COMMAND`",
+			Usage:  "libheif HEIC image conversion `COMMAND`",
 			Value:  "heif-convert",
 			EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "ffmpeg-bin",
-			Usage:  "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
-			Value:  "ffmpeg",
-			EnvVar: "PHOTOPRISM_FFMPEG_BIN",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "ffmpeg-encoder, vc",
-			Usage:  "FFmpeg AVC encoder `NAME`",
-			Value:  "libx264",
-			EnvVar: "PHOTOPRISM_FFMPEG_ENCODER",
-		},
-		Tags: []string{EnvSponsor}}, {
-		Flag: cli.IntFlag{
-			Name:   "ffmpeg-bitrate, vb",
-			Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
-			Value:  50,
-			EnvVar: "PHOTOPRISM_FFMPEG_BITRATE",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "exiftool-bin",
-			Usage:  "ExifTool `COMMAND` for extracting metadata",
-			Value:  "exiftool",
-			EnvVar: "PHOTOPRISM_EXIFTOOL_BIN",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "download-token",
@@ -639,6 +676,12 @@ var Flags = CliFlags{
 			Usage:  "maximum size of created JPEG sidecar files in `PIXELS` (720-30000)",
 			Value:  7680,
 			EnvVar: "PHOTOPRISM_JPEG_SIZE",
+		}}, {
+		Flag: cli.IntFlag{
+			Name:   "png-size",
+			Usage:  "maximum size of created PNG sidecar files in `PIXELS` (720-30000)",
+			Value:  7680,
+			EnvVar: "PHOTOPRISM_PNG_SIZE",
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "face-size",

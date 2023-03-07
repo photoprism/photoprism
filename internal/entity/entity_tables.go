@@ -15,6 +15,7 @@ type Tables map[string]interface{}
 // Entities contains database entities and their table names.
 var Entities = Tables{
 	migrate.Migration{}.TableName(): &migrate.Migration{},
+	migrate.Version{}.TableName():   &migrate.Version{},
 	Error{}.TableName():             &Error{},
 	Password{}.TableName():          &Password{},
 	User{}.TableName():              &User{},
@@ -107,12 +108,14 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 		}
 	}()
 
-	// Run pre-migrations, if any.
+	log.Infof("migrate: running database migrations")
+
+	// Run pre migrations, if any.
 	if err := migrate.Run(db, opt.Pre()); err != nil {
 		log.Error(err)
 	}
 
-	// Run auto migrations.
+	// Run ORM auto migrations.
 	if opt.AutoMigrate {
 		for name, entity = range list {
 			if err := db.AutoMigrate(entity).Error; err != nil {
@@ -128,7 +131,7 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 		}
 	}
 
-	// Run manual migrations, if any.
+	// Run main migrations, if any.
 	if err := migrate.Run(db, opt); err != nil {
 		log.Error(err)
 	}

@@ -69,11 +69,18 @@ func TestConfig_Name(t *testing.T) {
 	assert.Equal(t, "PhotoPrism", name)
 }
 
+func TestConfig_About(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	name := c.About()
+	assert.Equal(t, "PhotoPrism® Dev", name)
+}
+
 func TestConfig_Edition(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	name := c.Edition()
-	assert.Equal(t, "PhotoPrism® Dev", name)
+	assert.NotEmpty(t, name)
 }
 
 func TestConfig_Version(t *testing.T) {
@@ -81,6 +88,12 @@ func TestConfig_Version(t *testing.T) {
 
 	version := c.Version()
 	assert.Equal(t, "0.0.0", version)
+}
+
+func TestConfig_VersionChecksum(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, uint32(0x2e5b4b86), c.VersionChecksum())
 }
 
 func TestConfig_TensorFlowVersion(t *testing.T) {
@@ -186,7 +199,14 @@ func TestConfig_CachePath(t *testing.T) {
 	assert.True(t, strings.HasSuffix(c.CachePath(), "storage/testdata/cache"))
 }
 
-func TestConfig_ThumbnailsPath(t *testing.T) {
+func TestConfig_MediaCachePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.True(t, strings.HasPrefix(c.MediaCachePath(), "/"))
+	assert.True(t, strings.HasSuffix(c.MediaCachePath(), "storage/testdata/cache/media"))
+}
+
+func TestConfig_ThumbCachePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.True(t, strings.HasPrefix(c.ThumbCachePath(), "/"))
@@ -350,28 +370,28 @@ func TestConfig_OriginalsLimit(t *testing.T) {
 	assert.Equal(t, 800, c.OriginalsLimit())
 }
 
-func TestConfig_OriginalsLimitBytes(t *testing.T) {
+func TestConfig_OriginalsByteLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int64(-1), c.OriginalsLimitBytes())
+	assert.Equal(t, int64(-1), c.OriginalsByteLimit())
 	c.options.OriginalsLimit = 800
-	assert.Equal(t, int64(838860800), c.OriginalsLimitBytes())
+	assert.Equal(t, int64(838860800), c.OriginalsByteLimit())
 }
 
 func TestConfig_ResolutionLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, -1, c.ResolutionLimit())
+	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
 	c.options.ResolutionLimit = 800
 	assert.Equal(t, 800, c.ResolutionLimit())
 	c.options.ResolutionLimit = 950
 	assert.Equal(t, 900, c.ResolutionLimit())
 	c.options.ResolutionLimit = 0
-	assert.Equal(t, -1, c.ResolutionLimit())
+	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
 	c.options.ResolutionLimit = -1
 	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = false
-	assert.Equal(t, 150, c.ResolutionLimit())
+	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = true
 	assert.Equal(t, -1, c.ResolutionLimit())
 }
@@ -452,11 +472,15 @@ func TestConfig_SiteDomain(t *testing.T) {
 
 func TestConfig_SitePreview(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "http://photoprism.me:2342/static/img/preview.jpg", c.SitePreview())
+	assert.Equal(t, "https://i.photoprism.app/prism?cover=64&style=centered%20dark&caption=none&title=PhotoPrism", c.SitePreview())
 	c.options.SitePreview = "http://preview.jpg"
 	assert.Equal(t, "http://preview.jpg", c.SitePreview())
 	c.options.SitePreview = "preview123.jpg"
 	assert.Equal(t, "http://photoprism.me:2342/preview123.jpg", c.SitePreview())
+	c.options.SitePreview = "foo/preview123.jpg"
+	assert.Equal(t, "http://photoprism.me:2342/foo/preview123.jpg", c.SitePreview())
+	c.options.SitePreview = "/foo/preview123.jpg"
+	assert.Equal(t, "http://photoprism.me:2342/foo/preview123.jpg", c.SitePreview())
 }
 
 func TestConfig_SiteTitle(t *testing.T) {

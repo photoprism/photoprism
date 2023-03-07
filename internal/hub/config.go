@@ -208,9 +208,9 @@ func (c *Config) ReSync(token string) (err error) {
 	if c.Key != "" {
 		url = fmt.Sprintf(ServiceURL+"/%s", c.Key)
 		method = http.MethodPut
-		log.Debugf("config: requesting updated api key for maps and places")
+		log.Tracef("config: requesting updated keys for maps and places")
 	} else {
-		log.Debugf("config: requesting new api key for maps and places")
+		log.Tracef("config: requesting new api keys for maps and places")
 	}
 
 	// Create JSON request.

@@ -3,8 +3,9 @@
 set -e
 
 # Install dependencies.
+# TODO: Tested successfully on AlmaLinux 8, but requires changes for RHEL8.
 echo "Installing dependencies..."
-sudo dnf update -y
+sudo dnf upgrade -y
 sudo dnf install nano make netavark aardvark-dns podman podman-docker -y
 
 # Install Podman Compose if needed.

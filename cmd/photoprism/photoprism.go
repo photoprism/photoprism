@@ -12,7 +12,7 @@ Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
 	The AGPL is supplemented by our Trademark and Brand Guidelines,
 	which describe how our Brand Assets may be used:
-	<https://photoprism.app/trademark>
+	<https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -37,6 +37,7 @@ var log = event.Log
 
 const appName = "PhotoPrism"
 const appAbout = "PhotoPrism® CE"
+const appEdition = "ce"
 const appDescription = "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web." +
 	" It makes use of the latest technologies to tag and find pictures automatically without getting in your way." +
 	" You can run it at home, on a private server, or in the cloud."
@@ -46,6 +47,7 @@ const appCopyright = "(c) 2018-2023 PhotoPrism UG. All rights reserved."
 var Metadata = map[string]interface{}{
 	"Name":        appName,
 	"About":       appAbout,
+	"Edition":     appEdition,
 	"Description": appDescription,
 	"Version":     version,
 }

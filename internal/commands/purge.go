@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// PurgeCommand registers the index cli command.
+// PurgeCommand configures the command name, flags, and action.
 var PurgeCommand = cli.Command{
 	Name:   "purge",
 	Usage:  "Updates missing files, photo counts, and album covers",
@@ -60,21 +60,24 @@ func purgeAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("config: read-only mode enabled")
+		log.Infof("config: enabled read-only mode")
 	}
 
 	w := get.Purge()
 
 	opt := photoprism.PurgeOptions{
-		Path: subPath,
-		Dry:  ctx.Bool("dry"),
-		Hard: ctx.Bool("hard"),
+		Path:  subPath,
+		Dry:   ctx.Bool("dry"),
+		Hard:  ctx.Bool("hard"),
+		Force: true,
 	}
 
-	if files, photos, err := w.Start(opt); err != nil {
+	if files, photos, updated, err := w.Start(opt); err != nil {
 		return err
-	} else {
+	} else if updated > 0 {
 		log.Infof("purged %s and %s in %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(start))
+	} else {
+		log.Infof("purge completed in %s", time.Since(start))
 	}
 
 	return nil

@@ -140,6 +140,15 @@ func (m *Camera) String() string {
 	return clean.Log(m.CameraName)
 }
 
+// Scanner checks whether the model appears to be a scanner.
+func (m *Camera) Scanner() bool {
+	if m.CameraSlug == "" {
+		return false
+	}
+
+	return strings.Contains(m.CameraSlug, "scan")
+}
+
 // Unknown returns true if the camera is not a known make or model.
 func (m *Camera) Unknown() bool {
 	return m.CameraSlug == "" || m.CameraSlug == UnknownCamera.CameraSlug

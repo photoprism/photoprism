@@ -35,31 +35,37 @@ func AuthPassword(user *User, f form.Login, m *Session) (err error) {
 	// User found?
 	if user == nil {
 		message := "account not found"
-		limiter.Login.Reserve(m.IP())
-		event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-		event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-		m.Status = http.StatusUnauthorized
+		if m != nil {
+			limiter.Login.Reserve(m.IP())
+			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
+			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
+			m.Status = http.StatusUnauthorized
+		}
 		return i18n.Error(i18n.ErrInvalidCredentials)
 	}
 
 	// Login allowed?
 	if !user.CanLogIn() {
 		message := "account disabled"
-		event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-		event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-		m.Status = http.StatusUnauthorized
+		if m != nil {
+			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
+			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
+			m.Status = http.StatusUnauthorized
+		}
 		return i18n.Error(i18n.ErrInvalidCredentials)
 	}
 
 	// Password valid?
 	if user.WrongPassword(f.Password) {
 		message := "incorrect password"
-		limiter.Login.Reserve(m.IP())
-		event.AuditErr([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-		event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-		m.Status = http.StatusUnauthorized
+		if m != nil {
+			limiter.Login.Reserve(m.IP())
+			event.AuditErr([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
+			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
+			m.Status = http.StatusUnauthorized
+		}
 		return i18n.Error(i18n.ErrInvalidCredentials)
-	} else {
+	} else if m != nil {
 		event.AuditInfo([]string{m.IP(), "session %s", "login as %s", "succeeded"}, m.RefID, clean.LogQuote(name))
 		event.LoginInfo(m.IP(), "api", name, m.UserAgent)
 	}

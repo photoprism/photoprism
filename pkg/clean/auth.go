@@ -32,6 +32,30 @@ func Username(s string) string {
 	return strings.ToLower(s)
 }
 
+// DN returns the sanitized distinguished name (DN) with trimmed whitespace and in lowercase.
+func DN(s string) string {
+	s = strings.TrimSpace(s)
+
+	// Remove unwanted characters.
+	s = strings.Map(func(r rune) rune {
+		if r <= 31 || r == 127 {
+			return -1
+		}
+		switch r {
+		case '"', ',', '+', '=', '`', '~', '?', '|', '*', '\\', ':', ';', '<', '>', '{', '}':
+			return -1
+		}
+		return r
+	}, s)
+
+	// Empty or too long?
+	if s == "" || reject(s, txt.ClipEmail) {
+		return ""
+	}
+
+	return strings.ToLower(s)
+}
+
 // Email returns the sanitized email with trimmed whitespace and in lowercase.
 func Email(s string) string {
 	// Empty or too long?

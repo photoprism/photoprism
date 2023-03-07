@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers"
 )
 
-// OptimizeCommand registers the index cli command.
+// OptimizeCommand configures the command name, flags, and action.
 var OptimizeCommand = cli.Command{
 	Name:  "optimize",
 	Usage: "Maintains titles, estimates, and other metadata",
@@ -40,7 +40,7 @@ func optimizeAction(ctx *cli.Context) error {
 	defer conf.Shutdown()
 
 	if conf.ReadOnly() {
-		log.Infof("config: read-only mode enabled")
+		log.Infof("config: enabled read-only mode")
 	}
 
 	force := ctx.Bool("force")

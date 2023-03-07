@@ -113,7 +113,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 				}
 
 				if gi.Altitude != 0 {
-					data.Altitude = gi.Altitude
+					data.Altitude = float64(gi.Altitude)
 				}
 
 				if !gi.Timestamp.IsZero() {

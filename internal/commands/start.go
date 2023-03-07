@@ -24,7 +24,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// StartCommand registers the start cli command.
+// StartCommand configures the command name, flags, and action.
 var StartCommand = cli.Command{
 	Name:    "start",
 	Aliases: []string{"up"},
@@ -113,7 +113,7 @@ func startAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("config: read-only mode enabled")
+		log.Infof("config: enabled read-only mode")
 	}
 
 	// Start web server.

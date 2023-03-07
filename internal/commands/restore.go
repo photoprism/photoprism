@@ -26,7 +26,7 @@ const restoreDescription = "A user-defined SQL dump FILENAME can be passed as th
 	"The -i parameter can be omitted in this case.\n" +
 	"   The index backup and album file paths are automatically detected if not specified explicitly."
 
-// RestoreCommand configures the backup cli command.
+// RestoreCommand configures the command name, flags, and action.
 var RestoreCommand = cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,

@@ -32,7 +32,7 @@ func init() {
 }
 
 var (
-	YearMin      = 1990
+	YearMin      = 1970
 	YearMinShort = 90
 	YearMax      = time.Now().Add(OneYear * 3).Year()
 	YearShort    = Int(time.Now().Format("06"))
@@ -60,8 +60,8 @@ func DateTime(s, timeZone string) (t time.Time) {
 		}
 	}()
 
-	// Empty time string?
-	if EmptyTime(s) {
+	// Ignore defaults.
+	if DateTimeDefault(s) {
 		return time.Time{}
 	}
 

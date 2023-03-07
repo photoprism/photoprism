@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -180,6 +180,15 @@ export default class Config {
       this.setTheme(values.settings.ui.theme);
     }
 
+    // Adjust album counts by access level.
+    if (values.count && this.deny("photos", "access_private")) {
+      this.values.count.albums -= values.count.private_albums;
+      this.values.count.folders -= values.count.private_folders;
+      this.values.count.moments -= values.count.private_moments;
+      this.values.count.months -= values.count.private_months;
+      this.values.count.states -= values.count.private_states;
+    }
+
     return this;
   }
 
@@ -320,6 +329,8 @@ export default class Config {
         this.values.count.favorites += data.count;
         break;
       case "review":
+        this.values.count.all -= data.count;
+        this.values.count.photos -= data.count;
         this.values.count.review += data.count;
         break;
       case "private":
@@ -587,35 +598,59 @@ export default class Config {
   }
 
   getName() {
-    const name = this.get("name");
+    const s = this.get("name");
 
-    if (!name) {
+    if (!s) {
       return "PhotoPrism";
-    } else if (name === "PhotoPrism" && this.values.sponsor) {
+    } else if (s === "PhotoPrism" && this.values.sponsor) {
       return "PhotoPrism+";
     }
 
-    return name;
+    return s;
   }
 
   getAbout() {
-    const about = this.get("about");
+    const s = this.get("about");
 
-    if (!about) {
+    if (!s) {
       return "PhotoPrism® Dev";
     }
 
-    return about;
+    return s;
   }
 
   getEdition() {
-    const edition = this.get("edition");
+    const s = this.get("edition");
 
-    if (!edition) {
+    if (!s) {
       return "ce";
     }
 
-    return edition;
+    return s;
+  }
+
+  ce() {
+    return this.getEdition() === "ce";
+  }
+
+  getLicense() {
+    const s = this.get("license");
+
+    if (!s) {
+      return "ce";
+    }
+
+    return s;
+  }
+
+  getCustomer() {
+    const s = this.get("customer");
+
+    if (!s) {
+      return "";
+    }
+
+    return s;
   }
 
   getIcon() {

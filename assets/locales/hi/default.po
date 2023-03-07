@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-12-19 00:48+0000\n"
-"Last-Translator: nikhilhurule <nikhilhurule@gmail.com>\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
 "backend/hi/>\n"
 "Language: hi\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "अप्रत्याशित त्रुटि, कृपया पुनः प्रयास करें"
+msgid "Something went wrong, try again"
+msgstr "कुछ गलत हुआ है, दोबारा कोशिश करें"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "अमान्य अनुरोध"
+msgid "Unable to do that"
+msgstr "ऐसा करने में असमर्थ"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -375,6 +375,12 @@ msgstr "स्थायी रूप से हटा दिया गया"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s बहाल कर दिया गया है"
+
+#~ msgid "Invalid request"
+#~ msgstr "अमान्य अनुरोध"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "अप्रत्याशित त्रुटि, कृपया पुनः प्रयास करें"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "सर्वर पर नहीं मिला, हटाया गया?"

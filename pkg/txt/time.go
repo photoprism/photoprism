@@ -13,7 +13,7 @@ func TimeStamp(t *time.Time) string {
 		return ""
 	}
 
-	return t.Format("2006-01-02 15:04:05")
+	return t.UTC().Format("2006-01-02 15:04:05")
 }
 
 // NTimes converts an integer to a string in the format "n times" or returns an empty string if n is 0.

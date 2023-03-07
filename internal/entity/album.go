@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -146,7 +147,7 @@ func NewUserAlbum(albumTitle, albumType, userUid string) *Album {
 
 	// Set default values.
 	result := &Album{
-		AlbumOrder: SortOrderOldest,
+		AlbumOrder: sortby.Oldest,
 		AlbumType:  albumType,
 		CreatedAt:  now,
 		UpdatedAt:  now,
@@ -170,7 +171,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	now := TimeStamp()
 
 	result := &Album{
-		AlbumOrder:  SortOrderAdded,
+		AlbumOrder:  sortby.Added,
 		AlbumType:   AlbumFolder,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumPath:   txt.Clip(albumPath, txt.ClipPath),
@@ -193,7 +194,7 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	now := TimeStamp()
 
 	result := &Album{
-		AlbumOrder:  SortOrderOldest,
+		AlbumOrder:  sortby.Oldest,
 		AlbumType:   AlbumMoment,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumFilter: albumFilter,
@@ -218,7 +219,7 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	now := TimeStamp()
 
 	result := &Album{
-		AlbumOrder:  SortOrderNewest,
+		AlbumOrder:  sortby.Newest,
 		AlbumType:   AlbumState,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumFilter: albumFilter,
@@ -249,7 +250,7 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	now := TimeStamp()
 
 	result := &Album{
-		AlbumOrder:  SortOrderOldest,
+		AlbumOrder:  sortby.Oldest,
 		AlbumType:   AlbumMonth,
 		AlbumSlug:   albumSlug,
 		AlbumFilter: f.Serialize(),

@@ -48,10 +48,13 @@ services:
       ## LDAP Authentication (pre-configured for local tests):
       PHOTOPRISM_LDAP_URI: "ldap://dummy-ldap:389"
       PHOTOPRISM_LDAP_INSECURE: "true"
+      PHOTOPRISM_LDAP_SYNC: "true"
       PHOTOPRISM_LDAP_BIND: "simple"
       PHOTOPRISM_LDAP_BIND_DN: "cn"
       PHOTOPRISM_LDAP_BASE_DN: "dc=localssl,dc=dev"
-      PHOTOPRISM_LDAP_SYNC: "true"
+      PHOTOPRISM_LDAP_ROLE: ""
+      PHOTOPRISM_LDAP_ROLE_DN: "ou=photoprism-*,ou=groups,dc=localssl,dc=dev"
+      PHOTOPRISM_LDAP_WEBDAV_DN: "ou=photoprism-webdav,ou=groups,dc=localssl,dc=dev"
       ## OpenID Connect (pre-configured for local tests):
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"
       PHOTOPRISM_OIDC_INSECURE: "true"
@@ -87,8 +90,8 @@ services:
       PHOTOPRISM_DISABLE_PLACES: "false"             # disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
-      PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW files
-      PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW files (reduces performance)
+      PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
+      PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
       PHOTOPRISM_THUMB_FILTER: "lanczos"             # resample filter, best to worst: blackman, lanczos, cubic, linear

@@ -54,7 +54,7 @@ func (w *Faces) Stats() (err error) {
 		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
 	}
 
-	if faces, err := query.Faces(true, false, false); err != nil {
+	if faces, err := query.Faces(true, false, false, false); err != nil {
 		log.Errorf("faces: %s", err)
 	} else if samples := len(faces); samples > 0 {
 		log.Infof("faces: computing distance of faces matching to the same person")

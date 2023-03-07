@@ -24,9 +24,7 @@
         <v-avatar class="nav-avatar" tile :size="28">
           <img :src="appIcon" :alt="config.name">
         </v-avatar>
-        <v-toolbar-title class="nav-title">
-          {{ page.title }}
-        </v-toolbar-title>
+        <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
         <v-btn
             fab dark :ripple="false"
             color="transparent"
@@ -55,9 +53,7 @@
               <img :src="appIcon" :alt="appName" :class="{'animate-hue': indexing}">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title class="title">
-                {{ appName }}
-              </v-list-tile-title>
+              <v-list-tile-title class="title">{{ appName }}</v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
               <v-btn icon class="nav-minimize" @click.stop="toggleIsMini()">
@@ -120,11 +116,20 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'browse', query: { q: 'gifs' }}" :exact="true" class="nav-animated"
+          <v-list-tile :to="{name: 'browse', query: { q: 'animated' }}" :exact="true" class="nav-animated"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Animated</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile v-show="isSponsor" :to="{name: 'browse', query: { q: 'vectors' }}" :exact="true" class="nav-vectors"
+                       @click.stop="">
+            <v-list-tile-content>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                <translate>Vectors</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -414,7 +419,7 @@
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Originals">Originals</translate>
-                <span v-show="config.count.files > 0"
+                <span v-show="config.count.files > 0 && canAccessPrivate"
                       :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.files | abbreviateCount }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -487,20 +492,16 @@
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
+
+            <v-list-tile v-show="isAdmin && !isPublic && !isDemo && featUpgrade" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                  <translate key="Upgrade">Upgrade</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
           </v-list-group>
         </template>
-
-        <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" @click.stop="">
-          <v-list-tile-action :title="$gettext('Upgrade')">
-            <v-icon>diamond</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Upgrade">Upgrade</translate>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
 
         <v-list-tile v-show="!auth" :to="{ name: 'login' }" class="nav-login" @click.stop="">
           <v-list-tile-action :title="$gettext('Login')">
@@ -536,9 +537,7 @@
           </v-list-tile-avatar>
 
           <v-list-tile-content>
-            <v-list-tile-title>
-              {{ displayName }}
-            </v-list-tile-title>
+            <v-list-tile-title>{{ displayName }}</v-list-tile-title>
             <v-list-tile-sub-title>{{ accountInfo }}</v-list-tile-sub-title>
           </v-list-tile-content>
 
@@ -694,7 +693,7 @@ export default {
 
     return {
       canSearchPlaces: this.$config.allow("places", "search"),
-      canAccessAll: !isRestricted,
+      canAccessPrivate: !isRestricted && this.$config.allow("photos", "access_private"),
       canManagePhotos: this.$config.allow("photos", "manage"),
       canManagePeople: this.$config.allow("people", "manage"),
       appNameSuffix: appNameSuffix,
@@ -703,6 +702,7 @@ export default {
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,
+      featUpgrade: this.$config.getLicense() === "ce",
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
       isPublic: this.$config.get("public"),

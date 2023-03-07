@@ -23,10 +23,10 @@ type Data struct {
 	TakenGps      time.Time     `meta:"GPSDateTime,GPSDateStamp"`
 	TakenNs       int           `meta:"-"`
 	TimeZone      string        `meta:"-"`
-	Duration      time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
+	Duration      time.Duration `meta:"Duration,MediaDuration,TrackDuration,PreviewDuration"`
 	FPS           float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
-	Frames        int           `meta:"FrameCount"`
-	Codec         string        `meta:"CompressorID,VideoCodecID,CodecID,FileType"`
+	Frames        int           `meta:"FrameCount,AnimationFrames"`
+	Codec         string        `meta:"CompressorID,VideoCodecID,CodecID,OtherFormat,FileType"`
 	Title         string        `meta:"Headline,Title" xmp:"dc:title" dc:"title,title.Alt"`
 	Subject       string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords      Keywords      `meta:"Keywords"`
@@ -43,7 +43,7 @@ type Data struct {
 	CameraSerial  string        `meta:"SerialNumber"`
 	LensMake      string        `meta:"LensMake"`
 	LensModel     string        `meta:"Lens,LensModel" xmp:"LensModel"`
-	Software      string        `meta:"Software,HistorySoftwareAgent,ProcessingSoftware"`
+	Software      string        `meta:"Software,CreatorTool,HistorySoftwareAgent,ProcessingSoftware"`
 	Flash         bool          `meta:"FlashFired"`
 	FocalLength   int           `meta:"FocalLength,FocalLengthIn35mmFormat"`
 	FocalDistance float64       `meta:"HyperfocalDistance"`
@@ -57,7 +57,7 @@ type Data struct {
 	GPSLongitude  string        `meta:"GPSLongitude"`
 	Lat           float32       `meta:"-"`
 	Lng           float32       `meta:"-"`
-	Altitude      int           `meta:"GlobalAltitude,GPSAltitude"`
+	Altitude      float64       `meta:"GlobalAltitude,GPSAltitude"`
 	Width         int           `meta:"ImageWidth,PixelXDimension,ExifImageWidth,SourceImageWidth"`
 	Height        int           `meta:"ImageHeight,ImageLength,PixelYDimension,ExifImageHeight,SourceImageHeight"`
 	Orientation   int           `meta:"-"`

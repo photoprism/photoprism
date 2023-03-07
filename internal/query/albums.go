@@ -7,7 +7,10 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/search"
+
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/sortby"
 )
 
 // Albums returns a slice of albums.
@@ -29,7 +32,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 	if a, err = AlbumByUID(uid); err != nil {
 		return file, err
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
-		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
+		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: sortby.Relevance, Count: 1, Offset: 0, Merged: false}
 
 		if err = f.ParseQueryString(); err != nil {
 			return file, err
@@ -67,7 +70,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 	}
 
 	// Build query.
-	stmt := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
+	stmt := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
 		Joins("JOIN albums ON albums.album_uid = ?", uid).
 		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = 0").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL")

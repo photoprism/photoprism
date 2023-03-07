@@ -9,8 +9,8 @@ import (
 )
 
 func TestFilesByPath(t *testing.T) {
-	t.Run("files found", func(t *testing.T) {
-		files, err := FilesByPath(10, 0, entity.RootOriginals, "Holiday")
+	t.Run("Holiday", func(t *testing.T) {
+		files, err := FilesByPath(10, 0, entity.RootOriginals, "Holiday", false)
 
 		t.Logf("files: %+v", files)
 
@@ -20,8 +20,30 @@ func TestFilesByPath(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(files))
 	})
-	t.Run("files found - path starting with /", func(t *testing.T) {
-		files, err := FilesByPath(10, 0, entity.RootOriginals, "/Holiday")
+	t.Run("SlashHoliday", func(t *testing.T) {
+		files, err := FilesByPath(10, 0, entity.RootOriginals, "/Holiday", false)
+
+		t.Logf("files: %+v", files)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(files))
+	})
+	t.Run("2790Public", func(t *testing.T) {
+		files, err := FilesByPath(10, 0, entity.RootOriginals, "2790/07", true)
+
+		t.Logf("files: %+v", files)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(files))
+	})
+	t.Run("HolidayPublic", func(t *testing.T) {
+		files, err := FilesByPath(10, 0, entity.RootOriginals, "Holiday", true)
 
 		t.Logf("files: %+v", files)
 

@@ -19,7 +19,7 @@ func TestNewResponse(t *testing.T) {
 	t.Run("unexpected error", func(t *testing.T) {
 		resp := NewResponse(http.StatusInternalServerError, ErrUnexpected, "A cat")
 		assert.Equal(t, http.StatusInternalServerError, resp.Code)
-		assert.Equal(t, "Unexpected error, please try again", resp.Err)
+		assert.Equal(t, "Something went wrong, try again", resp.Err)
 		assert.Equal(t, "", resp.Msg)
 	})
 

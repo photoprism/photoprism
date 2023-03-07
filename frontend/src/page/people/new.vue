@@ -65,7 +65,7 @@
                 <v-layout v-if="model.SubjUID" row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-text-field
-                        v-model="model.Name"
+                        :value="model.Name"
                         :rules="[textRule]"
                         :readonly="readonly"
                         browser-autocomplete="off"
@@ -73,15 +73,15 @@
                         hide-details
                         single-line
                         solo-inverted
-                        @change="onRename(model)"
-                        @keyup.enter.native="onRename(model)"
+                        @change="(newName) => {onRename(model, newName)}"
+                        @keyup.enter.native="(event) => {onRename(model, event.target.value)}"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
                 <v-layout v-else row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-combobox
-                        v-model="model.Name"
+                        :value="model.Name"
                         style="z-index: 250"
                         :items="$config.values.people"
                         item-value="Name"
@@ -100,8 +100,8 @@
                         prepend-inner-icon="person_add"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
-                        @change="onRename(model)"
-                        @keyup.enter.native="onRename(model)"
+                        @change="(newName) => {onRename(model, newName)}"
+                        @keyup.enter.native="(event) => {onRename(model, event.target.value)}"
                     >
                     </v-combobox>
                   </v-flex>
@@ -536,8 +536,8 @@ export default {
         }
       });
     },
-    onRename(model) {
-      if (this.busy || !model || !model.Name || model.Name.trim() === "") {
+    onRename(model, newName) {
+      if (this.busy || !model || !newName || newName.trim() === "") {
         // Ignore if busy, refuse to save empty name.
         return;
       }
@@ -545,7 +545,7 @@ export default {
       this.busy = true;
       this.$notify.blockUI();
 
-      model.setName().finally(() => {
+      model.setName(newName).finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
         this.changeFaceCount(-1);

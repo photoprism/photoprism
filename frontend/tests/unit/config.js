@@ -287,7 +287,7 @@ const clientConfig = {
   previewToken: "public",
   cssUri: "/static/build/app.2259c0edcc020e7af593.css",
   jsUri: "/static/build/app.9bd7132eaee8e4c7c7e3.js",
-  manifestUri: "/manifest.json?0e41a7e5",
+  manifestUri: "/manifest.json",
   settings: {
     ui: {
       scrollbar: true,
@@ -371,6 +371,11 @@ const clientConfig = {
     hidden: 0,
     favorites: 1,
     private: 0,
+    private_albums: 0,
+    private_folders: 0,
+    private_moments: 0,
+    private_months: 0,
+    private_states: 0,
     review: 22,
     stories: 0,
     albums: 2,

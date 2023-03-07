@@ -49,7 +49,6 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Enable HTTP compression?
 	switch conf.HttpCompression() {
 	case "gzip":
-		log.Infof("server: enabling gzip compression")
 		router.Use(gzip.Gzip(
 			gzip.DefaultCompression,
 			gzip.WithExcludedPaths([]string{
@@ -60,6 +59,7 @@ func Start(ctx context.Context, conf *config.Config) {
 				conf.BaseUri(config.ApiUri + "/labels"),
 				conf.BaseUri(config.ApiUri + "/videos"),
 			})))
+		log.Infof("server: enabled gzip compression")
 	}
 
 	// Find and load templates.

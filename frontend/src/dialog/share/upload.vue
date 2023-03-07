@@ -128,7 +128,7 @@ export default {
       this.$emit('cancel');
     },
     setup() {
-      this.$router.push({name: "settings_sync"});
+      this.$router.push({name: "settings_services"});
     },
     confirm() {
       if (this.noServices) {

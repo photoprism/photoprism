@@ -7,4 +7,5 @@ type PurgeOptions struct {
 	Ignore fs.Done
 	Dry    bool
 	Hard   bool
+	Force  bool
 }
