@@ -282,7 +282,13 @@ func (c *Config) InitDb() {
 // MigrateDb initializes the database and migrates the schema if needed.
 func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	entity.Admin.UserName = c.AdminUser()
-	entity.InitDb(migrate.Opt(runFailed, ids))
+
+	// Only migrate once automatically per version.
+	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
+	entity.InitDb(migrate.Opt(version.NeedsMigration(), runFailed, ids))
+	if err := version.Migrated(c.Db()); err != nil {
+		log.Warnf("config: %s (migrate)", err)
+	}
 
 	// Init admin account?
 	if c.AdminPassword() == "" {

@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
-// CleanUpCommand registers the cleanup command.
+// CleanUpCommand configures the command name, flags, and action.
 var CleanUpCommand = cli.Command{
 	Name:   "cleanup",
 	Usage:  "Removes orphaned index entries, sidecar and thumbnail files",
@@ -43,7 +43,7 @@ func cleanUpAction(ctx *cli.Context) error {
 	defer conf.Shutdown()
 
 	if conf.ReadOnly() {
-		log.Infof("config: read-only mode enabled")
+		log.Infof("config: enabled read-only mode")
 	}
 
 	w := get.CleanUp()

@@ -10,7 +10,7 @@ import (
 func TestLightMap_Hex(t *testing.T) {
 	lum := []Luminance{1, 16, 2, 4, 15, 16, 1, 0, 8}
 	lMap := LightMap(lum)
-	assert.Equal(t, "11024F10108", lMap.Hex())
+	assert.Equal(t, "1F24FF108", lMap.Hex())
 
 }
 

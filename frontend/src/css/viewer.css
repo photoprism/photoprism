@@ -110,3 +110,7 @@
 #photo-viewer .pswp__container.slideshow {
     transition: transform 0.8s ease-in-out;
 }
+
+#photo-viewer .pswp__img {
+    -webkit-touch-callout: default;
+}

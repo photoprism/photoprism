@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -193,7 +193,7 @@ export class Thumb extends Model {
       for (let j = 0; j < p.Files.length; j++) {
         let f = p.Files[j];
 
-        if (!f || f.FileType !== "jpg") {
+        if (!f || (f.FileType !== "jpg" && f.FileType !== "png")) {
           continue;
         }
 

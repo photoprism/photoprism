@@ -20,13 +20,6 @@ const photoviewer = new PhotoViewer();
 const page = new Page();
 const albumdialog = new AlbumDialog();
 
-test.meta("testID", "authentication-000").meta({ type: "short", mode: "public" })(
-  "Common: Time to start instance (will be marked as unstable)",
-  async (t) => {
-    await t.wait(5000);
-  }
-);
-
 test.meta("testID", "albums-001").meta({ type: "short", mode: "public" })(
   "Common: Create/delete album on /albums",
   async (t) => {

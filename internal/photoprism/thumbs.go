@@ -26,8 +26,8 @@ func NewThumbs(conf *config.Config) *Thumbs {
 	return &Thumbs{conf: conf}
 }
 
-// Start creates thumbnail images for all files found in the originals and sidecar folders.
-func (w *Thumbs) Start(force, originalsOnly bool) (err error) {
+// Start creates thumbnails for files in the originals and sidecar folders.
+func (w *Thumbs) Start(dir string, force, originalsOnly bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("thumbs: %s (panic)\nstack: %s", r, debug.Stack())
@@ -36,13 +36,22 @@ func (w *Thumbs) Start(force, originalsOnly bool) (err error) {
 	}()
 
 	originalsPath := w.conf.OriginalsPath()
+	originalsDir := filepath.Join(originalsPath, dir)
 	sidecarPath := w.conf.SidecarPath()
+	sidecarDir := filepath.Join(sidecarPath, dir)
 
-	originalsOnly = originalsOnly || sidecarPath == "" || sidecarPath == originalsPath
+	// Valid path provided?
+	if !fs.PathExists(originalsDir) {
+		return fmt.Errorf("thumbs: directory %s not found", clean.Log(originalsDir))
+	}
 
-	if _, err = w.Dir(originalsPath, force); err != nil || originalsOnly {
+	// Scan sidecar folder?
+	originalsOnly = originalsOnly || sidecarPath == "" || sidecarPath == originalsPath || !fs.PathExists(sidecarDir)
+
+	// Start creating thumbnails.
+	if _, err = w.Dir(originalsDir, force); err != nil || originalsOnly {
 		return err
-	} else if _, err = w.Dir(sidecarPath, force); err != nil {
+	} else if _, err = w.Dir(sidecarDir, force); err != nil {
 		return err
 	}
 
@@ -50,10 +59,10 @@ func (w *Thumbs) Start(force, originalsOnly bool) (err error) {
 }
 
 // Dir creates thumbnail images for files found in a given path.
-func (w *Thumbs) Dir(dir string, force bool) (done fs.Done, err error) {
-	done = make(fs.Done)
+func (w *Thumbs) Dir(dir string, force bool) (fs.Done, error) {
+	done := make(fs.Done)
 
-	if err = mutex.MainWorker.Start(); err != nil {
+	if err := mutex.MainWorker.Start(); err != nil {
 		return done, err
 	}
 
@@ -100,7 +109,7 @@ func (w *Thumbs) Dir(dir string, force bool) (done fs.Done, err error) {
 
 		mf, err := NewMediaFile(fileName)
 
-		if err != nil || mf.Empty() || !mf.IsJpeg() {
+		if err != nil || mf.Empty() || !mf.IsPreviewImage() {
 			return nil
 		}
 
@@ -123,18 +132,18 @@ func (w *Thumbs) Dir(dir string, force bool) (done fs.Done, err error) {
 		return nil
 	}
 
-	log.Infof("thumbs: processing files in %s folder", clean.Log(filepath.Base(dir)))
+	log.Infof("thumbs: processing %s", clean.Log(dir))
 
 	if err := ignore.Dir(dir); err != nil {
 		log.Infof("thumbs: %s", err)
 	}
 
-	err = godirwalk.Walk(dir, &godirwalk.Options{
+	err := godirwalk.Walk(dir, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
 			return godirwalk.SkipNode
 		},
 		Callback:            handler,
-		Unsorted:            true,
+		Unsorted:            false,
 		FollowSymbolicLinks: true,
 	})
 

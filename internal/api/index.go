@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -59,36 +60,61 @@ func StartIndexing(router *gin.RouterGroup) {
 			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}
 
-		// Start indexing.
 		ind := get.Index()
-		indexed := ind.Start(indOpt)
+		lastRun, lastFound := ind.LastRun()
+		indexStart := time.Now()
 
-		RemoveFromFolderCache(entity.RootOriginals)
+		// Start indexing.
+		found, indexed := ind.Start(indOpt)
 
-		// Configure purge options.
-		prgOpt := photoprism.PurgeOptions{
-			Path:   filepath.Clean(f.Path),
-			Ignore: indexed,
+		// Only run purge and moments if necessary.
+		forceUpdate := indOpt.Rescan || indexed > 0 || lastRun.IsZero()
+		updateIndex := forceUpdate || len(found) != lastFound
+
+		log.Infof("index: updated %s [%s]", english.Plural(indexed, "file", "files"), time.Since(indexStart))
+
+		// Update index?
+		if updateIndex {
+			event.Publish("index.updating", event.Data{
+				"step": "folders",
+			})
+
+			RemoveFromFolderCache(entity.RootOriginals)
+
+			event.Publish("index.updating", event.Data{
+				"step": "purge",
+			})
+
+			// Configure purge options.
+			prgOpt := photoprism.PurgeOptions{
+				Path:   filepath.Clean(f.Path),
+				Ignore: found,
+				Force:  forceUpdate,
+			}
+
+			// Start purging.
+			prg := get.Purge()
+
+			if files, photos, updated, err := prg.Start(prgOpt); err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
+				return
+			} else if updated > 0 {
+				event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
+				forceUpdate = true
+			}
 		}
 
-		// Start purging.
-		prg := get.Purge()
+		// Update moments?
+		if forceUpdate {
+			event.Publish("index.updating", event.Data{
+				"step": "moments",
+			})
 
-		if files, photos, err := prg.Start(prgOpt); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
-			return
-		} else if len(files) > 0 || len(photos) > 0 {
-			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
-		}
+			moments := get.Moments()
 
-		event.Publish("index.updating", event.Data{
-			"step": "moments",
-		})
-
-		moments := get.Moments()
-
-		if err := moments.Start(); err != nil {
-			log.Warnf("moments: %s", err)
+			if err := moments.Start(); err != nil {
+				log.Warnf("moments: %s", err)
+			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())

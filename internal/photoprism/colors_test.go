@@ -6,10 +6,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fastwalk"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_Colors_Testdata(t *testing.T) {
@@ -53,10 +54,10 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 			Chroma:    20,
 		},
 		"Screenshot 2019-05-21 at 10.45.52.png": {
-			Colors:    colors.Colors{},
-			MainColor: 0,
-			Luminance: colors.LightMap{},
-			Chroma:    0,
+			Colors:    colors.Colors{4, 4, 4, 4, 4, 4, 4, 4, 4},
+			MainColor: 4,
+			Luminance: colors.LightMap{14, 14, 14, 15, 15, 15, 15, 15, 15},
+			Chroma:    1,
 		},
 	}
 
@@ -71,7 +72,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if !mediaFile.IsJpeg() {
+		if !mediaFile.IsPreviewImage() {
 			t.Logf("not a jpeg: %s", filepath.Base(mediaFile.FileName()))
 			return nil
 		}

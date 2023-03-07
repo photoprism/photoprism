@@ -5,7 +5,11 @@ type LightMap []Luminance
 // Hex returns all luminance value as a hex encoded string.
 func (m LightMap) Hex() (result string) {
 	for _, luminance := range m {
-		result += luminance.Hex()
+		if luminance > 15 {
+			result += "F"
+		} else {
+			result += luminance.Hex()
+		}
 	}
 
 	return result

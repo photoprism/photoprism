@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -225,7 +226,7 @@ func TestNewFolderAlbum(t *testing.T) {
 		assert.Equal(t, "Dogs", album.AlbumTitle)
 		assert.Equal(t, "dogs", album.AlbumSlug)
 		assert.Equal(t, AlbumFolder, album.AlbumType)
-		assert.Equal(t, SortOrderAdded, album.AlbumOrder)
+		assert.Equal(t, sortby.Added, album.AlbumOrder)
 		assert.Equal(t, "label:dog", album.AlbumFilter)
 	})
 	t.Run("title empty", func(t *testing.T) {
@@ -240,7 +241,7 @@ func TestNewMomentsAlbum(t *testing.T) {
 		assert.Equal(t, "Dogs", album.AlbumTitle)
 		assert.Equal(t, "dogs", album.AlbumSlug)
 		assert.Equal(t, AlbumMoment, album.AlbumType)
-		assert.Equal(t, SortOrderOldest, album.AlbumOrder)
+		assert.Equal(t, sortby.Oldest, album.AlbumOrder)
 		assert.Equal(t, "label:dog", album.AlbumFilter)
 	})
 	t.Run("title empty", func(t *testing.T) {
@@ -255,7 +256,7 @@ func TestNewStateAlbum(t *testing.T) {
 		assert.Equal(t, "Dogs", album.AlbumTitle)
 		assert.Equal(t, "dogs", album.AlbumSlug)
 		assert.Equal(t, AlbumState, album.AlbumType)
-		assert.Equal(t, SortOrderNewest, album.AlbumOrder)
+		assert.Equal(t, sortby.Newest, album.AlbumOrder)
 		assert.Equal(t, "label:dog", album.AlbumFilter)
 	})
 	t.Run("title empty", func(t *testing.T) {
@@ -270,7 +271,7 @@ func TestNewMonthAlbum(t *testing.T) {
 		assert.Equal(t, "Dogs", album.AlbumTitle)
 		assert.Equal(t, "dogs", album.AlbumSlug)
 		assert.Equal(t, AlbumMonth, album.AlbumType)
-		assert.Equal(t, SortOrderOldest, album.AlbumOrder)
+		assert.Equal(t, sortby.Oldest, album.AlbumOrder)
 		assert.Equal(t, "public:true year:2020 month:7", album.AlbumFilter)
 		assert.Equal(t, 7, album.AlbumMonth)
 		assert.Equal(t, 2020, album.AlbumYear)

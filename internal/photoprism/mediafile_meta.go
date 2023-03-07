@@ -12,7 +12,7 @@ import (
 
 // HasSidecarJson returns true if this file has or is a json sidecar file.
 func (m *MediaFile) HasSidecarJson() bool {
-	if m.IsJson() {
+	if m.IsJSON() {
 		return true
 	}
 

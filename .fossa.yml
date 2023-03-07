@@ -4,7 +4,7 @@ project:
   name: "PhotoPrism"
   id: "github.com/photoprism/photoprism"
   url: "https://github.com/photoprism/photoprism"
-  link: "https://photoprism.app/"
+  link: "https://www.photoprism.app/"
 
 revision:
   branch: "develop"

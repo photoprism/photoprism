@@ -11,6 +11,7 @@ const (
 	RegularFace Kind = iota + 1
 	KidsFace
 	IgnoredFace
+	AmbiguousFace
 )
 
 var r = rand.New(rand.NewSource(time.Now().UnixNano()))

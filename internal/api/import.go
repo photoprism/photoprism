@@ -57,7 +57,7 @@ func StartImport(router *gin.RouterGroup) {
 		srcFolder := ""
 		importPath := conf.ImportPath()
 
-		// Import from sub-folder?
+		// Import from subfolder?
 		if srcFolder = c.Param("path"); srcFolder != "" && srcFolder != "/" {
 			srcFolder = clean.UserPath(srcFolder)
 		} else if f.Path != "" {
@@ -81,7 +81,7 @@ func StartImport(router *gin.RouterGroup) {
 		RemoveFromFolderCache(entity.RootImport)
 
 		var destFolder string
-		if destFolder = s.User().UploadPath; destFolder == "" {
+		if destFolder = s.User().GetUploadPath(); destFolder == "" {
 			destFolder = conf.ImportDest()
 		}
 

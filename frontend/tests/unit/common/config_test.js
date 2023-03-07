@@ -263,16 +263,17 @@ describe("common/config", () => {
     myConfig.onCount("add.review", {
       count: 1,
     });
+    assert.equal(myConfig.values.count.all, 135);
     assert.equal(myConfig.values.count.review, 23);
     assert.equal(myConfig.values.count.private, 0);
     myConfig.onCount("add.private", {
       count: 3,
     });
     assert.equal(myConfig.values.count.private, 3);
-    assert.equal(myConfig.values.count.all, 136);
+    assert.equal(myConfig.values.count.all, 135);
     myConfig.onCount("add.photos", {
       count: 4,
     });
-    assert.equal(myConfig.values.count.all, 140);
+    assert.equal(myConfig.values.count.all, 139);
   });
 });

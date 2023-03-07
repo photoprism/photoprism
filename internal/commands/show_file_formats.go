@@ -10,20 +10,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/report"
 )
 
-// ShowFormatsCommand configures the command name, flags, and action.
-var ShowFormatsCommand = cli.Command{
-	Name:    "formats",
-	Aliases: []string{"filetypes"},
-	Usage:   "Displays supported media and sidecar file formats",
+// ShowFileFormatsCommand configures the command name, flags, and action.
+var ShowFileFormatsCommand = cli.Command{
+	Name:  "file-formats",
+	Usage: "Displays supported media and sidecar file formats",
 	Flags: append(report.CliFlags, cli.BoolFlag{
 		Name:  "short, s",
 		Usage: "hide format descriptions",
 	}),
-	Action: showFormatsAction,
+	Action: showFileFormatsAction,
 }
 
-// showFormatsAction lists supported media and sidecar file formats.
-func showFormatsAction(ctx *cli.Context) error {
+// showFileFormatsAction lists supported media and sidecar file formats.
+func showFileFormatsAction(ctx *cli.Context) error {
 	rows, cols := media.Report(fs.Extensions.Types(true), !ctx.Bool("short"), true, true)
 
 	result, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))

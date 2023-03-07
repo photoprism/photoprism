@@ -45,7 +45,7 @@
                                    @click.stop.prevent="downloadFile(file)">
                               <translate>Download</translate>
                             </v-btn>
-                            <v-btn v-if="features.edit && file.FileType === 'jpg' && !file.Error && !file.Primary" small depressed dark
+                            <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed dark
                                    color="primary-button"
                                    class="btn-action action-primary"
                                    @click.stop.prevent="primaryFile(file)">
@@ -106,11 +106,25 @@
                           </td>
                           <td>{{ file.sizeInfo() }}</td>
                         </tr>
+                        <tr v-if="file.Software">
+                          <td>
+                            <translate>Software</translate>
+                          </td>
+                          <td>{{ file.Software }}</td>
+                        </tr>
                         <tr v-if="file.FileType">
                           <td>
                             <translate>Type</translate>
                           </td>
                           <td>{{ file.typeInfo() }}</td>
+                        </tr>
+                        <tr v-if="file.isAnimated()">
+                          <td>
+                            <translate>Animated</translate>
+                          </td>
+                          <td>
+                            <translate>Yes</translate>
+                          </td>
                         </tr>
                         <tr v-if="file.Codec && file.Codec !== file.FileType">
                           <td>

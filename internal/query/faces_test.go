@@ -10,8 +10,8 @@ import (
 )
 
 func TestFaces(t *testing.T) {
-	t.Run("known", func(t *testing.T) {
-		results, err := Faces(true, false, false)
+	t.Run("Known", func(t *testing.T) {
+		results, err := Faces(true, false, false, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -25,7 +25,7 @@ func TestFaces(t *testing.T) {
 	})
 
 	t.Run("Hidden", func(t *testing.T) {
-		results, err := Faces(false, false, true)
+		results, err := Faces(false, false, true, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -34,8 +34,18 @@ func TestFaces(t *testing.T) {
 		assert.GreaterOrEqual(t, len(results), 1)
 	})
 
-	t.Run("unmatched", func(t *testing.T) {
-		results, err := Faces(false, true, false)
+	t.Run("Ignored", func(t *testing.T) {
+		results, err := Faces(false, false, true, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(results), 1)
+	})
+
+	t.Run("Unmatched", func(t *testing.T) {
+		results, err := Faces(false, true, false, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -51,7 +61,7 @@ func TestFaces(t *testing.T) {
 
 func TestManuallyAddedFaces(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		results, err := ManuallyAddedFaces(false, face.RegularFace)
+		results, err := ManuallyAddedFaces(false, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -64,7 +74,7 @@ func TestManuallyAddedFaces(t *testing.T) {
 		}
 	})
 	t.Run("Hidden", func(t *testing.T) {
-		results, err := ManuallyAddedFaces(true, face.RegularFace)
+		results, err := ManuallyAddedFaces(true, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -164,7 +174,7 @@ func TestMergeFaces(t *testing.T) {
 
 		faces := entity.Faces{*face1, *face2}
 
-		result, err := MergeFaces(faces)
+		result, err := MergeFaces(faces, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -200,13 +210,13 @@ func TestMergeFaces(t *testing.T) {
 
 		faces := entity.Faces{*face1, *face2}
 
-		result, err := MergeFaces(faces)
+		result, err := MergeFaces(faces, false)
 
 		assert.EqualError(t, err, "faces: cannot merge clusters with conflicting subjects jqynvsf28rhn6b0c <> jqynvt925h8c1asv")
 		assert.Nil(t, result)
 	})
 	t.Run("OneSubject", func(t *testing.T) {
-		result, err := MergeFaces(entity.Faces{entity.Face{ID: "5LH5E35ZGUMF5AYLM42BIZH4DGQHJDAV"}})
+		result, err := MergeFaces(entity.Faces{entity.Face{ID: "5LH5E35ZGUMF5AYLM42BIZH4DGQHJDAV"}}, false)
 
 		assert.EqualError(t, err, "faces: two or more clusters required for merging")
 		assert.Nil(t, result)

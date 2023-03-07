@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-03-08 11:48+0000\n"
-"Last-Translator: Pheggas <petko252@gmail.com>\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
 "backend/sk/>\n"
 "Language: sk\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Nastala neočakávaná chyba, skúste to neskôr prosím"
+msgid "Something went wrong, try again"
+msgstr "Niečo sa pokazilo, skúste to znova"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Neplatná požiadavka"
+msgid "Unable to do that"
+msgstr "Nemožno to urobiť"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -50,15 +50,15 @@ msgstr "Súbor nenájdený"
 
 #: messages.go:101
 msgid "File too large"
-msgstr ""
+msgstr "Príliš veľký súbor"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr ""
+msgstr "Nepodporovaný formát"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Priečinok Originály je prázdny"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -101,17 +101,14 @@ msgid "Not available in public mode"
 msgstr "Nedostupné vo verejnom móde"
 
 #: messages.go:114
-#, fuzzy
 msgid "Not available in read-only mode"
 msgstr "nedostupné v móde len pre čítanie"
 
 #: messages.go:115
-#, fuzzy
 msgid "Please log in to your account"
 msgstr "Prosím prihláste sa a skúste znova"
 
 #: messages.go:116
-#, fuzzy
 msgid "Permission denied"
 msgstr "Osoba odstránená"
 
@@ -121,19 +118,17 @@ msgstr "Nahrané súbory môžu byť urážlivé"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr ""
+msgstr "Odovzdávanie zlyhalo"
 
 #: messages.go:119
 msgid "No items selected"
 msgstr "Neboli vybraté žiadne položky"
 
 #: messages.go:120
-#, fuzzy
 msgid "Failed creating file, please check permissions"
 msgstr "Vytváranie súboru zlyhalo, prosím skontrolujte oprávnenia"
 
 #: messages.go:121
-#, fuzzy
 msgid "Failed creating folder, please check permissions"
 msgstr "Vytváranie zložky zlyhalo, prosím skontrolujte oprávnenia"
 
@@ -162,7 +157,6 @@ msgid "No files available for download"
 msgstr "Žiadne súbory na stiahnutie k dispozícií"
 
 #: messages.go:128
-#, fuzzy
 msgid "Failed to create zip file"
 msgstr "Nebolo možné vytvoriť súbor ZIP"
 
@@ -185,11 +179,11 @@ msgstr "Systém zaneprázdnený, prosím skúste znovu neskôr"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Interval prebúdzania je %s, ale musí byť najviac 1 h."
 
 #: messages.go:134
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Vaše konto sa nepodarilo pripojiť"
 
 #: messages.go:137
 msgid "Changes successfully saved"
@@ -332,7 +326,6 @@ msgid "Person deleted"
 msgstr "Osoba odstránená"
 
 #: messages.go:169
-#, fuzzy
 msgid "File uploaded"
 msgstr "Súbor odstránený"
 
@@ -343,10 +336,9 @@ msgstr "%d súborov nahraných za %d sekúnd"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr ""
+msgstr "Spracovanie nahrávania..."
 
 #: messages.go:172
-#, fuzzy
 msgid "Upload has been processed"
 msgstr "Nahrané súbory môžu byť urážlivé"
 
@@ -380,6 +372,12 @@ msgid "Permanently deleted"
 msgstr "Trvalo odstránené"
 
 #: messages.go:180
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been restored"
 msgstr "Označenie obnovené"
+
+#~ msgid "Invalid request"
+#~ msgstr "Neplatná požiadavka"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Nastala neočakávaná chyba, skúste to neskôr prosím"

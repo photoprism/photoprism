@@ -175,7 +175,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		imp := get.Import()
 
 		var destFolder string
-		if destFolder = s.User().UploadPath; destFolder == "" {
+		if destFolder = s.User().GetUploadPath(); destFolder == "" {
 			destFolder = conf.ImportDest()
 		}
 

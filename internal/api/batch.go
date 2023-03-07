@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"path"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -181,7 +182,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 		var approved entity.Photos
 
 		for _, p := range photos {
-			if err := p.Approve(); err != nil {
+			if err = p.Approve(); err != nil {
 				log.Errorf("approve: %s", err)
 			} else {
 				approved = append(approved, p)
@@ -382,6 +383,10 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		// Delete photos.
 		for _, p := range photos {
+			// Report file deletion.
+			event.AuditWarn([]string{ClientIP(c), s.UserName, "delete", path.Join(p.PhotoPath, p.PhotoName+"*")})
+
+			// Remove all related files from storage.
 			n, err := photoprism.DeletePhoto(p, true, true)
 
 			numFiles += n

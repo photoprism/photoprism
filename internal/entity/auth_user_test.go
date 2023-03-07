@@ -384,11 +384,11 @@ func TestUser_String(t *testing.T) {
 	})
 	t.Run("FullName", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "", DisplayName: "Test"}
-		assert.Equal(t, "Test", p.String())
+		assert.Equal(t, "'Test'", p.String())
 	})
 	t.Run("UserName", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "Super-User ", DisplayName: "Test"}
-		assert.Equal(t, "super-user", p.String())
+		assert.Equal(t, "'super-user'", p.String())
 	})
 }
 
@@ -812,5 +812,155 @@ func TestUser_SetAvatar(t *testing.T) {
 		m := FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "ebfc0aea7d3fd018b5fff57c76806b35181855ed", m.Thumb)
 		assert.Equal(t, SrcManual, m.ThumbSrc)
+	})
+}
+
+func TestUser_Login(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.Equal(t, "", Visitor.Login())
+	})
+	t.Run("UnknownUser", func(t *testing.T) {
+		assert.Equal(t, "", UnknownUser.Login())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, "admin", Admin.Login())
+	})
+}
+
+func TestUser_Provider(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.Equal(t, "", Visitor.Provider())
+	})
+	t.Run("UnknownUser", func(t *testing.T) {
+		assert.Equal(t, "", UnknownUser.Provider())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, "password", Admin.Provider())
+	})
+}
+
+func TestUser_GetBasePath(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.Equal(t, "", Visitor.GetBasePath())
+	})
+	t.Run("UnknownUser", func(t *testing.T) {
+		assert.Equal(t, "", UnknownUser.GetBasePath())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, "", Admin.GetBasePath())
+	})
+}
+
+func TestUser_SetBasePath(t *testing.T) {
+	t.Run("Test", func(t *testing.T) {
+		u := User{
+			ID:          1234567,
+			UserUID:     "urqdrfb72479n047",
+			UserName:    "test",
+			UserRole:    acl.RoleAdmin.String(),
+			DisplayName: "Test",
+			SuperAdmin:  false,
+			CanLogin:    true,
+			WebDAV:      true,
+			CanInvite:   false,
+		}
+
+		assert.Equal(t, "base", u.SetBasePath("base").GetBasePath())
+		assert.Equal(t, "users/urqdrfb72479n047", u.SetBasePath("~").GetBasePath())
+		assert.Equal(t, "users/urqdrfb72479n047", u.GetUploadPath())
+	})
+}
+
+func TestUser_GetUploadPath(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.Equal(t, "", Visitor.GetUploadPath())
+	})
+	t.Run("UnknownUser", func(t *testing.T) {
+		assert.Equal(t, "", UnknownUser.GetUploadPath())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, "", Admin.GetUploadPath())
+	})
+}
+
+func TestUser_SetUploadPath(t *testing.T) {
+	t.Run("Test", func(t *testing.T) {
+		u := User{
+			ID:          1234567,
+			UserUID:     "urqdrfb72479n047",
+			UserName:    "test",
+			UserRole:    acl.RoleAdmin.String(),
+			DisplayName: "Test",
+			SuperAdmin:  false,
+			CanLogin:    true,
+			WebDAV:      true,
+			CanInvite:   false,
+		}
+
+		assert.Equal(t, "upload", u.SetUploadPath("upload").GetUploadPath())
+		assert.Equal(t, "base/upload", u.SetBasePath("base").GetUploadPath())
+		assert.Equal(t, "base", u.SetUploadPath("~").GetUploadPath())
+		assert.Equal(t, "users/urqdrfb72479n047", u.SetBasePath("~").GetUploadPath())
+	})
+}
+
+func TestUser_Handle(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		u := User{
+			ID:          1234567,
+			UserUID:     "urqdrfb72479n047",
+			UserName:    "mr-happy@cat.com",
+			UserRole:    acl.RoleAdmin.String(),
+			DisplayName: "",
+			SuperAdmin:  false,
+			CanLogin:    true,
+			WebDAV:      true,
+			CanInvite:   false,
+		}
+
+		assert.Equal(t, "mr-happy@cat.com", u.Login())
+		assert.Equal(t, "mr-happy", u.Handle())
+
+		u.UserName = "mr.happy@cat.com"
+
+		assert.Equal(t, "mr.happy", u.Handle())
+
+		u.UserName = "mr.happy"
+
+		assert.Equal(t, "mr.happy", u.Handle())
+	})
+}
+
+func TestUser_FullName(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		u := User{
+			ID:          1234567,
+			UserUID:     "urqdrfb72479n047",
+			UserName:    "mr-happy@cat.com",
+			UserRole:    acl.RoleAdmin.String(),
+			DisplayName: "",
+			SuperAdmin:  false,
+			CanLogin:    true,
+			WebDAV:      true,
+			CanInvite:   false,
+		}
+
+		assert.Equal(t, "Mr-Happy", u.FullName())
+
+		u.UserName = "mr.happy@cat.com"
+
+		assert.Equal(t, "Mr Happy", u.FullName())
+
+		u.UserName = "mr.happy"
+
+		assert.Equal(t, "Mr Happy", u.FullName())
+
+		u.UserName = "foo@bar.com"
+
+		assert.Equal(t, "Foo", u.FullName())
+
+		u.SetDisplayName("Jane Doe")
+
+		assert.Equal(t, "Jane Doe", u.FullName())
 	})
 }

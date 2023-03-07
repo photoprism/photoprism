@@ -16,7 +16,7 @@ import (
 )
 
 // SetCoordinates changes the photo lat, lng and altitude if not empty and from an acceptable source.
-func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
+func (m *Photo) SetCoordinates(lat, lng float32, altitude float64, source string) {
 	m.SetAltitude(altitude, source)
 
 	if lat == 0.0 && lng == 0.0 {
@@ -33,8 +33,10 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 }
 
 // SetAltitude sets the photo altitude if not empty and from an acceptable source.
-func (m *Photo) SetAltitude(altitude int, source string) {
-	if altitude == 0 && source != SrcManual {
+func (m *Photo) SetAltitude(altitude float64, source string) {
+	a := clean.Altitude(altitude)
+
+	if a == 0 && source != SrcManual {
 		return
 	}
 
@@ -42,7 +44,7 @@ func (m *Photo) SetAltitude(altitude int, source string) {
 		return
 	}
 
-	m.PhotoAltitude = altitude
+	m.PhotoAltitude = a
 }
 
 // UnknownLocation tests if the photo has an unknown location.
@@ -69,7 +71,7 @@ func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 		m.PhotoLng = float32(pos.Lng)
 		m.PlaceSrc = source
 		m.CellAccuracy = pos.Accuracy
-		m.SetAltitude(pos.AltitudeInt(), source)
+		m.SetAltitude(pos.Altitude, source)
 
 		log.Debugf("photo: %s %s", m.String(), pos.String())
 

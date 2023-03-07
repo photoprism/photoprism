@@ -1,0 +1,11 @@
+UI:
+  Scrollbar: true
+  Zoom: false
+  Theme: default
+  Language: en
+Download:
+  Name: file
+  Disabled: false
+  Originals: true
+  MediaRaw: false
+  MediaSidecar: false

@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/get"
 )
 
-// MomentsCommand registers the moments command.
+// MomentsCommand configures the command name, flags, and action.
 var MomentsCommand = cli.Command{
 	Name:   "moments",
 	Usage:  "Creates albums of special moments, trips, and places",
@@ -33,7 +33,7 @@ func momentsAction(ctx *cli.Context) error {
 	defer conf.Shutdown()
 
 	if conf.ReadOnly() {
-		log.Infof("config: read-only mode enabled")
+		log.Infof("config: enabled read-only mode")
 	}
 
 	w := get.Moments()

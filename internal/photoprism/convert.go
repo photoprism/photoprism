@@ -23,6 +23,7 @@ type Convert struct {
 	sipsBlacklist        fs.Blacklist
 	darktableBlacklist   fs.Blacklist
 	rawtherapeeBlacklist fs.Blacklist
+	imagemagickBlacklist fs.Blacklist
 }
 
 // NewConvert returns a new converter and expects the config as argument.
@@ -31,14 +32,15 @@ func NewConvert(conf *config.Config) *Convert {
 		conf:                 conf,
 		sipsBlacklist:        fs.NewBlacklist(conf.SipsBlacklist()),
 		darktableBlacklist:   fs.NewBlacklist(conf.DarktableBlacklist()),
-		rawtherapeeBlacklist: fs.NewBlacklist(conf.RawtherapeeBlacklist()),
+		rawtherapeeBlacklist: fs.NewBlacklist(conf.RawTherapeeBlacklist()),
+		imagemagickBlacklist: fs.NewBlacklist(conf.ImageMagickBlacklist()),
 	}
 
 	return c
 }
 
 // Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(path string, ext []string, force bool) (err error) {
+func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
@@ -46,7 +48,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 		}
 	}()
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err = mutex.MainWorker.Start(); err != nil {
 		return err
 	}
 
@@ -68,7 +70,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 	done := make(fs.Done)
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
-	if err := ignore.Dir(path); err != nil {
+	if err = ignore.Dir(dir); err != nil {
 		log.Infof("convert: %s", err)
 	}
 
@@ -76,7 +78,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 		log.Infof("convert: ignoring %s", clean.Log(filepath.Base(fileName)))
 	}
 
-	err = godirwalk.Walk(path, &godirwalk.Options{
+	err = godirwalk.Walk(dir, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
 			return godirwalk.SkipNode
 		},
@@ -106,7 +108,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 
 			f, err := NewMediaFile(fileName)
 
-			if err != nil || f.Empty() || !(f.IsRaw() || f.IsHEIC() || f.IsAVIF() || f.IsImageOther() || f.IsVideo()) {
+			if err != nil || f.Empty() || f.IsPreviewImage() || !f.IsMedia() {
 				return nil
 			}
 
@@ -120,7 +122,7 @@ func (c *Convert) Start(path string, ext []string, force bool) (err error) {
 
 			return nil
 		},
-		Unsorted:            true,
+		Unsorted:            false,
 		FollowSymbolicLinks: true,
 	})
 

@@ -24,7 +24,7 @@ const backupDescription = "A user-defined SQL dump FILENAME or - for stdout can 
 	"   Make sure to run the command with exec -T when using Docker to prevent log messages from being sent to stdout.\n" +
 	"   The index backup and album file paths are automatically detected if not specified explicitly."
 
-// BackupCommand configures the backup cli command.
+// BackupCommand configures the command name, flags, and action.
 var BackupCommand = cli.Command{
 	Name:        "backup",
 	Description: backupDescription,

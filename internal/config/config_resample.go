@@ -17,6 +17,17 @@ func (c *Config) JpegSize() int {
 	return c.options.JpegSize
 }
 
+// PngSize returns the size limit for automatically converted files in `PIXELS` (720-30000).
+func (c *Config) PngSize() int {
+	if c.options.PngSize < 720 {
+		return 720
+	} else if c.options.PngSize > 30000 {
+		return 30000
+	}
+
+	return c.options.PngSize
+}
+
 // JpegQuality returns the jpeg image quality as thumb.Quality (25-100).
 func (c *Config) JpegQuality() thumb.Quality {
 	return thumb.ParseQuality(c.options.JpegQuality)

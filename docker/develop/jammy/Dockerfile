@@ -4,7 +4,7 @@ FROM ubuntu:jammy
 # Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -50,13 +50,10 @@ RUN echo 'APT::Default-Release "jammy";' > /etc/apt/apt.conf.d/80release && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
-        libc6 ca-certificates sudo bash tzdata avahi-utils \
-        gpg zip unzip wget curl rsync make nano \
-        jq lsof lshw sqlite3 imagemagick \
-        exiftool rawtherapee librsvg2-bin \
-        ffmpeg ffmpegthumbnailer libavcodec-extra \
-        libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
-        x264 x265 libde265-dev libaom3 libjpeg8 libvpx7 libwebm1 \
+        libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
+        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync \
+        imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
+        libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \
@@ -65,6 +62,7 @@ RUN echo 'APT::Default-Release "jammy";' > /etc/apt/apt.conf.d/80release && \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
+        librsvg2-bin ghostscript gsfonts \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
@@ -79,6 +77,7 @@ RUN echo 'APT::Default-Release "jammy";' > /etc/apt/apt.conf.d/80release && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \

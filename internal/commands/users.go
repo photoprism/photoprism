@@ -18,7 +18,7 @@ const (
 	UserWebDAVUsage   = "allow to sync files via WebDAV"
 )
 
-// UsersCommand registers the user management subcommands.
+// UsersCommand configures the user management subcommands.
 var UsersCommand = cli.Command{
 	Name:    "users",
 	Aliases: []string{"user"},

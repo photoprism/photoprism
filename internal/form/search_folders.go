@@ -6,6 +6,7 @@ type SearchFolders struct {
 	Recursive bool   `form:"recursive"`
 	Files     bool   `form:"files"`
 	Uncached  bool   `form:"uncached"`
+	Public    bool   `form:"public"`
 	Count     int    `form:"count" serialize:"-"`
 	Offset    int    `form:"offset" serialize:"-"`
 }

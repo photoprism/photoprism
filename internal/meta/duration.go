@@ -1,40 +1,33 @@
 package meta
 
 import (
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var DurationSecondsRegexp = regexp.MustCompile("[0-9\\.]+")
-
-// StringToDuration converts a metadata string to a valid duration.
-func StringToDuration(s string) (d time.Duration) {
+// Duration converts a metadata string to a valid duration.
+func Duration(s string) (result time.Duration) {
 	if s == "" {
-		return d
+		return 0
 	}
 
-	s = strings.TrimSpace(s)
+	s = clean.Duration(s)
 
-	if s == "" {
-		return d
+	if txt.IsFloat(s) {
+		result = time.Duration(txt.Float(s) * 1e9)
+	} else if n := strings.Split(strings.TrimSpace(s), ":"); len(n) == 3 {
+		hr, _ := strconv.Atoi(n[0])
+		min, _ := strconv.Atoi(n[1])
+		sec, _ := strconv.Atoi(n[2])
+
+		result = time.Duration(hr)*time.Hour + time.Duration(min)*time.Minute + time.Duration(sec)*time.Second
+	} else if d, err := time.ParseDuration(s); err == nil {
+		result = d
 	}
 
-	sec := DurationSecondsRegexp.FindAllString(s, -1)
-
-	if len(sec) == 1 {
-		secFloat, _ := strconv.ParseFloat(sec[0], 64)
-		d = time.Duration(secFloat) * time.Second
-	} else if n := strings.Split(s, ":"); len(n) == 3 {
-		h, _ := strconv.Atoi(n[0])
-		m, _ := strconv.Atoi(n[1])
-		s, _ := strconv.Atoi(n[2])
-
-		d = time.Duration(h)*time.Hour + time.Duration(m)*time.Minute + time.Duration(s)*time.Second
-	} else if pd, err := time.ParseDuration(s); err != nil {
-		d = pd
-	}
-
-	return d
+	return result.Round(10e6)
 }

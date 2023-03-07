@@ -1,32 +1,33 @@
 <!--
-Please describe your pull request:
-- What does it implement / fix / improve?
-- Is it related to an existing issue?
--->
 
-<!--
-After submitting your first pull request, you will automatically be asked to accept our Contributor License Agreement (CLA):
+Thank you for your interest in contributing!
 
-https://github.com/photoprism/photoprism/blob/develop/CONTRIBUTING.md#contributor-license-agreement-cla
+Because we want to create the best possible product for our users, we have a set of criteria to ensure that all submissions are acceptable, see https://docs.photoprism.app/developer-guide/pull-requests/ for details.
 
-Because we want to create the best possible product for our users, we have a set of guidelines to ensure that all submissions are acceptable.
-Please check the following items by replacing "[ ]" with "[x]".
-You can also do this when viewing the pull request after it was created:
+(1) Please provide a concise description of your pull request.
+
+- What does it implement / fix / improve? Why?
+- Are the changes related to an existing issue?
+
+(2) After you submit your first pull request, you will be asked to accept our CLA, see https://www.photoprism.app/cla.
+
+(3) Finally, please confirm that the following criteria are met by replacing "[ ]" with "[x]" (also possible at a later time).
+
 -->
 
 Acceptance Criteria:
 
-- [ ] **Features and enhancements are fully implemented** so that they can be released at any time without additional work
-- [ ] **Automated unit and/or acceptance tests have been added** to ensure the changes work as expected and to reduce repetitive manual work
-- [ ] **User interface changes are fully responsive** and have been tested on all major browsers and various devices
-- [ ] Database-related changes are compatible with SQLite and MariaDB
-- [ ] Translations have been / will be updated (specify if needed)
-- [ ] Documentation has been / will be updated (specify if needed)
-- [ ] Contributor License Agreement (CLA) has been signed
+- [ ] Features and enhancements must be fully implemented so that they can be released at any time without additional work
+- [ ] Automated unit and/or acceptance tests are mandatory to ensure the changes work as expected and to reduce repetitive manual work
+- [ ] Frontend components must be responsive to work and look properly on phones, tablets, and desktop computers; you must have tested them on all major browsers and different devices
+- [ ] Documentation and translation updates should be provided if needed
+- [ ] In case you submit database-related changes, they must be tested and compatible with SQLite 3 and MariaDB 10.5.12+
 
 <!--
-Reviewing, testing and finally merging pull requests consumes significant resources on our side. Unless it's just a small fix, it may take several months.
 
-Thanks for your patience :)
+Since reviewing, testing and finally merging pull requests requires significant resources on our side, this can take several months if it's not just a small fix, especially if extensive testing is required to prevent bugs from getting into our stable version.
+
+We thank you for your patience! :)
+
 -->
 

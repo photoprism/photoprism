@@ -48,6 +48,17 @@ func (embeddings Embeddings) Count() int {
 	return len(embeddings)
 }
 
+// Kind returns the type of face e.g. regular, kids, or ignored.
+func (embeddings Embeddings) Kind() (result Kind) {
+	for _, e := range embeddings {
+		if k := e.Kind(); k > result {
+			result = k
+		}
+	}
+
+	return result
+}
+
 // One tests if there is exactly one embedding.
 func (embeddings Embeddings) One() bool {
 	return embeddings.Count() == 1
