@@ -3,14 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-21 12:35+0000\n"
+"PO-Revision-Date: 2023-03-08 01:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -75,7 +76,7 @@ msgstr "Račun"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr ""
+msgstr "Računi"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -99,7 +100,7 @@ msgstr "Aktivacijski kod"
 
 #: src/page/admin/users.vue:37
 msgid "Add"
-msgstr ""
+msgstr "Dodati"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -486,7 +487,7 @@ msgstr "Chroma"
 
 #: src/page/admin/sessions.vue:28
 msgid "Client"
-msgstr ""
+msgstr "Klijent"
 
 #: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
@@ -1302,7 +1303,7 @@ msgstr "Jezik"
 
 #: src/page/admin/sessions.vue:29
 msgid "Last Active"
-msgstr ""
+msgstr "Zadnje aktivno"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1661,7 +1662,7 @@ msgstr "Ovdje se još nema što vidjeti. Budi strpljiv."
 
 #: src/page/admin/sessions.vue:32 src/page/admin/users.vue:35
 msgid "Nothing was found."
-msgstr ""
+msgstr "Ništa nije pronađeno."
 
 #: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
@@ -2045,7 +2046,7 @@ msgstr "Recenzija"
 
 #: src/page/admin/users.vue:29
 msgid "Role"
-msgstr ""
+msgstr "Uloga"
 
 #: src/options/options.js:296
 msgid "Satellite"
@@ -2127,11 +2128,11 @@ msgstr "URL usluge"
 
 #: src/page/admin/sessions.vue:26
 msgid "Session ID"
-msgstr ""
+msgstr "ID sesije"
 
 #: src/page/admin.vue:45
 msgid "Sessions"
-msgstr ""
+msgstr "Sjednice"
 
 #: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
 #: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
@@ -2564,7 +2565,7 @@ msgstr "Korisničko ime"
 
 #: src/component/navigation.vue:436 src/component/navigation.vue:35
 msgid "Users"
-msgstr ""
+msgstr "Korisnici"
 
 #: src/options/themes.js:478
 msgid "Vanta"
@@ -2634,11 +2635,11 @@ msgstr "Potrudit ćemo se odgovoriti na sva vaša pitanja. Zauzvrat, molimo vas 
 
 #: src/page/admin/users.vue:30
 msgid "Web Login"
-msgstr ""
+msgstr "Web prijava"
 
 #: src/page/admin/users.vue:31
 msgid "WebDAV"
-msgstr ""
+msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
@@ -2737,6 +2738,9 @@ msgstr "Vaša se knjižnica kontinuirano analizira kako bi se automatski izradil
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povećavanje/smanjivanje"
+
+#~ msgid "Web Login "
+#~ msgstr "Web prijava "
 
 #~ msgid "Options"
 #~ msgstr "Opcije"

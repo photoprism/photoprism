@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-02-21 12:35+0000\n"
+"PO-Revision-Date: 2023-03-08 01:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -72,7 +72,7 @@ msgstr "Λογαριασμός"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr ""
+msgstr "Λογαριασμοί"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -96,7 +96,7 @@ msgstr "Κωδικός ενεργοποίησης"
 
 #: src/page/admin/users.vue:37
 msgid "Add"
-msgstr ""
+msgstr "Προσθέστε"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -483,7 +483,7 @@ msgstr "Chroma"
 
 #: src/page/admin/sessions.vue:28
 msgid "Client"
-msgstr ""
+msgstr "Πελάτης"
 
 #: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
@@ -1299,7 +1299,7 @@ msgstr "Γλώσσα"
 
 #: src/page/admin/sessions.vue:29
 msgid "Last Active"
-msgstr ""
+msgstr "Τελευταία ενεργή"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1658,7 +1658,7 @@ msgstr "Δεν υπάρχει τίποτα να δείτε εδώ ακόμα. Κ
 
 #: src/page/admin/sessions.vue:32 src/page/admin/users.vue:35
 msgid "Nothing was found."
-msgstr ""
+msgstr "Δεν βρέθηκε τίποτα."
 
 #: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
@@ -2042,7 +2042,7 @@ msgstr "Ανασκόπηση"
 
 #: src/page/admin/users.vue:29
 msgid "Role"
-msgstr ""
+msgstr "Ρόλος"
 
 #: src/options/options.js:296
 msgid "Satellite"
@@ -2124,11 +2124,11 @@ msgstr "URL υπηρεσίας"
 
 #: src/page/admin/sessions.vue:26
 msgid "Session ID"
-msgstr ""
+msgstr "Αναγνωριστικό συνεδρίας"
 
 #: src/page/admin.vue:45
 msgid "Sessions"
-msgstr ""
+msgstr "Συνεδρίες"
 
 #: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
 #: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
@@ -2561,7 +2561,7 @@ msgstr "Όνομα χρήστη"
 
 #: src/component/navigation.vue:436 src/component/navigation.vue:35
 msgid "Users"
-msgstr ""
+msgstr "Χρήστες"
 
 #: src/options/themes.js:478
 msgid "Vanta"
@@ -2631,11 +2631,11 @@ msgstr "Θα κάνουμε ό,τι μπορούμε για να απαντήσ�
 
 #: src/page/admin/users.vue:30
 msgid "Web Login"
-msgstr ""
+msgstr "Σύνδεση μέσω Web"
 
 #: src/page/admin/users.vue:31
 msgid "WebDAV"
-msgstr ""
+msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
@@ -2734,6 +2734,9 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Web Login "
+#~ msgstr "Σύνδεση μέσω Web "
 
 #~ msgid "Options"
 #~ msgstr "Επιλογές"
