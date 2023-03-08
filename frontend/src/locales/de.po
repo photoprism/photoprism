@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 14:13+0000\n"
+"PO-Revision-Date: 2023-03-08 14:15+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -2680,7 +2680,7 @@ msgstr "Wir geben immer unser Bestes, um so viele Fragen wie möglich zu beantwo
 
 #: src/component/admin/users/edit.vue:383 src/page/admin/users.vue:36
 msgid "Web Login"
-msgstr "Web-Anmeldung"
+msgstr "Web-Login"
 
 #: src/component/admin/users/edit.vue:400 src/page/admin/users.vue:43
 msgid "WebDAV"
