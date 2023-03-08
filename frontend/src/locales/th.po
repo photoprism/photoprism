@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 14:06+0000\n"
+"PO-Revision-Date: 2023-03-08 20:47+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -347,7 +347,7 @@ msgstr "สร้างอัลบั้มของช่วงเวลาพ
 
 #: src/component/admin/users/edit.vue:320
 msgid "Base Folder"
-msgstr ""
+msgstr "โฟลเดอร์ฐาน"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -1320,7 +1320,7 @@ msgstr "ใช้งานล่าสุด"
 
 #: src/page/admin/users.vue:43
 msgid "Last Login"
-msgstr ""
+msgstr "เข้าสู่ระบบครั้งล่าสุด"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -2547,7 +2547,7 @@ msgstr "การอัพโหลดล้มเหลว"
 
 #: src/component/admin/users/edit.vue:346
 msgid "Upload Folder"
-msgstr ""
+msgstr "อัปโหลดโฟลเดอร์"
 
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
