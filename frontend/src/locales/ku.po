@@ -2633,7 +2633,7 @@ msgid "We'll do our best to answer all your questions. In return, we ask you to 
 msgstr "ئێمە پێت دەڵێین چۆن چالاکی بکەیت کاتێک خۆت تۆمار دەکەیت بۆ سپۆنسەری پاتریۆن یان گیت هاب."
 
 #: src/page/admin/users.vue:30
-msgid "Web Login "
+msgid "Web Login"
 msgstr ""
 
 #: src/page/admin/users.vue:31

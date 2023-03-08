@@ -2635,7 +2635,7 @@ msgid "We'll do our best to answer all your questions. In return, we ask you to 
 msgstr "Vom face tot posibilul să vă răspundem la toate întrebările. În schimb, vă rugăm să ne susțineți pe Patreon sau GitHub Sponsors."
 
 #: src/page/admin/users.vue:30
-msgid "Web Login "
+msgid "Web Login"
 msgstr ""
 
 #: src/page/admin/users.vue:31
