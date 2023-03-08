@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-08 14:06+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -347,8 +346,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "自動建立特殊時刻、旅行和地點的相冊。"
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "基本路径"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2543,13 +2542,13 @@ msgstr "上傳完成。索引中…"
 msgid "Upload failed"
 msgstr "上傳失敗"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "上傳本地檔案"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "上传路径"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2785,6 +2784,12 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Base Path"
+#~ msgstr "基本路径"
+
+#~ msgid "Upload Path"
+#~ msgstr "上传路径"
 
 #~ msgid "Web Login "
 #~ msgstr "网络登录 "

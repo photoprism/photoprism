@@ -345,7 +345,7 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr ""
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
+msgid "Base Folder"
 msgstr ""
 
 #: src/page/about/about.vue:59
@@ -2539,12 +2539,12 @@ msgstr ""
 msgid "Upload failed"
 msgstr ""
 
-#: src/dialog/service/edit.vue:379
-msgid "Upload local files"
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
 msgstr ""
 
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
+#: src/dialog/service/edit.vue:379
+msgid "Upload local files"
 msgstr ""
 
 #: src/page/settings/general.vue:297

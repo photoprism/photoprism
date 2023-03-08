@@ -343,8 +343,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Δημιουργεί αυτόματα άλμπουμ με ιδιαίτερες στιγμές, ταξίδια και τοποθεσίες."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Διαδρομή βάσης"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2537,13 +2537,13 @@ msgstr "Το ανέβασμα ολοκληρώθηκε. Δημιουργία ε�
 msgid "Upload failed"
 msgstr "Αποτυχία αποστολής"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Ανέβασμα τοπικών αρχείων"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Διαδρομή φόρτωσης"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2777,6 +2777,12 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Base Path"
+#~ msgstr "Διαδρομή βάσης"
+
+#~ msgid "Upload Path"
+#~ msgstr "Διαδρομή φόρτωσης"
 
 #~ msgid "Web Login "
 #~ msgstr "Σύνδεση μέσω Web "

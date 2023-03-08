@@ -343,8 +343,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Loob automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Baasirada"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2539,13 +2539,13 @@ msgstr "Üleslaadimine lõpetatud. Indekseerimine…"
 msgid "Upload failed"
 msgstr "Üleslaadimine ebaõnnestus"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Laadi üles kohalikud failid"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Upload Path (üleslaadimise tee)"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2781,6 +2781,12 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "Base Path"
+#~ msgstr "Baasirada"
+
+#~ msgid "Upload Path"
+#~ msgstr "Upload Path (üleslaadimise tee)"
 
 #~ msgid "Web Login "
 #~ msgstr "Veebisisene sisselogimine "

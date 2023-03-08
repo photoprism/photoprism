@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -344,8 +343,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Samodejno ustvari albume posebnih trenutkov, potovanj in krajev."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Osnovna pot"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2538,13 +2537,13 @@ msgstr "Nalaganje je končano. Indeksiranje…"
 msgid "Upload failed"
 msgstr "Nalaganje ni uspelo"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Prenos lokalnih datotek"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Pot za nalaganje"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2778,6 +2777,12 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Base Path"
+#~ msgstr "Osnovna pot"
+
+#~ msgid "Upload Path"
+#~ msgstr "Pot za nalaganje"
 
 #~ msgid "Web Login "
 #~ msgstr "Spletna prijava "

@@ -346,8 +346,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "به طور خودکار آلبوم هایی از لحظات، سفرها و مکان های خاص ایجاد می کند."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "مسیر پایه"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2542,13 +2542,13 @@ msgstr "آپلود کامل شد. در حال نمایه سازی…"
 msgid "Upload failed"
 msgstr "آپلود انجام نشد"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "فایل های محلی را آپلود کنید"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "مسیر آپلود"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2784,6 +2784,12 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Base Path"
+#~ msgstr "مسیر پایه"
+
+#~ msgid "Upload Path"
+#~ msgstr "مسیر آپلود"
 
 #~ msgid "Web Login "
 #~ msgstr "ورود به وب "

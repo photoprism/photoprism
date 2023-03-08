@@ -343,8 +343,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Skep outomaties albums van spesiale oomblikke, reise en plekke."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Basispad"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2539,13 +2539,13 @@ msgstr "Oplaai voltooi. Indekseer tans …"
 msgid "Upload failed"
 msgstr "Oplegging misluk"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Laai plaaslike lêers op"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Oplaai pad"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2781,6 +2781,12 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#~ msgid "Base Path"
+#~ msgstr "Basispad"
+
+#~ msgid "Upload Path"
+#~ msgstr "Oplaai pad"
 
 #~ msgid "Web Login "
 #~ msgstr "Web aanmeld "

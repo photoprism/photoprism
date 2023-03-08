@@ -346,8 +346,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "สร้างอัลบั้มของช่วงเวลาพิเศษ การเดินทาง และสถานที่ต่าง ๆ โดยอัตโนมัติ"
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "เส้นทางฐาน"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2540,13 +2540,13 @@ msgstr "อัพโหลดเสร็จแล้ว กำลังจั�
 msgid "Upload failed"
 msgstr "การอัพโหลดล้มเหลว"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "อัปโหลดไฟล์ในเครื่อง"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "อัปโหลดเส้นทาง"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2780,6 +2780,12 @@ msgstr "คลังของคุณได้รับการวิเคร
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#~ msgid "Base Path"
+#~ msgstr "เส้นทางฐาน"
+
+#~ msgid "Upload Path"
+#~ msgstr "อัปโหลดเส้นทาง"
 
 #~ msgid "Web Login "
 #~ msgstr "เข้าสู่ระบบเว็บ "

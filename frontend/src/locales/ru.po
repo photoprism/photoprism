@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-08 14:06+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -347,8 +346,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Автоматически создает альбомы особых моментов, поездок и мест."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Базовый путь"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2543,13 +2542,13 @@ msgstr "Загрузка завершена. Индексирование…"
 msgid "Upload failed"
 msgstr "Загрузка не удалась"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Загрузка локальных файлов"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Путь загрузки"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2785,6 +2784,12 @@ msgstr "Ваша библиотека постоянно анализирует�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#~ msgid "Base Path"
+#~ msgstr "Базовый путь"
+
+#~ msgid "Upload Path"
+#~ msgstr "Путь загрузки"
 
 #~ msgid "Web Login "
 #~ msgstr "Веб-логин "

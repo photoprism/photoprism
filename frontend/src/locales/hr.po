@@ -10,8 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -347,8 +346,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Automatski stvara albume posebnih trenutaka, putovanja i mjesta."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Osnovni put"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2541,13 +2540,13 @@ msgstr "Prijenos je završen. Indeksiranje…"
 msgid "Upload failed"
 msgstr "Prijenos nije uspio"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Prenesite lokalne datoteke"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Učitaj put"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2781,6 +2780,12 @@ msgstr "Vaša se knjižnica kontinuirano analizira kako bi se automatski izradil
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povećavanje/smanjivanje"
+
+#~ msgid "Base Path"
+#~ msgstr "Osnovni put"
+
+#~ msgid "Upload Path"
+#~ msgstr "Učitaj put"
 
 #~ msgid "Web Login "
 #~ msgstr "Web prijava "

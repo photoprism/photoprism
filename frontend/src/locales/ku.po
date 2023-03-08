@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-08 14:06+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ku/>\n"
+"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -347,8 +346,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Bixweber albûmên demên taybetî, rêwîtî û deveran diafirîne."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Rêya bingehîn"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2541,13 +2540,13 @@ msgstr "بارکردن تەواو بوو. نیشانەکردن…"
 msgid "Upload failed"
 msgstr "بارکردنەکە سەرکەوتوو نەبوو"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "بارکردنی فایلە ناوخۆییەکان"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Rêya barkirin"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2781,6 +2780,12 @@ msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên dem�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
+
+#~ msgid "Base Path"
+#~ msgstr "Rêya bingehîn"
+
+#~ msgid "Upload Path"
+#~ msgstr "Rêya barkirin"
 
 #~ msgid "Web Login "
 #~ msgstr "Têketina Webê "

@@ -346,8 +346,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara automatik."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Laluan Pangkalan"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2540,13 +2540,13 @@ msgstr "Muat naik selesai. Pengindeksan…"
 msgid "Upload failed"
 msgstr "Muat naik gagal"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Muat naik fail tempatan"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Laluan Muat Naik"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2780,6 +2780,12 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Base Path"
+#~ msgstr "Laluan Pangkalan"
+
+#~ msgid "Upload Path"
+#~ msgstr "Laluan Muat Naik"
 
 #~ msgid "Web Login "
 #~ msgstr "Log Masuk Web "

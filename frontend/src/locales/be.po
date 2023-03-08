@@ -7,8 +7,7 @@ msgstr ""
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -344,8 +343,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Аўтаматычна стварае альбомы асаблівых момантаў, паездак і месцаў."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Базавы шлях"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2540,13 +2539,13 @@ msgstr "Запампоўка завершана. Індэксацыя…"
 msgid "Upload failed"
 msgstr "Памылка загрузкі"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Загрузіць лакальныя файлы"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Шлях загрузкі"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2782,6 +2781,12 @@ msgstr "Ваша бібліятэка пастаянна аналізуецца 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Павелічэнне/памяншэнне"
+
+#~ msgid "Base Path"
+#~ msgstr "Базавы шлях"
+
+#~ msgid "Upload Path"
+#~ msgstr "Шлях загрузкі"
 
 #~ msgid "Web Login "
 #~ msgstr "Інтэрнэт-уваход "

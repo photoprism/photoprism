@@ -343,8 +343,8 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Luo automaattisesti albumeja erityisistä hetkistä, matkoista ja paikoista."
 
 #: src/component/admin/users/edit.vue:321
-msgid "Base Path"
-msgstr "Peruspolku"
+msgid "Base Folder"
+msgstr ""
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2537,13 +2537,13 @@ msgstr "Lähetys valmis. Indeksoidaan…"
 msgid "Upload failed"
 msgstr "Lähetys epäonnistui"
 
+#: src/component/admin/users/edit.vue:347
+msgid "Upload Folder"
+msgstr ""
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Lähetä paikallisia tiedostoja"
-
-#: src/component/admin/users/edit.vue:347
-msgid "Upload Path"
-msgstr "Lataa polku"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2777,6 +2777,12 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
+
+#~ msgid "Base Path"
+#~ msgstr "Peruspolku"
+
+#~ msgid "Upload Path"
+#~ msgstr "Lataa polku"
 
 #~ msgid "Web Login "
 #~ msgstr "Web-kirjautuminen "
