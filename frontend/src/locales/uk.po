@@ -3,14 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-21 12:35+0000\n"
+"PO-Revision-Date: 2023-03-08 01:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -75,7 +76,7 @@ msgstr "Обліковий запис"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr ""
+msgstr "Рахунки"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -99,7 +100,7 @@ msgstr "Код активації"
 
 #: src/page/admin/users.vue:37
 msgid "Add"
-msgstr ""
+msgstr "Додати"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -486,7 +487,7 @@ msgstr "Колірність"
 
 #: src/page/admin/sessions.vue:28
 msgid "Client"
-msgstr ""
+msgstr "Клієнт"
 
 #: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
@@ -1302,7 +1303,7 @@ msgstr "Мова"
 
 #: src/page/admin/sessions.vue:29
 msgid "Last Active"
-msgstr ""
+msgstr "Останній активний"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1661,7 +1662,7 @@ msgstr "Поки що тут немає на що дивитися."
 
 #: src/page/admin/sessions.vue:32 src/page/admin/users.vue:35
 msgid "Nothing was found."
-msgstr ""
+msgstr "Нічого не знайшли."
 
 #: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
@@ -2045,7 +2046,7 @@ msgstr "Потребують перевірки"
 
 #: src/page/admin/users.vue:29
 msgid "Role"
-msgstr ""
+msgstr "Роль"
 
 #: src/options/options.js:296
 msgid "Satellite"
@@ -2127,11 +2128,11 @@ msgstr "Послуги"
 
 #: src/page/admin/sessions.vue:26
 msgid "Session ID"
-msgstr ""
+msgstr "Ідентифікатор сеансу"
 
 #: src/page/admin.vue:45
 msgid "Sessions"
-msgstr ""
+msgstr "Сесії"
 
 #: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
 #: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
@@ -2566,7 +2567,7 @@ msgstr "Ім'я користувача"
 
 #: src/component/navigation.vue:436 src/component/navigation.vue:35
 msgid "Users"
-msgstr ""
+msgstr "Користувачі"
 
 #: src/options/themes.js:478
 msgid "Vanta"
@@ -2636,11 +2637,11 @@ msgstr "Ми зробимо все можливе, щоб відповісти �
 
 #: src/page/admin/users.vue:30
 msgid "Web Login"
-msgstr ""
+msgstr "Веб-логін"
 
 #: src/page/admin/users.vue:31
 msgid "WebDAV"
-msgstr ""
+msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
@@ -2741,6 +2742,9 @@ msgstr "Ваша бібліотека постійно аналізується,
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Збільшення/зменшення"
+
+#~ msgid "Web Login "
+#~ msgstr "Веб-логін "
 
 #~ msgid "Options"
 #~ msgstr "Параметри"

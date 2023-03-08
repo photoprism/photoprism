@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-21 12:35+0000\n"
+"PO-Revision-Date: 2023-03-08 01:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -75,7 +76,7 @@ msgstr "계정"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr ""
+msgstr "계정"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -99,7 +100,7 @@ msgstr "활성화 코드"
 
 #: src/page/admin/users.vue:37
 msgid "Add"
-msgstr ""
+msgstr "추가"
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -486,7 +487,7 @@ msgstr "채도"
 
 #: src/page/admin/sessions.vue:28
 msgid "Client"
-msgstr ""
+msgstr "클라이언트"
 
 #: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
@@ -1302,7 +1303,7 @@ msgstr "언어"
 
 #: src/page/admin/sessions.vue:29
 msgid "Last Active"
-msgstr ""
+msgstr "마지막 활성"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1661,7 +1662,7 @@ msgstr "아직 볼 것이 없습니다. 인내심을 가지세요."
 
 #: src/page/admin/sessions.vue:32 src/page/admin/users.vue:35
 msgid "Nothing was found."
-msgstr ""
+msgstr "아무것도 발견되지 않았습니다."
 
 #: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
@@ -2045,7 +2046,7 @@ msgstr "리뷰"
 
 #: src/page/admin/users.vue:29
 msgid "Role"
-msgstr ""
+msgstr "역할"
 
 #: src/options/options.js:296
 msgid "Satellite"
@@ -2127,11 +2128,11 @@ msgstr "서비스"
 
 #: src/page/admin/sessions.vue:26
 msgid "Session ID"
-msgstr ""
+msgstr "세션 ID"
 
 #: src/page/admin.vue:45
 msgid "Sessions"
-msgstr ""
+msgstr "세션"
 
 #: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
 #: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
@@ -2564,7 +2565,7 @@ msgstr "사용자 이름"
 
 #: src/component/navigation.vue:436 src/component/navigation.vue:35
 msgid "Users"
-msgstr ""
+msgstr "사용자"
 
 #: src/options/themes.js:478
 msgid "Vanta"
@@ -2634,11 +2635,11 @@ msgstr "귀하의 모든 질문에 최선을 다해 답변해 드리겠습니다
 
 #: src/page/admin/users.vue:30
 msgid "Web Login"
-msgstr ""
+msgstr "웹 로그인"
 
 #: src/page/admin/users.vue:31
 msgid "WebDAV"
-msgstr ""
+msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
@@ -2737,6 +2738,9 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#~ msgid "Web Login "
+#~ msgstr "웹 로그인 "
 
 #~ msgid "Options"
 #~ msgstr "옵션"
