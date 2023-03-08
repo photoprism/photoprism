@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-08 14:00+0000\n"
+"PO-Revision-Date: 2023-03-08 14:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -344,7 +344,7 @@ msgstr "Loob automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Folder"
-msgstr ""
+msgstr "Aluskaustik"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2541,7 +2541,7 @@ msgstr "Üleslaadimine ebaõnnestus"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Folder"
-msgstr ""
+msgstr "Upload kausta"
 
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"

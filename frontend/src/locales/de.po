@@ -2785,7 +2785,7 @@ msgstr "Herein/Herauszoomen"
 #~ msgstr "Basispfad"
 
 #~ msgid "Upload Path"
-#~ msgstr "Pfad hochladen"
+#~ msgstr "Upload-Ordner"
 
 #~ msgid "Web Login "
 #~ msgstr "Web-Anmeldung "
