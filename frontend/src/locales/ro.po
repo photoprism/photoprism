@@ -3,14 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 01:10+0000\n"
+"PO-Revision-Date: 2023-03-08 14:06+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -133,7 +135,7 @@ msgstr "Adăugat"
 
 #: src/options/admin.js:4 src/options/admin.js:16
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
@@ -347,7 +349,7 @@ msgstr "Creează automat albume cu momente, călătorii și locuri speciale."
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Path"
-msgstr ""
+msgstr "Calea de bază"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -1101,7 +1103,7 @@ msgstr "Gri"
 
 #: src/options/admin.js:8 src/options/admin.js:32
 msgid "Guest"
-msgstr ""
+msgstr "Invitat"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Hash"
@@ -1942,7 +1944,7 @@ msgstr "Scorul de calitate"
 
 #: src/page/admin/users.vue:78
 msgid "r"
-msgstr ""
+msgstr "r"
 
 #: src/page/discover.vue:16
 msgid "Random"
@@ -2316,7 +2318,7 @@ msgstr "Conectat cu succes"
 
 #: src/component/admin/users/edit.vue:366 src/page/admin/users.vue:69
 msgid "Super Admin"
-msgstr ""
+msgstr "Super Admin"
 
 #: src/component/admin/users/add.vue:29 src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2448,7 +2450,7 @@ msgstr "Tip"
 
 #: src/options/admin.js:10
 msgid "Unauthorized"
-msgstr ""
+msgstr "neautorizat"
 
 #: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
@@ -2548,7 +2550,7 @@ msgstr "Încărcați fișiere locale"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Path"
-msgstr ""
+msgstr "Cale de încărcare"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2556,7 +2558,7 @@ msgstr "Încărcați pe WebDAV și partajați linkuri cu prietenii."
 
 #: src/options/admin.js:7 src/options/admin.js:28
 msgid "Uploader"
-msgstr ""
+msgstr "Uploader"
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2648,7 +2650,7 @@ msgstr "Vedere"
 
 #: src/options/admin.js:6 src/options/admin.js:24
 msgid "Viewer"
-msgstr ""
+msgstr "Vizualizator"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
@@ -2656,7 +2658,7 @@ msgstr "Vizitați docs.photoprism.app/user-guide pentru a afla cum să vă sincr
 
 #: src/options/admin.js:9
 msgid "Visitor"
-msgstr ""
+msgstr "Vizitator"
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:29

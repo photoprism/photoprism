@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 01:09+0000\n"
+"PO-Revision-Date: 2023-03-08 14:06+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
+"frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -133,7 +134,7 @@ msgstr "Ajouté"
 
 #: src/options/admin.js:4 src/options/admin.js:16
 msgid "Admin"
-msgstr ""
+msgstr "Administrateur"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
@@ -347,7 +348,7 @@ msgstr "Création automatique d'albums regroupant des moments, des voyages et de
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Path"
-msgstr ""
+msgstr "Chemin de base"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -1101,7 +1102,7 @@ msgstr "Gris"
 
 #: src/options/admin.js:8 src/options/admin.js:32
 msgid "Guest"
-msgstr ""
+msgstr "Invité"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Hash"
@@ -1942,7 +1943,7 @@ msgstr "Score de qualité"
 
 #: src/page/admin/users.vue:78
 msgid "r"
-msgstr ""
+msgstr "r"
 
 #: src/page/discover.vue:16
 msgid "Random"
@@ -2316,7 +2317,7 @@ msgstr "Bien connecté"
 
 #: src/component/admin/users/edit.vue:366 src/page/admin/users.vue:69
 msgid "Super Admin"
-msgstr ""
+msgstr "Super Admin"
 
 #: src/component/admin/users/add.vue:29 src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2448,7 +2449,7 @@ msgstr "Type"
 
 #: src/options/admin.js:10
 msgid "Unauthorized"
-msgstr ""
+msgstr "Non autorisé"
 
 #: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
@@ -2548,7 +2549,7 @@ msgstr "Charger des fichiers locaux"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Path"
-msgstr ""
+msgstr "Chemin d'accès"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2556,7 +2557,7 @@ msgstr "Charger via le protocole WebDAV et partager des liens avec des amis."
 
 #: src/options/admin.js:7 src/options/admin.js:28
 msgid "Uploader"
-msgstr ""
+msgstr "Uploader"
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2648,7 +2649,7 @@ msgstr "Voir"
 
 #: src/options/admin.js:6 src/options/admin.js:24
 msgid "Viewer"
-msgstr ""
+msgstr "Visionneuse"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
@@ -2656,7 +2657,7 @@ msgstr "Consultez le site docs.photoprism.app/guide d'utilisation pour savoir co
 
 #: src/options/admin.js:9
 msgid "Visitor"
-msgstr ""
+msgstr "Visiteur"
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:29

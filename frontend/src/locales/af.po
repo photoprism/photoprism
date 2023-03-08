@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-08 01:10+0000\n"
+"PO-Revision-Date: 2023-03-08 14:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -130,7 +130,7 @@ msgstr "Bygevoeg"
 
 #: src/options/admin.js:4 src/options/admin.js:16
 msgid "Admin"
-msgstr ""
+msgstr "admin"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
@@ -344,7 +344,7 @@ msgstr "Skep outomaties albums van spesiale oomblikke, reise en plekke."
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Path"
-msgstr ""
+msgstr "Basispad"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -1098,7 +1098,7 @@ msgstr "Grys"
 
 #: src/options/admin.js:8 src/options/admin.js:32
 msgid "Guest"
-msgstr ""
+msgstr "Gas"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Hash"
@@ -1939,7 +1939,7 @@ msgstr "Gehaltetelling"
 
 #: src/page/admin/users.vue:78
 msgid "r"
-msgstr ""
+msgstr "r"
 
 #: src/page/discover.vue:16
 msgid "Random"
@@ -2313,7 +2313,7 @@ msgstr "Suksesvol gekoppel"
 
 #: src/component/admin/users/edit.vue:366 src/page/admin/users.vue:69
 msgid "Super Admin"
-msgstr ""
+msgstr "Super Admin"
 
 #: src/component/admin/users/add.vue:29 src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2445,7 +2445,7 @@ msgstr "Tik"
 
 #: src/options/admin.js:10
 msgid "Unauthorized"
-msgstr ""
+msgstr "Ongemagtig"
 
 #: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
@@ -2545,7 +2545,7 @@ msgstr "Laai plaaslike lêers op"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Path"
-msgstr ""
+msgstr "Oplaai pad"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2553,7 +2553,7 @@ msgstr "Laai op na WebDAV en deel skakels met vriende."
 
 #: src/options/admin.js:7 src/options/admin.js:28
 msgid "Uploader"
-msgstr ""
+msgstr "Oplaaier"
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2645,7 +2645,7 @@ msgstr "Beskou"
 
 #: src/options/admin.js:6 src/options/admin.js:24
 msgid "Viewer"
-msgstr ""
+msgstr "Kyker"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
@@ -2653,7 +2653,7 @@ msgstr "Besoek docs.photoprism.app/user-guide om te leer hoe om jou prente te si
 
 #: src/options/admin.js:9
 msgid "Visitor"
-msgstr ""
+msgstr "Besoeker"
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:29
