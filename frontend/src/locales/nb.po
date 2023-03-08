@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-21 12:35+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
-"photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,15 +40,15 @@ msgstr "%{n} personer ble funnet"
 msgid "%{n} pictures found"
 msgstr "%{n} bilder funnet"
 
-#: src/options/options.js:383
+#: src/options/options.js:387
 msgid "1 hour"
 msgstr "1 time"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "12 hours"
 msgstr "12 timer"
 
-#: src/options/options.js:384
+#: src/options/options.js:388
 msgid "4 hours"
 msgstr "4 timer"
 
@@ -67,12 +66,16 @@ msgstr "Om"
 msgid "Abyss"
 msgstr "Avgrunn"
 
-#: src/component/navigation.vue:94 src/component/navigation.vue:1965
+#: src/component/navigation.vue:95 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:138 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "Konto"
+
+#: src/page/admin.vue:33
+msgid "Accounts"
+msgstr ""
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -93,6 +96,10 @@ msgstr "Aktiver"
 #: src/page/connect.vue:292 src/page/connect.vue:360
 msgid "Activation Code"
 msgstr "Aktiveringskode"
+
+#: src/page/admin/users.vue:37
+msgid "Add"
+msgstr ""
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -124,27 +131,31 @@ msgstr "Legg til i album"
 msgid "Added"
 msgstr "Lagt til"
 
+#: src/app/routes.js:100
+msgid "Admin"
+msgstr ""
+
 #: src/page/settings.vue:60
 msgid "Advanced"
 msgstr "Avansert"
 
-#: src/options/options.js:393
+#: src/options/options.js:397
 msgid "After 1 day"
 msgstr "Etter 1 dag"
 
-#: src/options/options.js:394
+#: src/options/options.js:398
 msgid "After 3 days"
 msgstr "Etter 3 dager"
 
-#: src/options/options.js:395
+#: src/options/options.js:399
 msgid "After 7 days"
 msgstr "Etter 7 dager"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After one month"
 msgstr "Etter én måned"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After one year"
 msgstr "Etter ett år"
 
@@ -152,11 +163,11 @@ msgstr "Etter ett år"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Etter at du har valgt bilder fra søkeresultatene, kan du legge dem til i et album ved hjelp av hurtigmenyen."
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After two months"
 msgstr "Etter to måneder"
 
-#: src/options/options.js:396
+#: src/options/options.js:400
 msgid "After two weeks"
 msgstr "Etter to uker"
 
@@ -168,9 +179,9 @@ msgstr "Album"
 msgid "Album Name"
 msgstr "Albumnavn"
 
-#: src/app/routes.js:162 src/component/album/toolbar.vue:52
+#: src/app/routes.js:175 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:151 src/component/navigation.vue:161
-#: src/component/navigation.vue:548 src/component/navigation.vue:4
+#: src/component/navigation.vue:556 src/component/navigation.vue:4
 #: src/component/navigation.vue:648
 msgid "Albums"
 msgstr "Album"
@@ -250,8 +261,8 @@ msgstr "En feil oppstod - er du frakoblet?"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:92 src/options/options.js:318
+#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
 msgid "Animated"
 msgstr "Animert"
 
@@ -276,7 +287,7 @@ msgstr "Bruk"
 msgid "Approve"
 msgstr "Godkjenn"
 
-#: src/app/routes.js:243 src/component/navigation.vue:138
+#: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -351,19 +362,19 @@ msgstr "Info"
 msgid "Birth Date"
 msgstr "Fødselsdato"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Black"
 msgstr "Svart"
 
-#: src/options/options.js:431
+#: src/options/options.js:435
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos, bedre kantutjevning"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Blue"
 msgstr "Blå"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Brown"
 msgstr "Brun"
 
@@ -379,7 +390,7 @@ msgstr "Bla gjennom indekserte filer og mapper i Biblioteket."
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Bla gjennom kunnskapsbasen for detaljert informasjon om spesifikke produktfunksjoner, tjenester og relaterte ressurser."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:425
+#: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
 msgstr "Feilmelding"
 
@@ -391,7 +402,7 @@ msgstr "Opptatt, vennligst vent…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Ved å bruke programvaren og tjenestene vi tilbyr, godtar du våre vilkår for bruk, personvernerklæring og etiske retningslinjer."
 
-#: src/app/routes.js:175 src/component/navigation.vue:257
+#: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
 msgid "Calendar"
 msgstr "Kalender"
@@ -476,6 +487,10 @@ msgstr "Krysset av"
 #: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
 msgid "Chroma"
 msgstr "Kroma"
+
+#: src/page/admin/sessions.vue:28
+msgid "Client"
+msgstr ""
 
 #: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
@@ -571,7 +586,7 @@ msgstr "Kunne ikke finne noe."
 msgid "Country"
 msgstr "Land"
 
-#: src/page/login.vue:19
+#: src/page/auth/login.vue:19
 msgid "Create Account"
 msgstr "Opprett konto"
 
@@ -587,7 +602,7 @@ msgstr "Opprettet"
 msgid "Creating thumbnails for"
 msgstr "Oppretter miniatyrbilder for"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubisk: Moderat kvalitet, god ytelse"
 
@@ -595,11 +610,11 @@ msgstr "Kubisk: Moderat kvalitet, god ytelse"
 msgid "Current Password"
 msgstr "Nåværende Passord"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:422
+#: src/page/about/feedback.vue:5 src/options/options.js:426
 msgid "Customer Support"
 msgstr "Kundeservice"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Cyan"
 msgstr "Turkis"
 
@@ -607,7 +622,7 @@ msgstr "Turkis"
 msgid "Cyano"
 msgstr "Turkis"
 
-#: src/options/options.js:386
+#: src/options/options.js:390
 msgid "Daily"
 msgstr "Daglig"
 
@@ -620,7 +635,7 @@ msgstr "Dag"
 msgid "Debug Logs"
 msgstr "Feilsøkingslogger"
 
-#: src/options/options.js:279 src/options/options.js:337
+#: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
 msgstr "Standard"
@@ -713,8 +728,8 @@ msgstr "Deaktiverer støtte for vektorgrafikk."
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Deaktiverer videotranskoding og miniatyrbildeekstraksjon."
 
-#: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
-#: src/app/routes.js:440
+#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
+#: src/app/routes.js:453
 msgid "Discover"
 msgstr "Utforsk"
 
@@ -750,7 +765,7 @@ msgstr "Ikke bruk RawTherapee til å konvertere RAW-bilder."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Ikke bruk TensorFlow for bildeklassifisering."
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Donations"
 msgstr "Donasjoner"
 
@@ -842,8 +857,8 @@ msgstr "Rediger Bilde"
 msgid "Edited"
 msgstr "Redigert"
 
-#: src/page/settings/account.vue:221 src/page/settings/account.vue:616
-#: src/page/settings/account.vue:220
+#: src/page/admin/users.vue:28 src/page/settings/account.vue:221
+#: src/page/settings/account.vue:616 src/page/settings/account.vue:220
 msgid "Email"
 msgstr "E-post"
 
@@ -855,7 +870,7 @@ msgstr "Aktiver nye funksjoner som er under utvikling."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverer forhåndsinnstillinger for RAW -omformer. Kan redusere ytelsen."
 
-#: src/app/routes.js:294 src/component/navigation.vue:395
+#: src/app/routes.js:307 src/component/navigation.vue:395
 msgid "Errors"
 msgstr "Feil"
 
@@ -867,7 +882,7 @@ msgstr "Anslå omtrentlig plassering hvor bildene er tatt uten koordinater."
 msgid "Estimates"
 msgstr "Anslag"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "Every two days"
 msgstr "Hver andre dag"
 
@@ -927,7 +942,7 @@ msgstr "Fikk ikke til å oppdatere lenke"
 msgid "Family Name"
 msgstr "Merkelappnavn"
 
-#: src/options/options.js:264
+#: src/options/options.js:268
 msgid "Fast"
 msgstr "Hurtig"
 
@@ -935,12 +950,12 @@ msgstr "Hurtig"
 msgid "Favorite"
 msgstr "Favoritt"
 
-#: src/app/routes.js:208 src/component/navigation.vue:231
+#: src/app/routes.js:221 src/component/navigation.vue:231
 #: src/component/navigation.vue:926 src/page/albums.vue:86
 msgid "Favorites"
 msgstr "Favoritter"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:424
+#: src/page/about/feedback.vue:7 src/options/options.js:428
 msgid "Feature Request"
 msgstr "Funksjonsforespørsel"
 
@@ -948,7 +963,7 @@ msgstr "Funksjonsforespørsel"
 msgid "Feed"
 msgstr "Feed"
 
-#: src/component/navigation.vue:436 src/component/navigation.vue:35
+#: src/component/navigation.vue:444 src/component/navigation.vue:43
 msgid "Feedback"
 msgstr "Tilbakemelding"
 
@@ -956,15 +971,15 @@ msgstr "Tilbakemelding"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Vennligst kontakt oss på hello@photoprism.app hvis du har noen spørsmål eller trenger hjelp."
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "Female"
 msgstr "Hunn"
 
-#: src/model/file.js:296
+#: src/model/file.js:294
 msgid "File"
 msgstr "Fil"
 
-#: src/app/routes.js:281
+#: src/app/routes.js:294
 msgid "File Browser"
 msgstr "Filutforsker"
 
@@ -986,7 +1001,7 @@ msgstr "Fil"
 msgid "Filename"
 msgstr "Filnavn"
 
-#: src/component/navigation.vue:566 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:574 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Filer"
@@ -1013,12 +1028,12 @@ msgstr "Mappen inneholder %{n} filer"
 msgid "Folder is empty"
 msgstr "Mappen er tom"
 
-#: src/app/routes.js:188 src/component/navigation.vue:332
+#: src/app/routes.js:201 src/component/navigation.vue:332
 #: src/component/navigation.vue:1281
 msgid "Folders"
 msgstr "Mapper"
 
-#: src/page/login.vue:29
+#: src/page/auth/login.vue:29
 msgid "Forgot password?"
 msgstr "Glemt passord?"
 
@@ -1062,7 +1077,7 @@ msgstr "Originalnavn"
 msgid "Global Options"
 msgstr "Globale alternativer"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Gold"
 msgstr "Gull"
 
@@ -1070,11 +1085,11 @@ msgstr "Gull"
 msgid "Grayscale"
 msgstr "Gråskala"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Green"
 msgstr "Grønn"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Grey"
 msgstr "Grå"
 
@@ -1086,7 +1101,7 @@ msgstr "Hash"
 msgid "Help"
 msgstr "Hjelp"
 
-#: src/app/routes.js:77
+#: src/app/routes.js:78
 msgid "Help & Support"
 msgstr "Hjelp og støtte"
 
@@ -1094,7 +1109,7 @@ msgstr "Hjelp og støtte"
 msgid "Hidden"
 msgstr "Skjult"
 
-#: src/app/routes.js:287
+#: src/app/routes.js:300
 msgid "Hidden Files"
 msgstr "Skjulte Filer"
 
@@ -1106,7 +1121,7 @@ msgstr "Skjul"
 msgid "Hide photos that have been moved to archive."
 msgstr "Skjul bilder som har blitt flyttet til arkivet."
 
-#: src/options/options.js:341
+#: src/options/options.js:345
 msgid "High"
 msgstr "Høy"
 
@@ -1126,7 +1141,7 @@ msgstr "Hvis dette ikke hjelper, eller du har andre spørsmål:"
 msgid "image"
 msgstr "bilde"
 
-#: src/model/file.js:218 src/options/options.js:310
+#: src/model/file.js:216 src/options/options.js:314
 msgid "Image"
 msgstr "Bilde"
 
@@ -1176,7 +1191,7 @@ msgstr "I tillegg får sponsorer direkte teknisk støtte via e-post."
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Hvis bilder du forventer mangler, kan du skanne biblioteket på nytt og vente til indekseringen er fullført."
 
-#: src/component/navigation.vue:572 src/page/library.vue:35
+#: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Indeks"
@@ -1270,7 +1285,7 @@ msgstr "Kunnskapsbase"
 msgid "Label"
 msgstr "Merkelapp"
 
-#: src/app/routes.js:300 src/component/navigation.vue:319
+#: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1281,13 +1296,17 @@ msgstr "Merkelapper"
 msgid "Labels deleted"
 msgstr "Merkelapper slettet"
 
-#: src/options/options.js:432
+#: src/options/options.js:436
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Detaljbevaring, minimale artefakter"
 
 #: src/page/settings/general.vue:93
 msgid "Language"
 msgstr "Språk"
+
+#: src/page/admin/sessions.vue:29
+msgid "Last Active"
+msgstr ""
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1308,7 +1327,7 @@ msgstr "Lavendel"
 msgid "Learn more"
 msgstr "Lær mer"
 
-#: src/component/navigation.vue:593
+#: src/component/navigation.vue:601
 msgid "Legal Information"
 msgstr "Juridisk informasjon"
 
@@ -1316,15 +1335,15 @@ msgstr "Juridisk informasjon"
 msgid "Lens"
 msgstr "Linse"
 
-#: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
+#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "Bibliotek"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
-#: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
+#: src/page/connect.vue:4 src/component/navigation.vue:452
+#: src/component/navigation.vue:51 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
 msgstr "Lisens"
@@ -1333,7 +1352,7 @@ msgstr "Lisens"
 msgid "Like"
 msgstr "Lik"
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Lime"
 msgstr "Lime"
 
@@ -1341,7 +1360,7 @@ msgstr "Lime"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Grensen nådd, viser de første €{n} filene"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineær: Veldig jevn, beste ytelse"
 
@@ -1353,9 +1372,9 @@ msgstr "Lenke"
 msgid "List"
 msgstr "Liste"
 
-#: src/app/routes.js:215 src/component/photo/cards.vue:293
+#: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:322
+#: src/options/options.js:326
 msgid "Live"
 msgstr "Direkte"
 
@@ -1381,17 +1400,17 @@ msgstr "Plassering"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Loggmeldinger vises her når PhotoPrism kommer over ødelagte filer eller det er andre potensielle problemer."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1743
-#: src/component/navigation.vue:2017
+#: src/component/navigation.vue:474 src/component/navigation.vue:1774
+#: src/component/navigation.vue:2048
 msgid "Login"
 msgstr "Logg inn"
 
-#: src/component/navigation.vue:510 src/component/navigation.vue:1854
-#: src/component/navigation.vue:1885 src/component/navigation.vue:1936
+#: src/component/navigation.vue:518 src/component/navigation.vue:1885
+#: src/component/navigation.vue:1916 src/component/navigation.vue:1967
 msgid "Logout"
 msgstr "Log ut"
 
-#: src/component/navigation.vue:578 src/page/library.vue:58
+#: src/component/navigation.vue:586 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "Logger"
@@ -1400,15 +1419,15 @@ msgstr "Logger"
 msgid "Longitude"
 msgstr "Lengdegrad"
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "Low"
 msgstr "Lav"
 
-#: src/options/options.js:283
+#: src/options/options.js:287
 msgid "Low Resolution"
 msgstr "Lav oppløsning"
 
-#: src/options/options.js:404
+#: src/options/options.js:408
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1416,7 +1435,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Hovedfarge"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Male"
 msgstr "Mann"
 
@@ -1440,7 +1459,7 @@ msgstr "Kart"
 msgid "Marker"
 msgstr "Markør"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Medium"
 msgstr "Medium"
 
@@ -1460,7 +1479,7 @@ msgstr "Minimer"
 msgid "Missing"
 msgstr "Mangler"
 
-#: src/app/routes.js:149 src/component/navigation.vue:244
+#: src/app/routes.js:162 src/component/navigation.vue:244
 #: src/component/navigation.vue:971 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "Øyeblikk"
@@ -1507,16 +1526,16 @@ msgstr "Flytt Filer"
 msgid "Must have at least %{n} characters."
 msgstr "Må ha minst %{n} tegn."
 
-#: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
-#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
-#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
-#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
-#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
-#: src/page/about/feedback.vue:171 src/page/albums.vue:87
-#: src/page/labels.vue:339 src/page/login.vue:89 src/page/people/new.vue:52
-#: src/page/people/new.vue:299 src/page/people/recognized.vue:396
-#: src/page/settings/services.vue:26
+#: src/page/about/feedback.vue:172 src/page/admin/users.vue:27
+#: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
+#: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
+#: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
+#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159
+#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225
+#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:171
+#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/page/people/new.vue:52 src/page/people/new.vue:297
+#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Navn"
 
@@ -1531,7 +1550,8 @@ msgstr "Navn for langt"
 msgid "Neon"
 msgstr "Neon"
 
-#: src/options/options.js:382 src/options/options.js:392
+#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:50
+#: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Aldri"
@@ -1615,7 +1635,7 @@ msgstr "Ingen advarsler eller feilmeldinger inneholder dette nøkkelordet. Merk 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Bilder som ikke er fotografiske eller har lav kvalitet må gjennomgås før de kommer i søkeresultater."
 
-#: src/options/options.js:260 src/options/options.js:349
+#: src/options/options.js:264 src/options/options.js:353
 msgid "None"
 msgstr "Ingen"
 
@@ -1643,7 +1663,11 @@ msgstr "Notater"
 msgid "Nothing to see here yet."
 msgstr "Ingenting å se her ennå. Vær tålmodig."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1788
+#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:35
+msgid "Nothing was found."
+msgstr ""
+
+#: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
 msgstr "Frakoblet"
 
@@ -1656,7 +1680,7 @@ msgstr "Eldste først"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "På Windows skriver du inn følgende ressurs i tilkoblingsdialogen:"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "Once a week"
 msgstr "Én gang i uken"
 
@@ -1697,7 +1721,7 @@ msgstr "Onyks"
 msgid "or ask in our Community Chat"
 msgstr "eller spør i felleschatten vår"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Orange"
 msgstr "Oransje"
 
@@ -1724,7 +1748,7 @@ msgstr "Originalnavn"
 msgid "Originals"
 msgstr "Originaler"
 
-#: src/options/options.js:427 src/options/options.js:440
+#: src/options/options.js:431 src/options/options.js:444
 msgid "Other"
 msgstr "Andre"
 
@@ -1736,7 +1760,7 @@ msgstr "Teamet vårt avgjør dette fortløpende, avhengig av støtteinnsatsen so
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Brukerveiledningen vår dekker mange avanserte emner, for eksempel migrering fra Google Foto og innstillinger for miniatyrbildekvalitet."
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Outdoor"
 msgstr "Utendørs"
 
@@ -1749,7 +1773,7 @@ msgid "Panoramas"
 msgstr "Panoramaer"
 
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/login.vue:118
+#: src/dialog/share.vue:24 src/page/auth/login.vue:118
 msgid "Password"
 msgstr "Passord"
 
@@ -1757,8 +1781,8 @@ msgstr "Passord"
 msgid "Password changed"
 msgstr "Passord endret"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:218
-#: src/component/navigation.vue:554 src/component/navigation.vue:881
+#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
+#: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1800,11 +1824,11 @@ msgstr "PhotoPrism® er en AI-drevet fotoapp for det desentraliserte nettet."
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+-medlemskap"
 
-#: src/app/routes.js:142
+#: src/app/routes.js:155
 msgid "Photos"
 msgstr "Fotoer"
 
-#: src/options/options.js:405
+#: src/options/options.js:409
 msgid "Pink"
 msgstr "Rosa"
 
@@ -1816,9 +1840,9 @@ msgstr "Plass"
 msgid "Place & Time"
 msgstr "Sted og tid"
 
-#: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:284
-#: src/component/navigation.vue:294 src/component/navigation.vue:560
+#: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
+#: src/app/routes.js:281 src/component/navigation.vue:284
+#: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1875,7 +1899,7 @@ msgstr "Forhåndsvisning"
 msgid "Primary"
 msgstr "Primær"
 
-#: src/app/routes.js:236 src/component/navigation.vue:345
+#: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
 #: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
 msgid "Private"
@@ -1885,7 +1909,7 @@ msgstr "Privat"
 msgid "Proceed"
 msgstr "Fortsett"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:423
+#: src/page/about/feedback.vue:6 src/options/options.js:427
 msgid "Product Feedback"
 msgstr "Produkt-tilbakemelding"
 
@@ -1893,7 +1917,7 @@ msgstr "Produkt-tilbakemelding"
 msgid "Projection"
 msgstr "Projeksjon"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "Purple"
 msgstr "Lilla"
 
@@ -1913,7 +1937,7 @@ msgstr "Tilfeldig"
 msgid "Raspberry"
 msgstr "Bringebær"
 
-#: src/options/options.js:314
+#: src/options/options.js:318
 msgid "Raw"
 msgstr "Raw"
 
@@ -1956,11 +1980,11 @@ msgstr "Kjente igjen"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Gjenkjenner ansikter slik at bestemte personer kan bli funnet."
 
-#: src/options/options.js:406
+#: src/options/options.js:410
 msgid "Red"
 msgstr "Rød"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1950
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1968,7 +1992,7 @@ msgstr "Rød"
 msgid "Reload"
 msgstr "Oppdater"
 
-#: src/component/navigation.vue:125 src/dialog/reload.vue:26
+#: src/component/navigation.vue:126 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Oppdaterer…"
@@ -2019,11 +2043,15 @@ msgstr "Prøv på nytt"
 msgid "Retype Password"
 msgstr "Gjenta Passord"
 
-#: src/app/routes.js:229 src/component/navigation.vue:129
+#: src/app/routes.js:242 src/component/navigation.vue:129
 msgid "Review"
 msgstr "Gjennomgang"
 
-#: src/options/options.js:292
+#: src/page/admin/users.vue:29
+msgid "Role"
+msgstr ""
+
+#: src/options/options.js:296
 msgid "Satellite"
 msgstr "Satellitt"
 
@@ -2041,7 +2069,7 @@ msgid "Scans"
 msgstr "Skanninger"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:542 src/component/navigation.vue:4
+#: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2101,11 +2129,19 @@ msgstr "Tjeneste-URL"
 msgid "Services"
 msgstr "Tjenester"
 
-#: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:409
+#: src/page/admin/sessions.vue:26
+msgid "Session ID"
+msgstr ""
+
+#: src/page/admin.vue:45
+msgid "Sessions"
+msgstr ""
+
+#: src/app/routes.js:371 src/app/routes.js:383 src/app/routes.js:396
+#: src/app/routes.js:409 src/app/routes.js:421 src/component/navigation.vue:409
 #: src/component/navigation.vue:419 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1547 src/component/navigation.vue:1983
+#: src/component/navigation.vue:1547 src/component/navigation.vue:2014
 msgid "Settings"
 msgstr "Innstillinger"
 
@@ -2162,11 +2198,11 @@ msgstr "Vis server-logger i Biblioteket."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Viser mer detaljerte loggmeldinger. Krever en omstart."
 
-#: src/model/file.js:214
+#: src/model/file.js:212
 msgid "Sidecar"
 msgstr "Sidevogn"
 
-#: src/page/login.vue:22
+#: src/page/auth/login.vue:22
 msgid "Sign in"
 msgstr "Logg inn"
 
@@ -2179,7 +2215,7 @@ msgstr "Lignende"
 msgid "Size"
 msgstr "Størrelse"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Slow"
 msgstr "Sakte"
 
@@ -2187,7 +2223,7 @@ msgstr "Sakte"
 msgid "Snow"
 msgstr "Snø"
 
-#: src/dialog/photo/edit/files.vue:103 src/dialog/photo/edit/files.vue:100
+#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
 msgstr "Programvare"
 
@@ -2216,7 +2252,7 @@ msgstr "Stable bilder som er tatt på samme tid og plassa basert på deres metad
 msgid "Stackable"
 msgstr "Kan stables"
 
-#: src/component/navigation.vue:113 src/page/settings/library.vue:34
+#: src/component/navigation.vue:113 src/page/settings/library.vue:33
 msgid "Stacks"
 msgstr "Stabler"
 
@@ -2249,7 +2285,7 @@ msgstr "Status"
 msgid "Storage"
 msgstr "Lagring"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Streets"
 msgstr "Gater"
 
@@ -2282,7 +2318,7 @@ msgstr "Synkroniser raw- og video-filer"
 msgid "Taken"
 msgstr "Tatt"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Teal"
 msgstr "Blågrønn"
 
@@ -2365,7 +2401,7 @@ msgstr "Veksle Visning"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:302
+#: src/options/options.js:306
 msgid "Topographic"
 msgstr "Topografisk"
 
@@ -2381,7 +2417,7 @@ msgstr "Sjekklister for feilsøking"
 msgid "Try again using other filters or keywords."
 msgstr "Prøv igjen med andre filtre eller nøkkelord."
 
-#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
+#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 #: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
 #: src/dialog/service/edit.vue:528
 msgid "Type"
@@ -2407,12 +2443,12 @@ msgid "Unknown"
 msgstr "Ukjent"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:83 src/page/settings/account.vue:35
+#: src/component/navigation.vue:84 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Uregistrert"
 
-#: src/app/routes.js:201 src/component/navigation.vue:171
+#: src/app/routes.js:214 src/component/navigation.vue:171
 msgid "Unsorted"
 msgstr "Usortert"
 
@@ -2449,8 +2485,8 @@ msgstr "Oppdaterer forhåndsvisninger"
 msgid "Updating stacks"
 msgstr "Oppdaterer stabler"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:452
-#: src/component/navigation.vue:584 src/component/navigation.vue:51
+#: src/page/connect.vue:17 src/component/navigation.vue:460
+#: src/component/navigation.vue:592 src/component/navigation.vue:59
 msgid "Upgrade"
 msgstr "Oppgrader"
 
@@ -2459,7 +2495,7 @@ msgstr "Oppgrader"
 msgid "Upgrade Now"
 msgstr "Oppgrader nå"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2001
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:230
@@ -2511,11 +2547,12 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Bruk Forhåndsinnstillinger"
 
+#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:26
 #: src/model/user.js:205
 msgid "User"
 msgstr "Bruker"
 
-#: src/component/navigation.vue:589 src/page/about/about.vue:42
+#: src/component/navigation.vue:597 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "Brukerhåndbok"
 
@@ -2528,13 +2565,17 @@ msgstr "Brukergrensesnitt"
 msgid "Username"
 msgstr "Brukernavn"
 
+#: src/component/navigation.vue:436 src/component/navigation.vue:35
+msgid "Users"
+msgstr ""
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "Vanta"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:330
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
 msgid "Vector"
 msgstr "Vektor"
 
@@ -2548,8 +2589,8 @@ msgstr "Verifisert"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:221 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:326
+#: src/model/file.js:219 src/model/photo.js:828 src/model/photo.js:844
+#: src/options/options.js:330
 msgid "Video"
 msgstr "Video"
 
@@ -2558,7 +2599,7 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Varighet"
 
-#: src/app/routes.js:222 src/component/navigation.vue:184
+#: src/app/routes.js:235 src/component/navigation.vue:184
 #: src/component/navigation.vue:194 src/component/navigation.vue:4
 #: src/component/navigation.vue:765
 msgid "Videos"
@@ -2594,6 +2635,14 @@ msgstr "Vi gjør vårt beste for å svare innen fem virkedager eller mindre."
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Vi skal gjøre vårt beste for å svare på alle spørsmålene dine. Til gjengjeld ber vi deg om å støtte oss på Patreon- eller GitHub-sponsorer."
 
+#: src/page/admin/users.vue:30
+msgid "Web Login "
+msgstr ""
+
+#: src/page/admin/users.vue:31
+msgid "WebDAV"
+msgstr ""
+
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV-klienter kan koble seg til PhotoPrism ved å bruke følgende URL:"
@@ -2617,7 +2666,7 @@ msgstr "Nettsted"
 msgid "What functionality is generally available?"
 msgstr "Hvilken funksjonalitet er generelt tilgjengelig?"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "White"
 msgstr "Hvit"
 
@@ -2635,7 +2684,7 @@ msgstr "Detaljer"
 msgid "Year"
 msgstr "År"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Yellow"
 msgstr "Gul"
 
@@ -2644,10 +2693,10 @@ msgid "Yellowstone"
 msgstr "Yellowstone"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:98
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
 #: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:198
-#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:133
+#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:141 src/dialog/photo/edit/files.vue:149
 #: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/info.vue:259
 #: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301

@@ -40,15 +40,15 @@ msgstr "%{n} نفر پیدا شد"
 msgid "%{n} pictures found"
 msgstr "%{n} عکس پیدا شد"
 
-#: src/options/options.js:383
+#: src/options/options.js:387
 msgid "1 hour"
 msgstr "1 ساعت"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "12 hours"
 msgstr "12 ساعت"
 
-#: src/options/options.js:384
+#: src/options/options.js:388
 msgid "4 hours"
 msgstr "4 ساعت"
 
@@ -66,12 +66,16 @@ msgstr "درباره"
 msgid "Abyss"
 msgstr "پرتگاه"
 
-#: src/component/navigation.vue:94 src/component/navigation.vue:1965
+#: src/component/navigation.vue:95 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:138 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "حساب کاربری"
+
+#: src/page/admin.vue:33
+msgid "Accounts"
+msgstr ""
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -92,6 +96,10 @@ msgstr "فعال کنید"
 #: src/page/connect.vue:292 src/page/connect.vue:360
 msgid "Activation Code"
 msgstr "کد فعال سازی"
+
+#: src/page/admin/users.vue:37
+msgid "Add"
+msgstr ""
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -123,27 +131,31 @@ msgstr "افزودن به آلبوم"
 msgid "Added"
 msgstr "اضافه شده"
 
+#: src/app/routes.js:100
+msgid "Admin"
+msgstr "مدیر"
+
 #: src/page/settings.vue:60
 msgid "Advanced"
 msgstr "پیشرفته"
 
-#: src/options/options.js:393
+#: src/options/options.js:397
 msgid "After 1 day"
 msgstr "بعد از 1 روز"
 
-#: src/options/options.js:394
+#: src/options/options.js:398
 msgid "After 3 days"
 msgstr "بعد از 3 روز"
 
-#: src/options/options.js:395
+#: src/options/options.js:399
 msgid "After 7 days"
 msgstr "بعد از 7 روز"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After one month"
 msgstr "بعد از یک ماه"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After one year"
 msgstr "بعد از یک سال"
 
@@ -151,11 +163,11 @@ msgstr "بعد از یک سال"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "پس از انتخاب تصاویر از نتایج جستجو، می توانید آنها را با استفاده از منوی زمینه به آلبوم اضافه کنید."
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After two months"
 msgstr "بعد از دو ماه"
 
-#: src/options/options.js:396
+#: src/options/options.js:400
 msgid "After two weeks"
 msgstr "بعد از دو هفته"
 
@@ -167,9 +179,9 @@ msgstr "آلبوم"
 msgid "Album Name"
 msgstr "نام آلبوم"
 
-#: src/app/routes.js:162 src/component/album/toolbar.vue:52
+#: src/app/routes.js:175 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:151 src/component/navigation.vue:161
-#: src/component/navigation.vue:548 src/component/navigation.vue:4
+#: src/component/navigation.vue:556 src/component/navigation.vue:4
 #: src/component/navigation.vue:648
 msgid "Albums"
 msgstr "آلبوم ها"
@@ -249,8 +261,8 @@ msgstr "خطایی رخ داده است - آیا شما آفلاین هستید�
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:92 src/options/options.js:318
+#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
 msgid "Animated"
 msgstr "متحرک"
 
@@ -275,7 +287,7 @@ msgstr "درخواست"
 msgid "Approve"
 msgstr "تأیید"
 
-#: src/app/routes.js:243 src/component/navigation.vue:138
+#: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -350,19 +362,19 @@ msgstr "بود"
 msgid "Birth Date"
 msgstr "تاریخ تولد"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Black"
 msgstr "سیاه"
 
-#: src/options/options.js:431
+#: src/options/options.js:435
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Blue"
 msgstr "آبی"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Brown"
 msgstr "قهوه ای"
 
@@ -378,7 +390,7 @@ msgstr "پرونده ها و پوشه های فهرست بندی شده را د�
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "برای اطلاعات دقیق در مورد ویژگی‌های خاص محصول، خدمات و منابع مرتبط، پایگاه دانش را مرور کنید."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:425
+#: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
 msgstr "گزارش اشکال"
 
@@ -390,7 +402,7 @@ msgstr "مشغول است ، لطفا صبر کنید…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "با استفاده از نرم‌افزار و خدماتی که ما ارائه می‌کنیم، با شرایط خدمات، خط‌مشی رازداری و آیین‌نامه رفتار ما موافقت می‌کنید."
 
-#: src/app/routes.js:175 src/component/navigation.vue:257
+#: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
 msgid "Calendar"
 msgstr "تقویم"
@@ -475,6 +487,10 @@ msgstr "بررسی شده"
 #: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
 msgid "Chroma"
 msgstr "کروما"
+
+#: src/page/admin/sessions.vue:28
+msgid "Client"
+msgstr ""
 
 #: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
@@ -570,7 +586,7 @@ msgstr "نتوانست چیزی پیدا کند."
 msgid "Country"
 msgstr "کشور"
 
-#: src/page/login.vue:19
+#: src/page/auth/login.vue:19
 msgid "Create Account"
 msgstr "ایجاد حساب کاربری"
 
@@ -586,7 +602,7 @@ msgstr "ایجاد شده"
 msgid "Creating thumbnails for"
 msgstr "ایجاد تصاویر کوچک برای"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "مکعب: کیفیت متوسط ، عملکرد خوب"
 
@@ -594,11 +610,11 @@ msgstr "مکعب: کیفیت متوسط ، عملکرد خوب"
 msgid "Current Password"
 msgstr "رمز عبور فعلی"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:422
+#: src/page/about/feedback.vue:5 src/options/options.js:426
 msgid "Customer Support"
 msgstr "پشتیبانی مشتری"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Cyan"
 msgstr "فیروزه ای"
 
@@ -606,7 +622,7 @@ msgstr "فیروزه ای"
 msgid "Cyano"
 msgstr "سیانو"
 
-#: src/options/options.js:386
+#: src/options/options.js:390
 msgid "Daily"
 msgstr "روزانه"
 
@@ -619,7 +635,7 @@ msgstr "روز"
 msgid "Debug Logs"
 msgstr "گزارش‌های اشکال زدایی"
 
-#: src/options/options.js:279 src/options/options.js:337
+#: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
 msgstr "پیشفرض"
@@ -712,8 +728,8 @@ msgstr "پشتیبانی از گرافیک برداری را غیرفعال می
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "رمزگذاری ویدیو و استخراج تصاویر کوچک را غیرفعال می کند."
 
-#: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
-#: src/app/routes.js:440
+#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
+#: src/app/routes.js:453
 msgid "Discover"
 msgstr "کشف"
 
@@ -749,7 +765,7 @@ msgstr "از rawtherapee برای تبدیل پرونده های خام استف
 msgid "Don't use TensorFlow for image classification."
 msgstr "از TensorFlow برای طبقه بندی تصویر استفاده نکنید."
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Donations"
 msgstr "کمکهای مالی"
 
@@ -841,8 +857,8 @@ msgstr "ویرایش تصویر"
 msgid "Edited"
 msgstr "ویرایش شده"
 
-#: src/page/settings/account.vue:221 src/page/settings/account.vue:616
-#: src/page/settings/account.vue:220
+#: src/page/admin/users.vue:28 src/page/settings/account.vue:221
+#: src/page/settings/account.vue:616 src/page/settings/account.vue:220
 msgid "Email"
 msgstr "پست الکترونیک"
 
@@ -854,7 +870,7 @@ msgstr "فعال کردن ویژگی های جدید در حال توسعه."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "فعال کردن RAW converter presets  . ممکن است عملکرد را کاهش دهد."
 
-#: src/app/routes.js:294 src/component/navigation.vue:395
+#: src/app/routes.js:307 src/component/navigation.vue:395
 msgid "Errors"
 msgstr "خطا ها"
 
@@ -866,7 +882,7 @@ msgstr "محل تقریبی تصاویر را بدون مختصات تخمین �
 msgid "Estimates"
 msgstr "برآوردها"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "Every two days"
 msgstr "هر دو روز"
 
@@ -926,7 +942,7 @@ msgstr "پیوند به روز نشد"
 msgid "Family Name"
 msgstr "خانواده"
 
-#: src/options/options.js:264
+#: src/options/options.js:268
 msgid "Fast"
 msgstr "سریع"
 
@@ -934,12 +950,12 @@ msgstr "سریع"
 msgid "Favorite"
 msgstr "موردعلاقه"
 
-#: src/app/routes.js:208 src/component/navigation.vue:231
+#: src/app/routes.js:221 src/component/navigation.vue:231
 #: src/component/navigation.vue:926 src/page/albums.vue:86
 msgid "Favorites"
 msgstr "موارد دلخواه"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:424
+#: src/page/about/feedback.vue:7 src/options/options.js:428
 msgid "Feature Request"
 msgstr "درخواست ویژگی"
 
@@ -947,7 +963,7 @@ msgstr "درخواست ویژگی"
 msgid "Feed"
 msgstr "بازخورد"
 
-#: src/component/navigation.vue:436 src/component/navigation.vue:35
+#: src/component/navigation.vue:444 src/component/navigation.vue:43
 msgid "Feedback"
 msgstr "بازخورد"
 
@@ -955,15 +971,15 @@ msgstr "بازخورد"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "در صورت داشتن هرگونه سوال می توانید از طریق ایمیل hello@photoprism.app با تماس بگیرید."
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "Female"
 msgstr "زن"
 
-#: src/model/file.js:296
+#: src/model/file.js:294
 msgid "File"
 msgstr "فایل"
 
-#: src/app/routes.js:281
+#: src/app/routes.js:294
 msgid "File Browser"
 msgstr "مرورگر فایل"
 
@@ -985,7 +1001,7 @@ msgstr "فایل"
 msgid "Filename"
 msgstr "نام فایل"
 
-#: src/component/navigation.vue:566 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:574 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "فایل ها"
@@ -1012,12 +1028,12 @@ msgstr "پوشه حاوی %{n} فایل است"
 msgid "Folder is empty"
 msgstr "پوشه خالی است"
 
-#: src/app/routes.js:188 src/component/navigation.vue:332
+#: src/app/routes.js:201 src/component/navigation.vue:332
 #: src/component/navigation.vue:1281
 msgid "Folders"
 msgstr "پوشه ها"
 
-#: src/page/login.vue:29
+#: src/page/auth/login.vue:29
 msgid "Forgot password?"
 msgstr "رمز عبور را فراموش کرده‌اید؟"
 
@@ -1061,7 +1077,7 @@ msgstr "اسم اصلی"
 msgid "Global Options"
 msgstr "گزینه های جهانی"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Gold"
 msgstr "طلا"
 
@@ -1069,11 +1085,11 @@ msgstr "طلا"
 msgid "Grayscale"
 msgstr "سیاه و سفید"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Green"
 msgstr "سبز"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Grey"
 msgstr "خاکستری"
 
@@ -1085,7 +1101,7 @@ msgstr "هش"
 msgid "Help"
 msgstr "راهنما"
 
-#: src/app/routes.js:77
+#: src/app/routes.js:78
 msgid "Help & Support"
 msgstr "راهنما و پشتیبانی"
 
@@ -1093,7 +1109,7 @@ msgstr "راهنما و پشتیبانی"
 msgid "Hidden"
 msgstr "مخفی"
 
-#: src/app/routes.js:287
+#: src/app/routes.js:300
 msgid "Hidden Files"
 msgstr "فایل های مخفی"
 
@@ -1105,7 +1121,7 @@ msgstr "مخفی"
 msgid "Hide photos that have been moved to archive."
 msgstr "عکس هایی که به آرشیو منتقل شده اند را مخفی کنید."
 
-#: src/options/options.js:341
+#: src/options/options.js:345
 msgid "High"
 msgstr "بالا"
 
@@ -1125,7 +1141,7 @@ msgstr "اگر این کمک نمی کند یا سؤالات دیگری داری
 msgid "image"
 msgstr "تصویر"
 
-#: src/model/file.js:218 src/options/options.js:310
+#: src/model/file.js:216 src/options/options.js:314
 msgid "Image"
 msgstr "تصویر"
 
@@ -1175,7 +1191,7 @@ msgstr "علاوه بر این، حامیان مالی، پشتیبانی فنی
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "در صورتی که تصاویری که انتظار دارید گم شدند، لطفاً کتابخانه خود را مجدداً اسکن کنید و منتظر بمانید تا نمایه سازی کامل شود."
 
-#: src/component/navigation.vue:572 src/page/library.vue:35
+#: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "نمایه"
@@ -1269,7 +1285,7 @@ msgstr "دانش محور"
 msgid "Label"
 msgstr "برچسب"
 
-#: src/app/routes.js:300 src/component/navigation.vue:319
+#: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1280,13 +1296,17 @@ msgstr "برچسب ها"
 msgid "Labels deleted"
 msgstr "برچسب ها حذف شدند"
 
-#: src/options/options.js:432
+#: src/options/options.js:436
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: حفظ جزئیات، حداقل مصنوعات"
 
 #: src/page/settings/general.vue:93
 msgid "Language"
 msgstr "زبان"
+
+#: src/page/admin/sessions.vue:29
+msgid "Last Active"
+msgstr ""
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1307,7 +1327,7 @@ msgstr "اسطوخودوس"
 msgid "Learn more"
 msgstr "بیشتر بدانید"
 
-#: src/component/navigation.vue:593
+#: src/component/navigation.vue:601
 msgid "Legal Information"
 msgstr "اطلاعات حقوقی"
 
@@ -1315,15 +1335,15 @@ msgstr "اطلاعات حقوقی"
 msgid "Lens"
 msgstr "لنز"
 
-#: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
+#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "کتابخانه"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
-#: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
+#: src/page/connect.vue:4 src/component/navigation.vue:452
+#: src/component/navigation.vue:51 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
 msgstr "مجوز"
@@ -1332,7 +1352,7 @@ msgstr "مجوز"
 msgid "Like"
 msgstr "پسندیدن"
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Lime"
 msgstr "اهک"
 
@@ -1340,7 +1360,7 @@ msgstr "اهک"
 msgid "Limit reached, showing first %{n} files"
 msgstr "به حد مجاز رسیده است، اولین %{n} فایل را نشان می دهد"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "خطی: بسیار روان، بهترین عملکرد"
 
@@ -1352,9 +1372,9 @@ msgstr "لینک"
 msgid "List"
 msgstr "لیست"
 
-#: src/app/routes.js:215 src/component/photo/cards.vue:293
+#: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:322
+#: src/options/options.js:326
 msgid "Live"
 msgstr "زنده"
 
@@ -1380,17 +1400,17 @@ msgstr "محل"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "هر زمان که PhotoPrism با فایل های شکسته مواجه می شود یا مشکلات احتمالی دیگری وجود دارد، پیام های گزارش در اینجا ظاهر می شوند."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1743
-#: src/component/navigation.vue:2017
+#: src/component/navigation.vue:474 src/component/navigation.vue:1774
+#: src/component/navigation.vue:2048
 msgid "Login"
 msgstr "وارد شدن"
 
-#: src/component/navigation.vue:510 src/component/navigation.vue:1854
-#: src/component/navigation.vue:1885 src/component/navigation.vue:1936
+#: src/component/navigation.vue:518 src/component/navigation.vue:1885
+#: src/component/navigation.vue:1916 src/component/navigation.vue:1967
 msgid "Logout"
 msgstr "خارج شدن"
 
-#: src/component/navigation.vue:578 src/page/library.vue:58
+#: src/component/navigation.vue:586 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "گزارش ها"
@@ -1399,15 +1419,15 @@ msgstr "گزارش ها"
 msgid "Longitude"
 msgstr "طول جغرافیایی"
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "Low"
 msgstr "کم"
 
-#: src/options/options.js:283
+#: src/options/options.js:287
 msgid "Low Resolution"
 msgstr "وضوح کم"
 
-#: src/options/options.js:404
+#: src/options/options.js:408
 msgid "Magenta"
 msgstr "ارغوانی"
 
@@ -1415,7 +1435,7 @@ msgstr "ارغوانی"
 msgid "Main Color"
 msgstr "رنگ اصلی"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Male"
 msgstr "نر"
 
@@ -1439,7 +1459,7 @@ msgstr "نقشه ها"
 msgid "Marker"
 msgstr "نشانگر"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Medium"
 msgstr "متوسط"
 
@@ -1459,7 +1479,7 @@ msgstr "کوچک کردن"
 msgid "Missing"
 msgstr "گم شده"
 
-#: src/app/routes.js:149 src/component/navigation.vue:244
+#: src/app/routes.js:162 src/component/navigation.vue:244
 #: src/component/navigation.vue:971 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "لحظه ها"
@@ -1506,16 +1526,16 @@ msgstr "جابجایی فایل ها"
 msgid "Must have at least %{n} characters."
 msgstr "باید حداقل %{n} حرف داشته باشد."
 
-#: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
-#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
-#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
-#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
-#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
-#: src/page/about/feedback.vue:171 src/page/albums.vue:87
-#: src/page/labels.vue:339 src/page/login.vue:89 src/page/people/new.vue:52
-#: src/page/people/new.vue:299 src/page/people/recognized.vue:396
-#: src/page/settings/services.vue:26
+#: src/page/about/feedback.vue:172 src/page/admin/users.vue:27
+#: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
+#: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
+#: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
+#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159
+#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225
+#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:171
+#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/page/people/new.vue:52 src/page/people/new.vue:297
+#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "نام"
 
@@ -1530,7 +1550,8 @@ msgstr "نام خیلی طولانی است"
 msgid "Neon"
 msgstr "نئون"
 
-#: src/options/options.js:382 src/options/options.js:392
+#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:50
+#: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "هرگز"
@@ -1614,7 +1635,7 @@ msgstr "هیچ هشدار یا خطایی حاوی این کلمه کلیدی ن
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "تصاویر غیرعکاسی و با کیفیت پایین قبل از اینکه در نتایج جستجو ظاهر شوند نیاز به بررسی دارند."
 
-#: src/options/options.js:260 src/options/options.js:349
+#: src/options/options.js:264 src/options/options.js:353
 msgid "None"
 msgstr "هیچ یک"
 
@@ -1642,7 +1663,11 @@ msgstr "یادداشت"
 msgid "Nothing to see here yet."
 msgstr "هنوز چیزی برای دیدن اینجا وجود ندارد."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1788
+#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:35
+msgid "Nothing was found."
+msgstr ""
+
+#: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
 msgstr "آفلاین"
 
@@ -1655,7 +1680,7 @@ msgstr "اول قدیمی‌تر ها"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "در ویندوز، منبع زیر را در گفتگوی اتصال وارد کنید:"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "Once a week"
 msgstr "یک بار در هفته"
 
@@ -1696,7 +1721,7 @@ msgstr "اونیکس"
 msgid "or ask in our Community Chat"
 msgstr "یا در چت انجمن ما بپرسید"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Orange"
 msgstr "نارنجی"
 
@@ -1723,7 +1748,7 @@ msgstr "اسم اصلی"
 msgid "Originals"
 msgstr "اصلی ها"
 
-#: src/options/options.js:427 src/options/options.js:440
+#: src/options/options.js:431 src/options/options.js:444
 msgid "Other"
 msgstr "دیگر"
 
@@ -1735,7 +1760,7 @@ msgstr "تیم ما بسته به تلاش پشتیبانی مورد نیاز، 
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "راهنمای کاربر ما همچنین بسیاری از موضوعات پیشرفته مانند مهاجرت از Google Photos و تنظیمات کیفیت تصاویر بندانگشتی را پوشش می‌دهد."
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Outdoor"
 msgstr "بیرون"
 
@@ -1748,7 +1773,7 @@ msgid "Panoramas"
 msgstr "پانوراما"
 
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/login.vue:118
+#: src/dialog/share.vue:24 src/page/auth/login.vue:118
 msgid "Password"
 msgstr "رمزعبور"
 
@@ -1756,8 +1781,8 @@ msgstr "رمزعبور"
 msgid "Password changed"
 msgstr "رمز عبور تغییر کرد"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:218
-#: src/component/navigation.vue:554 src/component/navigation.vue:881
+#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
+#: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1799,11 +1824,11 @@ msgstr "PhotoPrism® یک برنامه عکس با هوش مصنوعی برای 
 msgid "PhotoPrism+ Membership"
 msgstr "عضویت PhotoPrism+"
 
-#: src/app/routes.js:142
+#: src/app/routes.js:155
 msgid "Photos"
 msgstr "تصاویر"
 
-#: src/options/options.js:405
+#: src/options/options.js:409
 msgid "Pink"
 msgstr "صورتی"
 
@@ -1815,9 +1840,9 @@ msgstr "مکان"
 msgid "Place & Time"
 msgstr "مکان و زمان"
 
-#: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:284
-#: src/component/navigation.vue:294 src/component/navigation.vue:560
+#: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
+#: src/app/routes.js:281 src/component/navigation.vue:284
+#: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1874,7 +1899,7 @@ msgstr "پیش نمایش"
 msgid "Primary"
 msgstr "اولیه"
 
-#: src/app/routes.js:236 src/component/navigation.vue:345
+#: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
 #: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
 msgid "Private"
@@ -1884,7 +1909,7 @@ msgstr "خصوصی"
 msgid "Proceed"
 msgstr "ادامه دهید"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:423
+#: src/page/about/feedback.vue:6 src/options/options.js:427
 msgid "Product Feedback"
 msgstr "بازخورد محصول"
 
@@ -1892,7 +1917,7 @@ msgstr "بازخورد محصول"
 msgid "Projection"
 msgstr "طرح ها"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "Purple"
 msgstr "بنفش"
 
@@ -1912,7 +1937,7 @@ msgstr "تصادفی"
 msgid "Raspberry"
 msgstr "تمشک"
 
-#: src/options/options.js:314
+#: src/options/options.js:318
 msgid "Raw"
 msgstr "خام"
 
@@ -1955,11 +1980,11 @@ msgstr "شناسایی شده"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "چهره ها را می شناسد تا افراد خاصی پیدا شوند."
 
-#: src/options/options.js:406
+#: src/options/options.js:410
 msgid "Red"
 msgstr "قرمز"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1950
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1967,7 +1992,7 @@ msgstr "قرمز"
 msgid "Reload"
 msgstr "بارگذاری مجدد"
 
-#: src/component/navigation.vue:125 src/dialog/reload.vue:26
+#: src/component/navigation.vue:126 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "در حال بارگیری مجدد…"
@@ -2018,11 +2043,15 @@ msgstr "محدودیت تلاش"
 msgid "Retype Password"
 msgstr "رمز عبور را دوباره تایپ کنید"
 
-#: src/app/routes.js:229 src/component/navigation.vue:129
+#: src/app/routes.js:242 src/component/navigation.vue:129
 msgid "Review"
 msgstr "بازبینی"
 
-#: src/options/options.js:292
+#: src/page/admin/users.vue:29
+msgid "Role"
+msgstr ""
+
+#: src/options/options.js:296
 msgid "Satellite"
 msgstr "ماهواره"
 
@@ -2040,7 +2069,7 @@ msgid "Scans"
 msgstr "اسکن ها"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:542 src/component/navigation.vue:4
+#: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2100,11 +2129,19 @@ msgstr "URL سرویس"
 msgid "Services"
 msgstr "URL سرویس"
 
-#: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:409
+#: src/page/admin/sessions.vue:26
+msgid "Session ID"
+msgstr ""
+
+#: src/page/admin.vue:45
+msgid "Sessions"
+msgstr ""
+
+#: src/app/routes.js:371 src/app/routes.js:383 src/app/routes.js:396
+#: src/app/routes.js:409 src/app/routes.js:421 src/component/navigation.vue:409
 #: src/component/navigation.vue:419 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1547 src/component/navigation.vue:1983
+#: src/component/navigation.vue:1547 src/component/navigation.vue:2014
 msgid "Settings"
 msgstr "تنظیمات"
 
@@ -2161,11 +2198,11 @@ msgstr "نمایش گزارش‌های سرور در کتابخانه."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "پیام های گزارش دقیق تر را نشان می دهد. نیاز به راه اندازی مجدد دارد."
 
-#: src/model/file.js:214
+#: src/model/file.js:212
 msgid "Sidecar"
 msgstr "جانبی"
 
-#: src/page/login.vue:22
+#: src/page/auth/login.vue:22
 msgid "Sign in"
 msgstr "ورود"
 
@@ -2178,7 +2215,7 @@ msgstr "مشابه"
 msgid "Size"
 msgstr "سایز"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Slow"
 msgstr "آهسته"
 
@@ -2186,7 +2223,7 @@ msgstr "آهسته"
 msgid "Snow"
 msgstr "برف"
 
-#: src/dialog/photo/edit/files.vue:103 src/dialog/photo/edit/files.vue:100
+#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
 msgstr "نرم افزار"
 
@@ -2215,7 +2252,7 @@ msgstr "عکس‌هایی را که دقیقاً در همان زمان و مک�
 msgid "Stackable"
 msgstr "قابل انباشته شدن"
 
-#: src/component/navigation.vue:113 src/page/settings/library.vue:34
+#: src/component/navigation.vue:113 src/page/settings/library.vue:33
 msgid "Stacks"
 msgstr "پشته ها"
 
@@ -2248,7 +2285,7 @@ msgstr "وضعیت"
 msgid "Storage"
 msgstr "ذخیره سازی"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Streets"
 msgstr "خیابان ها"
 
@@ -2281,7 +2318,7 @@ msgstr "همگام سازی فایل های خام و ویدیویی"
 msgid "Taken"
 msgstr "گرفته شده"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Teal"
 msgstr "آبی رنگ"
 
@@ -2366,7 +2403,7 @@ msgstr "تغییر حالت نمایش"
 msgid "Token"
 msgstr "توکن"
 
-#: src/options/options.js:302
+#: src/options/options.js:306
 msgid "Topographic"
 msgstr "توپوگرافی"
 
@@ -2382,7 +2419,7 @@ msgstr "چک لیست های عیب یابی"
 msgid "Try again using other filters or keywords."
 msgstr "دوباره با استفاده از فیلترها یا کلمات کلیدی دیگر امتحان کنید."
 
-#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
+#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 #: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
 #: src/dialog/service/edit.vue:528
 msgid "Type"
@@ -2408,12 +2445,12 @@ msgid "Unknown"
 msgstr "ناشناس"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:83 src/page/settings/account.vue:35
+#: src/component/navigation.vue:84 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "ثبت نشده"
 
-#: src/app/routes.js:201 src/component/navigation.vue:171
+#: src/app/routes.js:214 src/component/navigation.vue:171
 msgid "Unsorted"
 msgstr "مرتب نشده است"
 
@@ -2450,8 +2487,8 @@ msgstr "به روزرسانی پیش نمایش ها"
 msgid "Updating stacks"
 msgstr "به روزرسانی پشته ها"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:452
-#: src/component/navigation.vue:584 src/component/navigation.vue:51
+#: src/page/connect.vue:17 src/component/navigation.vue:460
+#: src/component/navigation.vue:592 src/component/navigation.vue:59
 msgid "Upgrade"
 msgstr "ارتقا دهید"
 
@@ -2460,7 +2497,7 @@ msgstr "ارتقا دهید"
 msgid "Upgrade Now"
 msgstr "اکنون ارتقا دهید"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2001
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:230
@@ -2512,11 +2549,12 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "از Presets استفاده کنید"
 
+#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:26
 #: src/model/user.js:205
 msgid "User"
 msgstr "کاربر"
 
-#: src/component/navigation.vue:589 src/page/about/about.vue:42
+#: src/component/navigation.vue:597 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "راهنمای کاربر"
 
@@ -2529,13 +2567,17 @@ msgstr "رابط کاربری"
 msgid "Username"
 msgstr "نام کاربری"
 
+#: src/component/navigation.vue:436 src/component/navigation.vue:35
+msgid "Users"
+msgstr ""
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "وانتا"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:330
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
 msgid "Vector"
 msgstr "بردار"
 
@@ -2549,8 +2591,8 @@ msgstr "تایید شده است"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:221 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:326
+#: src/model/file.js:219 src/model/photo.js:828 src/model/photo.js:844
+#: src/options/options.js:330
 msgid "Video"
 msgstr "ویدیو"
 
@@ -2559,7 +2601,7 @@ msgstr "ویدیو"
 msgid "Video Duration"
 msgstr "مدت"
 
-#: src/app/routes.js:222 src/component/navigation.vue:184
+#: src/app/routes.js:235 src/component/navigation.vue:184
 #: src/component/navigation.vue:194 src/component/navigation.vue:4
 #: src/component/navigation.vue:765
 msgid "Videos"
@@ -2595,6 +2637,14 @@ msgstr "ما تمام تلاش خود را می کنیم تا ظرف پنج رو
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "ما تمام تلاش خود را می کنیم تا به تمام سوالات شما پاسخ دهیم. در عوض، ما از شما می خواهیم که از ما در Patreon یا GitHub Sponsors حمایت کنید."
 
+#: src/page/admin/users.vue:30
+msgid "Web Login "
+msgstr ""
+
+#: src/page/admin/users.vue:31
+msgid "WebDAV"
+msgstr ""
+
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "کلاینت های WebDAV می توانند با استفاده از URL زیر به PhotoPrism متصل شوند:"
@@ -2620,7 +2670,7 @@ msgstr "سایت اینترنتی"
 msgid "What functionality is generally available?"
 msgstr "چه عملکردی به طور کلی در دسترس است؟"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "White"
 msgstr "سفید"
 
@@ -2638,7 +2688,7 @@ msgstr "جزئیات"
 msgid "Year"
 msgstr "سال"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Yellow"
 msgstr "زرد"
 
@@ -2647,10 +2697,10 @@ msgid "Yellowstone"
 msgstr "یلوستون"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:98
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
 #: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:198
-#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:133
+#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:141 src/dialog/photo/edit/files.vue:149
 #: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/info.vue:259
 #: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301
@@ -2834,9 +2884,6 @@ msgstr "بزرگنمایی/کوچک کردن"
 
 #~ msgid "Add Server"
 #~ msgstr "اضافه کردن سرور"
-
-#~ msgid "Admin"
-#~ msgstr "مدیر"
 
 #~ msgid "Change"
 #~ msgstr "تغییر"

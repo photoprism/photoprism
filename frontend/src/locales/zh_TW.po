@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-02-21 12:35+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,15 +40,15 @@ msgstr "找到 %{n} 人"
 msgid "%{n} pictures found"
 msgstr "找到 %{n} 張圖片"
 
-#: src/options/options.js:383
+#: src/options/options.js:387
 msgid "1 hour"
 msgstr "1 小時"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "12 hours"
 msgstr "12 小時"
 
-#: src/options/options.js:384
+#: src/options/options.js:388
 msgid "4 hours"
 msgstr "4 小時"
 
@@ -67,12 +66,16 @@ msgstr "關於"
 msgid "Abyss"
 msgstr "深淵"
 
-#: src/component/navigation.vue:94 src/component/navigation.vue:1965
+#: src/component/navigation.vue:95 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:138 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "帳號"
+
+#: src/page/admin.vue:33
+msgid "Accounts"
+msgstr ""
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -93,6 +96,10 @@ msgstr "激活"
 #: src/page/connect.vue:292 src/page/connect.vue:360
 msgid "Activation Code"
 msgstr "激活碼"
+
+#: src/page/admin/users.vue:37
+msgid "Add"
+msgstr ""
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -124,27 +131,31 @@ msgstr "新增到相簿"
 msgid "Added"
 msgstr "已新增"
 
+#: src/app/routes.js:100
+msgid "Admin"
+msgstr ""
+
 #: src/page/settings.vue:60
 msgid "Advanced"
 msgstr "進階"
 
-#: src/options/options.js:393
+#: src/options/options.js:397
 msgid "After 1 day"
 msgstr "1 天後"
 
-#: src/options/options.js:394
+#: src/options/options.js:398
 msgid "After 3 days"
 msgstr "3 天後"
 
-#: src/options/options.js:395
+#: src/options/options.js:399
 msgid "After 7 days"
 msgstr "7 天後"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After one month"
 msgstr "1 個月後"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After one year"
 msgstr "1 年後"
 
@@ -152,11 +163,11 @@ msgstr "1 年後"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "從搜尋結果選擇圖片後，您可以使用內容選單將它們加入相簿。"
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After two months"
 msgstr "2 個月後"
 
-#: src/options/options.js:396
+#: src/options/options.js:400
 msgid "After two weeks"
 msgstr "2 星期後"
 
@@ -168,9 +179,9 @@ msgstr "相簿"
 msgid "Album Name"
 msgstr "相簿名稱"
 
-#: src/app/routes.js:162 src/component/album/toolbar.vue:52
+#: src/app/routes.js:175 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:151 src/component/navigation.vue:161
-#: src/component/navigation.vue:548 src/component/navigation.vue:4
+#: src/component/navigation.vue:556 src/component/navigation.vue:4
 #: src/component/navigation.vue:648
 msgid "Albums"
 msgstr "相簿"
@@ -250,8 +261,8 @@ msgstr "發生錯誤了 - 你是不是離線了？"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:92 src/options/options.js:318
+#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
 msgid "Animated"
 msgstr "動畫"
 
@@ -276,7 +287,7 @@ msgstr "套用"
 msgid "Approve"
 msgstr "確認"
 
-#: src/app/routes.js:243 src/component/navigation.vue:138
+#: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -351,19 +362,19 @@ msgstr "個人資料"
 msgid "Birth Date"
 msgstr "出生日期"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Black"
 msgstr "黑色"
 
-#: src/options/options.js:431
+#: src/options/options.js:435
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "布萊克曼：Lanczos修改，少振鈴文物"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Blue"
 msgstr "藍色"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Brown"
 msgstr "棕色"
 
@@ -379,7 +390,7 @@ msgstr "在收藏庫中瀏覽已索引的檔案和資料夾。"
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "瀏覽知識庫以獲取有關特定產品功能、服務和相關資源的詳細信息。"
 
-#: src/page/about/feedback.vue:8 src/options/options.js:425
+#: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
 msgstr "回報問題"
 
@@ -391,7 +402,7 @@ msgstr "忙碌中，請稍候…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "當您開始使用我們提供的軟體及服務時，即表示您同意我們的服務條款、隱私權政策和行為準則。"
 
-#: src/app/routes.js:175 src/component/navigation.vue:257
+#: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
 msgid "Calendar"
 msgstr "日曆"
@@ -476,6 +487,10 @@ msgstr "已選擇"
 #: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
 msgid "Chroma"
 msgstr "彩度"
+
+#: src/page/admin/sessions.vue:28
+msgid "Client"
+msgstr ""
 
 #: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
@@ -571,7 +586,7 @@ msgstr "找不到任何東西。"
 msgid "Country"
 msgstr "國家"
 
-#: src/page/login.vue:19
+#: src/page/auth/login.vue:19
 msgid "Create Account"
 msgstr "創建賬戶"
 
@@ -587,7 +602,7 @@ msgstr "已新增"
 msgid "Creating thumbnails for"
 msgstr "為以下項目新增縮圖"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "立方：中等品質，良好效能"
 
@@ -595,11 +610,11 @@ msgstr "立方：中等品質，良好效能"
 msgid "Current Password"
 msgstr "現在密碼"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:422
+#: src/page/about/feedback.vue:5 src/options/options.js:426
 msgid "Customer Support"
 msgstr "客戶支援"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Cyan"
 msgstr "青色"
 
@@ -607,7 +622,7 @@ msgstr "青色"
 msgid "Cyano"
 msgstr "深青"
 
-#: src/options/options.js:386
+#: src/options/options.js:390
 msgid "Daily"
 msgstr "每日"
 
@@ -620,7 +635,7 @@ msgstr "日"
 msgid "Debug Logs"
 msgstr "除錯紀錄"
 
-#: src/options/options.js:279 src/options/options.js:337
+#: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
 msgstr "預設"
@@ -713,8 +728,8 @@ msgstr "禁用矢量图形支持。"
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "禁用视频转码和缩略图提取。"
 
-#: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
-#: src/app/routes.js:440
+#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
+#: src/app/routes.js:453
 msgid "Discover"
 msgstr "發現"
 
@@ -750,7 +765,7 @@ msgstr "不要使用 RawTherapee 來轉換 RAW 文件。"
 msgid "Don't use TensorFlow for image classification."
 msgstr "不要使用 TensorFlow 來進行圖片分類。"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Donations"
 msgstr "贊助"
 
@@ -842,8 +857,8 @@ msgstr "編輯相片"
 msgid "Edited"
 msgstr "已編輯"
 
-#: src/page/settings/account.vue:221 src/page/settings/account.vue:616
-#: src/page/settings/account.vue:220
+#: src/page/admin/users.vue:28 src/page/settings/account.vue:221
+#: src/page/settings/account.vue:616 src/page/settings/account.vue:220
 msgid "Email"
 msgstr "電子郵件"
 
@@ -855,7 +870,7 @@ msgstr "啟用目前正在開發的新功能。"
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "啟用 RAW 轉換器預設集。可能會降低性能。"
 
-#: src/app/routes.js:294 src/component/navigation.vue:395
+#: src/app/routes.js:307 src/component/navigation.vue:395
 msgid "Errors"
 msgstr "錯誤"
 
@@ -867,7 +882,7 @@ msgstr "估算沒有附坐標的圖片大概的位置。"
 msgid "Estimates"
 msgstr "估計"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "Every two days"
 msgstr "每兩天"
 
@@ -927,7 +942,7 @@ msgstr "更新連結失敗"
 msgid "Family Name"
 msgstr "姓氏"
 
-#: src/options/options.js:264
+#: src/options/options.js:268
 msgid "Fast"
 msgstr "快"
 
@@ -935,12 +950,12 @@ msgstr "快"
 msgid "Favorite"
 msgstr "我的最愛"
 
-#: src/app/routes.js:208 src/component/navigation.vue:231
+#: src/app/routes.js:221 src/component/navigation.vue:231
 #: src/component/navigation.vue:926 src/page/albums.vue:86
 msgid "Favorites"
 msgstr "我的最愛"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:424
+#: src/page/about/feedback.vue:7 src/options/options.js:428
 msgid "Feature Request"
 msgstr "功能要求"
 
@@ -948,7 +963,7 @@ msgstr "功能要求"
 msgid "Feed"
 msgstr "訂閱源"
 
-#: src/component/navigation.vue:436 src/component/navigation.vue:35
+#: src/component/navigation.vue:444 src/component/navigation.vue:43
 msgid "Feedback"
 msgstr "回饋"
 
@@ -956,15 +971,15 @@ msgstr "回饋"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "如果您有任何問題或需要幫助，請通過 hello@photoprism.app 與我們聯繫。"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "Female"
 msgstr "女性"
 
-#: src/model/file.js:296
+#: src/model/file.js:294
 msgid "File"
 msgstr "檔案"
 
-#: src/app/routes.js:281
+#: src/app/routes.js:294
 msgid "File Browser"
 msgstr "檔案瀏覽器"
 
@@ -986,7 +1001,7 @@ msgstr "檔案大小"
 msgid "Filename"
 msgstr "檔案名稱"
 
-#: src/component/navigation.vue:566 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:574 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "檔案"
@@ -1013,12 +1028,12 @@ msgstr "資料夾中有 %{n} 個檔案"
 msgid "Folder is empty"
 msgstr "資料夾是空的"
 
-#: src/app/routes.js:188 src/component/navigation.vue:332
+#: src/app/routes.js:201 src/component/navigation.vue:332
 #: src/component/navigation.vue:1281
 msgid "Folders"
 msgstr "資料夾"
 
-#: src/page/login.vue:29
+#: src/page/auth/login.vue:29
 msgid "Forgot password?"
 msgstr "忘記密碼？"
 
@@ -1062,7 +1077,7 @@ msgstr "名字"
 msgid "Global Options"
 msgstr "全球选项"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Gold"
 msgstr "金色"
 
@@ -1070,11 +1085,11 @@ msgstr "金色"
 msgid "Grayscale"
 msgstr "灰階"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Green"
 msgstr "綠色"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Grey"
 msgstr "灰色"
 
@@ -1086,7 +1101,7 @@ msgstr "雜湊"
 msgid "Help"
 msgstr "支援"
 
-#: src/app/routes.js:77
+#: src/app/routes.js:78
 msgid "Help & Support"
 msgstr "支援與幫助"
 
@@ -1094,7 +1109,7 @@ msgstr "支援與幫助"
 msgid "Hidden"
 msgstr "隱藏"
 
-#: src/app/routes.js:287
+#: src/app/routes.js:300
 msgid "Hidden Files"
 msgstr "隱藏的檔案"
 
@@ -1106,7 +1121,7 @@ msgstr "隱藏"
 msgid "Hide photos that have been moved to archive."
 msgstr "隱藏的圖片已經移至封存。"
 
-#: src/options/options.js:341
+#: src/options/options.js:345
 msgid "High"
 msgstr "高"
 
@@ -1126,7 +1141,7 @@ msgstr "如果這沒有用，或者您還有其他問題："
 msgid "image"
 msgstr "圖片"
 
-#: src/model/file.js:218 src/options/options.js:310
+#: src/model/file.js:216 src/options/options.js:314
 msgid "Image"
 msgstr "圖片"
 
@@ -1176,7 +1191,7 @@ msgstr "此外，贊助商還可以透過電子郵件獲得直接的技術支持
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "如果您覺得應該會在的圖片不見了，請重新掃描您的資料庫並等待索引完成。"
 
-#: src/component/navigation.vue:572 src/page/library.vue:35
+#: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "索引"
@@ -1270,7 +1285,7 @@ msgstr "知識庫"
 msgid "Label"
 msgstr "標籤"
 
-#: src/app/routes.js:300 src/component/navigation.vue:319
+#: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1281,13 +1296,17 @@ msgstr "標籤"
 msgid "Labels deleted"
 msgstr "已刪除標籤"
 
-#: src/options/options.js:432
+#: src/options/options.js:436
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos：保留細節，減少偽像"
 
 #: src/page/settings/general.vue:93
 msgid "Language"
 msgstr "語言"
+
+#: src/page/admin/sessions.vue:29
+msgid "Last Active"
+msgstr ""
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1308,7 +1327,7 @@ msgstr "薰衣草"
 msgid "Learn more"
 msgstr "了解更多"
 
-#: src/component/navigation.vue:593
+#: src/component/navigation.vue:601
 msgid "Legal Information"
 msgstr "法律資訊"
 
@@ -1316,15 +1335,15 @@ msgstr "法律資訊"
 msgid "Lens"
 msgstr "鏡頭"
 
-#: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
+#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "收藏庫"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
-#: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
+#: src/page/connect.vue:4 src/component/navigation.vue:452
+#: src/component/navigation.vue:51 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
 msgstr "授權"
@@ -1333,7 +1352,7 @@ msgstr "授權"
 msgid "Like"
 msgstr "喜歡"
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Lime"
 msgstr "萊姆色"
 
@@ -1341,7 +1360,7 @@ msgstr "萊姆色"
 msgid "Limit reached, showing first %{n} files"
 msgstr "到達上限，顯示前 %{n} 個檔案"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "線性：非常平滑，最佳性能"
 
@@ -1353,9 +1372,9 @@ msgstr "連結"
 msgid "List"
 msgstr "清單"
 
-#: src/app/routes.js:215 src/component/photo/cards.vue:293
+#: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:322
+#: src/options/options.js:326
 msgid "Live"
 msgstr "即時"
 
@@ -1381,17 +1400,17 @@ msgstr "地點"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "日誌訊息會在PhotoPrism遇到損毀的檔案，或是其他問題出現時出現。"
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1743
-#: src/component/navigation.vue:2017
+#: src/component/navigation.vue:474 src/component/navigation.vue:1774
+#: src/component/navigation.vue:2048
 msgid "Login"
 msgstr "登入"
 
-#: src/component/navigation.vue:510 src/component/navigation.vue:1854
-#: src/component/navigation.vue:1885 src/component/navigation.vue:1936
+#: src/component/navigation.vue:518 src/component/navigation.vue:1885
+#: src/component/navigation.vue:1916 src/component/navigation.vue:1967
 msgid "Logout"
 msgstr "登出"
 
-#: src/component/navigation.vue:578 src/page/library.vue:58
+#: src/component/navigation.vue:586 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "日誌"
@@ -1400,15 +1419,15 @@ msgstr "日誌"
 msgid "Longitude"
 msgstr "經度"
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "Low"
 msgstr "低"
 
-#: src/options/options.js:283
+#: src/options/options.js:287
 msgid "Low Resolution"
 msgstr "低解析度"
 
-#: src/options/options.js:404
+#: src/options/options.js:408
 msgid "Magenta"
 msgstr "洋紅"
 
@@ -1416,7 +1435,7 @@ msgstr "洋紅"
 msgid "Main Color"
 msgstr "主要顏色"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Male"
 msgstr "男性"
 
@@ -1440,7 +1459,7 @@ msgstr "地圖"
 msgid "Marker"
 msgstr "標記"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Medium"
 msgstr "中"
 
@@ -1460,7 +1479,7 @@ msgstr "最小化"
 msgid "Missing"
 msgstr "缺少"
 
-#: src/app/routes.js:149 src/component/navigation.vue:244
+#: src/app/routes.js:162 src/component/navigation.vue:244
 #: src/component/navigation.vue:971 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "回憶時刻"
@@ -1507,16 +1526,16 @@ msgstr "移動檔案"
 msgid "Must have at least %{n} characters."
 msgstr "必須至少有 %{n} 個字元。"
 
-#: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
-#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
-#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
-#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
-#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
-#: src/page/about/feedback.vue:171 src/page/albums.vue:87
-#: src/page/labels.vue:339 src/page/login.vue:89 src/page/people/new.vue:52
-#: src/page/people/new.vue:299 src/page/people/recognized.vue:396
-#: src/page/settings/services.vue:26
+#: src/page/about/feedback.vue:172 src/page/admin/users.vue:27
+#: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
+#: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
+#: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
+#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159
+#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225
+#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:171
+#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/page/people/new.vue:52 src/page/people/new.vue:297
+#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "名稱"
 
@@ -1531,7 +1550,8 @@ msgstr "名稱太長了"
 msgid "Neon"
 msgstr "霓虹"
 
-#: src/options/options.js:382 src/options/options.js:392
+#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:50
+#: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "永不"
@@ -1615,7 +1635,7 @@ msgstr "沒有包含此關鍵字的警告或錯誤。請注意，搜尋區分大
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "非照片和低品質圖像需要進行手動確認，才會出現在搜索結果中。"
 
-#: src/options/options.js:260 src/options/options.js:349
+#: src/options/options.js:264 src/options/options.js:353
 msgid "None"
 msgstr "無"
 
@@ -1643,7 +1663,11 @@ msgstr "備註"
 msgid "Nothing to see here yet."
 msgstr "這裡什麼都沒有。"
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1788
+#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:35
+msgid "Nothing was found."
+msgstr ""
+
+#: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
 msgstr "離線"
 
@@ -1656,7 +1680,7 @@ msgstr "最舊優先"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "在 Windows 上，於連接對話框中輸入以下資訊："
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "Once a week"
 msgstr "一周一次"
 
@@ -1697,7 +1721,7 @@ msgstr "瑪瑙"
 msgid "or ask in our Community Chat"
 msgstr "或在我們的社區聊天中提問"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Orange"
 msgstr "橘色"
 
@@ -1724,7 +1748,7 @@ msgstr "原始名稱"
 msgid "Originals"
 msgstr "來源"
 
-#: src/options/options.js:427 src/options/options.js:440
+#: src/options/options.js:431 src/options/options.js:444
 msgid "Other"
 msgstr "其他"
 
@@ -1736,7 +1760,7 @@ msgstr "我们的团队根据所需的支持工作、服务器和许可成本，
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "我們的用戶指南還涵蓋了許多進階主題，例如從 Google 相冊轉移和縮圖品質設定。"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Outdoor"
 msgstr "外出"
 
@@ -1749,7 +1773,7 @@ msgid "Panoramas"
 msgstr "全景照片"
 
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/login.vue:118
+#: src/dialog/share.vue:24 src/page/auth/login.vue:118
 msgid "Password"
 msgstr "密碼"
 
@@ -1757,8 +1781,8 @@ msgstr "密碼"
 msgid "Password changed"
 msgstr "密碼已更改"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:218
-#: src/component/navigation.vue:554 src/component/navigation.vue:881
+#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
+#: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1800,11 +1824,11 @@ msgstr "PhotoPrism® 是基於去中心化網絡的 AI 驅動的照片應用程�
 msgid "PhotoPrism+ Membership"
 msgstr "照片棱镜+会员资格"
 
-#: src/app/routes.js:142
+#: src/app/routes.js:155
 msgid "Photos"
 msgstr "照片"
 
-#: src/options/options.js:405
+#: src/options/options.js:409
 msgid "Pink"
 msgstr "粉紅色"
 
@@ -1816,9 +1840,9 @@ msgstr "地點"
 msgid "Place & Time"
 msgstr "地點與時間"
 
-#: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:284
-#: src/component/navigation.vue:294 src/component/navigation.vue:560
+#: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
+#: src/app/routes.js:281 src/component/navigation.vue:284
+#: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1875,7 +1899,7 @@ msgstr "預覽"
 msgid "Primary"
 msgstr "主要的"
 
-#: src/app/routes.js:236 src/component/navigation.vue:345
+#: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
 #: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
 msgid "Private"
@@ -1885,7 +1909,7 @@ msgstr "私人的"
 msgid "Proceed"
 msgstr "繼續"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:423
+#: src/page/about/feedback.vue:6 src/options/options.js:427
 msgid "Product Feedback"
 msgstr "產品回饋"
 
@@ -1893,7 +1917,7 @@ msgstr "產品回饋"
 msgid "Projection"
 msgstr "投影"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "Purple"
 msgstr "紫色"
 
@@ -1913,7 +1937,7 @@ msgstr "隨機"
 msgid "Raspberry"
 msgstr "樹梅"
 
-#: src/options/options.js:314
+#: src/options/options.js:318
 msgid "Raw"
 msgstr "原始"
 
@@ -1956,11 +1980,11 @@ msgstr "已辨識"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "辨識面孔，以找到特定的人。"
 
-#: src/options/options.js:406
+#: src/options/options.js:410
 msgid "Red"
 msgstr "紅色"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1950
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1968,7 +1992,7 @@ msgstr "紅色"
 msgid "Reload"
 msgstr "重新載入"
 
-#: src/component/navigation.vue:125 src/dialog/reload.vue:26
+#: src/component/navigation.vue:126 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "重新載入中…"
@@ -2019,11 +2043,15 @@ msgstr "重試限制"
 msgid "Retype Password"
 msgstr "重新輸入密碼"
 
-#: src/app/routes.js:229 src/component/navigation.vue:129
+#: src/app/routes.js:242 src/component/navigation.vue:129
 msgid "Review"
 msgstr "回顧"
 
-#: src/options/options.js:292
+#: src/page/admin/users.vue:29
+msgid "Role"
+msgstr ""
+
+#: src/options/options.js:296
 msgid "Satellite"
 msgstr "衛星"
 
@@ -2041,7 +2069,7 @@ msgid "Scans"
 msgstr "掃描"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:542 src/component/navigation.vue:4
+#: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2101,11 +2129,19 @@ msgstr "服務 URL"
 msgid "Services"
 msgstr "服務"
 
-#: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:409
+#: src/page/admin/sessions.vue:26
+msgid "Session ID"
+msgstr ""
+
+#: src/page/admin.vue:45
+msgid "Sessions"
+msgstr ""
+
+#: src/app/routes.js:371 src/app/routes.js:383 src/app/routes.js:396
+#: src/app/routes.js:409 src/app/routes.js:421 src/component/navigation.vue:409
 #: src/component/navigation.vue:419 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1547 src/component/navigation.vue:1983
+#: src/component/navigation.vue:1547 src/component/navigation.vue:2014
 msgid "Settings"
 msgstr "設定"
 
@@ -2162,11 +2198,11 @@ msgstr "在收藏庫中顯示伺服器日誌。"
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "顯示更詳細的日誌消息。需要重新啟動。"
 
-#: src/model/file.js:214
+#: src/model/file.js:212
 msgid "Sidecar"
 msgstr "Sidecar檔案"
 
-#: src/page/login.vue:22
+#: src/page/auth/login.vue:22
 msgid "Sign in"
 msgstr "登入"
 
@@ -2179,7 +2215,7 @@ msgstr "相似"
 msgid "Size"
 msgstr "尺寸"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Slow"
 msgstr "慢"
 
@@ -2187,7 +2223,7 @@ msgstr "慢"
 msgid "Snow"
 msgstr "雪"
 
-#: src/dialog/photo/edit/files.vue:103 src/dialog/photo/edit/files.vue:100
+#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
 msgstr "软件"
 
@@ -2216,7 +2252,7 @@ msgstr "根據元數據，將在相同時間和位置拍攝的照片堆疊在一
 msgid "Stackable"
 msgstr "可堆疊"
 
-#: src/component/navigation.vue:113 src/page/settings/library.vue:34
+#: src/component/navigation.vue:113 src/page/settings/library.vue:33
 msgid "Stacks"
 msgstr "堆疊"
 
@@ -2249,7 +2285,7 @@ msgstr "狀態"
 msgid "Storage"
 msgstr "儲存空間"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Streets"
 msgstr "街"
 
@@ -2282,7 +2318,7 @@ msgstr "同步 RAW 照片及影片"
 msgid "Taken"
 msgstr "拍攝於"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Teal"
 msgstr "藍綠"
 
@@ -2367,7 +2403,7 @@ msgstr "切換檢視"
 msgid "Token"
 msgstr "令牌"
 
-#: src/options/options.js:302
+#: src/options/options.js:306
 msgid "Topographic"
 msgstr "地形圖"
 
@@ -2383,7 +2419,7 @@ msgstr "故障排除清單"
 msgid "Try again using other filters or keywords."
 msgstr "請使用其他篩選條件或是關鍵字。"
 
-#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
+#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 #: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
 #: src/dialog/service/edit.vue:528
 msgid "Type"
@@ -2409,12 +2445,12 @@ msgid "Unknown"
 msgstr "未知"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:83 src/page/settings/account.vue:35
+#: src/component/navigation.vue:84 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "未註冊"
 
-#: src/app/routes.js:201 src/component/navigation.vue:171
+#: src/app/routes.js:214 src/component/navigation.vue:171
 msgid "Unsorted"
 msgstr "未分類"
 
@@ -2451,8 +2487,8 @@ msgstr "更新預覽"
 msgid "Updating stacks"
 msgstr "更新堆疊"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:452
-#: src/component/navigation.vue:584 src/component/navigation.vue:51
+#: src/page/connect.vue:17 src/component/navigation.vue:460
+#: src/component/navigation.vue:592 src/component/navigation.vue:59
 msgid "Upgrade"
 msgstr "升級"
 
@@ -2461,7 +2497,7 @@ msgstr "升級"
 msgid "Upgrade Now"
 msgstr "立即升級"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2001
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:230
@@ -2513,11 +2549,12 @@ msgstr "網址"
 msgid "Use Presets"
 msgstr "使用預設"
 
+#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:26
 #: src/model/user.js:205
 msgid "User"
 msgstr "使用者"
 
-#: src/component/navigation.vue:589 src/page/about/about.vue:42
+#: src/component/navigation.vue:597 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "使用者指南"
 
@@ -2530,13 +2567,17 @@ msgstr "使用者介面"
 msgid "Username"
 msgstr "使用者名稱"
 
+#: src/component/navigation.vue:436 src/component/navigation.vue:35
+msgid "Users"
+msgstr ""
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "奈米碳管黑"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:330
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
 msgid "Vector"
 msgstr "矢量"
 
@@ -2550,8 +2591,8 @@ msgstr "已驗證"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:221 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:326
+#: src/model/file.js:219 src/model/photo.js:828 src/model/photo.js:844
+#: src/options/options.js:330
 msgid "Video"
 msgstr "影片"
 
@@ -2560,7 +2601,7 @@ msgstr "影片"
 msgid "Video Duration"
 msgstr "影片長度"
 
-#: src/app/routes.js:222 src/component/navigation.vue:184
+#: src/app/routes.js:235 src/component/navigation.vue:184
 #: src/component/navigation.vue:194 src/component/navigation.vue:4
 #: src/component/navigation.vue:765
 msgid "Videos"
@@ -2596,6 +2637,14 @@ msgstr "我們盡最大努力在五個工作日或更短的時間內做出回應
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "我們將盡力回答您的所有問題。作為回報，我們希望您在 Patreon 或 GitHub 贊助商上支持我們。"
 
+#: src/page/admin/users.vue:30
+msgid "Web Login "
+msgstr ""
+
+#: src/page/admin/users.vue:31
+msgid "WebDAV"
+msgstr ""
+
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV客戶端可以使用以下URL連接到PhotoPrism："
@@ -2621,7 +2670,7 @@ msgstr "網站"
 msgid "What functionality is generally available?"
 msgstr "什麼功能是普遍可用的？"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "White"
 msgstr "白色"
 
@@ -2639,7 +2688,7 @@ msgstr "作品詳情"
 msgid "Year"
 msgstr "年"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Yellow"
 msgstr "黃色"
 
@@ -2648,10 +2697,10 @@ msgid "Yellowstone"
 msgstr "黃石"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:98
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
 #: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:198
-#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:133
+#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:141 src/dialog/photo/edit/files.vue:149
 #: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/info.vue:259
 #: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301

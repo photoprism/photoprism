@@ -10,8 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -41,15 +40,15 @@ msgstr "%{n} людей знайдено"
 msgid "%{n} pictures found"
 msgstr "%{n} зображень знайдено"
 
-#: src/options/options.js:383
+#: src/options/options.js:387
 msgid "1 hour"
 msgstr "1 година"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "12 hours"
 msgstr "12 годин"
 
-#: src/options/options.js:384
+#: src/options/options.js:388
 msgid "4 hours"
 msgstr "4 години"
 
@@ -67,12 +66,16 @@ msgstr "Про"
 msgid "Abyss"
 msgstr "Усі піддиректорії"
 
-#: src/component/navigation.vue:94 src/component/navigation.vue:1965
+#: src/component/navigation.vue:95 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:138 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "Обліковий запис"
+
+#: src/page/admin.vue:33
+msgid "Accounts"
+msgstr ""
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -93,6 +96,10 @@ msgstr "Активувати"
 #: src/page/connect.vue:292 src/page/connect.vue:360
 msgid "Activation Code"
 msgstr "Код активації"
+
+#: src/page/admin/users.vue:37
+msgid "Add"
+msgstr ""
 
 #: src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -124,27 +131,31 @@ msgstr "Додати до альбому"
 msgid "Added"
 msgstr "Додано"
 
+#: src/app/routes.js:100
+msgid "Admin"
+msgstr ""
+
 #: src/page/settings.vue:60
 msgid "Advanced"
 msgstr "Розширені"
 
-#: src/options/options.js:393
+#: src/options/options.js:397
 msgid "After 1 day"
 msgstr "Через 1 день"
 
-#: src/options/options.js:394
+#: src/options/options.js:398
 msgid "After 3 days"
 msgstr "Через 3 дні"
 
-#: src/options/options.js:395
+#: src/options/options.js:399
 msgid "After 7 days"
 msgstr "Через 7 днів"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After one month"
 msgstr "Через місяць"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After one year"
 msgstr "Через рік"
 
@@ -152,11 +163,11 @@ msgstr "Через рік"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Вибравши зображення з результатів пошуку, ви можете додати їх до альбому за допомогою контекстного меню."
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After two months"
 msgstr "Через два місяці"
 
-#: src/options/options.js:396
+#: src/options/options.js:400
 msgid "After two weeks"
 msgstr "Через два тижні"
 
@@ -168,9 +179,9 @@ msgstr "Альбом"
 msgid "Album Name"
 msgstr "Назва альбому"
 
-#: src/app/routes.js:162 src/component/album/toolbar.vue:52
+#: src/app/routes.js:175 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:151 src/component/navigation.vue:161
-#: src/component/navigation.vue:548 src/component/navigation.vue:4
+#: src/component/navigation.vue:556 src/component/navigation.vue:4
 #: src/component/navigation.vue:648
 msgid "Albums"
 msgstr "Альбоми"
@@ -250,8 +261,8 @@ msgstr "Сталася помилка - ви офлайн?"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:92 src/options/options.js:318
+#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
 msgid "Animated"
 msgstr "Анімовані"
 
@@ -276,7 +287,7 @@ msgstr "Застосувати"
 msgid "Approve"
 msgstr "Підтвердити"
 
-#: src/app/routes.js:243 src/component/navigation.vue:138
+#: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:340
 msgid "Archive"
@@ -351,19 +362,19 @@ msgstr "Біографія"
 msgid "Birth Date"
 msgstr "Дата народження"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Black"
 msgstr "Чорний"
 
-#: src/options/options.js:431
+#: src/options/options.js:435
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: модифікація Lanczos, менш виразні артефакти"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Blue"
 msgstr "Синій"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Brown"
 msgstr "Коричневий"
 
@@ -379,7 +390,7 @@ msgstr "Переглядайте проіндексовані файли та п
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Перегляньте Базу знань для отримання детальної інформації про конкретні функції продукту, послуги та пов'язані з ними ресурси."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:425
+#: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
 msgstr "Звіт про помилку"
 
@@ -391,7 +402,7 @@ msgstr "Система зайнята, будь ласка, зачекайте�
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Використовуючи програмне забезпечення та послуги, які ми надаємо, ви погоджуєтеся з нашими умовами надання послуг, політикою конфіденційності та кодексом поведінки."
 
-#: src/app/routes.js:175 src/component/navigation.vue:257
+#: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
 msgid "Calendar"
 msgstr "Календар"
@@ -476,6 +487,10 @@ msgstr "Перевірено"
 #: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
 msgid "Chroma"
 msgstr "Колірність"
+
+#: src/page/admin/sessions.vue:28
+msgid "Client"
+msgstr ""
 
 #: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
@@ -571,7 +586,7 @@ msgstr "Не можу знайти нічого."
 msgid "Country"
 msgstr "Країна"
 
-#: src/page/login.vue:19
+#: src/page/auth/login.vue:19
 msgid "Create Account"
 msgstr "Створити обліковий запис"
 
@@ -587,7 +602,7 @@ msgstr "Створено"
 msgid "Creating thumbnails for"
 msgstr "Створюю мініатюри для"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: помірна якість, хороша продуктивність"
 
@@ -595,11 +610,11 @@ msgstr "Cubic: помірна якість, хороша продуктивні�
 msgid "Current Password"
 msgstr "Поточний пароль"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:422
+#: src/page/about/feedback.vue:5 src/options/options.js:426
 msgid "Customer Support"
 msgstr "Підтримка клієнтів"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Cyan"
 msgstr "Блакитний"
 
@@ -607,7 +622,7 @@ msgstr "Блакитний"
 msgid "Cyano"
 msgstr "Блакитний"
 
-#: src/options/options.js:386
+#: src/options/options.js:390
 msgid "Daily"
 msgstr "Щоденний"
 
@@ -620,7 +635,7 @@ msgstr "День"
 msgid "Debug Logs"
 msgstr "Журнали налагодження"
 
-#: src/options/options.js:279 src/options/options.js:337
+#: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
 msgstr "За замовчуванням"
@@ -713,8 +728,8 @@ msgstr "Вимикає підтримку векторної графіки."
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Вимикає перекодування відео та вилучення мініатюр."
 
-#: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
-#: src/app/routes.js:440
+#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
+#: src/app/routes.js:453
 msgid "Discover"
 msgstr "Огляд"
 
@@ -750,7 +765,7 @@ msgstr "Не використовуйте RawTherapee для перетворе�
 msgid "Don't use TensorFlow for image classification."
 msgstr "Не використовувати TensorFlow для класифікації зображень."
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Donations"
 msgstr "Пожертви"
 
@@ -842,8 +857,8 @@ msgstr "Редагувати фото"
 msgid "Edited"
 msgstr "Відредаговано"
 
-#: src/page/settings/account.vue:221 src/page/settings/account.vue:616
-#: src/page/settings/account.vue:220
+#: src/page/admin/users.vue:28 src/page/settings/account.vue:221
+#: src/page/settings/account.vue:616 src/page/settings/account.vue:220
 msgid "Email"
 msgstr "Електронна пошта"
 
@@ -855,7 +870,7 @@ msgstr "Увімкнути нові функції, які зараз розро
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Увімкнути попередньо встановлені налаштування конвертера RAW. Може знизити продуктивність."
 
-#: src/app/routes.js:294 src/component/navigation.vue:395
+#: src/app/routes.js:307 src/component/navigation.vue:395
 msgid "Errors"
 msgstr "Помилки"
 
@@ -867,7 +882,7 @@ msgstr "Оцініть приблизне розташування зображ�
 msgid "Estimates"
 msgstr "Підрахунок"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "Every two days"
 msgstr "Кожні два дні"
 
@@ -927,7 +942,7 @@ msgstr "Не вдалось оновити посилання"
 msgid "Family Name"
 msgstr "Прізвище"
 
-#: src/options/options.js:264
+#: src/options/options.js:268
 msgid "Fast"
 msgstr "Швидко"
 
@@ -935,12 +950,12 @@ msgstr "Швидко"
 msgid "Favorite"
 msgstr "Вибрані"
 
-#: src/app/routes.js:208 src/component/navigation.vue:231
+#: src/app/routes.js:221 src/component/navigation.vue:231
 #: src/component/navigation.vue:926 src/page/albums.vue:86
 msgid "Favorites"
 msgstr "Вибране"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:424
+#: src/page/about/feedback.vue:7 src/options/options.js:428
 msgid "Feature Request"
 msgstr "Запит можливостей"
 
@@ -948,7 +963,7 @@ msgstr "Запит можливостей"
 msgid "Feed"
 msgstr "Канал"
 
-#: src/component/navigation.vue:436 src/component/navigation.vue:35
+#: src/component/navigation.vue:444 src/component/navigation.vue:43
 msgid "Feedback"
 msgstr "Відгук"
 
@@ -956,15 +971,15 @@ msgstr "Відгук"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Не соромтеся зв’язатися з нами за адресою hello@photoprism.app, якщо у вас виникнуть запитання."
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "Female"
 msgstr "Жінка"
 
-#: src/model/file.js:296
+#: src/model/file.js:294
 msgid "File"
 msgstr "Файл"
 
-#: src/app/routes.js:281
+#: src/app/routes.js:294
 msgid "File Browser"
 msgstr "Оглядач файлів"
 
@@ -986,7 +1001,7 @@ msgstr "Розмір файлу"
 msgid "Filename"
 msgstr "Ім'я файла"
 
-#: src/component/navigation.vue:566 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:574 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Файли"
@@ -1013,12 +1028,12 @@ msgstr "Тека містить %{n} файлів"
 msgid "Folder is empty"
 msgstr "Тека порожня"
 
-#: src/app/routes.js:188 src/component/navigation.vue:332
+#: src/app/routes.js:201 src/component/navigation.vue:332
 #: src/component/navigation.vue:1281
 msgid "Folders"
 msgstr "Теки"
 
-#: src/page/login.vue:29
+#: src/page/auth/login.vue:29
 msgid "Forgot password?"
 msgstr "Забули пароль?"
 
@@ -1062,7 +1077,7 @@ msgstr "Прізвище, ім'я та по батькові"
 msgid "Global Options"
 msgstr "Глобальні опції"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Gold"
 msgstr "Золотий"
 
@@ -1070,11 +1085,11 @@ msgstr "Золотий"
 msgid "Grayscale"
 msgstr "Градації сірого"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Green"
 msgstr "Зелений"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Grey"
 msgstr "Сірий"
 
@@ -1086,7 +1101,7 @@ msgstr "Хеш"
 msgid "Help"
 msgstr "Допомога"
 
-#: src/app/routes.js:77
+#: src/app/routes.js:78
 msgid "Help & Support"
 msgstr "Допомога і Підтримка"
 
@@ -1094,7 +1109,7 @@ msgstr "Допомога і Підтримка"
 msgid "Hidden"
 msgstr "Приховані"
 
-#: src/app/routes.js:287
+#: src/app/routes.js:300
 msgid "Hidden Files"
 msgstr "Приховані файли"
 
@@ -1106,7 +1121,7 @@ msgstr "Приховати"
 msgid "Hide photos that have been moved to archive."
 msgstr "Приховати фотографії, які були переміщені в архів."
 
-#: src/options/options.js:341
+#: src/options/options.js:345
 msgid "High"
 msgstr "Високий"
 
@@ -1126,7 +1141,7 @@ msgstr "Якщо це не допомогло або у вас виникли і
 msgid "image"
 msgstr "зображення"
 
-#: src/model/file.js:218 src/options/options.js:310
+#: src/model/file.js:216 src/options/options.js:314
 msgid "Image"
 msgstr "Зображення"
 
@@ -1176,7 +1191,7 @@ msgstr "На додачу спонсори отримають пряму тех�
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "У випадку якщо очікувані зображення відсутні, будь-ласка перескануйте вашу бібліотеку та зачекайте поки індексування закінчиться."
 
-#: src/component/navigation.vue:572 src/page/library.vue:35
+#: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Індекс"
@@ -1270,7 +1285,7 @@ msgstr "База знань"
 msgid "Label"
 msgstr "Мітка"
 
-#: src/app/routes.js:300 src/component/navigation.vue:319
+#: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:186
@@ -1281,13 +1296,17 @@ msgstr "Мітки"
 msgid "Labels deleted"
 msgstr "Мітки видалено"
 
-#: src/options/options.js:432
+#: src/options/options.js:436
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: збереження деталей, мінімум артефактів"
 
 #: src/page/settings/general.vue:93
 msgid "Language"
 msgstr "Мова"
+
+#: src/page/admin/sessions.vue:29
+msgid "Last Active"
+msgstr ""
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1308,7 +1327,7 @@ msgstr "Лавандовий"
 msgid "Learn more"
 msgstr "Дізнатися більше"
 
-#: src/component/navigation.vue:593
+#: src/component/navigation.vue:601
 msgid "Legal Information"
 msgstr "Юридична інформація"
 
@@ -1316,15 +1335,15 @@ msgstr "Юридична інформація"
 msgid "Lens"
 msgstr "Об'єктив"
 
-#: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
+#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
 #: src/page/settings.vue:48 src/page/settings/general.vue:406
 msgid "Library"
 msgstr "Бібліотека"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
-#: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
+#: src/page/connect.vue:4 src/component/navigation.vue:452
+#: src/component/navigation.vue:51 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
 msgstr "Ліцензія"
@@ -1333,7 +1352,7 @@ msgstr "Ліцензія"
 msgid "Like"
 msgstr "Вподобання"
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Lime"
 msgstr "Лаймовий"
 
@@ -1341,7 +1360,7 @@ msgstr "Лаймовий"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Ліміт досягнуто, показано перші %{n} файлів"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Лінійний: дуже плавний, найкраща продуктивність"
 
@@ -1353,9 +1372,9 @@ msgstr "Посилання"
 msgid "List"
 msgstr "Список"
 
-#: src/app/routes.js:215 src/component/photo/cards.vue:293
+#: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:322
+#: src/options/options.js:326
 msgid "Live"
 msgstr "Live фото"
 
@@ -1381,17 +1400,17 @@ msgstr "Місцезнаходження"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Повідомлення журналу з’являються тут щоразу, коли PhotoPrism натрапляє на пошкоджені файли або виникають інші потенційні проблеми."
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1743
-#: src/component/navigation.vue:2017
+#: src/component/navigation.vue:474 src/component/navigation.vue:1774
+#: src/component/navigation.vue:2048
 msgid "Login"
 msgstr "Увійти в систему"
 
-#: src/component/navigation.vue:510 src/component/navigation.vue:1854
-#: src/component/navigation.vue:1885 src/component/navigation.vue:1936
+#: src/component/navigation.vue:518 src/component/navigation.vue:1885
+#: src/component/navigation.vue:1916 src/component/navigation.vue:1967
 msgid "Logout"
 msgstr "Вийти з системи"
 
-#: src/component/navigation.vue:578 src/page/library.vue:58
+#: src/component/navigation.vue:586 src/page/library.vue:58
 #: src/page/settings/general.vue:450
 msgid "Logs"
 msgstr "Журнали"
@@ -1400,15 +1419,15 @@ msgstr "Журнали"
 msgid "Longitude"
 msgstr "Довгота"
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "Low"
 msgstr "Низький"
 
-#: src/options/options.js:283
+#: src/options/options.js:287
 msgid "Low Resolution"
 msgstr "Низька роздільна здатність"
 
-#: src/options/options.js:404
+#: src/options/options.js:408
 msgid "Magenta"
 msgstr "Маджента"
 
@@ -1416,7 +1435,7 @@ msgstr "Маджента"
 msgid "Main Color"
 msgstr "Основний колір"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Male"
 msgstr "Чоловік"
 
@@ -1440,7 +1459,7 @@ msgstr "Карти"
 msgid "Marker"
 msgstr "Маркер"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Medium"
 msgstr "Середній"
 
@@ -1460,7 +1479,7 @@ msgstr "Мінімізувати"
 msgid "Missing"
 msgstr "Відсутнє"
 
-#: src/app/routes.js:149 src/component/navigation.vue:244
+#: src/app/routes.js:162 src/component/navigation.vue:244
 #: src/component/navigation.vue:971 src/page/settings/general.vue:164
 msgid "Moments"
 msgstr "Моменти"
@@ -1507,16 +1526,16 @@ msgstr "Перемістити файли"
 msgid "Must have at least %{n} characters."
 msgstr "Повинно містити не менше %{n} символів."
 
-#: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
-#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
-#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
-#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
-#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
-#: src/page/about/feedback.vue:171 src/page/albums.vue:87
-#: src/page/labels.vue:339 src/page/login.vue:89 src/page/people/new.vue:52
-#: src/page/people/new.vue:299 src/page/people/recognized.vue:396
-#: src/page/settings/services.vue:26
+#: src/page/about/feedback.vue:172 src/page/admin/users.vue:27
+#: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
+#: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
+#: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
+#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159
+#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225
+#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:171
+#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/page/people/new.vue:52 src/page/people/new.vue:297
+#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Ім'я"
 
@@ -1531,7 +1550,8 @@ msgstr "Задовге ім'я"
 msgid "Neon"
 msgstr "Неон"
 
-#: src/options/options.js:382 src/options/options.js:392
+#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:50
+#: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Ніколи"
@@ -1615,7 +1635,7 @@ msgstr "Немає попереджень або помилок із цим кл
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Нефотографічні та низькоякісні зображення потребують перевірки, перш ніж з’являться в результатах пошуку."
 
-#: src/options/options.js:260 src/options/options.js:349
+#: src/options/options.js:264 src/options/options.js:353
 msgid "None"
 msgstr "Жодного"
 
@@ -1643,7 +1663,11 @@ msgstr "Примітки"
 msgid "Nothing to see here yet."
 msgstr "Поки що тут немає на що дивитися."
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1788
+#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:35
+msgid "Nothing was found."
+msgstr ""
+
+#: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
 msgstr "Поза мережею"
 
@@ -1656,7 +1680,7 @@ msgstr "Спочатку найстарші"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "У Windows, введіть наступний ресурс у діалоговому вікні підключення:"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "Once a week"
 msgstr "Раз на тиждень"
 
@@ -1697,7 +1721,7 @@ msgstr "Онікс"
 msgid "or ask in our Community Chat"
 msgstr "або запитайте в чаті нашої спільноти"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Orange"
 msgstr "Оранжевий"
 
@@ -1724,7 +1748,7 @@ msgstr "Оригінальна назва"
 msgid "Originals"
 msgstr "Оригінали"
 
-#: src/options/options.js:427 src/options/options.js:440
+#: src/options/options.js:431 src/options/options.js:444
 msgid "Other"
 msgstr "Інше"
 
@@ -1736,7 +1760,7 @@ msgstr "Наша команда вирішує це питання на пост
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Наш Посібник користувача також охоплює багато додаткових тем, таких як міграція з Google Фото та налаштування якості мініатюр."
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Outdoor"
 msgstr "На відкритому повітрі"
 
@@ -1749,7 +1773,7 @@ msgid "Panoramas"
 msgstr "Панорами"
 
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/login.vue:118
+#: src/dialog/share.vue:24 src/page/auth/login.vue:118
 msgid "Password"
 msgstr "Пароль"
 
@@ -1757,8 +1781,8 @@ msgstr "Пароль"
 msgid "Password changed"
 msgstr "Пароль змінено"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:218
-#: src/component/navigation.vue:554 src/component/navigation.vue:881
+#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
+#: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
 msgid "People"
@@ -1800,11 +1824,11 @@ msgstr "PhotoPrism® - це додаток для децентралізован
 msgid "PhotoPrism+ Membership"
 msgstr "Членство в PhotoPrism+"
 
-#: src/app/routes.js:142
+#: src/app/routes.js:155
 msgid "Photos"
 msgstr "Фотографії"
 
-#: src/options/options.js:405
+#: src/options/options.js:409
 msgid "Pink"
 msgstr "Рожевий"
 
@@ -1816,9 +1840,9 @@ msgstr "Місце"
 msgid "Place & Time"
 msgstr "Місце і час"
 
-#: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:284
-#: src/component/navigation.vue:294 src/component/navigation.vue:560
+#: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
+#: src/app/routes.js:281 src/component/navigation.vue:284
+#: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:496
@@ -1875,7 +1899,7 @@ msgstr "Попередній перегляд"
 msgid "Primary"
 msgstr "Первинний"
 
-#: src/app/routes.js:236 src/component/navigation.vue:345
+#: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
 #: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
 msgid "Private"
@@ -1885,7 +1909,7 @@ msgstr "Приватний"
 msgid "Proceed"
 msgstr "Приступити"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:423
+#: src/page/about/feedback.vue:6 src/options/options.js:427
 msgid "Product Feedback"
 msgstr "Відгуки про продукт"
 
@@ -1893,7 +1917,7 @@ msgstr "Відгуки про продукт"
 msgid "Projection"
 msgstr "Проекція"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "Purple"
 msgstr "Пурпурний"
 
@@ -1913,7 +1937,7 @@ msgstr "Випадковий"
 msgid "Raspberry"
 msgstr "Малиновий"
 
-#: src/options/options.js:314
+#: src/options/options.js:318
 msgid "Raw"
 msgstr "Raw файли"
 
@@ -1956,11 +1980,11 @@ msgstr "Розпізнані"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Розпізнавання облич для пошуку конкретних людей."
 
-#: src/options/options.js:406
+#: src/options/options.js:410
 msgid "Red"
 msgstr "Червоний"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1950
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1968,7 +1992,7 @@ msgstr "Червоний"
 msgid "Reload"
 msgstr "Перезавантажити"
 
-#: src/component/navigation.vue:125 src/dialog/reload.vue:26
+#: src/component/navigation.vue:126 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Перезавантаження…"
@@ -2019,11 +2043,15 @@ msgstr "Ліміт повторних спроб"
 msgid "Retype Password"
 msgstr "Введіть пароль повторно"
 
-#: src/app/routes.js:229 src/component/navigation.vue:129
+#: src/app/routes.js:242 src/component/navigation.vue:129
 msgid "Review"
 msgstr "Потребують перевірки"
 
-#: src/options/options.js:292
+#: src/page/admin/users.vue:29
+msgid "Role"
+msgstr ""
+
+#: src/options/options.js:296
 msgid "Satellite"
 msgstr "Супутник"
 
@@ -2041,7 +2069,7 @@ msgid "Scans"
 msgstr "Відскановані"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:542 src/component/navigation.vue:4
+#: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
@@ -2101,11 +2129,19 @@ msgstr "URL служби"
 msgid "Services"
 msgstr "Послуги"
 
-#: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:409
+#: src/page/admin/sessions.vue:26
+msgid "Session ID"
+msgstr ""
+
+#: src/page/admin.vue:45
+msgid "Sessions"
+msgstr ""
+
+#: src/app/routes.js:371 src/app/routes.js:383 src/app/routes.js:396
+#: src/app/routes.js:409 src/app/routes.js:421 src/component/navigation.vue:409
 #: src/component/navigation.vue:419 src/component/navigation.vue:8
 #: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1547 src/component/navigation.vue:1983
+#: src/component/navigation.vue:1547 src/component/navigation.vue:2014
 msgid "Settings"
 msgstr "Налаштування"
 
@@ -2162,11 +2198,11 @@ msgstr "Показати журнали сервера в бібліотеці."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Показати докладніші повідомлення журналу. Вимагає перезавантаження."
 
-#: src/model/file.js:214
+#: src/model/file.js:212
 msgid "Sidecar"
 msgstr "Додатковий вміст"
 
-#: src/page/login.vue:22
+#: src/page/auth/login.vue:22
 msgid "Sign in"
 msgstr "Увійти"
 
@@ -2179,7 +2215,7 @@ msgstr "Схожі"
 msgid "Size"
 msgstr "Розмір"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Slow"
 msgstr "Повільний"
 
@@ -2187,7 +2223,7 @@ msgstr "Повільний"
 msgid "Snow"
 msgstr "Сніг"
 
-#: src/dialog/photo/edit/files.vue:103 src/dialog/photo/edit/files.vue:100
+#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
 msgstr "Програмне забезпечення"
 
@@ -2216,7 +2252,7 @@ msgstr "Згрупувати зображення, зроблені в той с
 msgid "Stackable"
 msgstr "Згруповуємі"
 
-#: src/component/navigation.vue:113 src/page/settings/library.vue:34
+#: src/component/navigation.vue:113 src/page/settings/library.vue:33
 msgid "Stacks"
 msgstr "Групи"
 
@@ -2249,7 +2285,7 @@ msgstr "Статус"
 msgid "Storage"
 msgstr "Сховище"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Streets"
 msgstr "Вулиці"
 
@@ -2282,7 +2318,7 @@ msgstr "Синхронізація файлів у форматі raw і від�
 msgid "Taken"
 msgstr "Занято"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Teal"
 msgstr "Бірюзовий"
 
@@ -2367,7 +2403,7 @@ msgstr "Перемкнути перегляд"
 msgid "Token"
 msgstr "Токен"
 
-#: src/options/options.js:302
+#: src/options/options.js:306
 msgid "Topographic"
 msgstr "Топографічний"
 
@@ -2383,7 +2419,7 @@ msgstr "Контрольні списки для усунення несправ
 msgid "Try again using other filters or keywords."
 msgstr "Спробуйте ще раз, використовуючи інші фільтри або ключові слова."
 
-#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
+#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 #: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
 #: src/dialog/service/edit.vue:528
 msgid "Type"
@@ -2409,12 +2445,12 @@ msgid "Unknown"
 msgstr "Невідомий"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:83 src/page/settings/account.vue:35
+#: src/component/navigation.vue:84 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Незареєстрований"
 
-#: src/app/routes.js:201 src/component/navigation.vue:171
+#: src/app/routes.js:214 src/component/navigation.vue:171
 msgid "Unsorted"
 msgstr "Невідсортовані"
 
@@ -2451,8 +2487,8 @@ msgstr "Оновлення попереднього перегляду"
 msgid "Updating stacks"
 msgstr "Оновлення стеків"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:452
-#: src/component/navigation.vue:584 src/component/navigation.vue:51
+#: src/page/connect.vue:17 src/component/navigation.vue:460
+#: src/component/navigation.vue:592 src/component/navigation.vue:59
 msgid "Upgrade"
 msgstr "Оновлення"
 
@@ -2461,7 +2497,7 @@ msgstr "Оновлення"
 msgid "Upgrade Now"
 msgstr "Оновити зараз"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2001
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:230
@@ -2513,11 +2549,12 @@ msgstr "URL-адреса"
 msgid "Use Presets"
 msgstr "Використовуйте попередні налаштування"
 
+#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:26
 #: src/model/user.js:205
 msgid "User"
 msgstr "Користувач"
 
-#: src/component/navigation.vue:589 src/page/about/about.vue:42
+#: src/component/navigation.vue:597 src/page/about/about.vue:42
 msgid "User Guide"
 msgstr "Посібник користувача"
 
@@ -2530,13 +2567,17 @@ msgstr "Інтерфейс користувача"
 msgid "Username"
 msgstr "Ім'я користувача"
 
+#: src/component/navigation.vue:436 src/component/navigation.vue:35
+msgid "Users"
+msgstr ""
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "Ванта"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:330
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
 msgid "Vector"
 msgstr "Вектор"
 
@@ -2550,8 +2591,8 @@ msgstr "Перевірений"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:221 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:326
+#: src/model/file.js:219 src/model/photo.js:828 src/model/photo.js:844
+#: src/options/options.js:330
 msgid "Video"
 msgstr "Відео"
 
@@ -2560,7 +2601,7 @@ msgstr "Відео"
 msgid "Video Duration"
 msgstr "Тривалість відео"
 
-#: src/app/routes.js:222 src/component/navigation.vue:184
+#: src/app/routes.js:235 src/component/navigation.vue:184
 #: src/component/navigation.vue:194 src/component/navigation.vue:4
 #: src/component/navigation.vue:765
 msgid "Videos"
@@ -2596,6 +2637,14 @@ msgstr "Ми намагаємося відповідати протягом п'�
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Ми зробимо все можливе, щоб відповісти на всі ваші запитання. У свою чергу ми просимо вас підтримати нас на Patreon або спонсорах GitHub."
 
+#: src/page/admin/users.vue:30
+msgid "Web Login "
+msgstr ""
+
+#: src/page/admin/users.vue:31
+msgid "WebDAV"
+msgstr ""
+
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "Клієнти WebDAV можуть підключатися до PhotoPrism за такою URL-адресою:"
@@ -2621,7 +2670,7 @@ msgstr "Веб-сайт"
 msgid "What functionality is generally available?"
 msgstr "Який функціонал є загальнодоступним?"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "White"
 msgstr "Білий"
 
@@ -2639,7 +2688,7 @@ msgstr "Деталі роботи"
 msgid "Year"
 msgstr "Рік"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Yellow"
 msgstr "Жовтий"
 
@@ -2648,10 +2697,10 @@ msgid "Yellowstone"
 msgstr "Єллоустоун"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:98
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
 #: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:198
-#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:133
+#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:141 src/dialog/photo/edit/files.vue:149
 #: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/info.vue:259
 #: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301
