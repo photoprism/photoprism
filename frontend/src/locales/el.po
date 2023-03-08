@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-08 14:11+0000\n"
+"PO-Revision-Date: 2023-03-08 20:47+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1317,7 +1317,7 @@ msgstr "Τελευταία ενεργή"
 
 #: src/page/admin/users.vue:43
 msgid "Last Login"
-msgstr ""
+msgstr "Τελευταία σύνδεση"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
