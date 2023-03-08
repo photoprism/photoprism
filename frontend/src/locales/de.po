@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 14:15+0000\n"
+"PO-Revision-Date: 2023-03-08 14:19+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -348,7 +348,7 @@ msgstr "Erstellt automatisch Alben mit besonderen Momenten, Reisen und Orten."
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Folder"
-msgstr ""
+msgstr "Basis-Ordner"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2543,7 +2543,7 @@ msgstr "Upload fehlgeschlagen"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Folder"
-msgstr ""
+msgstr "Upload-Ordner"
 
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
