@@ -139,10 +139,6 @@ msgstr ""
 msgid "Added"
 msgstr ""
 
-#: src/app/routes.js:100
-msgid "Admin"
-msgstr ""
-
 #: src/page/settings.vue:60
 msgid "Advanced"
 msgstr ""
@@ -2463,6 +2459,7 @@ msgstr ""
 msgid "Sessions"
 msgstr ""
 
+#: src/app/routes.js:100
 #: src/app/routes.js:371
 #: src/app/routes.js:383
 #: src/app/routes.js:396

@@ -131,10 +131,6 @@ msgstr "Toevoegen aan album"
 msgid "Added"
 msgstr "Toegevoegd"
 
-#: src/app/routes.js:100
-msgid "Admin"
-msgstr ""
-
 #: src/page/settings.vue:60
 msgid "Advanced"
 msgstr "Geavanceerd"
@@ -2137,11 +2133,12 @@ msgstr ""
 msgid "Sessions"
 msgstr ""
 
-#: src/app/routes.js:371 src/app/routes.js:383 src/app/routes.js:396
-#: src/app/routes.js:409 src/app/routes.js:421 src/component/navigation.vue:409
-#: src/component/navigation.vue:419 src/component/navigation.vue:8
-#: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1547 src/component/navigation.vue:2014
+#: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
+#: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
+#: src/component/navigation.vue:409 src/component/navigation.vue:419
+#: src/component/navigation.vue:8 src/component/navigation.vue:18
+#: src/component/navigation.vue:4 src/component/navigation.vue:1547
+#: src/component/navigation.vue:2014
 msgid "Settings"
 msgstr "Instellingen"
 
