@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 14:00+0000\n"
+"PO-Revision-Date: 2023-03-08 14:11+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -347,7 +347,7 @@ msgstr "به طور خودکار آلبوم هایی از لحظات، سفره�
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Folder"
-msgstr ""
+msgstr "پوشه پایه"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2544,7 +2544,7 @@ msgstr "آپلود انجام نشد"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Folder"
-msgstr ""
+msgstr "پوشه آپلود"
 
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
