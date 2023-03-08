@@ -31,7 +31,11 @@ import { $gettext } from "common/vm";
 
 export class Rest extends Model {
   getId() {
-    return this.UID ? this.UID : this.ID;
+    if (this.UID) {
+      return this.UID;
+    }
+
+    return this.ID ? this.ID : "";
   }
 
   hasId() {
@@ -49,6 +53,16 @@ export class Rest extends Model {
   find(id, params) {
     return Api.get(this.getEntityResource(id), params).then((resp) =>
       Promise.resolve(new this.constructor(resp.data))
+    );
+  }
+
+  load() {
+    if (!this.hasId()) {
+      return;
+    }
+
+    return Api.get(this.getEntityResource(this.getId())).then((resp) =>
+      Promise.resolve(this.setValues(resp.data))
     );
   }
 
@@ -72,7 +86,7 @@ export class Rest extends Model {
     }
 
     // Send PUT request.
-    return Api.put(this.getEntityResource(), this.getValues(true)).then((resp) =>
+    return Api.put(this.getEntityResource(), values).then((resp) =>
       Promise.resolve(this.setValues(resp.data))
     );
   }

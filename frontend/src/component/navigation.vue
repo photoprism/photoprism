@@ -476,6 +476,14 @@
               </v-list-tile-content>
             </v-list-tile>
 
+            <v-list-tile v-if="canManageUsers" :to="{ path: '/admin/users' }" :exact="false" class="nav-admin-users" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                  <translate>Users</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
             <v-list-tile v-show="!isPublic && isAdmin && isSponsor" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
                          @click.stop="">
               <v-list-tile-content>
@@ -696,6 +704,7 @@ export default {
       canAccessPrivate: !isRestricted && this.$config.allow("photos", "access_private"),
       canManagePhotos: this.$config.allow("photos", "manage"),
       canManagePeople: this.$config.allow("people", "manage"),
+      canManageUsers: this.$config.allow("users", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
       appAbout: this.$config.getAbout(),

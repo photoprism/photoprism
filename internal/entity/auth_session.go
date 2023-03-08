@@ -257,8 +257,8 @@ func (m *Session) SetUser(u *User) *Session {
 	return m
 }
 
-// Login returns the login name.
-func (m *Session) Login() string {
+// Username returns the login name.
+func (m *Session) Username() string {
 	return m.UserName
 }
 

@@ -6,12 +6,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestHandle(t *testing.T) {
+	t.Run("Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin", Handle("Admin "))
+	})
+	t.Run(" Admin ", func(t *testing.T) {
+		assert.Equal(t, "adminfoo", Handle(" Admin@foo "))
+	})
+	t.Run(" admin ", func(t *testing.T) {
+		assert.Equal(t, "admin", Handle(" admin "))
+	})
+}
+
 func TestUsername(t *testing.T) {
 	t.Run("Admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Username("Admin "))
 	})
 	t.Run(" Admin ", func(t *testing.T) {
-		assert.Equal(t, "admin", Username(" Admin "))
+		assert.Equal(t, "admin@foo", Username(" Admin@foo "))
 	})
 	t.Run(" admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Username(" admin "))

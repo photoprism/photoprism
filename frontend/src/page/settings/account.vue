@@ -2,7 +2,7 @@
   <div class="p-tab p-settings-account">
     <v-form ref="form" v-model="valid" lazy-validation dense class="p-form-account pb-4 width-lg" accept-charset="UTF-8"
             @submit.prevent="onChange">
-      <input ref="upload" type="file" class="d-none input-upload" @change.stop="onUploadAvatar()">
+      <input ref="upload" type="file" class="d-none input-upload" accept="image/png, image/jpeg" @change.stop="onUploadAvatar()">
       <v-card flat tile class="mt-2 px-1 application">
         <v-card-actions>
           <v-layout row wrap align-top>
@@ -296,7 +296,7 @@
         </v-card-actions>
       </v-card>
     </v-form>
-    <p-account-password-dialog :show="dialog.password" @cancel="dialog.password = false" @confirm="dialog.password = false"></p-account-password-dialog>
+    <p-account-password-dialog :show="dialog.password" :model="user" @cancel="dialog.password = false" @confirm="dialog.password = false"></p-account-password-dialog>
     <p-webdav-dialog :show="dialog.webdav" @close="dialog.webdav = false"></p-webdav-dialog>
   </div>
 </template>

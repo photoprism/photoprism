@@ -20,11 +20,11 @@ func TestLogin_HasToken(t *testing.T) {
 func TestLogin_HasName(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
 		form := &Login{UserEmail: "test@test.com", Password: "passwd", AuthToken: ""}
-		assert.Equal(t, false, form.HasName())
+		assert.Equal(t, false, form.HasUsername())
 	})
 	t.Run("true", func(t *testing.T) {
 		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: "123"}
-		assert.Equal(t, true, form.HasName())
+		assert.Equal(t, true, form.HasUsername())
 	})
 }
 

@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -41,22 +42,22 @@ type User struct {
 	ID            int           `gorm:"primary_key" json:"-" yaml:"-"`
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
 	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
-	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
-	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID,omitempty" yaml:"AuthID,omitempty"`
+	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	UserName      string        `gorm:"size:255;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
 	BackupEmail   string        `gorm:"size:255;" json:"BackupEmail,omitempty" yaml:"BackupEmail,omitempty"`
-	UserRole      string        `gorm:"size:64;default:'';" json:"Role,omitempty" yaml:"Role,omitempty"`
-	UserAttr      string        `gorm:"size:1024;" json:"Attr,omitempty" yaml:"Attr,omitempty"`
-	SuperAdmin    bool          `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
-	CanLogin      bool          `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
-	LoginAt       *time.Time    `json:"LoginAt,omitempty" yaml:"LoginAt,omitempty"`
+	UserRole      string        `gorm:"size:64;default:'';" json:"Role" yaml:"Role,omitempty"`
+	UserAttr      string        `gorm:"size:1024;" json:"Attr" yaml:"Attr,omitempty"`
+	SuperAdmin    bool          `json:"SuperAdmin" yaml:"SuperAdmin,omitempty"`
+	CanLogin      bool          `json:"CanLogin" yaml:"CanLogin,omitempty"`
+	LoginAt       *time.Time    `json:"LoginAt" yaml:"LoginAt,omitempty"`
 	ExpiresAt     *time.Time    `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
-	WebDAV        bool          `gorm:"column:webdav;" json:"WebDAV,omitempty" yaml:"WebDAV,omitempty"`
-	BasePath      string        `gorm:"type:VARBINARY(1024);" json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
-	UploadPath    string        `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
-	CanInvite     bool          `json:"CanInvite,omitempty" yaml:"CanInvite,omitempty"`
+	WebDAV        bool          `gorm:"column:webdav;" json:"WebDAV" yaml:"WebDAV,omitempty"`
+	BasePath      string        `gorm:"type:VARBINARY(1024);" json:"BasePath" yaml:"BasePath,omitempty"`
+	UploadPath    string        `gorm:"type:VARBINARY(1024);" json:"UploadPath" yaml:"UploadPath,omitempty"`
+	CanInvite     bool          `json:"CanInvite" yaml:"CanInvite,omitempty"`
 	InviteToken   string        `gorm:"type:VARBINARY(64);index;" json:"-" yaml:"-"`
 	InvitedBy     string        `gorm:"size:64;" json:"-" yaml:"-"`
 	VerifyToken   string        `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
@@ -106,6 +107,8 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("id = ?", find.ID)
 	} else if rnd.IsUID(find.UserUID, UserUID) {
 		stmt = stmt.Where("user_uid = ?", find.UserUID)
+	} else if find.UserName != "" && find.AuthProvider != "" {
+		stmt = stmt.Where("user_name = ? AND (auth_provider = ? OR auth_provider = '')", find.UserName, find.AuthProvider)
 	} else if find.UserName != "" {
 		stmt = stmt.Where("user_name = ?", find.UserName)
 	} else if find.UserEmail != "" {
@@ -142,14 +145,25 @@ func FirstOrCreateUser(m *User) *User {
 }
 
 // FindUserByName returns the matching user or nil if it was not found.
-func FindUserByName(name string) *User {
-	name = clean.DN(name)
+func FindUserByName(userName string) *User {
+	userName = clean.Username(userName)
 
-	if name == "" {
+	if userName == "" {
 		return nil
 	}
 
-	return FindUser(User{UserName: name})
+	return FindUser(User{UserName: userName})
+}
+
+// FindLocalUser returns the matching local user or nil if it was not found.
+func FindLocalUser(userName string) *User {
+	userName = clean.Username(userName)
+
+	if userName == "" {
+		return nil
+	}
+
+	return FindUser(User{UserName: userName, AuthProvider: authn.ProviderLocal})
 }
 
 // FindUserByUID returns the matching user or nil if it was not found.
@@ -209,7 +223,7 @@ func (m *User) InitAccount(initName, initPasswd string) (updated bool) {
 
 	// Change username if needed.
 	if initName != "" && initName != m.UserName {
-		if err := m.UpdateName(initName); err != nil {
+		if err := m.UpdateUsername(initName); err != nil {
 			event.AuditErr([]string{"user %s", "failed to change username to %s", "%s"}, m.RefID, clean.Log(initName), err)
 		}
 	}
@@ -333,6 +347,25 @@ func (m *User) Disabled() bool {
 	return m.Deleted() || m.Expired() && !m.SuperAdmin
 }
 
+// UpdateLoginTime updates the login timestamp and returns it if successful.
+func (m *User) UpdateLoginTime() *time.Time {
+	if m == nil {
+		return nil
+	} else if m.Deleted() {
+		return nil
+	}
+
+	timeStamp := TimePointer()
+
+	if err := Db().Model(m).UpdateColumn("LoginAt", timeStamp).Error; err != nil {
+		return nil
+	}
+
+	m.LoginAt = timeStamp
+
+	return timeStamp
+}
+
 // CanLogIn checks if the user is allowed to log in and use the web UI.
 func (m *User) CanLogIn() bool {
 	if m == nil {
@@ -416,7 +449,7 @@ func (m *User) SetUploadPath(dir string) *User {
 
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
-	if n := m.Name(); n != "" {
+	if n := m.Username(); n != "" {
 		return clean.LogQuote(n)
 	} else if n = m.FullName(); n != "" {
 		return clean.LogQuote(n)
@@ -425,13 +458,52 @@ func (m *User) String() string {
 	return clean.Log(m.UserUID)
 }
 
-// Name returns the user's login name for authentication.
-func (m *User) Name() string {
+// Provider returns the authentication provider name.
+func (m *User) Provider() string {
+	if m.AuthProvider != "" {
+		return m.AuthProvider
+	} else if m.ID == Visitor.ID {
+		return authn.ProviderToken
+	} else if m.ID == 1 {
+		return authn.ProviderLocal
+	} else if m.UserName != "" && m.ID > 0 {
+		return authn.ProviderDefault
+	}
+
+	return authn.ProviderNone
+}
+
+// SetProvider set the authentication provider.
+func (m *User) SetProvider(s string) *User {
+	if m == nil {
+		return nil
+	} else if m.ID <= 0 {
+		return m
+	} else if s == authn.ProviderString(authn.ProviderDefault) {
+		s = ""
+	}
+
+	m.AuthProvider = clean.TypeLower(s)
+
+	return m
+}
+
+// IsLocal checks if the user is authenticated locally.
+func (m *User) IsLocal() bool {
+	if m.UserName == "" || m.ID <= 0 {
+		return false
+	}
+
+	return m.ID == 1 || m.AuthProvider == authn.ProviderDefault || m.AuthProvider == authn.ProviderLocal
+}
+
+// Username returns the user's login name as sanitized string.
+func (m *User) Username() string {
 	return clean.Username(m.UserName)
 }
 
-// SetName sets the login username to the specified string.
-func (m *User) SetName(login string) (err error) {
+// SetUsername sets the login username to the specified string.
+func (m *User) SetUsername(login string) (err error) {
 	if m.ID < 0 {
 		return fmt.Errorf("system users cannot be modified")
 	}
@@ -458,9 +530,9 @@ func (m *User) SetName(login string) (err error) {
 	return nil
 }
 
-// UpdateName changes the login username and saves it to the database.
-func (m *User) UpdateName(login string) (err error) {
-	if err = m.SetName(login); err != nil {
+// UpdateUsername changes the login username and saves it to the database.
+func (m *User) UpdateUsername(login string) (err error) {
+	if err = m.SetUsername(login); err != nil {
 		return err
 	}
 
@@ -556,6 +628,15 @@ func (m *User) IsRegistered() bool {
 // NotRegistered checks if the user is not registered with an own account.
 func (m *User) NotRegistered() bool {
 	return !m.IsRegistered()
+}
+
+// Equal returns true if the user specified matches.
+func (m *User) Equal(u *User) bool {
+	if m == nil || u == nil {
+		return false
+	}
+
+	return m.UserUID == u.UserUID
 }
 
 // IsAdmin checks if the user is an admin with username.
@@ -670,12 +751,12 @@ func (m *User) WrongPassword(s string) bool {
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
 	// Empty name?
-	if m.Name() == "" {
+	if m.Username() == "" {
 		return errors.New("username must not be empty")
 	}
 
 	// Name too short?
-	if len(m.Name()) < UsernameLength {
+	if len(m.Username()) < UsernameLength {
 		return fmt.Errorf("username must have at least %d characters", UsernameLength)
 	}
 
@@ -723,7 +804,8 @@ func (m *User) Validate() (err error) {
 
 // SetFormValues sets the values specified in the form.
 func (m *User) SetFormValues(frm form.User) *User {
-	m.UserName = frm.Name()
+	m.UserName = frm.Username()
+	m.SetProvider(frm.AuthProvider)
 	m.UserEmail = frm.Email()
 	m.DisplayName = frm.DisplayName
 	m.SuperAdmin = frm.SuperAdmin
@@ -853,9 +935,15 @@ func (m *User) Form() (form.User, error) {
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-func (m *User) SaveForm(f form.User) error {
+func (m *User) SaveForm(f form.User, updateRights bool) error {
 	if m.UserName == "" || m.ID <= 0 {
-		return fmt.Errorf("system users cannot be updated")
+		return fmt.Errorf("system users cannot be modified")
+	} else if (m.ID == 1 || f.SuperAdmin) && acl.RoleAdmin.NotEqual(f.Role()) {
+		return fmt.Errorf("super admin must not have a non-admin role")
+	} else if f.BasePath != "" && clean.UserPath(f.BasePath) == "" {
+		return fmt.Errorf("invalid base folder")
+	} else if f.UploadPath != "" && clean.UserPath(f.UploadPath) == "" {
+		return fmt.Errorf("invalid upload folder")
 	}
 
 	// Ignore details if not set.
@@ -870,7 +958,7 @@ func (m *User) SaveForm(f form.User) error {
 
 	// Sanitize display name.
 	if n := clean.Name(f.DisplayName); n != "" && n != m.DisplayName {
-		m.SetDisplayName(n)
+		m.SetDisplayName(n, SrcManual)
 	}
 
 	// Sanitize email address.
@@ -880,20 +968,34 @@ func (m *User) SaveForm(f form.User) error {
 		m.VerifyToken = GenerateToken()
 	}
 
+	// Update user rights only if explicitly requested.
+	if updateRights {
+		m.UserRole = f.UserRole
+		m.UserAttr = f.UserAttr
+		m.SuperAdmin = f.SuperAdmin
+		m.CanLogin = f.CanLogin
+		m.WebDAV = f.WebDAV
+
+		m.SetProvider(f.AuthProvider)
+		m.SetBasePath(f.BasePath)
+		m.SetUploadPath(f.UploadPath)
+	}
+
 	return m.Save()
 }
 
 // SetDisplayName sets a new display name and, if possible, splits it into its components.
-func (m *User) SetDisplayName(name string) *User {
+func (m *User) SetDisplayName(name, src string) *User {
 	name = clean.Name(name)
 
 	d := m.Details()
 
-	if name == "" || SrcPriority[SrcAuto] < SrcPriority[d.NameSrc] {
+	if name == "" || SrcPriority[src] < SrcPriority[d.NameSrc] {
 		return m
 	}
 
 	m.DisplayName = name
+	d.NameSrc = src
 
 	// Try to parse name into components.
 	n := txt.ParseName(name)
@@ -934,20 +1036,4 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	m.ThumbSrc = thumbSrc
 
 	return m.Updates(Values{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
-}
-
-// Login returns the username.
-func (m *User) Login() string {
-	return m.UserName
-}
-
-// Provider returns the authentication provider name.
-func (m *User) Provider() string {
-	if m.AuthProvider != "" {
-		return m.AuthProvider
-	} else if m.UserName != "" && m.ID > 0 {
-		return "password"
-	}
-
-	return ""
 }

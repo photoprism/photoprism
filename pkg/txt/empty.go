@@ -10,7 +10,7 @@ func Empty(s string) bool {
 		return true
 	} else if s = strings.Trim(s, "%* "); s == "" || s == "0" || s == "-1" || DateTimeDefault(s) {
 		return true
-	} else if s = strings.ToLower(s); s == "nil" || s == "null" || s == "nan" {
+	} else if s = strings.ToLower(s); s == "nil" || s == "null" || s == "none" || s == "nan" {
 		return true
 	}
 

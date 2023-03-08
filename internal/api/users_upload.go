@@ -40,8 +40,11 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			return
 		}
 
+		uid := clean.UID(c.Param("uid"))
+
 		// Users may only upload their own files.
-		if s.User().UserUID != clean.UID(c.Param("uid")) {
+		if s.User().UserUID != uid {
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "user uid does not match"}, s.RefID)
 			AbortForbidden(c)
 			return
 		}

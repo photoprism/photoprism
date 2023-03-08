@@ -33,7 +33,8 @@ import Labels from "page/labels.vue";
 import People from "page/people.vue";
 import Library from "page/library.vue";
 import Settings from "page/settings.vue";
-import Login from "page/login.vue";
+import Admin from "page/admin.vue";
+import Login from "page/auth/login.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
 import Feedback from "page/about/feedback.vue";
@@ -89,6 +90,18 @@ export default [
       } else {
         next({ name: "browse" });
       }
+    },
+  },
+  {
+    name: "admin",
+    path: "/admin/*",
+    component: Admin,
+    meta: {
+      title: $gettext("Settings"),
+      auth: true,
+      admin: true,
+      settings: true,
+      background: "application-light",
     },
   },
   {

@@ -50,7 +50,7 @@ import tabColors from "page/discover/colors.vue";
 import tabTodo from "page/discover/todo.vue";
 
 export default {
-  name: 'PPageSettings',
+  name: 'PPageDiscover',
   components: {
     'p-tab-discover-colors': tabColors,
     'p-tab-discover-todo': tabTodo,

@@ -66,7 +66,7 @@ require (
 	golang.org/x/oauth2 v0.4.0 // indirect
 )
 
-require github.com/gabriel-vasile/mimetype v1.4.1
+require github.com/gabriel-vasile/mimetype v1.4.2
 
 require (
 	golang.org/x/sync v0.1.0

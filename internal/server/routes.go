@@ -7,6 +7,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
+var APIv1 *gin.RouterGroup
+
 // registerRoutes configures the available web server routes.
 func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Enables automatic redirection if the current route cannot be matched but a
@@ -26,142 +28,139 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	registerSharingRoutes(router, conf)
 
 	// JSON-REST API Version 1
-	v1 := router.Group(conf.BaseUri(config.ApiUri))
-	{
-		// Authentication.
-		api.CreateSession(v1)
-		api.GetSession(v1)
-		api.DeleteSession(v1)
+	// Authentication.
+	api.CreateSession(APIv1)
+	api.GetSession(APIv1)
+	api.DeleteSession(APIv1)
 
-		// Global Config.
-		api.GetConfigOptions(v1)
-		api.SaveConfigOptions(v1)
+	// Global Config.
+	api.GetConfigOptions(APIv1)
+	api.SaveConfigOptions(APIv1)
 
-		// Custom Settings.
-		api.GetClientConfig(v1)
-		api.GetSettings(v1)
-		api.SaveSettings(v1)
+	// Custom Settings.
+	api.GetClientConfig(APIv1)
+	api.GetSettings(APIv1)
+	api.SaveSettings(APIv1)
 
-		// Profile and Uploads.
-		api.UploadUserFiles(v1)
-		api.ProcessUserUpload(v1)
-		api.UploadUserAvatar(v1)
-		api.UpdateUserPassword(v1)
-		api.UpdateUser(v1)
+	// Profile and Uploads.
+	api.UploadUserFiles(APIv1)
+	api.ProcessUserUpload(APIv1)
+	api.UploadUserAvatar(APIv1)
+	api.UpdateUserPassword(APIv1)
+	api.UpdateUser(APIv1)
 
-		// Service Accounts.
-		api.SearchServices(v1)
-		api.GetService(v1)
-		api.GetServiceFolders(v1)
-		api.UploadToService(v1)
-		api.AddService(v1)
-		api.DeleteService(v1)
-		api.UpdateService(v1)
+	// Service Accounts.
+	api.SearchServices(APIv1)
+	api.GetService(APIv1)
+	api.GetServiceFolders(APIv1)
+	api.UploadToService(APIv1)
+	api.AddService(APIv1)
+	api.DeleteService(APIv1)
+	api.UpdateService(APIv1)
 
-		// Thumbnail Images.
-		api.GetThumb(v1)
+	// Thumbnail Images.
+	api.GetThumb(APIv1)
 
-		// Video Streaming.
-		api.GetVideo(v1)
+	// Video Streaming.
+	api.GetVideo(APIv1)
 
-		// Downloads.
-		api.GetDownload(v1)
-		api.ZipCreate(v1)
-		api.ZipDownload(v1)
+	// Downloads.
+	api.GetDownload(APIv1)
+	api.ZipCreate(APIv1)
+	api.ZipDownload(APIv1)
 
-		// Index and Import.
-		api.StartImport(v1)
-		api.CancelImport(v1)
-		api.StartIndexing(v1)
-		api.CancelIndexing(v1)
+	// Index and Import.
+	api.StartImport(APIv1)
+	api.CancelImport(APIv1)
+	api.StartIndexing(APIv1)
+	api.CancelIndexing(APIv1)
 
-		// Photo Search and Organization.
-		api.SearchPhotos(v1)
-		api.SearchGeo(v1)
-		api.GetPhoto(v1)
-		api.GetPhotoYaml(v1)
-		api.UpdatePhoto(v1)
-		api.GetPhotoDownload(v1)
-		// api.GetPhotoLinks(v1)
-		// api.CreatePhotoLink(v1)
-		// api.UpdatePhotoLink(v1)
-		// api.DeletePhotoLink(v1)
-		api.ApprovePhoto(v1)
-		api.LikePhoto(v1)
-		api.DislikePhoto(v1)
-		api.AddPhotoLabel(v1)
-		api.RemovePhotoLabel(v1)
-		api.UpdatePhotoLabel(v1)
-		api.GetMomentsTime(v1)
-		api.GetFile(v1)
-		api.DeleteFile(v1)
-		api.UpdateMarker(v1)
-		api.ClearMarkerSubject(v1)
-		api.PhotoPrimary(v1)
-		api.PhotoUnstack(v1)
+	// Photo Search and Organization.
+	api.SearchPhotos(APIv1)
+	api.SearchGeo(APIv1)
+	api.GetPhoto(APIv1)
+	api.GetPhotoYaml(APIv1)
+	api.UpdatePhoto(APIv1)
+	api.GetPhotoDownload(APIv1)
+	// api.GetPhotoLinks(APIv1)
+	// api.CreatePhotoLink(APIv1)
+	// api.UpdatePhotoLink(APIv1)
+	// api.DeletePhotoLink(APIv1)
+	api.ApprovePhoto(APIv1)
+	api.LikePhoto(APIv1)
+	api.DislikePhoto(APIv1)
+	api.AddPhotoLabel(APIv1)
+	api.RemovePhotoLabel(APIv1)
+	api.UpdatePhotoLabel(APIv1)
+	api.GetMomentsTime(APIv1)
+	api.GetFile(APIv1)
+	api.DeleteFile(APIv1)
+	api.UpdateMarker(APIv1)
+	api.ClearMarkerSubject(APIv1)
+	api.PhotoPrimary(APIv1)
+	api.PhotoUnstack(APIv1)
 
-		// Photo Albums.
-		api.SearchAlbums(v1)
-		api.GetAlbum(v1)
-		api.AlbumCover(v1)
-		api.CreateAlbum(v1)
-		api.UpdateAlbum(v1)
-		api.DeleteAlbum(v1)
-		api.DownloadAlbum(v1)
-		api.GetAlbumLinks(v1)
-		api.CreateAlbumLink(v1)
-		api.UpdateAlbumLink(v1)
-		api.DeleteAlbumLink(v1)
-		api.LikeAlbum(v1)
-		api.DislikeAlbum(v1)
-		api.CloneAlbums(v1)
-		api.AddPhotosToAlbum(v1)
-		api.RemovePhotosFromAlbum(v1)
+	// Photo Albums.
+	api.SearchAlbums(APIv1)
+	api.GetAlbum(APIv1)
+	api.AlbumCover(APIv1)
+	api.CreateAlbum(APIv1)
+	api.UpdateAlbum(APIv1)
+	api.DeleteAlbum(APIv1)
+	api.DownloadAlbum(APIv1)
+	api.GetAlbumLinks(APIv1)
+	api.CreateAlbumLink(APIv1)
+	api.UpdateAlbumLink(APIv1)
+	api.DeleteAlbumLink(APIv1)
+	api.LikeAlbum(APIv1)
+	api.DislikeAlbum(APIv1)
+	api.CloneAlbums(APIv1)
+	api.AddPhotosToAlbum(APIv1)
+	api.RemovePhotosFromAlbum(APIv1)
 
-		// Photo Labels.
-		api.SearchLabels(v1)
-		api.LabelCover(v1)
-		api.UpdateLabel(v1)
-		// api.GetLabelLinks(v1)
-		// api.CreateLabelLink(v1)
-		// api.UpdateLabelLink(v1)
-		// api.DeleteLabelLink(v1)
-		api.LikeLabel(v1)
-		api.DislikeLabel(v1)
+	// Photo Labels.
+	api.SearchLabels(APIv1)
+	api.LabelCover(APIv1)
+	api.UpdateLabel(APIv1)
+	// api.GetLabelLinks(APIv1)
+	// api.CreateLabelLink(APIv1)
+	// api.UpdateLabelLink(APIv1)
+	// api.DeleteLabelLink(APIv1)
+	api.LikeLabel(APIv1)
+	api.DislikeLabel(APIv1)
 
-		// Files and Folders.
-		api.SearchFoldersOriginals(v1)
-		api.SearchFoldersImport(v1)
-		api.FolderCover(v1)
+	// Files and Folders.
+	api.SearchFoldersOriginals(APIv1)
+	api.SearchFoldersImport(APIv1)
+	api.FolderCover(APIv1)
 
-		// People.
-		api.SearchSubjects(v1)
-		api.GetSubject(v1)
-		api.UpdateSubject(v1)
-		api.LikeSubject(v1)
-		api.DislikeSubject(v1)
+	// People.
+	api.SearchSubjects(APIv1)
+	api.GetSubject(APIv1)
+	api.UpdateSubject(APIv1)
+	api.LikeSubject(APIv1)
+	api.DislikeSubject(APIv1)
 
-		// Faces.
-		api.SearchFaces(v1)
-		api.GetFace(v1)
-		api.UpdateFace(v1)
+	// Faces.
+	api.SearchFaces(APIv1)
+	api.GetFace(APIv1)
+	api.UpdateFace(APIv1)
 
-		// Batch Operations.
-		api.BatchPhotosApprove(v1)
-		api.BatchPhotosArchive(v1)
-		api.BatchPhotosRestore(v1)
-		api.BatchPhotosPrivate(v1)
-		api.BatchPhotosDelete(v1)
-		api.BatchAlbumsDelete(v1)
-		api.BatchLabelsDelete(v1)
+	// Batch Operations.
+	api.BatchPhotosApprove(APIv1)
+	api.BatchPhotosArchive(APIv1)
+	api.BatchPhotosRestore(APIv1)
+	api.BatchPhotosPrivate(APIv1)
+	api.BatchPhotosDelete(APIv1)
+	api.BatchAlbumsDelete(APIv1)
+	api.BatchLabelsDelete(APIv1)
 
-		// Technical Endpoints.
-		api.GetSvg(v1)
-		api.GetStatus(v1)
-		api.GetErrors(v1)
-		api.DeleteErrors(v1)
-		api.SendFeedback(v1)
-		api.Connect(v1)
-		api.WebSocket(v1)
-	}
+	// Technical Endpoints.
+	api.GetSvg(APIv1)
+	api.GetStatus(APIv1)
+	api.GetErrors(APIv1)
+	api.DeleteErrors(APIv1)
+	api.SendFeedback(APIv1)
+	api.Connect(APIv1)
+	api.WebSocket(APIv1)
 }

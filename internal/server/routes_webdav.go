@@ -167,5 +167,5 @@ func MarkUploadAsFavorite(fileName string) {
 	}
 
 	// Log success.
-	log.Infof("webdav: marked %s as favorite", clean.Log(filepath.Base(fileName)))
+	log.Infof("webdav: flagged %s as favorite", clean.Log(filepath.Base(fileName)))
 }

@@ -101,6 +101,7 @@ export class User extends RestModel {
         CreatedAt: "",
         UpdatedAt: "",
       },
+      LoginAt: "",
       VerifiedAt: "",
       ConsentAt: "",
       BornAt: "",
@@ -184,17 +185,15 @@ export class User extends RestModel {
     );
   }
 
+  isLocal() {
+    return !this.AuthProvider || this.AuthProvider === "local";
+  }
+
   changePassword(oldPassword, newPassword) {
     return Api.put(this.getEntityResource() + "/password", {
       old: oldPassword,
       new: newPassword,
     }).then((response) => Promise.resolve(response.data));
-  }
-
-  save() {
-    return Api.post(this.getEntityResource(), this.getValues()).then((response) =>
-      Promise.resolve(this.setValues(response.data))
-    );
   }
 
   static getCollectionResource() {

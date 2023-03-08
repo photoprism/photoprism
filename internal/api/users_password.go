@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
@@ -41,15 +42,22 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 			return
 		}
 
+		// Check if the session user is has user management privileges.
+		isPrivileged := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isSuperAdmin := isPrivileged && s.User().IsSuperAdmin()
+		uid := clean.UID(c.Param("uid"))
+
+		var u *entity.User
+
 		// Users may only change their own password.
-		if s.User().UserUID != clean.UID(c.Param("uid")) {
+		if !isPrivileged && s.User().UserUID != uid {
 			AbortForbidden(c)
 			return
-		}
-
-		u := s.User()
-
-		if u == nil {
+		} else if s.User().UserUID == uid {
+			u = s.User()
+			isPrivileged = false
+			isSuperAdmin = false
+		} else if u = entity.FindUserByUID(uid); u == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrUserNotFound)
 			return
 		}
@@ -62,7 +70,9 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		}
 
 		// Verify that the old password is correct.
-		if u.WrongPassword(f.OldPassword) {
+		if isSuperAdmin && f.OldPassword == "" {
+			// Do nothing.
+		} else if u.WrongPassword(f.OldPassword) {
 			limiter.Login.Reserve(ClientIP(c))
 			Abort(c, http.StatusBadRequest, i18n.ErrInvalidPassword)
 			return

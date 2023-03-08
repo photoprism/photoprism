@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -15,6 +16,89 @@ func TestNewUser(t *testing.T) {
 
 	assert.True(t, rnd.IsRefID(m.RefID))
 	assert.True(t, rnd.IsUID(m.UserUID, UserUID))
+}
+
+func TestFindLocalUser(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
+		m := FindLocalUser("admin")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 1, m.ID)
+		assert.NotEmpty(t, m.UserUID)
+		assert.Equal(t, "admin", m.UserName)
+		assert.Equal(t, "admin", m.Username())
+		m.UserName = "Admin "
+		assert.Equal(t, "admin", m.Username())
+		assert.Equal(t, "Admin ", m.UserName)
+		assert.Equal(t, "Admin", m.DisplayName)
+		assert.Equal(t, acl.RoleAdmin, m.AclRole())
+		assert.Equal(t, "", m.Attr())
+		assert.False(t, m.IsVisitor())
+		assert.True(t, m.SuperAdmin)
+		assert.True(t, m.CanLogin)
+		assert.True(t, m.CanInvite)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("Alice", func(t *testing.T) {
+		m := FindLocalUser("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 5, m.ID)
+		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
+		assert.Equal(t, "alice", m.UserName)
+		assert.Equal(t, "Alice", m.DisplayName)
+		assert.Equal(t, "alice@example.com", m.UserEmail)
+		assert.True(t, m.SuperAdmin)
+		assert.Equal(t, acl.RoleAdmin, m.AclRole())
+		assert.NotEqual(t, acl.RoleVisitor, m.AclRole())
+		assert.False(t, m.IsVisitor())
+		assert.True(t, m.CanLogin)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("Bob", func(t *testing.T) {
+		m := FindLocalUser("bob")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 7, m.ID)
+		assert.Equal(t, "uqxc08w3d0ej2283", m.UserUID)
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Robert Rich", m.DisplayName)
+		assert.Equal(t, "bob@example.com", m.UserEmail)
+		assert.False(t, m.SuperAdmin)
+		assert.False(t, m.IsVisitor())
+		assert.True(t, m.CanLogin)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("Unknown", func(t *testing.T) {
+		m := FindLocalUser("")
+
+		if m != nil {
+			t.Fatal("result should be nil")
+		}
+	})
+
+	t.Run("NotFound", func(t *testing.T) {
+		m := FindLocalUser("xxx")
+
+		if m != nil {
+			t.Fatal("result should be nil")
+		}
+	})
 }
 
 func TestFindUserByName(t *testing.T) {
@@ -28,9 +112,9 @@ func TestFindUserByName(t *testing.T) {
 		assert.Equal(t, 1, m.ID)
 		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "admin", m.UserName)
-		assert.Equal(t, "admin", m.Name())
+		assert.Equal(t, "admin", m.Username())
 		m.UserName = "Admin "
-		assert.Equal(t, "admin", m.Name())
+		assert.Equal(t, "admin", m.Username())
 		assert.Equal(t, "Admin ", m.UserName)
 		assert.Equal(t, "Admin", m.DisplayName)
 		assert.Equal(t, acl.RoleAdmin, m.AclRole())
@@ -114,10 +198,10 @@ func TestUser_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "example", m.Name())
+		assert.Equal(t, "example", m.Username())
 		assert.Equal(t, "example", m.UserName)
 
-		if err := m.UpdateName("example-editor"); err == nil {
+		if err := m.UpdateUsername("example-editor"); err == nil {
 			t.Fatal("error expected")
 		}
 	})
@@ -136,14 +220,14 @@ func TestUser_SetName(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, "admin", m.Name())
+		assert.Equal(t, "admin", m.Username())
 		assert.Equal(t, "admin", m.UserName)
 
-		if err := m.SetName("photoprism"); err != nil {
+		if err := m.SetUsername("photoprism"); err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "photoprism", m.Name())
+		assert.Equal(t, "photoprism", m.Username())
 		assert.Equal(t, "photoprism", m.UserName)
 	})
 }
@@ -328,7 +412,7 @@ func TestFindUserByUID(t *testing.T) {
 
 		assert.Equal(t, 5, m.ID)
 		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
-		assert.Equal(t, "alice", m.Name())
+		assert.Equal(t, "alice", m.Username())
 		assert.Equal(t, "Alice", m.DisplayName)
 		assert.Equal(t, "alice@example.com", m.UserEmail)
 		assert.True(t, m.SuperAdmin)
@@ -697,7 +781,20 @@ func TestUser_Disabled(t *testing.T) {
 	assert.True(t, UserFixtures.Pointer("deleted").Disabled())
 }
 
-func TestUser_CanUseAPI(t *testing.T) {
+func TestUser_UpdateLoginTime(t *testing.T) {
+	alice := UserFixtures.Get("alice")
+	time1 := alice.LoginAt
+	assert.Nil(t, time1)
+	alice.UpdateLoginTime()
+	time2 := alice.LoginAt
+	assert.NotNil(t, time2)
+	alice.UpdateLoginTime()
+	time3 := alice.LoginAt
+	assert.NotNil(t, time3)
+	assert.True(t, time3.After(*time2) || time3.Equal(*time2))
+}
+
+func TestUser_CanLogIn(t *testing.T) {
 	assert.True(t, UserFixtures.Pointer("alice").CanLogIn())
 	assert.False(t, UserFixtures.Pointer("deleted").CanLogIn())
 }
@@ -752,7 +849,7 @@ func TestUser_SaveForm(t *testing.T) {
 		frm, err := UnknownUser.Form()
 		assert.NoError(t, err)
 
-		err = UnknownUser.SaveForm(frm)
+		err = UnknownUser.SaveForm(frm, false)
 		assert.Error(t, err)
 	})
 	t.Run("Admin", func(t *testing.T) {
@@ -770,7 +867,32 @@ func TestUser_SaveForm(t *testing.T) {
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
-		err = Admin.SaveForm(frm)
+		err = Admin.SaveForm(frm, false)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "admin@example.com", Admin.UserEmail)
+		assert.Equal(t, "GoLand", Admin.Details().UserLocation)
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.Equal(t, "admin@example.com", m.UserEmail)
+		assert.Equal(t, "GoLand", m.Details().UserLocation)
+	})
+	t.Run("UpdateRights", func(t *testing.T) {
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UserEmail = "admin@example.com"
+		frm.UserDetails.UserLocation = "GoLand"
+		err = Admin.SaveForm(frm, true)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)
@@ -785,7 +907,7 @@ func TestUser_SaveForm(t *testing.T) {
 func TestUser_SetDisplayName(t *testing.T) {
 	t.Run("BillGates", func(t *testing.T) {
 		user := NewUser()
-		user.SetDisplayName("Sir William Henry Gates III")
+		user.SetDisplayName("Sir William Henry Gates III", SrcAuto)
 		d := user.Details()
 		assert.Equal(t, "Sir", d.NameTitle)
 		assert.Equal(t, "William", d.GivenName)
@@ -815,27 +937,27 @@ func TestUser_SetAvatar(t *testing.T) {
 	})
 }
 
-func TestUser_Login(t *testing.T) {
+func TestUser_Username(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
-		assert.Equal(t, "", Visitor.Login())
+		assert.Equal(t, "", Visitor.Username())
 	})
 	t.Run("UnknownUser", func(t *testing.T) {
-		assert.Equal(t, "", UnknownUser.Login())
+		assert.Equal(t, "", UnknownUser.Username())
 	})
 	t.Run("Admin", func(t *testing.T) {
-		assert.Equal(t, "admin", Admin.Login())
+		assert.Equal(t, "admin", Admin.Username())
 	})
 }
 
 func TestUser_Provider(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
-		assert.Equal(t, "", Visitor.Provider())
+		assert.Equal(t, authn.ProviderToken, Visitor.Provider())
 	})
 	t.Run("UnknownUser", func(t *testing.T) {
-		assert.Equal(t, "", UnknownUser.Provider())
+		assert.Equal(t, authn.ProviderNone, UnknownUser.Provider())
 	})
 	t.Run("Admin", func(t *testing.T) {
-		assert.Equal(t, "password", Admin.Provider())
+		assert.Equal(t, authn.ProviderLocal, Admin.Provider())
 	})
 }
 
@@ -918,7 +1040,7 @@ func TestUser_Handle(t *testing.T) {
 			CanInvite:   false,
 		}
 
-		assert.Equal(t, "mr-happy@cat.com", u.Login())
+		assert.Equal(t, "mr-happy@cat.com", u.Username())
 		assert.Equal(t, "mr-happy", u.Handle())
 
 		u.UserName = "mr.happy@cat.com"
@@ -959,7 +1081,7 @@ func TestUser_FullName(t *testing.T) {
 
 		assert.Equal(t, "Foo", u.FullName())
 
-		u.SetDisplayName("Jane Doe")
+		u.SetDisplayName("Jane Doe", SrcManual)
 
 		assert.Equal(t, "Jane Doe", u.FullName())
 	})

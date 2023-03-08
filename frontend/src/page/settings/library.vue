@@ -12,7 +12,6 @@
 
         <v-card-actions>
           <v-layout wrap align-top>
-
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.estimates"

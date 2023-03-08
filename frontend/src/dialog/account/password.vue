@@ -14,10 +14,10 @@
       </v-card-title>
       <v-card-text class="py-0 px-2">
         <v-layout wrap align-top>
-          <v-flex xs12 class="px-2 pb-2 caption">
+          <v-flex v-if="oldRequired" xs12 class="px-2 pb-2 caption">
             <translate>Please note that changing your password will log you out on other devices and browsers.</translate>
           </v-flex>
-          <v-flex xs12 class="px-2 py-1">
+          <v-flex v-if="oldRequired" xs12 class="px-2 py-1">
             <v-text-field
                 v-model="oldPassword"
                 hide-details required box flat
@@ -88,10 +88,16 @@
   </v-dialog>
 </template>
 <script>
+import User from "../../model/user";
+
 export default {
   name: 'PAccountPasswordDialog',
   props: {
     show: Boolean,
+    model: {
+      type: Object,
+      default: () => new User(null),
+    },
   },
   data() {
     return {
@@ -105,7 +111,17 @@ export default {
       rtl: this.$rtl,
     };
   },
-  computed: {},
+  computed: {
+    oldRequired() {
+      if (!this.model) {
+        return true;
+      }
+
+      const sessionUser = this.$session.getUser();
+
+      return !sessionUser.SuperAdmin || this.model.getId() === sessionUser.getId();
+    },
+  },
   created() {
     if(this.isPublic && !this.isDemo) {
       this.$emit('cancel');
@@ -113,11 +129,11 @@ export default {
   },
   methods: {
     disabled() {
-      return (this.isDemo || this.busy || this.oldPassword === "" || this.newPassword.length < this.passwordLength || (this.newPassword !== this.confirmPassword));
+      return (this.isDemo || this.busy || this.oldPassword === "" && this.oldRequired || this.newPassword.length < this.passwordLength || (this.newPassword !== this.confirmPassword));
     },
     confirm() {
       this.busy = true;
-      this.$session.getUser().changePassword(this.oldPassword, this.newPassword).then(() => {
+      this.model.changePassword(this.oldPassword, this.newPassword).then(() => {
         this.$notify.success(this.$gettext("Password changed"));
         this.$emit('confirm');
       }).finally(() => {

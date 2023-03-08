@@ -10,8 +10,8 @@ import (
 
 var EmailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
-// Username returns the sanitized username with trimmed whitespace and in lowercase.
-func Username(s string) string {
+// Handle returns the sanitized username with trimmed whitespace and in lowercase.
+func Handle(s string) string {
 	// Remove unwanted characters.
 	s = strings.Map(func(r rune) rune {
 		if r <= 42 || r == 127 {
@@ -32,8 +32,8 @@ func Username(s string) string {
 	return strings.ToLower(s)
 }
 
-// DN returns the sanitized distinguished name (DN) with trimmed whitespace and in lowercase.
-func DN(s string) string {
+// Username returns the sanitized distinguished name (Username) with trimmed whitespace and in lowercase.
+func Username(s string) string {
 	s = strings.TrimSpace(s)
 
 	// Remove unwanted characters.

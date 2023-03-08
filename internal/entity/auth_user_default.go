@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 // Role defaults.
@@ -17,6 +18,7 @@ const (
 var Admin = User{
 	ID:            1,
 	UserName:      AdminUserName,
+	AuthProvider:  authn.ProviderLocal,
 	UserRole:      acl.RoleAdmin.String(),
 	DisplayName:   AdminDisplayName,
 	SuperAdmin:    true,
@@ -33,6 +35,7 @@ var UnknownUser = User{
 	ID:            -1,
 	UserUID:       "u000000000000001",
 	UserName:      "",
+	AuthProvider:  authn.ProviderNone,
 	UserRole:      acl.RoleUnknown.String(),
 	CanLogin:      false,
 	WebDAV:        false,
@@ -48,6 +51,7 @@ var Visitor = User{
 	ID:            -2,
 	UserUID:       "u000000000000002",
 	UserName:      "",
+	AuthProvider:  authn.ProviderToken,
 	UserRole:      acl.RoleVisitor.String(),
 	DisplayName:   VisitorDisplayName,
 	CanLogin:      false,

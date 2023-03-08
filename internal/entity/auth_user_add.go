@@ -32,7 +32,7 @@ func AddUser(frm form.User) error {
 			return err
 		}
 
-		log.Infof("successfully added user %s", clean.LogQuote(user.Name()))
+		log.Infof("successfully added user %s", clean.LogQuote(user.Username()))
 
 		return nil
 	})
